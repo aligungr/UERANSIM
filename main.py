@@ -1,5 +1,5 @@
 from binascii import unhexlify, hexlify
-import ngap
+from pycrate import ngap
 
 InitiatingMessage = ngap.NGAP_PDU_Descriptions.InitiatingMessage
 
