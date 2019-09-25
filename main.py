@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(1, 'pycrate')
+
 from binascii import unhexlify, hexlify
 import generated
 
