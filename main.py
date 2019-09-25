@@ -1,10 +1,7 @@
-import sys
-sys.path.insert(1, 'pycrate')
-
 from binascii import unhexlify, hexlify
-import generated
+import ngap
 
-InitiatingMessage = generated.NGAP_PDU_Descriptions.InitiatingMessage
+InitiatingMessage = ngap.NGAP_PDU_Descriptions.InitiatingMessage
 
 print(InitiatingMessage.get_proto())
 
@@ -15,7 +12,7 @@ exit(0)
 
 
 b = unhexlify("00000400550002000500260021207e004171000d010011000000000099898877f71001002e04804080402f0201010079000f400001100000011000000110000075005a400118")
-InitialUEMessage = generated.NGAP_PDU_Contents.InitialUEMessage
+InitialUEMessage = ngap.NGAP_PDU_Contents.InitialUEMessage
 InitialUEMessage.from_aper(b)
 print(InitialUEMessage.to_json())
 
