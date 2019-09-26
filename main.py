@@ -6,6 +6,8 @@ from pycrate_asn1rt.asnobj_basic import *
 from pycrate_asn1rt.asnobj_ext import *
 from pycrate_asn1rt.asnobj_class import *
 
+# todo: map'e eklerken zaten var mı diye bak eğer zaten varsa direk dön
+# ama var olan yenisinden farklıysa hata var demektrir.
 MAP = {}
 
 
