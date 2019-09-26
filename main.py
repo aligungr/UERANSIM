@@ -1,85 +1,66 @@
 import ngap
+import json
 from pycrate_asn1rt.dictobj import *
+from pycrate_asn1rt.asnobj_construct import *
+from pycrate_asn1rt.asnobj_basic import *
+from pycrate_asn1rt.asnobj_ext import *
 
 
-def compile_element(element):
-    if type(element) is ASN1Dict:
-        return compile_object(element)
-    if type(element) is str:
-        return compile_primitive(element)
-    if type(element) is tuple:
-        if element[0] == "SEQUENCE":
-            return compile_object(element[1])
-        elif element[0] == "SEQUENCE OF":
-            return compile_array(element[1])
-        elif element[0] == "OPEN_TYPE":
-            return compile_open_type(element[1])
-        elif element[0] == "CHOICE":
-            return compile_choice(element[1])
-        else:
-            raise RuntimeError("not implemented yet")
-    raise RuntimeError("not implemented yet")
-
-
-def compile_object(element):
-    if not type(element) is ASN1Dict:
+def translate_element(element):
+    if type(element) is SEQ:
+        return translate_sequence(element)
+    elif type(element) is SEQ_OF:
+        return translate_sequence_of(element)
+    elif type(element) is INT:
+        return translate_int(element)
+    elif type(element) is ENUM:
+        return translate_enum(element)
+    elif type(element) is OPEN:
+        return translate_open(element)
+    else:
         raise RuntimeError("not implemented yet")
-    obj = {
-        "type": "object",
-        "properties": {}
-    }
-    for item in element._index:
-        if not type(item) is str:
-            raise RuntimeError("not implemented yet")
-        obj["properties"][item] = compile_element(element._dict[item])
-    return obj
 
 
-def compile_array(element):
-    return {"type": "array", "items": compile_element(element)}
-
-
-def compile_primitive(element):
-    return element
-
-
-def compile_open_type(element):
-    if not type(element) is ASN1Dict:
-        raise RuntimeError("not implemented yet")
-    obj = {
-        "type": "open-type",
-        "properties": {}
-    }
-    for item in element._index:
-        if type(item) is str:
-            obj["properties"][item] = compile_element(element._dict[item])
-        elif type(item) is tuple and len(item) == 2:
-            if item[0] == "NGAP-IEs":  # todo: burda sıkıntı var gibi
-                obj["properties"][item[1]] = compile_element(element._dict[item])
+def translate_sequence(element):
+    if type(element._cont) is ASN1Dict:
+        obj = {
+            "type": "sequence",
+            "properties": {}
+        }
+        for item in element._cont:
+            if type(item) is str:
+                obj["properties"][item] = translate_element(element._cont[item])
             else:
                 raise RuntimeError("not implemented yet")
-        else:
-            raise RuntimeError("not implemented yet")
-    return obj
-
-
-def compile_choice(element):
-    if not type(element) is ASN1Dict:
+        return obj
+    else:
         raise RuntimeError("not implemented yet")
+
+
+def translate_sequence_of(element):
     obj = {
-        "type": "choice",
-        "properties": {}
+        "type": "sequence_of",
+        "items": translate_element(element._cont)
     }
-    for item in element._index:
-        if not type(item) is str:
-            raise RuntimeError("not implemented yet")
-        obj["properties"][item] = compile_element(element._dict[item])
     return obj
 
 
-def compile_proto(element):
-    req_proto = element.get_proto(print_recurs=False)  # todo: loop ve ayrı defler
-    return compile_element(req_proto)
+def translate_int(element):
+    return 5
 
 
-print(compile_proto(ngap.NGAP_PDU_Contents.NGSetupRequest))
+def translate_enum(element):
+    obj = {
+        "type": "enum",
+        "values": {}
+    }
+    for item in element._cont:
+        obj["values"][str(item)] = element._cont[item]
+    return obj
+
+
+def translate_open(element):
+    return 45
+
+
+print(json.dumps(translate_element(ngap.NGAP_PDU_Contents.NGSetupRequest)))
