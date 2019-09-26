@@ -5,6 +5,26 @@ from pycrate_asn1rt.asnobj_construct import *
 from pycrate_asn1rt.asnobj_basic import *
 from pycrate_asn1rt.asnobj_ext import *
 
+MAP = {}
+
+
+def make_ref_id(element):
+    return "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
+
+
+def make_constraints(constraint_list):
+    res = []
+    for item in constraint_list:
+        if type(item) is ASN1RangeInt:
+            res.append({
+                "constraint": "range-int",
+                "lower-bound": item.lb,
+                "upper-bound": item.ub
+            })
+        else:
+            raise RuntimeError("not implemented yet")
+    return res
+
 
 def translate_element(element):
     if type(element) is SEQ:
@@ -46,17 +66,25 @@ def translate_sequence_of(element):
 
 
 def translate_int(element):
-    return 5
+    ref_id = make_ref_id(element)
+    obj = {
+        "type": "integer",
+        "constraints": make_constraints(element._tr._const_val.root)
+    }
+    MAP[ref_id] = obj
+    return ref_id
 
 
 def translate_enum(element):
+    ref_id = make_ref_id(element)
     obj = {
         "type": "enum",
         "values": {}
     }
     for item in element._cont:
         obj["values"][str(item)] = element._cont[item]
-    return obj
+    MAP[ref_id] = obj
+    return ref_id
 
 
 def translate_open(element):
@@ -64,3 +92,6 @@ def translate_open(element):
 
 
 print(json.dumps(translate_element(ngap.NGAP_PDU_Contents.NGSetupRequest)))
+
+print()
+print(json.dumps(MAP["$NGAP-CommonDataTypes.ProtocolIE-ID"]))
