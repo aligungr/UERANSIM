@@ -8,7 +8,11 @@ from pycrate_asn1rt.asnobj_ext import *
 MAP = {}
 
 
-def make_ref_id(element):
+def make_ref_id_int(element):
+    return "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
+
+
+def make_ref_id_enum(element):
     return "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
 
 
@@ -42,6 +46,9 @@ def translate_element(element):
 
 
 def translate_sequence(element):
+    assert not element._const_tab
+    assert not element._const_val
+    assert not element._tr
     if type(element._cont) is ASN1Dict:
         obj = {
             "type": "sequence",
@@ -66,7 +73,7 @@ def translate_sequence_of(element):
 
 
 def translate_int(element):
-    ref_id = make_ref_id(element)
+    ref_id = make_ref_id_int(element)
     obj = {
         "type": "integer",
         "constraints": make_constraints(element._tr._const_val.root)
@@ -76,7 +83,7 @@ def translate_int(element):
 
 
 def translate_enum(element):
-    ref_id = make_ref_id(element)
+    ref_id = make_ref_id_enum(element)
     obj = {
         "type": "enum",
         "values": {}
