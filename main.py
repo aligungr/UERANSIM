@@ -9,25 +9,58 @@ MAP = {}
 
 
 def make_ref_id_int(element):
-    return "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
+    assert element._tr._typeref.called[0]
+    assert element._tr._typeref.called[1]
+    res = "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
+    if len(element._tr._typeref.ced_path) > 0:
+        res += element._tr._typeref.ced_path[0]
+    return res
 
 
 def make_ref_id_enum(element):
-    return "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
+    assert element._tr._typeref.called[0]
+    assert element._tr._typeref.called[1]
+    res = "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
+    if len(element._tr._typeref.ced_path) > 0:
+        res += element._tr._typeref.ced_path[0]
+    return res
 
 
 def make_ref_id_sequence(element):
     if not element._tr:
         return "$" + element._mod + "." + element._name
     else:
-        return "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+        assert element._typeref.called[0]
+        assert element._typeref.called[1]
+        res = "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+        if len(element._typeref.ced_path) > 0:
+            res += element._typeref.ced_path[0]
+        return res
 
 
 def make_ref_id_sequence_of(element):
     if not element._tr:
         return "$" + element._mod + "." + element._name
     else:
-        return "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+        assert element._typeref.called[0]
+        assert element._typeref.called[1]
+        res = "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+        if len(element._typeref.ced_path) > 0:
+            res += element._typeref.ced_path[0]
+        return res
+
+
+def make_ref_id_open(element):
+    assert element._tr
+    assert element._typeref
+    assert not element._tr._typeref
+    assert element._typeref.called[0]
+    assert element._typeref.called[1]
+    res = "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+    if len(element._typeref.ced_path) > 0:
+        res += "&" + element._typeref.ced_path[0]
+    return res
+
 
 
 def make_constraints(constraint_list):
@@ -114,6 +147,7 @@ def translate_enum(element):
 
 
 def translate_open(element):
+    ref_id = make_ref_id_open(element)
     return 45
 
 
