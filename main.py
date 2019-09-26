@@ -63,6 +63,18 @@ def make_ref_id_open(element):
     return res
 
 
+def make_ref_id_class(element):
+    assert element._tr
+    assert element._typeref
+    assert not element._tr._typeref
+    assert element._typeref.called[0]
+    assert element._typeref.called[1]
+    res = "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+    if len(element._typeref.ced_path) > 0:
+        res += "&" + element._typeref.ced_path[0]
+    return res
+
+
 def make_constraints(constraint_list):
     res = []
     for item in constraint_list:
@@ -159,6 +171,7 @@ def translate_open(element):
 
 
 def translate_class(element):
+    ref_id = make_ref_id_class(element)
     return 4
 
 
