@@ -16,6 +16,20 @@ def make_ref_id_enum(element):
     return "$" + element._tr._typeref.called[0] + "." + element._tr._typeref.called[1]
 
 
+def make_ref_id_sequence(element):
+    if not element._tr:
+        return "$" + element._mod + "." + element._name
+    else:
+        return "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+
+
+def make_ref_id_sequence_of(element):
+    if not element._tr:
+        return "$" + element._mod + "." + element._name
+    else:
+        return "$" + element._typeref.called[0] + "." + element._typeref.called[1]
+
+
 def make_constraints(constraint_list):
     res = []
     for item in constraint_list:
@@ -48,7 +62,7 @@ def translate_element(element):
 def translate_sequence(element):
     assert not element._const_tab
     assert not element._const_val
-    assert not element._tr
+    ref_id = make_ref_id_sequence(element)
     if type(element._cont) is ASN1Dict:
         obj = {
             "type": "sequence",
@@ -59,17 +73,22 @@ def translate_sequence(element):
                 obj["properties"][item] = translate_element(element._cont[item])
             else:
                 raise RuntimeError("not implemented yet")
-        return obj
+        MAP[ref_id] = obj
+        return ref_id
     else:
         raise RuntimeError("not implemented yet")
 
 
 def translate_sequence_of(element):
+    assert not element._const_tab
+    assert not element._const_val
+    ref_id = make_ref_id_sequence_of(element)
     obj = {
         "type": "sequence_of",
         "items": translate_element(element._cont)
     }
-    return obj
+    MAP[ref_id] = obj
+    return ref_id
 
 
 def translate_int(element):
@@ -98,7 +117,8 @@ def translate_open(element):
     return 45
 
 
-print(json.dumps(translate_element(ngap.NGAP_PDU_Contents.NGSetupRequest)))
+translate_element(ngap.NGAP_PDU_Contents.NGSetupRequest)
 
-print()
-print(json.dumps(MAP["$NGAP-CommonDataTypes.ProtocolIE-ID"]))
+for key in MAP:
+    print(key)
+    print(json.dumps(MAP[key]))
