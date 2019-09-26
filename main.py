@@ -4,6 +4,7 @@ from pycrate_asn1rt.dictobj import *
 from pycrate_asn1rt.asnobj_construct import *
 from pycrate_asn1rt.asnobj_basic import *
 from pycrate_asn1rt.asnobj_ext import *
+from pycrate_asn1rt.asnobj_class import *
 
 MAP = {}
 
@@ -60,7 +61,6 @@ def make_ref_id_open(element):
     if len(element._typeref.ced_path) > 0:
         res += "&" + element._typeref.ced_path[0]
     return res
-
 
 
 def make_constraints(constraint_list):
@@ -148,7 +148,18 @@ def translate_enum(element):
 
 def translate_open(element):
     ref_id = make_ref_id_open(element)
-    return 45
+    assert element._const_tab
+    assert type(element._const_tab) is CLASS
+    obj = {
+        "type": "open-type",
+        "class": translate_class(element._const_tab)
+    }
+    MAP[ref_id] = obj
+    return ref_id
+
+
+def translate_class(element):
+    return 4
 
 
 translate_element(ngap.NGAP_PDU_Contents.NGSetupRequest)
