@@ -68,6 +68,7 @@ def compile_element(element, parent):
     if result is not None:
         if hasattr(element, "_typeref") and element._typeref is not None:
             assert element._typeref.ced_path is not None
+            assert type(element._typeref.called) == tuple and len(element._typeref.called) == 2
             result["type-ref"] = {
                 "called": [element._typeref.called[0], element._typeref.called[1]],
                 "ced_path": element._typeref.ced_path
