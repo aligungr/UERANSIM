@@ -212,7 +212,7 @@ def compile_printible_string(element, parent):
     assert not element._const_tab
     assert not element._const_val
     obj = {
-        "type": "bit-string"
+        "type": "printible-string"
     }
     if element._const_sz:
         assert type(element._const_sz.ra) is int
