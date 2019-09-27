@@ -6,6 +6,8 @@ from pycrate_asn1rt.asnobj_basic import *
 from pycrate_asn1rt.asnobj_ext import *
 from pycrate_asn1rt.asnobj_class import *
 
+# not: 'constraint belirten' asn1set'in içinde hep tek eleman var kabul edip ona göre yazdık.
+# ilerde bir yerde sorun çıkarsa buna da bak
 
 def compile_element(element):
     if type(element) is SEQ:
@@ -131,7 +133,7 @@ def compile_enum(element):
     return obj
 
 
-# possible values'la alkalı olarka genel bi veri kaybı sözkonusu olabilir
+# not: possible values'la alkalı olarka genel bi veri kaybı sözkonusu olabilir
 # içindeki enumlar intler için mesela constrianing valueslar var ama beraberkenki
 # possible valueslar yok
 # mesela (1, 'a'), (2, 'b') olanlar int için 1,2, char için 'a','b' olarak alınıyor
@@ -265,4 +267,5 @@ def get_type_by_name(name):
     assert False, "type not found"
 
 
-print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")))))
+#print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")))))
+print(json.dumps(compile_element(get_type_by_name("InitialUEMessage"))))
