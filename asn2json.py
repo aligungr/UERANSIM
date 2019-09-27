@@ -40,28 +40,38 @@ def compile_element(element, parent):
                     entry[key] = compile_element(value, entry)
             parent["possible-values"].append(entry)
 
+    result = None
+
     if type(element) is SEQ:
-        return compile_sequence(element, parent)
+        result = compile_sequence(element, parent)
     if type(element) is SEQ_OF:
-        return compile_sequence_of(element, parent)
+        result = compile_sequence_of(element, parent)
     if type(element) is INT:
-        return compile_int(element, parent)
+        result = compile_int(element, parent)
     if type(element) is ENUM:
-        return compile_enum(element, parent)
+        result = compile_enum(element, parent)
     if type(element) is OPEN:
-        return compile_open(element, parent)
+        result = compile_open(element, parent)
     if type(element) is OCT_STR:
-        return compile_octet_string(element, parent)
+        result = compile_octet_string(element, parent)
     if type(element) is CHOICE:
-        return compile_choice(element, parent)
+        result = compile_choice(element, parent)
     if type(element) is BIT_STR:
-        return compile_bit_string(element, parent)
+        result = compile_bit_string(element, parent)
     if type(element) is STR_PRINT:
-        return compile_printible_string(element, parent)
+        result = compile_printible_string(element, parent)
     if type(element) is OID:
-        return compile_object_identifier(element, parent)
+        result = compile_object_identifier(element, parent)
     if type(element) is CLASS:
-        return compile_class(element, parent)
+        result = compile_class(element, parent)
+
+    if result is not None:
+        if hasattr(element, "_typeref") and element._typeref is not None:
+            result["type-ref"] = {
+                "called": [element._typeref.called[0], element._typeref.called[1]],
+                "ced_path": element._typeref.ced_path
+            }
+        return result
     assert False, "type not implemented"
 
 
