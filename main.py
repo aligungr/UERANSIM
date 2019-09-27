@@ -9,33 +9,33 @@ from pycrate_asn1rt.asnobj_class import *
 # not: 'constraint belirten' asn1set'in içinde hep tek eleman var kabul edip ona göre yazdık.
 # ilerde bir yerde sorun çıkarsa buna da bak
 
-def compile_element(element):
+def compile_element(element, parent):
     if type(element) is SEQ:
-        return compile_sequence(element)
+        return compile_sequence(element, parent)
     if type(element) is SEQ_OF:
-        return compile_sequence_of(element)
+        return compile_sequence_of(element, parent)
     if type(element) is INT:
-        return compile_int(element)
+        return compile_int(element, parent)
     if type(element) is ENUM:
-        return compile_enum(element)
+        return compile_enum(element, parent)
     if type(element) is OPEN:
-        return compile_open(element)
+        return compile_open(element, parent)
     if type(element) is OCT_STR:
-        return compile_octet_string(element)
+        return compile_octet_string(element, parent)
     if type(element) is CHOICE:
-        return compile_choice(element)
+        return compile_choice(element, parent)
     if type(element) is BIT_STR:
-        return compile_bit_string(element)
+        return compile_bit_string(element, parent)
     if type(element) is STR_PRINT:
-        return compile_printible_string(element)
+        return compile_printible_string(element, parent)
     if type(element) is OID:
-        return compile_object_identifier(element)
+        return compile_object_identifier(element, parent)
     if type(element) is CLASS:
-        return compile_class(element)
+        return compile_class(element, parent)
     assert False, "type not implemented"
 
 
-def compile_sequence(element):
+def compile_sequence(element, parent):
     assert not element._const_tab
     assert not element._const_val
     assert type(element._cont) is ASN1Dict
@@ -46,35 +46,36 @@ def compile_sequence(element):
         "mandatory": [],
         "optional": []
     }
-    for item in element._cont._dict:
-        assert type(item) is str
-        value = compile_element(element._cont._dict[item])
-        obj["properties"][item] = value
     for item in element._root_mand:
         assert type(item) is str
         obj["mandatory"].append(item)
     for item in element._root_opt:
         assert type(item) is str
         obj["optional"].append(item)
+    for item in element._cont._dict:
+        assert type(item) is str
+        value = compile_element(element._cont._dict[item], obj)
+        obj["properties"][item] = value
     return obj
 
 
-def compile_sequence_of(element):
+def compile_sequence_of(element, parent):
     assert not element._const_tab
     assert not element._const_val
     assert not element._root
     assert not element._ext
     obj = {
-        "type": "sequence-of",
-        "items": compile_element(element._cont)
+        "type": "sequence-of"
     }
     if element._const_sz:  # size constraint is only defined for some types
         assert type(element._const_sz.ra) is int
         obj["max-length"] = element._const_sz.ra
+
+    obj["items"] = compile_element(element._cont, obj)
     return obj
 
 
-def compile_int(element):
+def compile_int(element, parent):
     obj = {
         "type": "integer"
     }
@@ -104,7 +105,7 @@ def compile_int(element):
     return obj
 
 
-def compile_enum(element):
+def compile_enum(element, parent):
     assert not element._const_val
     obj = {
         "type": "enum",
@@ -137,7 +138,7 @@ def compile_enum(element):
 # içindeki enumlar intler için mesela constrianing valueslar var ama beraberkenki
 # possible valueslar yok
 # mesela (1, 'a'), (2, 'b') olanlar int için 1,2, char için 'a','b' olarak alınıyor
-def compile_open(element):
+def compile_open(element, parent):
     assert not element._const_val
     obj = {
         "type": "open-type"
@@ -158,13 +159,13 @@ def compile_open(element):
             assert type(value) is tuple and len(value) == 2
             assert type(value[0]) is str and type(value[1]) is dict
             i = value[1][tab_id]
-            obj["possible-values"].append(compile_element(i))
+            obj["possible-values"].append(compile_element(i, obj))
         if len(obj["possible-values"]) == 0:
             del obj["possible-values"]
     return obj
 
 
-def compile_octet_string(element):
+def compile_octet_string(element, parent):
     assert not element._const_tab
     assert not element._const_val
     obj = {
@@ -175,11 +176,11 @@ def compile_octet_string(element):
         obj["max-length"] = element._const_sz.ra
     if element._const_cont:
         assert not element._const_cont_enc
-        obj["content"] = compile_element(element._const_cont)
+        obj["content"] = compile_element(element._const_cont, obj)
     return obj
 
 
-def compile_bit_string(element):
+def compile_bit_string(element, parent):
     assert not element._const_cont
     assert not element._const_tab
     assert not element._const_val
@@ -192,7 +193,7 @@ def compile_bit_string(element):
     return obj
 
 
-def compile_choice(element):
+def compile_choice(element, parent):
     # assert not element._const_tab --bazılarında varmış ama ignore edildi
     assert not element._const_val
     obj = {
@@ -202,11 +203,11 @@ def compile_choice(element):
     assert type(element._cont) is ASN1Dict
     for item in element._cont._dict:
         assert type(item) is str
-        obj["values"][item] = compile_element(element._cont._dict[item])
+        obj["values"][item] = compile_element(element._cont._dict[item], obj)
     return obj
 
 
-def compile_printible_string(element):
+def compile_printible_string(element, parent):
     assert not element._const_tab
     assert not element._const_val
     obj = {
@@ -218,7 +219,7 @@ def compile_printible_string(element):
     return obj
 
 
-def compile_object_identifier(element):
+def compile_object_identifier(element, parent):
     assert not element._const_tab
     assert not element._const_val
     obj = {
@@ -227,7 +228,7 @@ def compile_object_identifier(element):
     return obj
 
 
-def compile_class(element):
+def compile_class(element, parent):
     assert not element._const_tab
     assert not element._const_val
     assert type(element._cont) is ASN1Dict
@@ -237,7 +238,7 @@ def compile_class(element):
     }
     for item in element._cont._dict:
         assert type(item) is str
-        obj["properties"][item] = compile_element(element._cont._dict[item])
+        obj["properties"][item] = compile_element(element._cont._dict[item], obj)
     return obj
 
 
@@ -268,4 +269,4 @@ def get_type_by_name(name):
 
 
 #print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")))))
-print(json.dumps(compile_element(get_type_by_name("InitialUEMessage"))))
+print(json.dumps(compile_element(get_type_by_name("InitialUEMessage"), None)))
