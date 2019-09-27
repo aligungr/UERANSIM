@@ -258,6 +258,7 @@ def test():
         items = getattr(module, "_all_")
         for item in items:
             print(item)
+            compile_element(item, None)
 
 
 def get_type_by_name(name):
@@ -269,5 +270,7 @@ def get_type_by_name(name):
     assert False, "type not found"
 
 
+test()
+
 # print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")))))
-print(json.dumps(compile_element(get_type_by_name("InitialUEMessage"), None)))
+#print(json.dumps(compile_element(get_type_by_name("InitialUEMessage"), None)))
