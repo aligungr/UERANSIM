@@ -249,5 +249,5 @@ def get_type_by_name(name):
         items = getattr(module, "_obj_")
         for item in items:
             if item == name:
-                return getattr(module, name)
+                return getattr(module, name.replace("-", "_"))
     assert False, "type not found"
