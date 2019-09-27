@@ -239,19 +239,30 @@ def compile_class(element):
     return obj
 
 
+modules = [
+    ngap.NGAP_Constants,
+    ngap.NGAP_CommonDataTypes,
+    ngap.NGAP_Containers,
+    ngap.NGAP_IEs,
+    ngap.NGAP_PDU_Contents,
+    ngap.NGAP_PDU_Descriptions
+]
+
+
 def test():
-    modules = [
-        ngap.NGAP_Constants,
-        ngap.NGAP_CommonDataTypes,
-        ngap.NGAP_Containers,
-        ngap.NGAP_IEs,
-        ngap.NGAP_PDU_Contents,
-        ngap.NGAP_PDU_Descriptions
-    ]
     for module in modules:
-        all = getattr(module, "_all_")
-        for item in all:
+        items = getattr(module, "_all_")
+        for item in items:
             print(item)
 
 
-test()
+def get_type_by_name(name):
+    for module in modules:
+        items = getattr(module, "_obj_")
+        for item in items:
+            if item == name:
+                return getattr(module, name)
+    assert False, "type not found"
+
+
+print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")))))
