@@ -111,10 +111,10 @@ def compile_enum(element):
     for item in element._cont_rev:
         key = element._cont_rev[item]
         obj["values"][key] = item
-    if element._const_tab:
+    if element._const_tab and element._const_tab._lut:
         obj["possible-values"] = set()
         lut = element._const_tab._lut
-        assert lut and type(lut) is dict
+        assert type(lut) is dict
         tab_id = element._const_tab_id
         for item in lut:
             if item == "__key__":
@@ -163,7 +163,6 @@ def compile_open(element):
 
 
 def compile_octet_string(element):
-    assert not element._const_cont
     assert not element._const_tab
     assert not element._const_val
     obj = {
@@ -172,6 +171,9 @@ def compile_octet_string(element):
     if element._const_sz:
         assert type(element._const_sz.ra) is int
         obj["max-length"] = element._const_sz.ra
+    if element._const_cont:
+        assert not element._const_cont_enc
+        obj["content"] = compile_element(element._const_cont)
     return obj
 
 
@@ -189,7 +191,7 @@ def compile_bit_string(element):
 
 
 def compile_choice(element):
-    assert not element._const_tab
+    # assert not element._const_tab --bazılarında varmış ama ignore edildi
     assert not element._const_val
     obj = {
         "type": "choice",
@@ -237,7 +239,19 @@ def compile_class(element):
     return obj
 
 
-for item in ngap.NGAP_PDU_Contents._all_:
-    print(json.dumps(compile_element(item)))
+def test():
+    modules = [
+        ngap.NGAP_Constants,
+        ngap.NGAP_CommonDataTypes,
+        ngap.NGAP_Containers,
+        ngap.NGAP_IEs,
+        ngap.NGAP_PDU_Contents,
+        ngap.NGAP_PDU_Descriptions
+    ]
+    for module in modules:
+        all = getattr(module, "_all_")
+        for item in all:
+            print(item)
 
-# print(json.dumps(compile_element(ngap.NGAP_CommonDataTypes.PrivateIE_ID)))
+
+test()
