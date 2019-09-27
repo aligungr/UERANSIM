@@ -11,6 +11,36 @@ from pycrate_asn1rt.asnobj_class import *
 # ilerde bir yerde sorun çıkarsa buna da bak
 
 def compile_element(element, parent):
+    assert element._ext == None or len(element._ext) == 0
+
+    possible_values_detected, val = False, None
+    if hasattr(element, "_const_tab") and element._const_tab:
+        const_tab = element._const_tab
+        assert type(const_tab) is CLASS
+        if hasattr(const_tab, "_val"):
+            val = const_tab._val
+            assert type(val) is ASN1Set
+            assert val.ext == None or len(val.ext) == 0
+            if val.root:
+                assert type(val.root) is list
+                if len(val.root) > 0:
+                    possible_values_detected = True
+    if possible_values_detected and parent is not None:
+        assert type(parent) is dict
+        parent["possible-values"] = []
+        for item in val.root:
+            entry = {}
+            for key in item:
+                assert type(key) is str
+                value = item[key]
+                if type(value) is int:
+                    entry[key] = value
+                elif type(value) is str:
+                    entry[key] = value
+                else:
+                    entry[key] = compile_element(value, entry)
+            parent["possible-values"].append(entry)
+
     if type(element) is SEQ:
         return compile_sequence(element, parent)
     if type(element) is SEQ_OF:
@@ -85,24 +115,6 @@ def compile_int(element, parent):
         ub = element._const_val.ub
         obj["min"] = lb
         obj["max"] = ub
-    if element._const_tab:
-        obj["possible-values"] = set()
-        lut = element._const_tab._lut
-        assert lut and type(lut) is dict
-        tab_id = element._const_tab_id
-        assert type(tab_id) is str
-        for item in lut:
-            if item == "__key__":
-                continue
-            value = lut[item]
-            assert type(value) is tuple and len(value) == 2
-            assert type(value[0]) is str and type(value[1]) is dict
-            i = value[1][tab_id]
-            assert type(i) == int
-            obj["possible-values"].add(i)
-        obj["possible-values"] = list(obj["possible-values"])
-        if len(obj["possible-values"]) == 0:
-            del obj["possible-values"]
     return obj
 
 
@@ -115,54 +127,14 @@ def compile_enum(element, parent):
     for item in element._cont_rev:
         key = element._cont_rev[item]
         obj["values"][key] = item
-    if element._const_tab and element._const_tab._lut:
-        obj["possible-values"] = set()
-        lut = element._const_tab._lut
-        assert type(lut) is dict
-        tab_id = element._const_tab_id
-        for item in lut:
-            if item == "__key__":
-                continue
-            value = lut[item]
-            assert type(value) is tuple and len(value) == 2
-            assert type(value[0]) is str and type(value[1]) is dict
-            i = value[1][tab_id]
-            assert type(i) == str
-            obj["possible-values"].add(i)
-        obj["possible-values"] = list(obj["possible-values"])
-        if len(obj["possible-values"]) == 0:
-            del obj["possible-values"]
     return obj
 
 
-# not: possible values'la alkalı olarka genel bi veri kaybı sözkonusu olabilir
-# içindeki enumlar intler için mesela constrianing valueslar var ama beraberkenki
-# possible valueslar yok
-# mesela (1, 'a'), (2, 'b') olanlar int için 1,2, char için 'a','b' olarak alınıyor
 def compile_open(element, parent):
     assert not element._const_val
     obj = {
         "type": "open-type"
     }
-    if element._const_tab:
-        obj["possible-values"] = []
-        const_tab = element._const_tab
-        tab_id = element._const_tab_id
-        assert const_tab and type(const_tab) is CLASS
-        assert tab_id and type(tab_id) == str
-        lut = element._const_tab._lut
-        assert lut and type(lut) is dict
-        tab_id = element._const_tab_id
-        for item in lut:
-            if item == "__key__":
-                continue
-            value = lut[item]
-            assert type(value) is tuple and len(value) == 2
-            assert type(value[0]) is str and type(value[1]) is dict
-            i = value[1][tab_id]
-            obj["possible-values"].append(compile_element(i, obj))
-        if len(obj["possible-values"]) == 0:
-            del obj["possible-values"]
     return obj
 
 
@@ -254,11 +226,12 @@ modules = [
 
 
 def test():
+    print("test started.")
     for module in modules:
         items = getattr(module, "_all_")
         for item in items:
-            print(item)
             compile_element(item, None)
+    print("test success.")
 
 
 def get_type_by_name(name):
@@ -272,5 +245,5 @@ def get_type_by_name(name):
 
 test()
 
-# print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")))))
+print(json.dumps(compile_element(get_type_by_name(input("Enter type: ")), None)))
 #print(json.dumps(compile_element(get_type_by_name("InitialUEMessage"), None)))
