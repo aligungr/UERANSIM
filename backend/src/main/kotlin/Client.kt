@@ -14,32 +14,42 @@ object DaytimeClient {
     @Throws(IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
+        val ngapMsg = {
+            val msg = "00000400550002000500260021207e004171000d010011000000000099898877f71001002e04804080402f0201010079000f400001100000011000000110000075005a400118"
+            val hex = mutableListOf<Byte>()
+            for (i in 0..msg.length-2 step 2) {
+                hex.add(Integer.parseInt(msg, i, i + 2, 16).toByte())
+            }
+            hex
+        }()
+
         val serverAddr = InetSocketAddress(
             "::1",
             SERVER_PORT
         )
-        val buf = ByteBuffer.allocateDirect(60)
-        val charset = Charset.forName( "ISO-8859-1")
-        val decoder = charset.newDecoder()
+
+        val buf = ByteBuffer.wrap(ngapMsg.toByteArray())
+        val incBuf = ByteBuffer.allocate(0)
+//
+//        val buf = ByteBuffer.allocateDirect(60)
+//        val charset = Charset.forName( "ISO-8859-1")
+//        val decoder = charset.newDecoder()
 
         val sc = SctpChannel.open(serverAddr, 0, 0)
 
         /* handler to keep track of association setup and termination */
         val assocHandler = AssociationHandler()
 
+        val outMsgInfo = MessageInfo.createOutgoing(null, 1)
+        outMsgInfo.payloadProtocolID(60) // NGAP PPID
+        sc.send(buf, outMsgInfo)
+
         /* expect two messages and two notifications */
         var messageInfo: MessageInfo? = null
         do {
-            messageInfo = sc.receive(buf, System.out, assocHandler)
+            messageInfo = sc.receive(incBuf, System.out, assocHandler)
             buf.flip()
-
-            if (buf.remaining() > 0 && messageInfo!!.streamNumber() == US_STREAM) {
-
-                println("(US) " + decoder.decode(buf).toString())
-            } else if (buf.remaining() > 0 && messageInfo!!.streamNumber() == FR_STREAM) {
-
-                println("(FR) " + decoder.decode(buf).toString())
-            }
+            println("RECEIVED: " + incBuf.toString())
             buf.clear()
         } while (messageInfo != null)
 

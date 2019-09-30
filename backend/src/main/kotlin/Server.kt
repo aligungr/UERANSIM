@@ -35,6 +35,7 @@ object DaytimeServer {
         @JvmStatic
         fun main(args: Array<String>) {
             val ssc = SctpServerChannel.open()
+            ssc.supportedOptions()
             val serverAddr = InetSocketAddress(SERVER_PORT)
             ssc.bind(serverAddr)
 
@@ -74,6 +75,7 @@ object DaytimeServer {
 //                cbuf.clear()
 //                buf.clear()
                 val outMsgInfo = MessageInfo.createOutgoing(null, US_STREAM)
+                outMsgInfo.payloadProtocolID(60)
                 sc.send(ByteBuffer.wrap(ngapMsg.toByteArray()), outMsgInfo)
                 // shutdown and receive all pending messages/notifications
                 sc.shutdown()
