@@ -12,14 +12,36 @@ value = {
         {
             "id": 85,
             "criticality": "reject",
-            "value": ("UserLocationInformation", ("choice-Extensions", {
-                "id": 12,
-                "criticality": "ignore",
-                "value": ("INTEGER", 14)
-            }))
+            "value": ("RAN-UE-NGAP-ID", 5)
+        },
+        {
+            "id": 38,
+            "criticality": "reject",
+            "value": ("NAS-PDU", unhexlify("7e004171000d010011000000000099898877f71001002e04804080402f020101"))
+        },
+        {
+            "id": 121,
+            "criticality": "reject",
+            "value": ("UserLocationInformation", (
+                "userLocationInformationNR", {
+                    "nR-CGI": {
+                        "pLMNIdentity": unhexlify("000110"),
+                        "nRCellIdentity": (0b000000000000000000010001000000000000, 36) # possible bug
+                    },
+                    "tAI": {
+                        "pLMNIdentity": unhexlify("000110"),
+                        "tAC": unhexlify("000075")
+                    }
+                }
+            ))
+        },
+        {
+            "id": 90,
+            "criticality": "ignore",
+            "value": ("RRCEstablishmentCause", "mo-Signalling")
         }
     ]
 }
 
 asn_type.set_val(value)
-print(asn_type.to_aper())
+print(hexlify(asn_type.to_aper()))
