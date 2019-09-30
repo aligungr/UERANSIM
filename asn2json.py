@@ -263,6 +263,16 @@ def test():
     print()
 
 
+def get_all_schemas():
+    res = []
+    for module_name in modules:
+        module = modules[module_name]
+        items = getattr(module, "_obj_")
+        for item in items:
+            res.append(module_name + "." + item)
+    return res
+
+
 def get_type_by_name(module_name, type_name):
     module = modules[module_name.replace("-", "_")]
     items = getattr(module, "_obj_")
