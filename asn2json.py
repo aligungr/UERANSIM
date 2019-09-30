@@ -112,8 +112,10 @@ def compile_sequence_of(element, parent):
         "type": "sequence-of"
     }
     if element._const_sz:  # size constraint is only defined for some types
-        assert type(element._const_sz.ra) is int
-        obj["max-length"] = element._const_sz.ra
+        assert type(element._const_sz.ub) is int
+        assert type(element._const_sz.lb) is int
+        obj["max-length"] = element._const_sz.ub
+        obj["min-length"] = element._const_sz.lb
 
     if element._cont is None:
         obj["items"] = {}  # dikkat: ProtocolIE-Container birden fazla var ve bazılarında içeriği None
@@ -129,6 +131,8 @@ def compile_int(element, parent):
     if element._const_val:
         lb = element._const_val.lb
         ub = element._const_val.ub
+        assert type(ub) is int
+        assert type(lb) is int
         obj["min"] = lb
         obj["max"] = ub
     return obj
@@ -161,8 +165,10 @@ def compile_octet_string(element, parent):
         "type": "octet-string"
     }
     if element._const_sz:
-        assert type(element._const_sz.ra) is int
-        obj["max-length"] = element._const_sz.ra
+        assert type(element._const_sz.ub) is int
+        assert type(element._const_sz.lb) is int
+        obj["max-length"] = element._const_sz.ub
+        obj["min-length"] = element._const_sz.lb
     if element._const_cont:
         assert not element._const_cont_enc
         obj["content"] = compile_element(element._const_cont, obj)
@@ -177,8 +183,10 @@ def compile_bit_string(element, parent):
         "type": "bit-string"
     }
     if element._const_sz:
-        assert type(element._const_sz.ra) is int
-        obj["max-length"] = element._const_sz.ra
+        assert type(element._const_sz.ub) is int
+        assert type(element._const_sz.lb) is int
+        obj["max-length"] = element._const_sz.ub
+        obj["min-length"] = element._const_sz.lb
     return obj
 
 
@@ -203,8 +211,10 @@ def compile_printible_string(element, parent):
         "type": "printible-string"
     }
     if element._const_sz:
-        assert type(element._const_sz.ra) is int
-        obj["max-length"] = element._const_sz.ra
+        assert type(element._const_sz.ub) is int
+        assert type(element._const_sz.lb) is int
+        obj["max-length"] = element._const_sz.ub
+        obj["min-length"] = element._const_sz.lb
     return obj
 
 
