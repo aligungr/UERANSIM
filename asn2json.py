@@ -242,13 +242,14 @@ modules = [
 
 
 def test():
-    print("test started.")
+    print("====================== Test Started ======================")
     for module in modules:
         items = getattr(module, "_obj_")
         for item in items:
             compile_element(getattr(module, item.replace("-", "_")), None)
             print(item + " is OK")
-    print("test success.")
+    print("====================== Test Success ======================")
+    print()
 
 
 def get_type_by_name(name):
