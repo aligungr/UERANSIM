@@ -80,6 +80,8 @@ def compile_element(element, parent):
 def compile_sequence(element, parent):
     assert not element._const_tab
     assert not element._const_val
+    if element._cont is None:
+        return {}  # dikkat: bazı şeyler birden fazla var ve bazılarında içeriği None
     assert type(element._cont) is ASN1Dict
     assert not element._ext or len(element._ext) == 0
     obj = {
@@ -113,7 +115,10 @@ def compile_sequence_of(element, parent):
         assert type(element._const_sz.ra) is int
         obj["max-length"] = element._const_sz.ra
 
-    obj["items"] = compile_element(element._cont, obj)
+    if element._cont is None:
+        obj["items"] = {}  # dikkat: ProtocolIE-Container birden fazla var ve bazılarında içeriği None
+    else:
+        obj["items"] = compile_element(element._cont, obj)
     return obj
 
 
@@ -239,9 +244,10 @@ modules = [
 def test():
     print("test started.")
     for module in modules:
-        items = getattr(module, "_all_")
+        items = getattr(module, "_obj_")
         for item in items:
-            compile_element(item, None)
+            compile_element(getattr(module, item.replace("-", "_")), None)
+            print(item + " is OK")
     print("test success.")
 
 
