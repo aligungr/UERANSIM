@@ -7,7 +7,7 @@ import java.nio.*
 import java.nio.charset.*
 
 object DaytimeClient {
-    internal var SERVER_PORT = 3456
+    internal var SERVER_PORT = 3457
     internal var US_STREAM = 0
     internal var FR_STREAM = 1
 

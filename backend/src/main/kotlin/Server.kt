@@ -44,37 +44,37 @@ object DaytimeServer {
             val charset = Charset.forName("ISO-8859-1")
             val encoder = charset.newEncoder()
             val recvbuf = ByteBuffer.allocateDirect(255)
-
             while (true) {
                 val sc = ssc.accept()
 
                 /* get the current date */
-                val today = Date()
-                cbuf.put(USformatter.format(today)).flip()
-                encoder.encode(cbuf, buf, true)
-                buf.flip()
+//                val today = Date()
+//                cbuf.put(USformatter.format(today)).flip()
+//                encoder.encode(cbuf, buf, true)
+//                buf.flip()
 
                 /* send the message on the US stream */
-                val outMessageInfo = MessageInfo.createOutgoing(
-                    null,
-                    US_STREAM
-                )
-                sc.send(buf, outMessageInfo)
+//                val outMessageInfo = MessageInfo.createOutgoing(
+//                    null,
+//                    US_STREAM
+//                )
+//                sc.send(buf, outMessageInfo)
 
                 /* update the buffer with French format */
-                cbuf.clear()
-                cbuf.put(FRformatter.format(today)).flip()
-                buf.clear()
-                encoder.encode(cbuf, buf, true)
-                buf.flip()
+//                cbuf.clear()
+//                cbuf.put(FRformatter.format(today)).flip()
+//                buf.clear()
+//                encoder.encode(cbuf, buf, true)
+//                buf.flip()
 
                 /* send the message on the French stream */
-                outMessageInfo.streamNumber(FR_STREAM)
-                sc.send(buf, outMessageInfo)
+//                outMessageInfo.streamNumber(FR_STREAM)
+//                sc.send(buf, outMessageInfo)
 
-                cbuf.clear()
-                buf.clear()
-
+//                cbuf.clear()
+//                buf.clear()
+                val outMsgInfo = MessageInfo.createOutgoing(null, US_STREAM)
+                sc.send(ByteBuffer.wrap(ngapMsg.toByteArray()), outMsgInfo)
                 // shutdown and receive all pending messages/notifications
                 sc.shutdown()
                 val assocHandler = AssociationHandler()
