@@ -21,7 +21,7 @@ object DaytimeServer {
     )
 
     val ngapMsg = {
-        val msg = "00000400550002000500260021207e004171000d010011000000000099898877f71001002e04804080402f0201010079000f400001100000011000000110000075005a400118"
+        val msg = "000f404600000400550002000500260021207e004171000d010011000000000099898877f71001002e04804080402f0201010079000f400001100000110000000110000075005a400118"
         val hex = mutableListOf<Byte>()
         for (i in 0..msg.length-2 step 2) {
             hex.add(Integer.parseInt(msg, i, i + 2, 16).toByte())
@@ -73,7 +73,8 @@ object DaytimeServer {
 
 //                cbuf.clear()
 //                buf.clear()
-                val outMsgInfo = MessageInfo.createOutgoing(null, US_STREAM)
+                var outMsgInfo = MessageInfo.createOutgoing(null, US_STREAM)
+                outMsgInfo = outMsgInfo.payloadProtocolID(60)
                 sc.send(ByteBuffer.wrap(ngapMsg.toByteArray()), outMsgInfo)
                 // shutdown and receive all pending messages/notifications
                 sc.shutdown()
