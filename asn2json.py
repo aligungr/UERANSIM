@@ -231,31 +231,32 @@ def compile_class(element, parent):
     return obj
 
 
-modules = [
-    ngap.NGAP_Constants,
-    ngap.NGAP_CommonDataTypes,
-    ngap.NGAP_Containers,
-    ngap.NGAP_IEs,
-    ngap.NGAP_PDU_Contents,
-    ngap.NGAP_PDU_Descriptions
-]
+modules = {
+    "NGAP_Constants": ngap.NGAP_Constants,
+    "NGAP_CommonDataTypes": ngap.NGAP_CommonDataTypes,
+    "NGAP_Containers": ngap.NGAP_Containers,
+    "NGAP_IEs": ngap.NGAP_IEs,
+    "NGAP_PDU_Contents": ngap.NGAP_PDU_Contents,
+    "NGAP_PDU_Descriptions": ngap.NGAP_PDU_Descriptions
+}
 
 
 def test():
     print("====================== Test Started ======================")
-    for module in modules:
+    for module_name in modules:
+        module = modules[module_name]
         items = getattr(module, "_obj_")
         for item in items:
             compile_element(getattr(module, item.replace("-", "_")), None)
-            print(item + " is OK")
+            print(module_name + "." + item + " is OK")
     print("====================== Test Success ======================")
     print()
 
 
-def get_type_by_name(name):
-    for module in modules:
-        items = getattr(module, "_obj_")
-        for item in items:
-            if item == name:
-                return getattr(module, name.replace("-", "_"))
+def get_type_by_name(module_name, type_name):
+    module = modules[module_name.replace("-", "_")]
+    items = getattr(module, "_obj_")
+    for item in items:
+        if item == type_name:
+            return getattr(module, type_name.replace("-", "_"))
     assert False, "type not found"

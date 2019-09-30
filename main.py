@@ -3,8 +3,8 @@ import json
 
 asn2json.test()
 
-type_name = input("Enter type: ")
-asn_type = asn2json.get_type_by_name(type_name)
+user_input = input("Enter type: ").split(".")
+asn_type = asn2json.get_type_by_name(user_input[0], user_input[1])
 compiled = asn2json.compile_element(asn_type, None)
 
 print(json.dumps(compiled))
@@ -15,5 +15,3 @@ print(json.dumps(compiled))
 #### bunun integer olduğu ve min max değerlerinin ne olduğu zaten belli olması lazım
 #### --tabi bu durmunun bilgi kaybına yol açıp açmadığına mutalak bakıklsın. eğer bilgi kaubı yoksa,
 ####   user defined olanlar için bu type yerne kullanılablir
-
-### Bir de get type byb name kısmına modülü de dahil et hep. modül.type gibi olsun
