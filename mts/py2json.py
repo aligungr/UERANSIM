@@ -53,6 +53,7 @@ def json_obj_to_py(json_obj):
     elif py_type == "null":
         res = None
     elif py_type == "base16":
+        assert type(py_value) is str, "value must be a string"
         res = binascii.unhexlify(py_value)
     else:
         assert False, "invalid type: " + py_type
