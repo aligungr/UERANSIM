@@ -5,7 +5,6 @@ from flask import *
 from pycrate_asn1rt.err import *
 
 asn2json.test()
-
 app = Flask(__name__)
 
 
