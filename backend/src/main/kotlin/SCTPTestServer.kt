@@ -16,11 +16,6 @@ object SCTPTestServer {
         val ssc = SctpServerChannel.open()
         ssc.bind(serverAddr)
 
-        val buf = ByteBuffer.allocateDirect(60)
-
-        val cbuf = CharBuffer.allocate(60)
-        val charset = Charset.forName("ISO-8859-1")
-        val encoder = charset.newEncoder()
         val recvbuf = ByteBuffer.allocateDirect(255)
         while (true) {
             val sc = ssc.accept()
