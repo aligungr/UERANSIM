@@ -88,5 +88,5 @@ def py_to_json_object(obj):
             val[key] = py_to_json_object(obj[key])
         return {"type": "object", "value": val}
     if type(obj) is bytes:
-        return {"type": "base16", "value": binascii.unhexlify(obj)}
+        return {"type": "base16", "value": binascii.hexlify(obj).hex()}
     assert False, "invalid type: " + str(type(obj))
