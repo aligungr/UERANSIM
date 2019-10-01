@@ -1,4 +1,5 @@
 import json
+import binascii
 
 
 def json_string_to_py(json_string):
@@ -51,16 +52,18 @@ def json_obj_to_py(json_obj):
         res = tuple(arr)
     elif py_type == "null":
         res = None
+    elif py_type == "base16":
+        res = binascii.unhexlify(py_value)
     else:
         assert False, "invalid type: " + py_type
     return res
 
 
-def py_to_json(obj):
-    return json.dumps(_py_to_json(obj))
+def py_to_json_string(obj):
+    return json.dumps(py_to_json_object(obj))
 
 
-def _py_to_json(obj):
+def py_to_json_object(obj):
     if type(obj) is None:
         return {"type": "null"}
     if type(obj) is str:
@@ -72,15 +75,18 @@ def _py_to_json(obj):
     if type(obj) is list:
         val = []
         for item in obj:
-            val.append(_py_to_json(item))
+            val.append(py_to_json_object(item))
         return {"type": "array", "value": val}
     if type(obj) is tuple:
         val = []
         for item in obj:
-            val.append(_py_to_json(item))
+            val.append(py_to_json_object(item))
         return {"type": "tuple", "value": val}
     if type(obj) is dict:
         val = {}
         for key in obj:
-            val[key] = _py_to_json(obj[key])
+            val[key] = py_to_json_object(obj[key])
         return {"type": "object", "value": val}
+    if type(obj) is bytes:
+        return {"type": "base16", "value": binascii.unhexlify(obj)}
+    assert False, "invalid type: " + str(type(obj))
