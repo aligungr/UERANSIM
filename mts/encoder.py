@@ -49,6 +49,6 @@ import binascii
 
 def aper_encode(asn_type, value):
     asn_type.set_val(value)
-    h = hexlify(asn_type.to_aper()).hex()
+    h = asn_type.to_aper().hex()
     asn_type._val = None
     return h
