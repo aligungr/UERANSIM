@@ -50,5 +50,5 @@ import binascii
 def aper_encode(asn_type, value):
     asn_type.set_val(value)
     h = hexlify(asn_type.to_aper()).hex()
-    # asn_type.set_val(None) # kirli bırakılıyor
+    asn_type._val = None
     return h
