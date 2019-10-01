@@ -1,28 +1,30 @@
 import json
 
 
-def json_to_py(json_string):
+def json_string_to_py(json_string):
     json_obj = json.loads(json_string)
-    return _json_to_py(json_obj)
+    return json_obj_to_py(json_obj)
 
 
-def _json_to_py(json_obj):
+def json_obj_to_py(json_obj):
     assert type(json_obj) is dict, "invalid json"
+    assert "type" in json_obj, "'type' field is required"
+    assert "value" in json_obj, "'value' field is required"
     py_type = json_obj["type"]
     py_value = json_obj["value"]
-    assert py_type is not None, "type required"
-    assert py_value is not None, "value required"
+    assert py_type is not None, "'type' field required"
+    assert py_value is not None, "'value' field required"
 
     if py_type == "object":
         res = {}
         assert type(py_value) is dict, "value must be an object"
         for key in py_value:
-            res[key] = _json_to_py(py_value[key])
+            res[key] = json_obj_to_py(py_value[key])
     elif py_type == "array":
         res = []
         assert type(py_value) is list, "value must be an array"
         for item in py_value:
-            res.append(_json_to_py(item))
+            res.append(json_obj_to_py(item))
     elif py_type == "number":
         if type(py_value) is int:
             res = py_value
@@ -45,7 +47,7 @@ def _json_to_py(json_obj):
         assert type(py_value) is list, "value must be an array"
         arr = []
         for item in py_value:
-            arr.append(_json_to_py(item))
+            arr.append(json_obj_to_py(item))
         res = tuple(arr)
     elif py_type == "null":
         res = None
