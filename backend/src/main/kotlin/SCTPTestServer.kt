@@ -10,11 +10,11 @@ import java.util.*
 
 object SCTPTestServer {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val serverAddress = InetSocketAddress(3457)
+    fun start(port: Int) {
+        val serverAddress = InetSocketAddress(port)
         val ssc = SctpServerChannel.open()
         ssc.bind(serverAddress)
+        println("server started listening on port $port");
 
         val incomingBuffer = ByteBuffer.allocateDirect(1073741824)
         while (true) {
