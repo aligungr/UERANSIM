@@ -1,5 +1,7 @@
 package com.runsim.backend;
 
+import com.runsim.backend.sctp.SCTPClient;
+
 public class AppClient {
     public static void main(String[] args) throws Exception {
         SCTPClient client = new SCTPClient();
