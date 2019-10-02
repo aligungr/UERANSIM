@@ -12,29 +12,37 @@ object SCTPTestServer {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val serverAddr = InetSocketAddress(3457)
+        val serverAddress = InetSocketAddress(3457)
         val ssc = SctpServerChannel.open()
-        ssc.bind(serverAddr)
+        ssc.bind(serverAddress)
 
-        val recvbuf = ByteBuffer.allocateDirect(255)
+        val incomingBuffer = ByteBuffer.allocateDirect(1073741824)
         while (true) {
             val sc = ssc.accept()
 
-            val outMsgInfo = MessageInfo.createOutgoing(null, 0)
-            outMsgInfo.payloadProtocolID(60)
-            sc.send(ByteBuffer.wrap(byteArrayOf(45, 45, 45, 45)), outMsgInfo)
-            // shutdown and receive all pending messages/notifications
-            sc.shutdown()
             val assocHandler = AssociationHandler()
-            var inMessageInfo: MessageInfo? = null
+            var inMessageInfo: MessageInfo?
             while (true) {
-                inMessageInfo = sc.receive(recvbuf, System.out, assocHandler)
+                inMessageInfo = sc.receive(incomingBuffer, System.out, assocHandler)
                 if (inMessageInfo == null || inMessageInfo.bytes() == -1) {
                     break
                 }
+
+                val receivedBytes = ByteArray(inMessageInfo.bytes())
+                for (i in 0 until inMessageInfo.bytes()) {
+                    receivedBytes[i] = incomingBuffer[i]
+                }
+
+                handleMessage(sc, receivedBytes)
             }
             sc.close()
         }
+    }
+
+    private fun handleMessage(channel: SctpChannel, data: ByteArray) {
+        val msg = MessageInfo.createOutgoing(null, 0)
+        msg.payloadProtocolID(60)
+        channel.send(ByteBuffer.wrap(byteArrayOf(1, 2, 3, 4)), msg)
     }
 
     private class AssociationHandler : AbstractNotificationHandler<PrintStream>() {

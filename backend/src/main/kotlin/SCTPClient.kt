@@ -12,7 +12,7 @@ object SCTPClient {
         val associationHandler = AssociationHandler()
 
         val outgoingBuffer = ByteBuffer.wrap(data)
-        val incomingBuffer = ByteBuffer.allocate(0)
+        val incomingBuffer = ByteBuffer.allocate(1073741824)
 
         val outgoingMessage = MessageInfo.createOutgoing(null, streamNumber)
         outgoingMessage.payloadProtocolID(protocolId)
@@ -22,9 +22,23 @@ object SCTPClient {
         var messageInfo: MessageInfo?
         do {
             messageInfo = channel.receive(incomingBuffer, System.out, associationHandler)
-            //
-            val x = 21
+            if (messageInfo == null || messageInfo.bytes() == -1) {
+                break
+            }
+
+            val receivedBytes = ByteArray(messageInfo.bytes())
+            for (i in 0 until messageInfo.bytes()) {
+                receivedBytes[i] = outgoingBuffer[i]
+            }
+
+            handleMessage(channel, receivedBytes)
         } while (messageInfo != null)
+    }
+
+    private fun handleMessage(channel: SctpChannel, data: ByteArray) {
+        val msg = MessageInfo.createOutgoing(null, 0)
+        msg.payloadProtocolID(60)
+        channel.send(ByteBuffer.wrap(byteArrayOf(1, 2, 3, 4)), msg)
     }
 
     private class AssociationHandler : AbstractNotificationHandler<PrintStream>() {
