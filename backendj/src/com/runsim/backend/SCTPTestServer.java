@@ -1,5 +1,11 @@
 package com.runsim.backend;
 
+import com.runsim.backend.machine.handleresult.MessageHandleResult;
+import com.runsim.backend.machine.StateMachine;
+import com.runsim.backend.machine.handleresult.SendData;
+import com.runsim.backend.machine.handleresult.SwitchToMachine;
+import com.runsim.backend.machine.machines.TestServerMachine;
+import com.runsim.backend.machine.stateresult.StateResult;
 import com.sun.nio.sctp.*;
 
 import java.io.PrintStream;
@@ -8,7 +14,13 @@ import java.nio.ByteBuffer;
 
 public class SCTPTestServer {
 
-    public void start(int port) throws Exception {
+    private StateMachine machine;
+
+    public SCTPTestServer() {
+        this.machine = new TestServerMachine();
+    }
+
+    public void run(int port) throws Exception {
         InetSocketAddress serverAddress = new InetSocketAddress(port);
         SctpServerChannel ssc = SctpServerChannel.open();
         ssc.bind(serverAddress);
@@ -31,16 +43,24 @@ public class SCTPTestServer {
                     receivedBytes[i] = incomingBuffer.get(i);
                 }
 
-                handleMessage(sc, receivedBytes);
+                while (true) {
+                    MessageHandleResult handleResult = machine.handleMessage(receivedBytes);
+                    if (handleResult instanceof SendData) {
+                        SendData res = (SendData) handleResult;
+                        MessageInfo msg = MessageInfo.createOutgoing(null, 0);
+                        msg.payloadProtocolID(60);
+                        sc.send(ByteBuffer.wrap(res.getData()), msg);
+                        break;
+                    } else if (handleResult instanceof SwitchToMachine) {
+                        SwitchToMachine res = (SwitchToMachine) handleResult;
+                        this.machine = res.getStateMachine();
+                    } else {
+                        throw new RuntimeException("not handled messageHandleResult");
+                    }
+                }
             }
             sc.close();
         }
-    }
-
-    private void handleMessage(SctpChannel channel, byte[] data) throws Exception {
-        MessageInfo msg = MessageInfo.createOutgoing(null, 0);
-        msg.payloadProtocolID(60);
-        channel.send(ByteBuffer.wrap(new byte[] { 1, 2, 3, 4 }), msg);
     }
 
     private static class AssociationHandler extends AbstractNotificationHandler<PrintStream> {
