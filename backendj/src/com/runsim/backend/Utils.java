@@ -1,6 +1,6 @@
-package com.runsim.backend.utils;
+package com.runsim.backend;
 
-public final class Conversions {
+public final class Utils {
 
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
