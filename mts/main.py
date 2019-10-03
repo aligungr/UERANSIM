@@ -1,6 +1,6 @@
 import asn2json
 import encoder
-import py2json
+import otn
 from flask import *
 from pycrate_asn1rt.err import *
 
@@ -45,7 +45,7 @@ def encode():
         return bad_request("json body is expected", "bad-request")
     request.get_json(force=True)
     try:
-        py_val = py2json.json_obj_to_py(request.json)
+        py_val = otn.json_obj_to_py(request.json)
     except AssertionError as e:
         return bad_request(str(e), "bad-value")
     try:
