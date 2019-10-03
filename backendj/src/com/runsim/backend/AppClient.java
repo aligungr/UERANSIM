@@ -6,7 +6,7 @@ import com.runsim.backend.machine.annotations.State;
 
 public class AppClient {
 
-    static class TestMachine extends StateMachine {
+    public static class TestMachine extends StateMachine {
         @Starter
         public Action starter(MachineContext machineContext) {
             return Action.sendData(new byte[12], "someState");
