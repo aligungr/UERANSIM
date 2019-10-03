@@ -9,7 +9,7 @@ public abstract class Action {
     }
 
     public static Action closeConnection() {
-        return new NoOperation();
+        return new CloseConnection();
     }
 
     public static Action sendData(byte[] data, String nextState) {
