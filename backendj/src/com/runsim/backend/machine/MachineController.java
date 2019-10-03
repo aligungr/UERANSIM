@@ -74,7 +74,9 @@ public class MachineController {
             String oldState = currentState;
             Action.SendData action = (Action.SendData) actionRes;
             currentState = action.getNextState();
-            sctpClient.send(action.getStreamNumber(), action.getData(), this::handleMessage, stateAnnotations.get(oldState).timeout());
+
+            int timeout = oldState == null ? 0 : stateAnnotations.get(oldState).timeout();
+            sctpClient.send(action.getStreamNumber(), action.getData(), this::handleMessage, timeout);
         } else {
             throw new RuntimeException("unhandled action result");
         }

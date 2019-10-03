@@ -37,6 +37,11 @@ public class SCTPTestServer {
                     receivedBytes[i] = incomingBuffer.get(i);
                 }
 
+
+                // echo for testing
+                MessageInfo msg = MessageInfo.createOutgoing(null, 0);
+                msg.payloadProtocolID(60);
+                sc.send(ByteBuffer.wrap(receivedBytes), msg);
                 /*while (true) {
                     MessageHandleResult handleResult = machine.handleMessage(receivedBytes);
                     if (handleResult instanceof SendData) {
