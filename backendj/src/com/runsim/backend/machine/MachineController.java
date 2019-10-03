@@ -12,8 +12,8 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MachineController<TMachine> {
-    private final TMachine machine;
+public class MachineController {
+    private final StateMachine machine;
     private Method starterMethod;
     private Map<String, Method> stateMethods;
     private Map<String, State> stateAnnotations;
@@ -22,8 +22,8 @@ public class MachineController<TMachine> {
     private boolean runCalled;
     private MachineContext machineContext;
 
-    public MachineController(TMachine machine, String host, int port) throws Exception {
-        this.machine = machine;
+    public MachineController(Class<? extends StateMachine> machineType, String host, int port) throws Exception {
+        this.machine = machineType.getDeclaredConstructor().newInstance();
         this.sctpClient = new SCTPClient(host, port, Constants.NGAP_PROTOCOL_ID);
         this.currentState = null;
         this.starterMethod = null;
