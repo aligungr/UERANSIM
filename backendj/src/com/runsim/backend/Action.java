@@ -1,6 +1,4 @@
-package com.runsim.backend.machine;
-
-import com.runsim.backend.Constants;
+package com.runsim.backend;
 
 public abstract class Action {
 

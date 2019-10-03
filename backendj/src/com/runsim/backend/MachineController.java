@@ -1,8 +1,7 @@
-package com.runsim.backend.machine;
+package com.runsim.backend;
 
-import com.runsim.backend.Constants;
-import com.runsim.backend.machine.annotations.Starter;
-import com.runsim.backend.machine.annotations.State;
+import com.runsim.backend.annotations.Starter;
+import com.runsim.backend.annotations.State;
 import com.runsim.backend.sctp.SCTPClient;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;

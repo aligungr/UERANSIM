@@ -1,8 +1,8 @@
-package com.runsim.backend;
+package com.runsim.backend.demo;
 
-import com.runsim.backend.machine.*;
-import com.runsim.backend.machine.annotations.Starter;
-import com.runsim.backend.machine.annotations.State;
+import com.runsim.backend.*;
+import com.runsim.backend.annotations.Starter;
+import com.runsim.backend.annotations.State;
 
 public class AppClient {
 

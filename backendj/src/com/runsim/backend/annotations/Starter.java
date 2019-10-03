@@ -1,4 +1,4 @@
-package com.runsim.backend.machine.annotations;
+package com.runsim.backend.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

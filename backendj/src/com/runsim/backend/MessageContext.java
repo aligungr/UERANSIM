@@ -1,4 +1,4 @@
-package com.runsim.backend.machine;
+package com.runsim.backend;
 
 public class MessageContext {
     private final byte[] receivedData;

@@ -1,4 +1,6 @@
-package com.runsim.backend;
+package com.runsim.backend.demo;
+
+import com.runsim.backend.Constants;
 
 public class AppServer {
     public static void main(String[] args) throws Exception {
