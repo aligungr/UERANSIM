@@ -1,11 +1,6 @@
 package com.runsim.backend;
 
-import com.runsim.backend.machine.handleresult.MessageHandleResult;
-import com.runsim.backend.machine.StateMachine;
-import com.runsim.backend.machine.handleresult.SendData;
-import com.runsim.backend.machine.handleresult.SwitchToMachine;
-import com.runsim.backend.machine.machines.TestServerMachine;
-import com.runsim.backend.machine.stateresult.StateResult;
+
 import com.sun.nio.sctp.*;
 
 import java.io.PrintStream;
@@ -14,10 +9,9 @@ import java.nio.ByteBuffer;
 
 public class SCTPTestServer {
 
-    private StateMachine machine;
 
     public SCTPTestServer() {
-        this.machine = new TestServerMachine();
+
     }
 
     public void run(int port) throws Exception {
@@ -43,7 +37,7 @@ public class SCTPTestServer {
                     receivedBytes[i] = incomingBuffer.get(i);
                 }
 
-                while (true) {
+                /*while (true) {
                     MessageHandleResult handleResult = machine.handleMessage(receivedBytes);
                     if (handleResult instanceof SendData) {
                         SendData res = (SendData) handleResult;
@@ -57,7 +51,7 @@ public class SCTPTestServer {
                     } else {
                         throw new RuntimeException("not handled messageHandleResult");
                     }
-                }
+                }*/
             }
             sc.close();
         }

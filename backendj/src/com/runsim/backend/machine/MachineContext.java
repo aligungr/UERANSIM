@@ -1,4 +1,4 @@
 package com.runsim.backend.machine;
 
-public class ClientMachineController {
+public class MachineContext {
 }

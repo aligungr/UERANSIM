@@ -9,15 +9,11 @@ import java.util.function.Consumer;
 
 public class SCTPClient {
 
-    private final String hostname;
-    private final int port;
     private final int protocolId;
     private final SctpChannel channel;
     private final AssociationHandler associationHandler;
 
     public SCTPClient(String hostname, int port, int protocolId) throws Exception {
-        this.hostname = hostname;
-        this.port = port;
         this.protocolId = protocolId;
 
         InetSocketAddress serverAddress = new InetSocketAddress(hostname, port);
@@ -25,7 +21,7 @@ public class SCTPClient {
         associationHandler = new AssociationHandler();
     }
 
-    public void send(int streamNumber, byte[] data, Consumer<Byte[]> handler) throws Exception {
+    public void send(int streamNumber, byte[] data, ISCTPHandler handler, int timeout) throws Exception {
         ByteBuffer outgoingBuffer = ByteBuffer.wrap(data);
         ByteBuffer incomingBuffer = ByteBuffer.allocate(1073741824);
 
@@ -41,14 +37,18 @@ public class SCTPClient {
                 break;
             }
 
-            Byte[] receivedBytes = new Byte[messageInfo.bytes()];
+            byte[] receivedBytes = new byte[messageInfo.bytes()];
             for (int i = 0; i < receivedBytes.length; i++) {
                 receivedBytes[i] = incomingBuffer.get(i);
             }
 
-            handler.accept(receivedBytes);
+            handler.handleSCTPMessage(receivedBytes, messageInfo, channel);
         }
 
+        channel.close();
+    }
+
+    public void close() throws Exception {
         channel.close();
     }
 }
