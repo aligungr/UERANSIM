@@ -274,9 +274,11 @@ def get_all_schemas():
 
 
 def get_type_by_name(module_name, type_name):
-    module = modules[module_name.replace("-", "_")]
+    module_name = module_name.replace("-", "_")
+    assert module_name in modules, "schema type not found"
+    module = modules[module_name]
     items = getattr(module, "_obj_")
     for item in items:
         if item == type_name:
             return getattr(module, type_name.replace("-", "_"))
-    assert False, "type not found"
+    assert False, "schema type not found"
