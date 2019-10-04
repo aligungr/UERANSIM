@@ -18,4 +18,9 @@ public class OtnBase16 extends OtnElement {
     public byte[] getData() {
         return Utils.hexStringToByteArray(base16);
     }
+
+    @Override
+    public String toJson() {
+        return "{\"type\":\"base16\",\"value\":\"" + base16 + "\"}";
+    }
 }

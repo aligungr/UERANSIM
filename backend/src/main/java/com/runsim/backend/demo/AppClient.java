@@ -3,13 +3,14 @@ package com.runsim.backend.demo;
 import com.runsim.backend.*;
 import com.runsim.backend.annotations.Starter;
 import com.runsim.backend.annotations.State;
+import com.runsim.backend.otn.OtnString;
 
 public class AppClient {
 
     public static class TestMachine extends StateMachine {
         @Starter
         public Action starter(MachineContext machineContext) {
-            return Action.sendData(new byte[12], "someState");
+            return Action.sendElement("NGAP_CommonDataTypes.Criticality", new OtnString("ignore"), "someState");
         }
 
         @State
@@ -19,7 +20,7 @@ public class AppClient {
     }
 
     public static void main(String[] args) throws Exception {
-        MachineController controller = new MachineController(TestMachine.class, Constants.HOST, Constants.PORT);
+        MachineController controller = new MachineController(TestMachine.class, Constants.AMF_HOST, Constants.AMF_PORT);
         controller.run();
     }
 }

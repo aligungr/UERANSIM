@@ -28,4 +28,10 @@ public class OtnNumber extends OtnElement {
     public boolean isInteger() {
         return isInt;
     }
+
+    @Override
+    public String toJson() {
+        Object value = isInt ? intValue : floatValue;
+        return "{\"type\":\"number\",\"value\":\"" + value + "\"}";
+    }
 }

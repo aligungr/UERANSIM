@@ -2,6 +2,8 @@ package com.runsim.backend;
 
 import com.runsim.backend.annotations.Starter;
 import com.runsim.backend.annotations.State;
+import com.runsim.backend.mts.MTSAdapter;
+import com.runsim.backend.otn.OtnString;
 import com.runsim.backend.sctp.SCTPClient;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
@@ -76,6 +78,14 @@ public class MachineController {
 
             int timeout = oldState == null ? 0 : stateAnnotations.get(oldState).timeout();
             sctpClient.send(action.getStreamNumber(), action.getData(), this::handleMessage, timeout);
+        } else if (actionRes instanceof Action.SendElement) {
+            String oldState = currentState;
+            Action.SendElement action = (Action.SendElement) actionRes;
+            currentState = action.getNextState();
+
+            int timeout = oldState == null ? 0 : stateAnnotations.get(oldState).timeout();
+            byte[] data = MTSAdapter.encodeAper(action.getSchema(), action.getElement());
+            sctpClient.send(action.getStreamNumber(), data, this::handleMessage, timeout);
         } else {
             throw new RuntimeException("unhandled action result");
         }

@@ -1,5 +1,7 @@
 package com.runsim.backend;
 
+import com.runsim.backend.otn.OtnElement;
+
 public abstract class Action {
 
     public static Action noOperation() {
@@ -12,6 +14,10 @@ public abstract class Action {
 
     public static Action sendData(byte[] data, String nextState) {
         return new SendData(data, nextState);
+    }
+
+    public static Action sendElement(String schema, OtnElement element, String nextState) {
+        return new SendElement(schema, element, nextState);
     }
 
     public static class NoOperation extends Action { }
@@ -35,6 +41,40 @@ public abstract class Action {
 
         public byte[] getData() {
             return data;
+        }
+
+        public String getNextState() {
+            return nextState;
+        }
+
+        public int getStreamNumber() {
+            return streamNumber;
+        }
+    }
+
+    public static class SendElement extends Action {
+        private final String schema;
+        private final OtnElement element;
+        private final String nextState;
+        private final int streamNumber;
+
+        public SendElement(String schema, OtnElement element, String nextState) {
+            this(schema, element, nextState, Constants.DEFAULT_STREAM_NUMBER);
+        }
+
+        public SendElement(String schema, OtnElement element, String nextState, int streamNumber) {
+            this.schema = schema;
+            this.element = element;
+            this.nextState = nextState;
+            this.streamNumber = streamNumber;
+        }
+
+        public String getSchema() {
+            return schema;
+        }
+
+        public OtnElement getElement() {
+            return element;
         }
 
         public String getNextState() {

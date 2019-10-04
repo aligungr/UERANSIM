@@ -32,6 +32,9 @@ public class SCTPClient {
 
         MessageInfo messageInfo;
         while (true) {
+            if (!channel.isOpen()) // handleSCTPMessage metodunda gelen cevap handle edildikten sonra kapatılmış olabilir.
+                break;
+
             messageInfo = channel.receive(incomingBuffer, System.out, associationHandler);
             if (messageInfo == null || messageInfo.bytes() == -1) {
                 break;
