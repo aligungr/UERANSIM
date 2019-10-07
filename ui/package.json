@@ -1,0 +1,78 @@
+{
+  "name": "ts-react-parcel",
+  "version": "2.0.0",
+  "description": "Typescript with React, using parcel bundler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adhrinae/ts-react-parcel"
+  },
+  "author": "Ahn Dohyung",
+  "license": "MIT",
+  "main": "src/index.tsx",
+  "scripts": {
+    "develop": "concurrently -r \"npm:type-check:watch\" \"npm:start\"",
+    "start": "parcel ./src/index.html",
+    "build": "npm run type-check && parcel build ./src/index.html --public-url '/'",
+    "prettify": "prettier --write './src/**/*.{ts,tsx}'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettify && npm run test"
+    }
+  },
+  "engines": {
+    "node": ">= 8.11.0",
+    "npm": ">= 6.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.ts"
+    ],
+    "moduleNameMapper": {
+      ".+\\.css$": "<rootDir>/src/styleMock.ts"
+    },
+    "testMatch": [
+      "**/__tests__/*.(test|spec).(ts|tsx|js)"
+    ]
+  },
+  "keywords": [
+    "Typescript",
+    "React",
+    "Parcel"
+  ],
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.13.6",
+    "@types/react": "^16.8.14",
+    "@types/react-dom": "^16.8.4",
+    "concurrently": "^4.1.0",
+    "husky": "^1.3.1",
+    "jest": "^24.7.1",
+    "jest-dom": "^3.1.3",
+    "jest-extended": "^0.11.1",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.17.0",
+    "react-test-renderer": "^16.8.6",
+    "react-testing-library": "^6.1.2",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.4.4"
+  }
+}
