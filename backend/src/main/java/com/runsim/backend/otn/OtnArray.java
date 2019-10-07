@@ -20,6 +20,21 @@ public class OtnArray extends OtnElement {
         return this;
     }
 
+    public OtnArray add(int element) {
+        elements.add(new OtnNumber(element));
+        return this;
+    }
+
+    public OtnArray add(float element) {
+        elements.add(new OtnNumber(element));
+        return this;
+    }
+
+    public OtnArray add(String element) {
+        elements.add(new OtnString(element));
+        return this;
+    }
+
     public int size() {
         return elements.size();
     }

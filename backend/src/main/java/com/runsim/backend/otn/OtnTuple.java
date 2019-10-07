@@ -20,6 +20,21 @@ public class OtnTuple extends OtnElement {
         return this;
     }
 
+    public OtnTuple add(int element) {
+        elements.add(new OtnNumber(element));
+        return this;
+    }
+
+    public OtnTuple add(float element) {
+        elements.add(new OtnNumber(element));
+        return this;
+    }
+
+    public OtnTuple add(String element) {
+        elements.add(new OtnString(element));
+        return this;
+    }
+
     public int size() {
         return elements.size();
     }

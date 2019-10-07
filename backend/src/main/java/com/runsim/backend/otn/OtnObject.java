@@ -11,8 +11,23 @@ public class OtnObject extends OtnElement {
         this.fields = new HashMap<>();
     }
 
-    public OtnObject put(String key, OtnElement element) {
-        fields.put(key, element);
+    public OtnObject put(String key, OtnElement value) {
+        fields.put(key, value);
+        return this;
+    }
+
+    public OtnObject put(String key, int value) {
+        fields.put(key, new OtnNumber(value));
+        return this;
+    }
+
+    public OtnObject put(String key, float value) {
+        fields.put(key, new OtnNumber(value));
+        return this;
+    }
+
+    public OtnObject put(String key, String value) {
+        fields.put(key, new OtnString(value));
         return this;
     }
 
