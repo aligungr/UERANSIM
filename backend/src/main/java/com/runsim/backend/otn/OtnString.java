@@ -1,6 +1,6 @@
 package com.runsim.backend.otn;
 
-import org.json.simple.JSONValue;
+import com.runsim.backend.json.Json;
 
 public class OtnString extends OtnElement {
     private final String string;
@@ -15,6 +15,6 @@ public class OtnString extends OtnElement {
 
     @Override
     public String toJson() {
-        return "{\"type\":\"string\",\"value\":\"" + JSONValue.escape(string) + "\"}";
+        return "{\"type\":\"string\",\"value\":" + Json.toJson(string) + "}";
     }
 }
