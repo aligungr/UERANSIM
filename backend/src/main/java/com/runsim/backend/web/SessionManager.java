@@ -47,11 +47,11 @@ public class SessionManager {
         var args = obj.getObject("args");
 
         if (cmd == null) {
-            session.errorIndication("CMD is required");
+            session.errorIndication("cmd is required");
             return;
         }
         if (args == null) {
-            session.errorIndication("Args Object is required.");
+            session.errorIndication("args is required.");
             return;
         }
 
@@ -60,12 +60,12 @@ public class SessionManager {
         try {
             method = session.getClass().getMethod(cmd);
         } catch (Exception e) {
-            session.errorIndication("CMD NOT FOUND");
+            session.errorIndication("cmd not found: " + cmd);
             return;
         }
 
         if (method == null || !method.isAnnotationPresent(Command.class)) {
-            session.errorIndication("CMD NOT FOUND");
+            session.errorIndication("cmd not found: " + cmd);
             return;
         }
 
@@ -74,18 +74,19 @@ public class SessionManager {
             var param = method.getParameters()[i];
             var json = args.get(param.getName());
             if (json == null) {
-                session.errorIndication("Args must contain: " + param.getName());
+                session.errorIndication("args must contain: " + param.getName());
                 return;
             }
-            Object arg = null;
+            Object arg;
             try {
-                args = Json.fromJson(json.toString(), param.getType());
+                arg = Json.fromJson(json.toString(), param.getType());
             } catch (Exception e) {
                 session.errorIndication("unable to parse");
                 return;
             }
             params[i] = arg;
         }
-            method.invoke(session, params);
+
+        method.invoke(session, params);
     }
 }
