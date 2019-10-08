@@ -1,5 +1,9 @@
 package com.runsim.backend.otn;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 public class OtnNumber extends OtnElement {
     private final int intValue;
     private final float floatValue;
@@ -30,8 +34,13 @@ public class OtnNumber extends OtnElement {
     }
 
     @Override
-    public String toJson() {
-        Object value = isInt ? intValue : floatValue;
-        return "{\"type\":\"number\",\"value\":\"" + value + "\"}";
+    public JsonElement toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("type", new JsonPrimitive("number"));
+        if (isInt)
+            jsonObject.add("value", new JsonPrimitive(intValue));
+        else
+            jsonObject.add("value", new JsonPrimitive(floatValue));
+        return jsonObject;
     }
 }

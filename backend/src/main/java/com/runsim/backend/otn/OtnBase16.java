@@ -1,5 +1,9 @@
 package com.runsim.backend.otn;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.runsim.backend.Utils;
 
 public class OtnBase16 extends OtnElement {
@@ -20,7 +24,10 @@ public class OtnBase16 extends OtnElement {
     }
 
     @Override
-    public String toJson() {
-        return "{\"type\":\"base16\",\"value\":\"" + base16 + "\"}";
+    public JsonElement toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("type", new JsonPrimitive("base16"));
+        jsonObject.add("value", new JsonPrimitive(base16));
+        return jsonObject;
     }
 }

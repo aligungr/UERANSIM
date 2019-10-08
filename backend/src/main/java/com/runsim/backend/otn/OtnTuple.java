@@ -1,5 +1,10 @@
 package com.runsim.backend.otn;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -48,15 +53,15 @@ public class OtnTuple extends OtnElement {
     }
 
     @Override
-    public String toJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"type\": \"tuple\",\"value\":[");
-        for (int i = 0; i < size(); i++) {
-            sb.append(get(i).toJson());
-            if (i != size() - 1)
-                sb.append(",");
-        }
-        sb.append("]");
-        return sb.toString();
+    public JsonElement toJson() {
+        JsonArray value = new JsonArray();
+        for (OtnElement element : elements)
+            value.add(element.toJson());
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("type", new JsonPrimitive("tuple"));
+        jsonObject.add("value", value);
+
+        return jsonObject;
     }
 }

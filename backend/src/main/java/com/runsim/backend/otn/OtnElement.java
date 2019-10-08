@@ -1,10 +1,13 @@
 package com.runsim.backend.otn;
 
+import com.google.gson.JsonElement;
+
 public abstract class OtnElement {
-    public abstract String toJson();
+    public abstract JsonElement toJson();
 
     @Override
     public String toString() {
-        return toJson();
+        JsonElement jsonElement = toJson();
+        return jsonElement == null ? "null" : jsonElement.toString();
     }
 }

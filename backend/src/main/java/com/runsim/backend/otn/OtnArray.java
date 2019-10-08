@@ -1,5 +1,11 @@
 package com.runsim.backend.otn;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.runsim.backend.json.JObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -48,15 +54,15 @@ public class OtnArray extends OtnElement {
     }
 
     @Override
-    public String toJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"type\": \"array\",\"value\":[");
-        for (int i = 0; i < size(); i++) {
-            sb.append(get(i).toJson());
-            if (i != size() - 1)
-                sb.append(",");
-        }
-        sb.append("]");
-        return sb.toString();
+    public JsonElement toJson() {
+        JsonArray value = new JsonArray();
+        for (OtnElement element : elements)
+            value.add(element.toJson());
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("type", new JsonPrimitive("array"));
+        jsonObject.add("value", value);
+
+        return jsonObject;
     }
 }
