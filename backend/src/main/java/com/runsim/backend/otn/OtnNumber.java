@@ -4,43 +4,51 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import java.math.BigDecimal;
+
 public class OtnNumber extends OtnElement {
-    private final int intValue;
-    private final float floatValue;
-    private final boolean isInt;
+    private final BigDecimal value;
 
-    public OtnNumber(int intValue) {
-        this.intValue = intValue;
-        this.floatValue = 0;
-        this.isInt = true;
+    public OtnNumber(BigDecimal value) {
+        this.value = value;
     }
 
-    public OtnNumber(float floatValue) {
-        this.intValue = 0;
-        this.floatValue = floatValue;
-        this.isInt = false;
+    public OtnNumber(String value) {
+        this.value = new BigDecimal(value);
     }
 
-    public int getInt() {
-        return intValue;
+    public OtnNumber(long value) {
+        this.value = new BigDecimal(value);
     }
 
-    public float getFloat() {
-        return floatValue;
+    public OtnNumber(double value) {
+        this.value = new BigDecimal(value);
     }
 
-    public boolean isInteger() {
-        return isInt;
+    public int intValue() {
+        return value.intValue();
+    }
+
+    public long longValue() {
+        return value.longValue();
+    }
+
+    public float floatValue() {
+        return value.floatValue();
+    }
+
+    public double doubleValue() {
+        return value.doubleValue();
+    }
+
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override
     public JsonElement toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("type", new JsonPrimitive("number"));
-        if (isInt)
-            jsonObject.add("value", new JsonPrimitive(intValue));
-        else
-            jsonObject.add("value", new JsonPrimitive(floatValue));
+        jsonObject.add("type", new JsonPrimitive(value));
         return jsonObject;
     }
 }
