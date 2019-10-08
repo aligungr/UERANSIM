@@ -1,5 +1,8 @@
 package com.runsim.backend;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 public final class Utils {
 
     public static byte[] hexStringToByteArray(String s) {
@@ -35,5 +38,19 @@ public final class Utils {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static byte[] getResourceFile(String name) {
+        try (var stream = Utils.class.getClassLoader().getResourceAsStream(name)) {
+            if (stream == null)
+                throw new RuntimeException("resource not found: " + name);
+            return stream.readAllBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getResourceString(String name) {
+        return new String(getResourceFile(name), StandardCharsets.UTF_8);
     }
 }

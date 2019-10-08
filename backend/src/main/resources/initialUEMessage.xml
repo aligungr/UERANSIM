@@ -1,0 +1,49 @@
+<object>
+    <array name="protocolIEs">
+        <object>
+            <number name="id">85</number>
+            <string name="criticality">reject</string>
+            <tuple name="value">
+                <string>RAN-UE-NGAP-ID</string>
+                <number>5</number>
+            </tuple>
+        </object>
+        <number name="id">38</number>
+        <string name="criticality">reject</string>
+        <tuple name="value">
+            <string>UserLocationInformation</string>
+            <base16>7e004171000d010011000000000099898877f71001002e04804080402f020101</base16>
+        </tuple>
+        <object>
+            <number name="id">121</number>
+            <string name="criticality">reject</string>
+            <tuple name="value">
+                <string>UserLocationInformation</string>
+                <tuple>
+                    <string>userLocationInformationNR</string>
+                    <object>
+                        <object name="nR-CGI">
+                            <base16 name="pLMNIdentity">000110</base16>
+                            <tuple name="nRCellIdentity">
+                                <number>69632</number>
+                                <number>36</number>
+                            </tuple>
+                        </object>
+                        <object name="tAI">
+                            <base16 name="pLMNIdentity">000110</base16>
+                            <base16 name="tAC">000075</base16>
+                        </object>
+                    </object>
+                </tuple>
+            </tuple>
+        </object>
+        <object>
+            <number name="id">90</number>
+            <string name="criticality">ignore</string>
+            <tuple name="value">
+                <string>RRCEstablishmentCause</string>
+                <string>mo-Signalling</string>
+            </tuple>
+        </object>
+    </array>
+</object>
