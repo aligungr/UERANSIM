@@ -19,6 +19,6 @@ public class Session {
 
     @Command
     public void hello(String name) {
-        sender.send(new byte[3]);
+        sender.send("Hello " + name);
     }
 }

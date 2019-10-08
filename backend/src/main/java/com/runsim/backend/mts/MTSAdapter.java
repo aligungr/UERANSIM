@@ -2,9 +2,9 @@ package com.runsim.backend.mts;
 
 import com.runsim.backend.Constants;
 import com.runsim.backend.Utils;
+import com.runsim.backend.json.JObject;
+import com.runsim.backend.json.Json;
 import com.runsim.backend.otn.OtnElement;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -28,8 +28,9 @@ public class MTSAdapter {
             throw new RuntimeException("MTS request failed (" + response.statusCode() + "):\n" + response.body());
         }
 
-        JSONObject obj = (JSONObject) new JSONParser().parse(response.body());
-        String dataString = (String) obj.get("data");
+//        JSONObject obj = (JSONObject) new JSONParser().parse(response.body());
+        var obj = JObject.parse(response.body());
+        String dataString = obj.get("data").toString();
         return Utils.hexStringToByteArray(dataString);
     }
 }
