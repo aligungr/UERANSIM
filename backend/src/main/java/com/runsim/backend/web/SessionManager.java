@@ -31,7 +31,8 @@ public class SessionManager {
     }
 
     public static void onError(UUID uuid, Throwable error) {
-
+        var session = sessions.get(uuid);
+        session.errorIndication(error.getMessage());
     }
 
     public static void onMessage(UUID uuid, String message) throws InvocationTargetException, IllegalAccessException {
