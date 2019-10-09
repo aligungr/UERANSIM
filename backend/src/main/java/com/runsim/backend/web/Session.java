@@ -1,7 +1,6 @@
 package com.runsim.backend.web;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class Session {
     private UUID connectionId;
@@ -12,7 +11,6 @@ public class Session {
         this.sender = sender;
     }
 
-    @Command
     public void errorIndication(String message) {
         sender.send(message);
     }
