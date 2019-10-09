@@ -1,6 +1,8 @@
 package com.runsim.backend;
 
 public final class Constants {
+    public static final String MACHINE_PREFIX = "com.runsim.backend.machines";
+
     public static final int BACKEND_PORT = 5002;
 
     public static final String AMF_HOST = "10.154.14.5";

@@ -2,8 +2,8 @@ package com.runsim.backend;
 
 import com.runsim.backend.annotations.Starter;
 import com.runsim.backend.annotations.State;
+import com.runsim.backend.annotations.StateMachine;
 import com.runsim.backend.mts.MTSAdapter;
-import com.runsim.backend.otn.OtnString;
 import com.runsim.backend.sctp.SCTPClient;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
