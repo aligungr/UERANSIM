@@ -53,6 +53,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.19.0",
     "@types/express": "^4.17.1",
+    "@types/websocket": "0.0.40",
     "@types/ws": "^6.0.3",
     "express": "^4.17.1",
     "react": "^16.8.6",
@@ -78,6 +79,7 @@
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-react": "^4.0.0",
-    "typescript": "^3.4.4"
+    "typescript": "^3.4.4",
+    "websocket": "^1.0.30"
   }
 }
