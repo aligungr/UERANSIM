@@ -1,10 +1,9 @@
 package com.runsim.backend.otn;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.runsim.backend.Utils;
+import com.runsim.backend.utils.Utils;
 
 public class OtnBase16 extends OtnElement {
     private final String base16;

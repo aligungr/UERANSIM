@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.runsim.backend.json.JObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;

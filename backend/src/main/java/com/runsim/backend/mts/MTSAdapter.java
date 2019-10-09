@@ -2,9 +2,7 @@ package com.runsim.backend.mts;
 
 import com.google.gson.JsonParser;
 import com.runsim.backend.Constants;
-import com.runsim.backend.Utils;
-import com.runsim.backend.json.JObject;
-import com.runsim.backend.json.Json;
+import com.runsim.backend.utils.Utils;
 import com.runsim.backend.otn.OtnElement;
 
 import java.net.URI;
