@@ -52,8 +52,12 @@
   ],
   "dependencies": {
     "@blueprintjs/core": "^3.19.0",
+    "@types/express": "^4.17.1",
+    "@types/ws": "^6.0.3",
+    "express": "^4.17.1",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "ws": "^7.1.2"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
