@@ -1,4 +1,4 @@
-package com.runsim.backend;
+package com.runsim.backend.utils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

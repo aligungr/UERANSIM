@@ -1,94 +1,96 @@
 package com.runsim.backend.web;
 
 import com.google.gson.*;
-import com.runsim.backend.json.JElement;
-import com.runsim.backend.json.JObject;
-import com.runsim.backend.json.Json;
+import com.runsim.backend.utils.Fun;
+import com.runsim.backend.utils.Funs;
 
-import javax.management.RuntimeMBeanException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class SessionManager {
     private static ConcurrentHashMap<UUID, Session> sessions = new ConcurrentHashMap<>();
 
-    public static void onConnect(UUID uuid, Consumer<String> sender) {
-        sessions.put(uuid, new Session(uuid, message -> {
-            sender.accept(Json.toJson(message));
+    public static void onConnect(UUID connectionId, Consumer<String> sender) {
+        sessions.put(connectionId, new Session(connectionId, message -> {
+            sender.accept(new Gson().toJson(message));
         }));
     }
 
-    public static void onClose(UUID uuid) {
-        sessions.remove(uuid);
+    public static void onClose(UUID connectionId) {
+        sessions.remove(connectionId);
     }
 
-    public static void onError(UUID uuid, Throwable error) {
-        String message = error == null ? "n/a" : error.getMessage();
-        var session = sessions.get(uuid);
+    public static void onError(UUID connectionId, Throwable error) {
+        var message = error == null ? "n/a" : error.getMessage();
+        var session = sessions.get(connectionId);
         session.errorIndication(message);
     }
 
-    public static void onMessage(UUID uuid, String message) throws InvocationTargetException, IllegalAccessException {
-        var session = sessions.get(uuid);
+    public static void onMessage(UUID connectionId, String message) {
+        var session = sessions.get(connectionId);
 
-        // Json syntax controls
-        var obj = JObject.parse(message);
-        if (obj == null) {
-            session.errorIndication("Expected JSON Object, {cmd: <cmdname>, args: {}}");
-            return;
-        }
-        var cmd = obj.getString("cmd");
-        var args = obj.getObject("args");
+        var ref = new Object() {
+            String cmd;
+            JsonObject args;
+            Method method;
+            Object[] params;
+        };
 
-        if (cmd == null) {
-            session.errorIndication("cmd is required");
-            return;
-        }
-        if (args == null) {
-            session.errorIndication("args is required.");
-            return;
-        }
+        Fun jsonSyntaxControls = () -> {
+            var element = JsonParser.parseString(message);
+            if (!element.isJsonObject())
+                throw new RuntimeException("json object expected as message");
+            var obj = element.getAsJsonObject();
+            var cmdElement = obj.get("cmd");
+            var argsElement = obj.get("args");
 
-        // Find method
-        Method method;
-        try {
-            method = session.getClass().getMethod(cmd);
-        } catch (Exception e) {
-            session.errorIndication("cmd not found: " + cmd);
-            return;
-        }
+            if (cmdElement == null || !cmdElement.isJsonPrimitive() || !cmdElement.getAsJsonPrimitive().isString())
+                throw new RuntimeException("string field is expected: 'cmd'");
+            if (argsElement == null || !argsElement.isJsonObject())
+                throw new RuntimeException("object field is expected: 'args'");
 
-        if (method == null || !method.isAnnotationPresent(Command.class)) {
-            session.errorIndication("cmd not found: " + cmd);
-            return;
-        }
+            ref.cmd = cmdElement.getAsString();
+            ref.args = argsElement.getAsJsonObject();
+        };
 
-        var params = new Object[method.getParameterCount()];
-        for (int i = 0; i < method.getParameterCount(); i++) {
-            var param = method.getParameters()[i];
-            var json = args.get(param.getName());
-            if (json == null) {
-                session.errorIndication("args must contain: " + param.getName());
-                return;
+        Fun commandControls = () -> {
+            Method method = null;
+            var allMethods = session.getClass().getMethods(); // TODO: Check for multiple methods with same name!
+            for (var m : allMethods) {
+                if (m.getName().equals(ref.cmd))
+                    method = m;
             }
-            Object arg;
+            if (method == null || !method.isAnnotationPresent(Command.class))
+                throw new RuntimeException("cmd not found: " + ref.cmd);
+            ref.method = method;
+            ref.params = new Object[ref.method.getParameterCount()];
+        };
+
+        Fun parameterControls = () -> {
+            for (int i = 0; i < ref.method.getParameterCount(); i++) {
+                var param = ref.method.getParameters()[i];
+                var json = ref.args.get(param.getName());
+                if (json == null)
+                    throw new RuntimeException("args must contain: " + param.getName());
+                var arg = new Gson().fromJson(json.toString(), param.getType());
+                ref.params[i] = arg;
+            }
+        };
+
+        Fun invokeMethod = () -> {
             try {
-                arg = Json.fromJson(json.toString(), param.getType());
+                ref.method.invoke(session, ref.params);
             } catch (Exception e) {
-                session.errorIndication("unable to parse");
-                return;
+                throw new RuntimeException(e);
             }
-            params[i] = arg;
-        }
+        };
 
-        method.invoke(session, params);
+        Funs.run(jsonSyntaxControls, e -> session.errorIndication(e.getMessage()))
+                .then(commandControls, e -> session.errorIndication("command not found: " + ref.cmd))
+                .then(parameterControls, e -> session.errorIndication("unable to parse args, " + e.getMessage()))
+                .then(invokeMethod, e -> session.errorIndication("cmd method invocation failed, " + e.getMessage()))
+                .invoke();
     }
 }
