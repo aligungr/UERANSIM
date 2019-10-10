@@ -23,17 +23,35 @@ export class Console extends React.Component<any, IConsoleState> {
 
   constructor(props: any) {
     super(props)
-    this.state = { autoScrollBottom: true, isOpen: true, logEntries: [], isDark: App.isDark }
+    this.state = {
+      autoScrollBottom: true,
+      isOpen: true,
+      logEntries: [],
+      isDark: App.isDark,
+    }
     Console.instance = this
   }
 
   static getDateTime(): string {
     const date = new Date()
-    return date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds()
+    return (
+      date.getHours() +
+      ':' +
+      date.getMinutes() +
+      ':' +
+      date.getSeconds() +
+      ':' +
+      date.getMilliseconds()
+    )
   }
 
   static log(text: string, tag: string | null = null) {
-    const entry = '[' + this.getDateTime() + '] INFO ' + (tag == null || tag.length === 0 ? '' : tag + ': ') + text
+    const entry =
+      '[' +
+      this.getDateTime() +
+      '] INFO ' +
+      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      text
 
     const instance: Console = Console.instance
     if (instance != null) {
@@ -45,7 +63,12 @@ export class Console extends React.Component<any, IConsoleState> {
   }
 
   static success(text: string, tag: string | null = null) {
-    const entry = '[' + this.getDateTime() + '] INFO ' + (tag == null || tag.length === 0 ? '' : tag + ': ') + text
+    const entry =
+      '[' +
+      this.getDateTime() +
+      '] INFO ' +
+      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      text
 
     const instance: Console = Console.instance
     if (instance != null) {
@@ -57,7 +80,12 @@ export class Console extends React.Component<any, IConsoleState> {
   }
 
   static error(text: string, tag: string | null = null) {
-    const entry = '[' + this.getDateTime() + '] INFO ' + (tag == null || tag.length === 0 ? '' : tag + ': ') + text
+    const entry =
+      '[' +
+      this.getDateTime() +
+      '] INFO ' +
+      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      text
 
     const instance: Console = Console.instance
     if (instance != null) {
@@ -69,7 +97,12 @@ export class Console extends React.Component<any, IConsoleState> {
   }
 
   static warn(text: string, tag: string | null = null) {
-    const entry = '[' + this.getDateTime() + '] INFO ' + (tag == null || tag.length === 0 ? '' : tag + ': ') + text
+    const entry =
+      '[' +
+      this.getDateTime() +
+      '] INFO ' +
+      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      text
 
     const instance: Console = Console.instance
     if (instance != null) {
@@ -182,7 +215,7 @@ export class Console extends React.Component<any, IConsoleState> {
           >
             <div style={{ width: '36px' }}>
               <ButtonGroup minimal={false} vertical={true}>
-                <Button icon="cross" onClick={(e: any) => Console.clear()}/>
+                <Button icon="cross" onClick={(e: any) => Console.clear()} />
                 <Button
                   icon="automatic-updates"
                   active={this.state.autoScrollBottom}
@@ -190,7 +223,7 @@ export class Console extends React.Component<any, IConsoleState> {
                 />
               </ButtonGroup>
             </div>
-            <Divider/>
+            <Divider />
             <div
               id={'bp-console-content'}
               style={{
@@ -202,10 +235,14 @@ export class Console extends React.Component<any, IConsoleState> {
             >
               {this.state.logEntries.map(value => {
                 return (
-                  <div key={'' + value.entryId} style={{
-                    color:
-                      this.state.isDark ? Console.getDarkColor(value.className) : Console.getLightColor(value.className),
-                  }}>
+                  <div
+                    key={'' + value.entryId}
+                    style={{
+                      color: this.state.isDark
+                        ? Console.getDarkColor(value.className)
+                        : Console.getLightColor(value.className),
+                    }}
+                  >
                     {value.text}
                   </div>
                 )
