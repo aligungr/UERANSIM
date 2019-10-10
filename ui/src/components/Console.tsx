@@ -84,9 +84,9 @@ export class Console extends React.Component<any, ConsoleState> {
             padding: '4px',
           }}
         >
-          <div style={{}}>
+          <div style={{ width: '36px' }}>
             <ButtonGroup minimal={false} vertical={true}>
-              <Button icon="delete" onClick={(e: any) => Console.clear()} />
+              <Button icon="delete" onClick={(e: any) => Console.clear()}/>
               <Button
                 icon="arrow-down"
                 active={this.state.autoScrollBottom}
@@ -94,11 +94,11 @@ export class Console extends React.Component<any, ConsoleState> {
               />
             </ButtonGroup>
           </div>
+          <Divider/>
           <div
             id={'main_bp_console'}
             style={{
               overflow: 'auto',
-              backgroundColor: '#202b33',
               width: '100%',
               padding: '8px',
               marginLeft: '6px',
