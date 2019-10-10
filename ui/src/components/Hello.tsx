@@ -17,7 +17,6 @@ export const Hello = () => {
           setTxt('' + Math.random())
         }}
       />
-      <Console />
     </div>
   )
 }
