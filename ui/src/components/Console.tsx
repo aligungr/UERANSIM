@@ -6,19 +6,21 @@ import {
   Classes,
   Divider,
   Pre,
+  Collapse
 } from '@blueprintjs/core'
 
-class ConsoleState {
-  autoScrollBottom: boolean = true
+interface IConsoleState {
+  autoScrollBottom: boolean,
+  isOpen: boolean
 }
 
-export class Console extends React.Component<any, ConsoleState> {
+export class Console extends React.Component<any, IConsoleState> {
   public static instance: Console
   public static autoScroll: boolean = true
 
   constructor(props: any) {
     super(props)
-    this.state = { autoScrollBottom: true }
+    this.state = { autoScrollBottom: true, isOpen: true }
     Console.instance = this
   }
 
@@ -64,6 +66,23 @@ export class Console extends React.Component<any, ConsoleState> {
     element.innerHTML = ''
   }
 
+  static show() {
+    Console.instance.setState({ isOpen:true })
+  }
+
+  static hide() {
+    Console.instance.setState({ isOpen:false })
+  }
+
+  static toggleVisibility() {
+    if (Console.instance.state.isOpen) {
+      Console.hide();
+    }
+    else {
+      Console.show();
+    }
+  }
+
   static toggleAutoScroll() {
     const scroll = !Console.autoScroll
     Console.autoScroll = scroll
@@ -76,35 +95,37 @@ export class Console extends React.Component<any, ConsoleState> {
   render() {
     return (
       <footer className={'console-footer'}>
-        <Pre
-          style={{
-            maxHeight: '200px',
-            minHeight: '200px',
-            display: 'flex',
-            padding: '4px',
-          }}
-        >
-          <div style={{ width: '36px' }}>
-            <ButtonGroup minimal={false} vertical={true}>
-              <Button icon="delete" onClick={(e: any) => Console.clear()} />
-              <Button
-                icon="arrow-down"
-                active={this.state.autoScrollBottom}
-                onClick={(e: any) => Console.toggleAutoScroll()}
-              />
-            </ButtonGroup>
-          </div>
-          <Divider />
-          <div
-            id={'main_bp_console'}
+        <Collapse keepChildrenMounted={true} isOpen={this.state.isOpen}>
+          <Pre
             style={{
-              overflow: 'auto',
-              width: '100%',
-              padding: '8px',
-              marginLeft: '6px',
+              maxHeight: '200px',
+              minHeight: '200px',
+              display: 'flex',
+              padding: '4px',
             }}
-          />
-        </Pre>
+          >
+            <div style={{ width: '36px' }}>
+              <ButtonGroup minimal={false} vertical={true}>
+                <Button icon="cross" onClick={(e: any) => Console.clear()} />
+                <Button
+                  icon="automatic-updates"
+                  active={this.state.autoScrollBottom}
+                  onClick={(e: any) => Console.toggleAutoScroll()}
+                />
+              </ButtonGroup>
+            </div>
+            <Divider />
+            <div
+              id={'main_bp_console'}
+              style={{
+                overflow: 'auto',
+                width: '100%',
+                padding: '8px',
+                marginLeft: '6px',
+              }}
+            />
+          </Pre>
+        </Collapse>
       </footer>
     )
   }

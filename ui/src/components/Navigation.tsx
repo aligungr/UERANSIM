@@ -8,32 +8,61 @@ import {
   NavbarHeading,
   NavbarDivider,
 } from '@blueprintjs/core'
+import { Console } from './Console'
+import { App } from './App'
 
-export interface NavigationProps {}
 
-export class Navigation extends React.PureComponent<NavigationProps> {
+interface INavigationState {
+  isConsoleOpen: boolean
+  isDark: boolean
+}
+
+export class Navigation extends React.Component<any, INavigationState> {
+  constructor(props: any) {
+    super(props)
+    this.state = {
+      isConsoleOpen: true,
+      isDark: true,
+    }
+  }
+
   public render() {
     return (
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>UERANSIM</NavbarHeading>
-          <NavbarDivider />
+          <NavbarDivider/>
           <AnchorButton
-            href="#href"
-            text="Docs"
-            target="_blank"
+            // text={(this.state.isConsoleOpen ? "Hide" : "Show") + " Console"}
             minimal={true}
-            rightIcon="share"
+            rightIcon="console"
+            onClick={() => this.handleConsoleClick()}
+            // active={this.state.isConsoleOpen}
           />
           <AnchorButton
-            href="http://github.com/aligungr/ue-ran-sim"
-            text="Github"
-            target="_blank"
+            // text={(this.state.isConsoleOpen ? "Hide" : "Show") + " Console"}
             minimal={true}
-            rightIcon="code"
+            rightIcon={this.state.isDark ? 'flash' : 'moon'}
+            onClick={() => this.handleThemeClicked()}
+            // active={this.state.isConsoleOpen}
           />
         </NavbarGroup>
       </Navbar>
     )
+  }
+
+  handleConsoleClick() {
+    if (this.state.isConsoleOpen) {
+      this.setState({ isConsoleOpen: false })
+      Console.hide()
+    } else {
+      this.setState({ isConsoleOpen: true })
+      Console.show()
+    }
+  }
+
+  handleThemeClicked() {
+    App.setDark(!App.isDark)
+    this.setState({ isDark: App.isDark })
   }
 }
