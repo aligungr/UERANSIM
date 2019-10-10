@@ -3,6 +3,7 @@ import * as React from 'react'
 import { Hello } from './Hello'
 import { Navigation } from './Navigation'
 import { Console } from './Console'
+import { Constants } from './Constants'
 
 export class App extends React.Component<any, any> {
   public static isDark: boolean = true
@@ -14,12 +15,13 @@ export class App extends React.Component<any, any> {
   static setDark(isDark: boolean) {
     App.isDark = isDark
     const body = document.getElementsByTagName('body')[0]
+    Console.setDark(isDark)
     if (isDark) {
       body.setAttribute('class', 'bp3-dark')
-      body.style.backgroundColor = '#30404d'
+      body.style.backgroundColor = Constants.COLOR_DARK_BACKGROUND
     } else {
       body.setAttribute('class', '')
-      body.style.backgroundColor = '#ffffff'
+      body.style.backgroundColor = Constants.COLOR_LIGHT_BACKGROUND
     }
   }
 
