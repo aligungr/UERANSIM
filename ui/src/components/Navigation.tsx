@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react'
 import {
   Alignment,
   AnchorButton,
@@ -6,8 +6,8 @@ import {
   Navbar,
   NavbarGroup,
   NavbarHeading,
-  NavbarDivider
-} from "@blueprintjs/core";
+  NavbarDivider,
+} from '@blueprintjs/core'
 
 export interface NavigationProps {}
 
@@ -34,6 +34,6 @@ export class Navigation extends React.PureComponent<NavigationProps> {
           />
         </NavbarGroup>
       </Navbar>
-    );
+    )
   }
 }
