@@ -1,3 +1,20 @@
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
 body {
-  background-color: '#30404df';
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  background-color: #30404d;
+}
+hr {
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 50px;
 }
