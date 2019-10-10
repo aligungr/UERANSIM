@@ -101,7 +101,7 @@ export class Console extends React.Component<any, ConsoleState> {
               backgroundColor: '#202b33',
               width: '100%',
               padding: '8px',
-              marginLeft: '8px',
+              marginLeft: '6px',
             }}
           />
         </Pre>
