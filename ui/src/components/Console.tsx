@@ -86,7 +86,7 @@ export class Console extends React.Component<any, ConsoleState> {
         >
           <div style={{ width: '36px' }}>
             <ButtonGroup minimal={false} vertical={true}>
-              <Button icon="delete" onClick={(e: any) => Console.clear()}/>
+              <Button icon="delete" onClick={(e: any) => Console.clear()} />
               <Button
                 icon="arrow-down"
                 active={this.state.autoScrollBottom}
@@ -94,7 +94,7 @@ export class Console extends React.Component<any, ConsoleState> {
               />
             </ButtonGroup>
           </div>
-          <Divider/>
+          <Divider />
           <div
             id={'main_bp_console'}
             style={{

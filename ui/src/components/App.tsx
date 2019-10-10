@@ -28,9 +28,9 @@ export class App extends React.Component<any, any> {
 
     return (
       <div>
-        <Navigation/>
-        <Hello/>
-        <Console/>
+        <Navigation />
+        <Hello />
+        <Console />
       </div>
     )
   }
