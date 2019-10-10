@@ -77,11 +77,16 @@ export class Console extends React.Component<any, ConsoleState> {
     return (
       <footer className={'console-footer'}>
         <Pre
-          style={{ maxHeight: '200px', minHeight: '200px', display: 'flex', padding: '4px' }}
+          style={{
+            maxHeight: '200px',
+            minHeight: '200px',
+            display: 'flex',
+            padding: '4px',
+          }}
         >
-          <div style={{ }}>
+          <div style={{}}>
             <ButtonGroup minimal={false} vertical={true}>
-              <Button icon="delete" onClick={(e: any) => Console.clear()}/>
+              <Button icon="delete" onClick={(e: any) => Console.clear()} />
               <Button
                 icon="arrow-down"
                 active={this.state.autoScrollBottom}
