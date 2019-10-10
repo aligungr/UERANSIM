@@ -1,5 +1,12 @@
 import * as React from 'react'
-import { AnchorButton, Button, ButtonGroup, Classes, Divider, Pre } from '@blueprintjs/core'
+import {
+  AnchorButton,
+  Button,
+  ButtonGroup,
+  Classes,
+  Divider,
+  Pre,
+} from '@blueprintjs/core'
 
 class ConsoleState {
   autoScrollBottom: boolean = true
@@ -69,22 +76,29 @@ export class Console extends React.Component<any, ConsoleState> {
   render() {
     return (
       <footer className={'console-footer'}>
-        <Pre style={{ maxHeight: '200px', minHeight: '200px', display: 'flex' }}>
+        <Pre
+          style={{ maxHeight: '200px', minHeight: '200px', display: 'flex' }}
+        >
           <div style={{ width: '30px' }}>
             <ButtonGroup minimal={false} vertical={true}>
-              <Button icon="delete" onClick={(e: any) => Console.clear()}/>
-              <Button icon="arrow-down" active={this.state.autoScrollBottom}
-                      onClick={(e: any) => Console.toggleAutoScroll()}/>
+              <Button icon="delete" onClick={(e: any) => Console.clear()} />
+              <Button
+                icon="arrow-down"
+                active={this.state.autoScrollBottom}
+                onClick={(e: any) => Console.toggleAutoScroll()}
+              />
             </ButtonGroup>
           </div>
-          <div id={'main_bp_console'}
-               style={{
-                 overflow: 'auto',
-                 backgroundColor: '#202b33',
-                 width: '100%',
-                 padding: '8px',
-                 marginLeft: '16px',
-               }}/>
+          <div
+            id={'main_bp_console'}
+            style={{
+              overflow: 'auto',
+              backgroundColor: '#202b33',
+              width: '100%',
+              padding: '8px',
+              marginLeft: '16px',
+            }}
+          />
         </Pre>
       </footer>
     )
