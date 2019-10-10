@@ -11,7 +11,6 @@ import {
 import { Console } from './Console'
 import { App } from './App'
 
-
 interface INavigationState {
   isConsoleOpen: boolean
   isDark: boolean
@@ -31,7 +30,7 @@ export class Navigation extends React.Component<any, INavigationState> {
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>UERANSIM</NavbarHeading>
-          <NavbarDivider/>
+          <NavbarDivider />
           <AnchorButton
             // text={(this.state.isConsoleOpen ? "Hide" : "Show") + " Console"}
             minimal={true}

@@ -6,11 +6,11 @@ import {
   Classes,
   Divider,
   Pre,
-  Collapse
+  Collapse,
 } from '@blueprintjs/core'
 
 interface IConsoleState {
-  autoScrollBottom: boolean,
+  autoScrollBottom: boolean
   isOpen: boolean
 }
 
@@ -67,19 +67,18 @@ export class Console extends React.Component<any, IConsoleState> {
   }
 
   static show() {
-    Console.instance.setState({ isOpen:true })
+    Console.instance.setState({ isOpen: true })
   }
 
   static hide() {
-    Console.instance.setState({ isOpen:false })
+    Console.instance.setState({ isOpen: false })
   }
 
   static toggleVisibility() {
     if (Console.instance.state.isOpen) {
-      Console.hide();
-    }
-    else {
-      Console.show();
+      Console.hide()
+    } else {
+      Console.show()
     }
   }
 
