@@ -35,13 +35,13 @@ export class Console extends React.Component<any, IConsoleState> {
   static getDateTime(): string {
     const date = new Date()
     return (
-      date.getHours() +
+      date.getHours().toString().padStart(2, "0") +
       ':' +
-      date.getMinutes() +
+      date.getMinutes().toString().padStart(2, "0") +
       ':' +
-      date.getSeconds() +
+      date.getSeconds().toString().padStart(2, "0") +
       ':' +
-      date.getMilliseconds()
+      date.getMilliseconds().toString().padStart(4, "0")
     )
   }
 
@@ -49,8 +49,8 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] INFO ' +
-      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      '] INFO | ' +
+      (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
     const instance: Console = Console.instance
@@ -66,8 +66,8 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] INFO ' +
-      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      '] SUCCESS | ' +
+      (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
     const instance: Console = Console.instance
@@ -83,8 +83,8 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] INFO ' +
-      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      '] ERROR | ' +
+      (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
     const instance: Console = Console.instance
@@ -100,8 +100,8 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] INFO ' +
-      (tag == null || tag.length === 0 ? '' : tag + ': ') +
+      '] WARNING | ' +
+      (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
     const instance: Console = Console.instance

@@ -1,15 +1,18 @@
 import * as React from 'react'
 
-import { Hello } from './Hello'
 import { Navigation } from './Navigation'
 import { Console } from './Console'
 import { Constants } from './Constants'
+import { SocketClient } from './SocketClient'
+import { Main } from './Main'
 
 export class App extends React.Component<any, any> {
   public static isDark: boolean = true
+  public static instance: App
 
   constructor(props: any) {
     super(props)
+    App.instance = this;
   }
 
   static setDark(isDark: boolean) {
@@ -31,7 +34,7 @@ export class App extends React.Component<any, any> {
     return (
       <div>
         <Navigation />
-        <Hello />
+        <Main />
         <Console />
       </div>
     )

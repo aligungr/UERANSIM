@@ -1,3 +1,5 @@
+import { Console } from './Console'
+
 export class SocketClient {
   private ws: WebSocket
 
@@ -20,19 +22,19 @@ export class SocketClient {
   }
 
   private onMessage(e: MessageEvent) {
-    console.log('onMessage, ' + e)
+    Console.success(JSON.stringify(e), 'WebSocket')
   }
 
   private onOpen(e: Event) {
-    console.log('onOpen, ' + e)
+    Console.success("connection established", 'WebSocket')
   }
 
   private onClose(e: CloseEvent) {
-    console.log('onClose, ' + e)
+    Console.success("connection closed", 'WebSocket')
   }
 
   private onError(e: Event) {
-    console.log('onError, ' + e)
+    Console.error("error occured", 'WebSocket')
   }
 
   send(data: string) {
