@@ -13,7 +13,7 @@ export class Main extends React.Component<any, any> {
 
   constructor(props: any) {
     super(props)
-    Main.instance = this;
+    Main.instance = this
   }
 
   render() {
@@ -21,7 +21,7 @@ export class Main extends React.Component<any, any> {
       <div style={{ margin: '8px' }}>
         <Button
           className={Classes.DARK}
-          text={"btn"}
+          text={'btn'}
           onClick={() => {
             if (console != null) {
               Console.log('slm, ' + Math.random() + '')

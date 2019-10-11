@@ -26,15 +26,15 @@ export class SocketClient {
   }
 
   private onOpen(e: Event) {
-    Console.success("connection established", 'WebSocket')
+    Console.success('connection established', 'WebSocket')
   }
 
   private onClose(e: CloseEvent) {
-    Console.success("connection closed", 'WebSocket')
+    Console.success('connection closed', 'WebSocket')
   }
 
   private onError(e: Event) {
-    Console.error("error occured", 'WebSocket')
+    Console.error('error occured', 'WebSocket')
   }
 
   send(data: string) {

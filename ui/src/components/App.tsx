@@ -12,7 +12,7 @@ export class App extends React.Component<any, any> {
 
   constructor(props: any) {
     super(props)
-    App.instance = this;
+    App.instance = this
   }
 
   static setDark(isDark: boolean) {
