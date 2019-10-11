@@ -24,12 +24,12 @@ const FlowSelect = Select.ofType<IFlow>()
 
 const itemRenderer: ItemRenderer<IFlow> = (
   flow,
-  { handleClick, modifiers, query },
-  ) => {
+  { handleClick, modifiers, query }
+) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
-  idCounter = idCounter + 1;
+  idCounter = idCounter + 1
   return (
     <MenuItem
       key={idCounter}
@@ -60,7 +60,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
   }
 
   public render() {
-    let content = <Spinner/>
+    let content = <Spinner />
 
     if (this.state.loaded) {
       content = (
@@ -68,7 +68,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results."/>}
+            noResults={<MenuItem disabled={true} text="No results." />}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
             itemRenderer={itemRenderer}
           >

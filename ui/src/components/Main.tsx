@@ -24,7 +24,7 @@ export class Main extends React.Component<any, any> {
   public render() {
     return (
       <div style={{ margin: '8px' }}>
-        <FlowSelector ref={r => (this.flowSelector = r)}/>
+        <FlowSelector ref={r => (this.flowSelector = r)} />
       </div>
     )
   }
@@ -76,7 +76,11 @@ export class Main extends React.Component<any, any> {
               title: data[i],
             })
           }
-          this.flowSelector.setState({ loaded: true, selected: null, items: flowItems })
+          this.flowSelector.setState({
+            loaded: true,
+            selected: null,
+            items: flowItems,
+          })
         }
         return
       default:
