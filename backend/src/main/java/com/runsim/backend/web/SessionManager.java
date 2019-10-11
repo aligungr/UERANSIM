@@ -28,7 +28,7 @@ public class SessionManager {
     public static void onError(UUID connectionId, Throwable error) {
         var message = error == null ? "n/a" : error.getMessage();
         var session = sessions.get(connectionId);
-        session.errorIndication(message);
+        session.errorResponse(message);
     }
 
     public static void onMessage(UUID connectionId, String message) {
@@ -90,10 +90,10 @@ public class SessionManager {
             }
         };
 
-        Funs.run(jsonSyntaxControls, e -> session.errorIndication(e.getMessage()))
-                .then(commandControls, e -> session.errorIndication("command not found: " + ref.cmd))
-                .then(parameterControls, e -> session.errorIndication("unable to parse args, " + e.getMessage()))
-                .then(invokeMethod, e -> session.errorIndication("cmd method invocation failed, " + e.getMessage()))
+        Funs.run(jsonSyntaxControls, e -> session.errorResponse(e.getMessage()))
+                .then(commandControls, e -> session.errorResponse("command not found: " + ref.cmd))
+                .then(parameterControls, e -> session.errorResponse("unable to parse args, " + e.getMessage()))
+                .then(invokeMethod, e -> session.errorResponse("cmd method invocation failed, " + e.getMessage()))
                 .invoke();
     }
 }

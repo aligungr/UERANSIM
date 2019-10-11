@@ -27,8 +27,8 @@ public class Session {
         return makeMessage(type, new JsonPrimitive(data));
     }
 
-    public void errorIndication(String message) {
-        sender.send("errorIndication", message);
+    public void errorResponse(String message) {
+        sender.send("errorResponse", message);
     }
 
     @Command
