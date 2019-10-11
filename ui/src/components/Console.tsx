@@ -61,7 +61,7 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] INFO | ' +
+      '] ' +
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
@@ -78,7 +78,7 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] SUCCESS | ' +
+      '] ' +
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
@@ -95,7 +95,7 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] ERROR | ' +
+      '] ' +
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
@@ -112,7 +112,7 @@ export class Console extends React.Component<any, IConsoleState> {
     const entry =
       '[' +
       this.getDateTime() +
-      '] WARNING | ' +
+      '] ' +
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
