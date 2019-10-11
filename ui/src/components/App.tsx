@@ -5,6 +5,7 @@ import { Console } from './Console'
 import { Constants } from './Constants'
 import { SocketClient } from './SocketClient'
 import { Main } from './Main'
+import { Classes } from '@blueprintjs/core'
 
 export class App extends React.Component<any, any> {
   public static isDark: boolean = true
@@ -20,7 +21,7 @@ export class App extends React.Component<any, any> {
     const body = document.getElementsByTagName('body')[0]
     Console.setDark(isDark)
     if (isDark) {
-      body.setAttribute('class', 'bp3-dark')
+      body.setAttribute('class', Classes.DARK)
       body.style.backgroundColor = Constants.COLOR_DARK_BACKGROUND
     } else {
       body.setAttribute('class', '')
