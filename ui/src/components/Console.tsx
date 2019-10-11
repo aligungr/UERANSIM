@@ -114,9 +114,7 @@ export class Console extends React.Component<any, IConsoleState> {
   }
 
   static clear() {
-    const element = document.getElementById('bp-console-content')
-    if (element == null) throw new Error()
-    element.innerHTML = ''
+    Console.instance.setState({logEntries: []});
   }
 
   static show() {
