@@ -6,7 +6,7 @@ import { Constants } from './Constants'
 import { Navigation } from './Navigation'
 
 export interface IMessage {
-  cmd: string,
+  cmd: string
   args: object
 }
 
@@ -24,7 +24,7 @@ export class Main extends React.Component<any, any> {
   public render() {
     return (
       <div style={{ margin: '8px' }}>
-        <FlowSelector ref={r => this.flowSelector = r}/>
+        <FlowSelector ref={r => (this.flowSelector = r)} />
       </div>
     )
   }
@@ -51,7 +51,7 @@ export class Main extends React.Component<any, any> {
   }
 
   private onMessage(e: MessageEvent) {
-    console.log(e.data);
+    console.log(e.data)
     Console.log(JSON.stringify(e), 'WebSocket')
   }
 
@@ -74,8 +74,8 @@ export class Main extends React.Component<any, any> {
     Console.log(`sending message of type '${message.cmd}'.`, 'WebSocket')
     const json = JSON.stringify(message)
 
-    if (Main.instance.ws == null){
-      Console.error("Main.instance.ws is null", 'WebSocket')
+    if (Main.instance.ws == null) {
+      Console.error('Main.instance.ws is null', 'WebSocket')
       return
     }
 

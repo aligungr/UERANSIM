@@ -1,17 +1,29 @@
 import * as React from 'react'
-import { Button, ButtonGroup, Collapse, Divider, MenuItem, Pre, ProgressBar, Spinner } from '@blueprintjs/core'
+import {
+  Button,
+  ButtonGroup,
+  Collapse,
+  Divider,
+  MenuItem,
+  Pre,
+  ProgressBar,
+  Spinner,
+} from '@blueprintjs/core'
 import { App } from './App'
 import { Console } from './Console'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 import { Main } from './Main'
 
 interface IFlow {
-  title: string;
+  title: string
 }
 
 const FlowSelect = Select.ofType<IFlow>()
 
-const itemRenderer: ItemRenderer<IFlow> = (flow, { handleClick, modifiers, query }) => {
+const itemRenderer: ItemRenderer<IFlow> = (
+  flow,
+  { handleClick, modifiers, query }
+) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
@@ -44,7 +56,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
   }
 
   public render() {
-    let content = (<Spinner/>)
+    let content = <Spinner />
 
     if (this.state.loaded) {
       content = (
@@ -52,18 +64,27 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results."/>}
+            noResults={<MenuItem disabled={true} text="No results." />}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
-            itemRenderer={itemRenderer}>
-            <Button text={this.state.selected == null ? 'Select a Flow' : this.state.selected.title}
-                    icon="film"
-                    rightIcon="caret-down"/>
+            itemRenderer={itemRenderer}
+          >
+            <Button
+              text={
+                this.state.selected == null
+                  ? 'Select a Flow'
+                  : this.state.selected.title
+              }
+              icon="film"
+              rightIcon="caret-down"
+            />
           </FlowSelect>
           <Button
             style={{ marginLeft: '8px' }}
             disabled={this.state.selected == null}
-            text={'Run Flow'} onClick={() => this.onRunClicked()}
-            intent={'primary'}/>
+            text={'Run Flow'}
+            onClick={() => this.onRunClicked()}
+            intent={'primary'}
+          />
         </>
       )
     }
@@ -72,7 +93,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
   }
 
   private onRunClicked() {
-    Console.log("run clicked");
+    Console.log('run clicked')
   }
 
   private onItemSelect(item: IFlow) {
@@ -81,8 +102,8 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
 
   public startLoading() {
     Main.sendMessage({
-      cmd: "get-all-flows",
-      args: {}
+      cmd: 'get-all-flows',
+      args: {},
     })
   }
 }
