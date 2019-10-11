@@ -114,7 +114,7 @@ export class Console extends React.Component<any, IConsoleState> {
   }
 
   static clear() {
-    Console.instance.setState({logEntries: []});
+    Console.instance.setState({ logEntries: [] })
   }
 
   static show() {
