@@ -22,7 +22,7 @@ export class SocketClient {
   }
 
   private onMessage(e: MessageEvent) {
-    Console.success(JSON.stringify(e), 'WebSocket')
+    Console.log(JSON.stringify(e), 'WebSocket')
   }
 
   private onOpen(e: Event) {
