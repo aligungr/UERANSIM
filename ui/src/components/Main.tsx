@@ -24,7 +24,7 @@ export class Main extends React.Component<any, any> {
   public render() {
     return (
       <div style={{ margin: '8px' }}>
-        <FlowSelector ref={r => (this.flowSelector = r)} />
+        <FlowSelector ref={r => (this.flowSelector = r)}/>
       </div>
     )
   }
@@ -68,7 +68,7 @@ export class Main extends React.Component<any, any> {
         Console.error(data.toString(), 'Error Indication')
         return
       case 'allFlows':
-        Console.success('flow names retrieved', 'Response')
+        Console.success('flow names retrieved (total ' + data.length + ')', 'Response')
         if (this.flowSelector != null) {
           const flowItems: IFlow[] = []
           for (let i = 0; i < data.length; i = i + 1) {
