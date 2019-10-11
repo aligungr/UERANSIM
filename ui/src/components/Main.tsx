@@ -7,7 +7,6 @@ import { Constants } from './Constants'
 import { Navigation } from './Navigation'
 
 export class Main extends React.Component<any, any> {
-  public static isDark: boolean = true
   public static instance: Main
   private static ws: SocketClient
 
