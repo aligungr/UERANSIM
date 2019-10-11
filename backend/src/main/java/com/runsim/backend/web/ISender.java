@@ -2,5 +2,5 @@ package com.runsim.backend.web;
 
 @FunctionalInterface
 public interface ISender {
-    void send(Object message);
+    void send(String type, Object element);
 }

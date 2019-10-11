@@ -1,5 +1,10 @@
 package com.runsim.backend.web;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.runsim.backend.App;
+
 import java.util.UUID;
 
 public class Session {
@@ -11,12 +16,23 @@ public class Session {
         this.sender = sender;
     }
 
+    private static JsonObject makeMessage(String type, JsonElement data) {
+        var mes = new JsonObject();
+        mes.add("type", new JsonPrimitive(type));
+        mes.add("data", data);
+        return mes;
+    }
+
+    private static JsonObject makeMessage(String type, String data) {
+        return makeMessage(type, new JsonPrimitive(data));
+    }
+
     public void errorIndication(String message) {
-        sender.send(message);
+        sender.send("errorIndication", message);
     }
 
     @Command
-    public void hello(String name) {
-        sender.send("Hello " + name);
+    public void getAllFlows() {
+        sender.send("allFlows", App.getMachineNames());
     }
 }

@@ -13,8 +13,11 @@ public class SessionManager {
     private static ConcurrentHashMap<UUID, Session> sessions = new ConcurrentHashMap<>();
 
     public static void onConnect(UUID connectionId, Consumer<String> sender) {
-        sessions.put(connectionId, new Session(connectionId, message -> {
-            sender.accept(new Gson().toJson(message));
+        sessions.put(connectionId, new Session(connectionId, (type, data) -> {
+            var mes = new JsonObject();
+            mes.add("type", new JsonPrimitive(type));
+            mes.add("data", JsonParser.parseString(new Gson().toJson(data)));
+            sender.accept(mes.toString());
         }));
     }
 
