@@ -247,6 +247,7 @@ export class Console extends React.Component<any, IConsoleState> {
                   </div>
                 )
               })}
+              <br/>
             </div>
           </Pre>
         </Collapse>
