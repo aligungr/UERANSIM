@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { H1, Button, Classes, Card } from '@blueprintjs/core'
 import { Console } from './Console'
-import { FlowSelector } from './FlowSelector'
+import { FlowSelector, IFlow } from './FlowSelector'
 import { Constants } from './Constants'
 import { Navigation } from './Navigation'
 
@@ -24,7 +24,7 @@ export class Main extends React.Component<any, any> {
   public render() {
     return (
       <div style={{ margin: '8px' }}>
-        <FlowSelector ref={r => (this.flowSelector = r)} />
+        <FlowSelector ref={r => (this.flowSelector = r)}/>
       </div>
     )
   }
@@ -51,8 +51,38 @@ export class Main extends React.Component<any, any> {
   }
 
   private onMessage(e: MessageEvent) {
-    console.log(e.data)
-    Console.log(JSON.stringify(e), 'WebSocket')
+    if (e.data == null) return
+    if (!(typeof e.data === 'string' || e.data instanceof String)) return
+
+    const message: any = JSON.parse(e.data.toString())
+    const type: any = message['type']
+    const data: any = message['data']
+
+    if (type == null) {
+      Console.warn('null message type: ' + type, 'Response')
+      return
+    }
+
+    switch (type) {
+      case 'errorIndication':
+        Console.error(data.toString(), 'Error Indication')
+        return
+      case 'allFlows':
+        Console.success('flow names retrieved', 'Response')
+        if (this.flowSelector != null) {
+          const flowItems: IFlow[] = []
+          for (let i = 0; i < data.length; i = i + 1) {
+            flowItems.push({
+              title: data[i],
+            })
+          }
+          this.flowSelector.setState({ loaded: true, selected: null, items: flowItems })
+        }
+        return
+      default:
+        Console.warn('unrecognized message type: ' + type, 'Response')
+        return
+    }
   }
 
   private onOpen(e: Event) {

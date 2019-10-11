@@ -3,7 +3,6 @@ import * as React from 'react'
 import { Navigation } from './Navigation'
 import { Console } from './Console'
 import { Constants } from './Constants'
-import { SocketClient } from './SocketClient'
 import { Main } from './Main'
 import { Classes } from '@blueprintjs/core'
 

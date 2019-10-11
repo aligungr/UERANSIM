@@ -14,21 +14,25 @@ import { Console } from './Console'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 import { Main } from './Main'
 
-interface IFlow {
+export interface IFlow {
   title: string
 }
+
+let idCounter = 0
 
 const FlowSelect = Select.ofType<IFlow>()
 
 const itemRenderer: ItemRenderer<IFlow> = (
   flow,
-  { handleClick, modifiers, query }
-) => {
+  { handleClick, modifiers, query },
+  ) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
+  idCounter = idCounter + 1;
   return (
     <MenuItem
+      key={idCounter}
       active={modifiers.active}
       disabled={modifiers.disabled}
       onClick={handleClick}
@@ -56,7 +60,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
   }
 
   public render() {
-    let content = <Spinner />
+    let content = <Spinner/>
 
     if (this.state.loaded) {
       content = (
@@ -64,7 +68,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results." />}
+            noResults={<MenuItem disabled={true} text="No results."/>}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
             itemRenderer={itemRenderer}
           >
@@ -102,7 +106,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
 
   public startLoading() {
     Main.sendMessage({
-      cmd: 'get-all-flows',
+      cmd: 'getAllFlows',
       args: {},
     })
   }
