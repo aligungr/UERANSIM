@@ -64,8 +64,8 @@ export class Main extends React.Component<any, any> {
     }
 
     switch (type) {
-      case 'errorIndication':
-        Console.error(data.toString(), 'Error Indication')
+      case 'errorResponse':
+        Console.error(data.toString(), 'Error Response')
         return
       case 'allFlows':
         Console.success(
