@@ -10,11 +10,14 @@ import com.sun.nio.sctp.SctpChannel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MachineController {
-    private final StateMachine machine;
+    private final Class machineType;
+    private final Object machine;
     private Method starterMethod;
     private Map<String, Method> stateMethods;
     private Map<String, State> stateAnnotations;
@@ -23,7 +26,8 @@ public class MachineController {
     private boolean runCalled;
     private MachineContext machineContext;
 
-    public MachineController(Class<? extends StateMachine> machineType, String host, int port) throws Exception {
+    public MachineController(Class machineType, String host, int port) throws Exception {
+        this.machineType = machineType;
         this.machine = machineType.getDeclaredConstructor().newInstance();
         this.sctpClient = new SCTPClient(host, port, Constants.NGAP_PROTOCOL_ID);
         this.currentState = null;
@@ -98,5 +102,17 @@ public class MachineController {
 
         MessageContext messageContext = new MessageContext(receivedBytes, messageInfo.streamNumber());
         handleActionResult((Action) stateMethod.invoke(machine, messageContext, machineContext));
+    }
+
+    public HashMap getMachineInfo() {
+        var states = new ArrayList<String>();
+        for (Method method : this.stateMethods.values())
+            states.add(method.getName());
+
+        var inf = new HashMap<>();
+        inf.put("machine-name", this.machineType.getSimpleName());
+        inf.put("starter", this.starterMethod.getName());
+        inf.put("states", states);
+        return inf;
     }
 }

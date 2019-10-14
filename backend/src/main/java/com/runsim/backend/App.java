@@ -1,12 +1,12 @@
 package com.runsim.backend;
 
 import com.runsim.backend.annotations.StateMachine;
+import com.runsim.backend.web.Session;
 import com.runsim.backend.web.SessionManager;
 import io.javalin.Javalin;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,8 +15,18 @@ public class App {
     private static HashMap<String, Class> stateMachineTypes;
 
     public static void main(String[] args) {
+        //compilerOptionsControl();
         findStateMachines();
         startServer();
+    }
+
+    private static void compilerOptionsControl() {
+        for (var method : Session.class.getMethods()) {
+            for (var parameter : method.getParameters()) {
+                if (!parameter.isNamePresent())
+                    throw new IllegalArgumentException("Parameter names are not present!");
+            }
+        }
     }
 
     private static void findStateMachines() {
@@ -56,5 +66,9 @@ public class App {
 
     public static Set<String> getMachineNames() {
         return stateMachineTypes.keySet();
+    }
+
+    public static Class getMachineType(String machineName) {
+        return stateMachineTypes.get(machineName);
     }
 }
