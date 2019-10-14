@@ -53,7 +53,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
 
   onSocketMessage(type: string, data: any) {
     if (type === 'allFlows') {
-      Console.success(
+      Console.log(
         'flow names retrieved (total ' + data.length + ')',
         'Response'
       )
