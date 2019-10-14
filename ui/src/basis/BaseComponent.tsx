@@ -1,12 +1,11 @@
 import * as React from 'react'
 import { MainContent } from '../level1/Main'
+import { IMachineInfo } from '../classes/IMachineInfo'
 
 const mountedComponents: BaseComponent[] = []
 
-export abstract class BaseComponent<P = {}, S = {}> extends React.Component<
-  P,
-  S
-> {
+export abstract class BaseComponent<P = {}, S = {}> extends React.Component<P,
+  S> {
   componentDidMount(): void {
     mountedComponents.push(this)
   }
@@ -25,17 +24,27 @@ export abstract class BaseComponent<P = {}, S = {}> extends React.Component<
     return mountedComponents
   }
 
-  public onThemeChanged(isDark: boolean) {}
+  public onThemeChanged(isDark: boolean) {
+  }
 
-  public onConsoleChanged(isOpen: boolean) {}
+  public onConsoleChanged(isOpen: boolean) {
+  }
 
-  public onMainContentChanged(mainContent: MainContent) {}
+  public onMainContentChanged(mainContent: MainContent) {
+  }
 
-  public onSocketConnected(e: Event) {}
+  public onSocketConnected(e: Event) {
+  }
 
-  public onSocketClosed(e: CloseEvent) {}
+  public onSocketClosed(e: CloseEvent) {
+  }
 
-  public onSocketError(e: Event) {}
+  public onSocketError(e: Event) {
+  }
 
-  public onSocketMessage(type: string, data: any) {}
+  public onSocketMessage(type: string, data: any) {
+  }
+
+  public onMachineInfo(machineInfo: IMachineInfo) {
+  }
 }

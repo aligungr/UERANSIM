@@ -1,11 +1,13 @@
 import { BaseComponent } from './BaseComponent'
 import { Main, MainContent } from '../level1/Main'
 import { Console } from '../level1/Console'
+import { IMachineInfo } from '../classes/IMachineInfo'
 
 export class Broadcast {
   private static darkTheme: boolean = false
   private static consoleOpen: boolean = true
   private static mainContent: MainContent = MainContent.FLOW_SELECTION
+  private static machineInfo: IMachineInfo | null = null
 
   public static setDark(isDark: boolean) {
     this.darkTheme = isDark
@@ -28,7 +30,7 @@ export class Broadcast {
   public static setMainContent(mainContent: MainContent) {
     this.mainContent = mainContent
     BaseComponent.getComponents().forEach(x =>
-      x.onMainContentChanged(mainContent)
+      x.onMainContentChanged(mainContent),
     )
   }
 
@@ -67,5 +69,14 @@ export class Broadcast {
     }
 
     ws.send(json)
+  }
+
+  public static setMachineInfo(machineInfo: IMachineInfo) {
+    this.machineInfo = machineInfo
+    BaseComponent.getComponents().forEach(x => x.onMachineInfo(machineInfo))
+  }
+
+  public static getMachineInfo(): IMachineInfo | null {
+    return this.machineInfo
   }
 }
