@@ -7,7 +7,7 @@ import { Broadcast } from '../basis/Broadcast'
 
 export enum MainContent {
   FLOW_SELECTION = 1,
-  FLOW_ACTION = 2
+  FLOW_ACTION = 2,
 }
 
 interface IMainState {
@@ -79,16 +79,12 @@ export class Main extends BaseComponent<any, IMainState> {
 
     switch (this.state.mainContent) {
       case MainContent.FLOW_SELECTION:
-        content = (<FlowSelection/>)
+        content = <FlowSelection />
         break
       case MainContent.FLOW_ACTION:
-        content = (<FlowAction/>)
+        content = <FlowAction />
     }
 
-    return (
-      <div style={{ margin: '8px' }}>
-        {content}
-      </div>
-    )
+    return <div style={{ margin: '8px' }}>{content}</div>
   }
 }

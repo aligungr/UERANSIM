@@ -16,7 +16,7 @@ const FlowSelect = Select.ofType<IFlow>()
 
 const itemRenderer: ItemRenderer<IFlow> = (
   flow,
-  { handleClick, modifiers, query },
+  { handleClick, modifiers, query }
 ) => {
   if (!modifiers.matchesPredicate) {
     return null
@@ -55,7 +55,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
     if (type === 'allFlows') {
       Console.success(
         'flow names retrieved (total ' + data.length + ')',
-        'Response',
+        'Response'
       )
       const flowItems: IFlow[] = []
       for (let i = 0; i < data.length; i = i + 1) {
@@ -74,7 +74,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
   }
 
   public render() {
-    let content = <Spinner/>
+    let content = <Spinner />
 
     if (this.state.loaded) {
       content = (
@@ -82,7 +82,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results."/>}
+            noResults={<MenuItem disabled={true} text="No results." />}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
             itemRenderer={itemRenderer}
           >

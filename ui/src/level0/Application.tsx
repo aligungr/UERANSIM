@@ -40,9 +40,9 @@ export class Application extends BaseComponent<any, IApplicationState> {
   public render() {
     return (
       <div>
-        <Navigation/>
-        <Main/>
-        <Console/>
+        <Navigation />
+        <Main />
+        <Console />
       </div>
     )
   }

@@ -29,7 +29,7 @@ export class Navigation extends BaseComponent<any, INavigationState> {
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>UERANSIM</NavbarHeading>
-          <NavbarDivider/>
+          <NavbarDivider />
           <AnchorButton
             // text={(this.state.isConsoleOpen ? "Hide" : "Show") + " Console"}
             minimal={true}

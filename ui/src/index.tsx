@@ -4,4 +4,4 @@ import './index.css'
 import '@blueprintjs/core/lib/css/blueprint'
 import { Application } from './level0/Application'
 
-render(<Application/>, document.getElementById('root'))
+render(<Application />, document.getElementById('root'))

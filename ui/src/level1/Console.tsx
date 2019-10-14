@@ -211,7 +211,7 @@ export class Console extends BaseComponent<any, IConsoleState> {
           >
             <div style={{ width: '36px' }}>
               <ButtonGroup minimal={false} vertical={true}>
-                <Button icon="cross" onClick={(e: any) => Console.clear()}/>
+                <Button icon="cross" onClick={(e: any) => Console.clear()} />
                 <Button
                   icon="automatic-updates"
                   active={this.state.autoScrollBottom}
@@ -219,7 +219,7 @@ export class Console extends BaseComponent<any, IConsoleState> {
                 />
               </ButtonGroup>
             </div>
-            <Divider/>
+            <Divider />
             <div
               id={'bp-console-content'}
               style={{
@@ -243,7 +243,7 @@ export class Console extends BaseComponent<any, IConsoleState> {
                   </div>
                 )
               })}
-              <br/>
+              <br />
             </div>
           </Pre>
         </Collapse>
