@@ -30,7 +30,7 @@ export class Broadcast {
   public static setMainContent(mainContent: MainContent) {
     this.mainContent = mainContent
     BaseComponent.getComponents().forEach(x =>
-      x.onMainContentChanged(mainContent),
+      x.onMainContentChanged(mainContent)
     )
   }
 
