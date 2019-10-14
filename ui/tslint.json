@@ -6,7 +6,8 @@
     "variable-name": false,
     "function-name": false,
     "jsx-no-lambda": false,
-    "prefer-template": false
+    "prefer-template": false,
+    "object-literal-shorthand": false
   },
   "rulesDirectory": []
 }

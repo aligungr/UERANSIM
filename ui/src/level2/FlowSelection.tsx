@@ -1,18 +1,10 @@
 import * as React from 'react'
-import {
-  Button,
-  ButtonGroup,
-  Collapse,
-  Divider,
-  MenuItem,
-  Pre,
-  ProgressBar,
-  Spinner,
-} from '@blueprintjs/core'
-import { App } from './App'
-import { Console } from './Console'
+import { Button, MenuItem, Spinner } from '@blueprintjs/core'
+import { Console } from '../level1/Console'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
-import { Main } from './Main'
+import { MainContent } from '../level1/Main'
+import { BaseComponent } from '../basis/BaseComponent'
+import { Broadcast } from '../basis/Broadcast'
 
 export interface IFlow {
   title: string
@@ -24,7 +16,7 @@ const FlowSelect = Select.ofType<IFlow>()
 
 const itemRenderer: ItemRenderer<IFlow> = (
   flow,
-  { handleClick, modifiers, query }
+  { handleClick, modifiers, query },
 ) => {
   if (!modifiers.matchesPredicate) {
     return null
@@ -53,14 +45,36 @@ interface IFlowSelectorState {
   loaded: boolean
 }
 
-export class FlowSelector extends React.Component<any, IFlowSelectorState> {
+export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
   constructor(props: any) {
     super(props)
     this.state = { selected: null, items: [], loaded: false }
   }
 
+  onSocketMessage(type: string, data: any) {
+    if (type === 'allFlows') {
+      Console.success(
+        'flow names retrieved (total ' + data.length + ')',
+        'Response',
+      )
+      const flowItems: IFlow[] = []
+      for (let i = 0; i < data.length; i = i + 1) {
+        flowItems.push({
+          title: data[i],
+        })
+      }
+      this.setState({
+        loaded: true,
+        selected: null,
+        items: flowItems,
+      })
+    } else if (type === 'machineSetup') {
+      Broadcast.setMainContent(MainContent.FLOW_ACTION)
+    }
+  }
+
   public render() {
-    let content = <Spinner />
+    let content = <Spinner/>
 
     if (this.state.loaded) {
       content = (
@@ -68,7 +82,7 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results." />}
+            noResults={<MenuItem disabled={true} text="No results."/>}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
             itemRenderer={itemRenderer}
           >
@@ -97,17 +111,22 @@ export class FlowSelector extends React.Component<any, IFlowSelectorState> {
   }
 
   private onRunClicked() {
-    Console.log('run clicked')
+    let flowTitle = ''
+    if (this.state.selected != null) {
+      flowTitle = this.state.selected.title
+    }
+
+    Broadcast.setMainContent(MainContent.FLOW_ACTION)
+    Console.log('flow selected: ' + flowTitle)
+
+    Broadcast.sendSocketMessage('setupFlow', { arg0: flowTitle })
   }
 
   private onItemSelect(item: IFlow) {
     this.setState({ selected: item })
   }
 
-  public startLoading() {
-    Main.sendMessage({
-      cmd: 'getAllFlows',
-      args: {},
-    })
+  public onSocketConnected(e: Event) {
+    Broadcast.sendSocketMessage('getAllFlows', {})
   }
 }

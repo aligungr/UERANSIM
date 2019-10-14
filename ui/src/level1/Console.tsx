@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Button, ButtonGroup, Collapse, Divider, Pre } from '@blueprintjs/core'
-import { App } from './App'
-import { Constants } from './Constants'
+import { Constants } from '../classes/Constants'
+import { BaseComponent } from '../basis/BaseComponent'
+import { Broadcast } from '../basis/Broadcast'
 
 class LogEntry {
   text: string = ''
@@ -16,7 +17,7 @@ interface IConsoleState {
   isDark: boolean
 }
 
-export class Console extends React.Component<any, IConsoleState> {
+export class Console extends BaseComponent<any, IConsoleState> {
   public static instance: Console
   public static autoScroll: boolean = true
   private static idCounter: number = 1
@@ -27,7 +28,7 @@ export class Console extends React.Component<any, IConsoleState> {
       autoScrollBottom: true,
       isOpen: true,
       logEntries: [],
-      isDark: App.isDark,
+      isDark: Broadcast.isDark(),
     }
     Console.instance = this
   }
@@ -129,22 +130,6 @@ export class Console extends React.Component<any, IConsoleState> {
     Console.instance.setState({ logEntries: [] })
   }
 
-  static show() {
-    Console.instance.setState({ isOpen: true })
-  }
-
-  static hide() {
-    Console.instance.setState({ isOpen: false })
-  }
-
-  static toggleVisibility() {
-    if (Console.instance.state.isOpen) {
-      Console.hide()
-    } else {
-      Console.show()
-    }
-  }
-
   static toggleAutoScroll() {
     const scroll = !Console.autoScroll
     Console.autoScroll = scroll
@@ -182,11 +167,12 @@ export class Console extends React.Component<any, IConsoleState> {
     throw new Error()
   }
 
-  static setDark(isDark: boolean) {
-    if (Console.instance == null) {
-      return
-    }
-    Console.instance.setState({ isDark })
+  onThemeChanged(isDark: boolean) {
+    this.setState({ isDark: isDark })
+  }
+
+  onConsoleChanged(isOpen: boolean) {
+    this.setState({ isOpen: isOpen })
   }
 
   appendText(text: string, className: string) {
@@ -225,7 +211,7 @@ export class Console extends React.Component<any, IConsoleState> {
           >
             <div style={{ width: '36px' }}>
               <ButtonGroup minimal={false} vertical={true}>
-                <Button icon="cross" onClick={(e: any) => Console.clear()} />
+                <Button icon="cross" onClick={(e: any) => Console.clear()}/>
                 <Button
                   icon="automatic-updates"
                   active={this.state.autoScrollBottom}
@@ -233,7 +219,7 @@ export class Console extends React.Component<any, IConsoleState> {
                 />
               </ButtonGroup>
             </div>
-            <Divider />
+            <Divider/>
             <div
               id={'bp-console-content'}
               style={{
@@ -257,7 +243,7 @@ export class Console extends React.Component<any, IConsoleState> {
                   </div>
                 )
               })}
-              <br />
+              <br/>
             </div>
           </Pre>
         </Collapse>

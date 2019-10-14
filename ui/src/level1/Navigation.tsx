@@ -2,26 +2,25 @@ import * as React from 'react'
 import {
   Alignment,
   AnchorButton,
-  Classes,
   Navbar,
   NavbarGroup,
   NavbarHeading,
   NavbarDivider,
 } from '@blueprintjs/core'
-import { Console } from './Console'
-import { App } from './App'
+import { BaseComponent } from '../basis/BaseComponent'
+import { Broadcast } from '../basis/Broadcast'
 
 interface INavigationState {
   isConsoleOpen: boolean
   isDark: boolean
 }
 
-export class Navigation extends React.Component<any, INavigationState> {
+export class Navigation extends BaseComponent<any, INavigationState> {
   constructor(props: any) {
     super(props)
     this.state = {
-      isConsoleOpen: true,
-      isDark: true,
+      isConsoleOpen: Broadcast.isConsoleOpen(),
+      isDark: Broadcast.isDark(),
     }
   }
 
@@ -30,7 +29,7 @@ export class Navigation extends React.Component<any, INavigationState> {
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>UERANSIM</NavbarHeading>
-          <NavbarDivider />
+          <NavbarDivider/>
           <AnchorButton
             // text={(this.state.isConsoleOpen ? "Hide" : "Show") + " Console"}
             minimal={true}
@@ -42,7 +41,7 @@ export class Navigation extends React.Component<any, INavigationState> {
             // text={(this.state.isConsoleOpen ? "Hide" : "Show") + " Console"}
             minimal={true}
             rightIcon={this.state.isDark ? 'flash' : 'moon'}
-            onClick={() => this.handleThemeClicked()}
+            onClick={() => Broadcast.setDark(!Broadcast.isDark())}
             // active={this.state.isConsoleOpen}
           />
         </NavbarGroup>
@@ -51,17 +50,12 @@ export class Navigation extends React.Component<any, INavigationState> {
   }
 
   handleConsoleClick() {
-    if (this.state.isConsoleOpen) {
-      this.setState({ isConsoleOpen: false })
-      Console.hide()
-    } else {
-      this.setState({ isConsoleOpen: true })
-      Console.show()
-    }
+    const open = !this.state.isConsoleOpen
+    this.setState({ isConsoleOpen: open })
+    Broadcast.setConsoleOpen(open)
   }
 
-  handleThemeClicked() {
-    App.setDark(!App.isDark)
-    this.setState({ isDark: App.isDark })
+  onThemeChanged(isDark: boolean): void {
+    this.setState({ isDark: isDark })
   }
 }
