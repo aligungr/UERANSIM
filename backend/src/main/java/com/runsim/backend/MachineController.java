@@ -36,11 +36,11 @@ public class MachineController {
         this.stateMethods = new HashMap<>();
         this.stateAnnotations = new HashMap<>();
 
-        for (Method method : machine.getClass().getMethods()) {
+        for (var method : machine.getClass().getMethods()) {
             if (method.isAnnotationPresent(Starter.class)) {
                 if (starterMethod != null)
                     throw new RuntimeException("multiple starters are not allowed");
-                Parameter[] params = method.getParameters();
+                var params = method.getParameters();
                 if (params.length != 1 || params[0].getType() != MachineContext.class)
                     throw new RuntimeException("bad parameters for starter method");
                 if (!Action.class.isAssignableFrom(method.getReturnType()))
@@ -49,7 +49,7 @@ public class MachineController {
                 starterMethod = method;
             }
             if (method.isAnnotationPresent(State.class)) {
-                Parameter[] params = method.getParameters();
+                var params = method.getParameters();
                 if (params.length != 2 || params[0].getType() != MessageContext.class || params[1].getType() != MachineContext.class)
                     throw new RuntimeException("bad parameters for state function.");
                 if (!Action.class.isAssignableFrom(method.getReturnType()))
@@ -76,37 +76,37 @@ public class MachineController {
         } else if (actionRes instanceof Action.CloseConnection) {
             sctpClient.close();
         } else if (actionRes instanceof Action.SendData) {
-            String oldState = currentState;
-            Action.SendData action = (Action.SendData) actionRes;
-            currentState = action.getNextState();
+            var oldState = currentState;
+            var action = (Action.SendData) actionRes;
+            currentState = action.nextState;
 
             int timeout = oldState == null ? 0 : stateAnnotations.get(oldState).timeout();
-            sctpClient.send(action.getStreamNumber(), action.getData(), this::handleMessage, timeout);
+            sctpClient.send(action.streamNumber, action.data, this::handleMessage, timeout);
         } else if (actionRes instanceof Action.SendElement) {
-            String oldState = currentState;
-            Action.SendElement action = (Action.SendElement) actionRes;
-            currentState = action.getNextState();
+            var oldState = currentState;
+            var action = (Action.SendElement) actionRes;
+            currentState = action.nextState;
 
             int timeout = oldState == null ? 0 : stateAnnotations.get(oldState).timeout();
-            byte[] data = MTSAdapter.encodeAper(action.getSchema(), action.getElement());
-            sctpClient.send(action.getStreamNumber(), data, this::handleMessage, timeout);
+            byte[] data = MTSAdapter.encodeAper(action.schema, action.element);
+            sctpClient.send(action.streamNumber, data, this::handleMessage, timeout);
         } else {
             throw new RuntimeException("unhandled action result");
         }
     }
 
     private synchronized void handleMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) throws Exception {
-        Method stateMethod = stateMethods.get(currentState);
+        var stateMethod = stateMethods.get(currentState);
         if (stateMethod == null)
             throw new RuntimeException("state method could not found: " + currentState);
 
-        MessageContext messageContext = new MessageContext(receivedBytes, messageInfo.streamNumber());
+        var messageContext = new MessageContext(receivedBytes, messageInfo.streamNumber());
         handleActionResult((Action) stateMethod.invoke(machine, messageContext, machineContext));
     }
 
     public HashMap getMachineInfo() {
         var states = new ArrayList<String>();
-        for (Method method : this.stateMethods.values())
+        for (var method : this.stateMethods.values())
             states.add(method.getName());
 
         var inf = new HashMap<>();
