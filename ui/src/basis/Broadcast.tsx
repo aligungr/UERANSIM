@@ -1,6 +1,6 @@
 import { BaseComponent } from './BaseComponent'
 import { Main, MainContent } from '../level1/Main'
-import { Console } from '../level1/Console'
+import { Console } from './Console'
 import { IMachineInfo } from '../classes/IMachineInfo'
 
 export class Broadcast {

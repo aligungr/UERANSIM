@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Console } from '../level1/Console'
+import { ConsoleUI } from '../level1/ConsoleUI'
 import { Classes } from '@blueprintjs/core'
 import { Constants } from '../classes/Constants'
 import { Navigation } from '../level1/Navigation'
@@ -42,7 +42,7 @@ export class Application extends BaseComponent<any, IApplicationState> {
       <div>
         <Navigation />
         <Main />
-        <Console />
+        <ConsoleUI />
       </div>
     )
   }

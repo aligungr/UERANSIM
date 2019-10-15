@@ -2,7 +2,7 @@ import * as React from 'react'
 import { BaseComponent } from '../basis/BaseComponent'
 import { Broadcast } from '../basis/Broadcast'
 import { IMachineInfo } from '../classes/IMachineInfo'
-import { Console } from '../level1/Console'
+import { Console } from '../basis/Console'
 import { Divider, Pre } from '@blueprintjs/core'
 
 interface IFlowActionState {
@@ -15,18 +15,16 @@ export class FlowAction extends BaseComponent<any, IFlowActionState> {
 
     const machineInfo = Broadcast.getMachineInfo()
     if (machineInfo == null) {
-      throw new Error("machineInfo was null")
+      throw new Error('machineInfo was null')
     }
     this.state = {
       machineInfo: machineInfo,
     }
-
-    console.log(this.state.machineInfo);
   }
 
   public onMachineInfo(machineInfo: IMachineInfo) {
     this.setState({ machineInfo: machineInfo })
-    Console.warn("onMachineInfo called of FlowAction")
+    Console.warn('onMachineInfo called of FlowAction')
   }
 
   public render() {

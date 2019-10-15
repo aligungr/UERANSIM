@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Button, MenuItem, Spinner } from '@blueprintjs/core'
-import { Console } from '../level1/Console'
+import { Console } from '../basis/Console'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 import { MainContent } from '../level1/Main'
 import { BaseComponent } from '../basis/BaseComponent'
