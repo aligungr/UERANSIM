@@ -90,17 +90,26 @@ public class MachineController {
             int timeout = oldState == null ? 0 : stateAnnotations.get(oldState).timeout();
             byte[] data = MTSAdapter.encodeAper(action.schema, action.element);
             sctpClient.send(action.streamNumber, data, this::handleMessage, timeout);
-        } else {
+        } else if (actionRes instanceof Action.SwitchState) {
+            var action = (Action.SwitchState) actionRes;
+            currentState = action.nextState;
+            handleMessage(action.msgCtx);
+        }
+        else {
             throw new RuntimeException("unhandled action result");
         }
     }
 
     private synchronized void handleMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) throws Exception {
+        var messageContext = new MessageContext(receivedBytes, messageInfo.streamNumber());
+        handleMessage(messageContext);
+    }
+
+    private synchronized void handleMessage(MessageContext messageContext) throws Exception {
         var stateMethod = stateMethods.get(currentState);
         if (stateMethod == null)
             throw new RuntimeException("state method could not found: " + currentState);
 
-        var messageContext = new MessageContext(receivedBytes, messageInfo.streamNumber());
         handleActionResult((Action) stateMethod.invoke(machine, messageContext, machineContext));
     }
 
