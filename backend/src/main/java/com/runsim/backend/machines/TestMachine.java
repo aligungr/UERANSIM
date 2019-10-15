@@ -15,8 +15,9 @@ public class TestMachine {
 
     @Starter
     public Action starter(MachineContext machineContext) {
-
         int age = 22;
+
+
 
         OtnElement obj = OtnXmlParser.parseXml(Utils.getResourceString("initialUEMessage.xml"));
         return Action.sendElement("NGAP_PDU_Contents.InitialUEMessage", obj, "someState");

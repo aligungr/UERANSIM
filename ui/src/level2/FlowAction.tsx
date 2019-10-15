@@ -4,6 +4,7 @@ import { Broadcast } from '../basis/Broadcast'
 import { IMachineInfo } from '../classes/IMachineInfo'
 import { Console } from '../basis/Console'
 import { Divider, Pre } from '@blueprintjs/core'
+import { StateButtons } from '../level3/StateButtons'
 
 interface IFlowActionState {
   machineInfo: IMachineInfo
@@ -31,6 +32,7 @@ export class FlowAction extends BaseComponent<any, IFlowActionState> {
     return (
       <div>
         <h3 className="bp3-heading">{this.state.machineInfo.machineName}</h3>
+        <StateButtons />
       </div>
     )
   }

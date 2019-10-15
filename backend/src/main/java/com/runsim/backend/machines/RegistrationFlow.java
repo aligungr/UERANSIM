@@ -10,8 +10,6 @@ public class RegistrationFlow {
 
     @Starter
     public Action starter(MachineContext machineContext) {
-
+        return Action.closeConnection();
     }
-
-    
 }
