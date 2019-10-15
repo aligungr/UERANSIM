@@ -1,5 +1,12 @@
 import * as React from 'react'
-import { Button, ButtonGroup, Collapse, Divider, Pre, Tooltip } from '@blueprintjs/core'
+import {
+  Button,
+  ButtonGroup,
+  Collapse,
+  Divider,
+  Pre,
+  Tooltip,
+} from '@blueprintjs/core'
 import { Constants } from '../classes/Constants'
 import { BaseComponent } from '../basis/BaseComponent'
 import { Broadcast } from '../basis/Broadcast'
@@ -116,9 +123,13 @@ export class ConsoleUI extends BaseComponent<any, IConsoleState> {
             <div style={{ width: '36px' }}>
               <ButtonGroup minimal={false} vertical={true}>
                 <Tooltip content={'Clear Console'}>
-                  <Button icon="cross" onClick={(e: any) => Console.clear()}/>
+                  <Button icon="cross" onClick={(e: any) => Console.clear()} />
                 </Tooltip>
-                <Tooltip content={`${this.state.autoScrollBottom ? 'Disable' : 'Enable'} Auto Scroll to Bottom`}>
+                <Tooltip
+                  content={`${
+                    this.state.autoScrollBottom ? 'Disable' : 'Enable'
+                  } Auto Scroll to Bottom`}
+                >
                   <Button
                     icon="automatic-updates"
                     active={this.state.autoScrollBottom}
@@ -127,7 +138,7 @@ export class ConsoleUI extends BaseComponent<any, IConsoleState> {
                 </Tooltip>
               </ButtonGroup>
             </div>
-            <Divider/>
+            <Divider />
             <div
               id={'bp-console-content'}
               style={{
@@ -151,7 +162,7 @@ export class ConsoleUI extends BaseComponent<any, IConsoleState> {
                   </div>
                 )
               })}
-              <br/>
+              <br />
             </div>
           </Pre>
         </Collapse>

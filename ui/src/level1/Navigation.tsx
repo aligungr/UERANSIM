@@ -5,7 +5,8 @@ import {
   Navbar,
   NavbarGroup,
   NavbarHeading,
-  NavbarDivider, Tooltip,
+  NavbarDivider,
+  Tooltip,
 } from '@blueprintjs/core'
 import { BaseComponent } from '../basis/BaseComponent'
 import { Broadcast } from '../basis/Broadcast'
@@ -29,8 +30,10 @@ export class Navigation extends BaseComponent<any, INavigationState> {
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>UERANSIM</NavbarHeading>
-          <NavbarDivider/>
-          <Tooltip content={`${this.state.isConsoleOpen ? 'Hide' : 'Show'} Console`}>
+          <NavbarDivider />
+          <Tooltip
+            content={`${this.state.isConsoleOpen ? 'Hide' : 'Show'} Console`}
+          >
             <AnchorButton
               minimal={true}
               rightIcon="console"
@@ -38,7 +41,9 @@ export class Navigation extends BaseComponent<any, INavigationState> {
               // active={this.state.isConsoleOpen}
             />
           </Tooltip>
-          <Tooltip content={`Switch to ${this.state.isDark ? 'Light' : 'Dark'} Theme`}>
+          <Tooltip
+            content={`Switch to ${this.state.isDark ? 'Light' : 'Dark'} Theme`}
+          >
             <AnchorButton
               minimal={true}
               rightIcon={this.state.isDark ? 'flash' : 'moon'}
