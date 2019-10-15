@@ -110,7 +110,7 @@ public class MachineController {
             states.add(method.getName());
 
         var inf = new HashMap<>();
-        inf.put("machine-name", this.machineType.getSimpleName());
+        inf.put("machineName", this.machineType.getSimpleName());
         inf.put("starter", this.starterMethod.getName());
         inf.put("states", states);
         return inf;

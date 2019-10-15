@@ -17,4 +17,19 @@ public class RegistrationFlow {
     public Action starter(MachineContext machineContext) {
         return Action.closeConnection();
     }
+
+    @State
+    public Action someState(MessageContext messageContext, MachineContext machineContext) {
+        return Action.closeConnection();
+    }
+
+    @State
+    public Action someState2(MessageContext messageContext, MachineContext machineContext) {
+        return Action.closeConnection();
+    }
+
+    @State
+    public Action someState32(MessageContext messageContext, MachineContext machineContext) {
+        return Action.closeConnection();
+    }
 }
