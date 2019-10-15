@@ -20,14 +20,18 @@ public abstract class Action {
         return new SendElement(schema, element, nextState);
     }
 
+    public static Action switchState(MessageContext msgCtx, String nextState) {
+        return new SwitchState(msgCtx, nextState);
+    }
+
     public static class NoOperation extends Action { }
 
     public static class CloseConnection extends Action { }
 
     public static class SendData extends Action {
-        private final byte[] data;
-        private final String nextState;
-        private final int streamNumber;
+        public final byte[] data;
+        public final String nextState;
+        public final int streamNumber;
 
         public SendData(byte[] data, String nextState) {
             this(data, nextState, Constants.DEFAULT_STREAM_NUMBER);
@@ -38,25 +42,13 @@ public abstract class Action {
             this.nextState = nextState;
             this.streamNumber = streamNumber;
         }
-
-        public byte[] getData() {
-            return data;
-        }
-
-        public String getNextState() {
-            return nextState;
-        }
-
-        public int getStreamNumber() {
-            return streamNumber;
-        }
     }
 
     public static class SendElement extends Action {
-        private final String schema;
-        private final OtnElement element;
-        private final String nextState;
-        private final int streamNumber;
+        public final String schema;
+        public final OtnElement element;
+        public final String nextState;
+        public final int streamNumber;
 
         public SendElement(String schema, OtnElement element, String nextState) {
             this(schema, element, nextState, Constants.DEFAULT_STREAM_NUMBER);
@@ -68,21 +60,15 @@ public abstract class Action {
             this.nextState = nextState;
             this.streamNumber = streamNumber;
         }
+    }
 
-        public String getSchema() {
-            return schema;
-        }
+    public static class SwitchState  extends Action {
+        public final MessageContext msgCtx;
+        public final String nextState;
 
-        public OtnElement getElement() {
-            return element;
-        }
-
-        public String getNextState() {
-            return nextState;
-        }
-
-        public int getStreamNumber() {
-            return streamNumber;
+        public SwitchState(MessageContext msgCtx, String nextState) {
+            this.msgCtx = msgCtx;
+            this.nextState = nextState;
         }
     }
 }
