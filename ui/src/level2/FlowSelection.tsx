@@ -100,8 +100,8 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
           <Button
             style={{ marginLeft: '8px' }}
             disabled={this.state.selected == null}
-            text={'Run Flow'}
-            onClick={() => this.onRunClicked()}
+            text={'Select Flow'}
+            onClick={() => this.selectClicked()}
             intent={'primary'}
           />
         </>
@@ -111,7 +111,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
     return content
   }
 
-  private onRunClicked() {
+  private selectClicked() {
     let flowTitle = ''
     if (this.state.selected != null) {
       flowTitle = this.state.selected.title
