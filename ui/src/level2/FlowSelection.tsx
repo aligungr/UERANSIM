@@ -69,8 +69,8 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
         items: flowItems,
       })
     } else if (type === 'machineSetup') {
-      Broadcast.setMainContent(MainContent.FLOW_ACTION)
       Broadcast.setMachineInfo(data)
+      Broadcast.setMainContent(MainContent.FLOW_ACTION)
     }
   }
 
@@ -117,9 +117,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
       flowTitle = this.state.selected.title
     }
 
-    Broadcast.setMainContent(MainContent.FLOW_ACTION)
     Console.log('flow selected: ' + flowTitle)
-
     Broadcast.sendSocketMessage('setupFlow', { arg0: flowTitle })
   }
 

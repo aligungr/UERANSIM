@@ -70,7 +70,7 @@ export class Main extends BaseComponent<any, IMainState> {
     return this.ws
   }
 
-  onMainContentChanged(mainContent: MainContent) {
+  public onMainContentChanged(mainContent: MainContent) {
     this.setState({ mainContent: mainContent })
   }
 
