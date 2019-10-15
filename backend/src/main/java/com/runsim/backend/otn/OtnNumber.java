@@ -48,7 +48,8 @@ public class OtnNumber extends OtnElement {
     @Override
     public JsonElement toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("type", new JsonPrimitive(value));
+        jsonObject.add("type", new JsonPrimitive("number"));
+        jsonObject.add("value", new JsonPrimitive(value));
         return jsonObject;
     }
 }
