@@ -33,8 +33,6 @@ export class ConsoleUI extends BaseComponent<any, IConsoleState> {
     ConsoleUI.instance = this
   }
 
-
-
   static toggleAutoScroll() {
     const scroll = !ConsoleUI.autoScroll
     ConsoleUI.autoScroll = scroll

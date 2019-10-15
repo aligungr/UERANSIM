@@ -3,7 +3,7 @@ import { FlowSelection } from '../level2/FlowSelection'
 import { FlowAction } from '../level2/FlowAction'
 import { BaseComponent } from '../basis/BaseComponent'
 import { Broadcast } from '../basis/Broadcast'
-import { Console} from '../basis/Console'
+import { Console } from '../basis/Console'
 
 export enum MainContent {
   FLOW_SELECTION = 1,

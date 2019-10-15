@@ -1,7 +1,6 @@
 import { ConsoleUI } from '../level1/ConsoleUI'
 
 export class Console {
-
   public static log(text: string, tag: string | null = null) {
     const entry =
       '[' +
