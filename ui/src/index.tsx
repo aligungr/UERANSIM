@@ -2,6 +2,6 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import './index.css'
 import '@blueprintjs/core/lib/css/blueprint'
-import { Application } from './level0/Application'
+import { App } from './components/app'
 
-render(<Application />, document.getElementById('root'))
+render(<App />, document.getElementById('root'))

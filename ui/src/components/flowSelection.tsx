@@ -1,10 +1,7 @@
 import * as React from 'react'
 import { Button, MenuItem, Spinner } from '@blueprintjs/core'
-import { Console } from '../basis/Console'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
-import { MainContent } from '../level1/Main'
-import { BaseComponent } from '../basis/BaseComponent'
-import { Broadcast } from '../basis/Broadcast'
+import { konsol } from '../basis/konsol'
 
 export interface IFlow {
   title: string
@@ -14,10 +11,7 @@ let idCounter = 0
 
 const FlowSelect = Select.ofType<IFlow>()
 
-const itemRenderer: ItemRenderer<IFlow> = (
-  flow,
-  { handleClick, modifiers, query }
-) => {
+const itemRenderer: ItemRenderer<IFlow> = (flow, { handleClick, modifiers, query }) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
@@ -33,6 +27,13 @@ const itemRenderer: ItemRenderer<IFlow> = (
   )
 }
 
+export interface IMachineInfo {
+  machineName: string
+  starter: string
+  states: string[]
+}
+
+
 const itemFilter: ItemPredicate<IFlow> = (query, flow, _index, exactMatch) => {
   const normalizedTitle = flow.title.toLowerCase().trim()
   const normalizedQuery = query.toLowerCase().trim()
@@ -45,7 +46,9 @@ interface IFlowSelectorState {
   loaded: boolean
 }
 
-export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
+export class FlowSelection extends React.Component<any, IFlowSelectorState> {
+
+
   constructor(props: any) {
     super(props)
     this.state = { selected: null, items: [], loaded: false }
@@ -53,9 +56,9 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
 
   onSocketMessage(type: string, data: any) {
     if (type === 'allFlows') {
-      Console.log(
+      konsol.log(
         'flow names retrieved (total ' + data.length + ')',
-        'Response'
+        'Response',
       )
       const flowItems: IFlow[] = []
       for (let i = 0; i < data.length; i = i + 1) {
@@ -69,13 +72,13 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
         items: flowItems,
       })
     } else if (type === 'machineSetup') {
-      Broadcast.setMachineInfo(data)
-      Broadcast.setMainContent(MainContent.FLOW_ACTION)
+      //Broadcast.setMachineInfo(data)
+      //Broadcast.setMainContent(MainContent.FLOW_ACTION)
     }
   }
 
   public render() {
-    let content = <Spinner />
+    let content = <Spinner/>
 
     if (this.state.loaded) {
       content = (
@@ -83,7 +86,7 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results." />}
+            noResults={<MenuItem disabled={true} text="No results."/>}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
             itemRenderer={itemRenderer}
           >
@@ -117,8 +120,8 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
       flowTitle = this.state.selected.title
     }
 
-    Console.log('flow selected: ' + flowTitle)
-    Broadcast.sendSocketMessage('setupFlow', { arg0: flowTitle })
+    konsol.log('flow selected: ' + flowTitle)
+    //Broadcast.sendSocketMessage('setupFlow', { arg0: flowTitle })
   }
 
   private onItemSelect(item: IFlow) {
@@ -126,6 +129,6 @@ export class FlowSelection extends BaseComponent<any, IFlowSelectorState> {
   }
 
   public onSocketConnected(e: Event) {
-    Broadcast.sendSocketMessage('getAllFlows', {})
+    //Broadcast.sendSocketMessage('getAllFlows', {})
   }
 }

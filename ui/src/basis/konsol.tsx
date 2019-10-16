@@ -1,6 +1,7 @@
-import { ConsoleUI } from '../level1/ConsoleUI'
+import { ConsoleUI } from '../components/consoleUI'
 
-export class Console {
+export class konsol {
+
   public static log(text: string, tag: string | null = null) {
     const entry =
       '[' +
@@ -9,7 +10,7 @@ export class Console {
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
-    const instance: ConsoleUI = ConsoleUI.instance
+    const instance = ConsoleUI.instance
     if (instance != null) {
       instance.appendText(entry, 'log-text-normal')
     } else {
@@ -26,7 +27,7 @@ export class Console {
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
-    const instance: ConsoleUI = ConsoleUI.instance
+    const instance = ConsoleUI.instance
     if (instance != null) {
       instance.appendText(entry, 'log-text-success')
     } else {
@@ -43,7 +44,7 @@ export class Console {
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
-    const instance: ConsoleUI = ConsoleUI.instance
+    const instance = ConsoleUI.instance
     if (instance != null) {
       instance.appendText(entry, 'log-text-error')
     } else {
@@ -60,7 +61,7 @@ export class Console {
       (tag == null || tag.length === 0 ? '' : tag + ' | ') +
       text
 
-    const instance: ConsoleUI = ConsoleUI.instance
+    const instance = ConsoleUI.instance
     if (instance != null) {
       instance.appendText(entry, 'log-text-warning')
     } else {
@@ -70,7 +71,7 @@ export class Console {
   }
 
   public static clear() {
-    ConsoleUI.instance.setState({ logEntries: [] })
+    ConsoleUI.instance.clear()
   }
 
   private static getDateTime(): string {
