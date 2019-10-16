@@ -1,7 +1,6 @@
 import { ConsoleUI } from '../components/consoleUI'
 
 export class konsol {
-
   public static log(text: string, tag: string | null = null) {
     const entry =
       '[' +

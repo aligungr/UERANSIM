@@ -4,7 +4,7 @@ import { konsol } from '../basis/konsol'
 import { FlowSelection } from './flowSelection'
 
 export interface MainState {
-  mainInfo: MainInfo,
+  mainInfo: MainInfo
 }
 
 export class Main extends React.Component<any, MainState> {
@@ -57,15 +57,9 @@ export class Main extends React.Component<any, MainState> {
 
   private renderWithContext(mainInfo: MainInfo) {
     if (mainInfo.mainContent === MainContent.FLOW_SELECTION) {
-      return (
-        <FlowSelection/>
-      )
+      return <FlowSelection />
     } else {
-      return (
-        <div>
-          flow action
-        </div>
-      )
+      return <div>flow action</div>
     }
   }
 
@@ -106,4 +100,3 @@ export class Main extends React.Component<any, MainState> {
     this.webSocket = ws
   }
 }
-

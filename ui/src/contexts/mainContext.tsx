@@ -7,8 +7,8 @@ export enum MainContent {
 
 export class MainInfo {
   mainContent: MainContent = MainContent.FLOW_SELECTION
-  setContent: (mainContent: MainContent) => void = () => { }
-  sendSocketMessage: (message: string) => void = () => { }
+  setContent: (mainContent: MainContent) => void = () => {}
+  sendSocketMessage: (message: string) => void = () => {}
 }
 
 export const MainContext = React.createContext(new MainInfo())

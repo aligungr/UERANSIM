@@ -3,7 +3,7 @@ import { ConsoleInfo } from './consoleContext'
 
 export class ThemeInfo {
   isDark: boolean = false
-  toggleTheme: () => void = () => { }
+  toggleTheme: () => void = () => {}
 }
 
 export const ThemeContext = React.createContext(new ThemeInfo())

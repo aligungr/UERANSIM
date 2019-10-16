@@ -11,7 +11,10 @@ let idCounter = 0
 
 const FlowSelect = Select.ofType<IFlow>()
 
-const itemRenderer: ItemRenderer<IFlow> = (flow, { handleClick, modifiers, query }) => {
+const itemRenderer: ItemRenderer<IFlow> = (
+  flow,
+  { handleClick, modifiers, query }
+) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
@@ -33,7 +36,6 @@ export interface IMachineInfo {
   states: string[]
 }
 
-
 const itemFilter: ItemPredicate<IFlow> = (query, flow, _index, exactMatch) => {
   const normalizedTitle = flow.title.toLowerCase().trim()
   const normalizedQuery = query.toLowerCase().trim()
@@ -47,8 +49,6 @@ interface IFlowSelectorState {
 }
 
 export class FlowSelection extends React.Component<any, IFlowSelectorState> {
-
-
   constructor(props: any) {
     super(props)
     this.state = { selected: null, items: [], loaded: false }
@@ -56,10 +56,7 @@ export class FlowSelection extends React.Component<any, IFlowSelectorState> {
 
   onSocketMessage(type: string, data: any) {
     if (type === 'allFlows') {
-      konsol.log(
-        'flow names retrieved (total ' + data.length + ')',
-        'Response',
-      )
+      konsol.log('flow names retrieved (total ' + data.length + ')', 'Response')
       const flowItems: IFlow[] = []
       for (let i = 0; i < data.length; i = i + 1) {
         flowItems.push({
@@ -78,7 +75,7 @@ export class FlowSelection extends React.Component<any, IFlowSelectorState> {
   }
 
   public render() {
-    let content = <Spinner/>
+    let content = <Spinner />
 
     if (this.state.loaded) {
       content = (
@@ -86,7 +83,7 @@ export class FlowSelection extends React.Component<any, IFlowSelectorState> {
           <FlowSelect
             items={this.state.items}
             itemPredicate={itemFilter}
-            noResults={<MenuItem disabled={true} text="No results."/>}
+            noResults={<MenuItem disabled={true} text="No results." />}
             onItemSelect={(e: IFlow) => this.onItemSelect(e)}
             itemRenderer={itemRenderer}
           >

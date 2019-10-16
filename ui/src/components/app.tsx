@@ -7,9 +7,9 @@ import { Constants } from '../basis/constants'
 import { Content } from './content'
 
 export interface AppState {
-  appInfo: AppInfo,
-  consoleInfo: ConsoleInfo,
-  themeInfo: ThemeInfo,
+  appInfo: AppInfo
+  consoleInfo: ConsoleInfo
+  themeInfo: ThemeInfo
 }
 
 export class App extends React.Component<any, AppState> {
@@ -28,14 +28,14 @@ export class App extends React.Component<any, AppState> {
         },
         toggleAutoScroll: () => {
           this.toggleConsoleAutoScroll()
-        }
+        },
       },
       themeInfo: {
         isDark: true,
         toggleTheme: () => {
           this.toggleTheme()
         },
-      }
+      },
     }
   }
 
@@ -66,7 +66,7 @@ export class App extends React.Component<any, AppState> {
         isOpen: !this.state.consoleInfo.isOpen,
         autoScroll: this.state.consoleInfo.autoScroll,
         toggleOpen: this.state.consoleInfo.toggleOpen,
-        toggleAutoScroll: this.state.consoleInfo.toggleAutoScroll
+        toggleAutoScroll: this.state.consoleInfo.toggleAutoScroll,
       },
     })
   }
@@ -77,7 +77,7 @@ export class App extends React.Component<any, AppState> {
         isOpen: this.state.consoleInfo.isOpen,
         autoScroll: !this.state.consoleInfo.autoScroll,
         toggleOpen: this.state.consoleInfo.toggleOpen,
-        toggleAutoScroll: this.state.consoleInfo.toggleAutoScroll
+        toggleAutoScroll: this.state.consoleInfo.toggleAutoScroll,
       },
     })
   }
@@ -89,7 +89,7 @@ export class App extends React.Component<any, AppState> {
       <AppContext.Provider value={this.state.appInfo}>
         <ThemeContext.Provider value={this.state.themeInfo}>
           <ConsoleContext.Provider value={this.state.consoleInfo}>
-            <Content/>
+            <Content />
           </ConsoleContext.Provider>
         </ThemeContext.Provider>
       </AppContext.Provider>

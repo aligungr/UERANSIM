@@ -6,9 +6,9 @@ import { ConsoleUI } from './consoleUI'
 export function Content() {
   return (
     <div>
-      <Navigation/>
-      <Main/>
-      <ConsoleUI/>
+      <Navigation />
+      <Main />
+      <ConsoleUI />
     </div>
   )
 }

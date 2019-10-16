@@ -1,4 +1,12 @@
-import { Alignment, AnchorButton, Navbar, NavbarDivider, NavbarGroup, NavbarHeading, Tooltip } from '@blueprintjs/core'
+import {
+  Alignment,
+  AnchorButton,
+  Navbar,
+  NavbarDivider,
+  NavbarGroup,
+  NavbarHeading,
+  Tooltip,
+} from '@blueprintjs/core'
 import * as React from 'react'
 import { AppInfo, AppContext } from '../contexts/appContext'
 import { ThemeInfo, ThemeContext } from '../contexts/themeContext'
@@ -11,7 +19,9 @@ export function Navigation(props: any) {
         <ThemeContext.Consumer>
           {(themeInfo: ThemeInfo) => (
             <ConsoleContext.Consumer>
-              {(consoleInfo: ConsoleInfo) => renderWithContext(appInfo, themeInfo, consoleInfo)}
+              {(consoleInfo: ConsoleInfo) =>
+                renderWithContext(appInfo, themeInfo, consoleInfo)
+              }
             </ConsoleContext.Consumer>
           )}
         </ThemeContext.Consumer>
@@ -20,12 +30,16 @@ export function Navigation(props: any) {
   )
 }
 
-function renderWithContext(appInfo: AppInfo, themeInfo: ThemeInfo, consoleInfo: ConsoleInfo) {
+function renderWithContext(
+  appInfo: AppInfo,
+  themeInfo: ThemeInfo,
+  consoleInfo: ConsoleInfo
+) {
   return (
     <Navbar>
       <NavbarGroup align={Alignment.LEFT}>
         <NavbarHeading>{appInfo.appName}</NavbarHeading>
-        <NavbarDivider/>
+        <NavbarDivider />
         <Tooltip content={`${consoleInfo.isOpen ? 'Hide' : 'Show'} Console`}>
           <AnchorButton
             minimal={true}
@@ -36,14 +50,16 @@ function renderWithContext(appInfo: AppInfo, themeInfo: ThemeInfo, consoleInfo: 
             // active={this.state.isConsoleOpen}
           />
         </Tooltip>
-        <Tooltip content={`Switch to ${themeInfo.isDark ? 'Light' : 'Dark'} Theme`}>
+        <Tooltip
+          content={`Switch to ${themeInfo.isDark ? 'Light' : 'Dark'} Theme`}
+        >
           <AnchorButton
             minimal={true}
             rightIcon={themeInfo.isDark ? 'flash' : 'moon'}
-            onClick={() => themeInfo.toggleTheme()}/>
+            onClick={() => themeInfo.toggleTheme()}
+          />
         </Tooltip>
       </NavbarGroup>
     </Navbar>
   )
 }
-
