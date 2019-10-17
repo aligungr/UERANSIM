@@ -29,7 +29,7 @@ export function MachineSelection() {
         }
         setLoaded(true)
         setSelected(null)
-        setItems(flowItems)
+        //setItems(flowItems)todo: sonsuz döngü oluyo
       } else if (type === 'machineSetup') {
         // Broadcast.setMachineInfo(data)
         // Broadcast.setMainContent(MainContent.FLOW_ACTION)
