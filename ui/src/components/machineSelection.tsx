@@ -12,6 +12,9 @@ export function MachineSelection() {
   const [items, setItems] = React.useState([] as IFlow[])
 
   const socketListener: ISocketListener = {
+    onOpen: () => {
+      socketStore.sendMessage('getAllFlows', {})
+    },
     onMessage: (type, data) => {
       /*if (type === 'allFlows') {
         logger.log('flow names retrieved (total ' + data.length + ')', 'Response')
@@ -28,9 +31,6 @@ export function MachineSelection() {
         // Broadcast.setMachineInfo(data)
         // Broadcast.setMainContent(MainContent.FLOW_ACTION)
       }*/
-    },
-    onOpen: () => {
-      socketStore.sendMessage('getAllFlows', {})
     },
     onClose: () => {},
     onError: () => {},
