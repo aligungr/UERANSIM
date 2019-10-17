@@ -105,7 +105,7 @@ export class SocketClient {
   public static registerListener(
     listenerKey: string,
     socketListener: ISocketListener,
-    receiveOldEvents: boolean = true,
+    receiveOldEvents: boolean = true
   ) {
     if (this.listeners.has(listenerKey)) return
     this.listeners.set(listenerKey, socketListener)
@@ -143,7 +143,7 @@ export class SocketClient {
       JSON.stringify({
         cmd: cmd,
         args: args,
-      }),
+      })
     )
   }
 }

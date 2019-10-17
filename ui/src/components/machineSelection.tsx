@@ -5,7 +5,7 @@ import { logger } from './logger'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 
 export function MachineSelection() {
-  console.log("machine selection is rendering")
+  console.log('machine selection is rendering')
 
   const [isLoaded, setLoaded] = React.useState(false)
   const [selected, setSelected] = React.useState(null as IFlow | null)
@@ -17,7 +17,10 @@ export function MachineSelection() {
     },
     onMessage: (type, data) => {
       if (type === 'allFlows') {
-        logger.log('flow names retrieved (total ' + data.length + ')', 'Response')
+        logger.log(
+          'flow names retrieved (total ' + data.length + ')',
+          'Response'
+        )
         const flowItems: IFlow[] = []
         for (let i = 0; i < data.length; i = i + 1) {
           flowItems.push({

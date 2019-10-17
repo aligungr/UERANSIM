@@ -4,7 +4,7 @@ import { logger } from './logger'
 import { MachineSelection } from './machineSelection'
 import { SocketClient } from '../basis/socketClient'
 
-export function Content() {
+export function MainContent() {
   const contentStore = useContentStore()
 
   React.useEffect(() => {
