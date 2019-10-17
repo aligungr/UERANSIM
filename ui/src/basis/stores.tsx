@@ -18,11 +18,12 @@ function updateBodyForTheme(isDark: boolean) {
 
 export const [useThemeStore] = create(set => ({
   isDark: false,
-  toggleTheme: () => set(state => {
-    const isDark = !state.isDark
-    updateBodyForTheme(isDark)
-    return { isDark: isDark }
-  }),
+  toggleTheme: () =>
+    set(state => {
+      const isDark = !state.isDark
+      updateBodyForTheme(isDark)
+      return { isDark: isDark }
+    }),
 }))
 
 /////////////////////////////// APP STORE ///////////////////////////////
@@ -51,52 +52,55 @@ export const [useConsoleStore] = create(set => ({
   isOpen: true,
   autoScroll: true,
   logs: [],
-  toggleOpen: () => set(state => ({
-    isOpen: !state.isOpen,
-  })),
-  toggleAutoScroll: () => set(state => {
-    const autoScroll = !state.autoScroll
-    if (autoScroll) scrollConsoleToBottom()
-    return { autoScroll: autoScroll }
-  }),
-  clear: () => set(state => ({
-    logs: [],
-  })),
-  appendText: (text: string, className: string) => set(state => {
-    consoleLogId++
-    const entry = {
-      className,
-      text,
-      entryId: consoleLogId,
-    }
+  toggleOpen: () =>
+    set(state => ({
+      isOpen: !state.isOpen,
+    })),
+  toggleAutoScroll: () =>
+    set(state => {
+      const autoScroll = !state.autoScroll
+      if (autoScroll) scrollConsoleToBottom()
+      return { autoScroll: autoScroll }
+    }),
+  clear: () =>
+    set(state => ({
+      logs: [],
+    })),
+  appendText: (text: string, className: string) =>
+    set(state => {
+      consoleLogId++
+      const entry = {
+        className,
+        text,
+        entryId: consoleLogId,
+      }
 
-    const entries = state.logs
-    entries.push(entry)
-    if (state.autoScroll) {
-      scrollConsoleToBottom()
-    }
-    return { logs: entries }
-  }),
+      const entries = state.logs
+      entries.push(entry)
+      if (state.autoScroll) {
+        scrollConsoleToBottom()
+      }
+      return { logs: entries }
+    }),
 }))
-
 
 /////////////////////////////// CONTENT STORE ///////////////////////////////
 
 export enum ContentType {
   FLOW_SELECTION = 1,
-  FLOW_ACTION = 2
+  FLOW_ACTION = 2,
 }
 
 export const [useContentStore] = create(set => ({
   contentType: ContentType.FLOW_SELECTION,
-  setContent: (contentType: ContentType) => set(state => ({
-    contentType: contentType,
-  })),
+  setContent: (contentType: ContentType) =>
+    set(state => ({
+      contentType: contentType,
+    })),
 }))
-
 
 /////////////////////////////// CONTENT STORE ///////////////////////////////
 
 export const [useSocketStore] = create(set => ({
-  socketClient: new SocketClient()
+  socketClient: new SocketClient(),
 }))

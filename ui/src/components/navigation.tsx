@@ -19,7 +19,7 @@ export function Navigation(props: any) {
     <Navbar>
       <NavbarGroup align={Alignment.LEFT}>
         <NavbarHeading>{appStore.appName}</NavbarHeading>
-        <NavbarDivider/>
+        <NavbarDivider />
         <Tooltip content={`${consoleStore.isOpen ? 'Hide' : 'Show'} Console`}>
           <AnchorButton
             minimal={true}

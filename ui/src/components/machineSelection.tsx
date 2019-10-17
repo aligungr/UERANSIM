@@ -32,21 +32,19 @@ export function MachineSelection() {
     onOpen: () => {
       socketStore.sendMessage('getAllFlows', {})
     },
-    onClose: () => {
-    },
-    onError: () => {
-    },
+    onClose: () => {},
+    onError: () => {},
   }
 
   React.useEffect(() => {
-    socketStore.registerListener("machineSelection", socketListener, false)
+    socketStore.registerListener('machineSelection', socketListener, false)
     return () => {
-      socketStore.unregisterListener("machineSelection")
+      socketStore.unregisterListener('machineSelection')
     }
   })
 
   if (!isLoaded) {
-    return <Spinner/>
+    return <Spinner />
   }
 
   return (
@@ -54,18 +52,14 @@ export function MachineSelection() {
       <FlowSelect
         items={items}
         itemPredicate={itemFilter}
-        noResults={<MenuItem disabled={true} text="No results."/>}
+        noResults={<MenuItem disabled={true} text="No results." />}
         onItemSelect={(e: IFlow) => {
           setSelected(e)
         }}
         itemRenderer={itemRenderer}
       >
         <Button
-          text={
-            selected == null
-              ? 'Select a Flow'
-              : selected.title
-          }
+          text={selected == null ? 'Select a Flow' : selected.title}
           icon="film"
           rightIcon="caret-down"
         />
@@ -75,7 +69,7 @@ export function MachineSelection() {
         disabled={selected == null}
         text={'Select Flow'}
         onClick={() => {
-          const flowTitle = selected != null ? selected.title : ""
+          const flowTitle = selected != null ? selected.title : ''
           logger.success(`flow selected: ${flowTitle}`)
         }}
         intent={'primary'}
@@ -84,11 +78,9 @@ export function MachineSelection() {
   )
 }
 
-
 export interface IFlow {
   title: string
 }
-
 
 let idCounter = 1
 const FlowSelect = Select.ofType<IFlow>()

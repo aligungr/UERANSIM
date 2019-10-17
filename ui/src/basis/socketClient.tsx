@@ -1,14 +1,14 @@
 import { logger } from '../components/logger'
 
 export interface ISocketListener {
-  onOpen: (event: Event) => void,
+  onOpen: (event: Event) => void
   onClose: (event: CloseEvent) => void
   onError: (event: Event) => void
   onMessage: (type: string, data: any) => void
 }
 
 interface EventEntry {
-  eventType: string,
+  eventType: string
   event: any
 }
 
@@ -39,7 +39,7 @@ export class SocketClient {
     ws.onmessage = e => {
       this.onMessage(e)
     }
-    this.ws = ws;
+    this.ws = ws
   }
 
   private onOpen(e: Event) {
@@ -106,7 +106,11 @@ export class SocketClient {
     })
   }
 
-  public registerListener(listenerKey: string, socketListener: ISocketListener, receiveOldEvents: boolean = true) {
+  public registerListener(
+    listenerKey: string,
+    socketListener: ISocketListener,
+    receiveOldEvents: boolean = true
+  ) {
     if (this.listeners.has(listenerKey)) return
     this.listeners.set(listenerKey, socketListener)
 
@@ -139,10 +143,11 @@ export class SocketClient {
       logger.error('webSocket is not ready')
       return
     }
-    this.ws.send(JSON.stringify({
-      cmd: cmd,
-      args: args,
-    }))
+    this.ws.send(
+      JSON.stringify({
+        cmd: cmd,
+        args: args,
+      })
+    )
   }
 }
-

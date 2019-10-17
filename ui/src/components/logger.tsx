@@ -1,20 +1,43 @@
 import * as React from 'react'
-import { Button, ButtonGroup, Collapse, Divider, Pre, Tooltip } from '@blueprintjs/core'
-import { ConsoleLogEntry, useConsoleStore, useThemeStore } from '../basis/stores'
+import {
+  Button,
+  ButtonGroup,
+  Collapse,
+  Divider,
+  Pre,
+  Tooltip,
+} from '@blueprintjs/core'
+import {
+  ConsoleLogEntry,
+  useConsoleStore,
+  useThemeStore,
+} from '../basis/stores'
 import { Constants } from '../basis/constants'
 
 export let logger = {
-  appendText: (text: string, className: string) => { notInitYet() },
-  clear: () => { notInitYet() },
-  log: (text: string, tag: string | null = null) => { notInitYet() },
-  error: (text: string, tag: string | null = null) => { notInitYet() },
-  success: (text: string, tag: string | null = null) => { notInitYet() },
-  warning: (text: string, tag: string | null = null) => { notInitYet() },
+  appendText: (text: string, className: string) => {
+    notInitYet()
+  },
+  clear: () => {
+    notInitYet()
+  },
+  log: (text: string, tag: string | null = null) => {
+    notInitYet()
+  },
+  error: (text: string, tag: string | null = null) => {
+    notInitYet()
+  },
+  success: (text: string, tag: string | null = null) => {
+    notInitYet()
+  },
+  warning: (text: string, tag: string | null = null) => {
+    notInitYet()
+  },
 }
 
 function notInitYet() {
-  alert("Error: logger is not ready")
-  document.documentElement.innerText = "Error: logger is not ready"
+  alert('Error: logger is not ready')
+  document.documentElement.innerText = 'Error: logger is not ready'
 }
 
 export function Logger() {
@@ -56,7 +79,10 @@ export function Logger() {
           <div style={{ width: '36px' }}>
             <ButtonGroup minimal={false} vertical={true}>
               <Tooltip content={'Clear Console'}>
-                <Button icon="cross" onClick={(e: any) => consoleStore.clear()}/>
+                <Button
+                  icon="cross"
+                  onClick={(e: any) => consoleStore.clear()}
+                />
               </Tooltip>
               <Tooltip
                 content={`${
@@ -71,7 +97,7 @@ export function Logger() {
               </Tooltip>
             </ButtonGroup>
           </div>
-          <Divider/>
+          <Divider />
           <div
             id={'bp-console-content'}
             style={{
@@ -95,7 +121,7 @@ export function Logger() {
                 </div>
               )
             })}
-            <br/>
+            <br />
           </div>
         </Pre>
       </Collapse>
@@ -157,9 +183,11 @@ function getDateTime() {
 }
 
 function makeLogText(text: string, tag: string | null = null) {
-  return '[' +
+  return (
+    '[' +
     getDateTime() +
     '] ' +
     (tag == null || tag.length === 0 ? '' : tag + ' | ') +
     text
+  )
 }

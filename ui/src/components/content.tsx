@@ -10,20 +10,16 @@ export function Content() {
 
   React.useEffect(() => {
     socketStore.socketClient.initialize()
-    return () => { }
+    return () => {}
   })
 
   let content = <p>no-content</p>
 
   if (contentStore.contentType === ContentType.FLOW_SELECTION) {
-    content = <MachineSelection/>
+    content = <MachineSelection />
   }
   if (contentStore.contentType === ContentType.FLOW_ACTION) {
     content = <div>FLOW_ACTION</div>
   }
-  return (
-    <div style={{ margin: '8px' }}>
-      {content}
-    </div>
-  )
+  return <div style={{ margin: '8px' }}>{content}</div>
 }

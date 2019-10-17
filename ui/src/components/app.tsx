@@ -7,7 +7,7 @@ export function App() {
   return (
     <div>
       <Navigation />
-      <Content/>
+      <Content />
       <Logger />
     </div>
   )
