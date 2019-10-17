@@ -98,9 +98,3 @@ export const [useContentStore] = create(set => ({
       contentType: contentType,
     })),
 }))
-
-/////////////////////////////// CONTENT STORE ///////////////////////////////
-
-export const [useSocketStore] = create(set => ({
-  socketClient: new SocketClient(),
-}))

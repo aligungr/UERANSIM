@@ -1,15 +1,14 @@
 import * as React from 'react'
-import { ContentType, useContentStore, useSocketStore } from '../basis/stores'
+import { ContentType, useContentStore } from '../basis/stores'
 import { logger } from './logger'
 import { MachineSelection } from './machineSelection'
 import { SocketClient } from '../basis/socketClient'
 
 export function Content() {
   const contentStore = useContentStore()
-  const socketStore = useSocketStore()
 
   React.useEffect(() => {
-    socketStore.socketClient.initialize()
+    SocketClient.initialize()
     return () => {}
   })
 

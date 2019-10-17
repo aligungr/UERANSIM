@@ -13,19 +13,15 @@ interface EventEntry {
 }
 
 export class SocketClient {
-  private ws: WebSocket | undefined
-  private listeners = new Map<string, ISocketListener>()
-  private events: EventEntry[]
-  private initialized: boolean
+  private static ws: WebSocket | undefined
+  private static listeners = new Map<string, ISocketListener>()
+  private static events: EventEntry[] = []
 
-  constructor() {
-    this.events = []
-    this.initialized = false
-  }
+  public static initialize() {
+    if (this.ws != null) {
+      return
+    }
 
-  public initialize() {
-    if (this.initialized) return
-    this.initialized = true
     const ws = new WebSocket('ws://localhost:5002')
     ws.onopen = e => {
       this.onOpen(e)
@@ -42,7 +38,7 @@ export class SocketClient {
     this.ws = ws
   }
 
-  private onOpen(e: Event) {
+  private static onOpen(e: Event) {
     logger.success('connection established', 'WebSocket')
     this.events.push({
       eventType: 'onOpen',
@@ -53,7 +49,7 @@ export class SocketClient {
     })
   }
 
-  private onClose(e: CloseEvent) {
+  private static onClose(e: CloseEvent) {
     logger.success('connection closed', 'WebSocket')
     this.events.push({
       eventType: 'onClose',
@@ -64,7 +60,7 @@ export class SocketClient {
     })
   }
 
-  private onError(e: Event) {
+  private static onError(e: Event) {
     logger.error('error happened', 'WebSocket')
     this.events.push({
       eventType: 'onError',
@@ -75,7 +71,7 @@ export class SocketClient {
     })
   }
 
-  private onMessage(e: MessageEvent) {
+  private static onMessage(e: MessageEvent) {
     if (e.data == null) return
     if (!(typeof e.data === 'string' || e.data instanceof String)) return
 
@@ -106,10 +102,10 @@ export class SocketClient {
     })
   }
 
-  public registerListener(
+  public static registerListener(
     listenerKey: string,
     socketListener: ISocketListener,
-    receiveOldEvents: boolean = true
+    receiveOldEvents: boolean = true,
   ) {
     if (this.listeners.has(listenerKey)) return
     this.listeners.set(listenerKey, socketListener)
@@ -134,11 +130,11 @@ export class SocketClient {
     }
   }
 
-  public unregisterListener(listenerKey: string) {
+  public static unregisterListener(listenerKey: string) {
     this.listeners.delete(listenerKey)
   }
 
-  public sendMessage(cmd: string, args: object) {
+  public static sendMessage(cmd: string, args: object) {
     if (this.ws == null) {
       logger.error('webSocket is not ready')
       return
@@ -147,7 +143,7 @@ export class SocketClient {
       JSON.stringify({
         cmd: cmd,
         args: args,
-      })
+      }),
     )
   }
 }

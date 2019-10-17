@@ -1,22 +1,22 @@
 import * as React from 'react'
 import { Button, MenuItem, Spinner } from '@blueprintjs/core'
 import { ISocketListener, SocketClient } from '../basis/socketClient'
-import { useSocketStore } from '../basis/stores'
 import { logger } from './logger'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 
 export function MachineSelection() {
-  const socketStore = useSocketStore(state => state.socketClient)
+  console.log("machine selection is rendering")
+
   const [isLoaded, setLoaded] = React.useState(false)
   const [selected, setSelected] = React.useState(null as IFlow | null)
   const [items, setItems] = React.useState([] as IFlow[])
 
   const socketListener: ISocketListener = {
     onOpen: () => {
-      socketStore.sendMessage('getAllFlows', {})
+      SocketClient.sendMessage('getAllFlows', {})
     },
     onMessage: (type, data) => {
-      /*if (type === 'allFlows') {
+      if (type === 'allFlows') {
         logger.log('flow names retrieved (total ' + data.length + ')', 'Response')
         const flowItems: IFlow[] = []
         for (let i = 0; i < data.length; i = i + 1) {
@@ -30,16 +30,16 @@ export function MachineSelection() {
       } else if (type === 'machineSetup') {
         // Broadcast.setMachineInfo(data)
         // Broadcast.setMainContent(MainContent.FLOW_ACTION)
-      }*/
+      }
     },
     onClose: () => {},
     onError: () => {},
   }
 
   React.useEffect(() => {
-    socketStore.registerListener('machineSelection', socketListener, false)
+    SocketClient.registerListener('machineSelection', socketListener, false)
     return () => {
-      socketStore.unregisterListener('machineSelection')
+      SocketClient.unregisterListener('machineSelection')
     }
   })
 
