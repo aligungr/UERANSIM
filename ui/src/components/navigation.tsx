@@ -8,55 +8,33 @@ import {
   Tooltip,
 } from '@blueprintjs/core'
 import * as React from 'react'
-import { AppInfo, AppContext } from '../contexts/appContext'
-import { ThemeInfo, ThemeContext } from '../contexts/themeContext'
-import { ConsoleInfo, ConsoleContext } from '../contexts/consoleContext'
+import { useThemeStore, useAppStore, useConsoleStore } from '../basis/stores'
 
 export function Navigation(props: any) {
-  return (
-    <AppContext.Consumer>
-      {(appInfo: AppInfo) => (
-        <ThemeContext.Consumer>
-          {(themeInfo: ThemeInfo) => (
-            <ConsoleContext.Consumer>
-              {(consoleInfo: ConsoleInfo) =>
-                renderWithContext(appInfo, themeInfo, consoleInfo)
-              }
-            </ConsoleContext.Consumer>
-          )}
-        </ThemeContext.Consumer>
-      )}
-    </AppContext.Consumer>
-  )
-}
+  const themeStore = useThemeStore()
+  const appStore = useAppStore()
+  const consoleStore = useConsoleStore()
 
-function renderWithContext(
-  appInfo: AppInfo,
-  themeInfo: ThemeInfo,
-  consoleInfo: ConsoleInfo
-) {
   return (
     <Navbar>
       <NavbarGroup align={Alignment.LEFT}>
-        <NavbarHeading>{appInfo.appName}</NavbarHeading>
-        <NavbarDivider />
-        <Tooltip content={`${consoleInfo.isOpen ? 'Hide' : 'Show'} Console`}>
+        <NavbarHeading>{appStore.appName}</NavbarHeading>
+        <NavbarDivider/>
+        <Tooltip content={`${consoleStore.isOpen ? 'Hide' : 'Show'} Console`}>
           <AnchorButton
             minimal={true}
             rightIcon="console"
-            onClick={() => {
-              consoleInfo.toggleOpen()
-            }}
-            // active={this.state.isConsoleOpen}
+            onClick={() => consoleStore.toggleOpen()}
+            active={consoleStore.isOpen}
           />
         </Tooltip>
         <Tooltip
-          content={`Switch to ${themeInfo.isDark ? 'Light' : 'Dark'} Theme`}
+          content={`Switch to ${themeStore.isDark ? 'Light' : 'Dark'} Theme`}
         >
           <AnchorButton
             minimal={true}
-            rightIcon={themeInfo.isDark ? 'flash' : 'moon'}
-            onClick={() => themeInfo.toggleTheme()}
+            rightIcon={themeStore.isDark ? 'flash' : 'moon'}
+            onClick={() => themeStore.toggleTheme()}
           />
         </Tooltip>
       </NavbarGroup>
