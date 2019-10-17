@@ -44,9 +44,11 @@ export class SocketClient {
       eventType: 'onOpen',
       event: e,
     })
-    this.listeners.forEach(value => {
-      value.onOpen(e)
-    })
+    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+      const key = keys.next().value
+      const value = this.listeners.get(key)
+      if (value != null) value.onOpen(e)
+    }
   }
 
   private static onClose(e: CloseEvent) {
@@ -55,9 +57,11 @@ export class SocketClient {
       eventType: 'onClose',
       event: e,
     })
-    this.listeners.forEach(value => {
-      value.onClose(e)
-    })
+    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+      const key = keys.next().value
+      const value = this.listeners.get(key)
+      if (value != null) value.onClose(e)
+    }
   }
 
   private static onError(e: Event) {
@@ -66,9 +70,11 @@ export class SocketClient {
       eventType: 'onError',
       event: e,
     })
-    this.listeners.forEach(value => {
-      value.onError(e)
-    })
+    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+      const key = keys.next().value
+      const value = this.listeners.get(key)
+      if (value != null) value.onError(e)
+    }
   }
 
   private static onMessage(e: MessageEvent) {
@@ -97,9 +103,11 @@ export class SocketClient {
       },
     })
 
-    this.listeners.forEach(value => {
-      value.onMessage(type, data)
-    })
+    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+      const key = keys.next().value
+      const value = this.listeners.get(key)
+      if (value != null) value.onMessage(type, data)
+    }
   }
 
   public static registerListener(

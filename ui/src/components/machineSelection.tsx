@@ -5,8 +5,6 @@ import { logger } from './logger'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 
 export function MachineSelection() {
-  console.log('machine selection is rendering')
-
   const [isLoaded, setLoaded] = React.useState(false)
   const [selected, setSelected] = React.useState(null as IFlow | null)
   const [items, setItems] = React.useState([] as IFlow[])
@@ -29,7 +27,7 @@ export function MachineSelection() {
         }
         setLoaded(true)
         setSelected(null)
-        //setItems(flowItems)todo: sonsuz döngü oluyo
+        setItems(flowItems)
       } else if (type === 'machineSetup') {
         // Broadcast.setMachineInfo(data)
         // Broadcast.setMainContent(MainContent.FLOW_ACTION)
