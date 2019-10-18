@@ -85,7 +85,7 @@ def dump_all_schemas(root_folder):
             os.makedirs(root_folder + "/" + dirName)
 
         with open(root_folder + "/" + dirName + "/" + fileName + '.json', 'w') as f:
-            json.dump(compiled, f)
+            json.dump(compiled, f, indent=2)
 
         print(x, "DUMPED")
 
