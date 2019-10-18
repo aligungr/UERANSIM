@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { Classes } from '@blueprintjs/core'
 import { Constants } from './constants'
-import { SocketClient } from './socketClient'
 
 /////////////////////////////// THEME STORE ///////////////////////////////
 
