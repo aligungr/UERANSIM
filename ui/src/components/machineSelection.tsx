@@ -6,8 +6,8 @@ import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 
 export function MachineSelection() {
   const [isLoaded, setLoaded] = React.useState(false)
-  const [selected, setSelected] = React.useState(null as IFlow | null)
-  const [items, setItems] = React.useState([] as IFlow[])
+  const [selected, setSelected] = React.useState(null as string | null)
+  const [items, setItems] = React.useState([] as string[])
 
   const socketListener: ISocketListener = {
     onOpen: () => {
@@ -19,11 +19,9 @@ export function MachineSelection() {
           'flow names retrieved (total ' + data.length + ')',
           'Response',
         )
-        const flowItems: IFlow[] = []
+        const flowItems: string[] = []
         for (let i = 0; i < data.length; i = i + 1) {
-          flowItems.push({
-            title: data[i],
-          })
+          flowItems.push(data[i])
         }
         setLoaded(true)
         setSelected(null)
@@ -53,16 +51,17 @@ export function MachineSelection() {
   return (
     <>
       <FlowSelect
+        key={Math.random()}
         items={items}
         itemPredicate={itemFilter}
         noResults={<MenuItem disabled={true} text="No results."/>}
-        onItemSelect={(e: IFlow) => {
+        onItemSelect={(e: string) => {
           setSelected(e)
         }}
         itemRenderer={itemRenderer}
       >
         <Button
-          text={selected == null ? 'Select a Flow' : selected.title}
+          text={selected == null ? 'Select a Flow' : selected}
           icon="film"
           rightIcon="caret-down"
         />
@@ -72,7 +71,7 @@ export function MachineSelection() {
         disabled={selected == null}
         text={'Select Flow'}
         onClick={() => {
-          const flowTitle = selected != null ? selected.title : ''
+          const flowTitle = selected != null ? selected : ''
           logger.success(`flow selected: ${flowTitle}`)
         }}
         intent={'primary'}
@@ -81,14 +80,10 @@ export function MachineSelection() {
   )
 }
 
-export interface IFlow {
-  title: string
-}
-
 let idCounter = 1
-const FlowSelect = Select.ofType<IFlow>()
+const FlowSelect = Select.ofType<string>()
 
-const itemRenderer: ItemRenderer<IFlow> = (flow, { handleClick, modifiers, query }) => {
+const itemRenderer: ItemRenderer<string> = (flow, { handleClick, modifiers, query }) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
@@ -99,13 +94,13 @@ const itemRenderer: ItemRenderer<IFlow> = (flow, { handleClick, modifiers, query
       active={modifiers.active}
       disabled={modifiers.disabled}
       onClick={handleClick}
-      text={flow.title}
+      text={flow}
     />
   )
 }
 
-const itemFilter: ItemPredicate<IFlow> = (query, flow, _index, exactMatch) => {
-  const normalizedTitle = flow.title.toLowerCase().trim()
+const itemFilter: ItemPredicate<string> = (query, flow, _index, exactMatch) => {
+  const normalizedTitle = flow.toLowerCase().trim()
   const normalizedQuery = query.toLowerCase().trim()
   return normalizedTitle.includes(normalizedQuery)
 }
