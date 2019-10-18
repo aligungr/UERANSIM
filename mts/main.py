@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import asn2json
 import encoder
 import otn
@@ -50,6 +53,41 @@ def encode():
         return bad_request(str(e), "bad-value")
     try:
         res = encoder.aper_encode(asn_type, py_val)
-    except (ASN1Err, ASN1ObjErr, ASN1NotSuppErr, ASN1CodecErr, ASN1ASNEncodeErr, ASN1ASNDecodeErr, ASN1PEREncodeErr, ASN1PERDecodeErr) as e:
+    except (ASN1Err, ASN1ObjErr, ASN1NotSuppErr, ASN1CodecErr, ASN1ASNEncodeErr, ASN1ASNDecodeErr, ASN1PEREncodeErr,
+            ASN1PERDecodeErr) as e:
         return bad_request(str(e), "asn-error")
     return success(res)
+
+
+def dump_all_schemas(root_folder):
+    if root_folder.endswith("/"):
+        root_folder = root_folder[:-1]
+
+    # Preparing the directory
+    if not os.path.exists(root_folder):
+        os.makedirs(root_folder)
+    for root, dirs, files in os.walk('/path/to/folder'):
+        for f in files:
+            os.unlink(os.path.join(root, f))
+        for d in dirs:
+            shutil.rmtree(os.path.join(root, d))
+
+    # Dumping
+    for x in asn2json.get_all_schemas():
+        name = x.split(".")
+        asn_type = asn2json.get_type_by_name(name[0], name[1])
+        compiled = asn2json.compile_element(asn_type, None)
+
+        dirName = name[0]
+        fileName = name[1]
+
+        if not os.path.exists(root_folder + "/" + dirName):
+            os.makedirs(root_folder + "/" + dirName)
+
+        with open(root_folder + "/" + dirName + "/" + fileName + '.json', 'w') as f:
+            json.dump(compiled, f)
+
+        print(x, "DUMPED")
+
+# if __name__ == '__main__':
+#    dump_all_schemas("/home/ali/Desktop/asn2json")
