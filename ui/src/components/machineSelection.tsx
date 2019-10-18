@@ -17,7 +17,7 @@ export function MachineSelection() {
       if (type === 'allFlows') {
         logger.log(
           'flow names retrieved (total ' + data.length + ')',
-          'Response'
+          'Response',
         )
         const flowItems: IFlow[] = []
         for (let i = 0; i < data.length; i = i + 1) {
@@ -33,8 +33,10 @@ export function MachineSelection() {
         // Broadcast.setMainContent(MainContent.FLOW_ACTION)
       }
     },
-    onClose: () => {},
-    onError: () => {},
+    onClose: () => {
+    },
+    onError: () => {
+    },
   }
 
   React.useEffect(() => {
@@ -45,7 +47,7 @@ export function MachineSelection() {
   })
 
   if (!isLoaded) {
-    return <Spinner />
+    return <Spinner/>
   }
 
   return (
@@ -53,7 +55,7 @@ export function MachineSelection() {
       <FlowSelect
         items={items}
         itemPredicate={itemFilter}
-        noResults={<MenuItem disabled={true} text="No results." />}
+        noResults={<MenuItem disabled={true} text="No results."/>}
         onItemSelect={(e: IFlow) => {
           setSelected(e)
         }}
@@ -86,14 +88,11 @@ export interface IFlow {
 let idCounter = 1
 const FlowSelect = Select.ofType<IFlow>()
 
-const itemRenderer: ItemRenderer<IFlow> = (
-  flow,
-  { handleClick, modifiers, query }
-) => {
+const itemRenderer: ItemRenderer<IFlow> = (flow, { handleClick, modifiers, query }) => {
   if (!modifiers.matchesPredicate) {
     return null
   }
-  idCounter = idCounter + 1
+  idCounter++
   return (
     <MenuItem
       key={idCounter}

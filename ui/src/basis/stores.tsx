@@ -17,7 +17,7 @@ function updateBodyForTheme(isDark: boolean) {
 }
 
 export const [useThemeStore] = create(set => ({
-  isDark: false,
+  isDark: true,
   toggleTheme: () =>
     set(state => {
       const isDark = !state.isDark
