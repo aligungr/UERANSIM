@@ -5,7 +5,7 @@ import { logger } from './logger'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 import { ContentType, useContentStore, useFlowActionStore } from '../basis/stores'
 
-export function MachineSelection() {
+export function FlowSelection() {
   const [isLoaded, setLoaded] = React.useState(false)
   const [selected, setSelected] = React.useState(null as string | null)
   const [items, setItems] = React.useState([] as string[])
@@ -42,9 +42,9 @@ export function MachineSelection() {
   }
 
   React.useEffect(() => {
-    SocketClient.registerListener('machineSelection', socketListener, false)
+    SocketClient.registerListener('flowSelection', socketListener, false)
     return () => {
-      SocketClient.unregisterListener('machineSelection')
+      SocketClient.unregisterListener('flowSelection')
     }
   })
 

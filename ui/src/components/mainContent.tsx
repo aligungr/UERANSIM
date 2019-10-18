@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ContentType, useContentStore } from '../basis/stores'
 import { logger } from './logger'
-import { MachineSelection } from './machineSelection'
+import { FlowSelection } from "./flowSelection"
 import { SocketClient } from '../basis/socketClient'
 
 export function MainContent() {
@@ -15,7 +15,7 @@ export function MainContent() {
   let content = <p>no-content</p>
 
   if (contentStore.contentType === ContentType.FLOW_SELECTION) {
-    content = <MachineSelection />
+    content = <FlowSelection />
   }
   if (contentStore.contentType === ContentType.FLOW_ACTION) {
     content = <div>FLOW_ACTION</div>
