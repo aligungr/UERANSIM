@@ -98,3 +98,13 @@ export const [useContentStore] = create(set => ({
       contentType: contentType,
     })),
 }))
+
+/////////////////////////////// FLOW ACTION STORE ///////////////////////////////
+
+export const [useFlowActionStore] = create(set => ({
+  machineInfo: {} as any,
+  setMachineInfo: (machineInfo: any) =>
+    set(state => ({
+      machineInfo: machineInfo,
+    })),
+}))

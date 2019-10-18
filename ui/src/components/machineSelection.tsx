@@ -3,11 +3,15 @@ import { Button, MenuItem, Spinner } from '@blueprintjs/core'
 import { ISocketListener, SocketClient } from '../basis/socketClient'
 import { logger } from './logger'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
+import { ContentType, useContentStore, useFlowActionStore } from '../basis/stores'
 
 export function MachineSelection() {
   const [isLoaded, setLoaded] = React.useState(false)
   const [selected, setSelected] = React.useState(null as string | null)
   const [items, setItems] = React.useState([] as string[])
+  const [buttonEnabled, setButtonEnabled] = React.useState(true)
+  const contentStore = useContentStore()
+  const flowActionStore = useFlowActionStore()
 
   const socketListener: ISocketListener = {
     onOpen: () => {
@@ -27,8 +31,8 @@ export function MachineSelection() {
         setSelected(null)
         setItems(flowItems)
       } else if (type === 'machineSetup') {
-        // Broadcast.setMachineInfo(data)
-        // Broadcast.setMainContent(MainContent.FLOW_ACTION)
+        flowActionStore.setMachineInfo(data)
+        contentStore.setContent(ContentType.FLOW_ACTION)
       }
     },
     onClose: () => {
@@ -68,11 +72,13 @@ export function MachineSelection() {
       </FlowSelect>
       <Button
         style={{ marginLeft: '8px' }}
-        disabled={selected == null}
+        disabled={selected == null || !buttonEnabled}
         text={'Select Flow'}
         onClick={() => {
-          const flowTitle = selected != null ? selected : ''
-          logger.success(`flow selected: ${flowTitle}`)
+          const flowName = selected != null ? selected : ''
+          logger.success(`flow selected: ${flowName}`)
+          setButtonEnabled(false)
+          SocketClient.sendMessage('setupFlow', {arg0: flowName})
         }}
         intent={'primary'}
       />
