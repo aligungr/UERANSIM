@@ -19,11 +19,7 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettify"
-    }
-  },
+
   "engines": {
     "node": ">= 8.11.0",
     "npm": ">= 6.0.0"
