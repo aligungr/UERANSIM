@@ -5,19 +5,30 @@ import { MainContent } from './mainContent';
 import { useThemeStore } from '../basis/stores';
 import { useLogStore } from '../stores';
 import { LoggerV2 } from './loggerv2';
-import { Button, H5 } from '@blueprintjs/core';
+import { Button, H5, ButtonGroup } from '@blueprintjs/core';
+import { useApi } from '../hooks/useApi';
 
 export function App() {
 	const logStore = useLogStore();
-
+	const [ a, setA ] = React.useState(0);
+	const [ send, close ] = useApi('wss://echo.websocket.org');
+	React.useEffect(() => {
+		console.log('LENLEN mounint');
+		return () => console.log('Cleaing up shit');
+	}, []);
 	return (
 		<div>
 			{/* <Navigation /> */}
 			{/* <MainContent /> */}
-			<Button onClick={() => logStore.toggleOpen()} text="TOGGLE" />
-			<H5 onClick={() => logStore.getTaggedLogger('ASD').debug(Math.random().toFixed(3))}>
+			<ButtonGroup>
+				<Button onClick={() => logStore.toggleOpen()} text="TOGGLE" />
+				<Button onClick={() => close()} text="CLOSE" />
+			</ButtonGroup>
+			<H5 onClick={() => send('ASDAS')}>
 				{JSON.stringify(logStore.logs)}
+				{a}
 			</H5>
+
 			<LoggerV2 />
 			{/* <Logger /> */}
 		</div>
