@@ -59,7 +59,8 @@
     "express": "^4.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "ws": "^7.1.2"
+    "ws": "^7.1.2",
+    "zustand": "^2.1.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",

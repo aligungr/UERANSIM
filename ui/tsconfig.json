@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
-    "strict": true,
+    "strict": false,
     "jsx": "react",
     "rootDir": "./src",
     "incremental": true,
