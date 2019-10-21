@@ -8,20 +8,8 @@ export function App() {
 	const logStore = useLogStore();
 	return (
 		<div>
-			{ <Navigation /> }
-			{ <MainContent /> }
-			{
-				/*
-				<ButtonGroup>
-					<Button onClick={() => logStore.toggleOpen()} text="TOGGLE" />
-					<Button onClick={() => close()} text="CLOSE" />
-				</ButtonGroup>
-					<H5 onClick={() => send('ASDAS')}>
-				{JSON.stringify(logStore.logs)}
-				{a}
-			</H5>
-			*/
-			}
+			<Navigation />
+			<MainContent />
 			<LoggerV2 />
 			{/* <Logger /> */}
 		</div>
