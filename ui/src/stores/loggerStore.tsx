@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { LogEntry, LogType } from '../components/loggerv2'
 
-let consoleLogId = 1
+let _item_id = 1
 
 function scrollConsoleToBottom() {
   const element = document.getElementById('bp-console-content')
@@ -9,7 +9,7 @@ function scrollConsoleToBottom() {
   element.scrollTop = element.scrollHeight
 }
 
-export const [useConsoleStore] = create(set => ({
+export const [useLoggerStore] = create<LoggerStore>(set => ({
   isOpen: false,
   autoScroll: true,
   logs: [],
@@ -29,11 +29,10 @@ export const [useConsoleStore] = create(set => ({
     })),
   append: (text: string, logType: LogType) =>
     set(state => {
-      consoleLogId++
       const entry: LogEntry = {
         type: logType,
         entry: text,
-        id: consoleLogId,
+        id: _item_id++,
       }
 
       const entries = state.logs
@@ -44,3 +43,13 @@ export const [useConsoleStore] = create(set => ({
       return { logs: entries }
     }),
 }))
+
+export type LoggerStore = {
+  isOpen: boolean,
+  autoScroll: boolean,
+  logs: LogEntry[],
+  toggleOpen(): void,
+  toggleAutoScroll(): void,
+  clear(): void,
+  append(text: string, logType: LogType): void,
+}

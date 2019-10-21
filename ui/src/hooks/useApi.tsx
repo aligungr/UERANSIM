@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useConsoleStore } from '../stores/consoleStore'
+import { useConsoleStore } from '../stores/loggerStore'
 import { logger } from '../components/loggerv2'
 
 export type Event = {
