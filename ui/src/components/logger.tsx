@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { Collapse, Pre, ButtonGroup, Tooltip, Button, Divider, Callout, Icon, H6 } from '@blueprintjs/core'
 import { Constants } from '../basis/constants'
-import { useLoggerStore } from '../stores/loggerStore'
-import { useThemeStore } from '../stores/themeStore'
+import { useLoggerStore, useThemeStore } from '../stores'
 
 export enum LogType {
   INFO = 0,
@@ -32,6 +31,15 @@ type LoggerProps = {
 export const Logger: React.FC<LoggerProps> = (props) => {
   const loggerStore = useLoggerStore()
   const themeStore = useThemeStore()
+
+  const consoleRef = React.useRef<HTMLDivElement>()
+
+  React.useEffect(() => {
+    const current = consoleRef.current;
+    if (loggerStore.autoScroll && current != null) {
+      current.scrollTop = current.scrollHeight
+    }
+  }, [loggerStore.autoScroll, loggerStore.logs])
 
   const logger = {
     append: (text, logType) => {
@@ -120,7 +128,7 @@ export const Logger: React.FC<LoggerProps> = (props) => {
           </ButtonGroup>
           <Divider/>
           <div
-            id={'bp-console-content'}
+            ref={consoleRef}
             style={{
               overflow: 'auto',
               width: '100%',

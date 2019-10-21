@@ -3,8 +3,7 @@ import { Button, MenuItem, Spinner } from '@blueprintjs/core'
 import { ISocketListener, SocketClient } from '../basis/socketClient'
 import { logger } from './app'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
-import { ContentType, useContentStore } from '../stores/contentStore'
-import { useFlowActionStore } from '../stores/flowActionStore'
+import { ContentType, useContentStore, useFlowActionStore } from '../stores'
 
 export function FlowSelection() {
   const [isLoaded, setLoaded] = React.useState(false)

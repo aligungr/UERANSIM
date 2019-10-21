@@ -1,8 +1,6 @@
 import { Alignment, AnchorButton, Navbar, NavbarDivider, NavbarGroup, NavbarHeading, Tooltip } from '@blueprintjs/core';
 import * as React from 'react';
-import { useLoggerStore } from '../stores/loggerStore';
-import { useAppStore } from '../stores/appStore';
-import { useThemeStore } from '../stores/themeStore';
+import { useAppStore, useLoggerStore, useThemeStore } from '../stores';
 
 export function Navigation(props: any) {
 	const themeStore = useThemeStore();

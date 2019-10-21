@@ -1,12 +1,6 @@
 import { create } from 'zustand'
 import { LogEntry, LogType } from '../components/logger'
 
-function scrollConsoleToBottom() {
-  const element = document.getElementById('bp-console-content')
-  if (element == null) throw new Error()
-  element.scrollTop = element.scrollHeight
-}
-
 export const [useLoggerStore] = create<LoggerStore>(set => ({
   isOpen: false,
   autoScroll: true,
@@ -18,7 +12,6 @@ export const [useLoggerStore] = create<LoggerStore>(set => ({
   toggleAutoScroll: () =>
     set(state => {
       const autoScroll = !state.autoScroll
-      if (autoScroll) scrollConsoleToBottom()
       return { autoScroll: autoScroll }
     }),
   clear: () =>
@@ -34,9 +27,6 @@ export const [useLoggerStore] = create<LoggerStore>(set => ({
 
       const entries = state.logs
       entries.push(entry)
-      if (state.autoScroll) {
-        scrollConsoleToBottom()
-      }
       return { logs: entries }
     }),
 }))
