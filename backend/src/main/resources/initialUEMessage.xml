@@ -10,7 +10,15 @@
           <string name="criticality">reject</string>
           <tuple name="value">
             <string>RAN-UE-NGAP-ID</string>
-            <number>5</number>
+            <number>1</number>
+          </tuple>
+        </object>
+        <object>
+          <number name="id">38</number>
+          <string name="criticality">reject</string>
+          <tuple name="value">
+            <string>NAS-PDU</string>
+            <base16>7e004171000d010011000000000000000000f12e0480808080</base16>
           </tuple>
         </object>
         <object>
