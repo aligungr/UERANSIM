@@ -9,7 +9,6 @@ export function App() {
 			<Navigation />
 			<MainContent />
 			<LoggerV2 />
-			{/* <Logger /> */} /*todo: remove this*/
 		</div>
 	);
 }

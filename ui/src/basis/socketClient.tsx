@@ -93,7 +93,7 @@ export class SocketClient {
       logger.error(data.toString(), 'Error Response')
       return
     }
-    logger.log('message received: ' + type, 'Response')
+    logger.info('message received: ' + type, 'Response')
 
     this.events.push({
       eventType: 'onMessage',
@@ -144,7 +144,7 @@ export class SocketClient {
 
   public static sendMessage(cmd: string, args: object) {
     if (this.ws == null) {
-      logger.error('webSocket is not ready')
+      logger.error('webSocket is not ready', "WebSocket")
       return
     }
     this.ws.send(

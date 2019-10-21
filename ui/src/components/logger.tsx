@@ -8,28 +8,29 @@ import {
   Tooltip,
 } from '@blueprintjs/core'
 import { Constants } from '../basis/constants'
-import { ConsoleLogEntry, useConsoleStore } from '../stores/consoleStore'
+import { useConsoleStore } from '../stores/consoleStore'
 import { useThemeStore } from '../stores/themeStore'
 
-export let logger = {
-  appendText: (text: string, className: string) => {
-    notInitYet()
-  },
-  clear: () => {
-    notInitYet()
-  },
-  log: (text: string, tag: string | null = null) => {
-    notInitYet()
-  },
-  error: (text: string, tag: string | null = null) => {
-    notInitYet()
-  },
-  success: (text: string, tag: string | null = null) => {
-    notInitYet()
-  },
-  warning: (text: string, tag: string | null = null) => {
-    notInitYet()
-  },
+export enum LogType {
+  'INFO',
+  'SUCCESS',
+  'WARNING',
+  'ERROR',
+}
+
+export type LogEntry = {
+  entry: string;
+  type: LogType;
+  id: number;
+};
+
+export let logger: LoggerObject = {
+  append: (text: string, logType: LogType) => notInitYet(),
+  clear: () => notInitYet(),
+  info: (text: string, tag: string | null = null) => notInitYet(),
+  error: (text: string, tag: string | null = null) => notInitYet(),
+  success: (text: string, tag: string | null = null) => notInitYet(),
+  warning: (text: string, tag: string | null = null) => notInitYet(),
 }
 
 function notInitYet() {
@@ -37,30 +38,56 @@ function notInitYet() {
   //document.documentElement.innerText = 'Error: logger is not ready'
 }
 
+export type LoggerObject = {
+  append: (entry: string, logType: LogType) => void;
+  clear: () => void;
+  success: (entry: string, tag: string | null) => void;
+  warning: (entry: string, tag: string | null) => void;
+  error: (entry: string, tag: string | null) => void;
+  info: (entry: string, tag: string | null) => void;
+};
+
+
 export function Logger() {
   const consoleStore = useConsoleStore()
   const themeStore = useThemeStore()
 
   logger = {
-    appendText: (text, className) => {
-      consoleStore.appendText(text, className)
+    append: (text, logType) => {
+      consoleStore.appendText(text, logType)
     },
     clear: () => {
       consoleStore.clear()
     },
-    log: (text, tag) => {
-      consoleStore.appendText(makeLogText(text, tag), 'log-text-normal')
+    info: (text, tag) => {
+      consoleStore.appendText(makeLogText(text, tag), LogType.INFO)
     },
     error: (text, tag) => {
-      consoleStore.appendText(makeLogText(text, tag), 'log-text-error')
+      consoleStore.appendText(makeLogText(text, tag), LogType.ERROR)
     },
     warning: (text, tag) => {
-      consoleStore.appendText(makeLogText(text, tag), 'log-text-warning')
+      consoleStore.appendText(makeLogText(text, tag), LogType.WARNING)
     },
     success: (text, tag) => {
-      consoleStore.appendText(makeLogText(text, tag), 'log-text-success')
+      consoleStore.appendText(makeLogText(text, tag), LogType.SUCCESS)
     },
   }
+
+  const getColor = React.useCallback(
+    (type: LogType) => {
+      switch (type) {
+        case LogType.INFO:
+          return themeStore.isDark ? Constants.COLOR_LIGHT_LOG_INFO : Constants.COLOR_DARK_LOG_INFO;
+        case LogType.SUCCESS:
+          return themeStore.isDark ? Constants.COLOR_LIGHT_LOG_SUCCESS : Constants.COLOR_DARK_LOG_SUCCESS;
+        case LogType.WARNING:
+          return themeStore.isDark ? Constants.COLOR_LIGHT_LOG_WARNING : Constants.COLOR_DARK_LOG_WARNING;
+        case LogType.ERROR:
+          return themeStore.isDark ? Constants.COLOR_LIGHT_LOG_ERROR : Constants.COLOR_DARK_LOG_ERROR;
+      }
+    },
+    [ themeStore.isDark ]
+  );
 
   return (
     <footer className={'console-footer'}>
@@ -104,17 +131,15 @@ export function Logger() {
               marginLeft: '6px',
             }}
           >
-            {consoleStore.logs.map((value: ConsoleLogEntry) => {
+            {consoleStore.logs.map((value: LogEntry) => {
               return (
                 <div
-                  key={'' + value.entryId}
+                  key={'' + value.id}
                   style={{
-                    color: themeStore.isDark
-                      ? getDarkColor(value.className)
-                      : getLightColor(value.className),
+                    color: getColor(value.type),
                   }}
                 >
-                  {value.text}
+                  {value.entry}
                 </div>
               )
             })}
@@ -129,7 +154,7 @@ export function Logger() {
 function getLightColor(className: string): string {
   switch (className) {
     case 'log-text-normal':
-      return Constants.COLOR_LIGHT_LOG_NORMAL
+      return Constants.COLOR_LIGHT_LOG_INFO
     case 'log-text-success':
       return Constants.COLOR_LIGHT_LOG_SUCCESS
     case 'log-text-warning':
@@ -143,7 +168,7 @@ function getLightColor(className: string): string {
 function getDarkColor(className: string): string {
   switch (className) {
     case 'log-text-normal':
-      return Constants.COLOR_DARK_LOG_NORMAL
+      return Constants.COLOR_DARK_LOG_INFO
     case 'log-text-success':
       return Constants.COLOR_DARK_LOG_SUCCESS
     case 'log-text-warning':

@@ -20,7 +20,7 @@ export function FlowSelection() {
     },
     onMessage: (type, data) => {
       if (type === 'allFlows') {
-        logger.log(
+        logger.info(
           'flow names retrieved (total ' + data.length + ')',
           'Response',
         )
@@ -77,7 +77,7 @@ export function FlowSelection() {
         text={'Select Flow'}
         onClick={() => {
           const flowName = selected != null ? selected : ''
-          logger.success(`flow selected: ${flowName}`)
+          logger.success(`flow selected: ${flowName}`, "FlowSelection")
           setButtonEnabled(false)
           SocketClient.sendMessage('setupFlow', {arg0: flowName})
         }}
