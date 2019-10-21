@@ -1,8 +1,6 @@
 import { create } from 'zustand'
 import { LogEntry, LogType } from '../components/logger'
 
-let _item_id = 1
-
 function scrollConsoleToBottom() {
   const element = document.getElementById('bp-console-content')
   if (element == null) throw new Error()
@@ -32,7 +30,6 @@ export const [useLoggerStore] = create<LoggerStore>(set => ({
       const entry: LogEntry = {
         type: logType,
         entry: text,
-        id: _item_id++,
       }
 
       const entries = state.logs

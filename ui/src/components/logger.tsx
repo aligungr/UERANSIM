@@ -14,7 +14,6 @@ export enum LogType {
 export type LogEntry = {
   entry: string;
   type: LogType;
-  id: number;
 };
 
 export let logger: LoggerObject = {
@@ -40,7 +39,7 @@ export type LoggerObject = {
   info: (entry: string, tag: string | null) => void;
 };
 
-export const LoggerV2: React.FC = () => {
+export const Logger: React.FC = () => {
   const loggerStore = useLoggerStore()
   const themeStore = useThemeStore()
 
@@ -157,35 +156,14 @@ export const LoggerV2: React.FC = () => {
 
 function getDateTime() {
   const date = new Date()
-  return (
-    date
-      .getHours()
-      .toString()
-      .padStart(2, '0') +
-    ':' +
-    date
-      .getMinutes()
-      .toString()
-      .padStart(2, '0') +
-    ':' +
-    date
-      .getSeconds()
-      .toString()
-      .padStart(2, '0') +
-    ':' +
-    date
-      .getMilliseconds()
-      .toString()
-      .padStart(4, '0')
-  )
+  const hours = date.getHours().toString().padStart(2, "0")
+  const minutes = date.getMinutes().toString().padStart(2, "0")
+  const seconds = date.getSeconds().toString().padStart(2, "0")
+  const milliseconds = date.getMilliseconds().toString().padStart(4, "0")
+
+  return `${hours}:${minutes}:${seconds}:${milliseconds}`
 }
 
 function makeLogText(text: string, tag: string | null = null) {
-  return (
-    '[' +
-    getDateTime() +
-    '] ' +
-    (tag == null || tag.length === 0 ? '' : tag + ' | ') +
-    text
-  )
+  return '[' + getDateTime() + '] ' + (tag == null || tag.length === 0 ? '' : tag + ' | ') + text
 }

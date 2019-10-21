@@ -110,11 +110,7 @@ export class SocketClient {
     }
   }
 
-  public static registerListener(
-    listenerKey: string,
-    socketListener: ISocketListener,
-    receiveOldEvents: boolean = true
-  ) {
+  public static registerListener(listenerKey: string, socketListener: ISocketListener, receiveOldEvents: boolean = true) {
     if (this.listeners.has(listenerKey)) return
     this.listeners.set(listenerKey, socketListener)
 
@@ -144,14 +140,14 @@ export class SocketClient {
 
   public static sendMessage(cmd: string, args: object) {
     if (this.ws == null) {
-      logger.error('webSocket is not ready', "WebSocket")
+      logger.error('webSocket is not ready', 'WebSocket')
       return
     }
     this.ws.send(
       JSON.stringify({
         cmd: cmd,
         args: args,
-      })
+      }),
     )
   }
 }
