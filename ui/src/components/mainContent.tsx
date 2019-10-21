@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { ContentType, useContentStore } from '../basis/stores'
-import { logger } from './logger'
+import { ContentType, useContentStore } from '../stores/contentStore'
 import { FlowSelection } from "./flowSelection"
 import { SocketClient } from '../basis/socketClient'
 

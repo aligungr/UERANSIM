@@ -7,12 +7,9 @@ import {
   Pre,
   Tooltip,
 } from '@blueprintjs/core'
-import {
-  ConsoleLogEntry,
-  useConsoleStore,
-  useThemeStore,
-} from '../basis/stores'
 import { Constants } from '../basis/constants'
+import { ConsoleLogEntry, useConsoleStore } from '../stores/consoleStore'
+import { useThemeStore } from '../stores/themeStore'
 
 export let logger = {
   appendText: (text: string, className: string) => {
@@ -36,8 +33,8 @@ export let logger = {
 }
 
 function notInitYet() {
-  alert('Error: logger is not ready')
-  document.documentElement.innerText = 'Error: logger is not ready'
+  //alert('Error: logger is not ready')
+  //document.documentElement.innerText = 'Error: logger is not ready'
 }
 
 export function Logger() {
@@ -97,7 +94,7 @@ export function Logger() {
               </Tooltip>
             </ButtonGroup>
           </div>
-          <Divider />
+          <Divider/>
           <div
             id={'bp-console-content'}
             style={{
@@ -121,7 +118,7 @@ export function Logger() {
                 </div>
               )
             })}
-            <br />
+            <br/>
           </div>
         </Pre>
       </Collapse>

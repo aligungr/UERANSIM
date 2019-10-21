@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useLogStore, LogType } from '../stores';
-import { Collapse, Pre, ButtonGroup, Tooltip, Button, Divider, Card, Callout, Icon, H5, H6 } from '@blueprintjs/core';
+import { useLogStore, LogType } from '../stores/log';
+import { Collapse, Pre, ButtonGroup, Tooltip, Button, Divider, Callout, Icon, H6 } from '@blueprintjs/core';
 import { Constants } from '../basis/constants';
 
 export const LoggerV2: React.FC = () => {

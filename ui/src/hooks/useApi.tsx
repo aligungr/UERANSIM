@@ -1,4 +1,4 @@
-import { useLogStore } from '../stores';
+import { useLogStore } from '../stores/log';
 import { useEffect, useState, useCallback } from 'react';
 
 export type Event = {
