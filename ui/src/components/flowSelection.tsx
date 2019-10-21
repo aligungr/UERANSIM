@@ -46,7 +46,7 @@ export function FlowSelection() {
     return () => {
       SocketClient.unregisterListener('flowSelection')
     }
-  })
+  }, [])
 
   if (!isLoaded) {
     return <Spinner/>

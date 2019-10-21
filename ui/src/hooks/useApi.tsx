@@ -1,13 +1,18 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useLoggerStore } from '../stores/loggerStore'
+import { useLoggerStore } from '../stores'
 import { logger } from '../components/app'
 
 export type Event = {
   type: 'AMF_DOWN' | 'AMF_UP';
   data: any;
 };
+
+let ws;
+
 // TODO: Make it reusable or shove everyting in?
 export const useApi = (url: string) => {
+
+
   const consoleStore = useLoggerStore()
   const [ws, setWs] = useState<WebSocket | null>()
   const send = useCallback(
@@ -52,11 +57,11 @@ export const useApi = (url: string) => {
       logger.warning('Socket closed', 'useApi')
     }
     setWs(_ws),
-    () => {
-      logger.info('Closing ws', 'useApi')
-      console.log('Closing ws')
-      _ws.close()
-    }
+      () => {
+        logger.info('Closing ws', 'useApi')
+        console.log('Closing ws')
+        _ws.close()
+      }
   }, [])
 
   return [send, close]
