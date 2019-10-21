@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Collapse, Pre, ButtonGroup, Tooltip, Button, Divider, Callout, Icon, H6 } from '@blueprintjs/core'
 import { Constants } from '../basis/constants'
 import { useLoggerStore } from '../stores/loggerStore'
-import { useThemeStore } from '../stores/themeStore';
+import { useThemeStore } from '../stores/themeStore'
 
 export enum LogType {
   'INFO',
@@ -81,7 +81,7 @@ export const LoggerV2: React.FC = () => {
     [themeStore.isDark],
   )
 
-  let lastLogEntry = ""
+  let lastLogEntry = ''
   let lastLogType = LogType.INFO
 
   if (loggerStore.logs.length > 0) {
@@ -93,12 +93,12 @@ export const LoggerV2: React.FC = () => {
     <footer className={'console-footer'}>
       <Callout style={{ display: loggerStore.isOpen ? 'none' : 'flex' }}>
         <Icon
-          color="white"
+          color={themeStore.isDark ? Constants.COLOR_DARK_ICON : Constants.COLOR_LIGHT_ICON}
           icon="chevron-up"
           onClick={loggerStore.toggleOpen}
           style={{ cursor: 'pointer', paddingRight: '15px' }}
         />
-        <div style={{fontFamily: 'monospace', color: getColor(lastLogType)}}> {lastLogEntry} </div>
+        <div style={{ fontFamily: 'monospace', color: getColor(lastLogType) }}> {lastLogEntry} </div>
       </Callout>
 
       <Collapse keepChildrenMounted={true} isOpen={loggerStore.isOpen}>
