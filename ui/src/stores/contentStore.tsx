@@ -5,7 +5,7 @@ export enum ContentType {
   FLOW_ACTION = 2,
 }
 
-export const [useContentStore] = create(set => ({
+export const [useContentStore] = create<ContentStore>(set => ({
   contentType: ContentType.FLOW_SELECTION,
   setContent: (contentType: ContentType) =>
     set(state => ({
@@ -13,3 +13,8 @@ export const [useContentStore] = create(set => ({
 
     })),
 }))
+
+type ContentStore = {
+  contentType: ContentType,
+  setContent(contentType: ContentType): void
+}
