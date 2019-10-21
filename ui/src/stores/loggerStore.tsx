@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { LogEntry, LogType } from '../components/loggerv2'
+import { LogEntry, LogType } from '../components/logger'
 
 let _item_id = 1
 

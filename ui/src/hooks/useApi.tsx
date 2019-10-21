@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useConsoleStore } from '../stores/loggerStore'
-import { logger } from '../components/loggerv2'
+import { useLoggerStore } from '../stores/loggerStore'
+import { logger } from '../components/logger'
 
 export type Event = {
   type: 'AMF_DOWN' | 'AMF_UP';
@@ -8,7 +8,7 @@ export type Event = {
 };
 // TODO: Make it reusable or shove everyting in?
 export const useApi = (url: string) => {
-  const consoleStore = useConsoleStore()
+  const consoleStore = useLoggerStore()
   const [ws, setWs] = useState<WebSocket | null>()
   const send = useCallback(
     (data: string) => {

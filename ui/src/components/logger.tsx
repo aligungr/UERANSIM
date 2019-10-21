@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Collapse, Pre, ButtonGroup, Tooltip, Button, Divider, Callout, Icon, H6 } from '@blueprintjs/core'
 import { Constants } from '../basis/constants'
 import { useLoggerStore } from '../stores/loggerStore'
+import { useThemeStore } from '../stores/themeStore';
 
 export enum LogType {
   'INFO',
@@ -41,9 +42,8 @@ export type LoggerObject = {
 
 export const LoggerV2: React.FC = () => {
   const loggerStore = useLoggerStore()
+  const themeStore = useThemeStore()
 
-  const [autoScroll, setAutoScroll] = React.useState(false)
-  const [isDark, _] = React.useState(false)
   const ref = React.useRef<HTMLDivElement>()
 
   /*React.useEffect(
@@ -78,16 +78,16 @@ export const LoggerV2: React.FC = () => {
     (type: LogType) => {
       switch (type) {
         case LogType.INFO:
-          return isDark ? Constants.COLOR_LIGHT_LOG_INFO : Constants.COLOR_DARK_LOG_INFO
+          return themeStore.isDark ? Constants.COLOR_DARK_LOG_INFO : Constants.COLOR_LIGHT_LOG_INFO
         case LogType.SUCCESS:
-          return isDark ? Constants.COLOR_LIGHT_LOG_SUCCESS : Constants.COLOR_DARK_LOG_SUCCESS
+          return themeStore.isDark ? Constants.COLOR_DARK_LOG_SUCCESS : Constants.COLOR_LIGHT_LOG_SUCCESS
         case LogType.WARNING:
-          return isDark ? Constants.COLOR_LIGHT_LOG_WARNING : Constants.COLOR_DARK_LOG_WARNING
+          return themeStore.isDark ? Constants.COLOR_DARK_LOG_WARNING : Constants.COLOR_LIGHT_LOG_WARNING
         case LogType.ERROR:
-          return isDark ? Constants.COLOR_LIGHT_LOG_ERROR : Constants.COLOR_DARK_LOG_ERROR
+          return themeStore.isDark ? Constants.COLOR_DARK_LOG_ERROR : Constants.COLOR_LIGHT_LOG_ERROR
       }
     },
-    [isDark],
+    [themeStore.isDark],
   )
 
   return (
@@ -118,11 +118,11 @@ export const LoggerV2: React.FC = () => {
             <Tooltip content={'Clear Console'}>
               <Button icon="trash" onClick={(e: any) => loggerStore.clear()}/>
             </Tooltip>
-            <Tooltip content={`${autoScroll ? 'Disable' : 'Enable'} Auto Scroll to Bottom`}>
+            <Tooltip content={`${loggerStore.autoScroll ? 'Disable' : 'Enable'} Auto Scroll to Bottom`}>
               <Button
                 icon="automatic-updates"
-                active={autoScroll}
-                onClick={() => setAutoScroll(!autoScroll)}
+                active={loggerStore.autoScroll}
+                onClick={loggerStore.toggleAutoScroll}
               />
             </Tooltip>
           </ButtonGroup>

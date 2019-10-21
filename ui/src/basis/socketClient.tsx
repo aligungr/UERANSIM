@@ -1,4 +1,4 @@
-import { logger } from '../components/loggerv2'
+import { logger } from '../components/logger'
 
 export interface ISocketListener {
   onOpen: (event: Event) => void

@@ -13,7 +13,7 @@ function updateBodyForTheme(isDark: boolean) {
   }
 }
 
-export const [useThemeStore] = create(set => ({
+export const [useThemeStore] = create<ThemeStore>(set => ({
   isDark: true,
   toggleTheme: () =>
     set(state => {
@@ -22,3 +22,8 @@ export const [useThemeStore] = create(set => ({
       return { isDark: isDark }
     }),
 }))
+
+export type ThemeStore = {
+  isDark: boolean,
+  toggleTheme(): void
+}
