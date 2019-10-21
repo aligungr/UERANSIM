@@ -5,10 +5,10 @@ import { useLoggerStore } from '../stores/loggerStore'
 import { useThemeStore } from '../stores/themeStore'
 
 export enum LogType {
-  'INFO',
-  'SUCCESS',
-  'WARNING',
-  'ERROR',
+  INFO = 0,
+  SUCCESS = 1,
+  WARNING = 2,
+  ERROR = 3,
 }
 
 export type LogEntry = {
