@@ -44,15 +44,6 @@ export const LoggerV2: React.FC = () => {
   const loggerStore = useLoggerStore()
   const themeStore = useThemeStore()
 
-  const ref = React.useRef<HTMLDivElement>()
-
-  /*React.useEffect(
-    () => {
-      if (autoScroll) ref.current.scrollTop = ref.current.scrollHeight
-    },
-    [consoleStore.logs, autoScroll],
-  )*/
-
   logger = {
     append: (text, logType) => {
       loggerStore.append(text, logType)
@@ -128,7 +119,6 @@ export const LoggerV2: React.FC = () => {
           </ButtonGroup>
           <Divider/>
           <div
-            ref={ref}
             id={'bp-console-content'}
             style={{
               overflow: 'auto',
