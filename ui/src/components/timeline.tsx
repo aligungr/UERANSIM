@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import { Button } from '@blueprintjs/core';
 
 export const Timeline = () => {
-	const [ isOpen, setIsOpen ] = useState(false);
+	const [ isOpen, setIsOpen ] = React.useState(false);
 	return (
 		<VerticalTimeline>
 			<VerticalTimelineElement
