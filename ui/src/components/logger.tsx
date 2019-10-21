@@ -16,20 +16,6 @@ export type LogEntry = {
   type: LogType;
 };
 
-export let logger: LoggerObject = {
-  append: (text: string, logType: LogType) => notInitYet(),
-  clear: () => notInitYet(),
-  info: (text: string, tag: string | null = null) => notInitYet(),
-  success: (text: string, tag: string | null = null) => notInitYet(),
-  warning: (text: string, tag: string | null = null) => notInitYet(),
-  error: (text: string, tag: string | null = null) => notInitYet(),
-}
-
-function notInitYet() {
-  alert('Error: logger is not ready')
-  document.documentElement.innerText = 'Error: logger is not ready'
-}
-
 export type LoggerObject = {
   append: (entry: string, logType: LogType) => void;
   clear: () => void;
@@ -39,11 +25,15 @@ export type LoggerObject = {
   error: (entry: string, tag: string | null) => void;
 };
 
-export const Logger: React.FC = () => {
+type LoggerProps = {
+  setLogger: null | ((loggerObject: LoggerObject) => void)
+}
+
+export const Logger: React.FC<LoggerProps> = (props) => {
   const loggerStore = useLoggerStore()
   const themeStore = useThemeStore()
 
-  logger = {
+  const logger = {
     append: (text, logType) => {
       loggerStore.append(text, logType)
     },
@@ -62,6 +52,10 @@ export const Logger: React.FC = () => {
     error: (text, tag) => {
       loggerStore.append(makeLogText(text, tag), LogType.ERROR)
     },
+  }
+
+  if (props.setLogger != null) {
+    props.setLogger(logger)
   }
 
   const getColor = React.useCallback(
@@ -156,10 +150,10 @@ export const Logger: React.FC = () => {
 
 function getDateTime() {
   const date = new Date()
-  const hours = date.getHours().toString().padStart(2, "0")
-  const minutes = date.getMinutes().toString().padStart(2, "0")
-  const seconds = date.getSeconds().toString().padStart(2, "0")
-  const milliseconds = date.getMilliseconds().toString().padStart(4, "0")
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  const seconds = date.getSeconds().toString().padStart(2, '0')
+  const milliseconds = date.getMilliseconds().toString().padStart(4, '0')
 
   return `${hours}:${minutes}:${seconds}:${milliseconds}`
 }

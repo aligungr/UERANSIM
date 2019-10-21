@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useLoggerStore } from '../stores/loggerStore'
-import { logger } from '../components/logger'
+import { logger } from '../components/app'
 
 export type Event = {
   type: 'AMF_DOWN' | 'AMF_UP';

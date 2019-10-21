@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, MenuItem, Spinner } from '@blueprintjs/core'
 import { ISocketListener, SocketClient } from '../basis/socketClient'
-import { logger } from './logger'
+import { logger } from './app'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 import { ContentType, useContentStore } from '../stores/contentStore'
 import { useFlowActionStore } from '../stores/flowActionStore'
