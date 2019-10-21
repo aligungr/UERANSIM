@@ -1,10 +1,15 @@
 import { logger } from '../components/app'
 
+export enum MessageType {
+  'FETCH_FLOW_DETAILS',
+  'FETCH_FLOW',
+}
+
 export interface ISocketListener {
   onOpen: (event: Event) => void
   onClose: (event: CloseEvent) => void
   onError: (event: Event) => void
-  onMessage: (type: string, data: any) => void
+  onMessage: (type: MessageType, data: any) => void
 }
 
 interface EventEntry {
@@ -44,7 +49,11 @@ export class SocketClient {
       eventType: 'onOpen',
       event: e,
     })
-    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+    for (
+      let keys = this.listeners.keys(), i = 0;
+      i < this.listeners.size;
+      i++
+    ) {
       const key = keys.next().value
       const value = this.listeners.get(key)
       if (value != null) value.onOpen(e)
@@ -57,7 +66,11 @@ export class SocketClient {
       eventType: 'onClose',
       event: e,
     })
-    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+    for (
+      let keys = this.listeners.keys(), i = 0;
+      i < this.listeners.size;
+      i++
+    ) {
       const key = keys.next().value
       const value = this.listeners.get(key)
       if (value != null) value.onClose(e)
@@ -70,7 +83,11 @@ export class SocketClient {
       eventType: 'onError',
       event: e,
     })
-    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+    for (
+      let keys = this.listeners.keys(), i = 0;
+      i < this.listeners.size;
+      i++
+    ) {
       const key = keys.next().value
       const value = this.listeners.get(key)
       if (value != null) value.onError(e)
@@ -103,14 +120,22 @@ export class SocketClient {
       },
     })
 
-    for (let keys = this.listeners.keys(), i = 0; i < this.listeners.size; i++) {
+    for (
+      let keys = this.listeners.keys(), i = 0;
+      i < this.listeners.size;
+      i++
+    ) {
       const key = keys.next().value
       const value = this.listeners.get(key)
       if (value != null) value.onMessage(type, data)
     }
   }
 
-  public static registerListener(listenerKey: string, socketListener: ISocketListener, receiveOldEvents: boolean = true) {
+  public static registerListener(
+    listenerKey: string,
+    socketListener: ISocketListener,
+    receiveOldEvents: boolean = true
+  ) {
     if (this.listeners.has(listenerKey)) return
     this.listeners.set(listenerKey, socketListener)
 
@@ -147,7 +172,7 @@ export class SocketClient {
       JSON.stringify({
         cmd: cmd,
         args: args,
-      }),
+      })
     )
   }
 }
