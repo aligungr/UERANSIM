@@ -50,7 +50,7 @@ public class MachineController {
             }
             if (method.isAnnotationPresent(State.class)) {
                 var params = method.getParameters();
-                if (params.length != 2 || params[0].getType() != MessageContext.class || params[1].getType() != MachineContext.class)
+                if (params.length != 2 || params[1].getType() != MessageContext.class || params[0].getType() != MachineContext.class)
                     throw new RuntimeException("bad parameters for state function.");
                 if (!Action.class.isAssignableFrom(method.getReturnType()))
                     throw new RuntimeException("return type of the starter method must be Action");
@@ -110,7 +110,7 @@ public class MachineController {
         if (stateMethod == null)
             throw new RuntimeException("state method could not found: " + currentState);
 
-        handleActionResult((Action) stateMethod.invoke(machine, messageContext, machineContext));
+        handleActionResult((Action) stateMethod.invoke(machine, machineContext, messageContext));
     }
 
     public HashMap getMachineInfo() {

@@ -24,11 +24,10 @@ public class RegistrationFlow {
         );
     }
 
-    // TODO: MachineCtx should be first argument
     @State
-    public Action waitForRequest(MessageContext msgCtx, MachineContext machineCtx) {
+    public Action waitForRequest(MachineContext machineContext, MessageContext messageContext) {
 //        var type = parse(msgCtx.getReceivedData());
-        return Action.switchState(msgCtx, "send");
+        return Action.switchState(messageContext, "send");
     }
 //
 //    @State
