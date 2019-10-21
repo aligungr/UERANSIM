@@ -81,6 +81,14 @@ export const LoggerV2: React.FC = () => {
     [themeStore.isDark],
   )
 
+  let lastLogEntry = ""
+  let lastLogType = LogType.INFO
+
+  if (loggerStore.logs.length > 0) {
+    lastLogEntry = loggerStore.logs[loggerStore.logs.length - 1].entry
+    lastLogType = loggerStore.logs[loggerStore.logs.length - 1].type
+  }
+
   return (
     <footer className={'console-footer'}>
       <Callout style={{ display: loggerStore.isOpen ? 'none' : 'flex' }}>
@@ -90,7 +98,7 @@ export const LoggerV2: React.FC = () => {
           onClick={loggerStore.toggleOpen}
           style={{ cursor: 'pointer', paddingRight: '15px' }}
         />
-        <H6> {loggerStore.logs.length > 0 && loggerStore.logs[loggerStore.logs.length - 1].entry} </H6>
+        <div style={{fontFamily: 'monospace', color: getColor(lastLogType)}}> {lastLogEntry} </div>
       </Callout>
 
       <Collapse keepChildrenMounted={true} isOpen={loggerStore.isOpen}>
