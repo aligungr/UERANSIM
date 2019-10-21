@@ -20,9 +20,9 @@ export let logger: LoggerObject = {
   append: (text: string, logType: LogType) => notInitYet(),
   clear: () => notInitYet(),
   info: (text: string, tag: string | null = null) => notInitYet(),
-  error: (text: string, tag: string | null = null) => notInitYet(),
   success: (text: string, tag: string | null = null) => notInitYet(),
   warning: (text: string, tag: string | null = null) => notInitYet(),
+  error: (text: string, tag: string | null = null) => notInitYet(),
 }
 
 function notInitYet() {
@@ -33,10 +33,10 @@ function notInitYet() {
 export type LoggerObject = {
   append: (entry: string, logType: LogType) => void;
   clear: () => void;
+  info: (entry: string, tag: string | null) => void;
   success: (entry: string, tag: string | null) => void;
   warning: (entry: string, tag: string | null) => void;
   error: (entry: string, tag: string | null) => void;
-  info: (entry: string, tag: string | null) => void;
 };
 
 export const Logger: React.FC = () => {
@@ -53,14 +53,14 @@ export const Logger: React.FC = () => {
     info: (text, tag) => {
       loggerStore.append(makeLogText(text, tag), LogType.INFO)
     },
-    error: (text, tag) => {
-      loggerStore.append(makeLogText(text, tag), LogType.ERROR)
+    success: (text, tag) => {
+      loggerStore.append(makeLogText(text, tag), LogType.SUCCESS)
     },
     warning: (text, tag) => {
       loggerStore.append(makeLogText(text, tag), LogType.WARNING)
     },
-    success: (text, tag) => {
-      loggerStore.append(makeLogText(text, tag), LogType.SUCCESS)
+    error: (text, tag) => {
+      loggerStore.append(makeLogText(text, tag), LogType.ERROR)
     },
   }
 
