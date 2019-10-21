@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useConsoleStore } from '../stores/consoleStore'
-import { logger } from '../components/logger'
+import { logger } from '../components/loggerv2'
 
 export type Event = {
   type: 'AMF_DOWN' | 'AMF_UP';
@@ -51,7 +51,7 @@ export const useApi = (url: string) => {
     _ws.onclose = (e: WebSocketEventMap['close']) => {
       logger.warning('Socket closed', 'useApi')
     }
-    setWs(_ws)
+    setWs(_ws),
     () => {
       logger.info('Closing ws', 'useApi')
       console.log('Closing ws')

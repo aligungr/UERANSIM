@@ -1,8 +1,43 @@
 import * as React from 'react';
 import { Collapse, Pre, ButtonGroup, Tooltip, Button, Divider, Callout, Icon, H6 } from '@blueprintjs/core';
 import { Constants } from '../basis/constants';
-import { LogType } from './logger'
 import { useConsoleStore } from '../stores/consoleStore';
+
+export enum LogType {
+	'INFO',
+	'SUCCESS',
+	'WARNING',
+	'ERROR',
+}
+
+export type LogEntry = {
+	entry: string;
+	type: LogType;
+	id: number;
+};
+
+export let logger: LoggerObject = {
+	append: (text: string, logType: LogType) => notInitYet(),
+	clear: () => notInitYet(),
+	info: (text: string, tag: string | null = null) => notInitYet(),
+	error: (text: string, tag: string | null = null) => notInitYet(),
+	success: (text: string, tag: string | null = null) => notInitYet(),
+	warning: (text: string, tag: string | null = null) => notInitYet(),
+}
+
+function notInitYet() {
+	//alert('Error: logger is not ready')
+	//document.documentElement.innerText = 'Error: logger is not ready'
+}
+
+export type LoggerObject = {
+	append: (entry: string, logType: LogType) => void;
+	clear: () => void;
+	success: (entry: string, tag: string | null) => void;
+	warning: (entry: string, tag: string | null) => void;
+	error: (entry: string, tag: string | null) => void;
+	info: (entry: string, tag: string | null) => void;
+};
 
 export const LoggerV2: React.FC = () => {
 	const consoleStore = useConsoleStore()

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { LogEntry, LogType } from '../components/logger'
+import { LogEntry, LogType } from '../components/loggerv2'
 
 let consoleLogId = 1
 
@@ -10,7 +10,7 @@ function scrollConsoleToBottom() {
 }
 
 export const [useConsoleStore] = create(set => ({
-  isOpen: true,
+  isOpen: false,
   autoScroll: true,
   logs: [],
   toggleOpen: () =>
