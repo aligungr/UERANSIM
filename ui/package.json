@@ -19,11 +19,7 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettify"
-    }
-  },
+
   "engines": {
     "node": ">= 8.11.0",
     "npm": ">= 6.0.0"
@@ -59,7 +55,8 @@
     "express": "^4.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "ws": "^7.1.2"
+    "ws": "^7.1.2",
+    "zustand": "^2.1.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { Classes } from '@blueprintjs/core'
 import { Constants } from './constants'
+import { debug } from 'util'
 
 /////////////////////////////// THEME STORE ///////////////////////////////
 
@@ -95,6 +96,7 @@ export const [useContentStore] = create(set => ({
   setContent: (contentType: ContentType) =>
     set(state => ({
       contentType: contentType,
+
     })),
 }))
 
@@ -107,3 +109,5 @@ export const [useFlowActionStore] = create(set => ({
       machineInfo: machineInfo,
     })),
 }))
+
+
