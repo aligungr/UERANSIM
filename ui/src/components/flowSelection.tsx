@@ -25,7 +25,7 @@ export function FlowSelection() {
           'Response',
         )
         const flowItems: string[] = []
-        for (let i = 0; i < data.length; i = i + 1) {
+        for (let i = 0; i < data.length; i++) {
           flowItems.push(data[i])
         }
         setLoaded(true)
