@@ -19,7 +19,7 @@ public final class Funs {
     }
 
     public static Funs run(Fun fun, Consumer<Exception> onError) {
-        return new Funs(new Pair<>(fun, null));
+        return new Funs(new Pair<>(fun, onError));
     }
 
     public Funs then(Fun fun) {
