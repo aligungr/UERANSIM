@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Navigation } from './navigation';
 import { MainContent } from './mainContent';
 import { Logger, LoggerObject, LogType } from './logger'
+import { SocketClient } from '../basis/socketClient'
 
 export let logger: LoggerObject = {
 	append: (text: string, logType: LogType) => notInitYet(),
@@ -22,6 +23,8 @@ function setLogger(loggerObject: LoggerObject) {
 }
 
 export function App() {
+	SocketClient.initialize()
+
 	return (
 		<div>
 			<Navigation />

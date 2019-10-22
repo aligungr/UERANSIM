@@ -1,11 +1,5 @@
 import { logger } from '../components/app'
-
-export enum MessageType {
-  'FETCH_FLOW_DETAILS',
-  'FETCH_FLOW',
-  'ALL_FLOWS',
-  'MACHINE_SETUP'
-}
+import { MessageType } from './messageType'
 
 export interface ISocketListener {
   onOpen: (event: Event) => void
@@ -165,7 +159,7 @@ export class SocketClient {
     this.listeners.delete(listenerKey)
   }
 
-  public static sendMessage(cmd: string, args: object) {
+  public static sendMessage(cmd: MessageType, args: object = {}) {
     if (this.ws == null) {
       logger.error('webSocket is not ready', 'WebSocket')
       return

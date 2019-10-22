@@ -1,54 +1,14 @@
 import * as React from 'react'
 import { Button, MenuItem, Spinner } from '@blueprintjs/core'
-import { ISocketListener, MessageType, SocketClient } from '../basis/socketClient'
-import { logger } from './app'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
-import { ContentType, useContentStore, useFlowActionStore } from '../stores'
+import { useFlowSelectionStore } from '../stores'
+import { useFlowSelectionApi } from '../hooks/useFlowSelectionApi'
 
 export function FlowSelection() {
-  const [isLoaded, setLoaded] = React.useState(false)
-  const [selected, setSelected] = React.useState(null as string | null)
-  const [items, setItems] = React.useState([] as string[])
-  const [buttonEnabled, setButtonEnabled] = React.useState(true)
-  const contentStore = useContentStore()
-  const flowActionStore = useFlowActionStore()
+  const flowSelectionStore = useFlowSelectionStore()
+  const flowSelectionApi = useFlowSelectionApi()
 
-  const socketListener: ISocketListener = {
-    onOpen: () => {
-      SocketClient.sendMessage('getAllFlows', {})
-    },
-    onMessage: (type, data) => {
-      if (type === MessageType.ALL_FLOWS) {
-        logger.info(
-          'flow names retrieved (total ' + data.length + ')',
-          'Response',
-        )
-        const flowItems: string[] = []
-        for (let i = 0; i < data.length; i++) {
-          flowItems.push(data[i])
-        }
-        setLoaded(true)
-        setSelected(null)
-        setItems(flowItems)
-      } else if (type === MessageType.MACHINE_SETUP) {
-        flowActionStore.setMachineInfo(data)
-        contentStore.setContent(ContentType.FLOW_ACTION)
-      }
-    },
-    onClose: () => {
-    },
-    onError: () => {
-    },
-  }
-
-  React.useEffect(() => {
-    SocketClient.registerListener('flowSelection', socketListener, false)
-    return () => {
-      SocketClient.unregisterListener('flowSelection')
-    }
-  }, [])
-
-  if (!isLoaded) {
+  if (!flowSelectionStore.isLoaded) {
     return <Spinner/>
   }
 
@@ -56,30 +16,24 @@ export function FlowSelection() {
     <>
       <FlowSelect
         key={Math.random()}
-        items={items}
+        items={flowSelectionStore.items}
         itemPredicate={itemFilter}
         noResults={<MenuItem disabled={true} text="No results."/>}
         onItemSelect={(e: string) => {
-          setSelected(e)
+          flowSelectionStore.setSelected(e)
         }}
-        itemRenderer={itemRenderer}
-      >
+        itemRenderer={itemRenderer}>
         <Button
-          text={selected == null ? 'Select a Flow' : selected}
+          text={flowSelectionStore.selected == null ? 'Select a Flow' : flowSelectionStore.selected}
           icon="film"
           rightIcon="caret-down"
         />
       </FlowSelect>
       <Button
         style={{ marginLeft: '8px' }}
-        disabled={selected == null || !buttonEnabled}
+        disabled={flowSelectionStore.selected == null || !flowSelectionStore.buttonEnabled}
         text={'Select Flow'}
-        onClick={() => {
-          const flowName = selected != null ? selected : ''
-          logger.success(`flow selected: ${flowName}`, "FlowSelection")
-          setButtonEnabled(false)
-          SocketClient.sendMessage('setupFlow', {arg0: flowName})
-        }}
+        onClick={() => flowSelectionApi.setCurrentFlow(flowSelectionStore.selected)}
         intent={'primary'}
       />
     </>

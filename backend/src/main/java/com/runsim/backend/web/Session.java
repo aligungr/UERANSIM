@@ -21,12 +21,12 @@ public class Session {
     }
 
     @Command
-    public void getAllFlows() {
+    public void allFlows() {
         sender.send("allFlows", App.getMachineNames());
     }
 
     @Command
-    public void setupFlow(String flowName) {
+    public void flowSetup(String flowName) {
         var type = App.getMachineType(flowName);
         if (type == null) {
             errorResponse("flow not found: " + flowName);
@@ -40,6 +40,6 @@ public class Session {
             return;
         }
 
-        sender.send("machineSetup", machineController.getMachineInfo());
+        sender.send("flowSetup", machineController.getMachineInfo());
     }
 }
