@@ -54,6 +54,7 @@
     "express": "^4.17.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "react-grid-layout": "^0.16.6",
     "reactstrap": "^8.1.1",
     "ws": "^7.1.2",
     "zustand": "^2.1.0"

@@ -1,25 +1,36 @@
 import * as React from 'react'
-import { Button, Card, Elevation } from '@blueprintjs/core'
+import { Button, Card, Elevation, ButtonGroup, AnchorButton } from '@blueprintjs/core'
+
+function columnStyle() {
+  const style: React.CSSProperties = {
+    float: 'left',
+    width: '15%',
+    height: '100%',
+  }
+
+  return style
+}
 
 export function FlowAction() {
   return (
     <div>
-      <div style={{ width: '25%' }}>
-        <StatesSide/>
-      </div>
-      <div style={{ width: '75%' }}>
-        <StatesSide/>
-      </div>
+      <div style={columnStyle()}><StatesSide/></div>
+      <div style={columnStyle()}>b</div>
+      <div style={columnStyle()}>c</div>
     </div>
   )
 }
 
 function StatesSide() {
   return (
-    <Card interactive={false} elevation={Elevation.TWO}>
-      <h5><a href="#">Card heading</a></h5>
-      <p>Card content</p>
-      <Button>Submit</Button>
+    <Card style={{}} interactive={false} elevation={Elevation.TWO}>
+      <ButtonGroup minimal={false} vertical={true}>
+        <Button disabled={false} active={true} icon="database">Queries</Button>
+        <Button disabled={false} active={true} icon="database">Queries</Button>
+        <Button disabled={false} active={true} icon="database">Queries</Button>
+        <Button disabled={false} active={true} icon="database">Queries</Button>
+        <Button disabled={false} active={true} icon="database">Queries</Button>
+      </ButtonGroup>
     </Card>
   )
 }
