@@ -2,10 +2,11 @@ import { useEffect } from 'react'
 import { ISocketListener, SocketClient } from '../basis/socketClient'
 import { MessageType } from '../basis/messageType'
 import { logger } from '../components/app'
-import { ContentType, useContentStore, useFlowSelectionStore } from '../stores'
+import { ContentType, useContentStore, useFlowSelectionStore, useFlowActionStore } from '../stores'
 
 export const useFlowSelectionApi = () => {
   const flowSelectionStore = useFlowSelectionStore()
+  const flowActionStore = useFlowActionStore();
   const contentStore = useContentStore()
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export const useFlowSelectionApi = () => {
             flowSelectionStore.setItems(flowItems)
             break
           case MessageType.FLOW_SETUP:
+            flowActionStore.setMachineInfo(data)
             contentStore.setContent(ContentType.FLOW_ACTION)
             break
         }
