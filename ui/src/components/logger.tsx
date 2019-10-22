@@ -92,7 +92,7 @@ export const Logger: React.FC<LoggerProps> = (props) => {
 
   return (
     <footer className={'console-footer'}>
-      <Callout style={{ display: loggerStore.isOpen ? 'none' : 'flex' }}>
+      <Callout style={{ display: loggerStore.isOpen ? 'none' : 'flex', backgroundColor: themeStore.isDark ? Constants.COLOR_DARK_STATUSBAR : Constants.COLOR_LIGHT_STATUSBAR }}>
         <Icon
           color={themeStore.isDark ? Constants.COLOR_DARK_ICON : Constants.COLOR_LIGHT_ICON}
           icon="chevron-up"

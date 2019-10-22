@@ -7,6 +7,9 @@ export class Constants {
   static COLOR_DARK_ICON: string = '#FFFFFF'
   static COLOR_LIGHT_ICON: string = '#30404d'
 
+  static COLOR_DARK_STATUSBAR: string = "#25323C"
+  static COLOR_LIGHT_STATUSBAR: string = "#FFFFFF"
+
   static COLOR_DARK_LOG_INFO: string = '#FFFFFF'
   static COLOR_DARK_LOG_SUCCESS: string = Colors.GREEN3
   static COLOR_DARK_LOG_WARNING: string = Colors.ORANGE3
