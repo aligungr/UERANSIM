@@ -17,20 +17,15 @@ export const useApi = () => {
   useEffect(() => {
     
     // ws = SocketClient.registerListener("API")
-    const sockListener: ISocketListener = {
-      onOpen: e => logger.info("App is ready"),
+    const socketListener: ISocketListener = {
+      onOpen: e => logger.success("connection established", "Web Socket"),
       onClose: e => {},
       onError: e => {},
       onMessage: (type, data) => {
-          switch (e.type) {
-            case  
-                flowStore.setMachineInfo(e.payload)
-                break
-              
-          }
+
       }  
     }
-    SocketClient.registerListener("API", sockListener)
+    SocketClient.registerListener("API", socketListener)
   }, [])
 
   return {

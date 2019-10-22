@@ -3,6 +3,8 @@ import { logger } from '../components/app'
 export enum MessageType {
   'FETCH_FLOW_DETAILS',
   'FETCH_FLOW',
+  'ALL_FLOWS',
+  'MACHINE_SETUP'
 }
 
 export interface ISocketListener {
@@ -134,7 +136,7 @@ export class SocketClient {
   public static registerListener(
     listenerKey: string,
     socketListener: ISocketListener,
-    receiveOldEvents: boolean = true
+    receiveOldEvents: boolean = true,
   ) {
     if (this.listeners.has(listenerKey)) return
     this.listeners.set(listenerKey, socketListener)
@@ -172,7 +174,7 @@ export class SocketClient {
       JSON.stringify({
         cmd: cmd,
         args: args,
-      })
+      }),
     )
   }
 }

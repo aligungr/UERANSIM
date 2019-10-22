@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Button, MenuItem, Spinner } from '@blueprintjs/core'
-import { ISocketListener, SocketClient } from '../basis/socketClient'
+import { ISocketListener, MessageType, SocketClient } from '../basis/socketClient'
 import { logger } from './app'
 import { ItemPredicate, ItemRenderer, Select } from '@blueprintjs/select'
 import { ContentType, useContentStore, useFlowActionStore } from '../stores'
@@ -18,7 +18,7 @@ export function FlowSelection() {
       SocketClient.sendMessage('getAllFlows', {})
     },
     onMessage: (type, data) => {
-      if (type === 'allFlows') {
+      if (type === MessageType.ALL_FLOWS) {
         logger.info(
           'flow names retrieved (total ' + data.length + ')',
           'Response',
@@ -30,7 +30,7 @@ export function FlowSelection() {
         setLoaded(true)
         setSelected(null)
         setItems(flowItems)
-      } else if (type === 'machineSetup') {
+      } else if (type === MessageType.MACHINE_SETUP) {
         flowActionStore.setMachineInfo(data)
         contentStore.setContent(ContentType.FLOW_ACTION)
       }
