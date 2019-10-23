@@ -2,27 +2,24 @@ package com.runsim.backend;
 
 import com.runsim.backend.annotations.Starter;
 import com.runsim.backend.annotations.State;
-import com.runsim.backend.annotations.StateMachine;
 import com.runsim.backend.mts.MTSAdapter;
 import com.runsim.backend.sctp.SCTPClient;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MachineController {
     private final Class machineType;
     private final Object machine;
+    private final SCTPClient sctpClient;
     private Method starterMethod;
     private Map<String, Method> stateMethods;
     private Map<String, State> stateAnnotations;
     private String currentState;
-    private final SCTPClient sctpClient;
     private boolean runCalled;
     private MachineContext machineContext;
 
@@ -94,8 +91,7 @@ public class MachineController {
             var action = (Action.SwitchState) actionRes;
             currentState = action.nextState;
             handleMessage(action.msgCtx);
-        }
-        else {
+        } else {
             throw new RuntimeException("unhandled action result");
         }
     }

@@ -6,52 +6,19 @@ import com.runsim.backend.MessageContext;
 import com.runsim.backend.annotations.Starter;
 import com.runsim.backend.annotations.State;
 import com.runsim.backend.annotations.StateMachine;
-import com.runsim.backend.mts.MTSAdapter;
-import com.runsim.backend.otn.OtnXmlParser;
-import com.runsim.backend.utils.Utils;
-
-import java.util.function.Function;
 
 @StateMachine
 public class RegistrationFlow {
 
     @Starter
     public Action starter(MachineContext machineContext) {
-        return Action.sendElement(
-                "NGAP_PDU_Descriptions.InitiatingMessage",
-                OtnXmlParser.parseXml(Utils.getResourceString("initialUEMessage.xml")),
-                "waitForRequest"
-        );
+        return Action.sendData(new byte[]{
+                (byte) 0x00, (byte) 0x0f, (byte) 0x40, (byte) 0x3f, (byte) 0x00, (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x55, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x26, (byte) 0x00, (byte) 0x1a, (byte) 0x19, (byte) 0x7e, (byte) 0x00, (byte) 0x41, (byte) 0x71, (byte) 0x00, (byte) 0x0d, (byte) 0x01, (byte) 0x00, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xf1, (byte) 0x2e, (byte) 0x04, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x0f, (byte) 0x40, (byte) 0x00, (byte) 0x01, (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x75, (byte) 0x00, (byte) 0x5a, (byte) 0x40, (byte) 0x01, (byte) 0x18
+        }, "state1");
     }
 
     @State
-    public Action waitForRequest(MachineContext machineContext, MessageContext messageContext) {
-//        var type = parse(msgCtx.getReceivedData());
-        return Action.switchState(messageContext, "send");
+    public Action state1(MachineContext machineContext, MessageContext messageContext) {
+        return Action.noOperation();
     }
-//
-//    @State
-//    public Action sendIdentityResponse(MessageContext msgCtx, MachineContext machineCtx) {
-//        return Action.sendElement("IdentityResp", Identity_Resp, "waitForRequest");
-//    }
-
-//    @State
-//    public Action sendAuthenticationResponse(MessageContext msgCtx, MachineContext machineCtx) {
-//        return Action.sendElement()
-//    }
-//
-//    @State
-//    public Action sendSecurityModeComplete(MessageContext msgCtx, MachineContext machineCtx) {
-//
-//    }
-//
-//    @State
-//    public Action sendContextSetupResponse(MessageContext msgCtx, MachineContext machineCtx) {
-//
-//    }
-
-//    private String parse(byte[] msg) {
-//        var elem = MTSAdapter.decodeAper(msg);
-//        elem.
-//    }
 }
