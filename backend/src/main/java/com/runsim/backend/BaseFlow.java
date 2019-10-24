@@ -50,6 +50,15 @@ public abstract class BaseFlow {
         this.currentState = this.currentState.accept(message);
     }
 
+    public final State closeConnection() {
+        sctpClient.close();
+        return this::sinkState;
+    }
+
+    protected final State sinkState(Message message) {
+        return this::sinkState;
+    }
+
     public abstract State main(Message message);
 
     @FunctionalInterface

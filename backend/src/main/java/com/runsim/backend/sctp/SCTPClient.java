@@ -53,4 +53,12 @@ public class SCTPClient {
 
         channel.close();
     }
+
+    public void close() {
+        try {
+            channel.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
