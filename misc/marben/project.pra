@@ -1,0 +1,24 @@
+#DO NOT MODIFY THIS FILE: changes will invalidate this product
+#Thu Oct 24 15:00:04 EET 2019
+integerSize=
+generateJavaLibrary=
+packagePrefix=com.runsim.backend.ngap
+longSize=
+addedFileURL2=../ngap-15-2-0/NGAP-Containers.asn
+integerSizeValue=32
+addedFileURL1=../ngap-15-2-0/NGAP-Constants.asn
+addedFileURL0=../ngap-15-2-0/NGAP-CommonDataTypes.asn
+jvmOptions=
+longSizeValue=32
+outputDirectoryURL=../../backend/src/main/java/com/runsim/backend/ngap/
+constraintCheck=
+addedFileURL5=../ngap-15-2-0/NGAP-PDU-Descriptions.asn
+addedFileURL4=../ngap-15-2-0/NGAP-PDU-Contents.asn
+nonePackage=
+addedFileURL3=../ngap-15-2-0/NGAP-IEs.asn
+JavaIdentifierPrefix=
+useReflection=
+valueTrace=
+per=
+compat=
+generatedFilePrefix=asn

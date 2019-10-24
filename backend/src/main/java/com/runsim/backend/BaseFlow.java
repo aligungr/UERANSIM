@@ -59,7 +59,7 @@ public abstract class BaseFlow {
         return this::sinkState;
     }
 
-    public abstract State main(Message message);
+    public abstract State main(Message message) throws Exception;
 
     @FunctionalInterface
     public interface State {

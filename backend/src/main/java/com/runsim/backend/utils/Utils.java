@@ -1,6 +1,7 @@
 package com.runsim.backend.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public final class Utils {
@@ -52,5 +53,9 @@ public final class Utils {
 
     public static String getResourceString(String name) {
         return new String(getResourceFile(name), StandardCharsets.UTF_8);
+    }
+
+    public static InputStream getResourceStream(String name) {
+        return Utils.class.getClassLoader().getResourceAsStream(name);
     }
 }

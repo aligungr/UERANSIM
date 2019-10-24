@@ -1,6 +1,10 @@
 # Project specific
+.directory
 pycrate
 *.iml
+misc/marben/lib
+backend/src/main/java/com/runsim/backend/ngap
+backend/src/main/resources/asntable.dat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
