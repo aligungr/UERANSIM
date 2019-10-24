@@ -1,6 +1,5 @@
 package com.runsim.backend;
 
-import com.runsim.backend.annotations.StateMachine;
 import com.runsim.backend.web.Session;
 import com.runsim.backend.web.SessionManager;
 import io.javalin.Javalin;
@@ -12,11 +11,11 @@ import java.util.UUID;
 
 public class App {
 
-    private static HashMap<String, Class> stateMachineTypes;
+    private static HashMap<String, Class<? extends BaseFlow>> flowTypes;
 
     public static void main(String[] args) {
         //compilerOptionsControl();
-        findStateMachines();
+        findFlowTypes();
         startServer();
     }
 
@@ -29,14 +28,14 @@ public class App {
         }
     }
 
-    private static void findStateMachines() {
-        stateMachineTypes = new HashMap<>();
+    private static void findFlowTypes() {
+        flowTypes = new HashMap<>();
         var reflections = new Reflections(Constants.MACHINE_PREFIX);
-        var types = reflections.getTypesAnnotatedWith(StateMachine.class);
+        var types = reflections.getTypesAnnotatedWith(BaseFlow.Flow.class);
         for (var type : types) {
             String name = type.getName();
             String shortName = name.substring(Constants.MACHINE_PREFIX.length() + 1);
-            stateMachineTypes.put(shortName, type);
+            flowTypes.put(shortName, (Class<? extends BaseFlow>) type);
         }
     }
 
@@ -64,11 +63,11 @@ public class App {
         });
     }
 
-    public static Set<String> getMachineNames() {
-        return stateMachineTypes.keySet();
+    public static Set<String> getFlowNames() {
+        return flowTypes.keySet();
     }
 
-    public static Class getMachineType(String machineName) {
-        return stateMachineTypes.get(machineName);
+    public static Class<? extends BaseFlow> getFlowType(String flowName) {
+        return flowTypes.get(flowName);
     }
 }
