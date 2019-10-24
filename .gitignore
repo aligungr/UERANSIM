@@ -5,6 +5,8 @@ pycrate
 misc/marben/lib
 backend/src/main/java/com/runsim/backend/ngap
 backend/src/main/resources/asntable.dat
+*/.idea
+*/.settings
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
