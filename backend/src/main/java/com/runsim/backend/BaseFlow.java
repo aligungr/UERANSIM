@@ -62,7 +62,7 @@ public abstract class BaseFlow {
     public abstract State main(Message message);
 
     @FunctionalInterface
-    protected interface State {
+    public interface State {
         State accept(Message message);
     }
 
