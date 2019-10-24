@@ -1,7 +1,6 @@
 package com.runsim.backend.demo;
 
 import com.runsim.backend.Constants;
-import com.runsim.backend.MachineContext;
 import com.runsim.backend.MachineController;
 import com.runsim.backend.machines.RegistrationFlow;
 

@@ -1,11 +1,10 @@
 package com.runsim.backend.sctp;
 
-import com.sun.nio.sctp.*;
+import com.sun.nio.sctp.MessageInfo;
+import com.sun.nio.sctp.SctpChannel;
 
-import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.function.Consumer;
 
 public class SCTPClient {
 

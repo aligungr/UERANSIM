@@ -24,9 +24,11 @@ public abstract class Action {
         return new SwitchState(msgCtx, nextState);
     }
 
-    public static class NoOperation extends Action { }
+    public static class NoOperation extends Action {
+    }
 
-    public static class CloseConnection extends Action { }
+    public static class CloseConnection extends Action {
+    }
 
     public static class SendData extends Action {
         public final byte[] data;
@@ -62,7 +64,7 @@ public abstract class Action {
         }
     }
 
-    public static class SwitchState  extends Action {
+    public static class SwitchState extends Action {
         public final MessageContext msgCtx;
         public final String nextState;
 

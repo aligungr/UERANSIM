@@ -1,12 +1,11 @@
 package com.runsim.backend.utils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
 public interface Fun {
     void run();
 
-    default boolean run(Consumer<Exception> onError)  {
+    default boolean run(Consumer<Exception> onError) {
         try {
             run();
             return true;
