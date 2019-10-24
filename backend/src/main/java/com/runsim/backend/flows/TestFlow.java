@@ -11,8 +11,7 @@ public class TestFlow extends BaseFlow {
     }
 
     private State someInvalidDataSentAndWaitingAResponse(Message message) {
-        System.err.println("message received");
-
+        System.err.println("message received " + message.getLength() + " bytes.");
         return closeConnection();
     }
 }
