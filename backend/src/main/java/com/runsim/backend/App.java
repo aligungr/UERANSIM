@@ -2,9 +2,11 @@ package com.runsim.backend;
 
 import com.runsim.backend.web.Session;
 import com.runsim.backend.web.SessionManager;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import io.javalin.Javalin;
-import org.reflections.Reflections;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -13,7 +15,7 @@ public class App {
 
     private static HashMap<String, Class<? extends BaseFlow>> flowTypes;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         //compilerOptionsControl();
         findFlowTypes();
         startServer();
@@ -28,14 +30,16 @@ public class App {
         }
     }
 
-    private static void findFlowTypes() {
+    private static void findFlowTypes() throws Exception {
         flowTypes = new HashMap<>();
-        var reflections = new Reflections(Constants.MACHINE_PREFIX);
-        var types = reflections.getTypesAnnotatedWith(BaseFlow.Flow.class);
-        for (var type : types) {
-            String name = type.getName();
-            String shortName = name.substring(Constants.MACHINE_PREFIX.length() + 1);
-            flowTypes.put(shortName, (Class<? extends BaseFlow>) type);
+        try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.FLOWS_PREFIX).scan()) {
+            var classInfoList = scanResult.getAllClasses();
+            for (var classInfo : classInfoList) {
+                Class clazz = Class.forName(classInfo.getName());
+                if (!BaseFlow.class.isAssignableFrom(clazz)) continue;
+                if (Modifier.isAbstract(clazz.getModifiers()) || clazz.isInterface()) continue;
+                flowTypes.put(clazz.getSimpleName(), clazz);
+            }
         }
     }
 

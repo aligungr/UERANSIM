@@ -30,9 +30,9 @@
             <version>1.7.26</version>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.4.10</version>
         </dependency>
     </dependencies>
 

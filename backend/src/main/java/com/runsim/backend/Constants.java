@@ -1,7 +1,7 @@
 package com.runsim.backend;
 
 public final class Constants {
-    public static final String MACHINE_PREFIX = "com.runsim.backend.machines";
+    public static final String FLOWS_PREFIX = "com.runsim.backend.flows";
 
     public static final int BACKEND_PORT = 5002;
 
