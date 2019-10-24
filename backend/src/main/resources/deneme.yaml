@@ -1,0 +1,18 @@
+---
+
+initiatingMessage:
+  procedureCode: id-InitialUEMessage
+  criticality: ignore
+  value:
+    InitialUEMessage:
+      protocolIEs:
+        - id: id-RAN-UE-NGAP-ID
+          criticality: reject
+          value:
+            RAN-UE-NGAP-ID: 1
+        - id: id-NAS-PDU
+          criticality: reject
+          value:
+            NAS-PDU: 3232
+
+...
