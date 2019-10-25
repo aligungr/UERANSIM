@@ -52,6 +52,15 @@ public class NGAP {
         return NGAP.context = context;
     }
 
+    public static byte[] perEncode(Value value) {
+        try (var stream = new ByteArrayOutputStream()) {
+            value.perEncode(getContext(), stream);
+            return stream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static <T extends Value> T perDecode(Class<T> type, byte[] data) {
         try {
             var value = type.getConstructor().newInstance();
@@ -70,9 +79,25 @@ public class NGAP {
         try (var stream = new ByteArrayOutputStream()) {
             value.xerEncode(getContext(), stream);
             var data = stream.toByteArray();
-            return new String(data, StandardCharsets.UTF_8);
+            var xml = new String(data, StandardCharsets.UTF_8);
+            return Utils.indentXml(xml);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T extends Value> T xerDecode(Class<T> type, byte[] xml) {
+        try {
+            var value = type.getConstructor().newInstance();
+            value.xerDecode(getContext(), new ByteArrayInputStream(xml));
+            return value;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T extends Value> T xerDecode(Class<T> type, String xml) {
+        xml = Utils.normalizeXml(xml);
+        return xerDecode(type, xml.getBytes(StandardCharsets.UTF_8));
     }
 }

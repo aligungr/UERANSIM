@@ -1,7 +1,17 @@
 package com.runsim.backend.utils;
 
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 public final class Utils {
@@ -57,5 +67,55 @@ public final class Utils {
 
     public static InputStream getResourceStream(String name) {
         return Utils.class.getClassLoader().getResourceAsStream(name);
+    }
+
+    public static String normalizeXml(String xml) {
+        try {
+            var factory = DocumentBuilderFactory.newInstance();
+            var builder = factory.newDocumentBuilder();
+            var is = new InputSource(new StringReader(xml));
+            var document = builder.parse(is);
+            document.normalizeDocument();
+            trimWhitespace(document.getDocumentElement());
+            return nodeToString(document.getDocumentElement(), true, false);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String indentXml(String xml) {
+        try {
+            var factory = DocumentBuilderFactory.newInstance();
+            var builder = factory.newDocumentBuilder();
+            var is = new InputSource(new StringReader(xml));
+            var document = builder.parse(is);
+            return nodeToString(document.getDocumentElement(), true, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void trimWhitespace(Node node) {
+        var children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); ++i) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE)
+                child.setTextContent(child.getTextContent().trim());
+            trimWhitespace(child);
+        }
+    }
+
+    private static String nodeToString(Node node, boolean omitXmlDeclaration, boolean indent) {
+        var sw = new StringWriter();
+        try {
+            var t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, omitXmlDeclaration ? "yes" : "no");
+            t.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
+            t.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+            t.transform(new DOMSource(node), new StreamResult(sw));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return sw.toString();
     }
 }

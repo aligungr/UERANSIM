@@ -1,9 +1,11 @@
 package com.runsim.backend;
 
+import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import com.runsim.backend.sctp.SCTPClient;
 import com.runsim.backend.utils.Utils;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
+import fr.marben.asnsdk.japi.spe.Value;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,6 +34,14 @@ public abstract class BaseFlow {
 
     protected final void sendBase16(String hexString) {
         sendData(Utils.hexStringToByteArray(hexString));
+    }
+
+    protected final void sendPDU(Value pdu) {
+        sendData(NGAP.perEncode(pdu));
+    }
+
+    protected final void sendPDU(String xml) {
+        sendPDU(NGAP.xerDecode(NGAP_PDU.class, xml));
     }
 
     public final void start() throws Exception {

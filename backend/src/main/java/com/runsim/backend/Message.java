@@ -1,5 +1,7 @@
 package com.runsim.backend;
 
+import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
+
 public class Message {
     private final byte[] rawData;
     private final int length;
@@ -21,5 +23,9 @@ public class Message {
 
     public int getStreamNumber() {
         return streamNumber;
+    }
+
+    public NGAP_PDU getAsPDU() {
+        return NGAP.perDecode(NGAP_PDU.class, getRawData());
     }
 }
