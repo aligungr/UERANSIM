@@ -2,7 +2,6 @@ package com.runsim.backend.nas.core.values;
 
 import com.runsim.backend.nas.core.BitInputStream;
 import com.runsim.backend.nas.core.BitOutputStream;
-import com.runsim.backend.nas.core.NASValue;
 
 public class HalfOctetValue extends NASValue {
     private int value;
