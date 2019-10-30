@@ -1,6 +1,6 @@
 package com.runsim.backend.nas.impl;
 
-import com.runsim.backend.nas.core.values.OctetValue;
+import com.runsim.backend.nas.core.OctetValue;
 
 public class ExtendedProtocolDiscriminator extends OctetValue {
 

@@ -2,8 +2,8 @@ package com.runsim.backend.nas.impl;
 
 import com.runsim.backend.nas.core.BitInputStream;
 import com.runsim.backend.nas.core.BitOutputStream;
-import com.runsim.backend.nas.core.values.NASValue;
-import com.runsim.backend.nas.core.values.SpareHalfOctetValue;
+import com.runsim.backend.nas.core.NASValue;
+import com.runsim.backend.nas.core.SpareHalfOctetValue;
 
 public class PlainNASMessage extends NASValue {
 

@@ -1,6 +1,6 @@
 package com.runsim.backend.nas.impl;
 
-import com.runsim.backend.nas.core.values.HalfOctetValue;
+import com.runsim.backend.nas.core.HalfOctetValue;
 
 public class SecurityHeaderType extends HalfOctetValue {
 

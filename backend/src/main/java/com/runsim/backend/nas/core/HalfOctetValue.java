@@ -1,15 +1,12 @@
-package com.runsim.backend.nas.core.values;
+package com.runsim.backend.nas.core;
 
-import com.runsim.backend.nas.core.BitInputStream;
-import com.runsim.backend.nas.core.BitOutputStream;
-
-public class OctetValue extends NASValue {
+public class HalfOctetValue extends NASValue {
     private int value;
 
-    public OctetValue() {
+    public HalfOctetValue() {
     }
 
-    public OctetValue(int value) {
+    public HalfOctetValue(int value) {
         this.value = value;
     }
 
@@ -19,12 +16,12 @@ public class OctetValue extends NASValue {
 
     @Override
     public void encode(BitOutputStream stream) {
-        stream.writeOctet(value);
+        stream.writeHalfOctet(value);
     }
 
     @Override
     public void decode(BitInputStream stream) {
-        this.value = stream.readOctet();
+        this.value = stream.readHalfOctet();
     }
 
     @Override

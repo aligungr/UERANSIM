@@ -1,7 +1,4 @@
-package com.runsim.backend.nas.core.values;
-
-import com.runsim.backend.nas.core.BitInputStream;
-import com.runsim.backend.nas.core.BitOutputStream;
+package com.runsim.backend.nas.core;
 
 public abstract class NASValue {
 
