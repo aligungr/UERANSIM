@@ -13,10 +13,6 @@ public class ExtendedProtocolDiscriminator extends NasEnum {
     }
 
     public static ExtendedProtocolDiscriminator fromValue(int value) {
-        if (value == MOBILITY_MANAGEMENT_MESSAGES.getValue())
-            return MOBILITY_MANAGEMENT_MESSAGES;
-        else if (value == SESSION_MANAGEMENT_MESSAGES.getValue())
-            return SESSION_MANAGEMENT_MESSAGES;
-        return null;
+        return fromValueGeneric(ExtendedProtocolDiscriminator.class, value);
     }
 }

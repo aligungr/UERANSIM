@@ -52,6 +52,7 @@ public class NasPduParser {
         plainNasMessage.setSecurityHeaderType(sht);
 
         var messageType = parseMessageType();
+        plainNasMessage.setMessageType(messageType);
 
         throw new NotImplementedException("plain nas messages not implemented yet");
         // return plainNasMessage;

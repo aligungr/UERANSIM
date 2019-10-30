@@ -111,7 +111,6 @@ public class MessageType extends NasEnum {
     }
 
     public static MessageType fromValue(int value) {
-        // TODO
-        return null;
+        return fromValueGeneric(MessageType.class, value);
     }
 }

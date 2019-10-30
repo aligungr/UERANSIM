@@ -19,16 +19,6 @@ public class SecurityHeaderType extends NasEnum {
     }
 
     public static SecurityHeaderType fromValue(int value) {
-        if (value == NOT_PROTECTED.getValue())
-            return NOT_PROTECTED;
-        if (value == INTEGRITY_PROTECTED.getValue())
-            return INTEGRITY_PROTECTED;
-        if (value == INTEGRITY_PROTECTED_AND_CIPHERED.getValue())
-            return INTEGRITY_PROTECTED_AND_CIPHERED;
-        if (value == INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT.getValue())
-            return INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT;
-        if (value == INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT.getValue())
-            return INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT;
-        return null;
+        return fromValueGeneric(SecurityHeaderType.class, value);
     }
 }
