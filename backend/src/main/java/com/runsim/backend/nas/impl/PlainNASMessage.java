@@ -7,23 +7,48 @@ import com.runsim.backend.nas.core.values.SpareHalfOctetValue;
 
 public class PlainNASMessage extends NASValue {
 
-    ExtendedProtocolDiscriminator extendedProtocolDiscriminator;
-    SecurityHeaderType securityHeaderType;
-    SpareHalfOctetValue spareHalfOctetValue;
+    private ExtendedProtocolDiscriminator extendedProtocolDiscriminator;
+    private SecurityHeaderType securityHeaderType;
+    private SpareHalfOctetValue spareHalfOctetValue;
+
+    public PlainNASMessage() {
+        this.extendedProtocolDiscriminator = new ExtendedProtocolDiscriminator();
+        this.securityHeaderType = new SecurityHeaderType();
+        this.spareHalfOctetValue = new SpareHalfOctetValue();
+    }
 
     @Override
     public void encode(BitOutputStream stream) {
-        // todo
+        extendedProtocolDiscriminator.encode(stream);
+        securityHeaderType.encode(stream);
+        spareHalfOctetValue.encode(stream);
     }
 
     @Override
     public void decode(BitInputStream stream) {
-        // todo
+        extendedProtocolDiscriminator.decode(stream);
+        securityHeaderType.decode(stream);
+        spareHalfOctetValue.decode(stream);
     }
 
     @Override
     public String display() {
-        // todo
-        return null;
+        return "Plain NAS Message";
+    }
+
+    public ExtendedProtocolDiscriminator getExtendedProtocolDiscriminator() {
+        return extendedProtocolDiscriminator;
+    }
+
+    public void setExtendedProtocolDiscriminator(ExtendedProtocolDiscriminator extendedProtocolDiscriminator) {
+        this.extendedProtocolDiscriminator = extendedProtocolDiscriminator;
+    }
+
+    public SecurityHeaderType getSecurityHeaderType() {
+        return securityHeaderType;
+    }
+
+    public void setSecurityHeaderType(SecurityHeaderType securityHeaderType) {
+        this.securityHeaderType = securityHeaderType;
     }
 }

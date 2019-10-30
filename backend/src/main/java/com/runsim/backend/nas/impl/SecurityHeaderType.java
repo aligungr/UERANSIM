@@ -19,19 +19,27 @@ public class SecurityHeaderType extends HalfOctetValue {
 
     @Override
     public String display() {
+        String string;
         switch (getValue()) {
             case NOT_PROTECTED:
-                return "Plain 5GS NAS message, not security protected";
+                string = "Plain 5GS NAS message, not security protected";
+                break;
             case INTEGRITY_PROTECTED:
-                return "Integrity protected";
+                string = "Integrity protected";
+                break;
             case INTEGRITY_PROTECTED_AND_CIPHERED:
-                return "Integrity protected and ciphered";
+                string = "Integrity protected and ciphered";
+                break;
             case INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT:
-                return "Integrity protected with new 5G NAS security context";
+                string = "Integrity protected with new 5G NAS security context";
+                break;
             case INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT:
-                return "Integrity protected and ciphered with new 5G NAS security context";
+                string = "Integrity protected and ciphered with new 5G NAS security context";
+                break;
             default:
-                return null;
+                string = INVALID_DATA;
+                break;
         }
+        return "Security header type: " + string;
     }
 }
