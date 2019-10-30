@@ -2,10 +2,7 @@ package com.runsim.backend.nas;
 
 import com.runsim.backend.nas.exceptions.InvalidValueException;
 import com.runsim.backend.nas.exceptions.NotImplementedException;
-import com.runsim.backend.nas.types.ExtendedProtocolDiscriminator;
-import com.runsim.backend.nas.types.NasMessage;
-import com.runsim.backend.nas.types.PlainNasMessage;
-import com.runsim.backend.nas.types.SecurityHeaderType;
+import com.runsim.backend.nas.types.*;
 
 public class NasPduParser {
     private final NasInputStream data;
@@ -16,8 +13,6 @@ public class NasPduParser {
 
     public NasMessage parseNasMessage() {
         var epd = parseExtendedProtocolDiscriminator();
-        if (epd == null) throw new InvalidValueException(ExtendedProtocolDiscriminator.class);
-
         if (epd.equals(ExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES)) {
             return parseSessionManagementMessage();
         } else {
@@ -26,7 +21,9 @@ public class NasPduParser {
     }
 
     private ExtendedProtocolDiscriminator parseExtendedProtocolDiscriminator() {
-        return ExtendedProtocolDiscriminator.fromValue(data.readOctet());
+        var epd = ExtendedProtocolDiscriminator.fromValue(data.readOctet());
+        if (epd == null) throw new InvalidValueException(ExtendedProtocolDiscriminator.class);
+        return epd;
     }
 
     private NasMessage parseSessionManagementMessage() {
@@ -38,7 +35,7 @@ public class NasPduParser {
         if (!sht.equals(SecurityHeaderType.NOT_PROTECTED))
             throw new NotImplementedException("security protected 5GS MM NAS messages not implemented yet");
 
-        return parsePlainNasMessage();
+        return parsePlainNasMessage(ExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES, sht);
     }
 
     private SecurityHeaderType parseSecurityHeaderType() {
@@ -49,7 +46,20 @@ public class NasPduParser {
         return sht;
     }
 
-    private PlainNasMessage parsePlainNasMessage() {
+    private PlainNasMessage parsePlainNasMessage(ExtendedProtocolDiscriminator epd, SecurityHeaderType sht) {
+        var plainNasMessage = new PlainNasMessage();
+        plainNasMessage.setExtendedProtocolDiscriminator(epd);
+        plainNasMessage.setSecurityHeaderType(sht);
+
+        var messageType = parseMessageType();
+
         throw new NotImplementedException("plain nas messages not implemented yet");
+        // return plainNasMessage;
+    }
+
+    private MessageType parseMessageType() {
+        var mt = MessageType.fromValue(data.readOctet());
+        if (mt == null) throw new InvalidValueException(MessageType.class);
+        return mt;
     }
 }
