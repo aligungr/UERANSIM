@@ -68,7 +68,42 @@ public class MessageType extends NasEnum {
 
     /* Message Types for Session Management Messages */
 
+    public static final MessageType SESSION_ESTABLISHMENT_REQUEST
+            = new MessageType(0b11000001, "PDU session establishment request");
+    public static final MessageType SESSION_ESTABLISHMENT_ACCEPT
+            = new MessageType(0b11000010, "PDU session establishment accept");
+    public static final MessageType SESSION_ESTABLISHMENT_REJECT
+            = new MessageType(0b11000011, "PDU session establishment reject");
 
+    public static final MessageType SESSION_AUTHENTICATION_COMMAND
+            = new MessageType(0b11000101, "PDU session authentication command");
+    public static final MessageType SESSION_AUTHENTICATION_COMPLETE
+            = new MessageType(0b11000110, "PDU session authentication complete");
+    public static final MessageType SESSION_AUTHENTICATION_RESULT
+            = new MessageType(0b11000111, "PDU session authentication result");
+
+    public static final MessageType SESSION_MODIFICATION_REQUEST
+            = new MessageType(0b11001001, "PDU session modification request");
+    public static final MessageType SESSION_MODIFICATION_REJECT
+            = new MessageType(0b11001010, "PDU session modification reject");
+    public static final MessageType SESSION_MODIFICATION_COMMAND
+            = new MessageType(0b11001011, "PDU session modification command");
+    public static final MessageType SESSION_MODIFICATION_COMPLETE
+            = new MessageType(0b11001100, "PDU session modification complete");
+    public static final MessageType SESSION_MODIFICATION_COMMAND_REJECT
+            = new MessageType(0b11001101, "PDU session modification command reject");
+
+    public static final MessageType SESSION_RELEASE_REQUEST
+            = new MessageType(0b11010001, "PDU session release request");
+    public static final MessageType SESSION_RELEASE_REJECT
+            = new MessageType(0b11010010, "PDU session release reject");
+    public static final MessageType SESSION_RELEASE_COMMAND
+            = new MessageType(0b11010011, "PDU session release command");
+    public static final MessageType SESSION_RELEASE_COMPLETE
+            = new MessageType(0b11010100, "PDU session release complete");
+
+    public static final MessageType FIVEG_SM_STATUS
+            = new MessageType(0b11010110, "5GSM status");
 
 
     private MessageType(int value, String name) {
