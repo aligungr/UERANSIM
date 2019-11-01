@@ -1,7 +1,7 @@
 package com.runsim.backend.protocols.nas;
 
-import com.runsim.backend.protocols.OctetInputStream;
 import com.runsim.backend.protocols.bits.Bit3;
+import com.runsim.backend.protocols.core.OctetInputStream;
 import com.runsim.backend.protocols.eap.EAPDecoder;
 import com.runsim.backend.protocols.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.protocols.exceptions.InvalidValueException;

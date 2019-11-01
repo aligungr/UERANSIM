@@ -1,6 +1,6 @@
 package com.runsim.backend.protocols.eap;
 
-import com.runsim.backend.protocols.OctetInputStream;
+import com.runsim.backend.protocols.core.OctetInputStream;
 import com.runsim.backend.protocols.exceptions.DecodingException;
 import com.runsim.backend.protocols.exceptions.InvalidValueException;
 import com.runsim.backend.protocols.exceptions.NotImplementedException;

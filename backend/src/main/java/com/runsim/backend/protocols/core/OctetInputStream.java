@@ -1,4 +1,4 @@
-package com.runsim.backend.protocols;
+package com.runsim.backend.protocols.core;
 
 import com.runsim.backend.protocols.octets.Octet;
 
