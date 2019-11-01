@@ -61,8 +61,10 @@ public class NASDecoder {
         var messageType = decodeMessageType();
         if (messageType.equals(MessageType.AUTHENTICATION_REQUEST)) {
             message = decodeAuthenticationRequest();
+        } else if (messageType.equals(MessageType.REGISTRATION_REQUEST)) {
+            message = decodeRegistrationRequest();
         } else {
-            throw new NotImplementedException("message type not implemented yet");
+            throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }
 
         message.extendedProtocolDiscriminator = epd;
@@ -123,5 +125,12 @@ public class NASDecoder {
         var length = data.readOctet2();
         var eapDecoder = new EAPDecoder(data);
         return eapDecoder.decodeEAP();
+    }
+
+    private RegistrationRequest decodeRegistrationRequest() {
+        var req = new RegistrationRequest();
+
+        //return req;
+        throw new NotImplementedException("registration request not implemented yet");
     }
 }
