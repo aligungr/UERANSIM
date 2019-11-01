@@ -10,6 +10,8 @@ public class FlowTesting {
         var data = Utils.hexStringToByteArray(test);
         var pdu = new NASDecoder(data).decodeNAS();
 
+        System.out.println("-");
+
         /*var flow = new RegistrationFlow();
         flow.start();*/
     }

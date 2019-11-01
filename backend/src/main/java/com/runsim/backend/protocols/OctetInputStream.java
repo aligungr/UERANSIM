@@ -1,5 +1,7 @@
 package com.runsim.backend.protocols;
 
+import com.runsim.backend.protocols.octets.Octet;
+
 public class OctetInputStream {
     private final byte[] data;
     private final int length;
@@ -41,5 +43,13 @@ public class OctetInputStream {
 
     public boolean hasNext() {
         return index < length;
+    }
+
+    public Octet[] readOctets(int length) {
+        Octet[] res = new Octet[length];
+        for (int i = 0; i < res.length; i++)
+            res[i] = new Octet(data[index + i]);
+        index += length;
+        return res;
     }
 }

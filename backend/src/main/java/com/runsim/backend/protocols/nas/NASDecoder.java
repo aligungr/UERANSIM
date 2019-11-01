@@ -2,11 +2,12 @@ package com.runsim.backend.protocols.nas;
 
 import com.runsim.backend.protocols.OctetInputStream;
 import com.runsim.backend.protocols.bits.Bit3;
-import com.runsim.backend.protocols.bits.Bit8;
 import com.runsim.backend.protocols.eap.EAPDecoder;
 import com.runsim.backend.protocols.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.protocols.exceptions.InvalidValueException;
 import com.runsim.backend.protocols.exceptions.NotImplementedException;
+import com.runsim.backend.protocols.octets.Octet;
+import com.runsim.backend.protocols.octets.OctetString;
 
 public class NASDecoder {
     private final OctetInputStream data;
@@ -113,10 +114,8 @@ public class NASDecoder {
 
     private ABBA decodeABBA() {
         var abba = new ABBA();
-        abba.length = new Bit8(data.readOctet());
-        abba.contents = new Bit8[abba.length.getValue()];
-        for (int i = 0; i < abba.contents.length; i++)
-            abba.contents[i] = new Bit8(data.readOctet());
+        abba.length = new Octet(data.readOctet());
+        abba.contents = new OctetString(data.readOctets(abba.length.intValue));
         return abba;
     }
 
