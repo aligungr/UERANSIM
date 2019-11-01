@@ -1,4 +1,4 @@
-package com.runsim.backend.nas.exceptions;
+package com.runsim.backend.protocols.exceptions;
 
 public class NotImplementedException extends RuntimeException {
     private String message;

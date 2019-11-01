@@ -1,8 +1,8 @@
-package com.runsim.backend.nas.types;
+package com.runsim.backend.protocols.nas;
 
-import com.runsim.backend.nas.core.NasEnum;
+import com.runsim.backend.protocols.core.ProtocolEnum;
 
-public class MessageType extends NasEnum {
+public class MessageType extends ProtocolEnum {
 
     /* Message Types for Mobility Management Messages */
 

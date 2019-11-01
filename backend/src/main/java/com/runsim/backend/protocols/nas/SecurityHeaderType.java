@@ -1,8 +1,8 @@
-package com.runsim.backend.nas.types;
+package com.runsim.backend.protocols.nas;
 
-import com.runsim.backend.nas.core.NasEnum;
+import com.runsim.backend.protocols.core.ProtocolEnum;
 
-public class SecurityHeaderType extends NasEnum {
+public class SecurityHeaderType extends ProtocolEnum {
     public static final SecurityHeaderType NOT_PROTECTED
             = new SecurityHeaderType(0b0000, "Plain 5GS NAS message, not security protected");
     public static final SecurityHeaderType INTEGRITY_PROTECTED

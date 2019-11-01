@@ -1,8 +1,8 @@
-package com.runsim.backend.nas.types;
+package com.runsim.backend.protocols.nas;
 
-import com.runsim.backend.nas.core.NasEnum;
+import com.runsim.backend.protocols.core.ProtocolEnum;
 
-public class ExtendedProtocolDiscriminator extends NasEnum {
+public class ExtendedProtocolDiscriminator extends ProtocolEnum {
     public static final ExtendedProtocolDiscriminator MOBILITY_MANAGEMENT_MESSAGES
             = new ExtendedProtocolDiscriminator(0b01111110, "5GS mobility management messages");
     public static final ExtendedProtocolDiscriminator SESSION_MANAGEMENT_MESSAGES
