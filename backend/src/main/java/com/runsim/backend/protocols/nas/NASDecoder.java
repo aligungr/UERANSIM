@@ -101,8 +101,7 @@ public class NASDecoder {
         return req;
     }
 
-    private NASKeySetIdentifier decodeNasKeySetIdentifier() {
-        int value = data.readOctet();
+    private NASKeySetIdentifier decodeNasKeySetIdentifierFromValue(int value) {
         int tscValue = (value >> 3) & 1;
         int identifierValue = value & 0b111;
 
@@ -112,6 +111,10 @@ public class NASDecoder {
             throw new InvalidValueException(TypeOfSecurityContext.class);
         res.nasKeySetIdentifier = new Bit3(identifierValue);
         return res;
+    }
+
+    private NASKeySetIdentifier decodeNasKeySetIdentifier() {
+        return decodeNasKeySetIdentifierFromValue(data.readOctet());
     }
 
     private ABBA decodeABBA() {
@@ -130,7 +133,139 @@ public class NASDecoder {
     private RegistrationRequest decodeRegistrationRequest() {
         var req = new RegistrationRequest();
 
+        int flags = data.readOctet();
+
+        int msb = (flags & 0b11110000) >> 4;
+        int lsb = flags & 0b00001111;
+
+        req.registrationType = decodeRegistrationTypeFromValue(lsb);
+        req.nasKeySetIdentifier = decodeNasKeySetIdentifierFromValue(msb);
+        req.mobileIdentity = decodeMobileIdentity();
+
         //return req;
         throw new NotImplementedException("registration request not implemented yet");
+    }
+
+    private FiveGSRegistrationType decodeRegistrationTypeFromValue(int value) {
+        var regType = new FiveGSRegistrationType();
+        regType.followOnRequestPending = FOR.fromValue((value >> 3) & 0b1);
+        regType.registrationType = RegistrationType.fromValue(value & 0b111);
+
+        if (regType.followOnRequestPending == null) throw new InvalidValueException(FOR.class);
+        if (regType.registrationType == null) throw new InvalidValueException(RegistrationType.class);
+
+        return regType;
+    }
+
+    private FiveGSMobileIdentity decodeMobileIdentity() {
+        int length = data.readOctet2();
+        int flags = data.peekOctet();
+
+        var typeOfIdentity = TypeOfIdentity.fromValue(flags & 0b111);
+        if (typeOfIdentity == null) {
+            // 3GPP 24501 15.2.0, 9.11.3.3:
+            // "All other values are unused and shall be interpreted as "SUCI", if received by the UE."
+            typeOfIdentity = TypeOfIdentity.SUCI;
+        }
+
+        if (typeOfIdentity.equals(TypeOfIdentity.SUCI)) {
+            return decodeSUCI();
+        } else {
+            throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name);
+        }
+    }
+
+    private SUCIMobileIdentity decodeSUCI() {
+        int flags = data.readOctet();
+
+        var supiFormat = SUPIFormat.fromValue((flags >> 4) & 0b111);
+        if (supiFormat == null) {
+            // 3GPP 24501 15.2.0, p. 345
+            // All other values are interpreted as IMSI by this version of the protocol.
+            supiFormat = SUPIFormat.IMSI;
+        }
+
+        if (supiFormat.equals(SUPIFormat.IMSI))
+            return decodeIMSI();
+        if (supiFormat.equals(SUPIFormat.NETWORK_SPECIFIC_IDENTIFIER))
+            return decodeNetworkSpecificIdentifier();
+        throw new InvalidValueException(SUPIFormat.class);
+    }
+
+    private IMSIMobileIdentity decodeIMSI() {
+        /* Decode MCC */
+        int octet1 = data.readOctet();
+        int mcc1 = octet1 & 0b1111;
+        int mcc2 = (octet1 >> 4) & 0b1111;
+        int octet2 = data.readOctet();
+        int mcc3 = octet2 & 0b1111;
+        int mcc = 100 * mcc1 + 10 * mcc2 + mcc3;
+        var mobileCountryCode = MobileCountryCode.fromValue(mcc);
+
+        /* Decode MNC */
+        int mnc3 = (octet2 >> 4) & 0b1111;
+        int octet3 = data.readOctet();
+        int mnc2 = octet3 & 0b1111;
+        int mnc1 = (octet3 >> 4) & 0b1111;
+        octet3 = data.readOctet();
+        int mnc = 10 * mnc1 + mnc2;
+        boolean longMnc = false;
+        if ((mnc3 != 0xf) || (octet1 == 0xff && octet2 == 0xff && octet3 == 0xff)) {
+            longMnc = true;
+            mnc = 10 * mnc + mnc3;
+        }
+        MobileNetworkCode mobileNetworkCode;
+        if (longMnc) {
+            mobileNetworkCode = MobileNetworkCode3.fromValue(mcc * 1000 + mnc);
+        } else {
+            mobileNetworkCode = MobileNetworkCode2.fromValue(mcc * 100 + mnc);
+        }
+
+        /* Decode routing indicator */
+        int octet = data.readOctet();
+        int r1 = octet & 0b1111;
+        int r2 = (octet >> 4) & 0b1111;
+        octet = data.readOctet();
+        int r3 = octet & 0b1111;
+        int r4 = (octet >> 4) & 0b1111;
+        var routingIndicator = decodeBCDString(octet == 0xFF ? 1 : 2, false); // WARNING: this was not tested
+
+        /* Decode protection schema id */
+        var protectionSchemaId = ProtectionSchemeIdentifier.fromValue(data.readOctet() & 0b1111);
+
+        /* Decode home network public key identifier */
+        int homeNetworkPublicKeyIdentifier = data.readOctet();
+
+        /* Decode others */
+        /*** todo**/
+
+        throw new NotImplementedException("IMSI not implemented yet");
+    }
+
+    private String decodeBCDString(int length, boolean skipFirst) {
+        final var digits = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '?', '?', '?', '?', '?', '?'};
+        int offset = 0, i = 0;
+        char[] arr = new char[length * 2];
+
+        while (offset < length) {
+            int octet = data.readOctet();
+            if (!skipFirst) {
+                arr[i] = digits[octet & 0x0f];
+                i++;
+            }
+            skipFirst = false;
+            octet = octet >> 4;
+
+            if (offset == length - 1 && octet == 0x0f)
+                break;
+            arr[i] = digits[octet & 0x0f];
+            i++;
+            offset++;
+        }
+        return new String(arr);
+    }
+
+    private NetworkSpecificIdentifierMobileIdentity decodeNetworkSpecificIdentifier() {
+        throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");
     }
 }

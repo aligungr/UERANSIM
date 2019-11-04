@@ -118,4 +118,16 @@ public final class Utils {
         }
         return sw.toString();
     }
+
+    public static String padLeft(String string, int totalLength, char character) {
+        int need = totalLength - string.length();
+        if (need <= 0) return string;
+        return String.valueOf(character).repeat(need) + string;
+    }
+
+    public static String padRight(String string, int totalLength, char character) {
+        int need = totalLength - string.length();
+        if (need <= 0) return string;
+        return string + String.valueOf(character).repeat(need);
+    }
 }

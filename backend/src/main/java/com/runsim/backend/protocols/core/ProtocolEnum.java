@@ -45,7 +45,7 @@ public class ProtocolEnum extends ProtocolValue {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return name;
     }
 }
