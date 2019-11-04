@@ -14,4 +14,9 @@ public class Octet2 {
     public Octet2(Octet msb, Octet lsb) {
         this(msb.intValue, lsb.intValue);
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(intValue);
+    }
 }

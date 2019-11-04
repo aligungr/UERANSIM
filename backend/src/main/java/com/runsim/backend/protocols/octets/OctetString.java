@@ -42,6 +42,10 @@ public class OctetString implements Iterable<Octet> {
 
     @Override
     public String toString() {
+        return toHexString();
+    }
+
+    public String toHexString() {
         var sb = new StringBuilder();
         forEach(octet -> sb.append(String.format("%02x", octet.intValue)));
         return sb.toString();

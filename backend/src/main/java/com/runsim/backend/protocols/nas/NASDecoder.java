@@ -169,13 +169,13 @@ public class NASDecoder {
         }
 
         if (typeOfIdentity.equals(TypeOfIdentity.SUCI)) {
-            return decodeSUCI();
+            return decodeSUCI(length);
         } else {
             throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name);
         }
     }
 
-    private SUCIMobileIdentity decodeSUCI() {
+    private SUCIMobileIdentity decodeSUCI(int length) {
         int flags = data.readOctet();
 
         var supiFormat = SUPIFormat.fromValue((flags >> 4) & 0b111);
@@ -186,13 +186,15 @@ public class NASDecoder {
         }
 
         if (supiFormat.equals(SUPIFormat.IMSI))
-            return decodeIMSI();
+            return decodeIMSI(length - 1);
         if (supiFormat.equals(SUPIFormat.NETWORK_SPECIFIC_IDENTIFIER))
-            return decodeNetworkSpecificIdentifier();
+            return decodeNetworkSpecificIdentifier(length - 1);
         throw new InvalidValueException(SUPIFormat.class);
     }
 
-    private IMSIMobileIdentity decodeIMSI() {
+    private IMSIMobileIdentity decodeIMSI(int length) {
+        var result = new IMSIMobileIdentity();
+
         /* Decode MCC */
         int octet1 = data.readOctet();
         int mcc1 = octet1 & 0b1111;
@@ -200,46 +202,46 @@ public class NASDecoder {
         int octet2 = data.readOctet();
         int mcc3 = octet2 & 0b1111;
         int mcc = 100 * mcc1 + 10 * mcc2 + mcc3;
-        var mobileCountryCode = MobileCountryCode.fromValue(mcc);
+        result.mobileCountryCode = MobileCountryCode.fromValue(mcc);
 
         /* Decode MNC */
         int mnc3 = (octet2 >> 4) & 0b1111;
         int octet3 = data.readOctet();
         int mnc2 = octet3 & 0b1111;
         int mnc1 = (octet3 >> 4) & 0b1111;
-        octet3 = data.readOctet();
         int mnc = 10 * mnc1 + mnc2;
         boolean longMnc = false;
         if ((mnc3 != 0xf) || (octet1 == 0xff && octet2 == 0xff && octet3 == 0xff)) {
             longMnc = true;
             mnc = 10 * mnc + mnc3;
         }
-        MobileNetworkCode mobileNetworkCode;
         if (longMnc) {
-            mobileNetworkCode = MobileNetworkCode3.fromValue(mcc * 1000 + mnc);
+            result.mobileNetworkCode = MobileNetworkCode3.fromValue(mcc * 1000 + mnc);
         } else {
-            mobileNetworkCode = MobileNetworkCode2.fromValue(mcc * 100 + mnc);
+            result.mobileNetworkCode = MobileNetworkCode2.fromValue(mcc * 100 + mnc);
         }
 
         /* Decode routing indicator */
-        int octet = data.readOctet();
-        int r1 = octet & 0b1111;
-        int r2 = (octet >> 4) & 0b1111;
-        octet = data.readOctet();
-        int r3 = octet & 0b1111;
-        int r4 = (octet >> 4) & 0b1111;
-        var routingIndicator = decodeBCDString(octet == 0xFF ? 1 : 2, false); // WARNING: this was not tested
+        int riLen = data.peekOctet(1) == 0xFF ? 1 : 2;
+        result.routingIndicator = decodeBCDString(riLen, false);
+        if (riLen == 1) data.readOctet();
 
         /* Decode protection schema id */
-        var protectionSchemaId = ProtectionSchemeIdentifier.fromValue(data.readOctet() & 0b1111);
+        result.protectionSchemaId = ProtectionSchemeIdentifier.fromValue(data.readOctet() & 0b1111);
 
         /* Decode home network public key identifier */
-        int homeNetworkPublicKeyIdentifier = data.readOctet();
+        result.homeNetworkPublicKeyIdentifier = new HomeNetworkPKI(data.readOctet());
 
-        /* Decode others */
-        /*** todo**/
+        /* Decode schema output */
+        String schemaOutput;
+        if (result.protectionSchemaId.equals(ProtectionSchemeIdentifier.NULL_SCHEMA)) {
+            result.schemaOutput = decodeBCDString(length - 7, false);
+        } else {
+            var range = data.readOctetString(length - 7);
+            result.schemaOutput = range.toHexString();
+        }
 
-        throw new NotImplementedException("IMSI not implemented yet");
+        return result;
     }
 
     private String decodeBCDString(int length, boolean skipFirst) {
@@ -265,7 +267,7 @@ public class NASDecoder {
         return new String(arr);
     }
 
-    private NetworkSpecificIdentifierMobileIdentity decodeNetworkSpecificIdentifier() {
+    private NetworkSpecificIdentifierMobileIdentity decodeNetworkSpecificIdentifier(int length) {
         throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");
     }
 }
