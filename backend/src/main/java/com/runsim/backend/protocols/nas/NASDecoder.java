@@ -312,52 +312,51 @@ public class NASDecoder {
 
         var cap = new UESecurityCapability();
 
-        if (length >= 3) {
-            cap.SUPPORTED_5G_EA0 = data.peekBit(0);
-            cap.SUPPORTED_128_5G_EA1 = data.peekBit(1);
-            cap.SUPPORTED_128_5G_EA2 = data.peekBit(2);
-            cap.SUPPORTED_128_5G_EA3 = data.peekBit(3);
-            cap.SUPPORTED_5G_EA4 = data.peekBit(4);
-            cap.SUPPORTED_5G_EA5 = data.peekBit(5);
-            cap.SUPPORTED_5G_EA6 = data.peekBit(6);
-            cap.SUPPORTED_5G_EA7 = data.peekBit(7);
+        if (length >= 1) {
+            cap.SUPPORTED_5G_EA0 = data.peekBit(7);
+            cap.SUPPORTED_128_5G_EA1 = data.peekBit(6);
+            cap.SUPPORTED_128_5G_EA2 = data.peekBit(5);
+            cap.SUPPORTED_128_5G_EA3 = data.peekBit(4);
+            cap.SUPPORTED_5G_EA4 = data.peekBit(3);
+            cap.SUPPORTED_5G_EA5 = data.peekBit(2);
+            cap.SUPPORTED_5G_EA6 = data.peekBit(1);
+            cap.SUPPORTED_5G_EA7 = data.peekBit(0);
         }
 
+        if (length >= 2) {
+            data.readOctet();
+            cap.SUPPORTED_5G_IA0 = data.peekBit(7);
+            cap.SUPPORTED_128_5G_IA1 = data.peekBit(6);
+            cap.SUPPORTED_128_5G_IA2 = data.peekBit(5);
+            cap.SUPPORTED_128_5G_IA3 = data.peekBit(4);
+            cap.SUPPORTED_5G_IA4 = data.peekBit(3);
+            cap.SUPPORTED_5G_IA5 = data.peekBit(2);
+            cap.SUPPORTED_5G_IA6 = data.peekBit(1);
+            cap.SUPPORTED_5G_IA7 = data.peekBit(0);
+        }
+
+        if (length >= 3) {
+            data.readOctet();
+            cap.SUPPORTED_EEA0 = data.peekBit(7);
+            cap.SUPPORTED_128_EEA1 = data.peekBit(6);
+            cap.SUPPORTED_128_EEA2 = data.peekBit(5);
+            cap.SUPPORTED_128_EEA3 = data.peekBit(4);
+            cap.SUPPORTED_EEA4 = data.peekBit(3);
+            cap.SUPPORTED_EEA5 = data.peekBit(2);
+            cap.SUPPORTED_EEA6 = data.peekBit(1);
+            cap.SUPPORTED_EEA7 = data.peekBit(0);
+        }
 
         if (length >= 4) {
             data.readOctet();
-            cap.SUPPORTED_5G_IA0 = data.peekBit(0);
-            cap.SUPPORTED_128_5G_IA1 = data.peekBit(1);
-            cap.SUPPORTED_128_5G_IA2 = data.peekBit(2);
-            cap.SUPPORTED_128_5G_IA3 = data.peekBit(3);
-            cap.SUPPORTED_5G_IA4 = data.peekBit(4);
-            cap.SUPPORTED_5G_IA5 = data.peekBit(5);
-            cap.SUPPORTED_5G_IA6 = data.peekBit(6);
-            cap.SUPPORTED_5G_IA7 = data.peekBit(7);
-        }
-
-        if (length >= 5) {
-            data.readOctet();
-            cap.SUPPORTED_EEA0 = data.peekBit(0);
-            cap.SUPPORTED_128_EEA1 = data.peekBit(1);
-            cap.SUPPORTED_128_EEA2 = data.peekBit(2);
-            cap.SUPPORTED_128_EEA3 = data.peekBit(3);
-            cap.SUPPORTED_EEA4 = data.peekBit(4);
-            cap.SUPPORTED_EEA5 = data.peekBit(5);
-            cap.SUPPORTED_EEA6 = data.peekBit(6);
-            cap.SUPPORTED_EEA7 = data.peekBit(7);
-        }
-
-        if (length >= 6) {
-            data.readOctet();
-            cap.SUPPORTED_EIA0 = data.peekBit(0);
-            cap.SUPPORTED_128_EIA1 = data.peekBit(1);
-            cap.SUPPORTED_128_EIA2 = data.peekBit(2);
-            cap.SUPPORTED_128_EIA3 = data.peekBit(3);
-            cap.SUPPORTED_EIA4 = data.peekBit(4);
-            cap.SUPPORTED_EIA5 = data.peekBit(5);
-            cap.SUPPORTED_EIA6 = data.peekBit(6);
-            cap.SUPPORTED_EIA7 = data.peekBit(7);
+            cap.SUPPORTED_EIA0 = data.peekBit(7);
+            cap.SUPPORTED_128_EIA1 = data.peekBit(6);
+            cap.SUPPORTED_128_EIA2 = data.peekBit(5);
+            cap.SUPPORTED_128_EIA3 = data.peekBit(4);
+            cap.SUPPORTED_EIA4 = data.peekBit(3);
+            cap.SUPPORTED_EIA5 = data.peekBit(2);
+            cap.SUPPORTED_EIA6 = data.peekBit(1);
+            cap.SUPPORTED_EIA7 = data.peekBit(0);
         }
 
         throw new NotImplementedException("decodeUESecurityCapability not implemented yet");
