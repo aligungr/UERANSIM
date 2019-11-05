@@ -6,6 +6,7 @@ import com.runsim.backend.protocols.eap.EAPDecoder;
 import com.runsim.backend.protocols.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.protocols.exceptions.InvalidValueException;
 import com.runsim.backend.protocols.exceptions.NotImplementedException;
+import com.runsim.backend.protocols.octets.Octet;
 
 public class NASDecoder {
     private final OctetInputStream data;
@@ -66,6 +67,8 @@ public class NASDecoder {
             message = decodeAuthenticationResponse();
         } else if (messageType.equals(MessageType.IDENTITY_REQUEST)) {
             message = decodeIdentityRequest();
+        } else if (messageType.equals(MessageType.IDENTITY_RESPONSE)) {
+            message = decodeIdentityResponse();
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }
@@ -211,6 +214,9 @@ public class NASDecoder {
 
         if (typeOfIdentity.equals(IdentityType.SUCI)) {
             return decodeSUCI(length);
+        } else if (typeOfIdentity.equals(IdentityType.IMEI)) {
+            int isEven = (flags >> 3) & 0b1;
+            return decodeIMEI(length, isEven == 0);
         } else {
             throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name);
         }
@@ -283,6 +289,14 @@ public class NASDecoder {
         }
 
         return result;
+    }
+
+    private IMEIMobileIdentity decodeIMEI(int length, boolean isEven) {
+        var imei = decodeBCDString(length, true);
+        var imeiMobileIdentity = new IMEIMobileIdentity();
+        imeiMobileIdentity.imei = imei;
+
+        return imeiMobileIdentity;
     }
 
     private String decodeBCDString(int length, boolean skipFirst) {
@@ -399,5 +413,10 @@ public class NASDecoder {
         return req;
     }
 
+    private IdentityResponse decodeIdentityResponse() {
+        var resp = new IdentityResponse();
+        resp.mobileIdentity = decodeMobileIdentity();
+        return resp;
+    }
 
 }
