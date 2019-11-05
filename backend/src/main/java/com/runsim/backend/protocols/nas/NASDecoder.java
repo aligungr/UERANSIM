@@ -359,6 +359,6 @@ public class NASDecoder {
             cap.SUPPORTED_EIA7 = data.peekBit(0);
         }
 
-        throw new NotImplementedException("decodeUESecurityCapability not implemented yet");
+        return cap;
     }
 }
