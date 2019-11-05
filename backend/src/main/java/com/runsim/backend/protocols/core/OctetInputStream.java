@@ -111,42 +111,30 @@ public class OctetInputStream {
     }
 
     /************ Read Octet Array ************/
-    public int[] readOctetArrayI(int offset, int length) {
+    public int[] readOctetArrayI(int length) {
         int[] res = new int[length];
         for (int i = 0; i < length; i++)
-            res[i] = readOctetI(offset + i);
+            res[i] = readOctetI();
         return res;
     }
 
-    public Octet[] readOctetArray(int offset, int length) {
+    public Octet[] readOctetArray(int length) {
         Octet[] res = new Octet[length];
         for (int i = 0; i < length; i++)
-            res[i] = readOctet(offset + i);
+            res[i] = readOctet();
         return res;
-    }
-
-    public OctetString readOctetString(int offset, int length) {
-        return new OctetString(readOctetArray(offset, length));
     }
 
     public OctetString readOctetString(int length) {
-        return readOctetString(0, length);
+        return new OctetString(readOctetArray(length));
     }
 
     /************ Read Octet ************/
 
-    public int readOctetI(int offset) {
-        int res = data[index + offset] & 0xFF;
+    public int readOctetI() {
+        int res = data[index] & 0xFF;
         index++;
         return res;
-    }
-
-    public int readOctetI() {
-        return readOctetI(0);
-    }
-
-    public Octet readOctet(int offset) {
-        return new Octet(readOctetI(offset));
     }
 
     public Octet readOctet() {
@@ -155,22 +143,17 @@ public class OctetInputStream {
 
     /************ Read Octet 2 ************/
 
-    public int readOctet2I(int offset) {
-        int big = readOctetI(isBigEndian ? offset : offset + 1);
-        int little = readOctetI(isBigEndian ? offset + 1 : offset);
+    public int readOctet2I() {
+        int big = peekOctetI(isBigEndian ? 0 : 1);
+        int little = peekOctetI(isBigEndian ? 1 : 0);
+        readOctet();
+        readOctet();
         return (big << 8) | little;
     }
 
-    public int readOctet2I() {
-        return readOctet2I(0);
-    }
-
-    public Octet2 readOctet2(int offset) {
-        return new Octet2(readOctet2I(offset));
-    }
 
     public Octet2 readOctet2() {
-        return readOctet2(0);
+        return new Octet2(readOctet2I());
     }
 
     /************ Others ************/
