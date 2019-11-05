@@ -6,8 +6,6 @@ import com.runsim.backend.protocols.eap.EAPDecoder;
 import com.runsim.backend.protocols.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.protocols.exceptions.InvalidValueException;
 import com.runsim.backend.protocols.exceptions.NotImplementedException;
-import com.runsim.backend.protocols.octets.Octet;
-import com.runsim.backend.protocols.octets.OctetString;
 
 public class NASDecoder {
     private final OctetInputStream data;
@@ -30,7 +28,7 @@ public class NASDecoder {
     }
 
     private ExtendedProtocolDiscriminator decodeExtendedProtocolDiscriminator() {
-        var epd = ExtendedProtocolDiscriminator.fromValue(data.readOctet());
+        var epd = ExtendedProtocolDiscriminator.fromValue(data.readOctetI());
         if (epd == null) throw new InvalidValueException(ExtendedProtocolDiscriminator.class);
         return epd;
     }
@@ -48,7 +46,7 @@ public class NASDecoder {
     }
 
     private SecurityHeaderType decodeSecurityHeaderType() {
-        int value = data.readOctet();
+        int value = data.readOctetI();
         value &= 0xF;
         var sht = SecurityHeaderType.fromValue(value);
         if (sht == null) throw new InvalidValueException(SecurityHeaderType.class);
@@ -74,7 +72,7 @@ public class NASDecoder {
     }
 
     private MessageType decodeMessageType() {
-        var mt = MessageType.fromValue(data.readOctet());
+        var mt = MessageType.fromValue(data.readOctetI());
         if (mt == null) throw new InvalidValueException(MessageType.class);
         return mt;
     }
@@ -85,7 +83,7 @@ public class NASDecoder {
         req.abba = decodeABBA();
 
         while (data.hasNext()) {
-            int type = data.readOctet();
+            int type = data.readOctetI();
             switch (type) {
                 case 0x21:
                     throw new NotImplementedException("RAND not implemented yet.");
@@ -114,13 +112,13 @@ public class NASDecoder {
     }
 
     private NASKeySetIdentifier decodeNasKeySetIdentifier() {
-        return decodeNasKeySetIdentifierFromValue(data.readOctet());
+        return decodeNasKeySetIdentifierFromValue(data.readOctetI());
     }
 
     private ABBA decodeABBA() {
         var abba = new ABBA();
-        abba.length = new Octet(data.readOctet());
-        abba.contents = new OctetString(data.readOctets(abba.length.intValue));
+        abba.length = data.readOctet();
+        abba.contents = data.readOctetString(abba.length.intValue);
         return abba;
     }
 
@@ -133,7 +131,7 @@ public class NASDecoder {
     private RegistrationRequest decodeRegistrationRequest() {
         var req = new RegistrationRequest();
 
-        int flags = data.readOctet();
+        int flags = data.readOctetI();
 
         int msb = (flags & 0b11110000) >> 4;
         int lsb = flags & 0b00001111;
@@ -142,8 +140,51 @@ public class NASDecoder {
         req.nasKeySetIdentifier = decodeNasKeySetIdentifierFromValue(msb);
         req.mobileIdentity = decodeMobileIdentity();
 
-        //return req;
-        throw new NotImplementedException("registration request not implemented yet");
+        while (data.hasNext()) {
+            int iei = data.readOctetI();
+            // TODO: Specte iei olarak "C-", "B-", "9-" yazanlar ihmal edildi.
+            switch (iei) {
+                case 0x10:
+                    throw new NotImplementedException("5GMM capability not implemented yet");
+                case 0x2E:
+                    req.ueSecurityCapability = decodeUESecurityCapability();
+                    break;
+                case 0x2F:
+                    throw new NotImplementedException("not implemented yet: Requested NSSAI");
+                case 0x52:
+                    throw new NotImplementedException("not implemented yet: Last visited registered TAI");
+                case 0x17:
+                    throw new NotImplementedException("not implemented yet: S1 UE network capability");
+                case 0x40:
+                    throw new NotImplementedException("not implemented yet: Uplink data status");
+                case 0x50:
+                    throw new NotImplementedException("not implemented yet: PDU session status");
+                case 0x2B:
+                    throw new NotImplementedException("not implemented yet: UE status");
+                case 0x77:
+                    throw new NotImplementedException("not implemented yet: Additional GUTI");
+                case 0x25:
+                    throw new NotImplementedException("not implemented yet: Allowed PDU session status");
+                case 0x18:
+                    throw new NotImplementedException("not implemented yet: UE's usage setting");
+                case 0x51:
+                    throw new NotImplementedException("not implemented yet: Requested DRX parameters");
+                case 0x70:
+                    throw new NotImplementedException("not implemented yet: EPS NAS message container");
+                case 0x7E:
+                    throw new NotImplementedException("not implemented yet: LADN indication");
+                case 0x7B:
+                    throw new NotImplementedException("not implemented yet: Payload container");
+                case 0x53:
+                    throw new NotImplementedException("not implemented yet: 5GS update type");
+                case 0x71:
+                    throw new NotImplementedException("not implemented yet: NAS message container");
+                default:
+                    throw new InvalidValueException("iei is invalid: " + iei);
+            }
+        }
+
+        return req;
     }
 
     private FiveGSRegistrationType decodeRegistrationTypeFromValue(int value) {
@@ -158,8 +199,8 @@ public class NASDecoder {
     }
 
     private FiveGSMobileIdentity decodeMobileIdentity() {
-        int length = data.readOctet2();
-        int flags = data.peekOctet();
+        int length = data.readOctet2I();
+        int flags = data.peekOctetI();
 
         var typeOfIdentity = TypeOfIdentity.fromValue(flags & 0b111);
         if (typeOfIdentity == null) {
@@ -176,7 +217,7 @@ public class NASDecoder {
     }
 
     private SUCIMobileIdentity decodeSUCI(int length) {
-        int flags = data.readOctet();
+        int flags = data.readOctetI();
 
         var supiFormat = SUPIFormat.fromValue((flags >> 4) & 0b111);
         if (supiFormat == null) {
@@ -196,17 +237,17 @@ public class NASDecoder {
         var result = new IMSIMobileIdentity();
 
         /* Decode MCC */
-        int octet1 = data.readOctet();
+        int octet1 = data.readOctetI();
         int mcc1 = octet1 & 0b1111;
         int mcc2 = (octet1 >> 4) & 0b1111;
-        int octet2 = data.readOctet();
+        int octet2 = data.readOctetI();
         int mcc3 = octet2 & 0b1111;
         int mcc = 100 * mcc1 + 10 * mcc2 + mcc3;
         result.mobileCountryCode = MobileCountryCode.fromValue(mcc);
 
         /* Decode MNC */
         int mnc3 = (octet2 >> 4) & 0b1111;
-        int octet3 = data.readOctet();
+        int octet3 = data.readOctetI();
         int mnc2 = octet3 & 0b1111;
         int mnc1 = (octet3 >> 4) & 0b1111;
         int mnc = 10 * mnc1 + mnc2;
@@ -222,12 +263,12 @@ public class NASDecoder {
         }
 
         /* Decode routing indicator */
-        int riLen = data.peekOctet(1) == 0xFF ? 1 : 2;
+        int riLen = data.peekOctetI(1) == 0xFF ? 1 : 2;
         result.routingIndicator = decodeBCDString(riLen, false);
         if (riLen == 1) data.readOctet();
 
         /* Decode protection schema id */
-        result.protectionSchemaId = ProtectionSchemeIdentifier.fromValue(data.readOctet() & 0b1111);
+        result.protectionSchemaId = ProtectionSchemeIdentifier.fromValue(data.readOctetI() & 0b1111);
 
         /* Decode home network public key identifier */
         result.homeNetworkPublicKeyIdentifier = new HomeNetworkPKI(data.readOctet());
@@ -250,7 +291,7 @@ public class NASDecoder {
         char[] arr = new char[length * 2];
 
         while (offset < length) {
-            int octet = data.readOctet();
+            int octet = data.readOctetI();
             if (!skipFirst) {
                 arr[i] = digits[octet & 0x0f];
                 i++;
@@ -269,5 +310,49 @@ public class NASDecoder {
 
     private NetworkSpecificIdentifierMobileIdentity decodeNetworkSpecificIdentifier(int length) {
         throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");
+    }
+
+    private UESecurityCapability decodeUESecurityCapability() {
+        int length = data.readOctetI();
+
+        var cap = new UESecurityCapability();
+/*
+        cap.SUPPORTED_5G_EA0 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_5G_EA1 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_5G_EA2 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_5G_EA3 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_EA4 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_EA5 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_EA6 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_EA7 = new Bit(data.peekBit());
+
+        cap.SUPPORTED_5G_IA0 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_5G_IA1 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_5G_IA2 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_5G_IA3 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_IA4 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_IA5 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_IA6 = new Bit(data.peekBit());
+        cap.SUPPORTED_5G_IA7 = new Bit(data.peekBit());
+
+        cap.SUPPORTED_EEA0 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_EEA1 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_EEA2 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_EEA3 = new Bit(data.peekBit());
+        cap.SUPPORTED_EEA4 = new Bit(data.peekBit());
+        cap.SUPPORTED_EEA5 = new Bit(data.peekBit());
+        cap.SUPPORTED_EEA6 = new Bit(data.peekBit());
+        cap.SUPPORTED_EEA7 = new Bit(data.peekBit());
+
+        cap.SUPPORTED_EIA0 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_EIA1 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_EIA2 = new Bit(data.peekBit());
+        cap.SUPPORTED_128_EIA3 = new Bit(data.peekBit());
+        cap.SUPPORTED_EIA4 = new Bit(data.peekBit());
+        cap.SUPPORTED_EIA5 = new Bit(data.peekBit());
+        cap.SUPPORTED_EIA6 = new Bit(data.peekBit());
+        cap.SUPPORTED_EIA7 = new Bit(data.peekBit());
+*/
+        throw new NotImplementedException("decodeUESecurityCapability not implemented yet");
     }
 }

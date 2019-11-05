@@ -1,28 +1,24 @@
 package com.runsim.backend.protocols.bits;
 
 public class BitN {
-    private final int value;
+    public final int intValue;
 
-    public BitN(int value, int mask) {
-        this.value = value & mask;
-    }
-
-    public int getValue() {
-        return value;
+    public BitN(int intValue, int mask) {
+        this.intValue = intValue & mask;
     }
 
     @Override
     public final int hashCode() {
-        return value;
+        return intValue;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Integer && this.value == (Integer) obj;
+        return obj instanceof Integer && this.intValue == (Integer) obj;
     }
 
     @Override
     public String toString() {
-        return Integer.toString(value);
+        return Integer.toString(intValue);
     }
 }
