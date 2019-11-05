@@ -117,7 +117,7 @@ public class FlowTesting {
 
         var s = (enumifyAll(xxxx));*/
         // NAS PDU
-        var test = "7e005778003002010030320100000305000864955b0fe729127b00000000000000000b05000069f5f2af9798323126ef3cf8896a8c4b";
+        var test = "7e005b03";
         var data = Utils.hexStringToByteArray(test);
         var pdu = new NASDecoder(data).decodeNAS();
         System.out.println("-");

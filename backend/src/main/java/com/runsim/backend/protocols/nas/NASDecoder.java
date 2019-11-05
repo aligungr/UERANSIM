@@ -64,6 +64,8 @@ public class NASDecoder {
             message = decodeRegistrationRequest();
         } else if (messageType.equals(MessageType.AUTHENTICATION_RESPONSE)) {
             message = decodeAuthenticationResponse();
+        } else if (messageType.equals(MessageType.IDENTITY_REQUEST)) {
+            message = decodeIdentityRequest();
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }
@@ -205,9 +207,9 @@ public class NASDecoder {
         int length = data.readOctet2I();
         int flags = data.peekOctetI();
 
-        var typeOfIdentity = TypeOfIdentity.fromValue(flags & 0b111);
+        var typeOfIdentity = IdentityType.fromValue(flags & 0b111);
 
-        if (typeOfIdentity.equals(TypeOfIdentity.SUCI)) {
+        if (typeOfIdentity.equals(IdentityType.SUCI)) {
             return decodeSUCI(length);
         } else {
             throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name);
@@ -389,4 +391,13 @@ public class NASDecoder {
     private AuthenticationResponseParameter decodeAuthenticationResponseParameter() {
         throw new NotImplementedException("AuthenticationResponseParameter Not Implemented");
     }
+
+    private IdentityRequest decodeIdentityRequest() {
+        var req = new IdentityRequest();
+        var flags = data.readOctetI();
+        req.identityType = IdentityType.fromValue(flags & 0b111);
+        return req;
+    }
+
+
 }
