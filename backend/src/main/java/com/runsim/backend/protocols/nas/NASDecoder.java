@@ -27,6 +27,7 @@ public class NASDecoder {
         }
     }
 
+
     private ExtendedProtocolDiscriminator decodeExtendedProtocolDiscriminator() {
         var epd = ExtendedProtocolDiscriminator.fromValue(data.readOctetI());
         if (epd == null) throw new InvalidValueException(ExtendedProtocolDiscriminator.class);
@@ -61,6 +62,8 @@ public class NASDecoder {
             message = decodeAuthenticationRequest();
         } else if (messageType.equals(MessageType.REGISTRATION_REQUEST)) {
             message = decodeRegistrationRequest();
+        } else if (messageType.equals(MessageType.AUTHENTICATION_RESPONSE)) {
+            message = decodeAuthenticationResponse();
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }
@@ -361,5 +364,29 @@ public class NASDecoder {
         }
 
         return cap;
+    }
+
+    private AuthenticationResponse decodeAuthenticationResponse() {
+        var resp = new AuthenticationResponse();
+
+        while (data.hasNext()) {
+            int iei = data.readOctetI();
+            switch (iei) {
+                case 0x2D:
+                    resp.authenticationResponseParameter = decodeAuthenticationResponseParameter();
+                    break;
+                case 0x78:
+                    resp.extensibleAuthenticationProtocol = decodeExtensibleAuthenticationProtocol();
+                    break;
+                default:
+                    throw new InvalidValueException("Authentication Response Invalid Value: " + iei);
+            }
+        }
+
+        return resp;
+    }
+
+    private AuthenticationResponseParameter decodeAuthenticationResponseParameter() {
+        throw new NotImplementedException("AuthenticationResponseParameter Not Implemented");
     }
 }

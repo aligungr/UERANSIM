@@ -113,12 +113,13 @@ public class FlowTesting {
         /*Object[][] xxxx = {
         };
 
-        var s = (enumifyAll(xxxx));*/
 
-        var test = "7E004171000D010011000000000000000000F12E0480808080";
+
+        var s = (enumifyAll(xxxx));*/
+        // NAS PDU
+        var test = "7e005778003002010030320100000305000864955b0fe729127b00000000000000000b05000069f5f2af9798323126ef3cf8896a8c4b";
         var data = Utils.hexStringToByteArray(test);
         var pdu = new NASDecoder(data).decodeNAS();
-
         System.out.println("-");
 
         /*var flow = new RegistrationFlow();
