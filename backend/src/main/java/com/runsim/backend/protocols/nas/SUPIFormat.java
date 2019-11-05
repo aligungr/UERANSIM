@@ -13,6 +13,6 @@ public class SUPIFormat extends ProtocolEnum {
     }
 
     public static SUPIFormat fromValue(int value) {
-        return fromValueGeneric(SUPIFormat.class, value);
+        return fromValueGeneric(SUPIFormat.class, value, null);
     }
 }

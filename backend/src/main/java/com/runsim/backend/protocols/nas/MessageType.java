@@ -111,6 +111,6 @@ public class MessageType extends ProtocolEnum {
     }
 
     public static MessageType fromValue(int value) {
-        return fromValueGeneric(MessageType.class, value);
+        return fromValueGeneric(MessageType.class, value, null);
     }
 }

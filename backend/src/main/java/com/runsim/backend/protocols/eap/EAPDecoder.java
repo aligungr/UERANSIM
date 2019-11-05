@@ -6,7 +6,6 @@ import com.runsim.backend.protocols.exceptions.InvalidValueException;
 import com.runsim.backend.protocols.exceptions.NotImplementedException;
 import com.runsim.backend.protocols.octets.Octet;
 import com.runsim.backend.protocols.octets.Octet2;
-import com.runsim.backend.protocols.octets.OctetString;
 
 import java.util.HashMap;
 
@@ -48,21 +47,21 @@ public class EAPDecoder {
     }
 
     private Code decodeCode() {
-        var val = Code.fromValue(data.readOctet());
+        var val = Code.fromValue(data.readOctetI());
         if (val == null) throw new InvalidValueException(Code.class);
         return val;
     }
 
     private Octet decodeId() {
-        return new Octet(data.readOctet());
+        return new Octet(data.readOctetI());
     }
 
     private Octet2 decodeLength() {
-        return new Octet2(data.readOctet2());
+        return new Octet2(data.readOctet2I());
     }
 
     private EAPType decodeEAPType() {
-        var val = EAPType.fromValue(data.readOctet());
+        var val = EAPType.fromValue(data.readOctetI());
         if (val == null) throw new InvalidValueException(EAPType.class);
         return val;
     }
@@ -87,14 +86,14 @@ public class EAPDecoder {
             readBytes += 1;
 
             // decode attribute length
-            var attributeLength = data.readOctet();
+            var attributeLength = data.readOctetI();
             readBytes += 1;
 
             // decode attribute value
-            var attributeVal = data.readOctets(4 * attributeLength - 2);
+            var attributeVal = data.readOctetString(4 * attributeLength - 2);
             readBytes += 4 * attributeLength - 2;
 
-            akaPrime.attributes.put(type, new OctetString(attributeVal));
+            akaPrime.attributes.put(type, attributeVal);
         }
 
         if (readBytes != length)
@@ -104,13 +103,13 @@ public class EAPDecoder {
     }
 
     private AKASubType decodeAKASubType() {
-        var val = AKASubType.fromValue(data.readOctet());
+        var val = AKASubType.fromValue(data.readOctetI());
         if (val == null) throw new InvalidValueException(AKASubType.class);
         return val;
     }
 
     private AKAAttributeType decodeAKAAttributeType() {
-        var val = AKAAttributeType.fromValue(data.readOctet());
+        var val = AKAAttributeType.fromValue(data.readOctetI());
         if (val == null) throw new InvalidValueException(AKAAttributeType.class);
         return val;
     }

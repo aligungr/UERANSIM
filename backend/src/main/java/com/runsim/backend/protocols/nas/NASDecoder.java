@@ -203,11 +203,6 @@ public class NASDecoder {
         int flags = data.peekOctetI();
 
         var typeOfIdentity = TypeOfIdentity.fromValue(flags & 0b111);
-        if (typeOfIdentity == null) {
-            // 3GPP 24501 15.2.0, 9.11.3.3:
-            // "All other values are unused and shall be interpreted as "SUCI", if received by the UE."
-            typeOfIdentity = TypeOfIdentity.SUCI;
-        }
 
         if (typeOfIdentity.equals(TypeOfIdentity.SUCI)) {
             return decodeSUCI(length);

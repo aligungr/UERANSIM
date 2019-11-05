@@ -19,6 +19,6 @@ public class RegistrationType extends ProtocolEnum {
     }
 
     public static RegistrationType fromValue(int value) {
-        return fromValueGeneric(RegistrationType.class, value);
+        return fromValueGeneric(RegistrationType.class, value, null);
     }
 }

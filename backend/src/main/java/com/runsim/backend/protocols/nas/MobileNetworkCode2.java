@@ -1615,7 +1615,7 @@ public class MobileNetworkCode2 extends MobileNetworkCode {
     }
 
     public static MobileNetworkCode2 fromValue(int value) {
-        var res = fromValueGeneric(MobileNetworkCode2.class, value);
+        var res = fromValueGeneric(MobileNetworkCode2.class, value, null);
         return res != null ? res : unknownValue(value);
     }
 

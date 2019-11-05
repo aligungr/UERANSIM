@@ -13,6 +13,6 @@ public class ExtendedProtocolDiscriminator extends ProtocolEnum {
     }
 
     public static ExtendedProtocolDiscriminator fromValue(int value) {
-        return fromValueGeneric(ExtendedProtocolDiscriminator.class, value);
+        return fromValueGeneric(ExtendedProtocolDiscriminator.class, value, null);
     }
 }

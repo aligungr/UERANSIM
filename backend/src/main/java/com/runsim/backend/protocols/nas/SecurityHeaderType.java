@@ -19,6 +19,6 @@ public class SecurityHeaderType extends ProtocolEnum {
     }
 
     public static SecurityHeaderType fromValue(int value) {
-        return fromValueGeneric(SecurityHeaderType.class, value);
+        return fromValueGeneric(SecurityHeaderType.class, value, null);
     }
 }

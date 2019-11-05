@@ -44,7 +44,7 @@ public class ProtectionSchemeIdentifier extends ProtocolEnum {
     }
 
     public static ProtectionSchemeIdentifier fromValue(int value) {
-        return fromValueGeneric(ProtectionSchemeIdentifier.class, value);
+        return fromValueGeneric(ProtectionSchemeIdentifier.class, value, null);
     }
 
     public boolean isReserved() {

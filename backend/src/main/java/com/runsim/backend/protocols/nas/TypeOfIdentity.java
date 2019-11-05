@@ -15,6 +15,8 @@ public class TypeOfIdentity extends ProtocolEnum {
     }
 
     public static TypeOfIdentity fromValue(int value) {
-        return fromValueGeneric(TypeOfIdentity.class, value);
+        // 3GPP 24501 15.2.0, 9.11.3.3:
+        // "All other values are unused and shall be interpreted as "SUCI", if received by the UE."
+        return fromValueGeneric(TypeOfIdentity.class, value, SUCI);
     }
 }

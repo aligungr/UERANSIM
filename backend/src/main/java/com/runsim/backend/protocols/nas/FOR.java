@@ -13,6 +13,6 @@ public class FOR extends ProtocolEnum {
     }
 
     public static FOR fromValue(int value) {
-        return fromValueGeneric(FOR.class, value);
+        return fromValueGeneric(FOR.class, value, null);
     }
 }

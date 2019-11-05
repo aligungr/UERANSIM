@@ -11,7 +11,7 @@ public class ProtocolEnum extends ProtocolValue {
         this.name = name;
     }
 
-    protected static <T extends ProtocolEnum> T fromValueGeneric(Class<T> clazz, int value) {
+    protected static <T extends ProtocolEnum> T fromValueGeneric(Class<T> clazz, int value, T defaultValue) {
         var declaredFields = clazz.getDeclaredFields();
         for (var field : declaredFields) {
             if (!Modifier.isStatic(field.getModifiers())) continue;
@@ -29,7 +29,7 @@ public class ProtocolEnum extends ProtocolValue {
             if (val.value == value)
                 return val;
         }
-        return null;
+        return defaultValue;
     }
 
     @Override

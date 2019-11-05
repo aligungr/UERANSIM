@@ -120,6 +120,6 @@ public class EAPType extends ProtocolEnum {
     }
 
     public static EAPType fromValue(int value) {
-        return fromValueGeneric(EAPType.class, value);
+        return fromValueGeneric(EAPType.class, value, null);
     }
 }

@@ -22,6 +22,6 @@ public class Code extends ProtocolEnum {
     }
 
     public static Code fromValue(int value) {
-        return fromValueGeneric(Code.class, value);
+        return fromValueGeneric(Code.class, value, null);
     }
 }

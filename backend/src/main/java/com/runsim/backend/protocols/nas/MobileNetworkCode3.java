@@ -505,7 +505,7 @@ public class MobileNetworkCode3 extends MobileNetworkCode {
     }
 
     public static MobileNetworkCode3 fromValue(int value) {
-        var res = fromValueGeneric(MobileNetworkCode3.class, value);
+        var res = fromValueGeneric(MobileNetworkCode3.class, value, null);
         return res != null ? res : unknownValue(value);
     }
 

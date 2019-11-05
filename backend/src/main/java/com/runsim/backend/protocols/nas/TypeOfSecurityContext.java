@@ -14,6 +14,6 @@ public class TypeOfSecurityContext extends ProtocolEnum {
     }
 
     public static TypeOfSecurityContext fromValue(int value) {
-        return fromValueGeneric(TypeOfSecurityContext.class, value);
+        return fromValueGeneric(TypeOfSecurityContext.class, value, null);
     }
 }

@@ -1,4 +1,6 @@
 package com.runsim.backend.protocols.nas;
 
-public abstract class NASMessage {
+import com.runsim.backend.protocols.core.ProtocolValue;
+
+public abstract class NASMessage extends ProtocolValue {
 }
