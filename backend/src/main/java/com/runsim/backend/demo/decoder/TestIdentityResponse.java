@@ -1,12 +1,12 @@
 package com.runsim.backend.demo.decoder;
 
 import com.runsim.backend.demo.DecoderTesting;
-import com.runsim.backend.protocols.nas.impl.enums.EExtendedProtocolDiscriminator;
-import com.runsim.backend.protocols.nas.impl.enums.EMessageType;
-import com.runsim.backend.protocols.nas.impl.enums.ESecurityHeaderType;
-import com.runsim.backend.protocols.nas.impl.ie.IEImeiMobileIdentity;
-import com.runsim.backend.protocols.nas.impl.messages.IdentityResponse;
-import com.runsim.backend.protocols.nas.messages.NasMessage;
+import com.runsim.backend.nas.core.messages.NasMessage;
+import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
+import com.runsim.backend.nas.impl.enums.EMessageType;
+import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
+import com.runsim.backend.nas.impl.ies.IEImeiMobileIdentity;
+import com.runsim.backend.nas.impl.messages.IdentityResponse;
 
 public class TestIdentityResponse extends DecoderTesting.PduTest {
 

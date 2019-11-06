@@ -1,12 +1,12 @@
 package com.runsim.backend.demo.decoder;
 
 import com.runsim.backend.demo.DecoderTesting;
-import com.runsim.backend.protocols.bits.Bit3;
-import com.runsim.backend.protocols.nas.impl.enums.*;
-import com.runsim.backend.protocols.nas.impl.ie.IEImsiMobileIdentity;
-import com.runsim.backend.protocols.nas.impl.messages.RegistrationRequest;
-import com.runsim.backend.protocols.nas.impl.values.VUeSecurityCapability;
-import com.runsim.backend.protocols.nas.messages.NasMessage;
+import com.runsim.backend.nas.core.messages.NasMessage;
+import com.runsim.backend.nas.impl.enums.*;
+import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
+import com.runsim.backend.nas.impl.messages.RegistrationRequest;
+import com.runsim.backend.nas.impl.values.VUeSecurityCapability;
+import com.runsim.backend.utils.bits.Bit3;
 
 public class TestRegistrationRequest extends DecoderTesting.PduTest {
 
