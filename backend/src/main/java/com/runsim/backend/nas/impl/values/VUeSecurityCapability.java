@@ -1,6 +1,6 @@
 package com.runsim.backend.nas.impl.values;
 
-import com.runsim.backend.nas.core.messages.NasValue;
+import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.Bit;
 

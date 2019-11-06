@@ -1,10 +1,10 @@
 package com.runsim.backend.nas;
 
+import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.core.messages.NasMessage;
-import com.runsim.backend.nas.core.messages.NasValue;
 import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.Bit4;
