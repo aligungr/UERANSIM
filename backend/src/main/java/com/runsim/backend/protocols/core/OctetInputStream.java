@@ -161,4 +161,8 @@ public class OctetInputStream {
     public boolean hasNext() {
         return index < length;
     }
+
+    public int length() {
+        return length;
+    }
 }

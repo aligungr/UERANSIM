@@ -19,6 +19,10 @@ public class Octet {
         return (intValue >> index) & 0b1;
     }
 
+    public boolean getBitB(int index) {
+        return getBitI(index) != 0;
+    }
+
     public Bit getBit(int index) {
         return new Bit(getBitI(index));
     }
