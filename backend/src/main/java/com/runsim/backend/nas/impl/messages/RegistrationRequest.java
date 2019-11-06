@@ -29,45 +29,57 @@ public class RegistrationRequest extends PlainNasMessage {
 
         while (stream.hasNext()) {
             int iei = stream.readOctetI();
-            // TODO: Specte iei olarak "C-", "B-", "9-" yazanlar ihmal edildi.
-            switch (iei) {
-                case 0x10:
-                    throw new NotImplementedException("5GMM capability not implemented yet");
-                case 0x2E:
-                    req.ueSecurityCapability = Decoder.nasValue(stream, VUeSecurityCapability.class);
-                    break;
-                case 0x2F:
-                    throw new NotImplementedException("not implemented yet: Requested NSSAI");
-                case 0x52:
-                    throw new NotImplementedException("not implemented yet: Last visited registered TAI");
-                case 0x17:
-                    throw new NotImplementedException("not implemented yet: S1 UE network capability");
-                case 0x40:
-                    throw new NotImplementedException("not implemented yet: Uplink data status");
-                case 0x50:
-                    throw new NotImplementedException("not implemented yet: PDU session status");
-                case 0x2B:
-                    throw new NotImplementedException("not implemented yet: UE status");
-                case 0x77:
-                    throw new NotImplementedException("not implemented yet: Additional GUTI");
-                case 0x25:
-                    throw new NotImplementedException("not implemented yet: Allowed PDU session status");
-                case 0x18:
-                    throw new NotImplementedException("not implemented yet: UE's usage setting");
-                case 0x51:
-                    throw new NotImplementedException("not implemented yet: Requested DRX parameters");
-                case 0x70:
-                    throw new NotImplementedException("not implemented yet: EPS NAS message container");
-                case 0x7E:
-                    throw new NotImplementedException("not implemented yet: LADN indication");
-                case 0x7B:
-                    throw new NotImplementedException("not implemented yet: Payload container");
-                case 0x53:
-                    throw new NotImplementedException("not implemented yet: 5GS update type");
-                case 0x71:
-                    throw new NotImplementedException("not implemented yet: NAS message container");
-                default:
-                    throw new InvalidValueException("iei is invalid: " + iei);
+            int msb = iei >> 4 & 0xF;
+            if (msb == 0xC || msb == 0xB || msb == 0x9) {
+                int lsb = iei & 0xF;
+                switch (msb) {
+                    case 0xC:
+                        throw new NotImplementedException("Non-current native nNAS key set identifier not implemented yet");
+                    case 0xB:
+                        throw new NotImplementedException("MICO indication not implemented yet");
+                    case 0x9:
+                        throw new NotImplementedException("Network slicing indication not implemented yet");
+                }
+            } else {
+                switch (iei) {
+                    case 0x10:
+                        throw new NotImplementedException("5GMM capability not implemented yet");
+                    case 0x2E:
+                        req.ueSecurityCapability = Decoder.nasValue(stream, VUeSecurityCapability.class);
+                        break;
+                    case 0x2F:
+                        throw new NotImplementedException("not implemented yet: Requested NSSAI");
+                    case 0x52:
+                        throw new NotImplementedException("not implemented yet: Last visited registered TAI");
+                    case 0x17:
+                        throw new NotImplementedException("not implemented yet: S1 UE network capability");
+                    case 0x40:
+                        throw new NotImplementedException("not implemented yet: Uplink data status");
+                    case 0x50:
+                        throw new NotImplementedException("not implemented yet: PDU session status");
+                    case 0x2B:
+                        throw new NotImplementedException("not implemented yet: UE status");
+                    case 0x77:
+                        throw new NotImplementedException("not implemented yet: Additional GUTI");
+                    case 0x25:
+                        throw new NotImplementedException("not implemented yet: Allowed PDU session status");
+                    case 0x18:
+                        throw new NotImplementedException("not implemented yet: UE's usage setting");
+                    case 0x51:
+                        throw new NotImplementedException("not implemented yet: Requested DRX parameters");
+                    case 0x70:
+                        throw new NotImplementedException("not implemented yet: EPS NAS message container");
+                    case 0x7E:
+                        throw new NotImplementedException("not implemented yet: LADN indication");
+                    case 0x7B:
+                        throw new NotImplementedException("not implemented yet: Payload container");
+                    case 0x53:
+                        throw new NotImplementedException("not implemented yet: 5GS update type");
+                    case 0x71:
+                        throw new NotImplementedException("not implemented yet: NAS message container");
+                    default:
+                        throw new InvalidValueException("iei is invalid: " + iei);
+                }
             }
         }
 
