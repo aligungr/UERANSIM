@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.exceptions.InvalidValueException;
-import com.runsim.backend.nas.ProtocolDecoder;
+import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.nas.impl.ies.IEAuthenticationResponseParameter;
@@ -21,10 +21,10 @@ public class AuthenticationResponse extends PlainNasMessage {
             int iei = stream.readOctetI();
             switch (iei) {
                 case 0x2D:
-                    resp.authenticationResponseParameter = ProtocolDecoder.ie4(stream, false, IEAuthenticationResponseParameter.class);
+                    resp.authenticationResponseParameter = Decoder.ie4(stream, false, IEAuthenticationResponseParameter.class);
                     break;
                 case 0x78:
-                    resp.eap = ProtocolDecoder.eap(stream);
+                    resp.eap = Decoder.eap(stream);
                     break;
                 default:
                     throw new InvalidValueException("Authentication Response Invalid Value: " + iei);

@@ -9,7 +9,7 @@ import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.Bit4;
 
-public class ProtocolDecoder {
+public class Decoder {
 
     public static <T extends NasValue> T nasValue(OctetInputStream stream, Class<T> clazz) {
         try {

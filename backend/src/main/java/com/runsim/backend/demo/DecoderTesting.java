@@ -1,7 +1,7 @@
 package com.runsim.backend.demo;
 
 import com.runsim.backend.demo.decoder.*;
-import com.runsim.backend.nas.ProtocolDecoder;
+import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.utils.Utils;
 
@@ -20,7 +20,7 @@ public class DecoderTesting {
     private static void performTest(PduTest test) {
         System.out.println("Testing: " + test.getClass().getSimpleName());
         var data = Utils.hexStringToByteArray(test.getPdu());
-        var pdu = ProtocolDecoder.nasPdu(data);
+        var pdu = Decoder.nasPdu(data);
         test.compare(pdu);
     }
 

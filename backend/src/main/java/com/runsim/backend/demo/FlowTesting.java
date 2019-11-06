@@ -1,6 +1,6 @@
 package com.runsim.backend.demo;
 
-import com.runsim.backend.nas.ProtocolDecoder;
+import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.utils.Utils;
 
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class FlowTesting {
         // NAS PDU
         var test = "7e004171000d010011000000000000000000f12e0480808080";
         var data = Utils.hexStringToByteArray(test);
-        var pdu = ProtocolDecoder.nasPdu(data);
+        var pdu = Decoder.nasPdu(data);
         System.out.println("-");
 
         /*var flow = new RegistrationFlow();

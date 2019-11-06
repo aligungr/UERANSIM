@@ -62,19 +62,19 @@ class NasDecoder {
 
         var messageType = decodeMessageType();
         if (messageType.equals(EMessageType.AUTHENTICATION_REQUEST)) {
-            message = ProtocolDecoder.nasMessage(data, AuthenticationRequest.class);
+            message = Decoder.nasMessage(data, AuthenticationRequest.class);
         } else if (messageType.equals(EMessageType.REGISTRATION_REQUEST)) {
-            message = ProtocolDecoder.nasMessage(data, RegistrationRequest.class);
+            message = Decoder.nasMessage(data, RegistrationRequest.class);
         } else if (messageType.equals(EMessageType.AUTHENTICATION_RESPONSE)) {
-            message = ProtocolDecoder.nasMessage(data, AuthenticationResponse.class);
+            message = Decoder.nasMessage(data, AuthenticationResponse.class);
         } else if (messageType.equals(EMessageType.IDENTITY_REQUEST)) {
-            message = ProtocolDecoder.nasMessage(data, IdentityRequest.class);
+            message = Decoder.nasMessage(data, IdentityRequest.class);
         } else if (messageType.equals(EMessageType.IDENTITY_RESPONSE)) {
-            message = ProtocolDecoder.nasMessage(data, IdentityResponse.class);
+            message = Decoder.nasMessage(data, IdentityResponse.class);
         } else if (messageType.equals(EMessageType.REGISTRATION_ACCEPT)) {
-            message = ProtocolDecoder.nasMessage(data, RegistrationAccept.class);
+            message = Decoder.nasMessage(data, RegistrationAccept.class);
         } else if (messageType.equals(EMessageType.REGISTRATION_COMPLETE)) {
-            message = ProtocolDecoder.nasMessage(data, RegistrationComplete.class);
+            message = Decoder.nasMessage(data, RegistrationComplete.class);
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }

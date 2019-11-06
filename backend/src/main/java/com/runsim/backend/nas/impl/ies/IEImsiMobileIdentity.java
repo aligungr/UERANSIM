@@ -1,6 +1,6 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.nas.ProtocolDecoder;
+import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.utils.OctetInputStream;
@@ -44,19 +44,19 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
         /* Decode routing indicator */
         int riLen = stream.peekOctetI(1) == 0xFF ? 1 : 2;
-        result.routingIndicator = ProtocolDecoder.bcdString(stream, riLen, false);
+        result.routingIndicator = Decoder.bcdString(stream, riLen, false);
         if (riLen == 1) stream.readOctet();
 
         /* Decode protection schema id */
         result.protectionSchemaId = EProtectionSchemeIdentifier.fromValue(stream.readOctetI() & 0b1111);
 
         /* Decode home network public key identifier */
-        result.homeNetworkPublicKeyIdentifier = ProtocolDecoder.nasValue(stream, VHomeNetworkPki.class);
+        result.homeNetworkPublicKeyIdentifier = Decoder.nasValue(stream, VHomeNetworkPki.class);
 
         /* Decode schema output */
         String schemaOutput;
         if (result.protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEMA)) {
-            result.schemaOutput = ProtocolDecoder.bcdString(stream, length - 7, false);
+            result.schemaOutput = Decoder.bcdString(stream, length - 7, false);
         } else {
             var range = stream.readOctetString(length - 7);
             result.schemaOutput = range.toHexString();
