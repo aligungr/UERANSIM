@@ -5,7 +5,7 @@ import com.runsim.backend.nas.impl.enums.E5gsRegistrationResult;
 import com.runsim.backend.nas.impl.enums.ESmsOverNasTransportAllowed;
 import com.runsim.backend.utils.OctetInputStream;
 
-public class IE5gRegistrationResult extends InformationElement4 {
+public class IE5gsRegistrationResult extends InformationElement4 {
     public ESmsOverNasTransportAllowed smsOverNasAllowed;
     public E5gsRegistrationResult registrationResult;
 
@@ -13,7 +13,7 @@ public class IE5gRegistrationResult extends InformationElement4 {
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         int value = stream.readOctetI();
 
-        var res = new IE5gRegistrationResult();
+        var res = new IE5gsRegistrationResult();
         res.smsOverNasAllowed = ESmsOverNasTransportAllowed.fromValue(value >> 3 & 0b1);
         res.registrationResult = E5gsRegistrationResult.fromValue(value & 0b111);
         return res;
