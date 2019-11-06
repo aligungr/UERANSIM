@@ -3,14 +3,14 @@ package com.runsim.backend.protocols.nas.impl.ie;
 import com.runsim.backend.protocols.core.OctetInputStream;
 import com.runsim.backend.protocols.nas.DecodeUtils;
 import com.runsim.backend.protocols.nas.impl.enums.*;
-import com.runsim.backend.protocols.nas.impl.values.HomeNetworkPKI;
+import com.runsim.backend.protocols.nas.impl.values.VHomeNetworkPki;
 
 public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public EMobileCountryCode mobileCountryCode;
     public EMobileNetworkCode mobileNetworkCode;
     public String routingIndicator;
     public EProtectionSchemeIdentifier protectionSchemaId;
-    public HomeNetworkPKI homeNetworkPublicKeyIdentifier;
+    public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
     public String schemaOutput;
 
     public IEImsiMobileIdentity decodeIMSI(OctetInputStream stream, int length) {
@@ -51,7 +51,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         result.protectionSchemaId = EProtectionSchemeIdentifier.fromValue(stream.readOctetI() & 0b1111);
 
         /* Decode home network public key identifier */
-        result.homeNetworkPublicKeyIdentifier = new HomeNetworkPKI().decode(stream);
+        result.homeNetworkPublicKeyIdentifier = DecodeUtils.value(stream, VHomeNetworkPki.class);
 
         /* Decode schema output */
         String schemaOutput;

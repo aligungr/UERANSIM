@@ -9,12 +9,22 @@ import com.runsim.backend.protocols.nas.ielements.InformationElement1;
 import com.runsim.backend.protocols.nas.ielements.InformationElement4;
 import com.runsim.backend.protocols.nas.ielements.InformationElement6;
 import com.runsim.backend.protocols.nas.messages.NasMessage;
+import com.runsim.backend.protocols.nas.messages.NasValue;
 
 public class DecodeUtils {
     public static InformationElement decodeInformationElement(OctetInputStream stream, Class<? extends InformationElement> clazz, boolean ieiPresent) {
         try {
             InformationElement instance = clazz.getConstructor().newInstance();
             return instance.decodeIE(stream, ieiPresent);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T extends NasValue> T value(OctetInputStream stream, Class<T> clazz) {
+        try {
+            T instance = clazz.getConstructor().newInstance();
+            return (T) instance.decode(stream);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -5,7 +5,7 @@ import com.runsim.backend.protocols.bits.Bit3;
 import com.runsim.backend.protocols.nas.impl.enums.*;
 import com.runsim.backend.protocols.nas.impl.ie.IEImsiMobileIdentity;
 import com.runsim.backend.protocols.nas.impl.messages.RegistrationRequest;
-import com.runsim.backend.protocols.nas.impl.values.UeSecurityCapability;
+import com.runsim.backend.protocols.nas.impl.values.VUeSecurityCapability;
 import com.runsim.backend.protocols.nas.messages.NasMessage;
 
 public class TestRegistrationRequest extends DecoderTesting.PduTest {
@@ -44,7 +44,7 @@ public class TestRegistrationRequest extends DecoderTesting.PduTest {
         assertNotNull(imsi.homeNetworkPublicKeyIdentifier);
         assertEquals(imsi.homeNetworkPublicKeyIdentifier.value, 0);
 
-        var capability = (UeSecurityCapability) mes.ueSecurityCapability;
+        var capability = (VUeSecurityCapability) mes.ueSecurityCapability;
         assertNotNull(capability);
         assertEquals(capability.SUPPORTED_5G_EA0, 1);
         assertEquals(capability.SUPPORTED_5G_IA0, 1);

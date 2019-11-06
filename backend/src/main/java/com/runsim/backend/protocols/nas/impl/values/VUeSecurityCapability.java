@@ -2,9 +2,9 @@ package com.runsim.backend.protocols.nas.impl.values;
 
 import com.runsim.backend.protocols.bits.Bit;
 import com.runsim.backend.protocols.core.OctetInputStream;
-import com.runsim.backend.protocols.core.ProtocolValue;
+import com.runsim.backend.protocols.nas.messages.NasValue;
 
-public class UeSecurityCapability extends ProtocolValue {
+public class VUeSecurityCapability extends NasValue {
 
     // 3GPP 24.501 f20:
     // "For the UE all bits in octets 7 to 10 are spare and shall be ignored, if the respective octet is received with the information element."
@@ -76,10 +76,11 @@ public class UeSecurityCapability extends ProtocolValue {
     public Bit SUPPORTED_EIA6;
     public Bit SUPPORTED_EIA7;
 
-    public UeSecurityCapability decodeUESecurityCapability(OctetInputStream stream) {
+    @Override
+    public NasValue decode(OctetInputStream stream) {
         int length = stream.readOctetI();
 
-        var cap = new UeSecurityCapability();
+        var cap = new VUeSecurityCapability();
 
         if (length >= 1) {
             var bits = stream.readOctet();

@@ -4,7 +4,7 @@ import com.runsim.backend.protocols.core.OctetInputStream;
 import com.runsim.backend.protocols.nas.messages.NasValue;
 import com.runsim.backend.protocols.octets.Octet;
 
-public class HomeNetworkPKI extends NasValue {
+public class VHomeNetworkPki extends NasValue {
     public Octet value;
 
     public boolean isReserved() {
@@ -17,8 +17,8 @@ public class HomeNetworkPKI extends NasValue {
     }
 
     @Override
-    public HomeNetworkPKI decode(OctetInputStream stream) {
-        var res = new HomeNetworkPKI();
+    public VHomeNetworkPki decode(OctetInputStream stream) {
+        var res = new VHomeNetworkPki();
         res.value = stream.readOctet();
         return res;
     }
