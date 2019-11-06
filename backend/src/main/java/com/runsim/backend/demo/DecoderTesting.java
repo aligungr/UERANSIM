@@ -14,6 +14,7 @@ public class DecoderTesting {
         performTest(new TestIdentityRequest());
         performTest(new TestIdentityResponse());
         performTest(new TestRegistrationComplete());
+        performTest(new TestRegistrationAccept());
         System.out.println("All tests are successful");
     }
 
