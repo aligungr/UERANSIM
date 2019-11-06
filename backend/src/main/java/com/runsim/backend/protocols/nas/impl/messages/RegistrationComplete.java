@@ -7,6 +7,8 @@ public class RegistrationComplete extends PlainNasMessage {
 
     @Override
     public RegistrationComplete decodeMessage(OctetInputStream stream) {
-        return new RegistrationComplete();
+        var res = new RegistrationComplete();
+        // todo
+        return res;
     }
 }
