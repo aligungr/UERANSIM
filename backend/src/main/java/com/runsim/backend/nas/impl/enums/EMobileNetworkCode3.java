@@ -505,7 +505,7 @@ public class EMobileNetworkCode3 extends EMobileNetworkCode {
     }
 
     public static EMobileNetworkCode3 fromValue(int value) {
-        var res = fromValueGeneric(EMobileNetworkCode3.class, value, null);
+        var res = fromValueGeneric(EMobileNetworkCode3.class, value);
         return res != null ? res : unknownValue(value);
     }
 

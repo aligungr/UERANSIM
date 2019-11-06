@@ -16,27 +16,9 @@ public class ProtocolEnum extends ProtocolValue {
     }
 
     protected static <T extends ProtocolEnum> T fromValueGeneric(Class<T> clazz, int value) {
-        var declaredFields = clazz.getDeclaredFields();
-        for (var field : declaredFields) {
-            if (!Modifier.isStatic(field.getModifiers())) continue;
-            if (!clazz.isAssignableFrom(field.getType())) continue;
-
-            T val;
-            try {
-                val = (T) field.get(null);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-
-            if (val == null) continue;
-
-            if (val.value == value)
-                return val;
-        }
-        return null;
+        return fromValueGeneric(clazz, value, null);
     }
 
-    @Deprecated
     protected static <T extends ProtocolEnum> T fromValueGeneric(Class<T> clazz, int value, T defaultValue) {
         var declaredFields = clazz.getDeclaredFields();
         for (var field : declaredFields) {
