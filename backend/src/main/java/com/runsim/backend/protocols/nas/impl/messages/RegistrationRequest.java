@@ -8,7 +8,6 @@ import com.runsim.backend.protocols.nas.impl.ie.IE5gsMobileIdentity;
 import com.runsim.backend.protocols.nas.impl.ie.IE5gsRegistrationType;
 import com.runsim.backend.protocols.nas.impl.ie.IENasKeySetIdentifier;
 import com.runsim.backend.protocols.nas.impl.values.UeSecurityCapability;
-import com.runsim.backend.protocols.nas.messages.NasMessage;
 import com.runsim.backend.protocols.nas.messages.PlainNasMessage;
 
 public class RegistrationRequest extends PlainNasMessage {
@@ -20,7 +19,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public UeSecurityCapability ueSecurityCapability;
 
     @Override
-    public NasMessage decodeMessage(OctetInputStream stream) {
+    public RegistrationRequest decodeMessage(OctetInputStream stream) {
         var req = new RegistrationRequest();
 
         int octet = stream.readOctetI();

@@ -13,6 +13,7 @@ public class DecoderTesting {
         performTest(new TestAuthenticationResponse());
         performTest(new TestIdentityRequest());
         performTest(new TestIdentityResponse());
+        performTest(new TestRegistrationComplete());
         System.out.println("All tests are successful");
     }
 

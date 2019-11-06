@@ -7,7 +7,6 @@ import com.runsim.backend.protocols.exceptions.NotImplementedException;
 import com.runsim.backend.protocols.nas.DecodeUtils;
 import com.runsim.backend.protocols.nas.impl.ie.IEAbba;
 import com.runsim.backend.protocols.nas.impl.ie.IENasKeySetIdentifier;
-import com.runsim.backend.protocols.nas.messages.NasMessage;
 import com.runsim.backend.protocols.nas.messages.PlainNasMessage;
 
 public class AuthenticationRequest extends PlainNasMessage {
@@ -16,7 +15,7 @@ public class AuthenticationRequest extends PlainNasMessage {
     public ExtensibleAuthenticationProtocol eap;
 
     @Override
-    public NasMessage decodeMessage(OctetInputStream stream) {
+    public AuthenticationRequest decodeMessage(OctetInputStream stream) {
         var req = new AuthenticationRequest();
         req.ngKSI = DecodeUtils.ie1(stream.readOctetI(), IENasKeySetIdentifier.class);
         req.abba = DecodeUtils.ie4(stream, false, IEAbba.class);

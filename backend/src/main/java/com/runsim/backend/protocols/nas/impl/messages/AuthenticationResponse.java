@@ -5,7 +5,6 @@ import com.runsim.backend.protocols.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.protocols.exceptions.InvalidValueException;
 import com.runsim.backend.protocols.nas.DecodeUtils;
 import com.runsim.backend.protocols.nas.impl.ie.IEAuthenticationResponseParameter;
-import com.runsim.backend.protocols.nas.messages.NasMessage;
 import com.runsim.backend.protocols.nas.messages.PlainNasMessage;
 
 public class AuthenticationResponse extends PlainNasMessage {
@@ -15,7 +14,7 @@ public class AuthenticationResponse extends PlainNasMessage {
     public ExtensibleAuthenticationProtocol eap;
 
     @Override
-    public NasMessage decodeMessage(OctetInputStream stream) {
+    public AuthenticationResponse decodeMessage(OctetInputStream stream) {
         var resp = new AuthenticationResponse();
 
         while (stream.hasNext()) {
