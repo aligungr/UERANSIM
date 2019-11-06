@@ -12,7 +12,7 @@ public class AuthenticationResponse extends PlainNasMessage {
 
     /* Optional fields */
     public IEAuthenticationResponseParameter authenticationResponseParameter;
-    public ExtensibleAuthenticationProtocol extensibleAuthenticationProtocol;
+    public ExtensibleAuthenticationProtocol eap;
 
     @Override
     public NasMessage decodeMessage(OctetInputStream stream) {
@@ -25,7 +25,7 @@ public class AuthenticationResponse extends PlainNasMessage {
                     resp.authenticationResponseParameter = DecodeUtils.ie4(stream, false, IEAuthenticationResponseParameter.class);
                     break;
                 case 0x78:
-                    resp.extensibleAuthenticationProtocol = DecodeUtils.decodeExtensibleAuthenticationProtocol(stream);
+                    resp.eap = DecodeUtils.decodeExtensibleAuthenticationProtocol(stream);
                     break;
                 default:
                     throw new InvalidValueException("Authentication Response Invalid Value: " + iei);

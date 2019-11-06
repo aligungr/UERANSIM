@@ -5,7 +5,7 @@ import com.runsim.backend.protocols.nas.messages.NasValue;
 import com.runsim.backend.protocols.octets.Octet;
 
 public class HomeNetworkPKI extends NasValue {
-    private Octet value;
+    public Octet value;
 
     public boolean isReserved() {
         return value.intValue == 0b11111111;

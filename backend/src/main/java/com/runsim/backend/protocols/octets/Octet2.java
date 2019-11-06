@@ -19,4 +19,15 @@ public class Octet2 {
     public String toString() {
         return Integer.toString(intValue);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Octet)
+            return ((Octet) obj).intValue == this.intValue;
+        if (obj instanceof Octet2)
+            return ((Octet2) obj).intValue == this.intValue;
+        if (obj instanceof Integer)
+            return this.intValue == (Integer) obj;
+        return false;
+    }
 }

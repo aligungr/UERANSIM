@@ -26,4 +26,15 @@ public class Octet {
     public Bit getBit(int index) {
         return new Bit(getBitI(index));
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Octet)
+            return ((Octet) obj).intValue == this.intValue;
+        if (obj instanceof Octet2)
+            return ((Octet2) obj).intValue == this.intValue;
+        if (obj instanceof Integer)
+            return this.intValue == (Integer) obj;
+        return false;
+    }
 }

@@ -1,5 +1,7 @@
 package com.runsim.backend.protocols.octets;
 
+import com.runsim.backend.utils.Utils;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -30,6 +32,10 @@ public class OctetString implements Iterable<Octet> {
         this.length = data.length;
     }
 
+    public OctetString(String base16) {
+        this(Utils.hexStringToByteArray(base16));
+    }
+
     public Octet get(int index) {
         return data[index];
     }
@@ -54,5 +60,19 @@ public class OctetString implements Iterable<Octet> {
     @Override
     public Iterator<Octet> iterator() {
         return Arrays.stream(data).iterator();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OctetString))
+            return false;
+        var os = (OctetString) obj;
+        if (os.length != this.length)
+            return false;
+        for (int i = 0; i < os.length; i++) {
+            if (os.data[i].intValue != this.data[i].intValue)
+                return false;
+        }
+        return true;
     }
 }

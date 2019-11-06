@@ -14,7 +14,11 @@ public class BitN {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Integer && this.intValue == (Integer) obj;
+        if (obj instanceof BitN)
+            return ((BitN) obj).intValue == this.intValue;
+        if (obj instanceof Integer)
+            return this.intValue == (Integer) obj;
+        return false;
     }
 
     @Override

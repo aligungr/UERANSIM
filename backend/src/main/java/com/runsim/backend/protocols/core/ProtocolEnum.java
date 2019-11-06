@@ -1,5 +1,9 @@
 package com.runsim.backend.protocols.core;
 
+import com.runsim.backend.protocols.bits.BitN;
+import com.runsim.backend.protocols.octets.Octet;
+import com.runsim.backend.protocols.octets.Octet2;
+
 import java.lang.reflect.Modifier;
 
 public class ProtocolEnum extends ProtocolValue {
@@ -56,6 +60,14 @@ public class ProtocolEnum extends ProtocolValue {
 
     @Override
     public final boolean equals(Object obj) {
+        if (obj instanceof Integer)
+            return (Integer) obj == value;
+        if (obj instanceof BitN)
+            return ((BitN) obj).intValue == value;
+        if (obj instanceof Octet)
+            return ((Octet) obj).intValue == value;
+        if (obj instanceof Octet2)
+            return ((Octet2) obj).intValue == value;
         if (!(obj instanceof ProtocolEnum))
             return false;
         return ((ProtocolEnum) obj).value == value;

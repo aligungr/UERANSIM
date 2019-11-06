@@ -24,8 +24,8 @@ public class RegistrationRequest extends PlainNasMessage {
         var req = new RegistrationRequest();
 
         int octet = stream.readOctetI();
-        req.registrationType = DecodeUtils.ie1(octet, IE5gsRegistrationType.class);
-        req.nasKeySetIdentifier = DecodeUtils.ie1(octet, IENasKeySetIdentifier.class);
+        req.registrationType = DecodeUtils.ie1(octet & 0xF, IE5gsRegistrationType.class);
+        req.nasKeySetIdentifier = DecodeUtils.ie1(octet >> 4, IENasKeySetIdentifier.class);
         req.mobileIdentity = DecodeUtils.ie6(stream, false, IE5gsMobileIdentity.class);
 
         while (stream.hasNext()) {

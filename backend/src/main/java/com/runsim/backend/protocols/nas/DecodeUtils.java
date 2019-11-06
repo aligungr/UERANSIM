@@ -20,10 +20,10 @@ public class DecodeUtils {
         }
     }
 
-    public static <T extends InformationElement1> T ie1(int octet, Class<T> clazz) {
+    public static <T extends InformationElement1> T ie1(int halfOctet, Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
-            return (T) instance.decodeIE1(new Bit4(octet & 0b1111));
+            return (T) instance.decodeIE1(new Bit4(halfOctet & 0xF));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -48,6 +48,9 @@ public class DecodeUtils {
     }
 
     public static String decodeBCDString(OctetInputStream stream, int length, boolean skipFirst) {
+        if (length == 0)
+            return "";
+
         final var digits = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '?', '?', '?', '?', '?', '?'};
         int offset = 0, i = 0;
         char[] arr = new char[length * 2];
@@ -67,7 +70,7 @@ public class DecodeUtils {
             i++;
             offset++;
         }
-        return new String(arr);
+        return new String(arr, 0, i);
     }
 
     public static <T extends NasMessage> T nasMessage(OctetInputStream stream, Class<T> clazz) {
