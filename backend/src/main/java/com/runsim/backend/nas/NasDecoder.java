@@ -23,44 +23,37 @@ class NasDecoder {
     }
 
     public NasMessage decodeNAS() {
-        var epd = decodeExtendedProtocolDiscriminator();
-        if (epd.equals(EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES)) {
-            return decodeSessionManagementMessage();
-        } else {
-            return decodeMobilityManagementMessage();
-        }
-    }
+        NasMessage nasMessage;
 
-    private EExtendedProtocolDiscriminator decodeExtendedProtocolDiscriminator() {
         var epd = EExtendedProtocolDiscriminator.fromValue(data.readOctetI());
+        var sht = ESecurityHeaderType.fromValue(data.readOctetI() & 0xF);
+
         if (epd == null) throw new InvalidValueException(EExtendedProtocolDiscriminator.class);
-        return epd;
-    }
-
-    private NasMessage decodeSessionManagementMessage() {
-        throw new NotImplementedException("session management messages not implemented yet");
-    }
-
-    private NasMessage decodeMobilityManagementMessage() {
-        var sht = decodeSecurityHeaderType();
-        if (!sht.equals(ESecurityHeaderType.NOT_PROTECTED))
-            throw new NotImplementedException("security protected 5GS MM NAS messages not implemented yet");
-
-        return decodePlainNasMessage(EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES, sht);
-    }
-
-    private ESecurityHeaderType decodeSecurityHeaderType() {
-        int value = data.readOctetI();
-        value &= 0xF;
-        var sht = ESecurityHeaderType.fromValue(value);
         if (sht == null) throw new InvalidValueException(ESecurityHeaderType.class);
-        return sht;
+
+        if (epd.equals(EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES)) {
+            throw new NotImplementedException("session management messages not implemented yet");
+        } else {
+            PlainNasMessage plainNasMessage = decodePlainNasMessage();
+            if (sht.equals(ESecurityHeaderType.NOT_PROTECTED)) {
+                nasMessage = plainNasMessage;
+            } else {
+                throw new NotImplementedException("security protected 5GS NAS messages not implemented yet");
+            }
+        }
+
+        nasMessage.extendedProtocolDiscriminator = epd;
+        nasMessage.securityHeaderType = sht;
+
+        return nasMessage;
     }
 
-    private PlainNasMessage decodePlainNasMessage(EExtendedProtocolDiscriminator epd, ESecurityHeaderType sht) {
+    private PlainNasMessage decodePlainNasMessage() {
         PlainNasMessage message;
 
-        var messageType = decodeMessageType();
+        var messageType = EMessageType.fromValue(data.readOctetI());
+        if (messageType == null) throw new InvalidValueException(EMessageType.class);
+
         if (messageType.equals(EMessageType.AUTHENTICATION_REQUEST)) {
             message = Decoder.nasMessage(data, AuthenticationRequest.class);
         } else if (messageType.equals(EMessageType.REGISTRATION_REQUEST)) {
@@ -81,15 +74,7 @@ class NasDecoder {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }
 
-        message.extendedProtocolDiscriminator = epd;
-        message.securityHeaderType = sht;
         message.messageType = messageType;
         return message;
-    }
-
-    private EMessageType decodeMessageType() {
-        var mt = EMessageType.fromValue(data.readOctetI());
-        if (mt == null) throw new InvalidValueException(EMessageType.class);
-        return mt;
     }
 }
