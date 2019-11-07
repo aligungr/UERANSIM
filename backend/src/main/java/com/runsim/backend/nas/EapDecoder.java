@@ -37,6 +37,8 @@ class EapDecoder {
         ExtensibleAuthenticationProtocol eap;
         if (type.equals(EEapType.EAP_AKA_PRIME)) {
             eap = decodeAKAPrime(innerLength);
+        } else if (type.equals(EEapType.NOTIFICATION)) {
+            eap = decodeNotification(innerLength);
         } else {
             throw new NotImplementedException("eap type not implemented yet: " + type.name);
         }
@@ -114,5 +116,9 @@ class EapDecoder {
         var val = EAkaAttributeType.fromValue(data.readOctetI());
         if (val == null) throw new InvalidValueException(EAkaAttributeType.class);
         return val;
+    }
+
+    private Notification decodeNotification(int length) {
+        throw new NotImplementedException("eap notification not implemented yet");
     }
 }
