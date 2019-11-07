@@ -1,9 +1,11 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public EMobileCountryCode mobileCountryCode;
@@ -13,7 +15,8 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
     public String schemaOutput;
 
-    public IEImsiMobileIdentity decodeIMSI(OctetInputStream stream, int length) {
+    @Override
+    public IEImsiMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         var result = new IEImsiMobileIdentity();
 
         /* Decode MCC */
@@ -63,5 +66,52 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         }
 
         return result;
+    }
+
+    @Override
+    public void encodeIE6(OctetOutputStream stream) {
+        /* Encode MCC and MNC*/
+        stream.writeOctet(0x01); // Flags for SUCI with SUPI format IMSI
+
+        int mcc = mobileCountryCode.value;
+        int mcc3 = mcc % 10;
+        int mcc2 = (mcc % 100) / 10;
+        int mcc1 = (mcc % 1000) / 100;
+        int octet1 = mcc2 << 4 | mcc1;
+
+        boolean longMnc;
+        int mnc;
+
+        if (mobileNetworkCode == null)
+            throw new EncodingException("mnc is null");
+        if (mobileNetworkCode instanceof EMobileNetworkCode2) {
+            longMnc = false;
+            mnc = mobileCountryCode.value % 100;
+        } else {
+            longMnc = true;
+            mnc = mobileCountryCode.value % 1000;
+        }
+
+        int mnc1 = longMnc ? (mnc % 1000) / 100 : (mnc % 100) / 10;
+        int mnc2 = longMnc ? (mnc % 100) / 10 : (mnc % 10);
+        int mnc3 = longMnc ? (mnc % 10) : 0xF;
+
+        int octet2 = mnc3 << 4 | mcc3;
+        int octet3 = mnc1 << 4 | mnc2;
+
+        stream.writeOctet(octet1);
+        stream.writeOctet(octet2);
+        stream.writeOctet(octet3);
+
+        /* Encode others */
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0); // todo
+        stream.writeOctet(0xf1); // todo
     }
 }

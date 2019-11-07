@@ -3,12 +3,14 @@ package com.runsim.backend.nas.impl.messages;
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.Encoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IE5gsMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
 import com.runsim.backend.nas.impl.values.VUeSecurityCapability;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public class RegistrationRequest extends PlainNasMessage {
     public IE5gsRegistrationType registrationType;
@@ -25,7 +27,7 @@ public class RegistrationRequest extends PlainNasMessage {
         int octet = stream.readOctetI();
         req.registrationType = Decoder.ie1(octet & 0xF, IE5gsRegistrationType.class);
         req.nasKeySetIdentifier = Decoder.ie1(octet >> 4, IENasKeySetIdentifier.class);
-        req.mobileIdentity = Decoder.ie6(stream, false, IE5gsMobileIdentity.class);
+        req.mobileIdentity = Decoder.mobileIdentity(stream, false);
 
         while (stream.hasNext()) {
             int iei = stream.readOctetI();
@@ -84,5 +86,15 @@ public class RegistrationRequest extends PlainNasMessage {
         }
 
         return req;
+    }
+
+    @Override
+    public void encodeMessage(OctetOutputStream stream) {
+        super.encodeMessage(stream);
+        Encoder.ie1(stream, nasKeySetIdentifier, registrationType);
+        Encoder.ie6(stream, mobileIdentity);
+
+        //if (ueSecurityCapability) todo
+        //Encoder.ie6(stream, mobileIdentity);
     }
 }

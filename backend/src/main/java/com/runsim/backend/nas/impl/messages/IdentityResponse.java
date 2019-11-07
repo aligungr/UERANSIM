@@ -11,7 +11,7 @@ public class IdentityResponse extends PlainNasMessage {
     @Override
     public IdentityResponse decodeMessage(OctetInputStream stream) {
         var resp = new IdentityResponse();
-        resp.mobileIdentity = Decoder.ie6(stream, false, IE5gsMobileIdentity.class);
+        resp.mobileIdentity = Decoder.mobileIdentity(stream, false);
         return resp;
     }
 }

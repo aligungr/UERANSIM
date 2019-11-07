@@ -4,10 +4,16 @@ import com.runsim.backend.nas.core.ProtocolValue;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public abstract class NasMessage extends ProtocolValue {
     public EExtendedProtocolDiscriminator extendedProtocolDiscriminator;
     public ESecurityHeaderType securityHeaderType;
 
     public abstract NasMessage decodeMessage(OctetInputStream stream);
+
+    public void encodeMessage(OctetOutputStream stream) {
+        stream.writeOctet(extendedProtocolDiscriminator.value);
+        stream.writeOctet(securityHeaderType.value);
+    }
 }

@@ -24,4 +24,9 @@ public class IENasKeySetIdentifier extends InformationElement1 {
         res.nasKeySetIdentifier = new Bit3(val & 0b111);
         return res;
     }
+
+    @Override
+    public int encodeIE1() {
+        return tsc.value << 3 | nasKeySetIdentifier.intValue;
+    }
 }

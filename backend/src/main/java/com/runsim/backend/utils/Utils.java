@@ -130,4 +130,16 @@ public final class Utils {
         if (need <= 0) return string;
         return string + String.valueOf(character).repeat(need);
     }
+
+    public static String insertSpaces(String string, int period) {
+        if (period < 1) throw new IllegalArgumentException();
+        if (string.length() % period != 0) throw new IllegalArgumentException();
+
+        var sb = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            sb.append(string.charAt(i));
+            if ((i + 1) % period == 0) sb.append(' ');
+        }
+        return sb.toString().trim();
+    }
 }

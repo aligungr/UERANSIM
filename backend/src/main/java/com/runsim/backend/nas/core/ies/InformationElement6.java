@@ -1,6 +1,7 @@
 package com.runsim.backend.nas.core.ies;
 
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public abstract class InformationElement6 extends InformationElement {
 
@@ -12,4 +13,6 @@ public abstract class InformationElement6 extends InformationElement {
         int length = stream.readOctet2I();
         return decodeIE6(stream, length);
     }
+
+    public abstract void encodeIE6(OctetOutputStream stream);
 }

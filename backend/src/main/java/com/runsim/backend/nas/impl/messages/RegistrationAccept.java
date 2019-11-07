@@ -38,7 +38,7 @@ public class RegistrationAccept extends PlainNasMessage {
             } else {
                 switch (iei) {
                     case 0x77:
-                        resp.mobileIdentity = Decoder.ie6(stream, false, IE5gsMobileIdentity.class);
+                        resp.mobileIdentity = Decoder.mobileIdentity(stream, false);
                         break;
                     case 0x4A:
                         throw new NotImplementedException("Equivalent PLMNs not implemented yet");

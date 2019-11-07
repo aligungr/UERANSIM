@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
@@ -8,6 +9,7 @@ import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
 import com.runsim.backend.nas.impl.values.V5gTmsi;
 import com.runsim.backend.nas.impl.values.VAmfSetId;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit6;
 import com.runsim.backend.utils.octets.Octet;
 
@@ -20,7 +22,8 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
     public Bit6 amfPointer;
     public V5gTmsi tmsi;
 
-    public IE5gsMobileIdentity decodeGUTI(OctetInputStream stream, int length) {
+    @Override
+    public IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         stream.readOctet();
 
         var result = new IE5gGutiMobileIdentity();
@@ -59,4 +62,11 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
 
         return result;
     }
+
+
+    @Override
+    public void encodeIE6(OctetOutputStream stream) {
+        throw new NotImplementedException("");
+    }
+
 }

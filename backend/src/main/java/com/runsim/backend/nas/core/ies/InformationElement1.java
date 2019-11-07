@@ -13,4 +13,6 @@ public abstract class InformationElement1 extends InformationElement {
         int value = octet & 0xF;
         return decodeIE1(new Bit4(value));
     }
+
+    public abstract int encodeIE1();
 }

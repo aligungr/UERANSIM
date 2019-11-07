@@ -18,4 +18,9 @@ public class IE5gsRegistrationType extends InformationElement1 {
         res.registrationType = ERegistrationType.fromValue(val & 0b111);
         return res;
     }
+
+    @Override
+    public int encodeIE1() {
+        return followOnRequestPending.value << 3 | registrationType.value;
+    }
 }

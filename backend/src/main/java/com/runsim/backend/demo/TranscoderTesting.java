@@ -37,12 +37,18 @@ public class TranscoderTesting {
     private static void performEncoderTest(PduTest test) {
         var message = test.getMessage();
         var pdu = Encoder.nasPdu(message);
-        var string = Utils.byteArrayToHexString(pdu);
+        var string = Utils.byteArrayToHexString(pdu).toUpperCase();
 
-        if (string.equals(test.getPdu()))
+        if (string.equals(test.getPdu().toUpperCase()))
             System.out.println(test.getClass().getSimpleName() + " Encoder: OK");
-        else
+        else {
             System.err.println(test.getClass().getSimpleName() + " Encoder: FAILED");
+            System.err.println("Encoded PDU:");
+            System.err.println(Utils.insertSpaces(string, 2));
+            System.err.println("Expected PDU:");
+            System.err.println(Utils.insertSpaces(test.getPdu().toUpperCase(), 2));
+            System.exit(1);
+        }
     }
 
     public static abstract class PduTest {
