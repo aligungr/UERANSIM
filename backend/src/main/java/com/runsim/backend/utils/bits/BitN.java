@@ -1,5 +1,6 @@
 package com.runsim.backend.utils.bits;
 
+// warning: maximum 31 bit, since implementation uses int32.
 public class BitN {
     public final int intValue;
 

@@ -1,7 +1,7 @@
 package com.runsim.backend.utils.bits;
 
 public final class Bit extends BitN {
-    public boolean booleanValue;
+    public final boolean booleanValue;
 
     public Bit(int value) {
         super(value, 0b1);

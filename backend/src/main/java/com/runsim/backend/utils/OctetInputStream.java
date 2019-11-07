@@ -3,6 +3,7 @@ package com.runsim.backend.utils;
 import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet2;
+import com.runsim.backend.utils.octets.Octet3;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class OctetInputStream {
@@ -155,6 +156,24 @@ public class OctetInputStream {
     public Octet2 readOctet2() {
         return new Octet2(readOctet2I());
     }
+
+    /************ Read Octet 3 ************/
+
+    public int readOctet3I() {
+        int big = peekOctetI(isBigEndian ? 0 : 2);
+        int middle = peekOctetI(isBigEndian ? 1 : 1);
+        int little = peekOctetI(isBigEndian ? 2 : 0);
+        readOctet();
+        readOctet();
+        readOctet();
+        return (big << 16) | (middle << 8) | little;
+    }
+
+
+    public Octet3 readOctet3() {
+        return new Octet3(readOctet3I());
+    }
+
 
     /************ Others ************/
 
