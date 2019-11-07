@@ -6,9 +6,9 @@ import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
 import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
+import com.runsim.backend.nas.impl.ies.IEUeSecurityCapability;
 import com.runsim.backend.nas.impl.messages.RegistrationRequest;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
-import com.runsim.backend.nas.impl.values.VUeSecurityCapability;
 import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.Bit3;
 import com.runsim.backend.utils.octets.Octet;
@@ -49,7 +49,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         assertNotNull(imsi.homeNetworkPublicKeyIdentifier);
         assertEquals(imsi.homeNetworkPublicKeyIdentifier.value, 0);
 
-        var capability = (VUeSecurityCapability) mes.ueSecurityCapability;
+        var capability = (IEUeSecurityCapability) mes.ueSecurityCapability;
         assertNotNull(capability);
         assertEquals(capability.SUPPORTED_5G_EA0, 1);
         assertEquals(capability.SUPPORTED_5G_IA0, 1);
@@ -109,7 +109,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         imsi.homeNetworkPublicKeyIdentifier.value = new Octet(0);
         nasMessage.mobileIdentity = imsi;
 
-        var capability = new VUeSecurityCapability();
+        var capability = new IEUeSecurityCapability();
         capability.SUPPORTED_5G_EA0 = new Bit(1);
         capability.SUPPORTED_5G_IA0 = new Bit(1);
         capability.SUPPORTED_EEA0 = new Bit(1);

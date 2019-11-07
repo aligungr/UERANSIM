@@ -1,7 +1,9 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
 
 public class IEPduSessionStatus extends InformationElement4 {
@@ -48,5 +50,10 @@ public class IEPduSessionStatus extends InformationElement4 {
         res.psi15 = octet1.getBit(7);
 
         return res;
+    }
+
+    @Override
+    public void encodeIE4(OctetOutputStream stream) {
+        throw new NotImplementedException("");
     }
 }

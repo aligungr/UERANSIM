@@ -1,7 +1,9 @@
 package com.runsim.backend.nas.impl.values;
 
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet4;
 
@@ -19,6 +21,11 @@ public class V5gTmsi extends NasValue {
         var res = new V5gTmsi();
         res.value = new Octet4(octet3, octet2, octet1, octet0);
         return res;
+    }
+
+    @Override
+    public void encode(OctetOutputStream stream) {
+        throw new NotImplementedException("");
     }
 
     @Override

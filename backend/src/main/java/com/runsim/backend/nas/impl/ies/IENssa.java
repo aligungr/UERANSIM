@@ -1,9 +1,11 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.DecodingException;
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.Decoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 import java.util.ArrayList;
 
@@ -28,5 +30,10 @@ public class IENssa extends InformationElement4 {
 
         res.sNssas = list.toArray(new IESNssa[0]);
         return res;
+    }
+
+    @Override
+    public void encodeIE4(OctetOutputStream stream) {
+        throw new NotImplementedException("");
     }
 }

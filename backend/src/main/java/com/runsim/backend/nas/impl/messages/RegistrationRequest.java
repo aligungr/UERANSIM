@@ -8,7 +8,7 @@ import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IE5gsMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
-import com.runsim.backend.nas.impl.values.VUeSecurityCapability;
+import com.runsim.backend.nas.impl.ies.IEUeSecurityCapability;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -18,7 +18,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IE5gsMobileIdentity mobileIdentity;
 
     /* Optional fields */
-    public VUeSecurityCapability ueSecurityCapability;
+    public IEUeSecurityCapability ueSecurityCapability;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -47,7 +47,7 @@ public class RegistrationRequest extends PlainNasMessage {
                     case 0x10:
                         throw new NotImplementedException("5GMM capability not implemented yet");
                     case 0x2E:
-                        req.ueSecurityCapability = Decoder.nasValue(stream, VUeSecurityCapability.class);
+                        req.ueSecurityCapability = Decoder.ie4(stream, false, IEUeSecurityCapability.class);
                         break;
                     case 0x2F:
                         throw new NotImplementedException("not implemented yet: Requested NSSAI");
@@ -94,7 +94,8 @@ public class RegistrationRequest extends PlainNasMessage {
         Encoder.ie1(stream, nasKeySetIdentifier, registrationType);
         Encoder.ie6(stream, mobileIdentity);
 
-        //if (ueSecurityCapability) todo
-        //Encoder.ie6(stream, mobileIdentity);
+        if (ueSecurityCapability != null) {
+            Encoder.ie4(stream, 0x2E, ueSecurityCapability);
+        }
     }
 }

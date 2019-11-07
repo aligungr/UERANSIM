@@ -17,6 +17,9 @@ import java.nio.charset.StandardCharsets;
 public final class Utils {
 
     public static byte[] hexStringToByteArray(String s) {
+        if (!isValidHexString(s))
+            throw new IllegalArgumentException("hex string contains invalid characters");
+
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {

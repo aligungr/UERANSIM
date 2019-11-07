@@ -7,6 +7,7 @@ import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public class IESNssa extends InformationElement4 {
 
@@ -41,5 +42,10 @@ public class IESNssa extends InformationElement4 {
         }
 
         return res;
+    }
+
+    @Override
+    public void encodeIE4(OctetOutputStream stream) {
+        throw new NotImplementedException("");
     }
 }

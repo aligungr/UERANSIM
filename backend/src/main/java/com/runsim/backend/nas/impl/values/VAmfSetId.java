@@ -1,7 +1,9 @@
 package com.runsim.backend.nas.impl.values;
 
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
 
 public class VAmfSetId extends NasValue {
@@ -15,6 +17,11 @@ public class VAmfSetId extends NasValue {
         var res = new VAmfSetId();
         res.value = (octet0 << 2) | (octet1 >> 6 & 0b11);
         return res;
+    }
+
+    @Override
+    public void encode(OctetOutputStream stream) {
+        throw new NotImplementedException("");
     }
 
     @Override

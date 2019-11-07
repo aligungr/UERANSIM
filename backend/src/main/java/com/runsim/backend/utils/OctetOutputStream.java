@@ -3,8 +3,10 @@ package com.runsim.backend.utils;
 import com.runsim.backend.utils.bits.Bit4;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet2;
+import com.runsim.backend.utils.octets.OctetString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OctetOutputStream {
@@ -79,6 +81,20 @@ public class OctetOutputStream {
         }
     }
 
+    public void writeOctetString(OctetString octetString) {
+        writeOctets(octetString.data);
+    }
+
+    public void writeOctets(Octet[] octets) {
+        data.addAll(Arrays.asList(octets));
+    }
+
+    public void writeOctets(int[] octets) {
+        for (int octet : octets) {
+            writeOctet(octet & 0xFF);
+        }
+    }
+
     public Octet[] toOctetArray() {
         return data.toArray(new Octet[0]);
     }
@@ -94,4 +110,5 @@ public class OctetOutputStream {
     public int length() {
         return data.size();
     }
+
 }

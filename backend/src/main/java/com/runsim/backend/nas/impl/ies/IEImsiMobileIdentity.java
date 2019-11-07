@@ -2,10 +2,12 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.Encoder;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.octets.OctetString;
 
 public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public EMobileCountryCode mobileCountryCode;
@@ -104,14 +106,15 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         stream.writeOctet(octet3);
 
         /* Encode others */
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0); // todo
-        stream.writeOctet(0xf1); // todo
+        Encoder.bcdString(stream, routingIndicator, 2);
+        stream.writeOctet(protectionSchemaId.value);
+        stream.writeOctet(homeNetworkPublicKeyIdentifier.value);
+
+        /* Encode schema output */
+        if (protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEMA)) {
+            Encoder.bcdString(stream, schemaOutput, -1);
+        } else {
+            stream.writeOctetString(new OctetString(schemaOutput));
+        }
     }
 }

@@ -1,10 +1,11 @@
-package com.runsim.backend.nas.impl.values;
+package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.nas.core.NasValue;
+import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
 
-public class VUeSecurityCapability extends NasValue {
+public class IEUeSecurityCapability extends InformationElement4 {
 
     // 3GPP 24.501 f20:
     // "For the UE all bits in octets 7 to 10 are spare and shall be ignored, if the respective octet is received with the information element."
@@ -77,10 +78,8 @@ public class VUeSecurityCapability extends NasValue {
     public Bit SUPPORTED_EIA7;
 
     @Override
-    public NasValue decode(OctetInputStream stream) {
-        int length = stream.readOctetI();
-
-        var cap = new VUeSecurityCapability();
+    protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
+        var cap = new IEUeSecurityCapability();
 
         if (length >= 1) {
             var bits = stream.readOctet();
@@ -131,5 +130,79 @@ public class VUeSecurityCapability extends NasValue {
         }
 
         return cap;
+    }
+
+    @Override
+    public void encodeIE4(OctetOutputStream stream) {
+        final var bits = new Bit[][]{
+                {
+                        SUPPORTED_5G_EA0,
+                        SUPPORTED_128_5G_EA1,
+                        SUPPORTED_128_5G_EA2,
+                        SUPPORTED_128_5G_EA3,
+                        SUPPORTED_5G_EA4,
+                        SUPPORTED_5G_EA5,
+                        SUPPORTED_5G_EA6,
+                        SUPPORTED_5G_EA7,
+                },
+                {
+                        SUPPORTED_5G_IA0,
+                        SUPPORTED_128_5G_IA1,
+                        SUPPORTED_128_5G_IA2,
+                        SUPPORTED_128_5G_IA3,
+                        SUPPORTED_5G_IA4,
+                        SUPPORTED_5G_IA5,
+                        SUPPORTED_5G_IA6,
+                        SUPPORTED_5G_IA7,
+                },
+                {
+                        SUPPORTED_EEA0,
+                        SUPPORTED_128_EEA1,
+                        SUPPORTED_128_EEA2,
+                        SUPPORTED_128_EEA3,
+                        SUPPORTED_EEA4,
+                        SUPPORTED_EEA5,
+                        SUPPORTED_EEA6,
+                        SUPPORTED_EEA7,
+                },
+                {
+                        SUPPORTED_EIA0,
+                        SUPPORTED_128_EIA1,
+                        SUPPORTED_128_EIA2,
+                        SUPPORTED_128_EIA3,
+                        SUPPORTED_EIA4,
+                        SUPPORTED_EIA5,
+                        SUPPORTED_EIA6,
+                        SUPPORTED_EIA7,
+                }
+        };
+
+        int length = 0;
+        for (int i = 0; i < bits.length; i++) {
+            for (Bit bit : bits[i]) {
+                if (bit != null) {
+                    length = Math.max(length, i + 1);
+                }
+            }
+        }
+
+        int[] octets = new int[length];
+        for (int i = 0; i < length; i++) {
+            int octet = 0;
+
+            for (int j = 0; j < 8; j++) {
+                var bit = bits[i][j];
+                if (bit == null) {
+                    throw new IllegalStateException(j + "th bit of the " + i
+                            + "th octet should not have be null, because that octet contains at least one bit which is not null.");
+                }
+                octet |= bit.intValue;
+                octet <<= 1;
+            }
+
+            octets[i] = octet >> 1;
+        }
+
+        stream.writeOctets(octets);
     }
 }
