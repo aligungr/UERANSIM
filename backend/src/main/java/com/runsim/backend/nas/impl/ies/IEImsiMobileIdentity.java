@@ -70,9 +70,9 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        /* Encode MCC and MNC*/
         stream.writeOctet(0x01); // Flags for SUCI with SUPI format IMSI
 
+        /* Encode MCC and MNC*/
         int mcc = mobileCountryCode.value;
         int mcc3 = mcc % 10;
         int mcc2 = (mcc % 100) / 10;
