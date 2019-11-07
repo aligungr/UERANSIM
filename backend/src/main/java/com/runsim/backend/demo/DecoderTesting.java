@@ -11,6 +11,7 @@ public class DecoderTesting {
         performTest(new TestRegistrationRequest());
         performTest(new TestAuthenticationRequest());
         performTest(new TestAuthenticationResponse());
+        performTest(new TestAuthenticationResult());
         performTest(new TestIdentityRequest());
         performTest(new TestIdentityResponse());
         performTest(new TestRegistrationComplete());
