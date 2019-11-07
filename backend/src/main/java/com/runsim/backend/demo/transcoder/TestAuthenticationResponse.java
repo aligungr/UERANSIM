@@ -1,6 +1,7 @@
-package com.runsim.backend.demo.decoder;
+package com.runsim.backend.demo.transcoder;
 
-import com.runsim.backend.demo.DecoderTesting;
+import com.runsim.backend.demo.TranscoderTesting;
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
@@ -9,7 +10,7 @@ import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
 import com.runsim.backend.nas.impl.messages.AuthenticationResponse;
 import com.runsim.backend.utils.octets.OctetString;
 
-public class TestAuthenticationResponse extends DecoderTesting.PduTest {
+public class TestAuthenticationResponse extends TranscoderTesting.PduTest {
 
     @Override
     public String getPdu() {
@@ -38,5 +39,10 @@ public class TestAuthenticationResponse extends DecoderTesting.PduTest {
         assertEquals(akaPrime.attributes.size(), 2);
         assertEquals(akaPrime.attributes.get(EAkaAttributeType.AT_RES), new OctetString("000864955b0fe729127b0000000000000000"));
         assertEquals(akaPrime.attributes.get(EAkaAttributeType.AT_MAC), new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
+    }
+
+    @Override
+    public NasMessage getMessage() {
+        throw new NotImplementedException("");
     }
 }

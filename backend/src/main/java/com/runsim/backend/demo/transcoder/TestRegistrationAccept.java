@@ -1,12 +1,13 @@
-package com.runsim.backend.demo.decoder;
+package com.runsim.backend.demo.transcoder;
 
-import com.runsim.backend.demo.DecoderTesting;
+import com.runsim.backend.demo.TranscoderTesting;
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IE5gGutiMobileIdentity;
 import com.runsim.backend.nas.impl.messages.RegistrationAccept;
 
-public class TestRegistrationAccept extends DecoderTesting.PduTest {
+public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
     @Override
     public String getPdu() {
@@ -61,5 +62,10 @@ public class TestRegistrationAccept extends DecoderTesting.PduTest {
         assertEquals(mes.pduSessionStatus.psi13, 0);
         assertEquals(mes.pduSessionStatus.psi14, 0);
         assertEquals(mes.pduSessionStatus.psi15, 0);
+    }
+
+    @Override
+    public NasMessage getMessage() {
+        throw new NotImplementedException("");
     }
 }

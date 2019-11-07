@@ -1,6 +1,7 @@
-package com.runsim.backend.demo.decoder;
+package com.runsim.backend.demo.transcoder;
 
-import com.runsim.backend.demo.DecoderTesting;
+import com.runsim.backend.demo.TranscoderTesting;
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
@@ -8,7 +9,7 @@ import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
 import com.runsim.backend.nas.impl.ies.IEImeiMobileIdentity;
 import com.runsim.backend.nas.impl.messages.IdentityResponse;
 
-public class TestIdentityResponse extends DecoderTesting.PduTest {
+public class TestIdentityResponse extends TranscoderTesting.PduTest {
 
     @Override
     public String getPdu() {
@@ -26,5 +27,10 @@ public class TestIdentityResponse extends DecoderTesting.PduTest {
         var imei = (IEImeiMobileIdentity) mes.mobileIdentity;
         assertInstance(mes.mobileIdentity, IEImeiMobileIdentity.class);
         assertEquals(imei.imei, "100000000000001");
+    }
+
+    @Override
+    public NasMessage getMessage() {
+        throw new NotImplementedException("");
     }
 }

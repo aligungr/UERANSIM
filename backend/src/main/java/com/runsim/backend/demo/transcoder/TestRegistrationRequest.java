@@ -1,6 +1,7 @@
-package com.runsim.backend.demo.decoder;
+package com.runsim.backend.demo.transcoder;
 
-import com.runsim.backend.demo.DecoderTesting;
+import com.runsim.backend.demo.TranscoderTesting;
+import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
@@ -8,7 +9,7 @@ import com.runsim.backend.nas.impl.messages.RegistrationRequest;
 import com.runsim.backend.nas.impl.values.VUeSecurityCapability;
 import com.runsim.backend.utils.bits.Bit3;
 
-public class TestRegistrationRequest extends DecoderTesting.PduTest {
+public class TestRegistrationRequest extends TranscoderTesting.PduTest {
 
     @Override
     public String getPdu() {
@@ -79,5 +80,10 @@ public class TestRegistrationRequest extends DecoderTesting.PduTest {
         assertEquals(capability.SUPPORTED_EIA5, 0);
         assertEquals(capability.SUPPORTED_EIA6, 0);
         assertEquals(capability.SUPPORTED_EIA7, 0);
+    }
+
+    @Override
+    public NasMessage getMessage() {
+        throw new NotImplementedException("");
     }
 }
