@@ -113,13 +113,15 @@ public class NasEncoder {
 
         int[] halfOctets = new int[requiredHalfOctets];
         for (int i = 0; i < bcd.length(); i++) {
-            halfOctets[i] = bcd.charAt(i) - '0'; // todo bound check '0'-'9'
+            char c = bcd.charAt(i);
+            if (c < '0' || c > '9')
+                throw new IllegalArgumentException("BCD string contains invalid characters");
+            halfOctets[i] = c - '0';
         }
 
         if (skipFirst) {
-            for (int i = bcd.length(); i >= 1; i--) {
+            for (int i = bcd.length(); i >= 1; i--)
                 halfOctets[i] = halfOctets[i - 1];
-            }
             halfOctets[0] = skippedHalfOctet != null ? skippedHalfOctet.intValue() : 0;
         }
 
