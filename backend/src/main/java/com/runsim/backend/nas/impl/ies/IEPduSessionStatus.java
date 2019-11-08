@@ -1,6 +1,5 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -26,9 +25,9 @@ public class IEPduSessionStatus extends InformationElement4 {
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
+        // (other octets are specified as spare (if any))
         var octet0 = stream.readOctet();
         var octet1 = stream.readOctet();
-        // (other octets are specified as spare (if any))
 
         var res = new IEPduSessionStatus();
 
@@ -54,6 +53,19 @@ public class IEPduSessionStatus extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        var bits1 = new Bit[]{psi00, psi01, psi02, psi03, psi04, psi05, psi06, psi07};
+        var bits2 = new Bit[]{psi08, psi09, psi10, psi11, psi12, psi13, psi14, psi15};
+
+        int octet1 = 0, octet2 = 0;
+        for (int i = 0; i < 8; i++) {
+            octet1 |= bits1[8 - i - 1].intValue();
+            octet1 <<= 1;
+
+            octet2 |= bits2[8 - i - 1].intValue();
+            octet2 <<= 1;
+        }
+
+        stream.writeOctet(octet1);
+        stream.writeOctet(octet2);
     }
 }
