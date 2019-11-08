@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
 import com.runsim.backend.utils.OctetInputStream;
@@ -16,7 +16,7 @@ public abstract class IE5gsMobileIdentity extends InformationElement6 {
         int isEven = (flags >> 3) & 0b1;
 
         if (typeOfIdentity.equals(EIdentityType.SUCI)) {
-            return Decoder.suciMobileIdentity(stream, length, isEven == 0);
+            return NasDecoder.suciMobileIdentity(stream, length, isEven == 0);
         } else if (typeOfIdentity.equals(EIdentityType.IMEI)) {
             return new IEImeiMobileIdentity().decodeMobileIdentity(stream, length, isEven == 0);
         } else if (typeOfIdentity.equals(EIdentityType.GUTI)) {

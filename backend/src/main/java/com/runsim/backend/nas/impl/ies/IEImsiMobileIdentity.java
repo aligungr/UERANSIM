@@ -1,8 +1,8 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.EncodingException;
-import com.runsim.backend.nas.Decoder;
-import com.runsim.backend.nas.Encoder;
+import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.utils.OctetInputStream;
@@ -49,19 +49,19 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
         /* Decode routing indicator */
         int riLen = stream.peekOctetI(1) == 0xFF ? 1 : 2;
-        result.routingIndicator = Decoder.bcdString(stream, riLen, false);
+        result.routingIndicator = NasDecoder.bcdString(stream, riLen, false);
         if (riLen == 1) stream.readOctet();
 
         /* Decode protection schema id */
         result.protectionSchemaId = EProtectionSchemeIdentifier.fromValue(stream.readOctetI() & 0b1111);
 
         /* Decode home network public key identifier */
-        result.homeNetworkPublicKeyIdentifier = Decoder.nasValue(stream, VHomeNetworkPki.class);
+        result.homeNetworkPublicKeyIdentifier = NasDecoder.nasValue(stream, VHomeNetworkPki.class);
 
         /* Decode schema output */
         String schemaOutput;
         if (result.protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEMA)) {
-            result.schemaOutput = Decoder.bcdString(stream, length - 7, false);
+            result.schemaOutput = NasDecoder.bcdString(stream, length - 7, false);
         } else {
             var range = stream.readOctetString(length - 7);
             result.schemaOutput = range.toHexString();
@@ -106,13 +106,13 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         stream.writeOctet(octet3);
 
         /* Encode others */
-        Encoder.bcdString(stream, routingIndicator, 2);
+        NasEncoder.bcdString(stream, routingIndicator, 2);
         stream.writeOctet(protectionSchemaId.value);
         stream.writeOctet(homeNetworkPublicKeyIdentifier.value);
 
         /* Encode schema output */
         if (protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEMA)) {
-            Encoder.bcdString(stream, schemaOutput, -1);
+            NasEncoder.bcdString(stream, schemaOutput, -1);
         } else {
             stream.writeOctetString(new OctetString(schemaOutput));
         }

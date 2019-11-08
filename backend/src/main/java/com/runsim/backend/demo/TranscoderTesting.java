@@ -1,9 +1,10 @@
 package com.runsim.backend.demo;
 
 import com.runsim.backend.demo.transcoder.*;
-import com.runsim.backend.nas.Decoder;
-import com.runsim.backend.nas.Encoder;
+import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
+import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.Utils;
 
 public class TranscoderTesting {
@@ -29,14 +30,14 @@ public class TranscoderTesting {
 
     private static void performDecoderTest(PduTest test) {
         var data = Utils.hexStringToByteArray(test.getPdu());
-        var pdu = Decoder.nasPdu(data);
+        var pdu = NasDecoder.nasPdu(new OctetInputStream(data));
         test.compare(pdu);
         System.out.println(test.getClass().getSimpleName() + " Decoder: OK");
     }
 
     private static void performEncoderTest(PduTest test) {
         var message = test.getMessage();
-        var pdu = Encoder.nasPdu(message);
+        var pdu = NasEncoder.nasPdu(message);
         var string = Utils.byteArrayToHexString(pdu).toUpperCase();
 
         if (string.equals(test.getPdu().toUpperCase()))

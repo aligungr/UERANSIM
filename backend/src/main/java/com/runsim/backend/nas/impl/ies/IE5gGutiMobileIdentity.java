@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode2;
@@ -56,9 +56,9 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
 
         /* Decode others */
         result.amfRegionId = stream.readOctet();
-        result.amfSetId = Decoder.nasValue(stream, VAmfSetId.class);
+        result.amfSetId = NasDecoder.nasValue(stream, VAmfSetId.class);
         result.amfPointer = new Bit6(stream.readOctetI());
-        result.tmsi = Decoder.nasValue(stream, V5gTmsi.class);
+        result.tmsi = NasDecoder.nasValue(stream, V5gTmsi.class);
 
         return result;
     }

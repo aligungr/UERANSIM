@@ -2,7 +2,7 @@ package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IE5gsMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationResult;
@@ -20,7 +20,7 @@ public class RegistrationAccept extends PlainNasMessage {
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
         var resp = new RegistrationAccept();
-        resp.registrationResult = Decoder.ie2346(stream, false, IE5gsRegistrationResult.class);
+        resp.registrationResult = NasDecoder.ie2346(stream, false, IE5gsRegistrationResult.class);
 
         while (stream.hasNext()) {
             int iei = stream.readOctetI();
@@ -38,14 +38,14 @@ public class RegistrationAccept extends PlainNasMessage {
             } else {
                 switch (iei) {
                     case 0x77:
-                        resp.mobileIdentity = Decoder.mobileIdentity(stream, false);
+                        resp.mobileIdentity = NasDecoder.mobileIdentity(stream, false);
                         break;
                     case 0x4A:
                         throw new NotImplementedException("Equivalent PLMNs not implemented yet");
                     case 0x54:
                         throw new NotImplementedException("TAI list not implemented yet");
                     case 0x15:
-                        resp.allowedNSSA = Decoder.ie2346(stream, false, IENssa.class);
+                        resp.allowedNSSA = NasDecoder.ie2346(stream, false, IENssa.class);
                         break;
                     case 0x11:
                         throw new NotImplementedException("Rejected NSSAI not implemented yet");
@@ -54,7 +54,7 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x21:
                         throw new NotImplementedException("5GS network feature support not implemented yet");
                     case 0x50:
-                        resp.pduSessionStatus = Decoder.ie2346(stream, false, IEPduSessionStatus.class);
+                        resp.pduSessionStatus = NasDecoder.ie2346(stream, false, IEPduSessionStatus.class);
                         break;
                     case 0x26:
                         throw new NotImplementedException("PDU session reactivation result not implemented yet");

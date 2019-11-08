@@ -2,7 +2,7 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
@@ -20,22 +20,22 @@ public class IESNssa extends InformationElement4 {
 
         switch (length) {
             case 0b00000001: // SST
-                res.sst = Decoder.nasValue(stream, VSliceServiceType.class);
+                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
                 break;
             case 0b00000010: // SST and mapped HPLMN SST
-                res.sst = Decoder.nasValue(stream, VSliceServiceType.class);
+                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
                 throw new NotImplementedException("HPLMN SST not implemented yet");
             case 0b00000100: // SST and SD
-                res.sst = Decoder.nasValue(stream, VSliceServiceType.class);
-                res.sd = Decoder.nasValue(stream, VSliceDifferentiator.class);
+                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
+                res.sd = NasDecoder.nasValue(stream, VSliceDifferentiator.class);
                 break;
             case 0b00000101: // SST, SD and mapped HPLMN SST
-                res.sst = Decoder.nasValue(stream, VSliceServiceType.class);
-                res.sd = Decoder.nasValue(stream, VSliceDifferentiator.class);
+                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
+                res.sd = NasDecoder.nasValue(stream, VSliceDifferentiator.class);
                 throw new NotImplementedException("HPLMN SST not implemented yet");
             case 0b00001000: // SST, SD, mapped HPLMN SST and mapped HPLMN SD
-                res.sst = Decoder.nasValue(stream, VSliceServiceType.class);
-                res.sd = Decoder.nasValue(stream, VSliceDifferentiator.class);
+                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
+                res.sd = NasDecoder.nasValue(stream, VSliceDifferentiator.class);
                 throw new NotImplementedException("HPLMN SST and HPLMN SD not implemented yet");
             default: // All other values are reserved
                 throw new InvalidValueException("reserved value used");

@@ -2,7 +2,7 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.DecodingException;
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -21,7 +21,7 @@ public class IENssa extends InformationElement4 {
 
         while (read < length) {
             int subLength = stream.peekOctetI();
-            list.add(Decoder.ie2346(stream, false, IESNssa.class));
+            list.add(NasDecoder.ie2346(stream, false, IESNssa.class));
             read += subLength + 1;
         }
 

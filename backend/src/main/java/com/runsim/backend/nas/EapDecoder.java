@@ -12,21 +12,11 @@ import java.util.HashMap;
 
 /* package-private */
 class EapDecoder {
-    private final OctetInputStream data;
-
-    public EapDecoder(byte[] data) {
-        this(new OctetInputStream(data));
-    }
-
-    public EapDecoder(OctetInputStream data) {
-        this.data = data;
-    }
-
-    public ExtensibleAuthenticationProtocol decodeEAP() {
-        var code = decodeCode();
-        var id = decodeId();
-        var length = decodeLength();
-        var type = decodeEAPType();
+    public static ExtensibleAuthenticationProtocol eapPdu(OctetInputStream stream) {
+        var code = decodeCode(stream);
+        var id = decodeId(stream);
+        var length = decodeLength(stream);
+        var type = decodeEAPType(stream);
 
         int innerLength = length.intValue()
                 - 1 // code
@@ -36,9 +26,9 @@ class EapDecoder {
 
         ExtensibleAuthenticationProtocol eap;
         if (type.equals(EEapType.EAP_AKA_PRIME)) {
-            eap = decodeAKAPrime(innerLength);
+            eap = decodeAKAPrime(stream, innerLength);
         } else if (type.equals(EEapType.NOTIFICATION)) {
-            eap = decodeNotification(innerLength);
+            eap = decodeNotification(stream, innerLength);
         } else {
             throw new NotImplementedException("eap type not implemented yet: " + type.name);
         }
@@ -50,51 +40,51 @@ class EapDecoder {
         return eap;
     }
 
-    private ECode decodeCode() {
-        var val = ECode.fromValue(data.readOctetI());
+    private static ECode decodeCode(OctetInputStream stream) {
+        var val = ECode.fromValue(stream.readOctetI());
         if (val == null) throw new InvalidValueException(ECode.class);
         return val;
     }
 
-    private Octet decodeId() {
-        return new Octet(data.readOctetI());
+    private static Octet decodeId(OctetInputStream stream) {
+        return new Octet(stream.readOctetI());
     }
 
-    private Octet2 decodeLength() {
-        return new Octet2(data.readOctet2I());
+    private static Octet2 decodeLength(OctetInputStream stream) {
+        return new Octet2(stream.readOctet2I());
     }
 
-    private EEapType decodeEAPType() {
+    private static EEapType decodeEAPType(OctetInputStream data) {
         var val = EEapType.fromValue(data.readOctetI());
         if (val == null) throw new InvalidValueException(EEapType.class);
         return val;
     }
 
-    private AkaPrime decodeAKAPrime(int length) {
+    private static AkaPrime decodeAKAPrime(OctetInputStream stream, int length) {
         var akaPrime = new AkaPrime();
         akaPrime.attributes = new HashMap<>();
 
         int readBytes = 0;
 
         // decode subtype
-        akaPrime.subType = decodeAKASubType();
+        akaPrime.subType = decodeAKASubType(stream);
         readBytes += 1;
 
         // consume reserved 2 octets
-        data.readOctet2();
+        stream.readOctet2();
         readBytes += 2;
 
         while (readBytes < length) {
             // decode attribute type
-            var type = decodeAKAAttributeType();
+            var type = decodeAKAAttributeType(stream);
             readBytes += 1;
 
             // decode attribute length
-            var attributeLength = data.readOctetI();
+            var attributeLength = stream.readOctetI();
             readBytes += 1;
 
             // decode attribute value
-            var attributeVal = data.readOctetString(4 * attributeLength - 2);
+            var attributeVal = stream.readOctetString(4 * attributeLength - 2);
             readBytes += 4 * attributeLength - 2;
 
             akaPrime.attributes.put(type, attributeVal);
@@ -106,19 +96,19 @@ class EapDecoder {
         return akaPrime;
     }
 
-    private EAkaSubType decodeAKASubType() {
-        var val = EAkaSubType.fromValue(data.readOctetI());
+    private static EAkaSubType decodeAKASubType(OctetInputStream stream) {
+        var val = EAkaSubType.fromValue(stream.readOctetI());
         if (val == null) throw new InvalidValueException(EAkaSubType.class);
         return val;
     }
 
-    private EAkaAttributeType decodeAKAAttributeType() {
-        var val = EAkaAttributeType.fromValue(data.readOctetI());
+    private static EAkaAttributeType decodeAKAAttributeType(OctetInputStream stream) {
+        var val = EAkaAttributeType.fromValue(stream.readOctetI());
         if (val == null) throw new InvalidValueException(EAkaAttributeType.class);
         return val;
     }
 
-    private Notification decodeNotification(int length) {
+    private static Notification decodeNotification(OctetInputStream stream, int length) {
         throw new NotImplementedException("eap notification not implemented yet");
     }
 }

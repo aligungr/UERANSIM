@@ -1,6 +1,6 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.nas.Decoder;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IESorTransparentContainer;
 import com.runsim.backend.utils.OctetInputStream;
@@ -18,7 +18,7 @@ public class RegistrationComplete extends PlainNasMessage {
             int iei = stream.readOctetI();
             switch (iei) {
                 case 0x73:
-                    res.sorTransparentContainer = Decoder.ie2346(stream, false, IESorTransparentContainer.class);
+                    res.sorTransparentContainer = NasDecoder.ie2346(stream, false, IESorTransparentContainer.class);
                     break;
             }
         }
