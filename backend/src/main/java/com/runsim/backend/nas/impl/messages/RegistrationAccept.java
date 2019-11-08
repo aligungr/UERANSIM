@@ -20,7 +20,7 @@ public class RegistrationAccept extends PlainNasMessage {
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
         var resp = new RegistrationAccept();
-        resp.registrationResult = Decoder.ie4(stream, false, IE5gsRegistrationResult.class);
+        resp.registrationResult = Decoder.ie2346(stream, false, IE5gsRegistrationResult.class);
 
         while (stream.hasNext()) {
             int iei = stream.readOctetI();
@@ -45,7 +45,7 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x54:
                         throw new NotImplementedException("TAI list not implemented yet");
                     case 0x15:
-                        resp.allowedNSSA = Decoder.ie4(stream, false, IENssa.class);
+                        resp.allowedNSSA = Decoder.ie2346(stream, false, IENssa.class);
                         break;
                     case 0x11:
                         throw new NotImplementedException("Rejected NSSAI not implemented yet");
@@ -54,7 +54,7 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x21:
                         throw new NotImplementedException("5GS network feature support not implemented yet");
                     case 0x50:
-                        resp.pduSessionStatus = Decoder.ie4(stream, false, IEPduSessionStatus.class);
+                        resp.pduSessionStatus = Decoder.ie2346(stream, false, IEPduSessionStatus.class);
                         break;
                     case 0x26:
                         throw new NotImplementedException("PDU session reactivation result not implemented yet");

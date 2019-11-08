@@ -21,7 +21,7 @@ public class IENssa extends InformationElement4 {
 
         while (read < length) {
             int subLength = stream.peekOctetI();
-            list.add(Decoder.ie4(stream, false, IESNssa.class));
+            list.add(Decoder.ie2346(stream, false, IESNssa.class));
             read += subLength + 1;
         }
 

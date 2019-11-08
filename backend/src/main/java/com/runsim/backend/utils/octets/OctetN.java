@@ -14,7 +14,7 @@ public class OctetN {
         if (longValue < 0)
             throw new IllegalArgumentException("negative value");
 
-        this._longValue = longValue & (1 << (8 * octetCount)) - 1;
+        this._longValue = longValue & ((1L << (8 * octetCount)) - 1);
         this._octetCount = (byte) octetCount;
     }
 

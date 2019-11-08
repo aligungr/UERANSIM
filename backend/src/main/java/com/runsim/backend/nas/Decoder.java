@@ -3,9 +3,8 @@ package com.runsim.backend.nas;
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.NasValue;
+import com.runsim.backend.nas.core.ies.InformationElement;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
@@ -34,16 +33,7 @@ public class Decoder {
         }
     }
 
-    public static <T extends InformationElement4> T ie4(OctetInputStream stream, boolean ieiPresent, Class<T> clazz) {
-        try {
-            T instance = clazz.getConstructor().newInstance();
-            return (T) instance.decodeIE(stream, ieiPresent);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static <T extends InformationElement6> T ie6(OctetInputStream stream, boolean ieiPresent, Class<T> clazz) {
+    public static <T extends InformationElement> T ie2346(OctetInputStream stream, boolean ieiPresent, Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
             return (T) instance.decodeIE(stream, ieiPresent);

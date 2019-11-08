@@ -47,7 +47,7 @@ public class RegistrationRequest extends PlainNasMessage {
                     case 0x10:
                         throw new NotImplementedException("5GMM capability not implemented yet");
                     case 0x2E:
-                        req.ueSecurityCapability = Decoder.ie4(stream, false, IEUeSecurityCapability.class);
+                        req.ueSecurityCapability = Decoder.ie2346(stream, false, IEUeSecurityCapability.class);
                         break;
                     case 0x2F:
                         throw new NotImplementedException("not implemented yet: Requested NSSAI");

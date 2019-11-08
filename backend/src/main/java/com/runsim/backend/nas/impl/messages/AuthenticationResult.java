@@ -26,7 +26,7 @@ public class AuthenticationResult extends PlainNasMessage {
             int iei = stream.readOctetI();
             switch (iei) {
                 case 0x38:
-                    res.abba = Decoder.ie4(stream, false, IEAbba.class);
+                    res.abba = Decoder.ie2346(stream, false, IEAbba.class);
                     break;
                 default:
                     throw new InvalidValueException("invalid iei for Authentication Result: " + iei);

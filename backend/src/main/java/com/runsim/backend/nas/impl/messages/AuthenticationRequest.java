@@ -18,7 +18,7 @@ public class AuthenticationRequest extends PlainNasMessage {
     public AuthenticationRequest decodeMessage(OctetInputStream stream) {
         var req = new AuthenticationRequest();
         req.ngKSI = Decoder.ie1(stream.readOctetI(), IENasKeySetIdentifier.class);
-        req.abba = Decoder.ie4(stream, false, IEAbba.class);
+        req.abba = Decoder.ie2346(stream, false, IEAbba.class);
 
         while (stream.hasNext()) {
             int type = stream.readOctetI();

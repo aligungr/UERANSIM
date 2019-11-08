@@ -173,7 +173,7 @@ public final class Utils {
         else if (b instanceof Long) lb = (long) b;
         else if (b instanceof BitN) lb = ((BitN) b).intValue();
         else if (b instanceof OctetN) lb = ((OctetN) b).longValue();
-        else if (b instanceof ProtocolEnum) la = ((ProtocolEnum) b).value;
+        else if (b instanceof ProtocolEnum) lb = ((ProtocolEnum) b).value;
         else difb = true;
 
         if (difa && difb) throw new IllegalArgumentException();

@@ -3,6 +3,9 @@ package com.runsim.backend.nas.core.ies;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.Bit4;
 
+/**
+ * Information elements of format V or TV with value part consisting of 1/2 octet
+ */
 public abstract class InformationElement1 extends InformationElement {
     public abstract InformationElement1 decodeIE1(Bit4 value);
 

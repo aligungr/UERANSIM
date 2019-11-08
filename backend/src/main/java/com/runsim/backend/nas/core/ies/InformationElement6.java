@@ -3,6 +3,9 @@ package com.runsim.backend.nas.core.ies;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
+/**
+ * Information elements of format LV-E or TLV-E with value part consisting of zero, one or more octets and a maximum of 65535 octets.
+ */
 public abstract class InformationElement6 extends InformationElement {
 
     protected abstract InformationElement6 decodeIE6(OctetInputStream stream, int length);
