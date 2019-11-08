@@ -3,15 +3,13 @@ package com.runsim.backend.demo.transcoder;
 import com.runsim.backend.demo.TranscoderTesting;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.*;
-import com.runsim.backend.nas.impl.ies.IE5gGutiMobileIdentity;
-import com.runsim.backend.nas.impl.ies.IE5gsRegistrationResult;
-import com.runsim.backend.nas.impl.ies.IENssa;
-import com.runsim.backend.nas.impl.ies.IESNssa;
+import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.nas.impl.messages.RegistrationAccept;
 import com.runsim.backend.nas.impl.values.V5gTmsi;
 import com.runsim.backend.nas.impl.values.VAmfSetId;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
+import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.Bit6;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.Octet;
@@ -104,6 +102,23 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
         message.allowedNSSA.sNssas[0].sd = new VSliceDifferentiator();
         message.allowedNSSA.sNssas[0].sst.value = new Octet(1);
         message.allowedNSSA.sNssas[0].sd.value = new Octet3(634799);
+
+        message.pduSessionStatus = new IEPduSessionStatus();
+        message.pduSessionStatus.psi01 = new Bit(0);
+        message.pduSessionStatus.psi02 = new Bit(0);
+        message.pduSessionStatus.psi03 = new Bit(0);
+        message.pduSessionStatus.psi04 = new Bit(0);
+        message.pduSessionStatus.psi05 = new Bit(0);
+        message.pduSessionStatus.psi06 = new Bit(0);
+        message.pduSessionStatus.psi07 = new Bit(0);
+        message.pduSessionStatus.psi08 = new Bit(0);
+        message.pduSessionStatus.psi09 = new Bit(0);
+        message.pduSessionStatus.psi10 = new Bit(0);
+        message.pduSessionStatus.psi11 = new Bit(0);
+        message.pduSessionStatus.psi12 = new Bit(0);
+        message.pduSessionStatus.psi13 = new Bit(0);
+        message.pduSessionStatus.psi14 = new Bit(0);
+        message.pduSessionStatus.psi15 = new Bit(0);
 
         return message;
     }
