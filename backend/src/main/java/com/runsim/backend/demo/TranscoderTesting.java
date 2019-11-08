@@ -44,11 +44,48 @@ public class TranscoderTesting {
             System.out.println(test.getClass().getSimpleName() + " Encoder: OK");
         else {
             System.err.println(test.getClass().getSimpleName() + " Encoder: FAILED");
-            System.err.println("Encoded PDU:");
-            System.err.println(Utils.insertSpaces(string, 2));
-            System.err.println("Expected PDU:");
-            System.err.println(Utils.insertSpaces(test.getPdu().toUpperCase(), 2));
+            printToCompare(Utils.insertSpaces(string, 2), Utils.insertSpaces(test.getPdu().toUpperCase(), 2));
             System.exit(1);
+        }
+    }
+
+    private static void printToCompare(String s1, String s2) {
+        String[] arr1 = s1.split(" ");
+        String[] arr2 = s2.split(" ");
+        boolean indexes[] = new boolean[Math.max(arr1.length, arr2.length)];
+        for (int i = 0; i < Math.min(arr1.length, arr2.length); i++)
+            indexes[i] = arr1[i].equals(arr2[i]);
+
+        System.err.println("Encoded PDU:");
+        int i = 0;
+        for (var hex : arr1) {
+            if (!indexes[i]) {
+                System.err.print("[");
+                System.err.print(hex);
+                System.err.print("]");
+            } else {
+                System.err.print(" ");
+                System.err.print(hex);
+                System.err.print(" ");
+            }
+            System.err.print(" ");
+            i++;
+        }
+        System.err.println();
+        System.err.println("Expected PDU:");
+        i = 0;
+        for (var hex : arr2) {
+            if (!indexes[i]) {
+                System.err.print("[");
+                System.err.print(hex);
+                System.err.print("]");
+            } else {
+                System.err.print(" ");
+                System.err.print(hex);
+                System.err.print(" ");
+            }
+            System.err.print(" ");
+            i++;
         }
     }
 

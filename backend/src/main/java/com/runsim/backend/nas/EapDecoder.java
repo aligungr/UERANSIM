@@ -8,10 +8,9 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet2;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-/* package-private */
-class EapDecoder {
+public class EapDecoder {
     public static ExtensibleAuthenticationProtocol eapPdu(OctetInputStream stream) {
         var code = decodeCode(stream);
         var id = decodeId(stream);
@@ -62,7 +61,7 @@ class EapDecoder {
 
     private static AkaPrime decodeAKAPrime(OctetInputStream stream, int length) {
         var akaPrime = new AkaPrime();
-        akaPrime.attributes = new HashMap<>();
+        akaPrime.attributes = new LinkedHashMap<>();
 
         int readBytes = 0;
 

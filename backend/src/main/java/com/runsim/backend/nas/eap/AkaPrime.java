@@ -2,9 +2,9 @@ package com.runsim.backend.nas.eap;
 
 import com.runsim.backend.utils.octets.OctetString;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class AkaPrime extends ExtensibleAuthenticationProtocol {
     public EAkaSubType subType;
-    public Map<EAkaAttributeType, OctetString> attributes;
+    public LinkedHashMap<EAkaAttributeType, OctetString> attributes;
 }
