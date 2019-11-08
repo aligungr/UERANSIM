@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -17,6 +17,6 @@ public class IEImeiMobileIdentity extends IE5gsMobileIdentity {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        NasEncoder.bcdString(stream, imei, -1);
     }
 }

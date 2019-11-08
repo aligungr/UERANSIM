@@ -1,7 +1,6 @@
 package com.runsim.backend.demo.transcoder;
 
 import com.runsim.backend.demo.TranscoderTesting;
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
@@ -31,6 +30,15 @@ public class TestIdentityResponse extends TranscoderTesting.PduTest {
 
     @Override
     public NasMessage getMessage() {
-        throw new NotImplementedException("");
+        var mes = new IdentityResponse();
+        mes.messageType = EMessageType.IDENTITY_RESPONSE;
+        mes.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+        ;
+        mes.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
+
+        var imei = new IEImeiMobileIdentity();
+        imei.imei = "100000000000001";
+        mes.mobileIdentity = imei;
+        return mes;
     }
 }
