@@ -96,32 +96,43 @@ public class NasEncoder {
      *
      * @param octetLength maximum octet length when encoding BCD string to octet string,
      *                    or pass <code>-1</code> to perform minimum number of octets
+     * @param skipFirst true if the first half octet should be skipped.
+     * @param skippedHalfOctet if <code>skipFirst</code>is true, then <code>skippedHalfOctet</code> is set to the skipped half octet.
+     *                         if <code>skippedHalfOctet</code> is null, then zero is assumed.
      */
-    public static void bcdString(OctetOutputStream stream, String bcd, int octetLength) {
-        int[] digits = new int[bcd.length() + bcd.length() % 2];
-        if (bcd.length() % 2 != 0)
-            digits[digits.length - 1] = 0xF;
+    public static void bcdString(OctetOutputStream stream, String bcd, int octetLength, boolean skipFirst, Bit4 skippedHalfOctet) {
+        int requiredHalfOctets = bcd.length();
+        if (skipFirst) requiredHalfOctets++;
+        if (requiredHalfOctets % 2 != 0) requiredHalfOctets++;
 
-        for (int i = 0; i < bcd.length(); i++) {
-            char c = bcd.charAt(i);
-            if (c < '0' || c > '9')
-                throw new IllegalArgumentException("BCD string contains invalid characters");
-            digits[i] = c - '0';
-        }
-
-        int requiredOctets = (int) Math.ceil(bcd.length() / 2.0);
+        int requiredOctets = requiredHalfOctets / 2;
         if (octetLength == -1)
             octetLength = requiredOctets;
-        if (requiredOctets > octetLength)
+        if (octetLength < requiredOctets)
             throw new IllegalArgumentException("octetLength should be greater or equal to " + requiredOctets);
 
-        for (int i = 0; i < digits.length / 2; i++) {
-            int octet = digits[2 * i + 1] << 4 | digits[2 * i];
-            stream.writeOctet(octet);
+        int[] halfOctets = new int[requiredHalfOctets];
+        for (int i = 0; i < bcd.length(); i++) {
+            halfOctets[i] = bcd.charAt(i) - '0'; // todo bound check '0'-'9'
         }
 
-        for (int i = digits.length / 2; i < octetLength; i++) {
-            stream.writeOctet(0xFF);
+        if (skipFirst) {
+            for (int i = bcd.length(); i >= 1; i--) {
+                halfOctets[i] = halfOctets[i - 1];
+            }
+            halfOctets[0] = skippedHalfOctet != null ? skippedHalfOctet.intValue() : 0;
+        }
+
+        int spare = requiredHalfOctets - (bcd.length() + (skipFirst ? 1 : 0));
+        for (int i = 0; i < spare; i++) {
+            halfOctets[i + bcd.length() + (skipFirst ? 1 : 0)] = 0xF;
+        }
+
+        for (int i = 0; i < halfOctets.length / 2; i++) {
+            int little = halfOctets[2 * i];
+            int big = halfOctets[2 * i + 1];
+            int octet = big << 4 | little;
+            stream.writeOctet(octet);
         }
     }
 }

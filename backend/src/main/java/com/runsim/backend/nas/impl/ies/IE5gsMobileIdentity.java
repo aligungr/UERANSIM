@@ -5,6 +5,7 @@ import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public abstract class IE5gsMobileIdentity extends InformationElement6 {
 
@@ -27,4 +28,9 @@ public abstract class IE5gsMobileIdentity extends InformationElement6 {
     }
 
     public abstract IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven);
+
+    @Override
+    public void encodeIE6(OctetOutputStream stream) {
+        throw new NotImplementedException("");
+    }
 }
