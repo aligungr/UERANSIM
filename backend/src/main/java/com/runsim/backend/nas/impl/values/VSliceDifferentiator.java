@@ -23,6 +23,6 @@ public class VSliceDifferentiator extends NasValue {
 
     @Override
     public String toString() {
-        return Integer.toString(value.intValue);
+        return Integer.toString(value.intValue());
     }
 }

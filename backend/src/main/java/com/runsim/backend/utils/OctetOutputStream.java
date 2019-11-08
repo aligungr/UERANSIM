@@ -31,7 +31,7 @@ public class OctetOutputStream {
     }
 
     public void writeOctet(Bit4 bigHalf, Bit4 littleHalf) {
-        writeOctet(bigHalf.intValue, littleHalf.intValue);
+        writeOctet(bigHalf.intValue(), littleHalf.intValue());
     }
 
     public void writeOctet(int bigHalf, int littleHalf) {
@@ -62,11 +62,11 @@ public class OctetOutputStream {
 
     public void writeOctet2(Octet2 octet2) {
         if (isBigEndian) {
-            writeOctet(octet2.intValue >> 8 & 0xFF);
-            writeOctet(octet2.intValue & 0xFF);
+            writeOctet(octet2.intValue() >> 8 & 0xFF);
+            writeOctet(octet2.intValue() & 0xFF);
         } else {
-            writeOctet(octet2.intValue & 0xFF);
-            writeOctet(octet2.intValue >> 8 & 0xFF);
+            writeOctet(octet2.intValue() & 0xFF);
+            writeOctet(octet2.intValue() >> 8 & 0xFF);
         }
     }
 
@@ -103,7 +103,7 @@ public class OctetOutputStream {
         Octet[] arr = toOctetArray();
         byte[] buf = new byte[arr.length];
         for (int i = 0; i < arr.length; i++)
-            buf[i] = (byte) arr[i].intValue;
+            buf[i] = (byte) arr[i].intValue();
         return buf;
     }
 

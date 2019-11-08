@@ -1,5 +1,8 @@
 package com.runsim.backend.utils;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
+import com.runsim.backend.utils.bits.BitN;
+import com.runsim.backend.utils.octets.OctetN;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -144,5 +147,38 @@ public final class Utils {
             if ((i + 1) % period == 0) sb.append(' ');
         }
         return sb.toString().trim();
+    }
+
+    public static boolean unsignedEqual(Object a, Object b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+
+        long la = 0, lb = 0;
+        boolean difa = false, difb = false;
+
+        if (a instanceof Boolean) la = (boolean) a ? 1 : 0;
+        else if (a instanceof Byte) la = (long) (byte) a;
+        else if (a instanceof Short) la = (long) (short) a;
+        else if (a instanceof Integer) la = (long) (int) a;
+        else if (a instanceof Long) la = (long) a;
+        else if (a instanceof BitN) la = ((BitN) a).intValue();
+        else if (a instanceof OctetN) la = ((OctetN) a).longValue();
+        else if (a instanceof ProtocolEnum) la = ((ProtocolEnum) a).value;
+        else difa = true;
+
+        if (b instanceof Boolean) lb = (boolean) b ? 1 : 0;
+        else if (b instanceof Byte) lb = (long) (byte) b;
+        else if (b instanceof Short) lb = (long) (short) b;
+        else if (b instanceof Integer) lb = (long) (int) b;
+        else if (b instanceof Long) lb = (long) b;
+        else if (b instanceof BitN) lb = ((BitN) b).intValue();
+        else if (b instanceof OctetN) lb = ((OctetN) b).longValue();
+        else if (b instanceof ProtocolEnum) la = ((ProtocolEnum) b).value;
+        else difb = true;
+
+        if (difa && difb) throw new IllegalArgumentException();
+        if (difa || difb) return false;
+
+        return la == lb;
     }
 }

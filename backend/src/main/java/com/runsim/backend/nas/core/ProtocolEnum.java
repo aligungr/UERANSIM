@@ -1,8 +1,6 @@
 package com.runsim.backend.nas.core;
 
-import com.runsim.backend.utils.bits.BitN;
-import com.runsim.backend.utils.octets.Octet;
-import com.runsim.backend.utils.octets.Octet2;
+import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Modifier;
 
@@ -11,6 +9,9 @@ public class ProtocolEnum extends ProtocolValue {
     public final String name;
 
     protected ProtocolEnum(int value, String name) {
+        if (value < 0)
+            throw new IllegalArgumentException("negative value");
+
         this.value = value;
         this.name = name;
     }
@@ -42,17 +43,7 @@ public class ProtocolEnum extends ProtocolValue {
 
     @Override
     public final boolean equals(Object obj) {
-        if (obj instanceof Integer)
-            return (Integer) obj == value;
-        if (obj instanceof BitN)
-            return ((BitN) obj).intValue == value;
-        if (obj instanceof Octet)
-            return ((Octet) obj).intValue == value;
-        if (obj instanceof Octet2)
-            return ((Octet2) obj).intValue == value;
-        if (!(obj instanceof ProtocolEnum))
-            return false;
-        return ((ProtocolEnum) obj).value == value;
+        return Utils.unsignedEqual(this, obj);
     }
 
     @Override

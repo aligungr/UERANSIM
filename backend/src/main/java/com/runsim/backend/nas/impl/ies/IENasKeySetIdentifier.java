@@ -17,7 +17,7 @@ public class IENasKeySetIdentifier extends InformationElement1 {
 
     @Override
     public InformationElement1 decodeIE1(Bit4 value) {
-        int val = value.intValue;
+        int val = value.intValue();
 
         var res = new IENasKeySetIdentifier();
         res.tsc = ETypeOfSecurityContext.fromValue(val >> 3 & 0b1);
@@ -27,6 +27,6 @@ public class IENasKeySetIdentifier extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        return tsc.value << 3 | nasKeySetIdentifier.intValue;
+        return tsc.value << 3 | nasKeySetIdentifier.intValue();
     }
 }

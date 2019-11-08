@@ -10,7 +10,7 @@ public class VHomeNetworkPki extends NasValue {
     public Octet value;
 
     public boolean isReserved() {
-        return value.intValue == 0b11111111;
+        return value.intValue() == 0b11111111;
     }
 
     @Override

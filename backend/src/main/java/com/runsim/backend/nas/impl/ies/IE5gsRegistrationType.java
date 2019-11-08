@@ -11,7 +11,7 @@ public class IE5gsRegistrationType extends InformationElement1 {
 
     @Override
     public InformationElement1 decodeIE1(Bit4 value) {
-        int val = value.intValue;
+        int val = value.intValue();
 
         var res = new IE5gsRegistrationType();
         res.followOnRequestPending = EFollowOnRequest.fromValue(val >> 3 & 0b1);

@@ -196,7 +196,7 @@ public class IEUeSecurityCapability extends InformationElement4 {
                     throw new IllegalStateException(j + "th bit of the " + i
                             + "th octet should not have be null, because that octet contains at least one bit which is not null.");
                 }
-                octet |= bit.intValue;
+                octet |= bit.intValue();
                 octet <<= 1;
             }
 

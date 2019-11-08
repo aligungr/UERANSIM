@@ -28,7 +28,7 @@ class EapDecoder {
         var length = decodeLength();
         var type = decodeEAPType();
 
-        int innerLength = length.intValue
+        int innerLength = length.intValue()
                 - 1 // code
                 - 1 // id
                 - 2 // length

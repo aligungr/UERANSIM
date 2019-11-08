@@ -30,7 +30,7 @@ public class Encoder {
      * Encodes information element type 1
      */
     public static void ie1(OctetOutputStream stream, Bit4 big, InformationElement1 little) {
-        int bigHalf = big.intValue;
+        int bigHalf = big.intValue();
         int littleHalf = little.encodeIE1() & 0xF;
         stream.writeOctet(bigHalf, littleHalf);
     }
@@ -40,7 +40,7 @@ public class Encoder {
      */
     public static void ie1(OctetOutputStream stream, InformationElement1 big, Bit4 little) {
         int bigHalf = big.encodeIE1() & 0xF;
-        int littleHalf = little.intValue;
+        int littleHalf = little.intValue();
         stream.writeOctet(bigHalf, littleHalf);
     }
 

@@ -3,41 +3,45 @@ package com.runsim.backend.utils.bits;
 import com.runsim.backend.utils.Utils;
 
 public class BitN {
-    public final int intValue;
-    public final byte bitCount;
+    private final int _intValue;
+    private final byte _bitCount;
 
     public BitN(int intValue, int bitCount) {
-        // warning: maximum 30 bit, since implementation uses int32.
+        // maximum 30 bit, since implementation uses int32.
         // if you want to keep more than 30 bits, the value can be changed from int to long.
         if (bitCount < 0 || bitCount > 30)
             throw new IllegalArgumentException("invalid bit count");
         if (intValue < 0)
             throw new IllegalArgumentException("negative int value");
 
-        this.intValue = intValue & ((1 << bitCount) - 1);
-        this.bitCount = (byte) bitCount;
+        this._intValue = intValue & ((1 << bitCount) - 1);
+        this._bitCount = (byte) bitCount;
+    }
+
+    public final int intValue() {
+        return _intValue;
+    }
+
+    public final int bitCount() {
+        return _bitCount;
     }
 
     @Override
     public final int hashCode() {
-        return intValue;
+        return _intValue;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof BitN)
-            return ((BitN) obj).intValue == this.intValue;
-        if (obj instanceof Integer)
-            return this.intValue == (Integer) obj;
-        return false;
+    public final boolean equals(Object obj) {
+        return Utils.unsignedEqual(this, obj);
     }
 
     @Override
     public String toString() {
-        return Integer.toString(intValue);
+        return Integer.toString(_intValue);
     }
 
-    public String toBinaryString() {
-        return Utils.padLeft(Integer.toBinaryString(intValue), bitCount, '0');
+    public final String toBinaryString() {
+        return "0b" + Utils.padLeft(Integer.toBinaryString(_intValue), _bitCount, '0');
     }
 }

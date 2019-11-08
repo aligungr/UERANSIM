@@ -58,7 +58,7 @@ public class OctetString implements Iterable<Octet> {
     public String toHexString(boolean withSpace) {
         var sb = new StringBuilder();
         forEach(octet -> {
-            sb.append(String.format("%02x", octet.intValue));
+            sb.append(String.format("%02x", octet.intValue()));
             if (withSpace) sb.append(' ');
         });
         return sb.toString().trim();
@@ -77,7 +77,7 @@ public class OctetString implements Iterable<Octet> {
         if (os.length != this.length)
             return false;
         for (int i = 0; i < os.length; i++) {
-            if (os.data[i].intValue != this.data[i].intValue)
+            if (os.data[i].intValue() != this.data[i].intValue())
                 return false;
         }
         return true;
