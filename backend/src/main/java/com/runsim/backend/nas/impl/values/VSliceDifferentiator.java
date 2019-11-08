@@ -4,14 +4,15 @@ import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.octets.Octet3;
 
 public class VSliceDifferentiator extends NasValue {
-    public int value;
+    public Octet3 value;
 
     @Override
     public NasValue decode(OctetInputStream stream) {
         var res = new VSliceDifferentiator();
-        res.value = stream.readOctet3I();
+        res.value = stream.readOctet3();
         return res;
     }
 
@@ -22,6 +23,6 @@ public class VSliceDifferentiator extends NasValue {
 
     @Override
     public String toString() {
-        return Integer.toString(value);
+        return Integer.toString(value.intValue);
     }
 }

@@ -1,11 +1,21 @@
 package com.runsim.backend.utils.bits;
 
-// warning: maximum 31 bit, since implementation uses int32.
+import com.runsim.backend.utils.Utils;
+
 public class BitN {
     public final int intValue;
+    public final byte bitCount;
 
-    public BitN(int intValue, int mask) {
-        this.intValue = intValue & mask;
+    public BitN(int intValue, int bitCount) {
+        // warning: maximum 30 bit, since implementation uses int32.
+        // if you want to keep more than 30 bits, the value can be changed from int to long.
+        if (bitCount < 0 || bitCount > 30)
+            throw new IllegalArgumentException("invalid bit count");
+        if (intValue < 0)
+            throw new IllegalArgumentException("negative int value");
+
+        this.intValue = intValue & ((1 << bitCount) - 1);
+        this.bitCount = (byte) bitCount;
     }
 
     @Override
@@ -25,5 +35,9 @@ public class BitN {
     @Override
     public String toString() {
         return Integer.toString(intValue);
+    }
+
+    public String toBinaryString() {
+        return Utils.padLeft(Integer.toBinaryString(intValue), bitCount, '0');
     }
 }

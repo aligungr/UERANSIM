@@ -4,10 +4,10 @@ import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
-import com.runsim.backend.utils.Utils;
+import com.runsim.backend.utils.bits.BitN;
 
 public class VAmfSetId extends NasValue {
-    public int value;
+    public BitN value;
 
     @Override
     public NasValue decode(OctetInputStream stream) {
@@ -15,7 +15,7 @@ public class VAmfSetId extends NasValue {
         int octet1 = stream.peekOctetI();
 
         var res = new VAmfSetId();
-        res.value = (octet0 << 2) | (octet1 >> 6 & 0b11);
+        res.value = new BitN((octet0 << 2) | (octet1 >> 6 & 0b11), 10);
         return res;
     }
 
@@ -26,6 +26,6 @@ public class VAmfSetId extends NasValue {
 
     @Override
     public String toString() {
-        return Utils.padLeft(Integer.toBinaryString(value), 10, '0');
+        return value.toBinaryString();
     }
 }
