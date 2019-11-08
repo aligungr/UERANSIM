@@ -3,16 +3,20 @@ package com.runsim.backend.nas.impl.messages;
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IE5gsMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationResult;
 import com.runsim.backend.nas.impl.ies.IENssa;
 import com.runsim.backend.nas.impl.ies.IEPduSessionStatus;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public class RegistrationAccept extends PlainNasMessage {
 
     public IE5gsRegistrationResult registrationResult;
+
+    /* Optional fields */
     public IE5gsMobileIdentity mobileIdentity;
     public IENssa allowedNSSA;
     public IEPduSessionStatus pduSessionStatus;
@@ -89,5 +93,17 @@ public class RegistrationAccept extends PlainNasMessage {
         }
 
         return resp;
+    }
+
+    @Override
+    public void encodeMessage(OctetOutputStream stream) {
+        super.encodeMessage(stream);
+        NasEncoder.ie2346(stream, registrationResult);
+        if (mobileIdentity != null)
+            NasEncoder.ie2346(stream, 0x77, mobileIdentity);
+        if (allowedNSSA != null)
+            NasEncoder.ie2346(stream, 0x15, allowedNSSA);
+        if (pduSessionStatus != null)
+            NasEncoder.ie2346(stream, 0x50, pduSessionStatus);
     }
 }

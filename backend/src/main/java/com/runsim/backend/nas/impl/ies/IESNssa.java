@@ -1,8 +1,10 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
@@ -46,6 +48,15 @@ public class IESNssa extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        // WARNING: Order is important.
+
+        if (sst == null) {
+            throw new EncodingException("sst cannot be null");
+        }
+        NasEncoder.nasValue(stream, sst);
+
+        if (sd != null) {
+            NasEncoder.nasValue(stream, sd);
+        }
     }
 }

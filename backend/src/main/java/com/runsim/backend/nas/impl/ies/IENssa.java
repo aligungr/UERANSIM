@@ -1,8 +1,9 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.DecodingException;
-import com.runsim.backend.exceptions.NotImplementedException;
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -34,6 +35,10 @@ public class IENssa extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        if (sNssas == null)
+            throw new EncodingException("S-NSSAs is null");
+        for (var snssa : sNssas) {
+            NasEncoder.ie2346(stream, snssa);
+        }
     }
 }

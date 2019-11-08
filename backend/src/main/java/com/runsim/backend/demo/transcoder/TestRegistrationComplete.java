@@ -1,7 +1,6 @@
 package com.runsim.backend.demo.transcoder;
 
 import com.runsim.backend.demo.TranscoderTesting;
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
@@ -27,6 +26,11 @@ public class TestRegistrationComplete extends TranscoderTesting.PduTest {
 
     @Override
     public NasMessage getMessage() {
-        throw new NotImplementedException("");
+        var message = new RegistrationComplete();
+        message.messageType = EMessageType.REGISTRATION_COMPLETE;
+        message.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+        message.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
+        message.sorTransparentContainer = null;
+        return message;
     }
 }

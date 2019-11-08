@@ -1,9 +1,11 @@
 package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IESorTransparentContainer;
 import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
 
 public class RegistrationComplete extends PlainNasMessage {
 
@@ -24,5 +26,13 @@ public class RegistrationComplete extends PlainNasMessage {
         }
 
         return res;
+    }
+
+    @Override
+    public void encodeMessage(OctetOutputStream stream) {
+        super.encodeMessage(stream);
+        if (sorTransparentContainer != null) {
+            NasEncoder.ie2346(stream, 0x73, sorTransparentContainer);
+        }
     }
 }

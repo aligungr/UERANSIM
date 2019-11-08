@@ -1,7 +1,8 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.exceptions.NotImplementedException;
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode2;
@@ -66,7 +67,51 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        stream.writeOctet(0xf2); // Flags for 5G-GUTI
+
+        /* Encode MCC and MNC*/
+        int mcc = mobileCountryCode.value;
+        int mcc3 = mcc % 10;
+        int mcc2 = (mcc % 100) / 10;
+        int mcc1 = (mcc % 1000) / 100;
+        int octet1 = mcc2 << 4 | mcc1;
+
+        boolean longMnc;
+        int mnc;
+
+        if (mobileNetworkCode == null)
+            throw new EncodingException("mnc is null");
+        if (mobileNetworkCode instanceof EMobileNetworkCode2) {
+            longMnc = false;
+            mnc = mobileCountryCode.value % 100;
+        } else {
+            longMnc = true;
+            mnc = mobileCountryCode.value % 1000;
+        }
+
+        int mnc1 = longMnc ? (mnc % 1000) / 100 : (mnc % 100) / 10;
+        int mnc2 = longMnc ? (mnc % 100) / 10 : (mnc % 10);
+        int mnc3 = longMnc ? (mnc % 10) : 0xF;
+
+        int octet2 = mnc3 << 4 | mcc3;
+        int octet3 = mnc1 << 4 | mnc2;
+
+        stream.writeOctet(octet1);
+        stream.writeOctet(octet2);
+        stream.writeOctet(octet3);
+
+        /* Encode region id */
+        stream.writeOctet(amfRegionId);
+
+        /* Encode AMF set id and AMF pointer */
+        var str = new OctetOutputStream();
+        NasEncoder.nasValue(str, amfSetId);
+        var bytes = str.toOctetArray();
+        bytes[1] = new Octet((bytes[1].intValue() << 6) | amfPointer.intValue());
+        stream.writeOctets(bytes);
+
+        /* Encode TMSI */
+        NasEncoder.nasValue(stream, tmsi);
     }
 
 }

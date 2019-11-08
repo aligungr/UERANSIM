@@ -1,6 +1,7 @@
 package com.runsim.backend.nas;
 
 import com.runsim.backend.exceptions.NotImplementedException;
+import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ies.*;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -88,6 +89,13 @@ public class NasEncoder {
     public static void ie2346(OctetOutputStream stream, Octet iei, InformationElement ie) {
         stream.writeOctet(iei);
         ie2346(stream, ie);
+    }
+
+    /**
+     * Encodes value to given stream
+     */
+    public static void nasValue(OctetOutputStream stream, NasValue value) {
+        value.encode(stream);
     }
 
     /**

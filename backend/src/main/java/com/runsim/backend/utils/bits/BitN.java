@@ -1,6 +1,7 @@
 package com.runsim.backend.utils.bits;
 
 import com.runsim.backend.utils.Utils;
+import com.runsim.backend.utils.octets.Octet;
 
 public class BitN {
     private final int _intValue;
@@ -26,6 +27,10 @@ public class BitN {
         return _bitCount;
     }
 
+    public final int octetCount() {
+        return (int) Math.ceil(bitCount() / 8.0);
+    }
+
     @Override
     public final int hashCode() {
         return _intValue;
@@ -43,5 +48,26 @@ public class BitN {
 
     public final String toBinaryString() {
         return "0b" + Utils.padLeft(Integer.toBinaryString(_intValue), _bitCount, '0');
+    }
+
+    public Octet[] toOctetArray(boolean useBigEndian) {
+        var octets = new Octet[octetCount()];
+        int intValue = intValue();
+        int bitCount = bitCount();
+        for (int i = 0; i < octets.length; i++) {
+            if (bitCount < 8)
+                bitCount = 8;
+
+            int msbOctet = ((intValue >> (bitCount - 8)) & 0xFF);
+            intValue &= ((1 << (bitCount - 8)) - 1);
+            bitCount -= 8;
+
+            octets[i] = new Octet(msbOctet);
+        }
+        return octets;
+    }
+
+    public Octet[] toOctetArray() {
+        return toOctetArray(true);
     }
 }

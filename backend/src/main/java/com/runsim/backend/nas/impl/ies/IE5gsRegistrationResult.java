@@ -1,6 +1,5 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.enums.E5gsRegistrationResult;
 import com.runsim.backend.nas.impl.enums.ESmsOverNasTransportAllowed;
@@ -23,6 +22,6 @@ public class IE5gsRegistrationResult extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        stream.writeOctet(smsOverNasAllowed.value << 3 | registrationResult.value);
     }
 }

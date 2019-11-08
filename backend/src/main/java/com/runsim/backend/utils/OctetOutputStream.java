@@ -1,9 +1,8 @@
 package com.runsim.backend.utils;
 
 import com.runsim.backend.utils.bits.Bit4;
-import com.runsim.backend.utils.octets.Octet;
-import com.runsim.backend.utils.octets.Octet2;
-import com.runsim.backend.utils.octets.OctetString;
+import com.runsim.backend.utils.bits.BitN;
+import com.runsim.backend.utils.octets.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +73,24 @@ public class OctetOutputStream {
         writeOctet2(new Octet2(octet2));
     }
 
+    public void writeOctet4(Octet4 octet4) {
+        writeOctets(octet4);
+    }
+
+    public void writeOctet4(long octet4) {
+        writeOctet4(new Octet4(octet4));
+    }
+
+    public void writeOctet3(Octet3 octet3) {
+        writeOctets(octet3);
+    }
+
+    public void writeOctet3(int octet3) {
+        writeOctet3(new Octet3(octet3));
+    }
+
+
+
     public void writeStream(OctetOutputStream stream) {
         var data = stream.data;
         for (var octet : data) {
@@ -89,10 +106,18 @@ public class OctetOutputStream {
         data.addAll(Arrays.asList(octets));
     }
 
+    public void writeOctets(OctetN octets) {
+        writeOctets(octets.toOctetArray(isBigEndian));
+    }
+
     public void writeOctets(int[] octets) {
         for (int octet : octets) {
             writeOctet(octet & 0xFF);
         }
+    }
+
+    public void writeOctets(BitN value) {
+        writeOctets(value.toOctetArray(isBigEndian));
     }
 
     public Octet[] toOctetArray() {

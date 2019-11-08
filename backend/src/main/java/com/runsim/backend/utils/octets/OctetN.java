@@ -61,4 +61,22 @@ public class OctetN {
     public final boolean equals(Object obj) {
         return Utils.unsignedEqual(this, obj);
     }
+
+    public final Octet[] toOctetArray(boolean useBigEndian) {
+        var octets = new Octet[octetCount()];
+        if (!useBigEndian) {
+            for (int i = 0; i < octets.length; i++) {
+                octets[i] = new Octet((int) ((_longValue >> (8 * i)) & 0xFF));
+            }
+        } else {
+            for (int i = 0; i < octets.length; i++) {
+                octets[octets.length - i - 1] = new Octet((int) ((_longValue >> (8 * i)) & 0xFF));
+            }
+        }
+        return octets;
+    }
+
+    public final Octet[] toOctetArray() {
+        return toOctetArray(true);
+    }
 }
