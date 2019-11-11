@@ -17,6 +17,7 @@ public class RegistrationRequest extends PlainNasMessage {
     /* Optional fields */
     public IEUeSecurityCapability ueSecurityCapability;
     public IE5gMmCapability mmCapability;
+    public IENssa requestedNSSA;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -49,7 +50,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         req.ueSecurityCapability = NasDecoder.ie2346(stream, false, IEUeSecurityCapability.class);
                         break;
                     case 0x2F:
-                        throw new NotImplementedException("not implemented yet: Requested NSSAI");
+                        req.requestedNSSA = NasDecoder.ie2346(stream, false, IENssa.class);
+                        break;
                     case 0x52:
                         throw new NotImplementedException("not implemented yet: Last visited registered TAI");
                     case 0x17:
