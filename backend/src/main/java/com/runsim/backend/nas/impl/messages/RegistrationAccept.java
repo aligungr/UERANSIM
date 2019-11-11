@@ -32,6 +32,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEGprsTimer3 t3512Value;
     public IEGprsTimer2 t3502Value;
     public IEGprsTimer2 non3gppDeRegistrationTimerValue;
+    public IE5gsDrxParameters negotiatedDrxParameters;
 
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
@@ -110,7 +111,8 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x76:
                         throw new NotImplementedException("Operator-defined access category definitions not implemented yet");
                     case 0x51:
-                        throw new NotImplementedException("Negotiated DRX parameters not implemented yet");
+                        this.negotiatedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
+                        break;
                     default:
                         throw new InvalidValueException("iei is invalid: " + iei);
                 }
