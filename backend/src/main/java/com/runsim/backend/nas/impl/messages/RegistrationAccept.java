@@ -26,6 +26,8 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEPlmnList equivalentPLMNs;
     public IERejectedNssai rejectedNSSAI;
     public IENssai configuredNSSAI;
+    public IE5gsNetworkFeatureSupport networkFeatureSupport;
+    public IEPduSessionReactivationResult pduSessionReactivationResult;
 
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
@@ -68,12 +70,13 @@ public class RegistrationAccept extends PlainNasMessage {
                         resp.configuredNSSAI = NasDecoder.ie2346(stream, false, IENssai.class);
                         break;
                     case 0x21:
-                        throw new NotImplementedException("5GS network feature support not implemented yet");
+                        resp.networkFeatureSupport = NasDecoder.ie2346(stream, false, IE5gsNetworkFeatureSupport.class);
+                        break;
                     case 0x50:
                         resp.pduSessionStatus = NasDecoder.ie2346(stream, false, IEPduSessionStatus.class);
                         break;
                     case 0x26:
-                        throw new NotImplementedException("PDU session reactivation result not implemented yet");
+                        resp.pduSessionReactivationResult = NasDecoder.ie2346(stream, false, IEPduSessionReactivationResult.class);
                     case 0x72:
                         throw new NotImplementedException("PDU session reactivation result error cause not implemented yet");
                     case 0x79:

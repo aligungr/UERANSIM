@@ -3,10 +3,15 @@ package com.runsim.backend.utils.bits;
 import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.octets.Octet;
 
+import java.util.Arrays;
+
 public class BitN {
     private final int _intValue;
     private final byte _bitCount;
 
+    /**
+     *
+     */
     public BitN(int intValue, int bitCount) {
         // maximum 30 bit, since implementation uses int32.
         // if you want to keep more than 30 bits, the value can be changed from int to long.
@@ -19,14 +24,56 @@ public class BitN {
         this._bitCount = (byte) bitCount;
     }
 
+    /**
+     * Constructs a BitN object with given Bit array.
+     * bits[0] is the least significant bit, and bits[n-1] is the most significant bit,
+     * where n is the length of the array.
+     */
+    public BitN(Bit... bits) {
+        this(Arrays.stream(bits).mapToInt(BitN::intValue).toArray());
+    }
+
+    /**
+     * Constructs a BitN object with given integer array.
+     * bits[0] is the least significant bit, and bits[n-1] is the most significant bit,
+     * where n is the length of the array.
+     */
+    public BitN(int... bits) {
+        this(bitsToInt(bits), bits.length);
+    }
+
+    /**
+     * Returns int32 representation of given bits.
+     * bits[0] is the least significant bit, and bits[n-1] is the most significant bit,
+     * where n is the length of the array.
+     */
+    private static int bitsToInt(int... bits) {
+        int val = 0;
+        for (int i = bits.length - 1; i >= 0; i--) {
+            val |= bits[i] & 0b1;
+            if (i != 0)
+                val <<= 1;
+        }
+        return val;
+    }
+
+    /**
+     * Returns int value of the underlying bit representation.
+     */
     public final int intValue() {
         return _intValue;
     }
 
+    /**
+     * Returns bit count of the underlying bit representation.
+     */
     public final int bitCount() {
         return _bitCount;
     }
 
+    /**
+     * Returns the minimum number of octet counts required to represent the BitN object.
+     */
     public final int octetCount() {
         return (int) Math.ceil(bitCount() / 8.0);
     }
@@ -76,7 +123,6 @@ public class BitN {
     public final Bit getBit(int index) {
         return new Bit(getBitI(index));
     }
-
 
     public final boolean getBitB(int index) {
         return getBitI(index) != 0;

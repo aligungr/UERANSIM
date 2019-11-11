@@ -1,0 +1,53 @@
+package com.runsim.backend.nas.impl.ies;
+
+import com.runsim.backend.nas.core.ies.InformationElement4;
+import com.runsim.backend.nas.impl.enums.*;
+import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.octets.OctetN;
+
+public class IE5gsNetworkFeatureSupport extends InformationElement4 {
+
+    public EImsVoPs3gpp imsVoPs3gpp;
+    public EImsVoPsN3gpp imsVoPsN3gpp;
+    public EEmergencyServiceSupport3gppIndicator emc;
+    public EEmergencyServiceFallback3gppIndicator emf;
+    public EInterworkingWithoutN26InterfaceIndicator iwkN26;
+    public EMpsIndicator mpsi;
+    public EEmergencyServiceSupportNon3gppIndicator emcn3;
+    public EMcsIndicator mcsi;
+
+    @Override
+    protected IE5gsNetworkFeatureSupport decodeIE4(OctetInputStream stream, int length) {
+        var res = new IE5gsNetworkFeatureSupport();
+
+        var octet = stream.readOctet();
+        res.imsVoPs3gpp = EImsVoPs3gpp.fromValue(octet.getBitI(0));
+        res.imsVoPsN3gpp = EImsVoPsN3gpp.fromValue(octet.getBitI(1));
+        res.emc = EEmergencyServiceSupport3gppIndicator.fromValue(octet.getBitRangeI(2, 3));
+        res.emf = EEmergencyServiceFallback3gppIndicator.fromValue(octet.getBitRangeI(4, 5));
+        res.iwkN26 = EInterworkingWithoutN26InterfaceIndicator.fromValue(octet.getBitI(6));
+        res.mpsi = EMpsIndicator.fromValue(octet.getBitI(7));
+        octet = stream.readOctet();
+        res.emcn3 = EEmergencyServiceSupportNon3gppIndicator.fromValue(octet.getBitI(0));
+        res.mcsi = EMcsIndicator.fromValue(octet.getBitI(1));
+        return res;
+    }
+
+    @Override
+    public void encodeIE4(OctetOutputStream stream) {
+        var octet = new OctetN(0, 8);
+        octet = octet.setBit(0, imsVoPs3gpp.value);
+        octet = octet.setBit(1, imsVoPsN3gpp.value);
+        octet = octet.setBitRange(2, 3, emc.value);
+        octet = octet.setBitRange(4, 5, emf.value);
+        octet = octet.setBit(1, iwkN26.value);
+        octet = octet.setBit(1, mpsi.value);
+        stream.writeOctet(octet.intValue());
+
+        octet = new OctetN(0, 8);
+        octet = octet.setBit(0, emcn3.value);
+        octet = octet.setBit(1, mcsi.value);
+        stream.writeOctet(octet.intValue());
+    }
+}

@@ -57,6 +57,48 @@ public class OctetN {
         return new Bit(getBitI(index));
     }
 
+    public final OctetN setBit(int index, int bit) {
+        return new OctetN(bit == 0 ? _longValue & ~(1L << index) : _longValue | (1L << index), _octetCount);
+    }
+
+    public final OctetN setBit(int index, Bit bit) {
+        return setBit(index, bit.intValue());
+    }
+
+    public final long getBitRangeL(int start, int end) {
+        if (end < start) {
+            int temp = end;
+            end = start;
+            start = temp;
+        }
+
+        long val = 0;
+        for (int i = end; i >= start; i--) {
+            int bit = getBitI(i);
+            val |= bit;
+
+            if (i != start)
+                val <<= 1L;
+        }
+        return val;
+    }
+
+    public final int getBitRangeI(int start, int end) {
+        return StrictMath.toIntExact(getBitRangeL(start, end));
+    }
+
+    public final OctetN setBitRange(int start, int end, long value) {
+        OctetN octetN = new OctetN(_longValue, _octetCount);
+        OctetN val = new OctetN(value, _octetCount);
+
+        int length = end - start + 1;
+        for (int i = 0; i < length; i++) {
+            octetN = octetN.setBit(start + i, val.getBitI(i));
+        }
+
+        return octetN;
+    }
+
     @Override
     public final boolean equals(Object obj) {
         return Utils.unsignedEqual(this, obj);
