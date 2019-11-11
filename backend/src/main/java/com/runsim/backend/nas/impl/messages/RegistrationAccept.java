@@ -29,6 +29,9 @@ public class RegistrationAccept extends PlainNasMessage {
     public IE5gsNetworkFeatureSupport networkFeatureSupport;
     public IEPduSessionReactivationResult pduSessionReactivationResult;
     public IEPduSessionReactivationResultErrorCause pduSessionReactivationResultErrorCause;
+    public IEGprsTimer3 t3512Value;
+    public IEGprsTimer2 t3502Value;
+    public IEGprsTimer2 non3gppDeRegistrationTimerValue;
 
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
@@ -87,11 +90,14 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x27:
                         throw new NotImplementedException("Service area list not implemented yet");
                     case 0x5E:
-                        throw new NotImplementedException("T3512 value not implemented yet");
+                        resp.t3512Value = NasDecoder.ie2346(stream, false, IEGprsTimer3.class);
+                        break;
                     case 0x5D:
-                        throw new NotImplementedException("Non-3GPP de-registration timer value not implemented yet");
+                        resp.non3gppDeRegistrationTimerValue = NasDecoder.ie2346(stream, false, IEGprsTimer2.class);
+                        break;
                     case 0x16:
-                        throw new NotImplementedException("T3502 value not implemented yet");
+                        resp.t3502Value = NasDecoder.ie2346(stream, false, IEGprsTimer2.class);
+                        break;
                     case 0x34:
                         throw new NotImplementedException("Emergency number list not implemented yet");
                     case 0x7A:
