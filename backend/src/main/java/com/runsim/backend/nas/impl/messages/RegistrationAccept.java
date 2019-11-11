@@ -77,6 +77,7 @@ public class RegistrationAccept extends PlainNasMessage {
                         break;
                     case 0x26:
                         resp.pduSessionReactivationResult = NasDecoder.ie2346(stream, false, IEPduSessionReactivationResult.class);
+                        break;
                     case 0x72:
                         throw new NotImplementedException("PDU session reactivation result error cause not implemented yet");
                     case 0x79:
