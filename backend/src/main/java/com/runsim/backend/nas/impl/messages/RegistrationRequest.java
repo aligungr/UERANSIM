@@ -5,10 +5,7 @@ import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.impl.ies.IE5gsMobileIdentity;
-import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
-import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
-import com.runsim.backend.nas.impl.ies.IEUeSecurityCapability;
+import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -19,6 +16,7 @@ public class RegistrationRequest extends PlainNasMessage {
 
     /* Optional fields */
     public IEUeSecurityCapability ueSecurityCapability;
+    public IE5gMmCapability mmCapability;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -45,7 +43,8 @@ public class RegistrationRequest extends PlainNasMessage {
             } else {
                 switch (iei) {
                     case 0x10:
-                        throw new NotImplementedException("5GMM capability not implemented yet");
+                        req.mmCapability = NasDecoder.ie2346(stream, false, IE5gMmCapability.class);
+                        break;
                     case 0x2E:
                         req.ueSecurityCapability = NasDecoder.ie2346(stream, false, IEUeSecurityCapability.class);
                         break;

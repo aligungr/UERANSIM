@@ -11,6 +11,7 @@ public class TranscoderTesting {
 
     public static void main(String[] args) {
         performDecoderTest(new TestRegistrationRequest());
+        performDecoderTest(new TestRegistrationRequest2());
         performDecoderTest(new TestAuthenticationRequest());
         performDecoderTest(new TestAuthenticationResponse());
         // performDecoderTest(new TestAuthenticationResult()); // todo
@@ -18,7 +19,9 @@ public class TranscoderTesting {
         performDecoderTest(new TestIdentityResponse());
         performDecoderTest(new TestRegistrationComplete());
         performDecoderTest(new TestRegistrationAccept());
+
         performEncoderTest(new TestRegistrationRequest());
+        performEncoderTest(new TestRegistrationRequest2());
         performEncoderTest(new TestAuthenticationRequest());
         performEncoderTest(new TestAuthenticationResponse());
         // performEncoderTest(new TestAuthenticationResult()); // todo
