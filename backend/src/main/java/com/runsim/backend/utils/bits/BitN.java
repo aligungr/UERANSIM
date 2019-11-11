@@ -10,7 +10,7 @@ public class BitN {
     public BitN(int intValue, int bitCount) {
         // maximum 30 bit, since implementation uses int32.
         // if you want to keep more than 30 bits, the value can be changed from int to long.
-        if (bitCount < 0 || bitCount > 30)
+        if (bitCount <= 0 || bitCount > 30)
             throw new IllegalArgumentException("invalid bit count");
         if (intValue < 0)
             throw new IllegalArgumentException("negative int value");
@@ -65,6 +65,21 @@ public class BitN {
             octets[i] = new Octet(msbOctet);
         }
         return octets;
+    }
+
+    public final int getBitI(int index) {
+        if (index < 0 || index > 29)
+            throw new IllegalArgumentException("invalid index");
+        return (int) ((_intValue >> index) & 0b1);
+    }
+
+    public final Bit getBit(int index) {
+        return new Bit(getBitI(index));
+    }
+
+
+    public final boolean getBitB(int index) {
+        return getBitI(index) != 0;
     }
 
     public Octet[] toOctetArray() {

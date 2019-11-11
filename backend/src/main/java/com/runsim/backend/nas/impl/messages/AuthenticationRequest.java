@@ -5,7 +5,7 @@ import com.runsim.backend.nas.EapEncoder;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
+import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.nas.impl.ies.IEAbba;
 import com.runsim.backend.nas.impl.ies.IEAutn;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
@@ -19,7 +19,7 @@ public class AuthenticationRequest extends PlainNasMessage {
     public IEAbba abba;
 
     /* Optional fields */
-    public ExtensibleAuthenticationProtocol eap;
+    public EAP eap;
     public IERand authParamRAND;
     public IEAutn authParamAUTN;
 

@@ -5,7 +5,7 @@ import com.runsim.backend.nas.EapEncoder;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
+import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.nas.impl.ies.IEAuthenticationResponseParameter;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -14,7 +14,7 @@ public class AuthenticationResponse extends PlainNasMessage {
 
     /* Optional fields */
     public IEAuthenticationResponseParameter authenticationResponseParameter;
-    public ExtensibleAuthenticationProtocol eap;
+    public EAP eap;
 
     @Override
     public AuthenticationResponse decodeMessage(OctetInputStream stream) {

@@ -2,8 +2,8 @@ package com.runsim.backend.nas;
 
 import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.eap.AkaPrime;
+import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.nas.eap.EEapType;
-import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
 import com.runsim.backend.utils.OctetOutputStream;
 
 import java.util.LinkedHashMap;
@@ -13,7 +13,7 @@ public class EapEncoder {
     /**
      * Encodes EAP PDU into given stream
      */
-    public static void eapPdu(OctetOutputStream stream, ExtensibleAuthenticationProtocol pdu) {
+    public static void eapPdu(OctetOutputStream stream, EAP pdu) {
         var innerStream = new OctetOutputStream();
 
         innerStream.writeOctet(pdu.code.value);

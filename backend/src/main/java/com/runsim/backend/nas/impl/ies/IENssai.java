@@ -10,14 +10,14 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 import java.util.ArrayList;
 
-public class IENssa extends InformationElement4 {
+public class IENssai extends InformationElement4 {
 
     public IESNssa[] sNssas;
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var list = new ArrayList<IESNssa>();
-        var res = new IENssa();
+        var res = new IENssai();
         int read = 0;
 
         while (read < length) {

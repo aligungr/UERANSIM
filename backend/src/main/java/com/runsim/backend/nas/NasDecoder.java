@@ -7,7 +7,7 @@ import com.runsim.backend.nas.core.ies.InformationElement;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.eap.ExtensibleAuthenticationProtocol;
+import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.nas.impl.messages.*;
@@ -134,7 +134,7 @@ public class NasDecoder {
         }
     }
 
-    public static ExtensibleAuthenticationProtocol eap(OctetInputStream stream) {
+    public static EAP eap(OctetInputStream stream) {
         var length = stream.readOctet2();
         return EapDecoder.eapPdu(stream);
     }

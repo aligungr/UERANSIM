@@ -11,7 +11,7 @@ import com.runsim.backend.utils.octets.Octet2;
 import java.util.LinkedHashMap;
 
 public class EapDecoder {
-    public static ExtensibleAuthenticationProtocol eapPdu(OctetInputStream stream) {
+    public static EAP eapPdu(OctetInputStream stream) {
         var code = decodeCode(stream);
         var id = decodeId(stream);
         var length = decodeLength(stream);
@@ -23,7 +23,7 @@ public class EapDecoder {
                 - 2 // length
                 - 1; // type
 
-        ExtensibleAuthenticationProtocol eap;
+        EAP eap;
         if (type.equals(EEapType.EAP_AKA_PRIME)) {
             eap = decodeAKAPrime(stream, innerLength);
         } else if (type.equals(EEapType.NOTIFICATION)) {

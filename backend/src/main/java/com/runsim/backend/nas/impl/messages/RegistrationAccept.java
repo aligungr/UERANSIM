@@ -2,13 +2,12 @@ package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
+import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.impl.ies.IE5gsMobileIdentity;
-import com.runsim.backend.nas.impl.ies.IE5gsRegistrationResult;
-import com.runsim.backend.nas.impl.ies.IENssa;
-import com.runsim.backend.nas.impl.ies.IEPduSessionStatus;
+import com.runsim.backend.nas.eap.EAP;
+import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -18,8 +17,15 @@ public class RegistrationAccept extends PlainNasMessage {
 
     /* Optional fields */
     public IE5gsMobileIdentity mobileIdentity;
-    public IENssa allowedNSSA;
+    public IENssai allowedNSSAI;
     public IEPduSessionStatus pduSessionStatus;
+    public EAP eap;
+    public IENssaiInclusionMode nssaiInclusionMode;
+    public IENetworkSlicingIndication networkSlicingIndication;
+    public IEMicoIndication micoIndication;
+    public IEPlmnList equivalentPLMNs;
+    public IERejectedNssai rejectedNSSAI;
+    public IENssai configuredNSSAI;
 
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
@@ -32,12 +38,15 @@ public class RegistrationAccept extends PlainNasMessage {
             if (msb == 0xA || msb == 0xB || msb == 0x9) {
                 int lsb = iei & 0xF;
                 switch (msb) {
-                    case 0xA:
-                        throw new NotImplementedException("NSSAI inclusion mode not implemented yet");
-                    case 0xB:
-                        throw new NotImplementedException("MICO indication not implemented yet");
                     case 0x9:
-                        throw new NotImplementedException("Network slicing indication not implemented yet");
+                        this.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
+                        break;
+                    case 0xA:
+                        this.nssaiInclusionMode = NasDecoder.ie1(lsb, IENssaiInclusionMode.class);
+                        break;
+                    case 0xB:
+                        this.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
+                        break;
                 }
             } else {
                 switch (iei) {
@@ -45,16 +54,19 @@ public class RegistrationAccept extends PlainNasMessage {
                         resp.mobileIdentity = NasDecoder.mobileIdentity(stream, false);
                         break;
                     case 0x4A:
-                        throw new NotImplementedException("Equivalent PLMNs not implemented yet");
+                        resp.equivalentPLMNs = NasDecoder.ie2346(stream, false, IEPlmnList.class);
+                        break;
                     case 0x54:
                         throw new NotImplementedException("TAI list not implemented yet");
                     case 0x15:
-                        resp.allowedNSSA = NasDecoder.ie2346(stream, false, IENssa.class);
+                        resp.allowedNSSAI = NasDecoder.ie2346(stream, false, IENssai.class);
                         break;
                     case 0x11:
-                        throw new NotImplementedException("Rejected NSSAI not implemented yet");
+                        resp.rejectedNSSAI = NasDecoder.ie2346(stream, false, IERejectedNssai.class);
+                        break;
                     case 0x31:
-                        throw new NotImplementedException("Configured NSSAI not implemented yet");
+                        resp.configuredNSSAI = NasDecoder.ie2346(stream, false, IENssai.class);
+                        break;
                     case 0x21:
                         throw new NotImplementedException("5GS network feature support not implemented yet");
                     case 0x50:
@@ -81,7 +93,8 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x73:
                         throw new NotImplementedException("SOR transparent container not implemented yet");
                     case 0x78:
-                        throw new NotImplementedException("EAP message not implemented yet");
+                        this.eap = EapDecoder.eapPdu(stream);
+                        break;
                     case 0x76:
                         throw new NotImplementedException("Operator-defined access category definitions not implemented yet");
                     case 0x51:
@@ -101,8 +114,8 @@ public class RegistrationAccept extends PlainNasMessage {
         NasEncoder.ie2346(stream, registrationResult);
         if (mobileIdentity != null)
             NasEncoder.ie2346(stream, 0x77, mobileIdentity);
-        if (allowedNSSA != null)
-            NasEncoder.ie2346(stream, 0x15, allowedNSSA);
+        if (allowedNSSAI != null)
+            NasEncoder.ie2346(stream, 0x15, allowedNSSAI);
         if (pduSessionStatus != null)
             NasEncoder.ie2346(stream, 0x50, pduSessionStatus);
     }
