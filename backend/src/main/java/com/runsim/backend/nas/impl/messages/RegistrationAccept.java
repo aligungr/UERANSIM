@@ -28,6 +28,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IENssai configuredNSSAI;
     public IE5gsNetworkFeatureSupport networkFeatureSupport;
     public IEPduSessionReactivationResult pduSessionReactivationResult;
+    public IEPduSessionReactivationResultErrorCause pduSessionReactivationResultErrorCause;
 
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
@@ -79,7 +80,8 @@ public class RegistrationAccept extends PlainNasMessage {
                         resp.pduSessionReactivationResult = NasDecoder.ie2346(stream, false, IEPduSessionReactivationResult.class);
                         break;
                     case 0x72:
-                        throw new NotImplementedException("PDU session reactivation result error cause not implemented yet");
+                        resp.pduSessionReactivationResultErrorCause = NasDecoder.ie2346(stream, false, IEPduSessionReactivationResultErrorCause.class);
+                        break;
                     case 0x79:
                         throw new NotImplementedException("LADN information not implemented yet");
                     case 0x27:
