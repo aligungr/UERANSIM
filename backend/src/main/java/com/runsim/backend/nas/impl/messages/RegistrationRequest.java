@@ -33,6 +33,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IES1UeNetworkCapability s1UeNetworkCapability;
     public IEPduSessionStatus pduSessionStatus;
+    public IEPayloadContainer payloadContainer;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -103,7 +104,8 @@ public class RegistrationRequest extends PlainNasMessage {
                     case 0x7E:
                         throw new NotImplementedException("not implemented yet: LADN indication");
                     case 0x7B:
-                        throw new NotImplementedException("not implemented yet: Payload container");
+                        req.payloadContainer = NasDecoder.ie2346(stream, false, IEPayloadContainer.class);
+                        break;
                     case 0x53:
                         req.updateType = NasDecoder.ie2346(stream, false, IE5gsUpdateType.class);
                         break;
