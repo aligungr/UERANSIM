@@ -32,6 +32,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IEAllowedPduSessionStatus allowedPduSessionStatus;
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IES1UeNetworkCapability s1UeNetworkCapability;
+    public IEPduSessionStatus pduSessionStatus;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -79,7 +80,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         req.uplinkDataStatus = NasDecoder.ie2346(stream, false, IEUplinkDataStatus.class);
                         break;
                     case 0x50:
-                        throw new NotImplementedException("not implemented yet: PDU session status");
+                        req.pduSessionStatus = NasDecoder.ie2346(stream, false, IEPduSessionStatus.class);
+                        break;
                     case 0x2B:
                         req.ueStatus = NasDecoder.ie2346(stream, false, IEUeStatus.class);
                         break;
