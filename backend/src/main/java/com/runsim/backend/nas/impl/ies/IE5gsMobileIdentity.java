@@ -7,7 +7,7 @@ import com.runsim.backend.nas.impl.enums.EIdentityType;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
-public abstract class IE5gsMobileIdentity extends InformationElement6 {
+public class IE5gsMobileIdentity extends InformationElement6 {
 
     @Override
     protected final IE5gsMobileIdentity decodeIE6(OctetInputStream stream, int length) {
@@ -27,7 +27,9 @@ public abstract class IE5gsMobileIdentity extends InformationElement6 {
         }
     }
 
-    public abstract IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven);
+    public IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+        throw new IllegalStateException("sub types must override this method.");
+    }
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {

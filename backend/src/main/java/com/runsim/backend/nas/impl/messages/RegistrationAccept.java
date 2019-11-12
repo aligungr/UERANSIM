@@ -1,26 +1,20 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.exceptions.InvalidValueException;
-import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.NasDecoder;
-import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.*;
-import com.runsim.backend.utils.OctetInputStream;
-import com.runsim.backend.utils.OctetOutputStream;
 
 public class RegistrationAccept extends PlainNasMessage {
 
     public IE5gsRegistrationResult registrationResult;
 
-    /* Optional fields */
+    public IENetworkSlicingIndication networkSlicingIndication;
+    public IENssaiInclusionMode nssaiInclusionMode;
+    public IEMicoIndication micoIndication;
+
     public IE5gsMobileIdentity mobileIdentity;
     public IENssai allowedNSSAI;
     public IEPduSessionStatus pduSessionStatus;
     public IEEapMessage eapMessage;
-    public IENssaiInclusionMode nssaiInclusionMode;
-    public IENetworkSlicingIndication networkSlicingIndication;
-    public IEMicoIndication micoIndication;
     public IEPlmnList equivalentPLMNs;
     public IERejectedNssai rejectedNSSAI;
     public IENssai configuredNSSAI;
@@ -33,102 +27,33 @@ public class RegistrationAccept extends PlainNasMessage {
     public IE5gsDrxParameters negotiatedDrxParameters;
 
     @Override
-    public RegistrationAccept decodeMessage(OctetInputStream stream) {
-        var resp = new RegistrationAccept();
-        resp.registrationResult = NasDecoder.ie2346(stream, IE5gsRegistrationResult.class);
+    public void transcode(ITranscodeBuilder builder) {
+        builder.mandatoryIE("registrationResult");
 
-        while (stream.hasNext()) {
-            int iei = stream.readOctetI();
-            int msb = iei >> 4 & 0xF;
-            if (msb == 0xA || msb == 0xB || msb == 0x9) {
-                int lsb = iei & 0xF;
-                switch (msb) {
-                    case 0x9:
-                        resp.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
-                        break;
-                    case 0xA:
-                        resp.nssaiInclusionMode = NasDecoder.ie1(lsb, IENssaiInclusionMode.class);
-                        break;
-                    case 0xB:
-                        resp.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
-                        break;
-                }
-            } else {
-                switch (iei) {
-                    case 0x77:
-                        resp.mobileIdentity = NasDecoder.mobileIdentity(stream);
-                        break;
-                    case 0x4A:
-                        resp.equivalentPLMNs = NasDecoder.ie2346(stream, IEPlmnList.class);
-                        break;
-                    case 0x54:
-                        throw new NotImplementedException("TAI list not implemented yet");
-                    case 0x15:
-                        resp.allowedNSSAI = NasDecoder.ie2346(stream, IENssai.class);
-                        break;
-                    case 0x11:
-                        resp.rejectedNSSAI = NasDecoder.ie2346(stream, IERejectedNssai.class);
-                        break;
-                    case 0x31:
-                        resp.configuredNSSAI = NasDecoder.ie2346(stream, IENssai.class);
-                        break;
-                    case 0x21:
-                        resp.networkFeatureSupport = NasDecoder.ie2346(stream, IE5gsNetworkFeatureSupport.class);
-                        break;
-                    case 0x50:
-                        resp.pduSessionStatus = NasDecoder.ie2346(stream, IEPduSessionStatus.class);
-                        break;
-                    case 0x26:
-                        resp.pduSessionReactivationResult = NasDecoder.ie2346(stream, IEPduSessionReactivationResult.class);
-                        break;
-                    case 0x72:
-                        resp.pduSessionReactivationResultErrorCause = NasDecoder.ie2346(stream, IEPduSessionReactivationResultErrorCause.class);
-                        break;
-                    case 0x79:
-                        throw new NotImplementedException("LADN information not implemented yet");
-                    case 0x27:
-                        throw new NotImplementedException("Service area list not implemented yet");
-                    case 0x5E:
-                        resp.t3512Value = NasDecoder.ie2346(stream, IEGprsTimer3.class);
-                        break;
-                    case 0x5D:
-                        resp.non3gppDeRegistrationTimerValue = NasDecoder.ie2346(stream, IEGprsTimer2.class);
-                        break;
-                    case 0x16:
-                        resp.t3502Value = NasDecoder.ie2346(stream, IEGprsTimer2.class);
-                        break;
-                    case 0x34:
-                        throw new NotImplementedException("Emergency number list not implemented yet");
-                    case 0x7A:
-                        throw new NotImplementedException("Extended emergency number list not implemented yet");
-                    case 0x73:
-                        throw new NotImplementedException("SOR transparent container not implemented yet");
-                    case 0x78:
-                        resp.eapMessage = NasDecoder.ie2346(stream, IEEapMessage.class);
-                        break;
-                    case 0x76:
-                        throw new NotImplementedException("Operator-defined access category definitions not implemented yet");
-                    case 0x51:
-                        resp.negotiatedDrxParameters = NasDecoder.ie2346(stream, IE5gsDrxParameters.class);
-                        break;
-                    default:
-                        throw new InvalidValueException("iei is invalid: " + iei);
-                }
-            }
-        }
+        builder.optionalIE1(0x9, "networkSlicingIndication");
+        builder.optionalIE1(0xA, "nssaiInclusionMode");
+        builder.optionalIE1(0xB, "micoIndication");
 
-        return resp;
-    }
-
-    @Override
-    public void encodeMessage(OctetOutputStream stream) {
-        super.encodeMessage(stream);
-        NasEncoder.ie2346(stream, registrationResult);
-        if (mobileIdentity != null)
-            NasEncoder.ie2346(stream, 0x77, mobileIdentity);
-        if (allowedNSSAI != null)
-            NasEncoder.ie2346(stream, 0x15, allowedNSSAI);
-        if (pduSessionStatus != null)
-            NasEncoder.ie2346(stream, 0x50, pduSessionStatus);
+        builder.optionalIE(0x77, "mobileIdentity");
+        builder.optionalIE(0x4A, "equivalentPLMNs");
+        //builder.optionalIE(0x54, null); // todo: not implemented yet
+        builder.optionalIE(0x15, "allowedNSSAI");
+        builder.optionalIE(0x11, "rejectedNSSAI");
+        builder.optionalIE(0x31, "configuredNSSAI");
+        builder.optionalIE(0x21, "networkFeatureSupport");
+        builder.optionalIE(0x50, "pduSessionStatus");
+        builder.optionalIE(0x26, "pduSessionReactivationResult");
+        builder.optionalIE(0x72, "pduSessionReactivationResultErrorCause");
+        //builder.optionalIE(0x79, null); // todo: not implemented yet
+        //builder.optionalIE(0x27, null); // todo: not implemented yet
+        builder.optionalIE(0x5E, "t3512Value");
+        builder.optionalIE(0x5D, "non3gppDeRegistrationTimerValue");
+        builder.optionalIE(0x16, "t3502Value");
+        //builder.optionalIE(0x34, null); // todo: not implemented yet
+        //builder.optionalIE(0x7A, null); // todo: not implemented yet
+        //builder.optionalIE(0x73, null); // todo: not implemented yet
+        builder.optionalIE(0x78, "eapMessage");
+        //builder.optionalIE(0x76, null); // todo: not implemented yet
+        builder.optionalIE(0x51, "negotiatedDrxParameters");
     }
 }

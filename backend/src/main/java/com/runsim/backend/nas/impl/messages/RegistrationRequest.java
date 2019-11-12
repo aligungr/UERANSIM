@@ -1,26 +1,20 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.exceptions.InvalidValueException;
-import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.NasDecoder;
-import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.*;
-import com.runsim.backend.utils.OctetInputStream;
-import com.runsim.backend.utils.OctetOutputStream;
 
 public class RegistrationRequest extends PlainNasMessage {
     public IE5gsRegistrationType registrationType;
     public IENasKeySetIdentifier nasKeySetIdentifier;
     public IE5gsMobileIdentity mobileIdentity;
 
-    /* Optional fields */
+    public IENasKeySetIdentifier nonCurrentNgKsi;
+    public IEMicoIndication micoIndication;
+    public IENetworkSlicingIndication networkSlicingIndication;
+
     public IEUeSecurityCapability ueSecurityCapability;
     public IE5gMmCapability mmCapability;
     public IENssai requestedNSSA;
-    public IEMicoIndication micoIndication;
-    public IENetworkSlicingIndication networkSlicingIndication;
-    public IENasKeySetIdentifier nonCurrentNgKsi;
     public IE5gsMobileIdentity additionalGuti;
     public IE5gsDrxParameters requestedDrxParameters;
     public IEUesUsageSetting uesUsageSetting;
@@ -36,99 +30,32 @@ public class RegistrationRequest extends PlainNasMessage {
     public IEPayloadContainer payloadContainer;
 
     @Override
-    public RegistrationRequest decodeMessage(OctetInputStream stream) {
-        var req = new RegistrationRequest();
+    public void transcode(ITranscodeBuilder builder) {
+        super.transcode(builder);
 
-        int octet = stream.readOctetI();
-        req.registrationType = NasDecoder.ie1(octet & 0xF, IE5gsRegistrationType.class);
-        req.nasKeySetIdentifier = NasDecoder.ie1(octet >> 4, IENasKeySetIdentifier.class);
-        req.mobileIdentity = NasDecoder.mobileIdentity(stream);
+        builder.mandatoryIE1("registrationType", "nasKeySetIdentifier");
+        builder.mandatoryIE("mobileIdentity");
 
-        while (stream.hasNext()) {
-            int iei = stream.readOctetI();
-            int msb = iei >> 4 & 0xF;
-            if (msb == 0xC || msb == 0xB || msb == 0x9) {
-                int lsb = iei & 0xF;
-                switch (msb) {
-                    case 0xC:
-                        req.nonCurrentNgKsi = NasDecoder.ie1(lsb, IENasKeySetIdentifier.class);
-                        break;
-                    case 0xB:
-                        req.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
-                        break;
-                    case 0x9:
-                        req.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
-                        break;
-                }
-            } else {
-                switch (iei) {
-                    case 0x10:
-                        req.mmCapability = NasDecoder.ie2346(stream, IE5gMmCapability.class);
-                        break;
-                    case 0x2E:
-                        req.ueSecurityCapability = NasDecoder.ie2346(stream, IEUeSecurityCapability.class);
-                        break;
-                    case 0x2F:
-                        req.requestedNSSA = NasDecoder.ie2346(stream, IENssai.class);
-                        break;
-                    case 0x52:
-                        req.lastVisitedRegisteredTai = NasDecoder.ie2346(stream, IE5gsTrackingAreaIdentity.class);
-                        break;
-                    case 0x17:
-                        req.s1UeNetworkCapability = NasDecoder.ie2346(stream, IES1UeNetworkCapability.class);
-                        break;
-                    case 0x40:
-                        req.uplinkDataStatus = NasDecoder.ie2346(stream, IEUplinkDataStatus.class);
-                        break;
-                    case 0x50:
-                        req.pduSessionStatus = NasDecoder.ie2346(stream, IEPduSessionStatus.class);
-                        break;
-                    case 0x2B:
-                        req.ueStatus = NasDecoder.ie2346(stream, IEUeStatus.class);
-                        break;
-                    case 0x77:
-                        req.additionalGuti = NasDecoder.ie2346(stream, IE5gsMobileIdentity.class);
-                        break;
-                    case 0x25:
-                        req.allowedPduSessionStatus = NasDecoder.ie2346(stream, IEAllowedPduSessionStatus.class);
-                        break;
-                    case 0x18:
-                        req.uesUsageSetting = NasDecoder.ie2346(stream, IEUesUsageSetting.class);
-                        break;
-                    case 0x51:
-                        req.requestedDrxParameters = NasDecoder.ie2346(stream, IE5gsDrxParameters.class);
-                        break;
-                    case 0x70:
-                        req.epsNasMessageContainer = NasDecoder.ie2346(stream, IEEpsNasMessageContainer.class);
-                        break;
-                    case 0x7E:
-                        throw new NotImplementedException("not implemented yet: LADN indication");
-                    case 0x7B:
-                        req.payloadContainer = NasDecoder.ie2346(stream, IEPayloadContainer.class);
-                        break;
-                    case 0x53:
-                        req.updateType = NasDecoder.ie2346(stream, IE5gsUpdateType.class);
-                        break;
-                    case 0x71:
-                        req.nasMessageContainer = NasDecoder.ie2346(stream, IENasMessageContainer.class);
-                        break;
-                    default:
-                        throw new InvalidValueException("iei is invalid: " + iei);
-                }
-            }
-        }
+        builder.optionalIE1(0xC, "nonCurrentNgKsi");
+        builder.optionalIE1(0xB, "micoIndication");
+        builder.optionalIE1(0x9, "networkSlicingIndication");
 
-        return req;
-    }
-
-    @Override
-    public void encodeMessage(OctetOutputStream stream) {
-        super.encodeMessage(stream);
-        NasEncoder.ie1(stream, nasKeySetIdentifier, registrationType);
-        NasEncoder.ie2346(stream, mobileIdentity);
-
-        if (ueSecurityCapability != null) {
-            NasEncoder.ie2346(stream, 0x2E, ueSecurityCapability);
-        }
+        builder.optionalIE(0x10, "mmCapability");
+        builder.optionalIE(0x2E, "ueSecurityCapability");
+        builder.optionalIE(0x2F, "requestedNSSA");
+        builder.optionalIE(0x52, "lastVisitedRegisteredTai");
+        builder.optionalIE(0x17, "s1UeNetworkCapability");
+        builder.optionalIE(0x40, "uplinkDataStatus");
+        builder.optionalIE(0x50, "pduSessionStatus");
+        builder.optionalIE(0x2B, "ueStatus");
+        builder.optionalIE(0x77, "additionalGuti");
+        builder.optionalIE(0x25, "allowedPduSessionStatus");
+        builder.optionalIE(0x18, "uesUsageSetting");
+        builder.optionalIE(0x51, "requestedDrxParameters");
+        builder.optionalIE(0x70, "epsNasMessageContainer");
+        //builder.optionalIE(0x7E, null); // TODO: Not implemented yet.
+        builder.optionalIE(0x7B, "payloadContainer");
+        builder.optionalIE(0x53, "updateType");
+        builder.optionalIE(0x71, "nasMessageContainer");
     }
 }
