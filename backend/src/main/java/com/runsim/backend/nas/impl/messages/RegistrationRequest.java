@@ -24,6 +24,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IE5gsMobileIdentity additionalGuti;
     public IE5gsDrxParameters requestedDrxParameters;
     public IEUesUsageSetting uesUsageSetting;
+    public IE5gsUpdateType updateType;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -89,7 +90,8 @@ public class RegistrationRequest extends PlainNasMessage {
                     case 0x7B:
                         throw new NotImplementedException("not implemented yet: Payload container");
                     case 0x53:
-                        throw new NotImplementedException("not implemented yet: 5GS update type");
+                        this.updateType = NasDecoder.ie2346(stream, false, IE5gsUpdateType.class);
+                        break;
                     case 0x71:
                         throw new NotImplementedException("not implemented yet: NAS message container");
                     default:
