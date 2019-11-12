@@ -18,6 +18,12 @@ public class RegistrationRequest extends PlainNasMessage {
     public IEUeSecurityCapability ueSecurityCapability;
     public IE5gMmCapability mmCapability;
     public IENssai requestedNSSA;
+    public IEMicoIndication micoIndication;
+    public IENetworkSlicingIndication networkSlicingIndication;
+    public IENasKeySetIdentifier nonCurrentNgKsi;
+    public IE5gsMobileIdentity additionalGuti;
+    public IE5gsDrxParameters requestedDrxParameters;
+    public IEUesUsageSetting uesUsageSetting;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -35,11 +41,14 @@ public class RegistrationRequest extends PlainNasMessage {
                 int lsb = iei & 0xF;
                 switch (msb) {
                     case 0xC:
-                        throw new NotImplementedException("Non-current native nNAS key set identifier not implemented yet");
+                        this.nonCurrentNgKsi = NasDecoder.ie1(lsb, IENasKeySetIdentifier.class);
+                        break;
                     case 0xB:
-                        throw new NotImplementedException("MICO indication not implemented yet");
+                        this.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
+                        break;
                     case 0x9:
-                        throw new NotImplementedException("Network slicing indication not implemented yet");
+                        this.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
+                        break;
                 }
             } else {
                 switch (iei) {
@@ -63,13 +72,16 @@ public class RegistrationRequest extends PlainNasMessage {
                     case 0x2B:
                         throw new NotImplementedException("not implemented yet: UE status");
                     case 0x77:
-                        throw new NotImplementedException("not implemented yet: Additional GUTI");
+                        this.additionalGuti = NasDecoder.ie2346(stream, false, IE5gsMobileIdentity.class);
+                        break;
                     case 0x25:
                         throw new NotImplementedException("not implemented yet: Allowed PDU session status");
                     case 0x18:
-                        throw new NotImplementedException("not implemented yet: UE's usage setting");
+                        this.uesUsageSetting = NasDecoder.ie2346(stream, false, IEUesUsageSetting.class);
+                        break;
                     case 0x51:
-                        throw new NotImplementedException("not implemented yet: Requested DRX parameters");
+                        this.requestedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
+                        break;
                     case 0x70:
                         throw new NotImplementedException("not implemented yet: EPS NAS message container");
                     case 0x7E:
