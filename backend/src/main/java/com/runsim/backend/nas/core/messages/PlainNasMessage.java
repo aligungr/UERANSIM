@@ -287,7 +287,7 @@ public abstract class PlainNasMessage extends NasMessage {
         void mandatoryIE1(String field1, String field0);
 
         /**
-         * Registers <b>one</b> optional information elements with type 1 with a spare half octet.
+         * Registers <b>one</b> optional information element with type 1 with a spare half octet.
          * Information element is the least significant 4 bits of the octet.
          *
          * @param field Java field name of the class of the relevant information element. That field
