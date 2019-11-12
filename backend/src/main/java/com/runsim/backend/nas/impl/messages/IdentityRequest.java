@@ -10,6 +10,6 @@ public class IdentityRequest extends PlainNasMessage {
     public void transcode(ITranscodeBuilder builder) {
         super.transcode(builder);
 
-        builder.mandatoryIE1("identityType", null);
+        builder.mandatoryIE1("identityType");
     }
 }

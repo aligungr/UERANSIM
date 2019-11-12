@@ -14,7 +14,7 @@ public class AuthenticationRequest extends PlainNasMessage {
     public void transcode(ITranscodeBuilder builder) {
         super.transcode(builder);
 
-        builder.mandatoryIE1("ngKSI", null);
+        builder.mandatoryIE1("ngKSI");
         builder.mandatoryIE("abba");
         builder.optionalIE(0x78, "eapMessage");
         builder.optionalIE(0x20, "authParamAUTN");
