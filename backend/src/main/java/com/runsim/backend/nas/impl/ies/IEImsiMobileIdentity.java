@@ -12,8 +12,8 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class IEImsiMobileIdentity extends IESuciMobileIdentity {
-    public EMobileCountryCode mobileCountryCode;
-    public EMobileNetworkCode mobileNetworkCode;
+    public EMobileCountryCode mcc;
+    public EMobileNetworkCode mnc;
     public String routingIndicator;
     public EProtectionSchemeIdentifier protectionSchemaId;
     public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
@@ -25,8 +25,8 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
         /* Decode MCC */
         var mccmnc = NasDecoder.nasValue(stream, VMccMnc.class);
-        result.mobileCountryCode = mccmnc.mobileCountryCode;
-        result.mobileNetworkCode = mccmnc.mobileNetworkCode;
+        result.mcc = mccmnc.mcc;
+        result.mnc = mccmnc.mnc;
 
         /* Decode routing indicator */
         int riLen = stream.peekOctetI(1) == 0xFF ? 1 : 2;
@@ -57,8 +57,8 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
         /* Encode MCC and MNC*/
         var mccmnc = new VMccMnc();
-        mccmnc.mobileCountryCode = mobileCountryCode;
-        mccmnc.mobileNetworkCode = mobileNetworkCode;
+        mccmnc.mcc = mcc;
+        mccmnc.mnc = mnc;
         NasEncoder.nasValue(stream, mccmnc);
 
         /* Encode others */

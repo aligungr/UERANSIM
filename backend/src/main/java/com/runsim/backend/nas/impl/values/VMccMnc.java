@@ -11,8 +11,8 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 public class VMccMnc extends NasValue {
 
-    public EMobileCountryCode mobileCountryCode;
-    public EMobileNetworkCode mobileNetworkCode;
+    public EMobileCountryCode mcc;
+    public EMobileNetworkCode mnc;
 
     @Override
     public NasValue decode(OctetInputStream stream) {
@@ -25,7 +25,7 @@ public class VMccMnc extends NasValue {
         int octet2 = stream.readOctetI();
         int mcc3 = octet2 & 0b1111;
         int mcc = 100 * mcc1 + 10 * mcc2 + mcc3;
-        res.mobileCountryCode = EMobileCountryCode.fromValue(mcc);
+        res.mcc = EMobileCountryCode.fromValue(mcc);
 
         /* Decode MNC */
         int mnc3 = (octet2 >> 4) & 0b1111;
@@ -39,9 +39,9 @@ public class VMccMnc extends NasValue {
             mnc = 10 * mnc + mnc3;
         }
         if (longMnc) {
-            res.mobileNetworkCode = EMobileNetworkCode3.fromValue(mcc * 1000 + mnc);
+            res.mnc = EMobileNetworkCode3.fromValue(mcc * 1000 + mnc);
         } else {
-            res.mobileNetworkCode = EMobileNetworkCode2.fromValue(mcc * 100 + mnc);
+            res.mnc = EMobileNetworkCode2.fromValue(mcc * 100 + mnc);
         }
 
         return res;
@@ -49,7 +49,7 @@ public class VMccMnc extends NasValue {
 
     @Override
     public void encode(OctetOutputStream stream) {
-        int mcc = mobileCountryCode.value;
+        int mcc = this.mcc.value;
         int mcc3 = mcc % 10;
         int mcc2 = (mcc % 100) / 10;
         int mcc1 = (mcc % 1000) / 100;
@@ -58,14 +58,14 @@ public class VMccMnc extends NasValue {
         boolean longMnc;
         int mnc;
 
-        if (mobileNetworkCode == null)
+        if (this.mnc == null)
             throw new EncodingException("mnc is null");
-        if (mobileNetworkCode instanceof EMobileNetworkCode2) {
+        if (this.mnc instanceof EMobileNetworkCode2) {
             longMnc = false;
-            mnc = mobileCountryCode.value % 100;
+            mnc = this.mcc.value % 100;
         } else {
             longMnc = true;
-            mnc = mobileCountryCode.value % 1000;
+            mnc = this.mcc.value % 1000;
         }
 
         int mnc1 = longMnc ? (mnc % 1000) / 100 : (mnc % 100) / 10;

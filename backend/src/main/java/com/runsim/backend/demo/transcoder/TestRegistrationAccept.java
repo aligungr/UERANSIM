@@ -33,8 +33,8 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
         assertInstance(mes.mobileIdentity, IE5gGutiMobileIdentity.class);
         var guti = (IE5gGutiMobileIdentity) mes.mobileIdentity;
-        assertEquals(guti.mobileCountryCode, EMobileCountryCode.unknownValue(1));
-        assertEquals(guti.mobileNetworkCode, EMobileNetworkCode3.unknownValue(guti.mobileCountryCode.value * 1000 + 1));
+        assertEquals(guti.mcc, EMobileCountryCode.unknownValue(1));
+        assertEquals(guti.mnc, EMobileNetworkCode3.unknownValue(guti.mcc.value * 1000 + 1));
         assertEquals(guti.amfRegionId, 42);
         assertNotNull(guti.amfSetId);
         assertEquals(guti.amfSetId.value, 342);
@@ -82,8 +82,8 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
         var guti = new IE5gGutiMobileIdentity();
         message.mobileIdentity = guti;
-        guti.mobileCountryCode = EMobileCountryCode.unknownValue(1);
-        guti.mobileNetworkCode = EMobileNetworkCode3.unknownValue(guti.mobileCountryCode.value * 1000 + 1);
+        guti.mcc = EMobileCountryCode.unknownValue(1);
+        guti.mnc = EMobileNetworkCode3.unknownValue(guti.mcc.value * 1000 + 1);
         guti.amfRegionId = new Octet(42);
         guti.amfSetId = new VAmfSetId();
         guti.amfSetId.value = new BitN(342, 10);

@@ -14,8 +14,8 @@ import com.runsim.backend.utils.octets.Octet;
 
 public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
 
-    public EMobileCountryCode mobileCountryCode;
-    public EMobileNetworkCode mobileNetworkCode;
+    public EMobileCountryCode mcc;
+    public EMobileNetworkCode mnc;
     public Octet amfRegionId;
     public VAmfSetId amfSetId;
     public Bit6 amfPointer;
@@ -29,8 +29,8 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
 
         /* Decode MCC and MNC */
         var mccmnc = NasDecoder.nasValue(stream, VMccMnc.class);
-        result.mobileCountryCode = mccmnc.mobileCountryCode;
-        result.mobileNetworkCode = mccmnc.mobileNetworkCode;
+        result.mcc = mccmnc.mcc;
+        result.mnc = mccmnc.mnc;
 
         /* Decode others */
         result.amfRegionId = stream.readOctet();
@@ -48,8 +48,8 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
 
         /* Encode MCC and MNC*/
         var mccmnc = new VMccMnc();
-        mccmnc.mobileCountryCode = mobileCountryCode;
-        mccmnc.mobileNetworkCode = mobileNetworkCode;
+        mccmnc.mcc = mcc;
+        mccmnc.mnc = mnc;
         NasEncoder.nasValue(stream, mccmnc);
 
         /* Encode region id */

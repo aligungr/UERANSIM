@@ -30,6 +30,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IEEpsNasMessageContainer epsNasMessageContainer;
     public IENasMessageContainer nasMessageContainer;
     public IEAllowedPduSessionStatus allowedPduSessionStatus;
+    public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -68,7 +69,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         req.requestedNSSA = NasDecoder.ie2346(stream, false, IENssai.class);
                         break;
                     case 0x52:
-                        throw new NotImplementedException("not implemented yet: Last visited registered TAI");
+                        req.lastVisitedRegisteredTai = NasDecoder.ie2346(stream, false, IE5gsTrackingAreaIdentity.class);
+                        break;
                     case 0x17:
                         throw new NotImplementedException("not implemented yet: S1 UE network capability");
                     case 0x40:
