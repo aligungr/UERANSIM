@@ -44,38 +44,38 @@ public class IEUeSecurityCapability extends InformationElement4 {
     public static final String NAME_EIA6 = "EIA6";
     public static final String NAME_EIA7 = "EIA7";
 
-    public Bit SUPPORTED_5G_EA0;
-    public Bit SUPPORTED_128_5G_EA1;
-    public Bit SUPPORTED_128_5G_EA2;
-    public Bit SUPPORTED_128_5G_EA3;
-    public Bit SUPPORTED_5G_EA4;
-    public Bit SUPPORTED_5G_EA5;
-    public Bit SUPPORTED_5G_EA6;
-    public Bit SUPPORTED_5G_EA7;
-    public Bit SUPPORTED_5G_IA0;
-    public Bit SUPPORTED_128_5G_IA1;
-    public Bit SUPPORTED_128_5G_IA2;
-    public Bit SUPPORTED_128_5G_IA3;
-    public Bit SUPPORTED_5G_IA4;
-    public Bit SUPPORTED_5G_IA5;
-    public Bit SUPPORTED_5G_IA6;
-    public Bit SUPPORTED_5G_IA7;
-    public Bit SUPPORTED_EEA0;
-    public Bit SUPPORTED_128_EEA1;
-    public Bit SUPPORTED_128_EEA2;
-    public Bit SUPPORTED_128_EEA3;
-    public Bit SUPPORTED_EEA4;
-    public Bit SUPPORTED_EEA5;
-    public Bit SUPPORTED_EEA6;
-    public Bit SUPPORTED_EEA7;
-    public Bit SUPPORTED_EIA0;
-    public Bit SUPPORTED_128_EIA1;
-    public Bit SUPPORTED_128_EIA2;
-    public Bit SUPPORTED_128_EIA3;
-    public Bit SUPPORTED_EIA4;
-    public Bit SUPPORTED_EIA5;
-    public Bit SUPPORTED_EIA6;
-    public Bit SUPPORTED_EIA7;
+    public Bit supported_5G_EA0;
+    public Bit supported_128_5G_EA1;
+    public Bit supported_128_5G_EA2;
+    public Bit supported_128_5G_EA3;
+    public Bit supported_5G_EA4;
+    public Bit supported_5G_EA5;
+    public Bit supported_5G_EA6;
+    public Bit supported_5G_EA7;
+    public Bit supported_5G_IA0;
+    public Bit supported_128_5G_IA1;
+    public Bit supported_128_5G_IA2;
+    public Bit supported_128_5G_IA3;
+    public Bit supported_5G_IA4;
+    public Bit supported_5G_IA5;
+    public Bit supported_5G_IA6;
+    public Bit supported_5G_IA7;
+    public Bit supported_EEA0;
+    public Bit supported_128_EEA1;
+    public Bit supported_128_EEA2;
+    public Bit supported_128_EEA3;
+    public Bit supported_EEA4;
+    public Bit supported_EEA5;
+    public Bit supported_EEA6;
+    public Bit supported_EEA7;
+    public Bit supported_EIA0;
+    public Bit supported_128_EIA1;
+    public Bit supported_128_EIA2;
+    public Bit supported_128_EIA3;
+    public Bit supported_EIA4;
+    public Bit supported_EIA5;
+    public Bit supported_EIA6;
+    public Bit supported_EIA7;
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
@@ -83,50 +83,50 @@ public class IEUeSecurityCapability extends InformationElement4 {
 
         if (length >= 1) {
             var bits = stream.readOctet();
-            cap.SUPPORTED_5G_EA0 = bits.getBit(7);
-            cap.SUPPORTED_128_5G_EA1 = bits.getBit(6);
-            cap.SUPPORTED_128_5G_EA2 = bits.getBit(5);
-            cap.SUPPORTED_128_5G_EA3 = bits.getBit(4);
-            cap.SUPPORTED_5G_EA4 = bits.getBit(3);
-            cap.SUPPORTED_5G_EA5 = bits.getBit(2);
-            cap.SUPPORTED_5G_EA6 = bits.getBit(1);
-            cap.SUPPORTED_5G_EA7 = bits.getBit(0);
+            cap.supported_5G_EA0 = bits.getBit(7);
+            cap.supported_128_5G_EA1 = bits.getBit(6);
+            cap.supported_128_5G_EA2 = bits.getBit(5);
+            cap.supported_128_5G_EA3 = bits.getBit(4);
+            cap.supported_5G_EA4 = bits.getBit(3);
+            cap.supported_5G_EA5 = bits.getBit(2);
+            cap.supported_5G_EA6 = bits.getBit(1);
+            cap.supported_5G_EA7 = bits.getBit(0);
         }
 
         if (length >= 2) {
             var bits = stream.readOctet();
-            cap.SUPPORTED_5G_IA0 = bits.getBit(7);
-            cap.SUPPORTED_128_5G_IA1 = bits.getBit(6);
-            cap.SUPPORTED_128_5G_IA2 = bits.getBit(5);
-            cap.SUPPORTED_128_5G_IA3 = bits.getBit(4);
-            cap.SUPPORTED_5G_IA4 = bits.getBit(3);
-            cap.SUPPORTED_5G_IA5 = bits.getBit(2);
-            cap.SUPPORTED_5G_IA6 = bits.getBit(1);
-            cap.SUPPORTED_5G_IA7 = bits.getBit(0);
+            cap.supported_5G_IA0 = bits.getBit(7);
+            cap.supported_128_5G_IA1 = bits.getBit(6);
+            cap.supported_128_5G_IA2 = bits.getBit(5);
+            cap.supported_128_5G_IA3 = bits.getBit(4);
+            cap.supported_5G_IA4 = bits.getBit(3);
+            cap.supported_5G_IA5 = bits.getBit(2);
+            cap.supported_5G_IA6 = bits.getBit(1);
+            cap.supported_5G_IA7 = bits.getBit(0);
         }
 
         if (length >= 3) {
             var bits = stream.readOctet();
-            cap.SUPPORTED_EEA0 = bits.getBit(7);
-            cap.SUPPORTED_128_EEA1 = bits.getBit(6);
-            cap.SUPPORTED_128_EEA2 = bits.getBit(5);
-            cap.SUPPORTED_128_EEA3 = bits.getBit(4);
-            cap.SUPPORTED_EEA4 = bits.getBit(3);
-            cap.SUPPORTED_EEA5 = bits.getBit(2);
-            cap.SUPPORTED_EEA6 = bits.getBit(1);
-            cap.SUPPORTED_EEA7 = bits.getBit(0);
+            cap.supported_EEA0 = bits.getBit(7);
+            cap.supported_128_EEA1 = bits.getBit(6);
+            cap.supported_128_EEA2 = bits.getBit(5);
+            cap.supported_128_EEA3 = bits.getBit(4);
+            cap.supported_EEA4 = bits.getBit(3);
+            cap.supported_EEA5 = bits.getBit(2);
+            cap.supported_EEA6 = bits.getBit(1);
+            cap.supported_EEA7 = bits.getBit(0);
         }
 
         if (length >= 4) {
             var bits = stream.readOctet();
-            cap.SUPPORTED_EIA0 = bits.getBit(7);
-            cap.SUPPORTED_128_EIA1 = bits.getBit(6);
-            cap.SUPPORTED_128_EIA2 = bits.getBit(5);
-            cap.SUPPORTED_128_EIA3 = bits.getBit(4);
-            cap.SUPPORTED_EIA4 = bits.getBit(3);
-            cap.SUPPORTED_EIA5 = bits.getBit(2);
-            cap.SUPPORTED_EIA6 = bits.getBit(1);
-            cap.SUPPORTED_EIA7 = bits.getBit(0);
+            cap.supported_EIA0 = bits.getBit(7);
+            cap.supported_128_EIA1 = bits.getBit(6);
+            cap.supported_128_EIA2 = bits.getBit(5);
+            cap.supported_128_EIA3 = bits.getBit(4);
+            cap.supported_EIA4 = bits.getBit(3);
+            cap.supported_EIA5 = bits.getBit(2);
+            cap.supported_EIA6 = bits.getBit(1);
+            cap.supported_EIA7 = bits.getBit(0);
         }
 
         return cap;
@@ -136,44 +136,44 @@ public class IEUeSecurityCapability extends InformationElement4 {
     public void encodeIE4(OctetOutputStream stream) {
         final var bits = new Bit[][]{
                 {
-                        SUPPORTED_5G_EA0,
-                        SUPPORTED_128_5G_EA1,
-                        SUPPORTED_128_5G_EA2,
-                        SUPPORTED_128_5G_EA3,
-                        SUPPORTED_5G_EA4,
-                        SUPPORTED_5G_EA5,
-                        SUPPORTED_5G_EA6,
-                        SUPPORTED_5G_EA7,
+                        supported_5G_EA0,
+                        supported_128_5G_EA1,
+                        supported_128_5G_EA2,
+                        supported_128_5G_EA3,
+                        supported_5G_EA4,
+                        supported_5G_EA5,
+                        supported_5G_EA6,
+                        supported_5G_EA7,
                 },
                 {
-                        SUPPORTED_5G_IA0,
-                        SUPPORTED_128_5G_IA1,
-                        SUPPORTED_128_5G_IA2,
-                        SUPPORTED_128_5G_IA3,
-                        SUPPORTED_5G_IA4,
-                        SUPPORTED_5G_IA5,
-                        SUPPORTED_5G_IA6,
-                        SUPPORTED_5G_IA7,
+                        supported_5G_IA0,
+                        supported_128_5G_IA1,
+                        supported_128_5G_IA2,
+                        supported_128_5G_IA3,
+                        supported_5G_IA4,
+                        supported_5G_IA5,
+                        supported_5G_IA6,
+                        supported_5G_IA7,
                 },
                 {
-                        SUPPORTED_EEA0,
-                        SUPPORTED_128_EEA1,
-                        SUPPORTED_128_EEA2,
-                        SUPPORTED_128_EEA3,
-                        SUPPORTED_EEA4,
-                        SUPPORTED_EEA5,
-                        SUPPORTED_EEA6,
-                        SUPPORTED_EEA7,
+                        supported_EEA0,
+                        supported_128_EEA1,
+                        supported_128_EEA2,
+                        supported_128_EEA3,
+                        supported_EEA4,
+                        supported_EEA5,
+                        supported_EEA6,
+                        supported_EEA7,
                 },
                 {
-                        SUPPORTED_EIA0,
-                        SUPPORTED_128_EIA1,
-                        SUPPORTED_128_EIA2,
-                        SUPPORTED_128_EIA3,
-                        SUPPORTED_EIA4,
-                        SUPPORTED_EIA5,
-                        SUPPORTED_EIA6,
-                        SUPPORTED_EIA7,
+                        supported_EIA0,
+                        supported_128_EIA1,
+                        supported_128_EIA2,
+                        supported_128_EIA3,
+                        supported_EIA4,
+                        supported_EIA5,
+                        supported_EIA6,
+                        supported_EIA7,
                 }
         };
 

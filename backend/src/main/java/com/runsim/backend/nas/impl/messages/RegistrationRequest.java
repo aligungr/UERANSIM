@@ -31,6 +31,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IENasMessageContainer nasMessageContainer;
     public IEAllowedPduSessionStatus allowedPduSessionStatus;
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
+    public IES1UeNetworkCapability s1UeNetworkCapability;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -72,7 +73,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         req.lastVisitedRegisteredTai = NasDecoder.ie2346(stream, false, IE5gsTrackingAreaIdentity.class);
                         break;
                     case 0x17:
-                        throw new NotImplementedException("not implemented yet: S1 UE network capability");
+                        req.s1UeNetworkCapability = NasDecoder.ie2346(stream, false, IES1UeNetworkCapability.class);
+                        break;
                     case 0x40:
                         this.uplinkDataStatus = NasDecoder.ie2346(stream, false, IEUplinkDataStatus.class);
                         break;
