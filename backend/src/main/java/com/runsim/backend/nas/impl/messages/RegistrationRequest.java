@@ -25,6 +25,8 @@ public class RegistrationRequest extends PlainNasMessage {
     public IE5gsDrxParameters requestedDrxParameters;
     public IEUesUsageSetting uesUsageSetting;
     public IE5gsUpdateType updateType;
+    public IEUeStatus ueStatus;
+    public IEUplinkDataStatus uplinkDataStatus;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -67,11 +69,13 @@ public class RegistrationRequest extends PlainNasMessage {
                     case 0x17:
                         throw new NotImplementedException("not implemented yet: S1 UE network capability");
                     case 0x40:
-                        throw new NotImplementedException("not implemented yet: Uplink data status");
+                        this.uplinkDataStatus = NasDecoder.ie2346(stream, false, IEUplinkDataStatus.class);
+                        break;
                     case 0x50:
                         throw new NotImplementedException("not implemented yet: PDU session status");
                     case 0x2B:
-                        throw new NotImplementedException("not implemented yet: UE status");
+                        this.ueStatus = NasDecoder.ie2346(stream, false, IEUeStatus.class);
+                        break;
                     case 0x77:
                         this.additionalGuti = NasDecoder.ie2346(stream, false, IE5gsMobileIdentity.class);
                         break;
