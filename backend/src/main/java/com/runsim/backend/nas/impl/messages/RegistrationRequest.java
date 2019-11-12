@@ -49,13 +49,13 @@ public class RegistrationRequest extends PlainNasMessage {
                 int lsb = iei & 0xF;
                 switch (msb) {
                     case 0xC:
-                        this.nonCurrentNgKsi = NasDecoder.ie1(lsb, IENasKeySetIdentifier.class);
+                        req.nonCurrentNgKsi = NasDecoder.ie1(lsb, IENasKeySetIdentifier.class);
                         break;
                     case 0xB:
-                        this.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
+                        req.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
                         break;
                     case 0x9:
-                        this.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
+                        req.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
                         break;
                 }
             } else {
@@ -76,37 +76,37 @@ public class RegistrationRequest extends PlainNasMessage {
                         req.s1UeNetworkCapability = NasDecoder.ie2346(stream, false, IES1UeNetworkCapability.class);
                         break;
                     case 0x40:
-                        this.uplinkDataStatus = NasDecoder.ie2346(stream, false, IEUplinkDataStatus.class);
+                        req.uplinkDataStatus = NasDecoder.ie2346(stream, false, IEUplinkDataStatus.class);
                         break;
                     case 0x50:
                         throw new NotImplementedException("not implemented yet: PDU session status");
                     case 0x2B:
-                        this.ueStatus = NasDecoder.ie2346(stream, false, IEUeStatus.class);
+                        req.ueStatus = NasDecoder.ie2346(stream, false, IEUeStatus.class);
                         break;
                     case 0x77:
-                        this.additionalGuti = NasDecoder.ie2346(stream, false, IE5gsMobileIdentity.class);
+                        req.additionalGuti = NasDecoder.ie2346(stream, false, IE5gsMobileIdentity.class);
                         break;
                     case 0x25:
-                        this.allowedPduSessionStatus = NasDecoder.ie2346(stream, false, IEAllowedPduSessionStatus.class);
+                        req.allowedPduSessionStatus = NasDecoder.ie2346(stream, false, IEAllowedPduSessionStatus.class);
                         break;
                     case 0x18:
-                        this.uesUsageSetting = NasDecoder.ie2346(stream, false, IEUesUsageSetting.class);
+                        req.uesUsageSetting = NasDecoder.ie2346(stream, false, IEUesUsageSetting.class);
                         break;
                     case 0x51:
-                        this.requestedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
+                        req.requestedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
                         break;
                     case 0x70:
-                        this.epsNasMessageContainer = NasDecoder.ie2346(stream, false, IEEpsNasMessageContainer.class);
+                        req.epsNasMessageContainer = NasDecoder.ie2346(stream, false, IEEpsNasMessageContainer.class);
                         break;
                     case 0x7E:
                         throw new NotImplementedException("not implemented yet: LADN indication");
                     case 0x7B:
                         throw new NotImplementedException("not implemented yet: Payload container");
                     case 0x53:
-                        this.updateType = NasDecoder.ie2346(stream, false, IE5gsUpdateType.class);
+                        req.updateType = NasDecoder.ie2346(stream, false, IE5gsUpdateType.class);
                         break;
                     case 0x71:
-                        this.nasMessageContainer = NasDecoder.ie2346(stream, false, IENasMessageContainer.class);
+                        req.nasMessageContainer = NasDecoder.ie2346(stream, false, IENasMessageContainer.class);
                         break;
                     default:
                         throw new InvalidValueException("iei is invalid: " + iei);

@@ -33,10 +33,10 @@ public class AuthenticationRequest extends PlainNasMessage {
             int type = stream.readOctetI();
             switch (type) {
                 case 0x21:
-                    authParamRAND = NasDecoder.ie2346(stream, false, IERand.class);
+                    req.authParamRAND = NasDecoder.ie2346(stream, false, IERand.class);
                     break;
                 case 0x20:
-                    authParamAUTN = NasDecoder.ie2346(stream, false, IEAutn.class);
+                    req.authParamAUTN = NasDecoder.ie2346(stream, false, IEAutn.class);
                     break;
                 case 0x78:
                     req.eap = NasDecoder.eap(stream);

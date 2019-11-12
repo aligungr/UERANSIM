@@ -46,13 +46,13 @@ public class RegistrationAccept extends PlainNasMessage {
                 int lsb = iei & 0xF;
                 switch (msb) {
                     case 0x9:
-                        this.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
+                        resp.networkSlicingIndication = NasDecoder.ie1(lsb, IENetworkSlicingIndication.class);
                         break;
                     case 0xA:
-                        this.nssaiInclusionMode = NasDecoder.ie1(lsb, IENssaiInclusionMode.class);
+                        resp.nssaiInclusionMode = NasDecoder.ie1(lsb, IENssaiInclusionMode.class);
                         break;
                     case 0xB:
-                        this.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
+                        resp.micoIndication = NasDecoder.ie1(lsb, IEMicoIndication.class);
                         break;
                 }
             } else {
@@ -106,12 +106,12 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x73:
                         throw new NotImplementedException("SOR transparent container not implemented yet");
                     case 0x78:
-                        this.eap = EapDecoder.eapPdu(stream);
+                        resp.eap = EapDecoder.eapPdu(stream);
                         break;
                     case 0x76:
                         throw new NotImplementedException("Operator-defined access category definitions not implemented yet");
                     case 0x51:
-                        this.negotiatedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
+                        resp.negotiatedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
                         break;
                     default:
                         throw new InvalidValueException("iei is invalid: " + iei);
