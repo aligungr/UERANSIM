@@ -28,6 +28,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IEUeStatus ueStatus;
     public IEUplinkDataStatus uplinkDataStatus;
     public IEEpsNasMessageContainer epsNasMessageContainer;
+    public IENasMessageContainer nasMessageContainer;
     public IEAllowedPduSessionStatus allowedPduSessionStatus;
 
     @Override
@@ -101,7 +102,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         this.updateType = NasDecoder.ie2346(stream, false, IE5gsUpdateType.class);
                         break;
                     case 0x71:
-                        throw new NotImplementedException("not implemented yet: NAS message container");
+                        this.nasMessageContainer = NasDecoder.ie2346(stream, false, IENasMessageContainer.class);
+                        break;
                     default:
                         throw new InvalidValueException("iei is invalid: " + iei);
                 }
