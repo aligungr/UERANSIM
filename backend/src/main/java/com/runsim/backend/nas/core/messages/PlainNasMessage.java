@@ -266,7 +266,7 @@ public abstract class PlainNasMessage extends NasMessage {
          * Registers an optional information element with type 2,3,4 or 6. For information element type 1,
          * use the {@link #optionalIE1} method instead.
          *
-         * @param iei   Information element identifier for the field. This value must be 4 bit (half octet)
+         * @param iei   Information element identifier for the field. This value must be 8 bit (one octet)
          * @param field Java field name of the class of the relevant information element. That field
          *              must be public and its type must be {@link InformationElement2}, {@link InformationElement3}, {@link InformationElement4}, {@link InformationElement6} or derived types.
          */
