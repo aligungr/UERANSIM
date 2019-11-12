@@ -33,7 +33,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public void transcode(ITranscodeBuilder builder) {
         super.transcode(builder);
 
-        builder.mandatoryIE1("registrationType", "nasKeySetIdentifier");
+        builder.mandatoryIE1("nasKeySetIdentifier", "registrationType");
         builder.mandatoryIE("mobileIdentity");
 
         builder.optionalIE1(0xC, "nonCurrentNgKsi");

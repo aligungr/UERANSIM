@@ -275,16 +275,16 @@ public abstract class PlainNasMessage extends NasMessage {
         /**
          * Registers <b>two</b> optional information elements with type 1.
          *
-         * @param field0 Java field name of the class of the relevant information element. That field
-         *               must be public and its type must be {@link InformationElement1} or derived types.
-         *               This field is the least significant 4 bits of the octet.
-         *               <code>null</code> value can be passed for spare half octets.
          * @param field1 Java field name of the class of the relevant information element. That field
          *               must be public and its type must be {@link InformationElement1} or derived types.
          *               This field is the most significant 4 bits of the octet.
          *               <code>null</code> value can be passed for spare half octets.
+         * @param field0 Java field name of the class of the relevant information element. That field
+         *               must be public and its type must be {@link InformationElement1} or derived types.
+         *               This field is the least significant 4 bits of the octet.
+         *               <code>null</code> value can be passed for spare half octets.
          */
-        void mandatoryIE1(String field0, String field1);
+        void mandatoryIE1(String field1, String field0);
 
         /**
          * Registers <b>one</b> optional information elements with type 1 with a spare half octet.
@@ -331,7 +331,7 @@ public abstract class PlainNasMessage extends NasMessage {
         }
 
         @Override
-        public void mandatoryIE1(String field0, String field1) {
+        public void mandatoryIE1(String field1, String field0) {
             var entry = new InformationElementEntry();
             entry.iei = -1;
             entry.field0 = field0;
@@ -342,7 +342,7 @@ public abstract class PlainNasMessage extends NasMessage {
 
         @Override
         public void mandatoryIE1(String field0) {
-            this.mandatoryIE1(field0, null);
+            this.mandatoryIE1(null, field0);
         }
 
         @Override
