@@ -14,23 +14,18 @@ public class EapEncoder {
      * Encodes EAP PDU into given stream
      */
     public static void eapPdu(OctetOutputStream stream, EAP pdu) {
-        var innerStream = new OctetOutputStream();
-
-        innerStream.writeOctet(pdu.code.value);
-        innerStream.writeOctet(pdu.id);
-        innerStream.writeOctet2(pdu.length);
-        innerStream.writeOctet(pdu.EAPType.value);
+        stream.writeOctet(pdu.code.value);
+        stream.writeOctet(pdu.id);
+        stream.writeOctet2(pdu.length);
+        stream.writeOctet(pdu.EAPType.value);
 
         if (pdu.EAPType.equals(EEapType.EAP_AKA_PRIME)) {
-            encodeAKAPrime(innerStream, (AkaPrime) pdu);
+            encodeAKAPrime(stream, (AkaPrime) pdu);
         } else if (pdu.EAPType.equals(EEapType.NOTIFICATION)) {
-            encodeNotification(innerStream);
+            encodeNotification(stream);
         } else {
             throw new NotImplementedException("eap type not implemented yet: " + pdu.EAPType.name);
         }
-
-        stream.writeOctet2(innerStream.length());
-        stream.writeStream(innerStream);
     }
 
     private static void encodeNotification(OctetOutputStream stream) {

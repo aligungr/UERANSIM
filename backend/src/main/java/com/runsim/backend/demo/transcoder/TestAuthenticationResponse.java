@@ -6,6 +6,7 @@ import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
+import com.runsim.backend.nas.impl.ies.IEEapMessage;
 import com.runsim.backend.nas.impl.messages.AuthenticationResponse;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet2;
@@ -29,15 +30,16 @@ public class TestAuthenticationResponse extends TranscoderTesting.PduTest {
         assertEquals(mes.securityHeaderType, ESecurityHeaderType.NOT_PROTECTED);
 
         assertNull(mes.authenticationResponseParameter);
-        assertNotNull(mes.eap);
+        assertNotNull(mes.eapMessage);
+        assertNotNull(mes.eapMessage.eap);
 
-        assertInstance(mes.eap, AkaPrime.class);
-        assertEquals(mes.eap.code, ECode.RESPONSE);
-        assertEquals(mes.eap.id, 1);
-        assertEquals(mes.eap.length, 48);
-        assertEquals(mes.eap.EAPType, EEapType.EAP_AKA_PRIME);
+        assertInstance(mes.eapMessage.eap, AkaPrime.class);
+        assertEquals(mes.eapMessage.eap.code, ECode.RESPONSE);
+        assertEquals(mes.eapMessage.eap.id, 1);
+        assertEquals(mes.eapMessage.eap.length, 48);
+        assertEquals(mes.eapMessage.eap.EAPType, EEapType.EAP_AKA_PRIME);
 
-        var akaPrime = (AkaPrime) mes.eap;
+        var akaPrime = (AkaPrime) mes.eapMessage.eap;
         assertEquals(akaPrime.subType, EAkaSubType.AKA_CHALLENGE);
         assertEquals(akaPrime.attributes.size(), 2);
         assertEquals(akaPrime.attributes.get(EAkaAttributeType.AT_RES), new OctetString("000864955b0fe729127b0000000000000000"));
@@ -52,8 +54,9 @@ public class TestAuthenticationResponse extends TranscoderTesting.PduTest {
         mes.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
 
         mes.authenticationResponseParameter = null;
+        mes.eapMessage = new IEEapMessage();
         var akaPrime = new AkaPrime();
-        mes.eap = akaPrime;
+        mes.eapMessage.eap = akaPrime;
 
         akaPrime.code = ECode.RESPONSE;
         akaPrime.id = new Octet(1);

@@ -6,6 +6,7 @@ import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
+import com.runsim.backend.nas.impl.ies.IE5gsIdentityType;
 import com.runsim.backend.nas.impl.messages.IdentityRequest;
 
 public class TestIdentityRequest extends TranscoderTesting.PduTest {
@@ -23,7 +24,7 @@ public class TestIdentityRequest extends TranscoderTesting.PduTest {
         assertEquals(mes.extendedProtocolDiscriminator, EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES);
         assertEquals(mes.securityHeaderType, ESecurityHeaderType.NOT_PROTECTED);
 
-        assertEquals(mes.identityType, EIdentityType.IMEI);
+        assertEquals(mes.identityType.value, EIdentityType.IMEI);
     }
 
     @Override
@@ -32,7 +33,8 @@ public class TestIdentityRequest extends TranscoderTesting.PduTest {
         mes.messageType = EMessageType.IDENTITY_REQUEST;
         mes.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
         mes.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
-        mes.identityType = EIdentityType.IMEI;
+        mes.identityType = new IE5gsIdentityType();
+        mes.identityType.value = EIdentityType.IMEI;
         return mes;
     }
 }

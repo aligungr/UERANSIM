@@ -2,11 +2,9 @@ package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -19,7 +17,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IE5gsMobileIdentity mobileIdentity;
     public IENssai allowedNSSAI;
     public IEPduSessionStatus pduSessionStatus;
-    public EAP eap;
+    public IEEapMessage eapMessage;
     public IENssaiInclusionMode nssaiInclusionMode;
     public IENetworkSlicingIndication networkSlicingIndication;
     public IEMicoIndication micoIndication;
@@ -106,7 +104,7 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x73:
                         throw new NotImplementedException("SOR transparent container not implemented yet");
                     case 0x78:
-                        resp.eap = EapDecoder.eapPdu(stream);
+                        resp.eapMessage = NasDecoder.ie2346(stream, IEEapMessage.class);
                         break;
                     case 0x76:
                         throw new NotImplementedException("Operator-defined access category definitions not implemented yet");

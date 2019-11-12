@@ -135,7 +135,7 @@ public class NasDecoder {
     }
 
     public static EAP eap(OctetInputStream stream) {
-        var length = stream.readOctet2();
+        //var length = stream.readOctet2();
         return EapDecoder.eapPdu(stream);
     }
 

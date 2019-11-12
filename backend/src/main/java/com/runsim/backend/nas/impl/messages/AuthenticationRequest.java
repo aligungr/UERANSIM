@@ -1,15 +1,10 @@
 package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.exceptions.InvalidValueException;
-import com.runsim.backend.nas.EapEncoder;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.eap.EAP;
-import com.runsim.backend.nas.impl.ies.IEAbba;
-import com.runsim.backend.nas.impl.ies.IEAutn;
-import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
-import com.runsim.backend.nas.impl.ies.IERand;
+import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit4;
@@ -19,7 +14,7 @@ public class AuthenticationRequest extends PlainNasMessage {
     public IEAbba abba;
 
     /* Optional fields */
-    public EAP eap;
+    public IEEapMessage eapMessage;
     public IERand authParamRAND;
     public IEAutn authParamAUTN;
 
@@ -39,7 +34,7 @@ public class AuthenticationRequest extends PlainNasMessage {
                     req.authParamAUTN = NasDecoder.ie2346(stream, IEAutn.class);
                     break;
                 case 0x78:
-                    req.eap = NasDecoder.eap(stream);
+                    req.eapMessage = NasDecoder.ie2346(stream, IEEapMessage.class);
                     break;
                 default:
                     throw new InvalidValueException("Authentication request IEI is invalid: " + type);
@@ -54,9 +49,9 @@ public class AuthenticationRequest extends PlainNasMessage {
         NasEncoder.ie1(stream, new Bit4(0), ngKSI);
         NasEncoder.ie2346(stream, abba);
 
-        if (eap != null) {
+        if (eapMessage != null) {
             stream.writeOctet(0x78);
-            EapEncoder.eapPdu(stream, eap);
+            NasEncoder.ie2346(stream, eapMessage);
         }
     }
 }

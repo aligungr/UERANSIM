@@ -1,24 +1,26 @@
 package com.runsim.backend.nas.impl.messages;
 
+import com.runsim.backend.nas.NasDecoder;
+import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.impl.enums.EIdentityType;
+import com.runsim.backend.nas.impl.ies.IE5gsIdentityType;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.bits.Bit4;
 
 public class IdentityRequest extends PlainNasMessage {
-    public EIdentityType identityType;
+    public IE5gsIdentityType identityType;
 
     @Override
     public IdentityRequest decodeMessage(OctetInputStream stream) {
         var req = new IdentityRequest();
-        var flags = stream.readOctetI();
-        req.identityType = EIdentityType.fromValue(flags & 0b111);
+        req.identityType = NasDecoder.ie1(stream.readOctetI() & 0xF, IE5gsIdentityType.class);
         return req;
     }
 
     @Override
     public void encodeMessage(OctetOutputStream stream) {
         super.encodeMessage(stream);
-        stream.writeOctet(identityType.value);
+        NasEncoder.ie1(stream, new Bit4(0), identityType);
     }
 }

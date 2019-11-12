@@ -8,6 +8,7 @@ import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
 import com.runsim.backend.nas.impl.enums.ETypeOfSecurityContext;
 import com.runsim.backend.nas.impl.ies.IEAbba;
+import com.runsim.backend.nas.impl.ies.IEEapMessage;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
 import com.runsim.backend.nas.impl.messages.AuthenticationRequest;
 import com.runsim.backend.utils.bits.Bit3;
@@ -39,13 +40,13 @@ public class TestAuthenticationRequest extends TranscoderTesting.PduTest {
         assertNotNull(mes.abba);
         assertEquals(mes.abba.contents, new OctetString(new int[2]));
 
-        assertInstance(mes.eap, AkaPrime.class);
-        assertEquals(mes.eap.code, ECode.REQUEST);
-        assertEquals(mes.eap.id, 1);
-        assertEquals(mes.eap.length, 108);
-        assertEquals(mes.eap.EAPType, EEapType.EAP_AKA_PRIME);
+        assertInstance(mes.eapMessage.eap, AkaPrime.class);
+        assertEquals(mes.eapMessage.eap.code, ECode.REQUEST);
+        assertEquals(mes.eapMessage.eap.id, 1);
+        assertEquals(mes.eapMessage.eap.length, 108);
+        assertEquals(mes.eapMessage.eap.EAPType, EEapType.EAP_AKA_PRIME);
 
-        var akaPrime = (AkaPrime) mes.eap;
+        var akaPrime = (AkaPrime) mes.eapMessage.eap;
         assertEquals(akaPrime.subType, EAkaSubType.AKA_CHALLENGE);
         assertNotNull(akaPrime.attributes);
         assertEquals(akaPrime.attributes.size(), 5);
@@ -71,7 +72,8 @@ public class TestAuthenticationRequest extends TranscoderTesting.PduTest {
         mes.abba.contents = new OctetString("0000");
 
         var akaPrime = new AkaPrime();
-        mes.eap = akaPrime;
+        mes.eapMessage = new IEEapMessage();
+        mes.eapMessage.eap = akaPrime;
 
         akaPrime.code = ECode.REQUEST;
         akaPrime.id = new Octet(1);
