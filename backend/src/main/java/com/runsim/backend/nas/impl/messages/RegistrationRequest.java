@@ -27,6 +27,8 @@ public class RegistrationRequest extends PlainNasMessage {
     public IE5gsUpdateType updateType;
     public IEUeStatus ueStatus;
     public IEUplinkDataStatus uplinkDataStatus;
+    public IEEpsNasMessageContainer epsNasMessageContainer;
+    public IEAllowedPduSessionStatus allowedPduSessionStatus;
 
     @Override
     public RegistrationRequest decodeMessage(OctetInputStream stream) {
@@ -80,7 +82,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         this.additionalGuti = NasDecoder.ie2346(stream, false, IE5gsMobileIdentity.class);
                         break;
                     case 0x25:
-                        throw new NotImplementedException("not implemented yet: Allowed PDU session status");
+                        this.allowedPduSessionStatus = NasDecoder.ie2346(stream, false, IEAllowedPduSessionStatus.class);
+                        break;
                     case 0x18:
                         this.uesUsageSetting = NasDecoder.ie2346(stream, false, IEUesUsageSetting.class);
                         break;
@@ -88,7 +91,8 @@ public class RegistrationRequest extends PlainNasMessage {
                         this.requestedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
                         break;
                     case 0x70:
-                        throw new NotImplementedException("not implemented yet: EPS NAS message container");
+                        this.epsNasMessageContainer = NasDecoder.ie2346(stream, false, IEEpsNasMessageContainer.class);
+                        break;
                     case 0x7E:
                         throw new NotImplementedException("not implemented yet: LADN indication");
                     case 0x7B:
