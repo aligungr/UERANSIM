@@ -24,7 +24,7 @@ public class AuthenticationResponse extends PlainNasMessage {
             int iei = stream.readOctetI();
             switch (iei) {
                 case 0x2D:
-                    resp.authenticationResponseParameter = NasDecoder.ie2346(stream, false, IEAuthenticationResponseParameter.class);
+                    resp.authenticationResponseParameter = NasDecoder.ie2346(stream, IEAuthenticationResponseParameter.class);
                     break;
                 case 0x78:
                     resp.eap = NasDecoder.eap(stream);

@@ -22,7 +22,7 @@ public class IENssai extends InformationElement4 {
 
         while (read < length) {
             int subLength = stream.peekOctetI();
-            list.add(NasDecoder.ie2346(stream, false, IESNssa.class));
+            list.add(NasDecoder.ie2346(stream, IESNssa.class));
             read += subLength + 1;
         }
 

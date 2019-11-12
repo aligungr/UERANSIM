@@ -27,16 +27,16 @@ public class AuthenticationRequest extends PlainNasMessage {
     public AuthenticationRequest decodeMessage(OctetInputStream stream) {
         var req = new AuthenticationRequest();
         req.ngKSI = NasDecoder.ie1(stream.readOctetI(), IENasKeySetIdentifier.class);
-        req.abba = NasDecoder.ie2346(stream, false, IEAbba.class);
+        req.abba = NasDecoder.ie2346(stream, IEAbba.class);
 
         while (stream.hasNext()) {
             int type = stream.readOctetI();
             switch (type) {
                 case 0x21:
-                    req.authParamRAND = NasDecoder.ie2346(stream, false, IERand.class);
+                    req.authParamRAND = NasDecoder.ie2346(stream, IERand.class);
                     break;
                 case 0x20:
-                    req.authParamAUTN = NasDecoder.ie2346(stream, false, IEAutn.class);
+                    req.authParamAUTN = NasDecoder.ie2346(stream, IEAutn.class);
                     break;
                 case 0x78:
                     req.eap = NasDecoder.eap(stream);

@@ -42,7 +42,7 @@ public class RegistrationRequest extends PlainNasMessage {
         int octet = stream.readOctetI();
         req.registrationType = NasDecoder.ie1(octet & 0xF, IE5gsRegistrationType.class);
         req.nasKeySetIdentifier = NasDecoder.ie1(octet >> 4, IENasKeySetIdentifier.class);
-        req.mobileIdentity = NasDecoder.mobileIdentity(stream, false);
+        req.mobileIdentity = NasDecoder.mobileIdentity(stream);
 
         while (stream.hasNext()) {
             int iei = stream.readOctetI();
@@ -63,54 +63,54 @@ public class RegistrationRequest extends PlainNasMessage {
             } else {
                 switch (iei) {
                     case 0x10:
-                        req.mmCapability = NasDecoder.ie2346(stream, false, IE5gMmCapability.class);
+                        req.mmCapability = NasDecoder.ie2346(stream, IE5gMmCapability.class);
                         break;
                     case 0x2E:
-                        req.ueSecurityCapability = NasDecoder.ie2346(stream, false, IEUeSecurityCapability.class);
+                        req.ueSecurityCapability = NasDecoder.ie2346(stream, IEUeSecurityCapability.class);
                         break;
                     case 0x2F:
-                        req.requestedNSSA = NasDecoder.ie2346(stream, false, IENssai.class);
+                        req.requestedNSSA = NasDecoder.ie2346(stream, IENssai.class);
                         break;
                     case 0x52:
-                        req.lastVisitedRegisteredTai = NasDecoder.ie2346(stream, false, IE5gsTrackingAreaIdentity.class);
+                        req.lastVisitedRegisteredTai = NasDecoder.ie2346(stream, IE5gsTrackingAreaIdentity.class);
                         break;
                     case 0x17:
-                        req.s1UeNetworkCapability = NasDecoder.ie2346(stream, false, IES1UeNetworkCapability.class);
+                        req.s1UeNetworkCapability = NasDecoder.ie2346(stream, IES1UeNetworkCapability.class);
                         break;
                     case 0x40:
-                        req.uplinkDataStatus = NasDecoder.ie2346(stream, false, IEUplinkDataStatus.class);
+                        req.uplinkDataStatus = NasDecoder.ie2346(stream, IEUplinkDataStatus.class);
                         break;
                     case 0x50:
-                        req.pduSessionStatus = NasDecoder.ie2346(stream, false, IEPduSessionStatus.class);
+                        req.pduSessionStatus = NasDecoder.ie2346(stream, IEPduSessionStatus.class);
                         break;
                     case 0x2B:
-                        req.ueStatus = NasDecoder.ie2346(stream, false, IEUeStatus.class);
+                        req.ueStatus = NasDecoder.ie2346(stream, IEUeStatus.class);
                         break;
                     case 0x77:
-                        req.additionalGuti = NasDecoder.ie2346(stream, false, IE5gsMobileIdentity.class);
+                        req.additionalGuti = NasDecoder.ie2346(stream, IE5gsMobileIdentity.class);
                         break;
                     case 0x25:
-                        req.allowedPduSessionStatus = NasDecoder.ie2346(stream, false, IEAllowedPduSessionStatus.class);
+                        req.allowedPduSessionStatus = NasDecoder.ie2346(stream, IEAllowedPduSessionStatus.class);
                         break;
                     case 0x18:
-                        req.uesUsageSetting = NasDecoder.ie2346(stream, false, IEUesUsageSetting.class);
+                        req.uesUsageSetting = NasDecoder.ie2346(stream, IEUesUsageSetting.class);
                         break;
                     case 0x51:
-                        req.requestedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
+                        req.requestedDrxParameters = NasDecoder.ie2346(stream, IE5gsDrxParameters.class);
                         break;
                     case 0x70:
-                        req.epsNasMessageContainer = NasDecoder.ie2346(stream, false, IEEpsNasMessageContainer.class);
+                        req.epsNasMessageContainer = NasDecoder.ie2346(stream, IEEpsNasMessageContainer.class);
                         break;
                     case 0x7E:
                         throw new NotImplementedException("not implemented yet: LADN indication");
                     case 0x7B:
-                        req.payloadContainer = NasDecoder.ie2346(stream, false, IEPayloadContainer.class);
+                        req.payloadContainer = NasDecoder.ie2346(stream, IEPayloadContainer.class);
                         break;
                     case 0x53:
-                        req.updateType = NasDecoder.ie2346(stream, false, IE5gsUpdateType.class);
+                        req.updateType = NasDecoder.ie2346(stream, IE5gsUpdateType.class);
                         break;
                     case 0x71:
-                        req.nasMessageContainer = NasDecoder.ie2346(stream, false, IENasMessageContainer.class);
+                        req.nasMessageContainer = NasDecoder.ie2346(stream, IENasMessageContainer.class);
                         break;
                     default:
                         throw new InvalidValueException("iei is invalid: " + iei);

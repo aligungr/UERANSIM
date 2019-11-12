@@ -13,7 +13,7 @@ public class IdentityResponse extends PlainNasMessage {
     @Override
     public IdentityResponse decodeMessage(OctetInputStream stream) {
         var resp = new IdentityResponse();
-        resp.mobileIdentity = NasDecoder.mobileIdentity(stream, false);
+        resp.mobileIdentity = NasDecoder.mobileIdentity(stream);
         return resp;
     }
 

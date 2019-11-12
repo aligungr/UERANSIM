@@ -11,8 +11,7 @@ public abstract class InformationElement3 extends InformationElement {
     protected abstract InformationElement3 decodeIE3(OctetInputStream stream);
 
     @Override
-    public final InformationElement decodeIE(OctetInputStream stream, boolean ieiPresent) {
-        if (ieiPresent) stream.readOctet();
+    public final InformationElement decodeIE(OctetInputStream stream) {
         return decodeIE3(stream);
     }
 

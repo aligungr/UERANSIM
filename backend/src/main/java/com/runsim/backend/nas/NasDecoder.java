@@ -125,10 +125,10 @@ public class NasDecoder {
         }
     }
 
-    public static <T extends InformationElement> T ie2346(OctetInputStream stream, boolean ieiPresent, Class<T> clazz) {
+    public static <T extends InformationElement> T ie2346(OctetInputStream stream, Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();
-            return (T) instance.decodeIE(stream, ieiPresent);
+            return (T) instance.decodeIE(stream);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -139,7 +139,7 @@ public class NasDecoder {
         return EapDecoder.eapPdu(stream);
     }
 
-    public static IE5gsMobileIdentity mobileIdentity(OctetInputStream stream, boolean iePresent) {
+    public static IE5gsMobileIdentity mobileIdentity(OctetInputStream stream) {
         int length = stream.readOctet2I();
 
         int flags = stream.peekOctetI();

@@ -37,7 +37,7 @@ public class RegistrationAccept extends PlainNasMessage {
     @Override
     public RegistrationAccept decodeMessage(OctetInputStream stream) {
         var resp = new RegistrationAccept();
-        resp.registrationResult = NasDecoder.ie2346(stream, false, IE5gsRegistrationResult.class);
+        resp.registrationResult = NasDecoder.ie2346(stream, IE5gsRegistrationResult.class);
 
         while (stream.hasNext()) {
             int iei = stream.readOctetI();
@@ -58,46 +58,46 @@ public class RegistrationAccept extends PlainNasMessage {
             } else {
                 switch (iei) {
                     case 0x77:
-                        resp.mobileIdentity = NasDecoder.mobileIdentity(stream, false);
+                        resp.mobileIdentity = NasDecoder.mobileIdentity(stream);
                         break;
                     case 0x4A:
-                        resp.equivalentPLMNs = NasDecoder.ie2346(stream, false, IEPlmnList.class);
+                        resp.equivalentPLMNs = NasDecoder.ie2346(stream, IEPlmnList.class);
                         break;
                     case 0x54:
                         throw new NotImplementedException("TAI list not implemented yet");
                     case 0x15:
-                        resp.allowedNSSAI = NasDecoder.ie2346(stream, false, IENssai.class);
+                        resp.allowedNSSAI = NasDecoder.ie2346(stream, IENssai.class);
                         break;
                     case 0x11:
-                        resp.rejectedNSSAI = NasDecoder.ie2346(stream, false, IERejectedNssai.class);
+                        resp.rejectedNSSAI = NasDecoder.ie2346(stream, IERejectedNssai.class);
                         break;
                     case 0x31:
-                        resp.configuredNSSAI = NasDecoder.ie2346(stream, false, IENssai.class);
+                        resp.configuredNSSAI = NasDecoder.ie2346(stream, IENssai.class);
                         break;
                     case 0x21:
-                        resp.networkFeatureSupport = NasDecoder.ie2346(stream, false, IE5gsNetworkFeatureSupport.class);
+                        resp.networkFeatureSupport = NasDecoder.ie2346(stream, IE5gsNetworkFeatureSupport.class);
                         break;
                     case 0x50:
-                        resp.pduSessionStatus = NasDecoder.ie2346(stream, false, IEPduSessionStatus.class);
+                        resp.pduSessionStatus = NasDecoder.ie2346(stream, IEPduSessionStatus.class);
                         break;
                     case 0x26:
-                        resp.pduSessionReactivationResult = NasDecoder.ie2346(stream, false, IEPduSessionReactivationResult.class);
+                        resp.pduSessionReactivationResult = NasDecoder.ie2346(stream, IEPduSessionReactivationResult.class);
                         break;
                     case 0x72:
-                        resp.pduSessionReactivationResultErrorCause = NasDecoder.ie2346(stream, false, IEPduSessionReactivationResultErrorCause.class);
+                        resp.pduSessionReactivationResultErrorCause = NasDecoder.ie2346(stream, IEPduSessionReactivationResultErrorCause.class);
                         break;
                     case 0x79:
                         throw new NotImplementedException("LADN information not implemented yet");
                     case 0x27:
                         throw new NotImplementedException("Service area list not implemented yet");
                     case 0x5E:
-                        resp.t3512Value = NasDecoder.ie2346(stream, false, IEGprsTimer3.class);
+                        resp.t3512Value = NasDecoder.ie2346(stream, IEGprsTimer3.class);
                         break;
                     case 0x5D:
-                        resp.non3gppDeRegistrationTimerValue = NasDecoder.ie2346(stream, false, IEGprsTimer2.class);
+                        resp.non3gppDeRegistrationTimerValue = NasDecoder.ie2346(stream, IEGprsTimer2.class);
                         break;
                     case 0x16:
-                        resp.t3502Value = NasDecoder.ie2346(stream, false, IEGprsTimer2.class);
+                        resp.t3502Value = NasDecoder.ie2346(stream, IEGprsTimer2.class);
                         break;
                     case 0x34:
                         throw new NotImplementedException("Emergency number list not implemented yet");
@@ -111,7 +111,7 @@ public class RegistrationAccept extends PlainNasMessage {
                     case 0x76:
                         throw new NotImplementedException("Operator-defined access category definitions not implemented yet");
                     case 0x51:
-                        resp.negotiatedDrxParameters = NasDecoder.ie2346(stream, false, IE5gsDrxParameters.class);
+                        resp.negotiatedDrxParameters = NasDecoder.ie2346(stream, IE5gsDrxParameters.class);
                         break;
                     default:
                         throw new InvalidValueException("iei is invalid: " + iei);

@@ -20,7 +20,7 @@ public class RegistrationComplete extends PlainNasMessage {
             int iei = stream.readOctetI();
             switch (iei) {
                 case 0x73:
-                    res.sorTransparentContainer = NasDecoder.ie2346(stream, false, IESorTransparentContainer.class);
+                    res.sorTransparentContainer = NasDecoder.ie2346(stream, IESorTransparentContainer.class);
                     break;
             }
         }

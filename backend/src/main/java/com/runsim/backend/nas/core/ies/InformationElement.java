@@ -13,5 +13,5 @@ import com.runsim.backend.utils.OctetInputStream;
  * TLV-E    | Type, Length and Value | yes         | yes         | yes
  */
 public abstract class InformationElement {
-    public abstract InformationElement decodeIE(OctetInputStream stream, boolean ieiPresent);
+    public abstract InformationElement decodeIE(OctetInputStream stream);
 }
