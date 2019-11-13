@@ -37,10 +37,9 @@ public class SCTPClient {
     }
 
     public void receiverLoop(ISCTPHandler handler) throws Exception {
-        ByteBuffer incomingBuffer = ByteBuffer.allocate(RECEIVER_BUFFER_SIZE);
-
         MessageInfo messageInfo;
         while (channel.isOpen()) {
+            ByteBuffer incomingBuffer = ByteBuffer.allocate(RECEIVER_BUFFER_SIZE);
             messageInfo = channel.receive(incomingBuffer, System.out, associationHandler);
             if (messageInfo == null || messageInfo.bytes() == -1) break;
 

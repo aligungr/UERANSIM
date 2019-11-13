@@ -20,10 +20,7 @@ import com.runsim.backend.ngap.ngap_commondatatypes.Criticality;
 import com.runsim.backend.ngap.ngap_commondatatypes.ProcedureCode;
 import com.runsim.backend.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import com.runsim.backend.ngap.ngap_ies.*;
-import com.runsim.backend.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import com.runsim.backend.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
-import com.runsim.backend.ngap.ngap_pdu_contents.UplinkNASTransport;
+import com.runsim.backend.ngap.ngap_pdu_contents.*;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import com.runsim.backend.utils.Color;
@@ -198,6 +195,10 @@ public class RegistrationFlow extends BaseFlow {
         } else if (initiatingMessage instanceof InitialContextSetupRequest) {
             var initialContextSetupRequest = (InitialContextSetupRequest) initiatingMessage;
             return handleInitialContextSetupRequest(initialContextSetupRequest);
+        } else if (initiatingMessage instanceof ErrorIndication) {
+            Console.println(Color.RED, "Error indication received");
+            Console.println(Color.RED, "Closing connection");
+            return closeConnection();
         } else {
             Console.println(Color.YELLOW, "bad message from AMF, DownlinkNASTransport or InitialContextSetupRequest is expected. message ignored");
             return this::waitingAMFRequests;
