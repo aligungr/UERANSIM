@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.core.ies;
 
+import com.runsim.backend.nas.core.ProtocolValue;
 import com.runsim.backend.utils.OctetInputStream;
 
 /**
@@ -12,6 +13,6 @@ import com.runsim.backend.utils.OctetInputStream;
  * LV-E     | Length and Value       | no          | yes         | yes
  * TLV-E    | Type, Length and Value | yes         | yes         | yes
  */
-public abstract class InformationElement {
+public abstract class InformationElement extends ProtocolValue {
     public abstract InformationElement decodeIE(OctetInputStream stream);
 }

@@ -16,6 +16,10 @@ import com.runsim.backend.utils.bits.Bit4;
 
 public class NasDecoder {
 
+    public static NasMessage nasPdu(byte[] data) {
+        return nasPdu(new OctetInputStream(data));
+    }
+
     public static NasMessage nasPdu(OctetInputStream stream) {
         NasMessage nasMessage;
 
