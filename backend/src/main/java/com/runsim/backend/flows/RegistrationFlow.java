@@ -13,6 +13,7 @@ import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
 import com.runsim.backend.nas.impl.ies.IEUeSecurityCapability;
 import com.runsim.backend.nas.impl.messages.AuthenticationRequest;
+import com.runsim.backend.nas.impl.messages.RegistrationReject;
 import com.runsim.backend.nas.impl.messages.RegistrationRequest;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.ngap.Values;
@@ -25,8 +26,8 @@ import com.runsim.backend.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import com.runsim.backend.utils.Color;
 import com.runsim.backend.utils.Console;
-import com.runsim.backend.utils.ConsoleColors;
 import com.runsim.backend.utils.Json;
 import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.Bit3;
@@ -160,14 +161,14 @@ public class RegistrationFlow extends BaseFlow {
         }
 
         Console.printDiv();
-        Console.println(ConsoleColors.BLUE, "Sending Initial UE Message:");
-        Console.println(ConsoleColors.WHITE_BRIGHT, NGAP.xerEncode(ngapPdu));
-        Console.println(ConsoleColors.BLUE, "Where NAS PDU is:");
-        Console.println(ConsoleColors.WHITE_BRIGHT, Json.toJson(nasMessage));
+        Console.println(Color.BLUE, "Sending Initial UE Message:");
+        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(ngapPdu));
+        Console.println(Color.BLUE, "Where NAS PDU is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
 
         sendPDU(ngapPdu);
         Console.printDiv();
-        Console.println(ConsoleColors.BLUE, "PDU Sent, waiting for AMF Request Messages");
+        Console.println(Color.BLUE, "PDU Sent, waiting for AMF Request Messages");
 
         return this::waitingAMFRequests;
     }
@@ -176,12 +177,12 @@ public class RegistrationFlow extends BaseFlow {
         var pdu = message.getAsPDU();
 
         Console.printDiv();
-        Console.println(ConsoleColors.BLUE, "Message received from AMF with length", message.getLength(), "bytes.");
-        Console.println(ConsoleColors.BLUE, "Received NGAP PDU:");
-        Console.println(ConsoleColors.WHITE_BRIGHT, NGAP.xerEncode(pdu));
+        Console.println(Color.BLUE, "Message received from AMF with length", message.getLength(), "bytes.");
+        Console.println(Color.BLUE, "Received NGAP PDU:");
+        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(pdu));
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
-            Console.println(ConsoleColors.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
+            Console.println(Color.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
             return this::waitingAMFRequests;
         }
 
@@ -194,13 +195,13 @@ public class RegistrationFlow extends BaseFlow {
             var initialContextSetupRequest = (InitialContextSetupRequest) initiatingMessage;
             return handleInitialContextSetupRequest(initialContextSetupRequest);
         } else {
-            Console.println(ConsoleColors.YELLOW, "bad message from AMF, DownlinkNASTransport or InitialContextSetupRequest is expected. message ignored");
+            Console.println(Color.YELLOW, "bad message from AMF, DownlinkNASTransport or InitialContextSetupRequest is expected. message ignored");
             return this::waitingAMFRequests;
         }
     }
 
     private State handleDownlinkNASTransport(DownlinkNASTransport message) {
-        Console.println(ConsoleColors.BLUE, "DownlinkNASTransport is handling.");
+        Console.println(Color.BLUE, "DownlinkNASTransport is handling.");
 
         var protocolIEs = (List<DownlinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList;
 
@@ -214,51 +215,49 @@ public class RegistrationFlow extends BaseFlow {
 
         if (nasPayload == null) {
             Console.printDiv();
-            Console.println(ConsoleColors.RED, "bad message from AMF, NAS PDU was expected.");
-            Console.println(ConsoleColors.RED, "closing connection");
+            Console.println(Color.RED, "bad message from AMF, NAS PDU was expected.");
+            Console.println(Color.RED, "closing connection");
             return closeConnection();
         }
 
         var nasMessage = NasDecoder.nasPdu(nasPayload.getValue());
 
-        Console.println(ConsoleColors.BLUE, "Where NAS PDU is:");
-        Console.println(ConsoleColors.WHITE_BRIGHT, Json.toJson(nasMessage));
+        Console.println(Color.BLUE, "Where NAS PDU is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
         return handleNasMessage(nasMessage);
     }
 
     private State handleInitialContextSetupRequest(InitialContextSetupRequest message) {
         Console.printDiv();
-        Console.println(ConsoleColors.BLUE, "InitialContextSetupRequest is handling.");
-        Console.println(ConsoleColors.BLUE, "Received NGAP PDU:");
-        Console.println(ConsoleColors.WHITE_BRIGHT, NGAP.xerEncode(message));
+        Console.println(Color.BLUE, "InitialContextSetupRequest is handling.");
 
-        Console.println(ConsoleColors.RED, "this method is not implemented yet.");
-        Console.println(ConsoleColors.RED, "closing connection");
+        Console.println(Color.RED, "this method is not implemented yet.");
+        Console.println(Color.RED, "closing connection");
 
         return closeConnection();
     }
 
     private State handleNasMessage(NasMessage nasMessage) {
         Console.printDiv();
-        Console.println(ConsoleColors.BLUE, "NAS message is handling.");
+        Console.println(Color.BLUE, "NAS message is handling.");
 
         if (!(nasMessage instanceof PlainNasMessage)) {
-            Console.println(ConsoleColors.RED, "Security protected NAS messages are not implemented yet");
-            Console.println(ConsoleColors.RED, "Closing connection");
+            Console.println(Color.RED, "Security protected NAS messages are not implemented yet");
+            Console.println(Color.RED, "Closing connection");
             return closeConnection();
         }
 
         var message = (PlainNasMessage) nasMessage;
 
-        Console.println(ConsoleColors.BLUE, message.messageType.name, "is detected");
+        Console.println(Color.BLUE, message.messageType.name, "is detected");
+
         if (message instanceof AuthenticationRequest) {
             return handleAuthenticationRequest((AuthenticationRequest) message);
-        } else if (message.messageType.equals(EMessageType.AUTHENTICATION_REJECT)) {
-            Console.println(ConsoleColors.RED, "AUTHENTICATION_REJECT not implemented yet");
-            Console.println(ConsoleColors.RED, "Closing connection");
+        } else if (message instanceof RegistrationReject) {
+            return handleRegistrationReject((RegistrationReject) message);
         } else {
-            Console.println(ConsoleColors.RED, "This message type was not implemented yet");
-            Console.println(ConsoleColors.RED, "Closing connection");
+            Console.println(Color.RED, "This message type was not implemented yet");
+            Console.println(Color.RED, "Closing connection");
         }
 
         return closeConnection();
@@ -266,9 +265,17 @@ public class RegistrationFlow extends BaseFlow {
 
     private State handleAuthenticationRequest(AuthenticationRequest authenticationRequest) {
         Console.printDiv();
-        Console.println(ConsoleColors.BLUE, "AuthenticationRequest is handling.");
-        Console.println(ConsoleColors.RED, "But but it was not implemented yet");
-        Console.println(ConsoleColors.RED, "Closing connection");
+        Console.println(Color.BLUE, "AuthenticationRequest is handling.");
+        Console.println(Color.RED, "But but it was not implemented yet");
+        Console.println(Color.RED, "Closing connection");
+        return closeConnection();
+    }
+
+    private State handleRegistrationReject(RegistrationReject registrationReject) {
+        Console.printDiv();
+        Console.println(Color.BLUE, "RegistrationReject is handling.");
+        Console.println(Color.RED, "5G MM Cause:", registrationReject.mmCause.value);
+        Console.println(Color.RED, "Closing connection");
         return closeConnection();
     }
 }

@@ -68,6 +68,8 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, RegistrationComplete.class);
         } else if (messageType.equals(EMessageType.AUTHENTICATION_RESULT)) {
             message = NasDecoder.nasMessage(stream, AuthenticationResult.class);
+        } else if (messageType.equals(EMessageType.REGISTRATION_REJECT)) {
+            message = NasDecoder.nasMessage(stream, RegistrationReject.class);
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }

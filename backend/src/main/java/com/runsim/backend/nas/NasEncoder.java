@@ -59,7 +59,7 @@ public class NasEncoder {
         if (ie instanceof InformationElement2) {
             throw new NotImplementedException("");
         } else if (ie instanceof InformationElement3) {
-            throw new NotImplementedException("");
+            ((InformationElement3) ie).encodeIE3(stream);
         } else if (ie instanceof InformationElement4) {
             ((InformationElement4) ie).encodeIE4(newStream);
             stream.writeOctet(newStream.length());

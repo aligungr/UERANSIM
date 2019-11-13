@@ -18,6 +18,7 @@ public class TranscoderTesting {
         performDecoderTest(new TestIdentityResponse());
         performDecoderTest(new TestRegistrationComplete());
         performDecoderTest(new TestRegistrationAccept());
+        performDecoderTest(new TestRegistrationReject());
 
         performEncoderTest(new TestRegistrationRequest());
         performEncoderTest(new TestAuthenticationRequest());
@@ -27,6 +28,7 @@ public class TranscoderTesting {
         performEncoderTest(new TestIdentityResponse());
         performEncoderTest(new TestRegistrationComplete());
         performEncoderTest(new TestRegistrationAccept());
+        performEncoderTest(new TestRegistrationReject());
     }
 
     private static void performDecoderTest(PduTest test) {

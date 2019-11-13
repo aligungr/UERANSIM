@@ -2,10 +2,10 @@ package com.runsim.backend.utils;
 
 public class Console {
 
-    public static void println(ConsoleColors color, Object... objects) {
+    public static void println(Color color, Object... objects) {
         if (color == null)
-            color = ConsoleColors.RESET;
-        System.out.println(color + objectsToString(objects) + ConsoleColors.RESET);
+            color = Color.RESET;
+        System.out.println(color + objectsToString(objects) + Color.RESET);
     }
 
     public static void println(Object... objects) {

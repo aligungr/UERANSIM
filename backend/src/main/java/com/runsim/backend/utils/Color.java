@@ -1,6 +1,6 @@
 package com.runsim.backend.utils;
 
-public enum ConsoleColors {
+public enum Color {
     // Reset
     RESET("\033[0m"), // Text Reset
 
@@ -77,7 +77,7 @@ public enum ConsoleColors {
 
     public final String val;
 
-    ConsoleColors(String val) {
+    Color(String val) {
         this.val = val;
     }
 
