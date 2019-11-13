@@ -34,6 +34,13 @@
             <artifactId>classgraph</artifactId>
             <version>4.4.10</version>
         </dependency>
+        <dependency>
+            <groupId>fr.marben</groupId>
+            <artifactId>asnsdk</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../misc/marben/lib/jrntspe.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>
