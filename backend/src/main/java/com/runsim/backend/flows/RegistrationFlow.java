@@ -6,11 +6,13 @@ import com.runsim.backend.NGAP;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
+import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
 import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
 import com.runsim.backend.nas.impl.ies.IEUeSecurityCapability;
+import com.runsim.backend.nas.impl.messages.AuthenticationRequest;
 import com.runsim.backend.nas.impl.messages.RegistrationRequest;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.ngap.Values;
@@ -175,6 +177,8 @@ public class RegistrationFlow extends BaseFlow {
 
         Console.printDiv();
         Console.println(ConsoleColors.BLUE, "Message received from AMF with length", message.getLength(), "bytes.");
+        Console.println(ConsoleColors.BLUE, "Received NGAP PDU:");
+        Console.println(ConsoleColors.WHITE_BRIGHT, NGAP.xerEncode(pdu));
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
             Console.println(ConsoleColors.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
@@ -196,10 +200,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleDownlinkNASTransport(DownlinkNASTransport message) {
-        Console.printDiv();
         Console.println(ConsoleColors.BLUE, "DownlinkNASTransport is handling.");
-        Console.println(ConsoleColors.BLUE, "Received NGAP PDU:");
-        Console.println(ConsoleColors.WHITE_BRIGHT, NGAP.xerEncode(message));
 
         var protocolIEs = (List<DownlinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList;
 
@@ -240,8 +241,34 @@ public class RegistrationFlow extends BaseFlow {
     private State handleNasMessage(NasMessage nasMessage) {
         Console.printDiv();
         Console.println(ConsoleColors.BLUE, "NAS message is handling.");
-        Console.println(ConsoleColors.RED, "this method is not implemented yet.");
-        Console.println(ConsoleColors.RED, "closing connection");
+
+        if (!(nasMessage instanceof PlainNasMessage)) {
+            Console.println(ConsoleColors.RED, "Security protected NAS messages are not implemented yet");
+            Console.println(ConsoleColors.RED, "Closing connection");
+            return closeConnection();
+        }
+
+        var message = (PlainNasMessage) nasMessage;
+
+        Console.println(ConsoleColors.BLUE, message.messageType.name, "is detected");
+        if (message instanceof AuthenticationRequest) {
+            return handleAuthenticationRequest((AuthenticationRequest) message);
+        } else if (message.messageType.equals(EMessageType.AUTHENTICATION_REJECT)) {
+            Console.println(ConsoleColors.RED, "AUTHENTICATION_REJECT not implemented yet");
+            Console.println(ConsoleColors.RED, "Closing connection");
+        } else {
+            Console.println(ConsoleColors.RED, "This message type was not implemented yet");
+            Console.println(ConsoleColors.RED, "Closing connection");
+        }
+
+        return closeConnection();
+    }
+
+    private State handleAuthenticationRequest(AuthenticationRequest authenticationRequest) {
+        Console.printDiv();
+        Console.println(ConsoleColors.BLUE, "AuthenticationRequest is handling.");
+        Console.println(ConsoleColors.RED, "But but it was not implemented yet");
+        Console.println(ConsoleColors.RED, "Closing connection");
         return closeConnection();
     }
 }
