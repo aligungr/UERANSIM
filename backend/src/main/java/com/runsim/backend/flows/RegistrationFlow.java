@@ -7,12 +7,11 @@ import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.*;
-import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
-import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
-import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
-import com.runsim.backend.nas.impl.ies.IEUeSecurityCapability;
+import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.nas.impl.messages.AuthenticationRequest;
+import com.runsim.backend.nas.impl.messages.AuthenticationResponse;
 import com.runsim.backend.nas.impl.messages.RegistrationReject;
 import com.runsim.backend.nas.impl.messages.RegistrationRequest;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
@@ -24,6 +23,7 @@ import com.runsim.backend.ngap.ngap_ies.*;
 import com.runsim.backend.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
+import com.runsim.backend.ngap.ngap_pdu_contents.UplinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import com.runsim.backend.utils.Color;
@@ -32,9 +32,13 @@ import com.runsim.backend.utils.Json;
 import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.Bit3;
 import com.runsim.backend.utils.octets.Octet;
+import com.runsim.backend.utils.octets.Octet2;
+import com.runsim.backend.utils.octets.OctetString;
+import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class RegistrationFlow extends BaseFlow {
@@ -266,9 +270,38 @@ public class RegistrationFlow extends BaseFlow {
     private State handleAuthenticationRequest(AuthenticationRequest authenticationRequest) {
         Console.printDiv();
         Console.println(Color.BLUE, "AuthenticationRequest is handling.");
-        Console.println(Color.RED, "But but it was not implemented yet");
-        Console.println(Color.RED, "Closing connection");
-        return closeConnection();
+
+        var eap = new AkaPrime();
+        eap.id = new Octet(1);
+        eap.length = new Octet2(48);
+        eap.EAPType = EEapType.EAP_AKA_PRIME;
+        eap.code = ECode.RESPONSE;
+        eap.subType = EAkaSubType.AKA_CHALLENGE;
+        eap.attributes = new LinkedHashMap<>();
+        eap.attributes.put(EAkaAttributeType.AT_RES, new OctetString("000864955b0fe729127b0000000000000000"));
+        eap.attributes.put(EAkaAttributeType.AT_MAC, new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
+
+        var response = new AuthenticationResponse();
+        response.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
+        response.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+        response.messageType = EMessageType.AUTHENTICATION_RESPONSE;
+        response.eapMessage = new IEEapMessage();
+        response.eapMessage.eap = eap;
+
+        Console.printDiv();
+        Console.println(Color.BLUE, "Authentication Response will be sent to AMF");
+        Console.println(Color.BLUE, "While NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(response));
+        Console.println(Color.BLUE, "While NGAP message is:");
+
+        var uplink = createUplinkMessage(1, 10, response);
+        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
+
+        sendPDU(uplink);
+
+        Console.printDiv();
+        Console.println(Color.BLUE, "PDU Sent, waiting for other AMF Request Messages");
+        return this::waitingAMFRequests;
     }
 
     private State handleRegistrationReject(RegistrationReject registrationReject) {
@@ -277,5 +310,43 @@ public class RegistrationFlow extends BaseFlow {
         Console.println(Color.RED, "5G MM Cause:", registrationReject.mmCause.value);
         Console.println(Color.RED, "Closing connection");
         return closeConnection();
+    }
+
+
+    private NGAP_PDU createUplinkMessage(int ranUeNgapId, int amfUeNgapId, NasMessage nasMessage) {
+        var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
+
+        var uplink = new UplinkNASTransport();
+        uplink.protocolIEs = new UplinkNASTransport.ProtocolIEs();
+        uplink.protocolIEs.valueList = list;
+
+        var ranUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        ranUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
+        ranUe.criticality = new Criticality(Criticality.ASN_reject);
+        ranUe.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+        list.add(ranUe);
+
+        var amfUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        amfUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
+        amfUe.criticality = new Criticality(Criticality.ASN_reject);
+        amfUe.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
+        list.add(amfUe);
+
+        var nasPayload = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        nasPayload.id = new ProtocolIE_ID(Values.NGAP_Constants__id_NAS_PDU);
+        nasPayload.criticality = new Criticality(Criticality.ASN_reject);
+        nasPayload.value = new OpenTypeValue(new NAS_PDU(NasEncoder.nasPdu(nasMessage)));
+        list.add(nasPayload);
+
+        var initiatingMessage = new InitiatingMessage();
+        initiatingMessage.procedureCode = new ProcedureCode(Values.NGAP_Constants__id_UplinkNASTransport);
+        initiatingMessage.criticality = new Criticality(Criticality.ASN_ignore);
+        initiatingMessage.value = new OpenTypeValue(uplink);
+
+        try {
+            return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
