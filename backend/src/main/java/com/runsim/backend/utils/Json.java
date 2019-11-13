@@ -8,9 +8,11 @@ import com.runsim.backend.utils.bits.*;
 import com.runsim.backend.utils.octets.*;
 
 public final class Json {
-    private static final Gson gson;
+    private static Gson gson;
 
-    static {
+    private static void makeGson() {
+        if (gson != null)
+            return;
 
         JsonSerializer<OctetN> octetNSerializer = (octetN, type, jsonSerializationContext)
                 -> new JsonPrimitive(octetN.toString());
@@ -40,10 +42,8 @@ public final class Json {
                 .create();
     }
 
-    private Json() {
-    }
-
     public static String toJson(Object obj) {
+        makeGson();
         return gson.toJson(obj);
     }
 }
