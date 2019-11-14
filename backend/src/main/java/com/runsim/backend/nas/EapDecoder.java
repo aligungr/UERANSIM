@@ -28,6 +28,8 @@ public class EapDecoder {
             eap = decodeAKAPrime(stream, innerLength);
         } else if (type.equals(EEapType.NOTIFICATION)) {
             eap = decodeNotification(stream, innerLength);
+        } else if (type.equals(EEapType.IDENTITY)) {
+            eap = decodeIdentity(stream, innerLength);
         } else {
             throw new NotImplementedException("eap type not implemented yet: " + type.name);
         }
@@ -108,6 +110,14 @@ public class EapDecoder {
     }
 
     private static Notification decodeNotification(OctetInputStream stream, int length) {
-        throw new NotImplementedException("eap notification not implemented yet");
+        var res = new Notification();
+        res.rawData = stream.readOctetString(length);
+        return res;
+    }
+
+    private static Identity decodeIdentity(OctetInputStream stream, int length) {
+        var res = new Identity();
+        res.rawData = stream.readOctetString(length);
+        return res;
     }
 }
