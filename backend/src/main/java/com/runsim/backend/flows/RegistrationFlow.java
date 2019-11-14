@@ -369,13 +369,13 @@ public class RegistrationFlow extends BaseFlow {
         Console.println(Color.BLUE, "AuthenticationResult is handling.");
 
         if (message.eapMessage.eap.code.equals(ECode.SUCCESS))
-            Console.println(Color.BLUE, "Authentication success");
+            Console.println(Color.GREEN, "Authentication success");
         else if (message.eapMessage.eap.code.equals(ECode.FAILURE)) {
             Console.println(Color.RED, "Authentication failure");
             Console.println(Color.RED, "Closing connection");
             return closeConnection();
         }
-        
+
         Console.println(Color.BLUE, "Waiting for other AMF Request Messages");
         return this::waitingAMFRequests;
     }
