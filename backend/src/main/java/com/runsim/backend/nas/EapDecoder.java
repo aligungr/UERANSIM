@@ -7,6 +7,7 @@ import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet2;
+import com.runsim.backend.utils.octets.OctetString;
 
 import java.util.LinkedHashMap;
 
@@ -118,6 +119,12 @@ public class EapDecoder {
     private static Identity decodeIdentity(OctetInputStream stream, int length) {
         var res = new Identity();
         res.rawData = stream.readOctetString(length);
+
+        // TODO: HACK: AMF bugını geçici olarak çözmek için
+        if (stream.remaining() == 3 && stream.peekOctetString(3).equals(new OctetString("020000"))) {
+            stream.readOctetString(3);
+        }
+
         return res;
     }
 }

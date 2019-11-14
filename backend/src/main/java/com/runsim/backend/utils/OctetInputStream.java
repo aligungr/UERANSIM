@@ -184,4 +184,8 @@ public class OctetInputStream {
     public int length() {
         return length;
     }
+
+    public int remaining() {
+        return length - index;
+    }
 }

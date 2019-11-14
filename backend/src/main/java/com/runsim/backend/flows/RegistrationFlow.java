@@ -35,6 +35,7 @@ import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -126,18 +127,10 @@ public class RegistrationFlow extends BaseFlow {
             nasPdu.criticality = new Criticality(Criticality.ASN_reject);
             nasPdu.value = new OpenTypeValue(new NAS_PDU(nasByteArray));
 
-            var userLocationInformationNr = new UserLocationInformationNR();
-            userLocationInformationNr.nR_CGI = new NR_CGI();
-            userLocationInformationNr.nR_CGI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
-            userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(new byte[]{0x00, 0x00, 0x01, 0x10, 0x00}, 36);
-            userLocationInformationNr.tAI = new TAI();
-            userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
-            userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
-
             var userLocationInformation = new InitialUEMessage.ProtocolIEs.SEQUENCE();
             userLocationInformation.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
             userLocationInformation.criticality = new Criticality(Criticality.ASN_reject);
-            userLocationInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, userLocationInformationNr));
+            userLocationInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr()));
 
             var establishmentCause = new InitialUEMessage.ProtocolIEs.SEQUENCE();
             establishmentCause.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RRCEstablishmentCause);
@@ -295,7 +288,16 @@ public class RegistrationFlow extends BaseFlow {
         Console.println(Color.WHITE_BRIGHT, Json.toJson(response));
         Console.println(Color.BLUE, "While NGAP message is:");
 
-        var uplink = createUplinkMessage(1, 10, response);
+        var userLocInformation = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        userLocInformation.criticality = new Criticality(Criticality.ASN_ignore);
+        userLocInformation.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
+        try {
+            userLocInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr()));
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+        var uplink = createUplinkMessage(1, 1, response, userLocInformation);
+
         Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
 
         sendPDU(uplink);
@@ -313,8 +315,7 @@ public class RegistrationFlow extends BaseFlow {
         return closeConnection();
     }
 
-
-    private NGAP_PDU createUplinkMessage(int ranUeNgapId, int amfUeNgapId, NasMessage nasMessage) {
+    private NGAP_PDU createUplinkMessage(int ranUeNgapId, int amfUeNgapId, NasMessage nasMessage, UplinkNASTransport.ProtocolIEs.SEQUENCE... additionalProtocolIEs) {
         var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
 
         var uplink = new UplinkNASTransport();
@@ -339,6 +340,8 @@ public class RegistrationFlow extends BaseFlow {
         nasPayload.value = new OpenTypeValue(new NAS_PDU(NasEncoder.nasPdu(nasMessage)));
         list.add(nasPayload);
 
+        list.addAll(Arrays.asList(additionalProtocolIEs));
+
         var initiatingMessage = new InitiatingMessage();
         initiatingMessage.procedureCode = new ProcedureCode(Values.NGAP_Constants__id_UplinkNASTransport);
         initiatingMessage.criticality = new Criticality(Criticality.ASN_ignore);
@@ -349,5 +352,16 @@ public class RegistrationFlow extends BaseFlow {
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private UserLocationInformationNR createUserLocationInformationNr() {
+        var userLocationInformationNr = new UserLocationInformationNR();
+        userLocationInformationNr.nR_CGI = new NR_CGI();
+        userLocationInformationNr.nR_CGI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
+        userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(new byte[]{0x00, 0x00, 0x01, 0x10, 0x00}, 36);
+        userLocationInformationNr.tAI = new TAI();
+        userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
+        userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
+        return userLocationInformationNr;
     }
 }
