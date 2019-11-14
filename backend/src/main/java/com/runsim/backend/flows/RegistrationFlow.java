@@ -10,10 +10,7 @@ import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.*;
-import com.runsim.backend.nas.impl.messages.AuthenticationRequest;
-import com.runsim.backend.nas.impl.messages.AuthenticationResponse;
-import com.runsim.backend.nas.impl.messages.RegistrationReject;
-import com.runsim.backend.nas.impl.messages.RegistrationRequest;
+import com.runsim.backend.nas.impl.messages.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.ngap.Values;
 import com.runsim.backend.ngap.ngap_commondatatypes.Criticality;
@@ -251,6 +248,8 @@ public class RegistrationFlow extends BaseFlow {
 
         if (message instanceof AuthenticationRequest) {
             return handleAuthenticationRequest((AuthenticationRequest) message);
+        } else if (message instanceof AuthenticationResult) {
+            return handleAuthenticationResult((AuthenticationResult) message);
         } else if (message instanceof RegistrationReject) {
             return handleRegistrationReject((RegistrationReject) message);
         } else {
@@ -363,5 +362,13 @@ public class RegistrationFlow extends BaseFlow {
         userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
         userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
         return userLocationInformationNr;
+    }
+
+    private State handleAuthenticationResult(AuthenticationResult message) {
+        Console.printDiv();
+        Console.println(Color.BLUE, "AuthenticationResult is handling.");
+        Console.println(Color.BLUE, "Nothing to do.");
+        Console.println(Color.BLUE, "Waiting for other AMF Request Messages");
+        return this::waitingAMFRequests;
     }
 }
