@@ -6,6 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 public abstract class IESuciMobileIdentity extends IE5gsMobileIdentity {
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        throw new IllegalStateException("");
     }
 }

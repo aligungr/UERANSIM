@@ -33,6 +33,6 @@ public class IE5gsMobileIdentity extends InformationElement6 {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        throw new IllegalStateException("sub types must override this method.");
     }
 }

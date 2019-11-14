@@ -23,6 +23,10 @@ public class IEGprsTimer3 extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
+        int octet = unit.value & 0b111;
+        octet <<= 5;
+        octet |= timerValue.intValue() & 0b11111;
 
+        stream.writeOctet(octet);
     }
 }
