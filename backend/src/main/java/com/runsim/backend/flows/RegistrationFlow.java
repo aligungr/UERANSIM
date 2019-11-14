@@ -321,17 +321,17 @@ public class RegistrationFlow extends BaseFlow {
         uplink.protocolIEs = new UplinkNASTransport.ProtocolIEs();
         uplink.protocolIEs.valueList = list;
 
-        var ranUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        ranUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
-        ranUe.criticality = new Criticality(Criticality.ASN_reject);
-        ranUe.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
-        list.add(ranUe);
-
         var amfUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
         amfUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
         amfUe.criticality = new Criticality(Criticality.ASN_reject);
         amfUe.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
         list.add(amfUe);
+
+        var ranUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        ranUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
+        ranUe.criticality = new Criticality(Criticality.ASN_reject);
+        ranUe.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+        list.add(ranUe);
 
         var nasPayload = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
         nasPayload.id = new ProtocolIE_ID(Values.NGAP_Constants__id_NAS_PDU);
