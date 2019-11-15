@@ -252,12 +252,98 @@ public class RegistrationFlow extends BaseFlow {
             return handleAuthenticationResult((AuthenticationResult) message);
         } else if (message instanceof RegistrationReject) {
             return handleRegistrationReject((RegistrationReject) message);
+        } else if (message instanceof IdentityRequest) {
+            return handleIdentityRequest((IdentityRequest) message);
+        } else if (message instanceof RegistrationAccept) {
+            return handleRegistrationAccept((RegistrationAccept) message);
         } else {
             Console.println(Color.RED, "This message type was not implemented yet");
             Console.println(Color.RED, "Closing connection");
         }
 
         return closeConnection();
+    }
+
+    private State handleRegistrationAccept(RegistrationAccept message) {
+        Console.printDiv();
+        Console.println(Color.GREEN, "RegistrationAccept is handling.");
+
+        var registrationComplete = new RegistrationComplete();
+        registrationComplete.messageType = EMessageType.REGISTRATION_COMPLETE;
+        registrationComplete.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+        registrationComplete.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
+
+        Console.printDiv();
+        Console.println(Color.BLUE, "Registration Complete will be sent to AMF");
+        Console.println(Color.BLUE, "While NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(registrationComplete));
+        Console.println(Color.BLUE, "While NGAP message is:");
+
+        var userLocInformation = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        userLocInformation.criticality = new Criticality(Criticality.ASN_ignore);
+        userLocInformation.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
+        try {
+            userLocInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr()));
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+        var uplink = createUplinkMessage(registrationComplete, userLocInformation);
+
+        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
+
+        sendPDU(uplink);
+
+        Console.printDiv();
+        Console.println(Color.GREEN_BOLD, "Registration complete.");
+        return this::waitingAMFRequests;
+    }
+
+    private State handleIdentityRequest(IdentityRequest identityRequest) {
+        Console.printDiv();
+        Console.println(Color.BLUE, "IdentityRequest is handling.");
+
+        var identityType = identityRequest.identityType.value;
+
+        var identityResponse = new IdentityResponse();
+        identityResponse.messageType = EMessageType.IDENTITY_RESPONSE;
+        identityResponse.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+        identityResponse.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
+
+        IE5gsMobileIdentity mobileIdentity;
+        if (identityType.equals(EIdentityType.IMEI)) {
+            var imei = new IEImeiMobileIdentity();
+            imei.imei = "100000000000001";
+            mobileIdentity = imei;
+        } else {
+            Console.println(Color.RED, "Identity type not implemented yet: " + identityType.name);
+            Console.println(Color.RED, "Closing connection");
+            return closeConnection();
+        }
+        identityResponse.mobileIdentity = mobileIdentity;
+
+        Console.printDiv();
+        Console.println(Color.BLUE, "Identity Response will be sent to AMF");
+        Console.println(Color.BLUE, "While NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(identityResponse));
+        Console.println(Color.BLUE, "While NGAP message is:");
+
+        var userLocInformation = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
+        userLocInformation.criticality = new Criticality(Criticality.ASN_ignore);
+        userLocInformation.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
+        try {
+            userLocInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr()));
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+        var uplink = createUplinkMessage(identityResponse, userLocInformation);
+
+        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
+
+        sendPDU(uplink);
+
+        Console.printDiv();
+        Console.println(Color.BLUE, "PDU Sent, waiting for other AMF Request Messages");
+        return this::waitingAMFRequests;
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest authenticationRequest) {
@@ -295,7 +381,7 @@ public class RegistrationFlow extends BaseFlow {
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
-        var uplink = createUplinkMessage(1, 1, response, userLocInformation);
+        var uplink = createUplinkMessage(response, userLocInformation);
 
         Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
 
@@ -314,7 +400,7 @@ public class RegistrationFlow extends BaseFlow {
         return closeConnection();
     }
 
-    private NGAP_PDU createUplinkMessage(int ranUeNgapId, int amfUeNgapId, NasMessage nasMessage, UplinkNASTransport.ProtocolIEs.SEQUENCE... additionalProtocolIEs) {
+    private NGAP_PDU createUplinkMessage(NasMessage nasMessage, UplinkNASTransport.ProtocolIEs.SEQUENCE... additionalProtocolIEs) {
         var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
 
         var uplink = new UplinkNASTransport();
@@ -324,13 +410,13 @@ public class RegistrationFlow extends BaseFlow {
         var amfUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
         amfUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
         amfUe.criticality = new Criticality(Criticality.ASN_reject);
-        amfUe.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
+        amfUe.value = new OpenTypeValue(new AMF_UE_NGAP_ID(1));
         list.add(amfUe);
 
         var ranUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
         ranUe.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
         ranUe.criticality = new Criticality(Criticality.ASN_reject);
-        ranUe.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+        ranUe.value = new OpenTypeValue(new RAN_UE_NGAP_ID(1));
         list.add(ranUe);
 
         var nasPayload = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
