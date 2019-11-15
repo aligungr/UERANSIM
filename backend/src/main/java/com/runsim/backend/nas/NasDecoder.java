@@ -74,6 +74,14 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, AuthenticationFailure.class);
         } else if (messageType.equals(EMessageType.AUTHENTICATION_REJECT)) {
             message = NasDecoder.nasMessage(stream, AuthenticationReject.class);
+        } else if (messageType.equals(EMessageType.DEREGISTRATION_ACCEPT_UE_ORIGINATING)) {
+            message = NasDecoder.nasMessage(stream, DeRegistrationAcceptUeOriginating.class);
+        } else if (messageType.equals(EMessageType.DEREGISTRATION_ACCEPT_UE_TERMINATED)) {
+            message = NasDecoder.nasMessage(stream, DeRegistrationAcceptUeTerminated.class);
+        } else if (messageType.equals(EMessageType.DEREGISTRATION_REQUEST_UE_ORIGINATING)) {
+            message = NasDecoder.nasMessage(stream, DeRegistrationRequestUeOriginating.class);
+        } else if (messageType.equals(EMessageType.DEREGISTRATION_REQUEST_UE_TERMINATED)) {
+            message = NasDecoder.nasMessage(stream, DeRegistrationRequestUeTerminated.class);
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name);
         }
