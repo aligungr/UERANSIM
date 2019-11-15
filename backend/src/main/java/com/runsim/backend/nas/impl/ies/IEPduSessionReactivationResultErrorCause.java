@@ -22,6 +22,8 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
         for (int i = 0; i < values.length; i++) {
             values[i] = NasDecoder.nasValue(stream, VPduSessionReactivationResultErrorCause.class);
         }
+
+        res.values = values;
         return res;
     }
 
