@@ -157,25 +157,6 @@ public class NasDecoder {
         return EapDecoder.eapPdu(stream);
     }
 
-    public static IE5gsMobileIdentity mobileIdentity(OctetInputStream stream) {
-        int length = stream.readOctet2I();
-
-        int flags = stream.peekOctetI();
-
-        var typeOfIdentity = EIdentityType.fromValue(flags & 0b111);
-        int isEven = (flags >> 3) & 0b1;
-
-        if (typeOfIdentity.equals(EIdentityType.SUCI)) {
-            return suciMobileIdentity(stream, length, isEven == 0);
-        } else if (typeOfIdentity.equals(EIdentityType.IMEI)) {
-            return new IEImeiMobileIdentity().decodeMobileIdentity(stream, length, isEven == 0);
-        } else if (typeOfIdentity.equals(EIdentityType.GUTI)) {
-            return new IE5gGutiMobileIdentity().decodeMobileIdentity(stream, length, isEven == 0);
-        } else {
-            throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name);
-        }
-    }
-
     public static IESuciMobileIdentity suciMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         int flags = stream.readOctetI();
 
