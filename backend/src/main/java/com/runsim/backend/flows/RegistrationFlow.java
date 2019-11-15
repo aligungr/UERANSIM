@@ -38,8 +38,6 @@ import java.util.List;
 
 public class RegistrationFlow extends BaseFlow {
 
-    private static final int RAN_UE_NGAP_ID = 1;
-
     public State main(Message message) throws Exception {
         return sendRegistrationRequest();
     }
@@ -117,7 +115,7 @@ public class RegistrationFlow extends BaseFlow {
             var ranUeNgapId = new InitialUEMessage.ProtocolIEs.SEQUENCE();
             ranUeNgapId.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
             ranUeNgapId.criticality = new Criticality(Criticality.ASN_reject);
-            ranUeNgapId.value = new OpenTypeValue(new RAN_UE_NGAP_ID(RAN_UE_NGAP_ID));
+            ranUeNgapId.value = new OpenTypeValue(new RAN_UE_NGAP_ID(1));
 
             var nasPdu = new InitialUEMessage.ProtocolIEs.SEQUENCE();
             nasPdu.id = new ProtocolIE_ID(Values.NGAP_Constants__id_NAS_PDU);
