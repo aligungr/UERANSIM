@@ -18,7 +18,7 @@ public class VServiceAreaList11 extends VServiceAreaList {
         var flags = new OctetN(0, 1);
         flags = flags.setBitRange(0, 4, 1);
         flags = flags.setBitRange(5, 6, 0b01);
-        flags = flags.setBit(7, allowedType.value);
+        flags = flags.setBit(7, allowedType.intValue());
         stream.writeOctets(flags);
         mccMnc.encode(stream);
     }

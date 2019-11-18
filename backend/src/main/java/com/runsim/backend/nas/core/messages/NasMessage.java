@@ -13,7 +13,7 @@ public abstract class NasMessage extends ProtocolValue {
     public abstract NasMessage decodeMessage(OctetInputStream stream);
 
     public void encodeMessage(OctetOutputStream stream) {
-        stream.writeOctet(extendedProtocolDiscriminator.value);
-        stream.writeOctet(securityHeaderType.value);
+        stream.writeOctet(extendedProtocolDiscriminator.intValue());
+        stream.writeOctet(securityHeaderType.intValue());
     }
 }

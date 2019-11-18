@@ -18,6 +18,6 @@ public class IEUesUsageSetting extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        stream.writeOctet(uesUsageSetting.value);
+        stream.writeOctet(uesUsageSetting.intValue());
     }
 }

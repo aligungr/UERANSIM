@@ -18,6 +18,6 @@ public class IE5gsDrxParameters extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        stream.writeOctet(drxValue.value);
+        stream.writeOctet(drxValue.intValue());
     }
 }

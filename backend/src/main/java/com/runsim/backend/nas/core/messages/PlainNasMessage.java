@@ -119,7 +119,7 @@ public abstract class PlainNasMessage extends NasMessage {
 
     public final void encodeMessage(OctetOutputStream stream) {
         super.encodeMessage(stream);
-        stream.writeOctet(messageType.value);
+        stream.writeOctet(messageType.intValue());
 
         var transcodeBuilder = new TranscodeBuilder();
         transcode(transcodeBuilder);

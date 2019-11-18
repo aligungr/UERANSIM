@@ -22,6 +22,6 @@ public class IE5gsRegistrationResult extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        stream.writeOctet(smsOverNasAllowed.value << 3 | registrationResult.value);
+        stream.writeOctet(smsOverNasAllowed.intValue() << 3 | registrationResult.intValue());
     }
 }

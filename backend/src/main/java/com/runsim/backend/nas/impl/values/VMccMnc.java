@@ -48,7 +48,7 @@ public class VMccMnc extends NasValue {
 
     @Override
     public void encode(OctetOutputStream stream) {
-        int mcc = this.mcc.value;
+        int mcc = this.mcc.intValue();
         int mcc3 = mcc % 10;
         int mcc2 = (mcc % 100) / 10;
         int mcc1 = (mcc % 1000) / 100;
@@ -61,10 +61,10 @@ public class VMccMnc extends NasValue {
             throw new EncodingException("mnc is null");
         if (this.mnc instanceof EMobileNetworkCode2) {
             longMnc = false;
-            mnc = this.mcc.value % 100;
+            mnc = this.mcc.intValue() % 100;
         } else {
             longMnc = true;
-            mnc = this.mcc.value % 1000;
+            mnc = this.mcc.intValue() % 1000;
         }
 
         int mnc1 = longMnc ? (mnc % 1000) / 100 : (mnc % 100) / 10;

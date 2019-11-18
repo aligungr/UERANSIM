@@ -87,7 +87,7 @@ public class NasDecoder {
         } else if (messageType.equals(EMessageType.DEREGISTRATION_REQUEST_UE_TERMINATED)) {
             message = NasDecoder.nasMessage(stream, DeRegistrationRequestUeTerminated.class);
         } else {
-            throw new NotImplementedException("message type not implemented yet: " + messageType.name);
+            throw new NotImplementedException("message type not implemented yet: " + messageType.name());
         }
 
         message.messageType = messageType;

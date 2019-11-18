@@ -17,6 +17,6 @@ public class IE5gsIdentityType extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        return value.value;
+        return value.intValue();
     }
 }

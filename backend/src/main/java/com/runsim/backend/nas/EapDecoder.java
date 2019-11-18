@@ -32,7 +32,7 @@ public class EapDecoder {
         } else if (type.equals(EEapType.IDENTITY)) {
             eap = decodeIdentity(stream, innerLength);
         } else {
-            throw new NotImplementedException("eap type not implemented yet: " + type.name);
+            throw new NotImplementedException("eap type not implemented yet: " + type.name());
         }
 
         eap.code = code;

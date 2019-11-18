@@ -63,7 +63,7 @@ public class RegistrationFlow extends BaseFlow {
 
             var imsi = new IEImsiMobileIdentity();
             imsi.mcc = EMobileCountryCode.unknownValue(1);
-            imsi.mnc = EMobileNetworkCode3.unknownValue(imsi.mcc.value * 1000 + 1);
+            imsi.mnc = EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 1);
             imsi.routingIndicator = "0000";
             imsi.protectionSchemaId = EProtectionSchemeIdentifier.NULL_SCHEMA;
             imsi.schemaOutput = "000000001";
@@ -242,7 +242,7 @@ public class RegistrationFlow extends BaseFlow {
 
         var message = (PlainNasMessage) nasMessage;
 
-        Console.println(Color.BLUE, message.messageType.name, "is detected");
+        Console.println(Color.BLUE, message.messageType.name(), "is detected");
 
         if (message instanceof AuthenticationRequest) {
             return handleAuthenticationRequest((AuthenticationRequest) message);
@@ -313,7 +313,7 @@ public class RegistrationFlow extends BaseFlow {
             imei.imei = "100000000000001";
             mobileIdentity = imei;
         } else {
-            Console.println(Color.RED, "Identity type not implemented yet: " + identityType.name);
+            Console.println(Color.RED, "Identity type not implemented yet: " + identityType.name());
             Console.println(Color.RED, "Closing connection");
             return closeConnection();
         }

@@ -63,7 +63,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
         /* Encode others */
         NasEncoder.bcdString(stream, routingIndicator, 2, false, null);
-        stream.writeOctet(protectionSchemaId.value);
+        stream.writeOctet(protectionSchemaId.intValue());
         stream.writeOctet(homeNetworkPublicKeyIdentifier.value);
 
         /* Encode schema output */

@@ -27,11 +27,11 @@ public class IE5gMmCapability extends InformationElement4 {
     @Override
     public void encodeIE4(OctetOutputStream stream) {
         int octet = 0;
-        octet |= lpp.value;
+        octet |= lpp.intValue();
         octet <<= 1;
-        octet |= hoAttach.value;
+        octet |= hoAttach.intValue();
         octet <<= 1;
-        octet |= s1Mode.value;
+        octet |= s1Mode.intValue();
         stream.writeOctet(octet);
     }
 }

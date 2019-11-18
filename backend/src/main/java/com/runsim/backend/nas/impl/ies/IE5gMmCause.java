@@ -18,6 +18,6 @@ public class IE5gMmCause extends InformationElement3 {
 
     @Override
     public void encodeIE3(OctetOutputStream stream) {
-        stream.writeOctet(value.value);
+        stream.writeOctet(value.intValue());
     }
 }

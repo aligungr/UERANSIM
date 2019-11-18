@@ -23,8 +23,8 @@ public class IE5gsUpdateType extends InformationElement4 {
     @Override
     public void encodeIE4(OctetOutputStream stream) {
         var octet = new OctetN(0, 1);
-        octet = octet.setBit(0, smsRequested.value);
-        octet = octet.setBit(1, ngRanRcu.value);
+        octet = octet.setBit(0, smsRequested.intValue());
+        octet = octet.setBit(1, ngRanRcu.intValue());
         stream.writeOctet(octet.intValue());
     }
 }

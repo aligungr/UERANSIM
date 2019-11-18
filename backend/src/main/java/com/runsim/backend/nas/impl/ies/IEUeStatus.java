@@ -23,7 +23,7 @@ public class IEUeStatus extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        int octet = s1ModeReg.value | (n1ModeReg.value << 1);
+        int octet = s1ModeReg.intValue() | (n1ModeReg.intValue() << 1);
         stream.writeOctet(octet);
     }
 }

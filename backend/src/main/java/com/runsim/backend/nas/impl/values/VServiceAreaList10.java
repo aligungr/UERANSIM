@@ -21,7 +21,7 @@ public class VServiceAreaList10 extends VServiceAreaList {
         var flags = new OctetN(0, 1);
         flags = flags.setBitRange(0, 4, tais.length);
         flags = flags.setBitRange(5, 6, 0b10);
-        flags = flags.setBit(7, allowedType.value);
+        flags = flags.setBit(7, allowedType.intValue());
         stream.writeOctets(flags);
         for (var tai : tais) {
             tai.encode(stream);

@@ -37,17 +37,17 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
     @Override
     public void encodeIE4(OctetOutputStream stream) {
         var octet = new OctetN(0, 1);
-        octet = octet.setBit(0, imsVoPs3gpp.value);
-        octet = octet.setBit(1, imsVoPsN3gpp.value);
-        octet = octet.setBitRange(2, 3, emc.value);
-        octet = octet.setBitRange(4, 5, emf.value);
-        octet = octet.setBit(1, iwkN26.value);
-        octet = octet.setBit(1, mpsi.value);
+        octet = octet.setBit(0, imsVoPs3gpp.intValue());
+        octet = octet.setBit(1, imsVoPsN3gpp.intValue());
+        octet = octet.setBitRange(2, 3, emc.intValue());
+        octet = octet.setBitRange(4, 5, emf.intValue());
+        octet = octet.setBit(1, iwkN26.intValue());
+        octet = octet.setBit(1, mpsi.intValue());
         stream.writeOctet(octet.intValue());
 
         octet = new OctetN(0, 1);
-        octet = octet.setBit(0, emcn3.value);
-        octet = octet.setBit(1, mcsi.value);
+        octet = octet.setBit(0, emcn3.intValue());
+        octet = octet.setBit(1, mcsi.intValue());
         stream.writeOctet(octet.intValue());
     }
 }

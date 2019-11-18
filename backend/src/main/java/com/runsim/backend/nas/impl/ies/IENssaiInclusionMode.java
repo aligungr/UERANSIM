@@ -16,6 +16,6 @@ public class IENssaiInclusionMode extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        return nssaiInclusionMode.value;
+        return nssaiInclusionMode.intValue();
     }
 }

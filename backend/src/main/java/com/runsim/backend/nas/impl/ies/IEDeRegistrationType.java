@@ -23,11 +23,11 @@ public class IEDeRegistrationType extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        int val = switchOff.value;
+        int val = switchOff.intValue();
         val <<= 1;
-        val |= reRegistrationRequired.value;
+        val |= reRegistrationRequired.intValue();
         val <<= 2;
-        val |= accessType.value;
+        val |= accessType.intValue();
         return val;
     }
 }

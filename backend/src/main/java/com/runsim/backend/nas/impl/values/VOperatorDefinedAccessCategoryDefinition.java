@@ -38,7 +38,7 @@ public class VOperatorDefinedAccessCategoryDefinition extends NasValue {
         stream.writeOctet(totalLength);
         stream.writeOctet(precedence);
 
-        int octet = psac.value;
+        int octet = psac.intValue();
         octet <<= 7;
         octet |= operatorDefinedAccessCategoryNumber.intValue();
         stream.writeOctet(octet);

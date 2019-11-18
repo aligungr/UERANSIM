@@ -17,6 +17,6 @@ public class IEMicoIndication extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        return raai.value;
+        return raai.intValue();
     }
 }

@@ -19,6 +19,6 @@ public class IENetworkSlicingIndication extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        return nssci.value | (dcni.value << 1);
+        return nssci.intValue() | (dcni.intValue() << 1);
     }
 }

@@ -23,7 +23,7 @@ public class IE5gsMobileIdentity extends InformationElement6 {
         } else if (typeOfIdentity.equals(EIdentityType.GUTI)) {
             return new IE5gGutiMobileIdentity().decodeMobileIdentity(stream, length, isEven == 0);
         } else {
-            throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name);
+            throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name());
         }
     }
 

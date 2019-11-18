@@ -5,8 +5,8 @@ import com.runsim.backend.utils.Utils;
 import java.lang.reflect.Modifier;
 
 public class ProtocolEnum extends ProtocolValue {
-    public final int value; // TODO: make this private and ann method intValue();
-    public final String name;
+    protected final int value;
+    protected final String name;
 
     protected ProtocolEnum(int value, String name) {
         if (value < 0)
@@ -53,6 +53,14 @@ public class ProtocolEnum extends ProtocolValue {
 
     @Override
     public String toString() {
+        return name;
+    }
+
+    public int intValue() {
+        return value;
+    }
+
+    public String name() {
         return name;
     }
 }
