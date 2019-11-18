@@ -88,6 +88,8 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, DeRegistrationRequestUeTerminated.class);
         } else if (messageType.equals(EMessageType.SERVICE_REQUEST)) {
             message = NasDecoder.nasMessage(stream, ServiceRequest.class);
+        } else if (messageType.equals(EMessageType.SERVICE_REJECT)) {
+            message = NasDecoder.nasMessage(stream, ServiceReject.class);
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name());
         }
