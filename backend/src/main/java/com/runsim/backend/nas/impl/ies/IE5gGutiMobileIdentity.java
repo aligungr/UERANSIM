@@ -28,15 +28,15 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
         var result = new IE5gGutiMobileIdentity();
 
         /* Decode MCC and MNC */
-        var mccmnc = NasDecoder.nasValue(stream, VMccMnc.class);
+        var mccmnc = VMccMnc.decode(stream);
         result.mcc = mccmnc.mcc;
         result.mnc = mccmnc.mnc;
 
         /* Decode others */
         result.amfRegionId = stream.readOctet();
-        result.amfSetId = NasDecoder.nasValue(stream, VAmfSetId.class);
+        result.amfSetId = VAmfSetId.decode(stream);
         result.amfPointer = new Bit6(stream.readOctetI());
-        result.tmsi = NasDecoder.nasValue(stream, V5gTmsi.class);
+        result.tmsi = V5gTmsi.decode(stream);
 
         return result;
     }

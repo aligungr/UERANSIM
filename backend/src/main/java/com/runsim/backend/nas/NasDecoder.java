@@ -125,15 +125,6 @@ public class NasDecoder {
         return new String(arr, 0, i);
     }
 
-    public static <T extends NasValue> T nasValue(OctetInputStream stream, Class<T> clazz) {
-        try {
-            T instance = clazz.getConstructor().newInstance();
-            return (T) instance.decode(stream);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static <T extends InformationElement1> T ie1(int halfOctet, Class<T> clazz) {
         try {
             T instance = clazz.getConstructor().newInstance();

@@ -10,8 +10,7 @@ public class V5gTmsi extends NasValue {
 
     public Octet4 value;
 
-    @Override
-    public NasValue decode(OctetInputStream stream) {
+    public static V5gTmsi decode(OctetInputStream stream) {
         Octet octet3 = stream.readOctet();
         Octet octet2 = stream.readOctet();
         Octet octet1 = stream.readOctet();

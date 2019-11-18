@@ -25,7 +25,7 @@ public class IE5gsTrackingAreaIdentity extends InformationElement3 {
         // but currently an exception is thrown if some invalid character found.
         //
         // See 3GPP 24.501 f20, Table 9.11.3.8.1: 5GS tracking area identity information element
-        mccmnc = NasDecoder.nasValue(stream, VMccMnc.class);
+        mccmnc = VMccMnc.decode(stream);
 
         res.mcc = mccmnc.mcc;
         res.mnc = mccmnc.mnc;

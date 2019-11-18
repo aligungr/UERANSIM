@@ -18,8 +18,7 @@ public class VHomeNetworkPki extends NasValue {
         return value.toString();
     }
 
-    @Override
-    public VHomeNetworkPki decode(OctetInputStream stream) {
+    public static VHomeNetworkPki decode(OctetInputStream stream) {
         var res = new VHomeNetworkPki();
         res.value = stream.readOctet();
         return res;

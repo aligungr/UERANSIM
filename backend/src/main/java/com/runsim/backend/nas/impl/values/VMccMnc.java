@@ -14,8 +14,7 @@ public class VMccMnc extends NasValue {
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
 
-    @Override
-    public NasValue decode(OctetInputStream stream) {
+    public static VMccMnc decode(OctetInputStream stream) {
         var res = new VMccMnc();
 
         /* Decode MCC */

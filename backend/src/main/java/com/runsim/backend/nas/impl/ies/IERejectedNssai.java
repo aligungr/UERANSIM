@@ -28,7 +28,7 @@ public class IERejectedNssai extends InformationElement4 {
         res.rejectedSNSSAs = new VRejectedSNssa[arrLength];
 
         for (int i = 0; i < arrLength; i++) {
-            res.rejectedSNSSAs[i] = NasDecoder.nasValue(stream, VRejectedSNssa.class);
+            res.rejectedSNSSAs[i] = VRejectedSNssa.decode(stream);
         }
 
         return res;

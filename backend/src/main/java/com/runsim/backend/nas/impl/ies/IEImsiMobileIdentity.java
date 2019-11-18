@@ -24,7 +24,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         var result = new IEImsiMobileIdentity();
 
         /* Decode MCC */
-        var mccmnc = NasDecoder.nasValue(stream, VMccMnc.class);
+        var mccmnc = VMccMnc.decode(stream);
         result.mcc = mccmnc.mcc;
         result.mnc = mccmnc.mnc;
 
@@ -37,7 +37,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         result.protectionSchemaId = EProtectionSchemeIdentifier.fromValue(stream.readOctetI() & 0b1111);
 
         /* Decode home network public key identifier */
-        result.homeNetworkPublicKeyIdentifier = NasDecoder.nasValue(stream, VHomeNetworkPki.class);
+        result.homeNetworkPublicKeyIdentifier = VHomeNetworkPki.decode(stream);
 
         /* Decode schema output */
         String schemaOutput;

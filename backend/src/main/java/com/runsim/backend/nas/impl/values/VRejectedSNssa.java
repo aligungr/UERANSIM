@@ -7,8 +7,7 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 public class VRejectedSNssa extends NasValue {
 
-    @Override
-    public VRejectedSNssa decode(OctetInputStream stream) {
+    public static VRejectedSNssa decode(OctetInputStream stream) {
         throw new NotImplementedException("");
     }
 

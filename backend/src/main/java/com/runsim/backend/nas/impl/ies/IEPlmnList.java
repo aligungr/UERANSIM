@@ -24,7 +24,7 @@ public class IEPlmnList extends InformationElement4 {
         res.plmns = new VMccMnc[arrLength];
 
         for (int i = 0; i < arrLength; i++) {
-            res.plmns[i] = NasDecoder.nasValue(stream, VMccMnc.class);
+            res.plmns[i] = VMccMnc.decode(stream);
         }
 
         return res;

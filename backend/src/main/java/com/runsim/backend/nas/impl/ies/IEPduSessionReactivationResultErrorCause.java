@@ -20,7 +20,7 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
 
         var values = new VPduSessionReactivationResultErrorCause[length / 2];
         for (int i = 0; i < values.length; i++) {
-            values[i] = NasDecoder.nasValue(stream, VPduSessionReactivationResultErrorCause.class);
+            values[i] = VPduSessionReactivationResultErrorCause.decode(stream);
         }
 
         res.values = values;

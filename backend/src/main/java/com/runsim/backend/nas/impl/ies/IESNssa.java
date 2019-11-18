@@ -22,22 +22,22 @@ public class IESNssa extends InformationElement4 {
 
         switch (length) {
             case 0b00000001: // SST
-                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
+                res.sst = VSliceServiceType.decode(stream);
                 break;
             case 0b00000010: // SST and mapped HPLMN SST
-                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
+                res.sst = VSliceServiceType.decode(stream);
                 throw new NotImplementedException("HPLMN SST not implemented yet");
             case 0b00000100: // SST and SD
-                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
-                res.sd = NasDecoder.nasValue(stream, VSliceDifferentiator.class);
+                res.sst = VSliceServiceType.decode(stream);
+                res.sd = VSliceDifferentiator.decode(stream);
                 break;
             case 0b00000101: // SST, SD and mapped HPLMN SST
-                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
-                res.sd = NasDecoder.nasValue(stream, VSliceDifferentiator.class);
+                res.sst = VSliceServiceType.decode(stream);
+                res.sd = VSliceDifferentiator.decode(stream);
                 throw new NotImplementedException("HPLMN SST not implemented yet");
             case 0b00001000: // SST, SD, mapped HPLMN SST and mapped HPLMN SD
-                res.sst = NasDecoder.nasValue(stream, VSliceServiceType.class);
-                res.sd = NasDecoder.nasValue(stream, VSliceDifferentiator.class);
+                res.sst = VSliceServiceType.decode(stream);
+                res.sd = VSliceDifferentiator.decode(stream);
                 throw new NotImplementedException("HPLMN SST and HPLMN SD not implemented yet");
             default: // All other values are reserved
                 throw new InvalidValueException("reserved value used");

@@ -10,8 +10,7 @@ public class VPduSessionReactivationResultErrorCause extends NasValue {
     public Octet pduSessionId;
     public Octet causeValue;
 
-    @Override
-    public VPduSessionReactivationResultErrorCause decode(OctetInputStream stream) {
+    public static VPduSessionReactivationResultErrorCause decode(OctetInputStream stream) {
         var res = new VPduSessionReactivationResultErrorCause();
         res.pduSessionId = stream.readOctet();
         res.causeValue = stream.readOctet();
