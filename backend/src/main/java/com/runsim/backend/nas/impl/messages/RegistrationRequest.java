@@ -28,6 +28,7 @@ public class RegistrationRequest extends PlainNasMessage {
     public IES1UeNetworkCapability s1UeNetworkCapability;
     public IEPduSessionStatus pduSessionStatus;
     public IEPayloadContainer payloadContainer;
+    public IELadnIndication ladnIndication;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -53,7 +54,7 @@ public class RegistrationRequest extends PlainNasMessage {
         builder.optionalIE(0x18, "uesUsageSetting");
         builder.optionalIE(0x51, "requestedDrxParameters");
         builder.optionalIE(0x70, "epsNasMessageContainer");
-        //builder.optionalIE(0x7E, null); // TODO: Not implemented yet.
+        builder.optionalIE(0x7E, "ladnIndication");
         builder.optionalIE(0x7B, "payloadContainer");
         builder.optionalIE(0x53, "updateType");
         builder.optionalIE(0x71, "nasMessageContainer");
