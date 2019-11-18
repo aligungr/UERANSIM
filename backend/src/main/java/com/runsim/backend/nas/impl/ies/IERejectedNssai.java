@@ -1,34 +1,31 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.DecodingException;
-import com.runsim.backend.nas.NasDecoder;
-import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.values.VRejectedSNssa;
+import com.runsim.backend.nas.impl.values.VEmergencyNumberInformation;
+import com.runsim.backend.nas.impl.values.VRejectedSNssai;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class IERejectedNssai extends InformationElement4 {
-
-    public VRejectedSNssa[] rejectedSNSSAs;
+    public List<VRejectedSNssai> rejectedSNssaiList;
 
     @Override
     protected IERejectedNssai decodeIE4(OctetInputStream stream, int length) {
-        if (length % 5 != 0)
-            throw new DecodingException("cannot decode Rejected NSSAI, length mod 5 != 0");
-
-        // The number of rejected S-NSSAI(s) cannot exceed eight. (24.501 f20, 9.11.3.46)
-        if (length > 8 * 5)
-            length = 8 * 5;
-
-        int arrLength = length / 5;
-
         var res = new IERejectedNssai();
-        res.rejectedSNSSAs = new VRejectedSNssa[arrLength];
+        res.rejectedSNssaiList = new ArrayList<>();
 
-        for (int i = 0; i < arrLength; i++) {
-            res.rejectedSNSSAs[i] = VRejectedSNssa.decode(stream);
+        int startIndex = stream.currentIndex();
+        while (stream.currentIndex() - startIndex < length) {
+            res.rejectedSNssaiList.add(VRejectedSNssai.decode(stream));
+        }
+
+        if (stream.currentIndex() - startIndex > length) {
+            throw new DecodingException("ie length exceeds the given length");
         }
 
         return res;
@@ -36,11 +33,8 @@ public class IERejectedNssai extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        // The number of rejected S-NSSAI(s) cannot exceed eight. (24.501 f20, 9.11.3.46)
-        int arrLength = Math.min(rejectedSNSSAs.length, 8);
-
-        for (int i = 0; i < arrLength; i++) {
-            rejectedSNSSAs[i].encode(stream);
+        for (var rejectedSNssai : rejectedSNssaiList) {
+            rejectedSNssai.encode(stream);
         }
     }
 }
