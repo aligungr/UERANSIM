@@ -20,7 +20,7 @@ public class IEEmergencyNumberList extends InformationElement4 {
 
         int startIndex = stream.currentIndex();
         while (stream.currentIndex() - startIndex < length) {
-            emergencyNumberInformations.add(VEmergencyNumberInformation.decode(stream));
+            res.emergencyNumberInformations.add(VEmergencyNumberInformation.decode(stream));
         }
 
         if (stream.currentIndex() - startIndex > length) {

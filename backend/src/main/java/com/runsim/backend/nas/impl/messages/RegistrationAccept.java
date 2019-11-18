@@ -28,6 +28,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IE5gsTrackingAreaIdentityList taiList;
     public IEServiceAreaList serviceAreaList;
     public IEEmergencyNumberList emergencyNumberList;
+    public IEOperatorDefinedAccessCategoryDefinitions operatorDefinedAccessCategoryDefinitions;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -56,7 +57,7 @@ public class RegistrationAccept extends PlainNasMessage {
         //builder.optionalIE(0x7A, null); // todo: not implemented yet
         //builder.optionalIE(0x73, null); // todo: not implemented yet
         builder.optionalIE(0x78, "eapMessage");
-        //builder.optionalIE(0x76, null); // todo: not implemented yet
+        builder.optionalIE(0x76, "operatorDefinedAccessCategoryDefinitions");
         builder.optionalIE(0x51, "negotiatedDrxParameters");
     }
 }

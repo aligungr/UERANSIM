@@ -5,7 +5,7 @@ import com.runsim.backend.utils.Utils;
 import java.lang.reflect.Modifier;
 
 public class ProtocolEnum extends ProtocolValue {
-    public final int value;
+    public final int value; // TODO: make this private and ann method intValue();
     public final String name;
 
     protected ProtocolEnum(int value, String name) {
