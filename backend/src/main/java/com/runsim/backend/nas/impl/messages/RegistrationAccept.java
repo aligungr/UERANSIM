@@ -25,6 +25,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEGprsTimer2 t3502Value;
     public IEGprsTimer2 non3gppDeRegistrationTimerValue;
     public IE5gsDrxParameters negotiatedDrxParameters;
+    public IE5gsTrackingAreaIdentityList taiList;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -36,7 +37,7 @@ public class RegistrationAccept extends PlainNasMessage {
 
         builder.optionalIE(0x77, "mobileIdentity");
         builder.optionalIE(0x4A, "equivalentPLMNs");
-        //builder.optionalIE(0x54, null); // todo: not implemented yet
+        builder.optionalIE(0x54, "taiList");
         builder.optionalIE(0x15, "allowedNSSAI");
         builder.optionalIE(0x11, "rejectedNSSAI");
         builder.optionalIE(0x31, "configuredNSSAI");
