@@ -50,20 +50,19 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
         var mccmnc = new VMccMnc();
         mccmnc.mcc = mcc;
         mccmnc.mnc = mnc;
-        NasEncoder.nasValue(stream, mccmnc);
+        mccmnc.encode(stream);
 
         /* Encode region id */
         stream.writeOctet(amfRegionId);
 
         /* Encode AMF set id and AMF pointer */
         var str = new OctetOutputStream();
-        NasEncoder.nasValue(str, amfSetId);
+        amfSetId.encode(str);
         var bytes = str.toOctetArray();
         bytes[1] = new Octet((bytes[1].intValue() << 6) | amfPointer.intValue());
         stream.writeOctets(bytes);
 
         /* Encode TMSI */
-        NasEncoder.nasValue(stream, tmsi);
+        tmsi.encode(stream);
     }
-
 }

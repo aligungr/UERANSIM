@@ -40,7 +40,7 @@ public class IERejectedNssai extends InformationElement4 {
         int arrLength = Math.min(rejectedSNSSAs.length, 8);
 
         for (int i = 0; i < arrLength; i++) {
-            NasEncoder.nasValue(stream, rejectedSNSSAs[i]);
+            rejectedSNSSAs[i].encode(stream);
         }
     }
 }

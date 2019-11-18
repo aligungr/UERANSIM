@@ -92,13 +92,6 @@ public class NasEncoder {
     }
 
     /**
-     * Encodes value to given stream
-     */
-    public static void nasValue(OctetOutputStream stream, NasValue value) {
-        value.encode(stream);
-    }
-
-    /**
      * Encodes BCD (binary coded decimal) value.
      * This method is not battle tested, and may contain errors.
      *

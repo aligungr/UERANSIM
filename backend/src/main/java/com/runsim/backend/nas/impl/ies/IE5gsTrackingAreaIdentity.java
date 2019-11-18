@@ -38,7 +38,7 @@ public class IE5gsTrackingAreaIdentity extends InformationElement3 {
         var mccmnc = new VMccMnc();
         mccmnc.mcc = mcc;
         mccmnc.mnc = mnc;
-        NasEncoder.nasValue(stream, mccmnc);
+        mccmnc.encode(stream);
         stream.writeOctet3(trackingAreaCode);
     }
 }

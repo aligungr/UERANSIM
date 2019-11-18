@@ -30,7 +30,7 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
     @Override
     public void encodeIE6(OctetOutputStream stream) {
         for (var item : values) {
-            NasEncoder.nasValue(stream, item);
+            item.encode(stream);
         }
     }
 }

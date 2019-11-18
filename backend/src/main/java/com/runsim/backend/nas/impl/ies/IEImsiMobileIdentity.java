@@ -59,7 +59,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         var mccmnc = new VMccMnc();
         mccmnc.mcc = mcc;
         mccmnc.mnc = mnc;
-        NasEncoder.nasValue(stream, mccmnc);
+        mccmnc.encode(stream);
 
         /* Encode others */
         NasEncoder.bcdString(stream, routingIndicator, 2, false, null);

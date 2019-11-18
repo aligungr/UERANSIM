@@ -35,7 +35,7 @@ public class IEPlmnList extends InformationElement4 {
         if (plmns == null)
             return;
         for (var mccmnc : plmns) {
-            NasEncoder.nasValue(stream, mccmnc);
+            mccmnc.encode(stream);
         }
     }
 }

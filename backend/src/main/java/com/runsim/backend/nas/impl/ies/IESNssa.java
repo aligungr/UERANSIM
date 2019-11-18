@@ -53,10 +53,10 @@ public class IESNssa extends InformationElement4 {
         if (sst == null) {
             throw new EncodingException("sst cannot be null");
         }
-        NasEncoder.nasValue(stream, sst);
+        sst.encode(stream);
 
         if (sd != null) {
-            NasEncoder.nasValue(stream, sd);
+            sd.encode(stream);
         }
     }
 }
