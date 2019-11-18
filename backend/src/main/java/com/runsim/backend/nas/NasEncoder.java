@@ -95,6 +95,7 @@ public class NasEncoder {
      * Encodes BCD (binary coded decimal) value.
      * This method is not battle tested, and may contain errors.
      *
+     * @param stream the relevant stream
      * @param octetLength maximum octet length when encoding BCD string to octet string,
      *                    or pass <code>-1</code> to perform minimum number of octets
      * @param skipFirst true if the first half octet should be skipped.

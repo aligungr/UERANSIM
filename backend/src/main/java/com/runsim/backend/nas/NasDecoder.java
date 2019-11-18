@@ -2,14 +2,18 @@ package com.runsim.backend.nas;
 
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ies.InformationElement;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.eap.EAP;
-import com.runsim.backend.nas.impl.enums.*;
-import com.runsim.backend.nas.impl.ies.*;
+import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
+import com.runsim.backend.nas.impl.enums.EMessageType;
+import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
+import com.runsim.backend.nas.impl.enums.ESupiFormat;
+import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
+import com.runsim.backend.nas.impl.ies.IENsaMobileIdentity;
+import com.runsim.backend.nas.impl.ies.IESuciMobileIdentity;
 import com.runsim.backend.nas.impl.messages.*;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.Bit4;
@@ -99,6 +103,11 @@ public class NasDecoder {
         }
     }
 
+    /**
+     * ....
+     *
+     * @param length length is the octet length
+     */
     public static String bcdString(OctetInputStream stream, int length, boolean skipFirst) {
         if (length == 0)
             return "";

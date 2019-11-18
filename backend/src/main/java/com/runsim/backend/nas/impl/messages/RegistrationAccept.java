@@ -27,6 +27,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IE5gsDrxParameters negotiatedDrxParameters;
     public IE5gsTrackingAreaIdentityList taiList;
     public IEServiceAreaList serviceAreaList;
+    public IEEmergencyNumberList emergencyNumberList;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -51,7 +52,7 @@ public class RegistrationAccept extends PlainNasMessage {
         builder.optionalIE(0x5E, "t3512Value");
         builder.optionalIE(0x5D, "non3gppDeRegistrationTimerValue");
         builder.optionalIE(0x16, "t3502Value");
-        //builder.optionalIE(0x34, null); // todo: not implemented yet
+        builder.optionalIE(0x34, "emergencyNumberList");
         //builder.optionalIE(0x7A, null); // todo: not implemented yet
         //builder.optionalIE(0x73, null); // todo: not implemented yet
         builder.optionalIE(0x78, "eapMessage");
