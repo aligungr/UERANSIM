@@ -14,6 +14,8 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IESNssa extends InformationElement4 {
     public VSliceServiceType sst;
     public VSliceDifferentiator sd;
+    public VSliceServiceType mappedHplmnSst;
+    public VSliceDifferentiator mappedHplmnSd;
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
@@ -25,7 +27,8 @@ public class IESNssa extends InformationElement4 {
                 break;
             case 0b00000010: // SST and mapped HPLMN SST
                 res.sst = VSliceServiceType.decode(stream);
-                throw new NotImplementedException("HPLMN SST not implemented yet");
+                res.mappedHplmnSst = VSliceServiceType.decode(stream);
+                break;
             case 0b00000100: // SST and SD
                 res.sst = VSliceServiceType.decode(stream);
                 res.sd = VSliceDifferentiator.decode(stream);
@@ -33,11 +36,14 @@ public class IESNssa extends InformationElement4 {
             case 0b00000101: // SST, SD and mapped HPLMN SST
                 res.sst = VSliceServiceType.decode(stream);
                 res.sd = VSliceDifferentiator.decode(stream);
-                throw new NotImplementedException("HPLMN SST not implemented yet");
+                res.mappedHplmnSst = VSliceServiceType.decode(stream);
+                break;
             case 0b00001000: // SST, SD, mapped HPLMN SST and mapped HPLMN SD
                 res.sst = VSliceServiceType.decode(stream);
                 res.sd = VSliceDifferentiator.decode(stream);
-                throw new NotImplementedException("HPLMN SST and HPLMN SD not implemented yet");
+                res.mappedHplmnSst = VSliceServiceType.decode(stream);
+                res.mappedHplmnSd = VSliceDifferentiator.decode(stream);
+                break;
             default: // All other values are reserved
                 throw new InvalidValueException("reserved value used");
         }
@@ -54,8 +60,8 @@ public class IESNssa extends InformationElement4 {
         }
         sst.encode(stream);
 
-        if (sd != null) {
-            sd.encode(stream);
-        }
+        if (sd != null) sd.encode(stream);
+        if (mappedHplmnSst != null) mappedHplmnSst.encode(stream);
+        if (mappedHplmnSd != null) mappedHplmnSd.encode(stream);
     }
 }
