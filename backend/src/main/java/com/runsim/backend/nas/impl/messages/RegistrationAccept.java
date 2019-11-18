@@ -26,6 +26,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEGprsTimer2 non3gppDeRegistrationTimerValue;
     public IE5gsDrxParameters negotiatedDrxParameters;
     public IE5gsTrackingAreaIdentityList taiList;
+    public IEServiceAreaList serviceAreaList;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -46,7 +47,7 @@ public class RegistrationAccept extends PlainNasMessage {
         builder.optionalIE(0x26, "pduSessionReactivationResult");
         builder.optionalIE(0x72, "pduSessionReactivationResultErrorCause");
         //builder.optionalIE(0x79, null); // todo: not implemented yet
-        //builder.optionalIE(0x27, null); // todo: not implemented yet
+        builder.optionalIE(0x27, "serviceAreaList");
         builder.optionalIE(0x5E, "t3512Value");
         builder.optionalIE(0x5D, "non3gppDeRegistrationTimerValue");
         builder.optionalIE(0x16, "t3502Value");

@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 
 public class VPduSessionReactivationResultErrorCause extends NasValue {
-
     public Octet pduSessionId;
     public Octet causeValue;
 

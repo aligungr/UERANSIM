@@ -8,7 +8,7 @@ public abstract class VPartialTrackingAreaIdentityList extends NasValue {
 
     public static VPartialTrackingAreaIdentityList decode(OctetInputStream stream) {
         var octet = stream.readOctet();
-        int numberOfElements = octet.getBitRangeI(0, 4);
+        int numberOfElements = octet.getBitRangeI(0, 4) + 1; // WARNING: plus 1 is required
         int typeOfList = octet.getBitRangeI(5, 6);
 
         switch (typeOfList) {
