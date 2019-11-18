@@ -9,10 +9,14 @@ public class OctetN {
 
     public OctetN(long longValue, int octetCount) {
         // maximum 7 octet, since implementation uses int64.
-        if (octetCount < 0 || octetCount > 30)
+        if (octetCount < 0 || octetCount > 7)
             throw new IllegalArgumentException("invalid octet count");
         if (longValue < 0)
             throw new IllegalArgumentException("negative value");
+
+        long octetMaximum = (1L << (octetCount * 8)) - 1;
+        if (longValue > octetMaximum)
+            throw new IllegalArgumentException("longValue exceeds the octetMaximum");
 
         this._longValue = longValue & ((1L << (8 * octetCount)) - 1);
         this._octetCount = (byte) octetCount;
