@@ -7,7 +7,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetN;
 
 public class IE5gsNetworkFeatureSupport extends InformationElement4 {
-
     public EImsVoPs3gpp imsVoPs3gpp;
     public EImsVoPsN3gpp imsVoPsN3gpp;
     public EEmergencyServiceSupport3gppIndicator emc;

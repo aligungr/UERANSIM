@@ -8,7 +8,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IE5gMmCapability extends InformationElement4 {
-
     public EEpcNasSupported s1Mode;
     public EHandoverAttachSupported hoAttach;
     public ELtePositioningProtocolCapability lpp;

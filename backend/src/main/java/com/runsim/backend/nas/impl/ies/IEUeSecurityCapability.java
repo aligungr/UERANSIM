@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
 
 public class IEUeSecurityCapability extends InformationElement4 {
-
     // 3GPP 24.501 f20:
     // "For the UE all bits in octets 7 to 10 are spare and shall be ignored, if the respective octet is received with the information element."
     // Hence, octet7-octet10 are ignored because it is meaningless for UE (but meaningful for AMF)

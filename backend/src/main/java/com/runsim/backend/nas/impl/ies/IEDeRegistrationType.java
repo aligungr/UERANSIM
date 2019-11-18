@@ -7,7 +7,6 @@ import com.runsim.backend.nas.impl.enums.ESwitchOff;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IEDeRegistrationType extends InformationElement1 {
-
     public EDeRegistrationAccessType accessType;
     public EReRegistrationRequired reRegistrationRequired;
     public ESwitchOff switchOff;

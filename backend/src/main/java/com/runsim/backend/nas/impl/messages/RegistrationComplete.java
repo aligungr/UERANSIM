@@ -4,7 +4,6 @@ import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IESorTransparentContainer;
 
 public class RegistrationComplete extends PlainNasMessage {
-
     public IESorTransparentContainer sorTransparentContainer;
 
     @Override

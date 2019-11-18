@@ -12,7 +12,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IESNssa extends InformationElement4 {
-
     public VSliceServiceType sst;
     public VSliceDifferentiator sd;
 

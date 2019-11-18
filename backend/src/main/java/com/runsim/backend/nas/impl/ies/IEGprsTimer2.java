@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 
 public class IEGprsTimer2 extends InformationElement4 {
-
     public Octet value;
 
     @Override

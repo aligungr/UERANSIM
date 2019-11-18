@@ -8,7 +8,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEEapMessage extends InformationElement6 {
-
     public EAP eap;
 
     @Override

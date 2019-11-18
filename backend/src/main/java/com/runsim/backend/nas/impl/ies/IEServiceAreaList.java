@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IEServiceAreaList extends InformationElement4 {
-
     public List<VServiceAreaList> partialServiceAreaLists;
 
     @Override

@@ -9,7 +9,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEPduSessionReactivationResultErrorCause extends InformationElement6 {
-
     public VPduSessionReactivationResultErrorCause[] values;
 
     @Override

@@ -7,7 +7,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit5;
 
 public class IEGprsTimer3 extends InformationElement4 {
-
     public Bit5 timerValue;
     public EGprsTimerValueUnit unit;
 

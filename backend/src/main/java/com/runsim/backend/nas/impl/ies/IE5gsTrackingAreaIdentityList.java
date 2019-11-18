@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
-
     public List<VPartialTrackingAreaIdentityList> partialTrackingAreaIdentityLists;
 
     @Override

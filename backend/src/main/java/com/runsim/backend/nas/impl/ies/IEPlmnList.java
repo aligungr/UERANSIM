@@ -9,7 +9,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEPlmnList extends InformationElement4 {
-
     // Minimum 1, maximum 15
     public VMccMnc[] plmns;
 

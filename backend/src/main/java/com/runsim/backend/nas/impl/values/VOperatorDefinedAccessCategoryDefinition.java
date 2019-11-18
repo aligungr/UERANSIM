@@ -8,7 +8,6 @@ import com.runsim.backend.utils.bits.Bit5;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class VOperatorDefinedAccessCategoryDefinition extends NasValue {
-
     public int precedence;
     public Bit5 operatorDefinedAccessCategoryNumber;
     public EPresenceOfStandardizedAccessCategory psac;

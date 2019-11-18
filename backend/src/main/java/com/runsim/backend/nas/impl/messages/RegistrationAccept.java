@@ -4,7 +4,6 @@ import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.*;
 
 public class RegistrationAccept extends PlainNasMessage {
-
     public IE5gsRegistrationResult registrationResult;
 
     public IENetworkSlicingIndication networkSlicingIndication;

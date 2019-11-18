@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEExtendedEmergencyNumberList extends InformationElement6 {
-
     @Override
     protected InformationElement6 decodeIE6(OctetInputStream stream, int length) {
         throw new NotImplementedException("");

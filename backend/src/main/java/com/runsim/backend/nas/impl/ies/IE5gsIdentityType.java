@@ -5,7 +5,6 @@ import com.runsim.backend.nas.impl.enums.EIdentityType;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IE5gsIdentityType extends InformationElement1 {
-
     public EIdentityType value;
 
     @Override

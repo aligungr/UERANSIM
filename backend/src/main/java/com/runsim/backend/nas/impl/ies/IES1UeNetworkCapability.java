@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
 
 public class IES1UeNetworkCapability extends InformationElement4 {
-
     public static final String NAME_EEA7 = "EEA7";
     public static final String NAME_EEA6 = "EEA6";
     public static final String NAME_EEA5 = "EEA5";

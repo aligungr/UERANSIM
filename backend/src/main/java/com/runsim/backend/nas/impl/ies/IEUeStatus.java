@@ -7,7 +7,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEUeStatus extends InformationElement4 {
-
     public EEmmRegistrationStatus s1ModeReg;
     public E5gMmRegistrationStatus n1ModeReg;
 

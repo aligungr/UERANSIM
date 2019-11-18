@@ -11,7 +11,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import java.util.ArrayList;
 
 public class IENssai extends InformationElement4 {
-
     public IESNssa[] sNssas;
 
     @Override

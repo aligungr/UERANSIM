@@ -1,7 +1,5 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.nas.NasDecoder;
-import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
 import com.runsim.backend.nas.impl.values.V5gTmsi;
@@ -13,7 +11,6 @@ import com.runsim.backend.utils.bits.Bit6;
 import com.runsim.backend.utils.octets.Octet;
 
 public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
-
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
     public Octet amfRegionId;

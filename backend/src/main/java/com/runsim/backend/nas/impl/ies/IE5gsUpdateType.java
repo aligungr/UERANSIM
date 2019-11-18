@@ -8,7 +8,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetN;
 
 public class IE5gsUpdateType extends InformationElement4 {
-
     public ESmsRequested smsRequested;
     public ENgRanRadioCapabilityUpdate ngRanRcu;
 

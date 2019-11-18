@@ -6,7 +6,6 @@ import com.runsim.backend.nas.impl.ies.IEEapMessage;
 import com.runsim.backend.nas.impl.ies.IEGprsTimer2;
 
 public class RegistrationReject extends PlainNasMessage {
-
     public IE5gMmCause mmCause;
     public IEGprsTimer2 t3346value;
     public IEGprsTimer2 t3502value;

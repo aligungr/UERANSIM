@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IE5gMmCause extends InformationElement3 {
-
     public EMmCause value;
 
     @Override

@@ -5,6 +5,7 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IENsaMobileIdentity extends IESuciMobileIdentity {
+
     @Override
     public IENsaMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");

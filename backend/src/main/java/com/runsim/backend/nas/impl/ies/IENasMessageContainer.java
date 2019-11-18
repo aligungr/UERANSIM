@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class IENasMessageContainer extends InformationElement6 {
-
     public OctetString value;
 
     @Override

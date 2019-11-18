@@ -4,7 +4,6 @@ import com.runsim.backend.nas.core.messages.PlainNasMessage;
 import com.runsim.backend.nas.impl.ies.IEEapMessage;
 
 public class AuthenticationReject extends PlainNasMessage {
-
     public IEEapMessage eapMessage;
 
     @Override

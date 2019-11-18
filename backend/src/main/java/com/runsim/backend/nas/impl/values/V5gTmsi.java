@@ -7,7 +7,6 @@ import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet4;
 
 public class V5gTmsi extends NasValue {
-
     public Octet4 value;
 
     public static V5gTmsi decode(OctetInputStream stream) {

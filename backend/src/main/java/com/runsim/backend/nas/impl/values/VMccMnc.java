@@ -10,7 +10,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class VMccMnc extends NasValue {
-
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
 

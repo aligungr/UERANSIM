@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IEEmergencyNumberList extends InformationElement4 {
-
     public List<VEmergencyNumberInformation> emergencyNumberInformations;
 
     @Override

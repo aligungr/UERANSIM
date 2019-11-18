@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IE5gsDrxParameters extends InformationElement4 {
-
     public EDrxValue drxValue;
 
     @Override

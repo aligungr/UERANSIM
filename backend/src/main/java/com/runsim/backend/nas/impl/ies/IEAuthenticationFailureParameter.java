@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class IEAuthenticationFailureParameter extends InformationElement4 {
-
     public OctetString rawData;
 
     @Override

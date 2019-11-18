@@ -5,7 +5,6 @@ import com.runsim.backend.nas.impl.enums.ERegistrationAreaAllocationIndication;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IEMicoIndication extends InformationElement1 {
-
     public ERegistrationAreaAllocationIndication raai;
 
     @Override

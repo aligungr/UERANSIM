@@ -5,7 +5,6 @@ import com.runsim.backend.nas.impl.ies.IE5gMmCause;
 import com.runsim.backend.nas.impl.ies.IEAuthenticationFailureParameter;
 
 public class AuthenticationFailure extends PlainNasMessage {
-
     public IE5gMmCause mmCause;
     public IEAuthenticationFailureParameter authenticationFailureParameter;
 

@@ -1,7 +1,5 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.nas.NasDecoder;
-import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.ies.InformationElement3;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
@@ -11,7 +9,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet3;
 
 public class IE5gsTrackingAreaIdentity extends InformationElement3 {
-
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
     public Octet3 trackingAreaCode;

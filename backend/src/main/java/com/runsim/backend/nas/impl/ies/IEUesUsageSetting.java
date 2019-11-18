@@ -6,7 +6,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEUesUsageSetting extends InformationElement4 {
-
     public EUesUsageSetting uesUsageSetting;
 
     @Override
