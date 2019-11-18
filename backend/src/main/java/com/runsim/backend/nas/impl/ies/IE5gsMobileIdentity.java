@@ -1,6 +1,6 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.exceptions.NotImplementedException;
+import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
@@ -14,16 +14,22 @@ public class IE5gsMobileIdentity extends InformationElement6 {
         int flags = stream.peekOctetI();
 
         var typeOfIdentity = EIdentityType.fromValue(flags & 0b111);
-        int isEven = (flags >> 3) & 0b1;
+        boolean isEven = ((flags >> 3) & 0b1) == 0;
 
         if (typeOfIdentity.equals(EIdentityType.SUCI)) {
-            return NasDecoder.suciMobileIdentity(stream, length, isEven == 0);
+            return NasDecoder.suciMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.IMEI)) {
-            return new IEImeiMobileIdentity().decodeMobileIdentity(stream, length, isEven == 0);
+            return new IEImeiMobileIdentity().decodeMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.GUTI)) {
-            return new IE5gGutiMobileIdentity().decodeMobileIdentity(stream, length, isEven == 0);
+            return new IE5gGutiMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+        } else if (typeOfIdentity.equals(EIdentityType.TMSI)) {
+            return new IE5gTmsiMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+        } else if (typeOfIdentity.equals(EIdentityType.IMEISV)) {
+            return new IEImeiSvMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+        } else if (typeOfIdentity.equals(EIdentityType.NO_IDENTITY)) {
+            return new IENoIdentity().decodeMobileIdentity(stream, length, isEven);
         } else {
-            throw new NotImplementedException("type of identity not implemented yet: " + typeOfIdentity.name());
+            throw new InvalidValueException("type of identity is invalid: " + typeOfIdentity.name());
         }
     }
 
