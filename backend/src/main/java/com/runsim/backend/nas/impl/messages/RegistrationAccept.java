@@ -29,6 +29,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEServiceAreaList serviceAreaList;
     public IEEmergencyNumberList emergencyNumberList;
     public IEOperatorDefinedAccessCategoryDefinitions operatorDefinedAccessCategoryDefinitions;
+    public IELadnInformation ladnInformation;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -48,7 +49,7 @@ public class RegistrationAccept extends PlainNasMessage {
         builder.optionalIE(0x50, "pduSessionStatus");
         builder.optionalIE(0x26, "pduSessionReactivationResult");
         builder.optionalIE(0x72, "pduSessionReactivationResultErrorCause");
-        //builder.optionalIE(0x79, null); // todo: not implemented yet
+        builder.optionalIE(0x79, "ladnInformation");
         builder.optionalIE(0x27, "serviceAreaList");
         builder.optionalIE(0x5E, "t3512Value");
         builder.optionalIE(0x5D, "non3gppDeRegistrationTimerValue");

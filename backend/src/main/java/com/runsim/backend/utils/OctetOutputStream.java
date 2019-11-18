@@ -21,6 +21,7 @@ public class OctetOutputStream {
         this.isBigEndian = isBigEndian;
     }
 
+    // TODO: Bunda ve diğerlerinde bound check yapılsın
     public void writeOctet(int octet) {
         writeOctet(new Octet(octet));
     }
