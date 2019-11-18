@@ -30,6 +30,8 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEEmergencyNumberList emergencyNumberList;
     public IEOperatorDefinedAccessCategoryDefinitions operatorDefinedAccessCategoryDefinitions;
     public IELadnInformation ladnInformation;
+    public IESorTransparentContainer sorTransparentContainer;
+    public IEExtendedEmergencyNumberList extendedEmergencyNumberList;
 
     @Override
     public void transcode(ITranscodeBuilder builder) {
@@ -55,8 +57,8 @@ public class RegistrationAccept extends PlainNasMessage {
         builder.optionalIE(0x5D, "non3gppDeRegistrationTimerValue");
         builder.optionalIE(0x16, "t3502Value");
         builder.optionalIE(0x34, "emergencyNumberList");
-        //builder.optionalIE(0x7A, null); // todo: not implemented yet
-        //builder.optionalIE(0x73, null); // todo: not implemented yet
+        builder.optionalIE(0x7A, "extendedEmergencyNumberList");
+        builder.optionalIE(0x73, "sorTransparentContainer");
         builder.optionalIE(0x78, "eapMessage");
         builder.optionalIE(0x76, "operatorDefinedAccessCategoryDefinitions");
         builder.optionalIE(0x51, "negotiatedDrxParameters");
