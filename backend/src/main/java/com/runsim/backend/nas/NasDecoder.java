@@ -92,7 +92,10 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, ServiceReject.class);
         } else if (messageType.equals(EMessageType.SERVICE_ACCEPT)) {
             message = NasDecoder.nasMessage(stream, ServiceAccept.class);
-        } else {
+        } else if (messageType.equals(EMessageType.CONFIGURATION_UPDATE_COMMAND)) {
+            message = NasDecoder.nasMessage(stream, ConfigurationUpdateCommand.class);
+        }
+        else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name());
         }
 
