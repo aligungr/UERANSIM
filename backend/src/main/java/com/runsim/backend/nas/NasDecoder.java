@@ -110,8 +110,10 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, NotificationResponse.class);
         } else if (messageType.equals(EMessageType.UL_NAS_TRANSPORT)) {
             message = NasDecoder.nasMessage(stream, UlNasTransport.class);
+        } else if (messageType.equals(EMessageType.DL_NAS_TRANSPORT)) {
+            message = NasDecoder.nasMessage(stream, DlNasTransport.class);
         } else {
-            throw new NotImplementedException("message type not implemented yet: " + messageType.name());
+            throw new InvalidValueException("message type value is invalid: " + messageType.intValue());
         }
 
         message.messageType = messageType;
