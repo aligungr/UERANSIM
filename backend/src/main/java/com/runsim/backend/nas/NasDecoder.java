@@ -98,6 +98,8 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, ConfigurationUpdateComplete.class);
         } else if (messageType.equals(EMessageType.SECURITY_MODE_COMMAND)) {
             message = NasDecoder.nasMessage(stream, SecurityModeCommand.class);
+        } else if (messageType.equals(EMessageType.SECURITY_MODE_COMPLETE)) {
+            message = NasDecoder.nasMessage(stream, SecurityModeComplete.class);
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name());
         }
