@@ -3,7 +3,6 @@ package com.runsim.backend.nas.impl.enums;
 import com.runsim.backend.nas.core.ProtocolEnum;
 
 public class EMmCause extends ProtocolEnum {
-
     public static final EMmCause ILLEGAL_UE = new EMmCause(0b00000011, "Illegal UE");
     public static final EMmCause PEI_NOT_ACCEPTED = new EMmCause(0b00000101, "PEI not accepted");
     public static final EMmCause ILLEGAL_ME = new EMmCause(0b00000110, "Illegal ME");
