@@ -10,7 +10,10 @@ public class BitN {
     private final byte _bitCount;
 
     /**
+     * Constructs a BitN object with given int value and bit count.
      *
+     * @param intValue is the integer value. This value can be 0 at minimum and (2^[bit count] - 1) at maximum.
+     * @param bitCount is the total number of bits to be used of integer value
      */
     public BitN(int intValue, int bitCount) {
         // maximum 30 bit, since implementation uses int32.
@@ -80,25 +83,42 @@ public class BitN {
         return (int) Math.ceil(bitCount() / 8.0);
     }
 
+    /**
+     * Returns a proper hash code for the object
+     */
     @Override
     public final int hashCode() {
         return _intValue;
     }
 
+    /**
+     * Performs compare operation with given object using {@link Utils#unsignedEqual(Object, Object)}
+     */
     @Override
     public final boolean equals(Object obj) {
         return Utils.unsignedEqual(this, obj);
     }
 
+    /**
+     * Returns string representation of the object
+     */
     @Override
     public String toString() {
         return Integer.toString(_intValue);
     }
 
+    /**
+     * Returns binary string representation of the object, prefixed with "0b"
+     */
     public final String toBinaryString() {
         return "0b" + Utils.padLeft(Integer.toBinaryString(_intValue), _bitCount, '0');
     }
 
+    /**
+     * Converts this object to {@link Octet[]} according to given endianness.
+     *
+     * @param useBigEndian true for bigEndian, false for littleEndian
+     */
     public Octet[] toOctetArray(boolean useBigEndian) {
         var octets = new Octet[octetCount()];
         int intValue = intValue();
@@ -116,21 +136,29 @@ public class BitN {
         return octets;
     }
 
+    /**
+     * Returns the bit at given index as an integer.
+     * index 0 is the least significant and index k is the most significant.
+     */
     public final int getBitI(int index) {
         if (index < 0 || index > 29)
             throw new IllegalArgumentException("invalid index");
-        return (int) ((_intValue >> index) & 0b1);
+        return (_intValue >> index) & 0b1;
     }
 
+    /**
+     * Returns the bit at given index a {@link Bit}.
+     * index 0 is the least significant and index k is the most significant.
+     */
     public final Bit getBit(int index) {
         return new Bit(getBitI(index));
     }
 
+    /**
+     * Returns the bit at given index a boolean.
+     * index 0 is the least significant and index k is the most significant.
+     */
     public final boolean getBitB(int index) {
         return getBitI(index) != 0;
-    }
-
-    public Octet[] toOctetArray() {
-        return toOctetArray(true);
     }
 }
