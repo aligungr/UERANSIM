@@ -20,6 +20,8 @@ public class BitN {
         if (intValue < 0)
             throw new IllegalArgumentException("negative int value");
 
+        // TODO: Add max bound check accourding to bit count
+
         this._intValue = intValue & ((1 << bitCount) - 1);
         this._bitCount = (byte) bitCount;
     }
