@@ -104,6 +104,8 @@ public class NasDecoder {
             message = NasDecoder.nasMessage(stream, SecurityModeReject.class);
         } else if (messageType.equals(EMessageType.FIVEG_MM_STATUS)) {
             message = NasDecoder.nasMessage(stream, FiveGMmStatus.class);
+        } else if (messageType.equals(EMessageType.NOTIFICATION)) {
+            message = NasDecoder.nasMessage(stream, Notification.class);
         } else {
             throw new NotImplementedException("message type not implemented yet: " + messageType.name());
         }
