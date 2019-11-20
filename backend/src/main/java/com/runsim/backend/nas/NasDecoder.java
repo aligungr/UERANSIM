@@ -27,33 +27,34 @@ public class NasDecoder {
         NasMessage nasMessage;
 
         var epd = EExtendedProtocolDiscriminator.fromValue(stream.readOctetI());
-        if (epd == null) throw new InvalidValueException(EExtendedProtocolDiscriminator.class);
+        if (epd == null)
+            throw new InvalidValueException(EExtendedProtocolDiscriminator.class);
 
         if (epd.equals(EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES)) {
             throw new NotImplementedException("session management messages not implemented yet");
         } else {
             var sht = ESecurityHeaderType.fromValue(stream.readOctetI() & 0xF);
-            if (sht == null) throw new InvalidValueException(ESecurityHeaderType.class);
-
-            PlainMmMessage plainMmMessage = decodePlainMmMessage(stream);
-            if (sht.equals(ESecurityHeaderType.NOT_PROTECTED)) {
-                nasMessage = plainMmMessage;
-            } else {
+            if (sht == null)
+                throw new InvalidValueException(ESecurityHeaderType.class);
+            if (!sht.equals(ESecurityHeaderType.NOT_PROTECTED))
                 throw new NotImplementedException("security protected 5GS NAS messages not implemented yet");
-            }
+            var messageType = EMessageType.fromValue(stream.readOctetI());
+            if (messageType == null)
+                throw new InvalidValueException(EMessageType.class);
 
+            PlainMmMessage plainMmMessage = decodePlainMmMessage(stream, messageType);
+            plainMmMessage.messageType = messageType;
             plainMmMessage.securityHeaderType = sht;
+
+            nasMessage = plainMmMessage;
         }
 
         nasMessage.extendedProtocolDiscriminator = epd;
         return nasMessage;
     }
 
-    private static PlainMmMessage decodePlainMmMessage(OctetInputStream stream) {
+    private static PlainMmMessage decodePlainMmMessage(OctetInputStream stream, EMessageType messageType) {
         PlainMmMessage message;
-
-        var messageType = EMessageType.fromValue(stream.readOctetI());
-        if (messageType == null) throw new InvalidValueException(EMessageType.class);
 
         if (messageType.equals(EMessageType.AUTHENTICATION_REQUEST)) {
             message = new AuthenticationRequest();
@@ -116,7 +117,6 @@ public class NasDecoder {
         }
 
         message = message.decodeMessage(stream);
-        message.messageType = messageType;
 
         return message;
     }
