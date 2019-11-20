@@ -17,7 +17,6 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         //compilerOptionsControl();
-        findFlowTypes();
         startServer();
     }
 
@@ -30,12 +29,17 @@ public class App {
         }
     }
 
-    private static void findFlowTypes() throws Exception {
+    private static void findFlowTypes() {
         flowTypes = new HashMap<>();
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.FLOWS_PREFIX).scan()) {
             var classInfoList = scanResult.getAllClasses();
             for (var classInfo : classInfoList) {
-                Class clazz = Class.forName(classInfo.getName());
+                Class clazz;
+                try {
+                    clazz = Class.forName(classInfo.getName());
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
                 if (!BaseFlow.class.isAssignableFrom(clazz)) continue;
                 if (Modifier.isAbstract(clazz.getModifiers()) || clazz.isInterface()) continue;
                 flowTypes.put(clazz.getSimpleName(), clazz);
@@ -68,10 +72,16 @@ public class App {
     }
 
     public static Set<String> getFlowNames() {
+        if (flowTypes == null) {
+            findFlowTypes();
+        }
         return flowTypes.keySet();
     }
 
     public static Class<? extends BaseFlow> getFlowType(String flowName) {
+        if (flowTypes == null) {
+            findFlowTypes();
+        }
         return flowTypes.get(flowName);
     }
 }

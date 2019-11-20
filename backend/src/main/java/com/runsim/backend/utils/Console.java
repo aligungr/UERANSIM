@@ -16,6 +16,16 @@ public class Console {
         System.out.println();
     }
 
+    public static void print(Object... objects) {
+        System.out.print(objectsToString(objects));
+    }
+
+    public static void print(Color color, Object... objects) {
+        if (color == null)
+            color = Color.RESET;
+        System.out.print(color + objectsToString(objects) + Color.RESET);
+    }
+
     public static void printDiv() {
         println("-----------------------------------------------------------------------------");
     }
