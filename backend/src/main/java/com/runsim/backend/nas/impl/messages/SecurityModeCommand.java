@@ -1,9 +1,10 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.core.IMessageBuilder;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.impl.ies.*;
 
-public class SecurityModeCommand extends PlainNasMessage {
+public class SecurityModeCommand extends PlainMmMessage {
     public IENasSecurityAlgorithms selectedNasSecurityAlgorithms;
     public IENasKeySetIdentifier ngKsi;
     public IEUeSecurityCapability replayedUeSecurityCapabilities;
@@ -15,8 +16,8 @@ public class SecurityModeCommand extends PlainNasMessage {
     public IES1UeNetworkCapability replayedS1UeNetworkCapability;
 
     @Override
-    public void transcode(ITranscodeBuilder builder) {
-        super.transcode(builder);
+    public void build(IMessageBuilder builder) {
+        super.build(builder);
 
         builder.mandatoryIE("selectedNasSecurityAlgorithms");
         builder.mandatoryIE1("ngKsi");

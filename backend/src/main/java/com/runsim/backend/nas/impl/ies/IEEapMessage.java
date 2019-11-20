@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.EapEncoder;
-import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.utils.OctetInputStream;
@@ -13,7 +13,7 @@ public class IEEapMessage extends InformationElement6 {
     @Override
     protected IEEapMessage decodeIE6(OctetInputStream stream, int length) {
         var res = new IEEapMessage();
-        res.eap = NasDecoder.eap(stream);
+        res.eap = EapDecoder.eapPdu(stream);
         return res;
     }
 

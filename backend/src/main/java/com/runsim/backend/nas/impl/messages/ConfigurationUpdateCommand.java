@@ -1,9 +1,10 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.core.IMessageBuilder;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.impl.ies.*;
 
-public class ConfigurationUpdateCommand extends PlainNasMessage {
+public class ConfigurationUpdateCommand extends PlainMmMessage {
     public IEConfigurationUpdateIndication configurationUpdateIndication;
     public IE5gsMobileIdentity guti;
     public IE5gsTrackingAreaIdentityList taiList;
@@ -23,8 +24,8 @@ public class ConfigurationUpdateCommand extends PlainNasMessage {
     public IESmsIndication smsIndication;
 
     @Override
-    public void transcode(ITranscodeBuilder builder) {
-        super.transcode(builder);
+    public void build(IMessageBuilder builder) {
+        super.build(builder);
 
         builder.optionalIE1(0xD, "configurationUpdateIndication");
         builder.optionalIE(0x77, "guti");

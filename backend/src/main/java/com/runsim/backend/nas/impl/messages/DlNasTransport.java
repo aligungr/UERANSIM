@@ -1,9 +1,10 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.core.IMessageBuilder;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.impl.ies.*;
 
-public class DlNasTransport extends PlainNasMessage {
+public class DlNasTransport extends PlainMmMessage {
     public IEPayloadContainerType payloadContainerType;
     public IEPayloadContainer payloadContainer;
     public IEPduSessionIdentity2 pduSessionId;
@@ -12,8 +13,8 @@ public class DlNasTransport extends PlainNasMessage {
     public IEGprsTimer3 backOffTimerValue;
 
     @Override
-    public void transcode(ITranscodeBuilder builder) {
-        super.transcode(builder);
+    public void build(IMessageBuilder builder) {
+        super.build(builder);
 
         builder.mandatoryIE1("payloadContainerType");
         builder.mandatoryIE("payloadContainer");

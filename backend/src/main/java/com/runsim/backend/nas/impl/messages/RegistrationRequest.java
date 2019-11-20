@@ -1,9 +1,10 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.core.IMessageBuilder;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.impl.ies.*;
 
-public class RegistrationRequest extends PlainNasMessage {
+public class RegistrationRequest extends PlainMmMessage {
     public IE5gsRegistrationType registrationType;
     public IENasKeySetIdentifier nasKeySetIdentifier;
     public IE5gsMobileIdentity mobileIdentity;
@@ -31,8 +32,8 @@ public class RegistrationRequest extends PlainNasMessage {
     public IELadnIndication ladnIndication;
 
     @Override
-    public void transcode(ITranscodeBuilder builder) {
-        super.transcode(builder);
+    public void build(IMessageBuilder builder) {
+        super.build(builder);
 
         builder.mandatoryIE1("nasKeySetIdentifier", "registrationType");
         builder.mandatoryIE("mobileIdentity");

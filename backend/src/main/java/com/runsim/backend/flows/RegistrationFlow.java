@@ -6,7 +6,7 @@ import com.runsim.backend.NGAP;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.*;
@@ -234,13 +234,13 @@ public class RegistrationFlow extends BaseFlow {
         Console.printDiv();
         Console.println(Color.BLUE, "NAS message is handling.");
 
-        if (!(nasMessage instanceof PlainNasMessage)) {
+        if (!(nasMessage instanceof PlainMmMessage)) {
             Console.println(Color.RED, "Security protected NAS messages are not implemented yet");
             Console.println(Color.RED, "Closing connection");
             return closeConnection();
         }
 
-        var message = (PlainNasMessage) nasMessage;
+        var message = (PlainMmMessage) nasMessage;
 
         Console.println(Color.BLUE, message.messageType.name(), "is detected");
 

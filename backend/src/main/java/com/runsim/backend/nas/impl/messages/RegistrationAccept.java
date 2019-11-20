@@ -1,9 +1,10 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
+import com.runsim.backend.nas.core.IMessageBuilder;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.impl.ies.*;
 
-public class RegistrationAccept extends PlainNasMessage {
+public class RegistrationAccept extends PlainMmMessage {
     public IE5gsRegistrationResult registrationResult;
 
     public IENetworkSlicingIndication networkSlicingIndication;
@@ -33,7 +34,7 @@ public class RegistrationAccept extends PlainNasMessage {
     public IEExtendedEmergencyNumberList extendedEmergencyNumberList;
 
     @Override
-    public void transcode(ITranscodeBuilder builder) {
+    public void build(IMessageBuilder builder) {
         builder.mandatoryIE("registrationResult");
 
         builder.optionalIE1(0x9, "networkSlicingIndication");

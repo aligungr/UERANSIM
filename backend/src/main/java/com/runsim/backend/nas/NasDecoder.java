@@ -5,8 +5,7 @@ import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.ies.InformationElement;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
-import com.runsim.backend.nas.core.messages.PlainNasMessage;
-import com.runsim.backend.nas.eap.EAP;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
@@ -28,105 +27,98 @@ public class NasDecoder {
         NasMessage nasMessage;
 
         var epd = EExtendedProtocolDiscriminator.fromValue(stream.readOctetI());
-        var sht = ESecurityHeaderType.fromValue(stream.readOctetI() & 0xF);
-
         if (epd == null) throw new InvalidValueException(EExtendedProtocolDiscriminator.class);
-        if (sht == null) throw new InvalidValueException(ESecurityHeaderType.class);
 
         if (epd.equals(EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES)) {
             throw new NotImplementedException("session management messages not implemented yet");
         } else {
-            PlainNasMessage plainNasMessage = decodePlainNasMessage(stream);
+            var sht = ESecurityHeaderType.fromValue(stream.readOctetI() & 0xF);
+            if (sht == null) throw new InvalidValueException(ESecurityHeaderType.class);
+
+            PlainMmMessage plainMmMessage = decodePlainMmMessage(stream);
             if (sht.equals(ESecurityHeaderType.NOT_PROTECTED)) {
-                nasMessage = plainNasMessage;
+                nasMessage = plainMmMessage;
             } else {
                 throw new NotImplementedException("security protected 5GS NAS messages not implemented yet");
             }
+
+            plainMmMessage.securityHeaderType = sht;
         }
 
         nasMessage.extendedProtocolDiscriminator = epd;
-        nasMessage.securityHeaderType = sht;
-
         return nasMessage;
     }
 
-    private static PlainNasMessage decodePlainNasMessage(OctetInputStream stream) {
-        PlainNasMessage message;
+    private static PlainMmMessage decodePlainMmMessage(OctetInputStream stream) {
+        PlainMmMessage message;
 
         var messageType = EMessageType.fromValue(stream.readOctetI());
         if (messageType == null) throw new InvalidValueException(EMessageType.class);
 
         if (messageType.equals(EMessageType.AUTHENTICATION_REQUEST)) {
-            message = NasDecoder.nasMessage(stream, AuthenticationRequest.class);
+            message = new AuthenticationRequest();
         } else if (messageType.equals(EMessageType.REGISTRATION_REQUEST)) {
-            message = NasDecoder.nasMessage(stream, RegistrationRequest.class);
+            message = new RegistrationRequest();
         } else if (messageType.equals(EMessageType.AUTHENTICATION_RESPONSE)) {
-            message = NasDecoder.nasMessage(stream, AuthenticationResponse.class);
+            message = new AuthenticationResponse();
         } else if (messageType.equals(EMessageType.IDENTITY_REQUEST)) {
-            message = NasDecoder.nasMessage(stream, IdentityRequest.class);
+            message = new IdentityRequest();
         } else if (messageType.equals(EMessageType.IDENTITY_RESPONSE)) {
-            message = NasDecoder.nasMessage(stream, IdentityResponse.class);
+            message = new IdentityResponse();
         } else if (messageType.equals(EMessageType.REGISTRATION_ACCEPT)) {
-            message = NasDecoder.nasMessage(stream, RegistrationAccept.class);
+            message = new RegistrationAccept();
         } else if (messageType.equals(EMessageType.REGISTRATION_COMPLETE)) {
-            message = NasDecoder.nasMessage(stream, RegistrationComplete.class);
+            message = new RegistrationComplete();
         } else if (messageType.equals(EMessageType.AUTHENTICATION_RESULT)) {
-            message = NasDecoder.nasMessage(stream, AuthenticationResult.class);
+            message = new AuthenticationResult();
         } else if (messageType.equals(EMessageType.REGISTRATION_REJECT)) {
-            message = NasDecoder.nasMessage(stream, RegistrationReject.class);
+            message = new RegistrationReject();
         } else if (messageType.equals(EMessageType.AUTHENTICATION_FAILURE)) {
-            message = NasDecoder.nasMessage(stream, AuthenticationFailure.class);
+            message = new AuthenticationFailure();
         } else if (messageType.equals(EMessageType.AUTHENTICATION_REJECT)) {
-            message = NasDecoder.nasMessage(stream, AuthenticationReject.class);
+            message = new AuthenticationReject();
         } else if (messageType.equals(EMessageType.DEREGISTRATION_ACCEPT_UE_ORIGINATING)) {
-            message = NasDecoder.nasMessage(stream, DeRegistrationAcceptUeOriginating.class);
+            message = new DeRegistrationAcceptUeOriginating();
         } else if (messageType.equals(EMessageType.DEREGISTRATION_ACCEPT_UE_TERMINATED)) {
-            message = NasDecoder.nasMessage(stream, DeRegistrationAcceptUeTerminated.class);
+            message = new DeRegistrationAcceptUeTerminated();
         } else if (messageType.equals(EMessageType.DEREGISTRATION_REQUEST_UE_ORIGINATING)) {
-            message = NasDecoder.nasMessage(stream, DeRegistrationRequestUeOriginating.class);
+            message = new DeRegistrationRequestUeOriginating();
         } else if (messageType.equals(EMessageType.DEREGISTRATION_REQUEST_UE_TERMINATED)) {
-            message = NasDecoder.nasMessage(stream, DeRegistrationRequestUeTerminated.class);
+            message = new DeRegistrationRequestUeTerminated();
         } else if (messageType.equals(EMessageType.SERVICE_REQUEST)) {
-            message = NasDecoder.nasMessage(stream, ServiceRequest.class);
+            message = new ServiceRequest();
         } else if (messageType.equals(EMessageType.SERVICE_REJECT)) {
-            message = NasDecoder.nasMessage(stream, ServiceReject.class);
+            message = new ServiceReject();
         } else if (messageType.equals(EMessageType.SERVICE_ACCEPT)) {
-            message = NasDecoder.nasMessage(stream, ServiceAccept.class);
+            message = new ServiceAccept();
         } else if (messageType.equals(EMessageType.CONFIGURATION_UPDATE_COMMAND)) {
-            message = NasDecoder.nasMessage(stream, ConfigurationUpdateCommand.class);
+            message = new ConfigurationUpdateCommand();
         } else if (messageType.equals(EMessageType.CONFIGURATION_UPDATE_COMPLETE)) {
-            message = NasDecoder.nasMessage(stream, ConfigurationUpdateComplete.class);
+            message = new ConfigurationUpdateComplete();
         } else if (messageType.equals(EMessageType.SECURITY_MODE_COMMAND)) {
-            message = NasDecoder.nasMessage(stream, SecurityModeCommand.class);
+            message = new SecurityModeCommand();
         } else if (messageType.equals(EMessageType.SECURITY_MODE_COMPLETE)) {
-            message = NasDecoder.nasMessage(stream, SecurityModeComplete.class);
+            message = new SecurityModeComplete();
         } else if (messageType.equals(EMessageType.SECURITY_MODE_REJECT)) {
-            message = NasDecoder.nasMessage(stream, SecurityModeReject.class);
+            message = new SecurityModeReject();
         } else if (messageType.equals(EMessageType.FIVEG_MM_STATUS)) {
-            message = NasDecoder.nasMessage(stream, FiveGMmStatus.class);
+            message = new FiveGMmStatus();
         } else if (messageType.equals(EMessageType.NOTIFICATION)) {
-            message = NasDecoder.nasMessage(stream, Notification.class);
+            message = new Notification();
         } else if (messageType.equals(EMessageType.NOTIFICATION_RESPONSE)) {
-            message = NasDecoder.nasMessage(stream, NotificationResponse.class);
+            message = new NotificationResponse();
         } else if (messageType.equals(EMessageType.UL_NAS_TRANSPORT)) {
-            message = NasDecoder.nasMessage(stream, UlNasTransport.class);
+            message = new UlNasTransport();
         } else if (messageType.equals(EMessageType.DL_NAS_TRANSPORT)) {
-            message = NasDecoder.nasMessage(stream, DlNasTransport.class);
+            message = new DlNasTransport();
         } else {
             throw new InvalidValueException("message type value is invalid: " + messageType.intValue());
         }
 
+        message = message.decodeMessage(stream);
         message.messageType = messageType;
-        return message;
-    }
 
-    private static <T extends NasMessage> T nasMessage(OctetInputStream stream, Class<T> clazz) {
-        try {
-            T instance = clazz.getConstructor().newInstance();
-            return (T) instance.decodeMessage(stream);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return message;
     }
 
     /**
@@ -176,11 +168,6 @@ public class NasDecoder {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static EAP eap(OctetInputStream stream) {
-        //var length = stream.readOctet2();
-        return EapDecoder.eapPdu(stream);
     }
 
     public static IESuciMobileIdentity suciMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
