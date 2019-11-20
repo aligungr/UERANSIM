@@ -68,38 +68,38 @@ public class EMessageType extends ProtocolEnum {
 
     /* Message Types for Session Management Messages */
 
-    public static final EMessageType SESSION_ESTABLISHMENT_REQUEST
+    public static final EMessageType PDU_SESSION_ESTABLISHMENT_REQUEST
             = new EMessageType(0b11000001, "PDU session establishment request");
-    public static final EMessageType SESSION_ESTABLISHMENT_ACCEPT
+    public static final EMessageType PDU_SESSION_ESTABLISHMENT_ACCEPT
             = new EMessageType(0b11000010, "PDU session establishment accept");
-    public static final EMessageType SESSION_ESTABLISHMENT_REJECT
+    public static final EMessageType PDU_SESSION_ESTABLISHMENT_REJECT
             = new EMessageType(0b11000011, "PDU session establishment reject");
 
-    public static final EMessageType SESSION_AUTHENTICATION_COMMAND
+    public static final EMessageType PDU_SESSION_AUTHENTICATION_COMMAND
             = new EMessageType(0b11000101, "PDU session authentication command");
-    public static final EMessageType SESSION_AUTHENTICATION_COMPLETE
+    public static final EMessageType PDU_SESSION_AUTHENTICATION_COMPLETE
             = new EMessageType(0b11000110, "PDU session authentication complete");
-    public static final EMessageType SESSION_AUTHENTICATION_RESULT
+    public static final EMessageType PDU_SESSION_AUTHENTICATION_RESULT
             = new EMessageType(0b11000111, "PDU session authentication result");
 
-    public static final EMessageType SESSION_MODIFICATION_REQUEST
+    public static final EMessageType PDU_SESSION_MODIFICATION_REQUEST
             = new EMessageType(0b11001001, "PDU session modification request");
-    public static final EMessageType SESSION_MODIFICATION_REJECT
+    public static final EMessageType PDU_SESSION_MODIFICATION_REJECT
             = new EMessageType(0b11001010, "PDU session modification reject");
-    public static final EMessageType SESSION_MODIFICATION_COMMAND
+    public static final EMessageType PDU_SESSION_MODIFICATION_COMMAND
             = new EMessageType(0b11001011, "PDU session modification command");
-    public static final EMessageType SESSION_MODIFICATION_COMPLETE
+    public static final EMessageType PDU_SESSION_MODIFICATION_COMPLETE
             = new EMessageType(0b11001100, "PDU session modification complete");
-    public static final EMessageType SESSION_MODIFICATION_COMMAND_REJECT
+    public static final EMessageType PDU_SESSION_MODIFICATION_COMMAND_REJECT
             = new EMessageType(0b11001101, "PDU session modification command reject");
 
-    public static final EMessageType SESSION_RELEASE_REQUEST
+    public static final EMessageType PDU_SESSION_RELEASE_REQUEST
             = new EMessageType(0b11010001, "PDU session release request");
-    public static final EMessageType SESSION_RELEASE_REJECT
+    public static final EMessageType PDU_SESSION_RELEASE_REJECT
             = new EMessageType(0b11010010, "PDU session release reject");
-    public static final EMessageType SESSION_RELEASE_COMMAND
+    public static final EMessageType PDU_SESSION_RELEASE_COMMAND
             = new EMessageType(0b11010011, "PDU session release command");
-    public static final EMessageType SESSION_RELEASE_COMPLETE
+    public static final EMessageType PDU_SESSION_RELEASE_COMPLETE
             = new EMessageType(0b11010100, "PDU session release complete");
 
     public static final EMessageType FIVEG_SM_STATUS
