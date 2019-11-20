@@ -51,9 +51,6 @@ public class RegistrationFlow0 extends BaseFlow {
         /* Create NAS PDU */
         {
             nasMessage = new RegistrationRequest();
-            nasMessage.messageType = EMessageType.REGISTRATION_REQUEST;
-            nasMessage.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
-            nasMessage.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
             nasMessage.registrationType = new IE5gsRegistrationType();
             nasMessage.registrationType.followOnRequestPending = EFollowOnRequest.NO_FOR_PENDING;
             nasMessage.registrationType.registrationType = ERegistrationType.INITIAL_REGISTRATION;
@@ -267,9 +264,6 @@ public class RegistrationFlow0 extends BaseFlow {
         Console.println(Color.GREEN, "RegistrationAccept is handling.");
 
         var registrationComplete = new RegistrationComplete();
-        registrationComplete.messageType = EMessageType.REGISTRATION_COMPLETE;
-        registrationComplete.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
-        registrationComplete.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
 
         Console.printDiv();
         Console.println(Color.BLUE, "Registration Complete will be sent to AMF");
@@ -303,9 +297,6 @@ public class RegistrationFlow0 extends BaseFlow {
         var identityType = identityRequest.identityType.value;
 
         var identityResponse = new IdentityResponse();
-        identityResponse.messageType = EMessageType.IDENTITY_RESPONSE;
-        identityResponse.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
-        identityResponse.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
 
         IE5gsMobileIdentity mobileIdentity;
         if (identityType.equals(EIdentityType.IMEI)) {
@@ -359,9 +350,6 @@ public class RegistrationFlow0 extends BaseFlow {
         eap.attributes.put(EAkaAttributeType.AT_MAC, new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
 
         var response = new AuthenticationResponse();
-        response.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
-        response.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
-        response.messageType = EMessageType.AUTHENTICATION_RESPONSE;
         response.eapMessage = new IEEapMessage();
         response.eapMessage.eap = eap;
 
