@@ -7,8 +7,16 @@ import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.EPduSessionIdentity;
 import com.runsim.backend.nas.impl.enums.EProcedureTransactionIdentity;
+import com.runsim.backend.nas.impl.ies.IE5gSmCapability;
+import com.runsim.backend.nas.impl.ies.IEIntegrityProtectionMaximumDataRate;
+import com.runsim.backend.nas.impl.ies.IEPduSessionType;
+import com.runsim.backend.nas.impl.ies.IESscMode;
 
 public class PduSessionEstablishmentRequest extends PlainSmMessage {
+    public IEIntegrityProtectionMaximumDataRate integrityProtectionMaximumDataRate;
+    public IEPduSessionType pduSessionType;
+    public IESscMode sscMode;
+    public IE5gSmCapability smCapability;
 
     public PduSessionEstablishmentRequest() {
         super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES;
@@ -21,6 +29,7 @@ public class PduSessionEstablishmentRequest extends PlainSmMessage {
     public void build(IMessageBuilder builder) {
         super.build(builder);
 
+        // TODO
         throw new NotImplementedException("");
     }
 }
