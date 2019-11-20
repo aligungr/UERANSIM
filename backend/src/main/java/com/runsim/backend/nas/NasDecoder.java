@@ -6,10 +6,8 @@ import com.runsim.backend.nas.core.ies.InformationElement;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainMmMessage;
-import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
-import com.runsim.backend.nas.impl.enums.EMessageType;
-import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
-import com.runsim.backend.nas.impl.enums.ESupiFormat;
+import com.runsim.backend.nas.core.messages.PlainSmMessage;
+import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IENsaMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IESuciMobileIdentity;
@@ -30,10 +28,8 @@ public class NasDecoder {
         if (epd == null)
             throw new InvalidValueException(EExtendedProtocolDiscriminator.class);
 
-        if (epd.equals(EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES)) {
-            throw new NotImplementedException("session management messages not implemented yet");
-        } else {
-            var sht = ESecurityHeaderType.fromValue(stream.readOctetI() & 0xF);
+        if (epd.equals(EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES)) {
+            var sht = ESecurityHeaderType.fromValue(stream.readOctetI());
             if (sht == null)
                 throw new InvalidValueException(ESecurityHeaderType.class);
             if (!sht.equals(ESecurityHeaderType.NOT_PROTECTED))
@@ -43,10 +39,28 @@ public class NasDecoder {
                 throw new InvalidValueException(EMessageType.class);
 
             PlainMmMessage plainMmMessage = decodePlainMmMessage(stream, messageType);
-            plainMmMessage.messageType = messageType;
             plainMmMessage.securityHeaderType = sht;
+            plainMmMessage.messageType = messageType;
 
             nasMessage = plainMmMessage;
+        } else {
+            var pduSessionId = EPduSessionIdentity.fromValue(stream.readOctetI());
+            var pti = EProcedureTransactionIdentity.fromValue(stream.readOctetI());
+            var messageType = EMessageType.fromValue(stream.readOctetI());
+
+            if (pduSessionId == null)
+                throw new InvalidValueException(EPduSessionIdentity.class);
+            if (pti == null)
+                throw new InvalidValueException(EProcedureTransactionIdentity.class);
+            if (messageType == null)
+                throw new InvalidValueException(EMessageType.class);
+
+            PlainSmMessage plainSmMessage = decodePlainSmMessage(stream, messageType);
+            plainSmMessage.pduSessionId = pduSessionId;
+            plainSmMessage.pti = pti;
+            plainSmMessage.messageType = messageType;
+
+            nasMessage = plainSmMessage;
         }
 
         nasMessage.extendedProtocolDiscriminator = epd;
@@ -114,6 +128,20 @@ public class NasDecoder {
             message = new DlNasTransport();
         } else {
             throw new InvalidValueException("message type value is invalid: " + messageType.intValue());
+        }
+
+        message = message.decodeMessage(stream);
+
+        return message;
+    }
+
+    private static PlainSmMessage decodePlainSmMessage(OctetInputStream stream, EMessageType messageType) {
+        PlainSmMessage message;
+
+        if (messageType.equals(EMessageType.PDU_SESSION_ESTABLISHMENT_REQUEST)) {
+            message = new PduSessionEstablishmentRequest();
+        } else {
+            throw new NotImplementedException("message type value is not implemented yet: " + messageType.intValue());
         }
 
         message = message.decodeMessage(stream);
