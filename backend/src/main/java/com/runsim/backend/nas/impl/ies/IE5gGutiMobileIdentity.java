@@ -53,10 +53,8 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
         stream.writeOctet(amfRegionId);
 
         /* Encode AMF set id and AMF pointer */
-        var str = new OctetOutputStream();
-        amfSetId.encode(str);
-        var bytes = str.toOctetArray();
-        bytes[1] = new Octet((bytes[1].intValue() << 6) | amfPointer.intValue());
+        var bytes = amfSetId.toIntArray();
+        bytes[1] = (bytes[1] << 6) | amfPointer.intValue();
         stream.writeOctets(bytes);
 
         /* Encode TMSI */

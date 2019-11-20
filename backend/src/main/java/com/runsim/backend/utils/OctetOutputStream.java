@@ -122,6 +122,14 @@ public class OctetOutputStream {
         return data.toArray(new Octet[0]);
     }
 
+    public int[] toIntArray() {
+        Octet[] arr = toOctetArray();
+        int[] buf = new int[arr.length];
+        for (int i = 0; i < arr.length; i++)
+            buf[i] = arr[i].intValue();
+        return buf;
+    }
+
     public byte[] toByteArray() {
         Octet[] arr = toOctetArray();
         byte[] buf = new byte[arr.length];

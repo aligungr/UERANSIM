@@ -1,6 +1,7 @@
 package com.runsim.backend.nas.core;
 
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.octets.Octet;
 
 public abstract class NasValue {
 
@@ -13,5 +14,17 @@ public abstract class NasValue {
         var stream = new OctetOutputStream();
         encode(stream);
         return stream.toByteArray();
+    }
+
+    public final Octet[] toOctetArray() {
+        var stream = new OctetOutputStream();
+        encode(stream);
+        return stream.toOctetArray();
+    }
+
+    public final int[] toIntArray() {
+        var stream = new OctetOutputStream();
+        encode(stream);
+        return stream.toIntArray();
     }
 }

@@ -120,6 +120,8 @@ public class BitN {
      * @param useBigEndian true for bigEndian, false for littleEndian
      */
     public Octet[] toOctetArray(boolean useBigEndian) {
+        // TODO: Taşan bitler big endian olcak octetler ise bool'a göre sıtalancak
+
         var octets = new Octet[octetCount()];
         int intValue = intValue();
         int bitCount = bitCount();
