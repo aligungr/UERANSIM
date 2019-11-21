@@ -1,14 +1,14 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EGprsTimerValueUnit;
+import com.runsim.backend.nas.impl.enums.EGprsTimerValueUnit3;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit5;
 
 public class IEGprsTimer3 extends InformationElement4 {
     public Bit5 timerValue;
-    public EGprsTimerValueUnit unit;
+    public EGprsTimerValueUnit3 unit;
 
     @Override
     protected IEGprsTimer3 decodeIE4(OctetInputStream stream, int length) {
@@ -16,7 +16,7 @@ public class IEGprsTimer3 extends InformationElement4 {
 
         var res = new IEGprsTimer3();
         res.timerValue = new Bit5(octet.getBitRangeI(0, 4));
-        res.unit = EGprsTimerValueUnit.fromValue(octet.getBitRangeI(5, 7));
+        res.unit = EGprsTimerValueUnit3.fromValue(octet.getBitRangeI(5, 7));
         return res;
     }
 
