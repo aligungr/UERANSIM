@@ -16,6 +16,7 @@ public class PduSessionEstablishmentRequest extends PlainSmMessage {
     public IE5gSmCapability smCapability;
     public IEMaximumNumberOfSupportedPacketFilters maximumNumberOfSupportedPacketFilters;
     public IESmPduDnRequestContainer smPduDnRequestContainer;
+    public IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions;
 
     public PduSessionEstablishmentRequest() {
         super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES;
