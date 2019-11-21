@@ -1,13 +1,12 @@
 package com.runsim.backend.nas.impl.values;
 
-import com.runsim.backend.exceptions.DecodingException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.octets.Octet;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VMappedEpsBearerContext extends NasValue {
@@ -25,16 +24,7 @@ public class VMappedEpsBearerContext extends NasValue {
         int paramCount = flags.getBitRangeI(0, 3);
         res.ebit = EEbit.fromValue(flags.getBitI(4));
         res.operationCode = EOperationCode.fromValue(flags.getBitRangeI(6, 7));
-
-        // TODO: 21.11.2019 Refactor list parsing to a reusable function.
-        int readLen = 1;
-        res.epsParameterList = new ArrayList<>();
-        while (readLen < totalLen) {
-            int streamIndex = stream.currentIndex();
-            res.epsParameterList.add(VEpsParameter.decode(stream));
-            readLen += stream.currentIndex() - streamIndex;
-        }
-        if (readLen > totalLen) throw new DecodingException("Value length exceeds total length!");
+        res.epsParameterList = Utils.decodeList(stream, VEpsParameter::decode, 1, totalLen);
 
         return res;
     }
