@@ -24,7 +24,7 @@ public interface IMessageBuilder {
     void optionalIE(int iei, String field);
 
     /**
-     * Registers <b>two</b> optional information elements with type 1.
+     * Registers <b>two</b> mandatory information elements with type 1.
      *
      * @param field1 Java field name of the class of the relevant information element. That field
      *               must be public and its type must be {@link InformationElement1} or derived types.
@@ -38,7 +38,7 @@ public interface IMessageBuilder {
     void mandatoryIE1(String field1, String field0);
 
     /**
-     * Registers <b>one</b> optional information element with type 1 with a spare half octet.
+     * Registers <b>one</b> mandatory information element with type 1 with a spare half octet.
      * Information element is the least significant 4 bits of the octet.
      *
      * @param field Java field name of the class of the relevant information element. That field

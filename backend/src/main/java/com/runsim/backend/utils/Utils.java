@@ -1,5 +1,6 @@
 package com.runsim.backend.utils;
 
+import com.runsim.backend.exceptions.DecodingException;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
@@ -16,8 +17,23 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 public final class Utils {
+
+    public static <T> List<T> decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int initialRead, int maxLen) {
+        int readLen = initialRead;
+        var res = new ArrayList<T>();
+        while (readLen < maxLen) {
+            int streamIndex = stream.currentIndex();
+            res.add(decoder.apply(stream));
+            readLen += stream.currentIndex() - streamIndex;
+        }
+        if (readLen > maxLen) throw new DecodingException("Value length exceeds total length!");
+        return res;
+    }
 
     public static byte[] hexStringToByteArray(String s) {
         if (!isValidHexString(s))

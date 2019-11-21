@@ -11,24 +11,24 @@ import com.runsim.backend.utils.OctetOutputStream;
 import java.util.ArrayList;
 
 public class IENssai extends InformationElement4 {
-    public IESNssa[] sNssas;
+    public IESNssai[] sNssas;
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
-        var list = new ArrayList<IESNssa>();
+        var list = new ArrayList<IESNssai>();
         var res = new IENssai();
         int read = 0;
 
         while (read < length) {
             int subLength = stream.peekOctetI();
-            list.add(NasDecoder.ie2346(stream, IESNssa.class));
+            list.add(NasDecoder.ie2346(stream, IESNssai.class));
             read += subLength + 1;
         }
 
         if (read > length)
             throw new DecodingException("read length exceeds the ie length");
 
-        res.sNssas = list.toArray(new IESNssa[0]);
+        res.sNssas = list.toArray(new IESNssai[0]);
         return res;
     }
 
