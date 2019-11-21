@@ -119,6 +119,13 @@ public class OctetInputStream {
         return res;
     }
 
+    public byte[] readOctetArrayB(int length) {
+        byte[] res = new byte[length];
+        for (int i = 0; i < length; i++)
+            res[i] = (byte) readOctetI();
+        return res;
+    }
+
     public Octet[] readOctetArray(int length) {
         Octet[] res = new Octet[length];
         for (int i = 0; i < length; i++)
