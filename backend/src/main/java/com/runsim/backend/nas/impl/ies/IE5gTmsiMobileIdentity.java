@@ -5,7 +5,6 @@ import com.runsim.backend.nas.impl.values.VAmfSetId;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit6;
-import com.runsim.backend.utils.octets.Octet;
 
 public class IE5gTmsiMobileIdentity extends IE5gsMobileIdentity {
     public VAmfSetId amfSetId;
@@ -26,11 +25,9 @@ public class IE5gTmsiMobileIdentity extends IE5gsMobileIdentity {
         stream.writeOctet(0b11110100); // Flags for 5G-TMSI
 
         /* Encode AMF set id and AMF pointer */
-        var str = new OctetOutputStream();
-        amfSetId.encode(str);
-        var bytes = str.toOctetArray();
-        bytes[1] = new Octet((bytes[1].intValue() << 6) | amfPointer.intValue());
-        stream.writeOctets(bytes);
+        var octets = amfSetId.toIntArray();
+        octets[1] |= amfPointer.intValue();
+        stream.writeOctets(octets);
 
         /* Encode TMSI */
         tmsi.encode(stream);

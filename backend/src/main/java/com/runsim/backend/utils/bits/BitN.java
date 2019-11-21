@@ -117,24 +117,36 @@ public class BitN {
     /**
      * Converts this object to {@link Octet[]} according to given endianness.
      *
-     * @param useBigEndian true for bigEndian, false for littleEndian
+     * @param useBigEndian true for Big Endian, false for Little Endian
+     * @param useMsb       In case of total number of bits is not divisible by eight, last octet will be padded right
+     *                     if this parameter is true, or will be padded left.
      */
-    public Octet[] toOctetArray(boolean useBigEndian) {
-        // TODO: Taşan bitler big endian olcak octetler ise bool'a göre sıtalancak
-
-        var octets = new Octet[octetCount()];
+    public Octet[] toOctetArray(boolean useBigEndian, boolean useMsb) {
         int intValue = intValue();
         int bitCount = bitCount();
-        for (int i = 0; i < octets.length; i++) {
-            if (bitCount < 8)
-                bitCount = 8;
 
-            int msbOctet = ((intValue >> (bitCount - 8)) & 0xFF);
-            intValue &= ((1 << (bitCount - 8)) - 1);
-            bitCount -= 8;
+        int odd = bitCount % 8;
 
-            octets[i] = new Octet(msbOctet);
+        if (odd != 0) {
+            int spare = 8 - odd;
+            if (useMsb) {
+                bitCount += spare;
+                intValue <<= spare;
+            } else {
+                int overflow = intValue & ((1 << odd) - 1);
+                intValue = ((intValue << spare) & ~0xFF) | overflow;
+                bitCount += spare;
+            }
         }
+
+        int octetCount = bitCount / 8;
+        var octets = new Octet[octetCount];
+
+        for (int i = 0; i < octetCount; i++) {
+            octets[useBigEndian ? octetCount - i - 1 : i] = new Octet(intValue & 0xFF);
+            intValue >>= 8;
+        }
+
         return octets;
     }
 

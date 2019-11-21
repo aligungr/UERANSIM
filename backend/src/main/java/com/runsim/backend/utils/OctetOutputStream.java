@@ -114,8 +114,12 @@ public class OctetOutputStream {
         }
     }
 
+    public void writeOctets(BitN value, boolean useMsb) {
+        writeOctets(value.toOctetArray(isBigEndian, useMsb));
+    }
+
     public void writeOctets(BitN value) {
-        writeOctets(value.toOctetArray(isBigEndian));
+        writeOctets(value, true);
     }
 
     public Octet[] toOctetArray() {

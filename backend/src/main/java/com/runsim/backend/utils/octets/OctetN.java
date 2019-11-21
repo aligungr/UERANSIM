@@ -42,7 +42,7 @@ public class OctetN {
     }
 
     public final String toHexString() {
-        return "0x" + Utils.padLeft(Long.toHexString(_longValue), _octetCount, '0');
+        return "0x" + Utils.padLeft(Long.toHexString(_longValue), _octetCount + (_octetCount % 2), '0');
     }
 
     public final String toBinaryString() {
