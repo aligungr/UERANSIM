@@ -4,6 +4,8 @@ import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Modifier;
 
+// TODO:
+// Diğerlerini içeri dağıt.
 public class ProtocolEnum extends ProtocolValue {
     protected final int value;
     protected final String name;
