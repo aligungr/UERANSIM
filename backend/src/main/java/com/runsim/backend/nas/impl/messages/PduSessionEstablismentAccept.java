@@ -16,7 +16,7 @@ public class PduSessionEstablismentAccept extends PlainSmMessage {
     public IE5gSmCause smCause;
     public IEPduAddress pduAddress;
     public IEGprsTimer rqTimerValue;
-    public IESNssai snssai;
+    public IESNssai sNssai;
     public IEAlwaysOnPduSessionIndication alwaysOnPduSessionIndication;
     public IEMappedEpsBearerContexts mappedEpsBearerContexts;
     public IEEapMessage eapMessage;
@@ -39,12 +39,10 @@ public class PduSessionEstablismentAccept extends PlainSmMessage {
         builder.mandatoryIE1("selectedSscMode", "selectedPduSessionType");
         builder.mandatoryIE("authorizedQoSRules");
         builder.mandatoryIE("sessionAmbr");
-        builder.mandatoryIE("authorizedQoSRules");
-        builder.mandatoryIE("sessionAmbr");
         builder.optionalIE(0x59, "smCause");
         builder.optionalIE(0x29, "pduAddress");
         builder.optionalIE(0x56, "rqTimerValue");
-        builder.optionalIE(0x22, "snssai");
+        builder.optionalIE(0x22, "sNssai");
         builder.optionalIE1(0x8, "alwaysOnPduSessionIndication");
         builder.optionalIE(0x7F, "mappedEpsBearerContexts");
         builder.optionalIE(0x78, "eapMessage");

@@ -100,11 +100,9 @@ public class VMappedEpsBearerContext extends NasValue {
         public static EOperationCode fromValue(int value) {
             return fromValueGeneric(EOperationCode.class, value);
         }
-
     }
 
     public static class EEbit extends ProtocolEnum {
-
         public static final EEbit NOT_INCLUDED_OR_EXTENSION
                 = new EEbit(0b0, "parameter list is not included / previously provided parameter list extension");
         public static final EEbit INCLUDED_OR_REPLACEMENT =
@@ -118,6 +116,4 @@ public class VMappedEpsBearerContext extends NasValue {
             return fromValueGeneric(EEbit.class, value);
         }
     }
-
-
 }
