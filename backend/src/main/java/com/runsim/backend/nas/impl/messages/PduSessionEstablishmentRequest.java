@@ -1,6 +1,5 @@
 package com.runsim.backend.nas.impl.messages;
 
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.core.IMessageBuilder;
 import com.runsim.backend.nas.core.messages.PlainSmMessage;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
@@ -15,6 +14,7 @@ public class PduSessionEstablishmentRequest extends PlainSmMessage {
     public IESscMode sscMode;
     public IE5gSmCapability smCapability;
     public IEMaximumNumberOfSupportedPacketFilters maximumNumberOfSupportedPacketFilters;
+    public IEAlwaysOnPduSessionRequested alwaysOnPduSessionRequested;
     public IESmPduDnRequestContainer smPduDnRequestContainer;
     public IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions;
 
@@ -29,7 +29,13 @@ public class PduSessionEstablishmentRequest extends PlainSmMessage {
     public void build(IMessageBuilder builder) {
         super.build(builder);
 
-        // TODO
-        throw new NotImplementedException("");
+        builder.mandatoryIE("integrityProtectionMaximumDataRate");
+        builder.optionalIE1(0x9, "pduSessionType");
+        builder.optionalIE1(0xA, "sscMode");
+        builder.optionalIE(0x28, "smCapability");
+        builder.optionalIE(0x55, "maximumNumberOfSupportedPacketFilters");
+        builder.optionalIE1(0xB, "alwaysOnPduSessionRequested");
+        builder.optionalIE(0x39, "smPduDnRequestContainer");
+        builder.optionalIE1(0x7B, "extendedProtocolConfigurationOptions");
     }
 }
