@@ -96,8 +96,8 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
         message.registrationResult.smsOverNasAllowed = ESmsOverNasTransportAllowed.ALLOWED;
 
         message.allowedNSSAI = new IENssai();
-        message.allowedNSSAI.sNssas = new IESNssa[1];
-        message.allowedNSSAI.sNssas[0] = new IESNssa();
+        message.allowedNSSAI.sNssas = new IESNssai[1];
+        message.allowedNSSAI.sNssas[0] = new IESNssai();
         message.allowedNSSAI.sNssas[0].sst = new VSliceServiceType();
         message.allowedNSSAI.sNssas[0].sd = new VSliceDifferentiator();
         message.allowedNSSAI.sNssas[0].sst.value = new Octet(1);

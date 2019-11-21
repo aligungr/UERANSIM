@@ -13,7 +13,7 @@ public class UlNasTransport extends PlainMmMessage {
     public IEPduSessionIdentity2 pduSessionId;
     public IEPduSessionIdentity2 oldPduSessionId;
     public IERequestType requestType;
-    public IESNssa sNssa;
+    public IESNssai sNssa;
     public IEDnn dnn;
     public IEAdditionalInformation additionalInformation;
 

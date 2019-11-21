@@ -2,16 +2,13 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.exceptions.InvalidValueException;
-import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.NasDecoder;
-import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
-public class IESNssa extends InformationElement4 {
+public class IESNssai extends InformationElement4 {
     public VSliceServiceType sst;
     public VSliceDifferentiator sd;
     public VSliceServiceType mappedHplmnSst;
@@ -19,7 +16,7 @@ public class IESNssa extends InformationElement4 {
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
-        var res = new IESNssa();
+        var res = new IESNssai();
 
         switch (length) {
             case 0b00000001: // SST
