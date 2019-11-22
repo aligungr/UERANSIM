@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.EReRegistrationRequired;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IEDeRegistrationType extends InformationElement1 {
@@ -58,6 +57,21 @@ public class IEDeRegistrationType extends InformationElement1 {
 
         public static EDeRegistrationAccessType fromValue(int value) {
             return fromValueGeneric(EDeRegistrationAccessType.class, value);
+        }
+    }
+
+    public static class EReRegistrationRequired extends ProtocolEnum {
+        public static final EReRegistrationRequired NOT_REQUIRED
+                = new EReRegistrationRequired(0b0, "re-registration not required");
+        public static final EReRegistrationRequired REQUIRED
+                = new EReRegistrationRequired(0b1, "re-registration required");
+
+        private EReRegistrationRequired(int value, String name) {
+            super(value, name);
+        }
+
+        public static EReRegistrationRequired fromValue(int value) {
+            return fromValueGeneric(EReRegistrationRequired.class, value);
         }
     }
 }

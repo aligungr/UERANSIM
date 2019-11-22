@@ -34,9 +34,9 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         assertNotNull(mes.nasKeySetIdentifier);
 
         assertEquals(mes.registrationType.followOnRequestPending, IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING);
-        assertEquals(mes.registrationType.registrationType, ERegistrationType.INITIAL_REGISTRATION);
+        assertEquals(mes.registrationType.registrationType, IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
 
-        assertEquals(mes.nasKeySetIdentifier.tsc, ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT);
+        assertEquals(mes.nasKeySetIdentifier.tsc, IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT);
         assertEquals(mes.nasKeySetIdentifier.nasKeySetIdentifier, new Bit3(7));
 
         var imsi = (IEImsiMobileIdentity) mes.mobileIdentity;
@@ -44,7 +44,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         assertEquals(imsi.mcc, EMobileCountryCode.unknownValue(1));
         assertEquals(imsi.mnc, EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 1));
         assertEquals(imsi.routingIndicator, "0000");
-        assertEquals(imsi.protectionSchemaId, EProtectionSchemeIdentifier.NULL_SCHEMA);
+        assertEquals(imsi.protectionSchemaId, IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA);
         assertEquals(imsi.schemaOutput, "000000001");
         assertNotNull(imsi.homeNetworkPublicKeyIdentifier);
         assertEquals(imsi.homeNetworkPublicKeyIdentifier.value, 0);
@@ -94,16 +94,16 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         nasMessage.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
         nasMessage.registrationType = new IE5gsRegistrationType();
         nasMessage.registrationType.followOnRequestPending = IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING;
-        nasMessage.registrationType.registrationType = ERegistrationType.INITIAL_REGISTRATION;
+        nasMessage.registrationType.registrationType = IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION;
         nasMessage.nasKeySetIdentifier = new IENasKeySetIdentifier();
-        nasMessage.nasKeySetIdentifier.tsc = ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;
+        nasMessage.nasKeySetIdentifier.tsc = IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;
         nasMessage.nasKeySetIdentifier.nasKeySetIdentifier = new Bit3(7);
 
         var imsi = new IEImsiMobileIdentity();
         imsi.mcc = EMobileCountryCode.unknownValue(1);
         imsi.mnc = EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 1);
         imsi.routingIndicator = "0000";
-        imsi.protectionSchemaId = EProtectionSchemeIdentifier.NULL_SCHEMA;
+        imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
         imsi.schemaOutput = "000000001";
         imsi.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki();
         imsi.homeNetworkPublicKeyIdentifier.value = new Octet(0);

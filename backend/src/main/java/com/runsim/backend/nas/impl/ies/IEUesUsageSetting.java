@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EUesUsageSetting;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -18,5 +18,20 @@ public class IEUesUsageSetting extends InformationElement4 {
     @Override
     public void encodeIE4(OctetOutputStream stream) {
         stream.writeOctet(uesUsageSetting.intValue());
+    }
+
+    public static class EUesUsageSetting extends ProtocolEnum {
+        public static final EUesUsageSetting NOT_SUPPORTED
+                = new EUesUsageSetting(0b0, "voice centric");
+        public static final EUesUsageSetting SUPPORTED
+                = new EUesUsageSetting(0b1, "data centric");
+
+        private EUesUsageSetting(int value, String name) {
+            super(value, name);
+        }
+
+        public static EUesUsageSetting fromValue(int value) {
+            return fromValueGeneric(EUesUsageSetting.class, value);
+        }
     }
 }

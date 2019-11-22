@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.ERegistrationRequested;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IEConfigurationUpdateIndication extends InformationElement1 {
@@ -34,6 +33,21 @@ public class IEConfigurationUpdateIndication extends InformationElement1 {
 
         public static EAcknowledgement fromValue(int value) {
             return fromValueGeneric(EAcknowledgement.class, value);
+        }
+    }
+
+    public static class ERegistrationRequested extends ProtocolEnum {
+        public static final ERegistrationRequested NOT_REQUESTED
+                = new ERegistrationRequested(0b0, "registration not requested");
+        public static final ERegistrationRequested REQUESTED
+                = new ERegistrationRequested(0b1, "registration requested");
+
+        private ERegistrationRequested(int value, String name) {
+            super(value, name);
+        }
+
+        public static ERegistrationRequested fromValue(int value) {
+            return fromValueGeneric(ERegistrationRequested.class, value);
         }
     }
 }

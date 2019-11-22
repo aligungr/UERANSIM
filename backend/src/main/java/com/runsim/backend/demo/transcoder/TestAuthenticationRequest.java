@@ -6,7 +6,6 @@ import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
-import com.runsim.backend.nas.impl.enums.ETypeOfSecurityContext;
 import com.runsim.backend.nas.impl.ies.IEAbba;
 import com.runsim.backend.nas.impl.ies.IEEapMessage;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
@@ -66,7 +65,7 @@ public class TestAuthenticationRequest extends TranscoderTesting.PduTest {
 
         mes.ngKSI = new IENasKeySetIdentifier();
         mes.ngKSI.nasKeySetIdentifier = new Bit3(0);
-        mes.ngKSI.tsc = ETypeOfSecurityContext.fromValue(0);
+        mes.ngKSI.tsc = IENasKeySetIdentifier.ETypeOfSecurityContext.fromValue(0);
 
         mes.abba = new IEAbba();
         mes.abba.contents = new OctetString("0000");

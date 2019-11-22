@@ -2,8 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EImsVoPsN3gpp;
-import com.runsim.backend.nas.impl.enums.EMcsIndicator;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
@@ -147,6 +145,36 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
 
         public static EImsVoPs3gpp fromValue(int value) {
             return fromValueGeneric(EImsVoPs3gpp.class, value);
+        }
+    }
+
+    public static class EImsVoPsN3gpp extends ProtocolEnum {
+        public static final EImsVoPsN3gpp NOT_SUPPORTED
+                = new EImsVoPsN3gpp(0b0, "IMS voice over PS session not supported over non-3GPP access");
+        public static final EImsVoPsN3gpp SUPPORTED
+                = new EImsVoPsN3gpp(0b1, "IMS voice over PS session supported over non-3GPP access");
+
+        private EImsVoPsN3gpp(int value, String name) {
+            super(value, name);
+        }
+
+        public static EImsVoPsN3gpp fromValue(int value) {
+            return fromValueGeneric(EImsVoPsN3gpp.class, value);
+        }
+    }
+
+    public static class EMcsIndicator extends ProtocolEnum {
+        public static final EMcsIndicator NOT_VALID
+                = new EMcsIndicator(0b0, "Access identity 2 not valid in RPLMN or equivalent PLMN");
+        public static final EMcsIndicator VALID
+                = new EMcsIndicator(0b1, "Access identity 2 valid in RPLMN or equivalent PLMN");
+
+        private EMcsIndicator(int value, String name) {
+            super(value, name);
+        }
+
+        public static EMcsIndicator fromValue(int value) {
+            return fromValueGeneric(EMcsIndicator.class, value);
         }
     }
 }

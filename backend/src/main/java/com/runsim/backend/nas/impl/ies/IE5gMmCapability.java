@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EHandoverAttachSupported;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -60,6 +59,21 @@ public class IE5gMmCapability extends InformationElement4 {
 
         public static ELtePositioningProtocolCapability fromValue(int value) {
             return fromValueGeneric(ELtePositioningProtocolCapability.class, value);
+        }
+    }
+
+    public static class EHandoverAttachSupported extends ProtocolEnum {
+        public static final EHandoverAttachSupported NOT_SUPPORTED
+                = new EHandoverAttachSupported(0b0, "not supported");
+        public static final EHandoverAttachSupported SUPPORTED
+                = new EHandoverAttachSupported(0b1, "supported");
+
+        private EHandoverAttachSupported(int value, String name) {
+            super(value, name);
+        }
+
+        public static EHandoverAttachSupported fromValue(int value) {
+            return fromValueGeneric(EHandoverAttachSupported.class, value);
         }
     }
 }

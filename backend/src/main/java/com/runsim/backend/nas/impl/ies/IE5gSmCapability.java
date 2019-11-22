@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EReflectiveQoS;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -35,6 +34,21 @@ public class IE5gSmCapability extends InformationElement4 {
 
         public static EMultiHomedIPv6PduSession fromValue(int value) {
             return fromValueGeneric(EMultiHomedIPv6PduSession.class, value);
+        }
+    }
+
+    public static class EReflectiveQoS extends ProtocolEnum {
+        public static final EReflectiveQoS NOT_SUPPORTED
+                = new EReflectiveQoS(0b0, "Reflective QoS not supported");
+        public static final EReflectiveQoS SUPPORTED
+                = new EReflectiveQoS(0b1, "Reflective QoS supported");
+
+        private EReflectiveQoS(int value, String name) {
+            super(value, name);
+        }
+
+        public static EReflectiveQoS fromValue(int value) {
+            return fromValueGeneric(EReflectiveQoS.class, value);
         }
     }
 }

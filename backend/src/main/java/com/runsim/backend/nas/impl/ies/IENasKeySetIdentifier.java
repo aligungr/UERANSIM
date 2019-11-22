@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.ETypeOfSecurityContext;
 import com.runsim.backend.utils.bits.Bit3;
 import com.runsim.backend.utils.bits.Bit4;
 
@@ -28,5 +28,20 @@ public class IENasKeySetIdentifier extends InformationElement1 {
     @Override
     public int encodeIE1() {
         return tsc.intValue() << 3 | nasKeySetIdentifier.intValue();
+    }
+
+    public static class ETypeOfSecurityContext extends ProtocolEnum {
+        public static final ETypeOfSecurityContext NATIVE_SECURITY_CONTEXT
+                = new ETypeOfSecurityContext(0b0, "Native security context (for KSI_AMF)");
+        public static final ETypeOfSecurityContext MAPPED_SECURITY_CONTEXT
+                = new ETypeOfSecurityContext(0b1, "Mapped security context (for KSI_ASME)");
+
+        private ETypeOfSecurityContext(int value, String name) {
+            super(value, name);
+        }
+
+        public static ETypeOfSecurityContext fromValue(int value) {
+            return fromValueGeneric(ETypeOfSecurityContext.class, value);
+        }
     }
 }
