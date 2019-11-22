@@ -171,7 +171,7 @@ public class NasDecoder {
         } else if (messageType.equals(EMessageType.FIVEG_SM_STATUS)) {
             message = new FiveGSmStatus();
         } else {
-            throw new NotImplementedException("message type value is not implemented yet: " + messageType.intValue());
+            throw new InvalidValueException("message type value is invalid: " + messageType.intValue());
         }
 
         message = message.decodeMessage(stream);

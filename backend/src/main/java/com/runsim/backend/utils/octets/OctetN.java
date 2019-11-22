@@ -3,6 +3,9 @@ package com.runsim.backend.utils.octets;
 import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.bits.Bit;
 
+/**
+ * Represents 1 to 7 octet value.
+ */
 public class OctetN {
     private final long _longValue;
     private final byte _octetCount;
@@ -13,10 +16,6 @@ public class OctetN {
             throw new IllegalArgumentException("invalid octet count");
         if (longValue < 0)
             throw new IllegalArgumentException("negative value");
-
-        long octetMaximum = (1L << (octetCount * 8)) - 1;
-        if (longValue > octetMaximum)
-            throw new IllegalArgumentException("longValue exceeds the octetMaximum");
 
         this._longValue = longValue & ((1L << (8 * octetCount)) - 1);
         this._octetCount = (byte) octetCount;

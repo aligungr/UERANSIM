@@ -1,5 +1,8 @@
 package com.runsim.backend.utils.octets;
 
+/**
+ * Represents 4-octet or 32-bit value
+ */
 public class Octet4 extends OctetN {
     public Octet4(long longValue) {
         super(longValue, 4);

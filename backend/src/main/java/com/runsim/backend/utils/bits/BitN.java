@@ -11,6 +11,7 @@ public class BitN {
 
     /**
      * Constructs a BitN object with given int value and bit count.
+     * Integer value is masked with ((2 ^ [bit count]) - 1)
      *
      * @param intValue is the integer value. This value can be 0 at minimum and (2^[bit count] - 1) at maximum.
      * @param bitCount is the total number of bits to be used of integer value
@@ -22,8 +23,6 @@ public class BitN {
             throw new IllegalArgumentException("invalid bit count");
         if (intValue < 0)
             throw new IllegalArgumentException("negative int value");
-
-        // TODO: Add max bound check accourding to bit count
 
         this._intValue = intValue & ((1 << bitCount) - 1);
         this._bitCount = (byte) bitCount;

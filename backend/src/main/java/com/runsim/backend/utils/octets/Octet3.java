@@ -1,5 +1,8 @@
 package com.runsim.backend.utils.octets;
 
+/**
+ * Represents 3-octet or 24-bit value
+ */
 public class Octet3 extends OctetN {
     public Octet3(int intValue) {
         super(intValue & 0xFFFFFF, 3);

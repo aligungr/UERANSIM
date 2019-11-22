@@ -1,5 +1,8 @@
 package com.runsim.backend.utils.octets;
 
+/**
+ * Represents 2-octet or 16-bit value
+ */
 public class Octet2 extends OctetN {
 
     public Octet2(int intValue) {
