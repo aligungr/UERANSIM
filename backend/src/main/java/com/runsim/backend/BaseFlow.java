@@ -7,10 +7,6 @@ import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import fr.marben.asnsdk.japi.spe.Value;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@BaseFlow.Flow
 public abstract class BaseFlow {
     private SCTPClient sctpClient;
     private boolean started;
@@ -74,10 +70,5 @@ public abstract class BaseFlow {
     @FunctionalInterface
     public interface State {
         State accept(Message message);
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Flow {
-
     }
 }
