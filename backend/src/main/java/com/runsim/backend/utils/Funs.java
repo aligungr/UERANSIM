@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public final class Funs {
-
     private ArrayList<Pair<Fun, Consumer<Exception>>> funs;
 
     private Funs(Pair<Fun, Consumer<Exception>> fun) {

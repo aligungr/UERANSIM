@@ -72,8 +72,7 @@ public enum Color {
     BLUE_BACKGROUND_BRIGHT("\033[0;104m"),// BLUE
     PURPLE_BACKGROUND_BRIGHT("\033[0;105m"), // PURPLE
     CYAN_BACKGROUND_BRIGHT("\033[0;106m"),  // CYAN
-    WHITE_BACKGROUND_BRIGHT("\033[0;107m"),
-    ;   // WHITE
+    WHITE_BACKGROUND_BRIGHT("\033[0;107m"); // WHITE
 
     public final String val;
 
