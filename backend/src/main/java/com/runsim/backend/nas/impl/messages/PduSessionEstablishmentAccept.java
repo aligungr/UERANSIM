@@ -21,7 +21,6 @@ public class PduSessionEstablishmentAccept extends PlainSmMessage {
     public IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions;
     public IEDnn dnn;
 
-
     public PduSessionEstablishmentAccept() {
         super(EMessageType.PDU_SESSION_ESTABLISHMENT_ACCEPT);
     }
