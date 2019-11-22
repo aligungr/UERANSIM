@@ -105,12 +105,18 @@ public class EMessageType extends ProtocolEnum {
     public static final EMessageType FIVEG_SM_STATUS
             = new EMessageType(0b11010110, "5GSM status");
 
-
     private EMessageType(int value, String name) {
         super(value, name);
     }
 
     public static EMessageType fromValue(int value) {
         return fromValueGeneric(EMessageType.class, value);
+    }
+
+    /**
+     * Returns true if the message type is Mobility Management, or returns false if the message is Session Management.
+     */
+    public boolean isMobilityManagement() {
+        return (value >> 7 & 1) == 0;
     }
 }

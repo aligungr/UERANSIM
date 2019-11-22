@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.core.messages;
 
+import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
@@ -14,6 +15,9 @@ public abstract class PlainMmMessage extends NasMessage {
         super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
         this.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
         this.messageType = messageType;
+
+        if (!messageType.isMobilityManagement())
+            throw new IncorrectImplementationException("message type and super classes are inconsistent");
     }
 
     @Override

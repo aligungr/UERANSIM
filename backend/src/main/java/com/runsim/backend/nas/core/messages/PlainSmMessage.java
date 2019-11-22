@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.core.messages;
 
+import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.EPduSessionIdentity;
@@ -17,6 +18,9 @@ public abstract class PlainSmMessage extends NasMessage {
         this.pduSessionId = EPduSessionIdentity.NO_VAL;
         this.pti = EProcedureTransactionIdentity.NO_VAL;
         this.messageType = messageType;
+
+        if (messageType.isMobilityManagement())
+            throw new IncorrectImplementationException("message type and super classes are inconsistent");
     }
 
     @Override
