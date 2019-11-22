@@ -2,6 +2,7 @@ package com.runsim.backend;
 
 public final class Constants {
     public static final String FLOWS_PREFIX = "com.runsim.backend.flows";
+    public static final String NAS_IMPL_PREFIX = "com.runsim.backend.nas.impl";
 
     public static final int BACKEND_PORT = 5002;
 
