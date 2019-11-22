@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EImsVoPs3gpp;
 import com.runsim.backend.nas.impl.enums.EImsVoPsN3gpp;
 import com.runsim.backend.nas.impl.enums.EMcsIndicator;
 import com.runsim.backend.utils.OctetInputStream;
@@ -133,6 +132,21 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
 
         public static EMpsIndicator fromValue(int value) {
             return fromValueGeneric(EMpsIndicator.class, value);
+        }
+    }
+
+    public static class EImsVoPs3gpp extends ProtocolEnum {
+        public static final EImsVoPs3gpp NOT_SUPPORTED
+                = new EImsVoPs3gpp(0b0, "IMS voice over PS session not supported over 3GPP access");
+        public static final EImsVoPs3gpp SUPPORTED
+                = new EImsVoPs3gpp(0b1, "IMS voice over PS session supported over 3GPP access");
+
+        private EImsVoPs3gpp(int value, String name) {
+            super(value, name);
+        }
+
+        public static EImsVoPs3gpp fromValue(int value) {
+            return fromValueGeneric(EImsVoPs3gpp.class, value);
         }
     }
 }

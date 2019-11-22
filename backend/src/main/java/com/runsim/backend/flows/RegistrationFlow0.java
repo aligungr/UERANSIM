@@ -52,7 +52,7 @@ public class RegistrationFlow0 extends BaseFlow {
         {
             nasMessage = new RegistrationRequest();
             nasMessage.registrationType = new IE5gsRegistrationType();
-            nasMessage.registrationType.followOnRequestPending = EFollowOnRequest.NO_FOR_PENDING;
+            nasMessage.registrationType.followOnRequestPending = IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING;
             nasMessage.registrationType.registrationType = ERegistrationType.INITIAL_REGISTRATION;
             nasMessage.nasKeySetIdentifier = new IENasKeySetIdentifier();
             nasMessage.nasKeySetIdentifier.tsc = ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;

@@ -1,8 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EAddCountryInitials;
-import com.runsim.backend.nas.impl.enums.ECodingScheme;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit3;
@@ -35,5 +34,35 @@ public class IENetworkName extends InformationElement4 {
         flags = flags.setBitRange(4, 6, codingScheme.intValue());
         stream.writeOctet(flags);
         stream.writeOctetString(textString);
+    }
+
+    public static class EAddCountryInitials extends ProtocolEnum {
+        public static final EAddCountryInitials SHOULD_NOT_ADD
+                = new EAddCountryInitials(0b0, "The MS should not add the letters for the Country's Initials to the text string");
+        public static final EAddCountryInitials SHOULD_ADD
+                = new EAddCountryInitials(0b1, "The MS should add the letters for the Country's Initials and a separator (e.g. a space) to the text string");
+
+        private EAddCountryInitials(int value, String name) {
+            super(value, name);
+        }
+
+        public static EAddCountryInitials fromValue(int value) {
+            return fromValueGeneric(EAddCountryInitials.class, value);
+        }
+    }
+
+    public static class ECodingScheme extends ProtocolEnum {
+        public static final ECodingScheme DEFAULT
+                = new ECodingScheme(0b000, "Cell Broadcast data coding scheme, GSM default alphabet, language unspecified, defined in 3GPP TS 23.038");
+        public static final ECodingScheme UCS2
+                = new ECodingScheme(0b001, "UCS2 (16 bit)");
+
+        private ECodingScheme(int value, String name) {
+            super(value, name);
+        }
+
+        public static ECodingScheme fromValue(int value) {
+            return fromValueGeneric(ECodingScheme.class, value);
+        }
     }
 }

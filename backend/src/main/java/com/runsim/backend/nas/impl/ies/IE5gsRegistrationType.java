@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.EFollowOnRequest;
 import com.runsim.backend.nas.impl.enums.ERegistrationType;
 import com.runsim.backend.utils.bits.Bit4;
 
@@ -22,5 +22,20 @@ public class IE5gsRegistrationType extends InformationElement1 {
     @Override
     public int encodeIE1() {
         return followOnRequestPending.intValue() << 3 | registrationType.intValue();
+    }
+
+    public static class EFollowOnRequest extends ProtocolEnum {
+        public static final EFollowOnRequest NO_FOR_PENDING
+                = new EFollowOnRequest(0b0, "No follow-on request pending");
+        public static final EFollowOnRequest FOR_PENDING
+                = new EFollowOnRequest(0b1, "Follow-on request pending");
+
+        private EFollowOnRequest(int value, String name) {
+            super(value, name);
+        }
+
+        public static EFollowOnRequest fromValue(int value) {
+            return fromValueGeneric(EFollowOnRequest.class, value);
+        }
     }
 }

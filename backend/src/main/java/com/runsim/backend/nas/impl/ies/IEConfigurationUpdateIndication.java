@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.EAcknowledgement;
 import com.runsim.backend.nas.impl.enums.ERegistrationRequested;
 import com.runsim.backend.utils.bits.Bit4;
 
@@ -20,5 +20,20 @@ public class IEConfigurationUpdateIndication extends InformationElement1 {
     @Override
     public int encodeIE1() {
         return red.intValue() << 1 | ack.intValue();
+    }
+
+    public static class EAcknowledgement extends ProtocolEnum {
+        public static final EAcknowledgement NOT_REQUESTED
+                = new EAcknowledgement(0b0, "acknowledgement not requested");
+        public static final EAcknowledgement REQUESTED
+                = new EAcknowledgement(0b1, "acknowledgement requested");
+
+        private EAcknowledgement(int value, String name) {
+            super(value, name);
+        }
+
+        public static EAcknowledgement fromValue(int value) {
+            return fromValueGeneric(EAcknowledgement.class, value);
+        }
     }
 }

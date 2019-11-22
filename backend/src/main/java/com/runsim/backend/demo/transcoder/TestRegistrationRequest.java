@@ -33,7 +33,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         assertNotNull(mes.ueSecurityCapability);
         assertNotNull(mes.nasKeySetIdentifier);
 
-        assertEquals(mes.registrationType.followOnRequestPending, EFollowOnRequest.NO_FOR_PENDING);
+        assertEquals(mes.registrationType.followOnRequestPending, IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING);
         assertEquals(mes.registrationType.registrationType, ERegistrationType.INITIAL_REGISTRATION);
 
         assertEquals(mes.nasKeySetIdentifier.tsc, ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT);
@@ -93,7 +93,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         nasMessage.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
         nasMessage.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
         nasMessage.registrationType = new IE5gsRegistrationType();
-        nasMessage.registrationType.followOnRequestPending = EFollowOnRequest.NO_FOR_PENDING;
+        nasMessage.registrationType.followOnRequestPending = IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING;
         nasMessage.registrationType.registrationType = ERegistrationType.INITIAL_REGISTRATION;
         nasMessage.nasKeySetIdentifier = new IENasKeySetIdentifier();
         nasMessage.nasKeySetIdentifier.tsc = ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;

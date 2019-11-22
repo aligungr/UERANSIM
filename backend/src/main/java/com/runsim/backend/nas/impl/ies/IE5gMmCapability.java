@@ -1,9 +1,8 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.EEpcNasSupported;
 import com.runsim.backend.nas.impl.enums.EHandoverAttachSupported;
-import com.runsim.backend.nas.impl.enums.ELtePositioningProtocolCapability;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -32,5 +31,35 @@ public class IE5gMmCapability extends InformationElement4 {
         octet <<= 1;
         octet |= s1Mode.intValue();
         stream.writeOctet(octet);
+    }
+
+    public static class EEpcNasSupported extends ProtocolEnum {
+        public static final EEpcNasSupported NOT_SUPPORTED
+                = new EEpcNasSupported(0b0, "S1 mode not supported");
+        public static final EEpcNasSupported SUPPORTED
+                = new EEpcNasSupported(0b1, "S1 mode supported");
+
+        private EEpcNasSupported(int value, String name) {
+            super(value, name);
+        }
+
+        public static EEpcNasSupported fromValue(int value) {
+            return fromValueGeneric(EEpcNasSupported.class, value);
+        }
+    }
+
+    public static class ELtePositioningProtocolCapability extends ProtocolEnum {
+        public static final ELtePositioningProtocolCapability NOT_SUPPORTED
+                = new ELtePositioningProtocolCapability(0b0, "LPP in N1 mode not supported");
+        public static final ELtePositioningProtocolCapability SUPPORTED
+                = new ELtePositioningProtocolCapability(0b1, "LPP in N1 mode supported");
+
+        private ELtePositioningProtocolCapability(int value, String name) {
+            super(value, name);
+        }
+
+        public static ELtePositioningProtocolCapability fromValue(int value) {
+            return fromValueGeneric(ELtePositioningProtocolCapability.class, value);
+        }
     }
 }

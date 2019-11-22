@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.EDeRegistrationAccessType;
 import com.runsim.backend.nas.impl.enums.EReRegistrationRequired;
 import com.runsim.backend.utils.bits.Bit4;
 
@@ -42,6 +41,23 @@ public class IEDeRegistrationType extends InformationElement1 {
 
         public static ESwitchOff fromValue(int value) {
             return fromValueGeneric(ESwitchOff.class, value);
+        }
+    }
+
+    public static class EDeRegistrationAccessType extends ProtocolEnum {
+        public static final EDeRegistrationAccessType THREEGPP_ACCESS
+                = new EDeRegistrationAccessType(0b01, "3GPP access");
+        public static final EDeRegistrationAccessType NON_THREEGPP_ACCESS
+                = new EDeRegistrationAccessType(0b10, "Non-3GPP access");
+        public static final EDeRegistrationAccessType THREEGPP_ACCESS_AND_NON_THREEGPP_ACCESS
+                = new EDeRegistrationAccessType(0b11, "3GPP access and non-3GPP access");
+
+        private EDeRegistrationAccessType(int value, String name) {
+            super(value, name);
+        }
+
+        public static EDeRegistrationAccessType fromValue(int value) {
+            return fromValueGeneric(EDeRegistrationAccessType.class, value);
         }
     }
 }

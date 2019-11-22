@@ -2,7 +2,6 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.EDefaultConfiguredNssaiIndication;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IENetworkSlicingIndication extends InformationElement1 {
@@ -34,6 +33,21 @@ public class IENetworkSlicingIndication extends InformationElement1 {
 
         public static ENetworkSlicingSubscriptionChangeIndication fromValue(int value) {
             return fromValueGeneric(ENetworkSlicingSubscriptionChangeIndication.class, value);
+        }
+    }
+
+    public static class EDefaultConfiguredNssaiIndication extends ProtocolEnum {
+        public static final EDefaultConfiguredNssaiIndication NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
+                = new EDefaultConfiguredNssaiIndication(0b0, "Requested NSSAI not created from default configured NSSAI");
+        public static final EDefaultConfiguredNssaiIndication CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
+                = new EDefaultConfiguredNssaiIndication(0b1, "Requested NSSAI created from default configured NSSAI");
+
+        private EDefaultConfiguredNssaiIndication(int value, String name) {
+            super(value, name);
+        }
+
+        public static EDefaultConfiguredNssaiIndication fromValue(int value) {
+            return fromValueGeneric(EDefaultConfiguredNssaiIndication.class, value);
         }
     }
 }
