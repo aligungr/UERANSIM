@@ -2,10 +2,7 @@ package com.runsim.backend.nas.impl.messages;
 
 import com.runsim.backend.nas.core.IMessageBuilder;
 import com.runsim.backend.nas.core.messages.PlainSmMessage;
-import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
-import com.runsim.backend.nas.impl.enums.EPduSessionIdentity;
-import com.runsim.backend.nas.impl.enums.EProcedureTransactionIdentity;
 import com.runsim.backend.nas.impl.ies.*;
 
 public class PduSessionEstablismentAccept extends PlainSmMessage {
@@ -26,10 +23,7 @@ public class PduSessionEstablismentAccept extends PlainSmMessage {
 
 
     public PduSessionEstablismentAccept() {
-        super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.SESSION_MANAGEMENT_MESSAGES;
-        super.pduSessionId = EPduSessionIdentity.NO_VAL;
-        super.pti = EProcedureTransactionIdentity.NO_VAL;
-        super.messageType = EMessageType.PDU_SESSION_ESTABLISHMENT_ACCEPT;
+        super(EMessageType.PDU_SESSION_ESTABLISHMENT_ACCEPT);
     }
 
     @Override

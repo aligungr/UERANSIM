@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.core.messages;
 
+import com.runsim.backend.nas.impl.enums.EExtendedProtocolDiscriminator;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.enums.ESecurityHeaderType;
 import com.runsim.backend.utils.OctetInputStream;
@@ -8,6 +9,12 @@ import com.runsim.backend.utils.OctetOutputStream;
 public abstract class PlainMmMessage extends NasMessage {
     public ESecurityHeaderType securityHeaderType;
     public EMessageType messageType;
+
+    public PlainMmMessage(EMessageType messageType) {
+        super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+        this.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
+        this.messageType = messageType;
+    }
 
     @Override
     public final PlainMmMessage decodeMessage(OctetInputStream stream) {
