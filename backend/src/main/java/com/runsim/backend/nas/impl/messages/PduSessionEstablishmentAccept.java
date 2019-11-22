@@ -5,7 +5,7 @@ import com.runsim.backend.nas.core.messages.PlainSmMessage;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.nas.impl.ies.*;
 
-public class PduSessionEstablismentAccept extends PlainSmMessage {
+public class PduSessionEstablishmentAccept extends PlainSmMessage {
     public IEPduSessionType selectedPduSessionType;
     public IESscMode selectedSscMode;
     public IEQoSRules authorizedQoSRules;
@@ -22,7 +22,7 @@ public class PduSessionEstablismentAccept extends PlainSmMessage {
     public IEDnn dnn;
 
 
-    public PduSessionEstablismentAccept() {
+    public PduSessionEstablishmentAccept() {
         super(EMessageType.PDU_SESSION_ESTABLISHMENT_ACCEPT);
     }
 
