@@ -6,7 +6,7 @@ import com.runsim.backend.nas.impl.enums.ECodingScheme;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit3;
-import com.runsim.backend.utils.octets.OctetN;
+import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class IENetworkName extends InformationElement4 {
@@ -29,11 +29,11 @@ public class IENetworkName extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        var flags = new OctetN(0, 1);
+        var flags = new Octet();
         flags = flags.setBitRange(0, 2, numOfSpareBits.intValue());
         flags = flags.setBit(3, addCi.intValue());
         flags = flags.setBitRange(4, 6, codingScheme.intValue());
-        stream.writeOctets(flags);
+        stream.writeOctet(flags);
         stream.writeOctetString(textString);
     }
 }

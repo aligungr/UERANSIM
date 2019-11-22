@@ -19,7 +19,7 @@ public class VAmfSetId extends NasValue {
 
     @Override
     public void encode(OctetOutputStream stream) {
-        stream.writeOctets(value);
+        stream.writeBits(value);
     }
 
     @Override

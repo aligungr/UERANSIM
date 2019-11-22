@@ -2,7 +2,7 @@ package com.runsim.backend.nas.impl.values;
 
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
-import com.runsim.backend.utils.octets.OctetN;
+import com.runsim.backend.utils.octets.Octet;
 
 public class VPartialTrackingAreaIdentityList10 extends VPartialTrackingAreaIdentityList {
     public VTrackingAreaIdentity[] tais;
@@ -18,10 +18,10 @@ public class VPartialTrackingAreaIdentityList10 extends VPartialTrackingAreaIden
 
     @Override
     public void encode(OctetOutputStream stream) {
-        var flags = new OctetN(0, 1);
+        var flags = new Octet();
         flags = flags.setBitRange(0, 4, tais.length);
         flags = flags.setBitRange(5, 6, 0b10);
-        stream.writeOctets(flags);
+        stream.writeOctet(flags);
         for (var tai : tais) {
             tai.encode(stream);
         }

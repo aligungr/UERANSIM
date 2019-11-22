@@ -9,6 +9,7 @@ import com.runsim.backend.utils.octets.Octet;
 
 import java.util.List;
 
+// TODO: Bu yanlış olöuş gibi tekrar bakılsın
 public class VMappedEpsBearerContext extends NasValue {
     public EEpsBearerIdentity epsBearerIdentity;
     public EOperationCode operationCode;
@@ -33,9 +34,11 @@ public class VMappedEpsBearerContext extends NasValue {
     public void encode(OctetOutputStream stream) {
         stream.writeOctet(epsBearerIdentity.intValue());
 
-        var octet = new Octet(0);
-        var flags = octet.setBitRange(6, 7, operationCode.intValue()).setBit(4, ebit.intValue()).setBitRange(0, 3, epsParameterList.size());
-        stream.writeOctet(flags.intValue());
+        var octet = new Octet();
+        octet = octet.setBitRange(6, 7, operationCode.intValue());
+        octet = octet.setBit(4, ebit.intValue());
+        octet = octet.setBitRange(0, 3, epsParameterList.size());
+        stream.writeOctet(octet);
 
         epsParameterList.forEach(param -> param.encode(stream));
     }

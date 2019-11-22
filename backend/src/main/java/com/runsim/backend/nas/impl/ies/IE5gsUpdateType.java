@@ -5,7 +5,7 @@ import com.runsim.backend.nas.impl.enums.ENgRanRadioCapabilityUpdate;
 import com.runsim.backend.nas.impl.enums.ESmsRequested;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
-import com.runsim.backend.utils.octets.OctetN;
+import com.runsim.backend.utils.octets.Octet;
 
 public class IE5gsUpdateType extends InformationElement4 {
     public ESmsRequested smsRequested;
@@ -21,7 +21,7 @@ public class IE5gsUpdateType extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        var octet = new OctetN(0, 1);
+        var octet = new Octet();
         octet = octet.setBit(0, smsRequested.intValue());
         octet = octet.setBit(1, ngRanRcu.intValue());
         stream.writeOctet(octet.intValue());

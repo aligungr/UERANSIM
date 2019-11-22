@@ -21,6 +21,6 @@ public class IEMaximumNumberOfSupportedPacketFilters extends InformationElement3
 
     @Override
     public void encodeIE3(OctetOutputStream stream) {
-        stream.writeOctets(value);
+        stream.writeBits(value);
     }
 }

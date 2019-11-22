@@ -15,7 +15,8 @@ public class OctetN {
      *
      * @param longValue  is the underlying unsigned integral value. This value cannot be negative.
      * @param octetCount is the total number of octets to represent this value.
-     *                   Given value is masked with ((2 ^ (8 * octetCount)) - 1)
+     *                   Given value is masked with ((2 ^ (8 * octetCount)) - 1).
+     *                   Octet count cannot exceeds 7 since implementation uses 64-bit signed integer.
      */
     public OctetN(long longValue, int octetCount) {
         // maximum 7 octet, since implementation uses 64-bit signed integer.
@@ -108,12 +109,25 @@ public class OctetN {
         return new Bit(getBitI(index));
     }
 
-
-    public final OctetN setBit(int index, int bit) {
-        return new OctetN(bit == 0 ? _longValue & ~(1L << index) : _longValue | (1L << index), _octetCount);
+    /**
+     * Assigns the bit at given index and returns a new instance.
+     *
+     * @param index is the index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit.
+     * @param bit   new bit value to be assigned
+     */
+    public OctetN setBit(int index, int bit) {
+        return new OctetN((bit & 1) == 0 ? _longValue & ~(1L << index) : _longValue | (1L << index), _octetCount);
     }
 
-    public final OctetN setBit(int index, Bit bit) {
+    /**
+     * Assigns the bit at given index and returns a new instance.
+     *
+     * @param index is the index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit.
+     * @param bit   new bit value to be assigned
+     */
+    public OctetN setBit(int index, Bit bit) {
         return setBit(index, bit.intValue());
     }
 
@@ -160,18 +174,29 @@ public class OctetN {
         return i;
     }
 
-    public final OctetN setBitRange(int start, int end, long value) {
+    /**
+     * Returns the bits in range [start, end] as integer.
+     * If end index is smaller than start index, then start and end indexes are swapped.
+     *
+     * @param start is the start index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit
+     * @param end   is the end index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit
+     * @param value is the value to be assigned.
+     */
+    public OctetN setBitRange(int start, int end, long value) {
         OctetN octetN = new OctetN(_longValue, _octetCount);
         OctetN val = new OctetN(value, _octetCount);
-
         int length = end - start + 1;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++)
             octetN = octetN.setBit(start + i, val.getBitI(i));
-        }
-
         return octetN;
     }
 
+    /**
+     * Returns true iff the underlying value is semantically assumed to be equal to given object.
+     * see {@link Utils#unsignedEqual(Object, Object)}
+     */
     @Override
     public final boolean equals(Object obj) {
         return Utils.unsignedEqual(this, obj);

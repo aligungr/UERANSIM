@@ -5,7 +5,7 @@ import com.runsim.backend.nas.impl.enums.EGprsTimerValueUnit;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit5;
-import com.runsim.backend.utils.octets.OctetN;
+import com.runsim.backend.utils.octets.Octet;
 
 public class IEGprsTimer extends InformationElement3 {
     public Bit5 timerValue;
@@ -22,9 +22,9 @@ public class IEGprsTimer extends InformationElement3 {
 
     @Override
     public void encodeIE3(OctetOutputStream stream) {
-        var octet = new OctetN(0, 1);
+        var octet = new Octet();
         octet = octet.setBitRange(0, 4, timerValue.intValue());
         octet = octet.setBitRange(5, 5, timerValueUnit.intValue());
-        stream.writeOctets(octet);
+        stream.writeOctet(octet);
     }
 }

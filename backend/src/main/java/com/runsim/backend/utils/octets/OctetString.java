@@ -5,7 +5,7 @@ import com.runsim.backend.utils.Utils;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class OctetString implements Iterable<Octet> {
+public final class OctetString implements Iterable<Octet> {
     public final Octet[] data;
     public final int length;
 

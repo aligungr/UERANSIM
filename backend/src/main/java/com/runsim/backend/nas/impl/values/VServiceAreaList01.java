@@ -2,8 +2,8 @@ package com.runsim.backend.nas.impl.values;
 
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
-import com.runsim.backend.utils.octets.OctetN;
 
 public class VServiceAreaList01 extends VServiceAreaList {
     public VMccMnc mccMnc;
@@ -18,11 +18,11 @@ public class VServiceAreaList01 extends VServiceAreaList {
 
     @Override
     public void encode(OctetOutputStream stream) {
-        var flags = new OctetN(0, 1);
+        var flags = new Octet(0);
         flags = flags.setBitRange(0, 4, 1);
         flags = flags.setBitRange(5, 6, 0b01);
         flags = flags.setBit(7, allowedType.intValue());
-        stream.writeOctets(flags);
+        stream.writeOctet(flags);
         mccMnc.encode(stream);
         stream.writeOctet3(tac);
     }

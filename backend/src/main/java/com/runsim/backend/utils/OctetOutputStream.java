@@ -74,7 +74,7 @@ public class OctetOutputStream {
     }
 
     public void writeOctet4(Octet4 octet4) {
-        writeOctets(octet4);
+        writeOctetN(octet4);
     }
 
     public void writeOctet4(long octet4) {
@@ -82,7 +82,7 @@ public class OctetOutputStream {
     }
 
     public void writeOctet3(Octet3 octet3) {
-        writeOctets(octet3);
+        writeOctetN(octet3);
     }
 
     public void writeOctet3(int octet3) {
@@ -104,7 +104,7 @@ public class OctetOutputStream {
         data.addAll(Arrays.asList(octets));
     }
 
-    public void writeOctets(OctetN octets) {
+    private void writeOctetN(OctetN octets) {
         writeOctets(octets.toOctetArray(isBigEndian));
     }
 
@@ -120,12 +120,12 @@ public class OctetOutputStream {
         }
     }
 
-    public void writeOctets(BitN value, boolean useMsb) {
+    public void writeBits(BitN value, boolean useMsb) {
         writeOctets(value.toOctetArray(isBigEndian, useMsb));
     }
 
-    public void writeOctets(BitN value) {
-        writeOctets(value, true);
+    public void writeBits(BitN value) {
+        writeBits(value, true);
     }
 
     public Octet[] toOctetArray() {
