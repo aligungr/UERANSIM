@@ -1,7 +1,7 @@
 package com.runsim.backend.utils.octets;
 
 /**
- * Represents 3-octet or 24-bit value
+ * Represents 3-octet or 24-bit unsigned integer
  */
 public class Octet3 extends OctetN {
     public Octet3(int intValue) {

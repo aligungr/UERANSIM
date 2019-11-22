@@ -1,7 +1,7 @@
 package com.runsim.backend.utils.octets;
 
 /**
- * Represents 1-octet or 8-bit value
+ * Represents 1-octet or 8-bit unsigned integer
  */
 public class Octet extends OctetN {
 
