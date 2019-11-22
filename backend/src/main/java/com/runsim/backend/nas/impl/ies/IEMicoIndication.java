@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
-import com.runsim.backend.nas.impl.enums.ERegistrationAreaAllocationIndication;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IEMicoIndication extends InformationElement1 {
@@ -17,5 +17,20 @@ public class IEMicoIndication extends InformationElement1 {
     @Override
     public int encodeIE1() {
         return raai.intValue();
+    }
+
+    public static class ERegistrationAreaAllocationIndication extends ProtocolEnum {
+        public static final ERegistrationAreaAllocationIndication NOT_ALLOCATED
+                = new ERegistrationAreaAllocationIndication(0b0, "all PLMN registration area not allocated");
+        public static final ERegistrationAreaAllocationIndication ALLOCATED
+                = new ERegistrationAreaAllocationIndication(0b1, "all PLMN registration area allocated");
+
+        private ERegistrationAreaAllocationIndication(int value, String name) {
+            super(value, name);
+        }
+
+        public static ERegistrationAreaAllocationIndication fromValue(int value) {
+            return fromValueGeneric(ERegistrationAreaAllocationIndication.class, value);
+        }
     }
 }

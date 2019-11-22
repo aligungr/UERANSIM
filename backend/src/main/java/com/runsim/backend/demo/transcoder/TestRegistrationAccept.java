@@ -44,7 +44,7 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
         assertNotNull(mes.registrationResult);
         assertEquals(mes.registrationResult.registrationResult, E5gsRegistrationResult.THREEGPP_ACCESS);
-        assertEquals(mes.registrationResult.smsOverNasAllowed, ESmsOverNasTransportAllowed.ALLOWED);
+        assertEquals(mes.registrationResult.smsOverNasAllowed, IE5gsRegistrationResult.ESmsOverNasTransportAllowed.ALLOWED);
 
         assertNotNull(mes.allowedNSSAI);
         assertNotNull(mes.allowedNSSAI.sNssas);
@@ -93,7 +93,7 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
         message.registrationResult = new IE5gsRegistrationResult();
         message.registrationResult.registrationResult = E5gsRegistrationResult.THREEGPP_ACCESS;
-        message.registrationResult.smsOverNasAllowed = ESmsOverNasTransportAllowed.ALLOWED;
+        message.registrationResult.smsOverNasAllowed = IE5gsRegistrationResult.ESmsOverNasTransportAllowed.ALLOWED;
 
         message.allowedNSSAI = new IENssai();
         message.allowedNSSAI.sNssas = new IESNssai[1];

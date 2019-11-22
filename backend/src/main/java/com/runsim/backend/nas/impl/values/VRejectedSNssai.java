@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.values;
 
 import com.runsim.backend.nas.core.NasValue;
-import com.runsim.backend.nas.impl.enums.ERejectedSNssaiCause;
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
@@ -45,6 +45,21 @@ public class VRejectedSNssai extends NasValue {
         }
         if (sd != null) {
             sd.encode(stream);
+        }
+    }
+
+    public static class ERejectedSNssaiCause extends ProtocolEnum {
+        public static final ERejectedSNssaiCause NA_IN_PLMN
+                = new ERejectedSNssaiCause(0b0, "S-NSSAI not available in the current PLMN");
+        public static final ERejectedSNssaiCause NA_IN_RA
+                = new ERejectedSNssaiCause(0b1, "S-NSSAI not available in the current registration area");
+
+        private ERejectedSNssaiCause(int value, String name) {
+            super(value, name);
+        }
+
+        public static ERejectedSNssaiCause fromValue(int value) {
+            return fromValueGeneric(ERejectedSNssaiCause.class, value);
         }
     }
 }

@@ -1,7 +1,10 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.enums.*;
+import com.runsim.backend.nas.impl.enums.EImsVoPs3gpp;
+import com.runsim.backend.nas.impl.enums.EImsVoPsN3gpp;
+import com.runsim.backend.nas.impl.enums.EMcsIndicator;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
@@ -48,5 +51,88 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         octet = octet.setBit(0, emcn3.intValue());
         octet = octet.setBit(1, mcsi.intValue());
         stream.writeOctet(octet);
+    }
+
+    public static class EEmergencyServiceFallback3gppIndicator extends ProtocolEnum {
+        public static final EEmergencyServiceFallback3gppIndicator NOT_SUPPORTED
+                = new EEmergencyServiceFallback3gppIndicator(0b00, "Emergency services fallback not supported");
+        public static final EEmergencyServiceFallback3gppIndicator SUPPORTED_IN_NR_CONNECTED_TO_5GCN_ONLY
+                = new EEmergencyServiceFallback3gppIndicator(0b01, "Emergency services fallback supported in NR connected to 5GCN only");
+        public static final EEmergencyServiceFallback3gppIndicator SUPPORTED_IN_EUTRA_CONNTECTED_TO_5GCN_ONLY
+                = new EEmergencyServiceFallback3gppIndicator(0b10, "Emergency services fallback supported in E-UTRA connected to 5GCN only");
+        public static final EEmergencyServiceFallback3gppIndicator SUPPORTED_IN_NR_CONNTECTED_TO_5GCN_AND_EUTRA_CONNECTED_TO_5GCN
+                = new EEmergencyServiceFallback3gppIndicator(0b11, "Emergency services fallback supported in NR connected to 5GCN and E-UTRA connected to 5GCN");
+
+        private EEmergencyServiceFallback3gppIndicator(int value, String name) {
+            super(value, name);
+        }
+
+        public static EEmergencyServiceFallback3gppIndicator fromValue(int value) {
+            return fromValueGeneric(EEmergencyServiceFallback3gppIndicator.class, value);
+        }
+    }
+
+    public static class EEmergencyServiceSupport3gppIndicator extends ProtocolEnum {
+        public static final EEmergencyServiceSupport3gppIndicator NOT_SUPPORTED
+                = new EEmergencyServiceSupport3gppIndicator(0b00, "Emergency services not supported");
+        public static final EEmergencyServiceSupport3gppIndicator SUPPORTED_IN_NR_CONNECTED_TO_5GCN_ONLY
+                = new EEmergencyServiceSupport3gppIndicator(0b01, "Emergency services supported in NR connected to 5GCN only");
+        public static final EEmergencyServiceSupport3gppIndicator SUPPORTED_IN_EUTRA_CONNTECTED_TO_5GCN_ONLY
+                = new EEmergencyServiceSupport3gppIndicator(0b10, "Emergency services supported in E-UTRA connected to 5GCN only");
+        public static final EEmergencyServiceSupport3gppIndicator SUPPORTED_IN_NR_CONNTECTED_TO_5GCN_AND_EUTRA_CONNECTED_TO_5GCN
+                = new EEmergencyServiceSupport3gppIndicator(0b11, "Emergency services supported in NR connected to 5GCN and E-UTRA connected to 5GCN");
+
+        private EEmergencyServiceSupport3gppIndicator(int value, String name) {
+            super(value, name);
+        }
+
+        public static EEmergencyServiceSupport3gppIndicator fromValue(int value) {
+            return fromValueGeneric(EEmergencyServiceSupport3gppIndicator.class, value);
+        }
+    }
+
+    public static class EEmergencyServiceSupportNon3gppIndicator extends ProtocolEnum {
+        public static final EEmergencyServiceSupportNon3gppIndicator NOT_SUPPORTED
+                = new EEmergencyServiceSupportNon3gppIndicator(0b0, "Emergency services not supported over non-3GPP access");
+        public static final EEmergencyServiceSupportNon3gppIndicator SUPPORTED
+                = new EEmergencyServiceSupportNon3gppIndicator(0b1, "Emergency services supported over non-3GPP access");
+
+        private EEmergencyServiceSupportNon3gppIndicator(int value, String name) {
+            super(value, name);
+        }
+
+        public static EEmergencyServiceSupportNon3gppIndicator fromValue(int value) {
+            return fromValueGeneric(EEmergencyServiceSupportNon3gppIndicator.class, value);
+        }
+    }
+
+    public static class EInterworkingWithoutN26InterfaceIndicator extends ProtocolEnum {
+        public static final EInterworkingWithoutN26InterfaceIndicator NOT_SUPPORTED
+                = new EInterworkingWithoutN26InterfaceIndicator(0b0, "Interworking without N26 interface not supported");
+        public static final EInterworkingWithoutN26InterfaceIndicator SUPPORTED
+                = new EInterworkingWithoutN26InterfaceIndicator(0b1, "Interworking without N26 interface supported");
+
+        private EInterworkingWithoutN26InterfaceIndicator(int value, String name) {
+            super(value, name);
+        }
+
+        public static EInterworkingWithoutN26InterfaceIndicator fromValue(int value) {
+            return fromValueGeneric(EInterworkingWithoutN26InterfaceIndicator.class, value);
+        }
+    }
+
+    public static class EMpsIndicator extends ProtocolEnum {
+        public static final EMpsIndicator NOT_SUPPORTED
+                = new EMpsIndicator(0b0, "Access identity 1 not valid in RPLMN or equivalent PLMN");
+        public static final EMpsIndicator SUPPORTED
+                = new EMpsIndicator(0b1, "Access identity 1 valid in RPLMN or equivalent PLMN");
+
+        private EMpsIndicator(int value, String name) {
+            super(value, name);
+        }
+
+        public static EMpsIndicator fromValue(int value) {
+            return fromValueGeneric(EMpsIndicator.class, value);
+        }
     }
 }
