@@ -140,12 +140,41 @@ public class NasDecoder {
 
         if (messageType.equals(EMessageType.PDU_SESSION_ESTABLISHMENT_REQUEST)) {
             message = new PduSessionEstablishmentRequest();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_ESTABLISHMENT_ACCEPT)) {
+            message = new PduSessionEstablishmentAccept();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_ESTABLISHMENT_REJECT)) {
+            message = new PduSessionEstablishmentReject();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_AUTHENTICATION_COMMAND)) {
+            message = new PduSessionAuthenticationCommand();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_AUTHENTICATION_COMPLETE)) {
+            message = new PduSessionAuthenticationComplete();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_AUTHENTICATION_RESULT)) {
+            message = new PduSessionAuthenticationResult();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_MODIFICATION_REQUEST)) {
+            message = new PduSessionModificationRequest();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_MODIFICATION_REJECT)) {
+            message = new PduSessionModificationReject();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_MODIFICATION_COMMAND)) {
+            message = new PduSessionModificationCommand();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_MODIFICATION_COMPLETE)) {
+            message = new PduSessionModificationComplete();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_MODIFICATION_COMMAND_REJECT)) {
+            message = new PduSessionModificationCommandReject();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_RELEASE_REQUEST)) {
+            message = new PduSessionReleaseRequest();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_RELEASE_REJECT)) {
+            message = new PduSessionReleaseReject();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_RELEASE_COMMAND)) {
+            message = new PduSessionReleaseCommand();
+        } else if (messageType.equals(EMessageType.PDU_SESSION_RELEASE_COMPLETE)) {
+            message = new PduSessionReleaseComplete();
+        } else if (messageType.equals(EMessageType.FIVEG_SM_STATUS)) {
+            message = new FiveGSmStatus();
         } else {
             throw new NotImplementedException("message type value is not implemented yet: " + messageType.intValue());
         }
 
         message = message.decodeMessage(stream);
-
         return message;
     }
 
