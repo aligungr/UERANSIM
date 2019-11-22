@@ -1,4 +1,4 @@
-package com.runsim.backend.nas.impl.messages;
+package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.impl.values.VMappedEpsBearerContext;
