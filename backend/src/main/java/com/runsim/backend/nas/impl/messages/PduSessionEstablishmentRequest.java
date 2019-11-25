@@ -30,6 +30,6 @@ public class PduSessionEstablishmentRequest extends PlainSmMessage {
         builder.optionalIE(0x55, "maximumNumberOfSupportedPacketFilters");
         builder.optionalIE1(0xB, "alwaysOnPduSessionRequested");
         builder.optionalIE(0x39, "smPduDnRequestContainer");
-        builder.optionalIE1(0x7B, "extendedProtocolConfigurationOptions");
+        builder.optionalIE(0x7B, "extendedProtocolConfigurationOptions");
     }
 }

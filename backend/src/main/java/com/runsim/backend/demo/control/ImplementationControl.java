@@ -1,9 +1,11 @@
 package com.runsim.backend.demo.control;
 
 import com.runsim.backend.exceptions.IncorrectImplementationException;
+import com.runsim.backend.nas.core.IMessageBuilder;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement;
+import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.core.messages.PlainSmMessage;
@@ -14,6 +16,7 @@ import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
 import com.runsim.backend.utils.octets.OctetString;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -144,6 +147,75 @@ public class ImplementationControl {
     }
 
     private static void controlMessageBuilder(Class clazz, NasMessage instance) {
-//todo
+        var ie1 = new HashSet<String>();
+        var ieN = new HashSet<String>();
+        var ieAll = new HashSet<String>();
+        var ieiAll = new HashSet<Integer>();
+
+        var builder = new IMessageBuilder() {
+            @Override
+            public void mandatoryIE(String field) {
+                if (ieAll.contains(field))
+                    throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field);
+                ieN.add(field);
+                ieAll.add(field);
+            }
+
+            @Override
+            public void optionalIE(int iei, String field) {
+                if (ieAll.contains(field))
+                    throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field);
+                if (ieiAll.contains(iei))
+                    throw new IncorrectImplementationException(clazz, "ie, occurs more than once: " + ie1);
+                ieiAll.add(iei);
+                ieN.add(field);
+                ieAll.add(field);
+            }
+
+            @Override
+            public void mandatoryIE1(String field1, String field0) {
+                if (ieAll.contains(field1))
+                    throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field1);
+                if (ieAll.contains(field0))
+                    throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field0);
+                ie1.add(field1);
+                ie1.add(field0);
+                ieAll.add(field1);
+                ieAll.add(field0);
+            }
+
+            @Override
+            public void mandatoryIE1(String field) {
+                if (ieAll.contains(field))
+                    throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field);
+                ie1.add(field);
+                ieAll.add(field);
+            }
+
+            @Override
+            public void optionalIE1(int iei, String field) {
+                if (ieAll.contains(field))
+                    throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field);
+                if (ieiAll.contains(iei))
+                    throw new IncorrectImplementationException(clazz, "ie, occurs more than once: " + ie1);
+                ieiAll.add(iei);
+                ie1.add(field);
+                ieAll.add(field);
+            }
+        };
+
+        instance.build(builder);
+
+        for (var field : ie1) {
+            var type = getFieldType(clazz, field);
+            if (type == null || (!InformationElement1.class.isAssignableFrom(type)))
+                throw new IncorrectImplementationException(clazz, "ie1 registered type must be InformationElement1: " + field);
+        }
+
+        for (var field : ieN) {
+            var type = getFieldType(clazz, field);
+            if (type == null || (InformationElement1.class.isAssignableFrom(type)))
+                throw new IncorrectImplementationException(clazz, "not ie1 registered type must not be InformationElement1: " + field);
+        }
     }
 }

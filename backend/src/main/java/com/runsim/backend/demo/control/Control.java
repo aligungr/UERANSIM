@@ -115,6 +115,14 @@ class Control {
         return true;
     }
 
+    static Class<?> getFieldType(Class<?> type, String fieldName) {
+        try {
+            return type.getField(fieldName).getType();
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+    }
+
     static <T extends ProtocolEnum> String findFieldNameOfProtocolEnum(T value) {
         var clazz = value.getClass();
         for (var field : clazz.getDeclaredFields()) {
