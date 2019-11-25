@@ -6,7 +6,7 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
 
 public class IEPduSessionStatus extends InformationElement4 {
-    private final Bit psi00 = new Bit(0); // this bit specified as spare;
+    public final Bit psi00 = new Bit(0); // this bit specified as spare;
     public Bit psi01;
     public Bit psi02;
     public Bit psi03;

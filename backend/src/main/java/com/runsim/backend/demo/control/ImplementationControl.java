@@ -4,6 +4,7 @@ import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement;
+import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
@@ -17,18 +18,19 @@ public class ImplementationControl {
 
     private static final Class[] USUAL_TYPES = new Class[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
-            String.class, OctetString.class, List.class,
+            String.class, OctetString.class, List.class, EAP.class,
+
             OctetN[].class, BitN[].class, InformationElement[].class, ProtocolEnum[].class, NasValue[].class,
-            String[].class, OctetString[].class
+            String[].class, OctetString[].class, List[].class, EAP[].class,
     };
 
     public static void main(String[] args) {
         controlForType(ProtocolEnum.class, false, ImplementationControl::controlProtocolEnums);
         controlForType(NasValue.class, false, ImplementationControl::controlNasValues);
         controlForType(NasValue.class, true, ImplementationControl::controlNasAbstractValues);
+        controlForType(InformationElement.class, true, ImplementationControl::controlInformationElements);
 
         controlMessages();
-        controlInformationElements();
     }
 
     private static void controlProtocolEnums(Class clazz) {
@@ -70,8 +72,19 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "NasValue should provide method: 'public static [same-type] decode(OctetInputStream, ...)'");
     }
 
-    private static void controlInformationElements() {
-
+    private static void controlInformationElements(Class clazz) {
+        if (!fieldVisibilityAll(clazz, Visibility.PUBLIC))
+            throw new IncorrectImplementationException(clazz, "IE should only contain public fields");
+        if (isInnerClass(clazz))
+            throw new IncorrectImplementationException(clazz, "IE should not be inner class");
+        if (!constructorExists(clazz, Visibility.PUBLIC))
+            throw new IncorrectImplementationException(clazz, "IE should be provide at least one public empty constructor");
+        if (fieldTypeExists(clazz, OctetN.class))
+            throw new IncorrectImplementationException(clazz, "do not use OctetN as field type directly. Use Octet, Octet2, Octet3, ... ");
+        if (fieldTypeExists(clazz, BitN.class))
+            throw new IncorrectImplementationException(clazz, "do not use BitN as field type directly. Use Bit, Bit2, Bit3, ... ");
+        if (!allFieldsOfTypesOrLists(clazz, USUAL_TYPES))
+            throw new IncorrectImplementationException(clazz, "IE contains a field with a type that should not be used directly.");
     }
 
     private static void controlMessages() {
