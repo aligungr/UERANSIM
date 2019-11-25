@@ -75,7 +75,7 @@ public class ESmCause extends ProtocolEnum {
     }
 
     public static ESmCause fromValue(int value) {
-        var val = fromValueGeneric(ESmCause.class, value);
+        var val = fromValueGeneric(ESmCause.class, value, null);
 
         // Any other value received by the UE shall be treated as 0010 0010, "service option temporarily out of order".
         // Any other value received by the network shall be treated as 0110 1111, "protocol error, unspecified".

@@ -43,7 +43,7 @@ public class IE5gMmCapability extends InformationElement4 {
         }
 
         public static EEpcNasSupported fromValue(int value) {
-            return fromValueGeneric(EEpcNasSupported.class, value);
+            return fromValueGeneric(EEpcNasSupported.class, value, null);
         }
     }
 
@@ -58,7 +58,7 @@ public class IE5gMmCapability extends InformationElement4 {
         }
 
         public static ELtePositioningProtocolCapability fromValue(int value) {
-            return fromValueGeneric(ELtePositioningProtocolCapability.class, value);
+            return fromValueGeneric(ELtePositioningProtocolCapability.class, value, null);
         }
     }
 
@@ -73,7 +73,7 @@ public class IE5gMmCapability extends InformationElement4 {
         }
 
         public static EHandoverAttachSupported fromValue(int value) {
-            return fromValueGeneric(EHandoverAttachSupported.class, value);
+            return fromValueGeneric(EHandoverAttachSupported.class, value, null);
         }
     }
 }

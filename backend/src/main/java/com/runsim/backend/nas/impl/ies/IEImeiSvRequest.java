@@ -30,7 +30,7 @@ public class IEImeiSvRequest extends InformationElement1 {
         }
 
         public static EImeiSvRequest fromValue(int value) {
-            return fromValueGeneric(EImeiSvRequest.class, value);
+            return fromValueGeneric(EImeiSvRequest.class, value, null);
         }
     }
 }

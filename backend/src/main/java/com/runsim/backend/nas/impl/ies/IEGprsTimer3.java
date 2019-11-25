@@ -52,7 +52,7 @@ public class IEGprsTimer3 extends InformationElement4 {
         }
 
         public static EGprsTimerValueUnit3 fromValue(int value) {
-            return fromValueGeneric(EGprsTimerValueUnit3.class, value);
+            return fromValueGeneric(EGprsTimerValueUnit3.class, value, null);
         }
     }
 }

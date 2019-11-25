@@ -37,7 +37,7 @@ public class IE5gsUpdateType extends InformationElement4 {
         }
 
         public static ENgRanRadioCapabilityUpdate fromValue(int value) {
-            return fromValueGeneric(ENgRanRadioCapabilityUpdate.class, value);
+            return fromValueGeneric(ENgRanRadioCapabilityUpdate.class, value, null);
         }
     }
 
@@ -52,7 +52,7 @@ public class IE5gsUpdateType extends InformationElement4 {
         }
 
         public static ESmsRequested fromValue(int value) {
-            return fromValueGeneric(ESmsRequested.class, value);
+            return fromValueGeneric(ESmsRequested.class, value, null);
         }
     }
 }

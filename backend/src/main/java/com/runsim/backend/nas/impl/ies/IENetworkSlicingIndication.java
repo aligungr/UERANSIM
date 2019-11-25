@@ -32,7 +32,7 @@ public class IENetworkSlicingIndication extends InformationElement1 {
         }
 
         public static ENetworkSlicingSubscriptionChangeIndication fromValue(int value) {
-            return fromValueGeneric(ENetworkSlicingSubscriptionChangeIndication.class, value);
+            return fromValueGeneric(ENetworkSlicingSubscriptionChangeIndication.class, value, null);
         }
     }
 
@@ -47,7 +47,7 @@ public class IENetworkSlicingIndication extends InformationElement1 {
         }
 
         public static EDefaultConfiguredNssaiIndication fromValue(int value) {
-            return fromValueGeneric(EDefaultConfiguredNssaiIndication.class, value);
+            return fromValueGeneric(EDefaultConfiguredNssaiIndication.class, value, null);
         }
     }
 }

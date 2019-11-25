@@ -45,7 +45,6 @@ public class EMmCause extends ProtocolEnum {
     }
 
     public static EMmCause fromValue(int value) {
-        var val = fromValueGeneric(EMmCause.class, value);
-        return val != null ? val : UNSPECIFIED_PROTOCOL_ERROR;
+        return fromValueGeneric(EMmCause.class, value, UNSPECIFIED_PROTOCOL_ERROR);
     }
 }

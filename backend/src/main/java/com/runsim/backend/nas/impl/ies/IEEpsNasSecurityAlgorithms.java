@@ -45,7 +45,7 @@ public class IEEpsNasSecurityAlgorithms extends InformationElement3 {
         }
 
         public static EEpsTypeOfCipheringAlgorithm fromValue(int value) {
-            return fromValueGeneric(EEpsTypeOfCipheringAlgorithm.class, value);
+            return fromValueGeneric(EEpsTypeOfCipheringAlgorithm.class, value, null);
         }
     }
 
@@ -72,7 +72,7 @@ public class IEEpsNasSecurityAlgorithms extends InformationElement3 {
         }
 
         public static EEpsTypeOfIntegrityProtectionAlgorithm fromValue(int value) {
-            return fromValueGeneric(EEpsTypeOfIntegrityProtectionAlgorithm.class, value);
+            return fromValueGeneric(EEpsTypeOfIntegrityProtectionAlgorithm.class, value, null);
         }
     }
 }

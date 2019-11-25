@@ -35,7 +35,7 @@ public class IEIntegrityProtectionMaximumDataRate extends InformationElement3 {
         }
 
         public static EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink fromValue(int value) {
-            return fromValueGeneric(EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink.class, value);
+            return fromValueGeneric(EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink.class, value, null);
         }
     }
 
@@ -50,7 +50,7 @@ public class IEIntegrityProtectionMaximumDataRate extends InformationElement3 {
         }
 
         public static EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink fromValue(int value) {
-            return fromValueGeneric(EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.class, value);
+            return fromValueGeneric(EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.class, value, null);
         }
     }
 }

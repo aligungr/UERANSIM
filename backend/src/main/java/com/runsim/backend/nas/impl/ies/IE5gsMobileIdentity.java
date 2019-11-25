@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.IncorrectImplementationException;
-import com.runsim.backend.exceptions.InvalidValueException;
+import com.runsim.backend.exceptions.ReservedOrInvalidValueException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
@@ -30,7 +30,7 @@ public class IE5gsMobileIdentity extends InformationElement6 {
         } else if (typeOfIdentity.equals(EIdentityType.NO_IDENTITY)) {
             return new IENoIdentity().decodeMobileIdentity(stream, length, isEven);
         } else {
-            throw new InvalidValueException("type of identity is invalid: " + typeOfIdentity.name());
+            throw new ReservedOrInvalidValueException("Type of Identity", typeOfIdentity);
         }
     }
 

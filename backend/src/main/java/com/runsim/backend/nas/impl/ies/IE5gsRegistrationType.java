@@ -34,7 +34,7 @@ public class IE5gsRegistrationType extends InformationElement1 {
         }
 
         public static EFollowOnRequest fromValue(int value) {
-            return fromValueGeneric(EFollowOnRequest.class, value);
+            return fromValueGeneric(EFollowOnRequest.class, value, null);
         }
     }
 
@@ -55,7 +55,7 @@ public class IE5gsRegistrationType extends InformationElement1 {
         }
 
         public static ERegistrationType fromValue(int value) {
-            return fromValueGeneric(ERegistrationType.class, value);
+            return fromValueGeneric(ERegistrationType.class, value, null);
         }
     }
 }

@@ -60,7 +60,7 @@ public class VOperatorDefinedAccessCategoryDefinition extends NasValue {
         }
 
         public static EPresenceOfStandardizedAccessCategory fromValue(int value) {
-            return fromValueGeneric(EPresenceOfStandardizedAccessCategory.class, value);
+            return fromValueGeneric(EPresenceOfStandardizedAccessCategory.class, value, null);
         }
     }
 }

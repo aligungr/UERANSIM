@@ -30,7 +30,7 @@ public class IESmsIndication extends InformationElement1 {
         }
 
         public static ESmsAvailabilityIndication fromValue(int value) {
-            return fromValueGeneric(ESmsAvailabilityIndication.class, value);
+            return fromValueGeneric(ESmsAvailabilityIndication.class, value, null);
         }
     }
 }

@@ -711,8 +711,7 @@ public class EMobileCountryCode extends ProtocolEnum {
     }
 
     public static EMobileCountryCode fromValue(int value) {
-        var res = fromValueGeneric(EMobileCountryCode.class, value);
-        return res != null ? res : unknownValue(value);
+        return fromValueGeneric(EMobileCountryCode.class, value, unknownValue(value));
     }
 
     public static EMobileCountryCode unknownValue(int value) {

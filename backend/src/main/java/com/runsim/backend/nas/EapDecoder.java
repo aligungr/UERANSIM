@@ -1,7 +1,6 @@
 package com.runsim.backend.nas;
 
 import com.runsim.backend.exceptions.DecodingException;
-import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.utils.OctetInputStream;
@@ -43,9 +42,7 @@ public class EapDecoder {
     }
 
     private static ECode decodeCode(OctetInputStream stream) {
-        var val = ECode.fromValue(stream.readOctetI());
-        if (val == null) throw new InvalidValueException(ECode.class);
-        return val;
+        return ECode.fromValue(stream.readOctetI());
     }
 
     private static Octet decodeId(OctetInputStream stream) {
@@ -57,9 +54,7 @@ public class EapDecoder {
     }
 
     private static EEapType decodeEAPType(OctetInputStream data) {
-        var val = EEapType.fromValue(data.readOctetI());
-        if (val == null) throw new InvalidValueException(EEapType.class);
-        return val;
+        return EEapType.fromValue(data.readOctetI());
     }
 
     private static AkaPrime decodeAKAPrime(OctetInputStream stream, int length) {
@@ -99,15 +94,11 @@ public class EapDecoder {
     }
 
     private static EAkaSubType decodeAKASubType(OctetInputStream stream) {
-        var val = EAkaSubType.fromValue(stream.readOctetI());
-        if (val == null) throw new InvalidValueException(EAkaSubType.class);
-        return val;
+        return EAkaSubType.fromValue(stream.readOctetI());
     }
 
     private static EAkaAttributeType decodeAKAAttributeType(OctetInputStream stream) {
-        var val = EAkaAttributeType.fromValue(stream.readOctetI());
-        if (val == null) throw new InvalidValueException(EAkaAttributeType.class);
-        return val;
+        return EAkaAttributeType.fromValue(stream.readOctetI());
     }
 
     private static Notification decodeNotification(OctetInputStream stream, int length) {

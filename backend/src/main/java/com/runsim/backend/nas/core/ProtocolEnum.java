@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.core;
 
+import com.runsim.backend.exceptions.ReservedOrInvalidValueException;
 import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Modifier;
@@ -14,10 +15,6 @@ public class ProtocolEnum extends ProtocolValue {
 
         this.value = value;
         this.name = name;
-    }
-
-    protected static <T extends ProtocolEnum> T fromValueGeneric(Class<T> clazz, int value) {
-        return fromValueGeneric(clazz, value, null);
     }
 
     protected static <T extends ProtocolEnum> T fromValueGeneric(Class<T> clazz, int value, T defaultValue) {
@@ -38,7 +35,10 @@ public class ProtocolEnum extends ProtocolValue {
             if (val.value == value)
                 return val;
         }
-        return defaultValue;
+
+        if (defaultValue != null)
+            return defaultValue;
+        throw new ReservedOrInvalidValueException(clazz.getSimpleName(), value);
     }
 
     @Override

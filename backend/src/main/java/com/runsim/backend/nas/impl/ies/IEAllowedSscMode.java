@@ -35,7 +35,7 @@ public class IEAllowedSscMode extends InformationElement1 {
         }
 
         public static ESsc1 fromValue(int value) {
-            return fromValueGeneric(ESsc1.class, value);
+            return fromValueGeneric(ESsc1.class, value, null);
         }
     }
 
@@ -50,7 +50,7 @@ public class IEAllowedSscMode extends InformationElement1 {
         }
 
         public static ESsc2 fromValue(int value) {
-            return fromValueGeneric(ESsc2.class, value);
+            return fromValueGeneric(ESsc2.class, value, null);
         }
     }
 
@@ -65,7 +65,7 @@ public class IEAllowedSscMode extends InformationElement1 {
         }
 
         public static ESsc3 fromValue(int value) {
-            return fromValueGeneric(ESsc3.class, value);
+            return fromValueGeneric(ESsc3.class, value, null);
         }
     }
 }

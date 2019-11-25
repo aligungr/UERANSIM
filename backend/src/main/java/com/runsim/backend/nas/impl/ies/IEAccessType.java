@@ -30,7 +30,7 @@ public class IEAccessType extends InformationElement1 {
         }
 
         public static EAccessType fromValue(int value) {
-            return fromValueGeneric(EAccessType.class, value);
+            return fromValueGeneric(EAccessType.class, value, null);
         }
     }
 }

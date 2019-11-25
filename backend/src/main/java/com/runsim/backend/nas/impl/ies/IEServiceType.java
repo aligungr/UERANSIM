@@ -50,7 +50,7 @@ public class IEServiceType extends InformationElement1 {
         }
 
         public static EServiceType fromValue(int value) {
-            return fromValueGeneric(EServiceType.class, value);
+            return fromValueGeneric(EServiceType.class, value, null);
         }
     }
 }

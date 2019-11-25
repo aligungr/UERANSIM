@@ -22,6 +22,6 @@ public class ECode extends ProtocolEnum {
     }
 
     public static ECode fromValue(int value) {
-        return fromValueGeneric(ECode.class, value);
+        return fromValueGeneric(ECode.class, value, null);
     }
 }

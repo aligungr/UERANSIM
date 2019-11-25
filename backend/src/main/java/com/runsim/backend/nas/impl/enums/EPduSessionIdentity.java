@@ -41,6 +41,6 @@ public class EPduSessionIdentity extends ProtocolEnum {
     }
 
     public static EPduSessionIdentity fromValue(int value) {
-        return fromValueGeneric(EPduSessionIdentity.class, value);
+        return fromValueGeneric(EPduSessionIdentity.class, value, null);
     }
 }

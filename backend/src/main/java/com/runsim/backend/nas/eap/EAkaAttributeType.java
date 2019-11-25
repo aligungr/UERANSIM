@@ -39,6 +39,6 @@ public class EAkaAttributeType extends ProtocolEnum {
     }
 
     public static EAkaAttributeType fromValue(int value) {
-        return fromValueGeneric(EAkaAttributeType.class, value);
+        return fromValueGeneric(EAkaAttributeType.class, value, null);
     }
 }

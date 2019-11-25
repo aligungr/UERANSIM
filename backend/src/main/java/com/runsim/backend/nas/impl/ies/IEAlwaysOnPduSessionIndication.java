@@ -30,7 +30,7 @@ public class IEAlwaysOnPduSessionIndication extends InformationElement1 {
         }
 
         public static EAlwaysOnPduSessionIndication fromValue(int value) {
-            return fromValueGeneric(EAlwaysOnPduSessionIndication.class, value);
+            return fromValueGeneric(EAlwaysOnPduSessionIndication.class, value, null);
         }
     }
 }

@@ -37,7 +37,7 @@ public class IE5gsDrxParameters extends InformationElement4 {
         }
 
         public static EDrxValue fromValue(int value) {
-            return fromValueGeneric(EDrxValue.class, value);
+            return fromValueGeneric(EDrxValue.class, value, null);
         }
     }
 }

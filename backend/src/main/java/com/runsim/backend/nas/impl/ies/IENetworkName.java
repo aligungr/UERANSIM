@@ -47,7 +47,7 @@ public class IENetworkName extends InformationElement4 {
         }
 
         public static EAddCountryInitials fromValue(int value) {
-            return fromValueGeneric(EAddCountryInitials.class, value);
+            return fromValueGeneric(EAddCountryInitials.class, value, null);
         }
     }
 
@@ -62,7 +62,7 @@ public class IENetworkName extends InformationElement4 {
         }
 
         public static ECodingScheme fromValue(int value) {
-            return fromValueGeneric(ECodingScheme.class, value);
+            return fromValueGeneric(ECodingScheme.class, value, null);
         }
     }
 }

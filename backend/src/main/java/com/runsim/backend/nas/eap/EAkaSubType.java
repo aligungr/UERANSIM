@@ -23,6 +23,6 @@ public class EAkaSubType extends ProtocolEnum {
     }
 
     public static EAkaSubType fromValue(int value) {
-        return fromValueGeneric(EAkaSubType.class, value);
+        return fromValueGeneric(EAkaSubType.class, value, null);
     }
 }

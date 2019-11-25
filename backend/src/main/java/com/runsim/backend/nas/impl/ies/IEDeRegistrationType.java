@@ -39,7 +39,7 @@ public class IEDeRegistrationType extends InformationElement1 {
         }
 
         public static ESwitchOff fromValue(int value) {
-            return fromValueGeneric(ESwitchOff.class, value);
+            return fromValueGeneric(ESwitchOff.class, value, null);
         }
     }
 
@@ -56,7 +56,7 @@ public class IEDeRegistrationType extends InformationElement1 {
         }
 
         public static EDeRegistrationAccessType fromValue(int value) {
-            return fromValueGeneric(EDeRegistrationAccessType.class, value);
+            return fromValueGeneric(EDeRegistrationAccessType.class, value, null);
         }
     }
 
@@ -71,7 +71,7 @@ public class IEDeRegistrationType extends InformationElement1 {
         }
 
         public static EReRegistrationRequired fromValue(int value) {
-            return fromValueGeneric(EReRegistrationRequired.class, value);
+            return fromValueGeneric(EReRegistrationRequired.class, value, null);
         }
     }
 }

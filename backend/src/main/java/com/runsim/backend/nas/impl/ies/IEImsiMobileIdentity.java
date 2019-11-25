@@ -115,7 +115,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         }
 
         public static EProtectionSchemeIdentifier fromValue(int value) {
-            return fromValueGeneric(EProtectionSchemeIdentifier.class, value);
+            return fromValueGeneric(EProtectionSchemeIdentifier.class, value, null);
         }
 
         public boolean isReserved() {

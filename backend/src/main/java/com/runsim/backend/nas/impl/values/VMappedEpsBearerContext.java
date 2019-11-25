@@ -82,7 +82,7 @@ public class VMappedEpsBearerContext extends NasValue {
         }
 
         public static EEpsBearerIdentity fromValue(int value) {
-            return fromValueGeneric(EEpsBearerIdentity.class, value);
+            return fromValueGeneric(EEpsBearerIdentity.class, value, null);
         }
     }
 
@@ -101,7 +101,7 @@ public class VMappedEpsBearerContext extends NasValue {
         }
 
         public static EOperationCode fromValue(int value) {
-            return fromValueGeneric(EOperationCode.class, value);
+            return fromValueGeneric(EOperationCode.class, value, null);
         }
     }
 
@@ -116,7 +116,7 @@ public class VMappedEpsBearerContext extends NasValue {
         }
 
         public static EEbit fromValue(int value) {
-            return fromValueGeneric(EEbit.class, value);
+            return fromValueGeneric(EEbit.class, value, null);
         }
     }
 }

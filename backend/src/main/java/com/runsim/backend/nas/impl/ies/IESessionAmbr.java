@@ -85,14 +85,12 @@ public class IESessionAmbr extends InformationElement4 {
         public static final EUnitForSessionAmbr VALUE_NOT_USED =
                 new EUnitForSessionAmbr(0b00000000, "Value is not used");
 
-
         private EUnitForSessionAmbr(int value, String name) {
             super(value, name);
         }
 
         public static EUnitForSessionAmbr fromValue(int value) {
-            EUnitForSessionAmbr eUnitForSessionAmbrForDownlink = fromValueGeneric(EUnitForSessionAmbr.class, value);
-            return eUnitForSessionAmbrForDownlink == null ? MULT_256Pbps : eUnitForSessionAmbrForDownlink;
+            return fromValueGeneric(EUnitForSessionAmbr.class, value, MULT_256Pbps);
         }
     }
 }

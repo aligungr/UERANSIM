@@ -41,7 +41,7 @@ public class IENasKeySetIdentifier extends InformationElement1 {
         }
 
         public static ETypeOfSecurityContext fromValue(int value) {
-            return fromValueGeneric(ETypeOfSecurityContext.class, value);
+            return fromValueGeneric(ETypeOfSecurityContext.class, value, null);
         }
     }
 }

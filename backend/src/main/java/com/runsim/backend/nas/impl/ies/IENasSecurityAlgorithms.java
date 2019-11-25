@@ -45,7 +45,7 @@ public class IENasSecurityAlgorithms extends InformationElement3 {
         }
 
         public static ETypeOfCipheringAlgorithm fromValue(int value) {
-            return fromValueGeneric(ETypeOfCipheringAlgorithm.class, value);
+            return fromValueGeneric(ETypeOfCipheringAlgorithm.class, value, null);
         }
     }
 
@@ -72,7 +72,7 @@ public class IENasSecurityAlgorithms extends InformationElement3 {
         }
 
         public static ETypeOfIntegrityProtectionAlgorithm fromValue(int value) {
-            return fromValueGeneric(ETypeOfIntegrityProtectionAlgorithm.class, value);
+            return fromValueGeneric(ETypeOfIntegrityProtectionAlgorithm.class, value, null);
         }
     }
 }

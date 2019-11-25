@@ -30,7 +30,7 @@ public class IEMicoIndication extends InformationElement1 {
         }
 
         public static ERegistrationAreaAllocationIndication fromValue(int value) {
-            return fromValueGeneric(ERegistrationAreaAllocationIndication.class, value);
+            return fromValueGeneric(ERegistrationAreaAllocationIndication.class, value, null);
         }
     }
 }

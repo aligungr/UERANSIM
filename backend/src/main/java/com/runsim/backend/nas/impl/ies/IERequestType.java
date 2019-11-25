@@ -38,7 +38,7 @@ public class IERequestType extends InformationElement1 {
         }
 
         public static ERequestType fromValue(int value) {
-            return fromValueGeneric(ERequestType.class, value);
+            return fromValueGeneric(ERequestType.class, value, null);
         }
     }
 }

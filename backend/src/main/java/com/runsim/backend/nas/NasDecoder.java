@@ -1,7 +1,7 @@
 package com.runsim.backend.nas;
 
-import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.exceptions.NotImplementedException;
+import com.runsim.backend.exceptions.ReservedOrInvalidValueException;
 import com.runsim.backend.nas.core.ies.InformationElement;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
@@ -25,18 +25,12 @@ public class NasDecoder {
         NasMessage nasMessage;
 
         var epd = EExtendedProtocolDiscriminator.fromValue(stream.readOctetI());
-        if (epd == null)
-            throw new InvalidValueException(EExtendedProtocolDiscriminator.class);
 
         if (epd.equals(EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES)) {
             var sht = ESecurityHeaderType.fromValue(stream.readOctetI());
-            if (sht == null)
-                throw new InvalidValueException(ESecurityHeaderType.class);
             if (!sht.equals(ESecurityHeaderType.NOT_PROTECTED))
                 throw new NotImplementedException("security protected 5GS NAS messages not implemented yet");
             var messageType = EMessageType.fromValue(stream.readOctetI());
-            if (messageType == null)
-                throw new InvalidValueException(EMessageType.class);
 
             PlainMmMessage plainMmMessage = decodePlainMmMessage(stream, messageType);
             plainMmMessage.securityHeaderType = sht;
@@ -47,13 +41,6 @@ public class NasDecoder {
             var pduSessionId = EPduSessionIdentity.fromValue(stream.readOctetI());
             var pti = EProcedureTransactionIdentity.fromValue(stream.readOctetI());
             var messageType = EMessageType.fromValue(stream.readOctetI());
-
-            if (pduSessionId == null)
-                throw new InvalidValueException(EPduSessionIdentity.class);
-            if (pti == null)
-                throw new InvalidValueException(EProcedureTransactionIdentity.class);
-            if (messageType == null)
-                throw new InvalidValueException(EMessageType.class);
 
             PlainSmMessage plainSmMessage = decodePlainSmMessage(stream, messageType);
             plainSmMessage.pduSessionId = pduSessionId;
@@ -127,7 +114,7 @@ public class NasDecoder {
         } else if (messageType.equals(EMessageType.DL_NAS_TRANSPORT)) {
             message = new DlNasTransport();
         } else {
-            throw new InvalidValueException("message type value is invalid: " + messageType.intValue());
+            throw new ReservedOrInvalidValueException("Message Type", messageType);
         }
 
         message = message.decodeMessage(stream);
@@ -171,7 +158,7 @@ public class NasDecoder {
         } else if (messageType.equals(EMessageType.FIVEG_SM_STATUS)) {
             message = new FiveGSmStatus();
         } else {
-            throw new InvalidValueException("message type value is invalid: " + messageType.intValue());
+            throw new ReservedOrInvalidValueException("Message Type", messageType);
         }
 
         message = message.decodeMessage(stream);
@@ -236,6 +223,6 @@ public class NasDecoder {
             return new IEImsiMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
         if (supiFormat.equals(ESupiFormat.NETWORK_SPECIFIC_IDENTIFIER))
             return new IENsaMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
-        throw new InvalidValueException(ESupiFormat.class);
+        throw new ReservedOrInvalidValueException(ESupiFormat.class);
     }
 }

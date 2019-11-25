@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.EncodingException;
-import com.runsim.backend.exceptions.InvalidValueException;
+import com.runsim.backend.exceptions.ReservedOrInvalidValueException;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
@@ -42,7 +42,7 @@ public class IESNssai extends InformationElement4 {
                 res.mappedHplmnSd = VSliceDifferentiator.decode(stream);
                 break;
             default: // All other values are reserved
-                throw new InvalidValueException("reserved value used");
+                throw new ReservedOrInvalidValueException("S-NSSAI Information Element Length Indicator");
         }
 
         return res;

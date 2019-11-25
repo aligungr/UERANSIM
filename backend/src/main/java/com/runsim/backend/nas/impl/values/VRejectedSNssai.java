@@ -60,7 +60,7 @@ public class VRejectedSNssai extends NasValue {
         }
 
         public static ERejectedSNssaiCause fromValue(int value) {
-            return fromValueGeneric(ERejectedSNssaiCause.class, value);
+            return fromValueGeneric(ERejectedSNssaiCause.class, value, null);
         }
     }
 }

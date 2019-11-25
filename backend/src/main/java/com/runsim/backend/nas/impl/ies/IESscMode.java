@@ -38,7 +38,7 @@ public class IESscMode extends InformationElement1 {
         }
 
         public static ESscMode fromValue(int value) {
-            var val = fromValueGeneric(ESscMode.class, value);
+            var val = fromValueGeneric(ESscMode.class, value, null);
             if (val.equals(UNUSED_1)) return SSC_MODE_1;
             if (val.equals(UNUSED_2)) return SSC_MODE_2;
             if (val.equals(UNUSED_3)) return SSC_MODE_3;

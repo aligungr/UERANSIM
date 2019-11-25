@@ -1614,8 +1614,7 @@ public class EMobileNetworkCode2 extends EMobileNetworkCode {
     }
 
     public static EMobileNetworkCode2 fromValue(int value) {
-        var res = fromValueGeneric(EMobileNetworkCode2.class, value);
-        return res != null ? res : unknownValue(value);
+        return fromValueGeneric(EMobileNetworkCode2.class, value, unknownValue(value));
     }
 
     public static EMobileNetworkCode2 unknownValue(int value) {

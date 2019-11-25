@@ -110,7 +110,7 @@ public class EMessageType extends ProtocolEnum {
     }
 
     public static EMessageType fromValue(int value) {
-        return fromValueGeneric(EMessageType.class, value);
+        return fromValueGeneric(EMessageType.class, value, null);
     }
 
     /**

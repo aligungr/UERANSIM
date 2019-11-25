@@ -31,7 +31,7 @@ public class IEUesUsageSetting extends InformationElement4 {
         }
 
         public static EUesUsageSetting fromValue(int value) {
-            return fromValueGeneric(EUesUsageSetting.class, value);
+            return fromValueGeneric(EUesUsageSetting.class, value, null);
         }
     }
 }

@@ -33,7 +33,7 @@ public class IEDaylightSavingTime extends InformationElement4 {
         }
 
         public static EDaylightSavingTime fromValue(int value) {
-            return fromValueGeneric(EDaylightSavingTime.class, value);
+            return fromValueGeneric(EDaylightSavingTime.class, value, null);
         }
     }
 }

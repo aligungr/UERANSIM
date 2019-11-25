@@ -40,7 +40,7 @@ public class IEPayloadContainerType extends InformationElement1 {
         }
 
         public static EPayloadContainerType fromValue(int value) {
-            return fromValueGeneric(EPayloadContainerType.class, value);
+            return fromValueGeneric(EPayloadContainerType.class, value, null);
         }
     }
 }

@@ -36,7 +36,7 @@ public class IEUeStatus extends InformationElement4 {
         }
 
         public static E5gMmRegistrationStatus fromValue(int value) {
-            return fromValueGeneric(E5gMmRegistrationStatus.class, value);
+            return fromValueGeneric(E5gMmRegistrationStatus.class, value, null);
         }
     }
 
@@ -51,7 +51,7 @@ public class IEUeStatus extends InformationElement4 {
         }
 
         public static EEmmRegistrationStatus fromValue(int value) {
-            return fromValueGeneric(EEmmRegistrationStatus.class, value);
+            return fromValueGeneric(EEmmRegistrationStatus.class, value, null);
         }
     }
 }

@@ -19,6 +19,6 @@ public class ESecurityHeaderType extends ProtocolEnum {
     }
 
     public static ESecurityHeaderType fromValue(int value) {
-        return fromValueGeneric(ESecurityHeaderType.class, value);
+        return fromValueGeneric(ESecurityHeaderType.class, value, null);
     }
 }

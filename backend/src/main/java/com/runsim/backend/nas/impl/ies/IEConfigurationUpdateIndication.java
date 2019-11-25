@@ -32,7 +32,7 @@ public class IEConfigurationUpdateIndication extends InformationElement1 {
         }
 
         public static EAcknowledgement fromValue(int value) {
-            return fromValueGeneric(EAcknowledgement.class, value);
+            return fromValueGeneric(EAcknowledgement.class, value, null);
         }
     }
 
@@ -47,7 +47,7 @@ public class IEConfigurationUpdateIndication extends InformationElement1 {
         }
 
         public static ERegistrationRequested fromValue(int value) {
-            return fromValueGeneric(ERegistrationRequested.class, value);
+            return fromValueGeneric(ERegistrationRequested.class, value, null);
         }
     }
 }

@@ -47,7 +47,7 @@ public abstract class VServiceAreaList extends NasValue {
         }
 
         public static EAllowedType fromValue(int value) {
-            return fromValueGeneric(EAllowedType.class, value);
+            return fromValueGeneric(EAllowedType.class, value, null);
         }
     }
 }

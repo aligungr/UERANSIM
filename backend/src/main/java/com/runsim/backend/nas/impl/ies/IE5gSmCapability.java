@@ -33,7 +33,7 @@ public class IE5gSmCapability extends InformationElement4 {
         }
 
         public static EMultiHomedIPv6PduSession fromValue(int value) {
-            return fromValueGeneric(EMultiHomedIPv6PduSession.class, value);
+            return fromValueGeneric(EMultiHomedIPv6PduSession.class, value, null);
         }
     }
 
@@ -48,7 +48,7 @@ public class IE5gSmCapability extends InformationElement4 {
         }
 
         public static EReflectiveQoS fromValue(int value) {
-            return fromValueGeneric(EReflectiveQoS.class, value);
+            return fromValueGeneric(EReflectiveQoS.class, value, null);
         }
     }
 }

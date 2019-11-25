@@ -35,7 +35,7 @@ public class IENssaiInclusionMode extends InformationElement1 {
         }
 
         public static ENssaiInclusionMode fromValue(int value) {
-            return fromValueGeneric(ENssaiInclusionMode.class, value);
+            return fromValueGeneric(ENssaiInclusionMode.class, value, null);
         }
     }
 }

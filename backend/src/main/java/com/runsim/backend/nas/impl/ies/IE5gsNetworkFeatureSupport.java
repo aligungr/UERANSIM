@@ -65,7 +65,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EEmergencyServiceFallback3gppIndicator fromValue(int value) {
-            return fromValueGeneric(EEmergencyServiceFallback3gppIndicator.class, value);
+            return fromValueGeneric(EEmergencyServiceFallback3gppIndicator.class, value, null);
         }
     }
 
@@ -84,7 +84,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EEmergencyServiceSupport3gppIndicator fromValue(int value) {
-            return fromValueGeneric(EEmergencyServiceSupport3gppIndicator.class, value);
+            return fromValueGeneric(EEmergencyServiceSupport3gppIndicator.class, value, null);
         }
     }
 
@@ -99,7 +99,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EEmergencyServiceSupportNon3gppIndicator fromValue(int value) {
-            return fromValueGeneric(EEmergencyServiceSupportNon3gppIndicator.class, value);
+            return fromValueGeneric(EEmergencyServiceSupportNon3gppIndicator.class, value, null);
         }
     }
 
@@ -114,7 +114,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EInterworkingWithoutN26InterfaceIndicator fromValue(int value) {
-            return fromValueGeneric(EInterworkingWithoutN26InterfaceIndicator.class, value);
+            return fromValueGeneric(EInterworkingWithoutN26InterfaceIndicator.class, value, null);
         }
     }
 
@@ -129,7 +129,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EMpsIndicator fromValue(int value) {
-            return fromValueGeneric(EMpsIndicator.class, value);
+            return fromValueGeneric(EMpsIndicator.class, value, null);
         }
     }
 
@@ -144,7 +144,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EImsVoPs3gpp fromValue(int value) {
-            return fromValueGeneric(EImsVoPs3gpp.class, value);
+            return fromValueGeneric(EImsVoPs3gpp.class, value, null);
         }
     }
 
@@ -159,7 +159,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EImsVoPsN3gpp fromValue(int value) {
-            return fromValueGeneric(EImsVoPsN3gpp.class, value);
+            return fromValueGeneric(EImsVoPsN3gpp.class, value, null);
         }
     }
 
@@ -174,7 +174,7 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         }
 
         public static EMcsIndicator fromValue(int value) {
-            return fromValueGeneric(EMcsIndicator.class, value);
+            return fromValueGeneric(EMcsIndicator.class, value, null);
         }
     }
 }

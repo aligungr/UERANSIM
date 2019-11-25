@@ -521,6 +521,6 @@ public class EProcedureTransactionIdentity extends ProtocolEnum {
     }
 
     public static EProcedureTransactionIdentity fromValue(int value) {
-        return fromValueGeneric(EProcedureTransactionIdentity.class, value);
+        return fromValueGeneric(EProcedureTransactionIdentity.class, value, null);
     }
 }

@@ -21,6 +21,6 @@ public class EPduSessionType extends ProtocolEnum {
     }
 
     public static EPduSessionType fromValue(int value) {
-        return fromValueGeneric(EPduSessionType.class, value);
+        return fromValueGeneric(EPduSessionType.class, value, null);
     }
 }

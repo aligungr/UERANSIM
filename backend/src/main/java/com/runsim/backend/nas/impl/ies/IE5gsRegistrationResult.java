@@ -35,7 +35,7 @@ public class IE5gsRegistrationResult extends InformationElement4 {
         }
 
         public static ESmsOverNasTransportAllowed fromValue(int value) {
-            return fromValueGeneric(ESmsOverNasTransportAllowed.class, value);
+            return fromValueGeneric(ESmsOverNasTransportAllowed.class, value, null);
         }
     }
 
@@ -52,7 +52,7 @@ public class IE5gsRegistrationResult extends InformationElement4 {
         }
 
         public static E5gsRegistrationResult fromValue(int value) {
-            return fromValueGeneric(E5gsRegistrationResult.class, value);
+            return fromValueGeneric(E5gsRegistrationResult.class, value, null);
         }
     }
 }

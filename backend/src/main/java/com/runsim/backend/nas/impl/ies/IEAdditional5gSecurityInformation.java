@@ -33,7 +33,7 @@ public class IEAdditional5gSecurityInformation extends InformationElement4 {
         }
 
         public static ERetransmissionOfInitialNasMessageRequest fromValue(int value) {
-            return fromValueGeneric(ERetransmissionOfInitialNasMessageRequest.class, value);
+            return fromValueGeneric(ERetransmissionOfInitialNasMessageRequest.class, value, null);
         }
     }
 
@@ -48,7 +48,7 @@ public class IEAdditional5gSecurityInformation extends InformationElement4 {
         }
 
         public static EHorizontalDerivationParameter fromValue(int value) {
-            return fromValueGeneric(EHorizontalDerivationParameter.class, value);
+            return fromValueGeneric(EHorizontalDerivationParameter.class, value, null);
         }
     }
 }

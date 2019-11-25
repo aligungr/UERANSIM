@@ -2,7 +2,6 @@ package com.runsim.backend.nas.core.messages;
 
 import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.exceptions.IncorrectImplementationException;
-import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.IMessageBuilder;
@@ -135,7 +134,7 @@ public abstract class NasMessage extends ProtocolValue {
                 setFieldValue(fieldInfo, instance, decoded);
             } else {
                 if (!transcodeBuilder.optionalIE.containsKey(iei)) {
-                    throw new InvalidValueException("iei is invalid: " + iei);
+                    throw new IncorrectImplementationException("iei is invalid: " + iei);
                 }
 
                 var entry = transcodeBuilder.optionalIE.get(iei);
