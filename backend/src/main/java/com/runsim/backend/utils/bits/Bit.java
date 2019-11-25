@@ -5,7 +5,7 @@ public final class Bit extends BitN {
         super(value, 1);
     }
 
-    public final boolean booleanValue() {
-        return intValue() != 0;
+    public Bit(Bit value) {
+        super(value);
     }
 }

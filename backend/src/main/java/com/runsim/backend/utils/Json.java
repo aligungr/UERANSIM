@@ -19,7 +19,7 @@ public final class Json {
         JsonSerializer<BitN> bitNSerializer = (bitN, type, jsonSerializationContext)
                 -> new JsonPrimitive(bitN.intValue());
         JsonSerializer<Bit> bitSerializer = (bit, type, jsonSerializationContext)
-                -> new JsonPrimitive(bit.booleanValue());
+                -> new JsonPrimitive(bit.intValue() != 0);
         JsonSerializer<OctetString> octetStringSerializer = (octetString, type, jsonSerializationContext)
                 -> new JsonPrimitive(octetString.toString());
 

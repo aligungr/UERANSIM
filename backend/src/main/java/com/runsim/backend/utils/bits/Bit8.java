@@ -1,6 +1,7 @@
 package com.runsim.backend.utils.bits;
 
 public final class Bit8 extends BitN {
+
     public Bit8(int value) {
         super(value, 8);
     }
