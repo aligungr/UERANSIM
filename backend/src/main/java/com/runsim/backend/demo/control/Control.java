@@ -2,6 +2,7 @@ package com.runsim.backend.demo.control;
 
 import com.runsim.backend.Constants;
 import com.runsim.backend.exceptions.IncorrectImplementationException;
+import com.runsim.backend.nas.core.ProtocolEnum;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
@@ -112,6 +113,21 @@ class Control {
                 return false;
         }
         return true;
+    }
+
+    static <T extends ProtocolEnum> String findFieldNameOfProtocolEnum(T value) {
+        var clazz = value.getClass();
+        for (var field : clazz.getDeclaredFields()) {
+            Object val = null;
+            try {
+                val = field.get(null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            if (val.equals(value))
+                return field.getName();
+        }
+        return null;
     }
 
     static boolean fieldVisibilityExists(Class type, Visibility visibility) {

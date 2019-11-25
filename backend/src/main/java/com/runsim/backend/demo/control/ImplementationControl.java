@@ -4,13 +4,18 @@ import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement;
+import com.runsim.backend.nas.core.messages.NasMessage;
+import com.runsim.backend.nas.core.messages.PlainMmMessage;
+import com.runsim.backend.nas.core.messages.PlainSmMessage;
 import com.runsim.backend.nas.eap.EAP;
+import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
 import com.runsim.backend.utils.octets.OctetString;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.runsim.backend.demo.control.Control.*;
 
@@ -29,8 +34,7 @@ public class ImplementationControl {
         controlForType(NasValue.class, false, ImplementationControl::controlNasValues);
         controlForType(NasValue.class, true, ImplementationControl::controlNasAbstractValues);
         controlForType(InformationElement.class, true, ImplementationControl::controlInformationElements);
-
-        controlMessages();
+        controlForType(NasMessage.class, true, ImplementationControl::controlMessages);
     }
 
     private static void controlProtocolEnums(Class clazz) {
@@ -87,7 +91,59 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "IE contains a field with a type that should not be used directly.");
     }
 
-    private static void controlMessages() {
+    private static void controlMessages(Class clazz) {
+        if (staticFieldExists(clazz))
+            throw new IncorrectImplementationException(clazz, "NasMessage should not contain static field");
+        if (!fieldVisibilityAll(clazz, Visibility.PUBLIC))
+            throw new IncorrectImplementationException(clazz, "NasMessage should only contain public fields");
+        if (isInnerClass(clazz))
+            throw new IncorrectImplementationException(clazz, "NasMessage should not be inner class");
+        if (!constructorExists(clazz, Visibility.PUBLIC))
+            throw new IncorrectImplementationException(clazz, "NasMessage should be provide at least one public empty constructor");
+        if (!allFieldsOfTypesOrLists(clazz, InformationElement.class))
+            throw new IncorrectImplementationException(clazz, "NasMessage fields cannot be a type other than InformationElement and subtypes.");
 
+        NasMessage instance;
+        try {
+            instance = (NasMessage) clazz.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        EMessageType messageType;
+        if (instance instanceof PlainSmMessage) {
+            var mess = (PlainSmMessage) instance;
+            if (mess.messageType.isMobilityManagement())
+                throw new IncorrectImplementationException(clazz, "Incorrect message type enum used");
+            messageType = mess.messageType;
+        } else if (instance instanceof PlainMmMessage) {
+            var mess = (PlainMmMessage) instance;
+            if (!mess.messageType.isMobilityManagement())
+                throw new IncorrectImplementationException(clazz, "Incorrect message type enum used");
+            messageType = mess.messageType;
+        } else {
+            throw new IncorrectImplementationException(clazz, "NasMessage should extends PlainSmMessage or PlainMmMessage");
+        }
+
+        String enumName = findFieldNameOfProtocolEnum(messageType);
+        if (enumName == null)
+            throw new IncorrectImplementationException(clazz, "invalid messageType enum value");
+
+        enumName = enumName.replace("_", "");
+        enumName = enumName.toLowerCase(Locale.ENGLISH);
+
+        String className = clazz.getSimpleName();
+        className = className.replace("_", "");
+        className = className.toLowerCase(Locale.ENGLISH);
+
+        if (!enumName.equals(className)) {
+            throw new IncorrectImplementationException(clazz, "Possible wrong message type or wrong message class name");
+        }
+
+        controlMessageBuilder(clazz, instance);
+    }
+
+    private static void controlMessageBuilder(Class clazz, NasMessage instance) {
+//todo
     }
 }
