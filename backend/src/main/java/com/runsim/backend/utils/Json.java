@@ -40,6 +40,11 @@ public final class Json {
                 .registerTypeAdapter(Bit5.class, bitNSerializer)
                 .registerTypeAdapter(Bit6.class, bitNSerializer)
                 .registerTypeAdapter(Bit7.class, bitNSerializer)
+                .registerTypeAdapter(Bit8.class, bitNSerializer)
+                .registerTypeAdapter(Bit9.class, bitNSerializer)
+                .registerTypeAdapter(Bit10.class, bitNSerializer)
+                .registerTypeAdapter(Bit11.class, bitNSerializer)
+                .registerTypeAdapter(Bit12.class, bitNSerializer)
                 .registerTypeAdapter(BitN.class, bitNSerializer)
                 .registerTypeAdapter(OctetString.class, octetStringSerializer)
                 .create();
