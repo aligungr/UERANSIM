@@ -10,8 +10,8 @@ import com.runsim.backend.nas.impl.values.VAmfSetId;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
 import com.runsim.backend.utils.bits.Bit;
+import com.runsim.backend.utils.bits.Bit10;
 import com.runsim.backend.utils.bits.Bit6;
-import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
 import com.runsim.backend.utils.octets.Octet4;
@@ -86,7 +86,7 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
         guti.mnc = EMobileNetworkCode3.unknownValue(guti.mcc.intValue() * 1000 + 1);
         guti.amfRegionId = new Octet(42);
         guti.amfSetId = new VAmfSetId();
-        guti.amfSetId.value = new BitN(342, 10);
+        guti.amfSetId.value = new Bit10(342);
         guti.amfPointer = new Bit6(42);
         guti.tmsi = new V5gTmsi();
         guti.tmsi.value = new Octet4(0x00000001);

@@ -4,7 +4,7 @@ import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
-import com.runsim.backend.utils.bits.BitN;
+import com.runsim.backend.utils.bits.Bit8;
 
 public class IEAllowedPduSessionStatus extends InformationElement4 {
     public Bit psi00;
@@ -51,8 +51,8 @@ public class IEAllowedPduSessionStatus extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        var octet1 = new BitN(psi00, psi01, psi02, psi03, psi04, psi05, psi06, psi07);
-        var octet2 = new BitN(psi08, psi09, psi10, psi11, psi12, psi13, psi14, psi15);
+        var octet1 = new Bit8(psi00, psi01, psi02, psi03, psi04, psi05, psi06, psi07);
+        var octet2 = new Bit8(psi08, psi09, psi10, psi11, psi12, psi13, psi14, psi15);
 
         stream.writeOctet(octet1.intValue());
         stream.writeOctet(octet2.intValue());

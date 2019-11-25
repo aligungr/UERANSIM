@@ -2,8 +2,8 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
+import com.runsim.backend.utils.bits.Bit3;
 import com.runsim.backend.utils.bits.Bit4;
-import com.runsim.backend.utils.bits.BitN;
 
 public class IEAllowedSscMode extends InformationElement1 {
     public ESsc1 ssc1;
@@ -21,7 +21,7 @@ public class IEAllowedSscMode extends InformationElement1 {
 
     @Override
     public int encodeIE1() {
-        return new BitN(ssc1.intValue(), ssc2.intValue(), ssc3.intValue()).intValue();
+        return new Bit3(ssc1.intValue(), ssc2.intValue(), ssc3.intValue()).intValue();
     }
 
     public static class ESsc1 extends ProtocolEnum {

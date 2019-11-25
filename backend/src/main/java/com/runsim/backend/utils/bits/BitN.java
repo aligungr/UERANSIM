@@ -16,7 +16,7 @@ public class BitN {
      * @param intValue is the integer value. This value can be 0 at minimum and (2^[bit count] - 1) at maximum.
      * @param bitCount is the total number of bits to be used of integer value
      */
-    public BitN(int intValue, int bitCount) {
+    BitN(int intValue, int bitCount) {
         // maximum 30 bit, since implementation uses int32.
         // if you want to keep more than 30 bits, the value can be changed from int to long.
         if (bitCount <= 0 || bitCount > 30)
@@ -33,7 +33,7 @@ public class BitN {
      * bits[0] is the least significant bit, and bits[n-1] is the most significant bit,
      * where n is the length of the array.
      */
-    public BitN(Bit... bits) {
+    BitN(Bit... bits) {
         this(Arrays.stream(bits).mapToInt(BitN::intValue).toArray());
     }
 
@@ -42,7 +42,7 @@ public class BitN {
      * bits[0] is the least significant bit, and bits[n-1] is the most significant bit,
      * where n is the length of the array.
      */
-    public BitN(int... bits) {
+    BitN(int... bits) {
         this(bitsToInt(bits), bits.length);
     }
 

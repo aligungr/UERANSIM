@@ -18,7 +18,7 @@ public class OctetN {
      *                   Given value is masked with ((2 ^ (8 * octetCount)) - 1).
      *                   Octet count cannot exceeds 7 since implementation uses 64-bit signed integer.
      */
-    public OctetN(long longValue, int octetCount) {
+    /*package-private*/ OctetN(long longValue, int octetCount) {
         // maximum 7 octet, since implementation uses 64-bit signed integer.
         if (octetCount < 0 || octetCount > 7)
             throw new IllegalArgumentException("invalid octet count");

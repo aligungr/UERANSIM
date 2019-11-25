@@ -5,10 +5,11 @@ import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit5;
+import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class VOperatorDefinedAccessCategoryDefinition extends NasValue {
-    public int precedence;
+    public Octet precedence;
     public Bit5 operatorDefinedAccessCategoryNumber;
     public EPresenceOfStandardizedAccessCategory psac;
     public OctetString criteria;
@@ -18,7 +19,7 @@ public class VOperatorDefinedAccessCategoryDefinition extends NasValue {
         var res = new VOperatorDefinedAccessCategoryDefinition();
 
         int length = stream.readOctetI();
-        res.precedence = stream.readOctetI();
+        res.precedence = stream.readOctet();
 
         int octet = stream.readOctetI();
         res.operatorDefinedAccessCategoryNumber = new Bit5(octet);

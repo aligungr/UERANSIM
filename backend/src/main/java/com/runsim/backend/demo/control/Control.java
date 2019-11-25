@@ -8,6 +8,8 @@ import io.github.classgraph.ScanResult;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 class Control {
@@ -18,6 +20,10 @@ class Control {
         } catch (NoSuchMethodException e) {
             return null;
         }
+    }
+
+    static Method[] getAllMethods(Class<?> type) {
+        return type.getDeclaredMethods();
     }
 
     static Constructor getConstructor(Class<?> type, Class<?>... argTypes) {
@@ -43,8 +49,27 @@ class Control {
     static boolean methodExists(Class type, boolean isStatic, Visibility visibility, String methodName, Class returnType, Class... argTypes) {
         Method method = getMethod(type, methodName, argTypes);
         if (method == null) return false;
-        if (visibility == null) return true;
-        return sameVisibility(method.getModifiers(), visibility);
+        if (Modifier.isStatic(method.getModifiers()) != isStatic) return false;
+        if (visibility != null && !sameVisibility(method.getModifiers(), visibility)) return false;
+        return true;
+    }
+
+    static boolean parameterPrefixMatch(Object[] base, Object[] prefix) {
+        if (base.length < prefix.length) return false;
+        int min = Math.min(base.length, prefix.length);
+        for (int i = 0; i < min; i++)
+            if (!base[i].equals(prefix[i])) return false;
+        return true;
+    }
+
+    static boolean methodExistsArgsPrefix(Class type, boolean isStatic, Visibility visibility, String methodName, Class returnType, Class... argTypes) {
+        return Arrays.stream(getAllMethods(type))
+                .filter(method -> Modifier.isStatic(method.getModifiers()) == isStatic)
+                .filter(method -> sameVisibility(method.getModifiers(), visibility))
+                .filter(method -> method.getName().equals(methodName))
+                .filter(method -> method.getReturnType().equals(returnType))
+                .anyMatch(method -> parameterPrefixMatch(Arrays.stream(method.getParameters())
+                        .map(Parameter::getType).toArray(), argTypes));
     }
 
     static boolean constructorExists(Class type, Visibility visibility, Class... argTypes) {
@@ -70,6 +95,23 @@ class Control {
                 return true;
         }
         return false;
+    }
+
+    static boolean fieldTypeExists(Class type, Class fieldType) {
+        var fields = type.getDeclaredFields();
+        for (var field : fields) {
+            if (field.getType().equals(fieldType)) return true;
+        }
+        return false;
+    }
+
+    static boolean allFieldsOfTypesOrLists(Class<?> type, Class<?>... types) {
+        var fields = type.getDeclaredFields();
+        for (var field : fields) {
+            if (Arrays.stream(types).noneMatch(clazz -> clazz.isAssignableFrom(field.getType())))
+                return false;
+        }
+        return true;
     }
 
     static boolean fieldVisibilityExists(Class type, Visibility visibility) {
@@ -124,6 +166,10 @@ class Control {
                 return true;
         }
         return false;
+    }
+
+    static boolean isInnerClass(Class type) {
+        return type.getEnclosingClass() != null;
     }
 
     static boolean constructorCount(Class type, int expectedCount) {

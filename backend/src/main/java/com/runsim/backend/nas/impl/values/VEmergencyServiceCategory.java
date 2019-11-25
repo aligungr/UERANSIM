@@ -4,7 +4,7 @@ import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit;
-import com.runsim.backend.utils.bits.BitN;
+import com.runsim.backend.utils.bits.Bit8;
 
 public class VEmergencyServiceCategory extends NasValue {
     public Bit police;
@@ -32,7 +32,7 @@ public class VEmergencyServiceCategory extends NasValue {
 
     @Override
     public void encode(OctetOutputStream stream) {
-        var bits = new BitN(police, ambulance, fireBrigade, marineGuard,
+        var bits = new Bit8(police, ambulance, fireBrigade, marineGuard,
                 mountainRescue, manuallyInitiatedECall, automaticallyInitiatedECall, spare);
         stream.writeOctet(bits.intValue());
     }

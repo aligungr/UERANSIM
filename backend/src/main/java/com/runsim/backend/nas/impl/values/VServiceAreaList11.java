@@ -7,8 +7,8 @@ import com.runsim.backend.utils.octets.Octet;
 public class VServiceAreaList11 extends VServiceAreaList {
     public VMccMnc mccMnc;
 
-    public static VServiceAreaList01 decode(OctetInputStream stream, int count) {
-        var res = new VServiceAreaList01();
+    public static VServiceAreaList11 decode(OctetInputStream stream, int count) {
+        var res = new VServiceAreaList11();
         res.mccMnc = VMccMnc.decode(stream);
         return res;
     }
