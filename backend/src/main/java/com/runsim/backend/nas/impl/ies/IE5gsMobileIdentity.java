@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
@@ -34,11 +35,11 @@ public class IE5gsMobileIdentity extends InformationElement6 {
     }
 
     public IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
-        throw new IllegalStateException("sub types must override this method.");
+        throw new IncorrectImplementationException("sub types must override this method.");
     }
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        throw new IllegalStateException("sub types must override this method.");
+        throw new IncorrectImplementationException("sub types must override this method.");
     }
 }

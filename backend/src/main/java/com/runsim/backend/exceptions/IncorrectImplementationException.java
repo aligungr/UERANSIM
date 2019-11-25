@@ -1,6 +1,5 @@
 package com.runsim.backend.exceptions;
 
-// TODO: Bazı diğer exception'ları da buna geçir
 public class IncorrectImplementationException extends RuntimeException {
     private final String message;
 

@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.impl.ies;
 
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -304,7 +305,7 @@ public class IES1UeNetworkCapability extends InformationElement4 {
             for (int j = 0; j < 8; j++) {
                 var bit = bits[i][j];
                 if (bit == null) {
-                    throw new IllegalStateException(j + "th bit of the " + i
+                    throw new EncodingException(j + "th bit of the " + i
                             + "th octet should not have be null, because that octet contains at least one bit which is not null.");
                 }
                 octet |= bit.intValue();

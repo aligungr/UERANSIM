@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.core.messages;
 
-import com.runsim.backend.exceptions.DecodingException;
 import com.runsim.backend.exceptions.EncodingException;
+import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.exceptions.InvalidValueException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
@@ -15,7 +15,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit4;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,6 @@ public abstract class NasMessage extends ProtocolValue {
         stream.writeOctet(extendedProtocolDiscriminator.intValue());
     }
 
-
     public void build(IMessageBuilder builder) {
 
     }
@@ -43,7 +41,7 @@ public abstract class NasMessage extends ProtocolValue {
         try {
             field = getClass().getField(name);
         } catch (NoSuchFieldException e) {
-            throw new EncodingException("public field could not found: " + name);
+            throw new IncorrectImplementationException("public field could not found: " + name);
         }
         return field;
     }
@@ -56,7 +54,7 @@ public abstract class NasMessage extends ProtocolValue {
         try {
             value = field.get(this);
         } catch (IllegalAccessException e) {
-            throw new EncodingException("could not access to field: " + field.getName());
+            throw new IncorrectImplementationException("could not access to field: " + field.getName());
         }
         return value;
     }
@@ -65,7 +63,7 @@ public abstract class NasMessage extends ProtocolValue {
         try {
             field.set(instance, value);
         } catch (IllegalAccessException e) {
-            throw new DecodingException("unable to set field");
+            throw new RuntimeException(e);
         }
     }
 
@@ -77,14 +75,8 @@ public abstract class NasMessage extends ProtocolValue {
         NasMessage instance;
         try {
             instance = clazz.getConstructor().newInstance();
-        } catch (InstantiationException e) {
-            throw new DecodingException("instantiating failed");
-        } catch (IllegalAccessException e) {
-            throw new DecodingException("illegal access to constructor");
-        } catch (InvocationTargetException e) {
-            throw new DecodingException("invocation target exception");
-        } catch (NoSuchMethodException e) {
-            throw new DecodingException("no such constructor");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         for (var ie : transcodeBuilder.mandatory) {
@@ -116,9 +108,9 @@ public abstract class NasMessage extends ProtocolValue {
                 var field = findField(ie.field0);
 
                 if (!InformationElement.class.isAssignableFrom(field.getType()))
-                    throw new DecodingException("bad type for field: " + ie.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + ie.field0);
                 if (InformationElement1.class.isAssignableFrom(field.getType()))
-                    throw new DecodingException("bad type for field: " + ie.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + ie.field0);
 
                 var decoded = NasDecoder.ie2346(stream, (Class<? extends InformationElement>) field.getType());
                 setFieldValue(field, instance, decoded);
@@ -133,11 +125,11 @@ public abstract class NasMessage extends ProtocolValue {
             if (transcodeBuilder.optionalIE1.containsKey(msb)) {
                 var entry = transcodeBuilder.optionalIE1.get(msb);
                 if (!entry.isType1)
-                    throw new DecodingException("bad type for field: " + entry.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + entry.field0);
 
                 var fieldInfo = findField(entry.field0);
                 if (!InformationElement1.class.isAssignableFrom(fieldInfo.getType()))
-                    throw new DecodingException("bad type for field: " + entry.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + entry.field0);
 
                 var decoded = NasDecoder.ie1(lsb, (Class<? extends InformationElement1>) fieldInfo.getType());
                 setFieldValue(fieldInfo, instance, decoded);
@@ -148,13 +140,13 @@ public abstract class NasMessage extends ProtocolValue {
 
                 var entry = transcodeBuilder.optionalIE.get(iei);
                 if (entry.isType1)
-                    throw new DecodingException("bad type for field: " + entry.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + entry.field0);
 
                 var fieldInfo = findField(entry.field0);
                 if (InformationElement1.class.isAssignableFrom(fieldInfo.getType()))
-                    throw new DecodingException("bad type for field: " + entry.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + entry.field0);
                 if (!InformationElement.class.isAssignableFrom(fieldInfo.getType()))
-                    throw new DecodingException("bad type for field: " + entry.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + entry.field0);
 
                 var decoded = NasDecoder.ie2346(stream, (Class<? extends InformationElement>) fieldInfo.getType());
                 setFieldValue(fieldInfo, instance, decoded);
@@ -177,10 +169,10 @@ public abstract class NasMessage extends ProtocolValue {
                 var fieldInfo1 = findField(ie.field1);
 
                 if (fieldInfo0 != null && !InformationElement1.class.isAssignableFrom(fieldInfo0.getType())) {
-                    throw new EncodingException("bad type for field: " + ie.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + ie.field0);
                 }
                 if (fieldInfo1 != null && !InformationElement1.class.isAssignableFrom(fieldInfo1.getType())) {
-                    throw new EncodingException("bad type for field: " + ie.field1);
+                    throw new IncorrectImplementationException("bad type for field: " + ie.field1);
                 }
 
                 var value0 = getFieldValue(fieldInfo0);
@@ -208,7 +200,7 @@ public abstract class NasMessage extends ProtocolValue {
                 var field = findField(ie.field0);
 
                 if (InformationElement1.class.isAssignableFrom(field.getType())) {
-                    throw new EncodingException("explicitly specify that this IE is type 1");
+                    throw new IncorrectImplementationException("explicitly specify that this IE is type 1");
                 }
 
                 Object value = getFieldValue(field);
@@ -217,7 +209,7 @@ public abstract class NasMessage extends ProtocolValue {
                     throw new EncodingException("mandatory information element is null: " + ie.field0);
 
                 if (!(value instanceof InformationElement))
-                    throw new EncodingException("bad type for field: " + ie.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + ie.field0);
 
                 var ieValue = (InformationElement) value;
                 NasEncoder.ie2346(stream, ieValue);
@@ -229,7 +221,7 @@ public abstract class NasMessage extends ProtocolValue {
                 var field = findField(ie.field0);
 
                 if (!InformationElement1.class.isAssignableFrom(field.getType())) {
-                    throw new EncodingException("bad type for field");
+                    throw new IncorrectImplementationException("bad type for field");
                 }
 
                 Object value = getFieldValue(field);
@@ -240,7 +232,7 @@ public abstract class NasMessage extends ProtocolValue {
                 var field = findField(ie.field0);
 
                 if (InformationElement1.class.isAssignableFrom(field.getType())) {
-                    throw new EncodingException("explicitly specify that this IE is type 1");
+                    throw new IncorrectImplementationException("explicitly specify that this IE is type 1");
                 }
 
                 Object value = getFieldValue(field);
@@ -249,7 +241,7 @@ public abstract class NasMessage extends ProtocolValue {
                     continue;
 
                 if (!(value instanceof InformationElement))
-                    throw new EncodingException("bad type for field: " + ie.field0);
+                    throw new IncorrectImplementationException("bad type for field: " + ie.field0);
 
                 var ieValue = (InformationElement) value;
                 NasEncoder.ie2346(stream, ie.iei, ieValue);

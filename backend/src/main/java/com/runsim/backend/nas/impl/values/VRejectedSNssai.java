@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.impl.values;
 
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.OctetInputStream;
@@ -32,7 +33,7 @@ public class VRejectedSNssai extends NasValue {
     public void encode(OctetOutputStream stream) {
         int totalLength = 0;
         if (sd != null && sst == null) {
-            throw new IllegalStateException("sst must not be null if sd is not null");
+            throw new EncodingException("sst must not be null if sd is not null");
         }
         if (sst != null) totalLength++;
         if (sd != null) totalLength += 3;
