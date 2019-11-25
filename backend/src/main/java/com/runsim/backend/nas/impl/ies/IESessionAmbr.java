@@ -82,7 +82,7 @@ public class IESessionAmbr extends InformationElement4 {
                 = new EUnitForSessionAmbr(0b00011000, "value is incremented in multiples of 64 Pbps");
         public static final EUnitForSessionAmbr MULT_256Pbps
                 = new EUnitForSessionAmbr(0b00011001, "value is incremented in multiples of 256 Pbps");
-        public static EUnitForSessionAmbr VALUE_NOT_USED =
+        public static final EUnitForSessionAmbr VALUE_NOT_USED =
                 new EUnitForSessionAmbr(0b00000000, "Value is not used");
 
 

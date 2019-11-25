@@ -3,7 +3,6 @@ package com.runsim.backend.nas.impl.enums;
 import com.runsim.backend.utils.Utils;
 
 public class EMobileNetworkCode2 extends EMobileNetworkCode {
-
     public static final EMobileNetworkCode2 COSMOTE_AE1 = new EMobileNetworkCode2(20201, "Cosmote AE");
     public static final EMobileNetworkCode2 COSMOTE_AE2 = new EMobileNetworkCode2(20202, "Cosmote AE");
     public static final EMobileNetworkCode2 OTE_AE1 = new EMobileNetworkCode2(20203, "OTE AE");
