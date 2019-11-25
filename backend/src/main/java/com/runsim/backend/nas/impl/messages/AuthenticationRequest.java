@@ -8,9 +8,9 @@ import com.runsim.backend.nas.impl.ies.*;
 public class AuthenticationRequest extends PlainMmMessage {
     public IENasKeySetIdentifier ngKSI;
     public IEAbba abba;
-    public IEEapMessage eapMessage;
     public IERand authParamRAND;
     public IEAutn authParamAUTN;
+    public IEEapMessage eapMessage;
 
     public AuthenticationRequest() {
         super(EMessageType.AUTHENTICATION_REQUEST);
@@ -22,8 +22,8 @@ public class AuthenticationRequest extends PlainMmMessage {
 
         builder.mandatoryIE1("ngKSI");
         builder.mandatoryIE("abba");
-        builder.optionalIE(0x78, "eapMessage");
-        builder.optionalIE(0x20, "authParamAUTN");
         builder.optionalIE(0x21, "authParamRAND");
+        builder.optionalIE(0x20, "authParamAUTN");
+        builder.optionalIE(0x78, "eapMessage");
     }
 }
