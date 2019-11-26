@@ -13,8 +13,8 @@ public class EPduSessionType extends ProtocolEnum {
             = new EPduSessionType(0b100, "Unstructured");
     public static final EPduSessionType ETHERNET
             = new EPduSessionType(0b101, "Ethernet");
-    public static final EPduSessionType RESERVED
-            = new EPduSessionType(0b111, "reserved");
+    //public static final EPduSessionType RESERVED
+    //        = new EPduSessionType(0b111, "reserved");
 
     private EPduSessionType(int value, String name) {
         super(value, name);

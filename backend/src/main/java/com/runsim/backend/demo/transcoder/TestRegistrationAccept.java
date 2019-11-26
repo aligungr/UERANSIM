@@ -16,6 +16,8 @@ import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
 import com.runsim.backend.utils.octets.Octet4;
 
+import java.util.Arrays;
+
 public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
     @Override
@@ -48,12 +50,12 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
 
         assertNotNull(mes.allowedNSSAI);
         assertNotNull(mes.allowedNSSAI.sNssas);
-        assertEquals(mes.allowedNSSAI.sNssas.length, 1);
-        assertNotNull(mes.allowedNSSAI.sNssas[0]);
-        assertNotNull(mes.allowedNSSAI.sNssas[0].sst);
-        assertNotNull(mes.allowedNSSAI.sNssas[0].sd);
-        assertEquals(mes.allowedNSSAI.sNssas[0].sst.value, 1);
-        assertEquals(mes.allowedNSSAI.sNssas[0].sd.value, 634799);
+        assertEquals(mes.allowedNSSAI.sNssas.size(), 1);
+        assertNotNull(mes.allowedNSSAI.sNssas.get(0));
+        assertNotNull(mes.allowedNSSAI.sNssas.get(0).sst);
+        assertNotNull(mes.allowedNSSAI.sNssas.get(0).sd);
+        assertEquals(mes.allowedNSSAI.sNssas.get(0).sst.value, 1);
+        assertEquals(mes.allowedNSSAI.sNssas.get(0).sd.value, 634799);
 
         assertNotNull(mes.pduSessionStatus);
         assertEquals(mes.pduSessionStatus.psi01, 0);
@@ -96,12 +98,12 @@ public class TestRegistrationAccept extends TranscoderTesting.PduTest {
         message.registrationResult.smsOverNasAllowed = IE5gsRegistrationResult.ESmsOverNasTransportAllowed.ALLOWED;
 
         message.allowedNSSAI = new IENssai();
-        message.allowedNSSAI.sNssas = new IESNssai[1];
-        message.allowedNSSAI.sNssas[0] = new IESNssai();
-        message.allowedNSSAI.sNssas[0].sst = new VSliceServiceType();
-        message.allowedNSSAI.sNssas[0].sd = new VSliceDifferentiator();
-        message.allowedNSSAI.sNssas[0].sst.value = new Octet(1);
-        message.allowedNSSAI.sNssas[0].sd.value = new Octet3(634799);
+        message.allowedNSSAI.sNssas = Arrays.asList(new IESNssai[1]);
+        message.allowedNSSAI.sNssas.set(0, new IESNssai());
+        message.allowedNSSAI.sNssas.get(0).sst = new VSliceServiceType();
+        message.allowedNSSAI.sNssas.get(0).sd = new VSliceDifferentiator();
+        message.allowedNSSAI.sNssas.get(0).sst.value = new Octet(1);
+        message.allowedNSSAI.sNssas.get(0).sd.value = new Octet3(634799);
 
         message.pduSessionStatus = new IEPduSessionStatus();
         message.pduSessionStatus.psi01 = new Bit(0);

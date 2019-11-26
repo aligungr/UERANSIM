@@ -14,8 +14,8 @@ public class IEUeStatus extends InformationElement4 {
         int octet = stream.readOctetI();
 
         var res = new IEUeStatus();
-        res.s1ModeReg = EEmmRegistrationStatus.fromValue(octet);
-        res.n1ModeReg = E5gMmRegistrationStatus.fromValue(octet >> 1);
+        res.s1ModeReg = EEmmRegistrationStatus.fromValue(octet & 0b1);
+        res.n1ModeReg = E5gMmRegistrationStatus.fromValue(octet >> 1 & 0b1);
         return res;
     }
 

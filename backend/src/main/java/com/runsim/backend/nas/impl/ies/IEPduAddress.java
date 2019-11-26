@@ -8,19 +8,19 @@ import com.runsim.backend.utils.octets.OctetString;
 
 public class IEPduAddress extends InformationElement4 {
     public EPduSessionType sessionType;
-    public OctetString pduAddressInfo;
+    public OctetString pduAddressInformation;
 
     @Override
     protected IEPduAddress decodeIE4(OctetInputStream stream, int length) {
         var res = new IEPduAddress();
-        res.sessionType = EPduSessionType.fromValue(stream.readOctetI());
-        res.pduAddressInfo = stream.readOctetString(length - 1);
+        res.sessionType = EPduSessionType.fromValue(stream.readOctetI() & 0b111);
+        res.pduAddressInformation = stream.readOctetString(length - 1);
         return res;
     }
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
         stream.writeOctet(sessionType.intValue());
-        stream.writeOctetString(pduAddressInfo);
+        stream.writeOctetString(pduAddressInformation);
     }
 }

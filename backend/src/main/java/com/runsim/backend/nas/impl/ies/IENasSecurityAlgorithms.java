@@ -12,8 +12,8 @@ public class IENasSecurityAlgorithms extends InformationElement3 {
     @Override
     protected IENasSecurityAlgorithms decodeIE3(OctetInputStream stream) {
         var res = new IENasSecurityAlgorithms();
-        res.typeOfIntegrityProtectionAlgorithm = ETypeOfIntegrityProtectionAlgorithm.fromValue(stream.peekOctetI());
-        res.typeOfCipheringAlgorithm = ETypeOfCipheringAlgorithm.fromValue(stream.readOctetI() >> 4);
+        res.typeOfIntegrityProtectionAlgorithm = ETypeOfIntegrityProtectionAlgorithm.fromValue(stream.peekOctetI() & 0xF);
+        res.typeOfCipheringAlgorithm = ETypeOfCipheringAlgorithm.fromValue(stream.readOctetI() >> 4 & 0xF);
         return res;
     }
 

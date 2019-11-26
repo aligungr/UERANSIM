@@ -13,8 +13,8 @@ public class IE5gsUpdateType extends InformationElement4 {
     @Override
     protected IE5gsUpdateType decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsUpdateType();
-        res.smsRequested = ESmsRequested.fromValue(stream.peekOctetI());
-        res.ngRanRcu = ENgRanRadioCapabilityUpdate.fromValue(stream.readOctetI() >> 1);
+        res.smsRequested = ESmsRequested.fromValue(stream.peekOctetI() & 0b1);
+        res.ngRanRcu = ENgRanRadioCapabilityUpdate.fromValue(stream.readOctetI() >> 1 & 0b1);
         return res;
     }
 
@@ -23,7 +23,7 @@ public class IE5gsUpdateType extends InformationElement4 {
         var octet = new Octet();
         octet = octet.setBit(0, smsRequested.intValue());
         octet = octet.setBit(1, ngRanRcu.intValue());
-        stream.writeOctet(octet.intValue());
+        stream.writeOctet(octet);
     }
 
     public static class ENgRanRadioCapabilityUpdate extends ProtocolEnum {

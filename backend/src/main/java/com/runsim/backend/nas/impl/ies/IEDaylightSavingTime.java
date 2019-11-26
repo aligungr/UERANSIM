@@ -11,7 +11,7 @@ public class IEDaylightSavingTime extends InformationElement4 {
     @Override
     protected IEDaylightSavingTime decodeIE4(OctetInputStream stream, int length) {
         var res = new IEDaylightSavingTime();
-        res.daylightSavingTime = EDaylightSavingTime.fromValue(stream.readOctetI());
+        res.daylightSavingTime = EDaylightSavingTime.fromValue(stream.readOctetI() & 0b11);
         return res;
     }
 

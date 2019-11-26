@@ -4,10 +4,10 @@ import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
-public class IENsaMobileIdentity extends IESuciMobileIdentity {
+public class IENsiMobileIdentity extends IESuciMobileIdentity {
 
     @Override
-    public IENsaMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+    public IENsiMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");
     }
 

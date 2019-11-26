@@ -5,12 +5,12 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
 
-public class IERand extends InformationElement3 {
+public class IEAuthenticationParameterRand extends InformationElement3 {
     public OctetString value;
 
     @Override
     protected InformationElement3 decodeIE3(OctetInputStream stream) {
-        var res = new IERand();
+        var res = new IEAuthenticationParameterRand();
         res.value = stream.readOctetString(16);
         return res;
     }

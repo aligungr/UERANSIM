@@ -20,8 +20,8 @@ public class IENetworkName extends InformationElement4 {
 
         var res = new IENetworkName();
         res.numOfSpareBits = new Bit3(flags);
-        res.addCi = EAddCountryInitials.fromValue(flags >> 3);
-        res.codingScheme = ECodingScheme.fromValue(flags >> 4);
+        res.addCi = EAddCountryInitials.fromValue(flags >> 3 & 0b1);
+        res.codingScheme = ECodingScheme.fromValue(flags >> 4 & 0b111);
         res.textString = stream.readOctetString(length - 1);
         return res;
     }

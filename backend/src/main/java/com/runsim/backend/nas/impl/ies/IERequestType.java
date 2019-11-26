@@ -10,7 +10,7 @@ public class IERequestType extends InformationElement1 {
     @Override
     public IERequestType decodeIE1(Bit4 value) {
         var res = new IERequestType();
-        res.requestType = ERequestType.fromValue(value.intValue());
+        res.requestType = ERequestType.fromValue(value.intValue() & 0b111);
         return res;
     }
 

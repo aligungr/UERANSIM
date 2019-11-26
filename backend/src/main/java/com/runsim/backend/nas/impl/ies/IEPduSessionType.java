@@ -10,7 +10,7 @@ public class IEPduSessionType extends InformationElement1 {
     @Override
     public IEPduSessionType decodeIE1(Bit4 value) {
         var res = new IEPduSessionType();
-        res.pduSessionType = EPduSessionType.fromValue(value.intValue());
+        res.pduSessionType = EPduSessionType.fromValue(value.intValue() & 0b111);
         return res;
     }
 

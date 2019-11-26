@@ -10,7 +10,7 @@ public class IE5gsIdentityType extends InformationElement1 {
     @Override
     public IE5gsIdentityType decodeIE1(Bit4 value) {
         var req = new IE5gsIdentityType();
-        req.value = EIdentityType.fromValue(value.intValue());
+        req.value = EIdentityType.fromValue(value.intValue() & 0b111);
         return req;
     }
 

@@ -1,6 +1,7 @@
 package com.runsim.backend.utils;
 
 import com.runsim.backend.utils.bits.Bit4;
+import com.runsim.backend.utils.bits.Bit8;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.*;
 
@@ -27,6 +28,10 @@ public class OctetOutputStream {
 
     public void writeOctet(Octet octet) {
         data.add(octet);
+    }
+
+    public void writeOctet(Bit8 octet) {
+        writeOctet(octet.intValue());
     }
 
     public void writeOctet(Bit4 bigHalf, Bit4 littleHalf) {

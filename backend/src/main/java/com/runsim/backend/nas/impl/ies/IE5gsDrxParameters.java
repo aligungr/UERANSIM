@@ -11,7 +11,7 @@ public class IE5gsDrxParameters extends InformationElement4 {
     @Override
     protected IE5gsDrxParameters decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsDrxParameters();
-        res.drxValue = EDrxValue.fromValue(stream.readOctetI());
+        res.drxValue = EDrxValue.fromValue(stream.readOctetI() & 0xF);
         return res;
     }
 

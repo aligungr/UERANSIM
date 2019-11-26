@@ -12,7 +12,6 @@ public class IESessionAmbr extends InformationElement4 {
     public EUnitForSessionAmbr unitForSessionAmbrForUplink;
     public Octet2 sessionAmbrForUplink;
 
-
     @Override
     protected IESessionAmbr decodeIE4(OctetInputStream stream, int length) {
         var res = new IESessionAmbr();

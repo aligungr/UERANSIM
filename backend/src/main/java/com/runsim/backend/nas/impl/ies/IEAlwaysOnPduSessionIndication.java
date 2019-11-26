@@ -10,7 +10,7 @@ public class IEAlwaysOnPduSessionIndication extends InformationElement1 {
     @Override
     public IEAlwaysOnPduSessionIndication decodeIE1(Bit4 value) {
         var res = new IEAlwaysOnPduSessionIndication();
-        res.apsi = EAlwaysOnPduSessionIndication.fromValue(value.intValue());
+        res.apsi = EAlwaysOnPduSessionIndication.fromValue(value.getBitI(0));
         return res;
     }
 

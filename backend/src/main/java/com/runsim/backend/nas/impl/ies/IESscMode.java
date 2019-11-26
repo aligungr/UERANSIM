@@ -10,7 +10,7 @@ public class IESscMode extends InformationElement1 {
     @Override
     public IESscMode decodeIE1(Bit4 value) {
         var res = new IESscMode();
-        res.sscMode = ESscMode.fromValue(value.intValue());
+        res.sscMode = ESscMode.fromValue(value.intValue() & 0b111);
         return res;
     }
 

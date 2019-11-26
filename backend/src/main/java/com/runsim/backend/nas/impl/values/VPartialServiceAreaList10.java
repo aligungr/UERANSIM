@@ -4,11 +4,11 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 
-public class VServiceAreaList10 extends VServiceAreaList {
+public class VPartialServiceAreaList10 extends VPartialServiceAreaList {
     public VServiceArea[] tais;
 
-    public static VServiceAreaList10 decode(OctetInputStream stream, int count) {
-        var res = new VServiceAreaList10();
+    public static VPartialServiceAreaList10 decode(OctetInputStream stream, int count) {
+        var res = new VPartialServiceAreaList10();
         res.tais = new VServiceArea[count];
         for (int i = 0; i < count; i++) {
             res.tais[i] = VServiceArea.decode(stream);

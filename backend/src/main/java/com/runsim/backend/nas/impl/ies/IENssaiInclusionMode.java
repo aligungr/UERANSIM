@@ -10,7 +10,7 @@ public class IENssaiInclusionMode extends InformationElement1 {
     @Override
     public IENssaiInclusionMode decodeIE1(Bit4 value) {
         var res = new IENssaiInclusionMode();
-        res.nssaiInclusionMode = ENssaiInclusionMode.fromValue(value.intValue());
+        res.nssaiInclusionMode = ENssaiInclusionMode.fromValue(value.intValue() & 0b11);
         return res;
     }
 

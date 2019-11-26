@@ -10,7 +10,7 @@ public class IEPayloadContainerType extends InformationElement1 {
     @Override
     public IEPayloadContainerType decodeIE1(Bit4 value) {
         var res = new IEPayloadContainerType();
-        res.payloadContainerType = EPayloadContainerType.fromValue(value.intValue());
+        res.payloadContainerType = EPayloadContainerType.fromValue(value.intValue() & 0b1111);
         return res;
     }
 

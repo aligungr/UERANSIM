@@ -11,7 +11,7 @@ public class IEUesUsageSetting extends InformationElement4 {
     @Override
     protected IEUesUsageSetting decodeIE4(OctetInputStream stream, int length) {
         var res = new IEUesUsageSetting();
-        res.uesUsageSetting = EUesUsageSetting.fromValue(stream.readOctetI());
+        res.uesUsageSetting = EUesUsageSetting.fromValue(stream.readOctetI() & 0b1);
         return res;
     }
 
@@ -21,9 +21,9 @@ public class IEUesUsageSetting extends InformationElement4 {
     }
 
     public static class EUesUsageSetting extends ProtocolEnum {
-        public static final EUesUsageSetting NOT_SUPPORTED
+        public static final EUesUsageSetting VOICE_CENTRIC
                 = new EUesUsageSetting(0b0, "voice centric");
-        public static final EUesUsageSetting SUPPORTED
+        public static final EUesUsageSetting DATA_CENTRIC
                 = new EUesUsageSetting(0b1, "data centric");
 
         private EUesUsageSetting(int value, String name) {

@@ -1,7 +1,9 @@
 package com.runsim.backend.utils;
 
 import com.runsim.backend.exceptions.DecodingException;
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.core.ProtocolEnum;
+import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
 import org.w3c.dom.Node;
@@ -33,6 +35,36 @@ public final class Utils {
         }
         if (readLen > maxLen) throw new DecodingException("Value length exceeds total length!");
         return res;
+    }
+
+    public static int[] fixedBitsToOctetArray(Bit[][] bits) {
+        int length = 0;
+        for (int i = 0; i < bits.length; i++) {
+            for (Bit bit : bits[i]) {
+                if (bit != null) {
+                    length = Math.max(length, i + 1);
+                }
+            }
+        }
+
+        int[] octets = new int[length];
+        for (int i = 0; i < length; i++) {
+            int octet = 0;
+
+            for (int j = 0; j < 8; j++) {
+                var bit = bits[i][j];
+                if (bit == null) {
+                    throw new EncodingException(j + "th bit of the " + i
+                            + "th octet should not have be null, because that octet contains at least one bit which is not null.");
+                }
+                octet |= bit.intValue();
+                octet <<= 1;
+            }
+
+            octets[i] = octet >> 1;
+        }
+
+        return octets;
     }
 
     public static byte[] hexStringToByteArray(String s) {

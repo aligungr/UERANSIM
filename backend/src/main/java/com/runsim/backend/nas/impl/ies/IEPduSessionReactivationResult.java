@@ -7,7 +7,7 @@ import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.Bit8;
 
 public class IEPduSessionReactivationResult extends InformationElement4 {
-    public Bit psi00;
+    public final Bit psi00 = new Bit(0);
     public Bit psi01;
     public Bit psi02;
     public Bit psi03;
@@ -30,7 +30,6 @@ public class IEPduSessionReactivationResult extends InformationElement4 {
         var octet2 = stream.readOctet();
 
         var res = new IEPduSessionReactivationResult();
-        res.psi00 = new Bit(octet1.getBitI(0));
         res.psi01 = new Bit(octet1.getBitI(1));
         res.psi02 = new Bit(octet1.getBitI(2));
         res.psi03 = new Bit(octet1.getBitI(3));

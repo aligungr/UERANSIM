@@ -8,8 +8,8 @@ import com.runsim.backend.nas.impl.ies.*;
 public class AuthenticationRequest extends PlainMmMessage {
     public IENasKeySetIdentifier ngKSI;
     public IEAbba abba;
-    public IERand authParamRAND;
-    public IEAutn authParamAUTN;
+    public IEAuthenticationParameterRand authParamRAND;
+    public IEAuthenticationParameterAutn authParamAUTN;
     public IEEapMessage eapMessage;
 
     public AuthenticationRequest() {

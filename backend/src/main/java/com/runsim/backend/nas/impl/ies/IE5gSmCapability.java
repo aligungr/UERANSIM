@@ -12,8 +12,8 @@ public class IE5gSmCapability extends InformationElement4 {
     @Override
     protected IE5gSmCapability decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gSmCapability();
-        res.rqos = EReflectiveQoS.fromValue(stream.peekOctetI());
-        res.mh6pdu = EMultiHomedIPv6PduSession.fromValue(stream.readOctetI() >> 1);
+        res.rqos = EReflectiveQoS.fromValue(stream.peekOctetI() & 0b1);
+        res.mh6pdu = EMultiHomedIPv6PduSession.fromValue(stream.readOctetI() >> 1 & 0b1);
         return res;
     }
 

@@ -12,8 +12,8 @@ public class IEAdditional5gSecurityInformation extends InformationElement4 {
     @Override
     protected IEAdditional5gSecurityInformation decodeIE4(OctetInputStream stream, int length) {
         var res = new IEAdditional5gSecurityInformation();
-        res.hdp = EHorizontalDerivationParameter.fromValue(stream.peekOctetI());
-        res.rinmr = ERetransmissionOfInitialNasMessageRequest.fromValue(stream.readOctetI() >> 1);
+        res.hdp = EHorizontalDerivationParameter.fromValue(stream.peekOctetI() & 0b1);
+        res.rinmr = ERetransmissionOfInitialNasMessageRequest.fromValue(stream.readOctetI() >> 1 & 0b1);
         return res;
     }
 

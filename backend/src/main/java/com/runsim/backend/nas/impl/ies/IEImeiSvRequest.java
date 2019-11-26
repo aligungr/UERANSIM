@@ -10,7 +10,7 @@ public class IEImeiSvRequest extends InformationElement1 {
     @Override
     public IEImeiSvRequest decodeIE1(Bit4 value) {
         var res = new IEImeiSvRequest();
-        res.imeiSvRequest = EImeiSvRequest.fromValue(value.intValue());
+        res.imeiSvRequest = EImeiSvRequest.fromValue(value.intValue() & 0b111);
         return res;
     }
 

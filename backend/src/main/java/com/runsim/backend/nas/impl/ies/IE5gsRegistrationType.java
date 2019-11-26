@@ -13,8 +13,8 @@ public class IE5gsRegistrationType extends InformationElement1 {
         int val = value.intValue();
 
         var res = new IE5gsRegistrationType();
-        res.followOnRequestPending = EFollowOnRequest.fromValue(val >> 3 & 0b1);
         res.registrationType = ERegistrationType.fromValue(val & 0b111);
+        res.followOnRequestPending = EFollowOnRequest.fromValue(val >> 3 & 0b1);
         return res;
     }
 

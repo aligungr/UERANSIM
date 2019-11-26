@@ -1,9 +1,9 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.bits.Bit;
 
 public class IEUeSecurityCapability extends InformationElement4 {
@@ -177,32 +177,6 @@ public class IEUeSecurityCapability extends InformationElement4 {
                 }
         };
 
-        int length = 0;
-        for (int i = 0; i < bits.length; i++) {
-            for (Bit bit : bits[i]) {
-                if (bit != null) {
-                    length = Math.max(length, i + 1);
-                }
-            }
-        }
-
-        int[] octets = new int[length];
-        for (int i = 0; i < length; i++) {
-            int octet = 0;
-
-            for (int j = 0; j < 8; j++) {
-                var bit = bits[i][j];
-                if (bit == null) {
-                    throw new EncodingException(j + "th bit of the " + i
-                            + "th octet should not have be null, because that octet contains at least one bit which is not null.");
-                }
-                octet |= bit.intValue();
-                octet <<= 1;
-            }
-
-            octets[i] = octet >> 1;
-        }
-
-        stream.writeOctets(octets);
+        stream.writeOctets(Utils.fixedBitsToOctetArray(bits));
     }
 }

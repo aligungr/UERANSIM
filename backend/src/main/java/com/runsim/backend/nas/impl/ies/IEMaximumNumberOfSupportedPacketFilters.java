@@ -10,9 +10,8 @@ public class IEMaximumNumberOfSupportedPacketFilters extends InformationElement3
 
     @Override
     protected IEMaximumNumberOfSupportedPacketFilters decodeIE3(OctetInputStream stream) {
-        int value = stream.readOctetI();
-        value <<= 3;
-        value |= stream.readOctetI() >> 5;
+        int value = stream.readOctet2I();
+        value >>= 5;
 
         var res = new IEMaximumNumberOfSupportedPacketFilters();
         res.value = new Bit11(value);

@@ -10,7 +10,7 @@ public class IEAlwaysOnPduSessionRequested extends InformationElement1 {
     @Override
     public InformationElement1 decodeIE1(Bit4 value) {
         var res = new IEAlwaysOnPduSessionRequested();
-        res.aprs = EAlwaysOnPduSessionRequested.fromValue(value.intValue());
+        res.aprs = EAlwaysOnPduSessionRequested.fromValue(value.getBitI(0));
         return res;
     }
 

@@ -174,4 +174,47 @@ public class BitN {
     public final boolean getBitB(int index) {
         return getBitI(index) != 0;
     }
+
+    /**
+     * Returns the bits in range [start, end] as long.
+     * If end index is smaller than start index, then start and end indexes are swapped.
+     *
+     * @param start is the start index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit
+     * @param end   is the end index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit
+     */
+    public final long getBitRangeL(int start, int end) {
+        if (end < start) {
+            int temp = end;
+            end = start;
+            start = temp;
+        }
+
+        long val = 0;
+        for (int i = end; i >= start; i--) {
+            int bit = getBitI(i);
+            val |= bit;
+
+            if (i != start)
+                val <<= 1L;
+        }
+        return val;
+    }
+
+    /**
+     * Returns the bits in range [start, end] as integer.
+     * If end index is smaller than start index, then start and end indexes are swapped.
+     *
+     * @param start is the start index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit
+     * @param end   is the end index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit
+     * @throws ArithmeticException is thrown if given range cannot fit into 32-bit signed integer.
+     */
+    public final int getBitRangeI(int start, int end) {
+        int i = StrictMath.toIntExact(getBitRangeL(start, end));
+        if (i < 0) throw new ArithmeticException();
+        return i;
+    }
 }

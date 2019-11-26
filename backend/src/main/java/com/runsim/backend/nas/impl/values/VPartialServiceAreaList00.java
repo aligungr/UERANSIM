@@ -5,12 +5,12 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
 
-public class VServiceAreaList00 extends VServiceAreaList {
+public class VPartialServiceAreaList00 extends VPartialServiceAreaList {
     public VMccMnc mccMnc;
     public Octet3[] tacs;
 
-    public static VServiceAreaList00 decode(OctetInputStream stream, int count) {
-        var res = new VServiceAreaList00();
+    public static VPartialServiceAreaList00 decode(OctetInputStream stream, int count) {
+        var res = new VPartialServiceAreaList00();
         res.mccMnc = VMccMnc.decode(stream);
         res.tacs = new Octet3[count];
         for (int i = 0; i < count; i++) {

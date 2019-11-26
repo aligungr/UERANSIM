@@ -9,7 +9,7 @@ import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.core.messages.PlainSmMessage;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
-import com.runsim.backend.nas.impl.ies.IENsaMobileIdentity;
+import com.runsim.backend.nas.impl.ies.IENsiMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IESuciMobileIdentity;
 import com.runsim.backend.nas.impl.messages.*;
 import com.runsim.backend.utils.OctetInputStream;
@@ -222,7 +222,7 @@ public class NasDecoder {
         if (supiFormat.equals(ESupiFormat.IMSI))
             return new IEImsiMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
         if (supiFormat.equals(ESupiFormat.NETWORK_SPECIFIC_IDENTIFIER))
-            return new IENsaMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
+            return new IENsiMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
         throw new ReservedOrInvalidValueException(ESupiFormat.class);
     }
 }

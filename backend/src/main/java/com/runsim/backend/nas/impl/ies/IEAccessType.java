@@ -10,7 +10,7 @@ public class IEAccessType extends InformationElement1 {
     @Override
     public IEAccessType decodeIE1(Bit4 value) {
         var res = new IEAccessType();
-        res.accessType = EAccessType.fromValue(value.intValue());
+        res.accessType = EAccessType.fromValue(value.intValue() & 0b11);
         return res;
     }
 
@@ -21,9 +21,9 @@ public class IEAccessType extends InformationElement1 {
 
     public static class EAccessType extends ProtocolEnum {
         public static final EAccessType THREEGPP_ACCESS
-                = new EAccessType(0b0, "3GPP access");
+                = new EAccessType(0b01, "3GPP access");
         public static final EAccessType NON_THREEGPP_ACCESS
-                = new EAccessType(0b1, "Non-3GPP access");
+                = new EAccessType(0b10, "Non-3GPP access");
 
         private EAccessType(int value, String name) {
             super(value, name);

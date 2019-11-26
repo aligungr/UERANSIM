@@ -3,6 +3,7 @@ package com.runsim.backend.nas.impl.ies;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.utils.bits.Bit4;
+import com.runsim.backend.utils.octets.Octet;
 
 public class IEDeRegistrationType extends InformationElement1 {
     public EDeRegistrationAccessType accessType;
@@ -12,20 +13,19 @@ public class IEDeRegistrationType extends InformationElement1 {
     @Override
     public IEDeRegistrationType decodeIE1(Bit4 value) {
         var res = new IEDeRegistrationType();
-        res.accessType = EDeRegistrationAccessType.fromValue(value.intValue());
-        res.reRegistrationRequired = EReRegistrationRequired.fromValue(value.intValue() >> 2);
-        res.switchOff = ESwitchOff.fromValue(value.intValue() >> 3);
+        res.accessType = EDeRegistrationAccessType.fromValue(value.getBitRangeI(0, 1));
+        res.reRegistrationRequired = EReRegistrationRequired.fromValue(value.getBitI(2));
+        res.switchOff = ESwitchOff.fromValue(value.getBitI(3));
         return res;
     }
 
     @Override
     public int encodeIE1() {
-        int val = switchOff.intValue();
-        val <<= 1;
-        val |= reRegistrationRequired.intValue();
-        val <<= 2;
-        val |= accessType.intValue();
-        return val;
+        var value = new Octet();
+        value = value.setBitRange(0, 1, accessType.intValue());
+        value = value.setBit(2, reRegistrationRequired.intValue());
+        value = value.setBit(3, switchOff.intValue());
+        return value.intValue();
     }
 
     public static class ESwitchOff extends ProtocolEnum {

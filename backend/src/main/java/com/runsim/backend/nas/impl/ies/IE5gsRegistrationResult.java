@@ -14,8 +14,8 @@ public class IE5gsRegistrationResult extends InformationElement4 {
         int value = stream.readOctetI();
 
         var res = new IE5gsRegistrationResult();
-        res.smsOverNasAllowed = ESmsOverNasTransportAllowed.fromValue(value >> 3 & 0b1);
         res.registrationResult = E5gsRegistrationResult.fromValue(value & 0b111);
+        res.smsOverNasAllowed = ESmsOverNasTransportAllowed.fromValue(value >> 3 & 0b1);
         return res;
     }
 

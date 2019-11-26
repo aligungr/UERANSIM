@@ -13,7 +13,7 @@ public class IEProtocolConfigurationOptions extends InformationElement4 {
     @Override
     protected IEProtocolConfigurationOptions decodeIE4(OctetInputStream stream, int length) {
         var res = new IEProtocolConfigurationOptions();
-        res.configurationProtocol = EConfigurationProtocol.fromValue(stream.readOctetI());
+        res.configurationProtocol = EConfigurationProtocol.fromValue(stream.readOctetI() & 0b111);
         res.rawData = stream.readOctetString(length - 1);
         return res;
     }
