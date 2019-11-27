@@ -5,7 +5,6 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
 
-// TODO: BU ve diğer tüm yarı implement edilmiş olan octetStringli octetli olanlara bakılsın
 public class IEPayloadContainer extends InformationElement6 {
     public OctetString payload;
 
