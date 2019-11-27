@@ -82,24 +82,24 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         public static final EProtectionSchemeIdentifier ECIES_SCHEMA_PROFILE_B
                 = new EProtectionSchemeIdentifier(0b0010, "ECIES scheme profile B");
 
-        public static final EProtectionSchemeIdentifier RESERVED1
-                = new EProtectionSchemeIdentifier(0b0011, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED2
-                = new EProtectionSchemeIdentifier(0b0100, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED3
-                = new EProtectionSchemeIdentifier(0b0101, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED4
-                = new EProtectionSchemeIdentifier(0b0110, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED5
-                = new EProtectionSchemeIdentifier(0b0111, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED6
-                = new EProtectionSchemeIdentifier(0b1000, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED7
-                = new EProtectionSchemeIdentifier(0b1001, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED8
-                = new EProtectionSchemeIdentifier(0b1010, "Reserved");
-        public static final EProtectionSchemeIdentifier RESERVED9
-                = new EProtectionSchemeIdentifier(0b1011, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED1
+        //        = new EProtectionSchemeIdentifier(0b0011, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED2
+        //        = new EProtectionSchemeIdentifier(0b0100, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED3
+        //        = new EProtectionSchemeIdentifier(0b0101, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED4
+        //        = new EProtectionSchemeIdentifier(0b0110, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED5
+        //        = new EProtectionSchemeIdentifier(0b0111, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED6
+        //        = new EProtectionSchemeIdentifier(0b1000, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED7
+        //        = new EProtectionSchemeIdentifier(0b1001, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED8
+        //        = new EProtectionSchemeIdentifier(0b1010, "Reserved");
+        //public static final EProtectionSchemeIdentifier RESERVED9
+        //        = new EProtectionSchemeIdentifier(0b1011, "Reserved");
 
         public static final EProtectionSchemeIdentifier OPERATOR_SPECIFIC1
                 = new EProtectionSchemeIdentifier(0b1100, "Operator-specific protection scheme");
@@ -118,9 +118,9 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
             return fromValueGeneric(EProtectionSchemeIdentifier.class, value, null);
         }
 
-        public boolean isReserved() {
-            return value >= RESERVED1.value && value <= RESERVED9.value;
-        }
+        //public boolean isReserved() {
+        //    return value >= RESERVED1.value && value <= RESERVED9.value;
+        //}
 
         public boolean isOperatorSpecific() {
             return value >= OPERATOR_SPECIFIC1.value && value <= OPERATOR_SPECIFIC4.value;

@@ -47,8 +47,8 @@ public class IE5gsRegistrationType extends InformationElement1 {
                 = new ERegistrationType(0b011, "periodic registration updating");
         public static final ERegistrationType EMERGENCY_REGISTRATION
                 = new ERegistrationType(0b100, "emergency registration");
-        public static final ERegistrationType RESERVED
-                = new ERegistrationType(0b111, "reserved");
+        //public static final ERegistrationType RESERVED
+        //        = new ERegistrationType(0b111, "reserved");
 
         private ERegistrationType(int value, String name) {
             super(value, name);

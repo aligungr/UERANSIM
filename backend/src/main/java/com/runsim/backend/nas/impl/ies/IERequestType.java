@@ -30,8 +30,8 @@ public class IERequestType extends InformationElement1 {
                 = new ERequestType(0b100, "existing emergency PDU session");
         public static final ERequestType MODIFICATION_REQUEST
                 = new ERequestType(0b101, "modification request");
-        public static final ERequestType RESERVED
-                = new ERequestType(0b111, "reserved");
+        //public static final ERequestType RESERVED
+        //        = new ERequestType(0b111, "reserved");
 
         private ERequestType(int value, String name) {
             super(value, name);

@@ -5,7 +5,6 @@ import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Modifier;
 
-// TODO: Reserved enumları fielddlardan çıkar ki invalidOrReseredVlaue exception atsın
 public class ProtocolEnum extends ProtocolValue {
     protected final int value;
     protected final String name;

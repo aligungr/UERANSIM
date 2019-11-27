@@ -90,8 +90,8 @@ public class VMappedEpsBearerContext extends NasValue {
     }
 
     public static class EOperationCode extends ProtocolEnum {
-        public static final EOperationCode RESERVED
-                = new EOperationCode(0b00, "Reserved");
+        //public static final EOperationCode RESERVED
+        //        = new EOperationCode(0b00, "Reserved");
         public static final EOperationCode CREATE_NEW_EPS_BEARER
                 = new EOperationCode(0b01, "Create new EPS bearer");
         public static final EOperationCode DELETE_EXISTING_EPS_BEARER

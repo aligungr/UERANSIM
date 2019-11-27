@@ -31,10 +31,12 @@ public class IESessionAmbr extends InformationElement4 {
     }
 
     public static class EUnitForSessionAmbr extends ProtocolEnum {
-        public static final EUnitForSessionAmbr MULT_4Kbps
-                = new EUnitForSessionAmbr(0b00000010, "value is incremented in multiples of 4 Kbps");
+        public static final EUnitForSessionAmbr VALUE_NOT_USED =
+                new EUnitForSessionAmbr(0b00000000, "value is not used");
         public static final EUnitForSessionAmbr MULT_1Kbps
                 = new EUnitForSessionAmbr(0b00000001, "value is incremented in multiples of 1 Kbps");
+        public static final EUnitForSessionAmbr MULT_4Kbps
+                = new EUnitForSessionAmbr(0b00000010, "value is incremented in multiples of 4 Kbps");
         public static final EUnitForSessionAmbr MULT_16Kbps
                 = new EUnitForSessionAmbr(0b00000011, "value is incremented in multiples of 16 Kbps");
         public static final EUnitForSessionAmbr MULT_64Kbps
@@ -81,8 +83,6 @@ public class IESessionAmbr extends InformationElement4 {
                 = new EUnitForSessionAmbr(0b00011000, "value is incremented in multiples of 64 Pbps");
         public static final EUnitForSessionAmbr MULT_256Pbps
                 = new EUnitForSessionAmbr(0b00011001, "value is incremented in multiples of 256 Pbps");
-        public static final EUnitForSessionAmbr VALUE_NOT_USED =
-                new EUnitForSessionAmbr(0b00000000, "Value is not used");
 
         private EUnitForSessionAmbr(int value, String name) {
             super(value, name);
