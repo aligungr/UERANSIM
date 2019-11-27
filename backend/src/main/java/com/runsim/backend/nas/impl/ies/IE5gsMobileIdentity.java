@@ -10,9 +10,6 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 public class IE5gsMobileIdentity extends InformationElement6 {
 
-    protected IE5gsMobileIdentity() {
-    }
-
     @Override
     protected final IE5gsMobileIdentity decodeIE6(OctetInputStream stream, int length) {
         int flags = stream.peekOctetI();
