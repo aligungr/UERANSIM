@@ -1,7 +1,6 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.IncorrectImplementationException;
-import com.runsim.backend.exceptions.NotImplementedException;
 import com.runsim.backend.exceptions.ReservedOrInvalidValueException;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.core.ies.InformationElement6;
@@ -14,6 +13,8 @@ import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit6;
+
+import java.nio.charset.StandardCharsets;
 
 public class IE5gsMobileIdentity extends InformationElement6 {
 
@@ -61,7 +62,9 @@ public class IE5gsMobileIdentity extends InformationElement6 {
 
                 return result;
             } else if (supiFormat.equals(ESupiFormat.NETWORK_SPECIFIC_IDENTIFIER)) {
-                throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");
+                var res = new IENsiMobileIdentity();
+                res.suciNai = new String(stream.readOctetArrayB(length - 1), StandardCharsets.UTF_8);
+                return res;
             } else {
                 throw new ReservedOrInvalidValueException(ESupiFormat.class);
             }
