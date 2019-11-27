@@ -1,7 +1,5 @@
 package com.runsim.backend.nas;
 
-import com.runsim.backend.exceptions.NotImplementedException;
-import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ies.*;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.utils.OctetOutputStream;
@@ -57,7 +55,7 @@ public class NasEncoder {
         var newStream = new OctetOutputStream();
 
         if (ie instanceof InformationElement2) {
-            throw new NotImplementedException("");
+            ((InformationElement2) ie).encodeIE2(stream);
         } else if (ie instanceof InformationElement3) {
             ((InformationElement3) ie).encodeIE3(stream);
         } else if (ie instanceof InformationElement4) {
