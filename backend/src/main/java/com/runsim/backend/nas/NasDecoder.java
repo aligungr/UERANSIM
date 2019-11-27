@@ -220,9 +220,9 @@ public class NasDecoder {
         var supiFormat = ESupiFormat.fromValue((flags >> 4) & 0b111);
 
         if (supiFormat.equals(ESupiFormat.IMSI))
-            return new IEImsiMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
+            return IEImsiMobileIdentity.decodeMobileIdentity(stream, length - 1, isEven);
         if (supiFormat.equals(ESupiFormat.NETWORK_SPECIFIC_IDENTIFIER))
-            return new IENsiMobileIdentity().decodeMobileIdentity(stream, length - 1, isEven);
+            return IENsiMobileIdentity.decodeMobileIdentity(stream, length - 1, isEven);
         throw new ReservedOrInvalidValueException(ESupiFormat.class);
     }
 }

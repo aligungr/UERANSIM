@@ -19,8 +19,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
     public String schemaOutput;
 
-    @Override
-    public IEImsiMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+    public static IEImsiMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         var result = new IEImsiMobileIdentity();
 
         /* Decode MCC */

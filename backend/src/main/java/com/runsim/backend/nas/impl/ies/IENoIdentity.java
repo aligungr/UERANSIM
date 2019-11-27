@@ -5,8 +5,7 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 public class IENoIdentity extends IE5gsMobileIdentity {
 
-    @Override
-    public IENoIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+    public static IENoIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         return new IENoIdentity();
     }
 

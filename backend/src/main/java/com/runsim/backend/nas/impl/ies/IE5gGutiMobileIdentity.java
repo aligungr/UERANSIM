@@ -18,8 +18,7 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
     public Bit6 amfPointer;
     public V5gTmsi tmsi;
 
-    @Override
-    public IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+    public static IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         stream.readOctet();
 
         var result = new IE5gGutiMobileIdentity();

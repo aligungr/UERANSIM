@@ -9,8 +9,7 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEImeiMobileIdentity extends IE5gsMobileIdentity {
     public String imei;
 
-    @Override
-    public IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+    public static IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         var imeiMobileIdentity = new IEImeiMobileIdentity();
         imeiMobileIdentity.imei = NasDecoder.bcdString(stream, length, true);
         return imeiMobileIdentity;

@@ -6,8 +6,7 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 public class IENsiMobileIdentity extends IESuciMobileIdentity {
 
-    @Override
-    public IENsiMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
+    public static IENsiMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
         throw new NotImplementedException("NetworkSpecificIdentifier not implemented yet");
     }
 

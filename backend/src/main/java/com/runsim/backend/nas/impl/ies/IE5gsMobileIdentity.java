@@ -10,6 +10,9 @@ import com.runsim.backend.utils.OctetOutputStream;
 
 public class IE5gsMobileIdentity extends InformationElement6 {
 
+    protected IE5gsMobileIdentity() {
+    }
+
     @Override
     protected final IE5gsMobileIdentity decodeIE6(OctetInputStream stream, int length) {
         int flags = stream.peekOctetI();
@@ -20,22 +23,18 @@ public class IE5gsMobileIdentity extends InformationElement6 {
         if (typeOfIdentity.equals(EIdentityType.SUCI)) {
             return NasDecoder.suciMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.IMEI)) {
-            return new IEImeiMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+            return IEImeiMobileIdentity.decodeMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.GUTI)) {
-            return new IE5gGutiMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+            return IE5gGutiMobileIdentity.decodeMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.TMSI)) {
-            return new IE5gTmsiMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+            return IE5gTmsiMobileIdentity.decodeMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.IMEISV)) {
-            return new IEImeiSvMobileIdentity().decodeMobileIdentity(stream, length, isEven);
+            return IEImeiSvMobileIdentity.decodeMobileIdentity(stream, length, isEven);
         } else if (typeOfIdentity.equals(EIdentityType.NO_IDENTITY)) {
-            return new IENoIdentity().decodeMobileIdentity(stream, length, isEven);
+            return IENoIdentity.decodeMobileIdentity(stream, length, isEven);
         } else {
             throw new ReservedOrInvalidValueException("Type of Identity", typeOfIdentity);
         }
-    }
-
-    public IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
-        throw new IncorrectImplementationException("sub types must override this method.");
     }
 
     @Override
