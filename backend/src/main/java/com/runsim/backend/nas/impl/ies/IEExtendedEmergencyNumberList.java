@@ -6,13 +6,14 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
 public class IEExtendedEmergencyNumberList extends InformationElement6 {
+
     @Override
     protected InformationElement6 decodeIE6(OctetInputStream stream, int length) {
-        throw new NotImplementedException("");
+        throw new NotImplementedException("This information element is in FFS (For Further Study) state for now (15.2.0");
     }
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        throw new NotImplementedException("");
+        throw new NotImplementedException("This information element is in FFS (For Further Study) state for now (15.2.0");
     }
 }
