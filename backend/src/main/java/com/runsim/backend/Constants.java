@@ -11,6 +11,4 @@ public final class Constants {
 
     public static final int NGAP_PROTOCOL_ID = 60;
     public static final int DEFAULT_STREAM_NUMBER = 1;
-
-    public static final String MTS_HOST = "http://localhost:5000";
 }
