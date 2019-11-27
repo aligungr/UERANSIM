@@ -5,7 +5,6 @@ import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
 import com.runsim.backend.nas.impl.values.V5gTmsi;
 import com.runsim.backend.nas.impl.values.VAmfSetId;
 import com.runsim.backend.nas.impl.values.VPlmn;
-import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit6;
 import com.runsim.backend.utils.octets.Octet;
@@ -17,26 +16,6 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
     public VAmfSetId amfSetId;
     public Bit6 amfPointer;
     public V5gTmsi tmsi;
-
-    public static IE5gsMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
-        stream.readOctet();
-
-        var result = new IE5gGutiMobileIdentity();
-
-        /* Decode MCC and MNC */
-        var mccmnc = VPlmn.decode(stream);
-        result.mcc = mccmnc.mcc;
-        result.mnc = mccmnc.mnc;
-
-        /* Decode others */
-        result.amfRegionId = stream.readOctet();
-        result.amfSetId = VAmfSetId.decode(stream);
-        result.amfPointer = new Bit6(stream.readOctetI());
-        result.tmsi = V5gTmsi.decode(stream);
-
-        return result;
-    }
-
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {

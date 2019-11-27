@@ -1,19 +1,11 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
-import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit4;
 
 public class IEImeiSvMobileIdentity extends IE5gsMobileIdentity {
     public String imeiSv;
-
-    public static IEImeiSvMobileIdentity decodeMobileIdentity(OctetInputStream stream, int length, boolean isEven) {
-        var res = new IEImeiSvMobileIdentity();
-        res.imeiSv = NasDecoder.bcdString(stream, length, true);
-        return res;
-    }
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
