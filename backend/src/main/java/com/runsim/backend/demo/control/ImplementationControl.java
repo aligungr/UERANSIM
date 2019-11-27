@@ -24,7 +24,6 @@ import static com.runsim.backend.demo.control.Control.*;
 
 public class ImplementationControl {
 
-    // TODO: Bazı yerlerde liste bazılarında array, ikisinden birine geçilsin tutarlı olur.
     private static final Class[] USUAL_TYPES = new Class[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
             String.class, OctetString.class, List.class, EAP.class,
