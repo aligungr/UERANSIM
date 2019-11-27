@@ -16,13 +16,12 @@ public class IE5gsTrackingAreaIdentity extends InformationElement3 {
     @Override
     protected IE5gsTrackingAreaIdentity decodeIE3(OctetInputStream stream) {
         var res = new IE5gsTrackingAreaIdentity();
-        VPlmn mccmnc;
 
-        // TODO: MCC and MNC are allowed to contain invalid characters for IE5gsTrackingAreaIdentity
-        // but currently an exception is thrown if some invalid character found.
+        // WARNING: MCC and MNC are allowed to contain invalid characters for IE5gsTrackingAreaIdentity
+        // but currently opposite of this is assumed.
         //
         // See 3GPP 24.501 f20, Table 9.11.3.8.1: 5GS tracking area identity information element
-        mccmnc = VPlmn.decode(stream);
+        VPlmn mccmnc = VPlmn.decode(stream);
 
         res.mcc = mccmnc.mcc;
         res.mnc = mccmnc.mnc;
