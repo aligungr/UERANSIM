@@ -6,12 +6,12 @@ import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
 
 public class VPartialServiceAreaList01 extends VPartialServiceAreaList {
-    public VMccMnc mccMnc;
+    public VPlmn plmn;
     public Octet3 tac;
 
     public static VPartialServiceAreaList01 decode(OctetInputStream stream, int count) {
         var res = new VPartialServiceAreaList01();
-        res.mccMnc = VMccMnc.decode(stream);
+        res.plmn = VPlmn.decode(stream);
         res.tac = stream.readOctet3();
         return res;
     }
@@ -19,11 +19,11 @@ public class VPartialServiceAreaList01 extends VPartialServiceAreaList {
     @Override
     public void encode(OctetOutputStream stream) {
         var flags = new Octet(0);
-        flags = flags.setBitRange(0, 4, 1);
+        flags = flags.setBitRange(0, 4, 0);
         flags = flags.setBitRange(5, 6, 0b01);
         flags = flags.setBit(7, allowedType.intValue());
         stream.writeOctet(flags);
-        mccMnc.encode(stream);
+        plmn.encode(stream);
         stream.writeOctet3(tac);
     }
 }

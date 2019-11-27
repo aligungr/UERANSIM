@@ -14,7 +14,6 @@ public class VEmergencyServiceCategory extends NasValue {
     public Bit mountainRescue;
     public Bit manuallyInitiatedECall;
     public Bit automaticallyInitiatedECall;
-    public final Bit spare = new Bit(0);
 
     public static VEmergencyServiceCategory decode(OctetInputStream stream) {
         var octet = stream.readOctet();
@@ -33,7 +32,7 @@ public class VEmergencyServiceCategory extends NasValue {
     @Override
     public void encode(OctetOutputStream stream) {
         var bits = new Bit8(police, ambulance, fireBrigade, marineGuard,
-                mountainRescue, manuallyInitiatedECall, automaticallyInitiatedECall, spare);
+                mountainRescue, manuallyInitiatedECall, automaticallyInitiatedECall, new Bit(0));
         stream.writeOctet(bits.intValue());
     }
 }

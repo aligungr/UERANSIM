@@ -6,6 +6,7 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 
+// TODO: Bunu sezgiselleştir.  https://wiki.nicksoft.info/lcb:programming:siemens-mc35:tp-scts
 public class IETimeZoneAndTime extends InformationElement3 {
     public Octet year;
     public Octet month;

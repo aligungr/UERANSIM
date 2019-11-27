@@ -4,8 +4,8 @@ import com.runsim.backend.nas.core.ies.InformationElement4;
 import com.runsim.backend.nas.impl.values.VPartialServiceAreaList;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class IEServiceAreaList extends InformationElement4 {
@@ -14,17 +14,12 @@ public class IEServiceAreaList extends InformationElement4 {
     @Override
     protected IEServiceAreaList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEServiceAreaList();
-        res.partialServiceAreaLists = new ArrayList<>();
-        while (stream.hasNext()) {
-            partialServiceAreaLists.add(VPartialServiceAreaList.decode(stream));
-        }
+        res.partialServiceAreaLists = Utils.decodeList(stream, VPartialServiceAreaList::decode, 0, length);
         return res;
     }
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        for (var list : partialServiceAreaLists) {
-            list.encode(stream);
-        }
+        partialServiceAreaLists.forEach(item -> item.encode(stream));
     }
 }

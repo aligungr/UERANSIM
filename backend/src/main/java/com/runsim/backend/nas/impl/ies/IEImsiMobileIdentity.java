@@ -6,7 +6,7 @@ import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
-import com.runsim.backend.nas.impl.values.VMccMnc;
+import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
@@ -24,7 +24,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         var result = new IEImsiMobileIdentity();
 
         /* Decode MCC */
-        var mccmnc = VMccMnc.decode(stream);
+        var mccmnc = VPlmn.decode(stream);
         result.mcc = mccmnc.mcc;
         result.mnc = mccmnc.mnc;
 
@@ -56,7 +56,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         stream.writeOctet(0x01); // Flags for SUCI with SUPI format IMSI
 
         /* Encode MCC and MNC*/
-        var mccmnc = new VMccMnc();
+        var mccmnc = new VPlmn();
         mccmnc.mcc = mcc;
         mccmnc.mnc = mnc;
         mccmnc.encode(stream);

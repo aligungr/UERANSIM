@@ -9,16 +9,15 @@ import com.runsim.backend.utils.octets.Octet;
 
 import java.util.List;
 
-// TODO: Bu yanlış olöuş gibi tekrar bakılsın
 public class VMappedEpsBearerContext extends NasValue {
     public EEpsBearerIdentity epsBearerIdentity;
-    public EOperationCode operationCode;
     public EEbit ebit;
+    public EOperationCode operationCode;
     public List<VEpsParameter> epsParameterList;
 
     public static VMappedEpsBearerContext decode(OctetInputStream stream) {
         var res = new VMappedEpsBearerContext();
-        res.epsBearerIdentity = EEpsBearerIdentity.fromValue(stream.readOctetI());
+        res.epsBearerIdentity = EEpsBearerIdentity.fromValue(stream.readOctetI() >> 4 & 0xF);
 
         int totalLen = stream.readOctetI();
         var flags = stream.readOctet();
@@ -32,15 +31,19 @@ public class VMappedEpsBearerContext extends NasValue {
 
     @Override
     public void encode(OctetOutputStream stream) {
-        stream.writeOctet(epsBearerIdentity.intValue());
+        var innerStream = new OctetOutputStream();
+        epsParameterList.forEach(param -> param.encode(innerStream));
 
-        var octet = new Octet();
-        octet = octet.setBitRange(6, 7, operationCode.intValue());
-        octet = octet.setBit(4, ebit.intValue());
-        octet = octet.setBitRange(0, 3, epsParameterList.size());
-        stream.writeOctet(octet);
+        stream.writeOctet(epsBearerIdentity.intValue() << 4);
+        stream.writeOctet(innerStream.length() + 1);
 
-        epsParameterList.forEach(param -> param.encode(stream));
+        var flags = new Octet();
+        flags = flags.setBitRange(6, 7, operationCode.intValue());
+        flags = flags.setBit(4, ebit.intValue());
+        flags = flags.setBitRange(0, 3, epsParameterList.size());
+        stream.writeOctet(flags);
+
+        stream.writeStream(innerStream);
     }
 
     public static class EEpsBearerIdentity extends ProtocolEnum {

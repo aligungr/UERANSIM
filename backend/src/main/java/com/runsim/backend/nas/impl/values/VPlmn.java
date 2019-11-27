@@ -9,12 +9,12 @@ import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 
-public class VMccMnc extends NasValue {
+public class VPlmn extends NasValue {
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
 
-    public static VMccMnc decode(OctetInputStream stream) {
-        var res = new VMccMnc();
+    public static VPlmn decode(OctetInputStream stream) {
+        var res = new VPlmn();
 
         /* Decode MCC */
         int octet1 = stream.readOctetI();

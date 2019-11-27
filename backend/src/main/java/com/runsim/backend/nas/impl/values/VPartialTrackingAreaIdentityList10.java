@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.impl.values;
 
+import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
@@ -18,8 +19,11 @@ public class VPartialTrackingAreaIdentityList10 extends VPartialTrackingAreaIden
 
     @Override
     public void encode(OctetOutputStream stream) {
+        if (tais.length == 0)
+            throw new EncodingException("tais cannot be empty");
+
         var flags = new Octet();
-        flags = flags.setBitRange(0, 4, tais.length);
+        flags = flags.setBitRange(0, 4, tais.length - 1);
         flags = flags.setBitRange(5, 6, 0b10);
         stream.writeOctet(flags);
         for (var tai : tais) {

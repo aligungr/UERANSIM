@@ -6,12 +6,12 @@ import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
 
 public class VPartialTrackingAreaIdentityList01 extends VPartialTrackingAreaIdentityList {
-    public VMccMnc mccMnc;
+    public VPlmn mccMnc;
     public Octet3 tac;
 
     public static VPartialTrackingAreaIdentityList01 decode(OctetInputStream stream, int count) {
         var res = new VPartialTrackingAreaIdentityList01();
-        res.mccMnc = VMccMnc.decode(stream);
+        res.mccMnc = VPlmn.decode(stream);
         res.tac = stream.readOctet3();
         return res;
     }
@@ -19,7 +19,7 @@ public class VPartialTrackingAreaIdentityList01 extends VPartialTrackingAreaIden
     @Override
     public void encode(OctetOutputStream stream) {
         var flags = new Octet();
-        flags = flags.setBitRange(0, 4, 1);
+        flags = flags.setBitRange(0, 4, 0);
         flags = flags.setBitRange(5, 6, 0b01);
         stream.writeOctet(flags);
         mccMnc.encode(stream);

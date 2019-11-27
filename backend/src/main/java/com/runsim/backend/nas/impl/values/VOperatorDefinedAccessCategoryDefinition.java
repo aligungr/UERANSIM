@@ -23,7 +23,7 @@ public class VOperatorDefinedAccessCategoryDefinition extends NasValue {
 
         int octet = stream.readOctetI();
         res.operatorDefinedAccessCategoryNumber = new Bit5(octet);
-        res.psac = EPresenceOfStandardizedAccessCategory.fromValue(octet >> 7);
+        res.psac = EPresenceOfStandardizedAccessCategory.fromValue(octet >> 7 & 0b1);
 
         int lengthOfCriteria = stream.readOctetI();
         res.criteria = stream.readOctetString(lengthOfCriteria);

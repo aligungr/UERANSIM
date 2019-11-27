@@ -15,7 +15,7 @@ public class VRejectedSNssai extends NasValue {
         var res = new VRejectedSNssai();
 
         int octet = stream.readOctetI();
-        res.cause = ERejectedSNssaiCause.fromValue(octet);
+        res.cause = ERejectedSNssaiCause.fromValue(octet & 0xF);
 
         int length = octet >> 4 & 0xF;
         if (length >= 1) {

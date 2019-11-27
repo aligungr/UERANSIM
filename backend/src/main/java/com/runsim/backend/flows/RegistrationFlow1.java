@@ -15,7 +15,7 @@ import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
 import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.nas.impl.messages.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
-import com.runsim.backend.nas.impl.values.VMccMnc;
+import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.nas.impl.values.VSliceDifferentiator;
 import com.runsim.backend.nas.impl.values.VSliceServiceType;
 import com.runsim.backend.ngap.Values;
@@ -394,7 +394,7 @@ public class RegistrationFlow1 extends BaseFlow {
     }
 
     private UserLocationInformationNR createUserLocationInformationNr() {
-        var plmnIdentity = new VMccMnc();
+        var plmnIdentity = new VPlmn();
         plmnIdentity.mcc = EMobileCountryCode.fromValue(1);
         plmnIdentity.mnc = EMobileNetworkCode3.fromValue(plmnIdentity.mcc.intValue() + 1000 + 1);
 

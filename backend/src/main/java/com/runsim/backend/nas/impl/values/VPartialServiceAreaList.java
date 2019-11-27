@@ -10,7 +10,12 @@ public abstract class VPartialServiceAreaList extends NasValue {
 
     public static VPartialServiceAreaList decode(OctetInputStream stream) {
         var octet = stream.readOctet();
+
         int numberOfElements = octet.getBitRangeI(0, 4) + 1; // WARNING: plus 1 is required
+        // From spec: All other values are unused and shall be interpreted as 16, if received by the UE.
+        if (numberOfElements > 16)
+            numberOfElements = 16;
+
         int typeOfList = octet.getBitRangeI(5, 6);
 
         VPartialServiceAreaList res;

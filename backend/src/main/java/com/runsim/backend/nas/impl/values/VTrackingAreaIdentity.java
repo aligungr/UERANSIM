@@ -6,12 +6,12 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet3;
 
 public class VTrackingAreaIdentity extends NasValue {
-    public VMccMnc mccMnc;
+    public VPlmn mccMnc;
     public Octet3 tac;
 
     public static VTrackingAreaIdentity decode(OctetInputStream stream) {
         var res = new VTrackingAreaIdentity();
-        res.mccMnc = VMccMnc.decode(stream);
+        res.mccMnc = VPlmn.decode(stream);
         res.tac = stream.readOctet3();
         return res;
     }

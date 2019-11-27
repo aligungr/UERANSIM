@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ies.InformationElement4;
-import com.runsim.backend.nas.impl.values.VMccMnc;
+import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
@@ -9,12 +9,12 @@ import com.runsim.backend.utils.Utils;
 import java.util.List;
 
 public class IEPlmnList extends InformationElement4 {
-    public List<VMccMnc> plmns;
+    public List<VPlmn> plmns;
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IEPlmnList();
-        res.plmns = Utils.decodeList(stream, VMccMnc::decode, 0, length);
+        res.plmns = Utils.decodeList(stream, VPlmn::decode, 0, length);
         return res;
     }
 

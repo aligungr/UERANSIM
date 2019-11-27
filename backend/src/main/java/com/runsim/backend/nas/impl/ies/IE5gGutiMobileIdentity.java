@@ -4,7 +4,7 @@ import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
 import com.runsim.backend.nas.impl.values.V5gTmsi;
 import com.runsim.backend.nas.impl.values.VAmfSetId;
-import com.runsim.backend.nas.impl.values.VMccMnc;
+import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.bits.Bit6;
@@ -25,7 +25,7 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
         var result = new IE5gGutiMobileIdentity();
 
         /* Decode MCC and MNC */
-        var mccmnc = VMccMnc.decode(stream);
+        var mccmnc = VPlmn.decode(stream);
         result.mcc = mccmnc.mcc;
         result.mnc = mccmnc.mnc;
 
@@ -44,7 +44,7 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
         stream.writeOctet(0xf2); // Flags for 5G-GUTI
 
         /* Encode MCC and MNC*/
-        var mccmnc = new VMccMnc();
+        var mccmnc = new VPlmn();
         mccmnc.mcc = mcc;
         mccmnc.mnc = mnc;
         mccmnc.encode(stream);
