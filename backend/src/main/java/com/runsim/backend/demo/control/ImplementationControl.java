@@ -166,7 +166,7 @@ public class ImplementationControl {
                 if (ieAll.contains(field))
                     throw new IncorrectImplementationException(clazz, "ie occurs more than once: " + field);
                 if (ieiAll.contains(iei))
-                    throw new IncorrectImplementationException(clazz, "ie, occurs more than once: " + ie1);
+                    throw new IncorrectImplementationException(clazz, "ie, occurs more than once: " + iei);
                 ieiAll.add(iei);
                 ieN.add(field);
                 ieAll.add(field);
