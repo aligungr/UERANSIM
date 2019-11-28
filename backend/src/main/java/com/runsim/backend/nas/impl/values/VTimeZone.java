@@ -7,7 +7,7 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet;
 
 public class VTimeZone extends NasValue {
-    public Octet rawOctet;
+    public Octet value;
 
     public static VTimeZone decode(OctetInputStream stream) {
         return fromOctet(stream.readOctet());
@@ -16,7 +16,7 @@ public class VTimeZone extends NasValue {
     public static VTimeZone fromOctet(Octet octet) {
         valueControl(octet);
         var res = new VTimeZone();
-        res.rawOctet = octet;
+        res.value = octet;
         return res;
     }
 
@@ -45,7 +45,7 @@ public class VTimeZone extends NasValue {
         octet = octet.setBitRange(4, 6, nibble0);
 
         var res = new VTimeZone();
-        res.rawOctet = octet;
+        res.value = octet;
         return res;
     }
 
@@ -58,19 +58,19 @@ public class VTimeZone extends NasValue {
     }
 
     public int getSign() {
-        return rawOctet.getBitI(7) == 0 ? 1 : -1;
+        return value.getBitI(7) == 0 ? 1 : -1;
     }
 
     public int getDifferenceInQuarters() {
         // (They are swapped nibble)
-        int nibble1 = rawOctet.getBitRangeI(0, 3);
-        int nibble0 = rawOctet.getBitRangeI(4, 6);
+        int nibble1 = value.getBitRangeI(0, 3);
+        int nibble0 = value.getBitRangeI(4, 6);
         return nibble1 * 10 + nibble0;
     }
 
     @Override
     public void encode(OctetOutputStream stream) {
-        stream.writeOctet(rawOctet);
+        stream.writeOctet(value);
     }
 
     @Override
