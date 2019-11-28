@@ -1,9 +1,10 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.exceptions.IncorrectImplementationException;
+import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.nas.core.ies.InformationElement6;
-import com.runsim.backend.nas.impl.values.VPlmnIdAccessTech;
+import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
@@ -111,6 +112,24 @@ public class IESorTransparentContainer extends InformationElement6 {
         public void encodeIE6(OctetOutputStream stream) {
             super.encodeIE6(stream);
             list.forEach(item -> item.encode(stream));
+        }
+    }
+
+    public static class VPlmnIdAccessTech extends NasValue {
+        public VPlmn plmnId;
+        public Octet2 accessTechnologyIdentifier;
+
+        public static VPlmnIdAccessTech decode(OctetInputStream stream) {
+            var res = new VPlmnIdAccessTech();
+            res.plmnId = VPlmn.decode(stream);
+            res.accessTechnologyIdentifier = stream.readOctet2();
+            return res;
+        }
+
+        @Override
+        public void encode(OctetOutputStream stream) {
+            plmnId.encode(stream);
+            stream.writeOctet2(accessTechnologyIdentifier);
         }
     }
 
