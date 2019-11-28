@@ -35,29 +35,23 @@ public class IEServiceAreaList extends InformationElement4 {
         public EAllowedType allowedType;
 
         public static VPartialServiceAreaList decode(OctetInputStream stream) {
-            var octet = stream.readOctet();
-
-            int numberOfElements = octet.getBitRangeI(0, 4) + 1; // WARNING: plus 1 is required
-            // From spec: All other values are unused and shall be interpreted as 16, if received by the UE.
-            if (numberOfElements > 16)
-                numberOfElements = 16;
-
+            var octet = stream.peekOctet();
             int typeOfList = octet.getBitRangeI(5, 6);
 
             VPartialServiceAreaList res;
 
             switch (typeOfList) {
                 case 0b00:
-                    res = VPartialServiceAreaList00.decode(stream, numberOfElements);
+                    res = VPartialServiceAreaList00.decode(stream);
                     break;
                 case 0b01:
-                    res = VPartialServiceAreaList01.decode(stream, numberOfElements);
+                    res = VPartialServiceAreaList01.decode(stream);
                     break;
                 case 0b10:
-                    res = VPartialServiceAreaList10.decode(stream, numberOfElements);
+                    res = VPartialServiceAreaList10.decode(stream);
                     break;
                 case 0b11:
-                    res = VPartialServiceAreaList11.decode(stream, numberOfElements);
+                    res = VPartialServiceAreaList11.decode(stream);
                     break;
                 default:
                     throw new DecodingException("invalid type of list for service area list");
@@ -72,7 +66,11 @@ public class IEServiceAreaList extends InformationElement4 {
         public VPlmn plmn;
         public List<Octet3> tacs;
 
-        public static VPartialServiceAreaList00 decode(OctetInputStream stream, int count) {
+        public static VPartialServiceAreaList00 decode(OctetInputStream stream) {
+            var octet = stream.readOctet();
+            int count = octet.getBitRangeI(0, 4) + 1;
+            if (count > 16) count = 16;
+
             var res = new VPartialServiceAreaList00();
             res.plmn = VPlmn.decode(stream);
             res.tacs = new ArrayList<>();
@@ -102,7 +100,11 @@ public class IEServiceAreaList extends InformationElement4 {
         public VPlmn plmn;
         public Octet3 tac;
 
-        public static VPartialServiceAreaList01 decode(OctetInputStream stream, int count) {
+        public static VPartialServiceAreaList01 decode(OctetInputStream stream) {
+            var octet = stream.readOctet();
+            int count = octet.getBitRangeI(0, 4) + 1;
+            if (count > 16) count = 16;
+
             var res = new VPartialServiceAreaList01();
             res.plmn = VPlmn.decode(stream);
             res.tac = stream.readOctet3();
@@ -124,7 +126,11 @@ public class IEServiceAreaList extends InformationElement4 {
     public static class VPartialServiceAreaList10 extends VPartialServiceAreaList {
         public List<VTrackingAreaIdentity> tais;
 
-        public static VPartialServiceAreaList10 decode(OctetInputStream stream, int count) {
+        public static VPartialServiceAreaList10 decode(OctetInputStream stream) {
+            var octet = stream.readOctet();
+            int count = octet.getBitRangeI(0, 4) + 1;
+            if (count > 16) count = 16;
+
             var res = new VPartialServiceAreaList10();
             res.tais = new ArrayList<>();
             for (int i = 0; i < count; i++) {
@@ -152,7 +158,11 @@ public class IEServiceAreaList extends InformationElement4 {
     public static class VPartialServiceAreaList11 extends VPartialServiceAreaList {
         public VPlmn plmn;
 
-        public static VPartialServiceAreaList11 decode(OctetInputStream stream, int count) {
+        public static VPartialServiceAreaList11 decode(OctetInputStream stream) {
+            var octet = stream.readOctet();
+            int count = octet.getBitRangeI(0, 4) + 1;
+            if (count > 16) count = 16;
+
             var res = new VPartialServiceAreaList11();
             res.plmn = VPlmn.decode(stream);
             return res;

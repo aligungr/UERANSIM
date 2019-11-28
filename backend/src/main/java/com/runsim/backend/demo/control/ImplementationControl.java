@@ -64,8 +64,8 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "NasValue should not be inner class");
         if (!constructorExists(clazz, Visibility.PUBLIC))
             throw new IncorrectImplementationException(clazz, "NasValue should be provide at least one public empty constructor");
-        if (!methodExistsArgsPrefix(clazz, true, Visibility.PUBLIC, "decode", clazz, OctetInputStream.class))
-            throw new IncorrectImplementationException(clazz, "NasValue should provide method: 'public static [same-type] decode(OctetInputStream, ...)'");
+        if (!methodExists(clazz, true, Visibility.PUBLIC, "decode", clazz, OctetInputStream.class))
+            throw new IncorrectImplementationException(clazz, "NasValue should provide method: 'public static [same-type] decode(OctetInputStream)'");
         if (fieldTypeExists(clazz, OctetN.class))
             throw new IncorrectImplementationException(clazz, "do not use OctetN as field type directly. Use Octet, Octet2, Octet3, ... ");
         if (fieldTypeExists(clazz, BitN.class))
