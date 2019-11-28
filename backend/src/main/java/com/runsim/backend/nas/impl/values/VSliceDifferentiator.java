@@ -8,7 +8,8 @@ import com.runsim.backend.utils.octets.Octet3;
 public class VSliceDifferentiator extends NasValue {
     public Octet3 value;
 
-    public static VSliceDifferentiator decode(OctetInputStream stream) {
+    @Override
+    public VSliceDifferentiator decode(OctetInputStream stream) {
         var res = new VSliceDifferentiator();
         res.value = stream.readOctet3();
         return res;

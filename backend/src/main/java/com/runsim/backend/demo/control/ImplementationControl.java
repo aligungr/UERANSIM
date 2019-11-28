@@ -11,7 +11,6 @@ import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.core.messages.PlainSmMessage;
 import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.nas.impl.enums.EMessageType;
-import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
 import com.runsim.backend.utils.octets.OctetString;
@@ -24,6 +23,7 @@ import static com.runsim.backend.demo.control.Control.*;
 
 public class ImplementationControl {
 
+    // TODO: Forbid lists, force native arrays
     private static final Class<?>[] USUAL_TYPES = new Class<?>[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
             String.class, OctetString.class, List.class, EAP.class,
@@ -64,8 +64,6 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "NasValue should not be inner class");
         if (!constructorExists(clazz, Visibility.PUBLIC))
             throw new IncorrectImplementationException(clazz, "NasValue should be provide at least one public empty constructor");
-        if (!methodExists(clazz, true, Visibility.PUBLIC, "decode", clazz, OctetInputStream.class))
-            throw new IncorrectImplementationException(clazz, "NasValue should provide method: 'public static [same-type] decode(OctetInputStream)'");
         if (fieldTypeExists(clazz, OctetN.class))
             throw new IncorrectImplementationException(clazz, "do not use OctetN as field type directly. Use Octet, Octet2, Octet3, ... ");
         if (fieldTypeExists(clazz, BitN.class))
@@ -75,8 +73,6 @@ public class ImplementationControl {
     }
 
     private static void controlNasAbstractValues(Class<?> clazz) {
-        if (!methodExistsArgsPrefix(clazz, true, Visibility.PUBLIC, "decode", clazz, OctetInputStream.class))
-            throw new IncorrectImplementationException(clazz, "NasValue should provide method: 'public static [same-type] decode(OctetInputStream, ...)'");
     }
 
     private static void controlInformationElements(Class<?> clazz) {

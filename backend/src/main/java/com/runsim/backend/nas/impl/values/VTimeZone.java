@@ -9,7 +9,8 @@ import com.runsim.backend.utils.octets.Octet;
 public class VTimeZone extends NasValue {
     public Octet value;
 
-    public static VTimeZone decode(OctetInputStream stream) {
+    @Override
+    public VTimeZone decode(OctetInputStream stream) {
         return fromOctet(stream.readOctet());
     }
 

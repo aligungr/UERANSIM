@@ -9,9 +9,10 @@ public class VTrackingAreaIdentity extends NasValue {
     public VPlmn mccMnc;
     public Octet3 tac;
 
-    public static VTrackingAreaIdentity decode(OctetInputStream stream) {
+    @Override
+    public VTrackingAreaIdentity decode(OctetInputStream stream) {
         var res = new VTrackingAreaIdentity();
-        res.mccMnc = VPlmn.decode(stream);
+        res.mccMnc = new VPlmn().decode(stream);
         res.tac = stream.readOctet3();
         return res;
     }

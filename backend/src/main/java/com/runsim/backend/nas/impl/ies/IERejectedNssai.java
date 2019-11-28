@@ -18,7 +18,7 @@ public class IERejectedNssai extends InformationElement4 {
     @Override
     protected IERejectedNssai decodeIE4(OctetInputStream stream, int length) {
         var res = new IERejectedNssai();
-        res.rejectedSNssaiList = Utils.decodeList(stream, VRejectedSNssai::decode, length);
+        res.rejectedSNssaiList = Utils.decodeList(stream, new VRejectedSNssai()::decode, length);
         return res;
     }
 
@@ -34,7 +34,8 @@ public class IERejectedNssai extends InformationElement4 {
         public VSliceServiceType sst;
         public VSliceDifferentiator sd;
 
-        public static VRejectedSNssai decode(OctetInputStream stream) {
+        @Override
+        public VRejectedSNssai decode(OctetInputStream stream) {
             var res = new VRejectedSNssai();
 
             int octet = stream.readOctetI();
@@ -42,11 +43,11 @@ public class IERejectedNssai extends InformationElement4 {
 
             int length = octet >> 4 & 0xF;
             if (length >= 1) {
-                res.sst = VSliceServiceType.decode(stream);
+                res.sst = new VSliceServiceType().decode(stream);
             }
 
             if (length >= 2) {
-                res.sd = VSliceDifferentiator.decode(stream);
+                res.sd = new VSliceDifferentiator().decode(stream);
             }
 
             return res;

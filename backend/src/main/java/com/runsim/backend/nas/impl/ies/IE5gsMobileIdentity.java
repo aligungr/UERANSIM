@@ -36,7 +36,7 @@ public class IE5gsMobileIdentity extends InformationElement6 {
                 var result = new IEImsiMobileIdentity();
 
                 /* Decode MCC */
-                var mccmnc = VPlmn.decode(stream);
+                var mccmnc = new VPlmn().decode(stream);
                 result.mcc = mccmnc.mcc;
                 result.mnc = mccmnc.mnc;
 
@@ -49,7 +49,7 @@ public class IE5gsMobileIdentity extends InformationElement6 {
                 result.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.fromValue(stream.readOctetI() & 0b1111);
 
                 /* Decode home network public key identifier */
-                result.homeNetworkPublicKeyIdentifier = VHomeNetworkPki.decode(stream);
+                result.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki().decode(stream);
 
                 /* Decode schema output */
                 String schemaOutput;
@@ -78,22 +78,22 @@ public class IE5gsMobileIdentity extends InformationElement6 {
             var result = new IE5gGutiMobileIdentity();
 
             /* Decode MCC and MNC */
-            var mccmnc = VPlmn.decode(stream);
+            var mccmnc = new VPlmn().decode(stream);
             result.mcc = mccmnc.mcc;
             result.mnc = mccmnc.mnc;
 
             /* Decode others */
             result.amfRegionId = stream.readOctet();
-            result.amfSetId = VAmfSetId.decode(stream);
+            result.amfSetId = new VAmfSetId().decode(stream);
             result.amfPointer = new Bit6(stream.readOctetI());
-            result.tmsi = V5gTmsi.decode(stream);
+            result.tmsi = new V5gTmsi().decode(stream);
 
             return result;
         } else if (typeOfIdentity.equals(EIdentityType.TMSI)) {
             var res = new IE5gTmsiMobileIdentity();
-            res.amfSetId = VAmfSetId.decode(stream);
+            res.amfSetId = new VAmfSetId().decode(stream);
             res.amfPointer = new Bit6(stream.readOctetI());
-            res.tmsi = V5gTmsi.decode(stream);
+            res.tmsi = new V5gTmsi().decode(stream);
             return res;
         } else if (typeOfIdentity.equals(EIdentityType.IMEISV)) {
             var res = new IEImeiSvMobileIdentity();

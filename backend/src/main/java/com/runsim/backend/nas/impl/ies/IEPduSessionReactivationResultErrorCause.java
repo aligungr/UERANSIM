@@ -19,7 +19,7 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
 
         var values = new VPduSessionReactivationResultErrorCause[length / 2];
         for (int i = 0; i < values.length; i++) {
-            values[i] = VPduSessionReactivationResultErrorCause.decode(stream);
+            values[i] = new VPduSessionReactivationResultErrorCause().decode(stream);
         }
 
         res.values = values;
@@ -37,7 +37,8 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
         public EPduSessionIdentity pduSessionId;
         public EMmCause causeValue;
 
-        public static VPduSessionReactivationResultErrorCause decode(OctetInputStream stream) {
+        @Override
+        public VPduSessionReactivationResultErrorCause decode(OctetInputStream stream) {
             var res = new VPduSessionReactivationResultErrorCause();
             res.pduSessionId = EPduSessionIdentity.fromValue(stream.readOctetI());
             res.causeValue = EMmCause.fromValue(stream.readOctetI());

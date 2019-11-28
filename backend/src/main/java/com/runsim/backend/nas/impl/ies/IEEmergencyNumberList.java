@@ -18,7 +18,7 @@ public class IEEmergencyNumberList extends InformationElement4 {
     @Override
     protected IEEmergencyNumberList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEEmergencyNumberList();
-        res.list = Utils.decodeList(stream, VEmergencyNumberInformation::decode, length);
+        res.list = Utils.decodeList(stream, new VEmergencyNumberInformation()::decode, length);
         return res;
     }
 
@@ -31,10 +31,11 @@ public class IEEmergencyNumberList extends InformationElement4 {
         public VEmergencyServiceCategory emergencyServiceCategory;
         public String number;
 
-        public static VEmergencyNumberInformation decode(OctetInputStream stream) {
+        @Override
+        public VEmergencyNumberInformation decode(OctetInputStream stream) {
             var res = new VEmergencyNumberInformation();
             int length = stream.readOctetI() - 1;
-            res.emergencyServiceCategory = VEmergencyServiceCategory.decode(stream);
+            res.emergencyServiceCategory = new VEmergencyServiceCategory().decode(stream);
             res.number = NasDecoder.bcdString(stream, length, false);
             return res;
         }
@@ -55,7 +56,8 @@ public class IEEmergencyNumberList extends InformationElement4 {
         public Bit manuallyInitiatedECall;
         public Bit automaticallyInitiatedECall;
 
-        public static VEmergencyServiceCategory decode(OctetInputStream stream) {
+        @Override
+        public VEmergencyServiceCategory decode(OctetInputStream stream) {
             var octet = stream.readOctet();
 
             var res = new VEmergencyServiceCategory();

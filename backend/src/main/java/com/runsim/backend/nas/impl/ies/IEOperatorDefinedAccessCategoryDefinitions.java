@@ -18,7 +18,7 @@ public class IEOperatorDefinedAccessCategoryDefinitions extends InformationEleme
     @Override
     protected IEOperatorDefinedAccessCategoryDefinitions decodeIE6(OctetInputStream stream, int length) {
         var res = new IEOperatorDefinedAccessCategoryDefinitions();
-        res.operatorDefinedAccessCategoryDefinitions = Utils.decodeList(stream, VOperatorDefinedAccessCategoryDefinition::decode, length);
+        res.operatorDefinedAccessCategoryDefinitions = Utils.decodeList(stream, new VOperatorDefinedAccessCategoryDefinition()::decode, length);
         return res;
     }
 
@@ -34,7 +34,8 @@ public class IEOperatorDefinedAccessCategoryDefinitions extends InformationEleme
         public OctetString criteria;
         public Bit5 standardizedAccessCategory;
 
-        public static VOperatorDefinedAccessCategoryDefinition decode(OctetInputStream stream) {
+        @Override
+        public VOperatorDefinedAccessCategoryDefinition decode(OctetInputStream stream) {
             var res = new VOperatorDefinedAccessCategoryDefinition();
 
             int length = stream.readOctetI();

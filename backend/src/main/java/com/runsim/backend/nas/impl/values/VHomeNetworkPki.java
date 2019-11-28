@@ -8,7 +8,8 @@ import com.runsim.backend.utils.octets.Octet;
 public class VHomeNetworkPki extends NasValue {
     public Octet value;
 
-    public static VHomeNetworkPki decode(OctetInputStream stream) {
+    @Override
+    public VHomeNetworkPki decode(OctetInputStream stream) {
         var res = new VHomeNetworkPki();
         res.value = stream.readOctet();
         return res;

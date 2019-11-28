@@ -13,7 +13,8 @@ public class VPlmn extends NasValue {
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
 
-    public static VPlmn decode(OctetInputStream stream) {
+    @Override
+    public VPlmn decode(OctetInputStream stream) {
         var res = new VPlmn();
 
         /* Decode MCC */

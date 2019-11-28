@@ -11,7 +11,7 @@ public class IETimeZone extends InformationElement3 {
     @Override
     protected IETimeZone decodeIE3(OctetInputStream stream) {
         var res = new IETimeZone();
-        res.timeZone = VTimeZone.decode(stream);
+        res.timeZone = new VTimeZone().decode(stream);
         return res;
     }
 

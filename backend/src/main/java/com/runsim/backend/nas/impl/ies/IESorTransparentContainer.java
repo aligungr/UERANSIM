@@ -47,7 +47,7 @@ public class IESorTransparentContainer extends InformationElement6 {
                 res.ack = ack;
                 res.sorMacIAusf = sorMacIAusf;
                 res.counterSor = counterSor;
-                res.list = Utils.decodeList(stream, VPlmnIdAccessTech::decode, length - 19);
+                res.list = Utils.decodeList(stream, octetInputStream -> new VPlmnIdAccessTech().decode(octetInputStream), length - 19);
                 return res;
             }
         } else {
@@ -119,9 +119,10 @@ public class IESorTransparentContainer extends InformationElement6 {
         public VPlmn plmnId;
         public Octet2 accessTechnologyIdentifier;
 
-        public static VPlmnIdAccessTech decode(OctetInputStream stream) {
+        @Override
+        public VPlmnIdAccessTech decode(OctetInputStream stream) {
             var res = new VPlmnIdAccessTech();
-            res.plmnId = VPlmn.decode(stream);
+            res.plmnId = new VPlmn().decode(stream);
             res.accessTechnologyIdentifier = stream.readOctet2();
             return res;
         }

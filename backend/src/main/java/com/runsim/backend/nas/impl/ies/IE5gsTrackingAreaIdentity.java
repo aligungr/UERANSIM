@@ -21,7 +21,7 @@ public class IE5gsTrackingAreaIdentity extends InformationElement3 {
         // but currently opposite of this is assumed.
         //
         // See 3GPP 24.501 f20, Table 9.11.3.8.1: 5GS tracking area identity information element
-        VPlmn mccmnc = VPlmn.decode(stream);
+        VPlmn mccmnc = new VPlmn().decode(stream);
 
         res.mcc = mccmnc.mcc;
         res.mnc = mccmnc.mnc;

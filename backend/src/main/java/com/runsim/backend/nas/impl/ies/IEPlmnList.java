@@ -14,7 +14,7 @@ public class IEPlmnList extends InformationElement4 {
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IEPlmnList();
-        res.plmns = Utils.decodeList(stream, VPlmn::decode, length);
+        res.plmns = Utils.decodeList(stream, new VPlmn()::decode, length);
         return res;
     }
 

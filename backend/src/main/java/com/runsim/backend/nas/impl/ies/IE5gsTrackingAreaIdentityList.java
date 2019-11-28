@@ -21,7 +21,7 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
     @Override
     protected IE5gsTrackingAreaIdentityList decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsTrackingAreaIdentityList();
-        res.partialTrackingAreaIdentityLists = Utils.decodeList(stream, VPartialTrackingAreaIdentityList::decode, length);
+        res.partialTrackingAreaIdentityLists = Utils.decodeList(stream, octetInputStream -> new VPartialTrackingAreaIdentityList().decode(stream), length);
         return res;
     }
 
@@ -30,22 +30,28 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
         partialTrackingAreaIdentityLists.forEach(item -> item.encode(stream));
     }
 
-    public static abstract class VPartialTrackingAreaIdentityList extends NasValue {
+    public static class VPartialTrackingAreaIdentityList extends NasValue {
 
-        public static VPartialTrackingAreaIdentityList decode(OctetInputStream stream) {
+        @Override
+        public VPartialTrackingAreaIdentityList decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int typeOfList = octet.getBitRangeI(5, 6);
 
             switch (typeOfList) {
                 case 0b00:
-                    return VPartialTrackingAreaIdentityList00.decode(stream);
+                    return new VPartialTrackingAreaIdentityList00().decode(stream);
                 case 0b01:
-                    return VPartialTrackingAreaIdentityList01.decode(stream);
+                    return new VPartialTrackingAreaIdentityList01().decode(stream);
                 case 0b10:
-                    return VPartialTrackingAreaIdentityList10.decode(stream);
+                    return new VPartialTrackingAreaIdentityList10().decode(stream);
                 default:
                     throw new DecodingException("invalid type of list for partical tracking area identity list");
             }
+        }
+
+        @Override
+        public void encode(OctetOutputStream stream) {
+
         }
     }
 
@@ -53,13 +59,14 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
         public VPlmn mccMnc;
         public List<Octet3> tacs;
 
-        public static VPartialTrackingAreaIdentityList00 decode(OctetInputStream stream) {
+        @Override
+        public VPartialTrackingAreaIdentityList00 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
 
             var res = new VPartialTrackingAreaIdentityList00();
-            res.mccMnc = VPlmn.decode(stream);
+            res.mccMnc = new VPlmn().decode(stream);
             res.tacs = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 res.tacs.add(stream.readOctet3());
@@ -87,13 +94,14 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
         public VPlmn mccMnc;
         public Octet3 tac;
 
-        public static VPartialTrackingAreaIdentityList01 decode(OctetInputStream stream) {
+        @Override
+        public VPartialTrackingAreaIdentityList01 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
 
             var res = new VPartialTrackingAreaIdentityList01();
-            res.mccMnc = VPlmn.decode(stream);
+            res.mccMnc = new VPlmn().decode(stream);
             res.tac = stream.readOctet3();
             return res;
         }
@@ -112,7 +120,8 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
     public static class VPartialTrackingAreaIdentityList10 extends VPartialTrackingAreaIdentityList {
         public List<VTrackingAreaIdentity> tais;
 
-        public static VPartialTrackingAreaIdentityList10 decode(OctetInputStream stream) {
+        @Override
+        public VPartialTrackingAreaIdentityList10 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
@@ -120,7 +129,7 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
             var res = new VPartialTrackingAreaIdentityList10();
             res.tais = new ArrayList<>();
             for (int i = 0; i < count; i++)
-                res.tais.add(VTrackingAreaIdentity.decode(stream));
+                res.tais.add(new VTrackingAreaIdentity().decode(stream));
             return res;
         }
 

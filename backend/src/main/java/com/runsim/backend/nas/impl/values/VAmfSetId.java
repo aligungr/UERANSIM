@@ -8,7 +8,8 @@ import com.runsim.backend.utils.bits.Bit10;
 public class VAmfSetId extends NasValue {
     public Bit10 value;
 
-    public static VAmfSetId decode(OctetInputStream stream) {
+    @Override
+    public VAmfSetId decode(OctetInputStream stream) {
         int octet0 = stream.readOctetI();
         int octet1 = stream.peekOctetI();
 

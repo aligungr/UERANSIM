@@ -20,26 +20,26 @@ public class IESNssai extends InformationElement4 {
 
         switch (length) {
             case 0b00000001: // SST
-                res.sst = VSliceServiceType.decode(stream);
+                res.sst = new VSliceServiceType().decode(stream);
                 break;
             case 0b00000010: // SST and mapped HPLMN SST
-                res.sst = VSliceServiceType.decode(stream);
-                res.mappedHplmnSst = VSliceServiceType.decode(stream);
+                res.sst = new VSliceServiceType().decode(stream);
+                res.mappedHplmnSst = new VSliceServiceType().decode(stream);
                 break;
             case 0b00000100: // SST and SD
-                res.sst = VSliceServiceType.decode(stream);
-                res.sd = VSliceDifferentiator.decode(stream);
+                res.sst = new VSliceServiceType().decode(stream);
+                res.sd = new VSliceDifferentiator().decode(stream);
                 break;
             case 0b00000101: // SST, SD and mapped HPLMN SST
-                res.sst = VSliceServiceType.decode(stream);
-                res.sd = VSliceDifferentiator.decode(stream);
-                res.mappedHplmnSst = VSliceServiceType.decode(stream);
+                res.sst = new VSliceServiceType().decode(stream);
+                res.sd = new VSliceDifferentiator().decode(stream);
+                res.mappedHplmnSst = new VSliceServiceType().decode(stream);
                 break;
             case 0b00001000: // SST, SD, mapped HPLMN SST and mapped HPLMN SD
-                res.sst = VSliceServiceType.decode(stream);
-                res.sd = VSliceDifferentiator.decode(stream);
-                res.mappedHplmnSst = VSliceServiceType.decode(stream);
-                res.mappedHplmnSd = VSliceDifferentiator.decode(stream);
+                res.sst = new VSliceServiceType().decode(stream);
+                res.sd = new VSliceDifferentiator().decode(stream);
+                res.mappedHplmnSst = new VSliceServiceType().decode(stream);
+                res.mappedHplmnSd = new VSliceDifferentiator().decode(stream);
                 break;
             default: // All other values are reserved
                 throw new ReservedOrInvalidValueException("S-NSSAI Information Element Length Indicator");

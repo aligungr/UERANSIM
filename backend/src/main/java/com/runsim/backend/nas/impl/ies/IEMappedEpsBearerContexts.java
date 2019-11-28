@@ -17,7 +17,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
     @Override
     protected IEMappedEpsBearerContexts decodeIE6(OctetInputStream stream, int length) {
         var res = new IEMappedEpsBearerContexts();
-        res.mappedEpsBearerContexts = Utils.decodeList(stream, VMappedEpsBearerContext::decode, length);
+        res.mappedEpsBearerContexts = Utils.decodeList(stream, new VMappedEpsBearerContext()::decode, length);
         return res;
     }
 
@@ -32,7 +32,8 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
         public EOperationCode operationCode;
         public List<VEpsParameter> epsParameterList;
 
-        public static VMappedEpsBearerContext decode(OctetInputStream stream) {
+        @Override
+        public VMappedEpsBearerContext decode(OctetInputStream stream) {
             var res = new VMappedEpsBearerContext();
             res.epsBearerIdentity = EEpsBearerIdentity.fromValue(stream.readOctetI() >> 4 & 0xF);
 
@@ -41,7 +42,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
             int paramCount = flags.getBitRangeI(0, 3);
             res.ebit = EEbit.fromValue(flags.getBitI(4));
             res.operationCode = EOperationCode.fromValue(flags.getBitRangeI(6, 7));
-            res.epsParameterList = Utils.decodeList(stream, VEpsParameter::decode, totalLen - 1);
+            res.epsParameterList = Utils.decodeList(stream, new VEpsParameter()::decode, totalLen - 1);
 
             return res;
         }
@@ -68,7 +69,8 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
         public Octet epsParameterIdentifier;
         public OctetString content;
 
-        public static VEpsParameter decode(OctetInputStream stream) {
+        @Override
+        public VEpsParameter decode(OctetInputStream stream) {
             var res = new VEpsParameter();
             res.epsParameterIdentifier = stream.readOctet();
             int length = stream.readOctetI();

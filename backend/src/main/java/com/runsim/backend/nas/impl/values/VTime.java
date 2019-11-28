@@ -15,7 +15,8 @@ public class VTime extends NasValue {
     public Octet minute;
     public Octet second;
 
-    public static VTime decode(OctetInputStream stream) {
+    @Override
+    public VTime decode(OctetInputStream stream) {
         return fromOctets(stream.readOctet(), stream.readOctet(), stream.readOctet(), stream.readOctet(), stream.readOctet(), stream.readOctet());
     }
 

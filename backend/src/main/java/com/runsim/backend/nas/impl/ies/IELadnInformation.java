@@ -16,7 +16,7 @@ public class IELadnInformation extends InformationElement6 {
     @Override
     protected IELadnInformation decodeIE6(OctetInputStream stream, int length) {
         var res = new IELadnInformation();
-        res.ladns = Utils.decodeList(stream, VLadn::decode, length);
+        res.ladns = Utils.decodeList(stream, new VLadn()::decode, length);
         return res;
     }
 
@@ -29,7 +29,8 @@ public class IELadnInformation extends InformationElement6 {
         public IEDnn dnn;
         public IE5gsTrackingAreaIdentityList trackingAreaIdentityList;
 
-        public static VLadn decode(OctetInputStream stream) {
+        @Override
+        public VLadn decode(OctetInputStream stream) {
             var res = new VLadn();
             res.dnn = NasDecoder.ie2346(stream, IEDnn.class);
             res.trackingAreaIdentityList = NasDecoder.ie2346(stream, IE5gsTrackingAreaIdentityList.class);

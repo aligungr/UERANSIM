@@ -13,8 +13,8 @@ public class IETimeZoneAndTime extends InformationElement3 {
     @Override
     protected IETimeZoneAndTime decodeIE3(OctetInputStream stream) {
         var res = new IETimeZoneAndTime();
-        res.time = VTime.decode(stream);
-        res.timeZone = VTimeZone.decode(stream);
+        res.time = new VTime().decode(stream);
+        res.timeZone = new VTimeZone().decode(stream);
         return res;
     }
 

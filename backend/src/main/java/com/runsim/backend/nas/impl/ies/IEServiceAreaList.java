@@ -22,7 +22,7 @@ public class IEServiceAreaList extends InformationElement4 {
     @Override
     protected IEServiceAreaList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEServiceAreaList();
-        res.partialServiceAreaLists = Utils.decodeList(stream, VPartialServiceAreaList::decode, length);
+        res.partialServiceAreaLists = Utils.decodeList(stream, octetInputStream -> new VPartialServiceAreaList().decode(octetInputStream), length);
         return res;
     }
 
@@ -31,10 +31,11 @@ public class IEServiceAreaList extends InformationElement4 {
         partialServiceAreaLists.forEach(item -> item.encode(stream));
     }
 
-    public static abstract class VPartialServiceAreaList extends NasValue {
+    public static class VPartialServiceAreaList extends NasValue {
         public EAllowedType allowedType;
 
-        public static VPartialServiceAreaList decode(OctetInputStream stream) {
+        @Override
+        public VPartialServiceAreaList decode(OctetInputStream stream) {
             var octet = stream.peekOctet();
             int typeOfList = octet.getBitRangeI(5, 6);
 
@@ -42,16 +43,16 @@ public class IEServiceAreaList extends InformationElement4 {
 
             switch (typeOfList) {
                 case 0b00:
-                    res = VPartialServiceAreaList00.decode(stream);
+                    res = new VPartialServiceAreaList00().decode(stream);
                     break;
                 case 0b01:
-                    res = VPartialServiceAreaList01.decode(stream);
+                    res = new VPartialServiceAreaList01().decode(stream);
                     break;
                 case 0b10:
-                    res = VPartialServiceAreaList10.decode(stream);
+                    res = new VPartialServiceAreaList10().decode(stream);
                     break;
                 case 0b11:
-                    res = VPartialServiceAreaList11.decode(stream);
+                    res = new VPartialServiceAreaList11().decode(stream);
                     break;
                 default:
                     throw new DecodingException("invalid type of list for service area list");
@@ -60,19 +61,25 @@ public class IEServiceAreaList extends InformationElement4 {
             res.allowedType = EAllowedType.fromValue(octet.getBitI(7));
             return res;
         }
+
+        @Override
+        public void encode(OctetOutputStream stream) {
+
+        }
     }
 
     public static class VPartialServiceAreaList00 extends VPartialServiceAreaList {
         public VPlmn plmn;
         public List<Octet3> tacs;
 
-        public static VPartialServiceAreaList00 decode(OctetInputStream stream) {
+        @Override
+        public VPartialServiceAreaList00 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
 
             var res = new VPartialServiceAreaList00();
-            res.plmn = VPlmn.decode(stream);
+            res.plmn = new VPlmn().decode(stream);
             res.tacs = new ArrayList<>();
             for (int i = 0; i < count; i++)
                 res.tacs.add(stream.readOctet3());
@@ -100,13 +107,14 @@ public class IEServiceAreaList extends InformationElement4 {
         public VPlmn plmn;
         public Octet3 tac;
 
-        public static VPartialServiceAreaList01 decode(OctetInputStream stream) {
+        @Override
+        public VPartialServiceAreaList01 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
 
             var res = new VPartialServiceAreaList01();
-            res.plmn = VPlmn.decode(stream);
+            res.plmn = new VPlmn().decode(stream);
             res.tac = stream.readOctet3();
             return res;
         }
@@ -126,7 +134,8 @@ public class IEServiceAreaList extends InformationElement4 {
     public static class VPartialServiceAreaList10 extends VPartialServiceAreaList {
         public List<VTrackingAreaIdentity> tais;
 
-        public static VPartialServiceAreaList10 decode(OctetInputStream stream) {
+        @Override
+        public VPartialServiceAreaList10 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
@@ -134,7 +143,7 @@ public class IEServiceAreaList extends InformationElement4 {
             var res = new VPartialServiceAreaList10();
             res.tais = new ArrayList<>();
             for (int i = 0; i < count; i++) {
-                res.tais.add(VTrackingAreaIdentity.decode(stream));
+                res.tais.add(new VTrackingAreaIdentity().decode(stream));
             }
             return res;
         }
@@ -158,13 +167,14 @@ public class IEServiceAreaList extends InformationElement4 {
     public static class VPartialServiceAreaList11 extends VPartialServiceAreaList {
         public VPlmn plmn;
 
-        public static VPartialServiceAreaList11 decode(OctetInputStream stream) {
+        @Override
+        public VPartialServiceAreaList11 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
             int count = octet.getBitRangeI(0, 4) + 1;
             if (count > 16) count = 16;
 
             var res = new VPartialServiceAreaList11();
-            res.plmn = VPlmn.decode(stream);
+            res.plmn = new VPlmn().decode(stream);
             return res;
         }
 
