@@ -24,7 +24,7 @@ import static com.runsim.backend.demo.control.Control.*;
 
 public class ImplementationControl {
 
-    private static final Class[] USUAL_TYPES = new Class[]{
+    private static final Class<?>[] USUAL_TYPES = new Class<?>[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
             String.class, OctetString.class, List.class, EAP.class,
 
@@ -40,7 +40,7 @@ public class ImplementationControl {
         controlForType(NasMessage.class, true, ImplementationControl::controlMessages);
     }
 
-    private static void controlProtocolEnums(Class clazz) {
+    private static void controlProtocolEnums(Class<?> clazz) {
         if (!methodExists(clazz, true, Visibility.PUBLIC, "fromValue", clazz, int.class))
             throw new IncorrectImplementationException(clazz, "All protocol enums must provide public static method: fromValue that returns itself and accepts an integer as an argument");
         if (!constructorCount(clazz, 1))
@@ -55,7 +55,7 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "All fields must be final for protocol enums");
     }
 
-    private static void controlNasValues(Class clazz) {
+    private static void controlNasValues(Class<?> clazz) {
         if (staticFieldExists(clazz))
             throw new IncorrectImplementationException(clazz, "NasValue should not contain static field");
         if (!fieldVisibilityAll(clazz, Visibility.PUBLIC))
@@ -74,12 +74,12 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "NasValue contains a field with a type that should not be used directly.");
     }
 
-    private static void controlNasAbstractValues(Class clazz) {
+    private static void controlNasAbstractValues(Class<?> clazz) {
         if (!methodExistsArgsPrefix(clazz, true, Visibility.PUBLIC, "decode", clazz, OctetInputStream.class))
             throw new IncorrectImplementationException(clazz, "NasValue should provide method: 'public static [same-type] decode(OctetInputStream, ...)'");
     }
 
-    private static void controlInformationElements(Class clazz) {
+    private static void controlInformationElements(Class<?> clazz) {
         if (!fieldVisibilityAll(clazz, Visibility.PUBLIC))
             throw new IncorrectImplementationException(clazz, "IE should only contain public fields");
         if (isInnerClass(clazz))
@@ -94,7 +94,7 @@ public class ImplementationControl {
             throw new IncorrectImplementationException(clazz, "IE contains a field with a type that should not be used directly.");
     }
 
-    private static void controlMessages(Class clazz) {
+    private static void controlMessages(Class<?> clazz) {
         if (staticFieldExists(clazz))
             throw new IncorrectImplementationException(clazz, "NasMessage should not contain static field");
         if (!fieldVisibilityAll(clazz, Visibility.PUBLIC))
@@ -146,7 +146,7 @@ public class ImplementationControl {
         controlMessageBuilder(clazz, instance);
     }
 
-    private static void controlMessageBuilder(Class clazz, NasMessage instance) {
+    private static void controlMessageBuilder(Class<?> clazz, NasMessage instance) {
         var ie1 = new HashSet<String>();
         var ieN = new HashSet<String>();
         var ieAll = new HashSet<String>();
