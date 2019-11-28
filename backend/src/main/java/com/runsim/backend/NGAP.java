@@ -19,6 +19,12 @@ public class NGAP {
     private static Context context;
 
     static {
+        try {
+            Class.forName("com.runsim.backend.utils.NgapFix").getConstructor().newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         RuntimeConfiguration.initialize();
     }
 

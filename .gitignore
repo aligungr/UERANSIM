@@ -1,10 +1,12 @@
-# Project specific
-.directory
-pycrate
-*.iml
+# Project specific (MARBEN)
 misc/marben/lib
 backend/src/main/java/com/runsim/backend/ngap
+backend/src/main/java/com/runsim/backend/utils/NgapFix.java
 backend/src/main/resources/asntable.dat
+
+# Project specific (OTHERS)
+.directory
+*.iml
 */.idea
 */.settings
 
