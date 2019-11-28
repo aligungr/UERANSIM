@@ -83,7 +83,7 @@ public class ImplementationControl {
         if (!fieldVisibilityAll(clazz, Visibility.PUBLIC))
             throw new IncorrectImplementationException(clazz, "IE should only contain public fields");
         if (isInnerClass(clazz))
-            throw new IncorrectImplementationException(clazz, "IE should not be inner class");
+            throw new IncorrectImplementationException(clazz, "IE should not be an inner class, but might be a nested class");
         if (!constructorExists(clazz, Visibility.PUBLIC))
             throw new IncorrectImplementationException(clazz, "IE should be provide at least one public empty constructor");
         if (fieldTypeExists(clazz, OctetN.class))

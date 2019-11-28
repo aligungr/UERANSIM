@@ -193,7 +193,7 @@ class Control {
     }
 
     static boolean isInnerClass(Class type) {
-        return type.getEnclosingClass() != null;
+        return type.getEnclosingClass() != null && !Modifier.isStatic(type.getModifiers());
     }
 
     static boolean constructorCount(Class type, int expectedCount) {

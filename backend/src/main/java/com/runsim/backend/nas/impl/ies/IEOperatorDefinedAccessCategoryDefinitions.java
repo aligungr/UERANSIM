@@ -14,7 +14,7 @@ public class IEOperatorDefinedAccessCategoryDefinitions extends InformationEleme
     @Override
     protected IEOperatorDefinedAccessCategoryDefinitions decodeIE6(OctetInputStream stream, int length) {
         var res = new IEOperatorDefinedAccessCategoryDefinitions();
-        res.operatorDefinedAccessCategoryDefinitions = Utils.decodeList(stream, VOperatorDefinedAccessCategoryDefinition::decode, 0, length);
+        res.operatorDefinedAccessCategoryDefinitions = Utils.decodeList(stream, VOperatorDefinedAccessCategoryDefinition::decode, length);
         return res;
     }
 

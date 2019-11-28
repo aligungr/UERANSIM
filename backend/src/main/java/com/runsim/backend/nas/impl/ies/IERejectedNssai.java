@@ -14,7 +14,7 @@ public class IERejectedNssai extends InformationElement4 {
     @Override
     protected IERejectedNssai decodeIE4(OctetInputStream stream, int length) {
         var res = new IERejectedNssai();
-        res.rejectedSNssaiList = Utils.decodeList(stream, VRejectedSNssai::decode, 0, length);
+        res.rejectedSNssaiList = Utils.decodeList(stream, VRejectedSNssai::decode, length);
         return res;
     }
 

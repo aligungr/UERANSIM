@@ -24,7 +24,7 @@ public class VMappedEpsBearerContext extends NasValue {
         int paramCount = flags.getBitRangeI(0, 3);
         res.ebit = EEbit.fromValue(flags.getBitI(4));
         res.operationCode = EOperationCode.fromValue(flags.getBitRangeI(6, 7));
-        res.epsParameterList = Utils.decodeList(stream, VEpsParameter::decode, 1, totalLen);
+        res.epsParameterList = Utils.decodeList(stream, VEpsParameter::decode, totalLen - 1);
 
         return res;
     }

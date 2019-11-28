@@ -14,7 +14,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
     @Override
     protected IEMappedEpsBearerContexts decodeIE6(OctetInputStream stream, int length) {
         var res = new IEMappedEpsBearerContexts();
-        res.mappedEpsBearerContexts = Utils.decodeList(stream, VMappedEpsBearerContext::decode, 0, length);
+        res.mappedEpsBearerContexts = Utils.decodeList(stream, VMappedEpsBearerContext::decode, length);
         return res;
     }
 

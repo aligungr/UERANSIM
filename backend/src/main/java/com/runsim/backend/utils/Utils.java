@@ -25,15 +25,16 @@ import java.util.function.Function;
 
 public final class Utils {
 
-    public static <T> List<T> decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int initialRead, int maxLen) {
-        int readLen = initialRead;
+    public static <T> List<T> decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length) {
+        int readLen = 0;
         var res = new ArrayList<T>();
-        while (readLen < maxLen) {
+        while (readLen < length) {
             int streamIndex = stream.currentIndex();
             res.add(decoder.apply(stream));
             readLen += stream.currentIndex() - streamIndex;
         }
-        if (readLen > maxLen) throw new DecodingException("Value length exceeds total length!");
+        if (readLen > length)
+            throw new DecodingException("Value length exceeds total length!");
         return res;
     }
 

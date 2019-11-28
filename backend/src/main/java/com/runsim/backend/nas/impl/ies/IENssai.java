@@ -15,7 +15,7 @@ public class IENssai extends InformationElement4 {
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IENssai();
-        res.sNssas = Utils.decodeList(stream, stream1 -> NasDecoder.ie2346(stream1, IESNssai.class), 0, length);
+        res.sNssas = Utils.decodeList(stream, stream1 -> NasDecoder.ie2346(stream1, IESNssai.class), length);
         return res;
     }
 
