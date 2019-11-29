@@ -1,11 +1,21 @@
 package com.runsim.backend.mts;
 
+class Deee {
+    public Deee(byte b) {
+
+    }
+}
+
 class Yazı {
     public Yazı(byte b) {
 
     }
 
     public Yazı(Point p) {
+
+    }
+
+    public Yazı(Deee p) {
 
     }
 }

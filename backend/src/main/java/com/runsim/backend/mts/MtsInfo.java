@@ -154,7 +154,7 @@ public class MtsInfo {
                 for (var inner : innerList) {
                     var val = inner.value;
                     try {
-                        list.add(new Conversion<>(inner.level, constructor.newInstance(val), depth + 1));
+                        list.add(new Conversion<>(inner.level, constructor.newInstance(val), inner.depth));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

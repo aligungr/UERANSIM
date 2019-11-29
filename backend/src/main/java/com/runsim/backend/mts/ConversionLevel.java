@@ -5,8 +5,7 @@ public enum ConversionLevel {
     LEVEL_NULL_CONVERSION(-1),
     SAME_TYPE(0),
     ASSIGNABLE_TYPE(1),
-    NUMERIC_CONVERSION(2),
-    LEVEL_DEEP_CONVERT(3);
+    NUMERIC_CONVERSION(2);
 
     private final int level;
 
