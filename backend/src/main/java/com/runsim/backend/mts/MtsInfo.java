@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class MtsInfo {
 
@@ -54,7 +53,7 @@ public class MtsInfo {
         return false;
     }
 
-    private static <T> Conversion<T> numberConversion(Object value, Class<T> targetType) {
+    private static <T> Conversion<T> numberConversion(Object value, Class<T> targetType, int depth) {
         var sourceType = value.getClass();
 
         if (!Traits.isNumberOrString(sourceType))
@@ -62,55 +61,55 @@ public class MtsInfo {
         if (!Traits.isNumberOrString(targetType))
             throw new IllegalArgumentException();
         if (sourceType == targetType)
-            return new Conversion<>(ConversionLevel.SAME_TYPE, (T) value);
+            return new Conversion<>(ConversionLevel.SAME_TYPE, (T) value, depth);
         if (Traits.isString(targetType))
-            return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) value.toString());
+            return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) value.toString(), depth);
         if (Traits.isString(sourceType)) {
             Object parsed = Traits.parseNumber(targetType, (String) value);
-            return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) parsed);
+            return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) parsed, depth);
         }
         if (Traits.isFloatingPoint(sourceType) && Traits.isFloatingPoint(targetType)) {
             if (Traits.isFloat(sourceType)) {
-                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Double.valueOf((Float) value));
+                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Double.valueOf((Float) value), depth);
             } else {
-                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) Float.valueOf((float) (double) (Double) value));
+                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) Float.valueOf((float) (double) (Double) value), depth);
             }
         }
         if (Traits.isFloatingPoint(targetType)) {
             long integral = Traits.getNumberAsLong(value);
             if (Traits.isFloat(sourceType)) {
-                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Float.valueOf(integral));
+                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Float.valueOf(integral), depth);
             } else {
-                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Double.valueOf(integral));
+                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Double.valueOf(integral), depth);
             }
         }
         if (Traits.isFloatingPoint(sourceType)) {
             if (Traits.isByte(targetType)) {
-                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Byte) Traits.getNumberAsByte(value));
+                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Byte) Traits.getNumberAsByte(value), depth);
             }
             if (Traits.isShort(targetType)) {
-                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Short) Traits.getNumberAsShort(value));
+                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Short) Traits.getNumberAsShort(value), depth);
             }
             if (Traits.isInteger(targetType)) {
-                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Integer) Traits.getNumberAsInt(value));
+                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Integer) Traits.getNumberAsInt(value), depth);
             }
             if (Traits.isLong(targetType)) {
-                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Long) Traits.getNumberAsLong(value));
+                return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) (Long) Traits.getNumberAsLong(value), depth);
             }
             throw new RuntimeException();
         }
 
         if (Traits.isByte(targetType)) {
-            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Byte) Traits.getNumberAsByte(value));
+            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Byte) Traits.getNumberAsByte(value), depth);
         }
         if (Traits.isShort(targetType)) {
-            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Short) Traits.getNumberAsShort(value));
+            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Short) Traits.getNumberAsShort(value), depth);
         }
         if (Traits.isInteger(targetType)) {
-            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Integer) Traits.getNumberAsInt(value));
+            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Integer) Traits.getNumberAsInt(value), depth);
         }
         if (Traits.isLong(targetType)) {
-            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Long) Traits.getNumberAsLong(value));
+            return new Conversion<>(Traits.requiredConversionIntegral(sourceType, targetType), (T) (Long) Traits.getNumberAsLong(value), depth);
         }
 
         throw new IllegalArgumentException();
@@ -118,21 +117,21 @@ public class MtsInfo {
 
     public static List<Conversion<?>> convert(Object from, Class<?> to) {
         var list = new ArrayList<Conversion<?>>();
-        convert(from, to, list, new HashSet<>(), new AtomicInteger(0));
+        convert(from, to, list, new HashSet<>(), 0);
         return list;
     }
 
-    private static void convert(Object from, Class<?> to, ArrayList<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, AtomicInteger currentDepth) {
+    private static void convert(Object from, Class<?> to, ArrayList<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth) {
         if (from == null) {
-            list.add(new Conversion<>(ConversionLevel.LEVEL_NULL_CONVERSION, null));
+            list.add(new Conversion<>(ConversionLevel.LEVEL_NULL_CONVERSION, null, depth));
             return;
         }
         if (from.getClass().equals(to)) {
-            list.add(new Conversion<>(ConversionLevel.SAME_TYPE, from));
+            list.add(new Conversion<>(ConversionLevel.SAME_TYPE, from, depth));
         } else if (to.isAssignableFrom(from.getClass())) {
-            list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from));
+            list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from, depth));
         } else if (Traits.isNumberOrString(from.getClass()) && Traits.isNumberOrString(to)) {
-            list.add(numberConversion(from, to));
+            list.add(numberConversion(from, to, depth));
         }
 
         if (visitedSingleParams.contains(to)) {
@@ -150,20 +149,18 @@ public class MtsInfo {
             if (convertable(from.getClass(), ctorParamType, new HashSet<>())) {
 
                 var innerList = new ArrayList<Conversion<?>>();
-                convert(from, ctorParamType, innerList, visitedSingleParams, currentDepth);
+                convert(from, ctorParamType, innerList, visitedSingleParams, depth + 1);
 
                 for (var inner : innerList) {
                     var val = inner.value;
                     try {
-                        list.add(new Conversion<>(currentDepth.get() == 1 ? inner.level : ConversionLevel.LEVEL_DEEP_CONVERT, constructor.newInstance(val)));
+                        list.add(new Conversion<>(inner.level, constructor.newInstance(val), depth + 1));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
         }
-
-        currentDepth.incrementAndGet();
     }
 
     public static boolean canBeConstructed(Class<?> a, Class<?> b) {

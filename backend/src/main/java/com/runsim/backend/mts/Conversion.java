@@ -5,10 +5,12 @@ import java.util.Objects;
 public class Conversion<T> {
     public final ConversionLevel level;
     public final T value;
+    public final int depth;
 
-    public Conversion(ConversionLevel level, T value) {
+    public Conversion(ConversionLevel level, T value, int depth) {
         this.level = level;
         this.value = value;
+        this.depth = depth;
     }
 
     @Override

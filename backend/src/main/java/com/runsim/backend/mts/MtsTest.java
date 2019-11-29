@@ -10,8 +10,10 @@ public class MtsTest {
                 (byte) 5,
                 Point.class
         ).forEach(conversion -> {
+            Console.println(Color.YELLOW, conversion.depth);
             Console.println(Color.GREEN, conversion.level);
             Console.println(Color.BLUE, conversion.value);
+            Console.println();
         });
     }
 }
