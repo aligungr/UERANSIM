@@ -1,4 +1,4 @@
-package com.runsim.backend.mts;
+package com.runsim.backend.exceptions;
 
 public class MtsException extends RuntimeException {
     private final String message;

@@ -2,27 +2,10 @@ package com.runsim.backend.mts;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-public class MtsInfo {
-
-    public static boolean allAssignableFrom(Class<?>[] lhs, Class<?>[] rhs) {
-        if (lhs.length != rhs.length)
-            return false;
-        for (int i = 0; i < lhs.length; i++) {
-            if (!lhs[i].isAssignableFrom(rhs[i]))
-                return false;
-        }
-        return true;
-    }
-
-    public static boolean constructableFromParameters(Class<?> type, Class<?>... params) {
-        return Arrays.stream(type.getDeclaredConstructors())
-                .filter(constructor -> constructor.getParameterCount() == params.length)
-                .anyMatch(constructor -> allAssignableFrom(constructor.getParameterTypes(), params));
-    }
+public class MtsConvert {
 
     public static boolean convertable(Class<?> from, Class<?> to) {
         return convertable(from, to, new HashSet<>());
@@ -161,9 +144,5 @@ public class MtsInfo {
                 }
             }
         }
-    }
-
-    public static boolean canBeConstructed(Class<?> a, Class<?> b) {
-        return true;
     }
 }
