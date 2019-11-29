@@ -14,7 +14,6 @@ public class Point {
     private int x, y;
 
     public Point(Point point) {
-        this(point.x * point.y);
     }
 
     public Point(double d) {

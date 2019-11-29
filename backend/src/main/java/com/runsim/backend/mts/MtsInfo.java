@@ -147,7 +147,7 @@ public class MtsInfo {
                 continue;
 
             var ctorParamType = constructor.getParameterTypes()[0];
-            if (convertable(from.getClass(), ctorParamType, visitedSingleParams)) {
+            if (convertable(from.getClass(), ctorParamType, new HashSet<>())) {
 
                 var innerList = new ArrayList<Conversion<?>>();
                 convert(from, ctorParamType, innerList, visitedSingleParams, currentDepth);
