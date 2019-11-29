@@ -3,11 +3,11 @@ package com.runsim.backend.mts;
 import com.runsim.backend.utils.Color;
 import com.runsim.backend.utils.Console;
 import com.runsim.backend.utils.Utils;
+import com.runsim.backend.utils.octets.Octet2;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 
 public class MtsTest {
@@ -112,26 +112,13 @@ public class MtsTest {
 
     public static void main(String[] args) throws Exception {
         MtsInfo.convert(
-                "5.54",
-                Point.class
+                5,
+                Octet2.class
         ).forEach(conversion -> {
             Console.println(Color.RED, conversion.level);
             Console.println(Color.BLUE, conversion.value);
         });
 
         Console.println();
-
-        if (1 == 1)
-            return;
-        TypeRegistry.register("Point", Point.class);
-        TypeRegistry.register("String", String.class);
-
-        createInstanceForTypeWithDescriptor(Point.class, new ValueDescriptor("Point", new LinkedHashMap<>() {{
-            put("x", 2);
-            put("y", 3);
-            // put("z", 3);
-        }}));
-
-        Console.print(MtsInfo.constructableFromParameters(Point.class, String.class, int.class));
     }
 }
