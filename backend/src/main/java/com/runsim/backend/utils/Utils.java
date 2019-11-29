@@ -22,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Utils {
 
@@ -229,5 +231,9 @@ public final class Utils {
         if (difa || difb) return false;
 
         return la == lb;
+    }
+
+    public static <T> List<T> streamToList(Stream<T> stream) {
+        return stream.collect(Collectors.toList());
     }
 }
