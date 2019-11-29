@@ -23,6 +23,17 @@ import static com.runsim.backend.demo.control.Control.*;
 
 public class ImplementationControl {
 
+    public static void main(String[] args) {
+        ParameterCheck.perform();
+
+        controlForType(ProtocolEnum.class, false, ImplementationControl::controlProtocolEnums);
+        controlForType(NasValue.class, false, ImplementationControl::controlNasValues);
+        controlForType(NasValue.class, true, ImplementationControl::controlNasAbstractValues);
+        controlForType(InformationElement.class, true, ImplementationControl::controlInformationElements);
+        controlForType(NasMessage.class, true, ImplementationControl::controlMessages);
+    }
+
+
     // TODO: Forbid lists, force native arrays
     private static final Class<?>[] USUAL_TYPES = new Class<?>[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
@@ -32,12 +43,25 @@ public class ImplementationControl {
             String[].class, OctetString[].class, List[].class, EAP[].class,
     };
 
-    public static void main(String[] args) {
-        controlForType(ProtocolEnum.class, false, ImplementationControl::controlProtocolEnums);
-        controlForType(NasValue.class, false, ImplementationControl::controlNasValues);
-        controlForType(NasValue.class, true, ImplementationControl::controlNasAbstractValues);
-        controlForType(InformationElement.class, true, ImplementationControl::controlInformationElements);
-        controlForType(NasMessage.class, true, ImplementationControl::controlMessages);
+    private static class ParameterCheck {
+
+        private static void controlMethod(int parameter) {
+            // do nothing
+        }
+
+        private static boolean parametersPresent() {
+            try {
+                return ParameterCheck.class.getDeclaredMethod("controlMethod", int.class).getParameters()[0].isNamePresent();
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public static void perform() {
+            if (!parametersPresent()) {
+                throw new IllegalStateException("sources must be compiled with -parameters");
+            }
+        }
     }
 
     private static void controlProtocolEnums(Class<?> clazz) {
