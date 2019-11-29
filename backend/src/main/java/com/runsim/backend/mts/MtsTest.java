@@ -3,7 +3,6 @@ package com.runsim.backend.mts;
 import com.runsim.backend.utils.Color;
 import com.runsim.backend.utils.Console;
 import com.runsim.backend.utils.Utils;
-import com.runsim.backend.utils.octets.Octet2;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -112,10 +111,10 @@ public class MtsTest {
 
     public static void main(String[] args) throws Exception {
         MtsInfo.convert(
-                5,
-                Octet2.class
+                (byte) 5,
+                Point.class
         ).forEach(conversion -> {
-            Console.println(Color.RED, conversion.level);
+            Console.println(Color.GREEN, conversion.level);
             Console.println(Color.BLUE, conversion.value);
         });
 

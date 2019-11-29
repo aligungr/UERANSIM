@@ -1,6 +1,10 @@
 package com.runsim.backend.mts;
 
 class Yazı {
+    public Yazı(byte b) {
+
+    }
+
     public Yazı(Point p) {
 
     }
