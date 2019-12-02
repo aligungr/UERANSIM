@@ -52,12 +52,12 @@ public class MtsConstruct {
         return true;
     }
 
-    public <T> T construct(Class<T> type, Map<String, Object> args, boolean allowDeepConversion) {
+    public <T> T construct(Class<T> type, Map<String, Object> args) {
         var constructors = Arrays.asList(type.getDeclaredConstructors());
 
         var matched = Utils.streamToList(constructors.stream().filter(constructor -> parameterCountMatches(constructor, args)));
         if (matched.size() == 0) {
-            throw new MtsException("no constructor found for %d number of parameters", args.size());
+            throw new MtsException("no constructor found for %d parameters", args.size());
         }
 
         matched = Utils.streamToList(matched.stream().filter(constructor -> parameterNameMatches(constructor, args)));

@@ -51,14 +51,30 @@ public class MtsConvert {
             throw new IllegalArgumentException();
         if (!Traits.isNumberOrString(targetType))
             throw new IllegalArgumentException();
-        if (Traits.isSameNumberType(sourceType, targetType, true))
+
+        if (Traits.isSameNumberType(sourceType, targetType))
             return new Conversion<>(ConversionLevel.SAME_TYPE, (T) value, depth);
+
         if (Traits.isString(targetType))
             return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) value.toString(), depth);
         if (Traits.isString(sourceType)) {
             Object parsed = Traits.parseNumber(targetType, (String) value);
             return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) parsed, depth);
         }
+
+        if (Traits.isBig(targetType)) {
+            var numberInfo = new NumberInfo((Number) value);
+            if (Traits.isBigDecimal(targetType)) {
+                return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) numberInfo.bigDecimalValue(), depth);
+            } else {
+                return new Conversion<>(numberInfo.isFractionalNumber() ? ConversionLevel.NUMERIC_CONVERSION : ConversionLevel.ASSIGNABLE_TYPE, (T) numberInfo.bigDecimalValue(), depth);
+            }
+        }
+        if (Traits.isBig(sourceType)) {
+            Object parsed = Traits.parseNumber(targetType, value.toString());
+            return new Conversion<>(ConversionLevel.NUMERIC_CONVERSION, (T) parsed, depth);
+        }
+
         if (Traits.isFloatingPoint(sourceType) && Traits.isFloatingPoint(targetType)) {
             if (Traits.isFloat(sourceType)) {
                 return new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, (T) Double.valueOf((Float) value), depth);

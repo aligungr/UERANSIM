@@ -7,10 +7,10 @@ import com.runsim.backend.exceptions.MtsException;
 import java.util.LinkedHashMap;
 
 public class MtsDecoder {
-    private final boolean allowDeepConversion;
+    private final MtsConstruct mtsConstruct;
 
     public MtsDecoder(boolean allowDeepConversion) {
-        this.allowDeepConversion = allowDeepConversion;
+        this.mtsConstruct = new MtsConstruct(allowDeepConversion);
     }
 
     public Object decode(String json) {
@@ -25,7 +25,18 @@ public class MtsDecoder {
             if (jsonPrimitive.isString()) {
                 return jsonPrimitive.getAsString();
             } else if (jsonPrimitive.isNumber()) {
-                return jsonPrimitive.getAsBigDecimal();
+                var jsonNumber = new NumberInfo(jsonPrimitive.getAsBigDecimal());
+                if (jsonNumber.isInt())
+                    return jsonNumber.intValue();
+                if (jsonNumber.isLong())
+                    return jsonNumber.longValue();
+                if (jsonNumber.isFloat())
+                    return jsonNumber.floatValue();
+                if (jsonNumber.isDouble())
+                    return jsonNumber.doubleValue();
+                if (jsonNumber.isWholeNumber())
+                    return jsonNumber.bigIntegerValue();
+                return jsonNumber.bigDecimalValue();
             } else if (jsonPrimitive.isBoolean()) {
                 return jsonPrimitive.getAsBoolean();
             } else {
@@ -49,6 +60,10 @@ public class MtsDecoder {
                 }
                 typeName = typeDecl.getAsString();
             }
+            var type = TypeRegistry.getClassByName(typeName);
+            if (type == null) {
+                throw new MtsException("declared type not registered: %s", typeName);
+            }
 
             var properties = new LinkedHashMap<String, Object>();
             for (var entry : jsonObject.entrySet()) {
@@ -56,7 +71,7 @@ public class MtsDecoder {
                     properties.put(entry.getKey(), decode(entry.getValue()));
             }
 
-            return new ValueDescriptor(typeName, properties);
+            return mtsConstruct.construct(type, properties);
         } else {
             return null; // not possible
         }

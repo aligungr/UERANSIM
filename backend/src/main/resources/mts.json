@@ -2,6 +2,6 @@
   "@type": "IdentityResponse",
   "mobileIdentity": {
     "@type": "IEImeiMobileIdentity",
-    "imei": "356938035643809"
+    "x": 356
   }
 }

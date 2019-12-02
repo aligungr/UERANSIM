@@ -1,6 +1,7 @@
 package com.runsim.backend.mts;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.function.Function;
 
 public final class Traits {
@@ -21,6 +22,14 @@ public final class Traits {
         return type == long.class || type == Long.class;
     }
 
+    public static boolean isBigInteger(Class<?> type) {
+        return type == BigInteger.class;
+    }
+
+    public static boolean isBigDecimal(Class<?> type) {
+        return type == BigDecimal.class;
+    }
+
     public static boolean isFloat(Class<?> type) {
         return type == float.class || type == Float.class;
     }
@@ -37,8 +46,12 @@ public final class Traits {
         return isFloat(type) || isDouble(type);
     }
 
+    public static boolean isBig(Class<?> type) {
+        return isBigInteger(type) || isBigDecimal(type);
+    }
+
     public static boolean isNumber(Class<?> type) {
-        return isIntegral(type) || isFloatingPoint(type);
+        return isIntegral(type) || isFloatingPoint(type) || isBig(type);
     }
 
     public static boolean isString(Class<?> type) {
@@ -90,6 +103,8 @@ public final class Traits {
         if (isLong(type)) return value.longValue();
         if (isFloat(type)) return value.floatValue();
         if (isDouble(type)) return value.doubleValue();
+        if (isBigInteger(type)) return value.toBigInteger();
+        if (isBigDecimal(type)) return value;
         throw new IllegalArgumentException();
     }
 
@@ -112,8 +127,8 @@ public final class Traits {
         return ConversionLevel.ASSIGNABLE_TYPE;
     }
 
-    public static boolean isSameNumberType(Class<?> sourceType, Class<?> targetType, boolean traitWrappersSame) {
-        if (!isNumber(sourceType) || !isNumber(targetType))
+    public static boolean isSameNumberType(Class<?> sourceType, Class<?> targetType) {
+        if (!isNumberOrString(sourceType) || !isNumberOrString(targetType))
             throw new IllegalArgumentException();
 
         Function<Class<?>, Class<?>> getWrapperType = (Class<?> type) -> {
@@ -123,8 +138,9 @@ public final class Traits {
             if (isLong(type)) return Long.class;
             if (isFloat(type)) return Float.class;
             if (isDouble(type)) return Double.class;
-            return null;
+            return type;
         };
+
         return getWrapperType.apply(sourceType).equals(getWrapperType.apply(targetType));
     }
 }
