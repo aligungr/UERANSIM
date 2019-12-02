@@ -25,6 +25,4 @@ public final class TypeRegistry {
     public static String getClassName(Class<?> type) {
         return types.getKey(type);
     }
-
-
 }

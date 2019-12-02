@@ -1,7 +1,6 @@
 package com.runsim.backend.demo;
 
 import com.runsim.backend.mts.MtsDecoder;
-import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.utils.Console;
 import com.runsim.backend.utils.Json;
 import com.runsim.backend.utils.Utils;
@@ -12,7 +11,7 @@ public class MtsTest {
         var jsonString = Utils.getResourceString("mts.json");
 
         var mtsDecoder = new MtsDecoder(false);
-        var nasMessage = mtsDecoder.decode(jsonString, NasMessage.class);
+        var nasMessage = mtsDecoder.decode(jsonString);
         Console.println(Json.toJson(nasMessage));
 
         /*
