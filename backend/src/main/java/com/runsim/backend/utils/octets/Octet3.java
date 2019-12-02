@@ -16,7 +16,7 @@ public final class Octet3 extends OctetN {
     }
 
     public Octet3(int big, int middle, int little) {
-        this((big << 16) | (middle << 8) | little);
+        this(((big & 0xFF) << 16) | ((middle & 0xFF) << 8) | (little & 0xFF));
     }
 
     public Octet3(Octet big, Octet middle, Octet little) {

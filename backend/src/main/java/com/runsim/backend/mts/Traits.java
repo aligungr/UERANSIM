@@ -1,6 +1,7 @@
 package com.runsim.backend.mts;
 
 import java.math.BigDecimal;
+import java.util.function.Function;
 
 public final class Traits {
 
@@ -109,5 +110,21 @@ public final class Traits {
         if (sizeA == sizeB) return ConversionLevel.SAME_TYPE;
         if (sizeA > sizeB) return ConversionLevel.NUMERIC_CONVERSION;
         return ConversionLevel.ASSIGNABLE_TYPE;
+    }
+
+    public static boolean isSameNumberType(Class<?> sourceType, Class<?> targetType, boolean traitWrappersSame) {
+        if (!isNumber(sourceType) || !isNumber(targetType))
+            throw new IllegalArgumentException();
+
+        Function<Class<?>, Class<?>> getWrapperType = (Class<?> type) -> {
+            if (isByte(type)) return Byte.class;
+            if (isShort(type)) return Short.class;
+            if (isInteger(type)) return Integer.class;
+            if (isLong(type)) return Long.class;
+            if (isFloat(type)) return Float.class;
+            if (isDouble(type)) return Double.class;
+            return null;
+        };
+        return getWrapperType.apply(sourceType).equals(getWrapperType.apply(targetType));
     }
 }

@@ -1,11 +1,11 @@
 package com.runsim.backend.mts;
 
 public enum ConversionLevel {
-    LEVEL_NO_CONVERSION(-2),
-    LEVEL_NULL_CONVERSION(-1),
-    SAME_TYPE(0),
-    ASSIGNABLE_TYPE(1),
-    NUMERIC_CONVERSION(2);
+    LEVEL_NULL_CONVERSION(0),
+    SAME_TYPE(1),
+    ASSIGNABLE_TYPE(2),
+    NUMERIC_CONVERSION(3),
+    LEVEL_NO_CONVERSION(10000);
 
     private final int level;
 
