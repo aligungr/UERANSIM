@@ -7,11 +7,11 @@ import java.util.List;
 
 public class MtsConvert {
 
-    public static boolean convertable(Class<?> from, Class<?> to) {
-        return convertable(from, to, new HashSet<>());
+    public static boolean isConvertable(Class<?> from, Class<?> to) {
+        return isConvertable(from, to, new HashSet<>());
     }
 
-    private static boolean convertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams) {
+    private static boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams) {
         if (from.equals(to))
             return true;
         if (to.isAssignableFrom(from))
@@ -28,7 +28,7 @@ public class MtsConvert {
             if (constructor.getParameterCount() != 1)
                 continue;
 
-            if (convertable(from, constructor.getParameterTypes()[0], visitedSingleParams)) {
+            if (isConvertable(from, constructor.getParameterTypes()[0], visitedSingleParams)) {
                 return true;
             }
         }
@@ -113,7 +113,7 @@ public class MtsConvert {
             list.add(new Conversion<>(ConversionLevel.SAME_TYPE, from, depth));
         } else if (to.isAssignableFrom(from.getClass())) {
             list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from, depth));
-        } else if (Traits.isNumberOrString(from.getClass()) && Traits.isNumberOrString(to)) {
+        } else if (Traits.isNumberOrString(to) && Traits.isNumberOrString(from.getClass()) && Traits.isNumberIfString(from)) {
             list.add(numberConversion(from, to, depth));
         }
 
@@ -129,7 +129,7 @@ public class MtsConvert {
                 continue;
 
             var ctorParamType = constructor.getParameterTypes()[0];
-            if (convertable(from.getClass(), ctorParamType, new HashSet<>())) {
+            if (isConvertable(from.getClass(), ctorParamType, new HashSet<>())) {
 
                 var innerList = new ArrayList<Conversion<?>>();
                 convert(from, ctorParamType, innerList, visitedSingleParams, depth + 1);

@@ -1,5 +1,7 @@
 package com.runsim.backend.mts;
 
+import java.math.BigDecimal;
+
 public final class Traits {
 
     public static boolean isByte(Class<?> type) {
@@ -80,13 +82,25 @@ public final class Traits {
     }
 
     public static Object parseNumber(Class<?> type, String string) {
-        if (isByte(type)) return Byte.parseByte(string);
-        if (isShort(type)) return Short.parseShort(string);
-        if (isInteger(type)) return Integer.parseInt(string);
-        if (isLong(type)) return Long.parseLong(string);
-        if (isFloat(type)) return Float.parseFloat(string);
-        if (isDouble(type)) return Double.parseDouble(string);
+        var value = new BigDecimal(string);
+        if (isByte(type)) return value.byteValue();
+        if (isShort(type)) return value.shortValue();
+        if (isInteger(type)) return value.intValue();
+        if (isLong(type)) return value.longValue();
+        if (isFloat(type)) return value.floatValue();
+        if (isDouble(type)) return value.doubleValue();
         throw new IllegalArgumentException();
+    }
+
+    public static boolean isNumberIfString(Object object) {
+        if (!(object instanceof String))
+            return true;
+        try {
+            new BigDecimal((String) object);
+        } catch (Exception ignored) {
+            return false;
+        }
+        return true;
     }
 
     public static ConversionLevel requiredConversionIntegral(Class<?> from, Class<?> to) {
