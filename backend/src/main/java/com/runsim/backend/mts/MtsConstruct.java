@@ -57,22 +57,22 @@ public class MtsConstruct {
 
         var matched = Utils.streamToList(constructors.stream().filter(constructor -> parameterCountMatches(constructor, args)));
         if (matched.size() == 0) {
-            throw new MtsException("no constructor found for %d parameters", args.size());
+            throw new MtsException("no constructor found for %d parameters for type %s", args.size(), type.getSimpleName());
         }
 
         matched = Utils.streamToList(matched.stream().filter(constructor -> parameterNameMatches(constructor, args)));
         if (matched.size() == 0) {
-            throw new MtsException("no constructor found for given parameter names");
+            throw new MtsException("no constructor found for given parameter names for type %s", type.getSimpleName());
         }
 
         matched = Utils.streamToList(matched.stream().filter(constructor -> parameterTypeMatches(constructor, args)));
         if (matched.size() == 0) {
-            throw new MtsException("no constructor found for given parameter values");
+            throw new MtsException("no constructor found for given parameter values for type %s", type.getSimpleName());
         }
         if (matched.size() > 1) {
             var exactMatched = Utils.streamToList(matched.stream().filter(constructor -> parameterTypeExactMatches(constructor, args)));
             if (exactMatched.size() != 1) {
-                throw new MtsException("multiple constructor found for given parameter values");
+                throw new MtsException("multiple constructor found for given parameter values for type %s", type.getSimpleName());
             } else {
                 matched = exactMatched;
             }

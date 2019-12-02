@@ -1,7 +1,11 @@
 {
-  "@type": "IdentityResponse",
-  "mobileIdentity": {
-    "@type": "IEImeiMobileIdentity",
-    "x": 356
+  "@type": "Octet2",
+  "msb": {
+    "@type": "Octet",
+    "value": 123
+  },
+  "lsb": {
+    "@type": "Octet",
+    "value": 123
   }
 }
