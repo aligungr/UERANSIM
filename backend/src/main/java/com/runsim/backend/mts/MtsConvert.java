@@ -6,12 +6,17 @@ import java.util.HashSet;
 import java.util.List;
 
 public class MtsConvert {
+    private final boolean allowDeepConversion;
 
-    public static boolean isConvertable(Class<?> from, Class<?> to, boolean allowDeepConversion) {
-        return isConvertable(from, to, new HashSet<>(), allowDeepConversion);
+    public MtsConvert(boolean allowDeepConversion) {
+        this.allowDeepConversion = allowDeepConversion;
     }
 
-    private static boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams, boolean allowDeepConversion) {
+    public boolean isConvertable(Class<?> from, Class<?> to) {
+        return isConvertable(from, to, new HashSet<>());
+    }
+
+    private boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams) {
         if (from.equals(to))
             return true;
         if (to.isAssignableFrom(from))
@@ -31,7 +36,7 @@ public class MtsConvert {
             if (constructor.getParameterCount() != 1)
                 continue;
 
-            if (isConvertable(from, constructor.getParameterTypes()[0], visitedSingleParams, allowDeepConversion)) {
+            if (isConvertable(from, constructor.getParameterTypes()[0], visitedSingleParams)) {
                 return true;
             }
         }
@@ -39,7 +44,7 @@ public class MtsConvert {
         return false;
     }
 
-    private static <T> Conversion<T> numberConversion(Object value, Class<T> targetType, int depth) {
+    private <T> Conversion<T> numberConversion(Object value, Class<T> targetType, int depth) {
         var sourceType = value.getClass();
 
         if (!Traits.isNumberOrString(sourceType))
@@ -101,13 +106,13 @@ public class MtsConvert {
         throw new IllegalArgumentException();
     }
 
-    public static List<Conversion<?>> convert(Object from, Class<?> to, boolean allowDeepConversion) {
+    public List<Conversion<?>> convert(Object from, Class<?> to) {
         List<Conversion<?>> list = new ArrayList<>();
-        convert(from, to, list, new HashSet<>(), 0, allowDeepConversion);
+        convert(from, to, list, new HashSet<>(), 0);
         return list;
     }
 
-    private static void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth, boolean allowDeepConversion) {
+    private void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth) {
         if (from == null) {
             list.add(new Conversion<>(ConversionLevel.LEVEL_NULL_CONVERSION, null, depth));
             return;
@@ -135,10 +140,10 @@ public class MtsConvert {
                 continue;
 
             var ctorParamType = constructor.getParameterTypes()[0];
-            if (isConvertable(from.getClass(), ctorParamType, new HashSet<>(), allowDeepConversion)) {
+            if (isConvertable(from.getClass(), ctorParamType, new HashSet<>())) {
 
                 var innerList = new ArrayList<Conversion<?>>();
-                convert(from, ctorParamType, innerList, visitedSingleParams, depth + 1, allowDeepConversion);
+                convert(from, ctorParamType, innerList, visitedSingleParams, depth + 1);
 
                 for (var inner : innerList) {
                     var val = inner.value;
