@@ -1,8 +1,8 @@
 {
-  "@type": "RegistrationRequest",
-  "registrationType": {
-    "octet": {
-      "value": 3324
-    }
+  "@type": "Point",
+  "point": {
+    "@type": "Point",
+    "x": 23,
+    "y": 34
   }
 }

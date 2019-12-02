@@ -25,7 +25,7 @@ public class MtsConvert {
             return true;
 
         if (visitedSingleParams.contains(to))
-            return true;
+            return false;
 
         visitedSingleParams.add(to);
 
