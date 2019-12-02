@@ -3,7 +3,7 @@ package com.runsim.backend.mts;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class NumberInfo {
+class NumberInfo {
     private final BigDecimal bd;
 
     public NumberInfo(Number number) {

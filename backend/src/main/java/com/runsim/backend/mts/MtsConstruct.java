@@ -40,6 +40,9 @@ public class MtsConstruct {
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
+            if (object instanceof ImplicitTypedValue) {
+                continue;
+            }
             if (object == null) {
                 if (Traits.isNullable(param.getType())) {
                     continue;
@@ -100,13 +103,16 @@ public class MtsConstruct {
         for (int j = 0; j < params.length; j++) {
             var param = params[j];
             var value = args.get(param.getName());
+            if (value instanceof ImplicitTypedValue) {
+                value = construct(param.getType(), ((ImplicitTypedValue) value).getParameters());
+            }
             var conversions = mtsConvert.convert(value, param.getType());
 
             var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
             var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));
 
             if (shallowConversions.size() == 0 && deepConversions.size() == 0) {
-                throw new MtsException("'%s' parameter value has type '%s', but expected type is '%s' or convertable types.", param.getName(), TypeRegistry.getClassName(value.getClass()), param.getType().getSimpleName());
+                throw new MtsException("'%s' parameter value has type '%s', but expected type is '%s' or convertable types.", param.getName(), value.getClass().getSimpleName(), param.getType().getSimpleName());
             }
 
             Conversion<?> selectedConversion;

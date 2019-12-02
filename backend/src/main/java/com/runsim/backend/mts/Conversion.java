@@ -2,7 +2,7 @@ package com.runsim.backend.mts;
 
 import java.util.Objects;
 
-public class Conversion<T> {
+class Conversion<T> {
     public final ConversionLevel level;
     public final T value;
     public final int depth;

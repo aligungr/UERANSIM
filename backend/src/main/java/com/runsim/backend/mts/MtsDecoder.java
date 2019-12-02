@@ -60,10 +60,6 @@ public class MtsDecoder {
                 }
                 typeName = typeDecl.getAsString();
             }
-            var type = TypeRegistry.getClassByName(typeName);
-            if (type == null) {
-                throw new MtsException("declared type not registered: %s", typeName);
-            }
 
             var properties = new LinkedHashMap<String, Object>();
             for (var entry : jsonObject.entrySet()) {
@@ -71,7 +67,15 @@ public class MtsDecoder {
                     properties.put(entry.getKey(), decode(entry.getValue()));
             }
 
-            return mtsConstruct.construct(type, properties);
+            if (typeName != null) {
+                var type = TypeRegistry.getClassByName(typeName);
+                if (type == null) {
+                    throw new MtsException("declared type not registered: %s", typeName);
+                }
+                return mtsConstruct.construct(type, properties);
+            } else {
+                return new ImplicitTypedValue(properties);
+            }
         } else {
             return null; // not possible
         }
