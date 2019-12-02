@@ -5,6 +5,7 @@ import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
 public class MtsConstruct {
@@ -15,24 +16,37 @@ public class MtsConstruct {
     }
 
     private boolean parameterCountMatches(Constructor<?> constructor, Map<String, Object> parameters) {
-        return constructor.getParameterCount() == parameters.size();
+        return constructor.getParameterCount() >= parameters.size();
     }
 
     private boolean parameterNameMatches(Constructor<?> constructor, Map<String, Object> parameters) {
-        if (constructor.getParameterCount() != parameters.size())
+        if (constructor.getParameterCount() < parameters.size())
             return false;
+
+        var ctorParams = new HashSet<String>();
         for (var param : constructor.getParameters()) {
-            if (!parameters.containsKey(param.getName()))
+            ctorParams.add(param.getName());
+        }
+
+        for (var s : parameters.keySet()) {
+            if (!ctorParams.contains(s))
                 return false;
         }
         return true;
     }
 
     private boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters) {
-        if (constructor.getParameterCount() != parameters.size())
+        if (constructor.getParameterCount() < parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
+            if (object == null) {
+                if (Traits.isNullable(param.getType())) {
+                    continue;
+                } else {
+                    return false;
+                }
+            }
             if (!mtsConvert.isConvertable(object.getClass(), param.getType()))
                 return false;
         }

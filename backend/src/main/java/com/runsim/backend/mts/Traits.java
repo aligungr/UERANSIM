@@ -143,4 +143,9 @@ public final class Traits {
 
         return getWrapperType.apply(sourceType).equals(getWrapperType.apply(targetType));
     }
+
+    public static boolean isNullable(Class<?> type) {
+        return !(type == boolean.class || type == char.class || type == byte.class || type == short.class
+                || type == int.class || type == long.class || type == float.class || type == double.class);
+    }
 }

@@ -1,11 +1,8 @@
 {
-  "@type": "Octet2",
-  "msb": {
-    "@type": "Octet",
-    "value": 123
-  },
-  "lsb": {
-    "@type": "Octet",
-    "value": 123
+  "@type": "RegistrationRequest",
+  "registrationType": {
+    "octet": {
+      "value": 3324
+    }
   }
 }
