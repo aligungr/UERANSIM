@@ -1,4 +1,7 @@
 {
   "@type": "Sınıf",
-  "sda": "Turkey"
+  "mcc1": "TURKEY",
+  "mcc2": {
+    "name": "Turkey"
+  }
 }

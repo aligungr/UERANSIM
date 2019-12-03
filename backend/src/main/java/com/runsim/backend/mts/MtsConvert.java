@@ -1,8 +1,5 @@
 package com.runsim.backend.mts;
 
-import com.runsim.backend.exceptions.MtsException;
-import com.runsim.backend.nas.core.ProtocolEnum;
-
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,9 +23,8 @@ public class MtsConvert {
             return true;
         if (Traits.isNumberOrString(from) && Traits.isNumberOrString(to))
             return true;
-        if (ProtocolEnum.class.isAssignableFrom(to)) {
-            return Traits.isNumberOrString(from);
-        }
+        if (TypeRegistry.isCustomConvertable(from, to))
+            return true;
 
         if (visitedSingleParams.contains(to))
             return false;
@@ -145,34 +141,11 @@ public class MtsConvert {
             list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from, depth));
         } else if (Traits.isNumberOrString(to) && Traits.isNumberOrString(from.getClass()) && Traits.isNumberIfString(from)) {
             list.add(numberConversion(from, to, depth));
-        } else if (ProtocolEnum.class.isAssignableFrom(to)) {
-            if (Traits.isNumberOrString(from.getClass())) {
-                if (Traits.isString(from.getClass())) {
-                    var fromIdentifier = ProtocolEnum.fromIdentifier((Class<? extends ProtocolEnum>) to, (String) from);
-                    var fromNames = ProtocolEnum.fromName((Class<? extends ProtocolEnum>) to, (String) from);
-
-                    if (fromIdentifier == null && fromNames.size() == 0) {
-                        throw new MtsException("invalid value for enum %s", to.getSimpleName());
-                    }
-                    if (fromIdentifier == null) {
-                        if (fromNames.size() > 1) {
-                            throw new MtsException("multiple values matched for enum %s", to.getSimpleName());
-                        } else {
-                            list.add(new Conversion<>(ConversionLevel.SAME_TYPE, fromNames.get(0), depth));
-                            return;
-                        }
-                    } else {
-                        list.add(new Conversion<>(ConversionLevel.SAME_TYPE, fromIdentifier, depth));
-                        return;
-                    }
-                } else {
-                    var numberInfo = new NumberInfo(from.toString());
-                    var res = ProtocolEnum.fromIntValue((Class<? extends ProtocolEnum>) to, numberInfo.intValue());
-                    list.add(new Conversion<>(numberInfo.isInt() ? ConversionLevel.SAME_TYPE : ConversionLevel.NUMERIC_CONVERSION, res, depth));
-                    return;
-                }
-            } else {
-                // bad type for protocol enum
+        } else {
+            var customConverter = TypeRegistry.getCustomConverter(to);
+            if (customConverter != null) {
+                customConverter.convert(from, to, list, depth);
+                return;
             }
         }
 

@@ -1,7 +1,6 @@
 package com.runsim.backend.mts;
 
 import com.runsim.backend.exceptions.MtsException;
-import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Constructor;
@@ -72,56 +71,9 @@ public class MtsConstruct {
     }
 
     public <T> T construct(Class<T> type, Map<String, Object> args) {
-        // TODO: buun gibi custom olanları cohernece yap.
-        if (ProtocolEnum.class.isAssignableFrom(type)) {
-            String identifier = null;
-            String name = null;
-            Integer value = null;
-
-            if (args.containsKey("identifier")) {
-                identifier = args.get("identifier").toString();
-            }
-            if (args.containsKey("name")) {
-                name = args.get("name").toString();
-            }
-            if (args.containsKey("value")) {
-                var obj = args.get("value");
-                if (!Traits.isNumber(obj.getClass()) /* && !Traits.isNumberIfString(obj) */)
-                    throw new MtsException("invalid value type for enum %s, it must be an int", type.getSimpleName());
-                value = new NumberInfo(obj.toString()).intValue();
-            }
-
-            if (identifier == null && name == null && value == null) {
-                throw new MtsException("specify identifier, name, or value for enum %s", type.getSimpleName());
-            }
-
-            if (identifier != null) {
-                if (name != null || value != null)
-                    throw new MtsException("specify exactly one of the following properties: identifier, name, or value for enum %s", type.getSimpleName());
-
-                var res = ProtocolEnum.fromIdentifier((Class<? extends ProtocolEnum>) type, identifier);
-                if (res == null)
-                    throw new MtsException("invalid value for enum %s", type.getSimpleName());
-                return (T) res;
-            }
-
-            if (value != null) {
-                if (name != null)
-                    throw new MtsException("specify exactly one of the following properties: identifier, name, or value for enum %s", type.getSimpleName());
-
-                var res = ProtocolEnum.fromIntValue((Class<? extends ProtocolEnum>) type, value);
-                if (res == null)
-                    throw new MtsException("invalid value for enum %s", type.getSimpleName());
-                return (T) res;
-            }
-
-            var res = ProtocolEnum.fromName((Class<? extends ProtocolEnum>) type, name);
-            if (res.size() == 0)
-                throw new MtsException("invalid value for enum %s", type.getSimpleName());
-            if (res.size() > 1)
-                throw new MtsException("multiple values matched for enum %s", type.getSimpleName());
-            return (T) res.get(0);
-        }
+        var customConstruct = TypeRegistry.getCustomConstruct(type);
+        if (customConstruct != null)
+            return customConstruct.construct(type, args);
 
         var constructors = Arrays.asList(type.getDeclaredConstructors());
 

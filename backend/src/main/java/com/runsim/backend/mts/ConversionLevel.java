@@ -1,6 +1,6 @@
 package com.runsim.backend.mts;
 
-enum ConversionLevel {
+public enum ConversionLevel {
     LEVEL_NULL_CONVERSION(0),
     SAME_TYPE(1),
     ASSIGNABLE_TYPE(2),
