@@ -1,22 +1,23 @@
 package com.runsim.backend.mts;
 
+import com.runsim.backend.exceptions.MtsException;
+import com.runsim.backend.utils.Utils;
+
+import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class MtsConvert {
-    private final boolean allowDeepConversion;
 
-    public MtsConvert(boolean allowDeepConversion) {
-        this.allowDeepConversion = allowDeepConversion;
-    }
-
-    public boolean isConvertable(Class<?> from, Class<?> to) {
+    public static boolean isConvertable(Class<?> from, Class<?> to) {
         return isConvertable(from, to, new HashSet<>());
     }
 
-    private boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams) {
+    private static boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams) {
         if (from.equals(to))
             return true;
         if (to.isAssignableFrom(from))
@@ -27,6 +28,11 @@ public class MtsConvert {
             return true;
         if (Traits.isChar(from) && Traits.isChar(to))
             return true;
+        if (Traits.isCollection(from) || Traits.isCollection(to)) {
+            throw new MtsException("collections are not supported, use array instead");
+        } else if (Traits.isArray(from) || Traits.isArray(to)) {
+            return Traits.isArray(from) && Traits.isArray(to);
+        }
         if (TypeRegistry.isCustomConvertable(from, to))
             return true;
 
@@ -35,7 +41,7 @@ public class MtsConvert {
 
         visitedSingleParams.add(to);
 
-        if (!allowDeepConversion)
+        if (!TypeRegistry.ALLOW_DEEP_CONVERSION)
             return false;
 
         for (var constructor : to.getDeclaredConstructors()) {
@@ -50,7 +56,7 @@ public class MtsConvert {
         return false;
     }
 
-    private <T> Conversion<T> numberConversion(Object value, Class<T> targetType, int depth) {
+    private static <T> Conversion<T> numberConversion(Object value, Class<T> targetType, int depth) {
         var sourceType = value.getClass();
 
         if (!Traits.isNumberOrString(sourceType))
@@ -128,13 +134,13 @@ public class MtsConvert {
         throw new IllegalArgumentException();
     }
 
-    public List<Conversion<?>> convert(Object from, Class<?> to) {
+    public static List<Conversion<?>> convert(Object from, Class<?> to) {
         List<Conversion<?>> list = new ArrayList<>();
         convert(from, to, list, new HashSet<>(), 0);
         return list;
     }
 
-    private void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth) {
+    private static void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth) {
         if (from == null) {
             list.add(new Conversion<>(ConversionLevel.LEVEL_NULL_CONVERSION, null, depth));
             return;
@@ -149,6 +155,13 @@ public class MtsConvert {
             list.add(new Conversion<>(ConversionLevel.SAME_TYPE, (Boolean) (boolean) from, depth));
         } else if (Traits.isChar(from.getClass()) && Traits.isChar(to)) {
             list.add(new Conversion<>(ConversionLevel.SAME_TYPE, (Character) (char) from, depth));
+        } else if (Traits.isCollection(from.getClass()) || Traits.isCollection(to)) {
+            throw new MtsException("collections are not supported, use array instead");
+        } else if (Traits.isArray(from.getClass()) || Traits.isArray(to)) {
+            if (Traits.isArray(from.getClass()) && Traits.isArray(to)) {
+                convertArray(from, to, list, depth);
+            }
+            return;
         } else {
             var customConverter = TypeRegistry.getCustomConverter(to);
             if (customConverter != null) {
@@ -162,7 +175,7 @@ public class MtsConvert {
         }
         visitedSingleParams.add(to);
 
-        if (!allowDeepConversion)
+        if (!TypeRegistry.ALLOW_DEEP_CONVERSION)
             return;
 
         for (var constructor : to.getDeclaredConstructors()) {
@@ -187,5 +200,73 @@ public class MtsConvert {
                 }
             }
         }
+    }
+
+    private static void convertArray(Object from, Class<?> to, List<Conversion<?>> list, int depth) {
+        Class<?> elementType = to.getComponentType();
+
+        // This function converts primitive arrays to wrapper arrays.
+        // Example: int[] -> Integer[]
+        Function<Object, Object[]> eliminatePrimitiveArray = arr -> {
+            var arrayList = new ArrayList<>();
+            for (int i = 0; i < Array.getLength(arr); i++)
+                arrayList.add(Array.get(arr, i));
+            return arrayList.toArray();
+        };
+
+        // This function converts primitive arrays to wrapper arrays.
+        // Example: Integer[] -> int[]
+        BiFunction<Object[], Class<?>, Object> makePrimitiveArray = (arr, primitiveType) -> {
+            var primitiveArray = Array.newInstance(primitiveType, arr.length);
+            for (int i = 0; i < arr.length; i++)
+                Array.set(primitiveArray, i, arr[i]);
+            return primitiveArray;
+        };
+
+        Object[] sourceArray = eliminatePrimitiveArray.apply(from);
+        Class<?> targetType = Traits.wrapperOfPrimitive(elementType);
+
+        for (int i = 0; i < sourceArray.length; i++) {
+            if (sourceArray[i] instanceof ImplicitTypedValue) {
+                sourceArray[i] = MtsConstruct.construct(targetType, ((ImplicitTypedValue) sourceArray[i]).getParameters());
+            }
+
+            var conversions = convert(sourceArray[i], targetType);
+
+            var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
+            var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));
+
+            if (shallowConversions.size() == 0 && deepConversions.size() == 0) {
+                throw new MtsException("element at index '%d' has type '%s', but expected type is '%s' or convertable types.", i, sourceArray[i].getClass().getSimpleName(), targetType.getSimpleName());
+            }
+
+            Conversion<?> selectedConversion;
+
+            if (shallowConversions.size() == 0) {
+                if (deepConversions.size() > 1) {
+                    throw new MtsException("multiple convertions matched for element at index '%d'", i);
+                }
+                selectedConversion = deepConversions.get(0);
+            } else if (shallowConversions.size() > 1) {
+                throw new MtsException("multiple convertions matched for element at index '%d'", i);
+            } else {
+                selectedConversion = shallowConversions.get(0);
+            }
+
+            sourceArray[i] = selectedConversion.value;
+        }
+
+        if (elementType.isPrimitive()) {
+            from = makePrimitiveArray.apply(sourceArray, elementType);
+        } else {
+            Object created = Array.newInstance(elementType, sourceArray.length);
+            for (int i = 0; i < sourceArray.length; i++) {
+                Array.set(created, i, sourceArray[i]);
+            }
+
+            from = created;
+        }
+        // (arrays are always assumed as assignable_type)
+        list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from, depth));
     }
 }

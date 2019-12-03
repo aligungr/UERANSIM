@@ -7,17 +7,12 @@ import com.runsim.backend.exceptions.MtsException;
 import java.util.LinkedHashMap;
 
 public class MtsDecoder {
-    private final MtsConstruct mtsConstruct;
 
-    public MtsDecoder(boolean allowDeepConversion) {
-        this.mtsConstruct = new MtsConstruct(allowDeepConversion);
+    public static Object decode(String json) {
+        return decode(new Gson().fromJson(json, JsonElement.class));
     }
 
-    public Object decode(String json) {
-        return this.decode(new Gson().fromJson(json, JsonElement.class));
-    }
-
-    public Object decode(JsonElement json) {
+    public static Object decode(JsonElement json) {
         if (json == null || json.isJsonNull())
             return null;
         if (json.isJsonPrimitive()) {
@@ -72,7 +67,7 @@ public class MtsDecoder {
                 if (type == null) {
                     throw new MtsException("declared type not registered: %s", typeName);
                 }
-                return mtsConstruct.construct(type, properties);
+                return MtsConstruct.construct(type, properties);
             } else {
                 return new ImplicitTypedValue(properties);
             }

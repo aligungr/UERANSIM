@@ -47,8 +47,7 @@ public class MtsTest {
 
         var jsonString = Utils.getResourceString("mts.json");
 
-        var mtsDecoder = new MtsDecoder(false);
-        var nasMessage = mtsDecoder.decode(jsonString);
+        var nasMessage = MtsDecoder.decode(jsonString);
         Console.println(Json.toJson(nasMessage));
     }
 }

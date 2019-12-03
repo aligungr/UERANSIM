@@ -2,6 +2,7 @@ package com.runsim.backend.mts;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.function.Function;
 
 public final class Traits {
@@ -68,6 +69,18 @@ public final class Traits {
 
     public static boolean isNumberOrString(Class<?> type) {
         return isNumber(type) || isString(type);
+    }
+
+    public static boolean isArray(Class<?> type) {
+        return type.isArray();
+    }
+
+    public static boolean isCollection(Class<?> type) {
+        return Collection.class.isAssignableFrom(type);
+    }
+
+    public static boolean isArrayOrCollection(Class<?> type) {
+        return isArray(type) || isCollection(type);
     }
 
     public static long getNumberAsLong(Object value) {
@@ -155,5 +168,31 @@ public final class Traits {
     public static boolean isNullable(Class<?> type) {
         return !(type == boolean.class || type == char.class || type == byte.class || type == short.class
                 || type == int.class || type == long.class || type == float.class || type == double.class);
+    }
+
+    public static Class<?> wrapperOfPrimitive(Class<?> type) {
+        if (type == boolean.class) return Boolean.class;
+        if (type == char.class) return Character.class;
+        if (type == byte.class) return Byte.class;
+        if (type == short.class) return Short.class;
+        if (type == int.class) return Integer.class;
+        if (type == long.class) return Long.class;
+        if (type == float.class) return Float.class;
+        if (type == double.class) return Double.class;
+        if (type == void.class) return Void.class;
+        return type;
+    }
+
+    public static Class<?> primitiveOfWrapper(Class<?> type) {
+        if (type == Boolean.class) return boolean.class;
+        if (type == Character.class) return char.class;
+        if (type == Byte.class) return byte.class;
+        if (type == Short.class) return short.class;
+        if (type == Integer.class) return int.class;
+        if (type == Long.class) return long.class;
+        if (type == Float.class) return float.class;
+        if (type == Double.class) return double.class;
+        if (type == Void.class) return void.class;
+        return type;
     }
 }

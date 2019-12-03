@@ -11,17 +11,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class MtsConstruct {
-    private final MtsConvert mtsConvert;
 
-    public MtsConstruct(boolean allowDeepConversion) {
-        this.mtsConvert = new MtsConvert(allowDeepConversion);
-    }
-
-    private boolean parameterCountMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private static boolean parameterCountMatches(Constructor<?> constructor, Map<String, Object> parameters) {
         return constructor.getParameterCount() >= parameters.size();
     }
 
-    private boolean parameterNameMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private static boolean parameterNameMatches(Constructor<?> constructor, Map<String, Object> parameters) {
         if (constructor.getParameterCount() < parameters.size())
             return false;
 
@@ -37,7 +32,7 @@ public class MtsConstruct {
         return true;
     }
 
-    private boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private static boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters) {
         if (constructor.getParameterCount() < parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
@@ -54,18 +49,18 @@ public class MtsConstruct {
                     return false;
                 }
             }
-            if (!mtsConvert.isConvertable(object.getClass(), param.getType()))
+            if (!MtsConvert.isConvertable(object.getClass(), param.getType()))
                 return false;
         }
         return true;
     }
 
-    private boolean parameterTypeExactMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private static boolean parameterTypeExactMatches(Constructor<?> constructor, Map<String, Object> parameters) {
         if (constructor.getParameterCount() != parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
-            var conversion = mtsConvert.convert(object, param.getType());
+            var conversion = MtsConvert.convert(object, param.getType());
             if (conversion.stream().noneMatch(c -> c.depth == 0 && (c.level == ConversionLevel.SAME_TYPE))) {
                 return false;
             }
@@ -73,7 +68,7 @@ public class MtsConstruct {
         return true;
     }
 
-    public <T> T construct(Class<T> type, Map<String, Object> args) {
+    public static <T> T construct(Class<T> type, Map<String, Object> args) {
         var customConstruct = TypeRegistry.getCustomConstruct(type);
         if (customConstruct != null)
             return customConstruct.construct(type, args);
@@ -118,7 +113,7 @@ public class MtsConstruct {
                 value = construct(param.getType(), ((ImplicitTypedValue) value).getParameters());
             }
 
-            var conversions = mtsConvert.convert(value, param.getType());
+            var conversions = MtsConvert.convert(value, param.getType());
 
             var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
             var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));

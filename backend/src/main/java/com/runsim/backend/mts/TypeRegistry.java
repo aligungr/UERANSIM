@@ -6,6 +6,8 @@ import com.runsim.backend.utils.BiMap;
 import java.util.*;
 
 public final class TypeRegistry {
+    static final boolean ALLOW_DEEP_CONVERSION = false;
+
     private static final BiMap<String, Class<?>> types;
     private static final Map<Class<?>, ICustomConstruct<?>> customConstructs;
     private static final Set<ICustomIsConvertable> customIsConvertables;
