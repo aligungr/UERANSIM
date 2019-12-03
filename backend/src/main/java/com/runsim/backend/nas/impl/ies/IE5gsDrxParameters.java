@@ -8,6 +8,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IE5gsDrxParameters extends InformationElement4 {
     public EDrxValue drxValue;
 
+    public IE5gsDrxParameters() {
+    }
+
+    public IE5gsDrxParameters(EDrxValue drxValue) {
+        this.drxValue = drxValue;
+    }
+
     @Override
     protected IE5gsDrxParameters decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsDrxParameters();

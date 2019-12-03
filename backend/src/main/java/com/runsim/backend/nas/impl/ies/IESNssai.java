@@ -14,6 +14,16 @@ public class IESNssai extends InformationElement4 {
     public VSliceServiceType mappedHplmnSst;
     public VSliceDifferentiator mappedHplmnSd;
 
+    public IESNssai() {
+    }
+
+    public IESNssai(VSliceServiceType sst, VSliceDifferentiator sd, VSliceServiceType mappedHplmnSst, VSliceDifferentiator mappedHplmnSd) {
+        this.sst = sst;
+        this.sd = sd;
+        this.mappedHplmnSst = mappedHplmnSst;
+        this.mappedHplmnSd = mappedHplmnSd;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IESNssai();

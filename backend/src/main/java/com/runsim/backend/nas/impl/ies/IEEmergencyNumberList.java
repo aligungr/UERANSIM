@@ -15,6 +15,13 @@ import java.util.List;
 public class IEEmergencyNumberList extends InformationElement4 {
     public List<VEmergencyNumberInformation> list;
 
+    public IEEmergencyNumberList() {
+    }
+
+    public IEEmergencyNumberList(List<VEmergencyNumberInformation> list) {
+        this.list = list;
+    }
+
     @Override
     protected IEEmergencyNumberList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEEmergencyNumberList();

@@ -18,6 +18,13 @@ import java.util.List;
 public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
     public List<VPartialTrackingAreaIdentityList> partialTrackingAreaIdentityLists;
 
+    public IE5gsTrackingAreaIdentityList() {
+    }
+
+    public IE5gsTrackingAreaIdentityList(List<VPartialTrackingAreaIdentityList> partialTrackingAreaIdentityLists) {
+        this.partialTrackingAreaIdentityLists = partialTrackingAreaIdentityLists;
+    }
+
     @Override
     protected IE5gsTrackingAreaIdentityList decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsTrackingAreaIdentityList();

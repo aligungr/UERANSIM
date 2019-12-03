@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEMicoIndication extends InformationElement1 {
     public ERegistrationAreaAllocationIndication raai;
 
+    public IEMicoIndication() {
+    }
+
+    public IEMicoIndication(ERegistrationAreaAllocationIndication raai) {
+        this.raai = raai;
+    }
+
     @Override
     public IEMicoIndication decodeIE1(Bit4 value) {
         var res = new IEMicoIndication();

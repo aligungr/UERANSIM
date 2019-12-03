@@ -8,6 +8,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IEUesUsageSetting extends InformationElement4 {
     public EUesUsageSetting uesUsageSetting;
 
+    public IEUesUsageSetting() {
+    }
+
+    public IEUesUsageSetting(EUesUsageSetting uesUsageSetting) {
+        this.uesUsageSetting = uesUsageSetting;
+    }
+
     @Override
     protected IEUesUsageSetting decodeIE4(OctetInputStream stream, int length) {
         var res = new IEUesUsageSetting();

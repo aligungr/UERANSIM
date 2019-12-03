@@ -23,6 +23,27 @@ public class IEPduSessionStatus extends InformationElement4 {
     public Bit psi14;
     public Bit psi15;
 
+    public IEPduSessionStatus() {
+    }
+
+    public IEPduSessionStatus(Bit psi01, Bit psi02, Bit psi03, Bit psi04, Bit psi05, Bit psi06, Bit psi07, Bit psi08, Bit psi09, Bit psi10, Bit psi11, Bit psi12, Bit psi13, Bit psi14, Bit psi15) {
+        this.psi01 = psi01;
+        this.psi02 = psi02;
+        this.psi03 = psi03;
+        this.psi04 = psi04;
+        this.psi05 = psi05;
+        this.psi06 = psi06;
+        this.psi07 = psi07;
+        this.psi08 = psi08;
+        this.psi09 = psi09;
+        this.psi10 = psi10;
+        this.psi11 = psi11;
+        this.psi12 = psi12;
+        this.psi13 = psi13;
+        this.psi14 = psi14;
+        this.psi15 = psi15;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         // (other octets are specified as spare (if any))

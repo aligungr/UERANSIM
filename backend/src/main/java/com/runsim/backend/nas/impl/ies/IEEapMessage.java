@@ -10,6 +10,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IEEapMessage extends InformationElement6 {
     public EAP eap;
 
+    public IEEapMessage() {
+    }
+
+    public IEEapMessage(EAP eap) {
+        this.eap = eap;
+    }
+
     @Override
     protected IEEapMessage decodeIE6(OctetInputStream stream, int length) {
         var res = new IEEapMessage();

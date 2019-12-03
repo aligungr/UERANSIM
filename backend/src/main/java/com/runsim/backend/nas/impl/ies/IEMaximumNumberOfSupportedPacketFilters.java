@@ -8,6 +8,13 @@ import com.runsim.backend.utils.bits.Bit11;
 public class IEMaximumNumberOfSupportedPacketFilters extends InformationElement3 {
     public Bit11 value;
 
+    public IEMaximumNumberOfSupportedPacketFilters() {
+    }
+
+    public IEMaximumNumberOfSupportedPacketFilters(Bit11 value) {
+        this.value = value;
+    }
+
     @Override
     protected IEMaximumNumberOfSupportedPacketFilters decodeIE3(OctetInputStream stream) {
         int value = stream.readOctet2I();

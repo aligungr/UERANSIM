@@ -9,6 +9,14 @@ public class IEAdditional5gSecurityInformation extends InformationElement4 {
     public EHorizontalDerivationParameter hdp;
     public ERetransmissionOfInitialNasMessageRequest rinmr;
 
+    public IEAdditional5gSecurityInformation() {
+    }
+
+    public IEAdditional5gSecurityInformation(EHorizontalDerivationParameter hdp, ERetransmissionOfInitialNasMessageRequest rinmr) {
+        this.hdp = hdp;
+        this.rinmr = rinmr;
+    }
+
     @Override
     protected IEAdditional5gSecurityInformation decodeIE4(OctetInputStream stream, int length) {
         var res = new IEAdditional5gSecurityInformation();

@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IENasMessageContainer extends InformationElement6 {
     public OctetString value;
 
+    public IENasMessageContainer() {
+    }
+
+    public IENasMessageContainer(OctetString value) {
+        this.value = value;
+    }
+
     @Override
     protected IENasMessageContainer decodeIE6(OctetInputStream stream, int length) {
         var res = new IENasMessageContainer();

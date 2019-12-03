@@ -15,6 +15,13 @@ import java.util.List;
 public class IERejectedNssai extends InformationElement4 {
     public List<VRejectedSNssai> rejectedSNssaiList;
 
+    public IERejectedNssai() {
+    }
+
+    public IERejectedNssai(List<VRejectedSNssai> rejectedSNssaiList) {
+        this.rejectedSNssaiList = rejectedSNssaiList;
+    }
+
     @Override
     protected IERejectedNssai decodeIE4(OctetInputStream stream, int length) {
         var res = new IERejectedNssai();

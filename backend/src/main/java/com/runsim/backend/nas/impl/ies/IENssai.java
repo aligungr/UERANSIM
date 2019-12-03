@@ -12,6 +12,13 @@ import java.util.List;
 public class IENssai extends InformationElement4 {
     public List<IESNssai> sNssas;
 
+    public IENssai() {
+    }
+
+    public IENssai(List<IESNssai> sNssas) {
+        this.sNssas = sNssas;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IENssai();

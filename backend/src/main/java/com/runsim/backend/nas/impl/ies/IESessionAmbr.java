@@ -12,6 +12,16 @@ public class IESessionAmbr extends InformationElement4 {
     public EUnitForSessionAmbr unitForSessionAmbrForUplink;
     public Octet2 sessionAmbrForUplink;
 
+    public IESessionAmbr() {
+    }
+
+    public IESessionAmbr(EUnitForSessionAmbr unitForSessionAmbrForDownlink, Octet2 sessionAmbrForDownlink, EUnitForSessionAmbr unitForSessionAmbrForUplink, Octet2 sessionAmbrForUplink) {
+        this.unitForSessionAmbrForDownlink = unitForSessionAmbrForDownlink;
+        this.sessionAmbrForDownlink = sessionAmbrForDownlink;
+        this.unitForSessionAmbrForUplink = unitForSessionAmbrForUplink;
+        this.sessionAmbrForUplink = sessionAmbrForUplink;
+    }
+
     @Override
     protected IESessionAmbr decodeIE4(OctetInputStream stream, int length) {
         var res = new IESessionAmbr();

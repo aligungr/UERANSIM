@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEImeiMobileIdentity extends IE5gsMobileIdentity {
     public String imei;
 
+    public IEImeiMobileIdentity() {
+    }
+
+    public IEImeiMobileIdentity(String imei) {
+        this.imei = imei;
+    }
+
     @Override
     public void encodeIE6(OctetOutputStream stream) {
         int imeiFlag = 0b0011;

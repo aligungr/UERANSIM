@@ -14,6 +14,16 @@ public class IENetworkName extends InformationElement4 {
     public ECodingScheme codingScheme;
     public OctetString textString;
 
+    public IENetworkName() {
+    }
+
+    public IENetworkName(Bit3 numOfSpareBits, EAddCountryInitials addCi, ECodingScheme codingScheme, OctetString textString) {
+        this.numOfSpareBits = numOfSpareBits;
+        this.addCi = addCi;
+        this.codingScheme = codingScheme;
+        this.textString = textString;
+    }
+
     @Override
     protected IENetworkName decodeIE4(OctetInputStream stream, int length) {
         int flags = stream.readOctetI();

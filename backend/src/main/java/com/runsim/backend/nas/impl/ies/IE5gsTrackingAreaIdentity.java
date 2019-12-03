@@ -13,6 +13,15 @@ public class IE5gsTrackingAreaIdentity extends InformationElement3 {
     public EMobileNetworkCode mnc;
     public Octet3 trackingAreaCode;
 
+    public IE5gsTrackingAreaIdentity() {
+    }
+
+    public IE5gsTrackingAreaIdentity(EMobileCountryCode mcc, EMobileNetworkCode mnc, Octet3 trackingAreaCode) {
+        this.mcc = mcc;
+        this.mnc = mnc;
+        this.trackingAreaCode = trackingAreaCode;
+    }
+
     @Override
     protected IE5gsTrackingAreaIdentity decodeIE3(OctetInputStream stream) {
         var res = new IE5gsTrackingAreaIdentity();

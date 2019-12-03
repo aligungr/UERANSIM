@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEPayloadContainerType extends InformationElement1 {
     public EPayloadContainerType payloadContainerType;
 
+    public IEPayloadContainerType() {
+    }
+
+    public IEPayloadContainerType(EPayloadContainerType payloadContainerType) {
+        this.payloadContainerType = payloadContainerType;
+    }
+
     @Override
     public IEPayloadContainerType decodeIE1(Bit4 value) {
         var res = new IEPayloadContainerType();

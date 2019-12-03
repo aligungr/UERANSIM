@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.Octet;
 public class IEGprsTimer2 extends InformationElement4 {
     public Octet value;
 
+    public IEGprsTimer2() {
+    }
+
+    public IEGprsTimer2(Octet value) {
+        this.value = value;
+    }
+
     @Override
     protected IEGprsTimer2 decodeIE4(OctetInputStream stream, int length) {
         var res = new IEGprsTimer2();

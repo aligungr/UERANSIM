@@ -15,6 +15,13 @@ import java.util.List;
 public class IEOperatorDefinedAccessCategoryDefinitions extends InformationElement6 {
     public List<VOperatorDefinedAccessCategoryDefinition> operatorDefinedAccessCategoryDefinitions;
 
+    public IEOperatorDefinedAccessCategoryDefinitions() {
+    }
+
+    public IEOperatorDefinedAccessCategoryDefinitions(List<VOperatorDefinedAccessCategoryDefinition> operatorDefinedAccessCategoryDefinitions) {
+        this.operatorDefinedAccessCategoryDefinitions = operatorDefinedAccessCategoryDefinitions;
+    }
+
     @Override
     protected IEOperatorDefinedAccessCategoryDefinitions decodeIE6(OctetInputStream stream, int length) {
         var res = new IEOperatorDefinedAccessCategoryDefinitions();

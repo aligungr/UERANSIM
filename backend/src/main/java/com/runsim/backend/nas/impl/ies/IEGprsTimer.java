@@ -11,6 +11,14 @@ public class IEGprsTimer extends InformationElement3 {
     public Bit5 timerValue;
     public EGprsTimerValueUnit timerValueUnit;
 
+    public IEGprsTimer() {
+    }
+
+    public IEGprsTimer(Bit5 timerValue, EGprsTimerValueUnit timerValueUnit) {
+        this.timerValue = timerValue;
+        this.timerValueUnit = timerValueUnit;
+    }
+
     @Override
     protected IEGprsTimer decodeIE3(OctetInputStream stream) {
         var res = new IEGprsTimer();

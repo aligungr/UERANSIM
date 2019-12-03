@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IESscMode extends InformationElement1 {
     public ESscMode sscMode;
 
+    public IESscMode() {
+    }
+
+    public IESscMode(ESscMode sscMode) {
+        this.sscMode = sscMode;
+    }
+
     @Override
     public IESscMode decodeIE1(Bit4 value) {
         var res = new IESscMode();

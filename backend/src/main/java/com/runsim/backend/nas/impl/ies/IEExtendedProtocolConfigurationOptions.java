@@ -9,6 +9,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IEExtendedProtocolConfigurationOptions extends InformationElement6 {
     public IEProtocolConfigurationOptions protocolConfigurationOptions;
 
+    public IEExtendedProtocolConfigurationOptions() {
+    }
+
+    public IEExtendedProtocolConfigurationOptions(IEProtocolConfigurationOptions protocolConfigurationOptions) {
+        this.protocolConfigurationOptions = protocolConfigurationOptions;
+    }
+
     @Override
     protected IEExtendedProtocolConfigurationOptions decodeIE6(OctetInputStream stream, int length) {
         var res = new IEExtendedProtocolConfigurationOptions();

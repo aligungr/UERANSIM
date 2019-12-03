@@ -14,6 +14,13 @@ import java.util.List;
 public class IEMappedEpsBearerContexts extends InformationElement6 {
     public List<VMappedEpsBearerContext> mappedEpsBearerContexts;
 
+    public IEMappedEpsBearerContexts() {
+    }
+
+    public IEMappedEpsBearerContexts(List<VMappedEpsBearerContext> mappedEpsBearerContexts) {
+        this.mappedEpsBearerContexts = mappedEpsBearerContexts;
+    }
+
     @Override
     protected IEMappedEpsBearerContexts decodeIE6(OctetInputStream stream, int length) {
         var res = new IEMappedEpsBearerContexts();

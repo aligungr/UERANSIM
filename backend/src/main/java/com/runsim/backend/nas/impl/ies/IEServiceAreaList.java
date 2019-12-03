@@ -19,6 +19,13 @@ import java.util.List;
 public class IEServiceAreaList extends InformationElement4 {
     public List<VPartialServiceAreaList> partialServiceAreaLists;
 
+    public IEServiceAreaList() {
+    }
+
+    public IEServiceAreaList(List<VPartialServiceAreaList> partialServiceAreaLists) {
+        this.partialServiceAreaLists = partialServiceAreaLists;
+    }
+
     @Override
     protected IEServiceAreaList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEServiceAreaList();

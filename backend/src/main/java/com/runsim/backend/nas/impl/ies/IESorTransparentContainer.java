@@ -17,6 +17,13 @@ import java.util.List;
 public class IESorTransparentContainer extends InformationElement6 {
     public ESorDataType sorDataType;
 
+    public IESorTransparentContainer() {
+    }
+
+    public IESorTransparentContainer(ESorDataType sorDataType) {
+        this.sorDataType = sorDataType;
+    }
+
     @Override
     protected final IESorTransparentContainer decodeIE6(OctetInputStream stream, int length) {
         var header = stream.readOctet();

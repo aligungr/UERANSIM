@@ -10,6 +10,15 @@ public class IE5gTmsiMobileIdentity extends IE5gsMobileIdentity {
     public Bit6 amfPointer;
     public V5gTmsi tmsi;
 
+    public IE5gTmsiMobileIdentity() {
+    }
+
+    public IE5gTmsiMobileIdentity(VAmfSetId amfSetId, Bit6 amfPointer, V5gTmsi tmsi) {
+        this.amfSetId = amfSetId;
+        this.amfPointer = amfPointer;
+        this.tmsi = tmsi;
+    }
+
     @Override
     public void encodeIE6(OctetOutputStream stream) {
         stream.writeOctet(0b11110100); // Flags for 5G-TMSI

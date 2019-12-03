@@ -11,6 +11,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IEPduSessionReactivationResultErrorCause extends InformationElement6 {
     public VPduSessionReactivationResultErrorCause[] values;
 
+    public IEPduSessionReactivationResultErrorCause() {
+    }
+
+    public IEPduSessionReactivationResultErrorCause(VPduSessionReactivationResultErrorCause[] values) {
+        this.values = values;
+    }
+
     @Override
     protected IEPduSessionReactivationResultErrorCause decodeIE6(OctetInputStream stream, int length) {
         var res = new IEPduSessionReactivationResultErrorCause();

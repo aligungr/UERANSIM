@@ -10,6 +10,14 @@ public class IEIntegrityProtectionMaximumDataRate extends InformationElement3 {
     public EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink maxRateUplink;
     public EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink maxRateDownlink;
 
+    public IEIntegrityProtectionMaximumDataRate() {
+    }
+
+    public IEIntegrityProtectionMaximumDataRate(EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink maxRateUplink, EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink maxRateDownlink) {
+        this.maxRateUplink = maxRateUplink;
+        this.maxRateDownlink = maxRateDownlink;
+    }
+
     @Override
     protected IEIntegrityProtectionMaximumDataRate decodeIE3(OctetInputStream stream) {
         var res = new IEIntegrityProtectionMaximumDataRate();

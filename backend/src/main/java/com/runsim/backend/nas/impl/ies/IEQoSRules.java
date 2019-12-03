@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEQoSRules extends InformationElement6 {
     public OctetString rawData;
 
+    public IEQoSRules() {
+    }
+
+    public IEQoSRules(OctetString rawData) {
+        this.rawData = rawData;
+    }
+
     @Override
     protected IEQoSRules decodeIE6(OctetInputStream stream, int length) {
         var res = new IEQoSRules();

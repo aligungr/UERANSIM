@@ -10,6 +10,14 @@ public class IE5gsUpdateType extends InformationElement4 {
     public ESmsRequested smsRequested;
     public ENgRanRadioCapabilityUpdate ngRanRcu;
 
+    public IE5gsUpdateType() {
+    }
+
+    public IE5gsUpdateType(ESmsRequested smsRequested, ENgRanRadioCapabilityUpdate ngRanRcu) {
+        this.smsRequested = smsRequested;
+        this.ngRanRcu = ngRanRcu;
+    }
+
     @Override
     protected IE5gsUpdateType decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsUpdateType();

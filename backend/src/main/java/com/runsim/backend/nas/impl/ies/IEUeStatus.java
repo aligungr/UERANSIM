@@ -9,6 +9,14 @@ public class IEUeStatus extends InformationElement4 {
     public EEmmRegistrationStatus s1ModeReg;
     public E5gMmRegistrationStatus n1ModeReg;
 
+    public IEUeStatus() {
+    }
+
+    public IEUeStatus(EEmmRegistrationStatus s1ModeReg, E5gMmRegistrationStatus n1ModeReg) {
+        this.s1ModeReg = s1ModeReg;
+        this.n1ModeReg = n1ModeReg;
+    }
+
     @Override
     protected IEUeStatus decodeIE4(OctetInputStream stream, int length) {
         int octet = stream.readOctetI();

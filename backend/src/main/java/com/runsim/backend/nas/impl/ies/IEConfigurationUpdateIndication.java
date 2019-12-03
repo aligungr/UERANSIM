@@ -8,6 +8,14 @@ public class IEConfigurationUpdateIndication extends InformationElement1 {
     public EAcknowledgement ack;
     public ERegistrationRequested red;
 
+    public IEConfigurationUpdateIndication() {
+    }
+
+    public IEConfigurationUpdateIndication(EAcknowledgement ack, ERegistrationRequested red) {
+        this.ack = ack;
+        this.red = red;
+    }
+
     @Override
     public IEConfigurationUpdateIndication decodeIE1(Bit4 value) {
         var res = new IEConfigurationUpdateIndication();

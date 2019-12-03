@@ -9,6 +9,13 @@ import java.nio.charset.StandardCharsets;
 public class IESmPduDnRequestContainer extends InformationElement4 {
     public String dnSpecificIdentity;
 
+    public IESmPduDnRequestContainer() {
+    }
+
+    public IESmPduDnRequestContainer(String dnSpecificIdentity) {
+        this.dnSpecificIdentity = dnSpecificIdentity;
+    }
+
     @Override
     protected IESmPduDnRequestContainer decodeIE4(OctetInputStream stream, int length) {
         var bytes = stream.readOctetArrayB(length);

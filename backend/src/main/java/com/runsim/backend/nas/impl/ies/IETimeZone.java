@@ -8,6 +8,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IETimeZone extends InformationElement3 {
     public VTimeZone timeZone;
 
+    public IETimeZone() {
+    }
+
+    public IETimeZone(VTimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
     @Override
     protected IETimeZone decodeIE3(OctetInputStream stream) {
         var res = new IETimeZone();

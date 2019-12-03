@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.Octet;
 public class IEPduSessionIdentity2 extends InformationElement3 {
     public Octet value;
 
+    public IEPduSessionIdentity2() {
+    }
+
+    public IEPduSessionIdentity2(Octet value) {
+        this.value = value;
+    }
+
     @Override
     protected IEPduSessionIdentity2 decodeIE3(OctetInputStream stream) {
         var res = new IEPduSessionIdentity2();
