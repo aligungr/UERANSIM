@@ -9,15 +9,15 @@ import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.OctetString;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IEMappedEpsBearerContexts extends InformationElement6 {
-    public List<VMappedEpsBearerContext> mappedEpsBearerContexts;
+    public VMappedEpsBearerContext[] mappedEpsBearerContexts;
 
     public IEMappedEpsBearerContexts() {
     }
 
-    public IEMappedEpsBearerContexts(List<VMappedEpsBearerContext> mappedEpsBearerContexts) {
+    public IEMappedEpsBearerContexts(VMappedEpsBearerContext[] mappedEpsBearerContexts) {
         this.mappedEpsBearerContexts = mappedEpsBearerContexts;
     }
 
@@ -30,19 +30,19 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        mappedEpsBearerContexts.forEach(ctx -> ctx.encode(stream));
+        Arrays.stream(mappedEpsBearerContexts).forEach(ctx -> ctx.encode(stream));
     }
 
     public static class VMappedEpsBearerContext extends NasValue {
         public EEpsBearerIdentity epsBearerIdentity;
         public EEbit ebit;
         public EOperationCode operationCode;
-        public List<VEpsParameter> epsParameterList;
+        public VEpsParameter[] epsParameterList;
 
         public VMappedEpsBearerContext() {
         }
 
-        public VMappedEpsBearerContext(EEpsBearerIdentity epsBearerIdentity, EEbit ebit, EOperationCode operationCode, List<VEpsParameter> epsParameterList) {
+        public VMappedEpsBearerContext(EEpsBearerIdentity epsBearerIdentity, EEbit ebit, EOperationCode operationCode, VEpsParameter[] epsParameterList) {
             this.epsBearerIdentity = epsBearerIdentity;
             this.ebit = ebit;
             this.operationCode = operationCode;
@@ -67,7 +67,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
         @Override
         public void encode(OctetOutputStream stream) {
             var innerStream = new OctetOutputStream();
-            epsParameterList.forEach(param -> param.encode(innerStream));
+            Arrays.stream(epsParameterList).forEach(param -> param.encode(innerStream));
 
             stream.writeOctet(epsBearerIdentity.intValue() << 4);
             stream.writeOctet(innerStream.length() + 1);
@@ -75,7 +75,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
             var flags = new Octet();
             flags = flags.setBitRange(6, 7, operationCode.intValue());
             flags = flags.setBit(4, ebit.intValue());
-            flags = flags.setBitRange(0, 3, epsParameterList.size());
+            flags = flags.setBitRange(0, 3, epsParameterList.length);
             stream.writeOctet(flags);
 
             stream.writeStream(innerStream);

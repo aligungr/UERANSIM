@@ -13,16 +13,15 @@ import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet3;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class IEServiceAreaList extends InformationElement4 {
-    public List<VPartialServiceAreaList> partialServiceAreaLists;
+    public VPartialServiceAreaList[] partialServiceAreaLists;
 
     public IEServiceAreaList() {
     }
 
-    public IEServiceAreaList(List<VPartialServiceAreaList> partialServiceAreaLists) {
+    public IEServiceAreaList(VPartialServiceAreaList[] partialServiceAreaLists) {
         this.partialServiceAreaLists = partialServiceAreaLists;
     }
 
@@ -35,7 +34,7 @@ public class IEServiceAreaList extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        partialServiceAreaLists.forEach(item -> item.encode(stream));
+        Arrays.stream(partialServiceAreaLists).forEach(item -> item.encode(stream));
     }
 
     public static class VPartialServiceAreaList extends NasValue {
@@ -84,12 +83,12 @@ public class IEServiceAreaList extends InformationElement4 {
 
     public static class VPartialServiceAreaList00 extends VPartialServiceAreaList {
         public VPlmn plmn;
-        public List<Octet3> tacs;
+        public Octet3[] tacs;
 
         public VPartialServiceAreaList00() {
         }
 
-        public VPartialServiceAreaList00(VPlmn plmn, List<Octet3> tacs) {
+        public VPartialServiceAreaList00(VPlmn plmn, Octet3[] tacs) {
             this.plmn = plmn;
             this.tacs = tacs;
         }
@@ -102,19 +101,19 @@ public class IEServiceAreaList extends InformationElement4 {
 
             var res = new VPartialServiceAreaList00();
             res.plmn = new VPlmn().decode(stream);
-            res.tacs = new ArrayList<>();
+            res.tacs = new Octet3[count];
             for (int i = 0; i < count; i++)
-                res.tacs.add(stream.readOctet3());
+                res.tacs[i] = stream.readOctet3();
             return res;
         }
 
         @Override
         public void encode(OctetOutputStream stream) {
-            if (tacs.size() == 0)
+            if (tacs.length == 0)
                 throw new EncodingException("tacs cannot be empty");
 
             var flags = new Octet();
-            flags = flags.setBitRange(0, 4, tacs.size() - 1);
+            flags = flags.setBitRange(0, 4, tacs.length - 1);
             flags = flags.setBitRange(5, 6, 0b00);
             flags = flags.setBit(7, allowedType.intValue());
             stream.writeOctet(flags);
@@ -162,12 +161,12 @@ public class IEServiceAreaList extends InformationElement4 {
     }
 
     public static class VPartialServiceAreaList10 extends VPartialServiceAreaList {
-        public List<VTrackingAreaIdentity> tais;
+        public VTrackingAreaIdentity[] tais;
 
         public VPartialServiceAreaList10() {
         }
 
-        public VPartialServiceAreaList10(List<VTrackingAreaIdentity> tais) {
+        public VPartialServiceAreaList10(VTrackingAreaIdentity[] tais) {
             this.tais = tais;
         }
 
@@ -178,20 +177,20 @@ public class IEServiceAreaList extends InformationElement4 {
             if (count > 16) count = 16;
 
             var res = new VPartialServiceAreaList10();
-            res.tais = new ArrayList<>();
+            res.tais = new VTrackingAreaIdentity[count];
             for (int i = 0; i < count; i++) {
-                res.tais.add(new VTrackingAreaIdentity().decode(stream));
+                res.tais[i] = new VTrackingAreaIdentity().decode(stream);
             }
             return res;
         }
 
         @Override
         public void encode(OctetOutputStream stream) {
-            if (tais.size() == 0)
+            if (tais.length == 0)
                 throw new EncodingException("tais cannot be empty");
 
             var flags = new Octet();
-            flags = flags.setBitRange(0, 4, tais.size() - 1);
+            flags = flags.setBitRange(0, 4, tais.length - 1);
             flags = flags.setBitRange(5, 6, 0b10);
             flags = flags.setBit(7, allowedType.intValue());
             stream.writeOctet(flags);

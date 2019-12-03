@@ -7,15 +7,15 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IELadnIndication extends InformationElement6 {
-    public List<IEDnn> dnns;
+    public IEDnn[] dnns;
 
     public IELadnIndication() {
     }
 
-    public IELadnIndication(List<IEDnn> dnns) {
+    public IELadnIndication(IEDnn[] dnns) {
         this.dnns = dnns;
     }
 
@@ -28,6 +28,6 @@ public class IELadnIndication extends InformationElement6 {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        dnns.forEach(dnn -> NasEncoder.ie2346(stream, dnn));
+        Arrays.stream(dnns).forEach(dnn -> NasEncoder.ie2346(stream, dnn));
     }
 }

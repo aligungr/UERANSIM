@@ -10,15 +10,15 @@ import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.Bit8;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IEEmergencyNumberList extends InformationElement4 {
-    public List<VEmergencyNumberInformation> list;
+    public VEmergencyNumberInformation[] list;
 
     public IEEmergencyNumberList() {
     }
 
-    public IEEmergencyNumberList(List<VEmergencyNumberInformation> list) {
+    public IEEmergencyNumberList(VEmergencyNumberInformation[] list) {
         this.list = list;
     }
 
@@ -31,7 +31,7 @@ public class IEEmergencyNumberList extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        list.forEach(item -> item.encode(stream));
+        Arrays.stream(list).forEach(item -> item.encode(stream));
     }
 
     public static class VEmergencyNumberInformation extends NasValue {

@@ -10,15 +10,13 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
 
-import java.util.List;
-
 public class IERejectedNssai extends InformationElement4 {
-    public List<VRejectedSNssai> rejectedSNssaiList;
+    public VRejectedSNssai[] rejectedSNssaiList;
 
     public IERejectedNssai() {
     }
 
-    public IERejectedNssai(List<VRejectedSNssai> rejectedSNssaiList) {
+    public IERejectedNssai(VRejectedSNssai[] rejectedSNssaiList) {
         this.rejectedSNssaiList = rejectedSNssaiList;
     }
 

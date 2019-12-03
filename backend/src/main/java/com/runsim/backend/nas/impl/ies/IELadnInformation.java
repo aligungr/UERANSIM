@@ -8,15 +8,15 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IELadnInformation extends InformationElement6 {
-    public List<VLadn> ladns;
+    public VLadn[] ladns;
 
     public IELadnInformation() {
     }
 
-    public IELadnInformation(List<VLadn> ladns) {
+    public IELadnInformation(VLadn[] ladns) {
         this.ladns = ladns;
     }
 
@@ -29,7 +29,7 @@ public class IELadnInformation extends InformationElement6 {
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        ladns.forEach(ladn -> ladn.encode(stream));
+        Arrays.stream(ladns).forEach(ladn -> ladn.encode(stream));
     }
 
     public static class VLadn extends NasValue {

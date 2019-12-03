@@ -6,15 +6,15 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IEPlmnList extends InformationElement4 {
-    public List<VPlmn> plmns;
+    public VPlmn[] plmns;
 
     public IEPlmnList() {
     }
 
-    public IEPlmnList(List<VPlmn> plmns) {
+    public IEPlmnList(VPlmn[] plmns) {
         this.plmns = plmns;
     }
 
@@ -27,6 +27,6 @@ public class IEPlmnList extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        plmns.forEach(vMccMnc -> vMccMnc.encode(stream));
+        Arrays.stream(plmns).forEach(vMccMnc -> vMccMnc.encode(stream));
     }
 }

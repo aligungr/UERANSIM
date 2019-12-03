@@ -16,7 +16,7 @@ public class RegistrationRequest extends PlainMmMessage {
 
     public IEUeSecurityCapability ueSecurityCapability;
     public IE5gMmCapability mmCapability;
-    public IENssai requestedNSSA;
+    public IENssai requestedNSSAI;
     public IE5gsMobileIdentity additionalGuti;
     public IE5gsDrxParameters requestedDrxParameters;
     public IEUesUsageSetting uesUsageSetting;
@@ -36,7 +36,7 @@ public class RegistrationRequest extends PlainMmMessage {
         super(EMessageType.REGISTRATION_REQUEST);
     }
 
-    public RegistrationRequest(IE5gsRegistrationType registrationType, IENasKeySetIdentifier nasKeySetIdentifier, IE5gsMobileIdentity mobileIdentity, IENasKeySetIdentifier nonCurrentNgKsi, IEMicoIndication micoIndication, IENetworkSlicingIndication networkSlicingIndication, IEUeSecurityCapability ueSecurityCapability, IE5gMmCapability mmCapability, IENssai requestedNSSA, IE5gsMobileIdentity additionalGuti, IE5gsDrxParameters requestedDrxParameters, IEUesUsageSetting uesUsageSetting, IE5gsUpdateType updateType, IEUeStatus ueStatus, IEUplinkDataStatus uplinkDataStatus, IEEpsNasMessageContainer epsNasMessageContainer, IENasMessageContainer nasMessageContainer, IEAllowedPduSessionStatus allowedPduSessionStatus, IE5gsTrackingAreaIdentity lastVisitedRegisteredTai, IES1UeNetworkCapability s1UeNetworkCapability, IEPduSessionStatus pduSessionStatus, IEPayloadContainer payloadContainer, IELadnIndication ladnIndication) {
+    public RegistrationRequest(IE5gsRegistrationType registrationType, IENasKeySetIdentifier nasKeySetIdentifier, IE5gsMobileIdentity mobileIdentity, IENasKeySetIdentifier nonCurrentNgKsi, IEMicoIndication micoIndication, IENetworkSlicingIndication networkSlicingIndication, IEUeSecurityCapability ueSecurityCapability, IE5gMmCapability mmCapability, IENssai requestedNSSAI, IE5gsMobileIdentity additionalGuti, IE5gsDrxParameters requestedDrxParameters, IEUesUsageSetting uesUsageSetting, IE5gsUpdateType updateType, IEUeStatus ueStatus, IEUplinkDataStatus uplinkDataStatus, IEEpsNasMessageContainer epsNasMessageContainer, IENasMessageContainer nasMessageContainer, IEAllowedPduSessionStatus allowedPduSessionStatus, IE5gsTrackingAreaIdentity lastVisitedRegisteredTai, IES1UeNetworkCapability s1UeNetworkCapability, IEPduSessionStatus pduSessionStatus, IEPayloadContainer payloadContainer, IELadnIndication ladnIndication) {
         this();
         this.registrationType = registrationType;
         this.nasKeySetIdentifier = nasKeySetIdentifier;
@@ -46,7 +46,7 @@ public class RegistrationRequest extends PlainMmMessage {
         this.networkSlicingIndication = networkSlicingIndication;
         this.ueSecurityCapability = ueSecurityCapability;
         this.mmCapability = mmCapability;
-        this.requestedNSSA = requestedNSSA;
+        this.requestedNSSAI = requestedNSSAI;
         this.additionalGuti = additionalGuti;
         this.requestedDrxParameters = requestedDrxParameters;
         this.uesUsageSetting = uesUsageSetting;
@@ -76,7 +76,7 @@ public class RegistrationRequest extends PlainMmMessage {
 
         builder.optionalIE(0x10, "mmCapability");
         builder.optionalIE(0x2E, "ueSecurityCapability");
-        builder.optionalIE(0x2F, "requestedNSSA");
+        builder.optionalIE(0x2F, "requestedNSSAI");
         builder.optionalIE(0x52, "lastVisitedRegisteredTai");
         builder.optionalIE(0x17, "s1UeNetworkCapability");
         builder.optionalIE(0x40, "uplinkDataStatus");

@@ -7,15 +7,15 @@ import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.Utils;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IENssai extends InformationElement4 {
-    public List<IESNssai> sNssas;
+    public IESNssai[] sNssas;
 
     public IENssai() {
     }
 
-    public IENssai(List<IESNssai> sNssas) {
+    public IENssai(IESNssai[] sNssas) {
         this.sNssas = sNssas;
     }
 
@@ -28,6 +28,6 @@ public class IENssai extends InformationElement4 {
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        sNssas.forEach(snssa -> NasEncoder.ie2346(stream, snssa));
+        Arrays.stream(sNssas).forEach(snssa -> NasEncoder.ie2346(stream, snssa));
     }
 }

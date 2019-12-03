@@ -16,7 +16,6 @@ import com.runsim.backend.utils.octets.OctetN;
 import com.runsim.backend.utils.octets.OctetString;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 
 import static com.runsim.backend.demo.control.Control.*;
@@ -33,14 +32,12 @@ public class ImplementationControl {
         controlForType(NasMessage.class, true, ImplementationControl::controlMessages);
     }
 
-
-    // TODO: Forbid lists, force native arrays
     private static final Class<?>[] USUAL_TYPES = new Class<?>[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
-            String.class, OctetString.class, List.class, EAP.class,
+            String.class, OctetString.class, EAP.class,
 
             OctetN[].class, BitN[].class, InformationElement[].class, ProtocolEnum[].class, NasValue[].class,
-            String[].class, OctetString[].class, List[].class, EAP[].class,
+            String[].class, OctetString[].class, EAP[].class,
     };
 
     private static class ParameterCheck {
@@ -229,13 +226,13 @@ public class ImplementationControl {
         for (var field : ie1) {
             var type = getFieldType(clazz, field);
             if (type == null || (!InformationElement1.class.isAssignableFrom(type)))
-                throw new IncorrectImplementationException(clazz, "ie1 registered type must be InformationElement1: " + field);
+                throw new IncorrectImplementationException(clazz, "field not found or, ie1 registered type must be InformationElement1: " + field);
         }
 
         for (var field : ieN) {
             var type = getFieldType(clazz, field);
             if (type == null || (InformationElement1.class.isAssignableFrom(type)))
-                throw new IncorrectImplementationException(clazz, "not ie1 registered type must not be InformationElement1: " + field);
+                throw new IncorrectImplementationException(clazz, "field not found or, not ie1 registered type must not be InformationElement1: " + field);
         }
     }
 }

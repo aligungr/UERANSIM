@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public final class Utils {
 
-    public static <T> List<T> decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length) {
+    public static <T> T[] decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length) {
         int readLen = 0;
         var res = new ArrayList<T>();
         while (readLen < length) {
@@ -37,7 +37,7 @@ public final class Utils {
         }
         if (readLen > length)
             throw new DecodingException("Value length exceeds total length!");
-        return res;
+        return (T[]) res.toArray();
     }
 
     public static int[] fixedBitsToOctetArray(Bit[][] bits) {

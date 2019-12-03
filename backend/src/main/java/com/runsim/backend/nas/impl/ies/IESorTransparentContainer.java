@@ -12,7 +12,7 @@ import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.Octet2;
 import com.runsim.backend.utils.octets.OctetString;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IESorTransparentContainer extends InformationElement6 {
     public ESorDataType sorDataType;
@@ -131,19 +131,19 @@ public class IESorTransparentContainer extends InformationElement6 {
     }
 
     public static class IEPlmnIdAccessTech extends IESteeringOfRoamingInformation {
-        public List<VPlmnIdAccessTech> list;
+        public VPlmnIdAccessTech[] list;
 
         public IEPlmnIdAccessTech() {
         }
 
-        public IEPlmnIdAccessTech(List<VPlmnIdAccessTech> list) {
+        public IEPlmnIdAccessTech(VPlmnIdAccessTech[] list) {
             this.list = list;
         }
 
         @Override
         public void encodeIE6(OctetOutputStream stream) {
             super.encodeIE6(stream);
-            list.forEach(item -> item.encode(stream));
+            Arrays.stream(list).forEach(item -> item.encode(stream));
         }
     }
 

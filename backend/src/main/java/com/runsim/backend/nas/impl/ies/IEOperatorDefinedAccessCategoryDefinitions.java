@@ -10,15 +10,15 @@ import com.runsim.backend.utils.bits.Bit5;
 import com.runsim.backend.utils.octets.Octet;
 import com.runsim.backend.utils.octets.OctetString;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class IEOperatorDefinedAccessCategoryDefinitions extends InformationElement6 {
-    public List<VOperatorDefinedAccessCategoryDefinition> operatorDefinedAccessCategoryDefinitions;
+    public VOperatorDefinedAccessCategoryDefinition[] operatorDefinedAccessCategoryDefinitions;
 
     public IEOperatorDefinedAccessCategoryDefinitions() {
     }
 
-    public IEOperatorDefinedAccessCategoryDefinitions(List<VOperatorDefinedAccessCategoryDefinition> operatorDefinedAccessCategoryDefinitions) {
+    public IEOperatorDefinedAccessCategoryDefinitions(VOperatorDefinedAccessCategoryDefinition[] operatorDefinedAccessCategoryDefinitions) {
         this.operatorDefinedAccessCategoryDefinitions = operatorDefinedAccessCategoryDefinitions;
     }
 
@@ -31,7 +31,7 @@ public class IEOperatorDefinedAccessCategoryDefinitions extends InformationEleme
 
     @Override
     public void encodeIE6(OctetOutputStream stream) {
-        operatorDefinedAccessCategoryDefinitions.forEach(item -> item.encode(stream));
+        Arrays.stream(operatorDefinedAccessCategoryDefinitions).forEach(item -> item.encode(stream));
     }
 
     public static class VOperatorDefinedAccessCategoryDefinition extends NasValue {
