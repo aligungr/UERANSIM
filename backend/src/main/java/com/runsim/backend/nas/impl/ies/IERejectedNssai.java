@@ -41,6 +41,15 @@ public class IERejectedNssai extends InformationElement4 {
         public VSliceServiceType sst;
         public VSliceDifferentiator sd;
 
+        public VRejectedSNssai() {
+        }
+
+        public VRejectedSNssai(ERejectedSNssaiCause cause, VSliceServiceType sst, VSliceDifferentiator sd) {
+            this.cause = cause;
+            this.sst = sst;
+            this.sd = sd;
+        }
+
         @Override
         public VRejectedSNssai decode(OctetInputStream stream) {
             var res = new VRejectedSNssai();

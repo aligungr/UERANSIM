@@ -36,6 +36,14 @@ public class IELadnInformation extends InformationElement6 {
         public IEDnn dnn;
         public IE5gsTrackingAreaIdentityList trackingAreaIdentityList;
 
+        public VLadn() {
+        }
+
+        public VLadn(IEDnn dnn, IE5gsTrackingAreaIdentityList trackingAreaIdentityList) {
+            this.dnn = dnn;
+            this.trackingAreaIdentityList = trackingAreaIdentityList;
+        }
+
         @Override
         public VLadn decode(OctetInputStream stream) {
             var res = new VLadn();

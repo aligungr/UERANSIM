@@ -44,6 +44,14 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
         public EPduSessionIdentity pduSessionId;
         public EMmCause causeValue;
 
+        public VPduSessionReactivationResultErrorCause() {
+        }
+
+        public VPduSessionReactivationResultErrorCause(EPduSessionIdentity pduSessionId, EMmCause causeValue) {
+            this.pduSessionId = pduSessionId;
+            this.causeValue = causeValue;
+        }
+
         @Override
         public VPduSessionReactivationResultErrorCause decode(OctetInputStream stream) {
             var res = new VPduSessionReactivationResultErrorCause();

@@ -41,6 +41,17 @@ public class IEOperatorDefinedAccessCategoryDefinitions extends InformationEleme
         public OctetString criteria;
         public Bit5 standardizedAccessCategory;
 
+        public VOperatorDefinedAccessCategoryDefinition() {
+        }
+
+        public VOperatorDefinedAccessCategoryDefinition(Octet precedence, Bit5 operatorDefinedAccessCategoryNumber, EPresenceOfStandardizedAccessCategory psac, OctetString criteria, Bit5 standardizedAccessCategory) {
+            this.precedence = precedence;
+            this.operatorDefinedAccessCategoryNumber = operatorDefinedAccessCategoryNumber;
+            this.psac = psac;
+            this.criteria = criteria;
+            this.standardizedAccessCategory = standardizedAccessCategory;
+        }
+
         @Override
         public VOperatorDefinedAccessCategoryDefinition decode(OctetInputStream stream) {
             var res = new VOperatorDefinedAccessCategoryDefinition();
@@ -75,20 +86,20 @@ public class IEOperatorDefinedAccessCategoryDefinitions extends InformationEleme
 
             stream.writeOctet(standardizedAccessCategory.intValue());
         }
+    }
 
-        public static class EPresenceOfStandardizedAccessCategory extends ProtocolEnum {
-            public static final EPresenceOfStandardizedAccessCategory NOT_INCLUDED
-                    = new EPresenceOfStandardizedAccessCategory(0b0, "Standardized access category field is not included");
-            public static final EPresenceOfStandardizedAccessCategory INCLUDED
-                    = new EPresenceOfStandardizedAccessCategory(0b1, "Standardized access category field is included");
+    public static class EPresenceOfStandardizedAccessCategory extends ProtocolEnum {
+        public static final EPresenceOfStandardizedAccessCategory NOT_INCLUDED
+                = new EPresenceOfStandardizedAccessCategory(0b0, "Standardized access category field is not included");
+        public static final EPresenceOfStandardizedAccessCategory INCLUDED
+                = new EPresenceOfStandardizedAccessCategory(0b1, "Standardized access category field is included");
 
-            private EPresenceOfStandardizedAccessCategory(int value, String name) {
-                super(value, name);
-            }
+        private EPresenceOfStandardizedAccessCategory(int value, String name) {
+            super(value, name);
+        }
 
-            public static EPresenceOfStandardizedAccessCategory fromValue(int value) {
-                return fromValueGeneric(EPresenceOfStandardizedAccessCategory.class, value, null);
-            }
+        public static EPresenceOfStandardizedAccessCategory fromValue(int value) {
+            return fromValueGeneric(EPresenceOfStandardizedAccessCategory.class, value, null);
         }
     }
 }

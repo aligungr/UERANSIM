@@ -63,6 +63,19 @@ public class IEEmergencyNumberList extends InformationElement4 {
         public Bit manuallyInitiatedECall;
         public Bit automaticallyInitiatedECall;
 
+        public VEmergencyServiceCategory() {
+        }
+
+        public VEmergencyServiceCategory(Bit police, Bit ambulance, Bit fireBrigade, Bit marineGuard, Bit mountainRescue, Bit manuallyInitiatedECall, Bit automaticallyInitiatedECall) {
+            this.police = police;
+            this.ambulance = ambulance;
+            this.fireBrigade = fireBrigade;
+            this.marineGuard = marineGuard;
+            this.mountainRescue = mountainRescue;
+            this.manuallyInitiatedECall = manuallyInitiatedECall;
+            this.automaticallyInitiatedECall = automaticallyInitiatedECall;
+        }
+
         @Override
         public VEmergencyServiceCategory decode(OctetInputStream stream) {
             var octet = stream.readOctet();

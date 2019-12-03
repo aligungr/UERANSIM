@@ -88,6 +88,17 @@ public class IESorTransparentContainer extends InformationElement6 {
         public OctetString sorMacIAusf;
         public Octet2 counterSor;
 
+        public IESteeringOfRoamingInformation() {
+        }
+
+        public IESteeringOfRoamingInformation(EListIndication listIndication, EListType listType, EAcknowledgement ack, OctetString sorMacIAusf, Octet2 counterSor) {
+            this.listIndication = listIndication;
+            this.listType = listType;
+            this.ack = ack;
+            this.sorMacIAusf = sorMacIAusf;
+            this.counterSor = counterSor;
+        }
+
         @Override
         public void encodeIE6(OctetOutputStream stream) {
             var flags = new Octet();
@@ -105,6 +116,13 @@ public class IESorTransparentContainer extends InformationElement6 {
     public static class IESecuredPacket extends IESteeringOfRoamingInformation {
         public OctetString securedPacket;
 
+        public IESecuredPacket() {
+        }
+
+        public IESecuredPacket(OctetString securedPacket) {
+            this.securedPacket = securedPacket;
+        }
+
         @Override
         public void encodeIE6(OctetOutputStream stream) {
             super.encodeIE6(stream);
@@ -114,6 +132,13 @@ public class IESorTransparentContainer extends InformationElement6 {
 
     public static class IEPlmnIdAccessTech extends IESteeringOfRoamingInformation {
         public List<VPlmnIdAccessTech> list;
+
+        public IEPlmnIdAccessTech() {
+        }
+
+        public IEPlmnIdAccessTech(List<VPlmnIdAccessTech> list) {
+            this.list = list;
+        }
 
         @Override
         public void encodeIE6(OctetOutputStream stream) {
@@ -125,6 +150,14 @@ public class IESorTransparentContainer extends InformationElement6 {
     public static class VPlmnIdAccessTech extends NasValue {
         public VPlmn plmnId;
         public Octet2 accessTechnologyIdentifier;
+
+        public VPlmnIdAccessTech() {
+        }
+
+        public VPlmnIdAccessTech(VPlmn plmnId, Octet2 accessTechnologyIdentifier) {
+            this.plmnId = plmnId;
+            this.accessTechnologyIdentifier = accessTechnologyIdentifier;
+        }
 
         @Override
         public VPlmnIdAccessTech decode(OctetInputStream stream) {

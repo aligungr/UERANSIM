@@ -39,6 +39,9 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
 
     public static class VPartialTrackingAreaIdentityList extends NasValue {
 
+        public VPartialTrackingAreaIdentityList() {
+        }
+
         @Override
         public VPartialTrackingAreaIdentityList decode(OctetInputStream stream) {
             var octet = stream.readOctet();
@@ -65,6 +68,14 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
     public static class VPartialTrackingAreaIdentityList00 extends VPartialTrackingAreaIdentityList {
         public VPlmn mccMnc;
         public List<Octet3> tacs;
+
+        public VPartialTrackingAreaIdentityList00() {
+        }
+
+        public VPartialTrackingAreaIdentityList00(VPlmn mccMnc, List<Octet3> tacs) {
+            this.mccMnc = mccMnc;
+            this.tacs = tacs;
+        }
 
         @Override
         public VPartialTrackingAreaIdentityList00 decode(OctetInputStream stream) {
@@ -101,6 +112,14 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
         public VPlmn mccMnc;
         public Octet3 tac;
 
+        public VPartialTrackingAreaIdentityList01() {
+        }
+
+        public VPartialTrackingAreaIdentityList01(VPlmn mccMnc, Octet3 tac) {
+            this.mccMnc = mccMnc;
+            this.tac = tac;
+        }
+
         @Override
         public VPartialTrackingAreaIdentityList01 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
@@ -126,6 +145,13 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
 
     public static class VPartialTrackingAreaIdentityList10 extends VPartialTrackingAreaIdentityList {
         public List<VTrackingAreaIdentity> tais;
+
+        public VPartialTrackingAreaIdentityList10() {
+        }
+
+        public VPartialTrackingAreaIdentityList10(List<VTrackingAreaIdentity> tais) {
+            this.tais = tais;
+        }
 
         @Override
         public VPartialTrackingAreaIdentityList10 decode(OctetInputStream stream) {
