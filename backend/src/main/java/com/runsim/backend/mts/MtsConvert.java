@@ -266,7 +266,7 @@ public class MtsConvert {
 
             from = created;
         }
-        // (arrays are always assumed as assignable_type)
+        // (arrays are assumed as assignable_type, and it not important)
         list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from, depth));
     }
 }
