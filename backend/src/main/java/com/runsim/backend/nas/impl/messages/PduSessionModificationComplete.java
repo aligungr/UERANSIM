@@ -12,6 +12,11 @@ public class PduSessionModificationComplete extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_MODIFICATION_COMPLETE);
     }
 
+    public PduSessionModificationComplete(IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

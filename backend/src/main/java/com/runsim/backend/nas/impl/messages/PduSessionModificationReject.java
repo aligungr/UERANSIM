@@ -16,6 +16,13 @@ public class PduSessionModificationReject extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_MODIFICATION_REJECT);
     }
 
+    public PduSessionModificationReject(IE5gSmCause smCause, IEGprsTimer3 backOffTimerValue, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCause = smCause;
+        this.backOffTimerValue = backOffTimerValue;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

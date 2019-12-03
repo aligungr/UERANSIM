@@ -20,6 +20,19 @@ public class SecurityModeCommand extends PlainMmMessage {
         super(EMessageType.SECURITY_MODE_COMMAND);
     }
 
+    public SecurityModeCommand(IENasSecurityAlgorithms selectedNasSecurityAlgorithms, IENasKeySetIdentifier ngKsi, IEUeSecurityCapability replayedUeSecurityCapabilities, IEImeiSvRequest imeiSvRequest, IEEpsNasSecurityAlgorithms epsNasSecurityAlgorithms, IEAdditional5gSecurityInformation additional5gSecurityInformation, IEEapMessage eapMessage, IEAbba abba, IES1UeNetworkCapability replayedS1UeNetworkCapability) {
+        this();
+        this.selectedNasSecurityAlgorithms = selectedNasSecurityAlgorithms;
+        this.ngKsi = ngKsi;
+        this.replayedUeSecurityCapabilities = replayedUeSecurityCapabilities;
+        this.imeiSvRequest = imeiSvRequest;
+        this.epsNasSecurityAlgorithms = epsNasSecurityAlgorithms;
+        this.additional5gSecurityInformation = additional5gSecurityInformation;
+        this.eapMessage = eapMessage;
+        this.abba = abba;
+        this.replayedS1UeNetworkCapability = replayedS1UeNetworkCapability;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

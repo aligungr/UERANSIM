@@ -14,6 +14,11 @@ public class PduSessionAuthenticationComplete extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_AUTHENTICATION_COMPLETE);
     }
 
+    public PduSessionAuthenticationComplete(IEEapMessage eapMessage) {
+        this();
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

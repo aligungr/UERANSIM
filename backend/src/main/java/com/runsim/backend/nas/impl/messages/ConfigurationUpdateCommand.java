@@ -28,6 +28,27 @@ public class ConfigurationUpdateCommand extends PlainMmMessage {
         super(EMessageType.CONFIGURATION_UPDATE_COMMAND);
     }
 
+    public ConfigurationUpdateCommand(IEConfigurationUpdateIndication configurationUpdateIndication, IE5gsMobileIdentity guti, IE5gsTrackingAreaIdentityList taiList, IENssai allowedNssai, IEServiceAreaList serviceAreaList, IENetworkName networkFullName, IENetworkName networkShortName, IETimeZone localTimeZone, IETimeZoneAndTime universalTimeAndLocalTimeZone, IEDaylightSavingTime networkDaylightSavingTime, IELadnInformation ladnInformation, IEMicoIndication micoIndication, IENetworkSlicingIndication networkSlicingIndication, IENssai configuredNssai, IERejectedNssai rejectedNssai, IEOperatorDefinedAccessCategoryDefinitions operatorDefinedAccessCategoryDefinitions, IESmsIndication smsIndication) {
+        this();
+        this.configurationUpdateIndication = configurationUpdateIndication;
+        this.guti = guti;
+        this.taiList = taiList;
+        this.allowedNssai = allowedNssai;
+        this.serviceAreaList = serviceAreaList;
+        this.networkFullName = networkFullName;
+        this.networkShortName = networkShortName;
+        this.localTimeZone = localTimeZone;
+        this.universalTimeAndLocalTimeZone = universalTimeAndLocalTimeZone;
+        this.networkDaylightSavingTime = networkDaylightSavingTime;
+        this.ladnInformation = ladnInformation;
+        this.micoIndication = micoIndication;
+        this.networkSlicingIndication = networkSlicingIndication;
+        this.configuredNssai = configuredNssai;
+        this.rejectedNssai = rejectedNssai;
+        this.operatorDefinedAccessCategoryDefinitions = operatorDefinedAccessCategoryDefinitions;
+        this.smsIndication = smsIndication;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

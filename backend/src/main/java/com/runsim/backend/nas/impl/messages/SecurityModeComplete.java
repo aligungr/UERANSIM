@@ -14,6 +14,12 @@ public class SecurityModeComplete extends PlainMmMessage {
         super(EMessageType.SECURITY_MODE_COMPLETE);
     }
 
+    public SecurityModeComplete(IE5gsMobileIdentity imeiSv, IENasMessageContainer nasMessageContainer) {
+        this();
+        this.imeiSv = imeiSv;
+        this.nasMessageContainer = nasMessageContainer;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

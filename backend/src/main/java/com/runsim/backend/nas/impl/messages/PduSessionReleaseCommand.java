@@ -18,6 +18,14 @@ public class PduSessionReleaseCommand extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_RELEASE_COMMAND);
     }
 
+    public PduSessionReleaseCommand(IE5gSmCause smCause, IEGprsTimer3 backOffTimerValue, IEEapMessage eapMessage, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCause = smCause;
+        this.backOffTimerValue = backOffTimerValue;
+        this.eapMessage = eapMessage;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

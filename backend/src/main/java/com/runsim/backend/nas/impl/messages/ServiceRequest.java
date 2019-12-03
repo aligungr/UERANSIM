@@ -18,6 +18,17 @@ public class ServiceRequest extends PlainMmMessage {
         super(EMessageType.SERVICE_REQUEST);
     }
 
+    public ServiceRequest(IENasKeySetIdentifier ngKSI, IEServiceType serviceType, IE5gsMobileIdentity tmsi, IEUplinkDataStatus uplinkDataStatus, IEPduSessionStatus pduSessionStatus, IEAllowedPduSessionStatus allowedPduSessionStatus, IENasMessageContainer nasMessageContainer) {
+        this();
+        this.ngKSI = ngKSI;
+        this.serviceType = serviceType;
+        this.tmsi = tmsi;
+        this.uplinkDataStatus = uplinkDataStatus;
+        this.pduSessionStatus = pduSessionStatus;
+        this.allowedPduSessionStatus = allowedPduSessionStatus;
+        this.nasMessageContainer = nasMessageContainer;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

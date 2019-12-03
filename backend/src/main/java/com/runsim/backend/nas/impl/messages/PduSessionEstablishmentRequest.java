@@ -19,6 +19,18 @@ public class PduSessionEstablishmentRequest extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_ESTABLISHMENT_REQUEST);
     }
 
+    public PduSessionEstablishmentRequest(IEIntegrityProtectionMaximumDataRate integrityProtectionMaximumDataRate, IEPduSessionType pduSessionType, IESscMode sscMode, IE5gSmCapability smCapability, IEMaximumNumberOfSupportedPacketFilters maximumNumberOfSupportedPacketFilters, IEAlwaysOnPduSessionRequested alwaysOnPduSessionRequested, IESmPduDnRequestContainer smPduDnRequestContainer, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.integrityProtectionMaximumDataRate = integrityProtectionMaximumDataRate;
+        this.pduSessionType = pduSessionType;
+        this.sscMode = sscMode;
+        this.smCapability = smCapability;
+        this.maximumNumberOfSupportedPacketFilters = maximumNumberOfSupportedPacketFilters;
+        this.alwaysOnPduSessionRequested = alwaysOnPduSessionRequested;
+        this.smPduDnRequestContainer = smPduDnRequestContainer;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

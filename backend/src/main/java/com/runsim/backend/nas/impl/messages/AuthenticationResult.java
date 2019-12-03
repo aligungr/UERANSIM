@@ -16,6 +16,13 @@ public class AuthenticationResult extends PlainMmMessage {
         super(EMessageType.AUTHENTICATION_RESULT);
     }
 
+    public AuthenticationResult(IENasKeySetIdentifier ngKSI, IEEapMessage eapMessage, IEAbba abba) {
+        this();
+        this.ngKSI = ngKSI;
+        this.eapMessage = eapMessage;
+        this.abba = abba;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

@@ -20,6 +20,19 @@ public class PduSessionModificationRequest extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_MODIFICATION_REQUEST);
     }
 
+    public PduSessionModificationRequest(IE5gSmCapability smCapability, IE5gSmCause smCause, IEMaximumNumberOfSupportedPacketFilters maximumNumberOfSupportedPacketFilters, IEAlwaysOnPduSessionRequested alwaysOnPduSessionRequested, IEIntegrityProtectionMaximumDataRate integrityProtectionMaximumDataRate, IEQoSRules requestedQosRules, IEQoSFlowDescriptions requestedQosFlowDescriptions, IEMappedEpsBearerContexts mappedEpsBearerContexts, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCapability = smCapability;
+        this.smCause = smCause;
+        this.maximumNumberOfSupportedPacketFilters = maximumNumberOfSupportedPacketFilters;
+        this.alwaysOnPduSessionRequested = alwaysOnPduSessionRequested;
+        this.integrityProtectionMaximumDataRate = integrityProtectionMaximumDataRate;
+        this.requestedQosRules = requestedQosRules;
+        this.requestedQosFlowDescriptions = requestedQosFlowDescriptions;
+        this.mappedEpsBearerContexts = mappedEpsBearerContexts;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

@@ -36,6 +36,33 @@ public class RegistrationRequest extends PlainMmMessage {
         super(EMessageType.REGISTRATION_REQUEST);
     }
 
+    public RegistrationRequest(IE5gsRegistrationType registrationType, IENasKeySetIdentifier nasKeySetIdentifier, IE5gsMobileIdentity mobileIdentity, IENasKeySetIdentifier nonCurrentNgKsi, IEMicoIndication micoIndication, IENetworkSlicingIndication networkSlicingIndication, IEUeSecurityCapability ueSecurityCapability, IE5gMmCapability mmCapability, IENssai requestedNSSA, IE5gsMobileIdentity additionalGuti, IE5gsDrxParameters requestedDrxParameters, IEUesUsageSetting uesUsageSetting, IE5gsUpdateType updateType, IEUeStatus ueStatus, IEUplinkDataStatus uplinkDataStatus, IEEpsNasMessageContainer epsNasMessageContainer, IENasMessageContainer nasMessageContainer, IEAllowedPduSessionStatus allowedPduSessionStatus, IE5gsTrackingAreaIdentity lastVisitedRegisteredTai, IES1UeNetworkCapability s1UeNetworkCapability, IEPduSessionStatus pduSessionStatus, IEPayloadContainer payloadContainer, IELadnIndication ladnIndication) {
+        this();
+        this.registrationType = registrationType;
+        this.nasKeySetIdentifier = nasKeySetIdentifier;
+        this.mobileIdentity = mobileIdentity;
+        this.nonCurrentNgKsi = nonCurrentNgKsi;
+        this.micoIndication = micoIndication;
+        this.networkSlicingIndication = networkSlicingIndication;
+        this.ueSecurityCapability = ueSecurityCapability;
+        this.mmCapability = mmCapability;
+        this.requestedNSSA = requestedNSSA;
+        this.additionalGuti = additionalGuti;
+        this.requestedDrxParameters = requestedDrxParameters;
+        this.uesUsageSetting = uesUsageSetting;
+        this.updateType = updateType;
+        this.ueStatus = ueStatus;
+        this.uplinkDataStatus = uplinkDataStatus;
+        this.epsNasMessageContainer = epsNasMessageContainer;
+        this.nasMessageContainer = nasMessageContainer;
+        this.allowedPduSessionStatus = allowedPduSessionStatus;
+        this.lastVisitedRegisteredTai = lastVisitedRegisteredTai;
+        this.s1UeNetworkCapability = s1UeNetworkCapability;
+        this.pduSessionStatus = pduSessionStatus;
+        this.payloadContainer = payloadContainer;
+        this.ladnIndication = ladnIndication;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

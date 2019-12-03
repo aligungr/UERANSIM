@@ -12,6 +12,11 @@ public class RegistrationComplete extends PlainMmMessage {
         super(EMessageType.REGISTRATION_COMPLETE);
     }
 
+    public RegistrationComplete(IESorTransparentContainer sorTransparentContainer) {
+        this();
+        this.sorTransparentContainer = sorTransparentContainer;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

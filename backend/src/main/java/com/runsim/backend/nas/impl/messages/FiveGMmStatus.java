@@ -12,6 +12,11 @@ public class FiveGMmStatus extends PlainMmMessage {
         super(EMessageType.FIVEG_MM_STATUS);
     }
 
+    public FiveGMmStatus(IE5gMmCause mmCause) {
+        this();
+        this.mmCause = mmCause;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

@@ -17,6 +17,16 @@ public class DlNasTransport extends PlainMmMessage {
         super(EMessageType.DL_NAS_TRANSPORT);
     }
 
+    public DlNasTransport(IEPayloadContainerType payloadContainerType, IEPayloadContainer payloadContainer, IEPduSessionIdentity2 pduSessionId, IEAdditionalInformation additionalInformation, IE5gMmCause mmCause, IEGprsTimer3 backOffTimerValue) {
+        this();
+        this.payloadContainerType = payloadContainerType;
+        this.payloadContainer = payloadContainer;
+        this.pduSessionId = pduSessionId;
+        this.additionalInformation = additionalInformation;
+        this.mmCause = mmCause;
+        this.backOffTimerValue = backOffTimerValue;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

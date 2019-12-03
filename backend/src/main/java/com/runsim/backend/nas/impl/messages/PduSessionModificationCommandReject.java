@@ -14,6 +14,12 @@ public class PduSessionModificationCommandReject extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_MODIFICATION_COMMAND_REJECT);
     }
 
+    public PduSessionModificationCommandReject(IE5gSmCause smCause, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCause = smCause;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

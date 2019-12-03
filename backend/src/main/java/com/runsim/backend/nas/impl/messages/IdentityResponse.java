@@ -12,6 +12,11 @@ public class IdentityResponse extends PlainMmMessage {
         super(EMessageType.IDENTITY_RESPONSE);
     }
 
+    public IdentityResponse(IE5gsMobileIdentity mobileIdentity) {
+        this();
+        this.mobileIdentity = mobileIdentity;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

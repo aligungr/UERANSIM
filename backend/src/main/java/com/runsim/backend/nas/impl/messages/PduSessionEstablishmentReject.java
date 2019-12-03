@@ -16,6 +16,15 @@ public class PduSessionEstablishmentReject extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_ESTABLISHMENT_REJECT);
     }
 
+    public PduSessionEstablishmentReject(IE5gSmCause smCause, IEGprsTimer3 backOffTimerValue, IEAllowedSscMode allowedSscMode, IEEapMessage eapMessage, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCause = smCause;
+        this.backOffTimerValue = backOffTimerValue;
+        this.allowedSscMode = allowedSscMode;
+        this.eapMessage = eapMessage;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

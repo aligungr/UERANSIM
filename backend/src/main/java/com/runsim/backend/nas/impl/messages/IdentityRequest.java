@@ -12,6 +12,11 @@ public class IdentityRequest extends PlainMmMessage {
         super(EMessageType.IDENTITY_REQUEST);
     }
 
+    public IdentityRequest(IE5gsIdentityType identityType) {
+        this();
+        this.identityType = identityType;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);
