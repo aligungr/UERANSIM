@@ -9,6 +9,21 @@ import com.runsim.backend.utils.octets.Octet4;
 public class V5gTmsi extends NasValue {
     public Octet4 value;
 
+    public V5gTmsi() {
+    }
+
+    public V5gTmsi(Octet4 value) {
+        this.value = value;
+    }
+
+    public V5gTmsi(long value) {
+        this(new Octet4(value));
+    }
+
+    public V5gTmsi(String hex) {
+        this(new Octet4(hex));
+    }
+
     @Override
     public V5gTmsi decode(OctetInputStream stream) {
         Octet octet3 = stream.readOctet();

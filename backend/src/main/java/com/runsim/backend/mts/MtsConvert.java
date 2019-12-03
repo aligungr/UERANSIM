@@ -23,6 +23,10 @@ public class MtsConvert {
             return true;
         if (Traits.isNumberOrString(from) && Traits.isNumberOrString(to))
             return true;
+        if (Traits.isBoolean(from) && Traits.isBoolean(to))
+            return true;
+        if (Traits.isChar(from) && Traits.isChar(to))
+            return true;
         if (TypeRegistry.isCustomConvertable(from, to))
             return true;
 
@@ -141,6 +145,10 @@ public class MtsConvert {
             list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, from, depth));
         } else if (Traits.isNumberOrString(to) && Traits.isNumberOrString(from.getClass()) && Traits.isNumberIfString(from)) {
             list.add(numberConversion(from, to, depth));
+        } else if (Traits.isBoolean(from.getClass()) && Traits.isBoolean(to)) {
+            list.add(new Conversion<>(ConversionLevel.SAME_TYPE, (Boolean) (boolean) from, depth));
+        } else if (Traits.isChar(from.getClass()) && Traits.isChar(to)) {
+            list.add(new Conversion<>(ConversionLevel.SAME_TYPE, (Character) (char) from, depth));
         } else {
             var customConverter = TypeRegistry.getCustomConverter(to);
             if (customConverter != null) {

@@ -6,6 +6,14 @@ import java.util.function.Function;
 
 public final class Traits {
 
+    public static boolean isBoolean(Class<?> type) {
+        return type == boolean.class || type == Boolean.class;
+    }
+
+    public static boolean isChar(Class<?> type) {
+        return type == char.class || type == Character.class;
+    }
+
     public static boolean isByte(Class<?> type) {
         return type == byte.class || type == Byte.class;
     }

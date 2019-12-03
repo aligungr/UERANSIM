@@ -4,6 +4,7 @@ import com.runsim.backend.exceptions.MtsException;
 import com.runsim.backend.utils.Utils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,6 +43,8 @@ public class MtsConstruct {
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
             if (object instanceof ImplicitTypedValue) {
+                if (Traits.isNumberOrString(param.getType()))
+                    return false;
                 continue;
             }
             if (object == null) {
@@ -142,6 +145,8 @@ public class MtsConstruct {
 
         try {
             return (T) constructor.newInstance(paramInstances);
+        } catch (InvocationTargetException e) {
+            throw new MtsException("construction failed for type %s, error message: %s", type.getSimpleName(), e.getTargetException().getMessage());
         } catch (Exception e) {
             throw new MtsException("Instantiation failed");
         }

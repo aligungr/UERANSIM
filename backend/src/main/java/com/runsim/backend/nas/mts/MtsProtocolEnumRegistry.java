@@ -39,7 +39,7 @@ public class MtsProtocolEnumRegistry implements TypeRegistry.ICustomTypeRegistry
 
             var res = ProtocolEnum.fromIdentifier((Class<? extends ProtocolEnum>) type, identifier);
             if (res == null)
-                throw new MtsException("invalid value for enum %s", type.getSimpleName());
+                throw new MtsException("value not found for enum %s with identifier %s", type.getSimpleName(), identifier);
             return res;
         }
 
@@ -49,15 +49,15 @@ public class MtsProtocolEnumRegistry implements TypeRegistry.ICustomTypeRegistry
 
             var res = ProtocolEnum.fromIntValue((Class<? extends ProtocolEnum>) type, value);
             if (res == null)
-                throw new MtsException("invalid value for enum %s", type.getSimpleName());
+                throw new MtsException("value not found for enum %s with value %d", type.getSimpleName(), value);
             return res;
         }
 
         var res = ProtocolEnum.fromName((Class<? extends ProtocolEnum>) type, name);
         if (res.size() == 0)
-            throw new MtsException("invalid value for enum %s", type.getSimpleName());
+            throw new MtsException("value not found for enum %s with name %s", type.getSimpleName(), name);
         if (res.size() > 1)
-            throw new MtsException("multiple values matched for enum %s", type.getSimpleName());
+            throw new MtsException("multiple values matched for enum %s with name %s", type.getSimpleName(), name);
         return res.get(0);
     }
 

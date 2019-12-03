@@ -1,7 +1,6 @@
 {
-  "@type": "Sınıf",
-  "mcc1": "TURKEY",
-  "mcc2": {
-    "name": "Turkey"
-  }
+  "@type": "VPlmn",
+  "mcc": 313,
+  "mnc": 210,
+  "longMNC": false
 }

@@ -9,6 +9,21 @@ import com.runsim.backend.utils.octets.Octet;
 public class VTimeZone extends NasValue {
     public Octet value;
 
+    public VTimeZone() {
+    }
+
+    public VTimeZone(Octet value) {
+        this.value = value;
+    }
+
+    public VTimeZone(String hex) {
+        this.value = new Octet(hex);
+    }
+
+    public VTimeZone(int hourDifference) {
+        this.value = fromHourDifference(hourDifference).value;
+    }
+
     @Override
     public VTimeZone decode(OctetInputStream stream) {
         return fromOctet(stream.readOctet());
