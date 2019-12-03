@@ -69,6 +69,7 @@ public class OctetN {
      * Returns hexadecimal string representation of the value.
      */
     public final String toHexString() {
+        // todo: padding buglı
         return "0x" + Utils.padLeft(Long.toHexString(_longValue), (_octetCount + (_octetCount % 2)) * 2, '0');
     }
 

@@ -25,6 +25,15 @@
     }
   },
   "requestedNSSAI": {
-    "Nssais": []
+    "sNssais": [
+      {
+        "sst": {
+          "value": 1
+        },
+        "sd": {
+          "hex": "09AFaf"
+        }
+      }
+    ]
   }
 }

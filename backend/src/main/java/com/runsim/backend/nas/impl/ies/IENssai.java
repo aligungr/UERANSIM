@@ -10,24 +10,24 @@ import com.runsim.backend.utils.Utils;
 import java.util.Arrays;
 
 public class IENssai extends InformationElement4 {
-    public IESNssai[] sNssas;
+    public IESNssai[] sNssais;
 
     public IENssai() {
     }
 
-    public IENssai(IESNssai[] sNssas) {
-        this.sNssas = sNssas;
+    public IENssai(IESNssai[] sNssais) {
+        this.sNssais = sNssais;
     }
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IENssai();
-        res.sNssas = Utils.decodeList(stream, stream1 -> NasDecoder.ie2346(stream1, IESNssai.class), length);
+        res.sNssais = Utils.decodeList(stream, s -> NasDecoder.ie2346(s, IESNssai.class), length);
         return res;
     }
 
     @Override
     public void encodeIE4(OctetOutputStream stream) {
-        Arrays.stream(sNssas).forEach(snssa -> NasEncoder.ie2346(stream, snssa));
+        Arrays.stream(sNssais).forEach(snssa -> NasEncoder.ie2346(stream, snssa));
     }
 }

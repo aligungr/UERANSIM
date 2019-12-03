@@ -71,12 +71,12 @@ public class RegistrationFlow1 extends BaseFlow {
             nasMessage.mobileIdentity = imsi;
 
             var nssai = new IENssai();
-            nssai.sNssas = new IESNssai[1];
-            nssai.sNssas[0] = new IESNssai();
-            nssai.sNssas[0].sst = new VSliceServiceType();
-            nssai.sNssas[0].sst.value = new Octet(1);
-            nssai.sNssas[0].sd = new VSliceDifferentiator();
-            nssai.sNssas[0].sd.value = new Octet3(0x09, 0xAF, 0xaf);
+            nssai.sNssais = new IESNssai[1];
+            nssai.sNssais[0] = new IESNssai();
+            nssai.sNssais[0].sst = new VSliceServiceType();
+            nssai.sNssais[0].sst.value = new Octet(1);
+            nssai.sNssais[0].sd = new VSliceDifferentiator();
+            nssai.sNssais[0].sd.value = new Octet3(0x09, 0xAF, 0xaf);
             nasMessage.requestedNSSAI = nssai;
 
             nasByteArray = NasEncoder.nasPdu(nasMessage);
