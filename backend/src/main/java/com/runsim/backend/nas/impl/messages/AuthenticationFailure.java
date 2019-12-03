@@ -14,6 +14,12 @@ public class AuthenticationFailure extends PlainMmMessage {
         super(EMessageType.AUTHENTICATION_FAILURE);
     }
 
+    public AuthenticationFailure(IE5gMmCause mmCause, IEAuthenticationFailureParameter authenticationFailureParameter) {
+        this();
+        this.mmCause = mmCause;
+        this.authenticationFailureParameter = authenticationFailureParameter;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

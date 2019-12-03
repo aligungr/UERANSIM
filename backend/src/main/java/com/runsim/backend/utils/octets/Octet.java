@@ -1,5 +1,6 @@
 package com.runsim.backend.utils.octets;
 
+import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.bits.Bit;
 
 /**
@@ -13,6 +14,10 @@ public final class Octet extends OctetN {
 
     public Octet(long value) {
         super(value, 1);
+    }
+
+    public Octet(String hex) {
+        this(Utils.toLong(hex));
     }
 
     @Override

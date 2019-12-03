@@ -10,6 +10,14 @@ public class IETimeZoneAndTime extends InformationElement3 {
     public VTime time;
     public VTimeZone timeZone;
 
+    public IETimeZoneAndTime() {
+    }
+
+    public IETimeZoneAndTime(VTime time, VTimeZone timeZone) {
+        this.time = time;
+        this.timeZone = timeZone;
+    }
+
     @Override
     protected IETimeZoneAndTime decodeIE3(OctetInputStream stream) {
         var res = new IETimeZoneAndTime();

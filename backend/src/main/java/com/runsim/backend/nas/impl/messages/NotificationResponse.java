@@ -12,6 +12,11 @@ public class NotificationResponse extends PlainMmMessage {
         super(EMessageType.NOTIFICATION_RESPONSE);
     }
 
+    public NotificationResponse(IEPduSessionStatus pduSessionStatus) {
+        this();
+        this.pduSessionStatus = pduSessionStatus;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

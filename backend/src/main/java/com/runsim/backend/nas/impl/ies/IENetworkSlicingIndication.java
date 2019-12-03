@@ -8,6 +8,14 @@ public class IENetworkSlicingIndication extends InformationElement1 {
     public ENetworkSlicingSubscriptionChangeIndication nssci;
     public EDefaultConfiguredNssaiIndication dcni;
 
+    public IENetworkSlicingIndication() {
+    }
+
+    public IENetworkSlicingIndication(ENetworkSlicingSubscriptionChangeIndication nssci, EDefaultConfiguredNssaiIndication dcni) {
+        this.nssci = nssci;
+        this.dcni = dcni;
+    }
+
     @Override
     public IENetworkSlicingIndication decodeIE1(Bit4 value) {
         var res = new IENetworkSlicingIndication();

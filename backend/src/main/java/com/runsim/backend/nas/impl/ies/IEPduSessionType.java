@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEPduSessionType extends InformationElement1 {
     public EPduSessionType pduSessionType;
 
+    public IEPduSessionType() {
+    }
+
+    public IEPduSessionType(EPduSessionType pduSessionType) {
+        this.pduSessionType = pduSessionType;
+    }
+
     @Override
     public IEPduSessionType decodeIE1(Bit4 value) {
         var res = new IEPduSessionType();

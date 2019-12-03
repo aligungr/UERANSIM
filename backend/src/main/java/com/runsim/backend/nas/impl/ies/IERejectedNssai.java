@@ -15,6 +15,13 @@ import java.util.List;
 public class IERejectedNssai extends InformationElement4 {
     public List<VRejectedSNssai> rejectedSNssaiList;
 
+    public IERejectedNssai() {
+    }
+
+    public IERejectedNssai(List<VRejectedSNssai> rejectedSNssaiList) {
+        this.rejectedSNssaiList = rejectedSNssaiList;
+    }
+
     @Override
     protected IERejectedNssai decodeIE4(OctetInputStream stream, int length) {
         var res = new IERejectedNssai();
@@ -33,6 +40,15 @@ public class IERejectedNssai extends InformationElement4 {
         public ERejectedSNssaiCause cause;
         public VSliceServiceType sst;
         public VSliceDifferentiator sd;
+
+        public VRejectedSNssai() {
+        }
+
+        public VRejectedSNssai(ERejectedSNssaiCause cause, VSliceServiceType sst, VSliceDifferentiator sd) {
+            this.cause = cause;
+            this.sst = sst;
+            this.sd = sd;
+        }
 
         @Override
         public VRejectedSNssai decode(OctetInputStream stream) {

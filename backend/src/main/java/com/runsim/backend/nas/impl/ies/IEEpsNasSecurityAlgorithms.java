@@ -9,6 +9,14 @@ public class IEEpsNasSecurityAlgorithms extends InformationElement3 {
     public EEpsTypeOfIntegrityProtectionAlgorithm typeOfIntegrityProtectionAlgorithm;
     public EEpsTypeOfCipheringAlgorithm typeOfCipheringAlgorithm;
 
+    public IEEpsNasSecurityAlgorithms() {
+    }
+
+    public IEEpsNasSecurityAlgorithms(EEpsTypeOfIntegrityProtectionAlgorithm typeOfIntegrityProtectionAlgorithm, EEpsTypeOfCipheringAlgorithm typeOfCipheringAlgorithm) {
+        this.typeOfIntegrityProtectionAlgorithm = typeOfIntegrityProtectionAlgorithm;
+        this.typeOfCipheringAlgorithm = typeOfCipheringAlgorithm;
+    }
+
     @Override
     protected IEEpsNasSecurityAlgorithms decodeIE3(OctetInputStream stream) {
         var res = new IEEpsNasSecurityAlgorithms();

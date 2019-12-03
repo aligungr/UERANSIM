@@ -125,6 +125,67 @@ public class IES1UeNetworkCapability extends InformationElement4 {
     public Bit supported_N1mode;
     public Bit supported_SGC;
 
+    public IES1UeNetworkCapability() {
+    }
+
+    public IES1UeNetworkCapability(Bit supported_EEA7, Bit supported_EEA6, Bit supported_EEA5, Bit supported_EEA4, Bit supported_128_EEA3, Bit supported_128_EEA2, Bit supported_128_EEA1, Bit supported_EEA0, Bit supported_EIA7, Bit supported_EIA6, Bit supported_EIA5, Bit supported_EIA4, Bit supported_128_EIA3, Bit supported_128_EIA2, Bit supported_128_EIA1, Bit supported_EIA0, Bit supported_UEA7, Bit supported_UEA6, Bit supported_UEA5, Bit supported_UEA4, Bit supported_UEA3, Bit supported_UEA2, Bit supported_UEA1, Bit supported_UEA0, Bit supported_UIA7, Bit supported_UIA6, Bit supported_UIA5, Bit supported_UIA4, Bit supported_UIA3, Bit supported_UIA2, Bit supported_UIA1, Bit supported_UCS2, Bit supported_NF, Bit supported_1xSR_VCC, Bit supported_LCS, Bit supported_LPP, Bit supported_ACC_CSFB, Bit supported_H_245_ASH, Bit supported_ProSe, Bit supported_ProSe_dd, Bit supported_ProSe_dc, Bit supported_Prose_relay, Bit supported_CP_CIoT, Bit supported_UP_CIoT, Bit supported_S1_U_data, Bit supported_ERw_oPDN, Bit supported_HC_CP_CIoT, Bit supported_ePCO, Bit supported_multipleDRB, Bit supported_V2X_PC5, Bit supported_RestrictEC, Bit supported_CP_backoff, Bit supported_DCNR, Bit supported_N1mode, Bit supported_SGC) {
+        this.supported_EEA7 = supported_EEA7;
+        this.supported_EEA6 = supported_EEA6;
+        this.supported_EEA5 = supported_EEA5;
+        this.supported_EEA4 = supported_EEA4;
+        this.supported_128_EEA3 = supported_128_EEA3;
+        this.supported_128_EEA2 = supported_128_EEA2;
+        this.supported_128_EEA1 = supported_128_EEA1;
+        this.supported_EEA0 = supported_EEA0;
+        this.supported_EIA7 = supported_EIA7;
+        this.supported_EIA6 = supported_EIA6;
+        this.supported_EIA5 = supported_EIA5;
+        this.supported_EIA4 = supported_EIA4;
+        this.supported_128_EIA3 = supported_128_EIA3;
+        this.supported_128_EIA2 = supported_128_EIA2;
+        this.supported_128_EIA1 = supported_128_EIA1;
+        this.supported_EIA0 = supported_EIA0;
+        this.supported_UEA7 = supported_UEA7;
+        this.supported_UEA6 = supported_UEA6;
+        this.supported_UEA5 = supported_UEA5;
+        this.supported_UEA4 = supported_UEA4;
+        this.supported_UEA3 = supported_UEA3;
+        this.supported_UEA2 = supported_UEA2;
+        this.supported_UEA1 = supported_UEA1;
+        this.supported_UEA0 = supported_UEA0;
+        this.supported_UIA7 = supported_UIA7;
+        this.supported_UIA6 = supported_UIA6;
+        this.supported_UIA5 = supported_UIA5;
+        this.supported_UIA4 = supported_UIA4;
+        this.supported_UIA3 = supported_UIA3;
+        this.supported_UIA2 = supported_UIA2;
+        this.supported_UIA1 = supported_UIA1;
+        this.supported_UCS2 = supported_UCS2;
+        this.supported_NF = supported_NF;
+        this.supported_1xSR_VCC = supported_1xSR_VCC;
+        this.supported_LCS = supported_LCS;
+        this.supported_LPP = supported_LPP;
+        this.supported_ACC_CSFB = supported_ACC_CSFB;
+        this.supported_H_245_ASH = supported_H_245_ASH;
+        this.supported_ProSe = supported_ProSe;
+        this.supported_ProSe_dd = supported_ProSe_dd;
+        this.supported_ProSe_dc = supported_ProSe_dc;
+        this.supported_Prose_relay = supported_Prose_relay;
+        this.supported_CP_CIoT = supported_CP_CIoT;
+        this.supported_UP_CIoT = supported_UP_CIoT;
+        this.supported_S1_U_data = supported_S1_U_data;
+        this.supported_ERw_oPDN = supported_ERw_oPDN;
+        this.supported_HC_CP_CIoT = supported_HC_CP_CIoT;
+        this.supported_ePCO = supported_ePCO;
+        this.supported_multipleDRB = supported_multipleDRB;
+        this.supported_V2X_PC5 = supported_V2X_PC5;
+        this.supported_RestrictEC = supported_RestrictEC;
+        this.supported_CP_backoff = supported_CP_backoff;
+        this.supported_DCNR = supported_DCNR;
+        this.supported_N1mode = supported_N1mode;
+        this.supported_SGC = supported_SGC;
+    }
+
     @Override
     protected IES1UeNetworkCapability decodeIE4(OctetInputStream stream, int length) {
         var cap = new IES1UeNetworkCapability();

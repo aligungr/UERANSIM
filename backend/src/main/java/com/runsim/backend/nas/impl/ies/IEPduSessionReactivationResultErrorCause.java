@@ -11,6 +11,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IEPduSessionReactivationResultErrorCause extends InformationElement6 {
     public VPduSessionReactivationResultErrorCause[] values;
 
+    public IEPduSessionReactivationResultErrorCause() {
+    }
+
+    public IEPduSessionReactivationResultErrorCause(VPduSessionReactivationResultErrorCause[] values) {
+        this.values = values;
+    }
+
     @Override
     protected IEPduSessionReactivationResultErrorCause decodeIE6(OctetInputStream stream, int length) {
         var res = new IEPduSessionReactivationResultErrorCause();
@@ -36,6 +43,14 @@ public class IEPduSessionReactivationResultErrorCause extends InformationElement
     public static class VPduSessionReactivationResultErrorCause extends NasValue {
         public EPduSessionIdentity pduSessionId;
         public EMmCause causeValue;
+
+        public VPduSessionReactivationResultErrorCause() {
+        }
+
+        public VPduSessionReactivationResultErrorCause(EPduSessionIdentity pduSessionId, EMmCause causeValue) {
+            this.pduSessionId = pduSessionId;
+            this.causeValue = causeValue;
+        }
 
         @Override
         public VPduSessionReactivationResultErrorCause decode(OctetInputStream stream) {

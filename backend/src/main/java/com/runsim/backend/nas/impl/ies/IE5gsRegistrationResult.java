@@ -9,6 +9,14 @@ public class IE5gsRegistrationResult extends InformationElement4 {
     public ESmsOverNasTransportAllowed smsOverNasAllowed;
     public E5gsRegistrationResult registrationResult;
 
+    public IE5gsRegistrationResult() {
+    }
+
+    public IE5gsRegistrationResult(ESmsOverNasTransportAllowed smsOverNasAllowed, E5gsRegistrationResult registrationResult) {
+        this.smsOverNasAllowed = smsOverNasAllowed;
+        this.registrationResult = registrationResult;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         int value = stream.readOctetI();

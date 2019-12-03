@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEServiceType extends InformationElement1 {
     public EServiceType serviceType;
 
+    public IEServiceType() {
+    }
+
+    public IEServiceType(EServiceType serviceType) {
+        this.serviceType = serviceType;
+    }
+
     @Override
     public IEServiceType decodeIE1(Bit4 value) {
         var res = new IEServiceType();

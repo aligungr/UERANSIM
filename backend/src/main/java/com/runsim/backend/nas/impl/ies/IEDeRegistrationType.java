@@ -10,6 +10,15 @@ public class IEDeRegistrationType extends InformationElement1 {
     public EReRegistrationRequired reRegistrationRequired;
     public ESwitchOff switchOff;
 
+    public IEDeRegistrationType() {
+    }
+
+    public IEDeRegistrationType(EDeRegistrationAccessType accessType, EReRegistrationRequired reRegistrationRequired, ESwitchOff switchOff) {
+        this.accessType = accessType;
+        this.reRegistrationRequired = reRegistrationRequired;
+        this.switchOff = switchOff;
+    }
+
     @Override
     public IEDeRegistrationType decodeIE1(Bit4 value) {
         var res = new IEDeRegistrationType();

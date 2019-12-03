@@ -3,10 +3,26 @@ package com.runsim.backend.nas.impl.values;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
+import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.bits.Bit10;
 
 public class VAmfSetId extends NasValue {
     public Bit10 value;
+
+    public VAmfSetId() {
+    }
+
+    public VAmfSetId(Bit10 value) {
+        this.value = value;
+    }
+
+    public VAmfSetId(int value) {
+        this(new Bit10(value));
+    }
+
+    public VAmfSetId(String hex) {
+        this(Utils.toInt(hex));
+    }
 
     @Override
     public VAmfSetId decode(OctetInputStream stream) {

@@ -14,6 +14,13 @@ import java.util.List;
 public class IEMappedEpsBearerContexts extends InformationElement6 {
     public List<VMappedEpsBearerContext> mappedEpsBearerContexts;
 
+    public IEMappedEpsBearerContexts() {
+    }
+
+    public IEMappedEpsBearerContexts(List<VMappedEpsBearerContext> mappedEpsBearerContexts) {
+        this.mappedEpsBearerContexts = mappedEpsBearerContexts;
+    }
+
     @Override
     protected IEMappedEpsBearerContexts decodeIE6(OctetInputStream stream, int length) {
         var res = new IEMappedEpsBearerContexts();
@@ -31,6 +38,16 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
         public EEbit ebit;
         public EOperationCode operationCode;
         public List<VEpsParameter> epsParameterList;
+
+        public VMappedEpsBearerContext() {
+        }
+
+        public VMappedEpsBearerContext(EEpsBearerIdentity epsBearerIdentity, EEbit ebit, EOperationCode operationCode, List<VEpsParameter> epsParameterList) {
+            this.epsBearerIdentity = epsBearerIdentity;
+            this.ebit = ebit;
+            this.operationCode = operationCode;
+            this.epsParameterList = epsParameterList;
+        }
 
         @Override
         public VMappedEpsBearerContext decode(OctetInputStream stream) {
@@ -68,6 +85,14 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
     public static class VEpsParameter extends NasValue {
         public Octet epsParameterIdentifier;
         public OctetString content;
+
+        public VEpsParameter() {
+        }
+
+        public VEpsParameter(Octet epsParameterIdentifier, OctetString content) {
+            this.epsParameterIdentifier = epsParameterIdentifier;
+            this.content = content;
+        }
 
         @Override
         public VEpsParameter decode(OctetInputStream stream) {

@@ -14,6 +14,12 @@ public class PduSessionReleaseRequest extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_RELEASE_REQUEST);
     }
 
+    public PduSessionReleaseRequest(IE5gSmCause smCause, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCause = smCause;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

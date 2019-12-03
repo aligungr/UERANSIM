@@ -10,6 +10,15 @@ public class IE5gMmCapability extends InformationElement4 {
     public EHandoverAttachSupported hoAttach;
     public ELtePositioningProtocolCapability lpp;
 
+    public IE5gMmCapability() {
+    }
+
+    public IE5gMmCapability(EEpcNasSupported s1Mode, EHandoverAttachSupported hoAttach, ELtePositioningProtocolCapability lpp) {
+        this.s1Mode = s1Mode;
+        this.hoAttach = hoAttach;
+        this.lpp = lpp;
+    }
+
     @Override
     protected IE5gMmCapability decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gMmCapability();

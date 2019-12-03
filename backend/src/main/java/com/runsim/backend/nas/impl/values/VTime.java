@@ -15,6 +15,43 @@ public class VTime extends NasValue {
     public Octet minute;
     public Octet second;
 
+    public VTime() {
+    }
+
+    public VTime(Octet year, Octet month, Octet day, Octet hour, Octet minute, Octet second) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
+    }
+
+    public VTime(String hex) {
+        var bytes = Utils.hexStringToByteArray(Utils.padLeft(hex, 12, '0'));
+        this.year = new Octet(bytes[0] & 0xFF);
+        this.month = new Octet(bytes[1] & 0xFF);
+        this.day = new Octet(bytes[2] & 0xFF);
+        this.hour = new Octet(bytes[3] & 0xFF);
+        this.minute = new Octet(bytes[4] & 0xFF);
+        this.second = new Octet(bytes[5] & 0xFF);
+    }
+
+    public VTime(Integer year, Integer month, Integer day, Integer hour, Integer minute, Integer second) {
+        if (year == null) year = 0;
+        if (month == null) month = 0;
+        if (day == null) day = 0;
+        if (hour == null) hour = 0;
+        if (minute == null) minute = 0;
+        if (second == null) second = 0;
+        this.year = new Octet(year);
+        this.month = new Octet(month);
+        this.day = new Octet(day);
+        this.hour = new Octet(hour);
+        this.minute = new Octet(minute);
+        this.second = new Octet(second);
+    }
+
     @Override
     public VTime decode(OctetInputStream stream) {
         return fromOctets(stream.readOctet(), stream.readOctet(), stream.readOctet(), stream.readOctet(), stream.readOctet(), stream.readOctet());

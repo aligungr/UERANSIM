@@ -16,6 +16,15 @@ public class AuthenticationRequest extends PlainMmMessage {
         super(EMessageType.AUTHENTICATION_REQUEST);
     }
 
+    public AuthenticationRequest(EMessageType messageType, IENasKeySetIdentifier ngKSI, IEAbba abba, IEAuthenticationParameterRand authParamRAND, IEAuthenticationParameterAutn authParamAUTN, IEEapMessage eapMessage) {
+        this();
+        this.ngKSI = ngKSI;
+        this.abba = abba;
+        this.authParamRAND = authParamRAND;
+        this.authParamAUTN = authParamAUTN;
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

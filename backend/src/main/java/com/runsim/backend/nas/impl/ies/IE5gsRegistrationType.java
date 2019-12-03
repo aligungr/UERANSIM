@@ -8,6 +8,14 @@ public class IE5gsRegistrationType extends InformationElement1 {
     public EFollowOnRequest followOnRequestPending;
     public ERegistrationType registrationType;
 
+    public IE5gsRegistrationType() {
+    }
+
+    public IE5gsRegistrationType(EFollowOnRequest followOnRequestPending, ERegistrationType registrationType) {
+        this.followOnRequestPending = followOnRequestPending;
+        this.registrationType = registrationType;
+    }
+
     @Override
     public InformationElement1 decodeIE1(Bit4 value) {
         int val = value.intValue();

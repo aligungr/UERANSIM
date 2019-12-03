@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEAuthenticationParameterRand extends InformationElement3 {
     public OctetString value;
 
+    public IEAuthenticationParameterRand() {
+    }
+
+    public IEAuthenticationParameterRand(OctetString value) {
+        this.value = value;
+    }
+
     @Override
     protected InformationElement3 decodeIE3(OctetInputStream stream) {
         var res = new IEAuthenticationParameterRand();

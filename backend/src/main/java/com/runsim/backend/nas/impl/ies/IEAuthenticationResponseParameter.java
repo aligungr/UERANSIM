@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEAuthenticationResponseParameter extends InformationElement4 {
     public OctetString rawData;
 
+    public IEAuthenticationResponseParameter() {
+    }
+
+    public IEAuthenticationResponseParameter(OctetString rawData) {
+        this.rawData = rawData;
+    }
+
     @Override
     protected IEAuthenticationResponseParameter decodeIE4(OctetInputStream stream, int length) {
         var res = new IEAuthenticationResponseParameter();

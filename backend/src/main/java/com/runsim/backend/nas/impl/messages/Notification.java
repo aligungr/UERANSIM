@@ -12,6 +12,11 @@ public class Notification extends PlainMmMessage {
         super(EMessageType.NOTIFICATION);
     }
 
+    public Notification(IEAccessType accessType) {
+        this();
+        this.accessType = accessType;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

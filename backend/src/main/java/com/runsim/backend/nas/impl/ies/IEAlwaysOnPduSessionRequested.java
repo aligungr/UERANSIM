@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEAlwaysOnPduSessionRequested extends InformationElement1 {
     public EAlwaysOnPduSessionRequested aprs;
 
+    public IEAlwaysOnPduSessionRequested() {
+    }
+
+    public IEAlwaysOnPduSessionRequested(EAlwaysOnPduSessionRequested aprs) {
+        this.aprs = aprs;
+    }
+
     @Override
     public InformationElement1 decodeIE1(Bit4 value) {
         var res = new IEAlwaysOnPduSessionRequested();

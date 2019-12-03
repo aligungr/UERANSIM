@@ -16,6 +16,13 @@ public class DeRegistrationRequestUeOriginating extends PlainMmMessage {
         super(EMessageType.DEREGISTRATION_REQUEST_UE_ORIGINATING);
     }
 
+    public DeRegistrationRequestUeOriginating(IEDeRegistrationType deRegistrationType, IENasKeySetIdentifier ngKSI, IE5gsMobileIdentity mobileIdentity) {
+        this();
+        this.deRegistrationType = deRegistrationType;
+        this.ngKSI = ngKSI;
+        this.mobileIdentity = mobileIdentity;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

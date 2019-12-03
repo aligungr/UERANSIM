@@ -17,6 +17,14 @@ public class RegistrationReject extends PlainMmMessage {
         super(EMessageType.REGISTRATION_REJECT);
     }
 
+    public RegistrationReject(IE5gMmCause mmCause, IEGprsTimer2 t3346value, IEGprsTimer2 t3502value, IEEapMessage eapMessage) {
+        this();
+        this.mmCause = mmCause;
+        this.t3346value = t3346value;
+        this.t3502value = t3502value;
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

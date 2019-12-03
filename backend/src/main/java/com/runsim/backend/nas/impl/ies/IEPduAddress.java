@@ -10,6 +10,14 @@ public class IEPduAddress extends InformationElement4 {
     public EPduSessionType sessionType;
     public OctetString pduAddressInformation;
 
+    public IEPduAddress() {
+    }
+
+    public IEPduAddress(EPduSessionType sessionType, OctetString pduAddressInformation) {
+        this.sessionType = sessionType;
+        this.pduAddressInformation = pduAddressInformation;
+    }
+
     @Override
     protected IEPduAddress decodeIE4(OctetInputStream stream, int length) {
         var res = new IEPduAddress();

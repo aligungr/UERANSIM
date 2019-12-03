@@ -1,5 +1,6 @@
 package com.runsim.backend.utils.octets;
 
+import com.runsim.backend.utils.Utils;
 import com.runsim.backend.utils.bits.Bit;
 
 /**
@@ -16,11 +17,15 @@ public final class Octet3 extends OctetN {
     }
 
     public Octet3(int big, int middle, int little) {
-        this((big << 16) | (middle << 8) | little);
+        this(((big & 0xFF) << 16) | ((middle & 0xFF) << 8) | (little & 0xFF));
     }
 
     public Octet3(Octet big, Octet middle, Octet little) {
         this(big.intValue(), middle.intValue(), little.intValue());
+    }
+
+    public Octet3(String hex) {
+        this(Utils.toLong(hex));
     }
 
     @Override

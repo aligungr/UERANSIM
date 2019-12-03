@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IE5gsIdentityType extends InformationElement1 {
     public EIdentityType value;
 
+    public IE5gsIdentityType() {
+    }
+
+    public IE5gsIdentityType(EIdentityType value) {
+        this.value = value;
+    }
+
     @Override
     public IE5gsIdentityType decodeIE1(Bit4 value) {
         var req = new IE5gsIdentityType();

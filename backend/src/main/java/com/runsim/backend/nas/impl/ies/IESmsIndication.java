@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IESmsIndication extends InformationElement1 {
     public ESmsAvailabilityIndication sai;
 
+    public IESmsIndication() {
+    }
+
+    public IESmsIndication(ESmsAvailabilityIndication sai) {
+        this.sai = sai;
+    }
+
     @Override
     public IESmsIndication decodeIE1(Bit4 value) {
         var res = new IESmsIndication();

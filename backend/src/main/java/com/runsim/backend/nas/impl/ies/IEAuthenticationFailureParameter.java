@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEAuthenticationFailureParameter extends InformationElement4 {
     public OctetString rawData;
 
+    public IEAuthenticationFailureParameter() {
+    }
+
+    public IEAuthenticationFailureParameter(OctetString rawData) {
+        this.rawData = rawData;
+    }
+
     @Override
     protected IEAuthenticationFailureParameter decodeIE4(OctetInputStream stream, int length) {
         var res = new IEAuthenticationFailureParameter();

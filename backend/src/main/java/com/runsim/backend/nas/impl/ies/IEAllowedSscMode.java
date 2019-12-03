@@ -10,6 +10,15 @@ public class IEAllowedSscMode extends InformationElement1 {
     public ESsc2 ssc2;
     public ESsc3 ssc3;
 
+    public IEAllowedSscMode() {
+    }
+
+    public IEAllowedSscMode(ESsc1 ssc1, ESsc2 ssc2, ESsc3 ssc3) {
+        this.ssc1 = ssc1;
+        this.ssc2 = ssc2;
+        this.ssc3 = ssc3;
+    }
+
     @Override
     public IEAllowedSscMode decodeIE1(Bit4 value) {
         var res = new IEAllowedSscMode();

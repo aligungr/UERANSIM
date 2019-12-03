@@ -17,6 +17,18 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
     public Bit6 amfPointer;
     public V5gTmsi tmsi;
 
+    public IE5gGutiMobileIdentity() {
+    }
+
+    public IE5gGutiMobileIdentity(EMobileCountryCode mcc, EMobileNetworkCode mnc, Octet amfRegionId, VAmfSetId amfSetId, Bit6 amfPointer, V5gTmsi tmsi) {
+        this.mcc = mcc;
+        this.mnc = mnc;
+        this.amfRegionId = amfRegionId;
+        this.amfSetId = amfSetId;
+        this.amfPointer = amfPointer;
+        this.tmsi = tmsi;
+    }
+
     @Override
     public void encodeIE6(OctetOutputStream stream) {
         stream.writeOctet(0xf2); // Flags for 5G-GUTI

@@ -11,6 +11,13 @@ import java.util.List;
 public class IEPlmnList extends InformationElement4 {
     public List<VPlmn> plmns;
 
+    public IEPlmnList() {
+    }
+
+    public IEPlmnList(List<VPlmn> plmns) {
+        this.plmns = plmns;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IEPlmnList();

@@ -9,6 +9,14 @@ public class IENasSecurityAlgorithms extends InformationElement3 {
     public ETypeOfIntegrityProtectionAlgorithm typeOfIntegrityProtectionAlgorithm;
     public ETypeOfCipheringAlgorithm typeOfCipheringAlgorithm;
 
+    public IENasSecurityAlgorithms() {
+    }
+
+    public IENasSecurityAlgorithms(ETypeOfIntegrityProtectionAlgorithm typeOfIntegrityProtectionAlgorithm, ETypeOfCipheringAlgorithm typeOfCipheringAlgorithm) {
+        this.typeOfIntegrityProtectionAlgorithm = typeOfIntegrityProtectionAlgorithm;
+        this.typeOfCipheringAlgorithm = typeOfCipheringAlgorithm;
+    }
+
     @Override
     protected IENasSecurityAlgorithms decodeIE3(OctetInputStream stream) {
         var res = new IENasSecurityAlgorithms();

@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEAlwaysOnPduSessionIndication extends InformationElement1 {
     public EAlwaysOnPduSessionIndication apsi;
 
+    public IEAlwaysOnPduSessionIndication() {
+    }
+
+    public IEAlwaysOnPduSessionIndication(EAlwaysOnPduSessionIndication apsi) {
+        this.apsi = apsi;
+    }
+
     @Override
     public IEAlwaysOnPduSessionIndication decodeIE1(Bit4 value) {
         var res = new IEAlwaysOnPduSessionIndication();

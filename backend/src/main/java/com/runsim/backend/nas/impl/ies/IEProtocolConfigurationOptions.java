@@ -10,6 +10,14 @@ public class IEProtocolConfigurationOptions extends InformationElement4 {
     public EConfigurationProtocol configurationProtocol;
     public OctetString rawData;
 
+    public IEProtocolConfigurationOptions() {
+    }
+
+    public IEProtocolConfigurationOptions(EConfigurationProtocol configurationProtocol, OctetString rawData) {
+        this.configurationProtocol = configurationProtocol;
+        this.rawData = rawData;
+    }
+
     @Override
     protected IEProtocolConfigurationOptions decodeIE4(OctetInputStream stream, int length) {
         var res = new IEProtocolConfigurationOptions();

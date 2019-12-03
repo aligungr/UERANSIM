@@ -17,6 +17,18 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
     public String schemaOutput;
 
+    public IEImsiMobileIdentity() {
+    }
+
+    public IEImsiMobileIdentity(EMobileCountryCode mcc, EMobileNetworkCode mnc, String routingIndicator, EProtectionSchemeIdentifier protectionSchemaId, VHomeNetworkPki homeNetworkPublicKeyIdentifier, String schemaOutput) {
+        this.mcc = mcc;
+        this.mnc = mnc;
+        this.routingIndicator = routingIndicator;
+        this.protectionSchemaId = protectionSchemaId;
+        this.homeNetworkPublicKeyIdentifier = homeNetworkPublicKeyIdentifier;
+        this.schemaOutput = schemaOutput;
+    }
+
     @Override
     public void encodeIE6(OctetOutputStream stream) {
         stream.writeOctet(0x01); // Flags for SUCI with SUPI format IMSI

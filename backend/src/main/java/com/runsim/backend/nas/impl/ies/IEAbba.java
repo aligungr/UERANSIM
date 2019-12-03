@@ -10,6 +10,13 @@ public class IEAbba extends InformationElement4 {
     // (3GPP TS 33.501, 15.2.0)
     public OctetString contents;
 
+    public IEAbba() {
+    }
+
+    public IEAbba(OctetString contents) {
+        this.contents = contents;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var abba = new IEAbba();

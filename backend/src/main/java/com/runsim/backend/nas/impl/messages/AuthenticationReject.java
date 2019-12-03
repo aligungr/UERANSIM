@@ -12,6 +12,11 @@ public class AuthenticationReject extends PlainMmMessage {
         super(EMessageType.AUTHENTICATION_REJECT);
     }
 
+    public AuthenticationReject(IEEapMessage eapMessage) {
+        this();
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

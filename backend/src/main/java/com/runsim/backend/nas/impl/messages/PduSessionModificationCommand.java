@@ -19,6 +19,18 @@ public class PduSessionModificationCommand extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_MODIFICATION_COMMAND);
     }
 
+    public PduSessionModificationCommand(IE5gSmCause smCause, IESessionAmbr sessionAmbr, IEGprsTimer rqTimerValue, IEAlwaysOnPduSessionIndication alwaysOnPduSessionIndication, IEQoSRules authorizedQoSRules, IEMappedEpsBearerContexts mappedEpsBearerContexts, IEQoSFlowDescriptions authorizedQoSFlowDescriptions, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions) {
+        this();
+        this.smCause = smCause;
+        this.sessionAmbr = sessionAmbr;
+        this.rqTimerValue = rqTimerValue;
+        this.alwaysOnPduSessionIndication = alwaysOnPduSessionIndication;
+        this.authorizedQoSRules = authorizedQoSRules;
+        this.mappedEpsBearerContexts = mappedEpsBearerContexts;
+        this.authorizedQoSFlowDescriptions = authorizedQoSFlowDescriptions;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

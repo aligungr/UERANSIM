@@ -38,6 +38,35 @@ public class RegistrationAccept extends PlainMmMessage {
         super(EMessageType.REGISTRATION_ACCEPT);
     }
 
+    public RegistrationAccept(IE5gsRegistrationResult registrationResult, IENetworkSlicingIndication networkSlicingIndication, IENssaiInclusionMode nssaiInclusionMode, IEMicoIndication micoIndication, IE5gsMobileIdentity mobileIdentity, IENssai allowedNSSAI, IEPduSessionStatus pduSessionStatus, IEEapMessage eapMessage, IEPlmnList equivalentPLMNs, IERejectedNssai rejectedNSSAI, IENssai configuredNSSAI, IE5gsNetworkFeatureSupport networkFeatureSupport, IEPduSessionReactivationResult pduSessionReactivationResult, IEPduSessionReactivationResultErrorCause pduSessionReactivationResultErrorCause, IEGprsTimer3 t3512Value, IEGprsTimer2 t3502Value, IEGprsTimer2 non3gppDeRegistrationTimerValue, IE5gsDrxParameters negotiatedDrxParameters, IE5gsTrackingAreaIdentityList taiList, IEServiceAreaList serviceAreaList, IEEmergencyNumberList emergencyNumberList, IEOperatorDefinedAccessCategoryDefinitions operatorDefinedAccessCategoryDefinitions, IELadnInformation ladnInformation, IESorTransparentContainer sorTransparentContainer, IEExtendedEmergencyNumberList extendedEmergencyNumberList) {
+        this();
+        this.registrationResult = registrationResult;
+        this.networkSlicingIndication = networkSlicingIndication;
+        this.nssaiInclusionMode = nssaiInclusionMode;
+        this.micoIndication = micoIndication;
+        this.mobileIdentity = mobileIdentity;
+        this.allowedNSSAI = allowedNSSAI;
+        this.pduSessionStatus = pduSessionStatus;
+        this.eapMessage = eapMessage;
+        this.equivalentPLMNs = equivalentPLMNs;
+        this.rejectedNSSAI = rejectedNSSAI;
+        this.configuredNSSAI = configuredNSSAI;
+        this.networkFeatureSupport = networkFeatureSupport;
+        this.pduSessionReactivationResult = pduSessionReactivationResult;
+        this.pduSessionReactivationResultErrorCause = pduSessionReactivationResultErrorCause;
+        this.t3512Value = t3512Value;
+        this.t3502Value = t3502Value;
+        this.non3gppDeRegistrationTimerValue = non3gppDeRegistrationTimerValue;
+        this.negotiatedDrxParameters = negotiatedDrxParameters;
+        this.taiList = taiList;
+        this.serviceAreaList = serviceAreaList;
+        this.emergencyNumberList = emergencyNumberList;
+        this.operatorDefinedAccessCategoryDefinitions = operatorDefinedAccessCategoryDefinitions;
+        this.ladnInformation = ladnInformation;
+        this.sorTransparentContainer = sorTransparentContainer;
+        this.extendedEmergencyNumberList = extendedEmergencyNumberList;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         builder.mandatoryIE("registrationResult");

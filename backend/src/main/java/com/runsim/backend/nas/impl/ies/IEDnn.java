@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEDnn extends InformationElement4 {
     public OctetString data;
 
+    public IEDnn() {
+    }
+
+    public IEDnn(OctetString data) {
+        this.data = data;
+    }
+
     @Override
     protected IEDnn decodeIE4(OctetInputStream stream, int length) {
         var res = new IEDnn();

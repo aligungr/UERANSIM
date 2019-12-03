@@ -8,6 +8,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IE5gMmCause extends InformationElement3 {
     public EMmCause value;
 
+    public IE5gMmCause() {
+    }
+
+    public IE5gMmCause(EMmCause value) {
+        this.value = value;
+    }
+
     @Override
     protected IE5gMmCause decodeIE3(OctetInputStream stream) {
         var res = new IE5gMmCause();

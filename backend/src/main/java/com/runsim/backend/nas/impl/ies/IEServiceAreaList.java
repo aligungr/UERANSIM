@@ -19,6 +19,13 @@ import java.util.List;
 public class IEServiceAreaList extends InformationElement4 {
     public List<VPartialServiceAreaList> partialServiceAreaLists;
 
+    public IEServiceAreaList() {
+    }
+
+    public IEServiceAreaList(List<VPartialServiceAreaList> partialServiceAreaLists) {
+        this.partialServiceAreaLists = partialServiceAreaLists;
+    }
+
     @Override
     protected IEServiceAreaList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEServiceAreaList();
@@ -33,6 +40,13 @@ public class IEServiceAreaList extends InformationElement4 {
 
     public static class VPartialServiceAreaList extends NasValue {
         public EAllowedType allowedType;
+
+        public VPartialServiceAreaList() {
+        }
+
+        public VPartialServiceAreaList(EAllowedType allowedType) {
+            this.allowedType = allowedType;
+        }
 
         @Override
         public VPartialServiceAreaList decode(OctetInputStream stream) {
@@ -72,6 +86,14 @@ public class IEServiceAreaList extends InformationElement4 {
         public VPlmn plmn;
         public List<Octet3> tacs;
 
+        public VPartialServiceAreaList00() {
+        }
+
+        public VPartialServiceAreaList00(VPlmn plmn, List<Octet3> tacs) {
+            this.plmn = plmn;
+            this.tacs = tacs;
+        }
+
         @Override
         public VPartialServiceAreaList00 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
@@ -107,6 +129,14 @@ public class IEServiceAreaList extends InformationElement4 {
         public VPlmn plmn;
         public Octet3 tac;
 
+        public VPartialServiceAreaList01() {
+        }
+
+        public VPartialServiceAreaList01(VPlmn plmn, Octet3 tac) {
+            this.plmn = plmn;
+            this.tac = tac;
+        }
+
         @Override
         public VPartialServiceAreaList01 decode(OctetInputStream stream) {
             var octet = stream.readOctet();
@@ -133,6 +163,13 @@ public class IEServiceAreaList extends InformationElement4 {
 
     public static class VPartialServiceAreaList10 extends VPartialServiceAreaList {
         public List<VTrackingAreaIdentity> tais;
+
+        public VPartialServiceAreaList10() {
+        }
+
+        public VPartialServiceAreaList10(List<VTrackingAreaIdentity> tais) {
+            this.tais = tais;
+        }
 
         @Override
         public VPartialServiceAreaList10 decode(OctetInputStream stream) {
@@ -166,6 +203,13 @@ public class IEServiceAreaList extends InformationElement4 {
 
     public static class VPartialServiceAreaList11 extends VPartialServiceAreaList {
         public VPlmn plmn;
+
+        public VPartialServiceAreaList11() {
+        }
+
+        public VPartialServiceAreaList11(VPlmn plmn) {
+            this.plmn = plmn;
+        }
 
         @Override
         public VPartialServiceAreaList11 decode(OctetInputStream stream) {

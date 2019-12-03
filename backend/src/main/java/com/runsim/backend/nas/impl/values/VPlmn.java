@@ -13,6 +13,28 @@ public class VPlmn extends NasValue {
     public EMobileCountryCode mcc;
     public EMobileNetworkCode mnc;
 
+    public VPlmn() {
+    }
+
+    public VPlmn(EMobileCountryCode mcc, EMobileNetworkCode2 mnc) {
+        this.mcc = mcc;
+        this.mnc = mnc;
+    }
+
+    public VPlmn(EMobileCountryCode mcc, EMobileNetworkCode3 mnc) {
+        this.mcc = mcc;
+        this.mnc = mnc;
+    }
+
+    public VPlmn(int mcc, int mnc, boolean longMNC) {
+        this.mcc = EMobileCountryCode.fromValue(mcc);
+        if (longMNC) {
+            this.mnc = EMobileNetworkCode3.fromValue(mcc * 1000 + mnc);
+        } else {
+            this.mnc = EMobileNetworkCode2.fromValue(mcc * 100 + mnc);
+        }
+    }
+
     @Override
     public VPlmn decode(OctetInputStream stream) {
         var res = new VPlmn();

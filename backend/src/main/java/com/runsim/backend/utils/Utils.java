@@ -72,7 +72,7 @@ public final class Utils {
 
     public static byte[] hexStringToByteArray(String s) {
         if (!isValidHexString(s))
-            throw new IllegalArgumentException("hex string contains invalid characters");
+            throw new IllegalArgumentException("hex string contains invalid characters or has bad format");
 
         int len = s.length();
         byte[] data = new byte[len / 2];
@@ -235,5 +235,45 @@ public final class Utils {
 
     public static <T> List<T> streamToList(Stream<T> stream) {
         return stream.collect(Collectors.toList());
+    }
+
+    /**
+     * Padded left, and uses big endian
+     */
+    public static long toLong(byte[] arr) {
+        long value = 0;
+        for (int i = 0; i < arr.length; i++) {
+            value |= arr[i] & 0xFF;
+            if (i != arr.length - 1)
+                value <<= 8;
+        }
+        return value;
+    }
+
+    /**
+     * Padded left, and uses big endian
+     */
+    public static long toLong(String hex) {
+        return toLong(hexStringToByteArray(hex));
+    }
+
+    /**
+     * Padded left, and uses big endian
+     */
+    public static int toInt(byte[] arr) {
+        int value = 0;
+        for (int i = 0; i < arr.length; i++) {
+            value |= arr[i] & 0xFF;
+            if (i != arr.length - 1)
+                value <<= 8;
+        }
+        return value;
+    }
+
+    /**
+     * Padded left, and uses big endian
+     */
+    public static int toInt(String hex) {
+        return toInt(hexStringToByteArray(hex));
     }
 }

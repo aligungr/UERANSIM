@@ -18,6 +18,14 @@ public class ServiceReject extends PlainMmMessage {
         super(EMessageType.SERVICE_REJECT);
     }
 
+    public ServiceReject(IE5gMmCause mmCause, IEPduSessionStatus pduSessionStatus, IEGprsTimer2 t3346Value, IEEapMessage eapMessage) {
+        this();
+        this.mmCause = mmCause;
+        this.pduSessionStatus = pduSessionStatus;
+        this.t3346Value = t3346Value;
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

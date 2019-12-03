@@ -12,6 +12,13 @@ import java.util.List;
 public class IELadnIndication extends InformationElement6 {
     public List<IEDnn> dnns;
 
+    public IELadnIndication() {
+    }
+
+    public IELadnIndication(List<IEDnn> dnns) {
+        this.dnns = dnns;
+    }
+
     @Override
     protected IELadnIndication decodeIE6(OctetInputStream stream, int length) {
         var res = new IELadnIndication();

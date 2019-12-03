@@ -13,6 +13,13 @@ import java.util.List;
 public class IELadnInformation extends InformationElement6 {
     public List<VLadn> ladns;
 
+    public IELadnInformation() {
+    }
+
+    public IELadnInformation(List<VLadn> ladns) {
+        this.ladns = ladns;
+    }
+
     @Override
     protected IELadnInformation decodeIE6(OctetInputStream stream, int length) {
         var res = new IELadnInformation();
@@ -28,6 +35,14 @@ public class IELadnInformation extends InformationElement6 {
     public static class VLadn extends NasValue {
         public IEDnn dnn;
         public IE5gsTrackingAreaIdentityList trackingAreaIdentityList;
+
+        public VLadn() {
+        }
+
+        public VLadn(IEDnn dnn, IE5gsTrackingAreaIdentityList trackingAreaIdentityList) {
+            this.dnn = dnn;
+            this.trackingAreaIdentityList = trackingAreaIdentityList;
+        }
 
         @Override
         public VLadn decode(OctetInputStream stream) {

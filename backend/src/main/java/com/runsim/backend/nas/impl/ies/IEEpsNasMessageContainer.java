@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEEpsNasMessageContainer extends InformationElement6 {
     public OctetString value;
 
+    public IEEpsNasMessageContainer() {
+    }
+
+    public IEEpsNasMessageContainer(OctetString value) {
+        this.value = value;
+    }
+
     @Override
     protected IEEpsNasMessageContainer decodeIE6(OctetInputStream stream, int length) {
         var res = new IEEpsNasMessageContainer();

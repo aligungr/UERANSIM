@@ -16,6 +16,13 @@ public class DeRegistrationRequestUeTerminated extends PlainMmMessage {
         super(EMessageType.DEREGISTRATION_REQUEST_UE_TERMINATED);
     }
 
+    public DeRegistrationRequestUeTerminated(IEDeRegistrationType deRegistrationType, IE5gMmCause mmCause, IEGprsTimer2 t3346Value) {
+        this();
+        this.deRegistrationType = deRegistrationType;
+        this.mmCause = mmCause;
+        this.t3346Value = t3346Value;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

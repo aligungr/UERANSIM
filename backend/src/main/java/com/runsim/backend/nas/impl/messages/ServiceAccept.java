@@ -18,6 +18,14 @@ public class ServiceAccept extends PlainMmMessage {
         super(EMessageType.SERVICE_ACCEPT);
     }
 
+    public ServiceAccept(IEPduSessionStatus pduSessionStatus, IEPduSessionReactivationResult pduSessionReactivationResult, IEPduSessionReactivationResultErrorCause pduSessionReactivationResultErrorCause, IEEapMessage eapMessage) {
+        this();
+        this.pduSessionStatus = pduSessionStatus;
+        this.pduSessionReactivationResult = pduSessionReactivationResult;
+        this.pduSessionReactivationResultErrorCause = pduSessionReactivationResultErrorCause;
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

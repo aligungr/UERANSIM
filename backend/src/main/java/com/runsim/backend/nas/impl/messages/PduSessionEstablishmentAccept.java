@@ -25,6 +25,24 @@ public class PduSessionEstablishmentAccept extends PlainSmMessage {
         super(EMessageType.PDU_SESSION_ESTABLISHMENT_ACCEPT);
     }
 
+    public PduSessionEstablishmentAccept(IEPduSessionType selectedPduSessionType, IESscMode selectedSscMode, IEQoSRules authorizedQoSRules, IESessionAmbr sessionAmbr, IE5gSmCause smCause, IEPduAddress pduAddress, IEGprsTimer rqTimerValue, IESNssai sNssai, IEAlwaysOnPduSessionIndication alwaysOnPduSessionIndication, IEMappedEpsBearerContexts mappedEpsBearerContexts, IEEapMessage eapMessage, IEQoSFlowDescriptions authorizedQoSFlowDescriptions, IEExtendedProtocolConfigurationOptions extendedProtocolConfigurationOptions, IEDnn dnn) {
+        this();
+        this.selectedPduSessionType = selectedPduSessionType;
+        this.selectedSscMode = selectedSscMode;
+        this.authorizedQoSRules = authorizedQoSRules;
+        this.sessionAmbr = sessionAmbr;
+        this.smCause = smCause;
+        this.pduAddress = pduAddress;
+        this.rqTimerValue = rqTimerValue;
+        this.sNssai = sNssai;
+        this.alwaysOnPduSessionIndication = alwaysOnPduSessionIndication;
+        this.mappedEpsBearerContexts = mappedEpsBearerContexts;
+        this.eapMessage = eapMessage;
+        this.authorizedQoSFlowDescriptions = authorizedQoSFlowDescriptions;
+        this.extendedProtocolConfigurationOptions = extendedProtocolConfigurationOptions;
+        this.dnn = dnn;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

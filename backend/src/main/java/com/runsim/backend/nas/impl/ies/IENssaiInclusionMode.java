@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IENssaiInclusionMode extends InformationElement1 {
     public ENssaiInclusionMode nssaiInclusionMode;
 
+    public IENssaiInclusionMode() {
+    }
+
+    public IENssaiInclusionMode(ENssaiInclusionMode nssaiInclusionMode) {
+        this.nssaiInclusionMode = nssaiInclusionMode;
+    }
+
     @Override
     public IENssaiInclusionMode decodeIE1(Bit4 value) {
         var res = new IENssaiInclusionMode();

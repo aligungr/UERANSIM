@@ -9,6 +9,14 @@ public class IE5gSmCapability extends InformationElement4 {
     public EReflectiveQoS rqos;
     public EMultiHomedIPv6PduSession mh6pdu;
 
+    public IE5gSmCapability() {
+    }
+
+    public IE5gSmCapability(EReflectiveQoS rqos, EMultiHomedIPv6PduSession mh6pdu) {
+        this.rqos = rqos;
+        this.mh6pdu = mh6pdu;
+    }
+
     @Override
     protected IE5gSmCapability decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gSmCapability();

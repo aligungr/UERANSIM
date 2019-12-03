@@ -15,6 +15,14 @@ public class IENasKeySetIdentifier extends InformationElement1 {
     public ETypeOfSecurityContext tsc;
     public Bit3 nasKeySetIdentifier;
 
+    public IENasKeySetIdentifier() {
+    }
+
+    public IENasKeySetIdentifier(ETypeOfSecurityContext tsc, Bit3 nasKeySetIdentifier) {
+        this.tsc = tsc;
+        this.nasKeySetIdentifier = nasKeySetIdentifier;
+    }
+
     @Override
     public InformationElement1 decodeIE1(Bit4 value) {
         int val = value.intValue();

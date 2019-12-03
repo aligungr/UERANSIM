@@ -19,6 +19,18 @@ public class UlNasTransport extends PlainMmMessage {
         super(EMessageType.UL_NAS_TRANSPORT);
     }
 
+    public UlNasTransport(IEPayloadContainerType payloadContainerType, IEPayloadContainer payloadContainer, IEPduSessionIdentity2 pduSessionId, IEPduSessionIdentity2 oldPduSessionId, IERequestType requestType, IESNssai sNssa, IEDnn dnn, IEAdditionalInformation additionalInformation) {
+        this();
+        this.payloadContainerType = payloadContainerType;
+        this.payloadContainer = payloadContainer;
+        this.pduSessionId = pduSessionId;
+        this.oldPduSessionId = oldPduSessionId;
+        this.requestType = requestType;
+        this.sNssa = sNssa;
+        this.dnn = dnn;
+        this.additionalInformation = additionalInformation;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

@@ -12,6 +12,11 @@ public class SecurityModeReject extends PlainMmMessage {
         super(EMessageType.SECURITY_MODE_REJECT);
     }
 
+    public SecurityModeReject(IE5gMmCause mmCause) {
+        this();
+        this.mmCause = mmCause;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

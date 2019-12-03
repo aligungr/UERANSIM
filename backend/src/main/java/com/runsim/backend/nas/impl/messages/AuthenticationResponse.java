@@ -14,6 +14,12 @@ public class AuthenticationResponse extends PlainMmMessage {
         super(EMessageType.AUTHENTICATION_RESPONSE);
     }
 
+    public AuthenticationResponse(IEAuthenticationResponseParameter authenticationResponseParameter, IEEapMessage eapMessage) {
+        this();
+        this.authenticationResponseParameter = authenticationResponseParameter;
+        this.eapMessage = eapMessage;
+    }
+
     @Override
     public void build(IMessageBuilder builder) {
         super.build(builder);

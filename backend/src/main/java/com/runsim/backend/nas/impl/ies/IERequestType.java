@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IERequestType extends InformationElement1 {
     public ERequestType requestType;
 
+    public IERequestType() {
+    }
+
+    public IERequestType(ERequestType requestType) {
+        this.requestType = requestType;
+    }
+
     @Override
     public IERequestType decodeIE1(Bit4 value) {
         var res = new IERequestType();

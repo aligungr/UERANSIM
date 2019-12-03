@@ -16,6 +16,20 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
     public EEmergencyServiceSupportNon3gppIndicator emcn3;
     public EMcsIndicator mcsi;
 
+    public IE5gsNetworkFeatureSupport() {
+    }
+
+    public IE5gsNetworkFeatureSupport(EImsVoPs3gpp imsVoPs3gpp, EImsVoPsN3gpp imsVoPsN3gpp, EEmergencyServiceSupport3gppIndicator emc, EEmergencyServiceFallback3gppIndicator emf, EInterworkingWithoutN26InterfaceIndicator iwkN26, EMpsIndicator mpsi, EEmergencyServiceSupportNon3gppIndicator emcn3, EMcsIndicator mcsi) {
+        this.imsVoPs3gpp = imsVoPs3gpp;
+        this.imsVoPsN3gpp = imsVoPsN3gpp;
+        this.emc = emc;
+        this.emf = emf;
+        this.iwkN26 = iwkN26;
+        this.mpsi = mpsi;
+        this.emcn3 = emcn3;
+        this.mcsi = mcsi;
+    }
+
     @Override
     protected IE5gsNetworkFeatureSupport decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsNetworkFeatureSupport();

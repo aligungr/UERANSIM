@@ -8,6 +8,13 @@ import com.runsim.backend.utils.octets.OctetString;
 public class IEAuthenticationParameterAutn extends InformationElement4 {
     public OctetString value;
 
+    public IEAuthenticationParameterAutn() {
+    }
+
+    public IEAuthenticationParameterAutn(OctetString value) {
+        this.value = value;
+    }
+
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IEAuthenticationParameterAutn();

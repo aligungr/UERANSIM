@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEAccessType extends InformationElement1 {
     public EAccessType accessType;
 
+    public IEAccessType() {
+    }
+
+    public IEAccessType(EAccessType accessType) {
+        this.accessType = accessType;
+    }
+
     @Override
     public IEAccessType decodeIE1(Bit4 value) {
         var res = new IEAccessType();

@@ -8,6 +8,13 @@ import com.runsim.backend.utils.OctetOutputStream;
 public class IEDaylightSavingTime extends InformationElement4 {
     public EDaylightSavingTime daylightSavingTime;
 
+    public IEDaylightSavingTime() {
+    }
+
+    public IEDaylightSavingTime(EDaylightSavingTime daylightSavingTime) {
+        this.daylightSavingTime = daylightSavingTime;
+    }
+
     @Override
     protected IEDaylightSavingTime decodeIE4(OctetInputStream stream, int length) {
         var res = new IEDaylightSavingTime();

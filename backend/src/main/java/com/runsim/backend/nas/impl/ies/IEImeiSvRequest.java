@@ -7,6 +7,13 @@ import com.runsim.backend.utils.bits.Bit4;
 public class IEImeiSvRequest extends InformationElement1 {
     public EImeiSvRequest imeiSvRequest;
 
+    public IEImeiSvRequest() {
+    }
+
+    public IEImeiSvRequest(EImeiSvRequest imeiSvRequest) {
+        this.imeiSvRequest = imeiSvRequest;
+    }
+
     @Override
     public IEImeiSvRequest decodeIE1(Bit4 value) {
         var res = new IEImeiSvRequest();
