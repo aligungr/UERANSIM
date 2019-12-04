@@ -13,7 +13,7 @@ $ git clone https://github.com/aligungr/ue-ran-sim
 $ cd ue-ran-sim
 ```
 
-### 2. Either buy or download trial version of [Marben ASNSDK](https://www.marben-products.com/freetrial-download-asnsdk/?project=asnsdk).
+### 2. Either buy or download trial version of [Marben ASNSDK TCE-Java](https://www.marben-products.com/freetrial-download-asnsdk/?project=asnsdk).
 
 ### 3. Run ASN Compiler
 1. Extract the package and put your license to `license` folder with name `license.dat`.
