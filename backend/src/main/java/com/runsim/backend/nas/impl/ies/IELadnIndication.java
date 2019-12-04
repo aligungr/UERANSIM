@@ -22,7 +22,7 @@ public class IELadnIndication extends InformationElement6 {
     @Override
     protected IELadnIndication decodeIE6(OctetInputStream stream, int length) {
         var res = new IELadnIndication();
-        res.dnns = Utils.decodeList(stream, s -> NasDecoder.ie2346(s, IEDnn.class), length);
+        res.dnns = Utils.decodeList(stream, s -> NasDecoder.ie2346(s, IEDnn.class), length, IEDnn.class);
         return res;
     }
 

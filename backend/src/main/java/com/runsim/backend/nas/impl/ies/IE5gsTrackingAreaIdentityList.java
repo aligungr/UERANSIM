@@ -27,7 +27,7 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
     @Override
     protected IE5gsTrackingAreaIdentityList decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gsTrackingAreaIdentityList();
-        res.partialTrackingAreaIdentityLists = Utils.decodeList(stream, octetInputStream -> new VPartialTrackingAreaIdentityList().decode(stream), length);
+        res.partialTrackingAreaIdentityLists = Utils.decodeList(stream, octetInputStream -> new VPartialTrackingAreaIdentityList().decode(stream), length, VPartialTrackingAreaIdentityList.class);
         return res;
     }
 

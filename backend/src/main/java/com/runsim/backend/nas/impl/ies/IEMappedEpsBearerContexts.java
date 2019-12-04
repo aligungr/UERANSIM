@@ -24,7 +24,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
     @Override
     protected IEMappedEpsBearerContexts decodeIE6(OctetInputStream stream, int length) {
         var res = new IEMappedEpsBearerContexts();
-        res.mappedEpsBearerContexts = Utils.decodeList(stream, new VMappedEpsBearerContext()::decode, length);
+        res.mappedEpsBearerContexts = Utils.decodeList(stream, new VMappedEpsBearerContext()::decode, length, VMappedEpsBearerContext.class);
         return res;
     }
 
@@ -59,7 +59,7 @@ public class IEMappedEpsBearerContexts extends InformationElement6 {
             int paramCount = flags.getBitRangeI(0, 3);
             res.ebit = EEbit.fromValue(flags.getBitI(4));
             res.operationCode = EOperationCode.fromValue(flags.getBitRangeI(6, 7));
-            res.epsParameterList = Utils.decodeList(stream, new VEpsParameter()::decode, totalLen - 1);
+            res.epsParameterList = Utils.decodeList(stream, new VEpsParameter()::decode, totalLen - 1, VEpsParameter.class);
 
             return res;
         }

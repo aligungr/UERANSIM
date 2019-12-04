@@ -25,7 +25,7 @@ public class IEEmergencyNumberList extends InformationElement4 {
     @Override
     protected IEEmergencyNumberList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEEmergencyNumberList();
-        res.list = Utils.decodeList(stream, new VEmergencyNumberInformation()::decode, length);
+        res.list = Utils.decodeList(stream, new VEmergencyNumberInformation()::decode, length, VEmergencyNumberInformation.class);
         return res;
     }
 

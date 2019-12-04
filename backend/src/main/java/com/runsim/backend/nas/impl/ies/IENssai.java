@@ -22,7 +22,7 @@ public class IENssai extends InformationElement4 {
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
         var res = new IENssai();
-        res.sNssais = Utils.decodeList(stream, s -> NasDecoder.ie2346(s, IESNssai.class), length);
+        res.sNssais = Utils.decodeList(stream, s -> NasDecoder.ie2346(s, IESNssai.class), length, IESNssai.class);
         return res;
     }
 

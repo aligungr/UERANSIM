@@ -23,7 +23,7 @@ public class IELadnInformation extends InformationElement6 {
     @Override
     protected IELadnInformation decodeIE6(OctetInputStream stream, int length) {
         var res = new IELadnInformation();
-        res.ladns = Utils.decodeList(stream, new VLadn()::decode, length);
+        res.ladns = Utils.decodeList(stream, new VLadn()::decode, length, VLadn.class);
         return res;
     }
 

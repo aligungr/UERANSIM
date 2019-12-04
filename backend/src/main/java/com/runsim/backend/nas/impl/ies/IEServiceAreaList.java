@@ -28,7 +28,7 @@ public class IEServiceAreaList extends InformationElement4 {
     @Override
     protected IEServiceAreaList decodeIE4(OctetInputStream stream, int length) {
         var res = new IEServiceAreaList();
-        res.partialServiceAreaLists = Utils.decodeList(stream, octetInputStream -> new VPartialServiceAreaList().decode(octetInputStream), length);
+        res.partialServiceAreaLists = Utils.decodeList(stream, octetInputStream -> new VPartialServiceAreaList().decode(octetInputStream), length, VPartialServiceAreaList.class);
         return res;
     }
 

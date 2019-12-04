@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.stream.Stream;
 
 public final class Utils {
 
-    public static <T> T[] decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length) {
+    public static <T> T[] decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length, Class<T> componentType) {
         int readLen = 0;
         var res = new ArrayList<T>();
         while (readLen < length) {
@@ -37,7 +38,12 @@ public final class Utils {
         }
         if (readLen > length)
             throw new DecodingException("Value length exceeds total length!");
-        return (T[]) res.toArray();
+
+        var arr = Array.newInstance(componentType, res.size());
+        for (int i = 0; i < res.size(); i++) {
+            Array.set(arr, i, res.get(i));
+        }
+        return (T[]) arr;
     }
 
     public static int[] fixedBitsToOctetArray(Bit[][] bits) {

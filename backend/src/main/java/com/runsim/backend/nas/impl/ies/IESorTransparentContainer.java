@@ -54,7 +54,7 @@ public class IESorTransparentContainer extends InformationElement6 {
                 res.ack = ack;
                 res.sorMacIAusf = sorMacIAusf;
                 res.counterSor = counterSor;
-                res.list = Utils.decodeList(stream, octetInputStream -> new VPlmnIdAccessTech().decode(octetInputStream), length - 19);
+                res.list = Utils.decodeList(stream, octetInputStream -> new VPlmnIdAccessTech().decode(octetInputStream), length - 19, VPlmnIdAccessTech.class);
                 return res;
             }
         } else {
