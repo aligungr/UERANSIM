@@ -5,6 +5,7 @@ import com.runsim.backend.Message;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
+import com.runsim.backend.nas.impl.ies.IEEapMessage;
 import com.runsim.backend.nas.impl.ies.IEImsiMobileIdentity;
 import com.runsim.backend.nas.impl.ies.IENasKeySetIdentifier;
 import com.runsim.backend.nas.impl.messages.AuthenticationResponse;
@@ -33,9 +34,10 @@ public class EapAkaSynchronization200 extends BaseFlow {
 
     private State authenticationResponse(Message message) {
         var nasMessage = new AuthenticationResponse();
-        //nasMessage.eapMessage=new IEEapMessage()
-        var ngapPdu = UeUtils.createInitialUeMessage(nasMessage, 150, RRCEstablishmentCause.ASN_mo_Data);
-        //sendPDU(ngapPdu);
+        nasMessage.eapMessage = new IEEapMessage(UeUtils.decodeEapFromBase64("MDI1YjAwMmMzMjAxMDAwMDAzMDMwMDQwZGE2Y2Q2M2MxMDUxMzQ0OTBiMDUwMDAwOGY5M2VhZTc3NDQyZjlhNGNhNTQxNzE5NGFiZDVkOWMxODAxMDAwMQ=="));
+
+        var ngapPdu = UeUtils.createUplinkMessage(nasMessage, 150, 1);
+        sendPDU(ngapPdu);
 
         return closeConnection();
     }

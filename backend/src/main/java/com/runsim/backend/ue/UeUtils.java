@@ -1,7 +1,9 @@
 package com.runsim.backend.ue;
 
+import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
+import com.runsim.backend.nas.eap.EAP;
 import com.runsim.backend.ngap.Values;
 import com.runsim.backend.ngap.ngap_commondatatypes.Criticality;
 import com.runsim.backend.ngap.ngap_commondatatypes.ProcedureCode;
@@ -11,10 +13,13 @@ import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
 import com.runsim.backend.ngap.ngap_pdu_contents.UplinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import com.runsim.backend.utils.OctetInputStream;
+import com.runsim.backend.utils.Utils;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class UeUtils {
 
@@ -27,6 +32,14 @@ public class UeUtils {
         userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
         userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
         return userLocationInformationNr;
+    }
+
+    public static EAP decodeEapFromBase64(String base64) {
+        var hex = new String(Base64.getDecoder().decode((base64)));
+        var bytes = Utils.hexStringToByteArray(hex);
+        return EapDecoder.eapPdu((new OctetInputStream((bytes))));
+
+
     }
 
     public static NGAP_PDU createInitialUeMessage(NasMessage nasMessage, int ranUeNgapIdValue, int establishmentCauseValue) {
@@ -78,7 +91,7 @@ public class UeUtils {
         return ngapPdu;
     }
 
-    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, int amfUeNgapId, int ranUeNgapId) {
+    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, int ranUeNgapId, int amfUeNgapId) {
         var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
 
         var uplink = new UplinkNASTransport();
