@@ -78,7 +78,7 @@ public class UeUtils {
         return ngapPdu;
     }
 
-    private static NGAP_PDU createUplinkMessage(NasMessage nasMessage, int amfUeNgapId, int ranUeNgapId) {
+    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, int amfUeNgapId, int ranUeNgapId) {
         var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
 
         var uplink = new UplinkNASTransport();
