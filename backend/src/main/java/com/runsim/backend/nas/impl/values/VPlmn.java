@@ -26,13 +26,9 @@ public class VPlmn extends NasValue {
         this.mnc = mnc;
     }
 
-    public VPlmn(int mcc, int mnc, boolean longMNC) {
+    public VPlmn(int mcc, int mnc) {
         this.mcc = EMobileCountryCode.fromValue(mcc);
-        if (longMNC) {
-            this.mnc = EMobileNetworkCode3.fromValue(mcc * 1000 + mnc);
-        } else {
-            this.mnc = EMobileNetworkCode2.fromValue(mcc * 100 + mnc);
-        }
+        this.mnc = EMobileNetworkCode3.fromValue(mnc);
     }
 
     @Override

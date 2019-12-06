@@ -2,6 +2,7 @@ package com.runsim.backend.flows;
 
 import com.runsim.backend.BaseFlow;
 import com.runsim.backend.Message;
+import com.runsim.backend.app.ue.UeUtils;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;
@@ -12,7 +13,6 @@ import com.runsim.backend.nas.impl.messages.AuthenticationResponse;
 import com.runsim.backend.nas.impl.messages.RegistrationRequest;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.ngap.ngap_ies.RRCEstablishmentCause;
-import com.runsim.backend.ue.UeUtils;
 import com.runsim.backend.utils.bits.Bit3;
 
 public class EapAkaSynchronization200 extends BaseFlow {

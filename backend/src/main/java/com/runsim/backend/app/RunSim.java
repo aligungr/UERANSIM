@@ -1,9 +1,7 @@
 package com.runsim.backend.app;
 
 import com.runsim.backend.Constants;
-import com.runsim.backend.app.sim.MtsEapAkaAttributes;
-import com.runsim.backend.app.sim.MtsIEEapMessage;
-import com.runsim.backend.app.sim.MtsProtocolEnumRegistry;
+import com.runsim.backend.app.sim.*;
 import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
 import com.runsim.backend.nas.eap.*;
@@ -13,7 +11,7 @@ import com.runsim.backend.utils.Utils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-public class UeRanSim {
+public class RunSim {
 
     private static String getTypeName(Class<?> type) {
         if (type.getEnclosingClass() == null) {
@@ -43,7 +41,7 @@ public class UeRanSim {
             }
         }
 
-        final Class<?>[] eapTypes = new Class[]{
+        final Class<?>[] otherTypes = new Class[]{
                 Eap.class,
                 EapAkaPrime.class,
                 EapIdentity.class,
@@ -52,9 +50,12 @@ public class UeRanSim {
                 EEapAkaSubType.class,
                 EEapCode.class,
                 EEapType.class,
+                SimulationFlow.class,
+                SimulationConfig.class,
+                SimulationStep.class,
         };
 
-        for (var type : eapTypes) {
+        for (var type : otherTypes) {
             TypeRegistry.registerTypeName(type.getSimpleName(), type);
         }
 

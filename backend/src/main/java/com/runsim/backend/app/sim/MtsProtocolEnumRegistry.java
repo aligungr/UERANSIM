@@ -80,15 +80,15 @@ public class MtsProtocolEnumRegistry implements TypeRegistry.ICustomTypeRegistry
                     if (fromNames.size() > 1) {
                         throw new MtsException("multiple values matched for enum %s", to.getSimpleName());
                     } else {
-                        list.add(new Conversion<>(ConversionLevel.SAME_TYPE, fromNames.get(0), depth));
+                        list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, fromNames.get(0), depth));
                     }
                 } else {
-                    list.add(new Conversion<>(ConversionLevel.SAME_TYPE, fromIdentifier, depth));
+                    list.add(new Conversion<>(ConversionLevel.ASSIGNABLE_TYPE, fromIdentifier, depth));
                 }
             } else {
                 var numberInfo = new NumberInfo(from.toString());
                 var res = ProtocolEnum.fromIntValue((Class<? extends ProtocolEnum>) to, numberInfo.intValue());
-                list.add(new Conversion<>(numberInfo.isInt() ? ConversionLevel.SAME_TYPE : ConversionLevel.NUMERIC_CONVERSION, res, depth));
+                list.add(new Conversion<>(numberInfo.isInt() ? ConversionLevel.ASSIGNABLE_TYPE : ConversionLevel.NUMERIC_CONVERSION, res, depth));
             }
         } else {
             // bad type for protocol enum

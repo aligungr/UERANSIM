@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
+import com.runsim.backend.nas.impl.values.VTime;
+import com.runsim.backend.nas.impl.values.VTimeZone;
 import com.runsim.backend.utils.bits.*;
 import com.runsim.backend.utils.octets.*;
 
@@ -22,6 +24,10 @@ public final class Json {
                 -> new JsonPrimitive(bit.intValue() != 0);
         JsonSerializer<OctetString> octetStringSerializer = (octetString, type, jsonSerializationContext)
                 -> new JsonPrimitive(octetString.toString());
+        JsonSerializer<VTime> timeSerializer = (vTime, type, jsonSerializationContext)
+                -> new JsonPrimitive(vTime.toString());
+        JsonSerializer<VTimeZone> timeZoneSerializer = (vTimeZone, type, jsonSerializationContext)
+                -> new JsonPrimitive(vTimeZone.toString());
 
         gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -47,6 +53,8 @@ public final class Json {
                 .registerTypeAdapter(Bit12.class, bitNSerializer)
                 .registerTypeAdapter(BitN.class, bitNSerializer)
                 .registerTypeAdapter(OctetString.class, octetStringSerializer)
+                .registerTypeAdapter(VTime.class, timeSerializer)
+                .registerTypeAdapter(VTimeZone.class, timeZoneSerializer)
                 .create();
     }
 

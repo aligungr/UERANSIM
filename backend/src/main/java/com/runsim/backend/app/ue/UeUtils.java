@@ -1,4 +1,4 @@
-package com.runsim.backend.ue;
+package com.runsim.backend.app.ue;
 
 import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.NasEncoder;

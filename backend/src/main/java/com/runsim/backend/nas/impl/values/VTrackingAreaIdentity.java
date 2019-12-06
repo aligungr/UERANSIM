@@ -6,38 +6,53 @@ import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet3;
 
 public class VTrackingAreaIdentity extends NasValue {
-    public VPlmn mccMnc;
+    public VPlmn plmn;
     public Octet3 tac;
 
     public VTrackingAreaIdentity() {
     }
 
-    public VTrackingAreaIdentity(VPlmn mccMnc, Octet3 tac) {
-        this.mccMnc = mccMnc;
+    public VTrackingAreaIdentity(VPlmn plmn, Octet3 tac) {
+        this.plmn = plmn;
         this.tac = tac;
     }
 
-    public VTrackingAreaIdentity(VPlmn mccMnc, int tac) {
-        this.mccMnc = mccMnc;
+    public VTrackingAreaIdentity(VPlmn plmn, int tac) {
+        this.plmn = plmn;
         this.tac = new Octet3(tac);
     }
 
-    public VTrackingAreaIdentity(VPlmn mccMnc, String tac) {
-        this.mccMnc = mccMnc;
+    public VTrackingAreaIdentity(VPlmn plmn, String tac) {
+        this.plmn = plmn;
+        this.tac = new Octet3(tac);
+    }
+
+    public VTrackingAreaIdentity(int mcc, int mnc, int tac) {
+        this.plmn = new VPlmn(mcc, mcc);
+        this.tac = new Octet3(tac);
+    }
+
+    public VTrackingAreaIdentity(int mcc, int mnc, Octet3 tac) {
+        this.plmn = new VPlmn(mcc, mcc);
+        this.tac = tac;
+    }
+
+    public VTrackingAreaIdentity(int mcc, int mnc, String tac) {
+        this.plmn = new VPlmn(mcc, mcc);
         this.tac = new Octet3(tac);
     }
 
     @Override
     public VTrackingAreaIdentity decode(OctetInputStream stream) {
         var res = new VTrackingAreaIdentity();
-        res.mccMnc = new VPlmn().decode(stream);
+        res.plmn = new VPlmn().decode(stream);
         res.tac = stream.readOctet3();
         return res;
     }
 
     @Override
     public void encode(OctetOutputStream stream) {
-        mccMnc.encode(stream);
+        plmn.encode(stream);
         stream.writeOctet3(tac);
     }
 }
