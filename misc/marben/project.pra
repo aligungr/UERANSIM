@@ -1,9 +1,9 @@
 #DO NOT MODIFY THIS FILE: changes will invalidate this product
-#Fri Oct 25 08:11:30 EET 2019
+#Wed Dec 04 09:06:52 EET 2019
 integerSize=
 generateJavaLibrary=
-packagePrefix=com.runsim.backend.ngap
 xer=
+packagePrefix=com.runsim.backend.ngap
 longSize=
 addedFileURL2=../ngap-15-2-0/NGAP-Containers.asn
 integerSizeValue=32
