@@ -78,7 +78,7 @@ public final class Utils {
 
     public static byte[] hexStringToByteArray(String s) {
         if (!isValidHexString(s))
-            throw new IllegalArgumentException("hex string contains invalid characters or has bad format");
+            throw new IllegalArgumentException("hex string contains invalid characters or has bad format: " + s);
 
         int len = s.length();
         byte[] data = new byte[len / 2];

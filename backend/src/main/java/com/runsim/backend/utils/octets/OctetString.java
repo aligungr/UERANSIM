@@ -14,26 +14,26 @@ public final class OctetString implements Iterable<Octet> {
         this.length = octets.length;
     }
 
-    public OctetString(int[] octets) {
-        var data = new Octet[octets.length];
-        for (int i = 0; i < octets.length; i++)
-            data[i] = new Octet(octets[i]);
+    public OctetString(int[] octetInts) {
+        var data = new Octet[octetInts.length];
+        for (int i = 0; i < octetInts.length; i++)
+            data[i] = new Octet(octetInts[i]);
 
         this.data = data;
         this.length = data.length;
     }
 
-    public OctetString(byte[] octets) {
-        var data = new Octet[octets.length];
-        for (int i = 0; i < octets.length; i++)
-            data[i] = new Octet(octets[i] & 0xFF);
+    public OctetString(byte[] octetBytes) {
+        var data = new Octet[octetBytes.length];
+        for (int i = 0; i < octetBytes.length; i++)
+            data[i] = new Octet(octetBytes[i] & 0xFF);
 
         this.data = data;
         this.length = data.length;
     }
 
-    public OctetString(String base16) {
-        this(Utils.hexStringToByteArray(base16));
+    public OctetString(String hex) {
+        this(Utils.hexStringToByteArray(hex));
     }
 
     public Octet get(int index) {

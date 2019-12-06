@@ -8,7 +8,7 @@ import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainMmMessage;
-import com.runsim.backend.nas.eap.ECode;
+import com.runsim.backend.nas.eap.EEapCode;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
 import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
 import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
@@ -412,9 +412,9 @@ public class RegistrationFlow1 extends BaseFlow {
         Console.printDiv();
         Console.println(Color.BLUE, "AuthenticationResult is handling.");
 
-        if (message.eapMessage.eap.code.equals(ECode.SUCCESS))
+        if (message.eapMessage.eap.code.equals(EEapCode.SUCCESS))
             Console.println(Color.GREEN, "Authentication success");
-        else if (message.eapMessage.eap.code.equals(ECode.FAILURE)) {
+        else if (message.eapMessage.eap.code.equals(EEapCode.FAILURE)) {
             Console.println(Color.RED, "Authentication failure");
             Console.println(Color.RED, "Closing connection");
             return closeConnection();

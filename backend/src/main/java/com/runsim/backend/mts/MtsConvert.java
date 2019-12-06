@@ -6,6 +6,7 @@ import com.runsim.backend.utils.Utils;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -136,9 +137,13 @@ public class MtsConvert {
         throw new IllegalArgumentException();
     }
 
+    /**
+     * Returns conversion result as list as sorted. (The less index means more preferable conversion)
+     */
     public static List<Conversion<?>> convert(Object from, Class<?> to, boolean includeCustoms) {
         List<Conversion<?>> list = new ArrayList<>();
         convert(from, to, list, new HashSet<>(), 0, includeCustoms);
+        list.sort(Comparator.comparingInt(a -> a.level.getLevel()));
         return list;
     }
 

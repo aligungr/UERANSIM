@@ -2,7 +2,7 @@ package com.runsim.backend.mts;
 
 import java.util.LinkedHashMap;
 
-final class ImplicitTypedObject {
+public final class ImplicitTypedObject {
     private LinkedHashMap<String, Object> parameters;
 
     public ImplicitTypedObject(LinkedHashMap<String, Object> parameters) {

@@ -1,10 +1,12 @@
 package com.runsim.backend.app;
 
 import com.runsim.backend.Constants;
+import com.runsim.backend.app.sim.MtsEapAkaAttributes;
 import com.runsim.backend.app.sim.MtsIEEapMessage;
 import com.runsim.backend.app.sim.MtsProtocolEnumRegistry;
 import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
+import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.utils.Console;
 import com.runsim.backend.utils.Json;
 import com.runsim.backend.utils.Utils;
@@ -41,8 +43,24 @@ public class UeRanSim {
             }
         }
 
+        final Class<?>[] eapTypes = new Class[]{
+                Eap.class,
+                EapAkaPrime.class,
+                EapIdentity.class,
+                EapNotification.class,
+                EEapAkaAttributeType.class,
+                EEapAkaSubType.class,
+                EEapCode.class,
+                EEapType.class,
+        };
+
+        for (var type : eapTypes) {
+            TypeRegistry.registerTypeName(type.getSimpleName(), type);
+        }
+
         TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
         TypeRegistry.registerCustomType(new MtsIEEapMessage());
+        TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
 
         MtsDecoder.setFileProvider(Utils::getResourceString);
     }

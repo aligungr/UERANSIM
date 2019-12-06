@@ -33,17 +33,17 @@ public class TestAuthenticationResponse extends TranscoderTesting.PduTest {
         assertNotNull(mes.eapMessage);
         assertNotNull(mes.eapMessage.eap);
 
-        assertInstance(mes.eapMessage.eap, AkaPrime.class);
-        assertEquals(mes.eapMessage.eap.code, ECode.RESPONSE);
+        assertInstance(mes.eapMessage.eap, EapAkaPrime.class);
+        assertEquals(mes.eapMessage.eap.code, EEapCode.RESPONSE);
         assertEquals(mes.eapMessage.eap.id, 1);
         assertEquals(mes.eapMessage.eap.length, 48);
         assertEquals(mes.eapMessage.eap.EAPType, EEapType.EAP_AKA_PRIME);
 
-        var akaPrime = (AkaPrime) mes.eapMessage.eap;
-        assertEquals(akaPrime.subType, EAkaSubType.AKA_CHALLENGE);
+        var akaPrime = (EapAkaPrime) mes.eapMessage.eap;
+        assertEquals(akaPrime.subType, EEapAkaSubType.AKA_CHALLENGE);
         assertEquals(akaPrime.attributes.size(), 2);
-        assertEquals(akaPrime.attributes.get(EAkaAttributeType.AT_RES), new OctetString("000864955b0fe729127b0000000000000000"));
-        assertEquals(akaPrime.attributes.get(EAkaAttributeType.AT_MAC), new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
+        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_RES), new OctetString("000864955b0fe729127b0000000000000000"));
+        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_MAC), new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
     }
 
     @Override
@@ -55,17 +55,17 @@ public class TestAuthenticationResponse extends TranscoderTesting.PduTest {
 
         mes.authenticationResponseParameter = null;
         mes.eapMessage = new IEEapMessage();
-        var akaPrime = new AkaPrime();
+        var akaPrime = new EapAkaPrime();
         mes.eapMessage.eap = akaPrime;
 
-        akaPrime.code = ECode.RESPONSE;
+        akaPrime.code = EEapCode.RESPONSE;
         akaPrime.id = new Octet(1);
         akaPrime.length = new Octet2(48);
         akaPrime.EAPType = EEapType.EAP_AKA_PRIME;
-        akaPrime.subType = EAkaSubType.AKA_CHALLENGE;
+        akaPrime.subType = EEapAkaSubType.AKA_CHALLENGE;
         akaPrime.attributes = new LinkedHashMap<>();
-        akaPrime.attributes.put(EAkaAttributeType.AT_RES, new OctetString("000864955b0fe729127b0000000000000000"));
-        akaPrime.attributes.put(EAkaAttributeType.AT_MAC, new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
+        akaPrime.attributes.put(EEapAkaAttributeType.AT_RES, new OctetString("000864955b0fe729127b0000000000000000"));
+        akaPrime.attributes.put(EEapAkaAttributeType.AT_MAC, new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
 
         return mes;
     }

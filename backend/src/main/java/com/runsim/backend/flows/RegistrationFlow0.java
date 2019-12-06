@@ -341,15 +341,15 @@ public class RegistrationFlow0 extends BaseFlow {
         Console.printDiv();
         Console.println(Color.BLUE, "AuthenticationRequest is handling.");
 
-        var eap = new AkaPrime();
+        var eap = new EapAkaPrime();
         eap.id = new Octet(1);
         eap.length = new Octet2(48);
         eap.EAPType = EEapType.EAP_AKA_PRIME;
-        eap.code = ECode.RESPONSE;
-        eap.subType = EAkaSubType.AKA_CHALLENGE;
+        eap.code = EEapCode.RESPONSE;
+        eap.subType = EEapAkaSubType.AKA_CHALLENGE;
         eap.attributes = new LinkedHashMap<>();
-        eap.attributes.put(EAkaAttributeType.AT_RES, new OctetString("000864955b0fe729127b0000000000000000"));
-        eap.attributes.put(EAkaAttributeType.AT_MAC, new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
+        eap.attributes.put(EEapAkaAttributeType.AT_RES, new OctetString("000864955b0fe729127b0000000000000000"));
+        eap.attributes.put(EEapAkaAttributeType.AT_MAC, new OctetString("000069f5f2af9798323126ef3cf8896a8c4b"));
 
         var response = new AuthenticationResponse();
         response.eapMessage = new IEEapMessage();
@@ -442,9 +442,9 @@ public class RegistrationFlow0 extends BaseFlow {
         Console.printDiv();
         Console.println(Color.BLUE, "AuthenticationResult is handling.");
 
-        if (message.eapMessage.eap.code.equals(ECode.SUCCESS))
+        if (message.eapMessage.eap.code.equals(EEapCode.SUCCESS))
             Console.println(Color.GREEN, "Authentication success");
-        else if (message.eapMessage.eap.code.equals(ECode.FAILURE)) {
+        else if (message.eapMessage.eap.code.equals(EEapCode.FAILURE)) {
             Console.println(Color.RED, "Authentication failure");
             Console.println(Color.RED, "Closing connection");
             return closeConnection();

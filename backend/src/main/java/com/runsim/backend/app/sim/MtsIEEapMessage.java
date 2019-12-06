@@ -50,12 +50,11 @@ public class MtsIEEapMessage implements TypeRegistry.ICustomTypeRegistry<IEEapMe
 
     @Override
     public boolean isConvertable(Class<?> from, Class<?> to) {
-        return false;//todo
+        return false;
     }
 
     @Override
     public void convert(Object from, Class<?> to, List<Conversion<?>> list, int depth) {
-        //todo
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.runsim.backend.mts;
 
 import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.utils.BiMap;
+import com.runsim.backend.utils.bits.*;
+import com.runsim.backend.utils.octets.*;
 
 import java.util.*;
 
@@ -18,6 +20,32 @@ public final class TypeRegistry {
         customConstructs = new HashMap<>();
         customIsConvertables = new HashSet<>();
         customConverters = new HashMap<>();
+
+        var coreTypes = new Class[]{
+                Bit.class,
+                Bit2.class,
+                Bit3.class,
+                Bit4.class,
+                Bit5.class,
+                Bit6.class,
+                Bit7.class,
+                Bit8.class,
+                Bit9.class,
+                Bit10.class,
+                Bit11.class,
+                Bit12.class,
+                Octet.class,
+                Octet2.class,
+                Octet3.class,
+                Octet4.class,
+                Octet5.class,
+                Octet6.class,
+                Octet7.class,
+                OctetString.class,
+        };
+
+        for (var type : coreTypes)
+            registerTypeName(type.getSimpleName(), type);
     }
 
     public static void registerTypeName(String name, Class<?> type) {

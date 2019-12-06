@@ -11,7 +11,7 @@ import com.runsim.backend.utils.octets.OctetString;
 import java.util.LinkedHashMap;
 
 public class EapDecoder {
-    public static EAP eapPdu(OctetInputStream stream) {
+    public static Eap eapPdu(OctetInputStream stream) {
         var code = decodeCode(stream);
         var id = decodeId(stream);
         var length = decodeLength(stream);
@@ -23,7 +23,7 @@ public class EapDecoder {
                 - 2 // length
                 - 1; // type
 
-        EAP eap;
+        Eap eap;
         if (type.equals(EEapType.EAP_AKA_PRIME)) {
             eap = decodeAKAPrime(stream, innerLength);
         } else if (type.equals(EEapType.NOTIFICATION)) {
@@ -41,8 +41,8 @@ public class EapDecoder {
         return eap;
     }
 
-    private static ECode decodeCode(OctetInputStream stream) {
-        return ECode.fromValue(stream.readOctetI());
+    private static EEapCode decodeCode(OctetInputStream stream) {
+        return EEapCode.fromValue(stream.readOctetI());
     }
 
     private static Octet decodeId(OctetInputStream stream) {
@@ -57,8 +57,8 @@ public class EapDecoder {
         return EEapType.fromValue(data.readOctetI());
     }
 
-    private static AkaPrime decodeAKAPrime(OctetInputStream stream, int length) {
-        var akaPrime = new AkaPrime();
+    private static EapAkaPrime decodeAKAPrime(OctetInputStream stream, int length) {
+        var akaPrime = new EapAkaPrime();
         akaPrime.attributes = new LinkedHashMap<>();
 
         int readBytes = 0;
@@ -93,22 +93,22 @@ public class EapDecoder {
         return akaPrime;
     }
 
-    private static EAkaSubType decodeAKASubType(OctetInputStream stream) {
-        return EAkaSubType.fromValue(stream.readOctetI());
+    private static EEapAkaSubType decodeAKASubType(OctetInputStream stream) {
+        return EEapAkaSubType.fromValue(stream.readOctetI());
     }
 
-    private static EAkaAttributeType decodeAKAAttributeType(OctetInputStream stream) {
-        return EAkaAttributeType.fromValue(stream.readOctetI());
+    private static EEapAkaAttributeType decodeAKAAttributeType(OctetInputStream stream) {
+        return EEapAkaAttributeType.fromValue(stream.readOctetI());
     }
 
-    private static Notification decodeNotification(OctetInputStream stream, int length) {
-        var res = new Notification();
+    private static EapNotification decodeNotification(OctetInputStream stream, int length) {
+        var res = new EapNotification();
         res.rawData = stream.readOctetString(length);
         return res;
     }
 
-    private static Identity decodeIdentity(OctetInputStream stream, int length) {
-        var res = new Identity();
+    private static EapIdentity decodeIdentity(OctetInputStream stream, int length) {
+        var res = new EapIdentity();
         res.rawData = stream.readOctetString(length);
 
         // TODO: HACK: AMF bugını geçici olarak çözmek için

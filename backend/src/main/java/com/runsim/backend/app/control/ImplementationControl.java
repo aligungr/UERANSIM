@@ -9,7 +9,7 @@ import com.runsim.backend.nas.core.ies.InformationElement1;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.core.messages.PlainSmMessage;
-import com.runsim.backend.nas.eap.EAP;
+import com.runsim.backend.nas.eap.Eap;
 import com.runsim.backend.nas.impl.enums.EMessageType;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
@@ -34,10 +34,10 @@ public class ImplementationControl {
 
     private static final Class<?>[] USUAL_TYPES = new Class<?>[]{
             OctetN.class, BitN.class, InformationElement.class, ProtocolEnum.class, NasValue.class,
-            String.class, OctetString.class, EAP.class,
+            String.class, OctetString.class, Eap.class,
 
             OctetN[].class, BitN[].class, InformationElement[].class, ProtocolEnum[].class, NasValue[].class,
-            String[].class, OctetString[].class, EAP[].class,
+            String[].class, OctetString[].class, Eap[].class,
     };
 
     private static class ParameterCheck {

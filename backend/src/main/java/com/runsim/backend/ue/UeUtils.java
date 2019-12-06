@@ -3,7 +3,7 @@ package com.runsim.backend.ue;
 import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
-import com.runsim.backend.nas.eap.EAP;
+import com.runsim.backend.nas.eap.Eap;
 import com.runsim.backend.ngap.Values;
 import com.runsim.backend.ngap.ngap_commondatatypes.Criticality;
 import com.runsim.backend.ngap.ngap_commondatatypes.ProcedureCode;
@@ -34,7 +34,7 @@ public class UeUtils {
         return userLocationInformationNr;
     }
 
-    public static EAP decodeEapFromBase64(String base64) {
+    public static Eap decodeEapFromBase64(String base64) {
         var hex = new String(Base64.getDecoder().decode((base64)));
         var bytes = Utils.hexStringToByteArray(hex);
         return EapDecoder.eapPdu((new OctetInputStream((bytes))));
