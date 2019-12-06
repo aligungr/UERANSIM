@@ -1,16 +1,17 @@
 package com.runsim.backend.app;
 
 import com.runsim.backend.Constants;
+import com.runsim.backend.app.sim.MtsIEEapMessage;
+import com.runsim.backend.app.sim.MtsProtocolEnumRegistry;
 import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
-import com.runsim.backend.nas.mts.MtsProtocolEnumRegistry;
 import com.runsim.backend.utils.Console;
 import com.runsim.backend.utils.Json;
 import com.runsim.backend.utils.Utils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-public class MtsTest {
+public class UeRanSim {
 
     private static String getTypeName(Class<?> type) {
         if (type.getEnclosingClass() == null) {
@@ -39,15 +40,17 @@ public class MtsTest {
                 TypeRegistry.registerTypeName(typeName, clazz);
             }
         }
+
         TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
+        TypeRegistry.registerCustomType(new MtsIEEapMessage());
+
+        MtsDecoder.setFileProvider(Utils::getResourceString);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         initMts();
 
-        var jsonString = Utils.getResourceString("mts.json");
-
-        var nasMessage = MtsDecoder.decode(jsonString);
+        var nasMessage = MtsDecoder.decode("flow1.json");
         Console.println(Json.toJson(nasMessage));
     }
 }

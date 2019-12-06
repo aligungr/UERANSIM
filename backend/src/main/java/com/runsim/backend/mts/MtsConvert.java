@@ -13,11 +13,11 @@ import java.util.function.Function;
 
 public class MtsConvert {
 
-    public static boolean isConvertable(Class<?> from, Class<?> to) {
-        return isConvertable(from, to, new HashSet<>());
+    public static boolean isConvertable(Class<?> from, Class<?> to, boolean includeCustoms) {
+        return isConvertable(from, to, new HashSet<>(), includeCustoms);
     }
 
-    private static boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams) {
+    private static boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams, boolean includeCustoms) {
         if (from.equals(to))
             return true;
         if (to.isAssignableFrom(from))
@@ -33,8 +33,10 @@ public class MtsConvert {
         } else if (Traits.isArray(from) || Traits.isArray(to)) {
             return Traits.isArray(from) && Traits.isArray(to);
         }
-        if (TypeRegistry.isCustomConvertable(from, to))
-            return true;
+        if (includeCustoms) {
+            if (TypeRegistry.isCustomConvertable(from, to))
+                return true;
+        }
 
         if (visitedSingleParams.contains(to))
             return false;
@@ -48,7 +50,7 @@ public class MtsConvert {
             if (constructor.getParameterCount() != 1)
                 continue;
 
-            if (isConvertable(from, constructor.getParameterTypes()[0], visitedSingleParams)) {
+            if (isConvertable(from, constructor.getParameterTypes()[0], visitedSingleParams, includeCustoms)) {
                 return true;
             }
         }
@@ -134,13 +136,13 @@ public class MtsConvert {
         throw new IllegalArgumentException();
     }
 
-    public static List<Conversion<?>> convert(Object from, Class<?> to) {
+    public static List<Conversion<?>> convert(Object from, Class<?> to, boolean includeCustoms) {
         List<Conversion<?>> list = new ArrayList<>();
-        convert(from, to, list, new HashSet<>(), 0);
+        convert(from, to, list, new HashSet<>(), 0, includeCustoms);
         return list;
     }
 
-    private static void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth) {
+    private static void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth, boolean includeCustoms) {
         if (from == null) {
             list.add(new Conversion<>(ConversionLevel.LEVEL_NULL_CONVERSION, null, depth));
             return;
@@ -159,10 +161,10 @@ public class MtsConvert {
             throw new MtsException("collections are not supported, use array instead");
         } else if (Traits.isArray(from.getClass()) || Traits.isArray(to)) {
             if (Traits.isArray(from.getClass()) && Traits.isArray(to)) {
-                convertArray(from, to, list, depth);
+                convertArray(from, to, list, depth, includeCustoms);
             }
             return;
-        } else {
+        } else if (includeCustoms) {
             var customConverter = TypeRegistry.getCustomConverter(to);
             if (customConverter != null) {
                 customConverter.convert(from, to, list, depth);
@@ -185,10 +187,10 @@ public class MtsConvert {
                 continue;
 
             var ctorParamType = constructor.getParameterTypes()[0];
-            if (isConvertable(from.getClass(), ctorParamType, new HashSet<>())) {
+            if (isConvertable(from.getClass(), ctorParamType, new HashSet<>(), includeCustoms)) {
 
                 var innerList = new ArrayList<Conversion<?>>();
-                convert(from, ctorParamType, innerList, visitedSingleParams, depth + 1);
+                convert(from, ctorParamType, innerList, visitedSingleParams, depth + 1, includeCustoms);
 
                 for (var inner : innerList) {
                     var val = inner.value;
@@ -202,7 +204,7 @@ public class MtsConvert {
         }
     }
 
-    private static void convertArray(Object from, Class<?> to, List<Conversion<?>> list, int depth) {
+    private static void convertArray(Object from, Class<?> to, List<Conversion<?>> list, int depth, boolean includeCustoms) {
         Class<?> elementType = to.getComponentType();
 
         // This function converts primitive arrays to wrapper arrays.
@@ -227,11 +229,11 @@ public class MtsConvert {
         Class<?> targetType = Traits.wrapperOfPrimitive(elementType);
 
         for (int i = 0; i < sourceArray.length; i++) {
-            if (sourceArray[i] instanceof ImplicitTypedValue) {
-                sourceArray[i] = MtsConstruct.construct(targetType, ((ImplicitTypedValue) sourceArray[i]).getParameters());
+            if (sourceArray[i] instanceof ImplicitTypedObject) {
+                sourceArray[i] = MtsConstruct.construct(targetType, ((ImplicitTypedObject) sourceArray[i]).getParameters(), includeCustoms);
             }
 
-            var conversions = convert(sourceArray[i], targetType);
+            var conversions = convert(sourceArray[i], targetType, includeCustoms);
 
             var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
             var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));

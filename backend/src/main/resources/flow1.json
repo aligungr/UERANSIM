@@ -1,0 +1,14 @@
+{
+  "steps": [
+    {
+      "nas": {
+        "@ref": "registrationRequest.json"
+      }
+    },
+    {
+      "nas": {
+        "@ref": "authenticationResponse.json"
+      }
+    }
+  ]
+}

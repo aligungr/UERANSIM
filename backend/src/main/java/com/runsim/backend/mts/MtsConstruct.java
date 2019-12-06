@@ -32,12 +32,12 @@ public class MtsConstruct {
         return true;
     }
 
-    private static boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private static boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters, boolean includeCustoms) {
         if (constructor.getParameterCount() < parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
-            if (object instanceof ImplicitTypedValue) {
+            if (object instanceof ImplicitTypedObject) {
                 if (Traits.isNumberOrString(param.getType()))
                     return false;
                 continue;
@@ -49,18 +49,18 @@ public class MtsConstruct {
                     return false;
                 }
             }
-            if (!MtsConvert.isConvertable(object.getClass(), param.getType()))
+            if (!MtsConvert.isConvertable(object.getClass(), param.getType(), includeCustoms))
                 return false;
         }
         return true;
     }
 
-    private static boolean parameterTypeExactMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private static boolean parameterTypeExactMatches(Constructor<?> constructor, Map<String, Object> parameters, boolean includeCustoms) {
         if (constructor.getParameterCount() != parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
-            var conversion = MtsConvert.convert(object, param.getType());
+            var conversion = MtsConvert.convert(object, param.getType(), includeCustoms);
             if (conversion.stream().noneMatch(c -> c.depth == 0 && (c.level == ConversionLevel.SAME_TYPE))) {
                 return false;
             }
@@ -68,10 +68,12 @@ public class MtsConstruct {
         return true;
     }
 
-    public static <T> T construct(Class<T> type, Map<String, Object> args) {
-        var customConstruct = TypeRegistry.getCustomConstruct(type);
-        if (customConstruct != null)
-            return customConstruct.construct(type, args);
+    public static <T> T construct(Class<T> type, Map<String, Object> args, boolean includeCustoms) {
+        if (includeCustoms) {
+            var customConstruct = TypeRegistry.getCustomConstruct(type);
+            if (customConstruct != null)
+                return customConstruct.construct(type, args);
+        }
 
         var constructors = Arrays.asList(type.getDeclaredConstructors());
 
@@ -87,12 +89,12 @@ public class MtsConstruct {
             throw new MtsException("no constructor found for given parameter names for type %s", type.getSimpleName());
         }
 
-        matched = Utils.streamToList(matched.stream().filter(constructor -> parameterTypeMatches(constructor, args)));
+        matched = Utils.streamToList(matched.stream().filter(constructor -> parameterTypeMatches(constructor, args, includeCustoms)));
         if (matched.size() == 0) {
             throw new MtsException("no constructor found for given parameter values for type %s", type.getSimpleName());
         }
         if (matched.size() > 1) {
-            var exactMatched = Utils.streamToList(matched.stream().filter(constructor -> parameterTypeExactMatches(constructor, args)));
+            var exactMatched = Utils.streamToList(matched.stream().filter(constructor -> parameterTypeExactMatches(constructor, args, includeCustoms)));
             if (exactMatched.size() != 1) {
                 throw new MtsException("multiple constructor found for given parameter values for type %s", type.getSimpleName());
             } else {
@@ -109,11 +111,11 @@ public class MtsConstruct {
             var param = params[j];
             var value = args.get(param.getName());
 
-            if (value instanceof ImplicitTypedValue) {
-                value = construct(param.getType(), ((ImplicitTypedValue) value).getParameters());
+            if (value instanceof ImplicitTypedObject) {
+                value = construct(param.getType(), ((ImplicitTypedObject) value).getParameters(), includeCustoms);
             }
 
-            var conversions = MtsConvert.convert(value, param.getType());
+            var conversions = MtsConvert.convert(value, param.getType(), includeCustoms);
 
             var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
             var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));

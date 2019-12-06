@@ -1,15 +1,95 @@
 package com.runsim.backend.mts;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.runsim.backend.app.sim.IFileProvider;
 import com.runsim.backend.exceptions.MtsException;
 
 import java.util.LinkedHashMap;
 
 public class MtsDecoder {
 
-    public static Object decode(String json) {
-        return decode(new Gson().fromJson(json, JsonElement.class));
+    private static IFileProvider fileProvider = path -> null;
+
+    public static void setFileProvider(IFileProvider fileProvider) {
+        MtsDecoder.fileProvider = fileProvider;
+    }
+
+    public static Object decode(String filePath) {
+        var json = fileProvider.readFile(filePath);
+        if (json == null)
+            throw new MtsException("referenced file not found: %s", filePath);
+
+        var jsonElement = parseJson(json);
+        jsonElement = resolveJsonRefs(jsonElement);
+        return decode(jsonElement);
+    }
+
+    private static JsonElement parseJson(String json) {
+        return new Gson().fromJson(json, JsonElement.class);
+    }
+
+    private static JsonElement resolveJsonRefs(JsonElement element) {
+        if (element == null) {
+            return null;
+        } else if (element.isJsonNull()) {
+            return element;
+        } else if (element.isJsonPrimitive()) {
+            return element;
+        } else if (element.isJsonArray()) {
+            var jsonArray = element.getAsJsonArray();
+            var newJsonArray = new JsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                newJsonArray.add(resolveJsonRefs(jsonArray.get(i)));
+            }
+            return newJsonArray;
+        } else if (element.isJsonObject()) {
+            var jsonObject = element.getAsJsonObject();
+            if (jsonObject.has("@ref")) {
+                var refElement = jsonObject.get("@ref");
+                if (!refElement.isJsonPrimitive() || !refElement.getAsJsonPrimitive().isString())
+                    throw new MtsException("@ref value must be string");
+
+                var refValue = refElement.getAsString();
+                if (refValue == null || refValue.length() == 0)
+                    throw new MtsException("@ref value cannot be empty");
+
+                var refContent = fileProvider.readFile(refValue);
+                if (refContent == null)
+                    throw new MtsException("referenced file not found: %s", refValue);
+
+                var refJson = parseJson(refContent);
+                refJson = resolveJsonRefs(refJson);
+                if (refJson == null)
+                    return null;
+                else if (refJson.isJsonObject()) {
+                    var refObject = refJson.getAsJsonObject();
+                    for (var entry : jsonObject.entrySet()) {
+                        if (entry.getKey().equals("@ref"))
+                            continue;
+                        if (refObject.has(entry.getKey())) {
+                            refObject.remove(entry.getKey());
+                        }
+                        refObject.add(entry.getKey(), resolveJsonRefs(entry.getValue()));
+                    }
+                    return refObject;
+                } else {
+                    if (jsonObject.size() != 1)
+                        throw new MtsException("primitive json element cannot be overridden, remove properties other than @ref");
+                    return refJson;
+                }
+            } else {
+                var newJsonObject = new JsonObject();
+                for (var entry : jsonObject.entrySet()) {
+                    newJsonObject.add(entry.getKey(), resolveJsonRefs(entry.getValue()));
+                }
+                return newJsonObject;
+            }
+        } else {
+            return null;
+        }
     }
 
     public static Object decode(JsonElement json) {
@@ -35,7 +115,7 @@ public class MtsDecoder {
             } else if (jsonPrimitive.isBoolean()) {
                 return jsonPrimitive.getAsBoolean();
             } else {
-                return null; // not possible
+                return null;
             }
         } else if (json.isJsonArray()) {
             var jsonArray = json.getAsJsonArray();
@@ -58,8 +138,13 @@ public class MtsDecoder {
 
             var properties = new LinkedHashMap<String, Object>();
             for (var entry : jsonObject.entrySet()) {
-                if (!entry.getKey().startsWith("@"))
+                if (entry.getKey().equals("@type")) {
+                    // do nothing
+                } else if (entry.getKey().startsWith("@")) {
+                    throw new MtsException("unrecognized keyword: %s", entry.getKey());
+                } else {
                     properties.put(entry.getKey(), decode(entry.getValue()));
+                }
             }
 
             if (typeName != null) {
@@ -67,12 +152,12 @@ public class MtsDecoder {
                 if (type == null) {
                     throw new MtsException("declared type not registered: %s", typeName);
                 }
-                return MtsConstruct.construct(type, properties);
+                return MtsConstruct.construct(type, properties, true);
             } else {
-                return new ImplicitTypedValue(properties);
+                return new ImplicitTypedObject(properties);
             }
         } else {
-            return null; // not possible
+            return null;
         }
     }
 }
