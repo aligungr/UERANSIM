@@ -1,4 +1,4 @@
-package com.runsim.backend.demo.control;
+package com.runsim.backend.app.control;
 
 import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.nas.core.IMessageBuilder;
@@ -18,7 +18,7 @@ import com.runsim.backend.utils.octets.OctetString;
 import java.util.HashSet;
 import java.util.Locale;
 
-import static com.runsim.backend.demo.control.Control.*;
+import static com.runsim.backend.app.control.Control.*;
 
 public class ImplementationControl {
 

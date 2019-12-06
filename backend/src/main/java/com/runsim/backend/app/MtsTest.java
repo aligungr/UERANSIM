@@ -1,4 +1,4 @@
-package com.runsim.backend.demo;
+package com.runsim.backend.app;
 
 import com.runsim.backend.Constants;
 import com.runsim.backend.mts.MtsDecoder;

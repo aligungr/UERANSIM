@@ -1,4 +1,4 @@
-package com.runsim.backend.demo.codegen;
+package com.runsim.backend.app.codegen;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

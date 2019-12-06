@@ -1,6 +1,5 @@
-package com.runsim.backend.demo;
+package com.runsim.backend.app;
 
-import com.runsim.backend.App;
 import com.runsim.backend.utils.Color;
 import com.runsim.backend.utils.Console;
 
@@ -12,7 +11,7 @@ public class FlowTesting {
     public static void main(String[] args) throws Exception {
         Console.println(Color.BLUE, "Select a flow:");
 
-        var flowNames = App.getFlowNames().toArray(new String[0]);
+        var flowNames = Backend.getFlowNames().toArray(new String[0]);
         Arrays.sort(flowNames);
 
         for (int i = 0; i < flowNames.length; i++) {
@@ -26,7 +25,7 @@ public class FlowTesting {
         int selection = scanner.nextInt();
 
         var flowName = flowNames[selection - 1];
-        var flow = App.getFlowType(flowName);
+        var flow = Backend.getFlowType(flowName);
         flow.getConstructor().newInstance().start();
     }
 }

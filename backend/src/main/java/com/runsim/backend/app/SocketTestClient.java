@@ -1,4 +1,4 @@
-package com.runsim.backend.demo;
+package com.runsim.backend.app;
 
 import com.google.gson.*;
 import com.runsim.backend.web.SessionManager;

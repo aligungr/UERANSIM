@@ -1,7 +1,7 @@
 package com.runsim.backend.web;
 
-import com.runsim.backend.App;
 import com.runsim.backend.BaseFlow;
+import com.runsim.backend.app.Backend;
 
 import java.util.UUID;
 
@@ -21,12 +21,12 @@ public class Session {
 
     @Command
     public void allFlows() {
-        sender.send("allFlows", App.getFlowNames());
+        sender.send("allFlows", Backend.getFlowNames());
     }
 
     @Command
     public void flowSetup(String flowName) {
-        var type = App.getFlowType(flowName);
+        var type = Backend.getFlowType(flowName);
         if (type == null) {
             errorResponse("flow not found: " + flowName);
             return;

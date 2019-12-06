@@ -1,6 +1,6 @@
-package com.runsim.backend.demo;
+package com.runsim.backend.app;
 
-import com.runsim.backend.demo.transcoder.*;
+import com.runsim.backend.app.transcoder.*;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;

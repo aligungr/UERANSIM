@@ -1,5 +1,7 @@
-package com.runsim.backend;
+package com.runsim.backend.app;
 
+import com.runsim.backend.BaseFlow;
+import com.runsim.backend.Constants;
 import com.runsim.backend.web.Session;
 import com.runsim.backend.web.SessionManager;
 import io.github.classgraph.ClassGraph;
@@ -11,7 +13,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
-public class App {
+public class Backend {
 
     private static HashMap<String, Class<? extends BaseFlow>> flowTypes;
 

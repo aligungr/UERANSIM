@@ -39,7 +39,7 @@ public class EapAkaSynchronization200 extends BaseFlow {
         var ngapPdu = UeUtils.createUplinkMessage(nasMessage, 150, 1);
         sendPDU(ngapPdu);
 
-        return closeConnection();
+        return this::sinkState;
     }
 
 }

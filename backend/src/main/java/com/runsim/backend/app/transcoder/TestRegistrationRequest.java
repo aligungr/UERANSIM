@@ -1,6 +1,6 @@
-package com.runsim.backend.demo.transcoder;
+package com.runsim.backend.app.transcoder;
 
-import com.runsim.backend.demo.TranscoderTesting;
+import com.runsim.backend.app.TranscoderTesting;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.impl.enums.*;
 import com.runsim.backend.nas.impl.ies.IE5gsRegistrationType;

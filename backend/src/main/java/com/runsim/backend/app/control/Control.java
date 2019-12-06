@@ -1,4 +1,4 @@
-package com.runsim.backend.demo.control;
+package com.runsim.backend.app.control;
 
 import com.runsim.backend.Constants;
 import com.runsim.backend.exceptions.IncorrectImplementationException;
