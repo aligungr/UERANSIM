@@ -282,4 +282,16 @@ public final class Utils {
     public static int toInt(String hex) {
         return toInt(hexStringToByteArray(hex));
     }
+
+    /**
+     * Returns an intuitive type name for given class
+     * Format: [Enclosing Class Simple Name].[Inner Class Simple Name]
+     */
+    public static String getTypeName(Class<?> type) {
+        if (type.getEnclosingClass() == null) {
+            return type.getSimpleName();
+        } else {
+            return getTypeName(type.getEnclosingClass()) + "." + type.getSimpleName();
+        }
+    }
 }

@@ -26,12 +26,12 @@
   },
   "steps": [
     {
-      "nas": {
+      "nasMessage": {
         "@ref": "registrationRequest.json"
       }
     },
     {
-      "nas": {
+      "nasMessage": {
         "@ref": "authenticationResponse.json"
       }
     }

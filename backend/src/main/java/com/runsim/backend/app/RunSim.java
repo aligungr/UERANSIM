@@ -6,20 +6,11 @@ import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.utils.Console;
-import com.runsim.backend.utils.Json;
 import com.runsim.backend.utils.Utils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
 public class RunSim {
-
-    private static String getTypeName(Class<?> type) {
-        if (type.getEnclosingClass() == null) {
-            return type.getSimpleName();
-        } else {
-            return getTypeName(type.getEnclosingClass()) + "." + type.getSimpleName();
-        }
-    }
 
     private static void initMts() {
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
@@ -32,7 +23,7 @@ public class RunSim {
                     throw new RuntimeException(e);
                 }
 
-                String typeName = getTypeName(clazz);
+                String typeName = Utils.getTypeName(clazz);
 
                 //Console.print(Color.RED, typeName + " ");
                 //Console.println(Color.BLUE, clazz.getName());
