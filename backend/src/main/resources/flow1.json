@@ -26,6 +26,12 @@
   },
   "steps": [
     {
+      "ngapType": "InitialUEMessage",
+      "ngapIEs": [
+        true,
+        {},
+        23
+      ],
       "nasMessage": {
         "@ref": "registrationRequest.json"
       }
