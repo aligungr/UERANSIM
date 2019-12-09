@@ -12,7 +12,7 @@
     "homeNetworkPublicKeyIdentifier": {
       "value": 0
     },
-    "schemaOutput": "000000028"
+    "schemaOutput": "000000015"
   },
   "registrationType": {
     "followOnRequestPending": "NO_FOR_PENDING",
@@ -23,5 +23,17 @@
     "nasKeySetIdentifier": {
       "value": 3
     }
+  },
+  "requestedNSSAI": {
+    "sNssais": [
+      {
+        "sst": {
+          "value": 1
+        },
+        "sd": {
+          "value": 634799
+        }
+      }
+    ]
   }
 }

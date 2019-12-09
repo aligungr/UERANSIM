@@ -229,4 +229,32 @@ public class OctetN {
     public final Octet[] toOctetArray() {
         return toOctetArray(true);
     }
+
+    /**
+     * Returns the underlying value as an array of bytes according to given endianness.
+     * Size of the returning array is equal to {@link #octetCount()}.
+     *
+     * @param useBigEndian should be set true to use Big Endian, or false for Little Endian
+     */
+    public final byte[] toByteArray(boolean useBigEndian) {
+        var octets = new byte[octetCount()];
+        if (!useBigEndian) {
+            for (int i = 0; i < octets.length; i++) {
+                octets[i] = (byte) ((int) ((_longValue >> (8 * i)) & 0xFF));
+            }
+        } else {
+            for (int i = 0; i < octets.length; i++) {
+                octets[octets.length - i - 1] = (byte) ((int) ((_longValue >> (8 * i)) & 0xFF));
+            }
+        }
+        return octets;
+    }
+
+    /**
+     * Returns the underlying value as an array of bytes using <b>Big Endian</b>.
+     * see {@link #toByteArray(boolean)}.
+     */
+    public final byte[] toByteArray() {
+        return toByteArray(true);
+    }
 }

@@ -82,4 +82,13 @@ public final class OctetString implements Iterable<Octet> {
         }
         return true;
     }
+
+    public byte[] toByteArray() {
+        var octetArray = getAsArray();
+        var byteArray = new byte[octetArray.length];
+        for (int i = 0; i < byteArray.length; i++) {
+            byteArray[i] = (byte) (octetArray[i].longValue() & 0xFF);
+        }
+        return byteArray;
+    }
 }
