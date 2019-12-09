@@ -1,5 +1,6 @@
 package com.runsim.backend;
 
+import com.runsim.backend.app.Constants;
 import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.impl.enums.EMccValue;
 import com.runsim.backend.nas.impl.enums.EMncValue;
@@ -129,7 +130,8 @@ public class NGAP {
         int mnc = plmn.mnc.intValue();
         boolean longMnc = plmn.mnc.isLongMnc();
 
-        longMnc = true; // here assumed always 3 digit, but it can be changed back, no problem.
+        if (Constants.ALWAYS_LONG_MNC)
+            longMnc = true;
 
         if (longMnc) {
             int mnc1 = mnc % 1000 / 100;

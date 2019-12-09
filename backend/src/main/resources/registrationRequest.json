@@ -3,7 +3,7 @@
   "mobileIdentity": {
     "@type": "IEImsiMobileIdentity",
     "mcc": 1,
-    "mnc": 245,
+    "mnc": 1,
     "routingIndicator": "0000",
     "protectionSchemaId": "NULL_SCHEMA",
     "homeNetworkPublicKeyIdentifier": {

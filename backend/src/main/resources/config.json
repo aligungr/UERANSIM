@@ -5,7 +5,7 @@
     "nrCgi": {
       "plmn": {
         "mcc": 1,
-        "mnc": 73
+        "mnc": 1
       },
       "nrCellIdentity": {
         "hex": "01b2c3d4e0"
@@ -13,7 +13,7 @@
     },
     "tai": {
       "mcc": 2,
-      "mnc": 912,
+      "mnc": 2,
       "tac": "000075"
     },
     "timeStamp": {

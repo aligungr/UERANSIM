@@ -1,5 +1,6 @@
 package com.runsim.backend.nas.impl.values;
 
+import com.runsim.backend.app.Constants;
 import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.core.NasValue;
 import com.runsim.backend.nas.impl.enums.EMccValue;
@@ -62,6 +63,9 @@ public class VPlmn extends NasValue {
 
         int mnc = this.mnc.intValue();
         boolean longMnc = this.mnc.isLongMnc();
+
+        if (Constants.ALWAYS_LONG_MNC)
+            longMnc = true;
 
         int mnc1 = longMnc ? (mnc % 1000) / 100 : (mnc % 100) / 10;
         int mnc2 = longMnc ? (mnc % 100) / 10 : (mnc % 10);
