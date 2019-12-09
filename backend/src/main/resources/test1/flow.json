@@ -5,11 +5,18 @@
     {
       "ngapType": "InitialUEMessage",
       "nasMessage": "@test1/registrationRequest.json",
-      "sleep": 10000
+      "sleep": 1000
     },
     {
       "ngapType": "UplinkNASTransport",
       "nasMessage": "@test1/authenticationResponse.json"
     }
+  ],
+  "passOnReceive": [
+    "AuthenticationResult"
+  ],
+  "failOnReceive": [
+    "AuthenticationReject",
+    "RegistrationReject"
   ]
 }

@@ -3,6 +3,8 @@ package com.runsim.backend.app.sim;
 import com.runsim.backend.BaseFlow;
 import com.runsim.backend.Message;
 import com.runsim.backend.NGAP;
+import com.runsim.backend.mts.TypeRegistry;
+import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.ngap.Values;
@@ -10,6 +12,7 @@ import com.runsim.backend.ngap.ngap_commondatatypes.Criticality;
 import com.runsim.backend.ngap.ngap_commondatatypes.ProcedureCode;
 import com.runsim.backend.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import com.runsim.backend.ngap.ngap_ies.*;
+import com.runsim.backend.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
 import com.runsim.backend.ngap.ngap_pdu_contents.UplinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
@@ -21,6 +24,7 @@ import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RunSimFlow extends BaseFlow {
     private final SimulationFlow simulationFlow;
@@ -38,15 +42,27 @@ public class RunSimFlow extends BaseFlow {
 
     private synchronized State performStep(Message message) {
         Console.println();
+
+        var receivedNas = receivedNasMessage(message);
+        if (receivedNas != null) {
+            Console.print(Color.WHITE_BRIGHT, "NAS Message received with type: ");
+            Console.println(Color.CYAN_BRIGHT, receivedNas.getClass().getSimpleName());
+
+            String registeredName = TypeRegistry.getClassName(receivedNas.getClass());
+            if (registeredName != null) {
+                if (Arrays.asList(simulationFlow.failOnReceive).contains(registeredName)) {
+                    Console.println(Color.RED_BOLD, "[TEST RESULT] Test Case Failed.");
+                    return closeConnection();
+                } else if (Arrays.asList(simulationFlow.passOnReceive).contains(registeredName)) {
+                    Console.println(Color.GREEN_BOLD, "[TEST RESULT] Test Case Passed.");
+                    return closeConnection();
+                }
+            }
+        }
+
         if (stepIndex >= simulationFlow.stepCount) {
             Console.println(Color.PURPLE, "perform step called but all steps are done. no-op.");
             return this::performStep;
-        }
-
-        if (message == null) {
-            //Console.println(Color.WHITE_BRIGHT, "message is null");
-        } else {
-            Console.println(Color.WHITE_BRIGHT, "message received");
         }
 
         Console.println(Color.YELLOW, "performStep is starting for step", stepIndex + 1 + "/" + simulationFlow.stepCount);
@@ -62,10 +78,10 @@ public class RunSimFlow extends BaseFlow {
         var pdu = makeNgapPdu(step);
 
         if (step.sleep > 0) {
-            Console.println(Color.CYAN_BOLD, "sleep is started...");
+            Console.println(Color.CYAN, "sleep is started...");
             int sleep = step.sleep;
             while (sleep > 0) {
-                Console.println(Color.CYAN_BOLD, sleep / 1000);
+                Console.println(Color.CYAN, sleep / 1000);
                 long current = System.currentTimeMillis();
                 Utils.sleep(Math.min(sleep, 1000));
                 long delta = System.currentTimeMillis() - current;
@@ -80,6 +96,33 @@ public class RunSimFlow extends BaseFlow {
         Console.println(Color.GREEN, "step done");
 
         return this::performStep;
+    }
+
+    private NasMessage receivedNasMessage(Message message) {
+        if (message == null)
+            return null;
+        var value = message.getAsPDU().getValue();
+        if (!(value instanceof InitiatingMessage))
+            return null;
+        value = ((InitiatingMessage) value).value.getDecodedValue();
+        if (!(value instanceof DownlinkNASTransport))
+            return null;
+
+        NAS_PDU nasPdu = null;
+
+        var protocolIEs = ((DownlinkNASTransport) value).protocolIEs.valueList;
+        for (var protocolIE : protocolIEs) {
+            if (protocolIE instanceof DownlinkNASTransport.ProtocolIEs.SEQUENCE) {
+                value = ((DownlinkNASTransport.ProtocolIEs.SEQUENCE) protocolIE).value.getDecodedValue();
+                if (value instanceof NAS_PDU) {
+                    nasPdu = (NAS_PDU) value;
+                }
+            }
+        }
+
+        if (nasPdu == null)
+            return null;
+        return NasDecoder.nasPdu(nasPdu.getValue());
     }
 
     private NGAP_PDU makeNgapPdu(SimulationStep step) {

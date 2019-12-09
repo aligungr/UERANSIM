@@ -6,6 +6,7 @@ import com.runsim.backend.mts.ImplicitTypedObject;
 import com.runsim.backend.mts.MtsConstruct;
 import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
+import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.utils.Fun;
 import com.runsim.backend.utils.Funs;
@@ -14,6 +15,8 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.function.Function;
 
 public class RunSim {
@@ -140,10 +143,50 @@ public class RunSim {
             }
         };
 
+        Fun onReceiveControl = () -> {
+            int index = 0;
+            for (var item : flow.passOnReceive) {
+                if (item == null) {
+                    throw new MtsException("passOnReceive[%d] is null", index);
+                }
+                var type = TypeRegistry.getClassByName(item);
+                if (type == null) {
+                    throw new MtsException("registered type not found: %s, at passOnReceive[%d]", item, index);
+                }
+                if (!NasMessage.class.isAssignableFrom(type)) {
+                    throw new MtsException("specified type is not a NasMessage: %s, at passOnReceive[%d]", item, index);
+                }
+                index++;
+            }
+
+            index = 0;
+            for (var item : flow.failOnReceive) {
+                if (item == null) {
+                    throw new MtsException("failOnReceive[%d] is null", index);
+                }
+                var type = TypeRegistry.getClassByName(item);
+                if (type == null) {
+                    throw new MtsException("registered type not found: %s, at failOnReceive[%d]", item, index);
+                }
+                if (!NasMessage.class.isAssignableFrom(type)) {
+                    throw new MtsException("specified type is not a NasMessage: %s, at failOnReceive[%d]", item, index);
+                }
+                index++;
+            }
+
+            var set = new HashSet<String>();
+            set.addAll(Arrays.asList(flow.failOnReceive));
+            set.addAll(Arrays.asList(flow.passOnReceive));
+            if (set.size() != flow.failOnReceive.length + flow.passOnReceive.length) {
+                throw new MtsException("duplicate items found at passOnReceive and/or failOnReceive");
+            }
+        };
+
         Funs.run(nullControl)
                 .then(setupControl)
                 .then(configControl)
                 .then(stepsControl)
+                .then(onReceiveControl)
                 .invoke();
     }
 }
