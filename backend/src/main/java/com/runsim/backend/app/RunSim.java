@@ -1,6 +1,5 @@
 package com.runsim.backend.app;
 
-import com.runsim.backend.NGAP;
 import com.runsim.backend.app.sim.*;
 import com.runsim.backend.exceptions.MtsException;
 import com.runsim.backend.mts.ImplicitTypedObject;
@@ -8,7 +7,9 @@ import com.runsim.backend.mts.MtsConstruct;
 import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
 import com.runsim.backend.nas.eap.*;
-import com.runsim.backend.utils.*;
+import com.runsim.backend.utils.Fun;
+import com.runsim.backend.utils.Funs;
+import com.runsim.backend.utils.Utils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
@@ -20,7 +21,7 @@ public class RunSim {
     public static void main(String[] args) throws Exception {
         initMts();
 
-        var flow = getSimulationFlow("flow1.json");
+        var flow = getSimulationFlow("test1/flow1.json");
         flowControl(flow);
 
         Constants.AMF_HOST = flow.setup.amfHost;

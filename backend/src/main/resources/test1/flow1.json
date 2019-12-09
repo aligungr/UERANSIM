@@ -4,11 +4,11 @@
   "steps": [
     {
       "ngapType": "InitialUEMessage",
-      "nasMessage": "@registrationRequest.json"
+      "nasMessage": "@test1/registrationRequest.json"
     },
     {
       "ngapType": "UplinkNASTransport",
-      "nasMessage": "@authenticationResponse.json"
+      "nasMessage": "@test1/authenticationResponse.json"
     }
   ]
 }
