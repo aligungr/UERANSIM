@@ -1,7 +1,7 @@
 package com.runsim.backend.nas.impl.ies;
 
-import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
-import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
+import com.runsim.backend.nas.impl.enums.EMccValue;
+import com.runsim.backend.nas.impl.enums.EMncValue;
 import com.runsim.backend.nas.impl.values.V5gTmsi;
 import com.runsim.backend.nas.impl.values.VAmfSetId;
 import com.runsim.backend.nas.impl.values.VPlmn;
@@ -10,8 +10,8 @@ import com.runsim.backend.utils.bits.Bit6;
 import com.runsim.backend.utils.octets.Octet;
 
 public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
-    public EMobileCountryCode mcc;
-    public EMobileNetworkCode mnc;
+    public EMccValue mcc;
+    public EMncValue mnc;
     public Octet amfRegionId;
     public VAmfSetId amfSetId;
     public Bit6 amfPointer;
@@ -20,7 +20,7 @@ public class IE5gGutiMobileIdentity extends IE5gsMobileIdentity {
     public IE5gGutiMobileIdentity() {
     }
 
-    public IE5gGutiMobileIdentity(EMobileCountryCode mcc, EMobileNetworkCode mnc, Octet amfRegionId, VAmfSetId amfSetId, Bit6 amfPointer, V5gTmsi tmsi) {
+    public IE5gGutiMobileIdentity(EMccValue mcc, EMncValue mnc, Octet amfRegionId, VAmfSetId amfSetId, Bit6 amfPointer, V5gTmsi tmsi) {
         this.mcc = mcc;
         this.mnc = mnc;
         this.amfRegionId = amfRegionId;

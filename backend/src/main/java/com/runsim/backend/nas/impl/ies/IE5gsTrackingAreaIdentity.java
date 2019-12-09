@@ -1,22 +1,22 @@
 package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.core.ies.InformationElement3;
-import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
-import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
+import com.runsim.backend.nas.impl.enums.EMccValue;
+import com.runsim.backend.nas.impl.enums.EMncValue;
 import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.Octet3;
 
 public class IE5gsTrackingAreaIdentity extends InformationElement3 {
-    public EMobileCountryCode mcc;
-    public EMobileNetworkCode mnc;
+    public EMccValue mcc;
+    public EMncValue mnc;
     public Octet3 trackingAreaCode;
 
     public IE5gsTrackingAreaIdentity() {
     }
 
-    public IE5gsTrackingAreaIdentity(EMobileCountryCode mcc, EMobileNetworkCode mnc, Octet3 trackingAreaCode) {
+    public IE5gsTrackingAreaIdentity(EMccValue mcc, EMncValue mnc, Octet3 trackingAreaCode) {
         this.mcc = mcc;
         this.mnc = mnc;
         this.trackingAreaCode = trackingAreaCode;

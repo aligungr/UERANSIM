@@ -1,8 +1,15 @@
 package com.runsim.backend;
 
+import com.runsim.backend.exceptions.EncodingException;
+import com.runsim.backend.nas.impl.enums.EMccValue;
+import com.runsim.backend.nas.impl.enums.EMncValue;
+import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.ngap.RuntimeConfiguration;
 import com.runsim.backend.ngap.ValueFactory;
+import com.runsim.backend.ngap.ngap_ies.PLMNIdentity;
+import com.runsim.backend.utils.OctetInputStream;
 import com.runsim.backend.utils.Utils;
+import com.runsim.backend.utils.octets.Octet3;
 import fr.marben.asnsdk.japi.Context;
 import fr.marben.asnsdk.japi.Loader;
 import fr.marben.asnsdk.japi.spe.Value;
@@ -105,5 +112,77 @@ public class NGAP {
     public static <T extends Value> T xerDecode(Class<T> type, String xml) {
         xml = Utils.normalizeXml(xml);
         return xerDecode(type, xml.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * This method is different from NAS/5GS version
+     */
+    public static PLMNIdentity plmnEncode(VPlmn plmn) {
+        int mcc = plmn.mcc.intValue();
+        int mcc3 = mcc % 10;
+        int mcc2 = (mcc % 100) / 10;
+        int mcc1 = (mcc % 1000) / 100;
+
+        if (plmn.mnc == null)
+            throw new EncodingException("mnc is null");
+
+        int mnc = plmn.mnc.intValue();
+        boolean longMnc = plmn.mnc.isLongMnc();
+
+        longMnc = true; // here assumed always 3 digit, but it can be changed back, no problem.
+
+        if (longMnc) {
+            int mnc1 = mnc % 1000 / 100;
+            int mnc2 = mnc % 100 / 10;
+            int mnc3 = mnc % 10;
+
+            int octet1 = mcc2 << 4 | mcc1;
+            int octet2 = mnc1 << 4 | mcc3;
+            int octet3 = mnc3 << 4 | mnc2;
+
+            return new PLMNIdentity(new Octet3(octet1, octet2, octet3).toByteArray());
+        } else {
+            int mnc1 = mnc % 100 / 10;
+            int mnc2 = mnc % 10;
+            int mnc3 = 0xF;
+
+            int octet1 = mcc2 << 4 | mcc1;
+            int octet2 = mnc3 << 4 | mcc3;
+            int octet3 = mnc2 << 4 | mnc1;
+
+            return new PLMNIdentity(new Octet3(octet1, octet2, octet3).toByteArray());
+        }
+    }
+
+    /**
+     * This method is different from NAS/5GS version
+     */
+    public static VPlmn plmnDecode(PLMNIdentity plmn) {
+        var bytes = plmn.getValue();
+        var stream = new OctetInputStream(bytes);
+
+        var res = new VPlmn();
+
+        /* Decode MCC */
+        int octet1 = stream.readOctetI();
+        int mcc1 = octet1 & 0b1111;
+        int mcc2 = (octet1 >> 4) & 0b1111;
+        int octet2 = stream.readOctetI();
+        int mcc3 = octet2 & 0b1111;
+        int mcc = 100 * mcc1 + 10 * mcc2 + mcc3;
+        res.mcc = EMccValue.fromValue(mcc);
+
+        /* Decode MNC */
+        int mnc3 = (octet2 >> 4) & 0b1111;
+        int octet3 = stream.readOctetI();
+        int mnc1 = octet3 & 0b1111;
+        int mnc2 = (octet3 >> 4) & 0b1111;
+
+        int mnc = 10 * mnc3 + mnc1;
+        if ((mnc3 != 0xf) || (octet1 == 0xff && octet2 == 0xff && octet3 == 0xff)) {
+            mnc = 10 * mnc + mnc2;
+        }
+        res.mnc = EMncValue.fromValue(mnc);
+        return res;
     }
 }
