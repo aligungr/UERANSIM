@@ -14,6 +14,8 @@ import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
 import com.runsim.backend.ngap.ngap_pdu_contents.UplinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import com.runsim.backend.utils.Color;
+import com.runsim.backend.utils.Console;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
@@ -34,15 +36,35 @@ public class RunSimFlow extends BaseFlow {
     }
 
     private synchronized State performStep(Message message) {
-        var step = simulationFlow.steps[stepIndex];
-        if (stepIndex >= simulationFlow.steps.length - 1) {
+        Console.println();
+        if (stepIndex >= simulationFlow.stepCount) {
+            Console.println(Color.PURPLE, "perform step called but all steps are done. no-op.");
             return this::performStep;
-        } else {
-            stepIndex++;
         }
 
+        if (message == null) {
+            //Console.println(Color.WHITE_BRIGHT, "message is null");
+        } else {
+            Console.println(Color.WHITE_BRIGHT, "message received");
+        }
+
+        Console.println(Color.YELLOW, "performStep is starting for step", stepIndex + 1 + "/" + simulationFlow.stepCount);
+
+        if (stepIndex >= simulationFlow.stepCount) {
+            Console.println(Color.CYAN, "step exceeds total step count return to itself");
+            return this::performStep;
+        }
+
+        var step = simulationFlow.steps[stepIndex];
+        stepIndex++;
+
+        Console.print(Color.BLUE, "pdu is sending...");
         var pdu = makeNgapPdu(step);
         sendPDU(pdu);
+        Console.println(Color.BLUE, " (done)");
+
+        Console.println(Color.GREEN, "step done");
+
         return this::performStep;
     }
 
