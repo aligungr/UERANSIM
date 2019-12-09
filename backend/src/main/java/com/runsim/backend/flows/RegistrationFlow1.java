@@ -11,8 +11,8 @@ import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.eap.EEapCode;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
-import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
-import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
+import com.runsim.backend.nas.impl.enums.EMccValue;
+import com.runsim.backend.nas.impl.enums.EMncValue;
 import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.nas.impl.messages.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
@@ -65,8 +65,8 @@ public class RegistrationFlow1 extends BaseFlow {
             nasMessage.nasKeySetIdentifier.nasKeySetIdentifier = new Bit3(3);
 
             var imsi = new IEImsiMobileIdentity();
-            imsi.mcc = EMobileCountryCode.unknownValue(123);
-            imsi.mnc = EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 123);
+            imsi.mcc = EMccValue.unknownValue(123);
+            imsi.mnc = EMncValue.unknownValue(123);
             imsi.routingIndicator = "0000";
             imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
             imsi.schemaOutput = "000000001";
@@ -399,8 +399,8 @@ public class RegistrationFlow1 extends BaseFlow {
 
     private UserLocationInformationNR createUserLocationInformationNr() {
         var plmnIdentity = new VPlmn();
-        plmnIdentity.mcc = EMobileCountryCode.fromValue(1);
-        plmnIdentity.mnc = EMobileNetworkCode3.fromValue(plmnIdentity.mcc.intValue() + 1000 + 1);
+        plmnIdentity.mcc = EMccValue.fromValue(1);
+        plmnIdentity.mnc = EMncValue.fromValue(1);
 
         var userLocationInformationNr = new UserLocationInformationNR();
         userLocationInformationNr.nR_CGI = new NR_CGI();

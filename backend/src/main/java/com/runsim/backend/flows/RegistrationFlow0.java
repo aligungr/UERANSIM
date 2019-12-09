@@ -10,8 +10,8 @@ import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.core.messages.PlainMmMessage;
 import com.runsim.backend.nas.eap.*;
 import com.runsim.backend.nas.impl.enums.EIdentityType;
-import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
-import com.runsim.backend.nas.impl.enums.EMobileNetworkCode3;
+import com.runsim.backend.nas.impl.enums.EMccValue;
+import com.runsim.backend.nas.impl.enums.EMncValue;
 import com.runsim.backend.nas.impl.ies.*;
 import com.runsim.backend.nas.impl.messages.*;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
@@ -61,8 +61,8 @@ public class RegistrationFlow0 extends BaseFlow {
             nasMessage.nasKeySetIdentifier.nasKeySetIdentifier = new Bit3(7);
 
             var imsi = new IEImsiMobileIdentity();
-            imsi.mcc = EMobileCountryCode.unknownValue(1);
-            imsi.mnc = EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 1);
+            imsi.mcc = EMccValue.unknownValue(1);
+            imsi.mnc = EMncValue.unknownValue(1);
             imsi.routingIndicator = "0000";
             imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
             imsi.schemaOutput = "000000001";

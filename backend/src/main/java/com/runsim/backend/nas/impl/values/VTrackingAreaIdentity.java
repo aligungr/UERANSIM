@@ -28,17 +28,17 @@ public class VTrackingAreaIdentity extends NasValue {
     }
 
     public VTrackingAreaIdentity(int mcc, int mnc, int tac) {
-        this.plmn = new VPlmn(mcc, mcc);
+        this.plmn = new VPlmn(mcc, mnc);
         this.tac = new Octet3(tac);
     }
 
     public VTrackingAreaIdentity(int mcc, int mnc, Octet3 tac) {
-        this.plmn = new VPlmn(mcc, mcc);
+        this.plmn = new VPlmn(mcc, mnc);
         this.tac = tac;
     }
 
     public VTrackingAreaIdentity(int mcc, int mnc, String tac) {
-        this.plmn = new VPlmn(mcc, mcc);
+        this.plmn = new VPlmn(mcc, mnc);
         this.tac = new Octet3(tac);
     }
 

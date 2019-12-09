@@ -2,16 +2,16 @@ package com.runsim.backend.nas.impl.ies;
 
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.ProtocolEnum;
-import com.runsim.backend.nas.impl.enums.EMobileCountryCode;
-import com.runsim.backend.nas.impl.enums.EMobileNetworkCode;
+import com.runsim.backend.nas.impl.enums.EMccValue;
+import com.runsim.backend.nas.impl.enums.EMncValue;
 import com.runsim.backend.nas.impl.values.VHomeNetworkPki;
 import com.runsim.backend.nas.impl.values.VPlmn;
 import com.runsim.backend.utils.OctetOutputStream;
 import com.runsim.backend.utils.octets.OctetString;
 
 public class IEImsiMobileIdentity extends IESuciMobileIdentity {
-    public EMobileCountryCode mcc;
-    public EMobileNetworkCode mnc;
+    public EMccValue mcc;
+    public EMncValue mnc;
     public String routingIndicator;
     public EProtectionSchemeIdentifier protectionSchemaId;
     public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
@@ -20,7 +20,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public IEImsiMobileIdentity() {
     }
 
-    public IEImsiMobileIdentity(EMobileCountryCode mcc, EMobileNetworkCode mnc, String routingIndicator, EProtectionSchemeIdentifier protectionSchemaId, VHomeNetworkPki homeNetworkPublicKeyIdentifier, String schemaOutput) {
+    public IEImsiMobileIdentity(EMccValue mcc, EMncValue mnc, String routingIndicator, EProtectionSchemeIdentifier protectionSchemaId, VHomeNetworkPki homeNetworkPublicKeyIdentifier, String schemaOutput) {
         this.mcc = mcc;
         this.mnc = mnc;
         this.routingIndicator = routingIndicator;

@@ -2,6 +2,7 @@ package com.runsim.backend.app.sim;
 
 import com.runsim.backend.BaseFlow;
 import com.runsim.backend.Message;
+import com.runsim.backend.NGAP;
 import com.runsim.backend.nas.NasEncoder;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.ngap.Values;
@@ -13,7 +14,6 @@ import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
 import com.runsim.backend.ngap.ngap_pdu_contents.UplinkNASTransport;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import com.runsim.backend.utils.Console;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
@@ -35,9 +35,8 @@ public class RunSimFlow extends BaseFlow {
 
     private synchronized State performStep(Message message) {
         var step = simulationFlow.steps[stepIndex];
-        if (stepIndex == simulationFlow.steps.length - 1) {
-            Console.println("the end");
-            closeConnection();
+        if (stepIndex >= simulationFlow.steps.length - 1) {
+            return this::performStep;
         } else {
             stepIndex++;
         }
@@ -63,11 +62,6 @@ public class RunSimFlow extends BaseFlow {
         ranUeNgapId.criticality = new Criticality(Criticality.ASN_reject);
         ranUeNgapId.value = new OpenTypeValue(new RAN_UE_NGAP_ID(simulationFlow.config.ranUeNgapId));
 
-        var establishmentCause = new InitialUEMessage.ProtocolIEs.SEQUENCE();
-        establishmentCause.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RRCEstablishmentCause);
-        establishmentCause.criticality = new Criticality(Criticality.ASN_ignore);
-        establishmentCause.value = new OpenTypeValue(new RRCEstablishmentCause(simulationFlow.config.rrcEstablishmentCause.intValue()));
-
         var nasPdu = new InitialUEMessage.ProtocolIEs.SEQUENCE();
         nasPdu.id = new ProtocolIE_ID(Values.NGAP_Constants__id_NAS_PDU);
         nasPdu.criticality = new Criticality(Criticality.ASN_reject);
@@ -82,11 +76,16 @@ public class RunSimFlow extends BaseFlow {
             throw new RuntimeException(e);
         }
 
+        var establishmentCause = new InitialUEMessage.ProtocolIEs.SEQUENCE();
+        establishmentCause.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RRCEstablishmentCause);
+        establishmentCause.criticality = new Criticality(Criticality.ASN_ignore);
+        establishmentCause.value = new OpenTypeValue(new RRCEstablishmentCause(simulationFlow.config.rrcEstablishmentCause.intValue()));
+
         var protocolIEs = new ArrayList<InitialUEMessage.ProtocolIEs.SEQUENCE>();
         protocolIEs.add(ranUeNgapId);
         protocolIEs.add(nasPdu);
-        protocolIEs.add(establishmentCause);
         protocolIEs.add(userLocationInformation);
+        protocolIEs.add(establishmentCause);
 
         var initialUEMessage = new InitialUEMessage();
         initialUEMessage.protocolIEs = new InitialUEMessage.ProtocolIEs(protocolIEs);
@@ -158,11 +157,11 @@ public class RunSimFlow extends BaseFlow {
 
         var userLocationInformationNr = new UserLocationInformationNR();
         userLocationInformationNr.nR_CGI = new NR_CGI();
-        userLocationInformationNr.nR_CGI.pLMNIdentity = new PLMNIdentity(config.nrCgi.plmn.toByteArray());
+        userLocationInformationNr.nR_CGI.pLMNIdentity = NGAP.plmnEncode(config.nrCgi.plmn);
         userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(config.nrCgi.nrCellIdentity.toByteArray(), 36);
         userLocationInformationNr.tAI = new TAI();
         userLocationInformationNr.tAI.tAC = new TAC(config.tai.tac.toByteArray());
-        userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(config.tai.plmn.toByteArray());
+        userLocationInformationNr.tAI.pLMNIdentity = NGAP.plmnEncode(config.tai.plmn);
         userLocationInformationNr.timeStamp = new TimeStamp(config.timeStamp.toByteArray());
         return userLocationInformationNr;
     }

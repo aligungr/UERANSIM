@@ -41,8 +41,8 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
 
         var imsi = (IEImsiMobileIdentity) mes.mobileIdentity;
         assertInstance(mes.mobileIdentity, IEImsiMobileIdentity.class);
-        assertEquals(imsi.mcc, EMobileCountryCode.unknownValue(1));
-        assertEquals(imsi.mnc, EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 1));
+        assertEquals(imsi.mcc, EMccValue.unknownValue(1));
+        assertEquals(imsi.mnc, EMncValue.unknownValue(1));
         assertEquals(imsi.routingIndicator, "0000");
         assertEquals(imsi.protectionSchemaId, IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA);
         assertEquals(imsi.schemaOutput, "000000001");
@@ -100,8 +100,8 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         nasMessage.nasKeySetIdentifier.nasKeySetIdentifier = new Bit3(7);
 
         var imsi = new IEImsiMobileIdentity();
-        imsi.mcc = EMobileCountryCode.unknownValue(1);
-        imsi.mnc = EMobileNetworkCode3.unknownValue(imsi.mcc.intValue() * 1000 + 1);
+        imsi.mcc = EMccValue.unknownValue(1);
+        imsi.mnc = EMncValue.unknownValue(1);
         imsi.routingIndicator = "0000";
         imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
         imsi.schemaOutput = "000000001";
