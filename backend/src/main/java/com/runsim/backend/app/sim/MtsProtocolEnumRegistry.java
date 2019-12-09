@@ -23,7 +23,7 @@ public class MtsProtocolEnumRegistry implements TypeRegistry.ICustomTypeRegistry
         }
         if (args.containsKey("value")) {
             var obj = args.get("value");
-            if (!Traits.isNumber(obj.getClass()) // && !Traits.isNumberIfString(obj)
+            if (obj == null || !Traits.isNumber(obj.getClass()) // && !Traits.isNumberIfString(obj)
             )
                 throw new MtsException("invalid value type for enum %s, it must be an int", type.getSimpleName());
             value = new NumberInfo(obj.toString()).intValue();

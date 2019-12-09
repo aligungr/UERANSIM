@@ -18,12 +18,15 @@ import com.runsim.backend.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import com.runsim.backend.ngap.ngap_ies.RRCEstablishmentCause;
 import com.runsim.backend.ngap.ngap_pdu_contents.InitialUEMessage;
 import com.runsim.backend.utils.Console;
+import com.runsim.backend.utils.Fun;
+import com.runsim.backend.utils.Funs;
 import com.runsim.backend.utils.Utils;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 
 public class RunSim {
 
@@ -31,6 +34,8 @@ public class RunSim {
         initMts();
 
         var flow = getSimulationFlow("flow1.json");
+        flowControl(flow);
+
         Console.println(Json.toJson(flow));
     }
 
@@ -90,6 +95,65 @@ public class RunSim {
             String name = decoded == null ? "null" : decoded.getClass().getSimpleName();
             throw new MtsException("unexpected type: '%s', SimulationFlow is expected", name);
         }
+    }
+
+    private static void flowControl(SimulationFlow flow) {
+        Function<String, Boolean> isValidIpAddress = ip -> {
+            try {
+                if (ip == null || ip.isEmpty()) return false;
+                String[] parts = ip.split("\\.");
+                if (parts.length != 4) return false;
+                for (String s : parts) {
+                    int i = Integer.parseInt(s);
+                    if ((i < 0) || (i > 255)) return false;
+                }
+                return !ip.endsWith(".");
+            } catch (NumberFormatException ignored) {
+                return false;
+            }
+        };
+
+        Fun nullControl = () -> {
+            var list = new ArrayList<String>();
+            Utils.findNullPublicFields(flow, list);
+            for (var item : list) {
+                throw new MtsException("missing mandatory property: %s", item);
+            }
+        };
+
+        Fun setupControl = () -> {
+            if (flow.setup.amfPort < 1024 || flow.setup.amfPort > 65535)
+                throw new MtsException("%s value must be in range [1024, 65535]", "setup.amfPort");
+            if (!isValidIpAddress.apply(flow.setup.amfHost))
+                throw new MtsException("invalid ip address: %s", flow.setup.amfHost);
+        };
+
+        Fun configControl = () -> {
+            if (flow.config.ranUeNgapId <= 0)
+                throw new MtsException("%s value must be positive", "config.ranUeNgapId");
+            if (flow.config.amfUeNgapId <= 0)
+                throw new MtsException("%s value must be positive", "config.amfUeNgapId");
+        };
+
+        Fun stepsControl = () -> {
+            if (flow.steps.length == 0)
+                throw new MtsException("at least one step is required");
+
+            int index = 0;
+            for (var step : flow.steps) {
+                if (step.nasMessage == null)
+                    throw new MtsException("missing mandatory property: steps[%d].nasMessage", index);
+                if (step.ngapType == null)
+                    throw new MtsException("missing mandatory property: steps[%d].ngapType", index);
+                index++;
+            }
+        };
+
+        Funs.run(nullControl)
+                .then(setupControl)
+                .then(configControl)
+                .then(stepsControl)
+                .invoke();
     }
 
     public static InitialUEMessage createInitialUeMessage(NasMessage nasMessage, int ranUeNgapIdValue, int establishmentCauseValue) {

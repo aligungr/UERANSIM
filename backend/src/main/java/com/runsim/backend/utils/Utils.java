@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -292,6 +293,43 @@ public final class Utils {
             return type.getSimpleName();
         } else {
             return getTypeName(type.getEnclosingClass()) + "." + type.getSimpleName();
+        }
+    }
+
+    /**
+     * Recursively finds null public fields of given object.
+     */
+    public static void findNullPublicFields(Object object, List<String> output) {
+        findNullPublicFields(object, output, "");
+    }
+
+    /**
+     * Recursively finds null public fields of given object.
+     */
+    private static void findNullPublicFields(Object object, List<String> output, String currentName) {
+        if (object == null)
+            return;
+        var type = object.getClass();
+        var fields = type.getDeclaredFields();
+
+        for (var field : fields) {
+            if (!Modifier.isPublic(field.getModifiers()))
+                continue;
+            if (Modifier.isStatic(field.getModifiers()))
+                continue;
+
+            Object value;
+            try {
+                value = field.get(object);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            String fieldName = currentName.length() == 0 ? field.getName() : currentName + "." + field.getName();
+            if (value == null) {
+                output.add(fieldName);
+            } else {
+                findNullPublicFields(value, output, fieldName);
+            }
         }
     }
 }
