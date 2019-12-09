@@ -1,5 +1,5 @@
 {
-  "@type": "SimulationFlow",
+  "setup": "@setup.json",
   "config": {
     "ranUeNgapId": 150,
     "amfUeNgapId": 1,
@@ -27,19 +27,11 @@
   "steps": [
     {
       "ngapType": "InitialUEMessage",
-      "ngapIEs": [
-        true,
-        {},
-        23
-      ],
-      "nasMessage": {
-        "@ref": "registrationRequest.json"
-      }
+      "nasMessage": "@registrationRequest.json"
     },
     {
-      "nasMessage": {
-        "@ref": "authenticationResponse.json"
-      }
+      "ngapType": "UplinkNASTransport",
+      "nasMessage": "@authenticationResponse.json"
     }
   ]
 }

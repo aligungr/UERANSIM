@@ -37,6 +37,22 @@ public class MtsDecoder {
         } else if (element.isJsonNull()) {
             return element;
         } else if (element.isJsonPrimitive()) {
+            // for reference jsons
+            if (element.getAsJsonPrimitive().isString()) {
+                String string = element.getAsString();
+                if (string != null && string.startsWith("@")) {
+                    string = string.substring(1);
+                    if (string.length() == 0)
+                        throw new MtsException("@ref value cannot be empty");
+
+                    var refContent = fileProvider.readFile(string);
+                    if (refContent == null)
+                        throw new MtsException("referenced file not found: %s", string);
+
+                    return resolveJsonRefs(parseJson(refContent));
+                }
+            }
+            // for all other primitives
             return element;
         } else if (element.isJsonArray()) {
             var jsonArray = element.getAsJsonArray();

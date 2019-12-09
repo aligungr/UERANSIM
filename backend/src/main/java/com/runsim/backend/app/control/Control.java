@@ -1,6 +1,6 @@
 package com.runsim.backend.app.control;
 
-import com.runsim.backend.Constants;
+import com.runsim.backend.app.Constants;
 import com.runsim.backend.exceptions.IncorrectImplementationException;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import io.github.classgraph.ClassGraph;

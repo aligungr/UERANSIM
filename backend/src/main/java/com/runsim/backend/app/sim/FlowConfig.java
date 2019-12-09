@@ -3,13 +3,13 @@ package com.runsim.backend.app.sim;
 import com.runsim.backend.app.ue.UserLocationInformationNr;
 import com.runsim.backend.nas.core.ProtocolEnum;
 
-public class SimulationConfig {
+public class FlowConfig {
     public final int ranUeNgapId;
     public final int amfUeNgapId;
     public final UserLocationInformationNr userLocationInformation;
     public final ERrcEstablishmentCause rrcEstablishmentCause;
 
-    public SimulationConfig(int ranUeNgapId, int amfUeNgapId, UserLocationInformationNr userLocationInformation, ERrcEstablishmentCause rrcEstablishmentCause) {
+    public FlowConfig(int ranUeNgapId, int amfUeNgapId, UserLocationInformationNr userLocationInformation, ERrcEstablishmentCause rrcEstablishmentCause) {
         this.ranUeNgapId = ranUeNgapId;
         this.amfUeNgapId = amfUeNgapId;
         this.userLocationInformation = userLocationInformation;

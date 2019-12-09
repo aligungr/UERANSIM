@@ -1,10 +1,12 @@
 package com.runsim.backend.app.sim;
 
 public class SimulationFlow {
-    public final SimulationConfig config;
+    public final SimulatorSetup setup;
+    public final FlowConfig config;
     public final SimulationStep[] steps;
 
-    public SimulationFlow(SimulationConfig config, SimulationStep[] steps) {
+    public SimulationFlow(SimulatorSetup setup, FlowConfig config, SimulationStep[] steps) {
+        this.setup = setup;
         this.config = config;
         this.steps = steps;
     }

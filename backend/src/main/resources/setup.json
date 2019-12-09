@@ -1,0 +1,5 @@
+{
+  "@type": "SimulatorSetup",
+  "amfHost": "128.1.1.1",
+  "amfPort": 1232
+}

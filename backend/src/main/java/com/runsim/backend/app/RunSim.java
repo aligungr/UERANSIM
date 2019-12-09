@@ -1,7 +1,9 @@
 package com.runsim.backend.app;
 
-import com.runsim.backend.Constants;
 import com.runsim.backend.app.sim.*;
+import com.runsim.backend.exceptions.MtsException;
+import com.runsim.backend.mts.ImplicitTypedObject;
+import com.runsim.backend.mts.MtsConstruct;
 import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
 import com.runsim.backend.nas.NasEncoder;
@@ -24,6 +26,13 @@ import io.github.classgraph.ScanResult;
 import java.util.ArrayList;
 
 public class RunSim {
+
+    public static void main(String[] args) {
+        initMts();
+
+        var flow = getSimulationFlow("flow1.json");
+        Console.println(Json.toJson(flow));
+    }
 
     private static void initMts() {
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
@@ -55,8 +64,9 @@ public class RunSim {
                 EEapCode.class,
                 EEapType.class,
                 SimulationFlow.class,
-                SimulationConfig.class,
+                FlowConfig.class,
                 SimulationStep.class,
+                SimulatorSetup.class,
         };
 
         for (var type : otherTypes) {
@@ -68,6 +78,18 @@ public class RunSim {
         TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
 
         MtsDecoder.setFileProvider(Utils::getResourceString);
+    }
+
+    private static SimulationFlow getSimulationFlow(String fileName) {
+        var decoded = MtsDecoder.decode(fileName);
+        if (decoded instanceof ImplicitTypedObject) {
+            return MtsConstruct.construct(SimulationFlow.class, ((ImplicitTypedObject) decoded).getParameters(), true);
+        } else if (decoded instanceof SimulationFlow) {
+            return (SimulationFlow) decoded;
+        } else {
+            String name = decoded == null ? "null" : decoded.getClass().getSimpleName();
+            throw new MtsException("unexpected type: '%s', SimulationFlow is expected", name);
+        }
     }
 
     public static InitialUEMessage createInitialUeMessage(NasMessage nasMessage, int ranUeNgapIdValue, int establishmentCauseValue) {
@@ -99,18 +121,5 @@ public class RunSim {
         var initialUEMessage = new InitialUEMessage();
         initialUEMessage.protocolIEs = new InitialUEMessage.ProtocolIEs(protocolIEs);
         return initialUEMessage;
-    }
-
-    public static void main(String[] args) {
-        initMts();
-
-/*
-        var x = NGAP.xerEncode(createInitialUeMessage(new RegistrationComplete(), 15, RRCEstablishmentCause.ASN_mo_Data));
-        Console.println(x);
-        if (1 == 1) return;
-        ;*/
-
-        var nasMessage = MtsDecoder.decode("flow1.json");
-        Console.println(Json.toJson(nasMessage));
     }
 }

@@ -1,5 +1,6 @@
 package com.runsim.backend;
 
+import com.runsim.backend.app.Constants;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import com.runsim.backend.sctp.SCTPClient;
 import com.runsim.backend.utils.Utils;
