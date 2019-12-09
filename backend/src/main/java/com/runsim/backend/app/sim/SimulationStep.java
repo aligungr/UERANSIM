@@ -6,10 +6,12 @@ import com.runsim.backend.nas.core.messages.NasMessage;
 public class SimulationStep {
     public final ENgapType ngapType;
     public final NasMessage nasMessage;
+    public final int sleep;
 
-    public SimulationStep(ENgapType ngapType, NasMessage nasMessage) {
+    public SimulationStep(ENgapType ngapType, NasMessage nasMessage, Integer sleep) {
         this.ngapType = ngapType;
         this.nasMessage = nasMessage;
+        this.sleep = sleep == null ? 0 : sleep;
     }
 
     public static class ENgapType extends ProtocolEnum {

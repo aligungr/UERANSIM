@@ -16,6 +16,7 @@ import com.runsim.backend.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import com.runsim.backend.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import com.runsim.backend.utils.Color;
 import com.runsim.backend.utils.Console;
+import com.runsim.backend.utils.Utils;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
@@ -58,8 +59,21 @@ public class RunSimFlow extends BaseFlow {
         var step = simulationFlow.steps[stepIndex];
         stepIndex++;
 
-        Console.print(Color.BLUE, "pdu is sending...");
         var pdu = makeNgapPdu(step);
+
+        if (step.sleep > 0) {
+            Console.println(Color.CYAN_BOLD, "sleep is started...");
+            int sleep = step.sleep;
+            while (sleep > 0) {
+                Console.println(Color.CYAN_BOLD, sleep / 1000);
+                long current = System.currentTimeMillis();
+                Utils.sleep(Math.min(sleep, 1000));
+                long delta = System.currentTimeMillis() - current;
+                sleep -= delta;
+            }
+        }
+
+        Console.print(Color.BLUE, "pdu is sending...");
         sendPDU(pdu);
         Console.println(Color.BLUE, " (done)");
 

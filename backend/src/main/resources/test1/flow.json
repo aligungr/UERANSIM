@@ -4,7 +4,8 @@
   "steps": [
     {
       "ngapType": "InitialUEMessage",
-      "nasMessage": "@test1/registrationRequest.json"
+      "nasMessage": "@test1/registrationRequest.json",
+      "sleep": 10000
     },
     {
       "ngapType": "UplinkNASTransport",
