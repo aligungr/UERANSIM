@@ -21,7 +21,7 @@ public class RunSim {
     public static void main(String[] args) throws Exception {
         initMts();
 
-        var flow = getSimulationFlow("test1/flow1.json");
+        var flow = getSimulationFlow("test1/flow.json");
         flowControl(flow);
 
         Constants.AMF_HOST = flow.setup.amfHost;

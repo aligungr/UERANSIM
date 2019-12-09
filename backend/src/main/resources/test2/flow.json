@@ -1,0 +1,14 @@
+{
+  "setup": "@setup.json",
+  "config": "@config.json",
+  "steps": [
+    {
+      "ngapType": "InitialUEMessage",
+      "nasMessage": "@test2/registrationRequest.json"
+    },
+    {
+      "ngapType": "UplinkNASTransport",
+      "nasMessage": "@test2/authenticationResponse.json"
+    }
+  ]
+}
