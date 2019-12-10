@@ -2,7 +2,8 @@ package com.runsim.backend.app.sim;
 
 import com.runsim.backend.BaseFlow;
 import com.runsim.backend.Message;
-import com.runsim.backend.NGAP;
+import com.runsim.backend.Ngap;
+import com.runsim.backend.app.Json;
 import com.runsim.backend.mts.TypeRegistry;
 import com.runsim.backend.nas.NasDecoder;
 import com.runsim.backend.nas.NasEncoder;
@@ -41,34 +42,30 @@ public class RunSimFlow extends BaseFlow {
     }
 
     private synchronized State performStep(Message message) {
-        Console.println();
+        Console.printDiv();
+
+        if (stepIndex < simulationFlow.stepCount) {
+            Console.println(Color.YELLOW, "[INFO] Step %d/%d is handling.", stepIndex + 1, simulationFlow.stepCount);
+        }
 
         var receivedNas = receivedNasMessage(message);
         if (receivedNas != null) {
-            Console.print(Color.WHITE_BRIGHT, "NAS Message received with type: ");
-            Console.println(Color.CYAN_BRIGHT, receivedNas.getClass().getSimpleName());
+            logReceivedMessage(message.getAsPDU(), receivedNas);
 
             String registeredName = TypeRegistry.getClassName(receivedNas.getClass());
             if (registeredName != null) {
                 if (Arrays.asList(simulationFlow.failOnReceive).contains(registeredName)) {
-                    Console.println(Color.RED_BOLD, "[TEST RESULT] Test Case Failed.");
+                    Console.println(Color.RED, "[ERROR] Test case failed.");
                     return closeConnection();
                 } else if (Arrays.asList(simulationFlow.passOnReceive).contains(registeredName)) {
-                    Console.println(Color.GREEN_BOLD, "[TEST RESULT] Test Case Passed.");
+                    Console.println(Color.GREEN, "[SUCCESS] Test case passed.");
                     return closeConnection();
                 }
             }
         }
 
         if (stepIndex >= simulationFlow.stepCount) {
-            Console.println(Color.PURPLE, "perform step called but all steps are done. no-op.");
-            return this::performStep;
-        }
-
-        Console.println(Color.YELLOW, "performStep is starting for step", stepIndex + 1 + "/" + simulationFlow.stepCount);
-
-        if (stepIndex >= simulationFlow.stepCount) {
-            Console.println(Color.CYAN, "step exceeds total step count return to itself");
+            Console.println(Color.PURPLE, "[WARNING] Next step called after all steps are done");
             return this::performStep;
         }
 
@@ -78,24 +75,47 @@ public class RunSimFlow extends BaseFlow {
         var pdu = makeNgapPdu(step);
 
         if (step.sleep > 0) {
-            Console.println(Color.CYAN, "sleep is started...");
+            Console.print(Color.CYAN, "[INFO] Sleep has started... ");
             int sleep = step.sleep;
             while (sleep > 0) {
-                Console.println(Color.CYAN, sleep / 1000);
+                Console.print(Color.CYAN, "(%d)", (sleep / 1000));
                 long current = System.currentTimeMillis();
                 Utils.sleep(Math.min(sleep, 1000));
                 long delta = System.currentTimeMillis() - current;
                 sleep -= delta;
             }
+            Console.println();
         }
 
-        Console.print(Color.BLUE, "pdu is sending...");
+        logSendingMessage(pdu, step.nasMessage);
+
+        Console.print(Color.BLUE, "[INFO] Message is sending...");
         sendPDU(pdu);
         Console.println(Color.BLUE, " (done)");
 
-        Console.println(Color.GREEN, "step done");
+        Console.println(Color.GREEN, "[INFO] Step completed");
 
         return this::performStep;
+    }
+
+    private void logSendingMessage(NGAP_PDU ngap, NasMessage nas) {
+        Console.print(Color.PURPLE_BRIGHT, "[INFO] NAS message will be sent: ");
+        Console.println(Color.PURPLE_BRIGHT, TypeRegistry.getClassName(nas.getClass()));
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nas));
+        if (simulationFlow.config.logNgapPdu) {
+            Console.println(Color.WHITE, "[INFO] NGAP PDU is the following: ");
+            Console.println(Color.WHITE, Utils.xmlToJson(Ngap.xerEncode(ngap)));
+        }
+    }
+
+    private void logReceivedMessage(NGAP_PDU ngap, NasMessage nas) {
+        Console.print(Color.CYAN_BRIGHT, "[INFO] NAS message received with type: ");
+        Console.println(Color.CYAN_BRIGHT, nas.getClass().getSimpleName());
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nas));
+        if (simulationFlow.config.logNgapPdu) {
+            Console.println(Color.WHITE, "[INFO] NGAP PDU is the following: ");
+            Console.println(Color.WHITE, Utils.xmlToJson(Ngap.xerEncode(ngap)));
+        }
     }
 
     private NasMessage receivedNasMessage(Message message) {
@@ -236,11 +256,11 @@ public class RunSimFlow extends BaseFlow {
 
         var userLocationInformationNr = new UserLocationInformationNR();
         userLocationInformationNr.nR_CGI = new NR_CGI();
-        userLocationInformationNr.nR_CGI.pLMNIdentity = NGAP.plmnEncode(config.nrCgi.plmn);
+        userLocationInformationNr.nR_CGI.pLMNIdentity = Ngap.plmnEncode(config.nrCgi.plmn);
         userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(config.nrCgi.nrCellIdentity.toByteArray(), 36);
         userLocationInformationNr.tAI = new TAI();
         userLocationInformationNr.tAI.tAC = new TAC(config.tai.tac.toByteArray());
-        userLocationInformationNr.tAI.pLMNIdentity = NGAP.plmnEncode(config.tai.plmn);
+        userLocationInformationNr.tAI.pLMNIdentity = Ngap.plmnEncode(config.tai.plmn);
         userLocationInformationNr.timeStamp = new TimeStamp(config.timeStamp.toByteArray());
         return userLocationInformationNr;
     }

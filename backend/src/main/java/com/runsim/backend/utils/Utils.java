@@ -1,11 +1,13 @@
 package com.runsim.backend.utils;
 
+import com.runsim.backend.app.Json;
 import com.runsim.backend.exceptions.DecodingException;
 import com.runsim.backend.exceptions.EncodingException;
 import com.runsim.backend.nas.core.ProtocolEnum;
 import com.runsim.backend.utils.bits.Bit;
 import com.runsim.backend.utils.bits.BitN;
 import com.runsim.backend.utils.octets.OctetN;
+import org.json.XML;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -22,8 +24,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -339,5 +344,25 @@ public final class Utils {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String xmlToJson(String xml) {
+        var jsonString = XML.toJSONObject(xml).toString(2);
+
+        var replace = new HashMap<String, String>();
+
+        Pattern pattern = Pattern.compile("\\{\"([a-zA-Z0-9_-]*)\": \"\"}");
+        Matcher m = pattern.matcher(jsonString);
+        while (m.find()) {
+            if (m.groupCount() >= 1) {
+                replace.put(m.group(0), m.group(1));
+            }
+        }
+
+        for (var entry : replace.entrySet()) {
+            jsonString = jsonString.replace(entry.getKey(), Json.toJson(entry.getValue()));
+        }
+
+        return jsonString;
     }
 }

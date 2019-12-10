@@ -2,7 +2,7 @@ package com.runsim.backend.flows;
 
 import com.runsim.backend.BaseFlow;
 import com.runsim.backend.Message;
-import com.runsim.backend.NGAP;
+import com.runsim.backend.Ngap;
 import com.runsim.backend.app.Json;
 import com.runsim.backend.nas.EapDecoder;
 import com.runsim.backend.nas.NasDecoder;
@@ -127,7 +127,7 @@ public class RegistrationFlow1 extends BaseFlow {
 
         Console.printDiv();
         Console.println(Color.BLUE, "Sending Initial UE Message:");
-        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(ngapPdu));
+        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(ngapPdu));
         Console.println(Color.BLUE, "Where NAS PDU is:");
         Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
 
@@ -144,7 +144,7 @@ public class RegistrationFlow1 extends BaseFlow {
         Console.printDiv();
         Console.println(Color.BLUE, "Message received from AMF with length", message.getLength(), "bytes.");
         Console.println(Color.BLUE, "Received NGAP PDU:");
-        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(pdu));
+        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(pdu));
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
@@ -260,7 +260,7 @@ public class RegistrationFlow1 extends BaseFlow {
         }
         var uplink = createUplinkMessage(registrationComplete, userLocInformation);
 
-        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
+        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(uplink));
 
         sendPDU(uplink);
 
@@ -283,7 +283,7 @@ public class RegistrationFlow1 extends BaseFlow {
             imei.imei = "356938035643809";
             mobileIdentity = imei;
         } else {
-            Console.println(Color.RED, "Identity type not implemented yet: " + identityType.name());
+            Console.println(Color.RED, "Identity type not implemented yet: %s", identityType.name());
             Console.println(Color.RED, "Closing connection");
             return closeConnection();
         }
@@ -305,7 +305,7 @@ public class RegistrationFlow1 extends BaseFlow {
         }
         var uplink = createUplinkMessage(identityResponse, userLocInformation);
 
-        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
+        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(uplink));
 
         sendPDU(uplink);
 
@@ -341,7 +341,7 @@ public class RegistrationFlow1 extends BaseFlow {
         }
         var uplink = createUplinkMessage(response, userLocInformation);
 
-        Console.println(Color.WHITE_BRIGHT, NGAP.xerEncode(uplink));
+        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(uplink));
 
         sendPDU(uplink);
 
@@ -353,7 +353,7 @@ public class RegistrationFlow1 extends BaseFlow {
     private State handleRegistrationReject(RegistrationReject registrationReject) {
         Console.printDiv();
         Console.println(Color.BLUE, "RegistrationReject is handling.");
-        Console.println(Color.RED, "5G MM Cause:", registrationReject.mmCause.value);
+        Console.println(Color.RED, "5G MM Cause: %s", registrationReject.mmCause.value);
         Console.println(Color.RED, "Closing connection");
         return closeConnection();
     }

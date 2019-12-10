@@ -16,7 +16,7 @@ public class FlowTesting {
 
         for (int i = 0; i < flowNames.length; i++) {
             Console.print(Color.BLUE, i + 1 + ") ");
-            Console.println(Color.RESET, flowNames[i]);
+            Console.println(flowNames[i]);
         }
 
         Console.print(Color.BLUE, "Selection: ");

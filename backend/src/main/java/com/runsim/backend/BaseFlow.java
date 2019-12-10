@@ -34,11 +34,11 @@ public abstract class BaseFlow {
     }
 
     protected final void sendPDU(Value pdu) {
-        sendData(NGAP.perEncode(pdu));
+        sendData(Ngap.perEncode(pdu));
     }
 
     protected final void sendPDU(String xml) {
-        sendPDU(NGAP.xerDecode(NGAP_PDU.class, xml));
+        sendPDU(Ngap.xerDecode(NGAP_PDU.class, xml));
     }
 
     public final void start() throws Exception {

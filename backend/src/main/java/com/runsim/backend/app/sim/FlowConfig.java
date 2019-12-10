@@ -8,12 +8,14 @@ public class FlowConfig {
     public final int amfUeNgapId;
     public final UserLocationInformationNr userLocationInformation;
     public final ERrcEstablishmentCause rrcEstablishmentCause;
+    public final boolean logNgapPdu;
 
-    public FlowConfig(int ranUeNgapId, int amfUeNgapId, UserLocationInformationNr userLocationInformation, ERrcEstablishmentCause rrcEstablishmentCause) {
+    public FlowConfig(int ranUeNgapId, int amfUeNgapId, UserLocationInformationNr userLocationInformation, ERrcEstablishmentCause rrcEstablishmentCause, Boolean logNgapPdu) {
         this.ranUeNgapId = ranUeNgapId;
         this.amfUeNgapId = amfUeNgapId;
         this.userLocationInformation = userLocationInformation;
         this.rrcEstablishmentCause = rrcEstablishmentCause;
+        this.logNgapPdu = logNgapPdu == null ? true : logNgapPdu;
     }
 
     public static class ERrcEstablishmentCause extends ProtocolEnum {

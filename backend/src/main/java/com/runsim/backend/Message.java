@@ -26,6 +26,6 @@ public class Message {
     }
 
     public NGAP_PDU getAsPDU() {
-        return NGAP.perDecode(NGAP_PDU.class, getRawData());
+        return Ngap.perDecode(NGAP_PDU.class, getRawData());
     }
 }

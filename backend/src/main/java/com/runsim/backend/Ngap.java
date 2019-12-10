@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-public class NGAP {
+public class Ngap {
     private static final boolean TRACE = false;
     private static Context context;
 
@@ -63,7 +63,7 @@ public class NGAP {
 
         context.setIndentationShift(2);
 
-        return NGAP.context = context;
+        return Ngap.context = context;
     }
 
     public static byte[] perEncode(Value value) {

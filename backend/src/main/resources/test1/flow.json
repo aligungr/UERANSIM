@@ -5,7 +5,7 @@
     {
       "ngapType": "InitialUEMessage",
       "nasMessage": "@test1/registrationRequest.json",
-      "sleep": 1000
+      "sleep": 0
     },
     {
       "ngapType": "UplinkNASTransport",

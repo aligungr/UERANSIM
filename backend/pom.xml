@@ -26,6 +26,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>fr.marben</groupId>
+            <artifactId>asnsdk</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../misc/marben/lib/jrntspe.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.6</version>
@@ -46,11 +53,9 @@
             <version>4.4.10</version>
         </dependency>
         <dependency>
-            <groupId>fr.marben</groupId>
-            <artifactId>asnsdk</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../misc/marben/lib/jrntspe.jar</systemPath>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
         </dependency>
     </dependencies>
 
