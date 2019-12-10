@@ -1,9 +1,9 @@
 #DO NOT MODIFY THIS FILE: changes will invalidate this product
-#Wed Dec 04 09:06:52 EET 2019
+#Tue Dec 10 11:13:29 EET 2019
 integerSize=
 generateJavaLibrary=
 xer=
-packagePrefix=com.runsim.backend.ngap
+packagePrefix=tr.havelsan.ueransim.ngap
 longSize=
 addedFileURL2=../ngap-15-2-0/NGAP-Containers.asn
 integerSizeValue=32
@@ -11,7 +11,7 @@ addedFileURL1=../ngap-15-2-0/NGAP-Constants.asn
 addedFileURL0=../ngap-15-2-0/NGAP-CommonDataTypes.asn
 jvmOptions=
 longSizeValue=32
-outputDirectoryURL=../../backend/src/main/java/com/runsim/backend/ngap/
+outputDirectoryURL=../../ueransim/src/main/java/tr/havelsan/ueransim/ngap/
 constraintCheck=
 addedFileURL5=../ngap-15-2-0/NGAP-PDU-Descriptions.asn
 addedFileURL4=../ngap-15-2-0/NGAP-PDU-Contents.asn

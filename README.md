@@ -25,18 +25,18 @@ java -jar asnci.jar
 4. Select from menu `File` -> `Open`.
 5. Open project file at `ue-ran-sim/misc/marben/project.pra`.
 6. Select `Parameters` tab at the right panel.
-7. Specify output directory as `ue-ran-sim/backend/src/main/java/com/runsim/backend/ngap`. If `ngap` folder is not present, create it with `mkdir`.
+7. Specify output directory as `ue-ran-sim/ueransim/src/main/java/tr/havelsan/ueransim/ngap`. If `ngap` folder is not present, create it with `mkdir`.
 8. Finally click `Run` -> `Compile`.  
 This will generate necessary .java source files for NGAP protocol.
 
 ### 4. Move `asntable.dat` file
 Move the file located at:
 ```
-ue-ran-sim/backend/src/main/java/com/runsim/backend/ngap/asntable.dat
+ue-ran-sim/ueransim/src/main/java/tr/havelsan/ueransim/ngap/asntable.dat
 ```
 to following location:
 ```
-ue-ran-sim/backend/src/main/resources/asntable.dat
+ue-ran-sim/ueransim/src/main/resources/asntable.dat
 ```
 
 ### 5. Prepare Marben Runtime Library
@@ -44,4 +44,4 @@ ue-ran-sim/backend/src/main/resources/asntable.dat
 2. copy the jar file `jrntspe.jar` to `ue-ran-sim/misc/marben/lib` folder. if `lib` folder is not present create it with `mkdir`.
 
 ### 6. Done
-Now you should be able to compile maven project located at `ue-ran-sim/backend/pom.xml`
+Now you should be able to compile maven project located at `ue-ran-sim/ueransim/pom.xml`
