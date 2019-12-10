@@ -89,11 +89,11 @@ public class RunSimFlow extends BaseFlow {
 
         logSendingMessage(pdu, step.nasMessage);
 
-        Console.print(Color.BLUE, "[INFO] Message is sending...");
+        Console.println(Color.BLUE, "[INFO] Message is sending...");
         sendPDU(pdu);
-        Console.println(Color.BLUE, " (done)");
+        Console.println(Color.BLUE, "[INFO] Message sent.");
 
-        Console.println(Color.GREEN, "[INFO] Step completed");
+        Console.println(Color.YELLOW, "[INFO] Step completed");
 
         return this::performStep;
     }
