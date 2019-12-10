@@ -8,6 +8,10 @@
     <artifactId>ueransim</artifactId>
     <version>1.0.0</version>
 
+    <properties>
+        <marben.asnsdk.path>${project.basedir}/../misc/marben/lib/jrntspe.jar</marben.asnsdk.path>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -22,7 +26,6 @@
                 </configuration>
             </plugin>
 
-            <!-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -42,8 +45,27 @@
                     </execution>
                 </executions>
             </plugin>
-            <-->
 
+            <!-->
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${marben.asnsdk.install}</sourceFile>
+                            <destinationFile>${project.build.directory}/install.sh</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,33 +73,13 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!-->
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <-->
                             <mainClass>tr.havelsan.ueransim.app.UeRanSim</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
-
-            <!-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <finalName>full-${project.artifactId}-${project.version}</finalName>
-                </configuration>
-            </plugin>
-            <-->
 
         </plugins>
     </build>
@@ -89,7 +91,7 @@
             <artifactId>asnsdk</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../misc/marben/lib/jrntspe.jar</systemPath>
+            <systemPath>${marben.asnsdk.path}</systemPath>
         </dependency>
 
         <dependency>
