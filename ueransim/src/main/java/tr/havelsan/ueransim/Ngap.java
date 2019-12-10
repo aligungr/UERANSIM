@@ -1,20 +1,20 @@
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.ngap.RuntimeConfiguration;
-import tr.havelsan.ueransim.ngap.ValueFactory;
-import tr.havelsan.ueransim.app.Constants;
-import tr.havelsan.ueransim.exceptions.EncodingException;
-import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
-import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
-import tr.havelsan.ueransim.ngap.ngap_ies.PLMNIdentity;
-import tr.havelsan.ueransim.utils.OctetInputStream;
-import tr.havelsan.ueransim.utils.Utils;
-import tr.havelsan.ueransim.utils.octets.Octet3;
 import fr.marben.asnsdk.japi.Context;
 import fr.marben.asnsdk.japi.Loader;
 import fr.marben.asnsdk.japi.spe.Value;
 import fr.marben.asnsdk.japi.vi.IAbstractSyntax;
+import tr.havelsan.ueransim.app.Constants;
+import tr.havelsan.ueransim.exceptions.EncodingException;
+import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
+import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.ngap.RuntimeConfiguration;
+import tr.havelsan.ueransim.ngap.ValueFactory;
+import tr.havelsan.ueransim.ngap.ngap_ies.PLMNIdentity;
+import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.Octet3;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ public class Ngap {
         try {
             Class.forName("tr.havelsan.ueransim.utils.NgapFix").getConstructor().newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         RuntimeConfiguration.initialize();
