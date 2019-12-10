@@ -7,23 +7,24 @@ import com.google.gson.JsonObject;
 import tr.havelsan.ueransim.app.sim.IFileProvider;
 import tr.havelsan.ueransim.exceptions.MtsException;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 public class MtsDecoder {
 
-    private static IFileProvider fileProvider = path -> null;
+    private static IFileProvider fileProvider = (searchDir, path) -> null;
 
     public static void setFileProvider(IFileProvider fileProvider) {
         MtsDecoder.fileProvider = fileProvider;
     }
 
     public static Object decode(String filePath) {
-        var json = fileProvider.readFile(filePath);
+        var json = fileProvider.readFile("", filePath);
         if (json == null)
             throw new MtsException("referenced file not found: %s", filePath);
 
         var jsonElement = parseJson(json);
-        jsonElement = resolveJsonRefs(jsonElement);
+        jsonElement = resolveJsonRefs(dirPath(filePath), jsonElement);
         return decode(jsonElement);
     }
 
@@ -31,7 +32,11 @@ public class MtsDecoder {
         return new Gson().fromJson(json, JsonElement.class);
     }
 
-    private static JsonElement resolveJsonRefs(JsonElement element) {
+    private static String dirPath(String filePath) {
+        return new File(filePath).getParent();
+    }
+
+    private static JsonElement resolveJsonRefs(String searchDir, JsonElement element) {
         if (element == null) {
             return null;
         } else if (element.isJsonNull()) {
@@ -45,11 +50,11 @@ public class MtsDecoder {
                     if (string.length() == 0)
                         throw new MtsException("@ref value cannot be empty");
 
-                    var refContent = fileProvider.readFile(string);
+                    var refContent = fileProvider.readFile(searchDir, string);
                     if (refContent == null)
                         throw new MtsException("referenced file not found: %s", string);
 
-                    return resolveJsonRefs(parseJson(refContent));
+                    return resolveJsonRefs(dirPath(refContent), parseJson(refContent));
                 }
             }
             // for all other primitives
@@ -58,7 +63,7 @@ public class MtsDecoder {
             var jsonArray = element.getAsJsonArray();
             var newJsonArray = new JsonArray();
             for (int i = 0; i < jsonArray.size(); i++) {
-                newJsonArray.add(resolveJsonRefs(jsonArray.get(i)));
+                newJsonArray.add(resolveJsonRefs(searchDir, jsonArray.get(i)));
             }
             return newJsonArray;
         } else if (element.isJsonObject()) {
@@ -72,12 +77,12 @@ public class MtsDecoder {
                 if (refValue == null || refValue.length() == 0)
                     throw new MtsException("@ref value cannot be empty");
 
-                var refContent = fileProvider.readFile(refValue);
+                var refContent = fileProvider.readFile(searchDir, refValue);
                 if (refContent == null)
                     throw new MtsException("referenced file not found: %s", refValue);
 
                 var refJson = parseJson(refContent);
-                refJson = resolveJsonRefs(refJson);
+                refJson = resolveJsonRefs(dirPath(refContent), refJson);
                 if (refJson == null)
                     return null;
                 else if (refJson.isJsonObject()) {
@@ -88,7 +93,7 @@ public class MtsDecoder {
                         if (refObject.has(entry.getKey())) {
                             refObject.remove(entry.getKey());
                         }
-                        refObject.add(entry.getKey(), resolveJsonRefs(entry.getValue()));
+                        refObject.add(entry.getKey(), resolveJsonRefs(dirPath(refContent), entry.getValue()));
                     }
                     return refObject;
                 } else {
@@ -99,7 +104,7 @@ public class MtsDecoder {
             } else {
                 var newJsonObject = new JsonObject();
                 for (var entry : jsonObject.entrySet()) {
-                    newJsonObject.add(entry.getKey(), resolveJsonRefs(entry.getValue()));
+                    newJsonObject.add(entry.getKey(), resolveJsonRefs(searchDir, entry.getValue()));
                 }
                 return newJsonObject;
             }

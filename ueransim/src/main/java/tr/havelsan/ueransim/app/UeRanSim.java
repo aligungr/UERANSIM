@@ -143,9 +143,9 @@ public class UeRanSim {
         TypeRegistry.registerCustomType(new MtsIEEapMessage());
         TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
 
-        MtsDecoder.setFileProvider(path -> {
+        MtsDecoder.setFileProvider((searchDir, path) -> {
             try {
-                return Files.readString(Paths.get(path));
+                return Files.readString(Paths.get(searchDir, path));
             } catch (NoSuchFileException e) {
                 throw new MtsException("file not found: %s", e.getFile());
             } catch (IOException e) {
