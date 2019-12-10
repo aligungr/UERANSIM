@@ -1,8 +1,8 @@
 # Project specific (MARBEN)
 misc/marben/lib
-backend/src/main/java/tr/havelsan/ueransim/ngap
-backend/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
-backend/src/main/resources/asntable.dat
+ueransim/src/main/java/tr/havelsan/ueransim/ngap
+ueransim/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
+ueransim/src/main/resources/asntable.dat
 
 # Project specific (OTHERS)
 .directory
