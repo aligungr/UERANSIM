@@ -15,6 +15,9 @@ import io.github.classgraph.ScanResult;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,13 +26,21 @@ import java.util.HashSet;
 import java.util.function.Function;
 
 public class RunSim {
+    private static String flowPath;
+    private static boolean dryRun;
 
     public static void main(String[] args) throws IOException {
+        initWithArgs(args);
         initLog();
         initMts();
 
-        var flow = getSimulationFlow("test1/flow.json");
+        var flow = getSimulationFlow(flowPath);
         flowControl(flow);
+
+        if (dryRun) {
+            Console.println(Color.GREEN, "[SUCCESS] flow json file is valid.");
+            return;
+        }
 
         Constants.AMF_HOST = flow.setup.amfHost;
         Constants.AMF_PORT = flow.setup.amfPort;
@@ -41,6 +52,29 @@ public class RunSim {
             Console.println(Color.RED, "[ERROR] Exception raised.");
             Console.println(Color.RED, Utils.stackTraceString(e));
         }
+    }
+
+    private static void initWithArgs(String[] args) {
+        if (args.length >= 1) {
+            flowPath = args[0];
+        } else {
+            printUsage();
+            System.exit(1);
+        }
+
+        if (Arrays.asList(args).contains("-d")) {
+            dryRun = true;
+        }
+
+        if (Arrays.stream(args).anyMatch(s -> s.startsWith("-") && !s.equals("-d"))) {
+            System.out.println("unrecognized options");
+            printUsage();
+            System.exit(1);
+        }
+    }
+
+    private static void printUsage() {
+        System.out.println("usage: runsim [filepath] {-d}");
     }
 
     private static void initLog() throws IOException {
@@ -109,7 +143,15 @@ public class RunSim {
         TypeRegistry.registerCustomType(new MtsIEEapMessage());
         TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
 
-        MtsDecoder.setFileProvider(Utils::getResourceString);
+        MtsDecoder.setFileProvider(path -> {
+            try {
+                return Files.readString(Paths.get(path));
+            } catch (NoSuchFileException e) {
+                throw new MtsException("file not found: %s", e.getFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private static SimulationFlow getSimulationFlow(String fileName) {
