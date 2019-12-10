@@ -38,7 +38,7 @@ public class UeRanSim {
         flowControl(flow);
 
         if (dryRun) {
-            Console.println(Color.GREEN, "[SUCCESS] flow json file is valid.");
+            Console.println(Color.GREEN, "[SUCCESS] Dry run completed, flow json file is valid.");
             return;
         }
 
