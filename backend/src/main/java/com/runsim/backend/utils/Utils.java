@@ -16,10 +16,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
@@ -364,5 +361,12 @@ public final class Utils {
         }
 
         return jsonString;
+    }
+
+    public static String stackTraceString(Exception e) {
+        var sw = new StringWriter();
+        var pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 }

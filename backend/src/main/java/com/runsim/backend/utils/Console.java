@@ -1,12 +1,16 @@
 package com.runsim.backend.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class Console {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private static boolean startOfLine = true;
+    private static List<Consumer<String>> printHandlers = new ArrayList<>();
 
     private static String getTime() {
         Calendar cal = Calendar.getInstance();
@@ -68,6 +72,10 @@ public class Console {
         println("-----------------------------------------------------------------------------");
     }
 
+    public synchronized static void addPrintHandler(Consumer<String> handler) {
+        printHandlers.add(handler);
+    }
+
     private synchronized static void outputLine() {
         outputLine("");
     }
@@ -78,5 +86,8 @@ public class Console {
 
     private synchronized static void output(String string) {
         System.out.print(string);
+
+        for (var handler : printHandlers)
+            handler.accept(string);
     }
 }

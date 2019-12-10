@@ -8,20 +8,24 @@ import com.runsim.backend.mts.MtsDecoder;
 import com.runsim.backend.mts.TypeRegistry;
 import com.runsim.backend.nas.core.messages.NasMessage;
 import com.runsim.backend.nas.eap.*;
-import com.runsim.backend.utils.Fun;
-import com.runsim.backend.utils.Funs;
-import com.runsim.backend.utils.Utils;
+import com.runsim.backend.utils.*;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.function.Function;
 
 public class RunSim {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
+        initLog();
         initMts();
 
         var flow = getSimulationFlow("test1/flow.json");
@@ -30,7 +34,36 @@ public class RunSim {
         Constants.AMF_HOST = flow.setup.amfHost;
         Constants.AMF_PORT = flow.setup.amfPort;
 
-        new RunSimFlow(flow).start();
+        try {
+            Console.println();
+            new RunSimFlow(flow).start();
+        } catch (Exception e) {
+            Console.println(Color.RED, "[ERROR] Exception raised.");
+            Console.println(Color.RED, Utils.stackTraceString(e));
+        }
+    }
+
+    private static void initLog() throws IOException {
+        var logFile = String.format("sim-%s.log",
+                new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+        System.out.println("(logging at file " + new File(logFile).getAbsolutePath() + ")");
+        System.out.println();
+
+        var writer = new FileWriter(logFile, true);
+
+        Console.addPrintHandler(string -> {
+            for (var item : Color.values()) {
+                string = string.replace(item.val, "");
+            }
+
+            try {
+                writer.write(string);
+                writer.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
     }
 
     private static void initMts() {
