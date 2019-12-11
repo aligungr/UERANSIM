@@ -44,16 +44,28 @@ public class UeRanSim {
         initMts();
         initWithArgs(args);
 
-        var flow = getSimulationFlow(flowPath);
-        flowControl(flow);
+        SimulationFlow flow;
+        try {
+            flow = getSimulationFlow(flowPath);
+            flowControl(flow);
 
-        if (dryRun) {
-            Console.println(Color.GREEN, "[SUCCESS] Dry run completed, flow json file is valid.");
+            if (dryRun) {
+                Console.println(Color.GREEN, "[SUCCESS] Dry run completed, flow json file is valid.");
+                return;
+            }
+
+            Constants.AMF_HOST = flow.setup.amfHost;
+            Constants.AMF_PORT = flow.setup.amfPort;
+        } catch (MtsException e) {
+            Console.println(Color.RED, "[ERROR] %s", e.getMessage());
+            System.exit(1);
+            return;
+        } catch (Exception e) {
+            Console.println(Color.RED, "[ERROR] Exception raised.");
+            Console.println(Color.RED, Utils.stackTraceString(e));
+            System.exit(1);
             return;
         }
-
-        Constants.AMF_HOST = flow.setup.amfHost;
-        Constants.AMF_PORT = flow.setup.amfPort;
 
         try {
             Console.println();
