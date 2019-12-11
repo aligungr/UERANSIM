@@ -17,6 +17,9 @@ import tr.havelsan.ueransim.nas.core.ies.InformationElement;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.utils.bits.BitN;
+import tr.havelsan.ueransim.utils.octets.OctetN;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -285,12 +288,16 @@ public class UeRanSim {
         var ies = hierarchyDumping(InformationElement.class);
         var enums = hierarchyDumping(ProtocolEnum.class);
         var values = hierarchyDumping(NasValue.class);
+        var bits = hierarchyDumping(BitN.class);
+        var octets = hierarchyDumping(OctetN.class);
+        var octetString = hierarchyDumping(OctetString.class);
 
         var dump = new JsonObject();
         dump.add("messages", messages);
         dump.add("informationElements", ies);
         dump.add("enums", enums);
         dump.add("values", values);
+        dump.add("coreTypes", mergeObjects(bits, octets, octetString));
 
         Console.println(Color.CYAN_BRIGHT, Json.toJson(dump));
     }
@@ -341,5 +348,16 @@ public class UeRanSim {
         for (var type : types)
             obj.add(TypeRegistry.getClassName(type), fieldDumping(type));
         return obj;
+    }
+
+    private static JsonObject mergeObjects(JsonObject... objects) {
+        var res = new JsonObject();
+        Arrays.stream(objects)
+                .forEach(jsonObject -> {
+                    jsonObject.entrySet().forEach(stringJsonElementEntry -> {
+                        res.add(stringJsonElementEntry.getKey(), stringJsonElementEntry.getValue());
+                    });
+                });
+        return res;
     }
 }
