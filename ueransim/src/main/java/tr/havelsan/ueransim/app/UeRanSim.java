@@ -6,6 +6,9 @@ import com.google.gson.JsonPrimitive;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import tr.havelsan.ueransim.app.sim.*;
+import tr.havelsan.ueransim.exceptions.DecodingException;
+import tr.havelsan.ueransim.exceptions.EncodingException;
+import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.exceptions.MtsException;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
@@ -56,23 +59,16 @@ public class UeRanSim {
 
             Constants.AMF_HOST = flow.setup.amfHost;
             Constants.AMF_PORT = flow.setup.amfPort;
-        } catch (MtsException e) {
-            Console.println(Color.RED, "[ERROR] %s", e.getMessage());
-            System.exit(1);
-            return;
-        } catch (Exception e) {
-            Console.println(Color.RED, "[ERROR] Exception raised.");
-            Console.println(Color.RED, Utils.stackTraceString(e));
-            System.exit(1);
-            return;
-        }
 
-        try {
             Console.println();
             new UeRanSimFlow(flow).start();
+        } catch (MtsException | EncodingException | DecodingException | IncorrectImplementationException e) {
+            Console.println(Color.RED, "[ERROR] %s - %s", e.getClass().getSimpleName(), e.getMessage());
+            System.exit(1);
         } catch (Exception e) {
             Console.println(Color.RED, "[ERROR] Exception raised.");
             Console.println(Color.RED, Utils.stackTraceString(e));
+            System.exit(1);
         }
     }
 
