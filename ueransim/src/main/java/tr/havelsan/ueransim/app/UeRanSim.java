@@ -1,5 +1,8 @@
 package tr.havelsan.ueransim.app;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import tr.havelsan.ueransim.app.sim.*;
@@ -8,6 +11,9 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.TypeRegistry;
+import tr.havelsan.ueransim.nas.core.NasValue;
+import tr.havelsan.ueransim.nas.core.ProtocolEnum;
+import tr.havelsan.ueransim.nas.core.ies.InformationElement;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.*;
@@ -15,6 +21,7 @@ import tr.havelsan.ueransim.utils.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -30,9 +37,9 @@ public class UeRanSim {
     private static boolean dryRun;
 
     public static void main(String[] args) throws IOException {
-        initWithArgs(args);
         initLog();
         initMts();
+        initWithArgs(args);
 
         var flow = getSimulationFlow(flowPath);
         flowControl(flow);
@@ -66,6 +73,12 @@ public class UeRanSim {
             dryRun = true;
         }
 
+        if (Arrays.asList(args).contains("-p")) {
+            typeDumping();
+            System.exit(0);
+            return;
+        }
+
         if (Arrays.stream(args).anyMatch(s -> s.startsWith("-") && !s.equals("-d"))) {
             System.out.println("unrecognized options");
             printUsage();
@@ -74,7 +87,9 @@ public class UeRanSim {
     }
 
     private static void printUsage() {
-        System.out.println("usage: ueransim [filepath] {-d}");
+        System.out.println("usage: ueransim [filepath] {-d} {-p}");
+        System.out.println("-d\tDry run");
+        System.out.println("-p\tPrint type information");
     }
 
     private static void initLog() throws IOException {
@@ -263,5 +278,68 @@ public class UeRanSim {
                 .then(stepsControl)
                 .then(onReceiveControl)
                 .invoke();
+    }
+
+    private static void typeDumping() {
+        var messages = hierarchyDumping(NasMessage.class);
+        var ies = hierarchyDumping(InformationElement.class);
+        var enums = hierarchyDumping(ProtocolEnum.class);
+        var values = hierarchyDumping(NasValue.class);
+
+        var dump = new JsonObject();
+        dump.add("messages", messages);
+        dump.add("informationElements", ies);
+        dump.add("enums", enums);
+        dump.add("values", values);
+
+        Console.println(Color.CYAN_BRIGHT, Json.toJson(dump));
+    }
+
+    private static JsonObject fieldDumping(Class<?> type) {
+        var message = new JsonObject();
+
+        var fields = new JsonObject();
+        Arrays.stream(type.getDeclaredFields())
+                .filter(field -> Modifier.isPublic(field.getModifiers()))
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .forEach(field -> {
+                    var name = field.getName();
+                    var typeName = TypeRegistry.getClassName(field.getType());
+                    if (typeName == null) {
+                        typeName = field.getType().getSimpleName();
+                    }
+                    fields.add(name, new JsonPrimitive(typeName));
+                });
+
+        var constructors = new JsonArray();
+        Arrays.stream(type.getDeclaredConstructors())
+                .filter(constructor -> Modifier.isPublic(constructor.getModifiers()))
+                .forEach(constructor -> {
+                    var ctor = new JsonObject();
+                    Arrays.stream(constructor.getParameters())
+                            .forEach(parameter -> {
+                                var name = parameter.getName();
+                                var typeName = TypeRegistry.getClassName(parameter.getType());
+                                if (typeName == null) {
+                                    typeName = parameter.getType().getSimpleName();
+                                }
+                                ctor.add(name, new JsonPrimitive(typeName));
+                            });
+                    if (ctor.size() > 0)
+                        constructors.add(ctor);
+                });
+
+        message.add("fields", fields);
+        message.add("constructors", constructors);
+
+        return message;
+    }
+
+    private static JsonObject hierarchyDumping(Class<?> assignableTo) {
+        var obj = new JsonObject();
+        var types = TypeRegistry.getClassesAssignableTo(assignableTo);
+        for (var type : types)
+            obj.add(TypeRegistry.getClassName(type), fieldDumping(type));
+        return obj;
     }
 }

@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class BiMap<K, V> {
     private final Map<K, V> keys;
@@ -35,5 +36,13 @@ public class BiMap<K, V> {
 
     public int size() {
         return keys.size();
+    }
+
+    public Set<K> keySet() {
+        return keys.keySet();
+    }
+
+    public Set<V> valueSet() {
+        return values.keySet();
     }
 }

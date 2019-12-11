@@ -2,8 +2,7 @@ package tr.havelsan.ueransim.mts;
 
 import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.BiMap;
-import tr.havelsan.ueransim.utils.bits.*;
-import tr.havelsan.ueransim.utils.octets.*;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.*;
 import tr.havelsan.ueransim.utils.octets.*;
 
@@ -100,6 +99,10 @@ public final class TypeRegistry {
 
     public static String getClassName(Class<?> type) {
         return types.getKey(type);
+    }
+
+    public static List<Class<?>> getClassesAssignableTo(Class<?> type) {
+        return Utils.streamToList(types.valueSet().stream().filter(type::isAssignableFrom));
     }
 
     public static <T> ICustomConstruct<T> getCustomConstruct(Class<T> type) {
