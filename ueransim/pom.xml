@@ -9,6 +9,7 @@
     <version>1.0.0</version>
 
     <properties>
+        <marben.asnsdk.install>${project.basedir}/../misc/marben/mvn_install_lib.sh</marben.asnsdk.install>
         <marben.asnsdk.path>${project.basedir}/../misc/marben/lib/jrntspe.jar</marben.asnsdk.path>
     </properties>
 
@@ -46,7 +47,6 @@
                 </executions>
             </plugin>
 
-            <!-->
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
@@ -60,12 +60,11 @@
                         </goals>
                         <configuration>
                             <sourceFile>${marben.asnsdk.install}</sourceFile>
-                            <destinationFile>${project.build.directory}/install.sh</destinationFile>
+                            <destinationFile>${project.build.directory}/mvn_install_lib.sh</destinationFile>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -90,8 +89,6 @@
             <groupId>fr.marben</groupId>
             <artifactId>asnsdk</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${marben.asnsdk.path}</systemPath>
         </dependency>
 
         <dependency>

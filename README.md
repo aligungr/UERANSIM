@@ -41,7 +41,8 @@ ue-ran-sim/ueransim/src/main/resources/asntable.dat
 
 ### 5. Prepare Marben Runtime Library
 1. `cd` to marben runtime directory `delivery-RT-XX/RuntimeSpe/lib`
-2. copy the jar file `jrntspe.jar` to `ue-ran-sim/misc/marben/lib` folder. if `lib` folder is not present create it with `mkdir`.
+2. Copy the jar file `jrntspe.jar` to `ue-ran-sim/misc/marben/lib` folder. if `lib` folder is not present create it with `mkdir`.
+3. Execute the script located at `ue-ran-sim/misc/marben/mvn_install_lib.sh`, and make sure that it successfuly installs the jar file to local repository.
 
 ### 6. Done
 Now you should be able to compile maven project located at `ue-ran-sim/ueransim/pom.xml`
