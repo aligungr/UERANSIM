@@ -43,6 +43,11 @@ public class UeRanSim {
     private static boolean dryRun;
 
     public static void main(String[] args) throws IOException {
+        args = new String[]{
+                "-p"
+        };
+
+
         initLog();
         initMts();
         initWithArgs(args);
@@ -85,7 +90,7 @@ public class UeRanSim {
         }
 
         if (Arrays.asList(args).contains("-p")) {
-            typeDumping();
+            dumping();
             System.exit(0);
             return;
         }
@@ -291,13 +296,13 @@ public class UeRanSim {
                 .invoke();
     }
 
-    private static void typeDumping() {
-        var messages = hierarchyFieldDumping(NasMessage.class);
-        var ies = hierarchyFieldDumping(InformationElement.class);
+    private static void dumping() {
+        var messages = hierarchyTypeDumping(NasMessage.class);
+        var ies = hierarchyTypeDumping(InformationElement.class);
         var enums = hierarchyEnumDumping(ProtocolEnum.class);
-        var values = hierarchyFieldDumping(NasValue.class);
-        var coreTypes = hierarchyFieldDumping(BitN.class, OctetN.class, OctetString.class);
-        var others = hierarchyFieldDumping(BitN.class, OctetN.class, OctetString.class);
+        var values = hierarchyTypeDumping(NasValue.class);
+        var coreTypes = hierarchyTypeDumping(BitN.class, OctetN.class, OctetString.class);
+        var others = hierarchyTypeDumping(BitN.class, OctetN.class, OctetString.class);
 
         var dump = new JsonObject();
         dump.add("messages", messages);
@@ -310,7 +315,7 @@ public class UeRanSim {
         Console.println(Color.CYAN_BRIGHT, Json.toJson(dump));
     }
 
-    private static JsonObject fieldDumping(Class<?> type) {
+    private static JsonObject typeDumping(Class<?> type) {
         var message = new JsonObject();
 
         /*var fields = new JsonObject();
@@ -344,17 +349,35 @@ public class UeRanSim {
                         constructors.add(ctor);
                 });
 
+        var subTypes = TypeRegistry.getClassesAssignableTo(type);
+        if (subTypes.size() > 1) {
+            var arr = new JsonArray();
+
+            for (var subType : subTypes) {
+                if (subType.equals(type))
+                    continue;
+
+                var typeName = TypeRegistry.getClassName(subType);
+                if (typeName == null)
+                    typeName = subType.getSimpleName();
+
+                arr.add(new JsonPrimitive(typeName));
+            }
+
+            message.add("subTypes", arr);
+        }
+
         //message.add("fields", fields);
         message.add("constructors", constructors);
 
         return message;
     }
 
-    private static JsonObject hierarchyFieldDumping(Class<?>... assignableTo) {
+    private static JsonObject hierarchyTypeDumping(Class<?>... assignableTo) {
         var obj = new JsonObject();
         var types = TypeRegistry.getClassesAssignableTo(assignableTo);
         for (var type : types)
-            obj.add(TypeRegistry.getClassName(type), fieldDumping(type));
+            obj.add(TypeRegistry.getClassName(type), typeDumping(type));
         return obj;
     }
 
