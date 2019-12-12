@@ -43,11 +43,6 @@ public class UeRanSim {
     private static boolean dryRun;
 
     public static void main(String[] args) throws IOException {
-        args = new String[]{
-                "-p"
-        };
-
-
         initLog();
         initMts();
         initWithArgs(args);
