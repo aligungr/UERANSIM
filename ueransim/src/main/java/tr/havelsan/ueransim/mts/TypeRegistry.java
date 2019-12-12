@@ -101,8 +101,9 @@ public final class TypeRegistry {
         return types.getKey(type);
     }
 
-    public static List<Class<?>> getClassesAssignableTo(Class<?> type) {
-        return Utils.streamToList(types.valueSet().stream().filter(type::isAssignableFrom));
+    public static List<Class<?>> getClassesAssignableTo(Class<?>... typeArgs) {
+        return Utils.streamToList(types.valueSet().stream()
+                .filter(cls -> Arrays.stream(typeArgs).anyMatch(type -> type.isAssignableFrom(cls))));
     }
 
     public static <T> ICustomConstruct<T> getCustomConstruct(Class<T> type) {

@@ -292,20 +292,20 @@ public class UeRanSim {
     }
 
     private static void typeDumping() {
-        var messages = hierarchyDumping(NasMessage.class);
-        var ies = hierarchyDumping(InformationElement.class);
-        var enums = hierarchyDumping(ProtocolEnum.class);
-        var values = hierarchyDumping(NasValue.class);
-        var bits = hierarchyDumping(BitN.class);
-        var octets = hierarchyDumping(OctetN.class);
-        var octetString = hierarchyDumping(OctetString.class);
+        var messages = hierarchyFieldDumping(NasMessage.class);
+        var ies = hierarchyFieldDumping(InformationElement.class);
+        var enums = hierarchyEnumDumping(ProtocolEnum.class);
+        var values = hierarchyFieldDumping(NasValue.class);
+        var coreTypes = hierarchyFieldDumping(BitN.class, OctetN.class, OctetString.class);
+        var others = hierarchyFieldDumping(BitN.class, OctetN.class, OctetString.class);
 
         var dump = new JsonObject();
         dump.add("messages", messages);
         dump.add("informationElements", ies);
         dump.add("enums", enums);
         dump.add("values", values);
-        dump.add("coreTypes", mergeObjects(bits, octets, octetString));
+        dump.add("coreTypes", coreTypes);
+        dump.add("others", others);
 
         Console.println(Color.CYAN_BRIGHT, Json.toJson(dump));
     }
@@ -313,7 +313,7 @@ public class UeRanSim {
     private static JsonObject fieldDumping(Class<?> type) {
         var message = new JsonObject();
 
-        var fields = new JsonObject();
+        /*var fields = new JsonObject();
         Arrays.stream(type.getDeclaredFields())
                 .filter(field -> Modifier.isPublic(field.getModifiers()))
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
@@ -324,7 +324,7 @@ public class UeRanSim {
                         typeName = field.getType().getSimpleName();
                     }
                     fields.add(name, new JsonPrimitive(typeName));
-                });
+                });*/
 
         var constructors = new JsonArray();
         Arrays.stream(type.getDeclaredConstructors())
@@ -344,13 +344,13 @@ public class UeRanSim {
                         constructors.add(ctor);
                 });
 
-        message.add("fields", fields);
+        //message.add("fields", fields);
         message.add("constructors", constructors);
 
         return message;
     }
 
-    private static JsonObject hierarchyDumping(Class<?> assignableTo) {
+    private static JsonObject hierarchyFieldDumping(Class<?>... assignableTo) {
         var obj = new JsonObject();
         var types = TypeRegistry.getClassesAssignableTo(assignableTo);
         for (var type : types)
@@ -358,14 +358,38 @@ public class UeRanSim {
         return obj;
     }
 
-    private static JsonObject mergeObjects(JsonObject... objects) {
-        var res = new JsonObject();
-        Arrays.stream(objects)
-                .forEach(jsonObject -> {
-                    jsonObject.entrySet().forEach(stringJsonElementEntry -> {
-                        res.add(stringJsonElementEntry.getKey(), stringJsonElementEntry.getValue());
-                    });
+    private static JsonObject hierarchyEnumDumping(Class<?> assignableTo) {
+        var obj = new JsonObject();
+        var types = TypeRegistry.getClassesAssignableTo(assignableTo);
+        for (var type : types) {
+            obj.add(TypeRegistry.getClassName(type), enumDumping((Class<? extends ProtocolEnum>) type));
+        }
+        return obj;
+    }
+
+    private static JsonArray enumDumping(Class<? extends ProtocolEnum> type) {
+        var arr = new JsonArray();
+
+        Arrays.stream(type.getDeclaredFields())
+                .filter(field -> Modifier.isPublic(field.getModifiers()))
+                .filter(field -> Modifier.isStatic(field.getModifiers()))
+                .filter(field -> field.getType().equals(type))
+                .forEach(field -> {
+                    Object val;
+                    try {
+                        val = field.get(null);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    var obj = new JsonObject();
+                    obj.add("identifier", new JsonPrimitive(field.getName()));
+                    obj.add("value", new JsonPrimitive(((ProtocolEnum) val).intValue()));
+                    obj.add("name", new JsonPrimitive(((ProtocolEnum) val).name()));
+
+                    arr.add(obj);
                 });
-        return res;
+
+        return arr;
     }
 }
