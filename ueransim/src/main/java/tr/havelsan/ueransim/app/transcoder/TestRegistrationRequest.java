@@ -3,7 +3,6 @@ package tr.havelsan.ueransim.app.transcoder;
 import tr.havelsan.ueransim.app.TranscoderTesting;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.*;
-import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
@@ -45,7 +44,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         assertEquals(imsi.mcc, EMccValue.unknownValue(1));
         assertEquals(imsi.mnc, EMncValue.unknownValue(1));
         assertEquals(imsi.routingIndicator, "0000");
-        assertEquals(imsi.protectionSchemaId, IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA);
+        assertEquals(imsi.protectionSchemaId, IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME);
         assertEquals(imsi.schemaOutput, "000000001");
         assertNotNull(imsi.homeNetworkPublicKeyIdentifier);
         assertEquals(imsi.homeNetworkPublicKeyIdentifier.value, 0);
@@ -104,7 +103,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         imsi.mcc = EMccValue.unknownValue(1);
         imsi.mnc = EMncValue.unknownValue(1);
         imsi.routingIndicator = "0000";
-        imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
+        imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
         imsi.schemaOutput = "000000001";
         imsi.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki();
         imsi.homeNetworkPublicKeyIdentifier.value = new Octet(0);

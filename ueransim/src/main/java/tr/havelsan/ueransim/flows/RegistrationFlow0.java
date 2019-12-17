@@ -64,7 +64,7 @@ public class RegistrationFlow0 extends BaseFlow {
             imsi.mcc = EMccValue.unknownValue(1);
             imsi.mnc = EMncValue.unknownValue(1);
             imsi.routingIndicator = "0000";
-            imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
+            imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
             imsi.schemaOutput = "000000001";
             imsi.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki();
             imsi.homeNetworkPublicKeyIdentifier.value = new Octet(0);

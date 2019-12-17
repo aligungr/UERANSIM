@@ -1,11 +1,11 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
-import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
+import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -45,7 +45,7 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
         stream.writeOctet(homeNetworkPublicKeyIdentifier.value);
 
         /* Encode schema output */
-        if (protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEMA)) {
+        if (protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEME)) {
             NasEncoder.bcdString(stream, schemaOutput, -1, false, null);
         } else {
             stream.writeOctetString(new OctetString(schemaOutput));
@@ -53,11 +53,11 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     }
 
     public static class EProtectionSchemeIdentifier extends ProtocolEnum {
-        public static final EProtectionSchemeIdentifier NULL_SCHEMA
+        public static final EProtectionSchemeIdentifier NULL_SCHEME
                 = new EProtectionSchemeIdentifier(0b0000, "Null scheme");
-        public static final EProtectionSchemeIdentifier ECIES_SCHEMA_PROFILE_A
+        public static final EProtectionSchemeIdentifier ECIES_SCHEME_PROFILE_A
                 = new EProtectionSchemeIdentifier(0b0001, "ECIES scheme profile A");
-        public static final EProtectionSchemeIdentifier ECIES_SCHEMA_PROFILE_B
+        public static final EProtectionSchemeIdentifier ECIES_SCHEME_PROFILE_B
                 = new EProtectionSchemeIdentifier(0b0010, "ECIES scheme profile B");
 
         //public static final EProtectionSchemeIdentifier RESERVED1

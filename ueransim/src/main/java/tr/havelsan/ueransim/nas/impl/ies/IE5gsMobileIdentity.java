@@ -1,15 +1,15 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
+import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.exceptions.ReservedOrInvalidValueException;
+import tr.havelsan.ueransim.nas.NasDecoder;
+import tr.havelsan.ueransim.nas.core.ies.InformationElement6;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.ESupiFormat;
 import tr.havelsan.ueransim.nas.impl.values.V5gTmsi;
 import tr.havelsan.ueransim.nas.impl.values.VAmfSetId;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
-import tr.havelsan.ueransim.exceptions.ReservedOrInvalidValueException;
-import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.nas.core.ies.InformationElement6;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit6;
@@ -53,7 +53,7 @@ public class IE5gsMobileIdentity extends InformationElement6 {
 
                 /* Decode schema output */
                 String schemaOutput;
-                if (result.protectionSchemaId.equals(IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA)) {
+                if (result.protectionSchemaId.equals(IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME)) {
                     result.schemaOutput = NasDecoder.bcdString(stream, length - 7, false);
                 } else {
                     var range = stream.readOctetString(length - 7);

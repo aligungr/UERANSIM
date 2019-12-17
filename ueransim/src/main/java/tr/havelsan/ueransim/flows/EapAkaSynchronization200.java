@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
+import tr.havelsan.ueransim.app.ue.UeUtils;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
@@ -12,7 +13,6 @@ import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
 import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
-import tr.havelsan.ueransim.app.ue.UeUtils;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 
 public class EapAkaSynchronization200 extends BaseFlow {
@@ -23,7 +23,7 @@ public class EapAkaSynchronization200 extends BaseFlow {
 
     private State sendRegistrationRequest(Message message) {
         var nasMessage = new RegistrationRequest();
-        nasMessage.mobileIdentity = new IEImsiMobileIdentity(EMccValue.fromValue(1), EMncValue.fromValue(1), "0000", IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA, new VHomeNetworkPki(0), "000000028");
+        nasMessage.mobileIdentity = new IEImsiMobileIdentity(EMccValue.fromValue(1), EMncValue.fromValue(1), "0000", IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME, new VHomeNetworkPki(0), "000000028");
         nasMessage.registrationType = new IE5gsRegistrationType(IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING, IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
         nasMessage.nasKeySetIdentifier = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, new Bit3(3));
 

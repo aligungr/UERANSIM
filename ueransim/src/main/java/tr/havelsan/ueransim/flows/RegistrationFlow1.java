@@ -1,5 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
+import fr.marben.asnsdk.japi.InvalidStructureException;
+import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.Ngap;
@@ -20,8 +22,13 @@ import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.nas.impl.values.VSliceDifferentiator;
 import tr.havelsan.ueransim.nas.impl.values.VSliceServiceType;
 import tr.havelsan.ueransim.ngap.Values;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.OctetInputStream;
@@ -30,17 +37,6 @@ import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.OctetString;
-import tr.havelsan.ueransim.nas.impl.ies.*;
-import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.OpenTypeValue;
-import tr.havelsan.ueransim.ngap.ngap_ies.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +68,7 @@ public class RegistrationFlow1 extends BaseFlow {
             imsi.mcc = EMccValue.unknownValue(123);
             imsi.mnc = EMncValue.unknownValue(123);
             imsi.routingIndicator = "0000";
-            imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEMA;
+            imsi.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
             imsi.schemaOutput = "000000001";
             imsi.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki();
             imsi.homeNetworkPublicKeyIdentifier.value = new Octet(0);
