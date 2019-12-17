@@ -15,18 +15,18 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
     public String routingIndicator;
     public EProtectionSchemeIdentifier protectionSchemaId;
     public VHomeNetworkPki homeNetworkPublicKeyIdentifier;
-    public String schemaOutput;
+    public String schemeOutput;
 
     public IEImsiMobileIdentity() {
     }
 
-    public IEImsiMobileIdentity(EMccValue mcc, EMncValue mnc, String routingIndicator, EProtectionSchemeIdentifier protectionSchemaId, VHomeNetworkPki homeNetworkPublicKeyIdentifier, String schemaOutput) {
+    public IEImsiMobileIdentity(EMccValue mcc, EMncValue mnc, String routingIndicator, EProtectionSchemeIdentifier protectionSchemaId, VHomeNetworkPki homeNetworkPublicKeyIdentifier, String schemeOutput) {
         this.mcc = mcc;
         this.mnc = mnc;
         this.routingIndicator = routingIndicator;
         this.protectionSchemaId = protectionSchemaId;
         this.homeNetworkPublicKeyIdentifier = homeNetworkPublicKeyIdentifier;
-        this.schemaOutput = schemaOutput;
+        this.schemeOutput = schemeOutput;
     }
 
     @Override
@@ -46,9 +46,9 @@ public class IEImsiMobileIdentity extends IESuciMobileIdentity {
 
         /* Encode schema output */
         if (protectionSchemaId.equals(EProtectionSchemeIdentifier.NULL_SCHEME)) {
-            NasEncoder.bcdString(stream, schemaOutput, -1, false, null);
+            NasEncoder.bcdString(stream, schemeOutput, -1, false, null);
         } else {
-            stream.writeOctetString(new OctetString(schemaOutput));
+            stream.writeOctetString(new OctetString(schemeOutput));
         }
     }
 

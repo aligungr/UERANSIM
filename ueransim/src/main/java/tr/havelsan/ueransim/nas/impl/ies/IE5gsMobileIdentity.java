@@ -54,10 +54,10 @@ public class IE5gsMobileIdentity extends InformationElement6 {
                 /* Decode schema output */
                 String schemaOutput;
                 if (result.protectionSchemaId.equals(IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME)) {
-                    result.schemaOutput = NasDecoder.bcdString(stream, length - 7, false);
+                    result.schemeOutput = NasDecoder.bcdString(stream, length - 7, false);
                 } else {
                     var range = stream.readOctetString(length - 7);
-                    result.schemaOutput = range.toHexString();
+                    result.schemeOutput = range.toHexString();
                 }
 
                 return result;
