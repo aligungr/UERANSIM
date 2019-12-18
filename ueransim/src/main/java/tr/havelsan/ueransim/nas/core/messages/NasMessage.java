@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.nas.core.messages;
 
-import tr.havelsan.ueransim.nas.impl.enums.EExtendedProtocolDiscriminator;
 import tr.havelsan.ueransim.exceptions.EncodingException;
 import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.NasDecoder;
@@ -9,6 +8,7 @@ import tr.havelsan.ueransim.nas.core.IMessageBuilder;
 import tr.havelsan.ueransim.nas.core.ProtocolValue;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement1;
+import tr.havelsan.ueransim.nas.impl.enums.EExtendedProtocolDiscriminator;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit4;
@@ -302,7 +302,7 @@ public abstract class NasMessage extends ProtocolValue {
         @Override
         public void optionalIE1(int iei, String field) {
             var entry = new InformationElementEntry();
-            entry.iei = -1;
+            entry.iei = iei;
             entry.field0 = field;
             entry.field1 = null;
             entry.isType1 = true;
