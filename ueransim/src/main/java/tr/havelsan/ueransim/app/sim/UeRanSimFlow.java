@@ -1,15 +1,16 @@
 package tr.havelsan.ueransim.app.sim;
 
+import fr.marben.asnsdk.japi.InvalidStructureException;
+import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.app.Json;
 import tr.havelsan.ueransim.mts.TypeRegistry;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.Values;
-import tr.havelsan.ueransim.ngap.ngap_ies.*;
-import tr.havelsan.ueransim.app.Json;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
@@ -22,8 +23,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,8 +72,6 @@ public class UeRanSimFlow extends BaseFlow {
         var step = simulationFlow.steps[stepIndex];
         stepIndex++;
 
-        var pdu = makeNgapPdu(step);
-
         if (step.sleep > 0) {
             Console.print(Color.CYAN, "[INFO] Sleep has started... ");
             int sleep = step.sleep;
@@ -88,13 +85,18 @@ public class UeRanSimFlow extends BaseFlow {
             Console.println();
         }
 
-        logSendingMessage(pdu, step.nasMessage);
+        if (step.ngapType.equals(SimulationStep.ENgapType.NO_OPERATION)) {
+            Console.println(Color.YELLOW, "[INFO] Step completed (no-operation)");
+        } else {
+            var pdu = makeNgapPdu(step);
+            logSendingMessage(pdu, step.nasMessage);
 
-        Console.println(Color.BLUE, "[INFO] Message is sending...");
-        sendPDU(pdu);
-        Console.println(Color.BLUE, "[INFO] Message sent.");
+            Console.println(Color.BLUE, "[INFO] Message is sending...");
+            sendPDU(pdu);
+            Console.println(Color.BLUE, "[INFO] Message sent.");
 
-        Console.println(Color.YELLOW, "[INFO] Step completed");
+            Console.println(Color.YELLOW, "[INFO] Step completed");
+        }
 
         return this::performStep;
     }
