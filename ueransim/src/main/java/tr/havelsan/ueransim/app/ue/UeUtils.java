@@ -1,26 +1,28 @@
 package tr.havelsan.ueransim.app.ue;
 
+import fr.marben.asnsdk.japi.InvalidStructureException;
+import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import tr.havelsan.ueransim.nas.EapDecoder;
+import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.ngap.Values;
-import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialUEMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class UeUtils {
 
@@ -39,11 +41,9 @@ public class UeUtils {
         var hex = new String(Base64.getDecoder().decode((base64)));
         var bytes = Utils.hexStringToByteArray(hex);
         return EapDecoder.eapPdu((new OctetInputStream((bytes))));
-
-
     }
 
-    public static NGAP_PDU createInitialUeMessage(NasMessage nasMessage, int ranUeNgapIdValue, int establishmentCauseValue) {
+    public static NGAP_PDU createInitialUeMessage(NasMessage nasMessage, long ranUeNgapIdValue, int establishmentCauseValue) {
         var ranUeNgapId = new InitialUEMessage.ProtocolIEs.SEQUENCE();
         ranUeNgapId.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
         ranUeNgapId.criticality = new Criticality(Criticality.ASN_reject);
@@ -92,7 +92,7 @@ public class UeUtils {
         return ngapPdu;
     }
 
-    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, int ranUeNgapId, int amfUeNgapId) {
+    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, long ranUeNgapId, long amfUeNgapId) {
         var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
 
         var uplink = new UplinkNASTransport();
@@ -137,5 +137,21 @@ public class UeUtils {
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static NasMessage getNasMessage(DownlinkNASTransport message) {
+        var protocolIEs = (List<DownlinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList;
+
+        NAS_PDU nasPayload = null;
+        for (var protocolIE : protocolIEs) {
+            if (protocolIE.value.getDecodedValue() instanceof NAS_PDU) {
+                nasPayload = (NAS_PDU) protocolIE.value.getDecodedValue();
+                break;
+            }
+        }
+
+        if (nasPayload == null)
+            return null;
+        return NasDecoder.nasPdu(nasPayload.getValue());
     }
 }

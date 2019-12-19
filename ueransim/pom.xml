@@ -124,6 +124,12 @@
             <version>20140107</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.brake.threegpp</groupId>
+            <artifactId>milenage</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
