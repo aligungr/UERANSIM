@@ -30,10 +30,10 @@ public class UeUtils {
         var userLocationInformationNr = new UserLocationInformationNR();
         userLocationInformationNr.nR_CGI = new NR_CGI();
         userLocationInformationNr.nR_CGI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
-        userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(new byte[]{0x00, 0x00, 0x01, 0x10, 0x00}, 36);
+        userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(new byte[]{0x01, (byte) 0xb2, (byte) 0xc3, (byte) 0xd4, (byte) 0xe0}, 36);
         userLocationInformationNr.tAI = new TAI();
         userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
-        userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
+        userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x02, 0x20});
         return userLocationInformationNr;
     }
 

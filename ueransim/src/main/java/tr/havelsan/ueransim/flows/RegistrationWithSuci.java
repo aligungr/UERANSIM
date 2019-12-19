@@ -64,16 +64,16 @@ public class RegistrationWithSuci extends BaseFlow {
         registrationRequest.registrationType = new IE5gsRegistrationType(IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING, IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
         registrationRequest.nasKeySetIdentifier = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, new Bit3(3));
         registrationRequest.requestedNSSAI = new IENssai(new IESNssai[]{
-                new IESNssai(new VSliceServiceType(1), new VSliceDifferentiator("09AFaf"), null, null)
+                new IESNssai(new VSliceServiceType(1), new VSliceDifferentiator("09afaf"), null, null)
         });
 
         var mobileIdentity = new IEImsiMobileIdentity();
-        mobileIdentity.mcc = EMccValue.fromValue(123);
-        mobileIdentity.mnc = EMncValue.fromValue(123);
+        mobileIdentity.mcc = EMccValue.fromValue(1);
+        mobileIdentity.mnc = EMncValue.fromValue(1);
         mobileIdentity.routingIndicator = "0000";
         mobileIdentity.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
         mobileIdentity.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki(0);
-        mobileIdentity.schemeOutput = "000000099";
+        mobileIdentity.schemeOutput = "000000095";
         registrationRequest.mobileIdentity = mobileIdentity;
 
         var ngapPdu = UeUtils.createInitialUeMessage(registrationRequest, ranUeNgapId, RRCEstablishmentCause.ASN_mo_Data);
@@ -169,7 +169,7 @@ public class RegistrationWithSuci extends BaseFlow {
             Console.println(Color.RED, "Closing connection");
         }
 
-        return closeConnection();
+        return this::waitAmfRequests;
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
@@ -184,6 +184,7 @@ public class RegistrationWithSuci extends BaseFlow {
         {
             var akaPrime = (EapAkaPrime) message.eapMessage.eap;
             var rand = akaPrime.attributes.get(EEapAkaAttributeType.AT_RAND);
+            rand = new OctetString("67b566efc2a5afb8f153aef84959200d");
             mac = akaPrime.attributes.get(EEapAkaAttributeType.AT_MAC);
             id = akaPrime.id;
 
@@ -205,13 +206,18 @@ public class RegistrationWithSuci extends BaseFlow {
 
             Map<MilenageResult, byte[]> result;
             try {
-                result = milenage.calculateAll(rand.toByteArray(), sqn, amf, executorService);
+                result = milenage.calculateAll(rand.substring(0).toByteArray(), sqn, amf, executorService);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
             executorService.shutdown();
             res = result.get(MilenageResult.RES);
+
+            int padding = (res.length + 2) % 4;
+            byte[] paddedRes = new byte[res.length + padding];
+            if (padding >= 0) System.arraycopy(res, 0, paddedRes, padding, res.length);
+            res = paddedRes;
         }
 
         // Send response

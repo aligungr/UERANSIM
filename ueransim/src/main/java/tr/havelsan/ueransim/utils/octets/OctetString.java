@@ -91,4 +91,16 @@ public final class OctetString implements Iterable<Octet> {
         }
         return byteArray;
     }
+
+    public OctetString substring(int startIndex) {
+        var data = new Octet[this.length - startIndex];
+        System.arraycopy(this.data, startIndex, data, 0, data.length);
+        return new OctetString(data);
+    }
+
+    public OctetString substring(int startIndex, int length) {
+        var data = new Octet[length];
+        System.arraycopy(this.data, startIndex, data, 0, data.length);
+        return new OctetString(data);
+    }
 }
