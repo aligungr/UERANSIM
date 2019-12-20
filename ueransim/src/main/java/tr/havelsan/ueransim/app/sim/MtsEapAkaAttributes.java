@@ -2,23 +2,21 @@ package tr.havelsan.ueransim.app.sim;
 
 import tr.havelsan.ueransim.exceptions.MtsException;
 import tr.havelsan.ueransim.mts.*;
-import tr.havelsan.ueransim.nas.eap.EEapAkaAttributeType;
-import tr.havelsan.ueransim.nas.eap.EapAkaAttributes;
+import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.utils.octets.OctetString;
-import tr.havelsan.ueransim.mts.*;
 
 import java.util.List;
 import java.util.Map;
 
-public class MtsEapAkaAttributes implements TypeRegistry.ICustomTypeRegistry<EapAkaAttributes> {
+public class MtsEapAkaAttributes implements TypeRegistry.ICustomTypeRegistry<EapAkaPrime.Attributes> {
 
     @Override
-    public EapAkaAttributes construct(Class<EapAkaAttributes> type, Map<String, Object> args) {
-        var attr = new EapAkaAttributes();
+    public EapAkaPrime.Attributes construct(Class<EapAkaPrime.Attributes> type, Map<String, Object> args) {
+        var attr = new EapAkaPrime.Attributes();
         for (var entry : args.entrySet()) {
-            var key = EEapAkaAttributeType.fromIdentifier(EEapAkaAttributeType.class, entry.getKey());
+            var key = EapAkaPrime.EAttributeType.fromIdentifier(EapAkaPrime.EAttributeType.class, entry.getKey());
             if (key == null) {
-                throw new MtsException("key not found for EapAkaAttributes: %s", entry.getKey());
+                throw new MtsException("key not found for EapAkaPrime.Attributes: %s", entry.getKey());
             }
             var value = entry.getValue();
 
@@ -52,7 +50,7 @@ public class MtsEapAkaAttributes implements TypeRegistry.ICustomTypeRegistry<Eap
     }
 
     @Override
-    public Class<EapAkaAttributes> getRegisteringClass() {
-        return EapAkaAttributes.class;
+    public Class<EapAkaPrime.Attributes> getRegisteringClass() {
+        return EapAkaPrime.Attributes.class;
     }
 }

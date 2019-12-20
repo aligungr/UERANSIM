@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
-import tr.havelsan.ueransim.nas.eap.EEapCode;
+import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
@@ -416,9 +416,9 @@ public class RegistrationFlow1 extends BaseFlow {
         Console.printDiv();
         Console.println(Color.BLUE, "AuthenticationResult is handling.");
 
-        if (message.eapMessage.eap.code.equals(EEapCode.SUCCESS))
+        if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS))
             Console.println(Color.GREEN, "Authentication success");
-        else if (message.eapMessage.eap.code.equals(EEapCode.FAILURE)) {
+        else if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
             Console.println(Color.RED, "Authentication failure");
             Console.println(Color.RED, "Closing connection");
             return closeConnection();

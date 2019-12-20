@@ -2,8 +2,8 @@ package tr.havelsan.ueransim.app.transcoder;
 
 import tr.havelsan.ueransim.app.TranscoderTesting;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.eap.*;
-import tr.havelsan.ueransim.nas.eap.*;
+import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.impl.enums.EExtendedProtocolDiscriminator;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
@@ -13,7 +13,6 @@ import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedHashMap;
@@ -41,20 +40,19 @@ public class TestAuthenticationRequest extends TranscoderTesting.PduTest {
         assertEquals(mes.abba.contents, new OctetString(new int[2]));
 
         assertInstance(mes.eapMessage.eap, EapAkaPrime.class);
-        assertEquals(mes.eapMessage.eap.code, EEapCode.REQUEST);
+        assertEquals(mes.eapMessage.eap.code, Eap.ECode.REQUEST);
         assertEquals(mes.eapMessage.eap.id, 1);
-        assertEquals(mes.eapMessage.eap.length, 108);
-        assertEquals(mes.eapMessage.eap.EAPType, EEapType.EAP_AKA_PRIME);
+        assertEquals(mes.eapMessage.eap.EAPType, Eap.EEapType.EAP_AKA_PRIME);
 
         var akaPrime = (EapAkaPrime) mes.eapMessage.eap;
-        assertEquals(akaPrime.subType, EEapAkaSubType.AKA_CHALLENGE);
+        assertEquals(akaPrime.subType, EapAkaPrime.ESubType.AKA_CHALLENGE);
         assertNotNull(akaPrime.attributes);
         assertEquals(akaPrime.attributes.size(), 5);
-        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_RAND), new OctetString("0000c1c855df1555ab38342f5e5242e286b2"));
-        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_AUTN), new OctetString("0000adca1f49a09c8000167c4316a3a016d1"));
-        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_KDF), new OctetString("0001"));
-        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_KDF_INPUT), new OctetString("002035473a6d6e633030312e6d63633030312e336770706e6574776f726b2e6f7267"));
-        assertEquals(akaPrime.attributes.get(EEapAkaAttributeType.AT_MAC), new OctetString("00005addcf552b22f2909f7dde0050e22cbd"));
+        assertEquals(akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_RAND), new OctetString("0000c1c855df1555ab38342f5e5242e286b2"));
+        assertEquals(akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_AUTN), new OctetString("0000adca1f49a09c8000167c4316a3a016d1"));
+        assertEquals(akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_KDF), new OctetString("0001"));
+        assertEquals(akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_KDF_INPUT), new OctetString("002035473a6d6e633030312e6d63633030312e336770706e6574776f726b2e6f7267"));
+        assertEquals(akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_MAC), new OctetString("00005addcf552b22f2909f7dde0050e22cbd"));
     }
 
     @Override
@@ -71,22 +69,17 @@ public class TestAuthenticationRequest extends TranscoderTesting.PduTest {
         mes.abba = new IEAbba();
         mes.abba.contents = new OctetString("0000");
 
-        var akaPrime = new EapAkaPrime();
+        var akaPrime = new EapAkaPrime(Eap.ECode.REQUEST, new Octet(1));
         mes.eapMessage = new IEEapMessage();
         mes.eapMessage.eap = akaPrime;
 
-        akaPrime.code = EEapCode.REQUEST;
-        akaPrime.id = new Octet(1);
-        akaPrime.length = new Octet2(108);
-        akaPrime.EAPType = EEapType.EAP_AKA_PRIME;
-
-        akaPrime.subType = EEapAkaSubType.AKA_CHALLENGE;
+        akaPrime.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
         akaPrime.attributes = new LinkedHashMap<>();
-        akaPrime.attributes.put(EEapAkaAttributeType.AT_RAND, new OctetString("0000c1c855df1555ab38342f5e5242e286b2"));
-        akaPrime.attributes.put(EEapAkaAttributeType.AT_AUTN, new OctetString("0000adca1f49a09c8000167c4316a3a016d1"));
-        akaPrime.attributes.put(EEapAkaAttributeType.AT_KDF, new OctetString("0001"));
-        akaPrime.attributes.put(EEapAkaAttributeType.AT_KDF_INPUT, new OctetString("002035473a6d6e633030312e6d63633030312e336770706e6574776f726b2e6f7267"));
-        akaPrime.attributes.put(EEapAkaAttributeType.AT_MAC, new OctetString("00005addcf552b22f2909f7dde0050e22cbd"));
+        akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_RAND, new OctetString("0000c1c855df1555ab38342f5e5242e286b2"));
+        akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_AUTN, new OctetString("0000adca1f49a09c8000167c4316a3a016d1"));
+        akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
+        akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF_INPUT, new OctetString("002035473a6d6e633030312e6d63633030312e336770706e6574776f726b2e6f7267"));
+        akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, new OctetString("00005addcf552b22f2909f7dde0050e22cbd"));
 
         return mes;
     }

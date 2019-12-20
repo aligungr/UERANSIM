@@ -18,7 +18,10 @@ import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.eap.*;
+import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.nas.eap.EapIdentity;
+import tr.havelsan.ueransim.nas.eap.EapNotification;
 import tr.havelsan.ueransim.utils.*;
 import tr.havelsan.ueransim.utils.bits.BitN;
 import tr.havelsan.ueransim.utils.octets.OctetN;
@@ -151,10 +154,10 @@ public class UeRanSim {
                 EapAkaPrime.class,
                 EapIdentity.class,
                 EapNotification.class,
-                EEapAkaAttributeType.class,
-                EEapAkaSubType.class,
-                EEapCode.class,
-                EEapType.class,
+                EapAkaPrime.EAttributeType.class,
+                EapAkaPrime.ESubType.class,
+                Eap.ECode.class,
+                Eap.EEapType.class,
                 SimulationFlow.class,
                 FlowConfig.class,
                 SimulationStep.class,

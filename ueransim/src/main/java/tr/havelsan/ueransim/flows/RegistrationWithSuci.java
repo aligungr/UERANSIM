@@ -11,10 +11,10 @@ import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.app.Json;
 import tr.havelsan.ueransim.app.ue.UeUtils;
-import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
-import tr.havelsan.ueransim.nas.eap.*;
+import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.*;
@@ -29,11 +29,9 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.ErrorIndication;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
-import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedHashMap;
@@ -47,19 +45,13 @@ public class RegistrationWithSuci extends BaseFlow {
     private long amfUeNgapId;
     private long ranUeNgapId = 1;
 
-    private static int findEapLength(Eap eap) {
-        var stream = new OctetOutputStream();
-        EapEncoder.eapPdu(stream, eap);
-        return stream.length();
-    }
-
     @Override
-    public State main(Message message) throws Exception {
+    public State main(Message message) {
         this.milenageBufferFactory = BigIntegerBufferFactory.getInstance();
-        return sendRegistrationRequest(message);
+        return sendRegistrationRequest();
     }
 
-    private State sendRegistrationRequest(Message message) {
+    private State sendRegistrationRequest() {
         var registrationRequest = new RegistrationRequest();
         registrationRequest.registrationType = new IE5gsRegistrationType(IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING, IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
         registrationRequest.nasKeySetIdentifier = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, new Bit3(3));
@@ -183,9 +175,9 @@ public class RegistrationWithSuci extends BaseFlow {
         // Handle request
         {
             var akaPrime = (EapAkaPrime) message.eapMessage.eap;
-            var rand = akaPrime.attributes.get(EEapAkaAttributeType.AT_RAND);
+            var rand = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_RAND);
             rand = new OctetString("67b566efc2a5afb8f153aef84959200d");
-            mac = akaPrime.attributes.get(EEapAkaAttributeType.AT_MAC);
+            mac = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
             id = akaPrime.id;
 
             final String OP = "c9e8763286b5b9ffbdf56e1297d0887b";
@@ -225,18 +217,11 @@ public class RegistrationWithSuci extends BaseFlow {
             var response = new AuthenticationResponse();
             response.authenticationResponseParameter = new IEAuthenticationResponseParameter(new OctetString("0102030405060708090A0B0C0D0E0F10"));
 
-            var akaPrime = new EapAkaPrime();
-            akaPrime.id = id;
-            akaPrime.EAPType = EEapType.EAP_AKA_PRIME;
-            akaPrime.length = new Octet2(0);
-            akaPrime.subType = EEapAkaSubType.AKA_CHALLENGE;
-            akaPrime.code = EEapCode.RESPONSE;
+            var akaPrime = new EapAkaPrime(Eap.ECode.RESPONSE, id);
+            akaPrime.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
             akaPrime.attributes = new LinkedHashMap<>();
-            akaPrime.attributes.put(EEapAkaAttributeType.AT_RES, new OctetString(res));
-            akaPrime.attributes.put(EEapAkaAttributeType.AT_MAC, mac);
-
-            int length = findEapLength(akaPrime);
-            akaPrime.length = new Octet2(length);
+            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_RES, new OctetString(res));
+            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
             response.eapMessage = new IEEapMessage(akaPrime);
 
             Console.printDiv();
