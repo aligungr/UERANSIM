@@ -7,7 +7,6 @@ import tr.havelsan.ueransim.utils.octets.Octet;
 public abstract class Eap extends ProtocolValue {
     public final ECode code;
     public final Octet id;
-    //public Octet2 length;
     public final EEapType EAPType;
 
     public Eap(ECode code, Octet id, EEapType EAPType) {
