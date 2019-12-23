@@ -142,25 +142,34 @@ public class RegistrationWithSuci extends BaseFlow {
         if (message instanceof AuthenticationRequest) {
             return handleAuthenticationRequest((AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {
-            Console.println(Color.RED, "This message type was not implemented yet");
-            Console.println(Color.RED, "Closing connection");
-            //return handleAuthenticationResult((AuthenticationResult) message);
+            return handleAuthenticationResult((AuthenticationResult) message);
         } else if (message instanceof RegistrationReject) {
-            Console.println(Color.RED, "This message type was not implemented yet");
-            Console.println(Color.RED, "Closing connection");
-            //return handleRegistrationReject((RegistrationReject) message);
+            return handleRegistrationReject((RegistrationReject) message);
         } else if (message instanceof IdentityRequest) {
-            Console.println(Color.RED, "This message type was not implemented yet");
-            Console.println(Color.RED, "Closing connection");
             return handleIdentityRequest((IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
-            Console.println(Color.RED, "This message type was not implemented yet");
-            Console.println(Color.RED, "Closing connection");
-            //return handleRegistrationAccept((RegistrationAccept) message);
+            return handleRegistrationAccept((RegistrationAccept) message);
         } else {
-            Console.println(Color.RED, "This message type was not implemented yet: %s", message.getClass().getSimpleName());
-            Console.println(Color.RED, "Closing connection");
+            Console.println(Color.YELLOW, "This message type was not implemented yet: %s", message.getClass().getSimpleName());
+            Console.println(Color.YELLOW, "Ignoring message");
         }
+
+        return this::waitAmfRequests;
+    }
+
+    private State handleRegistrationReject(RegistrationReject message) {
+        return closeConnection();
+    }
+
+    private State handleAuthenticationResult(AuthenticationResult message) {
+        Console.println(Color.BLUE, "Authentication result received");
+        return this::waitAmfRequests;
+    }
+
+    private State handleRegistrationAccept(RegistrationAccept message) {
+        var response = new RegistrationComplete();
+
+        sendUplinkMessage(response);
 
         return this::waitAmfRequests;
     }
@@ -225,14 +234,7 @@ public class RegistrationWithSuci extends BaseFlow {
             akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
             response.eapMessage = new IEEapMessage(akaPrime);
 
-            Console.printDiv();
-            Console.println(Color.BLUE, "Authentication Response will be sent to AMF");
-            Console.println(Color.BLUE, "While NAS message is:");
-            Console.println(Color.WHITE_BRIGHT, Json.toJson(response));
-
-            var ngap = UeUtils.createUplinkMessage(response, ranUeNgapId, amfUeNgapId);
-            sendPDU(ngap);
-            Console.println(Color.BLUE, "Message sent:");
+            sendUplinkMessage(response);
         }
 
         return this::waitAmfRequests;
@@ -247,15 +249,26 @@ public class RegistrationWithSuci extends BaseFlow {
         var response = new IdentityResponse();
         response.mobileIdentity = new IEImeiMobileIdentity("356938035643809");
 
-        Console.printDiv();
-        Console.println(Color.BLUE, "Identity Response will be sent to AMF");
-        Console.println(Color.BLUE, "While NAS message is:");
-        Console.println(Color.WHITE_BRIGHT, Json.toJson(response));
-
-        var ngap = UeUtils.createUplinkMessage(response, ranUeNgapId, amfUeNgapId);
-        sendPDU(ngap);
-        Console.println(Color.BLUE, "Message sent:");
+        sendUplinkMessage(response);
 
         return this::waitAmfRequests;
+    }
+
+    private void sendUplinkMessage(NasMessage nas) {
+        logNasMessageWillSend(nas);
+        var ngap = UeUtils.createUplinkMessage(nas, ranUeNgapId, amfUeNgapId);
+        sendPDU(ngap);
+        logMessageSent();
+    }
+
+    private void logNasMessageWillSend(NasMessage nasMessage) {
+        Console.printDiv();
+        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + "will be sent to AMF");
+        Console.println(Color.BLUE, "While NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
+    }
+
+    private void logMessageSent() {
+        Console.println(Color.BLUE, "Message sent:");
     }
 }
