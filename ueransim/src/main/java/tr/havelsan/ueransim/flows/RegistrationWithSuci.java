@@ -168,10 +168,11 @@ public class RegistrationWithSuci extends BaseFlow {
 
     private State handleRegistrationAccept(RegistrationAccept message) {
         var response = new RegistrationComplete();
-
         sendUplinkMessage(response);
 
-        return this::waitAmfRequests;
+        Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
+        Console.println(Color.WHITE_BRIGHT, "Closing connection");
+        return closeConnection();
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
@@ -263,12 +264,12 @@ public class RegistrationWithSuci extends BaseFlow {
 
     private void logNasMessageWillSend(NasMessage nasMessage) {
         Console.printDiv();
-        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + "will be sent to AMF");
+        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent to AMF");
         Console.println(Color.BLUE, "While NAS message is:");
         Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
     }
 
     private void logMessageSent() {
-        Console.println(Color.BLUE, "Message sent:");
+        Console.println(Color.BLUE, "Message sent");
     }
 }
