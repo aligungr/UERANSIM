@@ -15,6 +15,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.*;
@@ -151,13 +152,13 @@ public class RegistrationWithSuci extends BaseFlow {
         } else if (message instanceof IdentityRequest) {
             Console.println(Color.RED, "This message type was not implemented yet");
             Console.println(Color.RED, "Closing connection");
-            //return handleIdentityRequest((IdentityRequest) message);
+            return handleIdentityRequest((IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
             Console.println(Color.RED, "This message type was not implemented yet");
             Console.println(Color.RED, "Closing connection");
             //return handleRegistrationAccept((RegistrationAccept) message);
         } else {
-            Console.println(Color.RED, "This message type was not implemented yet");
+            Console.println(Color.RED, "This message type was not implemented yet: %s", message.getClass().getSimpleName());
             Console.println(Color.RED, "Closing connection");
         }
 
@@ -228,11 +229,32 @@ public class RegistrationWithSuci extends BaseFlow {
             Console.println(Color.BLUE, "Authentication Response will be sent to AMF");
             Console.println(Color.BLUE, "While NAS message is:");
             Console.println(Color.WHITE_BRIGHT, Json.toJson(response));
-            Console.println(Color.BLUE, "While NGAP message is:");
 
             var ngap = UeUtils.createUplinkMessage(response, ranUeNgapId, amfUeNgapId);
             sendPDU(ngap);
+            Console.println(Color.BLUE, "Message sent:");
         }
+
+        return this::waitAmfRequests;
+    }
+
+    private State handleIdentityRequest(IdentityRequest message) {
+        if (!message.identityType.value.equals(EIdentityType.IMEI)) {
+            Console.println(Color.RED, "Identity request for %s is not implemented yet", message.identityType.value.name());
+            return this::waitAmfRequests;
+        }
+
+        var response = new IdentityResponse();
+        response.mobileIdentity = new IEImeiMobileIdentity("356938035643809");
+
+        Console.printDiv();
+        Console.println(Color.BLUE, "Identity Response will be sent to AMF");
+        Console.println(Color.BLUE, "While NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(response));
+
+        var ngap = UeUtils.createUplinkMessage(response, ranUeNgapId, amfUeNgapId);
+        sendPDU(ngap);
+        Console.println(Color.BLUE, "Message sent:");
 
         return this::waitAmfRequests;
     }
