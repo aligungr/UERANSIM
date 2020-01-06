@@ -60,8 +60,8 @@ public class UeRanSim {
                 return;
             }
 
-            Constants.AMF_HOST = flow.setup.amfHost;
-            Constants.AMF_PORT = flow.setup.amfPort;
+            Environment.AMF_HOST = flow.setup.amfHost;
+            Environment.AMF_PORT = flow.setup.amfPort;
 
             Console.println();
             new UeRanSimFlow(flow).start();
