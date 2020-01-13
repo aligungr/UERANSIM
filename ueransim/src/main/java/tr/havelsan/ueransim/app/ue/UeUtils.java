@@ -1,12 +1,15 @@
 package tr.havelsan.ueransim.app.ue;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
+import fr.marben.asnsdk.japi.spe.BitStringValue;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
+import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.EapDecoder;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
@@ -14,6 +17,7 @@ import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialUEMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
@@ -153,5 +157,93 @@ public class UeUtils {
         if (nasPayload == null)
             return null;
         return NasDecoder.nasPdu(nasPayload.getValue());
+    }
+
+    private static GlobalRANNodeID createGlobalGnbId() {
+        try {
+            var res = new GlobalGNB_ID();
+            res.gNB_ID = new GNB_ID(GNB_ID.ASN_gNB_ID, new BitStringValue(new byte[]{0, 0, 0, 2}, 32));
+            res.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
+            return new GlobalRANNodeID(GlobalRANNodeID.ASN_globalGNB_ID, res);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static SliceSupportList createSliceSupportList() {
+        var list = new ArrayList<SliceSupportItem>();
+
+        var item = new SliceSupportItem();
+        item.s_NSSAI = new S_NSSAI();
+        item.s_NSSAI.sD = new SD(new byte[]{9, -81, -81});
+        item.s_NSSAI.sST = new SST(new byte[]{1});
+        list.add(item);
+
+        var res = new SliceSupportList();
+        res.valueList = list;
+        return res;
+    }
+
+    private static BroadcastPLMNList createBroadcastPlmnList() {
+        var list = new ArrayList<BroadcastPLMNItem>();
+
+        var item = new BroadcastPLMNItem();
+        item.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
+        item.tAISliceSupportList = createSliceSupportList();
+        list.add(item);
+
+        var res = new BroadcastPLMNList();
+        res.valueList = list;
+        return res;
+    }
+
+    private static SupportedTAList createSupportedTAList() {
+        var list = new ArrayList<SupportedTAItem>();
+
+        var supportedTaiItem = new SupportedTAItem();
+        supportedTaiItem.tAC = new TAC(new byte[]{0, 0, 117});
+        supportedTaiItem.broadcastPLMNList = createBroadcastPlmnList();
+        list.add(supportedTaiItem);
+
+        var res = new SupportedTAList();
+        res.valueList = list;
+        return res;
+    }
+
+    public static NGAP_PDU createNgSetupRequest() {
+        var ies = new ArrayList<>();
+
+        var ie_globalRanNodeId = new NGSetupRequest.ProtocolIEs.SEQUENCE();
+        ie_globalRanNodeId.id = new ProtocolIE_ID(Values.NGAP_Constants__id_GlobalRANNodeID);
+        ie_globalRanNodeId.criticality = new Criticality(Criticality.ASN_reject);
+        ie_globalRanNodeId.value = new OpenTypeValue(createGlobalGnbId());
+        ies.add(ie_globalRanNodeId);
+
+        var ie_supportedTaList = new NGSetupRequest.ProtocolIEs.SEQUENCE();
+        ie_supportedTaList.id = new ProtocolIE_ID(Values.NGAP_Constants__id_SupportedTAList);
+        ie_supportedTaList.criticality = new Criticality(Criticality.ASN_reject);
+        ie_supportedTaList.value = new OpenTypeValue(createSupportedTAList());
+        ies.add(ie_supportedTaList);
+
+        var ie_pagingDrx = new NGSetupRequest.ProtocolIEs.SEQUENCE();
+        ie_pagingDrx.id = new ProtocolIE_ID(Values.NGAP_Constants__id_DefaultPagingDRX);
+        ie_pagingDrx.criticality = new Criticality(Criticality.ASN_ignore);
+        ie_pagingDrx.value = new OpenTypeValue(new PagingDRX(PagingDRX.ASN_v64));
+        ies.add(ie_pagingDrx);
+
+        var ngSetupRequest = new NGSetupRequest();
+        ngSetupRequest.protocolIEs = new NGSetupRequest.ProtocolIEs();
+        ngSetupRequest.protocolIEs.valueList = ies;
+
+        var initiatingMessage = new InitiatingMessage();
+        initiatingMessage.procedureCode = new ProcedureCode(Values.NGAP_Constants__id_NGSetup);
+        initiatingMessage.criticality = new Criticality(Criticality.ASN_reject);
+        initiatingMessage.value = new OpenTypeValue(ngSetupRequest);
+
+        try {
+            return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
