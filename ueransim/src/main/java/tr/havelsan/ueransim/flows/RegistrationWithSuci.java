@@ -52,7 +52,7 @@ public class RegistrationWithSuci extends BaseFlow {
     @Override
     public State main(Message message) {
         this.milenageBufferFactory = BigIntegerBufferFactory.getInstance();
-        return sendRegistrationRequest(null); // sendNgSetupRequest(); todo
+        return sendNgSetupRequest();
     }
 
     private State sendNgSetupRequest() {
@@ -137,7 +137,7 @@ public class RegistrationWithSuci extends BaseFlow {
         mobileIdentity.routingIndicator = "0000";
         mobileIdentity.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
         mobileIdentity.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki(0);
-        mobileIdentity.schemeOutput = "000000095";
+        mobileIdentity.schemeOutput = "000000004";
         registrationRequest.mobileIdentity = mobileIdentity;
 
         var ngapPdu = UeUtils.createInitialUeMessage(registrationRequest, ranUeNgapId, RRCEstablishmentCause.ASN_mo_Data);

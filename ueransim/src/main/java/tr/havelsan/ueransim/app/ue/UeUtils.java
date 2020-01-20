@@ -37,7 +37,8 @@ public class UeUtils {
         userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(new byte[]{0x01, (byte) 0xb2, (byte) 0xc3, (byte) 0xd4, (byte) 0xe0}, 36);
         userLocationInformationNr.tAI = new TAI();
         userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
-        userLocationInformationNr.tAI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x02, 0x20});
+        userLocationInformationNr.tAI.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
+        userLocationInformationNr.timeStamp = new TimeStamp(new byte[]{0x5b, 0x5f, (byte) 0xa6, (byte) 0x80});
         return userLocationInformationNr;
     }
 
@@ -162,7 +163,7 @@ public class UeUtils {
     private static GlobalRANNodeID createGlobalGnbId() {
         try {
             var res = new GlobalGNB_ID();
-            res.gNB_ID = new GNB_ID(GNB_ID.ASN_gNB_ID, new BitStringValue(new byte[]{0, 0, 0, 2}, 32));
+            res.gNB_ID = new GNB_ID(GNB_ID.ASN_gNB_ID, new BitStringValue(new byte[]{0, 0, 0, 1}, 32));
             res.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
             return new GlobalRANNodeID(GlobalRANNodeID.ASN_globalGNB_ID, res);
         } catch (InvalidStructureException e) {
