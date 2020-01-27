@@ -1,5 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
+import fr.marben.asnsdk.japi.InvalidStructureException;
+import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import threegpp.milenage.Milenage;
 import threegpp.milenage.MilenageBufferFactory;
 import threegpp.milenage.MilenageResult;
@@ -23,11 +25,14 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
 import tr.havelsan.ueransim.nas.impl.values.VSliceDifferentiator;
 import tr.havelsan.ueransim.nas.impl.values.VSliceServiceType;
+import tr.havelsan.ueransim.ngap.Values;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.ErrorIndication;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
@@ -38,6 +43,7 @@ import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -69,35 +75,74 @@ public class RegistrationWithSuci extends BaseFlow {
         var pdu = message.getAsPDU();
 
         Console.printDiv();
-        Console.println(Color.BLUE, "Message received from AMF with length %d", message.getLength(), "bytes.");
+        Console.println(
+                Color.BLUE, "Message received from AMF with length %d", message.getLength(), "bytes.");
         Console.println(Color.BLUE, "Received NGAP PDU:");
         Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(pdu));
 
         if (!(pdu.getValue() instanceof SuccessfulOutcome)) {
-            Console.println(Color.YELLOW, "bad message from AMF, SuccessfulOutcome is expected. message ignored");
+            Console.println(
+                    Color.YELLOW, "bad message from AMF, SuccessfulOutcome is expected. message ignored");
             return this::waitNgSetupResponse;
         }
 
         var succ = (SuccessfulOutcome) pdu.getValue();
         if (!(succ.value.getDecodedValue() instanceof NGSetupResponse)) {
-            Console.println(Color.YELLOW, "bad message from AMF, NGSetupResponse is expected. message ignored");
+            Console.println(
+                    Color.YELLOW, "bad message from AMF, NGSetupResponse is expected. message ignored");
             return this::waitNgSetupResponse;
         }
 
         Console.println(Color.BLUE, "NGSetupResponse handled.");
-        return sendRegistrationRequest(null);
+        return sendRegistrationRequest();
+    }
+
+    private State sendRegistrationRequest() {
+        var registrationRequest = new RegistrationRequest();
+        registrationRequest.registrationType =
+                new IE5gsRegistrationType(
+                        IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING,
+                        IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
+        registrationRequest.nasKeySetIdentifier =
+                new IENasKeySetIdentifier(
+                        IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, new Bit3(3));
+        registrationRequest.requestedNSSAI =
+                new IENssai(
+                        new IESNssai[]{
+                                new IESNssai(new VSliceServiceType(1), new VSliceDifferentiator("09afaf"), null, null)
+                        });
+
+        var mobileIdentity = new IEImsiMobileIdentity();
+        mobileIdentity.mcc = EMccValue.fromValue(1);
+        mobileIdentity.mnc = EMncValue.fromValue(1);
+        mobileIdentity.routingIndicator = "0000";
+        mobileIdentity.protectionSchemaId =
+                IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
+        mobileIdentity.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki(0);
+        mobileIdentity.schemeOutput = "000000004";
+        registrationRequest.mobileIdentity = mobileIdentity;
+
+        var ngapPdu =
+                UeUtils.createInitialUeMessage(
+                        registrationRequest, ranUeNgapId, RRCEstablishmentCause.ASN_mo_Data);
+
+        sendPDU(ngapPdu);
+
+        return this::waitAmfMessages;
     }
 
     private State waitAmfMessages(Message message) {
         var pdu = message.getAsPDU();
 
         Console.printDiv();
-        Console.println(Color.BLUE, "Message received from AMF with length %d", message.getLength(), "bytes.");
+        Console.println(
+                Color.BLUE, "Message received from AMF with length %d", message.getLength(), "bytes.");
         Console.println(Color.BLUE, "Received NGAP PDU:");
         Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(pdu));
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
-            Console.println(Color.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
+            Console.println(
+                    Color.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
             return this::waitAmfMessages;
         }
 
@@ -113,38 +158,18 @@ public class RegistrationWithSuci extends BaseFlow {
                 }
             }
             return handleDownlinkNASTransport(downlinkNASTransport);
+        } else if (initiatingMessage instanceof InitialContextSetupRequest) {
+            return handleInitialContextSetup();
         } else if (initiatingMessage instanceof ErrorIndication) {
             Console.println(Color.RED, "Error indication received");
             Console.println(Color.RED, "Closing connection");
             return closeConnection();
         } else {
-            Console.println(Color.YELLOW, "bad message from AMF, DownlinkNASTransport or InitialContextSetupRequest is expected. message ignored");
+            Console.println(
+                    Color.YELLOW,
+                    "bad message from AMF, DownlinkNASTransport or InitialContextSetupRequest is expected. message ignored");
             return this::waitAmfMessages;
         }
-    }
-
-    private State sendRegistrationRequest(Message message) {
-        var registrationRequest = new RegistrationRequest();
-        registrationRequest.registrationType = new IE5gsRegistrationType(IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING, IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
-        registrationRequest.nasKeySetIdentifier = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, new Bit3(3));
-        registrationRequest.requestedNSSAI = new IENssai(new IESNssai[]{
-                new IESNssai(new VSliceServiceType(1), new VSliceDifferentiator("09afaf"), null, null)
-        });
-
-        var mobileIdentity = new IEImsiMobileIdentity();
-        mobileIdentity.mcc = EMccValue.fromValue(1);
-        mobileIdentity.mnc = EMncValue.fromValue(1);
-        mobileIdentity.routingIndicator = "0000";
-        mobileIdentity.protectionSchemaId = IEImsiMobileIdentity.EProtectionSchemeIdentifier.NULL_SCHEME;
-        mobileIdentity.homeNetworkPublicKeyIdentifier = new VHomeNetworkPki(0);
-        mobileIdentity.schemeOutput = "000000004";
-        registrationRequest.mobileIdentity = mobileIdentity;
-
-        var ngapPdu = UeUtils.createInitialUeMessage(registrationRequest, ranUeNgapId, RRCEstablishmentCause.ASN_mo_Data);
-
-        sendPDU(ngapPdu);
-
-        return this::waitAmfMessages;
     }
 
     private State handleDownlinkNASTransport(DownlinkNASTransport message) {
@@ -186,14 +211,58 @@ public class RegistrationWithSuci extends BaseFlow {
         } else if (message instanceof RegistrationAccept) {
             return handleRegistrationAccept((RegistrationAccept) message);
         } else {
-            Console.println(Color.YELLOW, "This message type was not implemented yet: %s", message.getClass().getSimpleName());
+            Console.println(
+                    Color.YELLOW,
+                    "This message type was not implemented yet: %s",
+                    message.getClass().getSimpleName());
             Console.println(Color.YELLOW, "Ignoring message");
+            return this::waitAmfMessages;
+        }
+    }
+
+    private State handleInitialContextSetup() {
+        var list = new ArrayList<InitialContextSetupResponse.ProtocolIEs.SEQUENCE>();
+        var contextSetupResponse = new InitialContextSetupResponse();
+        contextSetupResponse.protocolIEs = new InitialContextSetupResponse.ProtocolIEs();
+        contextSetupResponse.protocolIEs.valueList = list;
+        var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
+        item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
+        item0.criticality = new Criticality(Criticality.ASN_ignore);
+        item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+        var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
+        item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
+        item1.criticality = new Criticality(Criticality.ASN_ignore);
+        item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
+
+        list.add(item0);
+        list.add(item1);
+
+        NGAP_PDU ngapPdu;
+        try {
+            var successfullOutcome = new SuccessfulOutcome();
+            successfullOutcome.procedureCode =
+                    new ProcedureCode(Values.NGAP_Constants__id_InitialContextSetup);
+            successfullOutcome.criticality = new Criticality(Criticality.ASN_reject);
+            successfullOutcome.value = new OpenTypeValue(contextSetupResponse);
+
+            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfullOutcome);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
         }
 
-        return this::waitAmfMessages;
+        sendPDU(ngapPdu);
+        logMessageSent();
+
+        var response = new RegistrationComplete();
+        sendUplinkMessage(response);
+
+        Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
+        Console.println(Color.WHITE_BRIGHT, "Closing connection");
+        return closeConnection();
     }
 
     private State handleRegistrationReject(RegistrationReject message) {
+        Console.println(Color.RED, "RegistrationReject result received :((");
         return closeConnection();
     }
 
@@ -262,7 +331,9 @@ public class RegistrationWithSuci extends BaseFlow {
         // Send response
         {
             var response = new AuthenticationResponse();
-            response.authenticationResponseParameter = new IEAuthenticationResponseParameter(new OctetString("0102030405060708090A0B0C0D0E0F10"));
+            response.authenticationResponseParameter =
+                    new IEAuthenticationResponseParameter(
+                            new OctetString("0102030405060708090A0B0C0D0E0F10"));
 
             var akaPrime = new EapAkaPrime(Eap.ECode.RESPONSE, id);
             akaPrime.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
@@ -279,7 +350,10 @@ public class RegistrationWithSuci extends BaseFlow {
 
     private State handleIdentityRequest(IdentityRequest message) {
         if (!message.identityType.value.equals(EIdentityType.IMEI)) {
-            Console.println(Color.RED, "Identity request for %s is not implemented yet", message.identityType.value.name());
+            Console.println(
+                    Color.RED,
+                    "Identity request for %s is not implemented yet",
+                    message.identityType.value.name());
             return this::waitAmfMessages;
         }
 
