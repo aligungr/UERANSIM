@@ -280,6 +280,8 @@ public class RegistrationParameterised extends BaseFlow {
         {
             var akaPrime = (EapAkaPrime) message.eapMessage.eap;
             var rand = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_RAND);
+            rand = rand.substring(2); // warning
+
             mac = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
             id = akaPrime.id;
 

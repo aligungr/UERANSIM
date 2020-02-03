@@ -1,5 +1,5 @@
 "@type": RegistrationInput
-ranUeNgapId: 14
+ranUeNgapId: 1000
 ngKSI:
   value: 3
 requestNssai:
@@ -15,7 +15,7 @@ mobileIdentity:
   protectionSchemaId: NULL_SCHEME
   homeNetworkPublicKeyIdentifier:
     value: '0'
-  schemeOutput: '000000004'
+  schemeOutput: '000000040'
 rrcEstablishmentCause: 4
 imei: '356938035643809'
 authenticationResponseParameter:
@@ -38,3 +38,21 @@ userLocationInformationNr:
     tac: '000075'
   timeStamp:
     hex: 5b5fa680
+ngSetupInput:
+  gnbId: 1
+  gnbPlmn:
+    mcc: 1
+    mnc: 1
+  supportedTAs:
+    - tac:
+        hex: '000075'
+      broadcastPlmns:
+        - plmn:
+            mcc: 1
+            mnc: 1
+          taiSliceSupportNssais:
+            - sst:
+                value: 1
+              sd:
+                value:
+                  hex: 09afaf
