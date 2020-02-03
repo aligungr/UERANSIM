@@ -342,7 +342,7 @@ public class RegistrationParameterised extends BaseFlow {
 
     private void logNasMessageWillSend(NasMessage nasMessage) {
         Console.printDiv();
-        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent to AMF");
+        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
         Console.println(Color.BLUE, "While NAS message is:");
         Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
     }
