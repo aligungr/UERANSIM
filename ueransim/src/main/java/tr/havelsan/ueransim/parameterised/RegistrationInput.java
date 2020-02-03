@@ -7,19 +7,12 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RegistrationInput {
     public long ranUeNgapId;
-
     public Bit3 ngKSI;
-
     public IESNssai[] requestNssai;
-
     public IE5gsMobileIdentity mobileIdentity;
-
     public int rrcEstablishmentCause;
-
     public String imei;
-
     public OctetString authenticationResponseParameter;
-
     public EapAkaInputs eapAkaInputs;
 
     public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, OctetString authenticationResponseParameter, EapAkaInputs eapAkaInputs) {

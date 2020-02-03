@@ -21,7 +21,7 @@ public class Parameterised {
     public static void main(String[] args) throws Exception {
         initMts();
 
-        var registrationInput = (RegistrationInput) MtsDecoder.decode("parameter_test.json");
+        var registrationInput = (RegistrationInput) MtsDecoder.decode("parameter_test.yaml");
         Console.println(Json.toJson(registrationInput));
 
         new RegistrationParameterised(registrationInput).start();
@@ -63,7 +63,12 @@ public class Parameterised {
         TypeRegistry.registerCustomType(new MtsIEEapMessage());
         TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
 
-        MtsDecoder.setFileProvider((searchDir, path)
-                -> Utils.getResourceString(path));
+        MtsDecoder.setFileProvider((searchDir, path) -> {
+            String content = Utils.getResourceString(path);
+            if (path.endsWith(".yaml")) {
+                content = Utils.convertYamlToJson(content);
+            }
+            return content;
+        });
     }
 }

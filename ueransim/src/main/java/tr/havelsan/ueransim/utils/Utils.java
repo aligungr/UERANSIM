@@ -1,15 +1,16 @@
 package tr.havelsan.ueransim.utils;
 
+import org.json.XML;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.yaml.snakeyaml.Yaml;
+import tr.havelsan.ueransim.app.Json;
 import tr.havelsan.ueransim.exceptions.DecodingException;
 import tr.havelsan.ueransim.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitN;
 import tr.havelsan.ueransim.utils.octets.OctetN;
-import tr.havelsan.ueransim.app.Json;
-import org.json.XML;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -368,5 +370,14 @@ public final class Utils {
         var pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
+    }
+
+    /**
+     * Converts yaml string to json string
+     */
+    public static String convertYamlToJson(String yaml) {
+        Yaml y = new Yaml();
+        Map<String, Object> map = (Map<String, Object>) y.load(yaml);
+        return Json.toJson(map);
     }
 }
