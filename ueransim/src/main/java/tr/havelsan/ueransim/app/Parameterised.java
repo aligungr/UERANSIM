@@ -23,6 +23,7 @@ public class Parameterised {
 
         var registrationInput = (RegistrationInput) MtsDecoder.decode("parameter_test.yaml");
         Console.println(Json.toJson(registrationInput));
+        Console.printDiv();
 
         new RegistrationParameterised(registrationInput).start();
     }

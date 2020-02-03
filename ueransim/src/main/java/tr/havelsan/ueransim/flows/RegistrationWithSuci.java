@@ -14,6 +14,7 @@ import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.app.Json;
 import tr.havelsan.ueransim.app.ue.SupportedTA;
 import tr.havelsan.ueransim.app.ue.UeUtils;
+import tr.havelsan.ueransim.app.ue.UserLocationInformationNr;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -23,10 +24,7 @@ import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
-import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.nas.impl.values.VSliceDifferentiator;
-import tr.havelsan.ueransim.nas.impl.values.VSliceServiceType;
+import tr.havelsan.ueransim.nas.impl.values.*;
 import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
@@ -134,11 +132,17 @@ public class RegistrationWithSuci extends BaseFlow {
 
         var ngapPdu =
                 UeUtils.createInitialUeMessage(
-                        registrationRequest, ranUeNgapId, RRCEstablishmentCause.ASN_mo_Data);
+                        registrationRequest, ranUeNgapId, RRCEstablishmentCause.ASN_mo_Data,
+                        makeUserLocationInformation());
 
         sendPDU(ngapPdu);
 
         return this::waitAmfMessages;
+    }
+
+    private UserLocationInformationNr makeUserLocationInformation() {
+        return new UserLocationInformationNr(new UserLocationInformationNr.NrCgi(new VPlmn(1, 1), new OctetString("01b2c3d4e0")),
+                new VTrackingAreaIdentity(new VPlmn(1, 1), new Octet3(0x00, 0x00, 0x75)), new OctetString("5b5fa680"));
     }
 
     private State waitAmfMessages(Message message) {
@@ -377,7 +381,7 @@ public class RegistrationWithSuci extends BaseFlow {
 
     private void sendUplinkMessage(NasMessage nas) {
         logNasMessageWillSend(nas);
-        var ngap = UeUtils.createUplinkMessage(nas, ranUeNgapId, amfUeNgapId);
+        var ngap = UeUtils.createUplinkMessage(nas, ranUeNgapId, amfUeNgapId, makeUserLocationInformation());
         sendPDU(ngap);
         logMessageSent();
     }

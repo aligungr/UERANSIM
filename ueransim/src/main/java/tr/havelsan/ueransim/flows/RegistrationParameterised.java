@@ -112,7 +112,7 @@ public class RegistrationParameterised extends BaseFlow {
 
         var ngapPdu =
                 UeUtils.createInitialUeMessage(
-                        registrationRequest, input.ranUeNgapId, input.rrcEstablishmentCause);
+                        registrationRequest, input.ranUeNgapId, input.rrcEstablishmentCause, input.userLocationInformationNr);
 
         sendPDU(ngapPdu);
 
@@ -353,7 +353,7 @@ public class RegistrationParameterised extends BaseFlow {
 
     private void sendUplinkMessage(NasMessage nas) {
         logNasMessageWillSend(nas);
-        var ngap = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId);
+        var ngap = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
         sendPDU(ngap);
         logMessageSent();
     }

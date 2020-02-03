@@ -32,15 +32,15 @@ import java.util.List;
 
 public class UeUtils {
 
-    private static UserLocationInformationNR createUserLocationInformationNr() {
+    private static UserLocationInformationNR createUserLocationInformationNr(UserLocationInformationNr nr) {
         var userLocationInformationNr = new UserLocationInformationNR();
         userLocationInformationNr.nR_CGI = new NR_CGI();
-        userLocationInformationNr.nR_CGI.pLMNIdentity = new PLMNIdentity(new byte[]{0x00, 0x01, 0x10});
-        userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(new byte[]{0x01, (byte) 0xb2, (byte) 0xc3, (byte) 0xd4, (byte) 0xe0}, 36);
+        userLocationInformationNr.nR_CGI.pLMNIdentity = Ngap.plmnEncode(nr.nrCgi.plmn);
+        userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(nr.nrCgi.nrCellIdentity.toByteArray(), 36);
         userLocationInformationNr.tAI = new TAI();
-        userLocationInformationNr.tAI.tAC = new TAC(new byte[]{0x00, 0x00, 0x75});
-        userLocationInformationNr.tAI.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
-        userLocationInformationNr.timeStamp = new TimeStamp(new byte[]{0x5b, 0x5f, (byte) 0xa6, (byte) 0x80});
+        userLocationInformationNr.tAI.tAC = new TAC(nr.tai.tac.toByteArray());
+        userLocationInformationNr.tAI.pLMNIdentity = Ngap.plmnEncode(nr.tai.plmn);
+        userLocationInformationNr.timeStamp = new TimeStamp(nr.timeStamp.toByteArray());
         return userLocationInformationNr;
     }
 
@@ -50,7 +50,7 @@ public class UeUtils {
         return EapDecoder.eapPdu((new OctetInputStream((bytes))));
     }
 
-    public static NGAP_PDU createInitialUeMessage(NasMessage nasMessage, long ranUeNgapIdValue, int establishmentCauseValue) {
+    public static NGAP_PDU createInitialUeMessage(NasMessage nasMessage, long ranUeNgapIdValue, int establishmentCauseValue, UserLocationInformationNr userLocationInformationNr) {
         var ranUeNgapId = new InitialUEMessage.ProtocolIEs.SEQUENCE();
         ranUeNgapId.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
         ranUeNgapId.criticality = new Criticality(Criticality.ASN_reject);
@@ -65,7 +65,7 @@ public class UeUtils {
         userLocationInformation.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
         userLocationInformation.criticality = new Criticality(Criticality.ASN_reject);
         try {
-            userLocationInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr()));
+            userLocationInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr(userLocationInformationNr)));
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
@@ -99,7 +99,7 @@ public class UeUtils {
         return ngapPdu;
     }
 
-    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, long ranUeNgapId, long amfUeNgapId) {
+    public static NGAP_PDU createUplinkMessage(NasMessage nasMessage, long ranUeNgapId, long amfUeNgapId, UserLocationInformationNr userLocationInformationNr) {
         var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
 
         var uplink = new UplinkNASTransport();
@@ -128,7 +128,7 @@ public class UeUtils {
         userLocationInformation.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
         userLocationInformation.criticality = new Criticality(Criticality.ASN_reject);
         try {
-            userLocationInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr()));
+            userLocationInformation.value = new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, createUserLocationInformationNr(userLocationInformationNr)));
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
