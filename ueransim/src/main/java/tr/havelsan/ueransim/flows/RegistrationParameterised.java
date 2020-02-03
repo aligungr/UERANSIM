@@ -203,13 +203,13 @@ public class RegistrationParameterised extends BaseFlow {
 
         NGAP_PDU ngapPdu;
         try {
-            var successfullOutcome = new SuccessfulOutcome();
-            successfullOutcome.procedureCode =
+            var successfulOutcome = new SuccessfulOutcome();
+            successfulOutcome.procedureCode =
                     new ProcedureCode(Values.NGAP_Constants__id_InitialContextSetup);
-            successfullOutcome.criticality = new Criticality(Criticality.ASN_reject);
-            successfullOutcome.value = new OpenTypeValue(contextSetupResponse);
+            successfulOutcome.criticality = new Criticality(Criticality.ASN_reject);
+            successfulOutcome.value = new OpenTypeValue(contextSetupResponse);
 
-            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfullOutcome);
+            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutcome);
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
