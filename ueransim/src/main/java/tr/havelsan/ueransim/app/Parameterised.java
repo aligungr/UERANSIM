@@ -2,7 +2,9 @@ package tr.havelsan.ueransim.app;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import tr.havelsan.ueransim.app.sim.*;
+import tr.havelsan.ueransim.app.sim.MtsEapAkaAttributes;
+import tr.havelsan.ueransim.app.sim.MtsIEEapMessage;
+import tr.havelsan.ueransim.app.sim.MtsProtocolEnumRegistry;
 import tr.havelsan.ueransim.flows.RegistrationParameterised;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.TypeRegistry;
@@ -45,10 +47,7 @@ public class Parameterised {
                 EapAkaPrime.ESubType.class,
                 Eap.ECode.class,
                 Eap.EEapType.class,
-                SimulationFlow.class,
-                FlowConfig.class,
-                SimulationStep.class,
-                SimulatorSetup.class,
+                RegistrationInput.class
         };
 
         for (var type : otherTypes) {
@@ -62,7 +61,6 @@ public class Parameterised {
 
     public static void main(String[] args) throws Exception {
         initMts();
-        TypeRegistry.registerTypeName("RegistrationInput", RegistrationInput.class);
 
         MtsDecoder.setFileProvider((searchDir, path)
                 -> Utils.getResourceString(path));
