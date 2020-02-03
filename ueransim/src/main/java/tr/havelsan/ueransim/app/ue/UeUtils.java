@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
@@ -23,6 +24,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.Octet4;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -160,70 +162,78 @@ public class UeUtils {
         return NasDecoder.nasPdu(nasPayload.getValue());
     }
 
-    private static GlobalRANNodeID createGlobalGnbId() {
+    private static GlobalRANNodeID createGlobalGnbId(int globalGnbId, VPlmn gnbPlmn) {
         try {
             var res = new GlobalGNB_ID();
-            res.gNB_ID = new GNB_ID(GNB_ID.ASN_gNB_ID, new BitStringValue(new byte[]{0, 0, 0, 1}, 32));
-            res.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
+            res.gNB_ID = new GNB_ID(GNB_ID.ASN_gNB_ID, new BitStringValue(new Octet4(globalGnbId).toByteArray(true), 32));
+            res.pLMNIdentity = Ngap.plmnEncode(gnbPlmn);
             return new GlobalRANNodeID(GlobalRANNodeID.ASN_globalGNB_ID, res);
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static SliceSupportList createSliceSupportList() {
+    private static SliceSupportList createSliceSupportList(IESNssai[] taiSliceSupportNssais) {
         var list = new ArrayList<SliceSupportItem>();
 
-        var item = new SliceSupportItem();
-        item.s_NSSAI = new S_NSSAI();
-        item.s_NSSAI.sD = new SD(new byte[]{9, -81, -81});
-        item.s_NSSAI.sST = new SST(new byte[]{1});
-        list.add(item);
+        if (taiSliceSupportNssais != null) {
+            for (var nssai : taiSliceSupportNssais) {
+                var item = new SliceSupportItem();
+                item.s_NSSAI = new S_NSSAI();
+                item.s_NSSAI.sD = new SD(nssai.sd.value.toByteArray());
+                item.s_NSSAI.sST = new SST(nssai.sst.value.toByteArray());
+                list.add(item);
+            }
+        }
 
         var res = new SliceSupportList();
         res.valueList = list;
         return res;
     }
 
-    private static BroadcastPLMNList createBroadcastPlmnList() {
+    private static BroadcastPLMNList createBroadcastPlmnList(SupportedTA.BroadcastPlmn[] broadcastPlmns) {
         var list = new ArrayList<BroadcastPLMNItem>();
 
-        var item = new BroadcastPLMNItem();
-        item.pLMNIdentity = Ngap.plmnEncode(new VPlmn(1, 1));
-        item.tAISliceSupportList = createSliceSupportList();
-        list.add(item);
+        for (var broadcastPlmn : broadcastPlmns) {
+            var item = new BroadcastPLMNItem();
+            item.pLMNIdentity = Ngap.plmnEncode(broadcastPlmn.plmn);
+            item.tAISliceSupportList = createSliceSupportList(broadcastPlmn.taiSliceSupportNssais);
+            list.add(item);
+        }
 
         var res = new BroadcastPLMNList();
         res.valueList = list;
         return res;
     }
 
-    private static SupportedTAList createSupportedTAList() {
+    private static SupportedTAList createSupportedTAList(SupportedTA[] supportedTAs) {
         var list = new ArrayList<SupportedTAItem>();
 
-        var supportedTaiItem = new SupportedTAItem();
-        supportedTaiItem.tAC = new TAC(new byte[]{0, 0, 117});
-        supportedTaiItem.broadcastPLMNList = createBroadcastPlmnList();
-        list.add(supportedTaiItem);
+        for (var supportedTa : supportedTAs) {
+            var supportedTaiItem = new SupportedTAItem();
+            supportedTaiItem.tAC = new TAC(supportedTa.tac.toByteArray());
+            supportedTaiItem.broadcastPLMNList = createBroadcastPlmnList(supportedTa.broadcastPlmns);
+            list.add(supportedTaiItem);
+        }
 
         var res = new SupportedTAList();
         res.valueList = list;
         return res;
     }
 
-    public static NGAP_PDU createNgSetupRequest() {
+    public static NGAP_PDU createNgSetupRequest(int globalGnbId, VPlmn gnbPlmn, SupportedTA[] supportedTAs) {
         var ies = new ArrayList<>();
 
         var ie_globalRanNodeId = new NGSetupRequest.ProtocolIEs.SEQUENCE();
         ie_globalRanNodeId.id = new ProtocolIE_ID(Values.NGAP_Constants__id_GlobalRANNodeID);
         ie_globalRanNodeId.criticality = new Criticality(Criticality.ASN_reject);
-        ie_globalRanNodeId.value = new OpenTypeValue(createGlobalGnbId());
+        ie_globalRanNodeId.value = new OpenTypeValue(createGlobalGnbId(globalGnbId, gnbPlmn));
         ies.add(ie_globalRanNodeId);
 
         var ie_supportedTaList = new NGSetupRequest.ProtocolIEs.SEQUENCE();
         ie_supportedTaList.id = new ProtocolIE_ID(Values.NGAP_Constants__id_SupportedTAList);
         ie_supportedTaList.criticality = new Criticality(Criticality.ASN_reject);
-        ie_supportedTaList.value = new OpenTypeValue(createSupportedTAList());
+        ie_supportedTaList.value = new OpenTypeValue(createSupportedTAList(supportedTAs));
         ies.add(ie_supportedTaList);
 
         var ie_pagingDrx = new NGSetupRequest.ProtocolIEs.SEQUENCE();

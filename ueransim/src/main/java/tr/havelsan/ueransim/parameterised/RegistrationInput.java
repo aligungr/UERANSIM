@@ -6,16 +6,17 @@ import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RegistrationInput {
-    public long ranUeNgapId;
-    public Bit3 ngKSI;
-    public IESNssai[] requestNssai;
-    public IE5gsMobileIdentity mobileIdentity;
-    public int rrcEstablishmentCause;
-    public String imei;
-    public OctetString authenticationResponseParameter;
-    public EapAkaInputs eapAkaInputs;
+    public final long ranUeNgapId;
+    public final Bit3 ngKSI;
+    public final IESNssai[] requestNssai;
+    public final IE5gsMobileIdentity mobileIdentity;
+    public final int rrcEstablishmentCause;
+    public final String imei;
+    public final OctetString authenticationResponseParameter;
+    public final EapAkaInput eapAkaInput;
+    public final NgSetupInput ngSetupInput;
 
-    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, OctetString authenticationResponseParameter, EapAkaInputs eapAkaInputs) {
+    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, OctetString authenticationResponseParameter, EapAkaInput eapAkaInput, NgSetupInput ngSetupInput) {
         this.ranUeNgapId = ranUeNgapId;
         this.ngKSI = ngKSI;
         this.requestNssai = requestNssai;
@@ -23,6 +24,7 @@ public class RegistrationInput {
         this.rrcEstablishmentCause = rrcEstablishmentCause;
         this.imei = imei;
         this.authenticationResponseParameter = authenticationResponseParameter;
-        this.eapAkaInputs = eapAkaInputs;
+        this.eapAkaInput = eapAkaInput;
+        this.ngSetupInput = ngSetupInput;
     }
 }

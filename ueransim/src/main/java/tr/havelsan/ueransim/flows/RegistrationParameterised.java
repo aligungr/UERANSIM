@@ -60,7 +60,8 @@ public class RegistrationParameterised extends BaseFlow {
     }
 
     private State sendNgSetupRequest() {
-        var pdu = UeUtils.createNgSetupRequest();
+        var pdu = UeUtils.createNgSetupRequest(input.ngSetupInput.gnbId, input.ngSetupInput.gnbPlmn,
+                input.ngSetupInput.supportedTAs);
 
         logNgapMessageWillSend(pdu);
         sendPDU(pdu);
@@ -282,10 +283,10 @@ public class RegistrationParameterised extends BaseFlow {
             mac = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
             id = akaPrime.id;
 
-            final String OP = input.eapAkaInputs.OP;
-            final String SQN = input.eapAkaInputs.SQN;
-            final String AMF = input.eapAkaInputs.AMF;
-            final String KEY = input.eapAkaInputs.KEY;
+            final String OP = input.eapAkaInput.OP;
+            final String SQN = input.eapAkaInput.SQN;
+            final String AMF = input.eapAkaInput.AMF;
+            final String KEY = input.eapAkaInput.KEY;
 
             byte[] op = Utils.hexStringToByteArray(OP);
             byte[] sqn = Utils.hexStringToByteArray(SQN);

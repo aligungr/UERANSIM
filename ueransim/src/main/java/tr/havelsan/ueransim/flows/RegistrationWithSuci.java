@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.app.Json;
+import tr.havelsan.ueransim.app.ue.SupportedTA;
 import tr.havelsan.ueransim.app.ue.UeUtils;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
@@ -23,6 +24,7 @@ import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.nas.impl.values.VSliceDifferentiator;
 import tr.havelsan.ueransim.nas.impl.values.VSliceServiceType;
 import tr.havelsan.ueransim.ngap.Values;
@@ -41,6 +43,7 @@ import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
@@ -62,7 +65,14 @@ public class RegistrationWithSuci extends BaseFlow {
     }
 
     private State sendNgSetupRequest() {
-        var pdu = UeUtils.createNgSetupRequest();
+        var pdu = UeUtils.createNgSetupRequest(1, new VPlmn(1, 1), new SupportedTA[]{
+                new SupportedTA(new Octet3(0, 0, 117), new SupportedTA.BroadcastPlmn[]{
+                        new SupportedTA.BroadcastPlmn(new VPlmn(1, 1), new IESNssai[]{
+                                new IESNssai(new VSliceServiceType(1),
+                                        new VSliceDifferentiator(new Octet3(9, ((byte) -81) & 0xFF, ((byte) -87) & 0xFF)), null, null)
+                        })
+                })
+        });
 
         logNgapMessageWillSend(pdu);
         sendPDU(pdu);
