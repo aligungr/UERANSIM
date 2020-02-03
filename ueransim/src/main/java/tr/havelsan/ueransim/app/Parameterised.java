@@ -18,6 +18,15 @@ import tr.havelsan.ueransim.utils.Utils;
 
 public class Parameterised {
 
+    public static void main(String[] args) throws Exception {
+        initMts();
+
+        var registrationInput = (RegistrationInput) MtsDecoder.decode("parameter_test.json");
+        Console.println(Json.toJson(registrationInput));
+
+        new RegistrationParameterised(registrationInput).start();
+    }
+
     private static void initMts() {
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
             var classInfoList = scanResult.getAllClasses();
@@ -30,10 +39,6 @@ public class Parameterised {
                 }
 
                 String typeName = Utils.getTypeName(clazz);
-
-                //Console.print(Color.RED, typeName + " ");
-                //Console.println(Color.BLUE, clazz.getName());
-
                 TypeRegistry.registerTypeName(typeName, clazz);
             }
         }
@@ -57,17 +62,8 @@ public class Parameterised {
         TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
         TypeRegistry.registerCustomType(new MtsIEEapMessage());
         TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
-    }
-
-    public static void main(String[] args) throws Exception {
-        initMts();
 
         MtsDecoder.setFileProvider((searchDir, path)
                 -> Utils.getResourceString(path));
-
-        var registrationInput = (RegistrationInput) MtsDecoder.decode("parameter_test.json");
-        Console.println(Json.toJson(registrationInput));
-
-        new RegistrationParameterised(registrationInput).start();
     }
 }
