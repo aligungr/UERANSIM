@@ -15,7 +15,7 @@ mobileIdentity:
   protectionSchemaId: NULL_SCHEME
   homeNetworkPublicKeyIdentifier:
     value: '0'
-  schemeOutput: '000000040'
+  schemeOutput: '000000043'
 rrcEstablishmentCause: 4
 imei: '356938035643809'
 authenticationResponseParameter:

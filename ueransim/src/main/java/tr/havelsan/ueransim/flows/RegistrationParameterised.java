@@ -46,49 +46,38 @@ import java.util.concurrent.Executors;
 public class RegistrationParameterised extends BaseFlow {
 
     private final RegistrationInput input;
-    private MilenageBufferFactory<BigIntegerBuffer> milenageBufferFactory;
+    private final MilenageBufferFactory<BigIntegerBuffer> milenageBufferFactory;
     private long amfUeNgapId;
 
     public RegistrationParameterised(RegistrationInput input) {
         this.input = input;
+        this.milenageBufferFactory = BigIntegerBufferFactory.getInstance();
     }
 
     @Override
     public State main(Message message) {
-        this.milenageBufferFactory = BigIntegerBufferFactory.getInstance();
         return sendNgSetupRequest();
     }
 
     private State sendNgSetupRequest() {
-        var pdu = UeUtils.createNgSetupRequest(input.ngSetupInput.gnbId, input.ngSetupInput.gnbPlmn,
+        var ngSetupRequest = UeUtils.createNgSetupRequest(input.ngSetupInput.gnbId, input.ngSetupInput.gnbPlmn,
                 input.ngSetupInput.supportedTAs);
-
-        logNgapMessageWillSend(pdu);
-        sendPDU(pdu);
-        logMessageSent();
-
+        sendNgapMessage(ngSetupRequest);
         return this::waitNgSetupResponse;
     }
 
     private State waitNgSetupResponse(Message message) {
         var pdu = message.getAsPDU();
-
-        Console.printDiv();
-        Console.println(
-                Color.BLUE, "Message received from AMF with length %d", message.getLength(), "bytes.");
-        Console.println(Color.BLUE, "Received NGAP PDU:");
-        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(pdu));
+        logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof SuccessfulOutcome)) {
-            Console.println(
-                    Color.YELLOW, "bad message from AMF, SuccessfulOutcome is expected. message ignored");
+            Console.println(Color.YELLOW, "bad message, SuccessfulOutcome is expected. message ignored");
             return this::waitNgSetupResponse;
         }
 
-        var succ = (SuccessfulOutcome) pdu.getValue();
-        if (!(succ.value.getDecodedValue() instanceof NGSetupResponse)) {
-            Console.println(
-                    Color.YELLOW, "bad message from AMF, NGSetupResponse is expected. message ignored");
+        var successfulOutcome = (SuccessfulOutcome) pdu.getValue();
+        if (!(successfulOutcome.value.getDecodedValue() instanceof NGSetupResponse)) {
+            Console.println(Color.YELLOW, "bad message, NGSetupResponse is expected. message ignored");
             return this::waitNgSetupResponse;
         }
 
@@ -105,32 +94,19 @@ public class RegistrationParameterised extends BaseFlow {
         registrationRequest.nasKeySetIdentifier =
                 new IENasKeySetIdentifier(
                         IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
-        registrationRequest.requestedNSSAI =
-                new IENssai(input.requestNssai);
-
+        registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 
-        var ngapPdu =
-                UeUtils.createInitialUeMessage(
-                        registrationRequest, input.ranUeNgapId, input.rrcEstablishmentCause, input.userLocationInformationNr);
-
-        sendPDU(ngapPdu);
-
+        sendInitialUeMessage(registrationRequest);
         return this::waitAmfMessages;
     }
 
     private State waitAmfMessages(Message message) {
         var pdu = message.getAsPDU();
-
-        Console.printDiv();
-        Console.println(
-                Color.BLUE, "Message received from AMF with length %d", message.getLength(), "bytes.");
-        Console.println(Color.BLUE, "Received NGAP PDU:");
-        Console.println(Color.WHITE_BRIGHT, Ngap.xerEncode(pdu));
+        logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
-            Console.println(
-                    Color.YELLOW, "bad message from AMF, InitiatingMessage is expected. message ignored");
+            Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
             return this::waitAmfMessages;
         }
 
@@ -153,9 +129,7 @@ public class RegistrationParameterised extends BaseFlow {
             Console.println(Color.RED, "Closing connection");
             return closeConnection();
         } else {
-            Console.println(
-                    Color.YELLOW,
-                    "bad message from AMF, DownlinkNASTransport or InitialContextSetupRequest is expected. message ignored");
+            Console.println(Color.YELLOW, "unhandled ngap message. message ignored");
             return this::waitAmfMessages;
         }
     }
@@ -164,17 +138,16 @@ public class RegistrationParameterised extends BaseFlow {
         var nasMessage = UeUtils.getNasMessage(message);
         if (nasMessage == null) {
             Console.printDiv();
-            Console.println(Color.RED, "bad message from AMF, NAS PDU was expected.");
+            Console.println(Color.RED, "bad message, NAS PDU was expected.");
             Console.println(Color.RED, "closing connection");
             return closeConnection();
         }
-
-        Console.println(Color.BLUE, "Where NAS PDU is:");
-        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
         return handleNasMessage(nasMessage);
     }
 
     private State handleNasMessage(NasMessage nasMessage) {
+        Console.println(Color.BLUE, "Received NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
         Console.printDiv();
         Console.println(Color.BLUE, "NAS message is handling.");
 
@@ -210,13 +183,16 @@ public class RegistrationParameterised extends BaseFlow {
 
     private State handleInitialContextSetup() {
         var list = new ArrayList<InitialContextSetupResponse.ProtocolIEs.SEQUENCE>();
+
         var contextSetupResponse = new InitialContextSetupResponse();
         contextSetupResponse.protocolIEs = new InitialContextSetupResponse.ProtocolIEs();
         contextSetupResponse.protocolIEs.valueList = list;
+
         var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
         item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
         item0.criticality = new Criticality(Criticality.ASN_ignore);
         item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(input.ranUeNgapId));
+
         var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
         item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
         item1.criticality = new Criticality(Criticality.ASN_ignore);
@@ -238,8 +214,7 @@ public class RegistrationParameterised extends BaseFlow {
             throw new RuntimeException(e);
         }
 
-        sendPDU(ngapPdu);
-        logMessageSent();
+        sendNgapMessage(ngapPdu);
 
         var response = new RegistrationComplete();
         sendUplinkMessage(response);
@@ -250,7 +225,7 @@ public class RegistrationParameterised extends BaseFlow {
     }
 
     private State handleRegistrationReject(RegistrationReject message) {
-        Console.println(Color.RED, "RegistrationReject result received :((");
+        Console.println(Color.RED, "RegistrationReject result received.");
         return closeConnection();
     }
 
@@ -347,17 +322,22 @@ public class RegistrationParameterised extends BaseFlow {
 
         var response = new IdentityResponse();
         response.mobileIdentity = new IEImeiMobileIdentity(input.imei);
-
         sendUplinkMessage(response);
 
         return this::waitAmfMessages;
     }
 
+    private void sendInitialUeMessage(NasMessage nas) {
+        logNasMessageWillSend(nas);
+        var ngapPdu = UeUtils.createInitialUeMessage(
+                nas, input.ranUeNgapId, input.rrcEstablishmentCause, input.userLocationInformationNr);
+        sendNgapMessage(ngapPdu);
+    }
+
     private void sendUplinkMessage(NasMessage nas) {
         logNasMessageWillSend(nas);
-        var ngap = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
-        sendPDU(ngap);
-        logMessageSent();
+        var ngapPdu = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
+        sendNgapMessage(ngapPdu);
     }
 
     private void logNasMessageWillSend(NasMessage nasMessage) {
@@ -367,12 +347,19 @@ public class RegistrationParameterised extends BaseFlow {
         Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
     }
 
-    private void logNgapMessageWillSend(NGAP_PDU ngapPdu) {
+    private void sendNgapMessage(NGAP_PDU ngapPdu) {
         Console.printDiv();
-        Console.println(Color.BLUE, ngapPdu.getClass().getSimpleName() + " will be sent to AMF");
+        Console.println(Color.BLUE, "Following NGAP message will be sent:");
+        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+
+        sendPDU(ngapPdu);
+
+        Console.println(Color.BLUE, "Message sent");
     }
 
-    private void logMessageSent() {
-        Console.println(Color.BLUE, "Message sent");
+    private void logReceivedMessage(NGAP_PDU ngapPdu) {
+        Console.printDiv();
+        Console.println(Color.BLUE, "Received NGAP PDU:");
+        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
     }
 }
