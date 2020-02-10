@@ -8,6 +8,7 @@ import tr.havelsan.ueransim.app.sim.MtsIEEapMessage;
 import tr.havelsan.ueransim.app.sim.MtsProtocolEnumRegistry;
 import tr.havelsan.ueransim.exceptions.MtsException;
 import tr.havelsan.ueransim.flows.ConnectionTry;
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.TypeRegistry;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -32,6 +33,15 @@ public class Parameterised {
 
     public static void main(String[] args) throws Exception {
         initMts();
+
+        try {
+            var config = (ImplicitTypedObject) MtsDecoder.decode("config.yaml");
+            Environment.AMF_HOST = config.getParameters().get("amf_host").toString();
+            Environment.AMF_PORT = Integer.parseInt(config.getParameters().get("amf_port").toString());
+        } catch (Exception e) {
+            Console.println(Color.YELLOW, "WARNING: config.yaml could not read! (using default configuration)");
+            Console.printDiv();
+        }
 
         var scanner = new Scanner(System.in);
         var flowName = Utils.getCommandLineOption(args, "-f");
