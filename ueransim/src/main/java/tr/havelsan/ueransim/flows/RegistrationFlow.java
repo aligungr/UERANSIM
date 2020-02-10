@@ -13,6 +13,7 @@ import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.app.Json;
 import tr.havelsan.ueransim.app.ue.UeUtils;
+import tr.havelsan.ueransim.inputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -26,11 +27,13 @@ import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.ErrorIndication;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.parameterised.RegistrationInput;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
@@ -43,45 +46,19 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RegistrationParameterised extends BaseFlow {
+public class RegistrationFlow extends BaseFlow {
 
     private final RegistrationInput input;
     private final MilenageBufferFactory<BigIntegerBuffer> milenageBufferFactory;
     private long amfUeNgapId;
 
-    public RegistrationParameterised(RegistrationInput input) {
+    public RegistrationFlow(RegistrationInput input) {
         this.input = input;
         this.milenageBufferFactory = BigIntegerBufferFactory.getInstance();
     }
 
     @Override
     public State main(Message message) {
-        return sendNgSetupRequest();
-    }
-
-    private State sendNgSetupRequest() {
-        var ngSetupRequest = UeUtils.createNgSetupRequest(input.ngSetupInput.gnbId, input.ngSetupInput.gnbPlmn,
-                input.ngSetupInput.supportedTAs);
-        sendNgapMessage(ngSetupRequest);
-        return this::waitNgSetupResponse;
-    }
-
-    private State waitNgSetupResponse(Message message) {
-        var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
-
-        if (!(pdu.getValue() instanceof SuccessfulOutcome)) {
-            Console.println(Color.YELLOW, "bad message, SuccessfulOutcome is expected. message ignored");
-            return this::waitNgSetupResponse;
-        }
-
-        var successfulOutcome = (SuccessfulOutcome) pdu.getValue();
-        if (!(successfulOutcome.value.getDecodedValue() instanceof NGSetupResponse)) {
-            Console.println(Color.YELLOW, "bad message, NGSetupResponse is expected. message ignored");
-            return this::waitNgSetupResponse;
-        }
-
-        Console.println(Color.BLUE, "NGSetupResponse handled.");
         return sendRegistrationRequest();
     }
 
@@ -339,14 +316,14 @@ public class RegistrationParameterised extends BaseFlow {
         sendNgapMessage(ngapPdu);
     }
 
-    private void logNasMessageWillSend(NasMessage nasMessage) {
+    public void logNasMessageWillSend(NasMessage nasMessage) {
         Console.printDiv();
         Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
         Console.println(Color.BLUE, "While NAS message is:");
         Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
     }
 
-    private void sendNgapMessage(NGAP_PDU ngapPdu) {
+    public void sendNgapMessage(NGAP_PDU ngapPdu) {
         Console.printDiv();
         Console.println(Color.BLUE, "Following NGAP message will be sent:");
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
@@ -356,7 +333,7 @@ public class RegistrationParameterised extends BaseFlow {
         Console.println(Color.BLUE, "Message sent");
     }
 
-    private void logReceivedMessage(NGAP_PDU ngapPdu) {
+    public void logReceivedMessage(NGAP_PDU ngapPdu) {
         Console.printDiv();
         Console.println(Color.BLUE, "Received NGAP PDU:");
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));

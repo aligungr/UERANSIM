@@ -8,14 +8,15 @@ import tr.havelsan.ueransim.app.sim.MtsIEEapMessage;
 import tr.havelsan.ueransim.app.sim.MtsProtocolEnumRegistry;
 import tr.havelsan.ueransim.exceptions.MtsException;
 import tr.havelsan.ueransim.flows.ConnectionTry;
+import tr.havelsan.ueransim.inputs.RegistrationInput;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
+import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.TypeRegistry;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.eap.EapIdentity;
 import tr.havelsan.ueransim.nas.eap.EapNotification;
-import tr.havelsan.ueransim.parameterised.RegistrationInput;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
@@ -96,7 +97,7 @@ public class Parameterised {
             fileInput = scanner.nextLine();
         }
 
-        var registrationInput = (RegistrationInput) MtsDecoder.decode(fileInput);
+        var registrationInput = (ImplicitTypedObject) MtsDecoder.decode(fileInput);
         Console.println(Json.toJson(registrationInput));
         Console.printDiv();
 
@@ -107,7 +108,7 @@ public class Parameterised {
             return;
         }
 
-        ((BaseFlow) (ctors.get(0).newInstance(registrationInput))).start();
+        ((BaseFlow) (ctors.get(0).newInstance(MtsConstruct.construct(ctors.get(0).getParameterTypes()[0], registrationInput.getParameters(), true)))).start();
     }
 
     private static void initMts() {

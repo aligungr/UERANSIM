@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.parameterised;
+package tr.havelsan.ueransim.inputs;
 
 import tr.havelsan.ueransim.app.ue.SupportedTA;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;

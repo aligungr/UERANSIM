@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.parameterised;
+package tr.havelsan.ueransim.inputs;
 
 public class EapAkaInput {
     public final String OP;

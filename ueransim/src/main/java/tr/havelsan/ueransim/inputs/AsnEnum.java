@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.parameterised;
+package tr.havelsan.ueransim.inputs;
 
 import fr.marben.asnsdk.japi.spe.ExtEnumeratedValue;
 
