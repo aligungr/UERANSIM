@@ -20,6 +20,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialUEMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
@@ -31,7 +32,8 @@ public class UeRanSimFlow extends BaseFlow {
     private final SimulationFlow simulationFlow;
     private int stepIndex;
 
-    public UeRanSimFlow(SimulationFlow simulationFlow) {
+    public UeRanSimFlow(SCTPClient sctpClient, SimulationFlow simulationFlow) {
+        super(sctpClient);
         this.simulationFlow = simulationFlow;
         this.stepIndex = 0;
     }

@@ -15,6 +15,7 @@ public class SCTPClient {
 
     private SctpChannel channel;
     private AssociationHandler associationHandler;
+    private boolean receiving;
 
     public SCTPClient(String host, int port, int protocolId) {
         this.host = host;
@@ -27,6 +28,7 @@ public class SCTPClient {
         var serverAddress = new InetSocketAddress(host, port);
         this.channel = SctpChannel.open(serverAddress, 0, 0);
         this.associationHandler = new AssociationHandler();
+        this.receiving = true;
     }
 
     public void send(int streamNumber, byte[] data) throws Exception {
@@ -37,8 +39,10 @@ public class SCTPClient {
     }
 
     public void receiverLoop(ISCTPHandler handler) throws Exception {
+        receiving = true;
+
         MessageInfo messageInfo;
-        while (channel.isOpen()) {
+        while (receiving && channel.isOpen()) {
             ByteBuffer incomingBuffer = ByteBuffer.allocate(RECEIVER_BUFFER_SIZE);
             messageInfo = channel.receive(incomingBuffer, System.out, associationHandler);
             if (messageInfo == null || messageInfo.bytes() == -1) break;
@@ -49,8 +53,6 @@ public class SCTPClient {
             }
             handler.handleSCTPMessage(receivedBytes, messageInfo, channel);
         }
-
-        channel.close();
     }
 
     public void close() {
@@ -59,5 +61,13 @@ public class SCTPClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void abortReceiver() {
+        receiving = false;
+    }
+
+    public boolean isOpen() {
+        return channel.isOpen();
     }
 }

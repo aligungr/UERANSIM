@@ -4,7 +4,6 @@ import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import fr.marben.asnsdk.japi.spe.Value;
 import tr.havelsan.ueransim.app.Constants;
-import tr.havelsan.ueransim.app.Environment;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Utils;
@@ -14,6 +13,10 @@ public abstract class BaseFlow {
     private boolean started;
     private int streamNumber;
     private State currentState;
+
+    public BaseFlow(SCTPClient sctpClient) {
+        this.sctpClient = sctpClient;
+    }
 
     protected final void sendData(byte[] data) {
         try {
@@ -47,8 +50,6 @@ public abstract class BaseFlow {
 
         this.started = true;
         this.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
-        this.sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
-        this.sctpClient.start();
         this.currentState = main(null);
         this.sctpClient.receiverLoop(this::handleSCTPMessage);
     }
@@ -60,6 +61,11 @@ public abstract class BaseFlow {
 
     public final State closeConnection() {
         sctpClient.close();
+        return this::sinkState;
+    }
+
+    public final State abortReceiver() {
+        sctpClient.abortReceiver();
         return this::sinkState;
     }
 

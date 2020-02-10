@@ -34,6 +34,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
+import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
@@ -52,7 +53,8 @@ public class RegistrationFlow extends BaseFlow {
     private final MilenageBufferFactory<BigIntegerBuffer> milenageBufferFactory;
     private long amfUeNgapId;
 
-    public RegistrationFlow(RegistrationInput input) {
+    public RegistrationFlow(SCTPClient sctpClient, RegistrationInput input) {
+        super(sctpClient);
         this.input = input;
         this.milenageBufferFactory = BigIntegerBufferFactory.getInstance();
     }
@@ -196,8 +198,7 @@ public class RegistrationFlow extends BaseFlow {
         sendUplinkMessage(response);
 
         Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
-        Console.println(Color.WHITE_BRIGHT, "Closing connection");
-        return closeConnection();
+        return abortReceiver();
     }
 
     private State handleRegistrationReject(RegistrationReject message) {
@@ -215,8 +216,7 @@ public class RegistrationFlow extends BaseFlow {
         sendUplinkMessage(response);
 
         Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
-        Console.println(Color.WHITE_BRIGHT, "Closing connection");
-        return closeConnection();
+        return abortReceiver();
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {

@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
+import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
@@ -17,7 +18,8 @@ import tr.havelsan.ueransim.utils.Utils;
 public class NgSetupFlow extends BaseFlow {
     private final NgSetupInput input;
 
-    public NgSetupFlow(NgSetupInput input) {
+    public NgSetupFlow(SCTPClient sctpClient, NgSetupInput input) {
+        super(sctpClient);
         this.input = input;
     }
 
@@ -50,7 +52,7 @@ public class NgSetupFlow extends BaseFlow {
 
         Console.println(Color.BLUE, "NGSetupResponse handled.");
         Console.println(Color.GREEN_BOLD, "NGSetup complete");
-        return closeConnection();
+        return abortReceiver();
     }
 
     public void logNasMessageWillSend(NasMessage nasMessage) {

@@ -22,6 +22,7 @@ import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.eap.EapIdentity;
 import tr.havelsan.ueransim.nas.eap.EapNotification;
+import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.*;
 import tr.havelsan.ueransim.utils.bits.BitN;
 import tr.havelsan.ueransim.utils.octets.OctetN;
@@ -64,7 +65,11 @@ public class UeRanSim {
             Environment.AMF_PORT = flow.setup.amfPort;
 
             Console.println();
-            new UeRanSimFlow(flow).start();
+
+            var sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
+            sctpClient.start();
+            new UeRanSimFlow(sctpClient, flow).start();
+            sctpClient.close();
         } catch (MtsException | EncodingException | DecodingException | IncorrectImplementationException e) {
             Console.println(Color.RED, "[ERROR] %s - %s", e.getClass().getSimpleName(), e.getMessage());
             System.exit(1);
