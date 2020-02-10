@@ -6,7 +6,7 @@
 
     <groupId>tr.havelsan</groupId>
     <artifactId>ueransim</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
     <properties>
         <marben.asnsdk.install>${project.basedir}/../misc/marben/mvn_install_lib.sh</marben.asnsdk.install>
@@ -55,7 +55,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>tr.havelsan.ueransim.app.UeRanSim</mainClass>
+                            <mainClass>tr.havelsan.ueransim.app.Parameterised</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -75,7 +75,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>tr.havelsan.ueransim.app.UeRanSim</mainClass>
+                                    <mainClass>tr.havelsan.ueransim.app.Parameterised</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

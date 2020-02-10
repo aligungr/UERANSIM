@@ -380,4 +380,13 @@ public final class Utils {
         Map<String, Object> map = (Map<String, Object>) y.load(yaml);
         return Json.toJson(map);
     }
+
+    public static String getCommandLineOption(String[] args, String flag) {
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].equals(flag)) {
+                return args[i + 1];
+            }
+        }
+        return null;
+    }
 }
