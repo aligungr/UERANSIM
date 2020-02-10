@@ -125,9 +125,8 @@ public class RegistrationParameterised extends BaseFlow {
         } else if (initiatingMessage instanceof InitialContextSetupRequest) {
             return handleInitialContextSetup();
         } else if (initiatingMessage instanceof ErrorIndication) {
-            Console.println(Color.RED, "Error indication received");
-            Console.println(Color.RED, "Closing connection");
-            return closeConnection();
+            Console.println(Color.RED, "Error indication received, message ignored");
+            return this::waitAmfMessages;
         } else {
             Console.println(Color.YELLOW, "unhandled ngap message. message ignored");
             return this::waitAmfMessages;
