@@ -57,6 +57,9 @@ public class Parameterised {
         var sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
         sctpClient.start();
 
+        Console.printDiv();
+        Console.println(Color.BLUE, "SCTP connection established");
+
         var scanner = new Scanner(System.in);
         while (true) {
             Console.printDiv();
