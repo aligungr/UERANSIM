@@ -2,6 +2,8 @@ package tr.havelsan.ueransim.app;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.app.sim.MtsEapAkaAttributes;
 import tr.havelsan.ueransim.app.sim.MtsIEEapMessage;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Parameterised {
 
@@ -57,6 +60,8 @@ public class Parameterised {
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", Environment.AMF_HOST, Environment.AMF_PORT);
         var sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
         sctpClient.start();
+
+        catchINTSignal(sctpClient);
 
         Console.println(Color.BLUE, "SCTP connection established.");
         Console.printDiv();
@@ -110,6 +115,20 @@ public class Parameterised {
                         .start();
             }
         }
+    }
+
+    private static void catchINTSignal(SCTPClient sctpClient) {
+        Signal.handle(new Signal("INT"), new SignalHandler() {
+            private final AtomicBoolean inShutdown = new AtomicBoolean();
+            public void handle(Signal sig) {
+                if (inShutdown.compareAndSet(false, true)) {
+                    Console.println(Color.BLUE, "Simulator is shutdown gracefully");
+                    sctpClient.close();
+                    Console.println(Color.BLUE, "SCTP connection closed");
+                    System.exit(1);
+                }
+            }
+        });
     }
 
     private static Constructor<BaseFlow> findConstructor(Class<? extends BaseFlow> selectedType) {
