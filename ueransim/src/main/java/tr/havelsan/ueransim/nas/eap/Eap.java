@@ -4,7 +4,7 @@ import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.core.ProtocolValue;
 import tr.havelsan.ueransim.utils.octets.Octet;
 
-public abstract class Eap extends ProtocolValue {
+public class Eap extends ProtocolValue {
     public final ECode code;
     public final Octet id;
     public final EEapType EAPType;

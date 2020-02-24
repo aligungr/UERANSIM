@@ -18,6 +18,11 @@ public class EapDecoder {
         var code = decodeCode(stream);
         var id = decodeId(stream);
         var length = decodeLength(stream);
+
+        if (length.intValue() == 4) {
+            return new Eap(code, id, null);
+        }
+
         var type = decodeEAPType(stream);
 
         int innerLength = length.intValue()
@@ -110,10 +115,10 @@ public class EapDecoder {
         var res = new EapIdentity(code, id);
         res.rawData = stream.readOctetString(length);
 
-        // TODO: HACK: AMF bugını geçici olarak çözmek için
-        if (stream.remaining() == 3 && stream.peekOctetString(3).equals(new OctetString("020000"))) {
-            stream.readOctetString(3);
-        }
+        ////// TODO: HACK: AMF bugını geçici olarak çözmek için
+        ////if (stream.remaining() == 3 && stream.peekOctetString(3).equals(new OctetString("020000"))) {
+        ////    stream.readOctetString(3);
+        ////}
 
         return res;
     }
