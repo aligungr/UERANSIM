@@ -2,18 +2,15 @@ package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
-import tr.havelsan.ueransim.Ngap;
-import tr.havelsan.ueransim.app.Json;
+import tr.havelsan.ueransim.app.ue.FlowUtils;
 import tr.havelsan.ueransim.app.ue.UeUtils;
 import tr.havelsan.ueransim.inputs.NgSetupInput;
-import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
-import tr.havelsan.ueransim.utils.Utils;
 
 public class NgSetupFlow extends BaseFlow {
     private final NgSetupInput input;
@@ -37,7 +34,7 @@ public class NgSetupFlow extends BaseFlow {
 
     private State waitNgSetupResponse(Message message) {
         var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
+        FlowUtils.logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof SuccessfulOutcome)) {
             Console.println(Color.YELLOW, "bad message, SuccessfulOutcome is expected. message ignored");
@@ -55,26 +52,9 @@ public class NgSetupFlow extends BaseFlow {
         return abortReceiver();
     }
 
-    public void logNasMessageWillSend(NasMessage nasMessage) {
-        Console.printDiv();
-        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
-        Console.println(Color.BLUE, "While NAS message is:");
-        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
-    }
-
     public void sendNgapMessage(NGAP_PDU ngapPdu) {
-        Console.printDiv();
-        Console.println(Color.BLUE, "Following NGAP message will be sent:");
-        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
-
+        FlowUtils.logNgapMessageWillSend(ngapPdu);
         sendPDU(ngapPdu);
-
-        Console.println(Color.BLUE, "Message sent");
-    }
-
-    public void logReceivedMessage(NGAP_PDU ngapPdu) {
-        Console.printDiv();
-        Console.println(Color.BLUE, "Received NGAP PDU:");
-        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        FlowUtils.logMessageSent();
     }
 }

@@ -10,8 +10,8 @@ import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
-import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.app.Json;
+import tr.havelsan.ueransim.app.ue.FlowUtils;
 import tr.havelsan.ueransim.app.ue.UeUtils;
 import tr.havelsan.ueransim.inputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -82,7 +82,7 @@ public class RegistrationFlow extends BaseFlow {
 
     private State waitAmfMessages(Message message) {
         var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
+        FlowUtils.logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
@@ -304,38 +304,21 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private void sendInitialUeMessage(NasMessage nas) {
-        logNasMessageWillSend(nas);
+        FlowUtils.logNasMessageWillSend(nas);
         var ngapPdu = UeUtils.createInitialUeMessage(
                 nas, input.ranUeNgapId, input.rrcEstablishmentCause, input.userLocationInformationNr);
         sendNgapMessage(ngapPdu);
     }
 
     private void sendUplinkMessage(NasMessage nas) {
-        logNasMessageWillSend(nas);
+        FlowUtils.logNasMessageWillSend(nas);
         var ngapPdu = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
         sendNgapMessage(ngapPdu);
     }
 
-    public void logNasMessageWillSend(NasMessage nasMessage) {
-        Console.printDiv();
-        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
-        Console.println(Color.BLUE, "While NAS message is:");
-        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
-    }
-
     public void sendNgapMessage(NGAP_PDU ngapPdu) {
-        Console.printDiv();
-        Console.println(Color.BLUE, "Following NGAP message will be sent:");
-        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
-
+        FlowUtils.logNgapMessageWillSend(ngapPdu);
         sendPDU(ngapPdu);
-
-        Console.println(Color.BLUE, "Message sent");
-    }
-
-    public void logReceivedMessage(NGAP_PDU ngapPdu) {
-        Console.printDiv();
-        Console.println(Color.BLUE, "Received NGAP PDU:");
-        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        FlowUtils.logMessageSent();
     }
 }
