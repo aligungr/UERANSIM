@@ -76,7 +76,13 @@ public class Parameterised {
             }
             Console.print(Color.BLUE, "Selection: ");
 
-            int selection = scanner.nextInt();
+            int selection;
+            try {
+                selection = scanner.nextInt();
+            } catch (Exception e) {
+                Console.println(Color.YELLOW, "Invalid selection");
+                continue;
+            }
             scanner.nextLine();
             Console.println();
 
@@ -85,7 +91,7 @@ public class Parameterised {
                 break;
             }
 
-            if (selection - 1 >= typeNames.size()) {
+            if (selection < 1 || selection - 1 >= typeNames.size()) {
                 Console.print(Color.YELLOW, "Invalid selection");
                 continue;
             }
