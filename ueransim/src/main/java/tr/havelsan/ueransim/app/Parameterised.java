@@ -54,11 +54,11 @@ public class Parameterised {
         }
         typeNames.sort(String::compareTo);
 
-        Console.println(Color.BLUE, "SCTP connection is establishing...");
+        Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", Environment.AMF_HOST, Environment.AMF_PORT);
         var sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
         sctpClient.start();
 
-        Console.println(Color.BLUE, "SCTP connection established");
+        Console.println(Color.BLUE, "SCTP connection established.");
         Console.printDiv();
 
         var scanner = new Scanner(System.in);
