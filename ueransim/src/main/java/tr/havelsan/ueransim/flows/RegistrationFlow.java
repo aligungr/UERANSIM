@@ -265,8 +265,10 @@ public class RegistrationFlow extends BaseFlow {
             int padding = (res.length) % 4;
             byte[] paddedRes = new byte[res.length + padding + 2];
             System.arraycopy(res, 0, paddedRes, padding + 2, res.length);
+            int resBitLength = (paddedRes.length - 2) * 8;
+            paddedRes[0] = (byte) ((resBitLength >> 8) & 0xFF);
+            paddedRes[1] = (byte) (resBitLength & 0xFF);
             res = paddedRes;
-            res[1] = ((byte) (8 * (res.length - padding - 2)));
         }
 
         // Send response
@@ -280,6 +282,7 @@ public class RegistrationFlow extends BaseFlow {
             akaPrime.attributes = new LinkedHashMap<>();
             akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_RES, new OctetString(res));
             akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
+            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
             response.eapMessage = new IEEapMessage(akaPrime);
 
             sendUplinkMessage(response);
