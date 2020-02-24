@@ -92,7 +92,7 @@ public class Parameterised {
             }
 
             if (selection < 1 || selection - 1 >= typeNames.size()) {
-                Console.print(Color.YELLOW, "Invalid selection");
+                Console.println(Color.YELLOW, "Invalid selection: " + selection);
                 continue;
             }
 
