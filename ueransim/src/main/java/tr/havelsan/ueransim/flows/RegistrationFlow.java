@@ -262,10 +262,11 @@ public class RegistrationFlow extends BaseFlow {
             executorService.shutdown();
             res = result.get(MilenageResult.RES);
 
-            int padding = (res.length + 2) % 4;
-            byte[] paddedRes = new byte[res.length + padding];
-            if (padding >= 0) System.arraycopy(res, 0, paddedRes, padding, res.length);
+            int padding = (res.length) % 4;
+            byte[] paddedRes = new byte[res.length + padding + 2];
+            System.arraycopy(res, 0, paddedRes, padding + 2, res.length);
             res = paddedRes;
+            res[1] = ((byte) (8 * (res.length - padding - 2)));
         }
 
         // Send response
