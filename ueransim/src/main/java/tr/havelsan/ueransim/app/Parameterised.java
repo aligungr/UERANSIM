@@ -85,6 +85,11 @@ public class Parameterised {
                 break;
             }
 
+            if (selection - 1 >= typeNames.size()) {
+                Console.print(Color.YELLOW, "Invalid selection");
+                continue;
+            }
+
             var selectedType = types.get(typeNames.get(selection - 1));
             var ctor = findConstructor(selectedType);
             var inputType = ctor.getParameterCount() > 1 ? ctor.getParameterTypes()[1] : null;
