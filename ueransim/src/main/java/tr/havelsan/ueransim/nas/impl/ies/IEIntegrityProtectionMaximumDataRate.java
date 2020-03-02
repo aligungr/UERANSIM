@@ -34,9 +34,9 @@ public class IEIntegrityProtectionMaximumDataRate extends InformationElement3 {
 
     public static class EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink extends ProtocolEnum {
         public static final EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink SIXTY_FOR_KBPS
-                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink(0b0, "64 kbps");
+                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink(0b00000000, "64 kbps");
         public static final EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink FULL_DATA_RATE
-                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink(0b1, "Full data rate");
+                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink(0b11111111, "Full data rate");
 
         private EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink(int value, String name) {
             super(value, name);
@@ -49,9 +49,9 @@ public class IEIntegrityProtectionMaximumDataRate extends InformationElement3 {
 
     public static class EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink extends ProtocolEnum {
         public static final EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink SIXTY_FOR_KBPS
-                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink(0b0, "64 kbps");
+                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink(0b00000000, "64 kbps");
         public static final EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink FULL_DATA_RATE
-                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink(0b1, "Full data rate");
+                = new EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink(0b11111111, "Full data rate");
 
         private EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink(int value, String name) {
             super(value, name);
