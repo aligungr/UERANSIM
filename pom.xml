@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>tr.havelsan</groupId>
-    <artifactId>ueransim</artifactId>
+    <artifactId>ue-ran-sim</artifactId>
     <packaging>pom</packaging>
     <version>1.0.8</version>
     <modules>

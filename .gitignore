@@ -1,12 +1,14 @@
 # Project specific (MARBEN)
 misc/marben/lib
-ueransim/ngap/src/main/java/tr/havelsan/ueransim/ngap
-ueransim/utils/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
-ueransim/app/src/main/resources/asntable.dat
+ngap/src/main/java/tr/havelsan/ueransim/ngap
+utils/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
+app/src/main/resources/asntable.dat
 dependency-reduced-pom.xml
 
 # Project specific (OTHERS)
 .directory
+.idea
+.settings
 *.iml
 */.idea
 */.settings
