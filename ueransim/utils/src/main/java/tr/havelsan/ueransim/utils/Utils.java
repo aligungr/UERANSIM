@@ -223,7 +223,7 @@ public final class Utils {
         else if (a instanceof Long) la = (long) a;
         else if (a instanceof BitN) la = ((BitN) a).intValue();
         else if (a instanceof OctetN) la = ((OctetN) a).longValue();
-        //else if (a instanceof ProtocolEnum) la = ((ProtocolEnum) a).intValue();//TODO!!!
+        else if (a instanceof IIntValue) la = ((IIntValue) a).intValue();
         else difa = true;
 
         if (b instanceof Boolean) lb = (boolean) b ? 1 : 0;
@@ -233,7 +233,7 @@ public final class Utils {
         else if (b instanceof Long) lb = (long) b;
         else if (b instanceof BitN) lb = ((BitN) b).intValue();
         else if (b instanceof OctetN) lb = ((OctetN) b).longValue();
-        //else if (b instanceof ProtocolEnum) lb = ((ProtocolEnum) b).intValue();//TODO!!!
+        else if (b instanceof IIntValue) lb = ((IIntValue) b).intValue();
         else difb = true;
 
         if (difa && difb) throw new IllegalArgumentException();

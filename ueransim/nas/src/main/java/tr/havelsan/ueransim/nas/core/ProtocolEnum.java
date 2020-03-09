@@ -1,13 +1,14 @@
 package tr.havelsan.ueransim.nas.core;
 
 import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
+import tr.havelsan.ueransim.utils.IIntValue;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProtocolEnum extends ProtocolValue {
+public class ProtocolEnum extends ProtocolValue implements IIntValue {
     protected final int value;
     protected final String name;
 
