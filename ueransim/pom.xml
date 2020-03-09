@@ -6,7 +6,12 @@
 
     <groupId>tr.havelsan</groupId>
     <artifactId>ueransim</artifactId>
-    <version>1.0.7</version>
+    <packaging>pom</packaging>
+    <version>1.0.8</version>
+    <modules>
+        <module>app</module>
+        <module>sctp</module>
+    </modules>
 
     <properties>
         <marben.asnsdk.install>${project.basedir}/../misc/marben/mvn_install_lib.sh</marben.asnsdk.install>

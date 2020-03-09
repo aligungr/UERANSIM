@@ -3,7 +3,7 @@ misc/marben/lib
 ueransim/src/main/java/tr/havelsan/ueransim/ngap
 ueransim/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
 ueransim/src/main/resources/asntable.dat
-ueransim/dependency-reduced-pom.xml
+dependency-reduced-pom.xml
 
 # Project specific (OTHERS)
 .directory
