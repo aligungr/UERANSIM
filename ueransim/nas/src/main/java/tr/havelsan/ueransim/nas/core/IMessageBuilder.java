@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.nas.core;
 
 import tr.havelsan.ueransim.nas.core.ies.*;
-import tr.havelsan.ueransim.nas.core.ies.*;
 
 public interface IMessageBuilder {
 

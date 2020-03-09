@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import tr.havelsan.ueransim.app.sim.*;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;

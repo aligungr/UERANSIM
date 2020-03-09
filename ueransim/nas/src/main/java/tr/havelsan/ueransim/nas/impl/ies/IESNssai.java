@@ -3,7 +3,7 @@ package tr.havelsan.ueransim.nas.impl.ies;
 import tr.havelsan.ueransim.nas.impl.values.VSliceDifferentiator;
 import tr.havelsan.ueransim.nas.impl.values.VSliceServiceType;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
-import tr.havelsan.ueransim.exceptions.ReservedOrInvalidValueException;
+import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement4;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;

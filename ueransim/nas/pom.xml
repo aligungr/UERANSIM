@@ -9,14 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>app</artifactId>
+    <artifactId>nas</artifactId>
     <dependencies>
-        <dependency>
-            <groupId>tr.havelsan</groupId>
-            <artifactId>sctp</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>tr.havelsan</groupId>
             <artifactId>utils</artifactId>
@@ -25,13 +19,7 @@
         </dependency>
         <dependency>
             <groupId>tr.havelsan</groupId>
-            <artifactId>mts</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>tr.havelsan</groupId>
-            <artifactId>nas</artifactId>
+            <artifactId>core</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>

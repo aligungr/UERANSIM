@@ -3,7 +3,7 @@ package tr.havelsan.ueransim;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import fr.marben.asnsdk.japi.spe.Value;
-import tr.havelsan.ueransim.app.Constants;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Utils;

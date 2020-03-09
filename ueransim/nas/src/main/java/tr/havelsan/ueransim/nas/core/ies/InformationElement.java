@@ -15,6 +15,4 @@ import tr.havelsan.ueransim.utils.OctetInputStream;
  */
 public abstract class InformationElement extends ProtocolValue {
     public abstract InformationElement decodeIE(OctetInputStream stream);
-
-
 }

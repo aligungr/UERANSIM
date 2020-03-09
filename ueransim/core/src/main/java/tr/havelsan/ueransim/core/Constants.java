@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app;
+package tr.havelsan.ueransim.core;
 
 public final class Constants {
     public static final String FLOWS_PREFIX = "tr.havelsan.ueransim.flows";

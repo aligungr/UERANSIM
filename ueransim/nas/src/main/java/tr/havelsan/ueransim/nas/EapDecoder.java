@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.nas;
 
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
-import tr.havelsan.ueransim.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.eap.EapIdentity;

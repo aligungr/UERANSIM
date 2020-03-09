@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.app.control;
 
-import tr.havelsan.ueransim.app.Constants;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import io.github.classgraph.ClassGraph;

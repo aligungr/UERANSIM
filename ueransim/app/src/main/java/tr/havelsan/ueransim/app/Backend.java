@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.app;
 
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.web.Session;
 import tr.havelsan.ueransim.web.SessionManager;
 import tr.havelsan.ueransim.BaseFlow;

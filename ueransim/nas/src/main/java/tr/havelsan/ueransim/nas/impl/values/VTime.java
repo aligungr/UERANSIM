@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.nas.impl.values;
 
-import tr.havelsan.ueransim.exceptions.ReservedOrInvalidValueException;
+import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;

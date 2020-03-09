@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.nas.core;
 
-import tr.havelsan.ueransim.exceptions.ReservedOrInvalidValueException;
+import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.lang.reflect.Modifier;

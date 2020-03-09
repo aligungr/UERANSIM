@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.exceptions;
+package tr.havelsan.ueransim.core.exceptions;
 
 public class NotImplementedException extends RuntimeException {
     private String message;

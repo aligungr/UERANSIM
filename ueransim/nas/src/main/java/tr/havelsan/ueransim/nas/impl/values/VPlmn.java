@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.nas.impl.values;
 
-import tr.havelsan.ueransim.app.Constants;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
