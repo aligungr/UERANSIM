@@ -15,6 +15,7 @@
         <module>core</module>
         <module>mts</module>
         <module>nas</module>
+        <module>ngap</module>
     </modules>
 
     <properties>
