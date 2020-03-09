@@ -47,6 +47,12 @@
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>tr.havelsan</groupId>
+            <artifactId>flow-testing</artifactId>
+            <version>1.0.8</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 

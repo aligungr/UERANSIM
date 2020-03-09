@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.flowtesting;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
 
-public class Backend {
+public class FlowScanner {
 
     private static HashMap<String, Class<? extends BaseFlow>> flowTypes;
 

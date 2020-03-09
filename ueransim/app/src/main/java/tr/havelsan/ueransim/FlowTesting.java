@@ -1,43 +1,28 @@
 package tr.havelsan.ueransim;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
-import tr.havelsan.ueransim.sim.BaseFlow;
-import tr.havelsan.ueransim.sim.MtsEapAkaAttributes;
-import tr.havelsan.ueransim.sim.MtsIEEapMessage;
-import tr.havelsan.ueransim.sim.MtsProtocolEnumRegistry;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.mts.MtsException;
+import tr.havelsan.ueransim.flowtesting.FlowScanner;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
-import tr.havelsan.ueransim.mts.TypeRegistry;
-import tr.havelsan.ueransim.nas.eap.Eap;
-import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
-import tr.havelsan.ueransim.nas.eap.EapIdentity;
-import tr.havelsan.ueransim.nas.eap.EapNotification;
 import tr.havelsan.ueransim.sctp.SCTPClient;
+import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
-import tr.havelsan.ueransim.utils.Utils;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Parameterised {
+public class FlowTesting {
 
     public static void main(String[] args) throws Exception {
-        initMts();
+        MtsInitializer.initMts();
 
         var config = new LinkedHashMap<String, String>();
         var configYaml = (ImplicitTypedObject) MtsDecoder.decode("yaml/config.yaml");
@@ -45,13 +30,13 @@ public class Parameterised {
             config.put(e.getKey(), String.valueOf(e.getValue()));
         }
 
-        Environment.AMF_HOST = config.get("amf.host");
-        Environment.AMF_PORT = Integer.parseInt(config.get("amf.port"));
+        String amfHost = config.get("amf.host");
+        int amfPort = Integer.parseInt(config.get("amf.port"));
 
         var types = new LinkedHashMap<String, Class<? extends BaseFlow>>();
         var typeNames = new ArrayList<String>();
-        for (String fn : Backend.getFlowNames()) {
-            var type = Backend.getFlowType(fn);
+        for (String fn : FlowScanner.getFlowNames()) {
+            var type = FlowScanner.getFlowType(fn);
             types.put(fn, type);
             typeNames.add(fn);
         }
@@ -73,8 +58,8 @@ public class Parameterised {
             return i1.compareTo(i2);
         });
 
-        Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", Environment.AMF_HOST, Environment.AMF_PORT);
-        var sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
+        Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
+        var sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
         sctpClient.start();
 
         catchINTSignal(sctpClient);
@@ -136,6 +121,7 @@ public class Parameterised {
     private static void catchINTSignal(SCTPClient sctpClient) {
         Signal.handle(new Signal("INT"), new SignalHandler() {
             private final AtomicBoolean inShutdown = new AtomicBoolean();
+
             public void handle(Signal sig) {
                 if (inShutdown.compareAndSet(false, true)) {
                     Console.println(Color.BLUE, "Simulator is shutdown gracefully");
@@ -160,52 +146,5 @@ public class Parameterised {
         return MtsConstruct.construct(type, ((ImplicitTypedObject) inp).getParameters(), true);
     }
 
-    private static void initMts() {
-        try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
-            var classInfoList = scanResult.getAllClasses();
-            for (var classInfo : classInfoList) {
-                Class<?> clazz;
-                try {
-                    clazz = Class.forName(classInfo.getName());
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
 
-                String typeName = Utils.getTypeName(clazz);
-                TypeRegistry.registerTypeName(typeName, clazz);
-            }
-        }
-
-        final Class<?>[] otherTypes = new Class[]{
-                Eap.class,
-                EapAkaPrime.class,
-                EapIdentity.class,
-                EapNotification.class,
-                EapAkaPrime.EAttributeType.class,
-                EapAkaPrime.ESubType.class,
-                Eap.ECode.class,
-                Eap.EEapType.class
-        };
-
-        for (var type : otherTypes) {
-            TypeRegistry.registerTypeName(type.getSimpleName(), type);
-        }
-
-        TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
-        TypeRegistry.registerCustomType(new MtsIEEapMessage());
-        TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
-
-        MtsDecoder.setFileProvider((searchDir, path) -> {
-            try {
-                String content = Files.readString(Paths.get(searchDir, path));
-                if (path.endsWith(".yaml"))
-                    content = Utils.convertYamlToJson(content);
-                return content;
-            } catch (NoSuchFileException e) {
-                throw new MtsException("file not found: %s", e.getFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
 }
