@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.mts;
 
-import tr.havelsan.ueransim.exceptions.MtsException;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.lang.reflect.Array;

@@ -2,7 +2,7 @@ package tr.havelsan.ueransim.nas.impl.ies;
 
 import tr.havelsan.ueransim.nas.impl.values.VSliceDifferentiator;
 import tr.havelsan.ueransim.nas.impl.values.VSliceServiceType;
-import tr.havelsan.ueransim.exceptions.EncodingException;
+import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement4;

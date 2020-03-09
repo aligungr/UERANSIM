@@ -1,11 +1,9 @@
-package tr.havelsan.ueransim.exceptions;
-
-import tr.havelsan.ueransim.nas.core.ProtocolValue;
+package tr.havelsan.ueransim.core.exceptions;
 
 public class DecodingException extends RuntimeException {
     private final String message;
 
-    public DecodingException(Class<? extends ProtocolValue> clazz) {
+    public DecodingException(Class<?> clazz) {
         this("invalid value for " + clazz.getSimpleName());
     }
 

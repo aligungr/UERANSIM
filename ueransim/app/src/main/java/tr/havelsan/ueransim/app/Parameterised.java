@@ -8,7 +8,7 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.app.sim.MtsEapAkaAttributes;
 import tr.havelsan.ueransim.app.sim.MtsIEEapMessage;
 import tr.havelsan.ueransim.app.sim.MtsProtocolEnumRegistry;
-import tr.havelsan.ueransim.exceptions.MtsException;
+import tr.havelsan.ueransim.mts.MtsException;
 import tr.havelsan.ueransim.inputs.RegistrationInput;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;

@@ -2,7 +2,7 @@ package tr.havelsan.ueransim.nas.impl.ies;
 
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
-import tr.havelsan.ueransim.exceptions.DecodingException;
+import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement6;
 import tr.havelsan.ueransim.utils.OctetInputStream;

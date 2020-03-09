@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.app.sim;
 
-import tr.havelsan.ueransim.exceptions.MtsException;
+import tr.havelsan.ueransim.mts.MtsException;
 import tr.havelsan.ueransim.mts.*;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.utils.octets.OctetString;

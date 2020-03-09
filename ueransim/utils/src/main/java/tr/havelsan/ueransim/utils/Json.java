@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app;
+package tr.havelsan.ueransim.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

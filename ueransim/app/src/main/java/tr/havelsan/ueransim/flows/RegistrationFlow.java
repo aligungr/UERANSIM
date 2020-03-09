@@ -10,7 +10,7 @@ import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
-import tr.havelsan.ueransim.app.Json;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.app.ue.FlowUtils;
 import tr.havelsan.ueransim.app.ue.UeUtils;
 import tr.havelsan.ueransim.inputs.RegistrationInput;

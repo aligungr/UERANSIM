@@ -5,7 +5,7 @@ import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.Ngap;
-import tr.havelsan.ueransim.app.Json;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.mts.TypeRegistry;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;

@@ -11,6 +11,8 @@
     <modules>
         <module>app</module>
         <module>sctp</module>
+        <module>utils</module>
+        <module>core</module>
     </modules>
 
     <properties>

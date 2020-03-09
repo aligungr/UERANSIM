@@ -2,8 +2,7 @@ package tr.havelsan.ueransim.app.sim;
 
 import tr.havelsan.ueransim.mts.*;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
-import tr.havelsan.ueransim.exceptions.MtsException;
-import tr.havelsan.ueransim.mts.*;
+import tr.havelsan.ueransim.mts.MtsException;
 
 import java.util.List;
 import java.util.Map;

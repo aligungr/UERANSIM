@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.app.sim;
 
-import tr.havelsan.ueransim.exceptions.MtsException;
+import tr.havelsan.ueransim.mts.MtsException;
 import tr.havelsan.ueransim.mts.Conversion;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.TypeRegistry;

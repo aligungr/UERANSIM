@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.app.ue;
 
 import tr.havelsan.ueransim.Ngap;
-import tr.havelsan.ueransim.app.Json;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.Color;

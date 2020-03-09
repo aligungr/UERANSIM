@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import tr.havelsan.ueransim.app.sim.IFileProvider;
-import tr.havelsan.ueransim.exceptions.MtsException;
 
 import java.io.File;
 import java.util.LinkedHashMap;

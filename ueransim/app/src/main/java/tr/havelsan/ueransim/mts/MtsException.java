@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.exceptions;
+package tr.havelsan.ueransim.mts;
 
 public class MtsException extends RuntimeException {
     private final String message;
