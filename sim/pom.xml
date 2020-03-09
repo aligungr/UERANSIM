@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ue-ran-sim</artifactId>
-        <groupId>tr.havelsan</groupId>
+        <artifactId>root</artifactId>
+        <groupId>tr.havelsan.ueransim</groupId>
         <version>1.0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,19 +12,19 @@
     <artifactId>sim</artifactId>
     <dependencies>
         <dependency>
-            <groupId>tr.havelsan</groupId>
+            <groupId>tr.havelsan.ueransim</groupId>
             <artifactId>utils</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>tr.havelsan</groupId>
+            <groupId>tr.havelsan.ueransim</groupId>
             <artifactId>ngap</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>tr.havelsan</groupId>
+            <groupId>tr.havelsan.ueransim</groupId>
             <artifactId>sctp</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>

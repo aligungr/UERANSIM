@@ -9,11 +9,29 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>control</artifactId>
+    <artifactId>ueransim</artifactId>
     <dependencies>
         <dependency>
             <groupId>tr.havelsan.ueransim</groupId>
+            <artifactId>mts</artifactId>
+            <version>1.0.8</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>tr.havelsan.ueransim</groupId>
             <artifactId>nas</artifactId>
+            <version>1.0.8</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>tr.havelsan.ueransim</groupId>
+            <artifactId>flow-testing</artifactId>
+            <version>1.0.8</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>tr.havelsan.ueransim</groupId>
+            <artifactId>sim</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>

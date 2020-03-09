@@ -4,12 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>tr.havelsan</groupId>
-    <artifactId>ue-ran-sim</artifactId>
+    <groupId>tr.havelsan.ueransim</groupId>
+    <artifactId>root</artifactId>
     <packaging>pom</packaging>
     <version>1.0.8</version>
     <modules>
-        <module>app</module>
         <module>sctp</module>
         <module>utils</module>
         <module>core</module>
@@ -20,6 +19,7 @@
         <module>control</module>
         <module>flow-testing</module>
         <module>sim</module>
+        <module>ueransim</module>
     </modules>
 
     <properties>
