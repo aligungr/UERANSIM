@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement6;

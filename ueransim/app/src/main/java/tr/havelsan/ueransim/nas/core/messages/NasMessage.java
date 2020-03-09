@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.nas.core.messages;
 
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.IMessageBuilder;

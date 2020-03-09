@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.exceptions;
+package tr.havelsan.ueransim.core.exceptions;
 
 public class IncorrectImplementationException extends RuntimeException {
     private final String message;

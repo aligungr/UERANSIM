@@ -13,6 +13,7 @@
         <module>sctp</module>
         <module>utils</module>
         <module>core</module>
+        <module>mts</module>
     </modules>
 
     <properties>

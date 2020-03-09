@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.mts;
 
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.BiMap;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.*;

@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement6;

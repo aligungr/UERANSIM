@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.sim.*;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.mts.MtsException;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;

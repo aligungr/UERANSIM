@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.exceptions.IncorrectImplementationException;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 
 public abstract class IESuciMobileIdentity extends IE5gsMobileIdentity {
