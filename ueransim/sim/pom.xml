@@ -9,29 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>app</artifactId>
+    <artifactId>sim</artifactId>
     <dependencies>
         <dependency>
             <groupId>tr.havelsan</groupId>
-            <artifactId>sctp</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>tr.havelsan</groupId>
             <artifactId>utils</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>tr.havelsan</groupId>
-            <artifactId>mts</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>tr.havelsan</groupId>
-            <artifactId>nas</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
@@ -43,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>tr.havelsan</groupId>
-            <artifactId>sim</artifactId>
+            <artifactId>sctp</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
