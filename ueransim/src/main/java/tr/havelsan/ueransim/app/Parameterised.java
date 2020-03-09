@@ -39,7 +39,7 @@ public class Parameterised {
     public static void main(String[] args) throws Exception {
         initMts();
 
-        var config = new HashMap<String, String>();
+        var config = new LinkedHashMap<String, String>();
         var configYaml = (ImplicitTypedObject) MtsDecoder.decode("yaml/config.yaml");
         for (var e : configYaml.getParameters().entrySet()) {
             config.put(e.getKey(), String.valueOf(e.getValue()));
@@ -55,7 +55,23 @@ public class Parameterised {
             types.put(fn, type);
             typeNames.add(fn);
         }
-        typeNames.sort(String::compareTo);
+
+        var configOrder = new HashMap<String, Integer>();
+        for (var entry : config.entrySet()) {
+            String key = entry.getKey();
+            if (key.matches("^input\\.[a-zA-Z]+$")) {
+                configOrder.put(key.substring("input.".length()), configOrder.size());
+            }
+        }
+
+        typeNames.sort((string1, string2) -> {
+            Integer i1 = configOrder.get(string1);
+            Integer i2 = configOrder.get(string2);
+            if (i1 == null && i2 == null) return 0;
+            if (i1 == null) return 1;
+            if (i2 == null) return -1;
+            return i1.compareTo(i2);
+        });
 
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", Environment.AMF_HOST, Environment.AMF_PORT);
         var sctpClient = new SCTPClient(Environment.AMF_HOST, Environment.AMF_PORT, Constants.NGAP_PROTOCOL_ID);
