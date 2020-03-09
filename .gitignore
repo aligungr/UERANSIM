@@ -1,8 +1,8 @@
 # Project specific (MARBEN)
 misc/marben/lib
-ueransim/src/main/java/tr/havelsan/ueransim/ngap
-ueransim/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
-ueransim/src/main/resources/asntable.dat
+ueransim/ngap/src/main/java/tr/havelsan/ueransim/ngap
+ueransim/utils/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
+ueransim/app/src/main/resources/asntable.dat
 dependency-reduced-pom.xml
 
 # Project specific (OTHERS)
