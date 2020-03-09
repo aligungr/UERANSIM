@@ -1,0 +1,26 @@
+ranUeNgapId: 1000
+amfUeNgapId: 1
+pduSessionId:
+  value: 8
+procedureTransactionId:
+  value: 254
+sNssai:
+  sst:
+    value: 1
+  sd:
+    value: 634799
+dnn:
+  ascii: "internet"
+userLocationInformationNr:
+  nrCgi:
+    plmn:
+      mcc: 1
+      mnc: 1
+    nrCellIdentity:
+      hex: 'a1b2c3d4f0'
+  tai:
+    mcc: 1
+    mnc: 1
+    tac: '000075'
+  timeStamp:
+    hex: 5b5fa680

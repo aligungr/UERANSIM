@@ -1,0 +1,7 @@
+amf.host: 10.154.14.5
+amf.port: 38419
+
+input.NgSetupFlow: ngsetup.yaml
+input.RegistrationFlow: registration.yaml
+input.PduSessionEstablishmentFlow: pduSessionEstablishment.yaml
+input.PduSessionReleaseFlow: pduSessionRelease.yaml

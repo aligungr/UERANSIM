@@ -40,7 +40,7 @@ public class Parameterised {
         initMts();
 
         var config = new HashMap<String, String>();
-        var configYaml = (ImplicitTypedObject) MtsDecoder.decode("config.yaml");
+        var configYaml = (ImplicitTypedObject) MtsDecoder.decode("yaml/config.yaml");
         for (var e : configYaml.getParameters().entrySet()) {
             config.put(e.getKey(), String.valueOf(e.getValue()));
         }
@@ -108,7 +108,7 @@ public class Parameterised {
 
             if (inputType != null) {
                 String key = "input." + typeNames.get(selection - 1);
-                ctor.newInstance(sctpClient, readInputFile(key, config.get(key), inputType))
+                ctor.newInstance(sctpClient, readInputFile(key, "yaml/" + config.get(key), inputType))
                         .start();
             } else {
                 ctor.newInstance(sctpClient)
