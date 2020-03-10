@@ -33,6 +33,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static tr.havelsan.ueransim.ngap.Values.*;
+import static tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc.ASN_om_intervention;
 
 public class UeUtils {
 
@@ -523,5 +524,77 @@ public class UeUtils {
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
+    }
+
+  public static NGAP_PDU createUEContextRelease(long ranUeNgapId, long amfUeNgapId)
+      throws InvalidStructureException {
+
+      var initiatingMessage = new InitiatingMessage();
+      initiatingMessage.procedureCode = new ProcedureCode(NGAP_Constants__id_UEContextReleaseRequest);
+      initiatingMessage.criticality = new Criticality(Criticality.ASN_ignore);
+
+      var ueContextRelease = new UEContextReleaseRequest();
+      ueContextRelease.protocolIEs = new UEContextReleaseRequest.ProtocolIEs();
+
+      var item0 = new UEContextReleaseRequest.ProtocolIEs.SEQUENCE();
+      item0.id = new ProtocolIE_ID(NGAP_Constants__id_RAN_UE_NGAP_ID);
+      item0.criticality = new Criticality(Criticality.ASN_reject);
+      item0.value =  new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+
+      var item1 =  new UEContextReleaseRequest.ProtocolIEs.SEQUENCE();
+      item1.id = new ProtocolIE_ID(NGAP_Constants__id_AMF_UE_NGAP_ID);
+      item1.criticality = new Criticality(Criticality.ASN_reject);
+      item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
+
+      var item2 =  new UEContextReleaseRequest.ProtocolIEs.SEQUENCE();
+      item2.id = new ProtocolIE_ID(NGAP_Constants__id_Cause);
+      item2.criticality = new Criticality(Criticality.ASN_ignore);
+
+
+      var misc = new CauseMisc(ASN_om_intervention);
+      var cause = new Cause((short) 4,misc);
+
+      item2.value = new OpenTypeValue(cause);
+
+      ueContextRelease.protocolIEs.valueList = asList(item0,item1,item2);
+
+      initiatingMessage.value = new OpenTypeValue(ueContextRelease);
+
+      try {
+          return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
+      } catch (InvalidStructureException e) {
+          throw new RuntimeException(e);
+      }
+  }
+
+    public static NGAP_PDU ueContextReleaseComplete(long ranUeNgapId, long amfUeNgapId) {
+
+        var successfulOutCome = new SuccessfulOutcome();
+        successfulOutCome.procedureCode = new ProcedureCode(NGAP_Constants__id_UEContextRelease);
+        successfulOutCome.criticality = new Criticality(Criticality.ASN_reject);
+
+        var ueContextReleaseComplete = new UEContextReleaseComplete();
+        ueContextReleaseComplete.protocolIEs = new UEContextReleaseComplete.ProtocolIEs();
+
+        var item0 = new UEContextReleaseComplete.ProtocolIEs.SEQUENCE();
+        item0.id =  new ProtocolIE_ID(NGAP_Constants__id_AMF_UE_NGAP_ID);
+        item0.criticality = new Criticality(Criticality.ASN_ignore);
+        item0.value=new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
+
+        var item1 = new UEContextReleaseComplete.ProtocolIEs.SEQUENCE();
+        item1.id = new ProtocolIE_ID(NGAP_Constants__id_RAN_UE_NGAP_ID);
+        item1.criticality = new Criticality(Criticality.ASN_reject);
+        item1.value =  new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+
+        ueContextReleaseComplete.protocolIEs.valueList = asList(item0,item1);
+
+        successfulOutCome.value =new OpenTypeValue(successfulOutCome);
+
+        try {
+            return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutCome);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
