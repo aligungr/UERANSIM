@@ -33,7 +33,7 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
 
     sendNgapMessage(ngSetupRequest);
 
-    return abortReceiver();
+    return this::waitPduSessionReleaseCommand;
   }
 
   public void sendNgapMessage(NGAP_PDU ngapPdu) {
