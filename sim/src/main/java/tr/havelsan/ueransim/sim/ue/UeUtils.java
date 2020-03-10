@@ -3,20 +3,26 @@ package tr.havelsan.ueransim.sim.ue;
 import static java.util.Arrays.asList;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_AMF_UE_NGAP_ID;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_Cause;
+import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_FiveG_S_TMSI;
+import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_InitialUEMessage;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_NAS_PDU;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceRelease;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceReleasedListRelRes;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceSetup;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceSetupListSURes;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_RAN_UE_NGAP_ID;
+import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_RRCEstablishmentCause;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_UEContextRelease;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_UEContextReleaseRequest;
+import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_UserLocationInformation;
 import static tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc.ASN_om_intervention;
+import static tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause.ASN_mo_Signalling;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -33,6 +39,8 @@ import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
+import tr.havelsan.ueransim.ngap.ngap_ies.AMFPointer;
+import tr.havelsan.ueransim.ngap.ngap_ies.AMFSetID;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.AssociatedQosFlowItem;
 import tr.havelsan.ueransim.ngap.ngap_ies.AssociatedQosFlowList;
@@ -40,6 +48,8 @@ import tr.havelsan.ueransim.ngap.ngap_ies.BroadcastPLMNItem;
 import tr.havelsan.ueransim.ngap.ngap_ies.BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
 import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
+import tr.havelsan.ueransim.ngap.ngap_ies.FiveG_S_TMSI;
+import tr.havelsan.ueransim.ngap.ngap_ies.FiveG_TMSI;
 import tr.havelsan.ueransim.ngap.ngap_ies.GNB_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.GTPTunnel;
 import tr.havelsan.ueransim.ngap.ngap_ies.GTP_TEID;
@@ -240,9 +250,9 @@ public class UeUtils {
       }
     }
 
-      if (nasPayload == null) {
-          return null;
-      }
+    if (nasPayload == null) {
+      return null;
+    }
     return NasDecoder.nasPdu(nasPayload.getValue());
   }
 
@@ -650,6 +660,76 @@ public class UeUtils {
 
     try {
       return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutCome);
+    } catch (InvalidStructureException e) {
+      throw new RuntimeException(e);
+    }
+
+  }
+
+  public static NGAP_PDU createInitialUeMessageServiceRequest(long ranUeNgapId,
+      UserLocationInformationNr userLocationInformationNr) {
+
+    var initiatingMessage = new InitiatingMessage();
+    initiatingMessage.criticality = new Criticality(Criticality.ASN_ignore);
+    initiatingMessage.procedureCode = new ProcedureCode(NGAP_Constants__id_InitialUEMessage);
+    var initialUeMessage = new InitialUEMessage();
+    initialUeMessage.protocolIEs = new InitialUEMessage.ProtocolIEs();
+
+    var item0 = new InitialUEMessage.ProtocolIEs.SEQUENCE();
+    item0.id = new ProtocolIE_ID(NGAP_Constants__id_RAN_UE_NGAP_ID);
+    item0.criticality = new Criticality(Criticality.ASN_reject);
+    item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
+
+    var item1 = new InitialUEMessage.ProtocolIEs.SEQUENCE();
+    item1.id = new ProtocolIE_ID(NGAP_Constants__id_NAS_PDU);
+    item1.criticality = new Criticality(Criticality.ASN_reject);
+
+    String s = "7e004c070007f455aa00000001";
+    NAS_PDU nas_pdu = new NAS_PDU(Utils.hexStringToByteArray(s));
+    item1.value = new OpenTypeValue(nas_pdu);
+
+    var item2 = new InitialUEMessage.ProtocolIEs.SEQUENCE();
+    item2.id = new ProtocolIE_ID(NGAP_Constants__id_UserLocationInformation);
+    item2.criticality = new Criticality(Criticality.ASN_reject);
+    try {
+      item2.value =
+          new OpenTypeValue(
+              new UserLocationInformation(
+                  UserLocationInformation.ASN_userLocationInformationNR,
+                  createUserLocationInformationNr(userLocationInformationNr)));
+    } catch (InvalidStructureException e) {
+      throw new RuntimeException(e);
+    }
+
+    var item3 = new InitialUEMessage.ProtocolIEs.SEQUENCE();
+    item3.id = new ProtocolIE_ID(NGAP_Constants__id_RRCEstablishmentCause);
+    item3.criticality = new Criticality(Criticality.ASN_ignore);
+    RRCEstablishmentCause rrcEstablishmentCause = new RRCEstablishmentCause(ASN_mo_Signalling);
+    item3.value = new OpenTypeValue(rrcEstablishmentCause);
+
+    var item4 = new InitialUEMessage.ProtocolIEs.SEQUENCE();
+    item4.id = new ProtocolIE_ID(NGAP_Constants__id_FiveG_S_TMSI);
+    item4.criticality = new Criticality(Criticality.ASN_reject);
+
+    var fiveg_s_tmsi = new FiveG_S_TMSI();
+
+    byte[] amfPointerByteArray = new BigInteger(String.valueOf(42)).toByteArray();
+    fiveg_s_tmsi.aMFPointer = new AMFPointer(amfPointerByteArray, 2, 6);
+
+    byte[] amfSetIdByteArray = new BigInteger(String.valueOf(342)).toByteArray();
+    fiveg_s_tmsi.aMFSetID = new AMFSetID(amfSetIdByteArray, 6, 10);
+
+    var fiveG_TMSI = new FiveG_TMSI(Utils.hexStringToByteArray("00000001"));
+
+    fiveg_s_tmsi.fiveG_TMSI = fiveG_TMSI;
+
+    item4.value = new OpenTypeValue(fiveg_s_tmsi);
+
+    initialUeMessage.protocolIEs.valueList = asList(item0, item1, item2, item3, item4);
+    initiatingMessage.value = new OpenTypeValue(initialUeMessage);
+
+    try {
+      return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
     } catch (InvalidStructureException e) {
       throw new RuntimeException(e);
     }
