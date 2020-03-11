@@ -667,7 +667,7 @@ public class UeUtils {
   }
 
   public static NGAP_PDU createInitialUeMessageServiceRequest(long ranUeNgapId,
-      UserLocationInformationNr userLocationInformationNr) {
+      UserLocationInformationNr userLocationInformationNr,String amfPointer,String amfSetId,String fiveg_tmsi) {
 
     var initiatingMessage = new InitiatingMessage();
     initiatingMessage.criticality = new Criticality(Criticality.ASN_ignore);
@@ -713,13 +713,13 @@ public class UeUtils {
 
     var fiveg_s_tmsi = new FiveG_S_TMSI();
 
-    byte[] amfPointerByteArray = new BigInteger(String.valueOf(42)).toByteArray();
+    byte[] amfPointerByteArray = new BigInteger(String.valueOf(amfPointer)).toByteArray();
     fiveg_s_tmsi.aMFPointer = new AMFPointer(amfPointerByteArray, 2, 6);
 
-    byte[] amfSetIdByteArray = new BigInteger(String.valueOf(342)).toByteArray();
+    byte[] amfSetIdByteArray = new BigInteger(String.valueOf(amfSetId)).toByteArray();
     fiveg_s_tmsi.aMFSetID = new AMFSetID(amfSetIdByteArray, 6, 10);
 
-    var fiveG_TMSI = new FiveG_TMSI(Utils.hexStringToByteArray("00000001"));
+    var fiveG_TMSI = new FiveG_TMSI(Utils.hexStringToByteArray(fiveg_tmsi));
 
     fiveg_s_tmsi.fiveG_TMSI = fiveG_TMSI;
 

@@ -1,4 +1,7 @@
 ranUeNgapId: 1000
+amfSetId: 342
+amfPointer: 42
+five_g_tmsi: "00000001"
 userLocationInformationNr:
   nrCgi:
     plmn:
