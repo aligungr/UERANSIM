@@ -90,21 +90,29 @@ public class DeregistrationFlow extends BaseFlow {
     }
 
     private State waitUeContextReleaseCommand(Message message) {
-        var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
 
-        if (!(pdu.getValue() instanceof InitiatingMessage)) {
-            Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
-            return this::waitDeregistrationAccept;
+        var pdu = new NGAP_PDU();//TODO bir daha bakilacak
+
+        try {
+            pdu = message.getAsPDU();
+
+            if (!(pdu.getValue() instanceof InitiatingMessage)) {
+                Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
+                return this::waitDeregistrationAccept;
+            }
+
+            var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
+            if (!(initiatingMessage instanceof UEContextReleaseCommand)) {
+                Console.println(Color.YELLOW, "bad message, UEContextReleaseCommand is expected. message ignored");
+                return this::waitDeregistrationAccept;
+            }
+            var command = (UEContextReleaseCommand) initiatingMessage;
+            FlowUtils.logReceivedMessage(pdu);
+        }catch (Exception e){
+
+            e.printStackTrace();
         }
 
-        var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
-        if (!(initiatingMessage instanceof UEContextReleaseCommand)) {
-            Console.println(Color.YELLOW, "bad message, UEContextReleaseCommand is expected. message ignored");
-            return this::waitDeregistrationAccept;
-        }
-
-        var command = (UEContextReleaseCommand) initiatingMessage;
         // do something with command
 
         return sendUeContextReleaseComplete();
