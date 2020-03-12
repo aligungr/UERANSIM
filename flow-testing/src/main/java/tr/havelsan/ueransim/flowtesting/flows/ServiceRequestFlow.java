@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.utils.Console;
 
 public class ServiceRequestFlow extends BaseFlow {
 
-  ServiceRequestFlowInput input;
+  final ServiceRequestFlowInput input;
 
   public ServiceRequestFlow(SCTPClient sctpClient, ServiceRequestFlowInput input) {
     super(sctpClient);
