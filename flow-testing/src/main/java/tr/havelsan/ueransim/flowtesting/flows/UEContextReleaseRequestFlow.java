@@ -2,6 +2,8 @@ package tr.havelsan.ueransim.flowtesting.flows;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import tr.havelsan.ueransim.flowtesting.inputs.UEContextReleaseRequestInput;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
@@ -40,7 +42,6 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
 
   private State waitPduSessionReleaseCommand(Message message) {
 
-/*
     var pdu = message.getAsPDU();
     FlowUtils.logReceivedMessage(pdu);
 
@@ -49,12 +50,9 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
     if (value instanceof UEContextReleaseCommand) {
       Console.println(
           Color.BLUE,
-          "UEContextReleaseCommand arrived, UEContextReleaseComplete will return"); //TODO Buraya tekrardan bakılacak
+          "UEContextReleaseCommand arrived, UEContextReleaseComplete will return");
       return ueContextReleaseComplete();
     }
-*/
-
-    ueContextReleaseComplete();
 
     return this::waitPduSessionReleaseCommand;
   }

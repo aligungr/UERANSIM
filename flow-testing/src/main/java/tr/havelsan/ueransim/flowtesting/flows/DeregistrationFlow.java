@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flowtesting.flows;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
+import java.util.ArrayList;
 import tr.havelsan.ueransim.flowtesting.inputs.DeregistrationInput;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
@@ -27,132 +28,122 @@ import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
-import java.util.ArrayList;
-
 public class DeregistrationFlow extends BaseFlow {
 
-    private final DeregistrationInput input;
+  private final DeregistrationInput input;
 
-    public DeregistrationFlow(SCTPClient sctpClient, DeregistrationInput input) {
-        super(sctpClient);
-        this.input = input;
+  public DeregistrationFlow(SCTPClient sctpClient, DeregistrationInput input) {
+    super(sctpClient);
+    this.input = input;
+  }
+
+  @Override
+  public State main(Message message) throws Exception {
+    return sendDeregistrationRequest();
+  }
+
+  private State sendDeregistrationRequest() {
+    var request = new DeRegistrationRequestUeOriginating();
+    request.deRegistrationType = input.deregistrationType;
+    request.ngKSI = new IENasKeySetIdentifier(
+        IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+    request.mobileIdentity = input.guti;
+
+    var uplinkPdu = UeUtils.createUplinkMessage(request, input.ranUeNgapId, input.amfUeNgapId,
+        input.userLocationInformationNr);
+
+    FlowUtils.logNasMessageWillSend(request);
+    FlowUtils.logNgapMessageWillSend(uplinkPdu);
+    sendPDU(uplinkPdu);
+    FlowUtils.logMessageSent();
+
+    return this::waitDeregistrationAccept;
+  }
+
+  private State waitDeregistrationAccept(Message message) {
+    var pdu = message.getAsPDU();
+    FlowUtils.logReceivedMessage(pdu);
+
+    if (!(pdu.getValue() instanceof InitiatingMessage)) {
+      Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
+      return this::waitDeregistrationAccept;
     }
 
-    @Override
-    public State main(Message message) throws Exception {
-        return sendDeregistrationRequest(message);
+    var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
+    if (!(initiatingMessage instanceof DownlinkNASTransport)) {
+      Console
+          .println(Color.YELLOW, "bad message, DownlinkNASTransport is expected. message ignored");
+      return this::waitDeregistrationAccept;
     }
 
-    private State sendDeregistrationRequest(Message message) {
-        var request = new DeRegistrationRequestUeOriginating();
-        request.deRegistrationType = input.deregistrationType;
-        request.ngKSI = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
-        request.mobileIdentity = input.guti;
-
-        var uplinkPdu = UeUtils.createUplinkMessage(request, input.ranUeNgapId, input.amfUeNgapId, input.userLocationInformationNr);
-
-        FlowUtils.logNasMessageWillSend(request);
-        FlowUtils.logNgapMessageWillSend(uplinkPdu);
-        sendPDU(uplinkPdu);
-        FlowUtils.logMessageSent();
-
-        return this::waitDeregistrationAccept;
+    var downlinkNASTransport = (DownlinkNASTransport) initiatingMessage;
+    var nasMessage = UeUtils.getNasMessage(downlinkNASTransport);
+    if (nasMessage == null) {
+      Console.println(Color.YELLOW, "bad message, nas pdu is missing. message ignored");
+      return this::waitDeregistrationAccept;
     }
 
-    private State waitDeregistrationAccept(Message message) {
-        var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
-
-        if (!(pdu.getValue() instanceof InitiatingMessage)) {
-            Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
-            return this::waitDeregistrationAccept;
-        }
-
-        var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
-        if (!(initiatingMessage instanceof DownlinkNASTransport)) {
-            Console.println(Color.YELLOW, "bad message, DownlinkNASTransport is expected. message ignored");
-            return this::waitDeregistrationAccept;
-        }
-
-        var downlinkNASTransport = (DownlinkNASTransport) initiatingMessage;
-        var nasMessage = UeUtils.getNasMessage(downlinkNASTransport);
-        if (nasMessage == null) {
-            Console.println(Color.YELLOW, "bad message, nas pdu is missing. message ignored");
-            return this::waitDeregistrationAccept;
-        }
-
-        if (!(nasMessage instanceof DeRegistrationAcceptUeOriginating)) {
-            Console.println(Color.YELLOW, "bad message, DeRegistrationAcceptUeOriginating is expected. message ignored");
-            return this::waitDeregistrationAccept;
-        }
-
-        return this::waitUeContextReleaseCommand;
+    if (!(nasMessage instanceof DeRegistrationAcceptUeOriginating)) {
+      Console.println(Color.YELLOW,
+          "bad message, DeRegistrationAcceptUeOriginating is expected. message ignored");
+      return this::waitDeregistrationAccept;
     }
 
-    private State waitUeContextReleaseCommand(Message message) {
+    return this::waitUeContextReleaseCommand;
+  }
 
-        var pdu = new NGAP_PDU();//TODO bir daha bakilacak
+  private State waitUeContextReleaseCommand(Message message) {
 
-        try {
-            pdu = message.getAsPDU();
+    var pdu = message.getAsPDU();
+    FlowUtils.logReceivedMessage(pdu);
 
-            if (!(pdu.getValue() instanceof InitiatingMessage)) {
-                Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
-                return this::waitDeregistrationAccept;
-            }
+    var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
 
-            var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
-            if (!(initiatingMessage instanceof UEContextReleaseCommand)) {
-                Console.println(Color.YELLOW, "bad message, UEContextReleaseCommand is expected. message ignored");
-                return this::waitDeregistrationAccept;
-            }
-            var command = (UEContextReleaseCommand) initiatingMessage;
-            FlowUtils.logReceivedMessage(pdu);
-        }catch (Exception e){
-
-            e.printStackTrace();
-        }
-
-        // do something with command
-
-        return sendUeContextReleaseComplete();
+    if (value instanceof UEContextReleaseCommand) {
+      Console.println(
+          Color.BLUE,
+          "UEContextReleaseCommand arrived, UEContextReleaseComplete will return");
+      return sendUeContextReleaseComplete();
     }
 
-    private State sendUeContextReleaseComplete() {
-        var list = new ArrayList<UEContextReleaseComplete.ProtocolIEs.SEQUENCE>();
+    return this::waitUeContextReleaseCommand;
+  }
 
-        var ueContextReleaseComplete = new UEContextReleaseComplete();
-        ueContextReleaseComplete.protocolIEs = new UEContextReleaseComplete.ProtocolIEs();
-        ueContextReleaseComplete.protocolIEs.valueList = list;
+  private State sendUeContextReleaseComplete() {
+    var list = new ArrayList<UEContextReleaseComplete.ProtocolIEs.SEQUENCE>();
 
-        var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
-        item0.criticality = new Criticality(Criticality.ASN_ignore);
-        item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(input.ranUeNgapId));
+    var ueContextReleaseComplete = new UEContextReleaseComplete();
+    ueContextReleaseComplete.protocolIEs = new UEContextReleaseComplete.ProtocolIEs();
+    ueContextReleaseComplete.protocolIEs.valueList = list;
 
-        var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
-        item1.criticality = new Criticality(Criticality.ASN_ignore);
-        item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(input.amfUeNgapId));
+    var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
+    item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
+    item0.criticality = new Criticality(Criticality.ASN_ignore);
+    item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(input.ranUeNgapId));
 
-        NGAP_PDU ngapPdu;
-        try {
-            var successfulOutcome = new SuccessfulOutcome();
-            successfulOutcome.procedureCode =
-                    new ProcedureCode(Values.NGAP_Constants__id_UEContextRelease);
-            successfulOutcome.criticality = new Criticality(Criticality.ASN_reject);
-            successfulOutcome.value = new OpenTypeValue(ueContextReleaseComplete);
+    var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
+    item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
+    item1.criticality = new Criticality(Criticality.ASN_ignore);
+    item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(input.amfUeNgapId));
 
-            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutcome);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
+    NGAP_PDU ngapPdu;
+    try {
+      var successfulOutcome = new SuccessfulOutcome();
+      successfulOutcome.procedureCode =
+          new ProcedureCode(Values.NGAP_Constants__id_UEContextRelease);
+      successfulOutcome.criticality = new Criticality(Criticality.ASN_reject);
+      successfulOutcome.value = new OpenTypeValue(ueContextReleaseComplete);
 
-        FlowUtils.logNgapMessageWillSend(ngapPdu);
-        sendPDU(ngapPdu);
-        FlowUtils.logMessageSent();
-
-        Console.println(Color.GREEN_BOLD, "Deregistration complete");
-        return abortReceiver();
+      ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutcome);
+    } catch (InvalidStructureException e) {
+      throw new RuntimeException(e);
     }
+
+    FlowUtils.logNgapMessageWillSend(ngapPdu);
+    sendPDU(ngapPdu);
+    FlowUtils.logMessageSent();
+
+    Console.println(Color.GREEN_BOLD, "Deregistration complete");
+    return abortReceiver();
+  }
 }
