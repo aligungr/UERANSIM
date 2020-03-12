@@ -31,7 +31,8 @@ public class ServiceRequestFlow extends BaseFlow {
   private State sendInitialUeMessage() {
 
     var ngSetupRequest = UeUtils
-        .createInitialUeMessageServiceRequest(input.ranUeNgapId, input.userLocationInformationNr,input.amfPointer,input.amfSetId,input.fiveg_tmsi);
+        .createInitialUeMessageServiceRequest(input.ranUeNgapId, input.userLocationInformationNr,
+            input.amfPointer, input.amfSetId, input.fiveg_tmsi);
     sendNgapMessage(ngSetupRequest);
 
     return this::waitForDownLinkNasTransport;

@@ -38,7 +38,7 @@ public class DeregistrationFlow extends BaseFlow {
   }
 
   @Override
-  public State main(Message message) throws Exception {
+  public State main(Message message) {
     return sendDeregistrationRequest();
   }
 
@@ -61,8 +61,7 @@ public class DeregistrationFlow extends BaseFlow {
   }
 
   private State waitDeregistrationAccept(Message message) {
-    var pdu = message.getAsPDU();
-    FlowUtils.logReceivedMessage(pdu);
+    NGAP_PDU pdu = getNgap_pdu(message);
 
     if (!(pdu.getValue() instanceof InitiatingMessage)) {
       Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
@@ -92,10 +91,15 @@ public class DeregistrationFlow extends BaseFlow {
     return this::waitUeContextReleaseCommand;
   }
 
-  private State waitUeContextReleaseCommand(Message message) {
-
+  private NGAP_PDU getNgap_pdu(Message message) {
     var pdu = message.getAsPDU();
     FlowUtils.logReceivedMessage(pdu);
+    return pdu;
+  }
+
+  private State waitUeContextReleaseCommand(Message message) {
+
+    NGAP_PDU pdu = getNgap_pdu(message);
 
     var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
 
