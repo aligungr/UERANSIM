@@ -7,6 +7,7 @@ import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.sctp.SCTPClient;
+import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Utils;
 
 public abstract class BaseFlow {
@@ -38,8 +39,10 @@ public abstract class BaseFlow {
         sendData(Utils.hexStringToByteArray(hexString));
     }
 
-    protected final void sendPDU(Value pdu) {
+    protected final void sendPDU(NGAP_PDU pdu) {
+        FlowUtils.logNgapMessageWillSend(pdu);
         sendData(Ngap.perEncode(pdu));
+        FlowUtils.logMessageSent();
     }
 
     protected final void sendPDU(String xml) {

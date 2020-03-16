@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.core;
 public final class Constants {
     public static final String FLOWS_PREFIX = "tr.havelsan.ueransim.flowtesting.flows";
     public static final String NAS_IMPL_PREFIX = "tr.havelsan.ueransim.nas.impl";
+    public static final String NGAP_PDU_CONTENTS = "tr.havelsan.ueransim.ngap.ngap_pdu_contents";
 
     public static final int BACKEND_PORT = 5002;
 

@@ -24,6 +24,9 @@ public class FlowTesting {
     public static void main(String[] args) throws Exception {
         MtsInitializer.initMts();
 
+
+
+
         var config = new LinkedHashMap<String, String>();
         var configYaml = (ImplicitTypedObject) MtsDecoder.decode("yaml/config.yaml");
         for (var e : configYaml.getParameters().entrySet()) {

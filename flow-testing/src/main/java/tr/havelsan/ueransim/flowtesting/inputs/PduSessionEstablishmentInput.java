@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.flowtesting.inputs;
 
-import tr.havelsan.ueransim.sim.ue.UserLocationInformationNr;
+import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.nas.impl.ies.IEDnn;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.utils.octets.Octet;
