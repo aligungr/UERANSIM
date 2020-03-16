@@ -7,7 +7,6 @@ import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.EapDecoder;
 import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
@@ -20,12 +19,10 @@ import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupResponse;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.ngap2.SupportedTA;
-import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
+import tr.havelsan.ueransim.ngap2.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet4;
@@ -44,63 +41,6 @@ public class UeUtils {
         var hex = new String(Base64.getDecoder().decode((base64)));
         var bytes = Utils.hexStringToByteArray(hex);
         return EapDecoder.eapPdu((new OctetInputStream((bytes))));
-    }
-
-    public static NGAP_PDU createUplinkMessage(
-            NasMessage nasMessage,
-            long ranUeNgapId,
-            long amfUeNgapId,
-            UserLocationInformationNr userLocationInformationNr) {
-        var list = new ArrayList<UplinkNASTransport.ProtocolIEs.SEQUENCE>();
-
-        var uplink = new UplinkNASTransport();
-        uplink.protocolIEs = new UplinkNASTransport.ProtocolIEs();
-        uplink.protocolIEs.valueList = list;
-
-        var ranUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        ranUe.id = new ProtocolIE_ID(NGAP_Constants__id_RAN_UE_NGAP_ID);
-        ranUe.criticality = new Criticality(Criticality.ASN_reject);
-        ranUe.value = new OpenTypeValue(new RAN_UE_NGAP_ID(ranUeNgapId));
-        list.add(ranUe);
-
-        var amfUe = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        amfUe.id = new ProtocolIE_ID(NGAP_Constants__id_AMF_UE_NGAP_ID);
-        amfUe.criticality = new Criticality(Criticality.ASN_reject);
-        amfUe.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
-        list.add(amfUe);
-
-        var nasPayload = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        nasPayload.id = new ProtocolIE_ID(Values.NGAP_Constants__id_NAS_PDU);
-        nasPayload.criticality = new Criticality(Criticality.ASN_reject);
-        nasPayload.value = new OpenTypeValue(new NAS_PDU(NasEncoder.nasPdu(nasMessage)));
-        list.add(nasPayload);
-
-        var userLocationInformation = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        userLocationInformation.id =
-                new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
-        userLocationInformation.criticality = new Criticality(Criticality.ASN_ignore);
-        try {
-            userLocationInformation.value =
-                    new OpenTypeValue(
-                            new UserLocationInformation(
-                                    UserLocationInformation.ASN_userLocationInformationNR,
-                                    Ngap.createUserLocationInformationNr(userLocationInformationNr)));
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-        list.add(userLocationInformation);
-
-        var initiatingMessage = new InitiatingMessage();
-        initiatingMessage.procedureCode =
-                new ProcedureCode(Values.NGAP_Constants__id_UplinkNASTransport);
-        initiatingMessage.criticality = new Criticality(Criticality.ASN_ignore);
-        initiatingMessage.value = new OpenTypeValue(uplink);
-
-        try {
-            return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static NasMessage getNasMessage(DownlinkNASTransport message) {

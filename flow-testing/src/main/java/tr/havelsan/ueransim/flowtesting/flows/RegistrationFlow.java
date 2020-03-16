@@ -326,7 +326,14 @@ public class RegistrationFlow extends BaseFlow {
 
     private void sendUplinkMessage(NasMessage nas) {
         FlowUtils.logNasMessageWillSend(nas);
-        var ngapPdu = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
+        var ngapPdu = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(nas, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build();
         sendPDU(ngapPdu);
     }
 }

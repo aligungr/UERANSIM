@@ -1,6 +1,10 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
 import tr.havelsan.ueransim.flowtesting.inputs.PduSessionEstablishmentInput;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapPduDescription;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
@@ -61,10 +65,14 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         ulNasTransport.sNssa = input.sNssai;
         ulNasTransport.dnn = input.dnn;
 
-        var ngap =
-                UeUtils.createUplinkMessage(
-                        ulNasTransport, input.ranUeNgapId, input.amfUeNgapId, input.userLocationInformationNr);
-        FlowUtils.logNgapMessageWillSend(ngap);
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(ulNasTransport, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build();
         sendPDU(ngap);
 
         return this::waitPduSessionEstablishmentAccept;
