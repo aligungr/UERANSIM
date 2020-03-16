@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.flowtesting.inputs;
 
-import tr.havelsan.ueransim.sim.ue.SupportedTA;
+import tr.havelsan.ueransim.ngap2.SupportedTA;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 
 public class NgSetupInput {

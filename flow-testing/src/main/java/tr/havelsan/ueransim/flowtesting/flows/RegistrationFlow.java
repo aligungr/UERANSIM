@@ -8,12 +8,11 @@ import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBuffer;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapPduDescription;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.flowtesting.inputs.RegistrationInput;
-import tr.havelsan.ueransim.sim.BaseFlow;
-import tr.havelsan.ueransim.sim.Message;
-import tr.havelsan.ueransim.utils.Json;
-import tr.havelsan.ueransim.sim.ue.FlowUtils;
-import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -27,6 +26,7 @@ import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.ErrorIndication;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
@@ -35,8 +35,13 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.sctp.SCTPClient;
+import tr.havelsan.ueransim.sim.BaseFlow;
+import tr.havelsan.ueransim.sim.Message;
+import tr.havelsan.ueransim.sim.ue.FlowUtils;
+import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -160,39 +165,13 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        var list = new ArrayList<InitialContextSetupResponse.ProtocolIEs.SEQUENCE>();
-
-        var contextSetupResponse = new InitialContextSetupResponse();
-        contextSetupResponse.protocolIEs = new InitialContextSetupResponse.ProtocolIEs();
-        contextSetupResponse.protocolIEs.valueList = list;
-
-        var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
-        item0.criticality = new Criticality(Criticality.ASN_ignore);
-        item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(input.ranUeNgapId));
-
-        var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
-        item1.criticality = new Criticality(Criticality.ASN_ignore);
-        item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
-
-        list.add(item0);
-        list.add(item1);
-
-        NGAP_PDU ngapPdu;
-        try {
-            var successfulOutcome = new SuccessfulOutcome();
-            successfulOutcome.procedureCode =
-                    new ProcedureCode(Values.NGAP_Constants__id_InitialContextSetup);
-            successfulOutcome.criticality = new Criticality(Criticality.ASN_reject);
-            successfulOutcome.value = new OpenTypeValue(contextSetupResponse);
-
-            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutcome);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-
-        sendNgapMessage(ngapPdu);
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
+                .withProcedure(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
+                .build();
+        sendPDU(ngap);
 
         var response = new RegistrationComplete();
         sendUplinkMessage(response);
@@ -308,21 +287,27 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private void sendInitialUeMessage(NasMessage nas) {
-        FlowUtils.logNasMessageWillSend(nas);
-        var ngapPdu = UeUtils.createInitialUeMessage(
-                nas, input.ranUeNgapId, input.rrcEstablishmentCause, input.userLocationInformationNr);
-        sendNgapMessage(ngapPdu);
+        var ngapPdu = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(nas, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
+                .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE)
+                .build();
+        sendPDU(ngapPdu);
     }
 
     private void sendUplinkMessage(NasMessage nas) {
         FlowUtils.logNasMessageWillSend(nas);
-        var ngapPdu = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
-        sendNgapMessage(ngapPdu);
-    }
-
-    public void sendNgapMessage(NGAP_PDU ngapPdu) {
-        FlowUtils.logNgapMessageWillSend(ngapPdu);
+        var ngapPdu = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(nas, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build();
         sendPDU(ngapPdu);
-        FlowUtils.logMessageSent();
     }
 }

@@ -20,6 +20,10 @@ public final class Octet4 extends OctetN {
         this(Integer.toUnsignedLong(octet0.intValue() | octet1.intValue() << 8 | octet2.intValue() << 16 | octet3.intValue() << 24));
     }
 
+    public Octet4(int octet3, int octet2, int octet1, int octet0) {
+        this(new Octet(octet3), new Octet(octet2), new Octet(octet1), new Octet(octet0));
+    }
+
     public Octet4(String hex) {
         this(Utils.toLong(hex));
     }
