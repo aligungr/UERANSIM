@@ -20,17 +20,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
+import tr.havelsan.ueransim.utils.Utils;
 
 public class FlowTesting {
 
     public static void main(String[] args) throws Exception {
         MtsInitializer.initMts();
 
-
-
+        var scanner = new Scanner(System.in);
 
         var config = new LinkedHashMap<String, String>();
-        var configYaml = (ImplicitTypedObject) MtsDecoder.decode("yaml/config.yaml");
+        var configYaml = (ImplicitTypedObject) MtsDecoder.decode("config.yaml");
         for (var e : configYaml.getParameters().entrySet()) {
             config.put(e.getKey(), String.valueOf(e.getValue()));
         }
@@ -72,7 +72,27 @@ public class FlowTesting {
         Console.println(Color.BLUE, "SCTP connection established.");
         Console.printDiv();
 
-        var scanner = new Scanner(System.in);
+        String flowName = Utils.getCommandLineOption(args,"-f");
+        String yamlFile = Utils.getCommandLineOption(args,"-y");
+
+        if (flowName != null && yamlFile != null) {
+            var type = FlowScanner.getFlowType(flowName);
+            if (type == null) {
+                throw new RuntimeException("Flow not found: " + flowName);
+            }
+            var ctor = findConstructor(type);
+            var inputType = ctor.getParameterCount() > 1 ? ctor.getParameterTypes()[1] : null;
+
+            if (inputType != null) {
+                ctor.newInstance(sctpClient, readInputFile("", yamlFile, inputType))
+                    .start();
+            } else {
+                ctor.newInstance(sctpClient)
+                    .start();
+            }
+            return;
+        }
+
         while (true) {
             Console.printDiv();
 
@@ -114,7 +134,7 @@ public class FlowTesting {
 
             if (inputType != null) {
                 String key = "input." + typeNames.get(selection - 1);
-                ctor.newInstance(sctpClient, readInputFile(key, "yaml/" + config.get(key), inputType))
+                ctor.newInstance(sctpClient, readInputFile(key, "" + config.get(key), inputType))
                         .start();
             } else {
                 ctor.newInstance(sctpClient)
@@ -150,6 +170,5 @@ public class FlowTesting {
         var inp = MtsDecoder.decode(path);
         return MtsConstruct.construct(type, ((ImplicitTypedObject) inp).getParameters(), true);
     }
-
 
 }
