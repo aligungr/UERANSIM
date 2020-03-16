@@ -14,7 +14,7 @@ mobileIdentity:
   protectionSchemaId: NULL_SCHEME
   homeNetworkPublicKeyIdentifier:
     value: '0'
-  schemeOutput: '000000005'
+  schemeOutput: '000000010'
 rrcEstablishmentCause: 4
 imei: '356938035643809'
 authenticationResponseParameter:
@@ -23,7 +23,7 @@ eapAkaInput:
   OP: 'cdc202d5123e20f62b6d676ac72cb318'
   SQN: '000000000000'
   AMF: '8000'
-  KEY: '465b5ce8b199b49faa5f0a2ee238a005'
+  KEY: '465b5ce8b199b49faa5f0a2ee238a010'
 userLocationInformationNr:
   nrCgi:
     plmn:

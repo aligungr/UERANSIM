@@ -11,7 +11,8 @@ import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap.RuntimeConfiguration;
 import tr.havelsan.ueransim.ngap.ValueFactory;
-import tr.havelsan.ueransim.ngap.ngap_ies.PLMNIdentity;
+import tr.havelsan.ueransim.ngap.ngap_ies.*;
+import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet3;
@@ -186,5 +187,17 @@ public class Ngap {
         }
         res.mnc = EMncValue.fromValue(mnc);
         return res;
+    }
+
+    public static UserLocationInformationNR createUserLocationInformationNr(UserLocationInformationNr nr) {
+        var userLocationInformationNr = new UserLocationInformationNR();
+        userLocationInformationNr.nR_CGI = new NR_CGI();
+        userLocationInformationNr.nR_CGI.pLMNIdentity = Ngap.plmnEncode(nr.nrCgi.plmn);
+        userLocationInformationNr.nR_CGI.nRCellIdentity = new NRCellIdentity(nr.nrCgi.nrCellIdentity.toByteArray(), 36);
+        userLocationInformationNr.tAI = new TAI();
+        userLocationInformationNr.tAI.tAC = new TAC(nr.tai.tac.toByteArray());
+        userLocationInformationNr.tAI.pLMNIdentity = Ngap.plmnEncode(nr.tai.plmn);
+        userLocationInformationNr.timeStamp = new TimeStamp(nr.timeStamp.toByteArray());
+        return userLocationInformationNr;
     }
 }

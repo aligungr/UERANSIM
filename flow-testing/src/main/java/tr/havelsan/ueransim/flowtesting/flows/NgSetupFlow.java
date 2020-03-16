@@ -28,7 +28,7 @@ public class NgSetupFlow extends BaseFlow {
     private State sendNgSetupRequest() {
         var ngSetupRequest = UeUtils.createNgSetupRequest(input.gnbId, input.gnbPlmn,
                 input.supportedTAs);
-        sendNgapMessage(ngSetupRequest);
+        sendPDU(ngSetupRequest);
         return this::waitNgSetupResponse;
     }
 
@@ -50,11 +50,5 @@ public class NgSetupFlow extends BaseFlow {
         Console.println(Color.BLUE, "NGSetupResponse handled.");
         Console.println(Color.GREEN_BOLD, "NGSetup complete");
         return abortReceiver();
-    }
-
-    public void sendNgapMessage(NGAP_PDU ngapPdu) {
-        FlowUtils.logNgapMessageWillSend(ngapPdu);
-        sendPDU(ngapPdu);
-        FlowUtils.logMessageSent();
     }
 }

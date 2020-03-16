@@ -11,6 +11,14 @@ sNssai:
     value: 634799
 dnn:
   ascii: "internet"
+transportLayerAddress:
+  octet3: 104
+  octet2: 116
+  octet1: 116
+  octet0: 112
+gTpTeid:
+  value: 2
+qosFlowIdentifier: 1
 userLocationInformationNr:
   nrCgi:
     plmn:
