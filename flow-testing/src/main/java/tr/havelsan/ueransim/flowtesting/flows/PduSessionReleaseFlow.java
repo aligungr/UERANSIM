@@ -2,9 +2,14 @@ package tr.havelsan.ueransim.flowtesting.flows;
 
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.flowtesting.inputs.PduSessionReleaseInput;
+import tr.havelsan.ueransim.nas.NasEncoder;
+import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
+import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainer;
 import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainerType;
 import tr.havelsan.ueransim.nas.impl.ies.IEPduSessionIdentity2;
+import tr.havelsan.ueransim.nas.impl.messages.PduSessionReleaseComplete;
+import tr.havelsan.ueransim.nas.impl.messages.PduSessionReleaseRequest;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionID;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleaseResponseTransfer;
@@ -24,6 +29,7 @@ import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
 import java.util.ArrayList;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class PduSessionReleaseFlow extends BaseFlow {
     private PduSessionReleaseInput input;
@@ -35,9 +41,13 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
     @Override
     public State main(Message message) {
+        var pduRR =new PduSessionReleaseRequest();
+        pduRR.pduSessionId  = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
+        pduRR.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
+
         var uplink = new UlNasTransport();
         uplink.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
-        uplink.payloadContainer = new IEPayloadContainer(input.payloadContainer);
+        uplink.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduRR)));
         uplink.pduSessionId = new IEPduSessionIdentity2(input.pduSessionId);
         uplink.sNssa = input.sNssai;
         uplink.dnn = input.dnn;
@@ -98,9 +108,13 @@ public class PduSessionReleaseFlow extends BaseFlow {
     }
 
     private void sendUplinkNas() {
+        var releaseComplete = new PduSessionReleaseComplete();
+        releaseComplete.pduSessionId = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
+        releaseComplete.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
+
         var uplink = new UlNasTransport();
         uplink.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
-        uplink.payloadContainer = new IEPayloadContainer(input.payloadContainer);
+        uplink.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(releaseComplete)));
         uplink.pduSessionId = new IEPduSessionIdentity2(input.pduSessionId);
         uplink.sNssa = input.sNssai;
         uplink.dnn = input.dnn;

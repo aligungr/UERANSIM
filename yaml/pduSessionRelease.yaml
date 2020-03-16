@@ -6,8 +6,6 @@ pduSessionId:
   value: 8
 dnn:
   ascii: "internet"
-payloadContainer:
-  hex: "2e08fed4"
 userLocationInformationNr:
   nrCgi:
     plmn:
