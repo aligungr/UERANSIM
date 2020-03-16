@@ -36,7 +36,23 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
     @Override
     public State main(Message message) {
-        sendPDU(UeUtils.createNGAPSessionRelease(input.userLocationInformationNr));
+        var uplink = new UlNasTransport();
+        uplink.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
+        uplink.payloadContainer = new IEPayloadContainer(input.payloadContainer);
+        uplink.pduSessionId = new IEPduSessionIdentity2(input.pduSessionId);
+        uplink.sNssa = input.sNssai;
+        uplink.dnn = input.dnn;
+
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(uplink, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
+                .build();
+
+        sendPDU(ngap);
         return this::waitPduSessionReleaseCommand;
     }
 
