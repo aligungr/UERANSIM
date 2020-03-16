@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim;
 
-import jdk.jshell.execution.Util;
+
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 import tr.havelsan.ueransim.core.Constants;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
-import tr.havelsan.ueransim.utils.Utils;
+
 
 public class FlowTesting {
 
