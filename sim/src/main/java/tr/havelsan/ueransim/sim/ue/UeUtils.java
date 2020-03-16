@@ -11,15 +11,12 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupResponse;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap2.*;
@@ -127,7 +124,7 @@ public class UeUtils {
                 .withProcedure(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
                 .addProtocolIE(createGlobalGnbId(globalGnbId, gnbPlmn), NgapCriticality.REJECT)
                 .addProtocolIE(createSupportedTAList(supportedTAs), NgapCriticality.REJECT)
-                .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE)
+                .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX)
                 .build();
         return ngap;
     }

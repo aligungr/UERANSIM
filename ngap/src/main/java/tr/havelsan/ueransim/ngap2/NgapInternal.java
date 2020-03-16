@@ -65,7 +65,7 @@ public class NgapInternal {
         }
     }
 
-    public static void appendProtocolIe(NgapProcedure procedure, Value procedureContent, NgapCriticality criticality, Value value) {
+    public static void appendProtocolIe(NgapProcedure procedure, Value procedureContent, NgapCriticality criticality, Value value, Integer ieId) {
         try {
             var procedureClassName = getProcedureClassName(procedure);
             var protocolIEsClassName = procedureClassName + "$ProtocolIEs";
@@ -86,8 +86,12 @@ public class NgapInternal {
             }
             fieldProtocolIEs.set(procedureContent, protocolIEs);
 
+            if (ieId == null) {
+                ieId = findConstantId(value);
+            }
+
             var sequence = classSequence.getConstructor().newInstance();
-            setField(sequence, "id", new ProtocolIE_ID(findConstantId(value)));
+            setField(sequence, "id", new ProtocolIE_ID(ieId));
             setField(sequence, "criticality", new Criticality(criticality.getAsnValue()));
             setField(sequence, "value", new OpenTypeValue(value));
 
