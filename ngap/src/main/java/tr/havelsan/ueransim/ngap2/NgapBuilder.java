@@ -70,7 +70,7 @@ public class NgapBuilder {
 
     public NgapBuilder addUserLocationInformationNR(UserLocationInformationNr userLocationInformationNr, NgapCriticality criticality) {
         try {
-            return addProtocolIE(new OpenTypeValue(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, Ngap.createUserLocationInformationNr(userLocationInformationNr))), criticality);
+            return addProtocolIE(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, Ngap.createUserLocationInformationNr(userLocationInformationNr)), criticality);
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }

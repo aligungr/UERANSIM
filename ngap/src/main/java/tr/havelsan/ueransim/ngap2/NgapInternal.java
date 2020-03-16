@@ -3,6 +3,8 @@ package tr.havelsan.ueransim.ngap2;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import fr.marben.asnsdk.japi.spe.Value;
 import tr.havelsan.ueransim.ngap.Values;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
+import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 
 import static tr.havelsan.ueransim.core.Constants.NGAP_PDU_CONTENTS;
 
@@ -58,10 +60,10 @@ public class NgapInternal {
     public static void appendProtocolIe(NgapProcedure procedure, Value procedureContent, NgapCriticality criticality, Value value) {
         try {
             var procedureClassName = getProcedureClassName(procedure);
-            var protocolIEsClassName = procedureClassName + ".ProtocolIEs";
-            var sequenceClassName = protocolIEsClassName + ".SEQUENCE";
+            var protocolIEsClassName = procedureClassName + "$ProtocolIEs";
+            var sequenceClassName = protocolIEsClassName + "$SEQUENCE";
 
-            Class<?> classProtocolIEs = Class.forName(procedureClassName);
+            Class<?> classProtocolIEs = Class.forName(protocolIEsClassName);
             Class<?> classSequence = Class.forName(sequenceClassName);
 
             // protocolIEs field
@@ -73,8 +75,8 @@ public class NgapInternal {
             fieldProtocolIEs.set(procedureContent, protocolIEs);
 
             var sequence = classSequence.getConstructor().newInstance();
-            setField(sequence, "id", findConstantId(value));
-            setField(sequence, "criticality", criticality.getAsnValue());
+            setField(sequence, "id", new ProtocolIE_ID(findConstantId(value)));
+            setField(sequence, "criticality", new Criticality(criticality.getAsnValue()));
             setField(sequence, "value", new OpenTypeValue(value));
         } catch (Exception e) {
             throw new RuntimeException(e);
