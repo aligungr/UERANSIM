@@ -52,9 +52,7 @@ public class DeregistrationFlow extends BaseFlow {
         var uplinkPdu = UeUtils.createUplinkMessage(request, input.ranUeNgapId, input.amfUeNgapId, input.userLocationInformationNr);
 
         FlowUtils.logNasMessageWillSend(request);
-        FlowUtils.logNgapMessageWillSend(uplinkPdu);
         sendPDU(uplinkPdu);
-        FlowUtils.logMessageSent();
 
         return this::waitDeregistrationAccept;
     }
@@ -140,9 +138,7 @@ public class DeregistrationFlow extends BaseFlow {
             throw new RuntimeException(e);
         }
 
-        FlowUtils.logNgapMessageWillSend(ngapPdu);
         sendPDU(ngapPdu);
-        FlowUtils.logMessageSent();
 
         Console.println(Color.GREEN_BOLD, "Deregistration complete");
         return abortReceiver();

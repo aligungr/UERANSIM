@@ -197,7 +197,7 @@ public class RegistrationFlow extends BaseFlow {
             throw new RuntimeException(e);
         }
 
-        sendNgapMessage(ngapPdu);
+        sendPDU(ngapPdu);
 
         var response = new RegistrationComplete();
         sendUplinkMessage(response);
@@ -313,7 +313,6 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private void sendInitialUeMessage(NasMessage nas) {
-        FlowUtils.logNasMessageWillSend(nas);
         var ngapPdu = new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
@@ -322,18 +321,12 @@ public class RegistrationFlow extends BaseFlow {
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE)
                 .build();
-        sendNgapMessage(ngapPdu);
+        sendPDU(ngapPdu);
     }
 
     private void sendUplinkMessage(NasMessage nas) {
         FlowUtils.logNasMessageWillSend(nas);
         var ngapPdu = UeUtils.createUplinkMessage(nas, input.ranUeNgapId, amfUeNgapId, input.userLocationInformationNr);
-        sendNgapMessage(ngapPdu);
-    }
-
-    public void sendNgapMessage(NGAP_PDU ngapPdu) {
-        FlowUtils.logNgapMessageWillSend(ngapPdu);
         sendPDU(ngapPdu);
-        FlowUtils.logMessageSent();
     }
 }

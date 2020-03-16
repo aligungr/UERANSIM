@@ -65,10 +65,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
                 UeUtils.createUplinkMessage(
                         ulNasTransport, input.ranUeNgapId, input.amfUeNgapId, input.userLocationInformationNr);
         FlowUtils.logNgapMessageWillSend(ngap);
-        FlowUtils.logNasMessageWillSend(ulNasTransport);
-        FlowUtils.logNasMessageWillSend(pduSessionEstablishmentRequest);
         sendPDU(ngap);
-        FlowUtils.logMessageSent();
 
         return this::waitPduSessionEstablishmentAccept;
     }
@@ -93,14 +90,12 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     }
 
     private State sendPduSessionResourceSetupResponse() {
-
         var ngap = UeUtils.createNGAPSuccesfullOutCome();
 
         sendPDU(ngap);
 
         FlowUtils.logMessageSent();
-        Console.println(
-                Color.BLUE, "PDU Session Establishment Completed");
+        Console.println(Color.BLUE, "PDU Session Establishment Completed");
         return abortReceiver();
     }
 }
