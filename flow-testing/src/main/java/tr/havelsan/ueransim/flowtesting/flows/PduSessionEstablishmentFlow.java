@@ -138,7 +138,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
         sendPDU(ngap);
 
-        Console.println(Color.BLUE, "PDU Session Establishment Completed");
+        Console.println(Color.GREEN, "PDU Session Establishment Completed");
         return abortReceiver();
     }
 }
