@@ -1,10 +1,8 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
+import fr.marben.asnsdk.japi.InvalidStructureException;
+import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.flowtesting.inputs.PduSessionEstablishmentInput;
-import tr.havelsan.ueransim.sim.BaseFlow;
-import tr.havelsan.ueransim.sim.Message;
-import tr.havelsan.ueransim.sim.ue.FlowUtils;
-import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -17,12 +15,24 @@ import tr.havelsan.ueransim.nas.impl.ies.IERequestType.ERequestType;
 import tr.havelsan.ueransim.nas.impl.ies.IESscMode.ESscMode;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
+import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapPduDescription;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.sctp.SCTPClient;
+import tr.havelsan.ueransim.sim.BaseFlow;
+import tr.havelsan.ueransim.sim.Message;
+import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.OctetString;
+
+import java.util.Collections;
+
+import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceSetupListSURes;
 
 public class PduSessionEstablishmentFlow extends BaseFlow {
 
@@ -61,14 +71,15 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         ulNasTransport.sNssa = input.sNssai;
         ulNasTransport.dnn = input.dnn;
 
-        var ngap =
-                UeUtils.createUplinkMessage(
-                        ulNasTransport, input.ranUeNgapId, input.amfUeNgapId, input.userLocationInformationNr);
-        FlowUtils.logNgapMessageWillSend(ngap);
-        FlowUtils.logNasMessageWillSend(ulNasTransport);
-        FlowUtils.logNasMessageWillSend(pduSessionEstablishmentRequest);
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(ulNasTransport, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build();
         sendPDU(ngap);
-        FlowUtils.logMessageSent();
 
         return this::waitPduSessionEstablishmentAccept;
     }
@@ -93,14 +104,41 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     }
 
     private State sendPduSessionResourceSetupResponse() {
+        var gtpTunnel = new GTPTunnel();
+        gtpTunnel.transportLayerAddress = new TransportLayerAddress(input.transportLayerAddress.toByteArray(), 32);
+        gtpTunnel.gTP_TEID = new GTP_TEID(input.gTpTeid.toByteArray());
 
-        var ngap = UeUtils.createNGAPSuccesfullOutCome();
+        var transfer = new PDUSessionResourceSetupResponseTransfer();
+        transfer.qosFlowPerTNLInformation = new QosFlowPerTNLInformation();
+        try {
+            transfer.qosFlowPerTNLInformation.uPTransportLayerInformation = new UPTransportLayerInformation(UPTransportLayerInformation.ASN_gTPTunnel, gtpTunnel);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+        transfer.qosFlowPerTNLInformation.associatedQosFlowList = new AssociatedQosFlowList();
+
+        var associatedFlowItem = new AssociatedQosFlowItem();
+        associatedFlowItem.qosFlowIdentifier = new QosFlowIdentifier(input.qosFlowIdentifier);
+        transfer.qosFlowPerTNLInformation.associatedQosFlowList.valueList = Collections.singletonList(associatedFlowItem);
+
+        var list = new PDUSessionResourceSetupListSURes();
+        var item = new PDUSessionResourceSetupItemSURes();
+
+        item.pDUSessionID = new PDUSessionID(input.pduSessionId.intValue());
+        item.pDUSessionResourceSetupResponseTransfer = new ContainingOctetStringValue(transfer);
+        list.valueList = Collections.singletonList(item);
+
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
+                .withProcedure(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
+                .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes)
+                .build();
 
         sendPDU(ngap);
 
-        FlowUtils.logMessageSent();
-        Console.println(
-                Color.BLUE, "PDU Session Establishment Completed");
+        Console.println(Color.BLUE, "PDU Session Establishment Completed");
         return abortReceiver();
     }
 }

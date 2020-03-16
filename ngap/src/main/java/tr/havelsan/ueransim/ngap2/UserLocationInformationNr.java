@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.sim.ue;
+package tr.havelsan.ueransim.ngap2;
 
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;

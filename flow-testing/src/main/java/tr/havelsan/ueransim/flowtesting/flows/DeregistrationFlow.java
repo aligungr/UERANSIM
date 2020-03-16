@@ -19,6 +19,10 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseComplete;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapPduDescription;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
@@ -49,12 +53,15 @@ public class DeregistrationFlow extends BaseFlow {
         request.ngKSI = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         request.mobileIdentity = input.guti;
 
-        var uplinkPdu = UeUtils.createUplinkMessage(request, input.ranUeNgapId, input.amfUeNgapId, input.userLocationInformationNr);
-
-        FlowUtils.logNasMessageWillSend(request);
-        FlowUtils.logNgapMessageWillSend(uplinkPdu);
-        sendPDU(uplinkPdu);
-        FlowUtils.logMessageSent();
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(request, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build();
+        sendPDU(ngap);
 
         return this::waitDeregistrationAccept;
     }
@@ -111,38 +118,13 @@ public class DeregistrationFlow extends BaseFlow {
     }
 
     private State sendUeContextReleaseComplete() {
-        var list = new ArrayList<UEContextReleaseComplete.ProtocolIEs.SEQUENCE>();
-
-        var ueContextReleaseComplete = new UEContextReleaseComplete();
-        ueContextReleaseComplete.protocolIEs = new UEContextReleaseComplete.ProtocolIEs();
-        ueContextReleaseComplete.protocolIEs.valueList = list;
-
-        var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
-        item0.criticality = new Criticality(Criticality.ASN_ignore);
-        item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(input.ranUeNgapId));
-
-        var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
-        item1.criticality = new Criticality(Criticality.ASN_ignore);
-        item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(input.amfUeNgapId));
-
-        NGAP_PDU ngapPdu;
-        try {
-            var successfulOutcome = new SuccessfulOutcome();
-            successfulOutcome.procedureCode =
-                    new ProcedureCode(Values.NGAP_Constants__id_UEContextRelease);
-            successfulOutcome.criticality = new Criticality(Criticality.ASN_reject);
-            successfulOutcome.value = new OpenTypeValue(ueContextReleaseComplete);
-
-            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutcome);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-
-        FlowUtils.logNgapMessageWillSend(ngapPdu);
-        sendPDU(ngapPdu);
-        FlowUtils.logMessageSent();
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
+                .withProcedure(NgapProcedure.UEContextReleaseComplete,NgapCriticality.REJECT )
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
+                .build();
+        sendPDU(ngap);
 
         Console.println(Color.GREEN_BOLD, "Deregistration complete");
         return abortReceiver();
