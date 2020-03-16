@@ -121,42 +121,15 @@ public class UeUtils {
         return res;
     }
 
-    public static NGAP_PDU createNgSetupRequest(
-            int globalGnbId, VPlmn gnbPlmn, SupportedTA[] supportedTAs) {
-        var ies = new ArrayList<>();
-
-        var ie_globalRanNodeId = new NGSetupRequest.ProtocolIEs.SEQUENCE();
-        ie_globalRanNodeId.id = new ProtocolIE_ID(Values.NGAP_Constants__id_GlobalRANNodeID);
-        ie_globalRanNodeId.criticality = new Criticality(Criticality.ASN_reject);
-        ie_globalRanNodeId.value = new OpenTypeValue(createGlobalGnbId(globalGnbId, gnbPlmn));
-        ies.add(ie_globalRanNodeId);
-
-        var ie_supportedTaList = new NGSetupRequest.ProtocolIEs.SEQUENCE();
-        ie_supportedTaList.id = new ProtocolIE_ID(Values.NGAP_Constants__id_SupportedTAList);
-        ie_supportedTaList.criticality = new Criticality(Criticality.ASN_reject);
-        ie_supportedTaList.value = new OpenTypeValue(createSupportedTAList(supportedTAs));
-        ies.add(ie_supportedTaList);
-
-        var ie_pagingDrx = new NGSetupRequest.ProtocolIEs.SEQUENCE();
-        ie_pagingDrx.id = new ProtocolIE_ID(Values.NGAP_Constants__id_DefaultPagingDRX);
-        ie_pagingDrx.criticality = new Criticality(Criticality.ASN_ignore);
-        ie_pagingDrx.value = new OpenTypeValue(new PagingDRX(PagingDRX.ASN_v64));
-        ies.add(ie_pagingDrx);
-
-        var ngSetupRequest = new NGSetupRequest();
-        ngSetupRequest.protocolIEs = new NGSetupRequest.ProtocolIEs();
-        ngSetupRequest.protocolIEs.valueList = ies;
-
-        var initiatingMessage = new InitiatingMessage();
-        initiatingMessage.procedureCode = new ProcedureCode(Values.NGAP_Constants__id_NGSetup);
-        initiatingMessage.criticality = new Criticality(Criticality.ASN_reject);
-        initiatingMessage.value = new OpenTypeValue(ngSetupRequest);
-
-        try {
-            return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
+    public static NGAP_PDU createNgSetupRequest(int globalGnbId, VPlmn gnbPlmn, SupportedTA[] supportedTAs) {
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
+                .addProtocolIE(createGlobalGnbId(globalGnbId, gnbPlmn), NgapCriticality.REJECT)
+                .addProtocolIE(createSupportedTAList(supportedTAs), NgapCriticality.REJECT)
+                .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE)
+                .build();
+        return ngap;
     }
 
     public static NGAP_PDU createNGAPSuccesfullOutCome() {

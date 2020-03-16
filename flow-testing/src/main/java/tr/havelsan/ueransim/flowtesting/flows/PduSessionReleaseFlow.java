@@ -20,7 +20,6 @@ import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
-import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 

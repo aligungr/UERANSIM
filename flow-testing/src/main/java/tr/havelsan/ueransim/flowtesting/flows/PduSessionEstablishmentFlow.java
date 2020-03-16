@@ -99,7 +99,6 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     private State sendPduSessionResourceSetupResponse() {
         var ngap = UeUtils.createNGAPSuccesfullOutCome();
-
         sendPDU(ngap);
 
         FlowUtils.logMessageSent();

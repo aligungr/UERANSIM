@@ -165,39 +165,13 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        var list = new ArrayList<InitialContextSetupResponse.ProtocolIEs.SEQUENCE>();
-
-        var contextSetupResponse = new InitialContextSetupResponse();
-        contextSetupResponse.protocolIEs = new InitialContextSetupResponse.ProtocolIEs();
-        contextSetupResponse.protocolIEs.valueList = list;
-
-        var item0 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item0.id = new ProtocolIE_ID(Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
-        item0.criticality = new Criticality(Criticality.ASN_ignore);
-        item0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(input.ranUeNgapId));
-
-        var item1 = new InitialContextSetupResponse.ProtocolIEs.SEQUENCE();
-        item1.id = new ProtocolIE_ID(Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
-        item1.criticality = new Criticality(Criticality.ASN_ignore);
-        item1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(amfUeNgapId));
-
-        list.add(item0);
-        list.add(item1);
-
-        NGAP_PDU ngapPdu;
-        try {
-            var successfulOutcome = new SuccessfulOutcome();
-            successfulOutcome.procedureCode =
-                    new ProcedureCode(Values.NGAP_Constants__id_InitialContextSetup);
-            successfulOutcome.criticality = new Criticality(Criticality.ASN_reject);
-            successfulOutcome.value = new OpenTypeValue(contextSetupResponse);
-
-            ngapPdu = new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, successfulOutcome);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-
-        sendPDU(ngapPdu);
+        var ngap = new NgapBuilder()
+                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
+                .withProcedure(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
+                .build();
+        sendPDU(ngap);
 
         var response = new RegistrationComplete();
         sendUplinkMessage(response);
