@@ -6,6 +6,8 @@ import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 
+import java.util.ArrayList;
+
 import static tr.havelsan.ueransim.core.Constants.NGAP_PDU_CONTENTS;
 
 public class NgapInternal {
@@ -66,11 +68,15 @@ public class NgapInternal {
             Class<?> classProtocolIEs = Class.forName(protocolIEsClassName);
             Class<?> classSequence = Class.forName(sequenceClassName);
 
-            // protocolIEs field
             var fieldProtocolIEs = procedureContent.getClass().getField("protocolIEs");
             var protocolIEs = fieldProtocolIEs.get(procedureContent);
+            var valueList = new ArrayList<>();
+            var fieldValueList = classProtocolIEs.getField("valueList");
             if (protocolIEs == null) {
                 protocolIEs = classProtocolIEs.getConstructor().newInstance();
+                fieldValueList.set(protocolIEs, valueList);
+            } else {
+                valueList = (ArrayList) fieldValueList.get(protocolIEs);
             }
             fieldProtocolIEs.set(procedureContent, protocolIEs);
 
@@ -78,6 +84,8 @@ public class NgapInternal {
             setField(sequence, "id", new ProtocolIE_ID(findConstantId(value)));
             setField(sequence, "criticality", new Criticality(criticality.getAsnValue()));
             setField(sequence, "value", new OpenTypeValue(value));
+
+            valueList.add(sequence);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
