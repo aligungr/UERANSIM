@@ -91,10 +91,6 @@ public class FlowTesting {
             return;
         }
 
-
-
-
-
         while (true) {
             Console.printDiv();
 
@@ -136,7 +132,7 @@ public class FlowTesting {
 
             if (inputType != null) {
                 String key = "input." + typeNames.get(selection - 1);
-                ctor.newInstance(sctpClient, readInputFile(key, "yaml/" + config.get(key), inputType))
+                ctor.newInstance(sctpClient, readInputFile(key, "" + config.get(key), inputType))
                         .start();
             } else {
                 ctor.newInstance(sctpClient)
@@ -172,6 +168,5 @@ public class FlowTesting {
         var inp = MtsDecoder.decode(path);
         return MtsConstruct.construct(type, ((ImplicitTypedObject) inp).getParameters(), true);
     }
-
 
 }
