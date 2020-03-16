@@ -25,10 +25,7 @@ public class FlowTesting {
     public static void main(String[] args) throws Exception {
         MtsInitializer.initMts();
 
-
-
         var scanner = new Scanner(System.in);
-
 
         var config = new LinkedHashMap<String, String>();
         var configYaml = (ImplicitTypedObject) MtsDecoder.decode("config.yaml");
