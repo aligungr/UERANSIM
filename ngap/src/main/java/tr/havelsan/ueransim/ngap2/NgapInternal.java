@@ -13,7 +13,13 @@ import static tr.havelsan.ueransim.core.Constants.NGAP_PDU_CONTENTS;
 public class NgapInternal {
 
     public static int findProcedureCode(NgapProcedure procedure) {
-        String fieldName = "NGAP_Constants__id_" + procedure.name();
+        String procedureName = procedure.name();
+        if (procedureName.endsWith("Request"))
+            procedureName = procedureName.substring(0, procedureName.length() - "Request".length());
+        else if (procedureName.endsWith("Response"))
+            procedureName = procedureName.substring(0, procedureName.length() - "Response".length());
+
+        String fieldName = "NGAP_Constants__id_" + procedureName;
         try {
             return (int) Values.class.getField(fieldName).get(null);
         } catch (Exception e) {
