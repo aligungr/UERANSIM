@@ -4,7 +4,7 @@ import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
-import tr.havelsan.ueransim.*;
+import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.EapDecoder;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -17,7 +17,10 @@ import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupRequest;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupResponse;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
@@ -310,78 +313,6 @@ public class UeUtils {
 
         String s = "1d7e00670100042e08fed1120822040109afaf250908696e7465726e6574";
         NAS_PDU nas_pdu = Ngap.perDecode(NAS_PDU.class, s);
-
-        protocolIE2.value = new OpenTypeValue(nas_pdu);
-
-        var protocolIE3 = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        protocolIE3.id = new ProtocolIE_ID(Values.NGAP_Constants__id_UserLocationInformation);
-        protocolIE3.criticality = new Criticality(Criticality.ASN_reject);
-        try {
-            protocolIE3.value =
-                    new OpenTypeValue(
-                            new UserLocationInformation(
-                                    UserLocationInformation.ASN_userLocationInformationNR,
-                                    Ngap.createUserLocationInformationNr(userLocationInformationNr)));
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-
-        uplinkNasTransport.protocolIEs.valueList =
-                asList(protocolIE0, protocolIE1, protocolIE2, protocolIE3);
-        initiatingMessage.value = new OpenTypeValue(uplinkNasTransport);
-
-        try {
-            return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, initiatingMessage);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static NGAP_PDU pduSessionReleaseResponse(int ranUeNgapId, int amfUeNgapId, UserLocationInformationNr userLocationInformationNr, int... pduSessionIds) {
-        var list = new PDUSessionResourceReleasedListRelRes();
-        list.valueList = new ArrayList<>();
-
-        for (var session : pduSessionIds) {
-            var itm = new PDUSessionResourceReleasedItemRelRes();
-            itm.pDUSessionID = new PDUSessionID(session);
-            itm.pDUSessionResourceReleaseResponseTransfer = new ContainingOctetStringValue(new PDUSessionResourceReleaseResponseTransfer());
-        }
-
-        return new NgapBuilder()
-                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-                .withProcedure(NgapProcedure.PDUSessionResourceReleaseResponse, NgapCriticality.REJECT)
-                .addRanUeNgapId(ranUeNgapId, NgapCriticality.IGNORE)
-                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
-                .addUserLocationInformationNR(userLocationInformationNr, NgapCriticality.IGNORE)
-                .addProtocolIE(list, NgapCriticality.IGNORE)
-                .build();
-    }
-
-    public static NGAP_PDU sendUplinkNas(UserLocationInformationNr userLocationInformationNr) {
-        var initiatingMessage = new InitiatingMessage();
-        initiatingMessage.procedureCode =
-                new ProcedureCode(Values.NGAP_Constants__id_UplinkNASTransport);
-        initiatingMessage.criticality = new Criticality(1);
-
-        var uplinkNasTransport = new UplinkNASTransport();
-        uplinkNasTransport.protocolIEs = new UplinkNASTransport.ProtocolIEs();
-
-        var protocolIE0 = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        protocolIE0.id = new ProtocolIE_ID(NGAP_Constants__id_RAN_UE_NGAP_ID);
-        protocolIE0.value = new OpenTypeValue(new RAN_UE_NGAP_ID(1000));
-        protocolIE0.criticality = new Criticality(Criticality.ASN_reject);
-
-        var protocolIE1 = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        protocolIE1.id = new ProtocolIE_ID(NGAP_Constants__id_AMF_UE_NGAP_ID);
-        protocolIE1.value = new OpenTypeValue(new AMF_UE_NGAP_ID(1));
-        protocolIE1.criticality = new Criticality(Criticality.ASN_reject);
-
-        var protocolIE2 = new UplinkNASTransport.ProtocolIEs.SEQUENCE();
-        protocolIE2.id = new ProtocolIE_ID(NGAP_Constants__id_NAS_PDU);
-        protocolIE2.criticality = new Criticality(Criticality.ASN_reject);
-
-        String s = "7e00670100042e08fed4120822040109afaf250908696e7465726e6574";
-        NAS_PDU nas_pdu = new NAS_PDU(Utils.hexStringToByteArray(s));
 
         protocolIE2.value = new OpenTypeValue(nas_pdu);
 

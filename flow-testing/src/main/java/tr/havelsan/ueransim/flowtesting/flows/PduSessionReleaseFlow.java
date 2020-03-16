@@ -1,17 +1,21 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapPduDescription;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.flowtesting.inputs.PduSessionReleaseInput;
+import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainer;
+import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainerType;
+import tr.havelsan.ueransim.nas.impl.ies.IEPduSessionIdentity2;
+import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionID;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleaseResponseTransfer;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleasedItemRelRes;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleasedListRelRes;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceReleaseCommand;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapPduDescription;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
@@ -43,24 +47,17 @@ public class PduSessionReleaseFlow extends BaseFlow {
         var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
 
         if (value instanceof PDUSessionResourceReleaseCommand) {
-            Console.println(
-                    Color.BLUE,
-                    "PDUSessionResourceReleaseCommand arrived, Pdu Session Resource Setup Response will return.");
+            Console.println(Color.BLUE, "PDUSessionResourceReleaseCommand arrived, Pdu Session Resource Setup Response will return.");
             return sendResponse();
         } else {
-            Console.println(
-                    Color.YELLOW,
-                    "PDUSessionResourceReleaseCommand was expected, message ignored");
+            Console.println(Color.YELLOW, "PDUSessionResourceReleaseCommand was expected, message ignored");
             return this::waitPduSessionReleaseCommand;
         }
     }
 
     private State sendResponse() {
         sendPDUSessionResourceReleased();
-
-        var uplinkNas = UeUtils.sendUplinkNas(input.userLocationInformationNr);
-        sendPDU(uplinkNas);
-
+        sendUplinkNas();
         Console.println(Color.GREEN, "PDU Session Resource Release completed");
         return abortReceiver();
     }
@@ -70,7 +67,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
         list.valueList = new ArrayList<>();
 
         var item = new PDUSessionResourceReleasedItemRelRes();
-        item.pDUSessionID = new PDUSessionID(8);
+        item.pDUSessionID = new PDUSessionID(input.pduSessionId.intValue());
         item.pDUSessionResourceReleaseResponseTransfer = new ContainingOctetStringValue(new PDUSessionResourceReleaseResponseTransfer());
 
         var releaseResponse = new NgapBuilder()
@@ -83,5 +80,24 @@ public class PduSessionReleaseFlow extends BaseFlow {
                 .build();
 
         sendPDU(releaseResponse);
+    }
+
+    private void sendUplinkNas() {
+        var uplink = new UlNasTransport();
+        uplink.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
+        uplink.payloadContainer = new IEPayloadContainer(input.payloadContainer);
+        uplink.pduSessionId = new IEPduSessionIdentity2(input.pduSessionId);
+        uplink.sNssa = input.sNssai;
+        uplink.dnn = input.dnn;
+
+        var ngapPdu = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(uplink, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
+                .build();
+        sendPDU(ngapPdu);
     }
 }
