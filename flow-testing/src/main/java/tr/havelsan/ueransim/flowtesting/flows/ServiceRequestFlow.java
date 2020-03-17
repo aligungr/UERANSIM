@@ -41,10 +41,8 @@ public class ServiceRequestFlow extends BaseFlow {
   private State sendInitialUeMessage() {
 
     var fiveg_s_tmsi = new FiveG_S_TMSI();
-    fiveg_s_tmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()},
-        6); // todo: 2 vardı
-    fiveg_s_tmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(),
-        10); // todo burda 6 vardı
+    fiveg_s_tmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()}, 6);
+    fiveg_s_tmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
     fiveg_s_tmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
     var ngSetupRequest = new NgapBuilder()

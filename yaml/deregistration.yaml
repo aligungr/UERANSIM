@@ -29,7 +29,7 @@ guti:
   tmsi:
     value: '00000001'
 ngKSI:
-  value: 3
+  value: 0
 deregistrationType:
   accessType:
     value: 1
