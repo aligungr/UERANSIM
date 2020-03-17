@@ -26,6 +26,8 @@ public class NgapInternal {
             procedureName = procedureName.substring(0, procedureName.length() - "Request".length());
         else if (procedureName.endsWith("Response"))
             procedureName = procedureName.substring(0, procedureName.length() - "Response".length());
+        else if (procedureName.endsWith("Complete"))
+            procedureName = procedureName.substring(0, procedureName.length() - "Complete".length());
         fieldName = "NGAP_Constants__id_" + procedureName;
 
         try {
