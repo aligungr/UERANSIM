@@ -90,6 +90,8 @@ public class IE5gsMobileIdentity extends InformationElement6 {
 
             return result;
         } else if (typeOfIdentity.equals(EIdentityType.TMSI)) {
+            stream.readOctetI();
+
             var res = new IE5gTmsiMobileIdentity();
             res.amfSetId = new VAmfSetId().decode(stream);
             res.amfPointer = new Bit6(stream.readOctetI());
