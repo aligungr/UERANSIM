@@ -75,7 +75,7 @@ public class ServiceRequestFlow extends BaseFlow {
 
     if (value instanceof DownlinkNASTransport) {
       Console.println(
-          Color.GREEN,
+          Color.GREEN_BOLD,
           "DownlinkNASTransport arrived, Service Request Completed.");
       return abortReceiver();
     }
