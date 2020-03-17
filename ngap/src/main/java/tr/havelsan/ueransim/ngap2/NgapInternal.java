@@ -14,12 +14,20 @@ public class NgapInternal {
 
     public static int findProcedureCode(NgapProcedure procedure) {
         String procedureName = procedure.name();
+
+        String fieldName = "NGAP_Constants__id_" + procedureName;
+        try {
+            return (int) Values.class.getField(fieldName).get(null);
+        } catch (Exception ignored) {
+
+        }
+
         if (procedureName.endsWith("Request"))
             procedureName = procedureName.substring(0, procedureName.length() - "Request".length());
         else if (procedureName.endsWith("Response"))
             procedureName = procedureName.substring(0, procedureName.length() - "Response".length());
+        fieldName = "NGAP_Constants__id_" + procedureName;
 
-        String fieldName = "NGAP_Constants__id_" + procedureName;
         try {
             return (int) Values.class.getField(fieldName).get(null);
         } catch (Exception e) {
