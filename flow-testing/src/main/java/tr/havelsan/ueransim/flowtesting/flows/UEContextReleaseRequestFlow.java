@@ -1,15 +1,23 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
+import static tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc.ASN_om_intervention;
+
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import tr.havelsan.ueransim.flowtesting.inputs.UEContextReleaseRequestInput;
+import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
+import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapPduDescription;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
-import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
@@ -22,6 +30,15 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
     this.input = input;
   }
 
+  public static NGAP_PDU ueContextReleaseComplete(long ranUeNgapId, long amfUeNgapId) {
+
+    return new NgapBuilder().withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
+        .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
+        .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
+        .addRanUeNgapId(ranUeNgapId, NgapCriticality.REJECT).build();
+
+  }
+
   @Override
   public State main(Message message) throws Exception {
 
@@ -29,15 +46,22 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
   }
 
   private State sendNgSetupRequest() throws InvalidStructureException {
-    var ngSetupRequest = UeUtils.createUEContextRelease(input.ranUeNgapId, input.amfUeNgapId);
-    sendNgapMessage(ngSetupRequest);
-    return this::waitPduSessionReleaseCommand;
-  }
 
-  public void sendNgapMessage(NGAP_PDU ngapPdu) {
-    FlowUtils.logNgapMessageWillSend(ngapPdu);
-    sendPDU(ngapPdu);
-    FlowUtils.logMessageSent();
+    var ueContextRelease = new UEContextReleaseRequest();
+    ueContextRelease.protocolIEs = new UEContextReleaseRequest.ProtocolIEs();
+
+    var misc = new CauseMisc(ASN_om_intervention);
+    var cause = new Cause(Cause.ASN_misc, misc);
+
+    var ngSetupRequest = new NgapBuilder().withDescription(NgapPduDescription.INITIATING_MESSAGE)
+        .withProcedure(NgapProcedure.UEContextReleaseRequest,
+            NgapCriticality.IGNORE)
+        .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+        .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+        .addProtocolIE(cause, NgapCriticality.IGNORE).build();
+
+    sendPDU(ngSetupRequest);
+    return this::waitPduSessionReleaseCommand;
   }
 
   private State waitPduSessionReleaseCommand(Message message) {
@@ -59,9 +83,9 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
 
   private State ueContextReleaseComplete() {
 
-    var ngSetupRequest = UeUtils.ueContextReleaseComplete(input.ranUeNgapId, input.amfUeNgapId);
+    var ngSetupRequest = ueContextReleaseComplete(input.ranUeNgapId, input.amfUeNgapId);
 
-    sendNgapMessage(ngSetupRequest);
+    sendPDU(ngSetupRequest);
 
     Console.println(
         Color.GREEN,
@@ -69,6 +93,5 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
 
     return abortReceiver();
   }
-
 
 }

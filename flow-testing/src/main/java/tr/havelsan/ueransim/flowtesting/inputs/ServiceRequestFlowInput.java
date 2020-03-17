@@ -1,22 +1,20 @@
 package tr.havelsan.ueransim.flowtesting.inputs;
 
-import tr.havelsan.ueransim.sim.ue.UserLocationInformationNr;
+import tr.havelsan.ueransim.nas.impl.ies.IE5gTmsiMobileIdentity;
+import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
+
 
 public class ServiceRequestFlowInput {
 
   public final long ranUeNgapId;
   public final UserLocationInformationNr userLocationInformationNr;
-  public final String amfSetId;
-  public final String amfPointer;
-  public final String fiveg_tmsi;
+  public final IE5gTmsiMobileIdentity tmsi;
 
   public ServiceRequestFlowInput(long ranUeNgapId,
-      UserLocationInformationNr userLocationInformationNr, String amfSetId,
-      String amfPointer, String fiveg_tmsi) {
+      UserLocationInformationNr userLocationInformationNr,
+      IE5gTmsiMobileIdentity tmsi) {
     this.ranUeNgapId = ranUeNgapId;
     this.userLocationInformationNr = userLocationInformationNr;
-    this.amfSetId = amfSetId;
-    this.amfPointer = amfPointer;
-    this.fiveg_tmsi = fiveg_tmsi;
+    this.tmsi = tmsi;
   }
 }
