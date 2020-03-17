@@ -6,6 +6,11 @@ import static tr.havelsan.ueransim.ngap2.NgapCriticality.REJECT;
 import static tr.havelsan.ueransim.ngap2.NgapPduDescription.INITIATING_MESSAGE;
 
 import tr.havelsan.ueransim.flowtesting.inputs.ServiceRequestFlowInput;
+import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
+import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier.ETypeOfSecurityContext;
+import tr.havelsan.ueransim.nas.impl.ies.IEServiceType;
+import tr.havelsan.ueransim.nas.impl.ies.IEServiceType.EServiceType;
+import tr.havelsan.ueransim.nas.impl.messages.ServiceRequest;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMFPointer;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMFSetID;
 import tr.havelsan.ueransim.ngap.ngap_ies.FiveG_S_TMSI;
@@ -37,22 +42,25 @@ public class ServiceRequestFlow extends BaseFlow {
     return sendInitialUeMessage();
   }
 
-
   private State sendInitialUeMessage() {
+    var serviceRequest = new ServiceRequest();
+    serviceRequest.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+    serviceRequest.serviceType = new IEServiceType(EServiceType.SIGNALLING);
+    serviceRequest.tmsi = input.tmsi;
 
-    var fiveg_s_tmsi = new FiveG_S_TMSI();
-    fiveg_s_tmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()}, 6);
-    fiveg_s_tmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
-    fiveg_s_tmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
+    var fivegTmsi = new FiveG_S_TMSI();
+    fivegTmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()}, 6);
+    fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
+    fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
     var ngSetupRequest = new NgapBuilder()
         .withDescription(INITIATING_MESSAGE)
         .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
         .addRanUeNgapId(input.ranUeNgapId, REJECT)
-        .addNasPdu("7e004c070007f455aa00000001", REJECT)
+        .addNasPdu(serviceRequest, REJECT)
         .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
         .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
-        .addProtocolIE(fiveg_s_tmsi, REJECT)
+        .addProtocolIE(fivegTmsi, REJECT)
         .build();
     sendPDU(ngSetupRequest);
 
