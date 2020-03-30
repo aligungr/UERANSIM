@@ -32,8 +32,7 @@ public class UeUtils {
     }
 
     public static NasMessage getNasMessage(DownlinkNASTransport message) {
-        var protocolIEs =
-                (List<DownlinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList;
+        var protocolIEs = (List<DownlinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList;
 
         NAS_PDU nasPayload = null;
         for (var protocolIE : protocolIEs) {

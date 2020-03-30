@@ -5,3 +5,6 @@ input.NgSetupFlow: ngsetup.yaml
 input.RegistrationFlow: registration.yaml
 input.PduSessionEstablishmentFlow: pduSessionEstablishment.yaml
 input.PduSessionReleaseFlow: pduSessionRelease.yaml
+input.UEContextReleaseRequestFlow: ueContextReleaseRequest.yaml
+input.ServiceRequestFlow: serviceRequest.yaml
+input.DeregistrationFlow: deregistration.yaml
