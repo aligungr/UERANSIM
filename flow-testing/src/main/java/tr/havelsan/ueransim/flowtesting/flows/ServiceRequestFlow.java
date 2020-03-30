@@ -29,56 +29,56 @@ import tr.havelsan.ueransim.utils.Console;
 
 public class ServiceRequestFlow extends BaseFlow {
 
-  final ServiceRequestFlowInput input;
+    private final ServiceRequestFlowInput input;
 
-  public ServiceRequestFlow(SCTPClient sctpClient, ServiceRequestFlowInput input) {
-    super(sctpClient);
-    this.input = input;
-  }
-
-  @Override
-  public State main(Message message) {
-
-    return sendInitialUeMessage();
-  }
-
-  private State sendInitialUeMessage() {
-    var serviceRequest = new ServiceRequest();
-    serviceRequest.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
-    serviceRequest.serviceType = new IEServiceType(EServiceType.SIGNALLING);
-    serviceRequest.tmsi = input.tmsi;
-
-    var fivegTmsi = new FiveG_S_TMSI();
-    fivegTmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()}, 6);
-    fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
-    fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
-
-    var ngSetupRequest = new NgapBuilder()
-        .withDescription(INITIATING_MESSAGE)
-        .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
-        .addRanUeNgapId(input.ranUeNgapId, REJECT)
-        .addNasPdu(serviceRequest, REJECT)
-        .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
-        .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
-        .addProtocolIE(fivegTmsi, REJECT)
-        .build();
-    sendPDU(ngSetupRequest);
-
-    return this::waitForDownLinkNasTransport;
-  }
-
-  private State waitForDownLinkNasTransport(Message message) {
-    var pdu = message.getAsPDU();
-    FlowUtils.logReceivedMessage(pdu);
-
-    var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
-
-    if (value instanceof DownlinkNASTransport) {
-      Console.println(
-          Color.GREEN_BOLD,
-          "DownlinkNASTransport arrived, Service Request Completed.");
-      return abortReceiver();
+    public ServiceRequestFlow(SCTPClient sctpClient, ServiceRequestFlowInput input) {
+        super(sctpClient);
+        this.input = input;
     }
-    return this::waitForDownLinkNasTransport;
-  }
+
+    @Override
+    public State main(Message message) {
+        return sendMessage();
+    }
+
+    private State sendMessage() {
+        var serviceRequest = new ServiceRequest();
+        serviceRequest.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+        serviceRequest.serviceType = new IEServiceType(EServiceType.SIGNALLING);
+        serviceRequest.tmsi = input.tmsi;
+
+        var fivegTmsi = new FiveG_S_TMSI();
+        fivegTmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()}, 6);
+        fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
+        fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
+
+        var ngSetupRequest = new NgapBuilder()
+                .withDescription(INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, REJECT)
+                .addNasPdu(serviceRequest, REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
+                .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
+                .addProtocolIE(fivegTmsi, REJECT)
+                .build();
+        sendPDU(ngSetupRequest);
+
+        return this::waitForDownlinkNasTransport;
+    }
+
+    private State waitForDownlinkNasTransport(Message message) {
+        var pdu = message.getAsPDU();
+        FlowUtils.logReceivedMessage(pdu);
+
+        var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
+
+        if (value instanceof DownlinkNASTransport) {
+            Console.println(Color.GREEN_BOLD, "DownlinkNASTransport arrived, Service Request Completed.");
+            return abortReceiver();
+        } else {
+            Console.println(Color.YELLOW, "unexpected message ignored");
+        }
+
+        return this::waitForDownlinkNasTransport;
+    }
 }

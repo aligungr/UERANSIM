@@ -23,75 +23,59 @@ import tr.havelsan.ueransim.utils.Console;
 
 public class UEContextReleaseRequestFlow extends BaseFlow {
 
-  UEContextReleaseRequestInput input;
+    private final UEContextReleaseRequestInput input;
 
-  public UEContextReleaseRequestFlow(SCTPClient sctpClient, UEContextReleaseRequestInput input) {
-    super(sctpClient);
-    this.input = input;
-  }
-
-  public static NGAP_PDU ueContextReleaseComplete(long ranUeNgapId, long amfUeNgapId) {
-
-    return new NgapBuilder().withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-        .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
-        .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
-        .addRanUeNgapId(ranUeNgapId, NgapCriticality.REJECT).build();
-
-  }
-
-  @Override
-  public State main(Message message) throws Exception {
-
-    return sendNgSetupRequest();
-  }
-
-  private State sendNgSetupRequest() throws InvalidStructureException {
-
-    var ueContextRelease = new UEContextReleaseRequest();
-    ueContextRelease.protocolIEs = new UEContextReleaseRequest.ProtocolIEs();
-
-    var misc = new CauseMisc(ASN_om_intervention);
-    var cause = new Cause(Cause.ASN_misc, misc);
-
-    var ngSetupRequest = new NgapBuilder().withDescription(NgapPduDescription.INITIATING_MESSAGE)
-        .withProcedure(NgapProcedure.UEContextReleaseRequest,
-            NgapCriticality.IGNORE)
-        .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-        .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
-        .addProtocolIE(cause, NgapCriticality.IGNORE).build();
-
-    sendPDU(ngSetupRequest);
-    return this::waitPduSessionReleaseCommand;
-  }
-
-  private State waitPduSessionReleaseCommand(Message message) {
-
-    var pdu = message.getAsPDU();
-    FlowUtils.logReceivedMessage(pdu);
-
-    var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
-
-    if (value instanceof UEContextReleaseCommand) {
-      Console.println(
-          Color.BLUE,
-          "UEContextReleaseCommand arrived, UEContextReleaseComplete will return");
-      return ueContextReleaseComplete();
+    public UEContextReleaseRequestFlow(SCTPClient sctpClient, UEContextReleaseRequestInput input) {
+        super(sctpClient);
+        this.input = input;
     }
 
-    return this::waitPduSessionReleaseCommand;
-  }
+    @Override
+    public State main(Message message) throws Exception {
+        return sendRequest();
+    }
 
-  private State ueContextReleaseComplete() {
+    private State sendRequest() throws InvalidStructureException {
+        var misc = new CauseMisc(ASN_om_intervention);
+        var cause = new Cause(Cause.ASN_misc, misc);
 
-    var ngSetupRequest = ueContextReleaseComplete(input.ranUeNgapId, input.amfUeNgapId);
+        var ngSetupRequest = new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
+                .addProtocolIE(cause, NgapCriticality.IGNORE)
+                .build();
 
-    sendPDU(ngSetupRequest);
+        sendPDU(ngSetupRequest);
+        return this::waitPduSessionReleaseCommand;
+    }
 
-    Console.println(
-        Color.GREEN,
-        "UEContextRelease completed");
+    private State waitPduSessionReleaseCommand(Message message) {
+        var pdu = message.getAsPDU();
+        FlowUtils.logReceivedMessage(pdu);
 
-    return abortReceiver();
-  }
+        var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
 
+        if (value instanceof UEContextReleaseCommand) {
+            Console.println(Color.BLUE, "UEContextReleaseCommand arrived, UEContextReleaseComplete will return");
+            return ueContextReleaseComplete();
+        } else {
+            Console.println(Color.YELLOW, "unexpected message ignored");
+            return this::waitPduSessionReleaseCommand;
+        }
+    }
+
+    private State ueContextReleaseComplete() {
+        var ngSetupRequest = new NgapBuilder()
+                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
+                .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .build();
+        sendPDU(ngSetupRequest);
+
+        Console.println(Color.GREEN, "UEContextRelease completed");
+        return abortReceiver();
+    }
 }
