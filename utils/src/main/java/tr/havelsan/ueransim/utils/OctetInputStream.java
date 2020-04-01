@@ -1,10 +1,7 @@
 package tr.havelsan.ueransim.utils;
 
 import tr.havelsan.ueransim.utils.bits.Bit;
-import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.utils.octets.Octet2;
-import tr.havelsan.ueransim.utils.octets.Octet3;
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.utils.octets.*;
 
 public class OctetInputStream {
     private final byte[] data;
@@ -16,7 +13,7 @@ public class OctetInputStream {
         this.data = data;
         this.length = data.length;
         this.index = 0;
-        this.isBigEndian = true;
+        this.isBigEndian = isBigEndian;
     }
 
     public OctetInputStream(byte[] data) {
@@ -112,6 +109,7 @@ public class OctetInputStream {
     }
 
     /************ Read Octet Array ************/
+
     public int[] readOctetArrayI(int length) {
         int[] res = new int[length];
         for (int i = 0; i < length; i++)
@@ -181,6 +179,16 @@ public class OctetInputStream {
         return new Octet3(readOctet3I());
     }
 
+    /************ Read Octet 4 ************/
+
+    public Octet4 readOctet4() {
+        var octets = readOctetArray(4);
+        if (isBigEndian) {
+            return new Octet4(octets[0], octets[1], octets[2], octets[3]);
+        } else {
+            return new Octet4(octets[3], octets[2], octets[1], octets[0]);
+        }
+    }
 
     /************ Others ************/
 

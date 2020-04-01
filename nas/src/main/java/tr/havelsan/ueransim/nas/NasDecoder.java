@@ -1,18 +1,16 @@
 package tr.havelsan.ueransim.nas;
 
+import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement1;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
+import tr.havelsan.ueransim.nas.core.messages.SecurityProtectedNasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.*;
-import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
-import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.bits.Bit4;
-import tr.havelsan.ueransim.nas.impl.enums.*;
 
 public class NasDecoder {
 
@@ -27,15 +25,17 @@ public class NasDecoder {
 
         if (epd.equals(EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES)) {
             var sht = ESecurityHeaderType.fromValue(stream.readOctetI());
-            if (!sht.equals(ESecurityHeaderType.NOT_PROTECTED))
-                throw new NotImplementedException("security protected 5GS NAS messages not implemented yet");
-            var messageType = EMessageType.fromValue(stream.readOctetI());
+            if (sht.equals(ESecurityHeaderType.NOT_PROTECTED)) {
+                var messageType = EMessageType.fromValue(stream.readOctetI());
 
-            PlainMmMessage plainMmMessage = decodePlainMmMessage(stream, messageType);
-            plainMmMessage.securityHeaderType = sht;
-            plainMmMessage.messageType = messageType;
+                PlainMmMessage plainMmMessage = decodePlainMmMessage(stream, messageType);
+                plainMmMessage.securityHeaderType = sht;
+                plainMmMessage.messageType = messageType;
 
-            nasMessage = plainMmMessage;
+                nasMessage = plainMmMessage;
+            } else {
+                nasMessage = decodeSecurityProtectedNasMessage(stream, epd, sht);
+            }
         } else {
             var pduSessionId = EPduSessionIdentity.fromValue(stream.readOctetI());
             var pti = EProcedureTransactionIdentity.fromValue(stream.readOctetI());
@@ -161,6 +161,16 @@ public class NasDecoder {
         }
 
         message = message.decodeMessage(stream);
+        return message;
+    }
+
+    private static SecurityProtectedNasMessage decodeSecurityProtectedNasMessage(OctetInputStream stream, EExtendedProtocolDiscriminator epd, ESecurityHeaderType sht) {
+        var message = new SecurityProtectedNasMessage();
+        message.extendedProtocolDiscriminator = epd;
+        message.securityHeaderType = sht;
+        message.messageAuthenticationCode = stream.readOctet4();
+        message.sequenceNumber = stream.readOctet();
+        message.plainNasMessage = nasPdu(stream);
         return message;
     }
 

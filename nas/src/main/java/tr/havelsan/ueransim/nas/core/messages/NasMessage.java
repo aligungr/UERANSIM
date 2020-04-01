@@ -22,8 +22,6 @@ import java.util.Map;
 public abstract class NasMessage extends ProtocolValue {
     public EExtendedProtocolDiscriminator extendedProtocolDiscriminator;
 
-    public abstract NasMessage decodeMessage(OctetInputStream stream);
-
     public void encodeMessage(OctetOutputStream stream) {
         stream.writeOctet(extendedProtocolDiscriminator.intValue());
     }

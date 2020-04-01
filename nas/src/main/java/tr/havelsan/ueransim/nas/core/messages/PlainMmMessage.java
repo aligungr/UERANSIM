@@ -13,6 +13,7 @@ public abstract class PlainMmMessage extends NasMessage {
 
     public PlainMmMessage(EMessageType messageType) {
         super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
+
         this.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;
         this.messageType = messageType;
 
@@ -20,10 +21,8 @@ public abstract class PlainMmMessage extends NasMessage {
             throw new IncorrectImplementationException("message type and super classes are inconsistent");
     }
 
-    @Override
     public final PlainMmMessage decodeMessage(OctetInputStream stream) {
-        var mess = (PlainMmMessage) decodeViaBuilder(stream);
-        return mess;
+        return (PlainMmMessage) decodeViaBuilder(stream);
     }
 
     public final void encodeMessage(OctetOutputStream stream) {
