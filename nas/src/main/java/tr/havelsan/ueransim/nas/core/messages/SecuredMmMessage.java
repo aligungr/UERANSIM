@@ -6,13 +6,13 @@ import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
-public class SecurityProtectedNasMessage extends NasMessage {
+public class SecuredMmMessage extends NasMessage {
     public ESecurityHeaderType securityHeaderType;
     public Octet4 messageAuthenticationCode;
     public Octet sequenceNumber;
     public NasMessage plainNasMessage;
 
-    public SecurityProtectedNasMessage() {
+    public SecuredMmMessage() {
         super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
 
         this.securityHeaderType = ESecurityHeaderType.NOT_PROTECTED;

@@ -6,7 +6,7 @@ import tr.havelsan.ueransim.nas.core.ies.InformationElement1;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
-import tr.havelsan.ueransim.nas.core.messages.SecurityProtectedNasMessage;
+import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
@@ -164,8 +164,8 @@ public class NasDecoder {
         return message;
     }
 
-    private static SecurityProtectedNasMessage decodeSecurityProtectedNasMessage(OctetInputStream stream, EExtendedProtocolDiscriminator epd, ESecurityHeaderType sht) {
-        var message = new SecurityProtectedNasMessage();
+    private static SecuredMmMessage decodeSecurityProtectedNasMessage(OctetInputStream stream, EExtendedProtocolDiscriminator epd, ESecurityHeaderType sht) {
+        var message = new SecuredMmMessage();
         message.extendedProtocolDiscriminator = epd;
         message.securityHeaderType = sht;
         message.messageAuthenticationCode = stream.readOctet4();
