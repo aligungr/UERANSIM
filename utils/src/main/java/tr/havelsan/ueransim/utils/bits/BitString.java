@@ -41,6 +41,10 @@ public final class BitString {
         return res;
     }
 
+    public static BitString fromHex(String hex) {
+        return from(new OctetString(hex));
+    }
+
     public void set(int index) {
         set(index, true);
     }
