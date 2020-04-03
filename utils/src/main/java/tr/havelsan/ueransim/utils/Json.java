@@ -42,4 +42,9 @@ public final class Json {
         makeGson();
         return gson.toJson(obj);
     }
+
+    public static <T> T fromJson(String json, Class<T> typeOfT) {
+        makeGson();
+        return gson.fromJson(json, typeOfT);
+    }
 }
