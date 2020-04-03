@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.utils.bits;
 
-import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.Octet;
 
 import java.util.Arrays;
 
@@ -66,6 +66,13 @@ public class BitN {
      */
     public final int intValue() {
         return _intValue;
+    }
+
+    /*
+     * Returns bool value of the underlying bit representation.
+     * */
+    public final boolean boolValue() {
+        return intValue() != 0;
     }
 
     /**
