@@ -10,6 +10,8 @@ import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.lang.reflect.Type;
+
 public final class Json {
     private static Gson gson;
 
@@ -43,7 +45,7 @@ public final class Json {
         return gson.toJson(obj);
     }
 
-    public static <T> T fromJson(String json, Class<T> typeOfT) {
+    public static <T> T fromJson(String json, Type typeOfT) {
         makeGson();
         return gson.fromJson(json, typeOfT);
     }

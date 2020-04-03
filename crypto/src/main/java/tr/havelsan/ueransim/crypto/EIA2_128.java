@@ -1,12 +1,16 @@
 package tr.havelsan.ueransim.crypto;
 
+import com.google.gson.reflect.TypeToken;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.macs.CMac;
+import tr.havelsan.ueransim.utils.Json;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EIA2_128 {
 
@@ -19,8 +23,7 @@ public class EIA2_128 {
 
     static List<TestData> generateTestData() {
         var list = new ArrayList<TestData>();
-
-        // todo
+        list.add(TestData.fromResource("crypto/testdata/eia2_128/test1.txt"));
         return list;
     }
 
@@ -70,35 +73,19 @@ public class EIA2_128 {
     }
 
     static class TestData {
-        private InputParams params;
-        private BitString key;
-        private BitString result;
+        InputParams params;
+        BitString key;
+        BitString result;
 
-        public InputParams getParams() {
-            return params;
-        }
+        public static TestData fromResource(String testFile) {
+            String json = Utils.getResourceString(testFile);
 
-        public TestData setParams(InputParams params) {
-            this.params = params;
-            return this;
-        }
+            Map<String, String> obj = Json.fromJson(json, new TypeToken<Map<String, String>>() {
+            }.getType());
 
-        public BitString getKey() {
-            return key;
-        }
 
-        public TestData setKey(BitString key) {
-            this.key = key;
-            return this;
-        }
-
-        public BitString getResult() {
-            return result;
-        }
-
-        public TestData setResult(BitString result) {
-            this.result = result;
-            return this;
+            // todo
+            return null;
         }
     }
 }
