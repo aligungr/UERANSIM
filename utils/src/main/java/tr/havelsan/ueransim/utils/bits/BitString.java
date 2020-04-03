@@ -4,13 +4,14 @@ import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-import java.util.BitSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class BitString {
-    private final BitSet bitSet;
+    private final List<Boolean> bits;
 
     public BitString() {
-        this.bitSet = new BitSet();
+        this.bits = new ArrayList<>();
     }
 
     public static void copy(BitString source, int sourceOffset, BitString destination, int destinationOffset, int length) {
@@ -19,22 +20,21 @@ public final class BitString {
         }
     }
 
-    public static BitString from(OctetN octets, boolean useBigEndian, boolean firstMsb) {
-        return from(octets.toOctetArray(useBigEndian), firstMsb);
+    public static BitString from(OctetN octets, boolean useBigEndian) {
+        return from(octets.toOctetArray(useBigEndian));
     }
 
-    public static BitString from(OctetString octetString, boolean firstMsb) {
-        return from(octetString.getAsArray(), firstMsb);
+    public static BitString from(OctetString octetString) {
+        return from(octetString.getAsArray());
     }
 
-    public static BitString from(Octet[] octets, boolean firstMsb) {
+    public static BitString from(Octet[] octets) {
         var res = new BitString();
         for (int i = 0; i < octets.length; i++) {
             var octet = octets[i];
             for (int j = 0; j < 8; j++) {
                 boolean bit = octet.getBitB(j);
-                int k = firstMsb ? 7 - j : j;
-                res.set(i * 8 + k, bit);
+                res.set(i * 8 + (7 - j), bit);
             }
         }
         return res;
@@ -44,8 +44,18 @@ public final class BitString {
         set(index, true);
     }
 
+    private void expand(int requiredIndex) {
+        if (bits.size() <= requiredIndex) {
+            int delta = requiredIndex - bits.size() + 1;
+            for (int i = 0; i < delta; i++) {
+                bits.add(false);
+            }
+        }
+    }
+
     public void set(int index, boolean value) {
-        bitSet.set(index, value);
+        expand(index);
+        bits.set(index, value);
     }
 
     public void set(int fromIndex, int toIndex) {
@@ -85,7 +95,8 @@ public final class BitString {
     }
 
     public boolean getB(int index) {
-        return bitSet.get(index);
+        expand(index);
+        return bits.get(index);
     }
 
     public int getI(int index) {
@@ -93,33 +104,28 @@ public final class BitString {
     }
 
     public int bitLength() {
-        return bitSet.cardinality();
+        return bits.size();
     }
 
     public int octetLength() {
         return (int) Math.ceil(bitLength() / 8.0);
     }
 
-    public int[] toIntArray(boolean firstMsb) {
+    public int[] toIntArray() {
         int[] res = new int[octetLength()];
         for (int i = 0; i < res.length; i++) {
             for (int j = 0; j < 8; j++) {
                 boolean bit = getB(i * 8 + j);
                 if (bit) {
-                    int k = firstMsb ? 7 - j : j;
-                    res[i] |= 0b1 << k;
+                    res[i] |= 0b1 << (7 - j);
                 }
             }
         }
         return res;
     }
 
-    public int[] toIntArray() {
-        return toIntArray(true);
-    }
-
-    public byte[] toByteArray(boolean firstMsb) {
-        int[] arr = toIntArray(firstMsb);
+    public byte[] toByteArray() {
+        int[] arr = toIntArray();
         byte[] res = new byte[arr.length];
         for (int i = 0; i < arr.length; i++) {
             res[i] = (byte) (arr[i] & 0xFF);
@@ -127,12 +133,8 @@ public final class BitString {
         return res;
     }
 
-    public byte[] toByteArray() {
-        return toByteArray(true);
-    }
-
-    public Octet[] toOctetArray(boolean firstMsb) {
-        int[] arr = toIntArray(firstMsb);
+    public Octet[] toOctetArray() {
+        int[] arr = toIntArray();
         Octet[] res = new Octet[arr.length];
         for (int i = 0; i < arr.length; i++) {
             res[i] = new Octet(arr[i]);
@@ -140,36 +142,35 @@ public final class BitString {
         return res;
     }
 
-    public Octet[] toOctetArray() {
-        return toOctetArray(true);
-    }
-
-    public OctetString toOctetString(boolean firstMsb) {
-        return new OctetString(toOctetArray(firstMsb));
-    }
-
     public OctetString toOctetString() {
-        return toOctetString(true);
+        return new OctetString(toOctetArray());
     }
 
     public String toBinaryString() {
+        return toBinaryString(false);
+    }
+
+    public String toBinaryString(boolean withSpace) {
         var sb = new StringBuilder();
-        for (int i = 0; i < bitLength(); i++) {
+        int length = bitLength();
+        for (int i = 0; i < length; i++) {
             sb.append(getI(i));
+
+            if (withSpace) {
+                if ((i + 1) % 8 == 0) {
+                    sb.append(' ');
+                }
+            }
         }
         return sb.toString();
     }
 
     public String toHexString() {
-        return toHexString(true);
-    }
-
-    public String toHexString(boolean firstMsb) {
-        return toOctetString(firstMsb).toHexString();
+        return toOctetString().toHexString();
     }
 
     @Override
     public String toString() {
-        return toBinaryString();
+        return toBinaryString(true);
     }
 }
