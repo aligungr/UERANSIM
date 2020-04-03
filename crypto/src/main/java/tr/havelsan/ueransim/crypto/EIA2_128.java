@@ -23,7 +23,7 @@ public class EIA2_128 {
 
     static List<TestData> generateTestData() {
         var list = new ArrayList<TestData>();
-        list.add(TestData.fromResource("crypto/testdata/eia2_128/test1.txt"));
+        list.add(TestData.fromResource("crypto/testdata/eia2_128/test1.json"));
         return list;
     }
 
@@ -78,14 +78,20 @@ public class EIA2_128 {
         BitString result;
 
         public static TestData fromResource(String testFile) {
-            String json = Utils.getResourceString(testFile);
-
-            Map<String, String> obj = Json.fromJson(json, new TypeToken<Map<String, String>>() {
+            Map<String, String> json = Json.fromJson(Utils.getResourceString(testFile), new TypeToken<Map<String, String>>() {
             }.getType());
 
+            var inputParams = new InputParams();
+            inputParams.count = BitString.fromHex(json.get("count").replace(" ", ""));
+            inputParams.bearer = BitString.fromHex(json.get("bearer").replace(" ", ""));
+            inputParams.direction = new Bit(Integer.parseInt(json.get("direction")));
+            inputParams.message = BitString.fromHex(json.get("message").replace(" ", ""));
 
-            // todo
-            return null;
+            var testData = new TestData();
+            testData.params = inputParams;
+            testData.key = BitString.fromHex(json.get("key").replace(" ", ""));
+            testData.result = BitString.fromHex(json.get("result").replace(" ", ""));
+            return testData;
         }
     }
 }
