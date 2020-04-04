@@ -29,6 +29,8 @@ public class EIA2_128 {
         String[] testFiles = {
                 "crypto/testdata/eia2_128/test1.json",
                 "crypto/testdata/eia2_128/test2.json",
+                "crypto/testdata/eia2_128/test3.json",
+                "crypto/testdata/eia2_128/test4.json",
                 "crypto/testdata/eia2_128/test5.json"
         };
 
