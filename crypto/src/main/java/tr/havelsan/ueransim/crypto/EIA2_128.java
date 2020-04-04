@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.crypto;
 
 import com.google.gson.reflect.TypeToken;
-import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
@@ -18,18 +17,19 @@ public class EIA2_128 {
     public static BitString computeMac(InputParams inputParams, BitString key) {
         var cipher = new AESEngine();
         int blockSize = 16;
-        byte[] message = inputParams.generateInput().toByteArray();
         byte[] ik = key.toByteArray();
         int macSize = 4;
-
+        byte[] message = inputParams.generateInput().toByteArray();
         byte[] result = CMac.computeMac(cipher, blockSize, message, ik, macSize);
+
         return BitString.from(result);
     }
 
     static List<TestData> generateTestData() {
         String[] testFiles = {
                 "crypto/testdata/eia2_128/test1.json",
-                "crypto/testdata/eia2_128/test2.json"
+                "crypto/testdata/eia2_128/test2.json",
+                "crypto/testdata/eia2_128/test5.json"
         };
 
         var list = new ArrayList<TestData>();
@@ -76,7 +76,7 @@ public class EIA2_128 {
 
             BitString m = new BitString();
             BitString.copy(count, 0, m, 0, 32);
-            BitString.copy(bearer, 0, m, 32, 5);
+            BitString.copy(bearer, bearer.bitLength() - 5, m, 32, 5);
             m.set(37, direction);
             m.clear(38, 63);
             BitString.copy(message, 0, m, 64, message.bitLength());

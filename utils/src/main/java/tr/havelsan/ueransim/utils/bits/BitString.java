@@ -61,6 +61,14 @@ public final class BitString {
         return res;
     }
 
+    public static BitString reverse(BitString bitString) {
+        var res = new BitString();
+        for (int i = 0; i < bitString.bitLength(); i++) {
+            res.set(bitString.bitLength() - i - 1, bitString.getB(i));
+        }
+        return res;
+    }
+
     public void set(int index) {
         set(index, true);
     }
@@ -186,8 +194,12 @@ public final class BitString {
         return sb.toString();
     }
 
+    public String toHexString(boolean withSpace) {
+        return toOctetString().toHexString(withSpace);
+    }
+
     public String toHexString() {
-        return toOctetString().toHexString();
+        return toHexString(false);
     }
 
     @Override
