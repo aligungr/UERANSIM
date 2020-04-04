@@ -41,8 +41,24 @@ public final class BitString {
         return res;
     }
 
+    public static BitString from(byte[] octets) {
+        return from(new OctetString(octets));
+    }
+
     public static BitString fromHex(String hex) {
         return from(new OctetString(hex));
+    }
+
+    public static BitString xor(BitString a, BitString b) {
+        if (a.bitLength() != b.bitLength()) {
+            throw new IllegalArgumentException("bit lengths must be the same");
+        }
+        int length = a.bitLength();
+        BitString res = new BitString();
+        for (int i = 0; i < length; i++) {
+            res.set(i, a.getB(i) ^ b.getB(i));
+        }
+        return res;
     }
 
     public void set(int index) {

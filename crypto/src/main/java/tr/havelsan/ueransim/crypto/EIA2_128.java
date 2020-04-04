@@ -1,12 +1,13 @@
 package tr.havelsan.ueransim.crypto;
 
 import com.google.gson.reflect.TypeToken;
+import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.macs.CMac;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +15,27 @@ import java.util.Map;
 
 public class EIA2_128 {
 
-    public static BitString computeMac(InputParams params, BitString key) {
-        CMac cmac = new CMac(new AESEngine());
+    public static BitString computeMac(InputParams inputParams, BitString key) {
+        var cipher = new AESEngine();
+        int blockSize = 16;
+        byte[] message = inputParams.generateInput().toByteArray();
+        byte[] ik = key.toByteArray();
+        int macSize = 4;
 
-        // todo
-        return new BitString();
+        byte[] result = CMac.computeMac(cipher, blockSize, message, ik, macSize);
+        return BitString.from(result);
     }
 
     static List<TestData> generateTestData() {
+        String[] testFiles = {
+                "crypto/testdata/eia2_128/test1.json",
+                "crypto/testdata/eia2_128/test2.json"
+        };
+
         var list = new ArrayList<TestData>();
-        list.add(TestData.fromResource("crypto/testdata/eia2_128/test1.json"));
+        for (String testFile : testFiles) {
+            list.add(TestData.fromResource(testFile));
+        }
         return list;
     }
 
@@ -73,6 +85,7 @@ public class EIA2_128 {
     }
 
     static class TestData {
+        String testFile;
         InputParams params;
         BitString key;
         BitString result;
@@ -88,6 +101,7 @@ public class EIA2_128 {
             inputParams.message = BitString.fromHex(json.get("message").replace(" ", ""));
 
             var testData = new TestData();
+            testData.testFile = testFile;
             testData.params = inputParams;
             testData.key = BitString.fromHex(json.get("key").replace(" ", ""));
             testData.result = BitString.fromHex(json.get("result").replace(" ", ""));
