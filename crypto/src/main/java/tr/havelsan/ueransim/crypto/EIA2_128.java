@@ -3,21 +3,44 @@ package tr.havelsan.ueransim.crypto;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import tr.havelsan.ueransim.utils.bits.Bit;
+import tr.havelsan.ueransim.utils.bits.Bit5;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class EIA2_128 {
     private static final int BLOCK_SIZE = 16;
     private static final int MAC_SIZE = 4;
     private static final int POLY = 0x87;
 
-    public static BitString computeMac(InputParams inputParams, BitString key) {
-        if (key.bitLength() != BLOCK_SIZE * 8) {
-            throw new IllegalArgumentException("expected key length is 32");
+    public static BitString computeMac(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
+        if (key.length != BLOCK_SIZE) {
+            throw new IllegalArgumentException("expected key length is " + BLOCK_SIZE);
         }
-        return cmac(inputParams.generateInput(), key);
+
+        var macInput = generateMacInput(count, bearer, direction, message);
+        return cmac(macInput, key);
     }
 
-    private static BitString cmac(BitString message, BitString key) {
+    private static BitString generateMacInput(Octet4 count, Bit5 bearer, Bit direction, BitString message) {
+        if (count == null) throw new IllegalStateException("count cannot be null");
+        if (bearer == null) throw new IllegalStateException("bearer cannot be null");
+        if (direction == null) throw new IllegalStateException("direction cannot be null");
+        if (message == null) throw new IllegalStateException("message cannot be null");
+
+        BitString bearerBs = BitString.reverse(bearer.toBitString());
+        BitString countBs = BitString.from(count.toOctetArray(true));
+
+        BitString m = new BitString();
+        BitString.copy(countBs, 0, m, 0, 32);
+        BitString.copy(bearerBs, 0, m, 32, 5);
+        m.set(37, direction);
+        m.clear(38, 63);
+        BitString.copy(message, 0, m, 64, message.bitLength());
+        return m;
+    }
+
+    private static BitString cmac(BitString message, OctetString key) {
         /////////// Initialize cipher ///////////
         AESEngine cipher;
         {
@@ -117,27 +140,5 @@ public class EIA2_128 {
             bit = (b >>> 7) & 1;
         }
         return bit;
-    }
-
-    public static class InputParams {
-        public BitString count;
-        public BitString bearer;
-        public Bit direction;
-        public BitString message;
-
-        public BitString generateInput() {
-            if (count == null) throw new IllegalStateException("count cannot be null");
-            if (bearer == null) throw new IllegalStateException("bearer cannot be null");
-            if (direction == null) throw new IllegalStateException("direction cannot be null");
-            if (message == null) throw new IllegalStateException("message cannot be null");
-
-            BitString m = new BitString();
-            BitString.copy(count, 0, m, 0, 32);
-            BitString.copy(bearer, bearer.bitLength() - 5, m, 32, 5);
-            m.set(37, direction);
-            m.clear(38, 63);
-            BitString.copy(message, 0, m, 64, message.bitLength());
-            return m;
-        }
     }
 }

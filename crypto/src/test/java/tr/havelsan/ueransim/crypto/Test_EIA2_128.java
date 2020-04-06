@@ -6,7 +6,10 @@ import org.junit.jupiter.api.Test;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit;
+import tr.havelsan.ueransim.utils.bits.Bit5;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.Map;
 
@@ -56,19 +59,18 @@ public class Test_EIA2_128 {
         Map<String, String> json = Json.fromJson(Utils.getResourceString(testFile), new TypeToken<Map<String, String>>() {
         }.getType());
 
-        var inputParams = new EIA2_128.InputParams();
-        inputParams.count = BitString.fromHex(json.get("count").replace(" ", ""));
-        inputParams.bearer = BitString.fromHex(json.get("bearer").replace(" ", ""));
-        inputParams.direction = new Bit(Integer.parseInt(json.get("direction")));
+        var count = new Octet4(json.get("count").replace(" ", ""));
+        var bearer = new Bit5(Integer.parseInt(json.get("bearer"), 16));
+        var direction = new Bit(Integer.parseInt(json.get("direction")));
 
         String messageHex = json.get("message").replace(" ", "");
         int messageBitLength = Integer.parseInt(json.get("length"));
-        inputParams.message = BitString.fromHex(messageHex, messageBitLength);
+        var message = BitString.fromHex(messageHex, messageBitLength);
 
-        BitString key = BitString.fromHex(json.get("key").replace(" ", ""));
+        OctetString key = new OctetString(json.get("key").replace(" ", ""));
         BitString expected = BitString.fromHex(json.get("result").replace(" ", ""));
 
-        var result = EIA2_128.computeMac(inputParams, key);
+        var result = EIA2_128.computeMac(count, bearer, direction, message, key);
         Assert.assertEquals(result, expected);
     }
 }

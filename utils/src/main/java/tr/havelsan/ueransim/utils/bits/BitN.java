@@ -224,4 +224,15 @@ public class BitN {
         if (i < 0) throw new ArithmeticException();
         return i;
     }
+
+    /**
+     * Converts this object to {@link BitString}.
+     */
+    public BitString toBitString() {
+        var bs = new BitString();
+        for (int i = 0; i < bitCount(); i++) {
+            bs.set(i, this.getBitB(i));
+        }
+        return bs;
+    }
 }
