@@ -132,7 +132,10 @@ public class EIA2_128 {
                 "crypto/testdata/eia2_128/test2.json",
                 "crypto/testdata/eia2_128/test3.json",
                 "crypto/testdata/eia2_128/test4.json",
-                "crypto/testdata/eia2_128/test5.json"
+                "crypto/testdata/eia2_128/test5.json",
+                "crypto/testdata/eia2_128/test6.json",
+                "crypto/testdata/eia2_128/test7.json",
+                "crypto/testdata/eia2_128/test8.json"
         };
 
         var list = new ArrayList<TestData>();
