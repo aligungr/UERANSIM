@@ -21,28 +21,58 @@ public final class BitString {
         }
     }
 
-    public static BitString from(OctetN octets, boolean useBigEndian) {
-        return from(octets.toOctetArray(useBigEndian));
+    public static BitString from(OctetString octetString, int bitLength) {
+        return from(octetString.getAsArray(), bitLength);
     }
 
     public static BitString from(OctetString octetString) {
-        return from(octetString.getAsArray());
+        return from(octetString, octetString.length * 8);
     }
 
-    public static BitString from(Octet[] octets) {
+    public static BitString from(Octet[] octets, int bitLength) {
         var res = new BitString();
         for (int i = 0; i < octets.length; i++) {
+            if (res.bitLength() >= bitLength) {
+                break;
+            }
             var octet = octets[i];
             for (int j = 0; j < 8; j++) {
                 boolean bit = octet.getBitB(j);
                 res.set(i * 8 + (7 - j), bit);
             }
         }
+        if (bitLength != res.bitLength()) {
+            return res.substring(0, bitLength);
+        }
         return res;
     }
 
+    private BitString substring(int startIndex, int bitLength) {
+        var res = new BitString();
+        for (int i = 0; i < bitLength; i++) {
+            res.set(i, this.getB(startIndex + i));
+        }
+        return res;
+    }
+
+    private BitString substring(int startIndex) {
+        return substring(startIndex, this.bitLength() - startIndex);
+    }
+
+    public static BitString from(Octet[] octets) {
+        return from(octets, octets.length * 8);
+    }
+
+    public static BitString from(byte[] octets, int bitLength) {
+        return from(new OctetString(octets), bitLength);
+    }
+
     public static BitString from(byte[] octets) {
-        return from(new OctetString(octets));
+        return from(octets, octets.length * 8);
+    }
+
+    public static BitString fromHex(String hex, int bitLength) {
+        return from(new OctetString(hex), bitLength);
     }
 
     public static BitString fromHex(String hex) {
@@ -124,7 +154,6 @@ public final class BitString {
     }
 
     public boolean getB(int index) {
-        expand(index);
         return bits.get(index);
     }
 
