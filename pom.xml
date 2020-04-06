@@ -23,11 +23,6 @@
         <module>crypto</module>
     </modules>
 
-    <properties>
-        <marben.asnsdk.install>${project.basedir}/../misc/marben/mvn_install_lib.sh</marben.asnsdk.install>
-        <marben.asnsdk.path>${project.basedir}/../misc/marben/lib/jrntspe.jar</marben.asnsdk.path>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -157,11 +152,18 @@
             <version>5.1.1</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
             <version> 1.1.1</version>
             <scope>test</scope>
+
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.56</version>
         </dependency>
 
     </dependencies>
