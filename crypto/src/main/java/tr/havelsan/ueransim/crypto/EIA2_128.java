@@ -1,16 +1,9 @@
 package tr.havelsan.ueransim.crypto;
 
-import com.google.gson.reflect.TypeToken;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
-import tr.havelsan.ueransim.utils.Json;
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitString;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class EIA2_128 {
     private static final int BLOCK_SIZE = 16;
@@ -126,30 +119,11 @@ public class EIA2_128 {
         return bit;
     }
 
-    static List<TestData> generateTestData() {
-        String[] testFiles = {
-                "crypto/testdata/eia2_128/test1.json",
-                "crypto/testdata/eia2_128/test2.json",
-                "crypto/testdata/eia2_128/test3.json",
-                "crypto/testdata/eia2_128/test4.json",
-                "crypto/testdata/eia2_128/test5.json",
-                "crypto/testdata/eia2_128/test6.json",
-                "crypto/testdata/eia2_128/test7.json",
-                "crypto/testdata/eia2_128/test8.json"
-        };
-
-        var list = new ArrayList<TestData>();
-        for (String testFile : testFiles) {
-            list.add(TestData.fromResource(testFile));
-        }
-        return list;
-    }
-
     public static class InputParams {
-        private BitString count;
-        private BitString bearer;
-        private Bit direction;
-        private BitString message;
+        public BitString count;
+        public BitString bearer;
+        public Bit direction;
+        public BitString message;
 
         public BitString generateInput() {
             if (count == null) throw new IllegalStateException("count cannot be null");
@@ -164,34 +138,6 @@ public class EIA2_128 {
             m.clear(38, 63);
             BitString.copy(message, 0, m, 64, message.bitLength());
             return m;
-        }
-    }
-
-    static class TestData {
-        String testFile;
-        InputParams params;
-        BitString key;
-        BitString result;
-
-        public static TestData fromResource(String testFile) {
-            Map<String, String> json = Json.fromJson(Utils.getResourceString(testFile), new TypeToken<Map<String, String>>() {
-            }.getType());
-
-            var inputParams = new InputParams();
-            inputParams.count = BitString.fromHex(json.get("count").replace(" ", ""));
-            inputParams.bearer = BitString.fromHex(json.get("bearer").replace(" ", ""));
-            inputParams.direction = new Bit(Integer.parseInt(json.get("direction")));
-
-            String messageHex = json.get("message").replace(" ", "");
-            int messageBitLength = Integer.parseInt(json.get("length"));
-            inputParams.message = BitString.fromHex(messageHex, messageBitLength);
-
-            var testData = new TestData();
-            testData.testFile = testFile;
-            testData.params = inputParams;
-            testData.key = BitString.fromHex(json.get("key").replace(" ", ""));
-            testData.result = BitString.fromHex(json.get("result").replace(" ", ""));
-            return testData;
         }
     }
 }
