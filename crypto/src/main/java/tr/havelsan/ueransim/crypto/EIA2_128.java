@@ -48,12 +48,13 @@ public class EIA2_128 {
 
         ///////////// Process last block ///////////
         {
-            int bsize = Math.min(message.bitLength(), BLOCK_SIZE * 8);
+            int bsize = message.bitLength() % (BLOCK_SIZE * 8);
+            bsize = bsize == 0 ? BLOCK_SIZE * 8 : bsize;
             if (bsize == BLOCK_SIZE * 8) {
                 // Xor with subKey1
                 int offset = message.bitLength() - BLOCK_SIZE * 8;
                 for (int i = 0; i < BLOCK_SIZE * 8; i++) {
-                    message.set(offset + 1, message.getB(offset + i) ^ subKey1.getB(i));
+                    message.set(offset + i, message.getB(offset + i) ^ subKey1.getB(i));
                 }
             } else {
                 // Add padding

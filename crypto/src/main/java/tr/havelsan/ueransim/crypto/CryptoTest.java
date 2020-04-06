@@ -13,7 +13,7 @@ class CryptoTest {
             if (!result.equals(testData.result)) {
                 Console.println(Color.RED_BOLD, "test failed: " + testData.testFile);
             } else {
-                Console.println(Color.GREEN_BOLD, "test failed: " + testData.testFile);
+                Console.println(Color.GREEN_BOLD, "test success: " + testData.testFile);
             }
         }
     }

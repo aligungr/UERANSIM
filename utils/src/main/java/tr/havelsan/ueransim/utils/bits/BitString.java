@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.utils.bits;
 
 import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
@@ -47,18 +46,6 @@ public final class BitString {
         return res;
     }
 
-    private BitString substring(int startIndex, int bitLength) {
-        var res = new BitString();
-        for (int i = 0; i < bitLength; i++) {
-            res.set(i, this.getB(startIndex + i));
-        }
-        return res;
-    }
-
-    private BitString substring(int startIndex) {
-        return substring(startIndex, this.bitLength() - startIndex);
-    }
-
     public static BitString from(Octet[] octets) {
         return from(octets, octets.length * 8);
     }
@@ -97,6 +84,18 @@ public final class BitString {
             res.set(bitString.bitLength() - i - 1, bitString.getB(i));
         }
         return res;
+    }
+
+    private BitString substring(int startIndex, int bitLength) {
+        var res = new BitString();
+        for (int i = 0; i < bitLength; i++) {
+            res.set(i, this.getB(startIndex + i));
+        }
+        return res;
+    }
+
+    private BitString substring(int startIndex) {
+        return substring(startIndex, this.bitLength() - startIndex);
     }
 
     public void set(int index) {
@@ -170,10 +169,17 @@ public final class BitString {
     }
 
     public int[] toIntArray() {
-        int[] res = new int[octetLength()];
+        int bitLength = bitLength();
+        int octetLength = octetLength();
+        if (octetLength == 0) {
+            return new int[0];
+        }
+
+        int[] res = new int[octetLength];
         for (int i = 0; i < res.length; i++) {
             for (int j = 0; j < 8; j++) {
-                boolean bit = getB(i * 8 + j);
+                int index = i * 8 + j;
+                boolean bit = index < bitLength && getB(index);
                 if (bit) {
                     res[i] |= 0b1 << (7 - j);
                 }
