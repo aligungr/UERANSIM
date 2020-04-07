@@ -12,8 +12,8 @@ extern "C" {
  * Method:    computeMac
  * Signature: ([BIZ[BI[B)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_tr_havelsan_ueransim_crypto_EIA3_1128_computeMac
-  (JNIEnv *, jclass, jbyteArray, jint, jboolean, jbyteArray, jint, jbyteArray);
+JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_crypto_EIA3_1128_computeMac
+  (JNIEnv *, jclass, jlong, jint, jboolean, jbyteArray, jint, jbyteArray);
 
 #ifdef __cplusplus
 }

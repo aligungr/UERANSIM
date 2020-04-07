@@ -19,10 +19,14 @@ public class EIA3_128 {
         if (key.length != BLOCK_SIZE) {
             throw new IllegalArgumentException("expected key length is " + BLOCK_SIZE);
         }
-        byte[] mac = computeMac(count.toByteArray(true), bearer.intValue(), direction.boolValue(),
+        int mac = computeMac(count.longValue(), bearer.intValue(), direction.boolValue(),
                 message.toByteArray(), message.bitLength(), key.toByteArray());
-        return BitString.from(mac);
+        int octet3 = (mac >> (24)) & 0xFF;
+        int octet2 = (mac >> (16)) & 0xFF;
+        int octet1 = (mac >> (8)) & 0xFF;
+        int octet0 = (mac >> (0)) & 0xFF;
+        return BitString.from(new Octet4(octet3, octet2, octet1, octet0).toByteArray(true));
     }
 
-    private static native byte[] computeMac(byte[] count, int bearer, boolean direction, byte[] message, int bitLength, byte[] key);
+    private static native int computeMac(long count, int bearer, boolean direction, byte[] message, int bitLength, byte[] key);
 }

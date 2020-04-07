@@ -192,7 +192,7 @@ void Zuc::Initialization(uint8_t *k, uint8_t *iv)
 void Zuc::GenerateKeyStream(uint32_t *pKeyStream, uint32_t KeyStreamLen)
 {
     /* working cycles */
-    for (int i = 0; i < KeyStreamLen; ++i)
+    for (uint32_t i = 0; i < KeyStreamLen; ++i)
     {
         BitReorganization();
         pKeyStream[i] = F() ^ BRC_X[3];
