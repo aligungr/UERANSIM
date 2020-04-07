@@ -387,4 +387,28 @@ public final class Utils {
         }
         return null;
     }
+
+    public static void loadLibraryFromResource(String name) {
+        try {
+            InputStream in = Utils.class.getClassLoader().getResourceAsStream(name);
+            if (in == null) {
+                throw new RuntimeException("resource not found: " + name);
+            }
+
+            byte[] buffer = new byte[1024];
+            int read;
+            File temp = File.createTempFile(name, "");
+            temp.deleteOnExit();
+
+            FileOutputStream fos = new FileOutputStream(temp);
+            while((read = in.read(buffer)) != -1) {
+                fos.write(buffer, 0, read);
+            }
+            fos.close();
+            in.close();
+            System.load(temp.getAbsolutePath());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
