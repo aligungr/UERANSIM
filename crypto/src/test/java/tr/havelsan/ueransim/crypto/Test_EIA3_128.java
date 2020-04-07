@@ -16,6 +16,16 @@ import java.util.Map;
 public class Test_EIA3_128 {
 
     @Test
+    public void test1() {
+        testForFile("crypto/testdata/eia3_128/test1.json");
+    }
+
+    @Test
+    public void test2() {
+        testForFile("crypto/testdata/eia3_128/test2.json");
+    }
+
+    @Test
     public void test3() {
         testForFile("crypto/testdata/eia3_128/test3.json");
     }
