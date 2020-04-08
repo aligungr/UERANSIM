@@ -30,6 +30,11 @@ public class Test_EIA3_128 {
         testForFile("crypto/testdata/eia3_128/test3.json");
     }
 
+    @Test
+    public void test4() {
+        testForFile("crypto/testdata/eia3_128/test4.json");
+    }
+
     private void testForFile(String testFile) {
         Map<String, String> json = Json.fromJson(Utils.getResourceString(testFile), new TypeToken<Map<String, String>>() {
         }.getType());
