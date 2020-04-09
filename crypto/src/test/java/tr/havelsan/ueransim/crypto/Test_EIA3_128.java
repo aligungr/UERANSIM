@@ -48,12 +48,12 @@ public class Test_EIA3_128 {
         var bearer = new Bit5(Integer.parseInt(json.get("bearer"), 16));
         var direction = new Bit(Integer.parseInt(json.get("direction")));
 
-        String messageHex = json.get("message").replace(" ", "");
+        var messageHex = json.get("message").replace(" ", "");
         int messageBitLength = Integer.parseInt(json.get("length"));
         var message = BitString.fromHex(messageHex, messageBitLength);
 
-        OctetString key = new OctetString(json.get("key").replace(" ", ""));
-        BitString expected = BitString.fromHex(json.get("result").replace(" ", ""));
+        var key = new OctetString(json.get("key").replace(" ", ""));
+        var expected = new Octet4(json.get("result").replace(" ", ""));
 
         var result = EIA3_128.computeMac(count, bearer, direction, message, key);
         Assert.assertEquals(expected, result);

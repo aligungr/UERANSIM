@@ -13,7 +13,7 @@ public class EIA2_128 {
     private static final int MAC_SIZE = 4;
     private static final int POLY = 0x87;
 
-    public static BitString computeMac(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
+    public static Octet4 computeMac(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
         if (key.length != BLOCK_SIZE) {
             throw new IllegalArgumentException("expected key length is " + BLOCK_SIZE);
         }
@@ -40,7 +40,7 @@ public class EIA2_128 {
         return m;
     }
 
-    private static BitString cmac(BitString message, OctetString key) {
+    private static Octet4 cmac(BitString message, OctetString key) {
         /////////// Initialize cipher ///////////
         AESEngine cipher;
         {
@@ -90,7 +90,7 @@ public class EIA2_128 {
         }
 
         ///////////// Perform tag calculation ///////////
-        BitString tag;
+        Octet4 tag;
         {
             byte[] messageData = message.toByteArray();
             int messageLength = messageData.length;
@@ -112,7 +112,7 @@ public class EIA2_128 {
 
             byte[] result = new byte[MAC_SIZE];
             System.arraycopy(lastCode, 0, result, 0, result.length);
-            tag = BitString.from(result);
+            tag = new Octet4(result[0] & 0xFF, result[1] & 0xFF, result[2] & 0xFF, result[3] & 0xFF);
         }
 
         return tag;
