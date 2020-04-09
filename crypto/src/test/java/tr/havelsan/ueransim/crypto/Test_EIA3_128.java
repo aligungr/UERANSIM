@@ -56,6 +56,6 @@ public class Test_EIA3_128 {
         BitString expected = BitString.fromHex(json.get("result").replace(" ", ""));
 
         var result = EIA3_128.computeMac(count, bearer, direction, message, key);
-        Assert.assertEquals(result, expected);
+        Assert.assertEquals(expected, result);
     }
 }
