@@ -1,30 +1,28 @@
 #include "tr_havelsan_ueransim_crypto_EIA3_128.h"
 #include "eia3_128.h"
 
-uint8_t *jbyteArrayToUint8Array(JNIEnv *env, jbyteArray jba)
+static uint8_t *jbyteArrayToUint8Array(JNIEnv *env, jbyteArray jba, jsize alignment, jsize *resLength)
 {
   jboolean isCopy;
   jbyte *bytes = env->GetByteArrayElements(jba, &isCopy);
   jsize len = env->GetArrayLength(jba);
+  jsize padding = (alignment - (len % alignment)) % alignment;
 
-  uint8_t *data = new uint8_t[len];
+  uint8_t *data = new uint8_t[len + padding];
   for (jsize i = 0; i < len; i++)
-  {
     data[i] = static_cast<uint8_t>(bytes[i]);
-  }
 
   env->ReleaseByteArrayElements(jba, bytes, 0);
-
+  if (resLength)
+    *resLength = len + padding;
   return data;
 }
 
-uint32_t *jbyteArrayToUint32Array(JNIEnv *env, jbyteArray jba)
+static uint32_t *jbyteArrayToUint32Array(JNIEnv *env, jbyteArray jba)
 {
-  jsize len = env->GetArrayLength(jba);
-  jsize len4 = len / 4;
+  jsize len4;
 
-  uint8_t *arr = jbyteArrayToUint8Array(env, jba);
-
+  uint8_t *arr = jbyteArrayToUint8Array(env, jba, 4, &len4);
   uint32_t *res = new uint32_t[len4];
 
   for (jsize i = 0; i < len4; i++)
@@ -44,7 +42,7 @@ uint32_t *jbyteArrayToUint32Array(JNIEnv *env, jbyteArray jba)
 
 extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_crypto_EIA3_1128_computeMac(JNIEnv *env, jclass cls, jlong count, jint bearer, jboolean direction, jbyteArray message, jint bitLength, jbyteArray key)
 {
-  auto IK = jbyteArrayToUint8Array(env, key);
+  auto IK = jbyteArrayToUint8Array(env, key, 1, nullptr);
   auto M = jbyteArrayToUint32Array(env, message);
 
   auto MAC = EIA3_128::EIA3(IK, static_cast<uint32_t>(count), direction, static_cast<uint32_t>(bearer), static_cast<uint32_t>(bitLength), M);
