@@ -29,7 +29,7 @@ public class EIA2_128 {
         if (message == null) throw new IllegalStateException("message cannot be null");
 
         BitString bearerBs = BitString.reverse(bearer.toBitString());
-        BitString countBs = BitString.from(count.toOctetArray(true));
+        BitString countBs = count.toBitString(true);
 
         BitString m = new BitString();
         BitString.copy(countBs, 0, m, 0, 32);

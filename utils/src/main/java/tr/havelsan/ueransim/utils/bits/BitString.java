@@ -14,8 +14,8 @@ public final class BitString {
         this.bits = new ArrayList<>();
     }
 
-    public static void copy(BitString source, int sourceOffset, BitString destination, int destinationOffset, int length) {
-        for (int i = 0; i < length; i++) {
+    public static void copy(BitString source, int sourceOffset, BitString destination, int destinationOffset, int bitLength) {
+        for (int i = 0; i < bitLength; i++) {
             destination.set(destinationOffset + i, source.getB(sourceOffset + i));
         }
     }
