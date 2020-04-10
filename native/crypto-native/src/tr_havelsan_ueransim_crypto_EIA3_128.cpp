@@ -23,6 +23,8 @@ static uint32_t *jbyteArrayToUint32Array(JNIEnv *env, jbyteArray jba)
   jsize len4;
 
   uint8_t *arr = jbyteArrayToUint8Array(env, jba, 4, &len4);
+  len4 /= 4;
+
   uint32_t *res = new uint32_t[len4];
 
   for (jsize i = 0; i < len4; i++)
