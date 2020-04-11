@@ -13,10 +13,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class EEA2_128 {
 
     public static BitString encrypt(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
-        if (key.length != 16) {
-            throw new IllegalArgumentException("expected key length is " + 16);
-        }
-
         byte[] res = cipher(Cipher.ENCRYPT_MODE, key.toByteArray(), computeIV(count, bearer, direction), message.toByteArray());
         return BitString.from(res, message.bitLength());
     }

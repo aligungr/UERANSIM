@@ -12,11 +12,8 @@ public class UEA2 {
     static {
         Utils.loadLibraryFromResource("libcrypto-native.so");
     }
-    
+
     public static BitString uea2(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
-        if (key.length != 16) {
-            throw new IllegalArgumentException("expected key length is " + 16);
-        }
         byte[] res = uea2(count.longValue(), bearer.intValue(), direction.boolValue(),
                 message.toByteArray(), message.bitLength(), key.toByteArray());
         return BitString.from(res, message.bitLength());

@@ -22,9 +22,6 @@ public class EEA3_128 {
     }
 
     public static BitString eea3(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
-        if (key.length != 16) {
-            throw new IllegalArgumentException("expected key length is " + 16);
-        }
         byte[] res = eea3(count.longValue(), bearer.intValue(), direction.boolValue(),
                 message.toByteArray(), message.bitLength(), key.toByteArray());
         return BitString.from(res, message.bitLength());

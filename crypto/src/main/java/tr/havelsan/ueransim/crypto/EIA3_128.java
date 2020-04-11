@@ -14,9 +14,6 @@ public class EIA3_128 {
     }
 
     public static Octet4 computeMac(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
-        if (key.length != 16) {
-            throw new IllegalArgumentException("expected key length is " + 16);
-        }
         int mac = computeMac(count.longValue(), bearer.intValue(), direction.boolValue(),
                 message.toByteArray(), message.bitLength(), key.toByteArray());
         return new Octet4(Integer.toUnsignedLong(mac));

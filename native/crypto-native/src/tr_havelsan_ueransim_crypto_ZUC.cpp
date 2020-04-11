@@ -1,11 +1,11 @@
 #include <jni.h>
 #include "zuc.h"
-#include "utils.h"
+#include "jni_utils.h"
 
-extern "C" JNIEXPORT jintArray JNICALL Java_tr_havelsan_ueransim_crypto_ZUC_zuc(JNIEnv *env, jclass cls, jbyteArray key, jbyteArray iv, jint length)
+extern "C" JNIEXPORT jintArray JNICALL Java_tr_havelsan_ueransim_crypto_ZUC_zuc(JNIEnv *pJniEnv, jclass pCls, jbyteArray key, jbyteArray iv, jint length)
 {
-    auto K = Utils::jbyteArrayToUint8Array(env, key, 1, nullptr);
-    auto IV = Utils::jbyteArrayToUint8Array(env, iv, 1, nullptr);
+    auto K = JniConvert::jbytearray_to_uint8array(pJniEnv, key, 1, nullptr);
+    auto IV = JniConvert::jbytearray_to_uint8array(pJniEnv, iv, 1, nullptr);
     auto KS = new uint32_t[length];
 
     Zuc::Initialization(K, IV);
@@ -14,7 +14,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_tr_havelsan_ueransim_crypto_ZUC_zuc(
     delete[] K;
     delete[] IV;
 
-    auto res = Utils::int32ArrayToJintArray(env, reinterpret_cast<int32_t*>(KS), length);
+    auto res = JniConvert::int32array_to_jintarray(pJniEnv, reinterpret_cast<int32_t*>(KS), length);
     delete[] KS;
 
     return res;
