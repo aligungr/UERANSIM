@@ -19,10 +19,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Utils {
+
+    private static final HashSet<String> loadedResLibs = new HashSet<>();
 
     public static <T> T[] decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length, Class<T> componentType) {
         int readLen = 0;
@@ -388,7 +387,10 @@ public final class Utils {
         return null;
     }
 
-    public static void loadLibraryFromResource(String name) {
+    public static synchronized void loadLibraryFromResource(String name) {
+        if (loadedResLibs.contains(name)) {
+            return;
+        }
         try {
             InputStream in = Utils.class.getClassLoader().getResourceAsStream(name);
             if (in == null) {
@@ -407,6 +409,7 @@ public final class Utils {
             fos.close();
             in.close();
             System.load(temp.getAbsolutePath());
+            loadedResLibs.add(name);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
