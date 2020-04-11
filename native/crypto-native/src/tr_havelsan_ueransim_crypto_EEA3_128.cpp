@@ -8,14 +8,14 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_tr_havelsan_ueransim_crypto_EEA3_11
 
     auto CK = JniConvert::jbytearray_to_uint8array(pJniEnv, key, 1, nullptr);
     auto M = JniConvert::jbytearray_to_uint32array(pJniEnv, message, &nWordLen);
-    auto C = new uint32_t[nWordLen];
 
-    EEA3_128::EEA3(CK, static_cast<uint32_t>(count), static_cast<uint32_t>(bearer), direction, static_cast<uint32_t>(bitLength), M, C);
+    EEA3_128::EEA3(CK, static_cast<uint32_t>(count), static_cast<uint32_t>(bearer), direction, static_cast<uint32_t>(bitLength), M);
 
     delete[] CK;
+
+    auto res = JniConvert::uint32array_to_jbytearray(pJniEnv, M, nWordLen);
+    
     delete[] M;
 
-    auto res = JniConvert::uint32array_to_jbytearray(pJniEnv, C, nWordLen);
-    delete[] C;
     return res;
 }

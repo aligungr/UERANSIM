@@ -2,66 +2,62 @@
 #include "zuc.h"
 #include <cstdlib>
 
-static void ZUC(uint8_t *k, uint8_t *iv, uint32_t *ks, int len)
+static void ZUC(uint8_t *pKey, uint8_t *pIv, uint32_t *pKeyStream, uint32_t nKeyStream)
 {
-    Zuc::Initialize(k, iv);
-    Zuc::GenerateKeyStream(ks, len);
+    Zuc::Initialize(pKey, pIv);
+    Zuc::GenerateKeyStream(pKeyStream, nKeyStream);
 }
 
-static uint32_t GET_WORD(uint32_t *DATA, uint32_t i)
+static uint32_t GetWord(uint32_t *pData, uint32_t index)
 {
-    uint32_t WORD, ti;
-
-    ti = i % 32;
+    uint32_t ti = index % 32;
     if (ti == 0)
-        WORD = DATA[i / 32];
+        return pData[index / 32];
     else
-        WORD = (DATA[i / 32] << ti) | (DATA[i / 32 + 1] >> (32 - ti));
-
-    return WORD;
+        return (pData[index / 32] << ti) | (pData[index / 32 + 1] >> (32 - ti));
 }
 
-static uint8_t GET_BIT(uint32_t *DATA, uint32_t i)
+static uint8_t GetBit(uint32_t *pData, uint32_t index)
 {
-    return (DATA[i / 32] & (1 << (31 - (i % 32)))) ? 1 : 0;
+    return (pData[index / 32] & (1 << (31 - (index % 32)))) ? 1 : 0;
 }
 
-uint32_t EIA3_128::EIA3(uint8_t *IK, uint32_t COUNT, uint32_t DIRECTION, uint32_t BEARER, uint32_t LENGTH, uint32_t *M)
+uint32_t EIA3_128::EIA3(uint8_t *pKey, uint32_t count, uint32_t direction, uint32_t bearer, uint32_t length, uint32_t *pData)
 {
     uint32_t *z, N, L, T, i;
     uint8_t IV[16];
 
-    IV[0] = (COUNT >> 24) & 0xFF;
-    IV[1] = (COUNT >> 16) & 0xFF;
-    IV[2] = (COUNT >> 8) & 0xFF;
-    IV[3] = COUNT & 0xFF;
+    IV[0] = (count >> 24) & 0xFF;
+    IV[1] = (count >> 16) & 0xFF;
+    IV[2] = (count >> 8) & 0xFF;
+    IV[3] = count & 0xFF;
 
-    IV[4] = (BEARER << 3) & 0xF8;
+    IV[4] = (bearer << 3) & 0xF8;
     IV[5] = IV[6] = IV[7] = 0;
 
-    IV[8] = ((COUNT >> 24) & 0xFF) ^ ((DIRECTION & 1) << 7);
-    IV[9] = (COUNT >> 16) & 0xFF;
-    IV[10] = (COUNT >> 8) & 0xFF;
-    IV[11] = COUNT & 0xFF;
+    IV[8] = ((count >> 24) & 0xFF) ^ ((direction & 1) << 7);
+    IV[9] = (count >> 16) & 0xFF;
+    IV[10] = (count >> 8) & 0xFF;
+    IV[11] = count & 0xFF;
 
     IV[12] = IV[4];
     IV[13] = IV[5];
-    IV[14] = IV[6] ^ ((DIRECTION & 1) << 7);
+    IV[14] = IV[6] ^ ((direction & 1) << 7);
     IV[15] = IV[7];
 
-    N = LENGTH + 64;
+    N = length + 64;
     L = (N + 31) / 32;
     z = new uint32_t[L];
-    ZUC(IK, IV, z, L);
+    ZUC(pKey, IV, z, L);
 
     T = 0;
-    for (i = 0; i < LENGTH; i++)
+    for (i = 0; i < length; i++)
     {
-        if (GET_BIT(M, i))
-            T ^= GET_WORD(z, i);
+        if (GetBit(pData, i))
+            T ^= GetWord(z, i);
     }
 
-    T ^= GET_WORD(z, LENGTH);
+    T ^= GetWord(z, length);
     uint32_t MAC = T ^ z[L - 1];
     delete[] z;
 

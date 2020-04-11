@@ -4,5 +4,7 @@
 
 namespace EEA3_128
 {
-    void EEA3(uint8_t *CK, uint32_t COUNT, uint32_t BEARER, uint32_t DIRECTION, uint32_t LENGTH, uint32_t *M, uint32_t *C);
-}
+
+void EEA3(uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t direction, uint32_t length, uint32_t *pData);
+
+} // namespace EEA3_128

@@ -5,14 +5,14 @@ using u8 = uint8_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
-void UEA2::f8(u8 *key, u32 count, u32 bearer, u32 dir, u8 *data, u32 length)
+void UEA2::f8(u8 *pKey, u32 count, u32 bearer, u32 dir, u8 *pData, u32 length)
 {
     u32 K[4], IV[4];
     int n = (length + 31) / 32;
     int i = 0;
     u32 *KS;
     for (i = 0; i < 4; i++)
-        K[3 - i] = (key[4 * i] << 24) ^ (key[4 * i + 1] << 16) ^ (key[4 * i + 2] << 8) ^ (key[4 * i + 3]);
+        K[3 - i] = (pKey[4 * i] << 24) ^ (pKey[4 * i + 1] << 16) ^ (pKey[4 * i + 2] << 8) ^ (pKey[4 * i + 3]);
     IV[3] = count;
     IV[2] = (bearer << 27) | ((dir & 0x1) << 26);
     IV[1] = IV[3];
@@ -22,10 +22,10 @@ void UEA2::f8(u8 *key, u32 count, u32 bearer, u32 dir, u8 *data, u32 length)
     Snow3G::GenerateKeyStream((u32 *)KS, n);
     for (i = 0; i < n; i++)
     {
-        data[4 * i + 0] ^= (u8)(KS[i] >> 24) & 0xff;
-        data[4 * i + 1] ^= (u8)(KS[i] >> 16) & 0xff;
-        data[4 * i + 2] ^= (u8)(KS[i] >> 8) & 0xff;
-        data[4 * i + 3] ^= (u8)(KS[i]) & 0xff;
+        pData[4 * i + 0] ^= (u8)(KS[i] >> 24) & 0xff;
+        pData[4 * i + 1] ^= (u8)(KS[i] >> 16) & 0xff;
+        pData[4 * i + 2] ^= (u8)(KS[i] >> 8) & 0xff;
+        pData[4 * i + 3] ^= (u8)(KS[i]) & 0xff;
     }
     delete[] KS;
 }
@@ -63,7 +63,7 @@ static u8 mask8bit(int n)
     return 0xFF ^ ((1 << (8 - n)) - 1);
 }
 
-u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
+u32 UEA2::f9(u8 *pKey, u32 count, u32 fresh, u32 dir, u8 *pData, u64 length)
 {
     u32 K[4], IV[4], z[5];
     u32 i = 0, D;
@@ -76,7 +76,7 @@ u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
     u64 M_D_2;
     int rem_bits = 0;
     for (i = 0; i < 4; i++)
-        K[3 - i] = (key[4 * i] << 24) ^ (key[4 * i + 1] << 16) ^ (key[4 * i + 2] << 8) ^ (key[4 * i + 3]);
+        K[3 - i] = (pKey[4 * i] << 24) ^ (pKey[4 * i + 1] << 16) ^ (pKey[4 * i + 2] << 8) ^ (pKey[4 * i + 3]);
     IV[3] = count;
     IV[2] = fresh;
     IV[1] = count ^ (dir << 31);
@@ -94,7 +94,7 @@ u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
     c = 0x1b;
     for (i = 0; i < D - 2; i++)
     {
-        V = EVAL ^ ((u64)data[8 * i] << 56 | (u64)data[8 * i + 1] << 48 | (u64)data[8 * i + 2] << 40 | (u64)data[8 * i + 3] << 32 | (u64)data[8 * i + 4] << 24 | (u64)data[8 * i + 5] << 16 | (u64)data[8 * i + 6] << 8 | (u64)data[8 * i + 7]);
+        V = EVAL ^ ((u64)pData[8 * i] << 56 | (u64)pData[8 * i + 1] << 48 | (u64)pData[8 * i + 2] << 40 | (u64)pData[8 * i + 3] << 32 | (u64)pData[8 * i + 4] << 24 | (u64)pData[8 * i + 5] << 16 | (u64)pData[8 * i + 6] << 8 | (u64)pData[8 * i + 7]);
         EVAL = MUL64(V, P, c);
     }
     rem_bits = length % 64;
@@ -104,12 +104,12 @@ u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
     i = 0;
     while (rem_bits > 7)
     {
-        M_D_2 |= (u64)data[8 * (D - 2) + i] << (8 * (7 - i));
+        M_D_2 |= (u64)pData[8 * (D - 2) + i] << (8 * (7 - i));
         rem_bits -= 8;
         i++;
     }
     if (rem_bits > 0)
-        M_D_2 |= (u64)(data[8 * (D - 2) + i] & mask8bit(rem_bits)) << (8 * (7 - i));
+        M_D_2 |= (u64)(pData[8 * (D - 2) + i] & mask8bit(rem_bits)) << (8 * (7 - i));
     V = EVAL ^ M_D_2;
     EVAL = MUL64(V, P, c);
     EVAL ^= length;
