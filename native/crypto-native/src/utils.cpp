@@ -94,3 +94,10 @@ std::string Utils::uint32ToHexString(uint32_t value)
     uint8_t octet0 = value & 0xFF;
     return Utils::uint8ToHexString(octet3) + Utils::uint8ToHexString(octet2) + Utils::uint8ToHexString(octet1) + Utils::uint8ToHexString(octet0);
 }
+
+jintArray Utils::int32ArrayToJintArray(JNIEnv *env, int32_t *arr, jsize length)
+{
+    jintArray ret = env->NewIntArray(length);
+    env->SetIntArrayRegion(ret, 0, length, arr);
+    return ret;
+}

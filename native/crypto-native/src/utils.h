@@ -18,4 +18,5 @@ namespace Utils
 
     jbyteArray uint32ArrayToJbyteArray(JNIEnv *env, uint32_t *arr, jsize wordLength);
 
+    jintArray int32ArrayToJintArray(JNIEnv *env, int32_t *arr, jsize length);
 }
