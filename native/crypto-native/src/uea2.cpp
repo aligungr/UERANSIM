@@ -118,9 +118,9 @@ u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
         MAC_I[i] = ((EVAL >> (56 - (i * 8))) ^ (z[4] >> (24 - (i * 8)))) & 0xff;
     
     u32 mac32 = 0;
-    mac32 |= (MAC_I[0] << 24) & 0xFF;
-    mac32 |= (MAC_I[1] << 16) & 0xFF;
-    mac32 |= (MAC_I[2] << 8) & 0xFF;
-    mac32 |= (MAC_I[3] << 0) & 0xFF;
+    mac32 |= (MAC_I[0] << 24);
+    mac32 |= (MAC_I[1] << 16);
+    mac32 |= (MAC_I[2] << 8);
+    mac32 |= MAC_I[3];
     return mac32;
 }
