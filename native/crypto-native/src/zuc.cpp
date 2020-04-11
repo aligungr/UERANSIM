@@ -1,16 +1,12 @@
 #include "zuc.h"
 
-/* state registers LFSR */
 static thread_local uint32_t LFSR_S[16];
 
-/* F registers */
 static thread_local uint32_t F_R1;
 static thread_local uint32_t F_R2;
 
-/* output of BR procedure */
 static thread_local uint32_t BRC_X[4];
 
-/* S-boxes */
 static thread_local uint8_t S0[256] = {
     0x3e, 0x72, 0x5b, 0x47, 0xca, 0xe0, 0x00, 0x33, 0x04, 0xd1, 0x54, 0x98, 0x09, 0xb9, 0x6d, 0xcb,
     0x7b, 0x1b, 0xf9, 0x32, 0xaf, 0x9d, 0x6a, 0xa5, 0xb8, 0x2d, 0xfc, 0x1d, 0x08, 0x53, 0x03, 0x90,
@@ -47,7 +43,6 @@ static thread_local uint8_t S1[256] = {
     0x88, 0xb1, 0x98, 0x7c, 0xf3, 0x3d, 0x60, 0x6c, 0x7b, 0xca, 0xd3, 0x1f, 0x32, 0x65, 0x04, 0x28,
     0x64, 0xbe, 0x85, 0x9b, 0x2f, 0x59, 0x8a, 0xd7, 0xb0, 0x25, 0xac, 0xaf, 0x12, 0x03, 0xe2, 0xf2};
 
-/* D constants */
 static thread_local uint32_t EK_d[16] = {
     0x44D7, 0x26BC, 0x626B, 0x135E, 0x5789, 0x35E2, 0x7135, 0x09AF,
     0x4D78, 0x2F13, 0x6BC4, 0x1AF1, 0x5E26, 0x3C4D, 0x789A, 0x47AC};
@@ -60,7 +55,6 @@ static uint32_t AddM(uint32_t a, uint32_t b)
 
 #define MulByPow2(x, k) ((((x) << k) | ((x) >> (31 - k))) & 0x7FFFFFFF)
 
-/* LFSR */
 static void LFSRWithInitializationMode(uint32_t u)
 {
     uint32_t f, v;
@@ -83,15 +77,11 @@ static void LFSRWithInitializationMode(uint32_t u)
 
     f = AddM(f, u);
 
-    /* update the state */
     for (int i = 0; i < 15; ++i)
-    {
         LFSR_S[i] = LFSR_S[i + 1];
-    }
     LFSR_S[15] = f;
 }
 
-/* LFSR with work mode */
 static void LFSRWithWorkMode()
 {
     uint32_t f, v;
@@ -112,15 +102,11 @@ static void LFSRWithWorkMode()
     v = MulByPow2(LFSR_S[15], 15);
     f = AddM(f, v);
 
-    /* update state */
     for (int i = 0; i < 15; ++i)
-    {
         LFSR_S[i] = LFSR_S[i + 1];
-    }
     LFSR_S[15] = f;
 }
 
-/* Bit Reorganization Procedure */
 static void BitReorganization()
 {
     BRC_X[0] = ((LFSR_S[15] & 0x7FFF8000) << 1) | (LFSR_S[14] & 0xFFFF);
@@ -131,23 +117,19 @@ static void BitReorganization()
 
 #define ROT(a, k) (((a) << k) | ((a) >> (32 - k)))
 
-/* linear transformation L1 */
 static uint32_t L1(uint32_t X)
 {
     return (X ^ ROT(X, 2) ^ ROT(X, 10) ^ ROT(X, 18) ^ ROT(X, 24));
 }
 
-/* linear transformation L2 */
 static uint32_t L2(uint32_t X)
 {
     return (X ^ ROT(X, 8) ^ ROT(X, 14) ^ ROT(X, 22) ^ ROT(X, 30));
 }
 
-/* create 32-bit word */
 #define MAKEU32(a, b, c, d) ( \
     ((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | ((uint32_t)(d)))
 
-/* non-linear function F */
 static uint32_t F()
 {
     uint32_t W, W1, W2, u, v;
@@ -166,12 +148,12 @@ static uint32_t F()
 #define MAKEU31(a, b, c) ( \
     ((uint32_t)((uint32_t)(0) | (uint8_t)(a)) << 23) | ((uint32_t)(b) << 8) | (uint32_t)((uint32_t)(0) | (uint8_t)(c)))
 
-void Zuc::Initialization(uint8_t *k, uint8_t *iv)
+void Zuc::Initialize(uint8_t *pKey, uint8_t *pIv)
 {
     uint32_t w;
 
     for (int i = 0; i < 16; ++i)
-        LFSR_S[i] = MAKEU31(k[i], EK_d[i], iv[i]);
+        LFSR_S[i] = MAKEU31(pKey[i], EK_d[i], pIv[i]);
 
     F_R1 = 0;
     F_R2 = 0;
@@ -189,10 +171,9 @@ void Zuc::Initialization(uint8_t *k, uint8_t *iv)
     LFSRWithWorkMode();
 }
 
-void Zuc::GenerateKeyStream(uint32_t *pKeyStream, uint32_t KeyStreamLen)
+void Zuc::GenerateKeyStream(uint32_t *pKeyStream, uint32_t nKeyStream)
 {
-    /* working cycles */
-    for (uint32_t i = 0; i < KeyStreamLen; ++i)
+    for (uint32_t i = 0; i < nKeyStream; ++i)
     {
         BitReorganization();
         pKeyStream[i] = F() ^ BRC_X[3];

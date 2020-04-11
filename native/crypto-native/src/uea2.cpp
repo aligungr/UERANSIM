@@ -19,7 +19,7 @@ void UEA2::f8(u8 *key, u32 count, u32 bearer, u32 dir, u8 *data, u32 length)
     IV[0] = IV[2];
     Snow3G::Initialize(K, IV);
     KS = new u32[n];
-    Snow3G::GenerateKeyStream(n, (u32 *)KS);
+    Snow3G::GenerateKeyStream((u32 *)KS, n);
     for (i = 0; i < n; i++)
     {
         data[4 * i + 0] ^= (u8)(KS[i] >> 24) & 0xff;
@@ -83,7 +83,7 @@ u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
     IV[0] = fresh ^ (dir << 15);
     z[0] = z[1] = z[2] = z[3] = z[4] = 0;
     Snow3G::Initialize(K, IV);
-    Snow3G::GenerateKeyStream(5, z);
+    Snow3G::GenerateKeyStream(z, 5);
     P = (u64)z[0] << 32 | (u64)z[1];
     Q = (u64)z[2] << 32 | (u64)z[3];
     if ((length % 64) == 0)
@@ -116,7 +116,7 @@ u32 UEA2::f9(u8 *key, u32 count, u32 fresh, u32 dir, u8 *data, u64 length)
     EVAL = MUL64(EVAL, Q, c);
     for (i = 0; i < 4; i++)
         MAC_I[i] = ((EVAL >> (56 - (i * 8))) ^ (z[4] >> (24 - (i * 8)))) & 0xff;
-    
+
     u32 mac32 = 0;
     mac32 |= (MAC_I[0] << 24);
     mac32 |= (MAC_I[1] << 16);

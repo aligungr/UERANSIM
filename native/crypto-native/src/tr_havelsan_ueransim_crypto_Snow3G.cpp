@@ -9,7 +9,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_tr_havelsan_ueransim_crypto_Snow3G_s
     auto KS = new uint32_t[length];
 
     Snow3G::Initialize(K, IV);
-    Snow3G::GenerateKeyStream(static_cast<uint32_t>(length), KS);
+    Snow3G::GenerateKeyStream(KS, static_cast<uint32_t>(length));
 
     delete[] K;
     delete[] IV;

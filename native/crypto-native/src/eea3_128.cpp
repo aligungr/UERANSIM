@@ -3,7 +3,7 @@
 
 static void ZUC(uint8_t *k, uint8_t *iv, uint32_t *ks, uint32_t len)
 {
-    Zuc::Initialization(k, iv);
+    Zuc::Initialize(k, iv);
     Zuc::GenerateKeyStream(ks, len);
 }
 

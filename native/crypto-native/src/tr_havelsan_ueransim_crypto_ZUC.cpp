@@ -8,7 +8,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_tr_havelsan_ueransim_crypto_ZUC_zuc(
     auto IV = JniConvert::jbytearray_to_uint8array(pJniEnv, iv, 1, nullptr);
     auto KS = new uint32_t[length];
 
-    Zuc::Initialization(K, IV);
+    Zuc::Initialize(K, IV);
     Zuc::GenerateKeyStream(KS, static_cast<uint32_t>(length));
 
     delete[] K;
