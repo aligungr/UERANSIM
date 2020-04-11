@@ -172,7 +172,7 @@ void Zuc::Initialization(uint8_t *k, uint8_t *iv)
 
     for (int i = 0; i < 16; ++i)
         LFSR_S[i] = MAKEU31(k[i], EK_d[i], iv[i]);
-        
+
     F_R1 = 0;
     F_R2 = 0;
     uint32_t nCount = 32;

@@ -1,8 +1,6 @@
 #include "eea3_128.h"
 #include "zuc.h"
 
-#include <cstdlib>
-
 static void ZUC(uint8_t *k, uint8_t *iv, uint32_t *ks, uint32_t len)
 {
     Zuc::Initialization(k, iv);
@@ -15,7 +13,7 @@ void EEA3_128::EEA3(uint8_t *CK, uint32_t COUNT, uint32_t BEARER, uint32_t DIREC
     uint8_t IV[16];
 
     L = (LENGTH + 31) / 32;
-    z = (uint32_t *)malloc(L * sizeof(uint32_t));
+    z = new uint32_t[L];
 
     IV[0] = (COUNT >> 24) & 0xFF;
     IV[1] = (COUNT >> 16) & 0xFF;
@@ -36,9 +34,9 @@ void EEA3_128::EEA3(uint8_t *CK, uint32_t COUNT, uint32_t BEARER, uint32_t DIREC
     IV[13] = IV[5];
     IV[14] = IV[6];
     IV[15] = IV[7];
-    
+
     ZUC(CK, IV, z, L);
     for (i = 0; i < L; i++)
         C[i] = M[i] ^ z[i];
-    free(z);
+    delete[] z;
 }

@@ -14,24 +14,21 @@ public class EEA3_128 {
     }
 
     public static BitString encrypt(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
-        if (key.length != 16) {
-            throw new IllegalArgumentException("expected key length is " + 16);
-        }
-        byte[] res = encrypt(count.longValue(), bearer.intValue(), direction.boolValue(),
-                message.toByteArray(), message.bitLength(), key.toByteArray());
-        return BitString.from(res, message.bitLength());
+        return eea3(count, bearer, direction, message, key);
     }
 
     public static BitString decrypt(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
+        return eea3(count, bearer, direction, message, key);
+    }
+
+    public static BitString eea3(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
         if (key.length != 16) {
             throw new IllegalArgumentException("expected key length is " + 16);
         }
-        byte[] res = decrypt(count.longValue(), bearer.intValue(), direction.boolValue(),
+        byte[] res = eea3(count.longValue(), bearer.intValue(), direction.boolValue(),
                 message.toByteArray(), message.bitLength(), key.toByteArray());
         return BitString.from(res, message.bitLength());
     }
 
-    private static native byte[] encrypt(long count, int bearer, boolean direction, byte[] message, int bitLength, byte[] key);
-
-    private static native byte[] decrypt(long count, int bearer, boolean direction, byte[] message, int bitLength, byte[] key);
+    private static native byte[] eea3(long count, int bearer, boolean direction, byte[] message, int bitLength, byte[] key);
 }

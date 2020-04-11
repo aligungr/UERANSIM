@@ -51,7 +51,7 @@ uint32_t EIA3_128::EIA3(uint8_t *IK, uint32_t COUNT, uint32_t DIRECTION, uint32_
 
     N = LENGTH + 64;
     L = (N + 31) / 32;
-    z = (uint32_t *)malloc(L * sizeof(uint32_t));
+    z = new uint32_t[L];
     ZUC(IK, IV, z, L);
 
     T = 0;
@@ -63,7 +63,7 @@ uint32_t EIA3_128::EIA3(uint8_t *IK, uint32_t COUNT, uint32_t DIRECTION, uint32_
 
     T ^= GET_WORD(z, LENGTH);
     uint32_t MAC = T ^ z[L - 1];
-    free(z);
+    delete[] z;
 
     return MAC;
 }
