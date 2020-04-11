@@ -1,4 +1,4 @@
-#include "tr_havelsan_ueransim_crypto_EIA3_128.h"
+#include <jni.h>
 #include "eia3_128.h"
 #include "utils.h"
 

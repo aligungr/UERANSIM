@@ -1,4 +1,4 @@
-#include "tr_havelsan_ueransim_crypto_ZUC.h"
+#include <jni.h>
 #include "zuc.h"
 #include "utils.h"
 

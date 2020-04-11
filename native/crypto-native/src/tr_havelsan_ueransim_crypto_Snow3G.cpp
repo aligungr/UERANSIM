@@ -1,4 +1,4 @@
-#include "tr_havelsan_ueransim_crypto_Snow3G.h"
+#include <jni.h>
 #include "snow3g.h"
 #include "utils.h"
 
