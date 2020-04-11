@@ -10,7 +10,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_tr_havelsan_ueransim_crypto_EEA3_11
     auto M = Utils::jbyteArrayToUint32Array(env, message, &mWordLen);
     auto C = new uint32_t[mWordLen];
 
-    EEA3_128::EEA3(CK, static_cast<uint32_t>(count), direction, static_cast<uint32_t>(bearer), static_cast<uint32_t>(bitLength), M, C);
+    EEA3_128::EEA3(CK, static_cast<uint32_t>(count), static_cast<uint32_t>(bearer), direction, static_cast<uint32_t>(bitLength), M, C);
 
     delete[] CK;
     delete[] M;
