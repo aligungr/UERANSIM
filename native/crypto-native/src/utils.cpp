@@ -109,3 +109,10 @@ std::string Utils::byteArrayToHexString(uint8_t *arr, size_t length)
         s += Utils::uint8ToHexString(arr[i]);
     return s;
 }
+
+jbyteArray Utils::byteArrayToJByteArray(JNIEnv *env, uint8_t *arr, jsize length)
+{
+    jbyteArray ret = env->NewByteArray(length);
+    env->SetByteArrayRegion(ret, 0, length, reinterpret_cast<jbyte *>(arr));
+    return ret;
+}
