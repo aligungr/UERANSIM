@@ -19,11 +19,7 @@ public class EIA3_128 {
         }
         int mac = computeMac(count.longValue(), bearer.intValue(), direction.boolValue(),
                 message.toByteArray(), message.bitLength(), key.toByteArray());
-        int octet3 = (mac >> (24)) & 0xFF;
-        int octet2 = (mac >> (16)) & 0xFF;
-        int octet1 = (mac >> (8)) & 0xFF;
-        int octet0 = (mac >> (0)) & 0xFF;
-        return new Octet4(octet3, octet2, octet1, octet0);
+        return new Octet4(Integer.toUnsignedLong(mac));
     }
 
     private static native int computeMac(long count, int bearer, boolean direction, byte[] message, int bitLength, byte[] key);

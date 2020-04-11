@@ -14,12 +14,7 @@ public class ZUC {
         int[] rn = zuc(key.toByteArray(), iv.toByteArray(), length);
         Octet4[] rm = new Octet4[rn.length];
         for (int i = 0; i < rn.length; i++) {
-            int word = rn[i];
-            int octet3 = (word >> (24)) & 0xFF;
-            int octet2 = (word >> (16)) & 0xFF;
-            int octet1 = (word >> (8)) & 0xFF;
-            int octet0 = (word >> (0)) & 0xFF;
-            rm[i] = new Octet4(octet3, octet2, octet1, octet0);
+            rm[i] = new Octet4(Integer.toUnsignedLong(rn[i]));
         }
         return rm;
     }
