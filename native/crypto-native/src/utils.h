@@ -12,6 +12,8 @@ namespace Utils
 
     std::string uint32ToHexString(uint32_t value);
 
+    std::string byteArrayToHexString(uint8_t* arr, size_t length);
+
     uint8_t *jbyteArrayToUint8Array(JNIEnv *env, jbyteArray jba, jsize alignment, jsize *resLength);
 
     uint32_t *jbyteArrayToUint32Array(JNIEnv *env, jbyteArray jba, jsize *resLength);

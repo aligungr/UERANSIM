@@ -101,3 +101,11 @@ jintArray Utils::int32ArrayToJintArray(JNIEnv *env, int32_t *arr, jsize length)
     env->SetIntArrayRegion(ret, 0, length, arr);
     return ret;
 }
+
+std::string Utils::byteArrayToHexString(uint8_t *arr, size_t length)
+{
+    std::string s("");
+    for (size_t i = 0; i < length; i++)
+        s += Utils::uint8ToHexString(arr[i]);
+    return s;
+}
