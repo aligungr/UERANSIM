@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
@@ -66,7 +67,7 @@ public class RegistrationFlow extends BaseFlow {
                         IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
         registrationRequest.nasKeySetIdentifier =
                 new IENasKeySetIdentifier(
-                        IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+                        ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 

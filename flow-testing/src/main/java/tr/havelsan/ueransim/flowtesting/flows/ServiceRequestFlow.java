@@ -1,8 +1,8 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
 import tr.havelsan.ueransim.flowtesting.inputs.ServiceRequestFlowInput;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
-import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEServiceType;
 import tr.havelsan.ueransim.nas.impl.ies.IEServiceType.EServiceType;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceRequest;

@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
 import tr.havelsan.ueransim.flowtesting.inputs.DeregistrationInput;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating;
@@ -36,7 +37,7 @@ public class DeregistrationFlow extends BaseFlow {
     private State sendDeregistrationRequest(Message message) {
         var request = new DeRegistrationRequestUeOriginating();
         request.deRegistrationType = input.deregistrationType;
-        request.ngKSI = new IENasKeySetIdentifier(IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+        request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         request.mobileIdentity = input.guti;
 
         var ngap = new NgapBuilder()
