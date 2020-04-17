@@ -49,7 +49,7 @@ public class IEAdditional5gSecurityInformation extends InformationElement4 {
         public static final EHorizontalDerivationParameter NOT_REQUIRED
                 = new EHorizontalDerivationParameter(0b0, "K_AMF derivation is not required");
         public static final EHorizontalDerivationParameter REQUIRED
-                = new EHorizontalDerivationParameter(0b1, "K_AMF derivation is not required");
+                = new EHorizontalDerivationParameter(0b1, "K_AMF derivation is required");
 
         private EHorizontalDerivationParameter(int value, String name) {
             super(value, name);
