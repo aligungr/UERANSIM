@@ -21,28 +21,28 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
+import tr.havelsan.ueransim.sim.contexts.SimulationContext;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
-import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class PduSessionReleaseFlow extends BaseFlow {
     private PduSessionReleaseInput input;
 
-    public PduSessionReleaseFlow(SCTPClient sctpClient, PduSessionReleaseInput pduSessionReleaseInput) {
-        super(sctpClient);
+    public PduSessionReleaseFlow(SimulationContext simContext, PduSessionReleaseInput pduSessionReleaseInput) {
+        super(simContext);
         this.input = pduSessionReleaseInput;
     }
 
     @Override
     public State main(Message message) {
-        var pduRR =new PduSessionReleaseRequest();
-        pduRR.pduSessionId  = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
+        var pduRR = new PduSessionReleaseRequest();
+        pduRR.pduSessionId = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
         pduRR.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
 
         var uplink = new UlNasTransport();

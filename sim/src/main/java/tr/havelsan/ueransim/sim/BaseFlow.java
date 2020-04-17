@@ -2,27 +2,26 @@ package tr.havelsan.ueransim.sim;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
-import fr.marben.asnsdk.japi.spe.Value;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.sctp.SCTPClient;
+import tr.havelsan.ueransim.sim.contexts.SimulationContext;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Utils;
 
 public abstract class BaseFlow {
-    private SCTPClient sctpClient;
+    private final SimulationContext simContext;
     private boolean started;
     private int streamNumber;
     private State currentState;
 
-    public BaseFlow(SCTPClient sctpClient) {
-        this.sctpClient = sctpClient;
+    public BaseFlow(SimulationContext simContext) {
+        this.simContext = simContext;
     }
 
     protected final void sendData(byte[] data) {
         try {
-            sctpClient.send(this.streamNumber, data);
+            simContext.getSctpClient().send(this.streamNumber, data);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +54,7 @@ public abstract class BaseFlow {
         this.started = true;
         this.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
         this.currentState = main(null);
-        this.sctpClient.receiverLoop(this::handleSCTPMessage);
+        this.simContext.getSctpClient().receiverLoop(this::handleSCTPMessage);
     }
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
@@ -64,12 +63,12 @@ public abstract class BaseFlow {
     }
 
     public final State closeConnection() {
-        sctpClient.close();
+        simContext.getSctpClient().close();
         return this::sinkState;
     }
 
     public final State abortReceiver() {
-        sctpClient.abortReceiver();
+        simContext.getSctpClient().abortReceiver();
         return this::sinkState;
     }
 

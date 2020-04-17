@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
+import tr.havelsan.ueransim.sim.contexts.SimulationContext;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
@@ -65,6 +66,9 @@ public class FlowTesting {
 
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
         var sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
+
+        var simContext = new SimulationContext(sctpClient);
+
         sctpClient.start();
 
         catchINTSignal(sctpClient);
@@ -84,10 +88,10 @@ public class FlowTesting {
             var inputType = ctor.getParameterCount() > 1 ? ctor.getParameterTypes()[1] : null;
 
             if (inputType != null) {
-                ctor.newInstance(sctpClient, readInputFile("", yamlFile, inputType))
+                ctor.newInstance(simContext, readInputFile("", yamlFile, inputType))
                     .start();
             } else {
-                ctor.newInstance(sctpClient)
+                ctor.newInstance(simContext)
                     .start();
             }
             return;
@@ -134,10 +138,10 @@ public class FlowTesting {
 
             if (inputType != null) {
                 String key = "input." + typeNames.get(selection - 1);
-                ctor.newInstance(sctpClient, readInputFile(key, "" + config.get(key), inputType))
+                ctor.newInstance(simContext, readInputFile(key, "" + config.get(key), inputType))
                         .start();
             } else {
-                ctor.newInstance(sctpClient)
+                ctor.newInstance(simContext)
                         .start();
             }
         }

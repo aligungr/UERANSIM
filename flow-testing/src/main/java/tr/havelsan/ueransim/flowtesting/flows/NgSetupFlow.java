@@ -1,22 +1,21 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
 import tr.havelsan.ueransim.flowtesting.inputs.NgSetupInput;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
+import tr.havelsan.ueransim.sim.contexts.SimulationContext;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.sim.ue.UeUtils;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
 public class NgSetupFlow extends BaseFlow {
     private final NgSetupInput input;
 
-    public NgSetupFlow(SCTPClient sctpClient, NgSetupInput input) {
-        super(sctpClient);
+    public NgSetupFlow(SimulationContext simContext, NgSetupInput input) {
+        super(simContext);
         this.input = input;
     }
 

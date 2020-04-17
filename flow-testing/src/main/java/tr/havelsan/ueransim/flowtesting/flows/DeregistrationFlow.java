@@ -1,44 +1,30 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import tr.havelsan.ueransim.flowtesting.inputs.DeregistrationInput;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating;
-import tr.havelsan.ueransim.ngap.Values;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseComplete;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
+import tr.havelsan.ueransim.sim.contexts.SimulationContext;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.sim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
-import java.util.ArrayList;
-
 public class DeregistrationFlow extends BaseFlow {
 
     private final DeregistrationInput input;
 
-    public DeregistrationFlow(SCTPClient sctpClient, DeregistrationInput input) {
-        super(sctpClient);
+    public DeregistrationFlow(SimulationContext simContext, DeregistrationInput input) {
+        super(simContext);
         this.input = input;
     }
 
@@ -120,7 +106,7 @@ public class DeregistrationFlow extends BaseFlow {
     private State sendUeContextReleaseComplete() {
         var ngap = new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-                .withProcedure(NgapProcedure.UEContextReleaseComplete,NgapCriticality.REJECT )
+                .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .build();

@@ -22,9 +22,9 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.sim.BaseFlow;
 import tr.havelsan.ueransim.sim.Message;
+import tr.havelsan.ueransim.sim.contexts.SimulationContext;
 import tr.havelsan.ueransim.sim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -38,8 +38,8 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     private final PduSessionEstablishmentInput input;
 
-    public PduSessionEstablishmentFlow(SCTPClient sctpClient, PduSessionEstablishmentInput input) {
-        super(sctpClient);
+    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentInput input) {
+        super(simContext);
         this.input = input;
     }
 
