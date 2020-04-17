@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.utils.bits;
 
-import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.Octet;
 
 import java.util.Arrays;
 
@@ -66,6 +66,13 @@ public class BitN {
      */
     public final int intValue() {
         return _intValue;
+    }
+
+    /*
+     * Returns bool value of the underlying bit representation.
+     * */
+    public final boolean boolValue() {
+        return intValue() != 0;
     }
 
     /**
@@ -216,5 +223,16 @@ public class BitN {
         int i = StrictMath.toIntExact(getBitRangeL(start, end));
         if (i < 0) throw new ArithmeticException();
         return i;
+    }
+
+    /**
+     * Converts this object to {@link BitString}.
+     */
+    public BitString toBitString() {
+        var bs = new BitString();
+        for (int i = 0; i < bitCount(); i++) {
+            bs.set(i, this.getBitB(i));
+        }
+        return bs;
     }
 }

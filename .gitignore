@@ -8,6 +8,7 @@ dependency-reduced-pom.xml
 # Project specific (OTHERS)
 .directory
 .idea
+.vscode
 .settings
 *.iml
 */.idea
@@ -20,6 +21,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.o
 
 # Distribution / packaging
 .Python

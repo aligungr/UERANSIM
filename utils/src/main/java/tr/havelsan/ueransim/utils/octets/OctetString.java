@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public final class OctetString implements Iterable<Octet> {
-    public final Octet[] data;
+    private final Octet[] data;
     public final int length;
 
     public OctetString(Octet[] octets) {

@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.utils.octets;
 
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit;
+import tr.havelsan.ueransim.utils.bits.BitString;
 
 /**
  * Represents 1 to 7 octet unsigned integer.
@@ -256,5 +257,40 @@ public class OctetN {
      */
     public final byte[] toByteArray() {
         return toByteArray(true);
+    }
+
+    /**
+     * Returns the underlying value as an {@link OctetString} according to given endianness.
+     * Size of the returning string is equal to {@link #octetCount()}.
+     *
+     * @param useBigEndian should be set true to use Big Endian, or false for Little Endian
+     */
+    public final OctetString toOctetString(boolean useBigEndian) {
+        return new OctetString(toByteArray(useBigEndian));
+    }
+
+    /**
+     * Returns the underlying value as an {@link OctetString} using <b>Big Endian</b>.
+     * see {@link #toOctetString(boolean)}.
+     */
+    public final OctetString toOctetString() {
+        return toOctetString(true);
+    }
+
+    /**
+     * Returns the underlying value as an {@link BitString} according to given endianness.
+     *
+     * @param useBigEndian should be set true to use Big Endian, or false for Little Endian
+     */
+    public final BitString toBitString(boolean useBigEndian) {
+        return BitString.from(toByteArray(useBigEndian));
+    }
+
+    /**
+     * Returns the underlying value as an {@link BitString} using <b>Big Endian</b>.
+     * see {@link #toBitString(boolean)}.
+     */
+    public final BitString toBitString() {
+        return toBitString(true);
     }
 }

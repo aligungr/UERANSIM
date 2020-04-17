@@ -6,8 +6,11 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitN;
+import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
+
+import java.lang.reflect.Type;
 
 public final class Json {
     private static Gson gson;
@@ -24,6 +27,8 @@ public final class Json {
                 -> new JsonPrimitive(bit.intValue() != 0);
         JsonSerializer<OctetString> octetStringSerializer = (octetString, type, jsonSerializationContext)
                 -> new JsonPrimitive(octetString.toString());
+        JsonSerializer<BitString> bitStringSerializer = (bitString, type, jsonSerializationContext)
+                -> new JsonPrimitive(bitString.toBinaryString());
 
         gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -31,11 +36,17 @@ public final class Json {
                 .registerTypeHierarchyAdapter(BitN.class, bitNSerializer)
                 .registerTypeAdapter(Bit.class, bitSerializer)
                 .registerTypeAdapter(OctetString.class, octetStringSerializer)
+                .registerTypeAdapter(BitString.class, bitStringSerializer)
                 .create();
     }
 
     public static String toJson(Object obj) {
         makeGson();
         return gson.toJson(obj);
+    }
+
+    public static <T> T fromJson(String json, Type typeOfT) {
+        makeGson();
+        return gson.fromJson(json, typeOfT);
     }
 }
