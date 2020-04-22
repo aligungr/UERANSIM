@@ -36,7 +36,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         assertEquals(mes.registrationType.followOnRequestPending, IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING);
         assertEquals(mes.registrationType.registrationType, IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
 
-        assertEquals(mes.nasKeySetIdentifier.tsc, IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT);
+        assertEquals(mes.nasKeySetIdentifier.tsc, ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT);
         assertEquals(mes.nasKeySetIdentifier.nasKeySetIdentifier, new Bit3(7));
 
         var imsi = (IEImsiMobileIdentity) mes.mobileIdentity;
@@ -96,7 +96,7 @@ public class TestRegistrationRequest extends TranscoderTesting.PduTest {
         nasMessage.registrationType.followOnRequestPending = IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING;
         nasMessage.registrationType.registrationType = IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION;
         nasMessage.nasKeySetIdentifier = new IENasKeySetIdentifier();
-        nasMessage.nasKeySetIdentifier.tsc = IENasKeySetIdentifier.ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;
+        nasMessage.nasKeySetIdentifier.tsc = ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;
         nasMessage.nasKeySetIdentifier.nasKeySetIdentifier = new Bit3(7);
 
         var imsi = new IEImsiMobileIdentity();

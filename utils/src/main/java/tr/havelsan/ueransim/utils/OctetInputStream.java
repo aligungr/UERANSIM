@@ -135,6 +135,10 @@ public class OctetInputStream {
         return new OctetString(readOctetArray(length));
     }
 
+    public OctetString readOctetString() {
+        return readOctetString(length - index);
+    }
+
     /************ Read Octet ************/
 
     public int readOctetI() {

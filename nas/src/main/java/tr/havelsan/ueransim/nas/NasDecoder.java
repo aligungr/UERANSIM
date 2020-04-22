@@ -170,7 +170,7 @@ public class NasDecoder {
         message.securityHeaderType = sht;
         message.messageAuthenticationCode = stream.readOctet4();
         message.sequenceNumber = stream.readOctet();
-        message.plainNasMessage = nasPdu(stream);
+        message.plainNasMessage = stream.readOctetString();
         return message;
     }
 

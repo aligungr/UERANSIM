@@ -25,17 +25,16 @@
         </dependency>
         <dependency>
             <groupId>tr.havelsan.ueransim</groupId>
-            <artifactId>flow-testing</artifactId>
+            <artifactId>ngap</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>tr.havelsan.ueransim</groupId>
-            <artifactId>sim</artifactId>
+            <artifactId>sctp</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
 
 </project>

@@ -5,12 +5,13 @@ import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class SecuredMmMessage extends NasMessage {
     public ESecurityHeaderType securityHeaderType;
     public Octet4 messageAuthenticationCode;
     public Octet sequenceNumber;
-    public NasMessage plainNasMessage;
+    public OctetString plainNasMessage;
 
     public SecuredMmMessage() {
         super.extendedProtocolDiscriminator = EExtendedProtocolDiscriminator.MOBILITY_MANAGEMENT_MESSAGES;
@@ -26,6 +27,6 @@ public class SecuredMmMessage extends NasMessage {
         stream.writeOctet(securityHeaderType.intValue());
         stream.writeOctet4(messageAuthenticationCode);
         stream.writeOctet(sequenceNumber);
-        plainNasMessage.encodeMessage(stream);
+        stream.writeOctetString(plainNasMessage);
     }
 }

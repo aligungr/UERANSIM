@@ -6,6 +6,7 @@ import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.impl.enums.EExtendedProtocolDiscriminator;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEAbba;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
@@ -64,7 +65,7 @@ public class TestAuthenticationRequest extends TranscoderTesting.PduTest {
 
         mes.ngKSI = new IENasKeySetIdentifier();
         mes.ngKSI.nasKeySetIdentifier = new Bit3(0);
-        mes.ngKSI.tsc = IENasKeySetIdentifier.ETypeOfSecurityContext.fromValue(0);
+        mes.ngKSI.tsc = ETypeOfSecurityContext.fromValue(0);
 
         mes.abba = new IEAbba();
         mes.abba.contents = new OctetString("0000");

@@ -17,8 +17,6 @@
         <module>ngap</module>
         <module>transcode</module>
         <module>control</module>
-        <module>flow-testing</module>
-        <module>sim</module>
         <module>ueransim</module>
         <module>crypto</module>
     </modules>
