@@ -86,7 +86,7 @@ public abstract class BaseFlow {
     }
 
     //======================================================================================================
-    //                                          START METHOD
+    //                                            GENERAL
     //======================================================================================================
 
     public final void start() throws Exception {
@@ -98,13 +98,17 @@ public abstract class BaseFlow {
         this.simContext.getSctpClient().receiverLoop(this::handleSCTPMessage);
     }
 
-    //======================================================================================================
-    //                                           CONNECTION
-    //======================================================================================================
-
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var message = new Message(receivedBytes, messageInfo.streamNumber());
         this.currentState = this.currentState.accept(message);
+    }
+
+    //======================================================================================================
+    //                                             STATES
+    //======================================================================================================
+
+    protected final State sinkState(Message message) {
+        return this::sinkState;
     }
 
     public final State closeConnection() {
@@ -114,14 +118,6 @@ public abstract class BaseFlow {
 
     public final State abortReceiver() {
         simContext.getSctpClient().abortReceiver();
-        return this::sinkState;
-    }
-
-    //======================================================================================================
-    //                                             STATES
-    //======================================================================================================
-
-    protected final State sinkState(Message message) {
         return this::sinkState;
     }
 
