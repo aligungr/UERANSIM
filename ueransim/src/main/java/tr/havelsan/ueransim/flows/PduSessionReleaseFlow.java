@@ -24,7 +24,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -67,7 +66,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
     private State waitPduSessionReleaseCommand(Message message) {
         var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
+        logReceivedMessage(pdu);
 
         var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
 

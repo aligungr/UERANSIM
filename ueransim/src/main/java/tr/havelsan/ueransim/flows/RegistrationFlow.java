@@ -28,7 +28,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -77,7 +76,7 @@ public class RegistrationFlow extends BaseFlow {
 
     private State waitAmfMessages(Message message) {
         var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
+        logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
@@ -289,7 +288,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private void sendUplinkMessage(NasMessage nas) {
-        FlowUtils.logNasMessageWillSend(nas);
+        logNasMessageWillSend(nas);
         var ngapPdu = new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)

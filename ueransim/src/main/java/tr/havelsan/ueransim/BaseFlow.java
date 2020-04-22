@@ -2,10 +2,13 @@ package tr.havelsan.ueransim;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.ue.FlowUtils;
+import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.utils.Color;
+import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 
 public abstract class BaseFlow {
@@ -14,9 +17,44 @@ public abstract class BaseFlow {
     private int streamNumber;
     private State currentState;
 
+    //======================================================================================================
+    //                                          CONSTRUCTORS
+    //======================================================================================================
+
     public BaseFlow(SimulationContext simContext) {
         this.simContext = simContext;
     }
+
+    //======================================================================================================
+    //                                            LOGGING
+    //======================================================================================================
+
+    public static void logReceivedMessage(NGAP_PDU ngapPdu) {
+        Console.printDiv();
+        Console.println(Color.BLUE, "Received NGAP PDU:");
+        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+    }
+
+    public static void logNasMessageWillSend(NasMessage nasMessage) {
+        Console.printDiv();
+        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
+        Console.println(Color.BLUE, "While NAS message is:");
+        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
+    }
+
+    public static void logNgapMessageWillSend(NGAP_PDU ngapPdu) {
+        Console.printDiv();
+        Console.println(Color.BLUE, "Following NGAP message will be sent:");
+        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+    }
+
+    public static void logMessageSent() {
+        Console.println(Color.BLUE, "Message sent");
+    }
+
+    //======================================================================================================
+    //                                          DATA SENDING
+    //======================================================================================================
 
     protected final void sendData(byte[] data) {
         try {
@@ -38,14 +76,18 @@ public abstract class BaseFlow {
     }
 
     protected final void sendPDU(NGAP_PDU pdu) {
-        FlowUtils.logNgapMessageWillSend(pdu);
+        logNgapMessageWillSend(pdu);
         sendData(Ngap.perEncode(pdu));
-        FlowUtils.logMessageSent();
+        logMessageSent();
     }
 
     protected final void sendPDU(String xml) {
         sendPDU(Ngap.xerDecode(NGAP_PDU.class, xml));
     }
+
+    //======================================================================================================
+    //                                          START METHOD
+    //======================================================================================================
 
     public final void start() throws Exception {
         if (started) throw new RuntimeException("already started");
@@ -55,6 +97,10 @@ public abstract class BaseFlow {
         this.currentState = main(null);
         this.simContext.getSctpClient().receiverLoop(this::handleSCTPMessage);
     }
+
+    //======================================================================================================
+    //                                           CONNECTION
+    //======================================================================================================
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var message = new Message(receivedBytes, messageInfo.streamNumber());
@@ -71,11 +117,19 @@ public abstract class BaseFlow {
         return this::sinkState;
     }
 
+    //======================================================================================================
+    //                                             STATES
+    //======================================================================================================
+
     protected final State sinkState(Message message) {
         return this::sinkState;
     }
 
     public abstract State main(Message message) throws Exception;
+
+    //======================================================================================================
+    //                                           INTERFACES
+    //======================================================================================================
 
     @FunctionalInterface
     public interface State {

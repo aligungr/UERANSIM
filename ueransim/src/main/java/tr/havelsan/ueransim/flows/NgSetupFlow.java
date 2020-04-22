@@ -6,7 +6,6 @@ import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.NgSetupInput;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -33,7 +32,7 @@ public class NgSetupFlow extends BaseFlow {
 
     private State waitNgSetupResponse(Message message) {
         var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
+        logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof SuccessfulOutcome)) {
             Console.println(Color.YELLOW, "bad message, SuccessfulOutcome is expected. message ignored");

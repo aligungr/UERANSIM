@@ -14,7 +14,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
@@ -64,7 +63,7 @@ public class ServiceRequestFlow extends BaseFlow {
 
     private State waitForDownlinkNasTransport(Message message) {
         var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
+        logReceivedMessage(pdu);
 
         var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
 

@@ -25,7 +25,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -86,7 +85,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     private State waitPduSessionEstablishmentAccept(Message message) {
         var pdu = message.getAsPDU();
-        FlowUtils.logReceivedMessage(pdu);
+        logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
