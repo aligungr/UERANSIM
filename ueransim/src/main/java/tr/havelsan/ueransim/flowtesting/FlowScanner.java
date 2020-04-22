@@ -2,12 +2,12 @@ package tr.havelsan.ueransim.flowtesting;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import java.util.Locale;
+import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.sim.BaseFlow;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Set;
 
 public class FlowScanner {

@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.sim.ue;
+package tr.havelsan.ueransim.ue;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;

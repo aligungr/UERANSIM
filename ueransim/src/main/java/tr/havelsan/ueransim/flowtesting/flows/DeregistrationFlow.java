@@ -1,5 +1,7 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
+import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.flowtesting.inputs.DeregistrationInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
@@ -12,11 +14,9 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.sim.BaseFlow;
-import tr.havelsan.ueransim.sim.Message;
-import tr.havelsan.ueransim.sim.contexts.SimulationContext;
-import tr.havelsan.ueransim.sim.ue.FlowUtils;
-import tr.havelsan.ueransim.sim.ue.UeUtils;
+import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.ue.FlowUtils;
+import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 

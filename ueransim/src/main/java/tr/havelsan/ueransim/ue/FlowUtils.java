@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.sim.ue;
+package tr.havelsan.ueransim.ue;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.utils.Json;

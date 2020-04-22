@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.sim.contexts;
+package tr.havelsan.ueransim.contexts;
 
 import tr.havelsan.ueransim.sctp.SCTPClient;
 

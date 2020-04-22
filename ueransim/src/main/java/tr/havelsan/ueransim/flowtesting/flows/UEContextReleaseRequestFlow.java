@@ -1,6 +1,8 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
+import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.flowtesting.inputs.UEContextReleaseRequestInput;
 import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
 import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
@@ -10,10 +12,8 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.sim.BaseFlow;
-import tr.havelsan.ueransim.sim.Message;
-import tr.havelsan.ueransim.sim.contexts.SimulationContext;
-import tr.havelsan.ueransim.sim.ue.FlowUtils;
+import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 

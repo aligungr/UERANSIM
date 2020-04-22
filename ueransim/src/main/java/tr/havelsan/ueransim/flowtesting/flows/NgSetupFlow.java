@@ -1,13 +1,13 @@
 package tr.havelsan.ueransim.flowtesting.flows;
 
+import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.flowtesting.inputs.NgSetupInput;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.sim.BaseFlow;
-import tr.havelsan.ueransim.sim.Message;
-import tr.havelsan.ueransim.sim.contexts.SimulationContext;
-import tr.havelsan.ueransim.sim.ue.FlowUtils;
-import tr.havelsan.ueransim.sim.ue.UeUtils;
+import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.ue.FlowUtils;
+import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 

@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.sim;
+package tr.havelsan.ueransim;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
