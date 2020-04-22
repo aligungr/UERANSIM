@@ -21,4 +21,13 @@ public class ESecurityHeaderType extends ProtocolEnum {
     public static ESecurityHeaderType fromValue(int value) {
         return fromValueGeneric(ESecurityHeaderType.class, value, null);
     }
+
+    public boolean isIntegrityProtected() {
+        return this.equals(INTEGRITY_PROTECTED) || this.equals(INTEGRITY_PROTECTED_AND_CIPHERED)
+                || this.equals(INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT) || this.equals(INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT);
+    }
+
+    public boolean isCiphered() {
+        return this.equals(INTEGRITY_PROTECTED_AND_CIPHERED) || this.equals(INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT);
+    }
 }
