@@ -43,20 +43,22 @@ public class NasEncryption {
                 throw new NasSecurityException(NasSecurityException.MAC_MISMATCH);
             }
         }
-        byte[] decrypted = decryptData(protectedNasMessage.plainNasMessage.toByteArray(), securityContext, isUplink);
+        byte[] decrypted = decryptData(protectedNasMessage, securityContext, isUplink);
         return NasDecoder.nasPdu(decrypted);
     }
 
-    private static byte[] decryptData(byte[] data, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
+    private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
+        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber, isUplink);
+
         var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
-            return copy(data);
+            return copy(protectedNasMessage.plainNasMessage.toByteArray());
         }
 
         Octet4 count = getCount(securityContext, isUplink);
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
-        BitString message = BitString.from(data);
+        BitString message = BitString.from(protectedNasMessage.plainNasMessage.toByteArray());
         OctetString key = securityContext.keyNasInt;
 
         var alg = securityContext.selectedAlgorithms.ciphering;
@@ -139,18 +141,26 @@ public class NasEncryption {
         BitString message = BitString.from(data);
         OctetString key = securityContext.keyNasInt;
 
+        byte[] result;
+
         var alg = securityContext.selectedAlgorithms.ciphering;
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
-            return NEA1_128.encrypt(count, bearer, direction, message, key).toByteArray();
-        }
-        if (alg.equals(ETypeOfCipheringAlgorithm.EA2_128)) {
-            return NEA2_128.encrypt(count, bearer, direction, message, key).toByteArray();
-        }
-        if (alg.equals(ETypeOfCipheringAlgorithm.EA3_128)) {
-            return NEA3_128.encrypt(count, bearer, direction, message, key).toByteArray();
+            result = NEA1_128.encrypt(count, bearer, direction, message, key).toByteArray();
+        } else if (alg.equals(ETypeOfCipheringAlgorithm.EA2_128)) {
+            result = NEA2_128.encrypt(count, bearer, direction, message, key).toByteArray();
+        } else if (alg.equals(ETypeOfCipheringAlgorithm.EA3_128)) {
+            result = NEA3_128.encrypt(count, bearer, direction, message, key).toByteArray();
+        } else {
+            result = null;
         }
 
-        throw new NasSecurityException(NasSecurityException.INVALID_CIPHERING_ALG, alg.name());
+        securityContext.countOnEncrypt(isUplink);
+
+        if (result == null) {
+            throw new NasSecurityException(NasSecurityException.INVALID_CIPHERING_ALG, alg.name());
+        } else {
+            return result;
+        }
     }
 
     private static byte[] copy(byte[] data) {

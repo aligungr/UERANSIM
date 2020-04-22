@@ -41,6 +41,34 @@ public class NasSecurityContext {
         return isUplink ? uplinkCount : downlinkCount;
     }
 
+    public void countOnDecrypt(Octet sequenceNumber, boolean isUplink) {
+        if (isUplink) {
+            if (uplinkCount.sqn.longValue() > sequenceNumber.longValue()) {
+                uplinkCount.overflow = new Octet2((uplinkCount.overflow.longValue() + 1) & 0xFFFF);
+            }
+            uplinkCount.sqn = sequenceNumber;
+        } else {
+            if (downlinkCount.sqn.longValue() > sequenceNumber.longValue()) {
+                downlinkCount.overflow = new Octet2((uplinkCount.overflow.longValue() + 1) & 0xFFFF);
+            }
+            downlinkCount.sqn = sequenceNumber;
+        }
+    }
+
+    public void countOnEncrypt(boolean isUplink) {
+        if (!isUplink) {
+            downlinkCount.sqn = new Octet((downlinkCount.sqn.longValue() + 1) & 0xFF);
+            if (downlinkCount.sqn.longValue() == 0) {
+                downlinkCount.overflow = new Octet2((downlinkCount.overflow.longValue() + 1) & 0xFFFF);
+            }
+        } else {
+            uplinkCount.sqn = new Octet((uplinkCount.sqn.longValue() + 1) & 0xFF);
+            if (uplinkCount.sqn.longValue() == 0) {
+                uplinkCount.overflow = new Octet2((uplinkCount.overflow.longValue() + 1) & 0xFFFF);
+            }
+        }
+    }
+
     public static class Count {
         public Octet2 overflow;
         public Octet sqn;
