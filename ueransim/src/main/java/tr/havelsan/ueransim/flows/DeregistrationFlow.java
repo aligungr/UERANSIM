@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.DeregistrationInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -11,6 +10,7 @@ import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
@@ -29,11 +29,11 @@ public class DeregistrationFlow extends BaseFlow {
     }
 
     @Override
-    public State main(Message message) throws Exception {
-        return sendDeregistrationRequest(message);
+    public State main(NGAP_PDU ngapIn) throws Exception {
+        return sendDeregistrationRequest(ngapIn);
     }
 
-    private State sendDeregistrationRequest(Message message) {
+    private State sendDeregistrationRequest(NGAP_PDU ngapIn) {
         var request = new DeRegistrationRequestUeOriginating();
         request.deRegistrationType = input.deregistrationType;
         request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
@@ -52,8 +52,8 @@ public class DeregistrationFlow extends BaseFlow {
         return this::waitDeregistrationAccept;
     }
 
-    private State waitDeregistrationAccept(Message message) {
-        var pdu = message.getAsPDU();
+    private State waitDeregistrationAccept(NGAP_PDU ngapIn) {
+        var pdu = ngapIn;
         logReceivedMessage(pdu);
 
         if (!(pdu.getValue() instanceof InitiatingMessage)) {
@@ -82,16 +82,15 @@ public class DeregistrationFlow extends BaseFlow {
         return this::waitUeContextReleaseCommand;
     }
 
-    private State waitUeContextReleaseCommand(Message message) {
-        var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
+    private State waitUeContextReleaseCommand(NGAP_PDU ngapIn) {
+        logReceivedMessage(ngapIn);
 
-        if (!(pdu.getValue() instanceof InitiatingMessage)) {
+        if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
             return this::waitDeregistrationAccept;
         }
 
-        var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
+        var initiatingMessage = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
         if (!(initiatingMessage instanceof UEContextReleaseCommand)) {
             Console.println(Color.YELLOW, "bad message, UEContextReleaseCommand is expected. message ignored");
             return this::waitDeregistrationAccept;

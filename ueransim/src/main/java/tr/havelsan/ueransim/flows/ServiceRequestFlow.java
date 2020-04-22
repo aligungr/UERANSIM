@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.ServiceRequestFlowInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -12,6 +11,7 @@ import tr.havelsan.ueransim.nas.impl.messages.ServiceRequest;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
@@ -32,7 +32,7 @@ public class ServiceRequestFlow extends BaseFlow {
     }
 
     @Override
-    public State main(Message message) {
+    public State main(NGAP_PDU ngapIn) {
         return sendMessage();
     }
 
@@ -61,11 +61,10 @@ public class ServiceRequestFlow extends BaseFlow {
         return this::waitForDownlinkNasTransport;
     }
 
-    private State waitForDownlinkNasTransport(Message message) {
-        var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
+    private State waitForDownlinkNasTransport(NGAP_PDU ngapIn) {
+        logReceivedMessage(ngapIn);
 
-        var value = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
+        var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
 
         if (value instanceof DownlinkNASTransport) {
             Console.println(Color.GREEN_BOLD, "DownlinkNASTransport arrived, Service Request Completed.");

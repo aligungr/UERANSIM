@@ -7,7 +7,6 @@ import threegpp.milenage.biginteger.BigIntegerBuffer;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -24,6 +23,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.ErrorIndication;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
@@ -54,7 +54,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     @Override
-    public State main(Message message) {
+    public State main(NGAP_PDU ngapIn) {
         return sendRegistrationRequest();
     }
 
@@ -74,16 +74,15 @@ public class RegistrationFlow extends BaseFlow {
         return this::waitAmfMessages;
     }
 
-    private State waitAmfMessages(Message message) {
-        var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
+    private State waitAmfMessages(NGAP_PDU ngapIn) {
+        logReceivedMessage(ngapIn);
 
-        if (!(pdu.getValue() instanceof InitiatingMessage)) {
+        if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
             return this::waitAmfMessages;
         }
 
-        var initiatingMessage = ((InitiatingMessage) pdu.getValue()).value.getDecodedValue();
+        var initiatingMessage = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
 
         if (initiatingMessage instanceof DownlinkNASTransport) {
             var downlinkNASTransport = (DownlinkNASTransport) initiatingMessage;

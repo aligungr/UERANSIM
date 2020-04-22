@@ -99,15 +99,14 @@ public abstract class BaseFlow {
     }
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
-        var message = new Message(receivedBytes, messageInfo.streamNumber());
-        this.currentState = this.currentState.accept(message);
+        this.currentState = this.currentState.accept(Ngap.perDecode(NGAP_PDU.class, receivedBytes));
     }
 
     //======================================================================================================
     //                                             STATES
     //======================================================================================================
 
-    protected final State sinkState(Message message) {
+    protected final State sinkState(NGAP_PDU ngapIn) {
         return this::sinkState;
     }
 
@@ -121,7 +120,7 @@ public abstract class BaseFlow {
         return this::sinkState;
     }
 
-    public abstract State main(Message message) throws Exception;
+    public abstract State main(NGAP_PDU ngapIn) throws Exception;
 
     //======================================================================================================
     //                                           INTERFACES
@@ -129,6 +128,6 @@ public abstract class BaseFlow {
 
     @FunctionalInterface
     public interface State {
-        State accept(Message message);
+        State accept(NGAP_PDU message);
     }
 }

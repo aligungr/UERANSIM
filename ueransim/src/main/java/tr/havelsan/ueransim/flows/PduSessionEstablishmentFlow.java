@@ -3,7 +3,6 @@ package tr.havelsan.ueransim.flows;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.Message;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.PduSessionEstablishmentInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -21,6 +20,7 @@ import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
@@ -43,7 +43,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     }
 
     @Override
-    public State main(Message message) {
+    public State main(NGAP_PDU ngapIn) {
         return sendEstablishmentRequest();
     }
 
@@ -83,16 +83,15 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         return this::waitPduSessionEstablishmentAccept;
     }
 
-    private State waitPduSessionEstablishmentAccept(Message message) {
-        var pdu = message.getAsPDU();
-        logReceivedMessage(pdu);
+    private State waitPduSessionEstablishmentAccept(NGAP_PDU ngapIn) {
+        logReceivedMessage(ngapIn);
 
-        if (!(pdu.getValue() instanceof InitiatingMessage)) {
+        if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
             return this::waitPduSessionEstablishmentAccept;
         }
 
-        var initiatingMessage = (InitiatingMessage) pdu.getValue();
+        var initiatingMessage = (InitiatingMessage) ngapIn.getValue();
         if (!(initiatingMessage.value.getDecodedValue() instanceof PDUSessionResourceSetupRequest)) {
             Console.println(
                     Color.YELLOW, "bad message, PDUSessionResourceSetupRequest is expected. message ignored");
