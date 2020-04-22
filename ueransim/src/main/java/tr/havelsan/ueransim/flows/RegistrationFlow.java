@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.flowtesting.flows;
+package tr.havelsan.ueransim.flows;
 
 import threegpp.milenage.Milenage;
 import threegpp.milenage.MilenageBufferFactory;
@@ -8,7 +8,8 @@ import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
-import tr.havelsan.ueransim.flowtesting.inputs.RegistrationInput;
+import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -27,7 +28,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;

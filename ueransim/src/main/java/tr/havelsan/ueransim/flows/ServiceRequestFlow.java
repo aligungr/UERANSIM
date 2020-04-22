@@ -1,8 +1,9 @@
-package tr.havelsan.ueransim.flowtesting.flows;
+package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
-import tr.havelsan.ueransim.flowtesting.inputs.ServiceRequestFlowInput;
+import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.flowinputs.ServiceRequestFlowInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.ies.IEServiceType;
@@ -13,7 +14,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;

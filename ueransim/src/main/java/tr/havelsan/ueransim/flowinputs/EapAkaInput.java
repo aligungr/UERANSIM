@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.flowtesting.inputs;
+package tr.havelsan.ueransim.flowinputs;
 
 public class EapAkaInput {
     public final String OP;

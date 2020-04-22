@@ -1,9 +1,10 @@
-package tr.havelsan.ueransim.flowtesting.flows;
+package tr.havelsan.ueransim.flows;
 
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Message;
-import tr.havelsan.ueransim.flowtesting.inputs.PduSessionReleaseInput;
+import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.flowinputs.PduSessionReleaseInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
@@ -23,7 +24,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.ue.FlowUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;

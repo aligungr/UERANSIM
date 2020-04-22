@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.flowtesting.inputs;
+package tr.havelsan.ueransim.flowinputs;
 
 import tr.havelsan.ueransim.nas.impl.ies.IE5gTmsiMobileIdentity;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;

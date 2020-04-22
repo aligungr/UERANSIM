@@ -3,13 +3,13 @@ package tr.havelsan.ueransim;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
+import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.flowtesting.FlowScanner;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
+import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.sctp.SCTPClient;
-import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
