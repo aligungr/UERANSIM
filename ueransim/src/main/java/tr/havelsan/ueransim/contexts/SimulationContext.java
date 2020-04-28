@@ -11,6 +11,7 @@ public class SimulationContext {
     public SimulationContext(SCTPClient sctpClient) {
         this.sctpClient = sctpClient;
         this.nasSecurityContext = null;
+        this.amfUeNgapId = 0;
     }
 
     public SCTPClient getSctpClient() {
