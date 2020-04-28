@@ -7,11 +7,10 @@ import threegpp.milenage.biginteger.BigIntegerBuffer;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.URSimUtils;
+import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
@@ -21,17 +20,13 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.ErrorIndication;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
-import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -45,7 +40,7 @@ public class RegistrationFlow extends BaseFlow {
 
     private final RegistrationInput input;
     private final MilenageBufferFactory<BigIntegerBuffer> milenageBufferFactory;
-    private long amfUeNgapId;
+    private long amfUeNgapId; // todo maintain this in simulationContext
 
     public RegistrationFlow(SimulationContext simContext, RegistrationInput input) {
         super(simContext);
@@ -54,15 +49,12 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     @Override
-    public State main(NGAP_PDU ngapIn) {
+    public State main(IncomingMessage message) {
         var registrationRequest = new RegistrationRequest();
-        registrationRequest.registrationType =
-                new IE5gsRegistrationType(
-                        IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING,
-                        IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
-        registrationRequest.nasKeySetIdentifier =
-                new IENasKeySetIdentifier(
-                        ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+        registrationRequest.registrationType = new IE5gsRegistrationType(
+                IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING,
+                IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
+        registrationRequest.nasKeySetIdentifier = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 
@@ -78,68 +70,41 @@ public class RegistrationFlow extends BaseFlow {
         return this::waitAmfMessages;
     }
 
-    private State waitAmfMessages(NGAP_PDU ngapIn) {
-        if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
-            Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
-            return this::waitAmfMessages;
+    private State waitAmfMessages(IncomingMessage message) {
+        var initialContextSetupRequest = message.getNgapMessage(InitialContextSetupRequest.class);
+        if (initialContextSetupRequest != null) {
+            return handleInitialContextSetup();
         }
 
-        var initiatingMessage = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
-
-        if (initiatingMessage instanceof DownlinkNASTransport) {
-            var downlinkNASTransport = (DownlinkNASTransport) initiatingMessage;
-            for (var item : downlinkNASTransport.protocolIEs.valueList) {
+        var downlinkNasTransport = message.getNgapMessage(DownlinkNASTransport.class);
+        if (downlinkNasTransport != null) {
+            for (var item : downlinkNasTransport.protocolIEs.valueList) {
                 var protocolIE = (DownlinkNASTransport.ProtocolIEs.SEQUENCE) item;
                 if (protocolIE.value.getDecodedValue() instanceof AMF_UE_NGAP_ID) {
                     var amfUeNgapId = (AMF_UE_NGAP_ID) protocolIE.value.getDecodedValue();
                     this.amfUeNgapId = amfUeNgapId.value;
                 }
             }
-            return handleDownlinkNASTransport(downlinkNASTransport);
-        } else if (initiatingMessage instanceof InitialContextSetupRequest) {
-            return handleInitialContextSetup();
-        } else if (initiatingMessage instanceof ErrorIndication) {
-            Console.println(Color.RED, "Error indication received, message ignored");
-            return this::waitAmfMessages;
-        } else {
-            Console.println(Color.YELLOW, "unhandled ngap message. message ignored");
-            return this::waitAmfMessages;
+
+            var nasMessage = message.getNasMessage(NasMessage.class);
+            if (nasMessage != null) {
+                return handleNasMessage(nasMessage);
+            }
         }
+
+        Console.println(Color.YELLOW, "unhandled ngap message. message ignored");
+        return this::waitAmfMessages;
     }
 
-    private State handleDownlinkNASTransport(DownlinkNASTransport message) {
-        var nasMessage = URSimUtils.extractNasMessage(message);
-        if (nasMessage == null) {
-            Console.printDiv();
-            Console.println(Color.RED, "bad message, NAS PDU was expected.");
-            Console.println(Color.RED, "closing connection");
-            return closeConnection();
-        }
-        return handleNasMessage(nasMessage);
-    }
-
-    private State handleNasMessage(NasMessage nasMessage) {
-        Console.println(Color.BLUE, "Received NAS message is:");
-        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
-        Console.printDiv();
-        Console.println(Color.BLUE, "NAS message is handling.");
-
-        if (!(nasMessage instanceof PlainMmMessage)) {
-            Console.println(Color.RED, "Security protected NAS messages are not implemented yet");
-            Console.println(Color.RED, "Closing connection");
-            return closeConnection();
-        }
-
-        var message = (PlainMmMessage) nasMessage;
-
-        Console.println(Color.BLUE, message.messageType.name(), "is detected");
-
+    private State handleNasMessage(NasMessage message) {
         if (message instanceof AuthenticationRequest) {
             return handleAuthenticationRequest((AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {
-            return handleAuthenticationResult((AuthenticationResult) message);
+            Console.println(Color.BLUE, "Authentication result received");
+            return this::waitAmfMessages;
         } else if (message instanceof RegistrationReject) {
-            return handleRegistrationReject((RegistrationReject) message);
+            Console.println(Color.RED, "RegistrationReject result received.");
+            return closeConnection();
         } else if (message instanceof IdentityRequest) {
             return handleIdentityRequest((IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
@@ -162,26 +127,28 @@ public class RegistrationFlow extends BaseFlow {
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
                 .build());
 
-        var response = new RegistrationComplete();
-        sendUplinkMessage(response);
+        sendNgap(new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(new RegistrationComplete(), NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build());
 
         Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
         return abortReceiver();
     }
 
-    private State handleRegistrationReject(RegistrationReject message) {
-        Console.println(Color.RED, "RegistrationReject result received.");
-        return closeConnection();
-    }
-
-    private State handleAuthenticationResult(AuthenticationResult message) {
-        Console.println(Color.BLUE, "Authentication result received");
-        return this::waitAmfMessages;
-    }
-
     private State handleRegistrationAccept(RegistrationAccept message) {
-        var response = new RegistrationComplete();
-        sendUplinkMessage(response);
+        sendNgap(new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(new RegistrationComplete(), NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                .build());
 
         logFlowComplete();
         return abortReceiver();
@@ -253,7 +220,14 @@ public class RegistrationFlow extends BaseFlow {
             akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
             response.eapMessage = new IEEapMessage(akaPrime);
 
-            sendUplinkMessage(response);
+            sendNgap(new NgapBuilder()
+                    .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                    .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                    .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                    .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
+                    .addNasPdu(response, NgapCriticality.REJECT)
+                    .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
+                    .build());
         }
 
         return this::waitAmfMessages;
@@ -277,18 +251,15 @@ public class RegistrationFlow extends BaseFlow {
             return this::waitAmfMessages;
         }
 
-        sendUplinkMessage(response);
-        return this::waitAmfMessages;
-    }
-
-    private void sendUplinkMessage(NasMessage nas) {
         sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(nas, NgapCriticality.REJECT)
+                .addNasPdu(response, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
                 .build());
+
+        return this::waitAmfMessages;
     }
 }

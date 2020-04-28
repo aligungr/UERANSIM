@@ -1,13 +1,12 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.UEContextReleaseRequestInput;
 import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
 import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
@@ -27,7 +26,7 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
     }
 
     @Override
-    public State main(NGAP_PDU ngapIn) throws Exception {
+    public State main(IncomingMessage message) throws Exception {
         var misc = new CauseMisc(ASN_om_intervention);
         var cause = new Cause(Cause.ASN_misc, misc);
 
@@ -41,10 +40,9 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
         return this::waitPduSessionReleaseCommand;
     }
 
-    private State waitPduSessionReleaseCommand(NGAP_PDU ngapIn) {
-        var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
-
-        if (!(value instanceof UEContextReleaseCommand)) {
+    private State waitPduSessionReleaseCommand(IncomingMessage message) {
+        var ueContextReleaseCommand = message.getNgapMessage(UEContextReleaseCommand.class);
+        if (ueContextReleaseCommand == null) {
             Console.println(Color.YELLOW, "unexpected message ignored");
             return this::waitPduSessionReleaseCommand;
         }

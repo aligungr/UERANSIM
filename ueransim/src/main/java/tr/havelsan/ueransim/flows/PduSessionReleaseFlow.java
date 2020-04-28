@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.PduSessionReleaseInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -18,8 +19,6 @@ import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleaseResponseTrans
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleasedItemRelRes;
 import tr.havelsan.ueransim.ngap.ngap_ies.PDUSessionResourceReleasedListRelRes;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceReleaseCommand;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
@@ -39,7 +38,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
     }
 
     @Override
-    public State main(NGAP_PDU ngapIn) {
+    public State main(IncomingMessage message) {
         var pduRR = new PduSessionReleaseRequest();
         pduRR.pduSessionId = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
         pduRR.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
@@ -62,10 +61,9 @@ public class PduSessionReleaseFlow extends BaseFlow {
         return this::waitPduSessionReleaseCommand;
     }
 
-    private State waitPduSessionReleaseCommand(NGAP_PDU ngapIn) {
-        var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
-
-        if (!(value instanceof PDUSessionResourceReleaseCommand)) {
+    private State waitPduSessionReleaseCommand(IncomingMessage message) {
+        var pduSessionResourceReleaseCommand = message.getNgapMessage(PDUSessionResourceReleaseCommand.class);
+        if (pduSessionResourceReleaseCommand == null) {
             Console.println(Color.YELLOW, "PDUSessionResourceReleaseCommand was expected, message ignored");
             return this::waitPduSessionReleaseCommand;
         }

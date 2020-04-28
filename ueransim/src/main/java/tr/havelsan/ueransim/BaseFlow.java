@@ -4,7 +4,6 @@ import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -29,31 +28,22 @@ public abstract class BaseFlow {
     //                                            LOGGING
     //======================================================================================================
 
-    private static void logReceivedMessage(NGAP_PDU ngapPdu, NasMessage nasMessage) {
+    private static void logReceivedMessage(IncomingMessage incomingMessage) {
         Console.printDiv();
         Console.println(Color.BLUE, "Received NGAP:");
-        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
-        if (nasMessage != null) {
+        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(incomingMessage.ngapPdu)));
+        if (incomingMessage.nasMessage != null) {
             Console.println(Color.BLUE, "Received NAS:");
-            Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
+            Console.println(Color.WHITE_BRIGHT, Json.toJson(incomingMessage.nasMessage));
         }
     }
 
-    private static void logNasMessageWillSend(NasMessage nasMessage) {
+    private static void logSentMessage(OutgoingMessage message) {
         Console.printDiv();
-        Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
-        Console.println(Color.BLUE, "While NAS message is:");
-        Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
-    }
+        Console.println(Color.BLUE, "Sent NGAP:");
+        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(message.ngapPdu)));
 
-    private static void logNgapMessageWillSend(NGAP_PDU ngapPdu) {
-        Console.printDiv();
-        Console.println(Color.BLUE, "Following NGAP message will be sent:");
-        Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
-    }
-
-    private static void logMessageSent() {
-        Console.println(Color.BLUE, "Message sent");
+        // todo log nas also
     }
 
     protected void logFlowComplete() {
@@ -64,7 +54,7 @@ public abstract class BaseFlow {
     //                                          DATA SENDING
     //======================================================================================================
 
-    protected final void sendNgap(byte[] data) {
+    private void sendData(byte[] data) {
         try {
             simContext.getSctpClient().send(this.streamNumber, data);
         } catch (Exception e) {
@@ -73,10 +63,8 @@ public abstract class BaseFlow {
     }
 
     protected final void sendNgap(NGAP_PDU pdu) {
-        logNgapMessageWillSend(pdu);
-        sendNgap(Ngap.perEncode(pdu));
-        // todo: log nas message also
-        logMessageSent();
+        sendData(Ngap.perEncode(pdu));
+        logSentMessage(new OutgoingMessage(pdu));
     }
 
     //======================================================================================================
@@ -93,21 +81,24 @@ public abstract class BaseFlow {
     }
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
-        var ngapIn = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
-        var nasIn = URSimUtils.extractNasMessage(ngapIn);
+        var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
+        var ngapMessage = URSimUtils.extractNgapMessage(ngapPdu);
+        var nasMessage = URSimUtils.extractNasMessage(ngapPdu);
 
         // todo: decrypt nas if needed
 
-        logReceivedMessage(ngapIn, nasIn);
+        var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, nasMessage);
 
-        this.currentState = this.currentState.accept(ngapIn);
+
+        logReceivedMessage(incomingMessage);
+        this.currentState = this.currentState.accept(incomingMessage);
     }
 
     //======================================================================================================
     //                                             STATES
     //======================================================================================================
 
-    protected final State sinkState(NGAP_PDU ngapIn) {
+    protected final State sinkState(IncomingMessage message) {
         return this::sinkState;
     }
 
@@ -121,7 +112,7 @@ public abstract class BaseFlow {
         return this::sinkState;
     }
 
-    public abstract State main(NGAP_PDU ngapIn) throws Exception;
+    public abstract State main(IncomingMessage message) throws Exception;
 
     //======================================================================================================
     //                                           INTERFACES
@@ -129,6 +120,6 @@ public abstract class BaseFlow {
 
     @FunctionalInterface
     public interface State {
-        State accept(NGAP_PDU message);
+        State accept(IncomingMessage message);
     }
 }

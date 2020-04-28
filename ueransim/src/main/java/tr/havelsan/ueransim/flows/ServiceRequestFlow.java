@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.ServiceRequestFlowInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -10,8 +11,6 @@ import tr.havelsan.ueransim.nas.impl.ies.IEServiceType.EServiceType;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceRequest;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
@@ -32,7 +31,7 @@ public class ServiceRequestFlow extends BaseFlow {
     }
 
     @Override
-    public State main(NGAP_PDU ngapIn) {
+    public State main(IncomingMessage message) {
         return sendMessage();
     }
 
@@ -60,15 +59,14 @@ public class ServiceRequestFlow extends BaseFlow {
         return this::waitForDownlinkNasTransport;
     }
 
-    private State waitForDownlinkNasTransport(NGAP_PDU ngapIn) {
-        var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
-
-        if (value instanceof DownlinkNASTransport) {
-            logFlowComplete();
-            return abortReceiver();
+    private State waitForDownlinkNasTransport(IncomingMessage message) {
+        var downlinkNasTransport = message.getNgapMessage(DownlinkNASTransport.class);
+        if (downlinkNasTransport == null) {
+            Console.println(Color.YELLOW, "unexpected message ignored");
+            return this::waitForDownlinkNasTransport;
         }
 
-        Console.println(Color.YELLOW, "unexpected message ignored");
-        return this::waitForDownlinkNasTransport;
+        logFlowComplete();
+        return abortReceiver();
     }
 }

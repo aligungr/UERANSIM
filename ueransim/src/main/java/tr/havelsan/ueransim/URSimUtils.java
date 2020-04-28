@@ -2,6 +2,8 @@ package tr.havelsan.ueransim;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;
+import fr.marben.asnsdk.japi.spe.OpenTypeValue;
+import fr.marben.asnsdk.japi.spe.SequenceValue;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
@@ -12,6 +14,8 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialUEMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
 import tr.havelsan.ueransim.ngap2.*;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -157,5 +161,30 @@ public class URSimUtils {
             }
         }
         return nasPayload == null ? null : NasDecoder.nasPdu(nasPayload.getValue());
+    }
+
+    public static SequenceValue extractNgapMessage(NGAP_PDU ngapPdu) {
+        if (ngapPdu == null) {
+            return null;
+        }
+
+        OpenTypeValue otv = null;
+
+        if (ngapPdu.getFieldNumber() == NGAP_PDU.ASN_initiatingMessage) {
+            var initiatingMessage = (InitiatingMessage) ngapPdu.getValue();
+            otv = initiatingMessage.value;
+        } else if (ngapPdu.getFieldNumber() == NGAP_PDU.ASN_successfulOutcome) {
+            var successfulOutcome = (SuccessfulOutcome) ngapPdu.getValue();
+            otv = successfulOutcome.value;
+        } else if (ngapPdu.getFieldNumber() == NGAP_PDU.ASN_unsuccessfulOutcome) {
+            var unsuccessfulOutcome = (UnsuccessfulOutcome) ngapPdu.getValue();
+            otv = unsuccessfulOutcome.value;
+        }
+
+        if (otv == null) {
+            return null;
+        }
+
+        return (SequenceValue) otv.getDecodedValue();
     }
 }

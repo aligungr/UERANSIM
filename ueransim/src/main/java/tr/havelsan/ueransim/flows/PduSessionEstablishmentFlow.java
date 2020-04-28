@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.flows;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.PduSessionEstablishmentInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -19,8 +20,6 @@ import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
@@ -43,7 +42,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     }
 
     @Override
-    public State main(NGAP_PDU ngapIn) {
+    public State main(IncomingMessage message) {
         var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
         pduSessionEstablishmentRequest.pduSessionId = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
         pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
@@ -74,23 +73,14 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         return this::waitPduSessionEstablishmentAccept;
     }
 
-    private State waitPduSessionEstablishmentAccept(NGAP_PDU ngapIn) {
-        if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
-            Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
-            return this::waitPduSessionEstablishmentAccept;
-        }
-
-        var initiatingMessage = (InitiatingMessage) ngapIn.getValue();
-        if (!(initiatingMessage.value.getDecodedValue() instanceof PDUSessionResourceSetupRequest)) {
+    private State waitPduSessionEstablishmentAccept(IncomingMessage message) {
+        var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);
+        if (pduSessionResourceSetupRequest == null) {
             Console.println(
                     Color.YELLOW, "bad message, PDUSessionResourceSetupRequest is expected. message ignored");
             return this::waitPduSessionEstablishmentAccept;
         }
 
-        return sendPduSessionResourceSetupResponse();
-    }
-
-    private State sendPduSessionResourceSetupResponse() {
         var gtpTunnel = new GTPTunnel();
         gtpTunnel.transportLayerAddress = new TransportLayerAddress(input.transportLayerAddress.toByteArray(), 32);
         gtpTunnel.gTP_TEID = new GTP_TEID(input.gTpTeid.toByteArray());
