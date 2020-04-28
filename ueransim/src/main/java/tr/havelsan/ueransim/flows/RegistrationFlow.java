@@ -150,8 +150,7 @@ public class RegistrationFlow extends BaseFlow {
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
                 .build());
 
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {

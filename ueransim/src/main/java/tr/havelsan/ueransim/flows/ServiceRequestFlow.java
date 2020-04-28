@@ -66,7 +66,6 @@ public class ServiceRequestFlow extends BaseFlow {
             return this::waitForDownlinkNasTransport;
         }
 
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 }

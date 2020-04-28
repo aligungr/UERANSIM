@@ -70,8 +70,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
         sendPDUSessionResourceReleased();
         sendUplinkNas();
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 
     private void sendPDUSessionResourceReleased() {

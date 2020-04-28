@@ -54,7 +54,6 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .build());
 
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 }

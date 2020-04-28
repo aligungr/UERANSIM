@@ -46,7 +46,7 @@ public abstract class BaseFlow {
         // todo log nas also
     }
 
-    protected void logFlowComplete() {
+    private void logFlowComplete() {
         Console.println(Color.GREEN_BOLD, "%s completed", getClass().getSimpleName());
     }
 
@@ -110,6 +110,11 @@ public abstract class BaseFlow {
     public final State abortReceiver() {
         simContext.getSctpClient().abortReceiver();
         return this::sinkState;
+    }
+
+    public final State flowComplete() {
+        logFlowComplete();
+        return abortReceiver();
     }
 
     public abstract State main(IncomingMessage message) throws Exception;

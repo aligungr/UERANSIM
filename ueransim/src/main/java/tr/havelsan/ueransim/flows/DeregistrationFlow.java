@@ -70,7 +70,6 @@ public class DeregistrationFlow extends BaseFlow {
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .build());
 
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 }

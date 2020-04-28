@@ -30,7 +30,6 @@ public class NgSetupFlow extends BaseFlow {
             return this::waitNgSetupResponse;
         }
 
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 }

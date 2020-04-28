@@ -113,7 +113,6 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes)
                 .build());
 
-        logFlowComplete();
-        return abortReceiver();
+        return flowComplete();
     }
 }
