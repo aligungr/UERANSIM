@@ -55,10 +55,6 @@ public class RegistrationFlow extends BaseFlow {
 
     @Override
     public State main(NGAP_PDU ngapIn) {
-        return sendRegistrationRequest();
-    }
-
-    private State sendRegistrationRequest() {
         var registrationRequest = new RegistrationRequest();
         registrationRequest.registrationType =
                 new IE5gsRegistrationType(
@@ -70,7 +66,15 @@ public class RegistrationFlow extends BaseFlow {
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 
-        sendInitialUeMessage(registrationRequest);
+        sendPDU(new NgapBuilder()
+                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
+                .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addNasPdu(registrationRequest, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
+                .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE)
+                .build());
+
         return this::waitAmfMessages;
     }
 
@@ -153,13 +157,12 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        var ngap = new NgapBuilder()
+        sendPDU(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
-                .build();
-        sendPDU(ngap);
+                .build());
 
         var response = new RegistrationComplete();
         sendUplinkMessage(response);
@@ -259,43 +262,36 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleIdentityRequest(IdentityRequest message) {
-        if (!message.identityType.value.equals(EIdentityType.IMEI)) {
-            Console.println(
-                    Color.RED,
-                    "Identity request for %s is not implemented yet",
+        IdentityResponse response = new IdentityResponse();
+
+        if (message.identityType.value.equals(EIdentityType.IMEI)) {
+            response.mobileIdentity = new IEImeiMobileIdentity(input.imei);
+        } else if (message.identityType.value.equals(EIdentityType.SUCI)) {
+            if (!(input.mobileIdentity instanceof IESuciMobileIdentity)) {
+                Console.println(Color.RED, "Identity request for %s is not provided in registration.yaml",
+                        message.identityType.value.name());
+                return this::waitAmfMessages;
+            }
+            response.mobileIdentity = input.mobileIdentity;
+        } else {
+            Console.println(Color.RED, "Identity request for %s is not implemented yet",
                     message.identityType.value.name());
             return this::waitAmfMessages;
         }
 
-        var response = new IdentityResponse();
-        response.mobileIdentity = new IEImeiMobileIdentity(input.imei);
         sendUplinkMessage(response);
-
         return this::waitAmfMessages;
-    }
-
-    private void sendInitialUeMessage(NasMessage nas) {
-        var ngapPdu = new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(nas, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
-                .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE)
-                .build();
-        sendPDU(ngapPdu);
     }
 
     private void sendUplinkMessage(NasMessage nas) {
         logNasMessageWillSend(nas);
-        var ngapPdu = new NgapBuilder()
+        sendPDU(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
                 .addNasPdu(nas, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .build();
-        sendPDU(ngapPdu);
+                .build());
     }
 }
