@@ -33,7 +33,6 @@ public class DeregistrationFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), request);
 
         return this::waitDeregistrationAccept;
@@ -57,8 +56,7 @@ public class DeregistrationFlow extends BaseFlow {
         }
 
         send(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE), null);
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE), null);
 
         return flowComplete();
     }

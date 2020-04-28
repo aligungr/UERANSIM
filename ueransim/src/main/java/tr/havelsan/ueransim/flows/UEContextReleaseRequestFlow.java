@@ -31,7 +31,6 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addProtocolIE(cause, NgapCriticality.IGNORE), null);
         return this::waitPduSessionReleaseCommand;
     }
@@ -44,7 +43,6 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
         }
 
         send(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), null);
 
         return flowComplete();

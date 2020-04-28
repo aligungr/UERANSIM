@@ -51,7 +51,6 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT), uplink);
         return this::waitPduSessionReleaseCommand;
     }
@@ -78,7 +77,6 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.PDUSessionResourceReleaseResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
                 .addProtocolIE(list, NgapCriticality.IGNORE), null);
     }
@@ -97,7 +95,6 @@ public class PduSessionReleaseFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT), uplink);
     }
 }

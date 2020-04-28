@@ -117,7 +117,7 @@ public class NgapInternal {
         }
     }
 
-    public static <T> List<T> extractProtocolIe(Value procedureContent, Class<T> ieType) {
+    public static <T extends Value> List<T> extractProtocolIe(Value procedureContent, Class<T> ieType) {
         try {
             var list = new ArrayList<T>();
             if (procedureContent != null) {

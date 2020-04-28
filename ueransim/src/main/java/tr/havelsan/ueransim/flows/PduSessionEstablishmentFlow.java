@@ -62,7 +62,6 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), ulNasTransport);
 
         return this::waitPduSessionEstablishmentAccept;
@@ -102,7 +101,6 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
         send(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null);
 
         return flowComplete();
