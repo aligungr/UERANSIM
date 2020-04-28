@@ -22,7 +22,6 @@ import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -61,9 +60,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         ulNasTransport.sNssa = input.sNssai;
         ulNasTransport.dnn = input.dnn;
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), ulNasTransport);
@@ -103,9 +100,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         item.pDUSessionResourceSetupResponseTransfer = new ContainingOctetStringValue(transfer);
         list.valueList = Collections.singletonList(item);
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-                .withProcedure(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
+        send(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null);

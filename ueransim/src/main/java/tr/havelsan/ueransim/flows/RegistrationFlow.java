@@ -23,7 +23,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -58,9 +57,7 @@ public class RegistrationFlow extends BaseFlow {
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest);
@@ -118,15 +115,11 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-                .withProcedure(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
+        send(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE), null);
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete());
@@ -136,9 +129,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleRegistrationAccept(RegistrationAccept message) {
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete());
@@ -212,9 +203,7 @@ public class RegistrationFlow extends BaseFlow {
             akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
             response.eapMessage = new IEEapMessage(akaPrime);
 
-            send(new NgapBuilder()
-                    .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                    .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+            send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                     .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                     .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
                     .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
@@ -241,9 +230,7 @@ public class RegistrationFlow extends BaseFlow {
             return this::waitAmfMessages;
         }
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);

@@ -19,7 +19,6 @@ import tr.havelsan.ueransim.utils.Console;
 import static tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause.ASN_mo_Signalling;
 import static tr.havelsan.ueransim.ngap2.NgapCriticality.IGNORE;
 import static tr.havelsan.ueransim.ngap2.NgapCriticality.REJECT;
-import static tr.havelsan.ueransim.ngap2.NgapPduDescription.INITIATING_MESSAGE;
 
 public class ServiceRequestFlow extends BaseFlow {
 
@@ -46,9 +45,7 @@ public class ServiceRequestFlow extends BaseFlow {
         fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
         fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
-        send(new NgapBuilder()
-                .withDescription(INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
+        send(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)

@@ -11,7 +11,6 @@ import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -32,9 +31,7 @@ public class DeregistrationFlow extends BaseFlow {
         request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         request.mobileIdentity = input.guti;
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), request);
@@ -59,9 +56,7 @@ public class DeregistrationFlow extends BaseFlow {
             return this::waitDeregistrationAccept;
         }
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-                .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
+        send(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE), null);
 

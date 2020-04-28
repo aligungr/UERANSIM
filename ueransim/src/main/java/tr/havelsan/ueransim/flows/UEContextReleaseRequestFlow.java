@@ -9,7 +9,6 @@ import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -30,9 +29,7 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
         var misc = new CauseMisc(ASN_om_intervention);
         var cause = new Cause(Cause.ASN_misc, misc);
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
+        send(new NgapBuilder(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addProtocolIE(cause, NgapCriticality.IGNORE), null);
@@ -46,9 +43,7 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
             return this::waitPduSessionReleaseCommand;
         }
 
-        send(new NgapBuilder()
-                .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
-                .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
+        send(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), null);
 
