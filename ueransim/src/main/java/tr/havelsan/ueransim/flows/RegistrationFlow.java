@@ -7,6 +7,7 @@ import threegpp.milenage.biginteger.BigIntegerBuffer;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.URSimUtils;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -28,7 +29,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapPduDescription;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Json;
@@ -66,7 +66,7 @@ public class RegistrationFlow extends BaseFlow {
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 
-        sendPDU(new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
@@ -79,8 +79,6 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State waitAmfMessages(NGAP_PDU ngapIn) {
-        logReceivedMessage(ngapIn);
-
         if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
             return this::waitAmfMessages;
@@ -110,7 +108,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleDownlinkNASTransport(DownlinkNASTransport message) {
-        var nasMessage = UeUtils.getNasMessage(message);
+        var nasMessage = URSimUtils.getNasMessage(message);
         if (nasMessage == null) {
             Console.printDiv();
             Console.println(Color.RED, "bad message, NAS PDU was expected.");
@@ -157,7 +155,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        sendPDU(new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
@@ -185,7 +183,7 @@ public class RegistrationFlow extends BaseFlow {
         var response = new RegistrationComplete();
         sendUplinkMessage(response);
 
-        Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
+        logFlowComplete();
         return abortReceiver();
     }
 
@@ -284,8 +282,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private void sendUplinkMessage(NasMessage nas) {
-        logNasMessageWillSend(nas);
-        sendPDU(new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)

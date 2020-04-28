@@ -47,7 +47,7 @@ public class ServiceRequestFlow extends BaseFlow {
         fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
         fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
-        var ngSetupRequest = new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, REJECT)
@@ -55,24 +55,20 @@ public class ServiceRequestFlow extends BaseFlow {
                 .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
                 .addProtocolIE(fivegTmsi, REJECT)
-                .build();
-        sendPDU(ngSetupRequest);
+                .build());
 
         return this::waitForDownlinkNasTransport;
     }
 
     private State waitForDownlinkNasTransport(NGAP_PDU ngapIn) {
-        logReceivedMessage(ngapIn);
-
         var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
 
         if (value instanceof DownlinkNASTransport) {
-            Console.println(Color.GREEN_BOLD, "DownlinkNASTransport arrived, Service Request Completed.");
+            logFlowComplete();
             return abortReceiver();
-        } else {
-            Console.println(Color.YELLOW, "unexpected message ignored");
         }
 
+        Console.println(Color.YELLOW, "unexpected message ignored");
         return this::waitForDownlinkNasTransport;
     }
 }

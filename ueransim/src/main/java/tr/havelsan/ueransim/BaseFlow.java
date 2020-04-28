@@ -29,34 +29,38 @@ public abstract class BaseFlow {
     //                                            LOGGING
     //======================================================================================================
 
-    public static void logReceivedMessage(NGAP_PDU ngapPdu) {
+    private static void logReceivedMessage(NGAP_PDU ngapPdu) {
         Console.printDiv();
         Console.println(Color.BLUE, "Received NGAP PDU:");
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
     }
 
-    public static void logNasMessageWillSend(NasMessage nasMessage) {
+    private static void logNasMessageWillSend(NasMessage nasMessage) {
         Console.printDiv();
         Console.println(Color.BLUE, nasMessage.getClass().getSimpleName() + " will be sent");
         Console.println(Color.BLUE, "While NAS message is:");
         Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
     }
 
-    public static void logNgapMessageWillSend(NGAP_PDU ngapPdu) {
+    private static void logNgapMessageWillSend(NGAP_PDU ngapPdu) {
         Console.printDiv();
         Console.println(Color.BLUE, "Following NGAP message will be sent:");
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
     }
 
-    public static void logMessageSent() {
+    private static void logMessageSent() {
         Console.println(Color.BLUE, "Message sent");
+    }
+
+    protected void logFlowComplete() {
+        Console.println(Color.GREEN_BOLD, "%s completed", getClass().getSimpleName());
     }
 
     //======================================================================================================
     //                                          DATA SENDING
     //======================================================================================================
 
-    protected final void sendData(byte[] data) {
+    protected final void sendNgap(byte[] data) {
         try {
             simContext.getSctpClient().send(this.streamNumber, data);
         } catch (Exception e) {
@@ -64,25 +68,10 @@ public abstract class BaseFlow {
         }
     }
 
-    protected final void sendData(int... data) {
-        byte[] bytes = new byte[data.length];
-        for (int i = 0; i < data.length; i++)
-            bytes[i] = (byte) data[i];
-        sendData(bytes);
-    }
-
-    protected final void sendBase16(String hexString) {
-        sendData(Utils.hexStringToByteArray(hexString));
-    }
-
-    protected final void sendPDU(NGAP_PDU pdu) {
+    protected final void sendNgap(NGAP_PDU pdu) {
         logNgapMessageWillSend(pdu);
-        sendData(Ngap.perEncode(pdu));
+        sendNgap(Ngap.perEncode(pdu));
         logMessageSent();
-    }
-
-    protected final void sendPDU(String xml) {
-        sendPDU(Ngap.xerDecode(NGAP_PDU.class, xml));
     }
 
     //======================================================================================================
@@ -99,7 +88,10 @@ public abstract class BaseFlow {
     }
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
-        this.currentState = this.currentState.accept(Ngap.perDecode(NGAP_PDU.class, receivedBytes));
+        var ngapIn = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
+        logReceivedMessage(ngapIn);
+
+        this.currentState = this.currentState.accept(ngapIn);
     }
 
     //======================================================================================================

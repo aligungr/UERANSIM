@@ -1,8 +1,7 @@
-package tr.havelsan.ueransim.ue;
+package tr.havelsan.ueransim;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;
-import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.EapDecoder;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -23,7 +22,7 @@ import java.util.List;
 
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingDRX;
 
-public class UeUtils {
+public class URSimUtils {
 
     public static Eap decodeEapFromBase64(String base64) {
         var hex = new String(Base64.getDecoder().decode((base64)));

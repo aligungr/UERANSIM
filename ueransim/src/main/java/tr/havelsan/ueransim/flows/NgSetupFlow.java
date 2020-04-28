@@ -1,12 +1,12 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.URSimUtils;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.NgSetupInput;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.ue.UeUtils;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
@@ -20,19 +20,11 @@ public class NgSetupFlow extends BaseFlow {
 
     @Override
     public State main(NGAP_PDU ngapIn) throws Exception {
-        return sendNgSetupRequest();
-    }
-
-    private State sendNgSetupRequest() {
-        var ngSetupRequest = UeUtils.createNgSetupRequest(input.gnbId, input.gnbPlmn,
-                input.supportedTAs);
-        sendPDU(ngSetupRequest);
+        sendNgap(URSimUtils.createNgSetupRequest(input.gnbId, input.gnbPlmn, input.supportedTAs));
         return this::waitNgSetupResponse;
     }
 
     private State waitNgSetupResponse(NGAP_PDU ngapIn) {
-        logReceivedMessage(ngapIn);
-
         if (!(ngapIn.getValue() instanceof SuccessfulOutcome)) {
             Console.println(Color.YELLOW, "bad message, SuccessfulOutcome is expected. message ignored");
             return this::waitNgSetupResponse;
@@ -44,8 +36,7 @@ public class NgSetupFlow extends BaseFlow {
             return this::waitNgSetupResponse;
         }
 
-        Console.println(Color.BLUE, "NGSetupResponse handled.");
-        Console.println(Color.GREEN_BOLD, "NGSetup complete");
+        logFlowComplete();
         return abortReceiver();
     }
 }

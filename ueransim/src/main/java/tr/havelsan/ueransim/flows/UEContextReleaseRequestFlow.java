@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.flows;
 
-import fr.marben.asnsdk.japi.InvalidStructureException;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.UEContextReleaseRequestInput;
@@ -29,49 +28,35 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
 
     @Override
     public State main(NGAP_PDU ngapIn) throws Exception {
-        return sendRequest();
-    }
-
-    private State sendRequest() throws InvalidStructureException {
         var misc = new CauseMisc(ASN_om_intervention);
         var cause = new Cause(Cause.ASN_misc, misc);
 
-        var ngSetupRequest = new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addProtocolIE(cause, NgapCriticality.IGNORE)
-                .build();
-
-        sendPDU(ngSetupRequest);
+                .build());
         return this::waitPduSessionReleaseCommand;
     }
 
     private State waitPduSessionReleaseCommand(NGAP_PDU ngapIn) {
-        logReceivedMessage(ngapIn);
-
         var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
 
-        if (value instanceof UEContextReleaseCommand) {
-            Console.println(Color.BLUE, "UEContextReleaseCommand arrived, UEContextReleaseComplete will return");
-            return ueContextReleaseComplete();
-        } else {
+        if (!(value instanceof UEContextReleaseCommand)) {
             Console.println(Color.YELLOW, "unexpected message ignored");
             return this::waitPduSessionReleaseCommand;
         }
-    }
 
-    private State ueContextReleaseComplete() {
-        var ngSetupRequest = new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .build();
-        sendPDU(ngSetupRequest);
+                .build());
 
-        Console.println(Color.GREEN, "UEContextRelease completed");
+        logFlowComplete();
         return abortReceiver();
     }
 }

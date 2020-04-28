@@ -44,15 +44,9 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     @Override
     public State main(NGAP_PDU ngapIn) {
-        return sendEstablishmentRequest();
-    }
-
-    private State sendEstablishmentRequest() {
         var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
-        pduSessionEstablishmentRequest.pduSessionId =
-                EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
-        pduSessionEstablishmentRequest.pti =
-                EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
+        pduSessionEstablishmentRequest.pduSessionId = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
+        pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
         pduSessionEstablishmentRequest.integrityProtectionMaximumDataRate =
                 new IEIntegrityProtectionMaximumDataRate(
                         EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.FULL_DATA_RATE,
@@ -61,31 +55,26 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         pduSessionEstablishmentRequest.sscMode = new IESscMode(ESscMode.SSC_MODE_1);
 
         var ulNasTransport = new UlNasTransport();
-        ulNasTransport.payloadContainerType =
-                new IEPayloadContainerType(EPayloadContainerType.N1_SM_INFORMATION);
-        ulNasTransport.payloadContainer =
-                new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduSessionEstablishmentRequest)));
+        ulNasTransport.payloadContainerType = new IEPayloadContainerType(EPayloadContainerType.N1_SM_INFORMATION);
+        ulNasTransport.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduSessionEstablishmentRequest)));
         ulNasTransport.pduSessionId = new IEPduSessionIdentity2(input.pduSessionId);
         ulNasTransport.requestType = new IERequestType(ERequestType.INITIAL_REQUEST);
         ulNasTransport.sNssa = input.sNssai;
         ulNasTransport.dnn = input.dnn;
 
-        var ngap = new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
                 .addNasPdu(ulNasTransport, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .build();
-        sendPDU(ngap);
+                .build());
 
         return this::waitPduSessionEstablishmentAccept;
     }
 
     private State waitPduSessionEstablishmentAccept(NGAP_PDU ngapIn) {
-        logReceivedMessage(ngapIn);
-
         if (!(ngapIn.getValue() instanceof InitiatingMessage)) {
             Console.println(Color.YELLOW, "bad message, InitiatingMessage is expected. message ignored");
             return this::waitPduSessionEstablishmentAccept;
@@ -126,17 +115,15 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         item.pDUSessionResourceSetupResponseTransfer = new ContainingOctetStringValue(transfer);
         list.valueList = Collections.singletonList(item);
 
-        var ngap = new NgapBuilder()
+        sendNgap(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes)
-                .build();
+                .build());
 
-        sendPDU(ngap);
-
-        Console.println(Color.GREEN, "PDU Session Establishment Completed");
+        logFlowComplete();
         return abortReceiver();
     }
 }
