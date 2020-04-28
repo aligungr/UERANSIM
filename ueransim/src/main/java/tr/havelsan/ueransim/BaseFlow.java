@@ -3,7 +3,6 @@ package tr.havelsan.ueransim;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
@@ -18,7 +17,6 @@ import tr.havelsan.ueransim.utils.Utils;
 public abstract class BaseFlow {
     private final SimulationContext simContext;
     private boolean started;
-    private int streamNumber;
     private State currentState;
 
     //======================================================================================================
@@ -63,18 +61,6 @@ public abstract class BaseFlow {
     }
 
     //======================================================================================================
-    //                                          DATA SENDING
-    //======================================================================================================
-
-    private void sendData(byte[] data) {
-        try {
-            simContext.getSctpClient().send(this.streamNumber, data);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //======================================================================================================
     //                                           MESSAGING
     //======================================================================================================
 
@@ -98,7 +84,7 @@ public abstract class BaseFlow {
         }
 
         var ngapPdu = ngapBuilder.build();
-        sendData(Ngap.perEncode(ngapPdu));
+        sendSctpData(Ngap.perEncode(ngapPdu));
 
         var outgoing = new OutgoingMessage(ngapPdu, nasMessage, securedNas);
         logSentMessage(outgoing);
@@ -153,14 +139,21 @@ public abstract class BaseFlow {
         if (started) throw new RuntimeException("already started");
 
         this.started = true;
-        this.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
         this.currentState = main(null);
-        this.simContext.getSctpClient().receiverLoop(this::handleSCTPMessage);
+        this.simContext.getSctpClient().receiverLoop(this::receiveSctpData);
     }
 
-    private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
+    private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
         receive(ngapPdu);
+    }
+
+    private void sendSctpData(byte[] data) {
+        try {
+            simContext.getSctpClient().send(simContext.getStreamNumber(), data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //======================================================================================================

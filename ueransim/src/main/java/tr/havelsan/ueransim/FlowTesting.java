@@ -66,7 +66,7 @@ public class FlowTesting {
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
         var sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
-        var simContext = new SimulationContext(sctpClient);
+        var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
 
         sctpClient.start();
 
