@@ -78,6 +78,8 @@ public class NgapBuilder {
     public NGAP_PDU build() {
         int procedureCode = NgapInternal.findProcedureCode(procedure);
         Value procedureContent = NgapInternal.createProcedureValue(procedure);
+
+        // TODO: make ie ordering according to 38.413
         for (var protocolIe : protocolIEs) {
             NgapInternal.appendProtocolIe(procedure, procedureContent, protocolIe.criticality, protocolIe.value, protocolIe.id);
         }

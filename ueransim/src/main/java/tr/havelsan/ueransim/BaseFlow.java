@@ -8,6 +8,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Json;
@@ -123,7 +124,7 @@ public abstract class BaseFlow {
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
-        var ngapMessage = URSimUtils.extractNgapMessage(ngapPdu);
+        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
         var nasMessage = URSimUtils.extractNasMessage(ngapPdu);
         var decryptedNasMessage = decryptNasMessage(nasMessage);
         var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
