@@ -30,13 +30,12 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
         var misc = new CauseMisc(ASN_om_intervention);
         var cause = new Cause(Cause.ASN_misc, misc);
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
-                .addProtocolIE(cause, NgapCriticality.IGNORE)
-                .build());
+                .addProtocolIE(cause, NgapCriticality.IGNORE), null);
         return this::waitPduSessionReleaseCommand;
     }
 
@@ -47,12 +46,11 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
             return this::waitPduSessionReleaseCommand;
         }
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .build());
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), null);
 
         return flowComplete();
     }

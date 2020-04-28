@@ -46,15 +46,13 @@ public class ServiceRequestFlow extends BaseFlow {
         fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
         fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, REJECT)
-                .addNasPdu(serviceRequest, REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
-                .addProtocolIE(fivegTmsi, REJECT)
-                .build());
+                .addProtocolIE(fivegTmsi, REJECT), serviceRequest);
 
         return this::waitForDownlinkNasTransport;
     }

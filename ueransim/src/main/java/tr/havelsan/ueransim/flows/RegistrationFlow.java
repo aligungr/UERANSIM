@@ -58,14 +58,12 @@ public class RegistrationFlow extends BaseFlow {
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = input.mobileIdentity;
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(registrationRequest, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
-                .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE)
-                .build());
+                .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest);
 
         return this::waitAmfMessages;
     }
@@ -120,35 +118,30 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
-                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE)
-                .build());
+                .addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE), null);
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(new RegistrationComplete(), NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .build());
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete());
 
         Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
         return abortReceiver();
     }
 
     private State handleRegistrationAccept(RegistrationAccept message) {
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(new RegistrationComplete(), NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .build());
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete());
 
         return flowComplete();
     }
@@ -219,14 +212,12 @@ public class RegistrationFlow extends BaseFlow {
             akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
             response.eapMessage = new IEEapMessage(akaPrime);
 
-            sendNgap(new NgapBuilder()
+            send(new NgapBuilder()
                     .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                     .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                     .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                     .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
-                    .addNasPdu(response, NgapCriticality.REJECT)
-                    .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                    .build());
+                    .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
         }
 
         return this::waitAmfMessages;
@@ -250,14 +241,12 @@ public class RegistrationFlow extends BaseFlow {
             return this::waitAmfMessages;
         }
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(amfUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(response, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .build());
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
 
         return this::waitAmfMessages;
     }

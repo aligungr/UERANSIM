@@ -16,7 +16,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
-import tr.havelsan.ueransim.ngap2.*;
+import tr.havelsan.ueransim.ngap2.SupportedTA;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.Octet4;
@@ -24,11 +24,9 @@ import tr.havelsan.ueransim.utils.octets.Octet4;
 import java.util.ArrayList;
 import java.util.List;
 
-import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingDRX;
-
 public class URSimUtils {
 
-    private static GlobalRANNodeID createGlobalGnbId(int globalGnbId, VPlmn gnbPlmn) {
+    public static GlobalRANNodeID createGlobalGnbId(int globalGnbId, VPlmn gnbPlmn) {
         try {
             var res = new GlobalGNB_ID();
             res.gNB_ID =
@@ -75,7 +73,7 @@ public class URSimUtils {
         return res;
     }
 
-    private static SupportedTAList createSupportedTAList(SupportedTA[] supportedTAs) {
+    public static SupportedTAList createSupportedTAList(SupportedTA[] supportedTAs) {
         var list = new ArrayList<SupportedTAItem>();
 
         for (var supportedTa : supportedTAs) {
@@ -88,16 +86,6 @@ public class URSimUtils {
         var res = new SupportedTAList();
         res.valueList = list;
         return res;
-    }
-
-    public static NGAP_PDU createNgSetupRequest(int globalGnbId, VPlmn gnbPlmn, SupportedTA[] supportedTAs) {
-        return new NgapBuilder()
-                .withDescription(NgapPduDescription.INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
-                .addProtocolIE(createGlobalGnbId(globalGnbId, gnbPlmn), NgapCriticality.REJECT)
-                .addProtocolIE(createSupportedTAList(supportedTAs), NgapCriticality.REJECT)
-                .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX)
-                .build();
     }
 
     public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {

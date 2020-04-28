@@ -32,14 +32,12 @@ public class DeregistrationFlow extends BaseFlow {
         request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         request.mobileIdentity = input.guti;
 
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.INITIATING_MESSAGE)
                 .withProcedure(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.REJECT)
-                .addNasPdu(request, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .build());
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), request);
 
         return this::waitDeregistrationAccept;
     }
@@ -61,14 +59,11 @@ public class DeregistrationFlow extends BaseFlow {
             return this::waitDeregistrationAccept;
         }
 
-        // do something with command
-
-        sendNgap(new NgapBuilder()
+        send(new NgapBuilder()
                 .withDescription(NgapPduDescription.SUCCESSFUL_OUTCOME)
                 .withProcedure(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
-                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE)
-                .build());
+                .addAmfUeNgapId(input.amfUeNgapId, NgapCriticality.IGNORE), null);
 
         return flowComplete();
     }

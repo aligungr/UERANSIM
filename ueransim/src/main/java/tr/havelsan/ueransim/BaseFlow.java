@@ -4,7 +4,10 @@ import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Json;
@@ -43,7 +46,14 @@ public abstract class BaseFlow {
         Console.println(Color.BLUE, "Sent NGAP:");
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(message.ngapPdu)));
 
-        // todo log nas also
+        if (message.plainNas != null) {
+            Console.println(Color.BLUE, "Sent Plain NAS: %s", message.plainNas.getClass().getSimpleName());
+            Console.println(Color.WHITE_BRIGHT, Json.toJson(message.plainNas));
+        }
+        if (message.securedNas != null && message.plainNas != message.securedNas) {
+            Console.println(Color.BLUE, "Sent Secured NAS: %s", message.securedNas.getClass().getSimpleName());
+            Console.println(Color.WHITE_BRIGHT, Json.toJson(message.securedNas));
+        }
     }
 
     private void logFlowComplete() {
@@ -62,9 +72,40 @@ public abstract class BaseFlow {
         }
     }
 
-    protected final void sendNgap(NGAP_PDU pdu) {
-        sendData(Ngap.perEncode(pdu));
-        logSentMessage(new OutgoingMessage(pdu));
+    protected final void send(NgapBuilder ngapBuilder, NasMessage nasMessage) {
+        NasMessage securedNas = encryptNasMessage(nasMessage);
+
+        if (securedNas != null) {
+            ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
+        }
+
+        var ngapPdu = ngapBuilder.build();
+        sendData(Ngap.perEncode(ngapPdu));
+
+        var outgoing = new OutgoingMessage(ngapPdu, nasMessage, securedNas);
+        logSentMessage(outgoing);
+    }
+
+    //======================================================================================================
+    //                                            SECURITY
+    //======================================================================================================
+
+    private NasMessage encryptNasMessage(NasMessage nasMessage) {
+        if (nasMessage == null) {
+            return null;
+        }
+
+        // todo: encrypt nasMessage if needed
+        return nasMessage;
+    }
+
+    private NasMessage decryptNasMessage(NasMessage nasMessage) {
+        if (nasMessage == null) {
+            return null;
+        }
+
+        // todo: decrypt nasMessage if needed
+        return nasMessage;
     }
 
     //======================================================================================================
@@ -84,11 +125,8 @@ public abstract class BaseFlow {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
         var ngapMessage = URSimUtils.extractNgapMessage(ngapPdu);
         var nasMessage = URSimUtils.extractNasMessage(ngapPdu);
-
-        // todo: decrypt nas if needed
-
-        var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, nasMessage);
-
+        var decryptedNasMessage = decryptNasMessage(nasMessage);
+        var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
 
         logReceivedMessage(incomingMessage);
         this.currentState = this.currentState.accept(incomingMessage);
