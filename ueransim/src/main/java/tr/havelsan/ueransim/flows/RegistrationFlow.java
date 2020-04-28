@@ -108,7 +108,7 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleDownlinkNASTransport(DownlinkNASTransport message) {
-        var nasMessage = URSimUtils.getNasMessage(message);
+        var nasMessage = URSimUtils.extractNasMessage(message);
         if (nasMessage == null) {
             Console.printDiv();
             Console.println(Color.RED, "bad message, NAS PDU was expected.");

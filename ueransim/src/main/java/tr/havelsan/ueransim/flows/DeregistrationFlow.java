@@ -60,7 +60,7 @@ public class DeregistrationFlow extends BaseFlow {
         }
 
         var downlinkNASTransport = (DownlinkNASTransport) initiatingMessage;
-        var nasMessage = URSimUtils.getNasMessage(downlinkNASTransport);
+        var nasMessage = URSimUtils.extractNasMessage(downlinkNASTransport);
         if (nasMessage == null) {
             Console.println(Color.YELLOW, "bad message, nas pdu is missing. message ignored");
             return this::waitDeregistrationAccept;

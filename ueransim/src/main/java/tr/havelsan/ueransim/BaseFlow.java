@@ -29,10 +29,14 @@ public abstract class BaseFlow {
     //                                            LOGGING
     //======================================================================================================
 
-    private static void logReceivedMessage(NGAP_PDU ngapPdu) {
+    private static void logReceivedMessage(NGAP_PDU ngapPdu, NasMessage nasMessage) {
         Console.printDiv();
-        Console.println(Color.BLUE, "Received NGAP PDU:");
+        Console.println(Color.BLUE, "Received NGAP:");
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        if (nasMessage != null) {
+            Console.println(Color.BLUE, "Received NAS:");
+            Console.println(Color.WHITE_BRIGHT, Json.toJson(nasMessage));
+        }
     }
 
     private static void logNasMessageWillSend(NasMessage nasMessage) {
@@ -71,6 +75,7 @@ public abstract class BaseFlow {
     protected final void sendNgap(NGAP_PDU pdu) {
         logNgapMessageWillSend(pdu);
         sendNgap(Ngap.perEncode(pdu));
+        // todo: log nas message also
         logMessageSent();
     }
 
@@ -89,7 +94,11 @@ public abstract class BaseFlow {
 
     private void handleSCTPMessage(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var ngapIn = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
-        logReceivedMessage(ngapIn);
+        var nasIn = URSimUtils.extractNasMessage(ngapIn);
+
+        // todo: decrypt nas if needed
+
+        logReceivedMessage(ngapIn, nasIn);
 
         this.currentState = this.currentState.accept(ngapIn);
     }
