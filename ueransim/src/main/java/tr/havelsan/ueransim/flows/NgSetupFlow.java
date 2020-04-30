@@ -10,8 +10,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingDRX;
 
@@ -35,7 +33,7 @@ public class NgSetupFlow extends BaseFlow {
     private State waitNgSetupResponse(IncomingMessage message) {
         var ngSetupResponse = message.getNgapMessage(NGSetupResponse.class);
         if (ngSetupResponse == null) {
-            Console.println(Color.YELLOW, "bad message, NGSetupResponse is expected. message ignored");
+            logUnhandledMessage(message, NGSetupResponse.class);
             return this::waitNgSetupResponse;
         }
 

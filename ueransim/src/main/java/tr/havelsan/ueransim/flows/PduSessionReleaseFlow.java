@@ -22,8 +22,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceReleaseComm
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
     private State waitPduSessionReleaseCommand(IncomingMessage message) {
         var pduSessionResourceReleaseCommand = message.getNgapMessage(PDUSessionResourceReleaseCommand.class);
         if (pduSessionResourceReleaseCommand == null) {
-            Console.println(Color.YELLOW, "PDUSessionResourceReleaseCommand was expected, message ignored");
+            logUnhandledMessage(message, PDUSessionResourceReleaseCommand.class);
             return this::waitPduSessionReleaseCommand;
         }
 

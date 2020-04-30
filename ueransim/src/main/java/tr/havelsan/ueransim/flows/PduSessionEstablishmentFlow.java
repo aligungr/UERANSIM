@@ -23,8 +23,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupReques
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.Collections;
@@ -70,8 +68,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     private State waitPduSessionEstablishmentAccept(IncomingMessage message) {
         var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);
         if (pduSessionResourceSetupRequest == null) {
-            Console.println(
-                    Color.YELLOW, "bad message, PDUSessionResourceSetupRequest is expected. message ignored");
+            logUnhandledMessage(message, PDUSessionResourceSetupRequest.class);
             return this::waitPduSessionEstablishmentAccept;
         }
 

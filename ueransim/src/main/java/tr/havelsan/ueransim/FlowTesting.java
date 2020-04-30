@@ -71,7 +71,6 @@ public class FlowTesting {
         catchINTSignal(sctpClient);
 
         Console.println(Color.BLUE, "SCTP connection established.");
-        Console.printDiv();
 
         String flowName = Utils.getCommandLineOption(args, "-f");
         String yamlFile = Utils.getCommandLineOption(args, "-y");

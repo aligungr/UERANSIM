@@ -12,8 +12,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 
 public class DeregistrationFlow extends BaseFlow {
 
@@ -41,17 +39,16 @@ public class DeregistrationFlow extends BaseFlow {
     private State waitDeregistrationAccept(IncomingMessage message) {
         var deRegistrationAcceptUeOriginating = message.getNasMessage(DeRegistrationAcceptUeOriginating.class);
         if (deRegistrationAcceptUeOriginating == null) {
-            Console.println(Color.YELLOW, "bad message, DeRegistrationAcceptUeOriginating is expected. message ignored");
+            logUnhandledMessage(message, DeRegistrationRequestUeOriginating.class);
             return this::waitDeregistrationAccept;
         }
-
         return this::waitUeContextReleaseCommand;
     }
 
     private State waitUeContextReleaseCommand(IncomingMessage message) {
         var command = message.getNgapMessage(UEContextReleaseCommand.class);
         if (command == null) {
-            Console.println(Color.YELLOW, "bad message, UEContextReleaseCommand is expected. message ignored");
+            logUnhandledMessage(message, UEContextReleaseCommand.class);
             return this::waitDeregistrationAccept;
         }
 

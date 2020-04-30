@@ -31,19 +31,19 @@ public abstract class BaseFlow {
     //                                            LOGGING
     //======================================================================================================
 
-    private static void logReceivedMessage(IncomingMessage incomingMessage) {
+    private void logReceivedMessage(IncomingMessage incomingMessage) {
         Console.printDiv();
-        Console.println(Color.BLUE, "Received NGAP:");
+        Console.println(Color.BLUE, "Received NGAP: %s", incomingMessage.ngapMessage.getClass().getSimpleName());
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(incomingMessage.ngapPdu)));
         if (incomingMessage.nasMessage != null) {
-            Console.println(Color.BLUE, "Received NAS:");
+            Console.println(Color.BLUE, "Received NAS: %s", incomingMessage.nasMessage.getClass().getSimpleName());
             Console.println(Color.WHITE_BRIGHT, Json.toJson(incomingMessage.nasMessage));
         }
     }
 
-    private static void logSentMessage(OutgoingMessage message) {
+    private void logSentMessage(OutgoingMessage message) {
         Console.printDiv();
-        Console.println(Color.BLUE, "Sent NGAP:");
+        Console.println(Color.BLUE, "Sent NGAP: %s", NgapInternal.extractNgapMessage(message.ngapPdu).getClass().getSimpleName());
         Console.println(Color.WHITE_BRIGHT, Utils.xmlToJson(Ngap.xerEncode(message.ngapPdu)));
 
         if (message.plainNas != null) {
@@ -56,8 +56,49 @@ public abstract class BaseFlow {
         }
     }
 
-    private void logFlowComplete() {
+    protected void logUnhandledMessage(String receivedMessageName, Class<?>... expectedType) {
+        if (expectedType == null) {
+            Console.println(Color.YELLOW, "Unhandled message received: %s", receivedMessageName);
+        } else {
+            var sb = new StringBuilder();
+            for (int i = 0; i < expectedType.length; i++) {
+                sb.append(expectedType[i].getSimpleName());
+                if (i != expectedType.length - 1) {
+                    sb.append(',');
+                }
+            }
+
+            var expectedMessages = sb.toString();
+            Console.println(Color.YELLOW, "Unhandled message received: %s, expected messages were: %s", receivedMessageName, expectedMessages);
+        }
+    }
+
+    protected void logUnhandledMessage(IncomingMessage message, Class<?>... expectedType) {
+        var incomingMessage = message.ngapMessage.getClass().getSimpleName();
+        if (message.nasMessage != null) {
+            incomingMessage += "/" + message.nasMessage.getClass().getSimpleName();
+        }
+        logUnhandledMessage(incomingMessage, expectedType);
+    }
+
+    protected void logUnhandledMessage(NasMessage message, Class<?>... expectedType) {
+        logUnhandledMessage(message.getClass().getSimpleName(), expectedType);
+    }
+
+    protected void logFlowComplete() {
         Console.println(Color.GREEN_BOLD, "%s completed", getClass().getSimpleName());
+    }
+
+    protected void logFlowFailed(String errorMessage) {
+        if (errorMessage != null) {
+            Console.println(Color.RED_BOLD, "%s failed: %s", getClass().getSimpleName(), errorMessage);
+        } else {
+            Console.println(Color.RED_BOLD, "%s failed", getClass().getSimpleName());
+        }
+    }
+
+    protected void logFlowFailed() {
+        logFlowFailed("");
     }
 
     //======================================================================================================
@@ -177,6 +218,15 @@ public abstract class BaseFlow {
     public final State flowComplete() {
         logFlowComplete();
         return abortReceiver();
+    }
+
+    public final State flowFailed(String errorMessage) {
+        logFlowFailed(errorMessage);
+        return abortReceiver();
+    }
+
+    public final State flowFailed() {
+        return flowFailed(null);
     }
 
     public abstract State main(IncomingMessage message) throws Exception;

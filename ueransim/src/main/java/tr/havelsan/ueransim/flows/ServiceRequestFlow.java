@@ -13,8 +13,6 @@ import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 
 import static tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause.ASN_mo_Signalling;
 import static tr.havelsan.ueransim.ngap2.NgapCriticality.IGNORE;
@@ -57,7 +55,7 @@ public class ServiceRequestFlow extends BaseFlow {
     private State waitForDownlinkNasTransport(IncomingMessage message) {
         var downlinkNasTransport = message.getNgapMessage(DownlinkNASTransport.class);
         if (downlinkNasTransport == null) {
-            Console.println(Color.YELLOW, "unexpected message ignored");
+            logUnhandledMessage(message, DownlinkNASTransport.class);
             return this::waitForDownlinkNasTransport;
         }
 

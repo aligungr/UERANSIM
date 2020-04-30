@@ -10,8 +10,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 
 import static tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc.ASN_om_intervention;
 
@@ -38,7 +36,7 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
     private State waitPduSessionReleaseCommand(IncomingMessage message) {
         var ueContextReleaseCommand = message.getNgapMessage(UEContextReleaseCommand.class);
         if (ueContextReleaseCommand == null) {
-            Console.println(Color.YELLOW, "unexpected message ignored");
+            logUnhandledMessage(message, UEContextReleaseCommand.class);
             return this::waitPduSessionReleaseCommand;
         }
 

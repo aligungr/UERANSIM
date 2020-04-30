@@ -73,7 +73,7 @@ public class RegistrationFlow extends BaseFlow {
             return handleNasMessage(nasMessage);
         }
 
-        Console.println(Color.YELLOW, "unhandled ngap message. message ignored");
+        logUnhandledMessage(message);
         return this::waitAmfMessages;
     }
 
@@ -84,18 +84,13 @@ public class RegistrationFlow extends BaseFlow {
             Console.println(Color.BLUE, "Authentication result received");
             return this::waitAmfMessages;
         } else if (message instanceof RegistrationReject) {
-            Console.println(Color.RED, "RegistrationReject result received.");
-            return closeConnection();
+            return flowFailed("RegistrationReject result received.");
         } else if (message instanceof IdentityRequest) {
             return handleIdentityRequest((IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
             return handleRegistrationAccept((RegistrationAccept) message);
         } else {
-            Console.println(
-                    Color.YELLOW,
-                    "This message type was not implemented yet: %s",
-                    message.getClass().getSimpleName());
-            Console.println(Color.YELLOW, "Ignoring message");
+            logUnhandledMessage(message);
             return this::waitAmfMessages;
         }
     }
@@ -108,8 +103,7 @@ public class RegistrationFlow extends BaseFlow {
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete());
 
-        Console.println(Color.GREEN_BOLD, "Registration successfully completed.");
-        return abortReceiver();
+        return flowComplete();
     }
 
     private State handleRegistrationAccept(RegistrationAccept message) {
@@ -121,9 +115,6 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
-        Console.printDiv();
-        Console.println(Color.BLUE, "AuthenticationRequest is handling.");
-
         OctetString mac;
         byte[] res;
         Octet id;
@@ -207,7 +198,7 @@ public class RegistrationFlow extends BaseFlow {
             }
             response.mobileIdentity = input.mobileIdentity;
         } else {
-            Console.println(Color.RED, "Identity request for %s is not implemented yet",
+            Console.println(Color.YELLOW, "Identity request for %s is not implemented yet",
                     message.identityType.value.name());
             return this::waitAmfMessages;
         }
