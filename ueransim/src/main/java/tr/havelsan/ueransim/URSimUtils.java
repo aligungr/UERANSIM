@@ -2,23 +2,13 @@ package tr.havelsan.ueransim;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;
-import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialUEMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UplinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.SupportedTA;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class URSimUtils {
 
@@ -82,68 +72,5 @@ public class URSimUtils {
         var res = new SupportedTAList();
         res.valueList = list;
         return res;
-    }
-
-    public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {
-        if (ngapPdu == null) return null;
-
-        if (ngapPdu.getFieldNumber() != NGAP_PDU.ASN_initiatingMessage)
-            return null;
-
-        var initiatingMessage = (InitiatingMessage) ngapPdu.getValue();
-        var procedureValue = initiatingMessage.value.getDecodedValue();
-
-        if (procedureValue instanceof InitialUEMessage) {
-            return extractNasMessage((InitialUEMessage) procedureValue);
-        }
-        if (procedureValue instanceof DownlinkNASTransport) {
-            return extractNasMessage((DownlinkNASTransport) procedureValue);
-        }
-        if (procedureValue instanceof UplinkNASTransport) {
-            return extractNasMessage((UplinkNASTransport) procedureValue);
-        }
-        return null;
-    }
-
-    public static NasMessage extractNasMessage(DownlinkNASTransport message) {
-        NAS_PDU nasPayload = null;
-        for (var protocolIE : (List<DownlinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList) {
-            if (protocolIE.value.getDecodedValue() instanceof NAS_PDU) {
-                if (nasPayload != null) {
-                    Console.println(Color.RED, "Multiple NAS_PDU found in NGAP_PDU. NAS_PDU is ignored.");
-                    return null;
-                }
-                nasPayload = (NAS_PDU) protocolIE.value.getDecodedValue();
-            }
-        }
-        return nasPayload == null ? null : NasDecoder.nasPdu(nasPayload.getValue());
-    }
-
-    public static NasMessage extractNasMessage(UplinkNASTransport message) {
-        NAS_PDU nasPayload = null;
-        for (var protocolIE : (List<UplinkNASTransport.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList) {
-            if (protocolIE.value.getDecodedValue() instanceof NAS_PDU) {
-                if (nasPayload != null) {
-                    Console.println(Color.RED, "Multiple NAS_PDU found in NGAP_PDU. NAS_PDU is ignored.");
-                    return null;
-                }
-                nasPayload = (NAS_PDU) protocolIE.value.getDecodedValue();
-            }
-        }
-        return nasPayload == null ? null : NasDecoder.nasPdu(nasPayload.getValue());
-    }
-
-    public static NasMessage extractNasMessage(InitialUEMessage message) {
-        NAS_PDU nasPayload = null;
-        for (var protocolIE : (List<InitialUEMessage.ProtocolIEs.SEQUENCE>) message.protocolIEs.valueList) {
-            if (protocolIE.value.getDecodedValue() instanceof NAS_PDU) {
-                if (nasPayload != null) {
-                    Console.println(Color.RED, "Multiple NAS_PDU found in NGAP_PDU. NAS_PDU is ignored.");
-                    return null;
-                }
-                nasPayload = (NAS_PDU) protocolIE.value.getDecodedValue();
-            }
-        }
-        return nasPayload == null ? null : NasDecoder.nasPdu(nasPayload.getValue());
     }
 }

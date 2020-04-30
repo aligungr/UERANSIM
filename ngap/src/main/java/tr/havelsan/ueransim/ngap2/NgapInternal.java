@@ -3,13 +3,18 @@ package tr.havelsan.ueransim.ngap2;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import fr.marben.asnsdk.japi.spe.SequenceValue;
 import fr.marben.asnsdk.japi.spe.Value;
+import tr.havelsan.ueransim.nas.NasDecoder;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
+import tr.havelsan.ueransim.ngap.ngap_ies.NAS_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
+import tr.havelsan.ueransim.utils.Color;
+import tr.havelsan.ueransim.utils.Console;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,5 +182,23 @@ public class NgapInternal {
         }
 
         return (SequenceValue) otv.getDecodedValue();
+    }
+
+    public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {
+        if (ngapPdu == null) return null;
+
+        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
+        var protocolIes = NgapInternal.extractProtocolIe(ngapMessage, NAS_PDU.class);
+
+        if (protocolIes.size() == 0) {
+            return null;
+        }
+
+        if (protocolIes.size() > 1) {
+            Console.println(Color.RED, "Multiple NAS_PDU found in NGAP_PDU. All NAS_PDUs are being ignored.");
+            return null;
+        }
+
+        return NasDecoder.nasPdu(protocolIes.get(0).getValue());
     }
 }

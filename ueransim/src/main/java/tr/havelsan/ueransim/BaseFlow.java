@@ -133,7 +133,7 @@ public abstract class BaseFlow {
 
     private void receive(NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
-        var nasMessage = URSimUtils.extractNasMessage(ngapPdu);
+        var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
         var decryptedNasMessage = decryptNasMessage(nasMessage);
         var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
 
