@@ -57,7 +57,7 @@ public abstract class BaseFlow {
     }
 
     protected void logUnhandledMessage(String receivedMessageName, Class<?>... expectedType) {
-        if (expectedType == null) {
+        if (expectedType == null || expectedType.length == 0) {
             Console.println(Color.YELLOW, "Unhandled message received: %s", receivedMessageName);
         } else {
             var sb = new StringBuilder();
@@ -90,7 +90,7 @@ public abstract class BaseFlow {
     }
 
     protected void logFlowFailed(String errorMessage) {
-        if (errorMessage != null) {
+        if (errorMessage != null && errorMessage.length() > 0) {
             Console.println(Color.RED_BOLD, "%s failed: %s", getClass().getSimpleName(), errorMessage);
         } else {
             Console.println(Color.RED_BOLD, "%s failed", getClass().getSimpleName());
