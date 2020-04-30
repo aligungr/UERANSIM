@@ -147,7 +147,12 @@ public abstract class BaseFlow {
         }
 
         logReceivedMessage(incomingMessage);
-        this.currentState = this.currentState.accept(incomingMessage);
+
+        try {
+            this.currentState = this.currentState.accept(incomingMessage);
+        } catch (FlowFailedException exception) {
+            this.currentState = flowFailed(exception.getMessage());
+        }
     }
 
     //======================================================================================================
@@ -178,10 +183,19 @@ public abstract class BaseFlow {
 
     public final void start() throws Exception {
         if (started) throw new RuntimeException("already started");
-
         this.started = true;
-        this.currentState = main(null);
-        this.simContext.getSctpClient().receiverLoop(this::receiveSctpData);
+
+        boolean mainStepFailed = false;
+        try {
+            this.currentState = main(null);
+        } catch (FlowFailedException exception) {
+            this.currentState = flowFailed(exception.getMessage());
+            mainStepFailed = true;
+        }
+
+        if (!mainStepFailed) {
+            this.simContext.getSctpClient().receiverLoop(this::receiveSctpData);
+        }
     }
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
@@ -232,11 +246,20 @@ public abstract class BaseFlow {
     public abstract State main(IncomingMessage message) throws Exception;
 
     //======================================================================================================
-    //                                           INTERFACES
+    //                                           OTHERS
     //======================================================================================================
 
     @FunctionalInterface
     public interface State {
         State accept(IncomingMessage message);
+    }
+
+    protected static class FlowFailedException extends RuntimeException {
+        public FlowFailedException() {
+        }
+
+        public FlowFailedException(String message) {
+            super(message);
+        }
     }
 }
