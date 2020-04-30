@@ -149,7 +149,7 @@ public class FlowTesting {
 
             public void handle(Signal sig) {
                 if (inShutdown.compareAndSet(false, true)) {
-                    Console.println(Color.BLUE, "Simulator is shutdown gracefully");
+                    Console.println(Color.BLUE, "ueransim is shutting down gracefully");
                     sctpClient.close();
                     Console.println(Color.BLUE, "SCTP connection closed");
                     System.exit(1);
