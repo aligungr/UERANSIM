@@ -1,11 +1,11 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement4;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Utils;
@@ -43,7 +43,7 @@ public class IE5gsTrackingAreaIdentityList extends InformationElement4 {
 
         @Override
         public VPartialTrackingAreaIdentityList decode(OctetInputStream stream) {
-            var octet = stream.readOctet();
+            var octet = stream.peekOctet();
             int typeOfList = octet.getBitRangeI(5, 6);
 
             switch (typeOfList) {
