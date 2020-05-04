@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.ServiceRequestFlowInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -10,17 +11,12 @@ import tr.havelsan.ueransim.nas.impl.ies.IEServiceType.EServiceType;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceRequest;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 
 import static tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause.ASN_mo_Signalling;
 import static tr.havelsan.ueransim.ngap2.NgapCriticality.IGNORE;
 import static tr.havelsan.ueransim.ngap2.NgapCriticality.REJECT;
-import static tr.havelsan.ueransim.ngap2.NgapPduDescription.INITIATING_MESSAGE;
 
 public class ServiceRequestFlow extends BaseFlow {
 
@@ -32,7 +28,7 @@ public class ServiceRequestFlow extends BaseFlow {
     }
 
     @Override
-    public State main(NGAP_PDU ngapIn) {
+    public State main(IncomingMessage message) {
         return sendMessage();
     }
 
@@ -47,32 +43,22 @@ public class ServiceRequestFlow extends BaseFlow {
         fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
         fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
-        var ngSetupRequest = new NgapBuilder()
-                .withDescription(INITIATING_MESSAGE)
-                .withProcedure(NgapProcedure.InitialUEMessage, IGNORE)
+        send(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, REJECT)
-                .addNasPdu(serviceRequest, REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
-                .addProtocolIE(fivegTmsi, REJECT)
-                .build();
-        sendPDU(ngSetupRequest);
+                .addProtocolIE(fivegTmsi, REJECT), serviceRequest);
 
         return this::waitForDownlinkNasTransport;
     }
 
-    private State waitForDownlinkNasTransport(NGAP_PDU ngapIn) {
-        logReceivedMessage(ngapIn);
-
-        var value = ((InitiatingMessage) ngapIn.getValue()).value.getDecodedValue();
-
-        if (value instanceof DownlinkNASTransport) {
-            Console.println(Color.GREEN_BOLD, "DownlinkNASTransport arrived, Service Request Completed.");
-            return abortReceiver();
-        } else {
-            Console.println(Color.YELLOW, "unexpected message ignored");
+    private State waitForDownlinkNasTransport(IncomingMessage message) {
+        var downlinkNasTransport = message.getNgapMessage(DownlinkNASTransport.class);
+        if (downlinkNasTransport == null) {
+            logUnhandledMessage(message, DownlinkNASTransport.class);
+            return this::waitForDownlinkNasTransport;
         }
 
-        return this::waitForDownlinkNasTransport;
+        return flowComplete();
     }
 }

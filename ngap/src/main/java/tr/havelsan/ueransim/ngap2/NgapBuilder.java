@@ -24,24 +24,14 @@ import java.util.List;
 
 public class NgapBuilder {
 
-    private NgapPduDescription pduDescription;
     private NgapCriticality procedureCriticality;
     private NgapProcedure procedure;
     private List<ProtocolIE> protocolIEs;
 
-    public NgapBuilder() {
+    public NgapBuilder(NgapProcedure procedure, NgapCriticality criticality) {
         this.protocolIEs = new ArrayList<>();
-    }
-
-    public NgapBuilder withDescription(NgapPduDescription pduDescription) {
-        this.pduDescription = pduDescription;
-        return this;
-    }
-
-    public NgapBuilder withProcedure(NgapProcedure procedure, NgapCriticality criticality) {
         this.procedure = procedure;
         this.procedureCriticality = criticality;
-        return this;
     }
 
     public NgapBuilder addProtocolIE(Value value, NgapCriticality criticality, Integer ieId) {
@@ -88,12 +78,16 @@ public class NgapBuilder {
     public NGAP_PDU build() {
         int procedureCode = NgapInternal.findProcedureCode(procedure);
         Value procedureContent = NgapInternal.createProcedureValue(procedure);
+
+        ProtocolIeOrdering.sortProtocolIEs(protocolIEs, procedureContent);
         for (var protocolIe : protocolIEs) {
             NgapInternal.appendProtocolIe(procedure, procedureContent, protocolIe.criticality, protocolIe.value, protocolIe.id);
         }
 
+        var pduDescription = procedure.pduDescription();
+
         try {
-            switch (this.pduDescription) {
+            switch (pduDescription) {
                 case INITIATING_MESSAGE: {
                     var desc = new InitiatingMessage();
                     desc.procedureCode = new ProcedureCode(procedureCode);
@@ -123,7 +117,7 @@ public class NgapBuilder {
         }
     }
 
-    private static class ProtocolIE {
+    static class ProtocolIE {
         final Value value;
         final NgapCriticality criticality;
         final Integer id;

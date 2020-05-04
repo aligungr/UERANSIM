@@ -1,5 +1,4 @@
 ranUeNgapId: 1000
-amfUeNgapId: 1
 userLocationInformationNr:
   nrCgi:
     plmn:
@@ -13,7 +12,6 @@ userLocationInformationNr:
     tac: '000075'
   timeStamp:
     hex: 5b5fa680
-
 guti:
   "@type": IE5gGutiMobileIdentity
   mcc:

@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim;
 
-
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 import tr.havelsan.ueransim.contexts.SimulationContext;
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 
 public class FlowTesting {
 
@@ -66,17 +64,16 @@ public class FlowTesting {
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
         var sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
-        var simContext = new SimulationContext(sctpClient);
+        var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
 
         sctpClient.start();
 
         catchINTSignal(sctpClient);
 
         Console.println(Color.BLUE, "SCTP connection established.");
-        Console.printDiv();
 
-        String flowName = Utils.getCommandLineOption(args,"-f");
-        String yamlFile = Utils.getCommandLineOption(args,"-y");
+        String flowName = Utils.getCommandLineOption(args, "-f");
+        String yamlFile = Utils.getCommandLineOption(args, "-y");
 
         if (flowName != null && yamlFile != null) {
             var type = FlowScanner.getFlowType(flowName);
@@ -88,10 +85,10 @@ public class FlowTesting {
 
             if (inputType != null) {
                 ctor.newInstance(simContext, readInputFile("", yamlFile, inputType))
-                    .start();
+                        .start();
             } else {
                 ctor.newInstance(simContext)
-                    .start();
+                        .start();
             }
             return;
         }
@@ -152,7 +149,7 @@ public class FlowTesting {
 
             public void handle(Signal sig) {
                 if (inShutdown.compareAndSet(false, true)) {
-                    Console.println(Color.BLUE, "Simulator is shutdown gracefully");
+                    Console.println(Color.BLUE, "ueransim is shutting down gracefully");
                     sctpClient.close();
                     Console.println(Color.BLUE, "SCTP connection closed");
                     System.exit(1);
@@ -173,5 +170,4 @@ public class FlowTesting {
         var inp = MtsDecoder.decode(path);
         return MtsConstruct.construct(type, ((ImplicitTypedObject) inp).getParameters(), true);
     }
-
 }
