@@ -6,7 +6,7 @@ import com.sun.nio.sctp.SctpChannel;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
-public class SCTPClient {
+public class SCTPClient implements ISCTPClient {
     private static final int RECEIVER_BUFFER_SIZE = 1073741824;
 
     private final String host;
@@ -23,6 +23,7 @@ public class SCTPClient {
         this.protocolId = protocolId;
     }
 
+    @Override
     public void start() throws Exception {
         if (this.channel != null) throw new RuntimeException("start was already called");
         var serverAddress = new InetSocketAddress(host, port);
@@ -31,6 +32,7 @@ public class SCTPClient {
         this.receiving = true;
     }
 
+    @Override
     public void send(int streamNumber, byte[] data) throws Exception {
         ByteBuffer outgoingBuffer = ByteBuffer.wrap(data);
         MessageInfo outgoingMessage = MessageInfo.createOutgoing(null, streamNumber);
@@ -38,6 +40,7 @@ public class SCTPClient {
         channel.send(outgoingBuffer, outgoingMessage);
     }
 
+    @Override
     public void receiverLoop(ISCTPHandler handler) throws Exception {
         receiving = true;
 
@@ -55,6 +58,7 @@ public class SCTPClient {
         }
     }
 
+    @Override
     public void close() {
         try {
             channel.close();
@@ -63,10 +67,12 @@ public class SCTPClient {
         }
     }
 
+    @Override
     public void abortReceiver() {
         receiving = false;
     }
 
+    @Override
     public boolean isOpen() {
         return channel.isOpen();
     }

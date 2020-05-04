@@ -8,6 +8,7 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -62,7 +63,7 @@ public class FlowTesting {
         });
 
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
-        var sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
+        ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
         var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
 
@@ -143,7 +144,7 @@ public class FlowTesting {
         }
     }
 
-    private static void catchINTSignal(SCTPClient sctpClient) {
+    private static void catchINTSignal(ISCTPClient sctpClient) {
         Signal.handle(new Signal("INT"), new SignalHandler() {
             private final AtomicBoolean inShutdown = new AtomicBoolean();
 
