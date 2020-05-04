@@ -4,15 +4,13 @@ import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import fr.marben.asnsdk.japi.spe.Value;
 import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.NAS_PDU;
-import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.UserLocationInformation;
+import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
@@ -73,6 +71,44 @@ public class NgapBuilder {
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public NgapBuilder addCause(NgapCause cause, NgapCriticality criticality) {
+        int fieldNum = cause.getFieldNumber();
+        Value value;
+
+        switch (fieldNum) {
+            case Cause.ASN_radioNetwork:
+                value = new CauseRadioNetwork(cause.getAsnValue());
+                break;
+            case Cause.ASN_transport:
+                value = new CauseTransport(cause.getAsnValue());
+                break;
+            case Cause.ASN_nas:
+                value = new CauseNas(cause.getAsnValue());
+                break;
+            case Cause.ASN_protocol:
+                value = new CauseProtocol(cause.getAsnValue());
+                break;
+            case Cause.ASN_misc:
+                value = new CauseMisc(cause.getAsnValue());
+                break;
+            default:
+                throw new ReservedOrInvalidValueException("cause field number");
+        }
+
+        Cause c;
+        try {
+            c = new Cause(cause.getFieldNumber(), value);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+
+        return addProtocolIE(c, criticality, Values.NGAP_Constants__id_Cause);
+    }
+
+    public NgapBuilder addCause(NgapCause cause) {
+        return addCause(cause, NgapCriticality.IGNORE);
     }
 
     public NGAP_PDU build() {
