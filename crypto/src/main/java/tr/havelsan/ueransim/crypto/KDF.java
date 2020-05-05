@@ -15,14 +15,27 @@ public class KDF {
      * Calculates derived key based on given parameters as specified in 3GPP TS 33.220
      */
     public static OctetString calculateKey(OctetString key, Octet fc, OctetString[] parameters) {
-        return hmacSha256(key, calculateS(new OctetString(new Octet[]{fc}), parameters));
+        var inputS = new OctetOutputStream(true);
+        inputS.writeOctet(fc);
+        for (var parameter : parameters) {
+            inputS.writeOctet2(parameter.length);
+            inputS.writeOctetString(parameter);
+        }
+        return hmacSha256(key, inputS.toOctetString());
     }
 
     /**
      * Calculates derived key based on given parameters as specified in 3GPP TS 33.220
      */
     public static OctetString calculateKey(OctetString key, Octet fc1, Octet fc2, OctetString[] parameters) {
-        return hmacSha256(key, calculateS(new OctetString(new Octet[]{fc1, fc2}), parameters));
+        var inputS = new OctetOutputStream(true);
+        inputS.writeOctet(fc1);
+        inputS.writeOctet(fc2);
+        for (var parameter : parameters) {
+            inputS.writeOctet2(parameter.length);
+            inputS.writeOctetString(parameter);
+        }
+        return hmacSha256(key, inputS.toOctetString());
     }
 
     /**
@@ -37,22 +50,30 @@ public class KDF {
         return new OctetString(bytes);
     }
 
-    private static OctetString calculateS(OctetString fc, OctetString[] parameters) {
-        var stream = new OctetOutputStream(true);
-        stream.writeOctetString(fc);
-        for (var parameter : parameters) {
-            stream.writeOctet2(parameter.length);
-            stream.writeOctetString(parameter);
-        }
-        return stream.toOctetString();
+    /**
+     * Calculates RES* or XRES* according to given parameters as specified in 3GPP TS 33.501
+     *
+     * @param key                The input key KEY shall be equal to the concatenation CK || IK of CK and IK.
+     * @param servingNetworkName The serving network name shall be constructed as specified in the TS.
+     * @param rand               RAND value
+     * @param res                RES or XRES value
+     */
+    public static OctetString calculateResStar(OctetString key, String servingNetworkName, OctetString rand, OctetString res) {
+        var params = new OctetString[]{encodeString(servingNetworkName), rand, res};
+        var output = calculateKey(key, new Octet(0x6B), params);
+        // The (X)RES* is identified with the 128 least significant bits of the output of the KDF.
+        return output.substring(output.length - 16);
     }
 
-    private static OctetString hmacSha256(OctetString key, OctetString s) {
+    /**
+     * Calculates the HMAC-SHA-256 with given parameters
+     */
+    private static OctetString hmacSha256(OctetString key, OctetString input) {
         try {
             final String algorithm = "HmacSHA256";
             Mac mac = Mac.getInstance(algorithm);
             mac.init(new SecretKeySpec(key.toByteArray(), algorithm));
-            return new OctetString(mac.doFinal(s.toByteArray()));
+            return new OctetString(mac.doFinal(input.toByteArray()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
