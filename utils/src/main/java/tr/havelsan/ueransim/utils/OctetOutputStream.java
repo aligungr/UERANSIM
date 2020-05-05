@@ -4,7 +4,6 @@ import tr.havelsan.ueransim.utils.bits.Bit4;
 import tr.havelsan.ueransim.utils.bits.Bit8;
 import tr.havelsan.ueransim.utils.bits.BitN;
 import tr.havelsan.ueransim.utils.octets.*;
-import tr.havelsan.ueransim.utils.octets.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,6 +151,10 @@ public class OctetOutputStream {
         for (int i = 0; i < arr.length; i++)
             buf[i] = (byte) arr[i].intValue();
         return buf;
+    }
+
+    public OctetString toOctetString() {
+        return new OctetString(toOctetArray());
     }
 
     public int length() {
