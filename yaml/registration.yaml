@@ -20,10 +20,14 @@ imei: '356938035643809'
 authenticationResponseParameter:
   hex: '0102030405060708090A0B0C0D0E0F10'
 eapAkaInput:
-  OP: 'cdc202d5123e20f62b6d676ac72cb318'
-  SQN: '000000000000'
-  AMF: '8000'
-  KEY: '465b5ce8b199b49faa5f0a2ee238a010'
+  OP:
+    hex: 'cdc202d5123e20f62b6d676ac72cb318'
+  SQN:
+    hex: '000000000000'
+  AMF:
+    hex: '8000'
+  KEY:
+    hex: '465b5ce8b199b49faa5f0a2ee238a010'
 userLocationInformationNr:
   nrCgi:
     plmn:

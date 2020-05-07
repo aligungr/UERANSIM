@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.flows;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.crypto.Milenage;
 import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -15,10 +16,12 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCause;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedHashMap;
@@ -103,31 +106,51 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
-        // Handle request
-        var eapRequest = (EapAkaPrime) message.eapMessage.eap;
-        var rand = eapRequest.attributes.get(EapAkaPrime.EAttributeType.AT_RAND).substring(2).toHexString(false);
-        var id = eapRequest.id;
+        if (message.eapMessage != null) {
+            // Handle EAP-AKA'
+            if (!(message.eapMessage.eap instanceof EapAkaPrime)) {
+                send(new NgapBuilder(NgapProcedure.ErrorIndication, NgapCriticality.IGNORE)
+                        .addCause(NgapCause.PROTOCOL_TRANSFER_SYNTAX_ERROR), null);
+                return this::waitAmfMessages;
+            }
 
-        OctetString mac = eapRequest.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
-        byte[] res = Milenage.computeRes(input.eapAkaInput.KEY, input.eapAkaInput.OP, rand,
-                input.eapAkaInput.SQN, input.eapAkaInput.AMF, true);
+            var eapRequest = (EapAkaPrime) message.eapMessage.eap;
+            var rand = eapRequest.attributes.get(EapAkaPrime.EAttributeType.AT_RAND).substring(2); // 2 octets reserved
+            var id = eapRequest.id;
 
-        // Send response
-        var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, id);
-        eapResponse.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
-        eapResponse.attributes = new LinkedHashMap<>();
-        eapResponse.attributes.put(EapAkaPrime.EAttributeType.AT_RES, new OctetString(res));
-        eapResponse.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
-        eapResponse.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
+            OctetString mac = eapRequest.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
+            OctetString res = Milenage.calculateRes(input.eapAkaInput.KEY, input.eapAkaInput.OP, rand);
 
-        var response = new AuthenticationResponse();
-        response.authenticationResponseParameter =
-                new IEAuthenticationResponseParameter(input.authenticationResponseParameter);
-        response.eapMessage = new IEEapMessage(eapResponse);
+            // Send response
+            var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, id);
+            eapResponse.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
+            eapResponse.attributes = new LinkedHashMap<>();
+            eapResponse.attributes.put(EapAkaPrime.EAttributeType.AT_RES, Utils.insertLeadingLength2(res));
+            eapResponse.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
+            eapResponse.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
 
-        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
+            var response = new AuthenticationResponse();
+            response.authenticationResponseParameter =
+                    new IEAuthenticationResponseParameter(input.authenticationResponseParameter);
+            response.eapMessage = new IEEapMessage(eapResponse);
+
+            send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                    .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                    .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
+        } else {
+            var ngKsi = message.ngKSI;
+            var rand = message.authParamRAND;
+            var autn = message.authParamAUTN;
+
+            if (ngKsi == null || rand == null || autn == null) {
+                send(new NgapBuilder(NgapProcedure.ErrorIndication, NgapCriticality.IGNORE)
+                        .addCause(NgapCause.PROTOCOL_TRANSFER_SYNTAX_ERROR), null);
+            } else {
+                // todo: handle 5g-aka
+                // Handle 5G-AKA
+                throw new NotImplementedException("5G-AKA not implemented yet");
+            }
+        }
 
         return this::waitAmfMessages;
     }

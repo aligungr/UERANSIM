@@ -1,12 +1,14 @@
 package tr.havelsan.ueransim.flowinputs;
 
-public class EapAkaInput {
-    public final String OP;
-    public final String SQN;
-    public final String AMF;
-    public final String KEY;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-    public EapAkaInput(String OP, String SQN, String AMF, String KEY) {
+public class EapAkaInput {
+    public final OctetString OP;
+    public final OctetString SQN;
+    public final OctetString AMF;
+    public final OctetString KEY;
+
+    public EapAkaInput(OctetString OP, OctetString SQN, OctetString AMF, OctetString KEY) {
         this.OP = OP;
         this.SQN = SQN;
         this.AMF = AMF;
