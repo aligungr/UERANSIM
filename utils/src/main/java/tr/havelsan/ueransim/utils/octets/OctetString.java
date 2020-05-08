@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public final class OctetString implements Iterable<Octet> {
-    private final Octet[] data;
     public final int length;
+    private final Octet[] data;
 
     public OctetString(Octet[] octets) {
         this.data = octets;
@@ -34,6 +34,18 @@ public final class OctetString implements Iterable<Octet> {
 
     public OctetString(String hex) {
         this(Utils.hexStringToByteArray(hex));
+    }
+
+    public static OctetString concat(OctetString s1, OctetString s2) {
+        Octet[] arr = new Octet[s1.length + s2.length];
+        int index = 0;
+        for (Octet octet : s1.data) {
+            arr[index++] = octet;
+        }
+        for (Octet octet : s2.data) {
+            arr[index++] = octet;
+        }
+        return new OctetString(arr);
     }
 
     public Octet get(int index) {
