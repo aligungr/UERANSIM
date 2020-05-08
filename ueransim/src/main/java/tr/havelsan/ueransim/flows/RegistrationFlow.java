@@ -119,7 +119,7 @@ public class RegistrationFlow extends BaseFlow {
             var id = eapRequest.id;
 
             OctetString mac = eapRequest.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
-            OctetString res = Milenage.calculateRes(input.eapAkaInput.KEY, input.eapAkaInput.OP, rand);
+            OctetString res = Milenage.calculateRes(input.akaInput.KEY, input.akaInput.OP, rand);
 
             // Send response
             var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, id);
@@ -138,14 +138,26 @@ public class RegistrationFlow extends BaseFlow {
                     .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                     .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
         } else {
-            var ngKsi = message.ngKSI;
-            var rand = message.authParamRAND;
-            var autn = message.authParamAUTN;
-
-            if (ngKsi == null || rand == null || autn == null) {
+            if (message.ngKSI == null || message.authParamRAND == null || message.authParamAUTN == null) {
                 send(new NgapBuilder(NgapProcedure.ErrorIndication, NgapCriticality.IGNORE)
                         .addCause(NgapCause.PROTOCOL_TRANSFER_SYNTAX_ERROR), null);
             } else {
+
+                //var ngKsi = message.ngKSI;
+                //var autn = message.authParamAUTN.value;
+
+                var key = input.akaInput.KEY;
+                var op = input.akaInput.OP;
+                var rand = message.authParamRAND.value;
+                var ssn = input.akaInput.SSN;
+
+                var res = Milenage.calculateRes(key, op, rand);
+                var ck = Milenage.calculateCk(key, op, rand);
+                var ik = Milenage.calculateIk(key, op, rand);
+
+                var resStar = Milenage.calculateResStar(OctetString.concat(ck, ik), ssn, rand, res);
+
+
                 // todo: handle 5g-aka
                 // Handle 5G-AKA
                 throw new NotImplementedException("5G-AKA not implemented yet");
