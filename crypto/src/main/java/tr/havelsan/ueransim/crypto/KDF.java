@@ -18,8 +18,8 @@ public class KDF {
         var inputS = new OctetOutputStream(true);
         inputS.writeOctet(fc);
         for (var parameter : parameters) {
-            inputS.writeOctet2(parameter.length);
             inputS.writeOctetString(parameter);
+            inputS.writeOctet2(parameter.length);
         }
         return hmacSha256(key, inputS.toOctetString());
     }
@@ -32,8 +32,8 @@ public class KDF {
         inputS.writeOctet(fc1);
         inputS.writeOctet(fc2);
         for (var parameter : parameters) {
-            inputS.writeOctet2(parameter.length);
             inputS.writeOctetString(parameter);
+            inputS.writeOctet2(parameter.length);
         }
         return hmacSha256(key, inputS.toOctetString());
     }
