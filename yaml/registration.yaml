@@ -17,8 +17,6 @@ mobileIdentity:
   schemeOutput: '000000010'
 rrcEstablishmentCause: 4
 imei: '356938035643809'
-authenticationResponseParameter:
-  hex: '0102030405060708090A0B0C0D0E0F10'
 userLocationInformationNr:
   nrCgi:
     plmn:
