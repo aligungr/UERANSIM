@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.nas.impl.messages;
 import tr.havelsan.ueransim.nas.core.IMessageBuilder;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
+import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationFailureParameter;
 
@@ -18,6 +19,14 @@ public class AuthenticationFailure extends PlainMmMessage {
         this();
         this.mmCause = mmCause;
         this.authenticationFailureParameter = authenticationFailureParameter;
+    }
+
+    public AuthenticationFailure(EMmCause mmCause, IEAuthenticationFailureParameter authenticationFailureParameter) {
+        this(new IE5gMmCause(mmCause), authenticationFailureParameter);
+    }
+
+    public AuthenticationFailure(EMmCause mmCause) {
+        this(new IE5gMmCause(mmCause), null);
     }
 
     @Override

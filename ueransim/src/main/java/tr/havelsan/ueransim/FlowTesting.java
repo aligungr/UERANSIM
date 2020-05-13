@@ -3,22 +3,22 @@ package tr.havelsan.ueransim;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.contexts.UeData;
 import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.mocked.MockedRemote;
+import tr.havelsan.ueransim.mocked.MockedSCTPClient;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
-import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FlowTesting {
@@ -65,7 +65,7 @@ public class FlowTesting {
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
         ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
-        var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
+        var simContext = createSimContext(sctpClient, config);
 
         sctpClient.start();
 
@@ -142,6 +142,20 @@ public class FlowTesting {
                         .start();
             }
         }
+    }
+
+    private static SimulationContext createSimContext(ISCTPClient sctpClient, Map<String, String> config) {
+        var ueData = new UeData();
+        ueData.ssn = config.get("ueData.ssn");
+        ueData.key = new OctetString(config.get("ueData.key"));
+        ueData.op = new OctetString(config.get("ueData.op"));
+        ueData.sqn = new OctetString(config.get("ueData.sqn"));
+        ueData.amf = new OctetString(config.get("ueData.amf"));
+
+        var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
+        simContext.ueData = ueData;
+
+        return simContext;
     }
 
     private static void catchINTSignal(ISCTPClient sctpClient) {

@@ -48,6 +48,17 @@ public final class OctetString implements Iterable<Octet> {
         return new OctetString(arr);
     }
 
+    public static OctetString xor(OctetString s1, OctetString s2) {
+        if (s1.length != s2.length) {
+            throw new IllegalStateException("s1.length != s2.length");
+        }
+        Octet[] arr = s1.getAsArray();
+        for (int i = 0; i < s1.length; i++) {
+            arr[i] = new Octet(arr[i].intValue() ^ s2.get(i).intValue());
+        }
+        return new OctetString(arr);
+    }
+
     public Octet get(int index) {
         return data[index];
     }

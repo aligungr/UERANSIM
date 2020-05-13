@@ -8,3 +8,9 @@ input.PduSessionReleaseFlow: pduSessionRelease.yaml
 input.UEContextReleaseRequestFlow: ueContextReleaseRequest.yaml
 input.ServiceRequestFlow: serviceRequest.yaml
 input.DeregistrationFlow: deregistration.yaml
+
+ueData.ssn: '5G:mnc001.mcc001.3gppnetwork.org'
+ueData.key: 'b672bd0c5881433f860948c970726720'
+ueData.op: '599eb586f3eb4b0cb25654d8c04d763e'
+ueData.sqn: '000000000000'
+ueData.amf: '8000'

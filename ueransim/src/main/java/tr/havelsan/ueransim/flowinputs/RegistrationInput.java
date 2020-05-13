@@ -14,10 +14,9 @@ public class RegistrationInput {
     public final int rrcEstablishmentCause;
     public final String imei;
     public final OctetString authenticationResponseParameter;
-    public final AkaInput akaInput;
     public final UserLocationInformationNr userLocationInformationNr;
 
-    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, OctetString authenticationResponseParameter, AkaInput akaInput, UserLocationInformationNr userLocationInformationNr) {
+    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, OctetString authenticationResponseParameter, UserLocationInformationNr userLocationInformationNr) {
         this.ranUeNgapId = ranUeNgapId;
         this.ngKSI = ngKSI;
         this.requestNssai = requestNssai;
@@ -25,7 +24,6 @@ public class RegistrationInput {
         this.rrcEstablishmentCause = rrcEstablishmentCause;
         this.imei = imei;
         this.authenticationResponseParameter = authenticationResponseParameter;
-        this.akaInput = akaInput;
         this.userLocationInformationNr = userLocationInformationNr;
     }
 }
