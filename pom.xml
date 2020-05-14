@@ -15,7 +15,6 @@
         <module>mts</module>
         <module>nas</module>
         <module>ngap</module>
-        <module>transcode</module>
         <module>control</module>
         <module>ueransim</module>
         <module>crypto</module>

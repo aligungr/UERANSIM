@@ -8,7 +8,9 @@ import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitN;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetN;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -403,7 +405,7 @@ public final class Utils {
             temp.deleteOnExit();
 
             FileOutputStream fos = new FileOutputStream(temp);
-            while((read = in.read(buffer)) != -1) {
+            while ((read = in.read(buffer)) != -1) {
                 fos.write(buffer, 0, read);
             }
             fos.close();
@@ -413,5 +415,72 @@ public final class Utils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Returns new octet string as 1-octet length is added at beginning of the given octet string.
+     * (The length is added using Big Endian)
+     * <p>
+     * See also:
+     * {@link #insertLeadingLength2(OctetString)}
+     * {@link #insertLeadingLength4(OctetString)}
+     */
+    public static OctetString insertLeadingLength1(OctetString octetString) {
+        int length = octetString.length;
+        if ((length & 0xFF) != 0) {
+            throw new IllegalStateException("octet string length cannot fit into 1-octet");
+        }
+
+        Octet[] res = new Octet[octetString.length + 1];
+        for (int i = 0; i < octetString.length; i++) {
+            res[1 + i] = octetString.get(i);
+        }
+        res[0] = new Octet(length & 0xFF);
+        return new OctetString(res);
+    }
+
+    /**
+     * Returns new octet string as 2-octet length is added at beginning of the given octet string.
+     * (The length is added using Big Endian)
+     * <p>
+     * See also:
+     * {@link #insertLeadingLength1(OctetString)}
+     * {@link #insertLeadingLength4(OctetString)}
+     */
+    public static OctetString insertLeadingLength2(OctetString octetString) {
+        int length = octetString.length;
+        if ((length & 0xFFFF) != 0) {
+            throw new IllegalStateException("octet string length cannot fit into 2-octets");
+        }
+
+        Octet[] res = new Octet[octetString.length + 2];
+        for (int i = 0; i < octetString.length; i++) {
+            res[2 + i] = octetString.get(i);
+        }
+        res[0] = new Octet(length >> 8 & 0xFF);
+        res[1] = new Octet(length & 0xFF);
+        return new OctetString(res);
+    }
+
+    /**
+     * Returns new octet string as 4-octet length is added at beginning of the given octet string.
+     * (The length is added using Big Endian)
+     * <p>
+     * See also:
+     * {@link #insertLeadingLength1(OctetString)}
+     * {@link #insertLeadingLength2(OctetString)}
+     */
+    public static OctetString insertLeadingLength4(OctetString octetString) {
+        int length = octetString.length;
+
+        Octet[] res = new Octet[octetString.length + 4];
+        for (int i = 0; i < octetString.length; i++) {
+            res[4 + i] = octetString.get(i);
+        }
+        res[0] = new Octet(length >> 24 & 0xFF);
+        res[1] = new Octet(length >> 16 & 0xFF);
+        res[2] = new Octet(length >> 8 & 0xFF);
+        res[3] = new Octet(length & 0xFF);
+        return new OctetString(res);
     }
 }

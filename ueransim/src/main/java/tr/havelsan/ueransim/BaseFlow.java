@@ -15,7 +15,7 @@ import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 
 public abstract class BaseFlow {
-    private final SimulationContext simContext;
+    protected final SimulationContext ctx;
     private boolean started;
     private State currentState;
 
@@ -24,7 +24,7 @@ public abstract class BaseFlow {
     //======================================================================================================
 
     public BaseFlow(SimulationContext simContext) {
-        this.simContext = simContext;
+        this.ctx = simContext;
     }
 
     //======================================================================================================
@@ -118,7 +118,7 @@ public abstract class BaseFlow {
         // This protocol ie should be included in all UE associated signalling.
         // AMF-UE-NGAP-ID may be ignored for non UE associated messages.
         // But currently this ie is added to all messages (if there is an AMF-UE-NGAP-ID in the context).
-        long amfUeNgapId = simContext.getAmfUeNgapId();
+        long amfUeNgapId = ctx.amfUeNgapId;
         if (amfUeNgapId != 0) {
             // NOTE: criticality is hardcoded here, it may be changed
             ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
@@ -142,7 +142,7 @@ public abstract class BaseFlow {
             var ieAmfUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, AMF_UE_NGAP_ID.class);
             if (ieAmfUeNgapId.size() > 0) {
                 var ie = ieAmfUeNgapId.get(ieAmfUeNgapId.size() - 1);
-                simContext.setAmfUeNgapId(ie.value);
+                ctx.amfUeNgapId = ie.value;
             }
         }
 
@@ -194,7 +194,7 @@ public abstract class BaseFlow {
         }
 
         if (!mainStepFailed) {
-            this.simContext.getSctpClient().receiverLoop(this::receiveSctpData);
+            this.ctx.sctpClient.receiverLoop(this::receiveSctpData);
         }
     }
 
@@ -205,7 +205,7 @@ public abstract class BaseFlow {
 
     private void sendSctpData(byte[] data) {
         try {
-            simContext.getSctpClient().send(simContext.getStreamNumber(), data);
+            ctx.sctpClient.send(ctx.streamNumber, data);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -220,12 +220,12 @@ public abstract class BaseFlow {
     }
 
     public final State closeConnection() {
-        simContext.getSctpClient().close();
+        ctx.sctpClient.close();
         return this::sinkState;
     }
 
     public final State abortReceiver() {
-        simContext.getSctpClient().abortReceiver();
+        ctx.sctpClient.abortReceiver();
         return this::sinkState;
     }
 
