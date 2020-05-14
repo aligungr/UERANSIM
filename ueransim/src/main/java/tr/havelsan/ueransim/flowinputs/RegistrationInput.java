@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.flowinputs;
 
-import tr.havelsan.ueransim.nas.impl.ies.IE5gsMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.utils.bits.Bit3;
@@ -9,18 +8,14 @@ public class RegistrationInput {
     public final long ranUeNgapId;
     public final Bit3 ngKSI;
     public final IESNssai[] requestNssai;
-    public final IE5gsMobileIdentity mobileIdentity;
     public final int rrcEstablishmentCause;
-    public final String imei;
     public final UserLocationInformationNr userLocationInformationNr;
 
-    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, UserLocationInformationNr userLocationInformationNr) {
+    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, int rrcEstablishmentCause, UserLocationInformationNr userLocationInformationNr) {
         this.ranUeNgapId = ranUeNgapId;
         this.ngKSI = ngKSI;
         this.requestNssai = requestNssai;
-        this.mobileIdentity = mobileIdentity;
         this.rrcEstablishmentCause = rrcEstablishmentCause;
-        this.imei = imei;
         this.userLocationInformationNr = userLocationInformationNr;
     }
 }

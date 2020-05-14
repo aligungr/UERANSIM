@@ -9,6 +9,8 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
@@ -17,7 +19,10 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FlowTesting {
@@ -64,7 +69,7 @@ public class FlowTesting {
         Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
         ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
-        var simContext = createSimContext(sctpClient, config);
+        var simContext = createSimContext(sctpClient, configYaml);
 
         sctpClient.start();
 
@@ -143,13 +148,17 @@ public class FlowTesting {
         }
     }
 
-    private static SimulationContext createSimContext(ISCTPClient sctpClient, Map<String, String> config) {
+    private static SimulationContext createSimContext(ISCTPClient sctpClient, ImplicitTypedObject config) {
+        var params = config.getParameters();
+
         var ueData = new UeData();
-        ueData.ssn = config.get("ueData.ssn");
-        ueData.key = new OctetString(config.get("ueData.key"));
-        ueData.op = new OctetString(config.get("ueData.op"));
-        ueData.sqn = new OctetString(config.get("ueData.sqn"));
-        ueData.amf = new OctetString(config.get("ueData.amf"));
+        ueData.ssn = (String) params.get("ueData.ssn");
+        ueData.key = new OctetString((String) params.get("ueData.key"));
+        ueData.op = new OctetString((String) params.get("ueData.op"));
+        ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
+        ueData.amf = new OctetString((String) params.get("ueData.amf"));
+        ueData.imei = new IEImeiMobileIdentity((String) params.get("ueData.imei"));
+        ueData.imsi = MtsConstruct.construct(IEImsiMobileIdentity.class, (ImplicitTypedObject) params.get("ueData.imsi"), true);
 
         var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
         simContext.ueData = ueData;
@@ -182,6 +191,6 @@ public class FlowTesting {
         if (path == null || path.length() == 0)
             throw new RuntimeException("please specify flow input file (" + key + ")");
         var inp = MtsDecoder.decode(path);
-        return MtsConstruct.construct(type, ((ImplicitTypedObject) inp).getParameters(), true);
+        return MtsConstruct.construct(type, (ImplicitTypedObject) inp, true);
     }
 }
