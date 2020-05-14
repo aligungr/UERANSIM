@@ -6,15 +6,6 @@ requestNssai:
       value: 1
     sd:
       hex: 09afaf
-mobileIdentity:
-  "@type": IEImsiMobileIdentity
-  mcc: 1
-  mnc: 1
-  routingIndicator: '0000'
-  protectionSchemaId: NULL_SCHEME
-  homeNetworkPublicKeyIdentifier:
-    value: '0'
-  schemeOutput: '000000010'
 rrcEstablishmentCause: 4
 userLocationInformationNr:
   nrCgi:

@@ -111,7 +111,7 @@ public class MtsConstruct {
             var value = args.get(param.getName());
 
             if (value instanceof ImplicitTypedObject) {
-                value = construct(param.getType(), ((ImplicitTypedObject) value).getParameters(), includeCustoms);
+                value = construct(param.getType(), (ImplicitTypedObject) value, includeCustoms);
             }
 
             var conversions = MtsConvert.convert(value, param.getType(), includeCustoms);
@@ -146,5 +146,9 @@ public class MtsConstruct {
         } catch (Exception e) {
             throw new MtsException("Instantiation failed");
         }
+    }
+
+    public static <T> T construct(Class<T> type, ImplicitTypedObject implicitTypedObject, boolean includeCustoms) {
+        return construct(type, implicitTypedObject.getParameters(), includeCustoms);
     }
 }

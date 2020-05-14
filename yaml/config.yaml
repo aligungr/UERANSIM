@@ -16,3 +16,11 @@ ueData.sqn: '001000000000'
 ueData.amf: '8000'
 
 ueData.imei: '356938035643809'
+ueData.imsi:
+  mcc: 1
+  mnc: 1
+  routingIndicator: '0000'
+  protectionSchemaId: NULL_SCHEME
+  homeNetworkPublicKeyIdentifier:
+    value: '0'
+  schemeOutput: '000000010'

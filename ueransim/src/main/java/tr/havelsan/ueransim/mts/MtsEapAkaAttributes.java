@@ -23,7 +23,7 @@ class MtsEapAkaAttributes implements TypeRegistry.ICustomTypeRegistry<EapAkaPrim
             } else if (value instanceof String) {
                 attr.getAttributes().put(key, new OctetString((String) value));
             } else if (value instanceof ImplicitTypedObject) {
-                var constructed = MtsConstruct.construct(OctetString.class, ((ImplicitTypedObject) value).getParameters(), true);
+                var constructed = MtsConstruct.construct(OctetString.class, (ImplicitTypedObject) value, true);
                 attr.getAttributes().put(key, constructed);
             } else {
                 var conversions = MtsConvert.convert(value, OctetString.class, true);

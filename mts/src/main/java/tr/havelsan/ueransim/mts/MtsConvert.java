@@ -234,7 +234,7 @@ public class MtsConvert {
 
         for (int i = 0; i < sourceArray.length; i++) {
             if (sourceArray[i] instanceof ImplicitTypedObject) {
-                sourceArray[i] = MtsConstruct.construct(targetType, ((ImplicitTypedObject) sourceArray[i]).getParameters(), includeCustoms);
+                sourceArray[i] = MtsConstruct.construct(targetType, (ImplicitTypedObject) sourceArray[i], includeCustoms);
             }
 
             var conversions = convert(sourceArray[i], targetType, includeCustoms);

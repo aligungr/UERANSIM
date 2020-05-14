@@ -9,7 +9,10 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
-import tr.havelsan.ueransim.nas.impl.ies.*;
+import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
+import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
+import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
+import tr.havelsan.ueransim.nas.impl.ies.IENssai;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
@@ -36,7 +39,7 @@ public class RegistrationFlow extends BaseFlow {
                 IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
         registrationRequest.nasKeySetIdentifier = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
-        registrationRequest.mobileIdentity = input.mobileIdentity;
+        registrationRequest.mobileIdentity = ctx.ueData.imsi;
 
         send(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
@@ -148,12 +151,7 @@ public class RegistrationFlow extends BaseFlow {
         if (message.identityType.value.equals(EIdentityType.IMEI)) {
             response.mobileIdentity = ctx.ueData.imei;
         } else if (message.identityType.value.equals(EIdentityType.SUCI)) {
-            if (!(input.mobileIdentity instanceof IESuciMobileIdentity)) {
-                Console.println(Color.RED, "Identity request for %s is not provided in registration.yaml",
-                        message.identityType.value.name());
-                return this::waitAmfMessages;
-            }
-            response.mobileIdentity = input.mobileIdentity;
+            response.mobileIdentity = ctx.ueData.imsi;
         } else {
             Console.println(Color.YELLOW, "Identity request for %s is not implemented yet",
                     message.identityType.value.name());
