@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.contexts;
 
+import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UeData {
@@ -9,5 +10,5 @@ public class UeData {
     public OctetString sqn;
     public OctetString amf;
 
-    public String imei;
+    public IEImeiMobileIdentity imei;
 }

@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
@@ -150,7 +151,7 @@ public class FlowTesting {
         ueData.op = new OctetString(config.get("ueData.op"));
         ueData.sqn = new OctetString(config.get("ueData.sqn"));
         ueData.amf = new OctetString(config.get("ueData.amf"));
-        ueData.imei = config.get("ueData.imei");
+        ueData.imei = new IEImeiMobileIdentity(config.get("ueData.imei"));
 
         var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
         simContext.ueData = ueData;
