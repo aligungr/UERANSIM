@@ -146,7 +146,7 @@ public class RegistrationFlow extends BaseFlow {
         IdentityResponse response = new IdentityResponse();
 
         if (message.identityType.value.equals(EIdentityType.IMEI)) {
-            response.mobileIdentity = new IEImeiMobileIdentity(input.imei);
+            response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
         } else if (message.identityType.value.equals(EIdentityType.SUCI)) {
             if (!(input.mobileIdentity instanceof IESuciMobileIdentity)) {
                 Console.println(Color.RED, "Identity request for %s is not provided in registration.yaml",

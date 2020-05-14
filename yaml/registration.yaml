@@ -16,7 +16,6 @@ mobileIdentity:
     value: '0'
   schemeOutput: '000000010'
 rrcEstablishmentCause: 4
-imei: '356938035643809'
 userLocationInformationNr:
   nrCgi:
     plmn:

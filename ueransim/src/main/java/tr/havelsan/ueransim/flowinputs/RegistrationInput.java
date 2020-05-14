@@ -11,16 +11,14 @@ public class RegistrationInput {
     public final IESNssai[] requestNssai;
     public final IE5gsMobileIdentity mobileIdentity;
     public final int rrcEstablishmentCause;
-    public final String imei;
     public final UserLocationInformationNr userLocationInformationNr;
 
-    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, String imei, UserLocationInformationNr userLocationInformationNr) {
+    public RegistrationInput(long ranUeNgapId, Bit3 ngKSI, IESNssai[] requestNssai, IE5gsMobileIdentity mobileIdentity, int rrcEstablishmentCause, UserLocationInformationNr userLocationInformationNr) {
         this.ranUeNgapId = ranUeNgapId;
         this.ngKSI = ngKSI;
         this.requestNssai = requestNssai;
         this.mobileIdentity = mobileIdentity;
         this.rrcEstablishmentCause = rrcEstablishmentCause;
-        this.imei = imei;
         this.userLocationInformationNr = userLocationInformationNr;
     }
 }

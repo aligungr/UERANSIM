@@ -8,4 +8,6 @@ public class UeData {
     public OctetString op;
     public OctetString sqn;
     public OctetString amf;
+
+    public String imei;
 }

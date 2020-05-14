@@ -150,6 +150,7 @@ public class FlowTesting {
         ueData.op = new OctetString(config.get("ueData.op"));
         ueData.sqn = new OctetString(config.get("ueData.sqn"));
         ueData.amf = new OctetString(config.get("ueData.amf"));
+        ueData.imei = config.get("ueData.imei");
 
         var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
         simContext.ueData = ueData;
