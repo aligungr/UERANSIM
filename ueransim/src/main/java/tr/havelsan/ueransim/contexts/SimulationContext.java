@@ -10,7 +10,7 @@ public class SimulationContext {
     public UeData ueData;
     public NasSecurityContext nasSecurityContext;
 
-    public long amfUeNgapId;
+    public Long amfUeNgapId;
 
     public SimulationContext(ISCTPClient sctpClient, int streamNumber) {
         this.sctpClient = sctpClient;
