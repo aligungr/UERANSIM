@@ -1,9 +1,11 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.configs.ServiceRequestFlowConfig;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.flowinputs.ServiceRequestFlowInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.ies.IEServiceType;
@@ -20,11 +22,11 @@ import static tr.havelsan.ueransim.ngap2.NgapCriticality.REJECT;
 
 public class ServiceRequestFlow extends BaseFlow {
 
-    private final ServiceRequestFlowInput input;
+    private final ServiceRequestFlowConfig config;
 
-    public ServiceRequestFlow(SimulationContext simContext, ServiceRequestFlowInput input) {
+    public ServiceRequestFlow(SimulationContext simContext, ServiceRequestFlowConfig config) {
         super(simContext);
-        this.input = input;
+        this.config = config;
     }
 
     @Override
@@ -34,20 +36,18 @@ public class ServiceRequestFlow extends BaseFlow {
 
     private State sendMessage() {
         var serviceRequest = new ServiceRequest();
-        serviceRequest.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+        serviceRequest.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, config.ngKSI);
         serviceRequest.serviceType = new IEServiceType(EServiceType.SIGNALLING);
-        serviceRequest.tmsi = input.tmsi;
+        serviceRequest.tmsi = config.tmsi;
 
         var fivegTmsi = new FiveG_S_TMSI();
-        fivegTmsi.aMFPointer = new AMFPointer(new byte[]{(byte) input.tmsi.amfPointer.intValue()}, 6);
-        fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
-        fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
+        fivegTmsi.aMFPointer = new AMFPointer(new byte[]{(byte) config.tmsi.amfPointer.intValue()}, 6);
+        fivegTmsi.aMFSetID = new AMFSetID(config.tmsi.amfSetId.toByteArray(), 10);
+        fivegTmsi.fiveG_TMSI = new FiveG_TMSI(config.tmsi.tmsi.toByteArray());
 
-        send(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
-                .addProtocolIE(fivegTmsi, REJECT), serviceRequest);
+                .addProtocolIE(fivegTmsi, REJECT), serviceRequest));
 
         return this::waitForDownlinkNasTransport;
     }
@@ -55,7 +55,7 @@ public class ServiceRequestFlow extends BaseFlow {
     private State waitForDownlinkNasTransport(IncomingMessage message) {
         var downlinkNasTransport = message.getNgapMessage(DownlinkNASTransport.class);
         if (downlinkNasTransport == null) {
-            logUnhandledMessage(message, DownlinkNASTransport.class);
+            FlowLogging.logUnhandledMessage(message, DownlinkNASTransport.class);
             return this::waitForDownlinkNasTransport;
         }
 

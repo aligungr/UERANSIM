@@ -1,10 +1,8 @@
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.URSimUtils;
+import tr.havelsan.ueransim.*;
+import tr.havelsan.ueransim.configs.NgSetupConfig;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.flowinputs.NgSetupInput;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
@@ -14,26 +12,28 @@ import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingDRX;
 
 public class NgSetupFlow extends BaseFlow {
-    private final NgSetupInput input;
+    private final NgSetupConfig config;
 
-    public NgSetupFlow(SimulationContext simContext, NgSetupInput input) {
+    public NgSetupFlow(SimulationContext simContext, NgSetupConfig config) {
         super(simContext);
-        this.input = input;
+        this.config = config;
     }
 
     @Override
     public State main(IncomingMessage message) throws Exception {
-        send(new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
-                .addProtocolIE(URSimUtils.createGlobalGnbId(input.gnbId, input.gnbPlmn), NgapCriticality.REJECT)
-                .addProtocolIE(URSimUtils.createSupportedTAList(input.supportedTAs), NgapCriticality.REJECT)
-                .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX), null);
+        send(new SendingMessage(
+                new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
+                        .addProtocolIE(URSimUtils.createGlobalGnbId(config.gnbId, config.gnbPlmn), NgapCriticality.REJECT)
+                        .addProtocolIE(URSimUtils.createSupportedTAList(config.supportedTAs), NgapCriticality.REJECT)
+                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX), null
+        ));
         return this::waitNgSetupResponse;
     }
 
     private State waitNgSetupResponse(IncomingMessage message) {
         var ngSetupResponse = message.getNgapMessage(NGSetupResponse.class);
         if (ngSetupResponse == null) {
-            logUnhandledMessage(message, NGSetupResponse.class);
+            FlowLogging.logUnhandledMessage(message, NGSetupResponse.class);
             return this::waitNgSetupResponse;
         }
 

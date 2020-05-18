@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.sctp;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
@@ -33,11 +34,15 @@ public class SCTPClient implements ISCTPClient {
     }
 
     @Override
-    public void send(int streamNumber, byte[] data) throws Exception {
+    public void send(int streamNumber, byte[] data) {
         ByteBuffer outgoingBuffer = ByteBuffer.wrap(data);
         MessageInfo outgoingMessage = MessageInfo.createOutgoing(null, streamNumber);
         outgoingMessage.payloadProtocolID(protocolId);
-        channel.send(outgoingBuffer, outgoingMessage);
+        try {
+            channel.send(outgoingBuffer, outgoingMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

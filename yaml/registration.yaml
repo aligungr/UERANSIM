@@ -1,4 +1,3 @@
-ranUeNgapId: 1000
 ngKSI:
   value: 3
 requestNssai:
@@ -7,16 +6,3 @@ requestNssai:
     sd:
       hex: 09afaf
 rrcEstablishmentCause: 4
-userLocationInformationNr:
-  nrCgi:
-    plmn:
-      mcc: 1
-      mnc: 1
-    nrCellIdentity:
-      hex: '01b2c3d4e0'
-  tai:
-    mcc: 1
-    mnc: 1
-    tac: '000075'
-  timeStamp:
-    hex: 5b5fa680

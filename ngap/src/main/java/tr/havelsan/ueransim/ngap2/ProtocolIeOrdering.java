@@ -5,12 +5,20 @@ import fr.marben.asnsdk.japi.spe.Value;
 import java.util.Comparator;
 import java.util.List;
 
+// TODO: Optimize this
 class ProtocolIeOrdering {
 
-    public static void sortProtocolIEs(List<NgapBuilder.ProtocolIE> protocolIEs, Value procedureContent) {
+    /**
+     * This method sorts the protocol information elements according to order specified in ASN.1
+     * Also removes any protocol information element which is not exist in the ASN.1 description of relevant procedure
+     */
+    public static void processProtocolIEs(List<NgapBuilder.ProtocolIE> protocolIEs, Value procedureContent) {
         var procedureClass = procedureContent.getClass();
         var list = ProtocolIeOrdering.findProtocolIeOrdering(procedureClass);
         protocolIEs.sort(Comparator.comparingInt(ie -> list.indexOf(ie.value.getClass())));
+
+        // remove procolIe if not included in list
+        protocolIEs.removeIf(ie -> !list.contains(ie.value.getClass()));
     }
 
     private static List<Class<?>> findProtocolIeOrdering(Class<?> procedureClass) {

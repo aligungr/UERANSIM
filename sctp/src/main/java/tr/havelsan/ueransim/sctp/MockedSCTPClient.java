@@ -1,7 +1,4 @@
-package tr.havelsan.ueransim.mocked;
-
-import tr.havelsan.ueransim.sctp.ISCTPClient;
-import tr.havelsan.ueransim.sctp.ISCTPHandler;
+package tr.havelsan.ueransim.sctp;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -27,7 +24,7 @@ public class MockedSCTPClient implements ISCTPClient {
     }
 
     @Override
-    public void send(int streamNumber, byte[] data) throws Exception {
+    public void send(int streamNumber, byte[] data) {
         mockedRemote.onMessage(data, queue);
     }
 
