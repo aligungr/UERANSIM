@@ -2,12 +2,11 @@ package tr.havelsan.ueransim;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.NasSecurity;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.Color;
@@ -106,12 +105,12 @@ public abstract class BaseFlow {
     //                                           MESSAGING
     //======================================================================================================
 
-    protected final void send(NgapBuilder ngapBuilder, NasMessage nasMessage) {
+    protected final void send(SendingMessage sendingMessage) {
         // Adding NAS PDU (if any)
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx, nasMessage);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx, sendingMessage.nasMessage);
         if (securedNas != null) {
             // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
+            sendingMessage.ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
         }
 
         // Adding AMF-UE-NGAP-ID (if any)
@@ -122,33 +121,18 @@ public abstract class BaseFlow {
         Long amfUeNgapId = ctx.amfUeNgapId;
         if (amfUeNgapId != null) {
             // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+            sendingMessage.ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
         }
 
-        var ngapPdu = ngapBuilder.build();
+        var ngapPdu = sendingMessage.ngapBuilder.build();
         sendSctpData(Ngap.perEncode(ngapPdu));
 
-        var outgoing = new OutgoingMessage(ngapPdu, nasMessage, securedNas);
+        var outgoing = new OutgoingMessage(ngapPdu, sendingMessage.nasMessage, securedNas);
         logSentMessage(outgoing);
     }
 
     private void receive(NGAP_PDU ngapPdu) {
-        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
-        var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
-        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx, nasMessage);
-        var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
-
-        // check for AMF-UE-NGAP-ID
-        {
-            var ieAmfUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, AMF_UE_NGAP_ID.class);
-            if (ieAmfUeNgapId.size() > 0) {
-                var ie = ieAmfUeNgapId.get(ieAmfUeNgapId.size() - 1);
-                ctx.amfUeNgapId = ie.value;
-            }
-        }
-
-        logReceivedMessage(incomingMessage);
-
+        var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
         try {
             this.currentState = this.currentState.accept(incomingMessage);
         } catch (FlowFailedException exception) {

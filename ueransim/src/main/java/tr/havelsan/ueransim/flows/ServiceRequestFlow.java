@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.ServiceRequestFlowInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -43,11 +44,11 @@ public class ServiceRequestFlow extends BaseFlow {
         fivegTmsi.aMFSetID = new AMFSetID(input.tmsi.amfSetId.toByteArray(), 10);
         fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
-        send(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, REJECT)
                 .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
-                .addProtocolIE(fivegTmsi, REJECT), serviceRequest);
+                .addProtocolIE(fivegTmsi, REJECT), serviceRequest));
 
         return this::waitForDownlinkNasTransport;
     }

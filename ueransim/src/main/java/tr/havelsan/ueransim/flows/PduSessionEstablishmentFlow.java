@@ -4,6 +4,7 @@ import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.PduSessionEstablishmentInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -58,9 +59,9 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         ulNasTransport.sNssa = input.sNssai;
         ulNasTransport.dnn = input.dnn;
 
-        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), ulNasTransport);
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), ulNasTransport));
 
         return this::waitPduSessionEstablishmentAccept;
     }
@@ -96,9 +97,9 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         item.pDUSessionResourceSetupResponseTransfer = new ContainingOctetStringValue(transfer);
         list.valueList = Collections.singletonList(item);
 
-        send(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
-                .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null);
+                .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null));
 
         return flowComplete();
     }

@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.UEContextReleaseRequestInput;
 import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
@@ -27,9 +28,9 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
         var misc = new CauseMisc(ASN_om_intervention);
         var cause = new Cause(Cause.ASN_misc, misc);
 
-        send(new NgapBuilder(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UEContextReleaseRequest, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addProtocolIE(cause, NgapCriticality.IGNORE), null);
+                .addProtocolIE(cause, NgapCriticality.IGNORE), null));
         return this::waitPduSessionReleaseCommand;
     }
 
@@ -40,8 +41,8 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
             return this::waitPduSessionReleaseCommand;
         }
 
-        send(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), null);
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), null));
 
         return flowComplete();
     }

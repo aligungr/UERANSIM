@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.flows;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.PduSessionReleaseInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -47,9 +48,9 @@ public class PduSessionReleaseFlow extends BaseFlow {
         uplink.sNssa = input.sNssai;
         uplink.dnn = input.dnn;
 
-        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT), uplink);
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT), uplink));
         return this::waitPduSessionReleaseCommand;
     }
 
@@ -73,10 +74,10 @@ public class PduSessionReleaseFlow extends BaseFlow {
         item.pDUSessionID = new PDUSessionID(input.pduSessionId.intValue());
         item.pDUSessionResourceReleaseResponseTransfer = new ContainingOctetStringValue(new PDUSessionResourceReleaseResponseTransfer());
 
-        send(new NgapBuilder(NgapProcedure.PDUSessionResourceReleaseResponse, NgapCriticality.REJECT)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceReleaseResponse, NgapCriticality.REJECT)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE)
-                .addProtocolIE(list, NgapCriticality.IGNORE), null);
+                .addProtocolIE(list, NgapCriticality.IGNORE), null));
     }
 
     private void sendUplinkNas() {
@@ -91,8 +92,8 @@ public class PduSessionReleaseFlow extends BaseFlow {
         uplink.sNssa = input.sNssai;
         uplink.dnn = input.dnn;
 
-        send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT), uplink);
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT), uplink));
     }
 }

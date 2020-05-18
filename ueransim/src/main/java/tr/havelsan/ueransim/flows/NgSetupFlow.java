@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.URSimUtils;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.NgSetupInput;
@@ -23,10 +24,12 @@ public class NgSetupFlow extends BaseFlow {
 
     @Override
     public State main(IncomingMessage message) throws Exception {
-        send(new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
-                .addProtocolIE(URSimUtils.createGlobalGnbId(input.gnbId, input.gnbPlmn), NgapCriticality.REJECT)
-                .addProtocolIE(URSimUtils.createSupportedTAList(input.supportedTAs), NgapCriticality.REJECT)
-                .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX), null);
+        send(new SendingMessage(
+                new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
+                        .addProtocolIE(URSimUtils.createGlobalGnbId(input.gnbId, input.gnbPlmn), NgapCriticality.REJECT)
+                        .addProtocolIE(URSimUtils.createSupportedTAList(input.supportedTAs), NgapCriticality.REJECT)
+                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX), null
+        ));
         return this::waitNgSetupResponse;
     }
 
