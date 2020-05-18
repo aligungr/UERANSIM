@@ -41,7 +41,6 @@ public class RegistrationFlow extends BaseFlow {
         registrationRequest.mobileIdentity = ctx.ueData.imsi;
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
 
         return this::waitAmfMessages;
@@ -81,24 +80,21 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleInitialContextSetup() {
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE), null));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT), null));
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), new RegistrationComplete()));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), new RegistrationComplete()));
 
         return flowComplete();
     }
 
     private State handleRegistrationAccept(RegistrationAccept message) {
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), new RegistrationComplete()));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), new RegistrationComplete()));
 
         return flowComplete();
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
-        var response = UeAuthentication.handleAuthenticationRequest(ctx, input, message);
+        var response = UeAuthentication.handleAuthenticationRequest(ctx, message);
         if (response != null) {
             send(response);
         }
@@ -118,8 +114,7 @@ public class RegistrationFlow extends BaseFlow {
             return this::waitAmfMessages;
         }
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), response));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
 
         return this::waitAmfMessages;
     }

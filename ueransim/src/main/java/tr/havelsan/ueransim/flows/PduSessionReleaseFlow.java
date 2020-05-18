@@ -48,8 +48,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
         uplink.sNssa = input.sNssai;
         uplink.dnn = input.dnn;
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), uplink));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), uplink));
         return this::waitPduSessionReleaseCommand;
     }
 
@@ -74,7 +73,6 @@ public class PduSessionReleaseFlow extends BaseFlow {
         item.pDUSessionResourceReleaseResponseTransfer = new ContainingOctetStringValue(new PDUSessionResourceReleaseResponseTransfer());
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceReleaseResponse, NgapCriticality.REJECT)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addProtocolIE(list, NgapCriticality.IGNORE), null));
     }
 
@@ -90,7 +88,6 @@ public class PduSessionReleaseFlow extends BaseFlow {
         uplink.sNssa = input.sNssai;
         uplink.dnn = input.dnn;
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), uplink));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), uplink));
     }
 }

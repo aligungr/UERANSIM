@@ -47,6 +47,12 @@ public class Messaging {
             }
         }
 
+        // Adding RAN-UE-NGAP-ID
+        {
+            // NOTE: criticality is hardcoded here, it may be changed
+            sendingMessage.ngapBuilder.addRanUeNgapId(ctx.ranUeNgapId, NgapCriticality.REJECT);
+        }
+
         // Adding user location information
         {
             // NOTE: criticality is hardcoded here, it may be changed

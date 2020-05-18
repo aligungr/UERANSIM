@@ -25,6 +25,7 @@ ueData.imsi:
     value: '0'
   schemeOutput: '000000010'
 
+context.ranUeNgapId: 1000
 context.userLocationInformationNr:
   nrCgi:
     plmn:

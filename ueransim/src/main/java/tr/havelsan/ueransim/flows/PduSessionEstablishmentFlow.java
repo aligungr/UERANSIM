@@ -59,8 +59,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         ulNasTransport.sNssa = input.sNssai;
         ulNasTransport.dnn = input.dnn;
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), ulNasTransport));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
 
         return this::waitPduSessionEstablishmentAccept;
     }
@@ -97,7 +96,6 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         list.valueList = Collections.singletonList(item);
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE)
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null));
 
         return flowComplete();

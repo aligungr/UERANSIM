@@ -12,6 +12,7 @@ public class SimulationContext {
     public NasSecurityContext nasSecurityContext;
 
     public Long amfUeNgapId;
+    public long ranUeNgapId;
     public UserLocationInformationNr userLocationInformationNr;
 
     public SimulationContext(ISCTPClient sctpClient, int streamNumber) {

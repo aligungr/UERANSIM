@@ -30,8 +30,7 @@ public class DeregistrationFlow extends BaseFlow {
         request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
         request.mobileIdentity = input.guti;
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), request));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), request));
 
         return this::waitDeregistrationAccept;
     }
@@ -52,8 +51,7 @@ public class DeregistrationFlow extends BaseFlow {
             return this::waitDeregistrationAccept;
         }
 
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE), null));
+        send(new SendingMessage(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT), null));
 
         return flowComplete();
     }

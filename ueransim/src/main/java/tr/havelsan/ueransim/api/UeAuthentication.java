@@ -8,7 +8,6 @@ import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.contexts.UeData;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
-import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
@@ -29,12 +28,11 @@ import java.util.concurrent.Executors;
 
 public class UeAuthentication {
 
-    // todo: remove registration INput
-    public static SendingMessage handleAuthenticationRequest(SimulationContext ctx, RegistrationInput registrationInput, AuthenticationRequest message) {
+    public static SendingMessage handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
             return handleEapAkaPrime(ctx, message);
         } else {
-            return handle5gAka(ctx, registrationInput, message);
+            return handle5gAka(ctx, message);
         }
     }
 
@@ -43,8 +41,8 @@ public class UeAuthentication {
         return null;
     }
 
-    private static SendingMessage handle5gAka(SimulationContext ctx, RegistrationInput input, AuthenticationRequest request) {
-        NasMessage response = null;
+    private static SendingMessage handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
+        NasMessage response;
 
         //var ngKsi = message.ngKSI;
         var autnCheck = UeAuthentication.validateAutn(ctx.ueData, request.authParamRAND.value,
@@ -77,8 +75,7 @@ public class UeAuthentication {
             return null;
         }
 
-        return new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), response);
+        return new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response);
     }
 
     public static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {

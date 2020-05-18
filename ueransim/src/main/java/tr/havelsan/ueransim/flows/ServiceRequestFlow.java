@@ -45,7 +45,6 @@ public class ServiceRequestFlow extends BaseFlow {
         fivegTmsi.fiveG_TMSI = new FiveG_TMSI(input.tmsi.tmsi.toByteArray());
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
                 .addProtocolIE(fivegTmsi, REJECT), serviceRequest));
 
