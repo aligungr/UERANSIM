@@ -46,7 +46,6 @@ public class ServiceRequestFlow extends BaseFlow {
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(ASN_mo_Signalling), IGNORE)
                 .addProtocolIE(fivegTmsi, REJECT), serviceRequest));
 

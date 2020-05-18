@@ -60,8 +60,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         ulNasTransport.dnn = input.dnn;
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), ulNasTransport));
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), ulNasTransport));
 
         return this::waitPduSessionEstablishmentAccept;
     }

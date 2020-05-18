@@ -31,8 +31,7 @@ public class DeregistrationFlow extends BaseFlow {
         request.mobileIdentity = input.guti;
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), request));
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), request));
 
         return this::waitDeregistrationAccept;
     }

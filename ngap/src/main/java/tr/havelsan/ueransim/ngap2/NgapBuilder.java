@@ -115,7 +115,7 @@ public class NgapBuilder {
         int procedureCode = NgapInternal.findProcedureCode(procedure);
         Value procedureContent = NgapInternal.createProcedureValue(procedure);
 
-        ProtocolIeOrdering.sortProtocolIEs(protocolIEs, procedureContent);
+        ProtocolIeOrdering.processProtocolIEs(protocolIEs, procedureContent);
         for (var protocolIe : protocolIEs) {
             NgapInternal.appendProtocolIe(procedure, procedureContent, protocolIe.criticality, protocolIe.value, protocolIe.id);
         }

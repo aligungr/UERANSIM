@@ -1,17 +1,4 @@
 ranUeNgapId: 1000
-userLocationInformationNr:
-  nrCgi:
-    plmn:
-      mcc: 1
-      mnc: 1
-    nrCellIdentity:
-      hex: '01b2c3d4e0'
-  tai:
-    mcc: 1
-    mnc: 1
-    tac: '000075'
-  timeStamp:
-    hex: 5b5fa680
 guti:
   "@type": IE5gGutiMobileIdentity
   mcc:

@@ -39,17 +39,20 @@ public class Messaging {
         }
 
         // Adding AMF-UE-NGAP-ID (if any)
-        // TODO:
-        // This protocol ie should be included in all UE associated signalling.
-        // AMF-UE-NGAP-ID may be ignored for non UE associated messages.
-        // But currently this ie is added to all messages (if there is an AMF-UE-NGAP-ID in the context).
-        Long amfUeNgapId = ctx.amfUeNgapId;
-        if (amfUeNgapId != null) {
-            // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+        {
+            Long amfUeNgapId = ctx.amfUeNgapId;
+            if (amfUeNgapId != null) {
+                // NOTE: criticality is hardcoded here, it may be changed
+                sendingMessage.ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+            }
         }
 
-        var ngapPdu = sendingMessage.ngapBuilder.build();
-        return new OutgoingMessage(ngapPdu, sendingMessage.nasMessage, securedNas);
+        // Adding user location information
+        {
+            // NOTE: criticality is hardcoded here, it may be changed
+            sendingMessage.ngapBuilder.addUserLocationInformationNR(ctx.userLocationInformationNr, NgapCriticality.IGNORE);
+        }
+
+        return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);
     }
 }

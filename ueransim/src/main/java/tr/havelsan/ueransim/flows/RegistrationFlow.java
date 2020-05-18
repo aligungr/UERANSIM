@@ -42,7 +42,6 @@ public class RegistrationFlow extends BaseFlow {
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.REJECT)
                 .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
 
         return this::waitAmfMessages;
@@ -86,16 +85,14 @@ public class RegistrationFlow extends BaseFlow {
                 .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.IGNORE), null));
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete()));
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), new RegistrationComplete()));
 
         return flowComplete();
     }
 
     private State handleRegistrationAccept(RegistrationAccept message) {
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), new RegistrationComplete()));
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), new RegistrationComplete()));
 
         return flowComplete();
     }
@@ -122,8 +119,7 @@ public class RegistrationFlow extends BaseFlow {
         }
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response));
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), response));
 
         return this::waitAmfMessages;
     }

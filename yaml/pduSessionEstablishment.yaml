@@ -18,16 +18,3 @@ transportLayerAddress:
 gTpTeid:
   value: 2
 qosFlowIdentifier: 1
-userLocationInformationNr:
-  nrCgi:
-    plmn:
-      mcc: 1
-      mnc: 1
-    nrCellIdentity:
-      hex: 'a1b2c3d4f0'
-  tai:
-    mcc: 1
-    mnc: 1
-    tac: '000075'
-  timeStamp:
-    hex: 5b5fa680

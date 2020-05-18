@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.contexts;
 
 import tr.havelsan.ueransim.nas.NasSecurityContext;
+import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 
 public class SimulationContext {
@@ -11,6 +12,7 @@ public class SimulationContext {
     public NasSecurityContext nasSecurityContext;
 
     public Long amfUeNgapId;
+    public UserLocationInformationNr userLocationInformationNr;
 
     public SimulationContext(ISCTPClient sctpClient, int streamNumber) {
         this.sctpClient = sctpClient;

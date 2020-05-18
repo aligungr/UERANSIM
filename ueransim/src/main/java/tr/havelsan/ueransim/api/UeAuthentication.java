@@ -32,13 +32,13 @@ public class UeAuthentication {
     // todo: remove registration INput
     public static SendingMessage handleAuthenticationRequest(SimulationContext ctx, RegistrationInput registrationInput, AuthenticationRequest message) {
         if (message.eapMessage != null) {
-            return handleEapAkaPrime(ctx, registrationInput, message);
+            return handleEapAkaPrime(ctx, message);
         } else {
             return handle5gAka(ctx, registrationInput, message);
         }
     }
 
-    private static SendingMessage handleEapAkaPrime(SimulationContext ctx, RegistrationInput input, AuthenticationRequest request) {
+    private static SendingMessage handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest request) {
         Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
         return null;
     }
@@ -78,8 +78,7 @@ public class UeAuthentication {
         }
 
         return new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT), response);
     }
 
     public static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {
