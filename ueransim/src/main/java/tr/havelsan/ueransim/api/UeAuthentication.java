@@ -14,6 +14,7 @@ import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationFailure;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
+import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResult;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
@@ -28,20 +29,19 @@ import java.util.concurrent.Executors;
 
 public class UeAuthentication {
 
-    public static SendingMessage handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
+    public static void handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
-            return handleEapAkaPrime(ctx, message);
+            handleEapAkaPrime(ctx, message);
         } else {
-            return handle5gAka(ctx, message);
+            handle5gAka(ctx, message);
         }
     }
 
-    private static SendingMessage handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest request) {
+    private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest request) {
         Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
-        return null;
     }
 
-    private static SendingMessage handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
+    private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
         NasMessage response;
 
         //var ngKsi = message.ngKSI;
@@ -71,14 +71,12 @@ public class UeAuthentication {
             }
         }
 
-        if (response == null) {
-            return null;
+        if (response != null) {
+            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
         }
-
-        return new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response);
     }
 
-    public static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {
+    private static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {
         var milenage = calculateMilenage(ueData, rand);
 
         // Decode AUTN
@@ -130,11 +128,15 @@ public class UeAuthentication {
         return true;
     }
 
-    public static OctetString calculateResStar(UeData ueData, OctetString rand) {
+    private static OctetString calculateResStar(UeData ueData, OctetString rand) {
         var milenage = calculateMilenage(ueData, rand);
         var res = milenage.get(MilenageResult.RES);
         var ck = milenage.get(MilenageResult.CK);
         var ik = milenage.get(MilenageResult.IK);
         return KDF.calculateResStar(OctetString.concat(ck, ik), ueData.ssn, rand, res);
+    }
+
+    public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {
+        Console.println(Color.BLUE, "Authentication result received");
     }
 }

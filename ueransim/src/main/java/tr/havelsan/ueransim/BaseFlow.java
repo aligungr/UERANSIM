@@ -23,10 +23,8 @@ public abstract class BaseFlow {
     //                                           MESSAGING
     //======================================================================================================
 
-    protected final void send(SendingMessage sendingMessage) {
-        var outgoing = Messaging.handleOutgoingMessage(ctx, sendingMessage);
-        sendSctpData(Ngap.perEncode(outgoing.ngapPdu));
-        FlowLogging.logSentMessage(outgoing);
+    public final void send(SendingMessage sendingMessage) {
+        Messaging.send(ctx, sendingMessage);
     }
 
     private void receive(NGAP_PDU ngapPdu) {
@@ -62,14 +60,6 @@ public abstract class BaseFlow {
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         receive(Ngap.perDecode(NGAP_PDU.class, receivedBytes));
-    }
-
-    private void sendSctpData(byte[] data) {
-        try {
-            ctx.sctpClient.send(ctx.streamNumber, data);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     //======================================================================================================

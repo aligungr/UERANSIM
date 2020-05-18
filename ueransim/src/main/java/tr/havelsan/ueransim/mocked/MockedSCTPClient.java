@@ -27,7 +27,7 @@ public class MockedSCTPClient implements ISCTPClient {
     }
 
     @Override
-    public void send(int streamNumber, byte[] data) throws Exception {
+    public void send(int streamNumber, byte[] data) {
         mockedRemote.onMessage(data, queue);
     }
 
