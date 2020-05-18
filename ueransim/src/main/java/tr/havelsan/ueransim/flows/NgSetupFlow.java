@@ -1,9 +1,6 @@
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.SendingMessage;
-import tr.havelsan.ueransim.URSimUtils;
+import tr.havelsan.ueransim.*;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.NgSetupInput;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
@@ -36,7 +33,7 @@ public class NgSetupFlow extends BaseFlow {
     private State waitNgSetupResponse(IncomingMessage message) {
         var ngSetupResponse = message.getNgapMessage(NGSetupResponse.class);
         if (ngSetupResponse == null) {
-            logUnhandledMessage(message, NGSetupResponse.class);
+            FlowLogging.logUnhandledMessage(message, NGSetupResponse.class);
             return this::waitNgSetupResponse;
         }
 

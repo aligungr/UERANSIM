@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
@@ -38,7 +39,7 @@ public class DeregistrationFlow extends BaseFlow {
     private State waitDeregistrationAccept(IncomingMessage message) {
         var deRegistrationAcceptUeOriginating = message.getNasMessage(DeRegistrationAcceptUeOriginating.class);
         if (deRegistrationAcceptUeOriginating == null) {
-            logUnhandledMessage(message, DeRegistrationRequestUeOriginating.class);
+            FlowLogging.logUnhandledMessage(message, DeRegistrationRequestUeOriginating.class);
             return this::waitDeregistrationAccept;
         }
         return this::waitUeContextReleaseCommand;
@@ -47,7 +48,7 @@ public class DeregistrationFlow extends BaseFlow {
     private State waitUeContextReleaseCommand(IncomingMessage message) {
         var command = message.getNgapMessage(UEContextReleaseCommand.class);
         if (command == null) {
-            logUnhandledMessage(message, UEContextReleaseCommand.class);
+            FlowLogging.logUnhandledMessage(message, UEContextReleaseCommand.class);
             return this::waitDeregistrationAccept;
         }
 

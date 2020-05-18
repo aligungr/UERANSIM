@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
@@ -55,7 +56,7 @@ public class PduSessionReleaseFlow extends BaseFlow {
     private State waitPduSessionReleaseCommand(IncomingMessage message) {
         var pduSessionResourceReleaseCommand = message.getNgapMessage(PDUSessionResourceReleaseCommand.class);
         if (pduSessionResourceReleaseCommand == null) {
-            logUnhandledMessage(message, PDUSessionResourceReleaseCommand.class);
+            FlowLogging.logUnhandledMessage(message, PDUSessionResourceReleaseCommand.class);
             return this::waitPduSessionReleaseCommand;
         }
 

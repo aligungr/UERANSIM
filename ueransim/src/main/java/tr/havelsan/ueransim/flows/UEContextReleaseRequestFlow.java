@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
@@ -36,7 +37,7 @@ public class UEContextReleaseRequestFlow extends BaseFlow {
     private State waitPduSessionReleaseCommand(IncomingMessage message) {
         var ueContextReleaseCommand = message.getNgapMessage(UEContextReleaseCommand.class);
         if (ueContextReleaseCommand == null) {
-            logUnhandledMessage(message, UEContextReleaseCommand.class);
+            FlowLogging.logUnhandledMessage(message, UEContextReleaseCommand.class);
             return this::waitPduSessionReleaseCommand;
         }
 

@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.api.UeAuthentication;
@@ -57,7 +58,7 @@ public class RegistrationFlow extends BaseFlow {
             return handleNasMessage(nasMessage);
         }
 
-        logUnhandledMessage(message);
+        FlowLogging.logUnhandledMessage(message);
         return this::waitAmfMessages;
     }
 
@@ -74,7 +75,7 @@ public class RegistrationFlow extends BaseFlow {
         } else if (message instanceof RegistrationAccept) {
             return handleRegistrationAccept((RegistrationAccept) message);
         } else {
-            logUnhandledMessage(message);
+            FlowLogging.logUnhandledMessage(message);
             return this::waitAmfMessages;
         }
     }

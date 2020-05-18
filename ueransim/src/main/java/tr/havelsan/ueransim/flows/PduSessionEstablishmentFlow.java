@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.flows;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
@@ -67,7 +68,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     private State waitPduSessionEstablishmentAccept(IncomingMessage message) {
         var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);
         if (pduSessionResourceSetupRequest == null) {
-            logUnhandledMessage(message, PDUSessionResourceSetupRequest.class);
+            FlowLogging.logUnhandledMessage(message, PDUSessionResourceSetupRequest.class);
             return this::waitPduSessionEstablishmentAccept;
         }
 

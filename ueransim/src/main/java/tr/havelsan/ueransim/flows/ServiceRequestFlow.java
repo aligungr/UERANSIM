@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
@@ -54,7 +55,7 @@ public class ServiceRequestFlow extends BaseFlow {
     private State waitForDownlinkNasTransport(IncomingMessage message) {
         var downlinkNasTransport = message.getNgapMessage(DownlinkNASTransport.class);
         if (downlinkNasTransport == null) {
-            logUnhandledMessage(message, DownlinkNASTransport.class);
+            FlowLogging.logUnhandledMessage(message, DownlinkNASTransport.class);
             return this::waitForDownlinkNasTransport;
         }
 
