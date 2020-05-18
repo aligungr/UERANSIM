@@ -3,8 +3,18 @@ package tr.havelsan.ueransim.api;
 import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
+import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.contexts.UeData;
 import tr.havelsan.ueransim.crypto.KDF;
+import tr.havelsan.ueransim.enums.AutnValidationRes;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
+import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
+import tr.havelsan.ueransim.nas.impl.messages.AuthenticationFailure;
+import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
+import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
+import tr.havelsan.ueransim.utils.Color;
+import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -13,6 +23,39 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class UeAuthentication {
+
+    public static NasMessage handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
+        // Handle EAP-AKA'
+        if (message.eapMessage != null) {
+            Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
+            return null;
+        }
+
+        // Handle 5G-AKA
+
+        //var ngKsi = message.ngKSI;
+        var autnCheck = UeAuthentication.validateAutn(ctx.ueData, message.authParamRAND.value,
+                message.authParamAUTN.value);
+        switch (autnCheck) {
+            case OK: {
+                var resStar = UeAuthentication.calculateResStar(ctx.ueData, message.authParamRAND.value);
+                return new AuthenticationResponse(new IEAuthenticationResponseParameter(resStar), null);
+            }
+            case MAC_FAILURE: {
+                // todo
+                Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+                return null;
+            }
+            case SYNCHRONISATION_FAILURE: {
+                // todo
+                Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+                return null;
+            }
+            default: {
+                return new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
+            }
+        }
+    }
 
     public static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {
         var milenage = calculateMilenage(ueData, rand);

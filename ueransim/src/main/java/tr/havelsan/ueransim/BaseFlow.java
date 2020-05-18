@@ -2,6 +2,7 @@ package tr.havelsan.ueransim;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
+import tr.havelsan.ueransim.api.NasSecurity;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
@@ -107,7 +108,7 @@ public abstract class BaseFlow {
 
     protected final void send(NgapBuilder ngapBuilder, NasMessage nasMessage) {
         // Adding NAS PDU (if any)
-        NasMessage securedNas = encryptNasMessage(nasMessage);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx, nasMessage);
         if (securedNas != null) {
             // NOTE: criticality is hardcoded here, it may be changed
             ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
@@ -134,7 +135,7 @@ public abstract class BaseFlow {
     private void receive(NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
         var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
-        var decryptedNasMessage = decryptNasMessage(nasMessage);
+        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx, nasMessage);
         var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
 
         // check for AMF-UE-NGAP-ID
@@ -153,28 +154,6 @@ public abstract class BaseFlow {
         } catch (FlowFailedException exception) {
             this.currentState = flowFailed(exception.getMessage());
         }
-    }
-
-    //======================================================================================================
-    //                                            SECURITY
-    //======================================================================================================
-
-    private NasMessage encryptNasMessage(NasMessage nasMessage) {
-        if (nasMessage == null) {
-            return null;
-        }
-
-        // todo: encrypt nasMessage if needed
-        return nasMessage;
-    }
-
-    private NasMessage decryptNasMessage(NasMessage nasMessage) {
-        if (nasMessage == null) {
-            return null;
-        }
-
-        // todo: decrypt nasMessage if needed
-        return nasMessage;
     }
 
     //======================================================================================================

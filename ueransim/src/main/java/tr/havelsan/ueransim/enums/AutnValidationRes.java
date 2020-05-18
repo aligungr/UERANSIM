@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.enums;
 
 public enum AutnValidationRes {
     OK,

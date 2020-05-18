@@ -7,10 +7,8 @@ import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
-import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
-import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.ies.IENssai;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -102,45 +100,11 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
-        // Handle EAP-AKA'
-        if (message.eapMessage != null) {
-            Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
-            return this::waitAmfMessages;
-        }
-
-        // Handle 5G-AKA
-
-        //var ngKsi = message.ngKSI;
-        var autnCheck = UeAuthentication.validateAutn(ctx.ueData, message.authParamRAND.value,
-                message.authParamAUTN.value);
-        switch (autnCheck) {
-            case OK: {
-                var resStar = UeAuthentication.calculateResStar(ctx.ueData, message.authParamRAND.value);
-                var response = new AuthenticationResponse(new IEAuthenticationResponseParameter(resStar), null);
-                send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                        .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                        .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
-                break;
-            }
-            case MAC_FAILURE: {
-                // todo
-                Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
-                return this::waitAmfMessages;
-            }
-            case SYNCHRONISATION_FAILURE: {
-                // todo
-                Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
-                return this::waitAmfMessages;
-            }
-            default: {
-                var response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
-                send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                                .addUserLocationInformationNR(input.userLocationInformationNr,
-                                        NgapCriticality.IGNORE),
-                        response);
-                break;
-            }
+        var response = UeAuthentication.handleAuthenticationRequest(ctx, message);
+        if (response != null) {
+            send(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                    .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                    .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
         }
         return this::waitAmfMessages;
     }

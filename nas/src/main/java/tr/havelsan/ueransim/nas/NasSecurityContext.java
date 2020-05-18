@@ -26,7 +26,7 @@ public class NasSecurityContext {
     public Algorithms selectedAlgorithms;
 
     public NasSecurityContext() {
-        this.isNew = false;
+        this.isNew = true;
         this.type = ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;
         this.ngKsi = new Bit3(0);
         this.keyNasEnc = new OctetString("");
