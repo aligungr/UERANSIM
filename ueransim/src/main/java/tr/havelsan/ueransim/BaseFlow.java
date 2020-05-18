@@ -3,11 +3,9 @@ package tr.havelsan.ueransim;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.NasSecurity;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -106,28 +104,8 @@ public abstract class BaseFlow {
     //======================================================================================================
 
     protected final void send(SendingMessage sendingMessage) {
-        // Adding NAS PDU (if any)
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx, sendingMessage.nasMessage);
-        if (securedNas != null) {
-            // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
-        }
-
-        // Adding AMF-UE-NGAP-ID (if any)
-        // TODO:
-        // This protocol ie should be included in all UE associated signalling.
-        // AMF-UE-NGAP-ID may be ignored for non UE associated messages.
-        // But currently this ie is added to all messages (if there is an AMF-UE-NGAP-ID in the context).
-        Long amfUeNgapId = ctx.amfUeNgapId;
-        if (amfUeNgapId != null) {
-            // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
-        }
-
-        var ngapPdu = sendingMessage.ngapBuilder.build();
-        sendSctpData(Ngap.perEncode(ngapPdu));
-
-        var outgoing = new OutgoingMessage(ngapPdu, sendingMessage.nasMessage, securedNas);
+        var outgoing = Messaging.handleOutgoingMessage(ctx, sendingMessage);
+        sendSctpData(Ngap.perEncode(outgoing.ngapPdu));
         logSentMessage(outgoing);
     }
 
@@ -162,8 +140,7 @@ public abstract class BaseFlow {
     }
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
-        var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
-        receive(ngapPdu);
+        receive(Ngap.perDecode(NGAP_PDU.class, receivedBytes));
     }
 
     private void sendSctpData(byte[] data) {
