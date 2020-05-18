@@ -111,6 +111,7 @@ public abstract class BaseFlow {
 
     private void receive(NGAP_PDU ngapPdu) {
         var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
+        logReceivedMessage(incomingMessage);
         try {
             this.currentState = this.currentState.accept(incomingMessage);
         } catch (FlowFailedException exception) {
