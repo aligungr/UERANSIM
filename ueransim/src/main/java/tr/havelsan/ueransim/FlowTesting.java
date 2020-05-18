@@ -66,6 +66,7 @@ public class FlowTesting {
 
         var simContext = createSimContext(configYaml);
 
+        Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", simContext.amfHost, simContext.amfPort);
         simContext.sctpClient.start();
 
         catchINTSignal(simContext.sctpClient);
@@ -177,9 +178,10 @@ public class FlowTesting {
             String amfHost = params.get("amf.host").toString();
             int amfPort = (int) params.get("amf.port");
 
-            Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
-            ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
+            simContext.amfHost = amfHost;
+            simContext.amfPort = amfPort;
 
+            ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
             simContext.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
             simContext.sctpClient = sctpClient;
         }
