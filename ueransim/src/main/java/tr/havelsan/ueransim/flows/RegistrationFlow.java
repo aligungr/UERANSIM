@@ -6,8 +6,8 @@ import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.UeRegistration;
+import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
@@ -16,16 +16,16 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 
 public class RegistrationFlow extends BaseFlow {
-    private final RegistrationInput input;
+    private final RegistrationConfig config;
 
-    public RegistrationFlow(SimulationContext simContext, RegistrationInput input) {
+    public RegistrationFlow(SimulationContext simContext, RegistrationConfig config) {
         super(simContext);
-        this.input = input;
+        this.config = config;
     }
 
     @Override
     public State main(IncomingMessage message) {
-        UeRegistration.sendInitialRegistration(ctx, input);
+        UeRegistration.sendInitialRegistration(ctx, config);
         return this::generalReceiver;
     }
 

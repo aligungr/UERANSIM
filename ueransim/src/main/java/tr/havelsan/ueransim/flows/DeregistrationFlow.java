@@ -4,8 +4,8 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.configs.DeregistrationConfig;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.flowinputs.DeregistrationInput;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
@@ -17,19 +17,19 @@ import tr.havelsan.ueransim.ngap2.NgapProcedure;
 
 public class DeregistrationFlow extends BaseFlow {
 
-    private final DeregistrationInput input;
+    private final DeregistrationConfig config;
 
-    public DeregistrationFlow(SimulationContext simContext, DeregistrationInput input) {
+    public DeregistrationFlow(SimulationContext simContext, DeregistrationConfig config) {
         super(simContext);
-        this.input = input;
+        this.config = config;
     }
 
     @Override
     public State main(IncomingMessage message) throws Exception {
         var request = new DeRegistrationRequestUeOriginating();
-        request.deRegistrationType = input.deregistrationType;
-        request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
-        request.mobileIdentity = input.guti;
+        request.deRegistrationType = config.deregistrationType;
+        request.ngKSI = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, config.ngKSI);
+        request.mobileIdentity = config.guti;
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), request));
 

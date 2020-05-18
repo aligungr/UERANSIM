@@ -4,8 +4,8 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.configs.UEContextReleaseRequestConfig;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.flowinputs.UEContextReleaseRequestInput;
 import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
 import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;
@@ -17,11 +17,11 @@ import static tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc.ASN_om_intervention;
 
 public class UEContextReleaseRequestFlow extends BaseFlow {
 
-    private final UEContextReleaseRequestInput input;
+    private final UEContextReleaseRequestConfig config;
 
-    public UEContextReleaseRequestFlow(SimulationContext simContext, UEContextReleaseRequestInput input) {
+    public UEContextReleaseRequestFlow(SimulationContext simContext, UEContextReleaseRequestConfig config) {
         super(simContext);
-        this.input = input;
+        this.config = config;
     }
 
     @Override

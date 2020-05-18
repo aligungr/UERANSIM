@@ -6,8 +6,8 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.flowinputs.PduSessionEstablishmentInput;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -33,18 +33,18 @@ import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionReso
 
 public class PduSessionEstablishmentFlow extends BaseFlow {
 
-    private final PduSessionEstablishmentInput input;
+    private final PduSessionEstablishmentConfig config;
 
-    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentInput input) {
+    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentConfig config) {
         super(simContext);
-        this.input = input;
+        this.config = config;
     }
 
     @Override
     public State main(IncomingMessage message) {
         var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
-        pduSessionEstablishmentRequest.pduSessionId = EPduSessionIdentity.fromValue(input.pduSessionId.intValue());
-        pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(input.procedureTransactionId.intValue());
+        pduSessionEstablishmentRequest.pduSessionId = EPduSessionIdentity.fromValue(config.pduSessionId.intValue());
+        pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(config.procedureTransactionId.intValue());
         pduSessionEstablishmentRequest.integrityProtectionMaximumDataRate =
                 new IEIntegrityProtectionMaximumDataRate(
                         EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.FULL_DATA_RATE,
@@ -55,10 +55,10 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         var ulNasTransport = new UlNasTransport();
         ulNasTransport.payloadContainerType = new IEPayloadContainerType(EPayloadContainerType.N1_SM_INFORMATION);
         ulNasTransport.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduSessionEstablishmentRequest)));
-        ulNasTransport.pduSessionId = new IEPduSessionIdentity2(input.pduSessionId);
+        ulNasTransport.pduSessionId = new IEPduSessionIdentity2(config.pduSessionId);
         ulNasTransport.requestType = new IERequestType(ERequestType.INITIAL_REQUEST);
-        ulNasTransport.sNssa = input.sNssai;
-        ulNasTransport.dnn = input.dnn;
+        ulNasTransport.sNssa = config.sNssai;
+        ulNasTransport.dnn = config.dnn;
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
 
@@ -73,8 +73,8 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         }
 
         var gtpTunnel = new GTPTunnel();
-        gtpTunnel.transportLayerAddress = new TransportLayerAddress(input.transportLayerAddress.toByteArray(), 32);
-        gtpTunnel.gTP_TEID = new GTP_TEID(input.gTpTeid.toByteArray());
+        gtpTunnel.transportLayerAddress = new TransportLayerAddress(config.transportLayerAddress.toByteArray(), 32);
+        gtpTunnel.gTP_TEID = new GTP_TEID(config.gTpTeid.toByteArray());
 
         var transfer = new PDUSessionResourceSetupResponseTransfer();
         transfer.qosFlowPerTNLInformation = new QosFlowPerTNLInformation();
@@ -86,13 +86,13 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         transfer.qosFlowPerTNLInformation.associatedQosFlowList = new AssociatedQosFlowList();
 
         var associatedFlowItem = new AssociatedQosFlowItem();
-        associatedFlowItem.qosFlowIdentifier = new QosFlowIdentifier(input.qosFlowIdentifier);
+        associatedFlowItem.qosFlowIdentifier = new QosFlowIdentifier(config.qosFlowIdentifier);
         transfer.qosFlowPerTNLInformation.associatedQosFlowList.valueList = Collections.singletonList(associatedFlowItem);
 
         var list = new PDUSessionResourceSetupListSURes();
         var item = new PDUSessionResourceSetupItemSURes();
 
-        item.pDUSessionID = new PDUSessionID(input.pduSessionId.intValue());
+        item.pDUSessionID = new PDUSessionID(config.pduSessionId.intValue());
         item.pDUSessionResourceSetupResponseTransfer = new ContainingOctetStringValue(transfer);
         list.valueList = Collections.singletonList(item);
 

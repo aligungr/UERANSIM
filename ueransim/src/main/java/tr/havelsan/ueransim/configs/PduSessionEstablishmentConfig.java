@@ -1,11 +1,11 @@
-package tr.havelsan.ueransim.flowinputs;
+package tr.havelsan.ueransim.configs;
 
 import tr.havelsan.ueransim.nas.impl.ies.IEDnn;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
-public class PduSessionEstablishmentInput {
+public class PduSessionEstablishmentConfig {
     public final Octet pduSessionId;
     public final Octet procedureTransactionId;
     public final IESNssai sNssai;
@@ -14,7 +14,7 @@ public class PduSessionEstablishmentInput {
     public final Octet4 gTpTeid;
     public final int qosFlowIdentifier;
 
-    public PduSessionEstablishmentInput(Octet pduSessionId, Octet procedureTransactionId, IESNssai sNssai, IEDnn dnn, Octet4 transportLayerAddress, Octet4 gTpTeid, int qosFlowIdentifier) {
+    public PduSessionEstablishmentConfig(Octet pduSessionId, Octet procedureTransactionId, IESNssai sNssai, IEDnn dnn, Octet4 transportLayerAddress, Octet4 gTpTeid, int qosFlowIdentifier) {
         this.pduSessionId = pduSessionId;
         this.procedureTransactionId = procedureTransactionId;
         this.sNssai = sNssai;
