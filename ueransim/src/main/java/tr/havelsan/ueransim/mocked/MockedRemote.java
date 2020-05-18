@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.mocked;
 
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupRequest;
@@ -39,11 +40,15 @@ public class MockedRemote implements MockedSCTPClient.IMockedRemote {
             return;
         }
         if (message.nasMessage instanceof RegistrationRequest) {
-            queue.add("00044019000003000a00020000005500034003e800260005047e005b01");
+            queue.add("00044019000003000a00020000005500034003e800260005047e005b03");
             return;
         }
         if (message.nasMessage instanceof IdentityResponse) {
-            queue.add("0004403f000003000a00020000005500034003e80026002b2a7e00560102000021072d2b3d1f80548b7544dd74c85d268e201082de79bd052180008fa7121de445e89b");
+            queue.add("0004403f000003000a00020000005500034003e80026002b2a7e00560702000021cb096fbdbdd4e5a0f18a224c7c0c065f2010f14210f31982800013912ddc0463d355");
+            return;
+        }
+        if (message.nasMessage instanceof AuthenticationResponse) {
+            queue.add("00044027000003000a00020000005500034003e800260013127e0300000000007e005d0007040102ffffe1");
             return;
         }
     }

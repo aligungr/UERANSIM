@@ -5,8 +5,8 @@ import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 
 public class SimulationContext {
-    public final ISCTPClient sctpClient;
-    public final int streamNumber;
+    public ISCTPClient sctpClient;
+    public int streamNumber;
 
     public UeData ueData;
     public NasSecurityContext nasSecurityContext;
@@ -14,9 +14,4 @@ public class SimulationContext {
     public Long amfUeNgapId;
     public long ranUeNgapId;
     public UserLocationInformationNr userLocationInformationNr;
-
-    public SimulationContext(ISCTPClient sctpClient, int streamNumber) {
-        this.sctpClient = sctpClient;
-        this.streamNumber = streamNumber;
-    }
 }

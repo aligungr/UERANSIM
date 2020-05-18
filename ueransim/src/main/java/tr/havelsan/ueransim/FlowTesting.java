@@ -11,6 +11,7 @@ import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
+import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
@@ -38,9 +39,6 @@ public class FlowTesting {
             config.put(e.getKey(), String.valueOf(e.getValue()));
         }
 
-        String amfHost = config.get("amf.host");
-        int amfPort = Integer.parseInt(config.get("amf.port"));
-
         var types = new LinkedHashMap<String, Class<? extends BaseFlow>>();
         var typeNames = new ArrayList<String>();
         for (String fn : FlowScanner.getFlowNames()) {
@@ -66,14 +64,11 @@ public class FlowTesting {
             return i1.compareTo(i2);
         });
 
-        Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
-        ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
+        var simContext = createSimContext(configYaml);
 
-        var simContext = createSimContext(sctpClient, configYaml);
+        simContext.sctpClient.start();
 
-        sctpClient.start();
-
-        catchINTSignal(sctpClient);
+        catchINTSignal(simContext.sctpClient);
 
         Console.println(Color.BLUE, "SCTP connection established.");
 
@@ -101,7 +96,7 @@ public class FlowTesting {
         while (true) {
             Console.printDiv();
 
-            if (!sctpClient.isOpen())
+            if (!simContext.sctpClient.isOpen())
                 break;
 
             Console.println(Color.BLUE, "Select a flow:");
@@ -124,7 +119,7 @@ public class FlowTesting {
             Console.println();
 
             if (selection == 0) {
-                sctpClient.close();
+                simContext.sctpClient.close();
                 break;
             }
 
@@ -148,20 +143,46 @@ public class FlowTesting {
         }
     }
 
-    private static SimulationContext createSimContext(ISCTPClient sctpClient, ImplicitTypedObject config) {
+    private static SimulationContext createSimContext(ImplicitTypedObject config) {
         var params = config.getParameters();
 
-        var ueData = new UeData();
-        ueData.ssn = (String) params.get("ueData.ssn");
-        ueData.key = new OctetString((String) params.get("ueData.key"));
-        ueData.op = new OctetString((String) params.get("ueData.op"));
-        ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
-        ueData.amf = new OctetString((String) params.get("ueData.amf"));
-        ueData.imei = new IEImeiMobileIdentity((String) params.get("ueData.imei"));
-        ueData.imsi = MtsConstruct.construct(IEImsiMobileIdentity.class, (ImplicitTypedObject) params.get("ueData.imsi"), true);
+        var simContext = new SimulationContext();
 
-        var simContext = new SimulationContext(sctpClient, Constants.DEFAULT_STREAM_NUMBER);
-        simContext.ueData = ueData;
+        // Parse UE Data
+        {
+            var ueData = new UeData();
+            ueData.ssn = (String) params.get("ueData.ssn");
+            ueData.key = new OctetString((String) params.get("ueData.key"));
+            ueData.op = new OctetString((String) params.get("ueData.op"));
+            ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
+            ueData.amf = new OctetString((String) params.get("ueData.amf"));
+            ueData.imei = new IEImeiMobileIdentity((String) params.get("ueData.imei"));
+            ueData.imsi = MtsConstruct.construct(IEImsiMobileIdentity.class, (ImplicitTypedObject) params.get("ueData.imsi"), true);
+            simContext.ueData = ueData;
+        }
+
+        // Parse User Location Information
+        {
+            simContext.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
+                    ((ImplicitTypedObject) params.get("context.userLocationInformationNr")), true);
+        }
+
+        // Parse RAN-UE-NGAP-ID
+        {
+            simContext.ranUeNgapId = ((Number) params.get("context.ranUeNgapId")).longValue();
+        }
+
+        // Create SCTP Client
+        {
+            String amfHost = params.get("amf.host").toString();
+            int amfPort = (int) params.get("amf.port");
+
+            Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", amfHost, amfPort);
+            ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
+
+            simContext.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
+            simContext.sctpClient = sctpClient;
+        }
 
         return simContext;
     }
