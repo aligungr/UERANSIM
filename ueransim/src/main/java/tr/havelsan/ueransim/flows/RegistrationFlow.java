@@ -101,11 +101,9 @@ public class RegistrationFlow extends BaseFlow {
     }
 
     private State handleAuthenticationRequest(AuthenticationRequest message) {
-        var response = UeAuthentication.handleAuthenticationRequest(ctx, message);
+        var response = UeAuthentication.handleAuthenticationRequest(ctx, input, message);
         if (response != null) {
-            send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
-                    .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
-                    .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response));
+            send(response);
         }
         return this::waitAmfMessages;
     }

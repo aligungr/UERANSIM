@@ -3,16 +3,21 @@ package tr.havelsan.ueransim.api;
 import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.contexts.UeData;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
+import tr.havelsan.ueransim.flowinputs.RegistrationInput;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationFailure;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -24,37 +29,57 @@ import java.util.concurrent.Executors;
 
 public class UeAuthentication {
 
-    public static NasMessage handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
-        // Handle EAP-AKA'
+    // todo: remove registration INput
+    public static SendingMessage handleAuthenticationRequest(SimulationContext ctx, RegistrationInput registrationInput, AuthenticationRequest message) {
         if (message.eapMessage != null) {
-            Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
-            return null;
+            return handleEapAkaPrime(ctx, registrationInput, message);
+        } else {
+            return handle5gAka(ctx, registrationInput, message);
         }
+    }
 
-        // Handle 5G-AKA
+    private static SendingMessage handleEapAkaPrime(SimulationContext ctx, RegistrationInput input, AuthenticationRequest request) {
+        Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
+        return null;
+    }
+
+    private static SendingMessage handle5gAka(SimulationContext ctx, RegistrationInput input, AuthenticationRequest request) {
+        NasMessage response = null;
 
         //var ngKsi = message.ngKSI;
-        var autnCheck = UeAuthentication.validateAutn(ctx.ueData, message.authParamRAND.value,
-                message.authParamAUTN.value);
+        var autnCheck = UeAuthentication.validateAutn(ctx.ueData, request.authParamRAND.value,
+                request.authParamAUTN.value);
         switch (autnCheck) {
             case OK: {
-                var resStar = UeAuthentication.calculateResStar(ctx.ueData, message.authParamRAND.value);
-                return new AuthenticationResponse(new IEAuthenticationResponseParameter(resStar), null);
+                var resStar = UeAuthentication.calculateResStar(ctx.ueData, request.authParamRAND.value);
+                response = new AuthenticationResponse(new IEAuthenticationResponseParameter(resStar), null);
+                break;
             }
             case MAC_FAILURE: {
                 // todo
                 Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
-                return null;
+                response = null;
+                break;
             }
             case SYNCHRONISATION_FAILURE: {
                 // todo
                 Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
-                return null;
+                response = null;
+                break;
             }
             default: {
-                return new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
+                response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
+                break;
             }
         }
+
+        if (response == null) {
+            return null;
+        }
+
+        return new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE)
+                .addRanUeNgapId(input.ranUeNgapId, NgapCriticality.REJECT)
+                .addUserLocationInformationNR(input.userLocationInformationNr, NgapCriticality.IGNORE), response);
     }
 
     public static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {
