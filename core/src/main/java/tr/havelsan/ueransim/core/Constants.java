@@ -5,8 +5,6 @@ public final class Constants {
     public static final String NAS_IMPL_PREFIX = "tr.havelsan.ueransim.nas.impl";
     public static final String NGAP_PDU_CONTENTS = "tr.havelsan.ueransim.ngap.ngap_pdu_contents";
 
-    public static final int BACKEND_PORT = 5002;
-
     public static final int NGAP_PROTOCOL_ID = 60;
     public static final int DEFAULT_STREAM_NUMBER = 1;
 
