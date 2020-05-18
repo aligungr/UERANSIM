@@ -1,7 +1,4 @@
-package tr.havelsan.ueransim.mocked;
-
-import tr.havelsan.ueransim.sctp.ISCTPClient;
-import tr.havelsan.ueransim.sctp.ISCTPHandler;
+package tr.havelsan.ueransim.sctp;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

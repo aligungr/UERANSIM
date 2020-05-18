@@ -11,8 +11,11 @@ import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
+import tr.havelsan.ueransim.sctp.MockedSCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -20,10 +23,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FlowTesting {
@@ -177,16 +177,65 @@ public class FlowTesting {
         {
             String amfHost = params.get("amf.host").toString();
             int amfPort = (int) params.get("amf.port");
+            boolean amfMocked = (boolean) params.get("amf.mocked");
 
             simContext.amfHost = amfHost;
             simContext.amfPort = amfPort;
 
             ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
+
+            if (amfMocked) {
+                Console.println(Color.YELLOW_BOLD, "Mocked Remote is enabled.");
+                sctpClient = newMockedClient((String) params.get("amf.mockedRemote"));
+            }
+
             simContext.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
             simContext.sctpClient = sctpClient;
         }
 
         return simContext;
+    }
+
+    private static MockedSCTPClient newMockedClient(String mockedRemoteFile) {
+        var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
+
+        return new MockedSCTPClient(new MockedSCTPClient.IMockedRemote() {
+            @Override
+            public void onMessage(byte[] data, Queue<Byte[]> queue) {
+                var ngapPdu = Ngap.perDecode(NGAP_PDU.class, data);
+                var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
+                var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
+                var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, nasMessage);
+                Queue<String> outs = new ArrayDeque<>();
+                onMessage(incomingMessage, outs);
+                while (!outs.isEmpty()) {
+                    var out = outs.remove();
+                    byte[] pdu = Utils.hexStringToByteArray(out);
+                    Byte[] res = new Byte[pdu.length];
+                    for (int i = 0; i < res.length; i++) {
+                        res[i] = pdu[i];
+                    }
+                    queue.add(res);
+                }
+            }
+
+            private void onMessage(IncomingMessage message, Queue<String> queue) {
+                var mockedValues = (Object[]) mockedRemote.get(message.ngapMessage.getClass().getSimpleName());
+                if (mockedValues != null) {
+                    for (var value : mockedValues) {
+                        queue.add(value.toString());
+                    }
+                }
+                if (message.nasMessage != null) {
+                    mockedValues = (Object[]) mockedRemote.get(message.nasMessage.getClass().getSimpleName());
+                    if (mockedValues != null) {
+                        for (var value : mockedValues) {
+                            queue.add(value.toString());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private static void catchINTSignal(ISCTPClient sctpClient) {
