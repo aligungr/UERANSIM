@@ -6,7 +6,6 @@ import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.contexts.UeData;
-import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
@@ -133,7 +132,7 @@ public class UeAuthentication {
         var res = milenage.get(MilenageResult.RES);
         var ck = milenage.get(MilenageResult.CK);
         var ik = milenage.get(MilenageResult.IK);
-        return KDF.calculateResStar(OctetString.concat(ck, ik), ueData.ssn, rand, res);
+        return UeKeyManagement.calculateResStar(OctetString.concat(ck, ik), ueData.ssn, rand, res);
     }
 
     public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {

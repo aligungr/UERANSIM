@@ -62,19 +62,4 @@ public class KDF {
             throw new RuntimeException(e);
         }
     }
-
-    /**
-     * Calculates RES* or XRES* according to given parameters as specified in 3GPP TS 33.501
-     *
-     * @param key                The input key KEY shall be equal to the concatenation CK || IK of CK and IK.
-     * @param servingNetworkName The serving network name shall be constructed as specified in the TS.
-     * @param rand               RAND value
-     * @param res                RES or XRES value
-     */
-    public static OctetString calculateResStar(OctetString key, String servingNetworkName, OctetString rand, OctetString res) {
-        var params = new OctetString[]{KDF.encodeString(servingNetworkName), rand, res};
-        var output = KDF.calculateKey(key, 0x6B, params);
-        // The (X)RES* is identified with the 128 least significant bits of the output of the KDF.
-        return output.substring(output.length - 16);
-    }
 }
