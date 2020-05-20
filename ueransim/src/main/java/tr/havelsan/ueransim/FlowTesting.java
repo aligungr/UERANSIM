@@ -9,8 +9,6 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
-import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
@@ -157,8 +155,8 @@ public class FlowTesting {
             ueData.op = new OctetString((String) params.get("ueData.op"));
             ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
             ueData.amf = new OctetString((String) params.get("ueData.amf"));
-            ueData.imei = new IEImeiMobileIdentity((String) params.get("ueData.imei"));
-            ueData.imsi = MtsConstruct.construct(IEImsiMobileIdentity.class, (ImplicitTypedObject) params.get("ueData.imsi"), true);
+            ueData.imei = (String) params.get("ueData.imei");
+            ueData.supi = (String) params.get("ueData.supi");
             simContext.ueData = ueData;
         }
 
