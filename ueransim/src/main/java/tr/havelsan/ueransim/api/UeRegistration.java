@@ -19,11 +19,16 @@ import tr.havelsan.ueransim.utils.Console;
 public class UeRegistration {
 
     public static void sendInitialRegistration(SimulationContext ctx, RegistrationConfig input) {
+        var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
+        if (ctx.nasSecurityContext != null && ctx.nasSecurityContext.ngKsi != null) {
+            ngKsi = ctx.nasSecurityContext.ngKsi;
+        }
+
         var registrationRequest = new RegistrationRequest();
         registrationRequest.registrationType = new IE5gsRegistrationType(
                 IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING,
                 IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
-        registrationRequest.nasKeySetIdentifier = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, input.ngKSI);
+        registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
         registrationRequest.mobileIdentity = ctx.ueData.imsi;
 

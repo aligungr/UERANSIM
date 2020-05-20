@@ -4,16 +4,14 @@ import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
-import tr.havelsan.ueransim.utils.bits.Bit3;
+import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasSecurityContext {
+    public IENasKeySetIdentifier ngKsi;
     public boolean isNew;
-
-    public ETypeOfSecurityContext type;
-    public Bit3 ngKsi;
 
     public OctetString keyNasEnc;
     public OctetString keyNasInt;
@@ -27,8 +25,7 @@ public class NasSecurityContext {
 
     public NasSecurityContext() {
         this.isNew = true;
-        this.type = ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT;
-        this.ngKsi = new Bit3(0);
+        this.ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         this.keyNasEnc = new OctetString("");
         this.keyNasInt = new OctetString("");
         this.downlinkCount = new Count();
