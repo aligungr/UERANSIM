@@ -2,6 +2,7 @@ package tr.havelsan.ueransim;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
+import tr.havelsan.ueransim.contexts.NasSecurityContext;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.contexts.UeData;
 import tr.havelsan.ueransim.core.Constants;
@@ -189,6 +190,11 @@ public class FlowTesting {
 
             simContext.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
             simContext.sctpClient = sctpClient;
+        }
+
+        // Create NAS Security Context
+        {
+            simContext.nasSecurityContext = new NasSecurityContext();
         }
 
         return simContext;
