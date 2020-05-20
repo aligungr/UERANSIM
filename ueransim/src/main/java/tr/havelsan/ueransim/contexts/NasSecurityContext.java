@@ -1,37 +1,31 @@
 package tr.havelsan.ueransim.contexts;
 
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
-import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
-import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
-import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasSecurityContext {
     public IENasKeySetIdentifier ngKsi;
     public boolean isNew;
-
-    public OctetString keyNasEnc;
-    public OctetString keyNasInt;
 
     public Count downlinkCount;
     public Count uplinkCount;
 
     public EConnectionIdentifier connectionIdentifier;
 
-    public Algorithms selectedAlgorithms;
+    public UeKeys keys;
+    public SelectedAlgorithms selectedAlgorithms;
 
     public NasSecurityContext() {
         this.isNew = true;
         this.ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
-        this.keyNasEnc = new OctetString("");
-        this.keyNasInt = new OctetString("");
         this.downlinkCount = new Count();
         this.uplinkCount = new Count();
         this.connectionIdentifier = EConnectionIdentifier.THREE_3GPP_ACCESS;
-        this.selectedAlgorithms = new Algorithms();
+        this.selectedAlgorithms = new SelectedAlgorithms();
+        this.keys = new UeKeys();
     }
 
     public final Count getCount(boolean isUplink) {
@@ -73,16 +67,6 @@ public class NasSecurityContext {
         public Count() {
             this.overflow = new Octet2();
             this.sqn = new Octet();
-        }
-    }
-
-    public static class Algorithms {
-        public ETypeOfIntegrityProtectionAlgorithm integrity;
-        public ETypeOfCipheringAlgorithm ciphering;
-
-        public Algorithms() {
-            integrity = ETypeOfIntegrityProtectionAlgorithm.IA0;
-            ciphering = ETypeOfCipheringAlgorithm.EA0;
         }
     }
 

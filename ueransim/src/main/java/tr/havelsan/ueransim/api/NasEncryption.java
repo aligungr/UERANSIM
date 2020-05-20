@@ -23,10 +23,6 @@ public class NasEncryption {
     }
 
     public static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
-        if (securityContext == null) {
-            throw new NasSecurityException(NasSecurityException.NO_SECURITY_CONTEXT);
-        }
-
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = getSecurityHeaderType(securityContext);
         secured.messageAuthenticationCode = computeMac(plainNasMessage, securityContext, isUplink);
@@ -36,10 +32,6 @@ public class NasEncryption {
     }
 
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
-        if (securityContext == null) {
-            throw new NasSecurityException(NasSecurityException.NO_SECURITY_CONTEXT);
-        }
-
         var mac = computeMac(protectedNasMessage.plainNasMessage.toByteArray(), securityContext, isUplink);
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!securityContext.selectedAlgorithms.integrity.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
@@ -62,7 +54,7 @@ public class NasEncryption {
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(protectedNasMessage.plainNasMessage.toByteArray());
-        OctetString key = securityContext.keyNasInt;
+        OctetString key = securityContext.keys.kNasEnc;
 
         var alg = securityContext.selectedAlgorithms.ciphering;
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
@@ -88,7 +80,7 @@ public class NasEncryption {
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
-        OctetString key = securityContext.keyNasInt;
+        OctetString key = securityContext.keys.kNasInt;
 
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA1_128)) {
             return NIA1_128.computeMac(count, bearer, direction, message, key);
@@ -114,8 +106,8 @@ public class NasEncryption {
     }
 
     private static ESecurityHeaderType getSecurityHeaderType(NasSecurityContext securityContext) {
-        var encKey = securityContext.keyNasEnc;
-        var intKey = securityContext.keyNasInt;
+        var encKey = securityContext.keys.kNasEnc;
+        var intKey = securityContext.keys.kNasInt;
 
         boolean ciphered = encKey != null && encKey.length > 0;
         boolean integrityProtected = intKey != null && intKey.length > 0;
@@ -142,7 +134,7 @@ public class NasEncryption {
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
-        OctetString key = securityContext.keyNasInt;
+        OctetString key = securityContext.keys.kNasEnc;
 
         byte[] result;
 
