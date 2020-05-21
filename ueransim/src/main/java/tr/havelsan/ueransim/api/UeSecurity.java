@@ -1,10 +1,14 @@
 package tr.havelsan.ueransim.api;
 
+import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvRequest;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeComplete;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 
 public class UeSecurity {
 
@@ -33,5 +37,8 @@ public class UeSecurity {
         }
 
         // todo: container
+
+        // Send response
+        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
     }
 }
