@@ -13,19 +13,7 @@ public class UeKeyManagement {
     private static final int N_UP_enc_alg = 0x05;
     private static final int N_UP_int_alg = 0x06;
 
-    public static void deriveKeysFor5gAka(SimulationContext ctx, OctetString ckik, OctetString sqnXorAk) {
-        ctx.nasSecurityContext.keys.kAusf
-                = KDF.calculateKey(ckik, 0x6A, KDF.encodeString(ctx.ueData.ssn), sqnXorAk);
-        deriveKeysSeafAmf(ctx);
-    }
-
-    public static void deriveKeysForEapAkaPrime(SimulationContext ctx) {
-        ctx.nasSecurityContext.keys.kAusf
-                = null; // todo
-        deriveKeysSeafAmf(ctx);
-    }
-
-    private static void deriveKeysSeafAmf(SimulationContext ctx) {
+    public static void deriveKeysSeafAmf(SimulationContext ctx) {
         var keys = ctx.nasSecurityContext.keys;
         keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.ssn));
         keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi), new OctetString("0000"));
