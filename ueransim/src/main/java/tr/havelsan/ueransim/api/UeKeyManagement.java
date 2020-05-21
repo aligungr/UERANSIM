@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.api;
 
+import tr.havelsan.ueransim.contexts.NasSecurityContext;
 import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.utils.octets.Octet;
@@ -19,18 +20,15 @@ public class UeKeyManagement {
         keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi), new OctetString("0000"));
     }
 
-    public static void deriveNasKeys(SimulationContext ctx) {
-        var keys = ctx.nasSecurityContext.keys;
-        var algorithms = ctx.nasSecurityContext.selectedAlgorithms;
+    public static void deriveNasKeys(NasSecurityContext securityContext) {
+        var kdfEnc = KDF.calculateKey(securityContext.keys.kAmf, 0x69, new Octet(N_NAS_enc_alg).toOctetString(),
+                new Octet(securityContext.selectedAlgorithms.ciphering.intValue()).toOctetString());
 
-        var kdfEnc = KDF.calculateKey(keys.kAmf, 0x69, new Octet(N_NAS_enc_alg).toOctetString(),
-                new Octet(algorithms.ciphering.intValue()).toOctetString());
+        var kdfInt = KDF.calculateKey(securityContext.keys.kAmf, 0x69, new Octet(N_NAS_int_alg).toOctetString(),
+                new Octet(securityContext.selectedAlgorithms.integrity.intValue()).toOctetString());
 
-        var kdfInt = KDF.calculateKey(keys.kAmf, 0x69, new Octet(N_NAS_int_alg).toOctetString(),
-                new Octet(algorithms.integrity.intValue()).toOctetString());
-
-        keys.kNasEnc = kdfEnc.substring(16, 16);
-        keys.kNasInt = kdfInt.substring(16, 16);
+        securityContext.keys.kNasEnc = kdfEnc.substring(16, 16);
+        securityContext.keys.kNasInt = kdfInt.substring(16, 16);
     }
 
     public static OctetString[] calculateCkPrimeIkPrime(OctetString ck, OctetString ik, String ssn, OctetString sqnXorAk) {
