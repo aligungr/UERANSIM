@@ -56,6 +56,9 @@ public class NasEncryption {
         OctetString key = securityContext.keys.kNasEnc;
 
         var alg = securityContext.selectedAlgorithms.ciphering;
+        if (alg.equals(ETypeOfCipheringAlgorithm.EA0)) {
+            return copy(protectedNasMessage.plainNasMessage.toByteArray());
+        }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
             return NEA1_128.decrypt(count, bearer, direction, message, key).toByteArray();
         }
@@ -138,7 +141,9 @@ public class NasEncryption {
         byte[] result;
 
         var alg = securityContext.selectedAlgorithms.ciphering;
-        if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
+        if (alg.equals(ETypeOfCipheringAlgorithm.EA0)) {
+            result = copy(data);
+        } else if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
             result = NEA1_128.encrypt(count, bearer, direction, message, key).toByteArray();
         } else if (alg.equals(ETypeOfCipheringAlgorithm.EA2_128)) {
             result = NEA2_128.encrypt(count, bearer, direction, message, key).toByteArray();

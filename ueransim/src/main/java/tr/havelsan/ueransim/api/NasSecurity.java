@@ -11,8 +11,11 @@ public class NasSecurity {
             return null;
         }
 
-        // todo: encrypt nasMessage if needed
-        return nasMessage;
+        if (ctx.nasSecurityContext.keys.kNasEnc == null) {
+            return nasMessage;
+        }
+
+        return NasEncryption.encrypt(nasMessage, ctx.nasSecurityContext, true);
     }
 
     public static NasMessage decryptNasMessage(SimulationContext ctx, NasMessage nasMessage) {
