@@ -53,7 +53,7 @@ public class UeAuthentication {
         var ak = milenage.get(MilenageResult.AK);
         var mac = milenage.get(MilenageResult.MAC_A);
 
-        var autnCheck = UeAuthentication.validateAutn(ak, mac, rand);
+        var autnCheck = UeAuthentication.validateAutn(ak, mac, request.authParamAUTN.value);
         if (autnCheck == AutnValidationRes.OK) {
 
             // Derive keys
