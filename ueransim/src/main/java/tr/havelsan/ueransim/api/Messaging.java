@@ -75,9 +75,11 @@ public class Messaging {
         } else if (message instanceof RegistrationReject) {
             UeRegistration.handleRegistrationReject(ctx, (RegistrationReject) message);
         } else if (message instanceof IdentityRequest) {
-            UeRegistration.handleIdentityRequest(ctx, (IdentityRequest) message);
+            UeIdentity.handleIdentityRequest(ctx, (IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
             UeRegistration.handleRegistrationAccept(ctx, (RegistrationAccept) message);
+        } else if (message instanceof SecurityModeCommand) {
+            UeSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
         } else {
             FlowLogging.logUnhandledMessage(message);
         }

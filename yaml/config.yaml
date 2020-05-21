@@ -11,21 +11,13 @@ input.UEContextReleaseRequestFlow: ueContextReleaseRequest.yaml
 input.ServiceRequestFlow: serviceRequest.yaml
 input.DeregistrationFlow: deregistration.yaml
 
-ueData.ssn: '5G:mnc001.mcc001.3gppnetwork.org'
 ueData.key: '5C95978B5E89488CB7DB44381E237809'
 ueData.op: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
 ueData.sqn: '001000000000'
 ueData.amf: '8000'
-
 ueData.imei: '356938035643809'
-ueData.imsi:
-  mcc: 1
-  mnc: 1
-  routingIndicator: '0000'
-  protectionSchemaId: NULL_SCHEME
-  homeNetworkPublicKeyIdentifier:
-    value: '0'
-  schemeOutput: '000000010'
+ueData.ssn: '5G:mnc001.mcc001.3gppnetwork.org'
+ueData.supi: 'imsi-001001000000010'
 
 context.ranUeNgapId: 1000
 context.userLocationInformationNr:

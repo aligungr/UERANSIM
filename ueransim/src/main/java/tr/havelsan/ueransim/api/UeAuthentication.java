@@ -42,33 +42,42 @@ public class UeAuthentication {
     }
 
     private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
-        NasMessage response;
+        NasMessage response = null;
 
-        //var ngKsi = message.ngKSI;
-        var autnCheck = UeAuthentication.validateAutn(ctx.ueData, request.authParamRAND.value,
-                request.authParamAUTN.value);
-        switch (autnCheck) {
-            case OK: {
-                var resStar = UeAuthentication.calculateResStar(ctx.ueData, request.authParamRAND.value);
-                response = new AuthenticationResponse(new IEAuthenticationResponseParameter(resStar), null);
-                break;
-            }
-            case MAC_FAILURE: {
-                // todo
-                Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
-                response = null;
-                break;
-            }
-            case SYNCHRONISATION_FAILURE: {
-                // todo
-                Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
-                response = null;
-                break;
-            }
-            default: {
-                response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
-                break;
-            }
+        var rand = request.authParamRAND.value;
+        var milenage = calculateMilenage(ctx.ueData, rand);
+        var res = milenage.get(MilenageResult.RES);
+        var ck = milenage.get(MilenageResult.CK);
+        var ik = milenage.get(MilenageResult.IK);
+        var ckik = OctetString.concat(ck, ik);
+        var ak = milenage.get(MilenageResult.AK);
+        var mac = milenage.get(MilenageResult.MAC_A);
+
+        var autnCheck = UeAuthentication.validateAutn(ak, mac, request.authParamAUTN.value);
+        if (autnCheck == AutnValidationRes.OK) {
+
+            // Derive keys
+            var ssn = ctx.ueData.ssn;
+            var sqnXorAk = OctetString.xor(ctx.ueData.sqn, ak);
+            ctx.nasSecurityContext.keys.rand = rand;
+            ctx.nasSecurityContext.keys.res = res;
+            ctx.nasSecurityContext.keys.resStar = UeKeyManagement.calculateResStar(ckik, ssn, rand, res);
+            ctx.nasSecurityContext.keys.kAusf = KDF.calculateKey(ckik, 0x6A, KDF.encodeString(ssn), sqnXorAk);
+            UeKeyManagement.deriveKeysSeafAmf(ctx);
+
+            // Prepare response
+            response = new AuthenticationResponse(
+                    new IEAuthenticationResponseParameter(ctx.nasSecurityContext.keys.resStar), null);
+
+        } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
+            // todo
+            Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+        } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
+            // todo
+            Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+        } else {
+            // Other errors
+            response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
         }
 
         if (response != null) {
@@ -76,17 +85,15 @@ public class UeAuthentication {
         }
     }
 
-    private static AutnValidationRes validateAutn(UeData ueData, OctetString rand, OctetString autn) {
-        var milenage = calculateMilenage(ueData, rand);
-
+    private static AutnValidationRes validateAutn(OctetString ak, OctetString mac, OctetString autn) {
         // Decode AUTN
         var receivedSQNxorAK = autn.substring(0, 6);
-        var receivedSQN = OctetString.xor(receivedSQNxorAK, milenage.get(MilenageResult.AK));
+        var receivedSQN = OctetString.xor(receivedSQNxorAK, ak);
         var receivedAMF = autn.substring(6, 2);
         var receivedMAC = autn.substring(8, 8);
 
         // Check MAC
-        if (!receivedMAC.equals(milenage.get(MilenageResult.MAC_A))) {
+        if (!receivedMAC.equals(mac)) {
             return AutnValidationRes.MAC_FAILURE;
         }
 
@@ -126,14 +133,6 @@ public class UeAuthentication {
         //  Verify the freshness of sequence numbers to determine whether the specified sequence number is
         //  in the correct range and acceptable by the USIM. See 3GPP TS 33.102, Annex C.2.
         return true;
-    }
-
-    private static OctetString calculateResStar(UeData ueData, OctetString rand) {
-        var milenage = calculateMilenage(ueData, rand);
-        var res = milenage.get(MilenageResult.RES);
-        var ck = milenage.get(MilenageResult.CK);
-        var ik = milenage.get(MilenageResult.IK);
-        return KDF.calculateResStar(OctetString.concat(ck, ik), ueData.ssn, rand, res);
     }
 
     public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {

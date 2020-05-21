@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.contexts;
 
-import tr.havelsan.ueransim.nas.NasSecurityContext;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 

@@ -1,9 +1,11 @@
-package tr.havelsan.ueransim.nas;
+package tr.havelsan.ueransim.api;
 
+import tr.havelsan.ueransim.contexts.NasSecurityContext;
 import tr.havelsan.ueransim.crypto.*;
+import tr.havelsan.ueransim.nas.NasDecoder;
+import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
-import tr.havelsan.ueransim.nas.exceptions.NasSecurityException;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
@@ -15,15 +17,11 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasEncryption {
 
-    public static SecuredMmMessage encrypt(NasMessage plainNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
+    public static SecuredMmMessage encrypt(NasMessage plainNasMessage, NasSecurityContext securityContext, boolean isUplink) {
         return encrypt(NasEncoder.nasPdu(plainNasMessage), securityContext, isUplink);
     }
 
-    public static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
-        if (securityContext == null) {
-            throw new NasSecurityException(NasSecurityException.NO_SECURITY_CONTEXT);
-        }
-
+    public static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext, boolean isUplink) {
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = getSecurityHeaderType(securityContext);
         secured.messageAuthenticationCode = computeMac(plainNasMessage, securityContext, isUplink);
@@ -32,22 +30,18 @@ public class NasEncryption {
         return secured;
     }
 
-    public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
-        if (securityContext == null) {
-            throw new NasSecurityException(NasSecurityException.NO_SECURITY_CONTEXT);
-        }
-
+    public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
         var mac = computeMac(protectedNasMessage.plainNasMessage.toByteArray(), securityContext, isUplink);
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!securityContext.selectedAlgorithms.integrity.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-                throw new NasSecurityException(NasSecurityException.MAC_MISMATCH);
+                return null;
             }
         }
         byte[] decrypted = decryptData(protectedNasMessage, securityContext, isUplink);
         return NasDecoder.nasPdu(decrypted);
     }
 
-    private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
+    private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
         securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber, isUplink);
 
         var sht = getSecurityHeaderType(securityContext);
@@ -59,7 +53,7 @@ public class NasEncryption {
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(protectedNasMessage.plainNasMessage.toByteArray());
-        OctetString key = securityContext.keyNasInt;
+        OctetString key = securityContext.keys.kNasEnc;
 
         var alg = securityContext.selectedAlgorithms.ciphering;
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
@@ -72,10 +66,10 @@ public class NasEncryption {
             return NEA3_128.decrypt(count, bearer, direction, message, key).toByteArray();
         }
 
-        throw new NasSecurityException(NasSecurityException.INVALID_CIPHERING_ALG, alg.name());
+        throw new RuntimeException("invalid ciphering alg");
     }
 
-    private static Octet4 computeMac(byte[] data, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
+    private static Octet4 computeMac(byte[] data, NasSecurityContext securityContext, boolean isUplink) {
         var alg = securityContext.selectedAlgorithms.integrity;
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
             return new Octet4(0);
@@ -85,7 +79,7 @@ public class NasEncryption {
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
-        OctetString key = securityContext.keyNasInt;
+        OctetString key = securityContext.keys.kNasInt;
 
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA1_128)) {
             return NIA1_128.computeMac(count, bearer, direction, message, key);
@@ -97,7 +91,7 @@ public class NasEncryption {
             return NIA3_128.computeMac(count, bearer, direction, message, key);
         }
 
-        throw new NasSecurityException(NasSecurityException.INVALID_INTEGRITY_ALG, alg.name());
+        throw new RuntimeException("invalid integrity alg");
     }
 
     private static Octet4 getCount(NasSecurityContext securityContext, boolean isUplink) {
@@ -111,8 +105,8 @@ public class NasEncryption {
     }
 
     private static ESecurityHeaderType getSecurityHeaderType(NasSecurityContext securityContext) {
-        var encKey = securityContext.keyNasEnc;
-        var intKey = securityContext.keyNasInt;
+        var encKey = securityContext.keys.kNasEnc;
+        var intKey = securityContext.keys.kNasInt;
 
         boolean ciphered = encKey != null && encKey.length > 0;
         boolean integrityProtected = intKey != null && intKey.length > 0;
@@ -129,7 +123,7 @@ public class NasEncryption {
                 ESecurityHeaderType.INTEGRITY_PROTECTED;
     }
 
-    private static byte[] encryptData(byte[] data, NasSecurityContext securityContext, boolean isUplink) throws NasSecurityException {
+    private static byte[] encryptData(byte[] data, NasSecurityContext securityContext, boolean isUplink) {
         var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
             return copy(data);
@@ -139,7 +133,7 @@ public class NasEncryption {
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
-        OctetString key = securityContext.keyNasInt;
+        OctetString key = securityContext.keys.kNasEnc;
 
         byte[] result;
 
@@ -157,7 +151,7 @@ public class NasEncryption {
         securityContext.countOnEncrypt(isUplink);
 
         if (result == null) {
-            throw new NasSecurityException(NasSecurityException.INVALID_CIPHERING_ALG, alg.name());
+            throw new RuntimeException("invalid ciphering alg");
         } else {
             return result;
         }

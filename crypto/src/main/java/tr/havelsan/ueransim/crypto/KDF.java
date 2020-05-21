@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.crypto;
 
 import tr.havelsan.ueransim.utils.OctetOutputStream;
-import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import javax.crypto.Mac;
@@ -14,7 +13,7 @@ public class KDF {
     /**
      * Calculates derived key based on given parameters as specified in 3GPP TS 33.220
      */
-    public static OctetString calculateKey(OctetString key, Octet fc, OctetString[] parameters) {
+    public static OctetString calculateKey(OctetString key, int fc, OctetString... parameters) {
         var inputS = new OctetOutputStream(true);
         inputS.writeOctet(fc);
         for (var parameter : parameters) {
@@ -27,7 +26,7 @@ public class KDF {
     /**
      * Calculates derived key based on given parameters as specified in 3GPP TS 33.220
      */
-    public static OctetString calculateKey(OctetString key, Octet fc1, Octet fc2, OctetString[] parameters) {
+    public static OctetString calculateKey(OctetString key, int fc1, int fc2, OctetString... parameters) {
         var inputS = new OctetOutputStream(true);
         inputS.writeOctet(fc1);
         inputS.writeOctet(fc2);
@@ -62,20 +61,5 @@ public class KDF {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Calculates RES* or XRES* according to given parameters as specified in 3GPP TS 33.501
-     *
-     * @param key                The input key KEY shall be equal to the concatenation CK || IK of CK and IK.
-     * @param servingNetworkName The serving network name shall be constructed as specified in the TS.
-     * @param rand               RAND value
-     * @param res                RES or XRES value
-     */
-    public static OctetString calculateResStar(OctetString key, String servingNetworkName, OctetString rand, OctetString res) {
-        var params = new OctetString[]{KDF.encodeString(servingNetworkName), rand, res};
-        var output = KDF.calculateKey(key, new Octet(0x6B), params);
-        // The (X)RES* is identified with the 128 least significant bits of the output of the KDF.
-        return output.substring(output.length - 16);
     }
 }

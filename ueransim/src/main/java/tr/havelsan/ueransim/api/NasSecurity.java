@@ -24,13 +24,12 @@ public class NasSecurity {
 
         SecuredMmMessage securedMmMessage = (SecuredMmMessage) nasMessage;
 
-        /*if (ctx.nasSecurityContext != null) {
-            NasEncryption.decrypt(securedMmMessage, ctx.nasSecurityContext, false);
+        var decrypted = NasEncryption.decrypt(securedMmMessage, ctx.nasSecurityContext, false);
+        if (decrypted == null) {
+            // todo:
+            throw new RuntimeException("mac mismatch in NAS encryption");
         } else {
-
-        }*/
-
-        // todo: decrypt nasMessage if needed
-        return nasMessage;
+            return decrypted;
+        }
     }
 }
