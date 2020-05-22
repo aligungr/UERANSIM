@@ -2,10 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.FlowLogging;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.*;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -100,5 +97,15 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null));
 
         return flowComplete();
+    }
+
+    @Override
+    public void onReceive(IncomingMessage incomingMessage) {
+
+    }
+
+    @Override
+    public void onSent(OutgoingMessage outgoingMessage) {
+
     }
 }

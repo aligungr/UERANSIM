@@ -1,9 +1,6 @@
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.FlowLogging;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.*;
 import tr.havelsan.ueransim.configs.DeregistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -55,5 +52,15 @@ public class DeregistrationFlow extends BaseFlow {
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UEContextReleaseComplete, NgapCriticality.REJECT), null));
 
         return flowComplete();
+    }
+
+    @Override
+    public void onReceive(IncomingMessage incomingMessage) {
+
+    }
+
+    @Override
+    public void onSent(OutgoingMessage outgoingMessage) {
+
     }
 }

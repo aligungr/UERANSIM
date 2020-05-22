@@ -39,4 +39,14 @@ public class NgSetupFlow extends BaseFlow {
 
         return flowComplete();
     }
+
+    @Override
+    public void onReceive(IncomingMessage incomingMessage) {
+
+    }
+
+    @Override
+    public void onSent(OutgoingMessage outgoingMessage) {
+
+    }
 }
