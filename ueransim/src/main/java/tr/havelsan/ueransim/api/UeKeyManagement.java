@@ -16,7 +16,7 @@ public class UeKeyManagement {
 
     public static void deriveKeysSeafAmf(SimulationContext ctx) {
         var keys = ctx.nasSecurityContext.keys;
-        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.ssn));
+        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.snn));
         keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi), new OctetString("0000"));
     }
 
@@ -31,21 +31,25 @@ public class UeKeyManagement {
         securityContext.keys.kNasInt = kdfInt.substring(16, 16);
     }
 
-    public static OctetString[] calculateCkPrimeIkPrime(OctetString ck, OctetString ik, String ssn, OctetString sqnXorAk) {
-        var res = KDF.calculateKey(OctetString.concat(ck, ik), 0x20, KDF.encodeString(ssn), sqnXorAk);
+    public static OctetString[] calculateCkPrimeIkPrime(OctetString ck, OctetString ik, String snn, OctetString sqnXorAk) {
+        var res = KDF.calculateKey(OctetString.concat(ck, ik), 0x20, KDF.encodeString(snn), sqnXorAk);
         return new OctetString[]{res.substring(0, ck.length), res.substring(ck.length)};
+    }
+
+    public static OctetString calculateKAusfFor5gAka(OctetString ck, OctetString ik, String snn, OctetString sqnXorAk) {
+        return KDF.calculateKey(OctetString.concat(ck, ik), 0x6A, KDF.encodeString(snn), sqnXorAk);
     }
 
     /**
      * Calculates RES* according to given parameters as specified in 3GPP TS 33.501
      *
      * @param key  The input key KEY shall be equal to the concatenation CK || IK of CK and IK.
-     * @param ssn  The serving network name shall be constructed as specified in the TS.
+     * @param snn  The serving network name shall be constructed as specified in the TS.
      * @param rand RAND value
      * @param res  RES value
      */
-    public static OctetString calculateResStar(OctetString key, String ssn, OctetString rand, OctetString res) {
-        var params = new OctetString[]{KDF.encodeString(ssn), rand, res};
+    public static OctetString calculateResStar(OctetString key, String snn, OctetString rand, OctetString res) {
+        var params = new OctetString[]{KDF.encodeString(snn), rand, res};
         var output = KDF.calculateKey(key, 0x6B, params);
         // The (X)RES* is identified with the 128 least significant bits of the output of the KDF.
         return output.substring(output.length - 16);

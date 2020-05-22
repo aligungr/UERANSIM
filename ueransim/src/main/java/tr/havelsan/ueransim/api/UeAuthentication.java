@@ -6,7 +6,6 @@ import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.UeData;
-import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
@@ -37,8 +36,43 @@ public class UeAuthentication {
         }
     }
 
-    private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest request) {
-        Console.println(Color.YELLOW, "EAP-AKA' not implemented yet");
+    private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
+        // todo
+        // Handle request
+        /*{
+            var akaPrime = (EapAkaPrime) message.eapMessage.eap;
+            var rand = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_RAND);
+            rand = rand.substring(2); // reserved octets
+
+            var mac = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
+            var id = akaPrime.id;
+
+            var milenage = calculateMilenage(ctx.ueData, rand);
+
+            byte[] res = milenage.get(MilenageResult.RES).toByteArray();
+
+            int padding = (res.length) % 4;
+            byte[] paddedRes = new byte[res.length + padding + 2];
+            System.arraycopy(res, 0, paddedRes, padding + 2, res.length);
+            int resBitLength = (paddedRes.length - 2) * 8;
+            paddedRes[0] = (byte) ((resBitLength >> 8) & 0xFF);
+            paddedRes[1] = (byte) (resBitLength & 0xFF);
+            res = paddedRes;
+        }/
+
+        /*
+        {
+
+            var akaPrime = new EapAkaPrime(Eap.ECode.RESPONSE, id);
+            akaPrime.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
+            akaPrime.attributes = new LinkedHashMap<>();
+            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_RES, new OctetString(res));
+            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
+            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
+
+            var response = new AuthenticationResponse();
+            response.eapMessage = new IEEapMessage(akaPrime);
+        }*/
     }
 
     private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
@@ -57,12 +91,12 @@ public class UeAuthentication {
         if (autnCheck == AutnValidationRes.OK) {
 
             // Derive keys
-            var ssn = ctx.ueData.ssn;
+            var snn = ctx.ueData.snn;
             var sqnXorAk = OctetString.xor(ctx.ueData.sqn, ak);
             ctx.nasSecurityContext.keys.rand = rand;
             ctx.nasSecurityContext.keys.res = res;
-            ctx.nasSecurityContext.keys.resStar = UeKeyManagement.calculateResStar(ckik, ssn, rand, res);
-            ctx.nasSecurityContext.keys.kAusf = KDF.calculateKey(ckik, 0x6A, KDF.encodeString(ssn), sqnXorAk);
+            ctx.nasSecurityContext.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
+            ctx.nasSecurityContext.keys.kAusf = UeKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
             UeKeyManagement.deriveKeysSeafAmf(ctx);
 
             // Prepare response

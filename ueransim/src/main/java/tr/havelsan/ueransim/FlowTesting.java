@@ -151,7 +151,7 @@ public class FlowTesting {
         // Parse UE Data
         {
             var ueData = new UeData();
-            ueData.ssn = (String) params.get("ueData.ssn");
+            ueData.snn = (String) params.get("ueData.snn");
             ueData.key = new OctetString((String) params.get("ueData.key"));
             ueData.op = new OctetString((String) params.get("ueData.op"));
             ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
