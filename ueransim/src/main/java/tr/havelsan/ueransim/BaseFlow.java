@@ -32,6 +32,7 @@ public abstract class BaseFlow implements IMessageListener {
     private void receive(NGAP_PDU ngapPdu) {
         var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
         FlowLogging.logReceivedMessage(incomingMessage);
+        ctx.dispatchMessageReceive(incomingMessage);
         try {
             this.currentState = this.currentState.accept(incomingMessage);
         } catch (FlowFailedException exception) {
@@ -85,7 +86,7 @@ public abstract class BaseFlow implements IMessageListener {
     }
 
     public final State abortFlow() {
-        ctx.unregisterListener(this);
+        ctx.unregisterListener();
         ctx.sctpClient.abortReceiver();
         return this::sinkState;
     }

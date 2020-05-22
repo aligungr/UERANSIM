@@ -1,15 +1,11 @@
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.OutgoingMessage;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class SimulationContext {
-    // Message callback
-    private final Set<IMessageListener> messageListeners;
-
     // Connection related
     public ISCTPClient sctpClient;
     public int streamNumber;
@@ -25,15 +21,30 @@ public class SimulationContext {
     public long ranUeNgapId;
     public UserLocationInformationNr userLocationInformationNr;
 
+    // Message callback
+    private IMessageListener messageListener;
+
     public SimulationContext() {
-        this.messageListeners = new HashSet<>();
+        this.messageListener = null;
     }
+
+    // todo: use read/write lock instead of synchronized
 
     public synchronized void registerListener(IMessageListener listener) {
-        messageListeners.add(listener);
+        messageListener = listener;
     }
 
-    public synchronized void unregisterListener(IMessageListener listener) {
-        messageListeners.remove(listener);
+    public synchronized void unregisterListener() {
+        messageListener = null;
+    }
+
+    public synchronized void dispatchMessageReceive(IncomingMessage incomingMessage) {
+        var listener = messageListener;
+        if (listener != null) listener.onReceive(incomingMessage);
+    }
+
+    public synchronized void dispatchMessageSent(OutgoingMessage outgoingMessage) {
+        var listener = messageListener;
+        if (listener != null) listener.onSent(outgoingMessage);
     }
 }
