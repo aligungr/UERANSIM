@@ -16,7 +16,7 @@ public class UeKeyManagement {
 
     public static void deriveKeysSeafAmf(SimulationContext ctx) {
         var keys = ctx.nasSecurityContext.keys;
-        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.ssn));
+        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.snn));
         keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi), new OctetString("0000"));
     }
 

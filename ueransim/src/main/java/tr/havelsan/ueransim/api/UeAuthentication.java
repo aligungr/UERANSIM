@@ -91,7 +91,7 @@ public class UeAuthentication {
         if (autnCheck == AutnValidationRes.OK) {
 
             // Derive keys
-            var snn = ctx.ueData.ssn;
+            var snn = ctx.ueData.snn;
             var sqnXorAk = OctetString.xor(ctx.ueData.sqn, ak);
             ctx.nasSecurityContext.keys.rand = rand;
             ctx.nasSecurityContext.keys.res = res;
