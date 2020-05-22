@@ -36,6 +36,10 @@ public class UeKeyManagement {
         return new OctetString[]{res.substring(0, ck.length), res.substring(ck.length)};
     }
 
+    public static OctetString calculateKAusfFor5gAka(OctetString ck, OctetString ik, String snn, OctetString sqnXorAk) {
+        return KDF.calculateKey(OctetString.concat(ck, ik), 0x6A, KDF.encodeString(snn), sqnXorAk);
+    }
+
     /**
      * Calculates RES* according to given parameters as specified in 3GPP TS 33.501
      *
