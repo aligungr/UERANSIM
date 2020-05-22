@@ -20,7 +20,7 @@ import tr.havelsan.ueransim.utils.Console;
 
 public class UeRegistration {
 
-    public static void sendInitialRegistration(SimulationContext ctx, RegistrationConfig input) {
+    public static void sendInitialRegistration(SimulationContext ctx, RegistrationConfig config) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.nasSecurityContext != null && ctx.nasSecurityContext.ngKsi != null) {
             ngKsi = ctx.nasSecurityContext.ngKsi;
@@ -31,11 +31,16 @@ public class UeRegistration {
                 IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING,
                 IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
         registrationRequest.nasKeySetIdentifier = ngKsi;
-        registrationRequest.requestedNSSAI = new IENssai(input.requestNssai);
-        registrationRequest.mobileIdentity = UeIdentity.generateSuciFromSupi(ctx.ueData.supi);
+        registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
+
+        if (config.use5gGuti) {
+            registrationRequest.mobileIdentity = config.gutiMobileIdentity;
+        } else {
+            registrationRequest.mobileIdentity = UeIdentity.generateSuciFromSupi(ctx.ueData.supi);
+        }
 
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
-                .addProtocolIE(new RRCEstablishmentCause(input.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
+                .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
     }
 
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
