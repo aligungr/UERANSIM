@@ -68,6 +68,18 @@ public final class OctetString implements Iterable<Octet> {
         return data[index];
     }
 
+    public Octet2 get2(int index) {
+        return new Octet2(get(index), get(index + 1));
+    }
+
+    public Octet3 get3(int index) {
+        return new Octet3(get(index), get(index + 1), get(index + 2));
+    }
+
+    public Octet4 get4(int index) {
+        return new Octet4(get(index), get(index + 1), get(index + 2), get(index + 3));
+    }
+
     public Octet[] getAsArray() {
         var res = new Octet[length];
         System.arraycopy(data, 0, res, 0, length);

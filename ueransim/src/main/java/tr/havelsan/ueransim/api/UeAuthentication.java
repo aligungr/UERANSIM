@@ -8,8 +8,10 @@ import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
+import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationFailure;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
 import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
@@ -20,6 +22,7 @@ import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.HashMap;
@@ -37,42 +40,59 @@ public class UeAuthentication {
     }
 
     private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
-        // todo
-        // Handle request
-        /*{
-            var akaPrime = (EapAkaPrime) message.eapMessage.eap;
-            var rand = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_RAND);
-            rand = rand.substring(2); // reserved octets
+        // TODO: EAP-AKA' is incomplete
 
-            var mac = akaPrime.attributes.get(EapAkaPrime.EAttributeType.AT_MAC);
-            var id = akaPrime.id;
+        OctetString rand, res, mac;
+        Octet id;
+
+        // Read EAP-AKA' request
+        {
+            var akaPrimeRequest = (EapAkaPrime) message.eapMessage.eap;
+            rand = akaPrimeRequest.attributes.getAttribute(EAttributeType.AT_RAND);
+            mac = akaPrimeRequest.attributes.getAttribute(EAttributeType.AT_MAC);
+            id = akaPrimeRequest.id;
+        }
+
+        // Derive keys
+        {
+            var snn = ctx.ueData.snn;
+            var sqn = ctx.ueData.sqn;
+            var supi = ctx.ueData.supi;
 
             var milenage = calculateMilenage(ctx.ueData, rand);
+            res = milenage.get(MilenageResult.RES);
+            var ck = milenage.get(MilenageResult.CK);
+            var ik = milenage.get(MilenageResult.IK);
+            var ak = milenage.get(MilenageResult.AK);
 
-            byte[] res = milenage.get(MilenageResult.RES).toByteArray();
+            var sqnXorAk = OctetString.xor(sqn, ak);
+            var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, snn, sqnXorAk);
+            var ckPrime = ckPrimeIkPrime[0];
+            var ikPrime = ckPrimeIkPrime[1];
 
-            int padding = (res.length) % 4;
-            byte[] paddedRes = new byte[res.length + padding + 2];
-            System.arraycopy(res, 0, paddedRes, padding + 2, res.length);
-            int resBitLength = (paddedRes.length - 2) * 8;
-            paddedRes[0] = (byte) ((resBitLength >> 8) & 0xFF);
-            paddedRes[1] = (byte) (resBitLength & 0xFF);
-            res = paddedRes;
-        }/
+            var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(ckPrime, ikPrime, supi);
 
-        /*
+            ctx.nasSecurityContext.keys.rand = rand;
+            ctx.nasSecurityContext.keys.res = res;
+            ctx.nasSecurityContext.keys.resStar = null;
+            ctx.nasSecurityContext.keys.kAusf = kAusf;
+            UeKeyManagement.deriveKeysSeafAmf(ctx);
+        }
+
+        // Send Response
         {
-
-            var akaPrime = new EapAkaPrime(Eap.ECode.RESPONSE, id);
-            akaPrime.subType = EapAkaPrime.ESubType.AKA_CHALLENGE;
-            akaPrime.attributes = new LinkedHashMap<>();
-            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_RES, new OctetString(res));
-            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_MAC, mac);
-            akaPrime.attributes.put(EapAkaPrime.EAttributeType.AT_KDF, new OctetString("0001"));
+            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, id);
+            akaPrimeResponse.subType = ESubType.AKA_CHALLENGE;
+            akaPrimeResponse.attributes = new EapAttributes();
+            akaPrimeResponse.attributes.putAttribute(EAttributeType.AT_RES, res);
+            akaPrimeResponse.attributes.putAttribute(EAttributeType.AT_MAC, mac);
+            akaPrimeResponse.attributes.putAttribute(EAttributeType.AT_KDF, new OctetString("0001"));
 
             var response = new AuthenticationResponse();
-            response.eapMessage = new IEEapMessage(akaPrime);
-        }*/
+            response.eapMessage = new IEEapMessage(akaPrimeResponse);
+
+            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+        }
     }
 
     private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {

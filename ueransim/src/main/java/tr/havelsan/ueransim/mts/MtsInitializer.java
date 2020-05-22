@@ -3,10 +3,7 @@ package tr.havelsan.ueransim.mts;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.nas.eap.Eap;
-import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
-import tr.havelsan.ueransim.nas.eap.EapIdentity;
-import tr.havelsan.ueransim.nas.eap.EapNotification;
+import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.io.IOException;
@@ -37,8 +34,8 @@ public class MtsInitializer {
                 EapAkaPrime.class,
                 EapIdentity.class,
                 EapNotification.class,
-                EapAkaPrime.EAttributeType.class,
-                EapAkaPrime.ESubType.class,
+                EAttributeType.class,
+                ESubType.class,
                 Eap.ECode.class,
                 Eap.EEapType.class
         };

@@ -3,10 +3,9 @@ package tr.havelsan.ueransim.nas;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.nas.eap.EapAttributes;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.Octet2;
-
-import java.util.LinkedHashMap;
 
 public class EapEncoder {
 
@@ -53,7 +52,7 @@ public class EapEncoder {
 
         int c = 0;
 
-        if (akaPrime.attributes == null) akaPrime.attributes = new LinkedHashMap<>();
+        if (akaPrime.attributes == null) akaPrime.attributes = new EapAttributes();
         for (var entry : akaPrime.attributes.entrySet()) {
             var key = entry.getKey();
             var value = entry.getValue();

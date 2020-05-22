@@ -2,16 +2,10 @@ package tr.havelsan.ueransim.nas;
 
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
-import tr.havelsan.ueransim.nas.eap.Eap;
-import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
-import tr.havelsan.ueransim.nas.eap.EapIdentity;
-import tr.havelsan.ueransim.nas.eap.EapNotification;
+import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
-import tr.havelsan.ueransim.utils.octets.OctetString;
-
-import java.util.LinkedHashMap;
 
 public class EapDecoder {
     public static Eap eapPdu(OctetInputStream stream) {
@@ -63,7 +57,6 @@ public class EapDecoder {
 
     private static EapAkaPrime decodeAKAPrime(OctetInputStream stream, Eap.ECode code, Octet id, int length) {
         var akaPrime = new EapAkaPrime(code, id);
-        akaPrime.attributes = new LinkedHashMap<>();
 
         int readBytes = 0;
 
@@ -88,7 +81,7 @@ public class EapDecoder {
             var attributeVal = stream.readOctetString(4 * attributeLength - 2);
             readBytes += 4 * attributeLength - 2;
 
-            akaPrime.attributes.put(type, attributeVal);
+            akaPrime.attributes.putAttribute(type, attributeVal);
         }
 
         if (readBytes != length)
@@ -97,12 +90,12 @@ public class EapDecoder {
         return akaPrime;
     }
 
-    private static EapAkaPrime.ESubType decodeAKASubType(OctetInputStream stream) {
-        return EapAkaPrime.ESubType.fromValue(stream.readOctetI());
+    private static ESubType decodeAKASubType(OctetInputStream stream) {
+        return ESubType.fromValue(stream.readOctetI());
     }
 
-    private static EapAkaPrime.EAttributeType decodeAKAAttributeType(OctetInputStream stream) {
-        return EapAkaPrime.EAttributeType.fromValue(stream.readOctetI());
+    private static EAttributeType decodeAKAAttributeType(OctetInputStream stream) {
+        return EAttributeType.fromValue(stream.readOctetI());
     }
 
     private static EapNotification decodeNotification(OctetInputStream stream, Eap.ECode code, Octet id, int length) {
@@ -114,12 +107,6 @@ public class EapDecoder {
     private static EapIdentity decodeIdentity(OctetInputStream stream, Eap.ECode code, Octet id, int length) {
         var res = new EapIdentity(code, id);
         res.rawData = stream.readOctetString(length);
-
-        ////// TODO: HACK: AMF bugını geçici olarak çözmek için
-        ////if (stream.remaining() == 3 && stream.peekOctetString(3).equals(new OctetString("020000"))) {
-        ////    stream.readOctetString(3);
-        ////}
-
         return res;
     }
 }
