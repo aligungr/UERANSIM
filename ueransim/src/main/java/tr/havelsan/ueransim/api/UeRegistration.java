@@ -2,7 +2,7 @@ package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;

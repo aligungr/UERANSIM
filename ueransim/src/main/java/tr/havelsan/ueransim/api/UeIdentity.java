@@ -1,8 +1,8 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
-import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;

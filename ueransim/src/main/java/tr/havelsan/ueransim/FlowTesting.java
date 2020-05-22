@@ -2,10 +2,10 @@ package tr.havelsan.ueransim;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
-import tr.havelsan.ueransim.contexts.NasSecurityContext;
-import tr.havelsan.ueransim.contexts.SimulationContext;
-import tr.havelsan.ueransim.contexts.UeData;
 import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.core.NasSecurityContext;
+import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;

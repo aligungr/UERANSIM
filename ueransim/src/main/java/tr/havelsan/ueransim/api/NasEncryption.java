@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.api;
 
-import tr.havelsan.ueransim.contexts.NasSecurityContext;
+import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.crypto.*;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;

@@ -1,12 +1,9 @@
 package tr.havelsan.ueransim.flows;
 
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.FlowLogging;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.*;
 import tr.havelsan.ueransim.configs.PduSessionReleaseConfig;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
@@ -90,5 +87,15 @@ public class PduSessionReleaseFlow extends BaseFlow {
         uplink.dnn = config.dnn;
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), uplink));
+    }
+
+    @Override
+    public void onReceive(IncomingMessage incomingMessage) {
+
+    }
+
+    @Override
+    public void onSent(OutgoingMessage outgoingMessage) {
+
     }
 }

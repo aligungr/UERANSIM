@@ -1,11 +1,8 @@
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.FlowLogging;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.*;
 import tr.havelsan.ueransim.configs.ServiceRequestFlowConfig;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.ies.IEServiceType;
@@ -60,5 +57,15 @@ public class ServiceRequestFlow extends BaseFlow {
         }
 
         return flowComplete();
+    }
+
+    @Override
+    public void onReceive(IncomingMessage incomingMessage) {
+
+    }
+
+    @Override
+    public void onSent(OutgoingMessage outgoingMessage) {
+
     }
 }

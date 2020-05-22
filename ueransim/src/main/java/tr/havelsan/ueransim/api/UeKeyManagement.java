@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.api;
 
-import tr.havelsan.ueransim.contexts.NasSecurityContext;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.NasSecurityContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;

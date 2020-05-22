@@ -3,10 +3,11 @@ package tr.havelsan.ueransim;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.IMessageListener;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 
-public abstract class BaseFlow {
+public abstract class BaseFlow implements IMessageListener {
     protected final SimulationContext ctx;
     private boolean started;
     private State currentState;
@@ -23,6 +24,7 @@ public abstract class BaseFlow {
     //                                           MESSAGING
     //======================================================================================================
 
+    @Deprecated
     public final void send(SendingMessage sendingMessage) {
         Messaging.send(ctx, sendingMessage);
     }
@@ -45,6 +47,8 @@ public abstract class BaseFlow {
         if (started) throw new RuntimeException("already started");
         this.started = true;
 
+        ctx.registerListener(this);
+
         boolean mainStepFailed = false;
         try {
             this.currentState = main(null);
@@ -66,28 +70,24 @@ public abstract class BaseFlow {
     //                                             STATES
     //======================================================================================================
 
-    protected final State sinkState(IncomingMessage message) {
-        return this::sinkState;
-    }
-
-    public final State closeConnection() {
-        ctx.sctpClient.close();
-        return this::sinkState;
-    }
-
-    public final State abortReceiver() {
-        ctx.sctpClient.abortReceiver();
+    private State sinkState(IncomingMessage message) {
         return this::sinkState;
     }
 
     public final State flowComplete() {
         FlowLogging.logFlowComplete(this);
-        return abortReceiver();
+        return abortFlow();
     }
 
     public final State flowFailed(String errorMessage) {
         FlowLogging.logFlowFailed(this, errorMessage);
-        return abortReceiver();
+        return abortFlow();
+    }
+
+    public final State abortFlow() {
+        ctx.unregisterListener(this);
+        ctx.sctpClient.abortReceiver();
+        return this::sinkState;
     }
 
     public final State flowFailed() {
