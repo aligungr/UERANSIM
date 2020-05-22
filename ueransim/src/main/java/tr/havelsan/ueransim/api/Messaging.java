@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.*;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;

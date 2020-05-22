@@ -6,7 +6,7 @@ import tr.havelsan.ueransim.FlowLogging;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.configs.PduSessionReleaseConfig;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;

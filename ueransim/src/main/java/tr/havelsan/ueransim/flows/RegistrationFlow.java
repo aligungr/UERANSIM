@@ -5,7 +5,7 @@ import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.UeRegistration;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 
 public class RegistrationFlow extends BaseFlow {
     private final RegistrationConfig config;

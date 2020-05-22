@@ -2,7 +2,7 @@ package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.*;
 import tr.havelsan.ueransim.configs.NgSetupConfig;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;

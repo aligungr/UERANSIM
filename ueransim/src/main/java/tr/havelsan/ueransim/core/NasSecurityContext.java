@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.contexts;
+package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;

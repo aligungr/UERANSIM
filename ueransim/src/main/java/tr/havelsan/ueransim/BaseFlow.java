@@ -3,7 +3,7 @@ package tr.havelsan.ueransim;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.contexts.SimulationContext;
+import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 
 public abstract class BaseFlow {

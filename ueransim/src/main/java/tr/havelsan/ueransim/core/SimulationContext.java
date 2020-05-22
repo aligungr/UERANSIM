@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.contexts;
+package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
