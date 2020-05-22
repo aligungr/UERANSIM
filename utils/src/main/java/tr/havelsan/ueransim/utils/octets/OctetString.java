@@ -9,7 +9,7 @@ public final class OctetString implements Iterable<Octet> {
     public final int length;
     private final Octet[] data;
 
-    public OctetString(Octet[] octets) {
+    public OctetString(Octet... octets) {
         this.data = octets;
         this.length = octets.length;
     }
@@ -36,14 +36,19 @@ public final class OctetString implements Iterable<Octet> {
         this(Utils.hexStringToByteArray(hex));
     }
 
-    public static OctetString concat(OctetString s1, OctetString s2) {
-        Octet[] arr = new Octet[s1.length + s2.length];
-        int index = 0;
-        for (Octet octet : s1.data) {
-            arr[index++] = octet;
+    public static OctetString concat(OctetString... octetStrings) {
+        int totalLength = 0;
+        for (var octetString : octetStrings) {
+            totalLength += octetString.length;
         }
-        for (Octet octet : s2.data) {
-            arr[index++] = octet;
+
+        Octet[] arr = new Octet[totalLength];
+        int index = 0;
+
+        for (var octetString : octetStrings) {
+            for (var octet : octetString.data) {
+                arr[index++] = octet;
+            }
         }
         return new OctetString(arr);
     }
