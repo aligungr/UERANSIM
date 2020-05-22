@@ -5,6 +5,7 @@ import tr.havelsan.ueransim.contexts.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
@@ -65,6 +66,19 @@ public class Messaging {
         }
 
         return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);
+    }
+
+    public static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
+        if (message.ngapMessage instanceof InitialContextSetupRequest) {
+            UeContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
+        }
+
+        var nasMessage = message.getNasMessage(NasMessage.class);
+        if (nasMessage != null) {
+            Messaging.handleNasMessage(ctx, nasMessage);
+        } else {
+            FlowLogging.logUnhandledMessage(message);
+        }
     }
 
     public static void handleNasMessage(SimulationContext ctx, NasMessage message) {
