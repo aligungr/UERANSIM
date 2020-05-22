@@ -19,7 +19,7 @@ public class RegistrationFlow extends BaseFlow {
 
     @Override
     public State main(IncomingMessage message) {
-        UeRegistration.sendInitialRegistration(ctx, config);
+        UeRegistration.sendInitialRegistration(ctx, config.requestNssai, config.rrcEstablishmentCause);
         return this::loop;
     }
 
