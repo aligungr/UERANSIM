@@ -31,6 +31,7 @@ public class UeIdentity {
         } else {
             Console.println(Color.YELLOW, "Identity request for %s is not implemented yet",
                     message.identityType.value.name());
+            return;
         }
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
     }
