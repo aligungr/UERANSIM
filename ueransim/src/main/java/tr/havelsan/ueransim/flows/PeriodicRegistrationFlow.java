@@ -10,21 +10,21 @@ import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 
-public class RegistrationFlow extends BaseFlow {
+public class PeriodicRegistrationFlow extends BaseFlow {
     private final RegistrationConfig config;
 
-    public RegistrationFlow(SimulationContext simContext, RegistrationConfig config) {
+    public PeriodicRegistrationFlow(SimulationContext simContext, RegistrationConfig config) {
         super(simContext);
         this.config = config;
     }
 
     @Override
-    public State main(IncomingMessage message) {
-        UeRegistration.sendRegistration(ctx, config, ERegistrationType.INITIAL_REGISTRATION);
+    public BaseFlow.State main(IncomingMessage message) {
+        UeRegistration.sendRegistration(ctx, config, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
         return this::loop;
     }
 
-    private State loop(IncomingMessage message) {
+    private BaseFlow.State loop(IncomingMessage message) {
         Messaging.handleNgapMessage(ctx, message);
         return this::loop;
     }
