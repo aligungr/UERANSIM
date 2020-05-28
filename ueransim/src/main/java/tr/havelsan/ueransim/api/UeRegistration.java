@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
@@ -20,7 +21,7 @@ import tr.havelsan.ueransim.utils.Console;
 
 public class UeRegistration {
 
-    public static void sendInitialRegistration(SimulationContext ctx, RegistrationConfig config) {
+    public static void sendRegistration(SimulationContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.nasSecurityContext != null && ctx.nasSecurityContext.ngKsi != null) {
             ngKsi = ctx.nasSecurityContext.ngKsi;
@@ -29,7 +30,7 @@ public class UeRegistration {
         var registrationRequest = new RegistrationRequest();
         registrationRequest.registrationType = new IE5gsRegistrationType(
                 IE5gsRegistrationType.EFollowOnRequest.NO_FOR_PENDING,
-                IE5gsRegistrationType.ERegistrationType.INITIAL_REGISTRATION);
+                registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
 

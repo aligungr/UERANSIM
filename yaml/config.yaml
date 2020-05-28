@@ -1,15 +1,17 @@
 amf.host: 10.154.14.5
 amf.port: 38419
-amf.mocked: true
+amf.mocked: false
 amf.mockedRemote: mockedRemote.yaml
 
 input.NgSetupFlow: ngsetup.yaml
 input.RegistrationFlow: registration.yaml
+input.PeriodicRegistrationFlow: registration.yaml
 input.PduSessionEstablishmentFlow: pduSessionEstablishment.yaml
 input.PduSessionReleaseFlow: pduSessionRelease.yaml
 input.UEContextReleaseRequestFlow: ueContextReleaseRequest.yaml
 input.ServiceRequestFlow: serviceRequest.yaml
 input.DeregistrationFlow: deregistration.yaml
+input.NgResetFlow: ngreset.yaml
 
 ueData.key: '5C95978B5E89488CB7DB44381E237809'
 ueData.op: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
