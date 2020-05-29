@@ -8,6 +8,7 @@ import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.nas.impl.ies.IENssai;
+import tr.havelsan.ueransim.nas.impl.ies.IEUeSecurityCapability;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
@@ -18,6 +19,7 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
 
@@ -33,6 +35,7 @@ public class UeRegistration {
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
+        registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
 
         if (config.use5gGuti) {
             registrationRequest.mobileIdentity = config.gutiMobileIdentity;
@@ -42,6 +45,43 @@ public class UeRegistration {
 
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
+    }
+
+    private static IEUeSecurityCapability createSecurityCapabilityIe() {
+        var ie = new IEUeSecurityCapability();
+        ie.supported_5G_EA0 = new Bit(1);
+        ie.supported_128_5G_EA1 = new Bit(1);
+        ie.supported_128_5G_EA2 = new Bit(1);
+        ie.supported_128_5G_EA3 = new Bit(1);
+        ie.supported_5G_EA4 = new Bit(0);
+        ie.supported_5G_EA5 = new Bit(0);
+        ie.supported_5G_EA6 = new Bit(0);
+        ie.supported_5G_EA7 = new Bit(0);
+        ie.supported_5G_IA0 = new Bit(1);
+        ie.supported_128_5G_IA1 = new Bit(1);
+        ie.supported_128_5G_IA2 = new Bit(1);
+        ie.supported_128_5G_IA3 = new Bit(1);
+        ie.supported_5G_IA4 = new Bit(0);
+        ie.supported_5G_IA5 = new Bit(0);
+        ie.supported_5G_IA6 = new Bit(0);
+        ie.supported_5G_IA7 = new Bit(0);
+        ie.supported_EEA0 = new Bit(1);
+        ie.supported_128_EEA1 = new Bit(1);
+        ie.supported_128_EEA2 = new Bit(1);
+        ie.supported_128_EEA3 = new Bit(1);
+        ie.supported_EEA4 = new Bit(0);
+        ie.supported_EEA5 = new Bit(0);
+        ie.supported_EEA6 = new Bit(0);
+        ie.supported_EEA7 = new Bit(0);
+        ie.supported_EIA0 = new Bit(1);
+        ie.supported_128_EIA1 = new Bit(1);
+        ie.supported_128_EIA2 = new Bit(1);
+        ie.supported_128_EIA3 = new Bit(1);
+        ie.supported_EIA4 = new Bit(0);
+        ie.supported_EIA5 = new Bit(0);
+        ie.supported_EIA6 = new Bit(0);
+        ie.supported_EIA7 = new Bit(0);
+        return ie;
     }
 
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
