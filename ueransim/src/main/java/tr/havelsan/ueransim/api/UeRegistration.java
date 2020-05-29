@@ -5,10 +5,7 @@ import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
-import tr.havelsan.ueransim.nas.impl.ies.IE5gsRegistrationType;
-import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
-import tr.havelsan.ueransim.nas.impl.ies.IENssai;
-import tr.havelsan.ueransim.nas.impl.ies.IEUeSecurityCapability;
+import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
@@ -37,8 +34,8 @@ public class UeRegistration {
         registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
         registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
 
-        if (config.use5gGuti) {
-            registrationRequest.mobileIdentity = config.gutiMobileIdentity;
+        if (ctx.guti != null) {
+            registrationRequest.mobileIdentity = ctx.guti;
         } else {
             registrationRequest.mobileIdentity = UeIdentity.generateSuciFromSupi(ctx.ueData.supi);
         }
@@ -85,6 +82,10 @@ public class UeRegistration {
     }
 
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
+        if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
+            ctx.guti = (IE5gGutiMobileIdentity) message.mobileIdentity;
+        }
+
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
                 new RegistrationComplete()));
     }
