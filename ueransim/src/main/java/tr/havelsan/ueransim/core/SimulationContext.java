@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
+import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 
@@ -14,6 +15,7 @@ public class SimulationContext {
 
     // UE related
     public UeData ueData;
+    public IE5gGutiMobileIdentity guti;
     public NasSecurityContext nasSecurityContext;
 
     // NGAP IE related

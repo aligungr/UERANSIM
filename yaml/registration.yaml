@@ -5,19 +5,3 @@ requestNssai:
       hex: 09afaf
 
 rrcEstablishmentCause: 4
-
-use5gGuti: true
-
-gutiMobileIdentity:
-  mcc:
-    value: 1
-  mnc:
-    value: 1
-  amfRegionId:
-    value: 2
-  amfSetId:
-    value: 8
-  amfPointer:
-    value: 1
-  tmsi:
-    hex: 'b11fb11f'
