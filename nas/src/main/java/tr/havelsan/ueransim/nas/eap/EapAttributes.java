@@ -42,24 +42,21 @@ public final class EapAttributes {
     public void putAttribute(EAttributeType key, OctetString value) {
         if (key.equals(EAttributeType.AT_RAND)) {
             attributes.put(key, OctetString.concat(new OctetString("0000"), value));
-        }
-        if (key.equals(EAttributeType.AT_MAC)) {
+        } else if (key.equals(EAttributeType.AT_MAC)) {
             attributes.put(key, OctetString.concat(new OctetString("0000"), value));
-        }
-        if (key.equals(EAttributeType.AT_KDF)) {
+        } else if (key.equals(EAttributeType.AT_KDF)) {
             if (value.length != 2) {
                 throw new IllegalArgumentException("KDF value length is incorrect");
             }
             attributes.put(key, value);
-        }
-        if (key.equals(EAttributeType.AT_RES)) {
+        } else if (key.equals(EAttributeType.AT_RES)) {
             if (value.length > 65535 || value.length % 4 != 0) {
                 throw new IllegalArgumentException("RES value length is incorrect");
             }
-            value = OctetString.concat(new Octet2(value.length).toOctetString(), value);
+            attributes.put(key, OctetString.concat(new Octet2(value.length).toOctetString(), value));
+        } else {
+            //throw new NotImplementedException("EapAkaPrime attribute type not implemented: " + key);
         }
-
-        attributes.put(key, value);
     }
 
     public Set<Map.Entry<EAttributeType, OctetString>> entrySet() {
