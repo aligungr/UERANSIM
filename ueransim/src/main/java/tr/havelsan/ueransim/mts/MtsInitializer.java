@@ -45,8 +45,6 @@ public class MtsInitializer {
         }
 
         TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
-        TypeRegistry.registerCustomType(new MtsIEEapMessage());
-        TypeRegistry.registerCustomType(new MtsEapAkaAttributes());
 
         MtsDecoder.setFileProvider((searchDir, path) -> {
             try {
