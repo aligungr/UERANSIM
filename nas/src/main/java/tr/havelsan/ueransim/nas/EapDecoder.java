@@ -81,7 +81,7 @@ public class EapDecoder {
             var attributeVal = stream.readOctetString(4 * attributeLength - 2);
             readBytes += 4 * attributeLength - 2;
 
-            akaPrime.attributes.putAttribute(type, attributeVal);
+            akaPrime.attributes.putRawAttribute(type, attributeVal);
         }
 
         if (readBytes != length)

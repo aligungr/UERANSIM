@@ -8,7 +8,10 @@ import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.eap.*;
+import tr.havelsan.ueransim.nas.eap.ESubType;
+import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.nas.eap.EapAttributes;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
@@ -48,8 +51,8 @@ public class UeAuthentication {
         // Read EAP-AKA' request
         {
             var akaPrimeRequest = (EapAkaPrime) message.eapMessage.eap;
-            rand = akaPrimeRequest.attributes.getAttribute(EAttributeType.AT_RAND);
-            mac = akaPrimeRequest.attributes.getAttribute(EAttributeType.AT_MAC);
+            rand = akaPrimeRequest.attributes.getRand();
+            mac = akaPrimeRequest.attributes.getMac();
             id = akaPrimeRequest.id;
         }
 
@@ -84,9 +87,9 @@ public class UeAuthentication {
             var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, id);
             akaPrimeResponse.subType = ESubType.AKA_CHALLENGE;
             akaPrimeResponse.attributes = new EapAttributes();
-            akaPrimeResponse.attributes.putAttribute(EAttributeType.AT_RES, res);
-            akaPrimeResponse.attributes.putAttribute(EAttributeType.AT_MAC, mac);
-            akaPrimeResponse.attributes.putAttribute(EAttributeType.AT_KDF, new OctetString("0001"));
+            akaPrimeResponse.attributes.putRes(res);
+            akaPrimeResponse.attributes.putMac(mac);
+            akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
 
             var response = new AuthenticationResponse();
             response.eapMessage = new IEEapMessage(akaPrimeResponse);
