@@ -422,11 +422,12 @@ public final class Utils {
      * (The length is added using Big Endian)
      * <p>
      * See also:
-     * {@link #insertLeadingLength2(OctetString)}
-     * {@link #insertLeadingLength4(OctetString)}
+     * {@link #insertLeadingLength2(OctetString, boolean)}
+     * {@link #insertLeadingLength4(OctetString, boolean)}
      */
-    public static OctetString insertLeadingLength1(OctetString octetString) {
+    public static OctetString insertLeadingLength1(OctetString octetString, boolean bitLength) {
         int length = octetString.length;
+        if (bitLength) length *= 8;
         if ((length & 0xFF) != length) {
             throw new IllegalStateException("octet string length cannot fit into 1-octet");
         }
@@ -444,11 +445,12 @@ public final class Utils {
      * (The length is added using Big Endian)
      * <p>
      * See also:
-     * {@link #insertLeadingLength1(OctetString)}
-     * {@link #insertLeadingLength4(OctetString)}
+     * {@link #insertLeadingLength1(OctetString, boolean)}
+     * {@link #insertLeadingLength4(OctetString, boolean)}
      */
-    public static OctetString insertLeadingLength2(OctetString octetString) {
+    public static OctetString insertLeadingLength2(OctetString octetString, boolean bitLength) {
         int length = octetString.length;
+        if (bitLength) length *= 8;
         if ((length & 0xFFFF) != length) {
             throw new IllegalStateException("octet string length cannot fit into 2-octets");
         }
@@ -467,11 +469,12 @@ public final class Utils {
      * (The length is added using Big Endian)
      * <p>
      * See also:
-     * {@link #insertLeadingLength1(OctetString)}
-     * {@link #insertLeadingLength2(OctetString)}
+     * {@link #insertLeadingLength1(OctetString, boolean)}
+     * {@link #insertLeadingLength2(OctetString, boolean)}
      */
-    public static OctetString insertLeadingLength4(OctetString octetString) {
+    public static OctetString insertLeadingLength4(OctetString octetString, boolean bitLength) {
         int length = octetString.length;
+        if (bitLength) length *= 8;
 
         Octet[] res = new Octet[octetString.length + 4];
         for (int i = 0; i < octetString.length; i++) {

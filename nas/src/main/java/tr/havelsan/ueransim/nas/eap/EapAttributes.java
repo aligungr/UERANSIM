@@ -31,11 +31,11 @@ public final class EapAttributes {
     //======================================================================================================
 
     public void putRes(OctetString value) {
-        attributes.put(EAttributeType.AT_RES, Utils.insertLeadingLength2(value));
+        attributes.put(EAttributeType.AT_RES, Utils.insertLeadingLength2(value, true));
     }
 
     public void putMac(OctetString value) {
-        attributes.put(EAttributeType.AT_MAC, Utils.insertLeadingLength2(value));
+        attributes.put(EAttributeType.AT_MAC, OctetString.concat(new OctetString("0000"), value));
     }
 
     public void putKdf(OctetString value) {
