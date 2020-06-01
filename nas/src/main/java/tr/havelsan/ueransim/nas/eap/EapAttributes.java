@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.nas.eap;
 
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedHashMap;
@@ -18,11 +19,11 @@ public final class EapAttributes {
     //======================================================================================================
 
     public OctetString getRand() {
-        return attributes.get(EAttributeType.AT_RAND);
+        return attributes.get(EAttributeType.AT_RAND).substring(2);
     }
 
     public OctetString getMac() {
-        return attributes.get(EAttributeType.AT_MAC);
+        return attributes.get(EAttributeType.AT_MAC).substring(2);
     }
 
     //======================================================================================================
@@ -30,11 +31,11 @@ public final class EapAttributes {
     //======================================================================================================
 
     public void putRes(OctetString value) {
-        attributes.put(EAttributeType.AT_RES, value);
+        attributes.put(EAttributeType.AT_RES, Utils.insertLeadingLength2(value));
     }
 
     public void putMac(OctetString value) {
-        attributes.put(EAttributeType.AT_MAC, value);
+        attributes.put(EAttributeType.AT_MAC, Utils.insertLeadingLength2(value));
     }
 
     public void putKdf(OctetString value) {

@@ -427,7 +427,7 @@ public final class Utils {
      */
     public static OctetString insertLeadingLength1(OctetString octetString) {
         int length = octetString.length;
-        if ((length & 0xFF) != 0) {
+        if ((length & 0xFF) != length) {
             throw new IllegalStateException("octet string length cannot fit into 1-octet");
         }
 
@@ -449,7 +449,7 @@ public final class Utils {
      */
     public static OctetString insertLeadingLength2(OctetString octetString) {
         int length = octetString.length;
-        if ((length & 0xFFFF) != 0) {
+        if ((length & 0xFFFF) != length) {
             throw new IllegalStateException("octet string length cannot fit into 2-octets");
         }
 
