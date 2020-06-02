@@ -229,7 +229,7 @@ public class FlowTesting {
 
             private void onMessage(IncomingMessage message, Queue<String> queue) {
                 var mockedValues = (Object[]) mockedRemote.get("messages-in-order");
-                Object mockedValue = mockedValues[messageIndex++];
+                Object mockedValue = mockedValues[messageIndex];
                 if (mockedValue != null) {
                     String str = mockedValue.toString();
                     if (str.length() > 0) {
