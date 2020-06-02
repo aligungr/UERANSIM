@@ -150,14 +150,16 @@ public class FlowTesting {
 
         // Parse UE Data
         {
+            Map<String, Object> ud = ((ImplicitTypedObject) params.get("ueData")).getParameters();
+
             var ueData = new UeData();
-            ueData.snn = (String) params.get("ueData.snn");
-            ueData.key = new OctetString((String) params.get("ueData.key"));
-            ueData.op = new OctetString((String) params.get("ueData.op"));
-            ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
-            ueData.amf = new OctetString((String) params.get("ueData.amf"));
-            ueData.imei = (String) params.get("ueData.imei");
-            ueData.supi = (String) params.get("ueData.supi");
+            ueData.snn = (String) ud.get("snn");
+            ueData.key = new OctetString((String) ud.get("key"));
+            ueData.op = new OctetString((String) ud.get("op"));
+            ueData.sqn = new OctetString((String) ud.get("sqn"));
+            ueData.amf = new OctetString((String) ud.get("amf"));
+            ueData.imei = (String) ud.get("imei");
+            ueData.supi = (String) ud.get("supi");
             simContext.ueData = ueData;
         }
 

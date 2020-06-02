@@ -13,13 +13,7 @@ input.ServiceRequestFlow: serviceRequest.yaml
 input.DeregistrationFlow: deregistration.yaml
 input.NgResetFlow: ngreset.yaml
 
-ueData.key: '5C95978B5E89488CB7DB44381E237809'
-ueData.op: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
-ueData.sqn: '001000000000'
-ueData.amf: '8000'
-ueData.imei: '356938035643809'
-ueData.snn: '5G:mnc001.mcc001.3gppnetwork.org'
-ueData.supi: 'imsi-001001000000010'
+ueData: '@ueData_i2i.yaml'
 
 context.ranUeNgapId: 1000
 context.userLocationInformationNr:
