@@ -206,6 +206,8 @@ public class FlowTesting {
         var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
 
         return new MockedSCTPClient(new MockedSCTPClient.IMockedRemote() {
+            int messageIndex = 0;
+
             @Override
             public void onMessage(byte[] data, Queue<Byte[]> queue) {
                 var ngapPdu = Ngap.perDecode(NGAP_PDU.class, data);
@@ -226,20 +228,15 @@ public class FlowTesting {
             }
 
             private void onMessage(IncomingMessage message, Queue<String> queue) {
-                var mockedValues = (Object[]) mockedRemote.get(message.ngapMessage.getClass().getSimpleName());
-                if (mockedValues != null) {
-                    for (var value : mockedValues) {
-                        queue.add(value.toString());
+                var mockedValues = (Object[]) mockedRemote.get("messages-in-order");
+                Object mockedValue = mockedValues[messageIndex++];
+                if (mockedValue != null) {
+                    String str = mockedValue.toString();
+                    if (str.length() > 0) {
+                        queue.add(str);
                     }
                 }
-                if (message.nasMessage != null) {
-                    mockedValues = (Object[]) mockedRemote.get(message.nasMessage.getClass().getSimpleName());
-                    if (mockedValues != null) {
-                        for (var value : mockedValues) {
-                            queue.add(value.toString());
-                        }
-                    }
-                }
+                messageIndex++;
             }
         });
     }
