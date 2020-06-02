@@ -10,12 +10,17 @@ import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit4;
 
 public class NasDecoder {
 
     public static NasMessage nasPdu(byte[] data) {
         return nasPdu(new OctetInputStream(data));
+    }
+
+    public static NasMessage nasPdu(String hex) {
+        return nasPdu(Utils.hexStringToByteArray(hex));
     }
 
     public static NasMessage nasPdu(OctetInputStream stream) {
