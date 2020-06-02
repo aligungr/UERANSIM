@@ -19,7 +19,7 @@ public class NasSecurityContext {
     public SelectedAlgorithms selectedAlgorithms;
 
     public NasSecurityContext() {
-        this.isNew = true;
+        this.isNew = false;
         this.ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         this.downlinkCount = new Count();
         this.uplinkCount = new Count();

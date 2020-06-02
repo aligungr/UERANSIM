@@ -37,6 +37,9 @@ public class UeIdentity {
     }
 
     public static IESuciMobileIdentity generateSuciFromSupi(String supi) {
+        if (supi == null) {
+            return null;
+        }
         if (supi.startsWith("imsi-")) {
             String imsi = supi.substring("imsi-".length());
             String mcc = imsi.substring(0, 3);
