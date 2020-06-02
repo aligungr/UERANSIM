@@ -3,15 +3,15 @@ amf.port: 38419
 amf.mocked: true
 amf.mockedRemote: mockedRemote.yaml
 
-input.NgSetupFlow: ngsetup.yaml
-input.RegistrationFlow: registration.yaml
-input.PeriodicRegistrationFlow: registration.yaml
-input.PduSessionEstablishmentFlow: pduSessionEstablishment.yaml
-input.PduSessionReleaseFlow: pduSessionRelease.yaml
-input.UEContextReleaseRequestFlow: ueContextReleaseRequest.yaml
-input.ServiceRequestFlow: serviceRequest.yaml
-input.DeregistrationFlow: deregistration.yaml
-input.NgResetFlow: ngreset.yaml
+input.NgSetupFlow: flows/ngsetup.yaml
+input.RegistrationFlow: flows/registration.yaml
+input.PeriodicRegistrationFlow: flows/registration.yaml
+input.PduSessionEstablishmentFlow: flows/pduSessionEstablishment.yaml
+input.PduSessionReleaseFlow: flows/pduSessionRelease.yaml
+input.UEContextReleaseRequestFlow: flows/ueContextReleaseRequest.yaml
+input.ServiceRequestFlow: flows/serviceRequest.yaml
+input.DeregistrationFlow: flows/deregistration.yaml
+input.NgResetFlow: flows/ngreset.yaml
 
 ueData: '@ueData_i2i.yaml'
 
