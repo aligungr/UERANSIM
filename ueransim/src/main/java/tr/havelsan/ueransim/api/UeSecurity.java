@@ -2,8 +2,10 @@ package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvRequest;
+import tr.havelsan.ueransim.nas.impl.ies.IENasMessageContainer;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeComplete;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
@@ -36,7 +38,7 @@ public class UeSecurity {
             response.imeiSv = new IEImeiSvMobileIdentity(ctx.ueData.imei);
         }
 
-        // todo: container
+        response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.registrationRequest));
 
         // Send response
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));

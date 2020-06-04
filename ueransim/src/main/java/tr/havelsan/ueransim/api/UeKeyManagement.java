@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.core.Supi;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.utils.octets.Octet;
@@ -20,7 +21,7 @@ public class UeKeyManagement {
     public static void deriveKeysSeafAmf(SimulationContext ctx) {
         var keys = ctx.nasSecurityContext.keys;
         keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.snn));
-        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi), new OctetString("0000"));
+        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi.value), new OctetString("0000"));
     }
 
     public static void deriveNasKeys(NasSecurityContext securityContext) {
@@ -52,7 +53,7 @@ public class UeKeyManagement {
     /**
      * Calculates K_AUSF for EAP-AKA' according to given parameters as specified in 3GPP TS 33.501 Annex F.
      */
-    public static OctetString calculateKAusfForEapAkaPrime(OctetString ckPrime, OctetString ikPrime, String supiIdentity) {
+    public static OctetString calculateKAusfForEapAkaPrime(OctetString ckPrime, OctetString ikPrime, Supi supiIdentity) {
         OctetString key = OctetString.concat(ikPrime, ckPrime);
         OctetString input = new OctetString(("EAP-AKA'" + supiIdentity).getBytes(StandardCharsets.US_ASCII));
 

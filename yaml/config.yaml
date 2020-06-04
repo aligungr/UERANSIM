@@ -3,23 +3,17 @@ amf.port: 38419
 amf.mocked: true
 amf.mockedRemote: mockedRemote.yaml
 
-input.NgSetupFlow: ngsetup.yaml
-input.RegistrationFlow: registration.yaml
-input.PeriodicRegistrationFlow: registration.yaml
-input.PduSessionEstablishmentFlow: pduSessionEstablishment.yaml
-input.PduSessionReleaseFlow: pduSessionRelease.yaml
-input.UEContextReleaseRequestFlow: ueContextReleaseRequest.yaml
-input.ServiceRequestFlow: serviceRequest.yaml
-input.DeregistrationFlow: deregistration.yaml
-input.NgResetFlow: ngreset.yaml
+input.NgSetupFlow: flows/ngsetup.yaml
+input.RegistrationFlow: flows/registration.yaml
+input.PeriodicRegistrationFlow: flows/registration.yaml
+input.PduSessionEstablishmentFlow: flows/pduSessionEstablishment.yaml
+input.PduSessionReleaseFlow: flows/pduSessionRelease.yaml
+input.UEContextReleaseRequestFlow: flows/ueContextReleaseRequest.yaml
+input.ServiceRequestFlow: flows/serviceRequest.yaml
+input.DeregistrationFlow: flows/deregistration.yaml
+input.NgResetFlow: flows/ngreset.yaml
 
-ueData.key: '5C95978B5E89488CB7DB44381E237809'
-ueData.op: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
-ueData.sqn: '001000000000'
-ueData.amf: '8000'
-ueData.imei: '356938035643809'
-ueData.snn: '5G:mnc001.mcc001.3gppnetwork.org'
-ueData.supi: 'imsi-001001000000010'
+ueData: '@ueData_i2i.yaml'
 
 context.ranUeNgapId: 1000
 context.userLocationInformationNr:

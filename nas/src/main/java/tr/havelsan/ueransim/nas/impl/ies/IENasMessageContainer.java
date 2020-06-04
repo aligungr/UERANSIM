@@ -15,6 +15,10 @@ public class IENasMessageContainer extends InformationElement6 {
         this.value = value;
     }
 
+    public IENasMessageContainer(byte[] value) {
+        this(new OctetString(value));
+    }
+
     @Override
     protected IENasMessageContainer decodeIE6(OctetInputStream stream, int length) {
         var res = new IENasMessageContainer();

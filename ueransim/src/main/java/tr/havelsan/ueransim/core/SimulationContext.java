@@ -3,6 +3,9 @@ package tr.havelsan.ueransim.core;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentityList;
+import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 
@@ -17,6 +20,10 @@ public class SimulationContext {
     public UeData ueData;
     public IE5gGutiMobileIdentity guti;
     public NasSecurityContext nasSecurityContext;
+    public UeTimers ueTimers;
+    public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
+    public IE5gsTrackingAreaIdentityList taiList;
+    public RegistrationRequest registrationRequest;
 
     // NGAP IE related
     public Long amfUeNgapId;
@@ -28,6 +35,7 @@ public class SimulationContext {
 
     public SimulationContext() {
         this.messageListener = null;
+        this.ueTimers = new UeTimers();
     }
 
     // todo: use read/write lock instead of synchronized

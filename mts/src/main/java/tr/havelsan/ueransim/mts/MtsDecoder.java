@@ -32,7 +32,8 @@ public class MtsDecoder {
     }
 
     private static String dirPath(String filePath) {
-        return new File(filePath).getParent();
+        String path = new File(filePath).getParent();
+        return path == null ? "./" : path;
     }
 
     private static JsonElement resolveJsonRefs(String searchDir, JsonElement element) {

@@ -2,10 +2,7 @@ package tr.havelsan.ueransim;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.NasSecurityContext;
-import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.core.UeData;
+import tr.havelsan.ueransim.core.*;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
@@ -150,14 +147,16 @@ public class FlowTesting {
 
         // Parse UE Data
         {
+            Map<String, Object> ud = ((ImplicitTypedObject) params.get("ueData")).getParameters();
+
             var ueData = new UeData();
-            ueData.snn = (String) params.get("ueData.snn");
-            ueData.key = new OctetString((String) params.get("ueData.key"));
-            ueData.op = new OctetString((String) params.get("ueData.op"));
-            ueData.sqn = new OctetString((String) params.get("ueData.sqn"));
-            ueData.amf = new OctetString((String) params.get("ueData.amf"));
-            ueData.imei = (String) params.get("ueData.imei");
-            ueData.supi = (String) params.get("ueData.supi");
+            ueData.snn = (String) ud.get("snn");
+            ueData.key = new OctetString((String) ud.get("key"));
+            ueData.op = new OctetString((String) ud.get("op"));
+            ueData.sqn = new OctetString((String) ud.get("sqn"));
+            ueData.amf = new OctetString((String) ud.get("amf"));
+            ueData.imei = (String) ud.get("imei");
+            ueData.supi = Supi.parse((String) ud.get("supi"));
             simContext.ueData = ueData;
         }
 
@@ -204,6 +203,8 @@ public class FlowTesting {
         var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
 
         return new MockedSCTPClient(new MockedSCTPClient.IMockedRemote() {
+            int messageIndex = 0;
+
             @Override
             public void onMessage(byte[] data, Queue<Byte[]> queue) {
                 var ngapPdu = Ngap.perDecode(NGAP_PDU.class, data);
@@ -224,20 +225,15 @@ public class FlowTesting {
             }
 
             private void onMessage(IncomingMessage message, Queue<String> queue) {
-                var mockedValues = (Object[]) mockedRemote.get(message.ngapMessage.getClass().getSimpleName());
-                if (mockedValues != null) {
-                    for (var value : mockedValues) {
-                        queue.add(value.toString());
+                var mockedValues = (Object[]) mockedRemote.get("messages-in-order");
+                Object mockedValue = mockedValues[messageIndex];
+                if (mockedValue != null) {
+                    String str = mockedValue.toString();
+                    if (str.length() > 0) {
+                        queue.add(str);
                     }
                 }
-                if (message.nasMessage != null) {
-                    mockedValues = (Object[]) mockedRemote.get(message.nasMessage.getClass().getSimpleName());
-                    if (mockedValues != null) {
-                        for (var value : mockedValues) {
-                            queue.add(value.toString());
-                        }
-                    }
-                }
+                messageIndex++;
             }
         });
     }
