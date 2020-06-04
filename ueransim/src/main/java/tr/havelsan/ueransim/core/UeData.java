@@ -10,5 +10,5 @@ public class UeData {
     public OctetString amf;
 
     public String imei;
-    public String supi;
+    public Supi supi;
 }

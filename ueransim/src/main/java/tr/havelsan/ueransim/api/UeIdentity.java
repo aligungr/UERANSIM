@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.core.Supi;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
@@ -36,12 +37,12 @@ public class UeIdentity {
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
     }
 
-    public static IESuciMobileIdentity generateSuciFromSupi(String supi) {
+    public static IESuciMobileIdentity generateSuciFromSupi(Supi supi) {
         if (supi == null) {
             return null;
         }
-        if (supi.startsWith("imsi-")) {
-            String imsi = supi.substring("imsi-".length());
+        if (supi.type.equals("imsi")) {
+            String imsi = supi.value;
             String mcc = imsi.substring(0, 3);
             String mnc = imsi.substring(3, Constants.ALWAYS_LONG_MNC ? 6 : 5);
             String msin = imsi.substring(mcc.length() + mnc.length());

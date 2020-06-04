@@ -2,10 +2,7 @@ package tr.havelsan.ueransim;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.NasSecurityContext;
-import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.core.UeData;
+import tr.havelsan.ueransim.core.*;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
@@ -159,7 +156,7 @@ public class FlowTesting {
             ueData.sqn = new OctetString((String) ud.get("sqn"));
             ueData.amf = new OctetString((String) ud.get("amf"));
             ueData.imei = (String) ud.get("imei");
-            ueData.supi = (String) ud.get("supi");
+            ueData.supi = Supi.parse((String) ud.get("supi"));
             simContext.ueData = ueData;
         }
 
