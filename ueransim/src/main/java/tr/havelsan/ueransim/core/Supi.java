@@ -22,4 +22,9 @@ public class Supi {
             throw new NotImplementedException("this supi format not implemented yet");
         }
     }
+
+    @Override
+    public String toString() {
+        return type + "-" + value;
+    }
 }
