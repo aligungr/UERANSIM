@@ -3,8 +3,6 @@ package tr.havelsan.ueransim.crypto;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 
@@ -20,7 +18,7 @@ public class KDF {
             inputS.writeOctetString(parameter);
             inputS.writeOctet2(parameter.length);
         }
-        return hmacSha256(key, inputS.toOctetString());
+        return Mac.hmacSha256(key, inputS.toOctetString());
     }
 
     /**
@@ -34,7 +32,7 @@ public class KDF {
             inputS.writeOctetString(parameter);
             inputS.writeOctet2(parameter.length);
         }
-        return hmacSha256(key, inputS.toOctetString());
+        return Mac.hmacSha256(key, inputS.toOctetString());
     }
 
     /**
@@ -47,19 +45,5 @@ public class KDF {
         String normalized = Normalizer.normalize(string, Normalizer.Form.NFKC);
         byte[] bytes = normalized.getBytes(StandardCharsets.UTF_8);
         return new OctetString(bytes);
-    }
-
-    /**
-     * Calculates the HMAC-SHA-256 with given parameters
-     */
-    private static OctetString hmacSha256(OctetString key, OctetString input) {
-        try {
-            final String algorithm = "HmacSHA256";
-            Mac mac = Mac.getInstance(algorithm);
-            mac.init(new SecretKeySpec(key.toByteArray(), algorithm));
-            return new OctetString(mac.doFinal(input.toByteArray()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
