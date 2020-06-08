@@ -102,6 +102,7 @@ public class UeAuthentication {
             var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
                 // todo
+                Console.println(Color.YELLOW, "EAP_MAC_FAILURE case not implemented yet in AUTN validation");
             }
         }
 
