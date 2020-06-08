@@ -38,6 +38,15 @@ public class EapEncoder {
         stream.writeOctets(octets);
     }
 
+    /**
+     * Encodes EAP PDU.
+     */
+    public static byte[] eapPdu(Eap pdu) {
+        var stream = new OctetOutputStream();
+        eapPdu(stream, pdu);
+        return stream.toByteArray();
+    }
+
     private static void encodeNotification(OctetOutputStream stream) {
         throw new NotImplementedException("");
     }
