@@ -4,7 +4,10 @@ import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.Supi;
 import tr.havelsan.ueransim.crypto.KDF;
+import tr.havelsan.ueransim.crypto.Mac;
 import tr.havelsan.ueransim.crypto.PRF;
+import tr.havelsan.ueransim.nas.EapEncoder;
+import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -51,14 +54,33 @@ public class UeKeyManagement {
     }
 
     /**
-     * Calculates K_AUSF for EAP-AKA' according to given parameters as specified in 3GPP TS 33.501 Annex F.
+     * Calculates mk for EAP-AKA' according to given parameters as specified in RFC 5448.
      */
-    public static OctetString calculateKAusfForEapAkaPrime(OctetString ckPrime, OctetString ikPrime, Supi supiIdentity) {
+    public static OctetString calculateMk(OctetString ckPrime, OctetString ikPrime, Supi supiIdentity) {
         OctetString key = OctetString.concat(ikPrime, ckPrime);
         OctetString input = new OctetString(("EAP-AKA'" + supiIdentity).getBytes(StandardCharsets.US_ASCII));
 
         // Calculating the 208-octet output
-        var mk = PRF.calculatePrfPrime(key, input, 208);
+        return PRF.calculatePrfPrime(key, input, 208);
+    }
+
+    /**
+     * Calculates MAC for EAP-AKA' according to given parameters.
+     */
+    public static OctetString calculateMacForEapAkaPrime(OctetString kaut, EapAkaPrime message) {
+        var eap = message.makeCopy();
+        eap.attributes.putMac(new OctetString(new byte[16]));
+
+        var input = new OctetString(EapEncoder.eapPdu(eap));
+
+        var sha = Mac.hmacSha256(kaut, input);
+        return sha.substring(0, 16);
+    }
+
+    /**
+     * Calculates K_AUSF for EAP-AKA' according to given parameters as specified in 3GPP TS 33.501 Annex F.
+     */
+    public static OctetString calculateKAusfForEapAkaPrime(OctetString mk) {
         // Octets [144...207] are EMSK
         var emsk = mk.substring(144);
         // The most significant 256 bits of EMSK is K_AUSF

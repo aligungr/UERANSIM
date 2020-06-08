@@ -26,6 +26,10 @@ public final class EapAttributes {
         return attributes.get(EAttributeType.AT_MAC).substring(2);
     }
 
+    public OctetString getAutn() {
+        return attributes.get(EAttributeType.AT_AUTN).substring(2);
+    }
+
     //======================================================================================================
     //                                          PUT METHODS
     //======================================================================================================
@@ -36,6 +40,10 @@ public final class EapAttributes {
 
     public void putMac(OctetString value) {
         attributes.put(EAttributeType.AT_MAC, OctetString.concat(new OctetString("0000"), value));
+    }
+
+    public void putAutn(OctetString value) {
+        attributes.put(EAttributeType.AT_AUTN, OctetString.concat(new OctetString("0000"), value));
     }
 
     public void putKdf(OctetString value) {

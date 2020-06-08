@@ -3,9 +3,6 @@ package tr.havelsan.ueransim.crypto;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 public class PRF {
 
     /**
@@ -34,23 +31,9 @@ public class PRF {
             } else {
                 s = OctetString.concat(T[i - 1], input, new OctetString(new Octet(i + 1)));
             }
-            T[i] = hmacSha256(key, s);
+            T[i] = Mac.hmacSha256(key, s);
         }
 
         return OctetString.concat(T);
-    }
-
-    /**
-     * Calculates the HMAC-SHA-256 with given parameters
-     */
-    private static OctetString hmacSha256(OctetString key, OctetString input) {
-        try {
-            final String algorithm = "HmacSHA256";
-            Mac mac = Mac.getInstance(algorithm);
-            mac.init(new SecretKeySpec(key.toByteArray(), algorithm));
-            return new OctetString(mac.doFinal(input.toByteArray()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

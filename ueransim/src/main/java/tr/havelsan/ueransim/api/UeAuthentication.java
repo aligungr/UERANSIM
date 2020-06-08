@@ -25,7 +25,6 @@ import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.bits.BitString;
-import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.HashMap;
@@ -43,17 +42,19 @@ public class UeAuthentication {
     }
 
     private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
-        // TODO: EAP-AKA' is incomplete
+        OctetString receivedRand, receivedMac, receivedAutn;
+        EapAkaPrime receivedEap;
 
-        OctetString rand, res, mac;
-        Octet id;
+        OctetString milenageAk, milenageMac;
+
+        OctetString res, mk, kaut;
 
         // Read EAP-AKA' request
         {
-            var akaPrimeRequest = (EapAkaPrime) message.eapMessage.eap;
-            rand = akaPrimeRequest.attributes.getRand();
-            mac = akaPrimeRequest.attributes.getMac();
-            id = akaPrimeRequest.id;
+            receivedEap = (EapAkaPrime) message.eapMessage.eap;
+            receivedRand = receivedEap.attributes.getRand();
+            receivedMac = receivedEap.attributes.getMac();
+            receivedAutn = receivedEap.attributes.getAutn();
         }
 
         // Derive keys
@@ -62,20 +63,54 @@ public class UeAuthentication {
             var sqn = ctx.ueData.sqn;
             var supi = ctx.ueData.supi;
 
-            var milenage = calculateMilenage(ctx.ueData, rand);
+            var milenage = calculateMilenage(ctx.ueData, receivedRand);
             res = milenage.get(MilenageResult.RES);
             var ck = milenage.get(MilenageResult.CK);
             var ik = milenage.get(MilenageResult.IK);
-            var ak = milenage.get(MilenageResult.AK);
+            milenageAk = milenage.get(MilenageResult.AK);
+            milenageMac = milenage.get(MilenageResult.MAC_A);
 
-            var sqnXorAk = OctetString.xor(sqn, ak);
+            var sqnXorAk = OctetString.xor(sqn, milenageAk);
             var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, snn, sqnXorAk);
             var ckPrime = ckPrimeIkPrime[0];
             var ikPrime = ckPrimeIkPrime[1];
 
-            var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(ckPrime, ikPrime, supi);
+            mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, supi);
+            kaut = mk.substring(16, 32);
+        }
 
-            ctx.nasSecurityContext.keys.rand = rand;
+        // Control received AUTN
+        {
+            var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
+            if (autnCheck != AutnValidationRes.OK) {
+                if (autnCheck == AutnValidationRes.MAC_FAILURE) {
+                    // todo
+                    Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+                } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
+                    // todo
+                    Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+                } else {
+                    // todo
+                    // Other errors
+                    Console.println(Color.YELLOW, "other cases not implemented yet in AUTN validation");
+                }
+            }
+        }
+
+        // Control received MAC
+        {
+            var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
+            if (!expectedMac.equals(receivedMac)) {
+                // todo
+                Console.println(Color.YELLOW, "EAP_MAC_FAILURE case not implemented yet in EAP AKA'");
+            }
+        }
+
+        // Continue key derivation
+        {
+            var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(mk);
+
+            ctx.nasSecurityContext.keys.rand = receivedRand;
             ctx.nasSecurityContext.keys.res = res;
             ctx.nasSecurityContext.keys.resStar = null;
             ctx.nasSecurityContext.keys.kAusf = kAusf;
@@ -84,12 +119,16 @@ public class UeAuthentication {
 
         // Send Response
         {
-            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, id);
+            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id);
             akaPrimeResponse.subType = ESubType.AKA_CHALLENGE;
             akaPrimeResponse.attributes = new EapAttributes();
             akaPrimeResponse.attributes.putRes(res);
-            akaPrimeResponse.attributes.putMac(mac);
+            akaPrimeResponse.attributes.putMac(new OctetString(new byte[16])); // Dummy mac for now
             akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
+
+            // Calculate and put mac value
+            var sendingMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
+            akaPrimeResponse.attributes.putMac(sendingMac);
 
             var response = new AuthenticationResponse();
             response.eapMessage = new IEEapMessage(akaPrimeResponse);

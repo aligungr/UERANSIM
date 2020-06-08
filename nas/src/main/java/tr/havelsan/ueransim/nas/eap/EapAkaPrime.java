@@ -16,4 +16,13 @@ public class EapAkaPrime extends Eap {
         this.subType = subType;
         this.attributes = attributes;
     }
+
+    public EapAkaPrime makeCopy() {
+        var copy = new EapAkaPrime(this.code, this.id);
+        copy.subType = this.subType;
+        for (var entry : this.attributes.entrySet()) {
+            copy.attributes.putRawAttribute(entry.getKey(), entry.getValue());
+        }
+        return copy;
+    }
 }
