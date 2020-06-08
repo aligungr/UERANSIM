@@ -42,10 +42,10 @@ public class UeAuthentication {
     }
 
     private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
-        // TODO: EAP-AKA' is incomplete (autn, kdf_input, etc)
-
-        OctetString receivedRand, receivedMac;
+        OctetString receivedRand, receivedMac, receivedAutn;
         EapAkaPrime receivedEap;
+
+        OctetString milenageAk, milenageMac;
 
         OctetString res, mk, kaut;
 
@@ -54,6 +54,7 @@ public class UeAuthentication {
             receivedEap = (EapAkaPrime) message.eapMessage.eap;
             receivedRand = receivedEap.attributes.getRand();
             receivedMac = receivedEap.attributes.getMac();
+            receivedAutn = receivedEap.attributes.getAutn();
         }
 
         // Derive keys
@@ -66,9 +67,10 @@ public class UeAuthentication {
             res = milenage.get(MilenageResult.RES);
             var ck = milenage.get(MilenageResult.CK);
             var ik = milenage.get(MilenageResult.IK);
-            var ak = milenage.get(MilenageResult.AK);
+            milenageAk = milenage.get(MilenageResult.AK);
+            milenageMac = milenage.get(MilenageResult.MAC_A);
 
-            var sqnXorAk = OctetString.xor(sqn, ak);
+            var sqnXorAk = OctetString.xor(sqn, milenageAk);
             var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, snn, sqnXorAk);
             var ckPrime = ckPrimeIkPrime[0];
             var ikPrime = ckPrimeIkPrime[1];
@@ -77,7 +79,25 @@ public class UeAuthentication {
             kaut = mk.substring(16, 32);
         }
 
-        // Control received mac
+        // Control received AUTN
+        {
+            var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
+            if (autnCheck != AutnValidationRes.OK) {
+                if (autnCheck == AutnValidationRes.MAC_FAILURE) {
+                    // todo
+                    Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+                } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
+                    // todo
+                    Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+                } else {
+                    // todo
+                    // Other errors
+                    Console.println(Color.YELLOW, "other cases not implemented yet in AUTN validation");
+                }
+            }
+        }
+
+        // Control received MAC
         {
             var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
