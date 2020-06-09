@@ -9,9 +9,9 @@
 
 #### 1. Install required dependencies
 ```
-$ sudo apt intall git
-$ sudo apt intall make
-$ sudo apt intall g++
+$ sudo apt install git
+$ sudo apt install make
+$ sudo apt install g++
 $ sudo apt install openjdk-11-jdk
 $ sudo apt install maven
 $ sudo apt install libsctp-dev lksctp-tools
