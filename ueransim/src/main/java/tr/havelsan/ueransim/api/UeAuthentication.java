@@ -80,16 +80,28 @@ public class UeAuthentication {
         {
             var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
             if (autnCheck != AutnValidationRes.OK) {
+                EapAkaPrime eapResponse = null;
+
                 if (autnCheck == AutnValidationRes.MAC_FAILURE) {
-                    // todo
-                    Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT, new EapAttributes());
+
+                    Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for EAP AKA'");
                 } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
                     // todo
-                    Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+                    //eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_SYNCHRONIZATION_FAILURE);
+                    //eapResponse.attributes.putAuts(...);
+
+                    Console.println(Color.YELLOW, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
                 } else {
-                    // todo
-                    // Other errors
-                    Console.println(Color.YELLOW, "other cases not implemented yet in AUTN validation");
+                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR, new EapAttributes());
+                    eapResponse.attributes.putClientErrorCode(0);
+
+                    Console.println(Color.YELLOW, "general failure in AUTN validation for EAP AKA^");
+                }
+
+                if (eapResponse != null) {
+                    var response = new AuthenticationReject(new IEEapMessage(eapResponse));
+                    Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
                 }
                 return;
             }
