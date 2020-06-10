@@ -83,7 +83,7 @@ public class UeAuthentication {
                 EapAkaPrime eapResponse = null;
 
                 if (autnCheck == AutnValidationRes.MAC_FAILURE) {
-                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT, new EapAttributes());
+                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
 
                     Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for EAP AKA'");
                 } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
@@ -93,7 +93,7 @@ public class UeAuthentication {
 
                     Console.println(Color.YELLOW, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
                 } else {
-                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR, new EapAttributes());
+                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                     eapResponse.attributes.putClientErrorCode(0);
 
                     Console.println(Color.YELLOW, "general failure in AUTN validation for EAP AKA^");
@@ -114,7 +114,7 @@ public class UeAuthentication {
                 Console.println(Color.YELLOW, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
 
-                var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR, new EapAttributes());
+                var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                 eapResponse.attributes.putClientErrorCode(0);
 
                 var response = new AuthenticationReject(new IEEapMessage(eapResponse));
@@ -136,8 +136,7 @@ public class UeAuthentication {
 
         // Send Response
         {
-            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id);
-            akaPrimeResponse.subType = ESubType.AKA_CHALLENGE;
+            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CHALLENGE);
             akaPrimeResponse.attributes = new EapAttributes();
             akaPrimeResponse.attributes.putRes(res);
             akaPrimeResponse.attributes.putMac(new OctetString(new byte[16])); // Dummy mac for now
