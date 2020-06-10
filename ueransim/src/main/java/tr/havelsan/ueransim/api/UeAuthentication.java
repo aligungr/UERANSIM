@@ -124,7 +124,7 @@ public class UeAuthentication {
             akaPrimeResponse.attributes = new EapAttributes();
             akaPrimeResponse.attributes.putRes(res);
             akaPrimeResponse.attributes.putMac(new OctetString(new byte[16])); // Dummy mac for now
-            akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
+            //akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
 
             // Calculate and put mac value
             var sendingMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
