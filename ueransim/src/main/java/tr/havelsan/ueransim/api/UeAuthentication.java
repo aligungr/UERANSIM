@@ -15,10 +15,7 @@ import tr.havelsan.ueransim.nas.eap.EapAttributes;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationFailure;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResult;
+import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
@@ -83,26 +80,46 @@ public class UeAuthentication {
         {
             var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
             if (autnCheck != AutnValidationRes.OK) {
+                EapAkaPrime eapResponse = null;
+
                 if (autnCheck == AutnValidationRes.MAC_FAILURE) {
-                    // todo
-                    Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
+
+                    Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for EAP AKA'");
                 } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
                     // todo
-                    Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+                    //eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_SYNCHRONIZATION_FAILURE);
+                    //eapResponse.attributes.putAuts(...);
+
+                    Console.println(Color.YELLOW, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
                 } else {
-                    // todo
-                    // Other errors
-                    Console.println(Color.YELLOW, "other cases not implemented yet in AUTN validation");
+                    eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
+                    eapResponse.attributes.putClientErrorCode(0);
+
+                    Console.println(Color.YELLOW, "general failure in AUTN validation for EAP AKA^");
                 }
+
+                if (eapResponse != null) {
+                    var response = new AuthenticationReject(new IEEapMessage(eapResponse));
+                    Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+                }
+                return;
             }
         }
 
-        // Control received MAC
+        // Control received AT_MAC
         {
             var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
-                // todo
-                Console.println(Color.YELLOW, "EAP_MAC_FAILURE case not implemented yet in EAP AKA'");
+                Console.println(Color.YELLOW, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
+                        expectedMac, receivedMac);
+
+                var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
+                eapResponse.attributes.putClientErrorCode(0);
+
+                var response = new AuthenticationReject(new IEEapMessage(eapResponse));
+                Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+                return;
             }
         }
 
@@ -119,12 +136,11 @@ public class UeAuthentication {
 
         // Send Response
         {
-            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id);
-            akaPrimeResponse.subType = ESubType.AKA_CHALLENGE;
+            var akaPrimeResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CHALLENGE);
             akaPrimeResponse.attributes = new EapAttributes();
             akaPrimeResponse.attributes.putRes(res);
             akaPrimeResponse.attributes.putMac(new OctetString(new byte[16])); // Dummy mac for now
-            akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
+            //akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
 
             // Calculate and put mac value
             var sendingMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
@@ -166,14 +182,15 @@ public class UeAuthentication {
                     new IEAuthenticationResponseParameter(ctx.nasSecurityContext.keys.resStar), null);
 
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
-            // todo
-            Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+            response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
+            Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for 5G AKA");
         } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
             // todo
             Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             // Other errors
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
+            Console.println(Color.YELLOW, "Unspecified error in AUTN validation for 5G AKA");
         }
 
         if (response != null) {

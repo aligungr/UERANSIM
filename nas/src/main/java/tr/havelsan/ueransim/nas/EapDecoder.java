@@ -56,13 +56,13 @@ public class EapDecoder {
     }
 
     private static EapAkaPrime decodeAKAPrime(OctetInputStream stream, Eap.ECode code, Octet id, int length) {
-        var akaPrime = new EapAkaPrime(code, id);
-
         int readBytes = 0;
 
         // decode subtype
-        akaPrime.subType = decodeAKASubType(stream);
+        var subType = decodeAKASubType(stream);
         readBytes += 1;
+
+        var akaPrime = new EapAkaPrime(code, id, subType);
 
         // consume reserved 2 octets
         stream.readOctet2();
