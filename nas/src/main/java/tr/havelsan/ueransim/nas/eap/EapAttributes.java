@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.nas.eap;
 
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedHashMap;
@@ -30,6 +31,10 @@ public final class EapAttributes {
         return attributes.get(EAttributeType.AT_AUTN).substring(2);
     }
 
+    public int getClientErrorCode() {
+        return attributes.get(EAttributeType.AT_CLIENT_ERROR_CODE).get(0).intValue();
+    }
+
     //======================================================================================================
     //                                          PUT METHODS
     //======================================================================================================
@@ -48,6 +53,10 @@ public final class EapAttributes {
 
     public void putKdf(OctetString value) {
         attributes.put(EAttributeType.AT_KDF, value);
+    }
+
+    public void putClientErrorCode(int code) {
+        attributes.put(EAttributeType.AT_CLIENT_ERROR_CODE, new Octet2(code).toOctetString());
     }
 
     //======================================================================================================

@@ -15,10 +15,7 @@ import tr.havelsan.ueransim.nas.eap.EapAttributes;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationFailure;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationRequest;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResponse;
-import tr.havelsan.ueransim.nas.impl.messages.AuthenticationResult;
+import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
@@ -94,15 +91,23 @@ public class UeAuthentication {
                     // Other errors
                     Console.println(Color.YELLOW, "other cases not implemented yet in AUTN validation");
                 }
+                return;
             }
         }
 
-        // Control received MAC
+        // Control received AT_MAC
         {
             var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
-                // todo
-                Console.println(Color.YELLOW, "EAP_MAC_FAILURE case not implemented yet in EAP AKA'");
+                Console.println(Color.YELLOW, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
+                        expectedMac, receivedMac);
+
+                var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR, new EapAttributes());
+                eapResponse.attributes.putClientErrorCode(0);
+
+                var response = new AuthenticationReject(new IEEapMessage(eapResponse));
+                Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+                return;
             }
         }
 
