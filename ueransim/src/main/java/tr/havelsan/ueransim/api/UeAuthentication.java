@@ -251,4 +251,8 @@ public class UeAuthentication {
     public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {
         Console.println(Color.BLUE, "Authentication result received");
     }
+
+    public static void handleAuthenticationReject(SimulationContext ctx, AuthenticationReject message) {
+        Console.println(Color.BLUE, "Authentication reject received");
+    }
 }
