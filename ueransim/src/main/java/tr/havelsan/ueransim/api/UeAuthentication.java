@@ -166,14 +166,15 @@ public class UeAuthentication {
                     new IEAuthenticationResponseParameter(ctx.nasSecurityContext.keys.resStar), null);
 
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
-            // todo
-            Console.println(Color.YELLOW, "MAC_FAILURE case not implemented yet in AUTN validation");
+            response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
+            Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for 5G AKA");
         } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
             // todo
             Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             // Other errors
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
+            Console.println(Color.YELLOW, "Unspecified error in AUTN validation for 5G AKA");
         }
 
         if (response != null) {
