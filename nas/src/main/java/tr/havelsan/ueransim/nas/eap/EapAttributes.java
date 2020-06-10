@@ -32,7 +32,7 @@ public final class EapAttributes {
     }
 
     public int getClientErrorCode() {
-        return attributes.get(EAttributeType.AT_CLIENT_ERROR_CODE).get(0).intValue();
+        return attributes.get(EAttributeType.AT_CLIENT_ERROR_CODE).get2(0).intValue();
     }
 
     public OctetString getAuts() {
