@@ -6,8 +6,10 @@ import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class EapDecoder {
+
     public static Eap eapPdu(OctetInputStream stream) {
         var code = decodeCode(stream);
         var id = decodeId(stream);
@@ -37,6 +39,14 @@ public class EapDecoder {
         }
 
         return eap;
+    }
+
+    public static Eap eapPdu(OctetString pdu) {
+        return eapPdu(new OctetInputStream(pdu.toByteArray()));
+    }
+
+    public static Eap eapPdu(String hex) {
+        return eapPdu(new OctetString(hex));
     }
 
     private static Eap.ECode decodeCode(OctetInputStream stream) {
