@@ -30,6 +30,9 @@ import java.util.concurrent.Executors;
 
 public class UeAuthentication {
 
+    private static final boolean IGNORE_CONTROLS_FAILURES = false;
+    private static final boolean USE_SQN_HACK = false; // todo
+
     public static void handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
             handleEapAkaPrime(ctx, message);
@@ -56,9 +59,10 @@ public class UeAuthentication {
 
         // Derive keys
         {
-            var snn = ctx.ueData.snn;
-            var sqn = ctx.ueData.sqn;
-            var supi = ctx.ueData.supi;
+            if (USE_SQN_HACK) {
+                ctx.ueData.sqn = OctetString.xor(receivedAutn.substring(0, 6),
+                        calculateMilenage(ctx.ueData, receivedRand).get(MilenageResult.AK));
+            }
 
             var milenage = calculateMilenage(ctx.ueData, receivedRand);
             res = milenage.get(MilenageResult.RES);
@@ -67,12 +71,12 @@ public class UeAuthentication {
             milenageAk = milenage.get(MilenageResult.AK);
             milenageMac = milenage.get(MilenageResult.MAC_A);
 
-            var sqnXorAk = OctetString.xor(sqn, milenageAk);
-            var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, snn, sqnXorAk);
+            var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
+            var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueData.snn, sqnXorAk);
             var ckPrime = ckPrimeIkPrime[0];
             var ikPrime = ckPrimeIkPrime[1];
 
-            mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, supi);
+            mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueData.supi);
             kaut = mk.substring(16, 32);
         }
 
@@ -99,7 +103,7 @@ public class UeAuthentication {
                     Console.println(Color.YELLOW, "general failure in AUTN validation for EAP AKA^");
                 }
 
-                if (eapResponse != null) {
+                if (!IGNORE_CONTROLS_FAILURES && eapResponse != null) {
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
                     Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
                 }
@@ -114,12 +118,14 @@ public class UeAuthentication {
                 Console.println(Color.YELLOW, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
 
-                var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
-                eapResponse.attributes.putClientErrorCode(0);
+                if (!IGNORE_CONTROLS_FAILURES) {
+                    var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
+                    eapResponse.attributes.putClientErrorCode(0);
 
-                var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
-                return;
+                    var response = new AuthenticationReject(new IEEapMessage(eapResponse));
+                    Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+                    return;
+                }
             }
         }
 
