@@ -88,7 +88,7 @@ public final class OctetString implements Iterable<Octet> {
 
     @Override
     public String toString() {
-        return toHexString(true);
+        return toHexString(false);
     }
 
     public String toHexString() {

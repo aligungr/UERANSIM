@@ -11,7 +11,7 @@ public class EIA1_128 {
     public static Octet4 computeMac(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
         var freshBits = new BitString();
         for (int i = 0; i < 5; i++) {
-            freshBits.set(i, bearer.getBitB(i));
+            freshBits.set(i, bearer.getBitB(4 - i));
         }
         freshBits.clear(31);
 
