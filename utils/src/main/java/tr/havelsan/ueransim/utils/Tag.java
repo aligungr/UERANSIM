@@ -7,5 +7,6 @@ public enum Tag {
     NGAP_INTERNAL,
     MESSAGING,
     FLOWS,
+    NAS_SECURITY,
     NOT_IMPL_YET;
 }

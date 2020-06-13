@@ -9,6 +9,8 @@ import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.Bit5;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -31,21 +33,31 @@ public class NasEncryption {
     }
 
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
+        Logging.funcIn("NasEncryption.decrypt");
+
         var mac = computeMac(protectedNasMessage.plainNasMessage.toByteArray(), securityContext, isUplink);
+        Logging.debug(Tag.VALUE, "computed mac: %s", mac);
+        Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!securityContext.selectedAlgorithms.integrity.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
+                Logging.funcOut();
                 return null;
             }
         }
         byte[] decrypted = decryptData(protectedNasMessage, securityContext, isUplink);
+
+        Logging.funcOut();
         return NasDecoder.nasPdu(decrypted);
     }
 
     private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
+        Logging.funcIn("NasEncryption.decryptData");
+
         securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber, isUplink);
 
         var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
+            Logging.funcOut();
             return copy(protectedNasMessage.plainNasMessage.toByteArray());
         }
 
@@ -57,24 +69,35 @@ public class NasEncryption {
 
         var alg = securityContext.selectedAlgorithms.ciphering;
         if (alg.equals(ETypeOfCipheringAlgorithm.EA0)) {
+            Logging.funcOut();
             return copy(protectedNasMessage.plainNasMessage.toByteArray());
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
+            Logging.funcOut();
             return NEA1_128.decrypt(count, bearer, direction, message, key).toByteArray();
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA2_128)) {
+            Logging.funcOut();
             return NEA2_128.decrypt(count, bearer, direction, message, key).toByteArray();
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA3_128)) {
+            Logging.funcOut();
             return NEA3_128.decrypt(count, bearer, direction, message, key).toByteArray();
         }
 
+        Logging.funcOut();
         throw new RuntimeException("invalid ciphering alg");
     }
 
     private static Octet4 computeMac(byte[] data, NasSecurityContext securityContext, boolean isUplink) {
+        Logging.funcIn("Computing Mac");
+
         var alg = securityContext.selectedAlgorithms.integrity;
+
+        Logging.debug(Tag.VALUE, "alg: %s", alg);
+
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
+            Logging.funcOut();
             return new Octet4(0);
         }
 
@@ -84,16 +107,26 @@ public class NasEncryption {
         BitString message = BitString.from(data);
         OctetString key = securityContext.keys.kNasInt;
 
+        Logging.debug(Tag.VALUE, "count: %s", count);
+        Logging.debug(Tag.VALUE, "bearer: %s", bearer);
+        Logging.debug(Tag.VALUE, "direction: %s", direction);
+        Logging.debug(Tag.VALUE, "message: %s", message.toHexString(false));
+        Logging.debug(Tag.VALUE, "key: %s", key);
+
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA1_128)) {
+            Logging.funcOut();
             return NIA1_128.computeMac(count, bearer, direction, message, key);
         }
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA2_128)) {
+            Logging.funcOut();
             return NIA2_128.computeMac(count, bearer, direction, message, key);
         }
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA3_128)) {
+            Logging.funcOut();
             return NIA3_128.computeMac(count, bearer, direction, message, key);
         }
 
+        Logging.funcOut();
         throw new RuntimeException("invalid integrity alg");
     }
 
