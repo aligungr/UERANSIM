@@ -3,6 +3,8 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class NasSecurity {
 
@@ -29,8 +31,8 @@ public class NasSecurity {
 
         var decrypted = NasEncryption.decrypt(securedMmMessage, ctx.nasSecurityContext, false);
         if (decrypted == null) {
-            // todo:
-            throw new RuntimeException("mac mismatch in NAS encryption");
+            Logging.error(Tag.NAS_SECURITY, "MAC mismatch in NAS encryption. Ignoring received NAS Message.");
+            return null;
         } else {
             return decrypted;
         }
