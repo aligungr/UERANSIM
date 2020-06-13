@@ -87,6 +87,8 @@ public class Messaging {
             UeAuthentication.handleAuthenticationRequest(ctx, (AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {
             UeAuthentication.handleAuthenticationResult(ctx, (AuthenticationResult) message);
+        } else if (message instanceof AuthenticationReject) {
+            UeAuthentication.handleAuthenticationReject(ctx, (AuthenticationReject) message);
         } else if (message instanceof RegistrationReject) {
             UeRegistration.handleRegistrationReject(ctx, (RegistrationReject) message);
         } else if (message instanceof IdentityRequest) {

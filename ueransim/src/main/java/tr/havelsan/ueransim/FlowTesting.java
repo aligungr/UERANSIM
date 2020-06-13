@@ -98,10 +98,10 @@ public class FlowTesting {
 
             Console.println(Color.BLUE, "Select a flow:");
             Console.print(Color.BLUE, "0) ");
-            Console.println("Close connection");
+            Console.println(null, "Close connection");
             for (int i = 0; i < typeNames.size(); i++) {
                 Console.print(Color.BLUE, i + 1 + ") ");
-                Console.println(typeNames.get(i));
+                Console.println(null, typeNames.get(i));
             }
             Console.print(Color.BLUE, "Selection: ");
 

@@ -13,8 +13,8 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,7 +195,7 @@ public class NgapInternal {
         }
 
         if (protocolIes.size() > 1) {
-            Console.println(Color.RED, "Multiple NAS_PDU found in NGAP_PDU. All NAS_PDUs are being ignored.");
+            Logging.error(Tag.NGAP_INTERNAL, "Multiple NAS_PDU found in NGAP_PDU. All NAS_PDUs are being ignored.");
             return null;
         }
 
