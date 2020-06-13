@@ -16,8 +16,6 @@ import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
@@ -121,8 +119,6 @@ public class UeRegistration {
     }
 
     public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
-        Console.println(Color.RED_BOLD, "RegistrationReject result received.");
-
         var cause = message.mmCause.value;
 
         var regType = ctx.registrationRequest.registrationType.registrationType;

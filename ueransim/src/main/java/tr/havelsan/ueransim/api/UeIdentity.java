@@ -17,12 +17,14 @@ import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class UeIdentity {
 
     public static void handleIdentityRequest(SimulationContext ctx, IdentityRequest message) {
+        Logging.funcIn("Handling: Identity Request");
+
         IdentityResponse response = new IdentityResponse();
 
         if (message.identityType.value.equals(EIdentityType.IMEI)) {
@@ -30,11 +32,13 @@ public class UeIdentity {
         } else if (message.identityType.value.equals(EIdentityType.SUCI)) {
             response.mobileIdentity = generateSuciFromSupi(ctx.ueData.supi);
         } else {
-            Console.println(Color.YELLOW, "Identity request for %s is not implemented yet",
+            Logging.error(Tag.NOT_IMPL_YET, "Identity request for %s is not implemented yet",
                     message.identityType.value.name());
             return;
         }
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+
+        Logging.funcOut();
     }
 
     public static IESuciMobileIdentity generateSuciFromSupi(Supi supi) {

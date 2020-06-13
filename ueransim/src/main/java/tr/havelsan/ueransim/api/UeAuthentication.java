@@ -19,8 +19,8 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -31,7 +31,7 @@ import java.util.concurrent.Executors;
 public class UeAuthentication {
 
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
-    private static final boolean USE_SQN_HACK = false; // todo
+    private static final boolean USE_SQN_HACK = true; // todo
 
     public static void handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
@@ -42,6 +42,8 @@ public class UeAuthentication {
     }
 
     private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
+        Logging.funcIn("Handling: EAP AKA' Authentication Request");
+
         OctetString receivedRand, receivedMac, receivedAutn;
         EapAkaPrime receivedEap;
 
@@ -55,10 +57,21 @@ public class UeAuthentication {
             receivedRand = receivedEap.attributes.getRand();
             receivedMac = receivedEap.attributes.getMac();
             receivedAutn = receivedEap.attributes.getAutn();
+
+            Logging.debug(Tag.VALUE, "received at_rand: %s", receivedRand);
+            Logging.debug(Tag.VALUE, "received at_mac: %s", receivedMac);
+            Logging.debug(Tag.VALUE, "received at_autn: %s", receivedAutn);
         }
 
         // Derive keys
         {
+            if (USE_SQN_HACK) {
+                Logging.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+            }
+            if (IGNORE_CONTROLS_FAILURES) {
+                Logging.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
+            }
+
             if (USE_SQN_HACK) {
                 ctx.ueData.sqn = OctetString.xor(receivedAutn.substring(0, 6),
                         calculateMilenage(ctx.ueData, receivedRand).get(MilenageResult.AK));
@@ -78,29 +91,41 @@ public class UeAuthentication {
 
             mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueData.supi);
             kaut = mk.substring(16, 32);
+
+            Logging.debug(Tag.VALUE, "ueData.sqn: %s", ctx.ueData.sqn);
+            Logging.debug(Tag.VALUE, "ueData.op: %s", ctx.ueData.op);
+            Logging.debug(Tag.VALUE, "ueData.K: %s", ctx.ueData.key);
+            Logging.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueData.supi);
+            Logging.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueData.snn);
+            Logging.debug(Tag.VALUE, "calculated res: %s", res);
+            Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
+            Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
+            Logging.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
+            Logging.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
+            Logging.debug(Tag.VALUE, "calculated ckPrime: %s", ckPrime);
+            Logging.debug(Tag.VALUE, "calculated ikPrime: %s", ikPrime);
+            Logging.debug(Tag.VALUE, "calculated kaut: %s", kaut);
         }
 
         // Control received AUTN
         {
             var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
+            Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
+
             if (autnCheck != AutnValidationRes.OK) {
                 EapAkaPrime eapResponse = null;
 
                 if (autnCheck == AutnValidationRes.MAC_FAILURE) {
                     eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
-
-                    Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for EAP AKA'");
                 } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
                     // todo
                     //eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_SYNCHRONIZATION_FAILURE);
                     //eapResponse.attributes.putAuts(...);
 
-                    Console.println(Color.YELLOW, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
+                    Logging.warning(Tag.NOT_IMPL_YET, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
                 } else {
                     eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                     eapResponse.attributes.putClientErrorCode(0);
-
-                    Console.println(Color.YELLOW, "general failure in AUTN validation for EAP AKA^");
                 }
 
                 if (!IGNORE_CONTROLS_FAILURES && eapResponse != null) {
@@ -115,7 +140,7 @@ public class UeAuthentication {
         {
             var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
-                Console.println(Color.YELLOW, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
+                Logging.error(Tag.RSLT, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
 
                 if (!IGNORE_CONTROLS_FAILURES) {
@@ -132,12 +157,17 @@ public class UeAuthentication {
         // Continue key derivation
         {
             var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(mk);
+            Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
             ctx.nasSecurityContext.keys.rand = receivedRand;
             ctx.nasSecurityContext.keys.res = res;
             ctx.nasSecurityContext.keys.resStar = null;
             ctx.nasSecurityContext.keys.kAusf = kAusf;
+
             UeKeyManagement.deriveKeysSeafAmf(ctx);
+
+            Logging.debug(Tag.VALUE, "kSeaf: %s", ctx.nasSecurityContext.keys.kSeaf);
+            Logging.debug(Tag.VALUE, "kAmf: %s", ctx.nasSecurityContext.keys.kAmf);
         }
 
         // Send Response
@@ -152,14 +182,20 @@ public class UeAuthentication {
             var sendingMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
             akaPrimeResponse.attributes.putMac(sendingMac);
 
+            Logging.debug(Tag.VALUE, "sending eap at_mac: %s", sendingMac);
+
             var response = new AuthenticationResponse();
             response.eapMessage = new IEEapMessage(akaPrimeResponse);
 
             Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
         }
+
+        Logging.funcOut();
     }
 
     private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
+        Logging.funcIn("Handling: 5G AKA Authentication Request");
+
         NasMessage response = null;
 
         var rand = request.authParamRAND.value;
@@ -189,19 +225,19 @@ public class UeAuthentication {
 
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
-            Console.println(Color.YELLOW, "MAC_FAILURE in AUTN validation for 5G AKA");
         } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
             // todo
-            Console.println(Color.YELLOW, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+            Logging.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             // Other errors
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
-            Console.println(Color.YELLOW, "Unspecified error in AUTN validation for 5G AKA");
         }
 
         if (response != null) {
             Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
         }
+
+        Logging.funcOut();
     }
 
     private static AutnValidationRes validateAutn(OctetString ak, OctetString mac, OctetString autn) {
@@ -213,17 +249,20 @@ public class UeAuthentication {
 
         // Check MAC
         if (!receivedMAC.equals(mac)) {
+            Logging.error(Tag.RSLT, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
             return AutnValidationRes.MAC_FAILURE;
         }
 
         // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
         // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
         if (!BitString.from(receivedAMF).getB(0)) {
+            Logging.error(Tag.RSLT, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
             return AutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
         }
 
         // Verify that the received sequence number SQN is in the correct range
         if (!checkSqn(receivedSQN)) {
+            Logging.error(Tag.RSLT, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
             return AutnValidationRes.SYNCHRONISATION_FAILURE;
         }
 
@@ -255,10 +294,8 @@ public class UeAuthentication {
     }
 
     public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {
-        Console.println(Color.BLUE, "Authentication result received");
     }
 
     public static void handleAuthenticationReject(SimulationContext ctx, AuthenticationReject message) {
-        Console.println(Color.BLUE, "Authentication reject received");
     }
 }
