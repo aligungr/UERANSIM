@@ -1,7 +1,1 @@
-requestNssai:
-  - sst:
-      value: 1
-    sd:
-      hex: 09afaf
-
 rrcEstablishmentCause: 4

@@ -32,8 +32,11 @@ public class UeRegistration {
                         EFollowOnRequest.NO_FOR_PENDING,
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
-        registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
+        registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
         registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
+        registrationRequest.updateType = new IE5gsUpdateType(
+                ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
+                IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
         if (ctx.guti != null) {
             registrationRequest.mobileIdentity = ctx.guti;
@@ -67,55 +70,61 @@ public class UeRegistration {
 
     private static IEUeSecurityCapability createSecurityCapabilityIe() {
         var ie = new IEUeSecurityCapability();
-        ie.supported_5G_EA0 = new Bit(1);
-        ie.supported_128_5G_EA1 = new Bit(1);
-        ie.supported_128_5G_EA2 = new Bit(1);
-        ie.supported_128_5G_EA3 = new Bit(1);
-        ie.supported_5G_EA4 = new Bit(0);
-        ie.supported_5G_EA5 = new Bit(0);
-        ie.supported_5G_EA6 = new Bit(0);
-        ie.supported_5G_EA7 = new Bit(0);
-        ie.supported_5G_IA0 = new Bit(1);
-        ie.supported_128_5G_IA1 = new Bit(1);
-        ie.supported_128_5G_IA2 = new Bit(1);
-        ie.supported_128_5G_IA3 = new Bit(1);
-        ie.supported_5G_IA4 = new Bit(0);
-        ie.supported_5G_IA5 = new Bit(0);
-        ie.supported_5G_IA6 = new Bit(0);
-        ie.supported_5G_IA7 = new Bit(0);
-        ie.supported_EEA0 = new Bit(1);
-        ie.supported_128_EEA1 = new Bit(1);
-        ie.supported_128_EEA2 = new Bit(1);
-        ie.supported_128_EEA3 = new Bit(1);
-        ie.supported_EEA4 = new Bit(0);
-        ie.supported_EEA5 = new Bit(0);
-        ie.supported_EEA6 = new Bit(0);
-        ie.supported_EEA7 = new Bit(0);
-        ie.supported_EIA0 = new Bit(1);
-        ie.supported_128_EIA1 = new Bit(1);
-        ie.supported_128_EIA2 = new Bit(1);
-        ie.supported_128_EIA3 = new Bit(1);
-        ie.supported_EIA4 = new Bit(0);
-        ie.supported_EIA5 = new Bit(0);
-        ie.supported_EIA6 = new Bit(0);
-        ie.supported_EIA7 = new Bit(0);
+        ie.supported_5G_EA0 = Bit.ONE;
+        ie.supported_128_5G_EA1 = Bit.ONE;
+        ie.supported_128_5G_EA2 = Bit.ONE;
+        ie.supported_128_5G_EA3 = Bit.ONE;
+        ie.supported_5G_EA4 = Bit.ZERO;
+        ie.supported_5G_EA5 = Bit.ZERO;
+        ie.supported_5G_EA6 = Bit.ZERO;
+        ie.supported_5G_EA7 = Bit.ZERO;
+        ie.supported_5G_IA0 = Bit.ONE;
+        ie.supported_128_5G_IA1 = Bit.ONE;
+        ie.supported_128_5G_IA2 = Bit.ONE;
+        ie.supported_128_5G_IA3 = Bit.ONE;
+        ie.supported_5G_IA4 = Bit.ZERO;
+        ie.supported_5G_IA5 = Bit.ZERO;
+        ie.supported_5G_IA6 = Bit.ZERO;
+        ie.supported_5G_IA7 = Bit.ZERO;
+        ie.supported_EEA0 = Bit.ONE;
+        ie.supported_128_EEA1 = Bit.ONE;
+        ie.supported_128_EEA2 = Bit.ONE;
+        ie.supported_128_EEA3 = Bit.ONE;
+        ie.supported_EEA4 = Bit.ZERO;
+        ie.supported_EEA5 = Bit.ZERO;
+        ie.supported_EEA6 = Bit.ZERO;
+        ie.supported_EEA7 = Bit.ZERO;
+        ie.supported_EIA0 = Bit.ONE;
+        ie.supported_128_EIA1 = Bit.ONE;
+        ie.supported_128_EIA2 = Bit.ONE;
+        ie.supported_128_EIA3 = Bit.ONE;
+        ie.supported_EIA4 = Bit.ZERO;
+        ie.supported_EIA5 = Bit.ZERO;
+        ie.supported_EIA6 = Bit.ZERO;
+        ie.supported_EIA7 = Bit.ZERO;
         return ie;
     }
 
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
-        if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
-            ctx.guti = (IE5gGutiMobileIdentity) message.mobileIdentity;
-
-            ctx.ueTimers.t3519.stop();
-
-            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
-                    new RegistrationComplete()));
-
-        } else {
-
-        }
+        boolean sendCompleteMes = false;
 
         ctx.taiList = message.taiList;
+
+        if (message.t3512Value != null && message.t3512Value.hasValue()) {
+            ctx.ueTimers.t3512.start(message.t3512Value);
+        }
+
+        if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
+            ctx.guti = (IE5gGutiMobileIdentity) message.mobileIdentity;
+            ctx.ueTimers.t3519.stop();
+
+            sendCompleteMes = true;
+        }
+
+        if (sendCompleteMes) {
+            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
+                    new RegistrationComplete()));
+        }
     }
 
     public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
@@ -135,15 +144,27 @@ public class UeRegistration {
                 ctx.taiList = null;
                 ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
-                if (message.t3346value != null && message.t3346value.value.intValue() != 0) {
+                if (message.t3346value != null && message.t3346value.hasValue()) {
                     ctx.ueTimers.t3346.stop();
 
                     if (message.securityHeaderType.isIntegrityProtected()) {

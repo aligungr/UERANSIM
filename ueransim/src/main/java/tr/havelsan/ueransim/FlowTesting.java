@@ -3,10 +3,8 @@ package tr.havelsan.ueransim;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 import tr.havelsan.ueransim.core.*;
-import tr.havelsan.ueransim.mts.ImplicitTypedObject;
-import tr.havelsan.ueransim.mts.MtsConstruct;
-import tr.havelsan.ueransim.mts.MtsDecoder;
-import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.mts.*;
+import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
@@ -160,10 +158,15 @@ public class FlowTesting {
             simContext.ueData = ueData;
         }
 
-        // Parse User Location Information
+        // Parse UE Config
         {
-            simContext.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
-                    ((ImplicitTypedObject) params.get("context.userLocationInformationNr")), true);
+            var ueConfig = new UeConfig();
+            ueConfig.smsOverNasSupported = (boolean) params.get("ue.smsOverNas");
+            ueConfig.requestedNssai = (IESNssai[]) MtsConvert.convert(params.get("ue.requestedNssai"), IESNssai[].class, true).get(0).value;
+            ueConfig.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
+                    ((ImplicitTypedObject) params.get("ue.userLocationInformationNr")), true);
+
+            simContext.ueConfig = ueConfig;
         }
 
         // Parse RAN-UE-NGAP-ID
