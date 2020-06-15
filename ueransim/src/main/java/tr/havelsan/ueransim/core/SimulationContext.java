@@ -24,6 +24,7 @@ public class SimulationContext {
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IE5gsTrackingAreaIdentityList taiList;
     public RegistrationRequest registrationRequest;
+    public boolean smsOverNasSupported;
 
     // NGAP IE related
     public Long amfUeNgapId;

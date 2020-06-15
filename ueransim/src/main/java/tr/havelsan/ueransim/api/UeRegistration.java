@@ -34,6 +34,9 @@ public class UeRegistration {
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
         registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
+        registrationRequest.updateType = new IE5gsUpdateType(
+                ctx.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
+                IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
         if (ctx.guti != null) {
             registrationRequest.mobileIdentity = ctx.guti;

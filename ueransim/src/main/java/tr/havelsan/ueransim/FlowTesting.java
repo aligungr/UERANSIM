@@ -160,6 +160,11 @@ public class FlowTesting {
             simContext.ueData = ueData;
         }
 
+        // Parse Other UE Related Configs
+        {
+            simContext.smsOverNasSupported = (boolean) params.get("ue.smsOverNas");
+        }
+
         // Parse User Location Information
         {
             simContext.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
