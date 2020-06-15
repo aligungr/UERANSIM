@@ -106,19 +106,25 @@ public class UeRegistration {
     }
 
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
-        if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
-            ctx.guti = (IE5gGutiMobileIdentity) message.mobileIdentity;
-
-            ctx.ueTimers.t3519.stop();
-
-            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
-                    new RegistrationComplete()));
-
-        } else {
-
-        }
+        boolean sendCompleteMes = false;
 
         ctx.taiList = message.taiList;
+
+        if (message.t3512Value != null && message.t3512Value.hasValue()) {
+            ctx.ueTimers.t3512.start(message.t3512Value);
+        }
+
+        if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
+            ctx.guti = (IE5gGutiMobileIdentity) message.mobileIdentity;
+            ctx.ueTimers.t3519.stop();
+
+            sendCompleteMes = true;
+        }
+
+        if (sendCompleteMes) {
+            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
+                    new RegistrationComplete()));
+        }
     }
 
     public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
@@ -138,13 +144,25 @@ public class UeRegistration {
                 ctx.taiList = null;
                 ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
-                // todo
+                ctx.guti = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.taiList = null;
+                ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
                 if (message.t3346value != null && message.t3346value.value.intValue() != 0) {
                     ctx.ueTimers.t3346.stop();

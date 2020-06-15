@@ -37,6 +37,10 @@ public class IEGprsTimer3 extends InformationElement4 {
         stream.writeOctet(octet);
     }
 
+    public boolean hasValue() {
+        return !unit.equals(EGprsTimerValueUnit3.DEACTIVATED) && timerValue.intValue() != 0;
+    }
+
     public static class EGprsTimerValueUnit3 extends ProtocolEnum {
         public static final EGprsTimerValueUnit3 MULTIPLES_OF_10MIN
                 = new EGprsTimerValueUnit3(0b000, "value is incremented in multiples of 10 minutes");
