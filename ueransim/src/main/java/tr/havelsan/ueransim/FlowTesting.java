@@ -163,13 +163,10 @@ public class FlowTesting {
             var ueConfig = new UeConfig();
             ueConfig.smsOverNasSupported = (boolean) params.get("ue.smsOverNas");
             ueConfig.requestedNssai = (IESNssai[]) MtsConvert.convert(params.get("ue.requestedNssai"), IESNssai[].class, true).get(0).value;
-            simContext.ueConfig = ueConfig;
-        }
+            ueConfig.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
+                    ((ImplicitTypedObject) params.get("ue.userLocationInformationNr")), true);
 
-        // Parse User Location Information
-        {
-            simContext.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
-                    ((ImplicitTypedObject) params.get("context.userLocationInformationNr")), true);
+            simContext.ueConfig = ueConfig;
         }
 
         // Parse RAN-UE-NGAP-ID

@@ -21,9 +21,7 @@ ue.requestedNssai:
       value: 1
     sd:
       hex: 09afaf
-
-context.ranUeNgapId: 1000
-context.userLocationInformationNr:
+ue.userLocationInformationNr:
   nrCgi:
     plmn:
       mcc: 1
@@ -36,3 +34,5 @@ context.userLocationInformationNr:
     tac: '000075'
   timeStamp:
     hex: 5b5fa680
+
+context.ranUeNgapId: 1000
