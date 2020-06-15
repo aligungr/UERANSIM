@@ -15,6 +15,10 @@ public class IEGprsTimer2 extends InformationElement4 {
         this.value = value;
     }
 
+    public boolean hasValue() {
+        return value.intValue() != 0;
+    }
+
     @Override
     protected IEGprsTimer2 decodeIE4(OctetInputStream stream, int length) {
         var res = new IEGprsTimer2();

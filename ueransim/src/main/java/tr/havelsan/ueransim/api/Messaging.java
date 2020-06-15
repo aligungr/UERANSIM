@@ -63,7 +63,7 @@ public class Messaging {
         // Adding user location information
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addUserLocationInformationNR(ctx.userLocationInformationNr, NgapCriticality.IGNORE);
+            sendingMessage.ngapBuilder.addUserLocationInformationNR(ctx.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
         }
 
         return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);

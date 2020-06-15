@@ -6,7 +6,6 @@ import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentityList;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
-import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 
 public class SimulationContext {
@@ -18,6 +17,7 @@ public class SimulationContext {
 
     // UE related
     public UeData ueData;
+    public UeConfig ueConfig;
     public IE5gGutiMobileIdentity guti;
     public NasSecurityContext nasSecurityContext;
     public UeTimers ueTimers;
@@ -28,7 +28,6 @@ public class SimulationContext {
     // NGAP IE related
     public Long amfUeNgapId;
     public long ranUeNgapId;
-    public UserLocationInformationNr userLocationInformationNr;
 
     // Message callback
     private IMessageListener messageListener;
