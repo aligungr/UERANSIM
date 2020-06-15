@@ -164,7 +164,7 @@ public class UeRegistration {
                 ctx.taiList = null;
                 ctx.nasSecurityContext = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
-                if (message.t3346value != null && message.t3346value.value.intValue() != 0) {
+                if (message.t3346value != null && message.t3346value.hasValue()) {
                     ctx.ueTimers.t3346.stop();
 
                     if (message.securityHeaderType.isIntegrityProtected()) {
