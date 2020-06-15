@@ -16,6 +16,11 @@ input.NgResetFlow: flows/ngreset.yaml
 ueData: '@ueData_i2i.yaml'
 
 ue.smsOverNas: true
+ue.requestedNssai:
+  - sst:
+      value: 1
+    sd:
+      hex: 09afaf
 
 context.ranUeNgapId: 1000
 context.userLocationInformationNr:

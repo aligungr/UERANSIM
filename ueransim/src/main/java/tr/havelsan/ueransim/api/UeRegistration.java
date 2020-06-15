@@ -32,7 +32,7 @@ public class UeRegistration {
                         EFollowOnRequest.NO_FOR_PENDING,
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
-        registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
+        registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
         registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
