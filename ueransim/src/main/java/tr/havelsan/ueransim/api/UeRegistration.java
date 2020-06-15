@@ -35,7 +35,7 @@ public class UeRegistration {
         registrationRequest.requestedNSSAI = new IENssai(config.requestNssai);
         registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
-                ctx.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
+                ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
         if (ctx.guti != null) {

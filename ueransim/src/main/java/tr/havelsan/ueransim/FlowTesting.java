@@ -160,9 +160,12 @@ public class FlowTesting {
             simContext.ueData = ueData;
         }
 
-        // Parse Other UE Related Configs
+        // Parse UE Config
         {
-            simContext.smsOverNasSupported = (boolean) params.get("ue.smsOverNas");
+            var ueConfig = new UeConfig();
+            ueConfig.smsOverNasSupported = (boolean) params.get("ue.smsOverNas");
+
+            simContext.ueConfig = ueConfig;
         }
 
         // Parse User Location Information

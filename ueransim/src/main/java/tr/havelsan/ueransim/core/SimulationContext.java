@@ -18,13 +18,13 @@ public class SimulationContext {
 
     // UE related
     public UeData ueData;
+    public UeConfig ueConfig;
     public IE5gGutiMobileIdentity guti;
     public NasSecurityContext nasSecurityContext;
     public UeTimers ueTimers;
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IE5gsTrackingAreaIdentityList taiList;
     public RegistrationRequest registrationRequest;
-    public boolean smsOverNasSupported;
 
     // NGAP IE related
     public Long amfUeNgapId;
