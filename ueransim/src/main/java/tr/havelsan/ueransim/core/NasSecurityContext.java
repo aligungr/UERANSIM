@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.core;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
+import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
 
@@ -18,9 +19,9 @@ public class NasSecurityContext {
     public UeKeys keys;
     public SelectedAlgorithms selectedAlgorithms;
 
-    public NasSecurityContext() {
+    public NasSecurityContext(ETypeOfSecurityContext tsc, Bit3 ngKsi) {
         this.isNew = false;
-        this.ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
+        this.ngKsi = new IENasKeySetIdentifier(tsc, ngKsi);
         this.downlinkCount = new Count();
         this.uplinkCount = new Count();
         this.connectionIdentifier = EConnectionIdentifier.THREE_3GPP_ACCESS;

@@ -19,7 +19,8 @@ public class SimulationContext {
     public UeData ueData;
     public UeConfig ueConfig;
     public IE5gGutiMobileIdentity guti;
-    public NasSecurityContext nasSecurityContext;
+    public NasSecurityContext currentNsc;
+    public NasSecurityContext nonCurrentNsc;
     public UeTimers ueTimers;
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IE5gsTrackingAreaIdentityList taiList;

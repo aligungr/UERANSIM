@@ -4,6 +4,7 @@ import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
@@ -159,15 +160,16 @@ public class UeAuthentication {
             var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(mk);
             Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
-            ctx.nasSecurityContext.keys.rand = receivedRand;
-            ctx.nasSecurityContext.keys.res = res;
-            ctx.nasSecurityContext.keys.resStar = null;
-            ctx.nasSecurityContext.keys.kAusf = kAusf;
+            ctx.nonCurrentNsc = new NasSecurityContext(message.ngKSI.tsc, message.ngKSI.nasKeySetIdentifier);
+            ctx.nonCurrentNsc.keys.rand = receivedRand;
+            ctx.nonCurrentNsc.keys.res = res;
+            ctx.nonCurrentNsc.keys.resStar = null;
+            ctx.nonCurrentNsc.keys.kAusf = kAusf;
 
-            UeKeyManagement.deriveKeysSeafAmf(ctx);
+            UeKeyManagement.deriveKeysSeafAmf(ctx.ueData, ctx.nonCurrentNsc);
 
-            Logging.debug(Tag.VALUE, "kSeaf: %s", ctx.nasSecurityContext.keys.kSeaf);
-            Logging.debug(Tag.VALUE, "kAmf: %s", ctx.nasSecurityContext.keys.kAmf);
+            Logging.debug(Tag.VALUE, "kSeaf: %s", ctx.nonCurrentNsc.keys.kSeaf);
+            Logging.debug(Tag.VALUE, "kAmf: %s", ctx.nonCurrentNsc.keys.kAmf);
         }
 
         // Send Response
@@ -213,15 +215,18 @@ public class UeAuthentication {
             // Derive keys
             var snn = ctx.ueData.snn;
             var sqnXorAk = OctetString.xor(ctx.ueData.sqn, ak);
-            ctx.nasSecurityContext.keys.rand = rand;
-            ctx.nasSecurityContext.keys.res = res;
-            ctx.nasSecurityContext.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
-            ctx.nasSecurityContext.keys.kAusf = UeKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
-            UeKeyManagement.deriveKeysSeafAmf(ctx);
+
+            ctx.nonCurrentNsc = new NasSecurityContext(request.ngKSI.tsc, request.ngKSI.nasKeySetIdentifier);
+            ctx.nonCurrentNsc.keys.rand = rand;
+            ctx.nonCurrentNsc.keys.res = res;
+            ctx.nonCurrentNsc.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
+            ctx.nonCurrentNsc.keys.kAusf = UeKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+
+            UeKeyManagement.deriveKeysSeafAmf(ctx.ueData, ctx.nonCurrentNsc);
 
             // Prepare response
             response = new AuthenticationResponse(
-                    new IEAuthenticationResponseParameter(ctx.nasSecurityContext.keys.resStar), null);
+                    new IEAuthenticationResponseParameter(ctx.nonCurrentNsc.keys.resStar), null);
 
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
