@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit4;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasDecoder {
 
@@ -21,6 +22,10 @@ public class NasDecoder {
 
     public static NasMessage nasPdu(String hex) {
         return nasPdu(Utils.hexStringToByteArray(hex));
+    }
+
+    public static NasMessage nasPdu(OctetString data) {
+        return nasPdu(data.toByteArray());
     }
 
     public static NasMessage nasPdu(OctetInputStream stream) {
