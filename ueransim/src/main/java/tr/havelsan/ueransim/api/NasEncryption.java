@@ -14,6 +14,7 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.Bit5;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -26,7 +27,7 @@ public class NasEncryption {
     public static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext, boolean isUplink) {
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = getSecurityHeaderType(securityContext);
-        secured.messageAuthenticationCode = computeMac(plainNasMessage, securityContext, isUplink);
+        secured.messageAuthenticationCode = computeMac(securityContext.getCount(isUplink).sqn, new OctetString(plainNasMessage), securityContext, isUplink);
         secured.sequenceNumber = securityContext.getCount(isUplink).sqn;
         secured.plainNasMessage = new OctetString(encryptData(plainNasMessage, securityContext, isUplink));
         return secured;
@@ -35,7 +36,7 @@ public class NasEncryption {
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
         Logging.funcIn("NasEncryption.decrypt");
 
-        var mac = computeMac(protectedNasMessage.plainNasMessage.toByteArray(), securityContext, isUplink);
+        var mac = computeMac(protectedNasMessage.sequenceNumber, protectedNasMessage.plainNasMessage, securityContext, isUplink);
         Logging.debug(Tag.VALUE, "computed mac: %s", mac);
         Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
@@ -44,6 +45,9 @@ public class NasEncryption {
                 return null;
             }
         }
+
+        securityContext.getCount(isUplink).sqn = protectedNasMessage.sequenceNumber;
+
         byte[] decrypted = decryptData(protectedNasMessage, securityContext, isUplink);
 
         Logging.funcOut();
@@ -89,8 +93,10 @@ public class NasEncryption {
         throw new RuntimeException("invalid ciphering alg");
     }
 
-    private static Octet4 computeMac(byte[] data, NasSecurityContext securityContext, boolean isUplink) {
+    private static Octet4 computeMac(Octet sqn, OctetString plainMessage, NasSecurityContext securityContext, boolean isUplink) {
         Logging.funcIn("Computing Mac");
+
+        var data = OctetString.concat(new OctetString(sqn), plainMessage);
 
         var alg = securityContext.selectedAlgorithms.integrity;
 
