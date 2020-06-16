@@ -22,7 +22,7 @@ public class NasSecurityContext {
     public SelectedAlgorithms selectedAlgorithms;
 
     public NasSecurityContext(ETypeOfSecurityContext tsc, Bit3 ngKsi) {
-        this.isNew = false;
+        this.isNew = true;
         this.ngKsi = new IENasKeySetIdentifier(tsc, ngKsi);
         this.downlinkCount = new Count();
         this.uplinkCount = new Count();
