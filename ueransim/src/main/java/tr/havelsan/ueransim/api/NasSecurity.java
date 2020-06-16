@@ -13,7 +13,7 @@ public class NasSecurity {
             return null;
         }
 
-        if (nsc.keys.kNasEnc == null) {
+        if (nsc == null || nsc.keys.kNasEnc == null) {
             return nasMessage;
         }
 
