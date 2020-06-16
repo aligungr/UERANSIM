@@ -1,6 +1,8 @@
 package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.utils.bits.Bit3;
@@ -25,7 +27,7 @@ public class NasSecurityContext {
         this.downlinkCount = new Count();
         this.uplinkCount = new Count();
         this.connectionIdentifier = EConnectionIdentifier.THREE_3GPP_ACCESS;
-        this.selectedAlgorithms = new SelectedAlgorithms();
+        this.selectedAlgorithms = new SelectedAlgorithms(ETypeOfIntegrityProtectionAlgorithm.IA0, ETypeOfCipheringAlgorithm.EA0);
         this.keys = new UeKeys();
     }
 
@@ -61,6 +63,17 @@ public class NasSecurityContext {
         }
     }
 
+    public NasSecurityContext deepCopy() {
+        var ctx = new NasSecurityContext(this.ngKsi.tsc, this.ngKsi.nasKeySetIdentifier);
+        ctx.isNew = this.isNew;
+        ctx.downlinkCount = this.downlinkCount.deepCopy();
+        ctx.uplinkCount = this.uplinkCount.deepCopy();
+        ctx.connectionIdentifier = this.connectionIdentifier;
+        ctx.keys = this.keys.deepCopy();
+        ctx.selectedAlgorithms = this.selectedAlgorithms;
+        return ctx;
+    }
+
     public static class Count {
         public Octet2 overflow;
         public Octet sqn;
@@ -68,6 +81,13 @@ public class NasSecurityContext {
         public Count() {
             this.overflow = new Octet2();
             this.sqn = new Octet();
+        }
+
+        public Count deepCopy() {
+            var res = new Count();
+            res.overflow = this.overflow;
+            res.sqn = this.sqn;
+            return res;
         }
     }
 

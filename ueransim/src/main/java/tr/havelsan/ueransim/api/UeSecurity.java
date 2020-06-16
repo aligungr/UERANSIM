@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.core.SelectedAlgorithms;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvMobileIdentity;
@@ -27,10 +28,10 @@ public class UeSecurity {
         // todo: check other optional fields
 
         // Assign selected algorithms to security context, and derive NAS keys
-        ctx.nonCurrentNsc.selectedAlgorithms.integrity
-                = message.selectedNasSecurityAlgorithms.typeOfIntegrityProtectionAlgorithm;
-        ctx.nonCurrentNsc.selectedAlgorithms.ciphering
-                = message.selectedNasSecurityAlgorithms.typeOfCipheringAlgorithm;
+        ctx.nonCurrentNsc.selectedAlgorithms = new SelectedAlgorithms(
+                message.selectedNasSecurityAlgorithms.typeOfIntegrityProtectionAlgorithm,
+                message.selectedNasSecurityAlgorithms.typeOfCipheringAlgorithm
+        );
         UeKeyManagement.deriveNasKeys(ctx.nonCurrentNsc);
 
         Logging.debug(Tag.VALUE, "kNasEnc: %s", ctx.nonCurrentNsc.keys.kNasEnc);
@@ -39,7 +40,7 @@ public class UeSecurity {
         Logging.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nonCurrentNsc.selectedAlgorithms.ciphering);
 
         // Set non-current NAS Security Context as current one.
-        ctx.currentNsc = ctx.nonCurrentNsc;
+        ctx.currentNsc = ctx.nonCurrentNsc.deepCopy();
 
         // Prepare response
         var response = new SecurityModeComplete();
