@@ -19,7 +19,7 @@ public class NasSecurity {
             return nasMessage;
         }
 
-        return NasEncryption.encrypt(nasMessage, nsc, true);
+        return NasEncryption.encrypt(nasMessage, nsc);
     }
 
     public static NasMessage decryptNasMessage(NasSecurityContext nsc, NasMessage nasMessage) {
@@ -39,7 +39,7 @@ public class NasSecurity {
             }
         }
 
-        var decrypted = NasEncryption.decrypt(securedMmMessage, nsc, false);
+        var decrypted = NasEncryption.decrypt(securedMmMessage, nsc);
         if (decrypted == null) {
             Logging.error(Tag.NAS_SECURITY, "MAC mismatch in NAS encryption. Ignoring received NAS Message.");
             return null;

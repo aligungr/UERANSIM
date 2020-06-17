@@ -8,6 +8,7 @@ import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
+import tr.havelsan.ueransim.utils.octets.Octet4;
 
 public class NasSecurityContext {
     public IENasKeySetIdentifier ngKsi;
@@ -29,10 +30,6 @@ public class NasSecurityContext {
         this.connectionIdentifier = EConnectionIdentifier.THREE_3GPP_ACCESS;
         this.selectedAlgorithms = new SelectedAlgorithms(ETypeOfIntegrityProtectionAlgorithm.IA0, ETypeOfCipheringAlgorithm.EA0);
         this.keys = new UeKeys();
-    }
-
-    public final Count getCount(boolean isUplink) {
-        return isUplink ? uplinkCount : downlinkCount;
     }
 
     public void countOnDecrypt(Octet sequenceNumber, boolean isUplink) {
@@ -88,6 +85,14 @@ public class NasSecurityContext {
             res.overflow = this.overflow;
             res.sqn = this.sqn;
             return res;
+        }
+
+        public Octet4 toOctet4() {
+            long value = 0;
+            value |= this.overflow.longValue();
+            value <<= 8;
+            value |= this.sqn.longValue();
+            return new Octet4(value);
         }
     }
 

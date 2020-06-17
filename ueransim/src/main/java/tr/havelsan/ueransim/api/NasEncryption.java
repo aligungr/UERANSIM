@@ -20,25 +20,28 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasEncryption {
 
-    public static SecuredMmMessage encrypt(NasMessage plainNasMessage, NasSecurityContext securityContext, boolean isUplink) {
-        return encrypt(NasEncoder.nasPdu(plainNasMessage), securityContext, isUplink);
+    public static SecuredMmMessage encrypt(NasMessage plainNasMessage, NasSecurityContext securityContext) {
+        return encrypt(NasEncoder.nasPdu(plainNasMessage), securityContext);
     }
 
-    public static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext, boolean isUplink) {
+    private static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext) {
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = getSecurityHeaderType(securityContext);
-        secured.messageAuthenticationCode = computeMac(securityContext.getCount(isUplink).sqn, new OctetString(plainNasMessage), securityContext, isUplink);
-        secured.sequenceNumber = securityContext.getCount(isUplink).sqn;
-        secured.plainNasMessage = new OctetString(encryptData(plainNasMessage, securityContext, isUplink));
+        secured.messageAuthenticationCode = computeMac(securityContext.uplinkCount.sqn, new OctetString(plainNasMessage), securityContext, true);
+        secured.sequenceNumber = securityContext.uplinkCount.sqn;
+        secured.plainNasMessage = new OctetString(encryptData(plainNasMessage, securityContext));
         return secured;
     }
 
-    public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
+    public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
         Logging.funcIn("NasEncryption.decrypt");
 
-        var mac = computeMac(protectedNasMessage.sequenceNumber, protectedNasMessage.plainNasMessage, securityContext, isUplink);
+        var mac = computeMac(protectedNasMessage.sequenceNumber, protectedNasMessage.plainNasMessage,
+                securityContext, false);
+
         Logging.debug(Tag.VALUE, "computed mac: %s", mac);
         Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
+
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!securityContext.selectedAlgorithms.integrity.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
                 Logging.funcOut();
@@ -46,18 +49,18 @@ public class NasEncryption {
             }
         }
 
-        securityContext.getCount(isUplink).sqn = protectedNasMessage.sequenceNumber;
+        securityContext.downlinkCount.sqn = protectedNasMessage.sequenceNumber;
 
-        byte[] decrypted = decryptData(protectedNasMessage, securityContext, isUplink);
+        byte[] decrypted = decryptData(protectedNasMessage, securityContext);
 
         Logging.funcOut();
         return NasDecoder.nasPdu(decrypted);
     }
 
-    private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext, boolean isUplink) {
+    private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
         Logging.funcIn("NasEncryption.decryptData");
 
-        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber, isUplink);
+        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber, false);
 
         var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
@@ -65,9 +68,9 @@ public class NasEncryption {
             return copy(protectedNasMessage.plainNasMessage.toByteArray());
         }
 
-        Octet4 count = getCount(securityContext, isUplink);
+        Octet4 count = securityContext.downlinkCount.toOctet4();
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
-        Bit direction = new Bit(isUplink ? 0 : 1);
+        Bit direction = Bit.ONE;
         BitString message = BitString.from(protectedNasMessage.plainNasMessage.toByteArray());
         OctetString key = securityContext.keys.kNasEnc;
 
@@ -107,7 +110,7 @@ public class NasEncryption {
             return new Octet4(0);
         }
 
-        Octet4 count = getCount(securityContext, isUplink);
+        Octet4 count = securityContext.uplinkCount.toOctet4();
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
@@ -136,16 +139,6 @@ public class NasEncryption {
         throw new RuntimeException("invalid integrity alg");
     }
 
-    private static Octet4 getCount(NasSecurityContext securityContext, boolean isUplink) {
-        var lc = securityContext.getCount(isUplink);
-
-        long value = 0;
-        value |= lc.overflow.longValue();
-        value <<= 8;
-        value |= lc.sqn.longValue();
-        return new Octet4(value);
-    }
-
     private static ESecurityHeaderType getSecurityHeaderType(NasSecurityContext securityContext) {
         var encKey = securityContext.keys.kNasEnc;
         var intKey = securityContext.keys.kNasInt;
@@ -165,15 +158,15 @@ public class NasEncryption {
                 ESecurityHeaderType.INTEGRITY_PROTECTED;
     }
 
-    private static byte[] encryptData(byte[] data, NasSecurityContext securityContext, boolean isUplink) {
+    private static byte[] encryptData(byte[] data, NasSecurityContext securityContext) {
         var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
             return copy(data);
         }
 
-        Octet4 count = getCount(securityContext, isUplink);
+        Octet4 count = securityContext.uplinkCount.toOctet4();
         Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
-        Bit direction = new Bit(isUplink ? 0 : 1);
+        Bit direction = Bit.ZERO;
         BitString message = BitString.from(data);
         OctetString key = securityContext.keys.kNasEnc;
 
@@ -192,7 +185,7 @@ public class NasEncryption {
             result = null;
         }
 
-        securityContext.countOnEncrypt(isUplink);
+        securityContext.countOnEncrypt(true);
 
         if (result == null) {
             throw new RuntimeException("invalid ciphering alg");
