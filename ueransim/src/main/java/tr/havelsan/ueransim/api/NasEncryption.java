@@ -52,7 +52,8 @@ public class NasEncryption {
         return secured;
     }
 
-    private static OctetString encryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, byte[] data, OctetString key) {
+    private static OctetString encryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
+                                           byte[] data, OctetString key) {
         Bit5 bearer = new Bit5(cnId.intValue());
         Bit direction = Bit.ZERO;
         BitString message = BitString.from(data);
@@ -114,7 +115,8 @@ public class NasEncryption {
         return decryptedMsg;
     }
 
-    private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, OctetString key, ESecurityHeaderType sht, byte[] data) {
+    private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
+                                           OctetString key, ESecurityHeaderType sht, byte[] data) {
         Logging.funcIn("NasEncryption.decryptData");
 
         if (!sht.isCiphered()) {
@@ -154,7 +156,8 @@ public class NasEncryption {
     //                                          COMMON
     //======================================================================================================
 
-    private static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId, boolean isUplink, OctetString key, byte[] plainMessage) {
+    private static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
+                                     boolean isUplink, OctetString key, byte[] plainMessage) {
         Logging.funcIn("Computing Mac");
 
         var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));
