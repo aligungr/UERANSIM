@@ -4,7 +4,6 @@ import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
-import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -32,11 +31,11 @@ public class NasSecurity {
 
         SecuredMmMessage securedMmMessage = (SecuredMmMessage) nasMessage;
 
-        // TODO!!
-        if (securedMmMessage.securityHeaderType.equals(ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT)) {
-            var x = NasDecoder.nasPdu(securedMmMessage.plainNasMessage);
-            if (x instanceof SecurityModeCommand) {
-                return x;
+        // TODO: integrity check with new security context
+        if (!securedMmMessage.securityHeaderType.isCiphered()) {
+            var plainMessage = NasDecoder.nasPdu(securedMmMessage.plainNasMessage);
+            if (plainMessage instanceof SecurityModeCommand) {
+                return plainMessage;
             }
         }
 
