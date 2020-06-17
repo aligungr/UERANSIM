@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IENoIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IESuciMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityRequest;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
@@ -29,14 +30,15 @@ public class UeIdentity {
 
         if (message.identityType.value.equals(EIdentityType.SUCI)) {
             response.mobileIdentity = generateSuciFromSupi(ctx.ueData.supi);
+
+
         } else {
             if (message.identityType.value.equals(EIdentityType.IMEI)) {
                 response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
             } else {
-                Logging.error(Tag.NOT_IMPL_YET, "Identity request for %s is not implemented yet",
+                response.mobileIdentity = new IENoIdentity();
+                Logging.warning(Tag.NOT_IMPL_YET, "Requested identity is not available: %s",
                         message.identityType.value.name());
-                Logging.funcOut();
-                return;
             }
         }
 
