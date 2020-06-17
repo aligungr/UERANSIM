@@ -45,14 +45,14 @@ public class NasEncryption {
         secured.securityHeaderType = sht;
         secured.messageAuthenticationCode = mac;
         secured.sequenceNumber = count.sqn;
-        secured.plainNasMessage = new OctetString(encryptedData);
+        secured.plainNasMessage = encryptedData;
 
         securityContext.countOnEncrypt();
 
         return secured;
     }
 
-    private static byte[] encryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, byte[] data, OctetString key) {
+    private static OctetString encryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, byte[] data, OctetString key) {
         Bit5 bearer = new Bit5(cnId.intValue());
         Bit direction = Bit.ZERO;
         BitString message = BitString.from(data);
@@ -60,7 +60,7 @@ public class NasEncryption {
         byte[] result;
 
         if (alg.equals(ETypeOfCipheringAlgorithm.EA0)) {
-            result = copy(data);
+            result = data;
         } else if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
             result = NEA1_128.encrypt(count.toOctet4(), bearer, direction, message, key).toByteArray();
         } else if (alg.equals(ETypeOfCipheringAlgorithm.EA2_128)) {
@@ -74,7 +74,7 @@ public class NasEncryption {
         if (result == null) {
             throw new RuntimeException("invalid ciphering alg");
         } else {
-            return result;
+            return new OctetString(result);
         }
     }
 
@@ -107,7 +107,7 @@ public class NasEncryption {
         securityContext.downlinkCount.sqn = protectedNasMessage.sequenceNumber;
         securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber);
 
-        byte[] decryptedData = decryptData(encAlg, count, cnId, encKey, protectedNasMessage.securityHeaderType,
+        var decryptedData = decryptData(encAlg, count, cnId, encKey, protectedNasMessage.securityHeaderType,
                 protectedNasMessage.plainNasMessage.toByteArray());
         var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
@@ -115,12 +115,12 @@ public class NasEncryption {
         return decryptedMsg;
     }
 
-    private static byte[] decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, OctetString key, ESecurityHeaderType sht, byte[] data) {
+    private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, OctetString key, ESecurityHeaderType sht, byte[] data) {
         Logging.funcIn("NasEncryption.decryptData");
 
         if (!sht.isCiphered()) {
             Logging.funcOut();
-            return copy(data);
+            return new OctetString(data);
         }
 
         Bit5 bearer = new Bit5(cnId.intValue());
@@ -130,7 +130,7 @@ public class NasEncryption {
         byte[] res = null;
 
         if (alg.equals(ETypeOfCipheringAlgorithm.EA0)) {
-            res = copy(data);
+            res = data;
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
             res = NEA1_128.decrypt(count.toOctet4(), bearer, direction, message, key).toByteArray();
@@ -143,11 +143,12 @@ public class NasEncryption {
         }
 
         if (res == null) {
+            Logging.funcOut();
             throw new RuntimeException("invalid ciphering alg");
         }
 
         Logging.funcOut();
-        return res;
+        return new OctetString(res);
     }
 
     //======================================================================================================
@@ -189,16 +190,13 @@ public class NasEncryption {
         }
 
         if (res == null) {
+            Logging.funcOut();
             throw new RuntimeException("invalid integrity alg");
         }
 
         Logging.funcOut();
         return res;
     }
-
-    //======================================================================================================
-    //                                          UTILS
-    //======================================================================================================
 
     private static ESecurityHeaderType getSecurityHeaderType(NasSecurityContext securityContext) {
         var encKey = securityContext.keys.kNasEnc;
@@ -217,11 +215,5 @@ public class NasEncryption {
         }
         return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT :
                 ESecurityHeaderType.INTEGRITY_PROTECTED;
-    }
-
-    private static byte[] copy(byte[] data) {
-        byte[] b = new byte[data.length];
-        System.arraycopy(data, 0, b, 0, data.length);
-        return b;
     }
 }
