@@ -104,7 +104,6 @@ public class NasEncryption {
             }
         }
 
-        securityContext.downlinkCount.sqn = protectedNasMessage.sequenceNumber;
         securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber);
 
         var decryptedData = decryptData(encAlg, count, cnId, encKey, protectedNasMessage.securityHeaderType,
