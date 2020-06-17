@@ -32,14 +32,14 @@ public class NasEncryption {
     private static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext) {
         var sht = getSecurityHeaderType(securityContext);
         var count = securityContext.uplinkCount;
-        var connectionIdentifier = securityContext.connectionIdentifier;
+        var cnId = securityContext.connectionIdentifier;
         var intKey = securityContext.keys.kNasInt;
         var encKey = securityContext.keys.kNasEnc;
         var intAlg = securityContext.selectedAlgorithms.integrity;
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
-        var encryptedData = encryptData(encAlg, count, connectionIdentifier, plainNasMessage, encKey);
-        var mac = computeMac(connectionIdentifier, intKey, intAlg, new OctetString(plainNasMessage), count, true);
+        var encryptedData = encryptData(encAlg, count, cnId, plainNasMessage, encKey);
+        var mac = computeMac(intAlg, count, cnId, true, intKey, plainNasMessage);
 
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = sht;
@@ -52,8 +52,8 @@ public class NasEncryption {
         return secured;
     }
 
-    private static byte[] encryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier connectionIdentifier, byte[] data, OctetString key) {
-        Bit5 bearer = new Bit5(connectionIdentifier.intValue());
+    private static byte[] encryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, byte[] data, OctetString key) {
+        Bit5 bearer = new Bit5(cnId.intValue());
         Bit direction = Bit.ZERO;
         BitString message = BitString.from(data);
 
@@ -85,8 +85,10 @@ public class NasEncryption {
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
         Logging.funcIn("NasEncryption.decrypt");
 
-        var mac = computeMac(securityContext.connectionIdentifier, securityContext.keys.kNasInt, securityContext.selectedAlgorithms.integrity, protectedNasMessage.plainNasMessage,
-                securityContext.downlinkCount, false);
+        var mac = computeMac(securityContext.selectedAlgorithms.integrity,
+                securityContext.downlinkCount,
+                securityContext.connectionIdentifier, false,
+                securityContext.keys.kNasInt, protectedNasMessage.plainNasMessage.toByteArray());
 
         Logging.debug(Tag.VALUE, "computed mac: %s", mac);
         Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
@@ -149,10 +151,10 @@ public class NasEncryption {
     //                                          COMMON
     //======================================================================================================
 
-    private static Octet4 computeMac(EConnectionIdentifier connectionIdentifier, OctetString key, ETypeOfIntegrityProtectionAlgorithm alg, OctetString plainMessage, NasCount count, boolean isUplink) {
+    private static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId, boolean isUplink, OctetString key, byte[] plainMessage) {
         Logging.funcIn("Computing Mac");
 
-        var data = OctetString.concat(new OctetString(count.sqn), plainMessage);
+        var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));
 
         Logging.debug(Tag.VALUE, "alg: %s", alg);
 
@@ -161,7 +163,7 @@ public class NasEncryption {
             return new Octet4(0);
         }
 
-        Bit5 bearer = new Bit5(connectionIdentifier.intValue());
+        Bit5 bearer = new Bit5(cnId.intValue());
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
 
