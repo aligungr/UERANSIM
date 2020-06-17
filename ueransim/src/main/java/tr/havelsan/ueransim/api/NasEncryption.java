@@ -60,7 +60,7 @@ public class NasEncryption {
     private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
         Logging.funcIn("NasEncryption.decryptData");
 
-        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber, false);
+        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber);
 
         var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
@@ -185,7 +185,7 @@ public class NasEncryption {
             result = null;
         }
 
-        securityContext.countOnEncrypt(true);
+        securityContext.countOnEncrypt();
 
         if (result == null) {
             throw new RuntimeException("invalid ciphering alg");
