@@ -2,7 +2,6 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentityList;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
@@ -18,7 +17,6 @@ public class SimulationContext {
     // UE related
     public UeData ueData;
     public UeConfig ueConfig;
-    public IE5gGutiMobileIdentity guti;
     public NasSecurityContext currentNsc;
     public NasSecurityContext nonCurrentNsc;
     public UeTimers ueTimers;

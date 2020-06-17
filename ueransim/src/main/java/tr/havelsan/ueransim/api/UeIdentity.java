@@ -29,9 +29,7 @@ public class UeIdentity {
         IdentityResponse response = new IdentityResponse();
 
         if (message.identityType.value.equals(EIdentityType.SUCI)) {
-            response.mobileIdentity = generateSuciFromSupi(ctx.ueData.supi);
-
-
+            response.mobileIdentity = getOrGenerateSuci(ctx);
         } else {
             if (message.identityType.value.equals(EIdentityType.IMEI)) {
                 response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
@@ -46,7 +44,25 @@ public class UeIdentity {
         Logging.funcOut();
     }
 
-    public static IESuciMobileIdentity generateSuciFromSupi(Supi supi) {
+    public static IESuciMobileIdentity getOrGenerateSuci(SimulationContext ctx) {
+        Logging.funcIn("Get or Generate SUCI");
+        if (ctx.ueTimers.t3519.isRunning()) {
+            Logging.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
+            Logging.funcOut();
+            return ctx.ueData.storedSuci;
+        }
+
+        ctx.ueData.storedSuci = generateSuci(ctx.ueData.supi);
+        Logging.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
+
+        ctx.ueTimers.t3519.start();
+
+        Logging.funcOut();
+        return ctx.ueData.storedSuci;
+    }
+
+    // TODO:
+    private static IESuciMobileIdentity generateSuci(Supi supi) {
         if (supi == null) {
             return null;
         }
@@ -56,7 +72,6 @@ public class UeIdentity {
             String mnc = imsi.substring(3, Constants.ALWAYS_LONG_MNC ? 6 : 5);
             String msin = imsi.substring(mcc.length() + mnc.length());
 
-            // TODO: currently only null scheme
             IEImsiMobileIdentity res = new IEImsiMobileIdentity();
             res.mcc = EMccValue.fromValue(Integer.parseInt(mcc));
             res.mnc = EMncValue.fromValue(Integer.parseInt(mnc));
@@ -66,7 +81,6 @@ public class UeIdentity {
             res.schemeOutput = msin;
             return res;
         } else {
-            // TODO: Other types not implemented yet
             throw new NotImplementedException("this supi format not implemented yet");
         }
     }
