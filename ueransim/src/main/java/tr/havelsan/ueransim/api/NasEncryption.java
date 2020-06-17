@@ -85,16 +85,20 @@ public class NasEncryption {
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
         Logging.funcIn("NasEncryption.decrypt");
 
-        var mac = computeMac(securityContext.selectedAlgorithms.integrity,
-                securityContext.downlinkCount,
-                securityContext.connectionIdentifier, false,
-                securityContext.keys.kNasInt, protectedNasMessage.plainNasMessage.toByteArray());
+        var count = securityContext.downlinkCount;
+        var cnId = securityContext.connectionIdentifier;
+        var intKey = securityContext.keys.kNasInt;
+        var encKey = securityContext.keys.kNasEnc;
+        var intAlg = securityContext.selectedAlgorithms.integrity;
+        var encAlg = securityContext.selectedAlgorithms.ciphering;
+
+        var mac = computeMac(intAlg, count, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray());
 
         Logging.debug(Tag.VALUE, "computed mac: %s", mac);
         Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
 
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
-            if (!securityContext.selectedAlgorithms.integrity.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
+            if (!intAlg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
                 Logging.funcOut();
                 return null;
             }
@@ -103,9 +107,10 @@ public class NasEncryption {
         securityContext.downlinkCount.sqn = protectedNasMessage.sequenceNumber;
 
         byte[] decrypted = decryptData(protectedNasMessage, securityContext);
+        var decryptedMsg = NasDecoder.nasPdu(decrypted);
 
         Logging.funcOut();
-        return NasDecoder.nasPdu(decrypted);
+        return decryptedMsg;
     }
 
     private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
