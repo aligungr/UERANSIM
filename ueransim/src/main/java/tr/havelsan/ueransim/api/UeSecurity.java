@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.core.SelectedAlgorithms;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvMobileIdentity;
@@ -27,16 +28,19 @@ public class UeSecurity {
         // todo: check other optional fields
 
         // Assign selected algorithms to security context, and derive NAS keys
-        ctx.nasSecurityContext.selectedAlgorithms.integrity
-                = message.selectedNasSecurityAlgorithms.typeOfIntegrityProtectionAlgorithm;
-        ctx.nasSecurityContext.selectedAlgorithms.ciphering
-                = message.selectedNasSecurityAlgorithms.typeOfCipheringAlgorithm;
-        UeKeyManagement.deriveNasKeys(ctx.nasSecurityContext);
+        ctx.nonCurrentNsc.selectedAlgorithms = new SelectedAlgorithms(
+                message.selectedNasSecurityAlgorithms.typeOfIntegrityProtectionAlgorithm,
+                message.selectedNasSecurityAlgorithms.typeOfCipheringAlgorithm
+        );
+        UeKeyManagement.deriveNasKeys(ctx.nonCurrentNsc);
 
-        Logging.debug(Tag.VALUE, "kNasEnc: %s", ctx.nasSecurityContext.keys.kNasEnc);
-        Logging.debug(Tag.VALUE, "kNasInt: %s", ctx.nasSecurityContext.keys.kNasInt);
-        Logging.debug(Tag.VALUE, "selectedIntAlg: %s", ctx.nasSecurityContext.selectedAlgorithms.integrity);
-        Logging.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nasSecurityContext.selectedAlgorithms.ciphering);
+        Logging.debug(Tag.VALUE, "kNasEnc: %s", ctx.nonCurrentNsc.keys.kNasEnc);
+        Logging.debug(Tag.VALUE, "kNasInt: %s", ctx.nonCurrentNsc.keys.kNasInt);
+        Logging.debug(Tag.VALUE, "selectedIntAlg: %s", ctx.nonCurrentNsc.selectedAlgorithms.integrity);
+        Logging.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nonCurrentNsc.selectedAlgorithms.ciphering);
+
+        // Set non-current NAS Security Context as current one.
+        ctx.currentNsc = ctx.nonCurrentNsc.deepCopy();
 
         // Prepare response
         var response = new SecurityModeComplete();

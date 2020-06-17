@@ -4,11 +4,11 @@ import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 
 public class SelectedAlgorithms {
-    public ETypeOfIntegrityProtectionAlgorithm integrity;
-    public ETypeOfCipheringAlgorithm ciphering;
+    public final ETypeOfIntegrityProtectionAlgorithm integrity;
+    public final ETypeOfCipheringAlgorithm ciphering;
 
-    public SelectedAlgorithms() {
-        integrity = ETypeOfIntegrityProtectionAlgorithm.IA0;
-        ciphering = ETypeOfCipheringAlgorithm.EA0;
+    public SelectedAlgorithms(ETypeOfIntegrityProtectionAlgorithm integrity, ETypeOfCipheringAlgorithm ciphering) {
+        this.integrity = integrity;
+        this.ciphering = ciphering;
     }
 }

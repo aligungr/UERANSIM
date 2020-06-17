@@ -4,6 +4,7 @@ public enum Tag {
     CONFIG,
     VALUE,
     RSLT,
+    PROC,
     NGAP_INTERNAL,
     MESSAGING,
     FLOWS,
