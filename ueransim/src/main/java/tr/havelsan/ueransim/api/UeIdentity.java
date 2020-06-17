@@ -27,17 +27,20 @@ public class UeIdentity {
 
         IdentityResponse response = new IdentityResponse();
 
-        if (message.identityType.value.equals(EIdentityType.IMEI)) {
-            response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
-        } else if (message.identityType.value.equals(EIdentityType.SUCI)) {
+        if (message.identityType.value.equals(EIdentityType.SUCI)) {
             response.mobileIdentity = generateSuciFromSupi(ctx.ueData.supi);
         } else {
-            Logging.error(Tag.NOT_IMPL_YET, "Identity request for %s is not implemented yet",
-                    message.identityType.value.name());
-            return;
+            if (message.identityType.value.equals(EIdentityType.IMEI)) {
+                response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
+            } else {
+                Logging.error(Tag.NOT_IMPL_YET, "Identity request for %s is not implemented yet",
+                        message.identityType.value.name());
+                Logging.funcOut();
+                return;
+            }
         }
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
 
+        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
         Logging.funcOut();
     }
 
