@@ -105,51 +105,49 @@ public class NasEncryption {
         }
 
         securityContext.downlinkCount.sqn = protectedNasMessage.sequenceNumber;
+        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber);
 
-        byte[] decrypted = decryptData(protectedNasMessage, securityContext);
-        var decryptedMsg = NasDecoder.nasPdu(decrypted);
+        byte[] decryptedData = decryptData(encAlg, count, cnId, encKey, protectedNasMessage.securityHeaderType,
+                protectedNasMessage.plainNasMessage.toByteArray());
+        var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
         Logging.funcOut();
         return decryptedMsg;
     }
 
-    private static byte[] decryptData(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
+    private static byte[] decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId, OctetString key, ESecurityHeaderType sht, byte[] data) {
         Logging.funcIn("NasEncryption.decryptData");
 
-        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber);
-
-        var sht = getSecurityHeaderType(securityContext);
         if (!sht.isCiphered()) {
             Logging.funcOut();
-            return copy(protectedNasMessage.plainNasMessage.toByteArray());
+            return copy(data);
         }
 
-        Octet4 count = securityContext.downlinkCount.toOctet4();
-        Bit5 bearer = new Bit5(securityContext.connectionIdentifier.intValue());
+        Bit5 bearer = new Bit5(cnId.intValue());
         Bit direction = Bit.ONE;
-        BitString message = BitString.from(protectedNasMessage.plainNasMessage.toByteArray());
-        OctetString key = securityContext.keys.kNasEnc;
+        BitString message = BitString.from(data);
 
-        var alg = securityContext.selectedAlgorithms.ciphering;
+        byte[] res = null;
+
         if (alg.equals(ETypeOfCipheringAlgorithm.EA0)) {
-            Logging.funcOut();
-            return copy(protectedNasMessage.plainNasMessage.toByteArray());
+            res = copy(data);
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA1_128)) {
-            Logging.funcOut();
-            return NEA1_128.decrypt(count, bearer, direction, message, key).toByteArray();
+            res = NEA1_128.decrypt(count.toOctet4(), bearer, direction, message, key).toByteArray();
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA2_128)) {
-            Logging.funcOut();
-            return NEA2_128.decrypt(count, bearer, direction, message, key).toByteArray();
+            res = NEA2_128.decrypt(count.toOctet4(), bearer, direction, message, key).toByteArray();
         }
         if (alg.equals(ETypeOfCipheringAlgorithm.EA3_128)) {
-            Logging.funcOut();
-            return NEA3_128.decrypt(count, bearer, direction, message, key).toByteArray();
+            res = NEA3_128.decrypt(count.toOctet4(), bearer, direction, message, key).toByteArray();
+        }
+
+        if (res == null) {
+            throw new RuntimeException("invalid ciphering alg");
         }
 
         Logging.funcOut();
-        throw new RuntimeException("invalid ciphering alg");
+        return res;
     }
 
     //======================================================================================================
@@ -178,21 +176,24 @@ public class NasEncryption {
         Logging.debug(Tag.VALUE, "message: %s", message.toHexString(false));
         Logging.debug(Tag.VALUE, "key: %s", key);
 
+        Octet4 res = null;
+
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA1_128)) {
-            Logging.funcOut();
-            return NIA1_128.computeMac(count.toOctet4(), bearer, direction, message, key);
+            res = NIA1_128.computeMac(count.toOctet4(), bearer, direction, message, key);
         }
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA2_128)) {
-            Logging.funcOut();
-            return NIA2_128.computeMac(count.toOctet4(), bearer, direction, message, key);
+            res = NIA2_128.computeMac(count.toOctet4(), bearer, direction, message, key);
         }
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA3_128)) {
-            Logging.funcOut();
-            return NIA3_128.computeMac(count.toOctet4(), bearer, direction, message, key);
+            res = NIA3_128.computeMac(count.toOctet4(), bearer, direction, message, key);
+        }
+
+        if (res == null) {
+            throw new RuntimeException("invalid integrity alg");
         }
 
         Logging.funcOut();
-        throw new RuntimeException("invalid integrity alg");
+        return res;
     }
 
     //======================================================================================================
