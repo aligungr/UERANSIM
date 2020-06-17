@@ -35,7 +35,7 @@ public class UeIdentity {
                 response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
             } else {
                 response.mobileIdentity = new IENoIdentity();
-                Logging.warning(Tag.PROC, "Requested identity is not available: %s",
+                Logging.error(Tag.PROC, "Requested identity is not available: %s",
                         message.identityType.value.name());
             }
         }
