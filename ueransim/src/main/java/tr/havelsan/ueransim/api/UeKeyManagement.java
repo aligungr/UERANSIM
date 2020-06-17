@@ -1,8 +1,8 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.core.NasSecurityContext;
-import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.Supi;
+import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.crypto.Mac;
 import tr.havelsan.ueransim.crypto.PRF;
@@ -21,10 +21,10 @@ public class UeKeyManagement {
     private static final int N_UP_enc_alg = 0x05;
     private static final int N_UP_int_alg = 0x06;
 
-    public static void deriveKeysSeafAmf(SimulationContext ctx) {
-        var keys = ctx.nasSecurityContext.keys;
-        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ctx.ueData.snn));
-        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ctx.ueData.supi.value), new OctetString("0000"));
+    public static void deriveKeysSeafAmf(UeData ueData, NasSecurityContext nasSecurityContext) {
+        var keys = nasSecurityContext.keys;
+        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ueData.snn));
+        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ueData.supi.value), new OctetString("0000"));
     }
 
     public static void deriveNasKeys(NasSecurityContext securityContext) {

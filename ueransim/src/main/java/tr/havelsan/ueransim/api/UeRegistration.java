@@ -22,8 +22,8 @@ public class UeRegistration {
 
     public static void sendRegistration(SimulationContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
-        if (ctx.nasSecurityContext != null && ctx.nasSecurityContext.ngKsi != null) {
-            ngKsi = ctx.nasSecurityContext.ngKsi;
+        if (ctx.currentNsc != null && ctx.currentNsc.ngKsi != null) {
+            ngKsi = ctx.currentNsc.ngKsi;
         }
 
         var registrationRequest = new RegistrationRequest();
@@ -38,10 +38,10 @@ public class UeRegistration {
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
-        if (ctx.guti != null) {
-            registrationRequest.mobileIdentity = ctx.guti;
+        if (ctx.ueData.storedGuti != null) {
+            registrationRequest.mobileIdentity = ctx.ueData.storedGuti;
         } else {
-            var suci = UeIdentity.generateSuciFromSupi(ctx.ueData.supi);
+            var suci = UeIdentity.getOrGenerateSuci(ctx);
             if (suci != null) {
                 registrationRequest.mobileIdentity = suci;
 
@@ -115,7 +115,7 @@ public class UeRegistration {
         }
 
         if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
-            ctx.guti = (IE5gGutiMobileIdentity) message.mobileIdentity;
+            ctx.ueData.storedGuti = (IE5gGutiMobileIdentity) message.mobileIdentity;
             ctx.ueTimers.t3519.stop();
 
             sendCompleteMes = true;
@@ -134,35 +134,41 @@ public class UeRegistration {
 
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {
             if (cause.equals(EMmCause.ILLEGAL_UE) || cause.equals(EMmCause.ILLEGAL_ME)) {
-                ctx.guti = null;
+                ctx.ueData.storedGuti = null;
                 ctx.lastVisitedRegisteredTai = null;
                 ctx.taiList = null;
-                ctx.nasSecurityContext = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
-                ctx.guti = null;
+                ctx.ueData.storedGuti = null;
                 ctx.lastVisitedRegisteredTai = null;
                 ctx.taiList = null;
-                ctx.nasSecurityContext = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
-                ctx.guti = null;
+                ctx.ueData.storedGuti = null;
                 ctx.lastVisitedRegisteredTai = null;
                 ctx.taiList = null;
-                ctx.nasSecurityContext = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
-                ctx.guti = null;
+                ctx.ueData.storedGuti = null;
                 ctx.lastVisitedRegisteredTai = null;
                 ctx.taiList = null;
-                ctx.nasSecurityContext = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
-                ctx.guti = null;
+                ctx.ueData.storedGuti = null;
                 ctx.lastVisitedRegisteredTai = null;
                 ctx.taiList = null;
-                ctx.nasSecurityContext = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
-                ctx.guti = null;
+                ctx.ueData.storedGuti = null;
                 ctx.lastVisitedRegisteredTai = null;
                 ctx.taiList = null;
-                ctx.nasSecurityContext = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
                 if (message.t3346value != null && message.t3346value.hasValue()) {
                     ctx.ueTimers.t3346.stop();

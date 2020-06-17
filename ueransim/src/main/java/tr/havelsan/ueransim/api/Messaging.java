@@ -22,7 +22,7 @@ public class Messaging {
     public static IncomingMessage handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
         var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
-        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx, nasMessage);
+        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx.currentNsc, nasMessage);
         var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
 
         // check for AMF-UE-NGAP-ID
@@ -39,7 +39,7 @@ public class Messaging {
 
     public static OutgoingMessage handleOutgoingMessage(SimulationContext ctx, SendingMessage sendingMessage) {
         // Adding NAS PDU (if any)
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx, sendingMessage.nasMessage);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, sendingMessage.nasMessage);
         if (securedNas != null) {
             // NOTE: criticality is hardcoded here, it may be changed
             sendingMessage.ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);

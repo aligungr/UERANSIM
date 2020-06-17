@@ -194,11 +194,6 @@ public class FlowTesting {
             simContext.sctpClient = sctpClient;
         }
 
-        // Create NAS Security Context
-        {
-            simContext.nasSecurityContext = new NasSecurityContext();
-        }
-
         return simContext;
     }
 

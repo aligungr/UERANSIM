@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEImsiMobileIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IENoIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IESuciMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityRequest;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
@@ -27,21 +28,41 @@ public class UeIdentity {
 
         IdentityResponse response = new IdentityResponse();
 
-        if (message.identityType.value.equals(EIdentityType.IMEI)) {
-            response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
-        } else if (message.identityType.value.equals(EIdentityType.SUCI)) {
-            response.mobileIdentity = generateSuciFromSupi(ctx.ueData.supi);
+        if (message.identityType.value.equals(EIdentityType.SUCI)) {
+            response.mobileIdentity = getOrGenerateSuci(ctx);
         } else {
-            Logging.error(Tag.NOT_IMPL_YET, "Identity request for %s is not implemented yet",
-                    message.identityType.value.name());
-            return;
+            if (message.identityType.value.equals(EIdentityType.IMEI)) {
+                response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
+            } else {
+                response.mobileIdentity = new IENoIdentity();
+                Logging.error(Tag.PROC, "Requested identity is not available: %s",
+                        message.identityType.value.name());
+            }
         }
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
 
+        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
         Logging.funcOut();
     }
 
-    public static IESuciMobileIdentity generateSuciFromSupi(Supi supi) {
+    public static IESuciMobileIdentity getOrGenerateSuci(SimulationContext ctx) {
+        Logging.funcIn("Get or Generate SUCI");
+        if (ctx.ueTimers.t3519.isRunning()) {
+            Logging.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
+            Logging.funcOut();
+            return ctx.ueData.storedSuci;
+        }
+
+        ctx.ueData.storedSuci = generateSuci(ctx.ueData.supi);
+        Logging.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
+
+        ctx.ueTimers.t3519.start();
+
+        Logging.funcOut();
+        return ctx.ueData.storedSuci;
+    }
+
+    // TODO:
+    private static IESuciMobileIdentity generateSuci(Supi supi) {
         if (supi == null) {
             return null;
         }
@@ -51,7 +72,6 @@ public class UeIdentity {
             String mnc = imsi.substring(3, Constants.ALWAYS_LONG_MNC ? 6 : 5);
             String msin = imsi.substring(mcc.length() + mnc.length());
 
-            // TODO: currently only null scheme
             IEImsiMobileIdentity res = new IEImsiMobileIdentity();
             res.mcc = EMccValue.fromValue(Integer.parseInt(mcc));
             res.mnc = EMncValue.fromValue(Integer.parseInt(mnc));
@@ -61,7 +81,6 @@ public class UeIdentity {
             res.schemeOutput = msin;
             return res;
         } else {
-            // TODO: Other types not implemented yet
             throw new NotImplementedException("this supi format not implemented yet");
         }
     }
