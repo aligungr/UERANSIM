@@ -14,6 +14,7 @@ import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.nas.eap.EapAttributes;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -155,21 +156,19 @@ public class UeAuthentication {
             }
         }
 
-        // Continue key derivation
+        // Create new partial native NAS security context and continue key derivation
         {
             var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(mk);
             Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
-            ctx.nonCurrentNsc = new NasSecurityContext(message.ngKSI.tsc, message.ngKSI.nasKeySetIdentifier);
+            ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+                    message.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsc.keys.rand = receivedRand;
             ctx.nonCurrentNsc.keys.res = res;
             ctx.nonCurrentNsc.keys.resStar = null;
             ctx.nonCurrentNsc.keys.kAusf = kAusf;
 
             UeKeyManagement.deriveKeysSeafAmf(ctx.ueData, ctx.nonCurrentNsc);
-
-            Logging.debug(Tag.VALUE, "kSeaf: %s", ctx.nonCurrentNsc.keys.kSeaf);
-            Logging.debug(Tag.VALUE, "kAmf: %s", ctx.nonCurrentNsc.keys.kAmf);
         }
 
         // Send Response
