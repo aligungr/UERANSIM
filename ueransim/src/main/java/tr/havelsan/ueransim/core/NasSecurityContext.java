@@ -12,7 +12,6 @@ import tr.havelsan.ueransim.utils.octets.Octet2;
 
 public class NasSecurityContext {
     public IENasKeySetIdentifier ngKsi;
-    public boolean isNew;
 
     public NasCount downlinkCount;
     public NasCount uplinkCount;
@@ -23,7 +22,6 @@ public class NasSecurityContext {
     public SelectedAlgorithms selectedAlgorithms;
 
     public NasSecurityContext(ETypeOfSecurityContext tsc, Bit3 ngKsi) {
-        this.isNew = true;
         this.ngKsi = new IENasKeySetIdentifier(tsc, ngKsi);
         this.downlinkCount = new NasCount();
         this.uplinkCount = new NasCount();
@@ -48,7 +46,6 @@ public class NasSecurityContext {
 
     public NasSecurityContext deepCopy() {
         var ctx = new NasSecurityContext(this.ngKsi.tsc, this.ngKsi.nasKeySetIdentifier);
-        ctx.isNew = this.isNew;
         ctx.downlinkCount = this.downlinkCount.deepCopy();
         ctx.uplinkCount = this.uplinkCount.deepCopy();
         ctx.connectionIdentifier = this.connectionIdentifier;
