@@ -212,10 +212,10 @@ public class NasEncryption {
             return ESecurityHeaderType.NOT_PROTECTED;
         }
         if (ciphered) {
-            return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT :
+            return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT :
                     ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED;
         }
-        return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT :
+        return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT :
                 ESecurityHeaderType.INTEGRITY_PROTECTED;
     }
 }
