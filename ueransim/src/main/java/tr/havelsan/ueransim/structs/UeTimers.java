@@ -1,4 +1,6 @@
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.structs;
+
+import tr.havelsan.ueransim.core.NasTimer;
 
 public class UeTimers {
     public final NasTimer t3346; /* MM - ... */

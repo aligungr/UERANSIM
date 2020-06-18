@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;

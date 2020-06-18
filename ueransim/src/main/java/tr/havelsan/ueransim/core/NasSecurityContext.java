@@ -6,6 +6,8 @@ import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 import tr.havelsan.ueransim.structs.NasCount;
+import tr.havelsan.ueransim.structs.SelectedAlgorithms;
+import tr.havelsan.ueransim.structs.UeKeys;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;

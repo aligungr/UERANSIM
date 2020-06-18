@@ -1,13 +1,13 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.core.NasSecurityContext;
-import tr.havelsan.ueransim.core.Supi;
-import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.crypto.Mac;
 import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.structs.Supi;
+import tr.havelsan.ueransim.structs.UeData;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.Octet;
