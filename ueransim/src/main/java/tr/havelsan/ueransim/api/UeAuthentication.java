@@ -46,12 +46,18 @@ public class UeAuthentication {
     private static void handleAuthenticationRequestEap(SimulationContext ctx, AuthenticationRequest message) {
         Logging.funcIn("Handling: EAP AKA' Authentication Request");
 
-        OctetString receivedRand, receivedMac, receivedAutn;
+        OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
         EapAkaPrime receivedEap;
 
-        OctetString milenageAk, milenageMac;
+        Runnable ueRejectionTimers = () -> {
+            ctx.ueTimers.t3520.start();
 
-        OctetString res, mk, kaut;
+            ctx.ueTimers.t3510.stop();
+            ctx.ueTimers.t3517.stop();
+            ctx.ueTimers.t3521.stop();
+        };
+
+        ctx.ueTimers.t3520.stop();
 
         // Read EAP-AKA' request
         {
@@ -109,6 +115,11 @@ public class UeAuthentication {
             Logging.debug(Tag.VALUE, "calculated kaut: %s", kaut);
         }
 
+        // Control received SSN
+        {
+            // todo
+        }
+
         // Control received AUTN
         {
             var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
@@ -131,6 +142,8 @@ public class UeAuthentication {
                 }
 
                 if (!IGNORE_CONTROLS_FAILURES && eapResponse != null) {
+                    ueRejectionTimers.run();
+
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
                     Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
                 }
@@ -146,6 +159,8 @@ public class UeAuthentication {
                         expectedMac, receivedMac);
 
                 if (!IGNORE_CONTROLS_FAILURES) {
+                    ueRejectionTimers.run();
+
                     var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                     eapResponse.attributes.putClientErrorCode(0);
 
