@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
@@ -16,6 +17,8 @@ import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
@@ -129,7 +132,12 @@ public class UeRegistration {
 
     public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
         if (message.eapMessage != null) {
-            UeAuthentication.handleEapMessage(ctx, message.eapMessage.eap);
+            if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
+                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
+                        message.eapMessage.eap.code.name());
+            }
         }
 
         var cause = message.mmCause.value;
