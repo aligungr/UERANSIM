@@ -128,6 +128,10 @@ public class UeRegistration {
     }
 
     public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
+        if (message.eapMessage != null) {
+            UeAuthentication.handleEapMessage(ctx, message.eapMessage.eap);
+        }
+
         var cause = message.mmCause.value;
 
         var regType = ctx.registrationRequest.registrationType.registrationType;

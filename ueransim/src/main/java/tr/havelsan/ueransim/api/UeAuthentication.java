@@ -36,13 +36,13 @@ public class UeAuthentication {
 
     public static void handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
-            handleEapAkaPrime(ctx, message);
+            handleAuthenticationRequestEap(ctx, message);
         } else {
-            handle5gAka(ctx, message);
+            handleAuthenticationRequest5gAka(ctx, message);
         }
     }
 
-    private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
+    private static void handleAuthenticationRequestEap(SimulationContext ctx, AuthenticationRequest message) {
         Logging.funcIn("Handling: EAP AKA' Authentication Request");
 
         OctetString receivedRand, receivedMac, receivedAutn;
@@ -195,7 +195,7 @@ public class UeAuthentication {
         Logging.funcOut();
     }
 
-    private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
+    private static void handleAuthenticationRequest5gAka(SimulationContext ctx, AuthenticationRequest request) {
         Logging.funcIn("Handling: 5G AKA Authentication Request");
 
         NasMessage response = null;
@@ -299,8 +299,24 @@ public class UeAuthentication {
     }
 
     public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {
+        if (message.eapMessage != null) {
+            handleEapMessage(ctx, message.eapMessage.eap);
+        }
+    }
+
+    public static void handleAuthenticationResponse(SimulationContext ctx, AuthenticationResponse message) {
+        if (message.eapMessage != null) {
+            handleEapMessage(ctx, message.eapMessage.eap);
+        }
     }
 
     public static void handleAuthenticationReject(SimulationContext ctx, AuthenticationReject message) {
+        if (message.eapMessage != null) {
+            handleEapMessage(ctx, message.eapMessage.eap);
+        }
+    }
+
+    public static void handleEapMessage(SimulationContext ctx, Eap eap) {
+
     }
 }
