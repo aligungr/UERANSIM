@@ -1,30 +1,30 @@
 package tr.havelsan.ueransim.core;
 
 public class UeTimers {
-    public NasTimer t3346; /* MM - ... */
-    public NasTimer t3396; /* SM - ... */
+    public final NasTimer t3346; /* MM - ... */
+    public final NasTimer t3396; /* SM - ... */
 
-    public NasTimer t3444; /* MM - ... */
-    public NasTimer t3445; /* MM - ... */
+    public final NasTimer t3444; /* MM - ... */
+    public final NasTimer t3445; /* MM - ... */
 
-    public NasTimer t3502; /* MM - ... */
-    public NasTimer t3510; /* MM - Registration Request transmission timer */
-    public NasTimer t3511; /* MM - ... */
-    public NasTimer t3512; /* MM - Periodic registration update timer */
-    public NasTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
-    public NasTimer t3517; /* MM - Service Request transmission timer */
-    public NasTimer t3519; /* MM - Transmission with fresh SUCI timer */
-    public NasTimer t3520; /* MM - ... */
-    public NasTimer t3521; /* MM - De-registration transmission timer for not switch off */
-    public NasTimer t3525; /* MM - ... */
-    public NasTimer t3540; /* MM - ... */
+    public final NasTimer t3502; /* MM - ... */
+    public final NasTimer t3510; /* MM - Registration Request transmission timer */
+    public final NasTimer t3511; /* MM - ... */
+    public final NasTimer t3512; /* MM - Periodic registration update timer */
+    public final NasTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
+    public final NasTimer t3517; /* MM - Service Request transmission timer */
+    public final NasTimer t3519; /* MM - Transmission with fresh SUCI timer */
+    public final NasTimer t3520; /* MM - ... */
+    public final NasTimer t3521; /* MM - De-registration transmission timer for not switch off */
+    public final NasTimer t3525; /* MM - ... */
+    public final NasTimer t3540; /* MM - ... */
 
-    public NasTimer t3580; /* SM - ... */
-    public NasTimer t3581; /* SM - ... */
-    public NasTimer t3582; /* SM - ... */
-    public NasTimer t3583; /* SM - ... */
-    public NasTimer t3584; /* SM - ... */
-    public NasTimer t3585; /* SM - ... */
+    public final NasTimer t3580; /* SM - ... */
+    public final NasTimer t3581; /* SM - ... */
+    public final NasTimer t3582; /* SM - ... */
+    public final NasTimer t3583; /* SM - ... */
+    public final NasTimer t3584; /* SM - ... */
+    public final NasTimer t3585; /* SM - ... */
 
     public UeTimers() {
         this.t3346 = new NasTimer();
