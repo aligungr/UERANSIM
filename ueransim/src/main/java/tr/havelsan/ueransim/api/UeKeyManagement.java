@@ -8,6 +8,8 @@ import tr.havelsan.ueransim.crypto.Mac;
 import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -25,6 +27,9 @@ public class UeKeyManagement {
         var keys = nasSecurityContext.keys;
         keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ueData.snn));
         keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ueData.supi.value), new OctetString("0000"));
+
+        Logging.debug(Tag.VALUE, "kSeaf: %s", nasSecurityContext.keys.kSeaf);
+        Logging.debug(Tag.VALUE, "kAmf: %s", nasSecurityContext.keys.kAmf);
     }
 
     public static void deriveNasKeys(NasSecurityContext securityContext) {

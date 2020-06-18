@@ -9,11 +9,9 @@ import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.UeData;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.eap.ESubType;
-import tr.havelsan.ueransim.nas.eap.Eap;
-import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
-import tr.havelsan.ueransim.nas.eap.EapAttributes;
+import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -36,21 +34,28 @@ public class UeAuthentication {
 
     public static void handleAuthenticationRequest(SimulationContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
-            handleEapAkaPrime(ctx, message);
+            handleAuthenticationRequestEap(ctx, message);
         } else {
-            handle5gAka(ctx, message);
+            handleAuthenticationRequest5gAka(ctx, message);
         }
     }
 
-    private static void handleEapAkaPrime(SimulationContext ctx, AuthenticationRequest message) {
+    private static void handleAuthenticationRequestEap(SimulationContext ctx, AuthenticationRequest message) {
         Logging.funcIn("Handling: EAP AKA' Authentication Request");
 
-        OctetString receivedRand, receivedMac, receivedAutn;
+        OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
         EapAkaPrime receivedEap;
+        int receivedKdf;
 
-        OctetString milenageAk, milenageMac;
+        Runnable ueRejectionTimers = () -> {
+            ctx.ueTimers.t3520.start();
 
-        OctetString res, mk, kaut;
+            ctx.ueTimers.t3510.stop();
+            ctx.ueTimers.t3517.stop();
+            ctx.ueTimers.t3521.stop();
+        };
+
+        ctx.ueTimers.t3520.stop();
 
         // Read EAP-AKA' request
         {
@@ -58,6 +63,7 @@ public class UeAuthentication {
             receivedRand = receivedEap.attributes.getRand();
             receivedMac = receivedEap.attributes.getMac();
             receivedAutn = receivedEap.attributes.getAutn();
+            receivedKdf = receivedEap.attributes.getKdf();
 
             Logging.debug(Tag.VALUE, "received at_rand: %s", receivedRand);
             Logging.debug(Tag.VALUE, "received at_mac: %s", receivedMac);
@@ -108,6 +114,22 @@ public class UeAuthentication {
             Logging.debug(Tag.VALUE, "calculated kaut: %s", kaut);
         }
 
+        // Control received KDF
+        {
+            if (!IGNORE_CONTROLS_FAILURES && receivedKdf != 1) {
+                ueRejectionTimers.run();
+
+                var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
+                var response = new AuthenticationReject(new IEEapMessage(eapResponse));
+                Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+            }
+        }
+
+        // Control received SSN
+        {
+            // todo
+        }
+
         // Control received AUTN
         {
             var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
@@ -130,6 +152,8 @@ public class UeAuthentication {
                 }
 
                 if (!IGNORE_CONTROLS_FAILURES && eapResponse != null) {
+                    ueRejectionTimers.run();
+
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
                     Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
                 }
@@ -145,6 +169,8 @@ public class UeAuthentication {
                         expectedMac, receivedMac);
 
                 if (!IGNORE_CONTROLS_FAILURES) {
+                    ueRejectionTimers.run();
+
                     var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                     eapResponse.attributes.putClientErrorCode(0);
 
@@ -155,21 +181,19 @@ public class UeAuthentication {
             }
         }
 
-        // Continue key derivation
+        // Create new partial native NAS security context and continue key derivation
         {
             var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(mk);
             Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
-            ctx.nonCurrentNsc = new NasSecurityContext(message.ngKSI.tsc, message.ngKSI.nasKeySetIdentifier);
+            ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+                    message.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsc.keys.rand = receivedRand;
             ctx.nonCurrentNsc.keys.res = res;
             ctx.nonCurrentNsc.keys.resStar = null;
             ctx.nonCurrentNsc.keys.kAusf = kAusf;
 
             UeKeyManagement.deriveKeysSeafAmf(ctx.ueData, ctx.nonCurrentNsc);
-
-            Logging.debug(Tag.VALUE, "kSeaf: %s", ctx.nonCurrentNsc.keys.kSeaf);
-            Logging.debug(Tag.VALUE, "kAmf: %s", ctx.nonCurrentNsc.keys.kAmf);
         }
 
         // Send Response
@@ -178,7 +202,7 @@ public class UeAuthentication {
             akaPrimeResponse.attributes = new EapAttributes();
             akaPrimeResponse.attributes.putRes(res);
             akaPrimeResponse.attributes.putMac(new OctetString(new byte[16])); // Dummy mac for now
-            akaPrimeResponse.attributes.putKdf(new OctetString("0001"));
+            akaPrimeResponse.attributes.putKdf(1);
 
             // Calculate and put mac value
             var sendingMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
@@ -195,7 +219,7 @@ public class UeAuthentication {
         Logging.funcOut();
     }
 
-    private static void handle5gAka(SimulationContext ctx, AuthenticationRequest request) {
+    private static void handleAuthenticationRequest5gAka(SimulationContext ctx, AuthenticationRequest request) {
         Logging.funcIn("Handling: 5G AKA Authentication Request");
 
         NasMessage response = null;
@@ -299,8 +323,79 @@ public class UeAuthentication {
     }
 
     public static void handleAuthenticationResult(SimulationContext ctx, AuthenticationResult message) {
+        if (message.eapMessage != null) {
+            if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
+                UeAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
+            } else if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
+                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
+                        message.eapMessage.eap.code.name());
+            }
+        }
+    }
+
+    public static void handleAuthenticationResponse(SimulationContext ctx, AuthenticationResponse message) {
+        if (message.eapMessage != null) {
+            if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
+                UeAuthentication.handleEapResponseMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
+                        message.eapMessage.eap.code.name());
+            }
+        }
     }
 
     public static void handleAuthenticationReject(SimulationContext ctx, AuthenticationReject message) {
+        if (message.eapMessage != null) {
+            if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
+
+                ctx.ueData.storedGuti = null;
+                ctx.taiList = null;
+                ctx.lastVisitedRegisteredTai = null;
+                ctx.currentNsc = null;
+                ctx.nonCurrentNsc = null;
+
+                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
+                        message.eapMessage.eap.code.name());
+            }
+        }
+    }
+
+    public static void handleEapSuccessMessage(SimulationContext ctx, Eap eap) {
+        Logging.funcIn("Handling: EAP-Success contained in received message");
+
+        // do nothing
+
+        Logging.funcOut();
+    }
+
+
+    public static void handleEapFailureMessage(SimulationContext ctx, Eap eap) {
+        Logging.funcIn("Handling: EAP-Failure contained in received message");
+
+        Logging.debug(Tag.PROC, "Deleting non-current NAS security context");
+        ctx.nonCurrentNsc = null;
+
+        Logging.funcOut();
+    }
+
+    public static void handleEapResponseMessage(SimulationContext ctx, Eap eap) {
+        Logging.funcIn("Handling: EAP contained in received message");
+
+        if (eap instanceof EapAkaPrime) {
+            var akaPrime = (EapAkaPrime) eap;
+
+        } else if (eap instanceof EapIdentity) {
+            Logging.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
+        } else if (eap instanceof EapNotification) {
+            Logging.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
+        } else {
+            Logging.warning(Tag.PROC, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
+        }
+
+        Logging.funcOut();
     }
 }
