@@ -234,6 +234,9 @@ public class UeAuthentication {
         var rand = request.authParamRAND.value;
         var autn = request.authParamAUTN.value;
 
+        Logging.debug(Tag.VALUE, "received rand: %s", rand);
+        Logging.debug(Tag.VALUE, "received autn: %s", autn);
+
         if (USE_SQN_HACK) {
             ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
                     calculateMilenage(ctx.ueData, rand).get(MilenageResult.AK));
@@ -247,25 +250,22 @@ public class UeAuthentication {
         var milenageAk = milenage.get(MilenageResult.AK);
         var milenageMac = milenage.get(MilenageResult.MAC_A);
         var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
-
-        Logging.debug(Tag.VALUE, "received rand: %s", rand);
-        Logging.debug(Tag.VALUE, "received autn: %s", autn);
+        var snn = ctx.ueData.snn;
 
         Logging.debug(Tag.VALUE, "calculated res: %s", res);
         Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
         Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
         Logging.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
         Logging.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
-
-        var snn = ctx.ueData.snn;
         Logging.debug(Tag.VALUE, "used snn: %s", snn);
+        Logging.debug(Tag.VALUE, "used sqn: %s", ctx.ueData.sqn);
 
         var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, autn);
         Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
         if (IGNORE_CONTROLS_FAILURES || autnCheck == AutnValidationRes.OK) {
 
-            // Create new partial native NAS security context and continue key derivation
+            // Create new partial native NAS security context and continue with key derivation
             ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
                     request.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsc.keys.rand = rand;
@@ -282,7 +282,6 @@ public class UeAuthentication {
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
         } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
-            // todo
             Logging.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
