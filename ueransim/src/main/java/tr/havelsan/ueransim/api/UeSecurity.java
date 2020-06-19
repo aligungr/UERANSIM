@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
+import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
@@ -39,9 +40,14 @@ public class UeSecurity {
             }
         }
 
-        // todo: check for mandatory ngKSI, current/noncurrent securit context,timers, counts etc
-
-        // todo: check other optional fields
+        // Handle EAP-Success message if any.
+        if (message.eapMessage != null) {
+            if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
+                UeAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
+            }
+        }
 
         // Assign selected algorithms to security context, and derive NAS keys
         ctx.nonCurrentNsc.selectedAlgorithms = new SelectedAlgorithms(
