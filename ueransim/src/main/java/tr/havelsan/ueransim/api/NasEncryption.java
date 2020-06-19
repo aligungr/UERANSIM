@@ -1,12 +1,16 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.core.NasSecurityContext;
+import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.crypto.*;
 import tr.havelsan.ueransim.enums.EConnectionIdentifier;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
+import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
+import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
@@ -26,11 +30,20 @@ public class NasEncryption {
     //======================================================================================================
 
     public static SecuredMmMessage encrypt(NasMessage plainNasMessage, NasSecurityContext securityContext) {
-        return encrypt(NasEncoder.nasPdu(plainNasMessage), securityContext);
+        EMessageType msgType;
+        if (plainNasMessage instanceof PlainMmMessage) {
+            msgType = ((PlainMmMessage) plainNasMessage).messageType;
+        } else if (plainNasMessage instanceof PlainSmMessage) {
+            msgType = ((PlainSmMessage) plainNasMessage).messageType;
+        } else {
+            throw new IncorrectImplementationException();
+        }
+
+        return encrypt(NasEncoder.nasPdu(plainNasMessage), msgType, securityContext);
     }
 
-    private static SecuredMmMessage encrypt(byte[] plainNasMessage, NasSecurityContext securityContext) {
-        var sht = getSecurityHeaderType(securityContext);
+    private static SecuredMmMessage encrypt(byte[] plainNasMessage, EMessageType messageType, NasSecurityContext securityContext) {
+        var sht = makeSecurityHeaderType(securityContext, messageType);
         var count = securityContext.uplinkCount;
         var cnId = securityContext.connectionIdentifier;
         var intKey = securityContext.keys.kNasInt;
@@ -200,22 +213,26 @@ public class NasEncryption {
         return res;
     }
 
-    private static ESecurityHeaderType getSecurityHeaderType(NasSecurityContext securityContext) {
+    private static ESecurityHeaderType makeSecurityHeaderType(NasSecurityContext securityContext, EMessageType messageType) {
         var encKey = securityContext.keys.kNasEnc;
         var intKey = securityContext.keys.kNasInt;
 
         boolean ciphered = encKey != null && encKey.length > 0;
         boolean integrityProtected = intKey != null && intKey.length > 0;
-        boolean isNew = securityContext.isNew;
 
         if (!ciphered && !integrityProtected) {
             return ESecurityHeaderType.NOT_PROTECTED;
         }
-        if (ciphered) {
-            return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED_WITH_SECURITY_CONTEXT :
-                    ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED;
+
+        if (messageType.equals(EMessageType.SECURITY_MODE_COMPLETE)) {
+            return ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT;
         }
-        return isNew ? ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_SECURITY_CONTEXT :
-                ESecurityHeaderType.INTEGRITY_PROTECTED;
+
+        // SecurityModeCommand message is always sent by network, so this should be not the case actually.
+        // if (messageType.equals(EMessageType.SECURITY_MODE_COMMAND)) {
+        //     return ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT;
+        // }
+
+        return ciphered ? ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED : ESecurityHeaderType.INTEGRITY_PROTECTED;
     }
 }

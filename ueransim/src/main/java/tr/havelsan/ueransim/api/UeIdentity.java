@@ -3,7 +3,6 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.core.Supi;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
@@ -18,6 +17,7 @@ import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.structs.Supi;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 

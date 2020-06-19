@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;

@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IESuciMobileIdentity;

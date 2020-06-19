@@ -1,7 +1,6 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
-import tr.havelsan.ueransim.core.SelectedAlgorithms;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvMobileIdentity;
@@ -12,6 +11,7 @@ import tr.havelsan.ueransim.nas.impl.messages.SecurityModeComplete;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.structs.SelectedAlgorithms;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
