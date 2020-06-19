@@ -5,7 +5,6 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit4;
 import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.nas.core.ies.*;
 
 public class NasEncoder {
 
@@ -94,10 +93,10 @@ public class NasEncoder {
      * Encodes BCD (binary coded decimal) value.
      * This method is not battle tested, and may contain errors.
      *
-     * @param stream the relevant stream
-     * @param octetLength maximum octet length when encoding BCD string to octet string,
-     *                    or pass <code>-1</code> to perform minimum number of octets
-     * @param skipFirst true if the first half octet should be skipped.
+     * @param stream           the relevant stream
+     * @param octetLength      maximum octet length when encoding BCD string to octet string,
+     *                         or pass <code>-1</code> to perform minimum number of octets
+     * @param skipFirst        true if the first half octet should be skipped.
      * @param skippedHalfOctet if <code>skipFirst</code>is true, then <code>skippedHalfOctet</code> is set to the skipped half octet.
      *                         if <code>skippedHalfOctet</code> is null, then zero is assumed.
      */
