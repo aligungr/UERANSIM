@@ -4,7 +4,7 @@ import tr.havelsan.ueransim.nas.core.IMessageBuilder;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.nas.impl.ies.*;
-import tr.havelsan.ueransim.nas.impl.ies.*;
+import tr.havelsan.ueransim.utils.octets.Octet4;
 
 public class SecurityModeCommand extends PlainMmMessage {
     public IENasSecurityAlgorithms selectedNasSecurityAlgorithms;
@@ -16,6 +16,8 @@ public class SecurityModeCommand extends PlainMmMessage {
     public IEEapMessage eapMessage;
     public IEAbba abba;
     public IES1UeNetworkCapability replayedS1UeNetworkCapability;
+
+    public Octet4 _macForNewSC;
 
     public SecurityModeCommand() {
         super(EMessageType.SECURITY_MODE_COMMAND);

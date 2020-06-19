@@ -21,6 +21,9 @@ public class UeSecurity {
     public static void handleSecurityModeCommand(SimulationContext ctx, SecurityModeCommand message) {
         Logging.funcIn("Handling: Security Mode Command");
 
+        // todo: check the integriti with new security context
+        var mac = message._macForNewSC;
+
         // todo: check for mandatory replayed ue security cap.
 
         // todo: check for mandatory ngKSI, current/noncurrent securit context,timers, counts etc

@@ -27,16 +27,18 @@ public class NasSecurity {
         if (nasMessage == null) {
             return null;
         }
-        if (!(nasMessage instanceof SecuredMmMessage))
+        if (!(nasMessage instanceof SecuredMmMessage)) {
             return nasMessage;
+        }
 
         SecuredMmMessage securedMmMessage = (SecuredMmMessage) nasMessage;
 
         if (securedMmMessage.securityHeaderType.equals(ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT)) {
-            // TODO: integrity check with new security context
             var plainMessage = NasDecoder.nasPdu(securedMmMessage.plainNasMessage);
             if (plainMessage instanceof SecurityModeCommand) {
-                return plainMessage;
+                var smc = (SecurityModeCommand) plainMessage;
+                smc._macForNewSC = securedMmMessage.messageAuthenticationCode;
+                return smc;
             } else {
                 Logging.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
                 return null;
