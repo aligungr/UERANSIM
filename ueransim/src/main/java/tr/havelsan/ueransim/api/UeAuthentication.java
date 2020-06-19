@@ -224,23 +224,50 @@ public class UeAuthentication {
 
         NasMessage response = null;
 
+        if (USE_SQN_HACK) {
+            Logging.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+        }
+        if (IGNORE_CONTROLS_FAILURES) {
+            Logging.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
+        }
+
         var rand = request.authParamRAND.value;
+        var autn = request.authParamAUTN.value;
+
+        if (USE_SQN_HACK) {
+            ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
+                    calculateMilenage(ctx.ueData, rand).get(MilenageResult.AK));
+        }
+
         var milenage = calculateMilenage(ctx.ueData, rand);
         var res = milenage.get(MilenageResult.RES);
         var ck = milenage.get(MilenageResult.CK);
         var ik = milenage.get(MilenageResult.IK);
         var ckik = OctetString.concat(ck, ik);
-        var ak = milenage.get(MilenageResult.AK);
-        var mac = milenage.get(MilenageResult.MAC_A);
+        var milenageAk = milenage.get(MilenageResult.AK);
+        var milenageMac = milenage.get(MilenageResult.MAC_A);
+        var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
 
-        var autnCheck = UeAuthentication.validateAutn(ak, mac, request.authParamAUTN.value);
-        if (autnCheck == AutnValidationRes.OK) {
+        Logging.debug(Tag.VALUE, "received rand: %s", rand);
+        Logging.debug(Tag.VALUE, "received autn: %s", autn);
 
-            // Derive keys
-            var snn = ctx.ueData.snn;
-            var sqnXorAk = OctetString.xor(ctx.ueData.sqn, ak);
+        Logging.debug(Tag.VALUE, "calculated res: %s", res);
+        Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
+        Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
+        Logging.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
+        Logging.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
 
-            ctx.nonCurrentNsc = new NasSecurityContext(request.ngKSI.tsc, request.ngKSI.nasKeySetIdentifier);
+        var snn = ctx.ueData.snn;
+        Logging.debug(Tag.VALUE, "used snn: %s", snn);
+
+        var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, autn);
+        Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
+
+        if (IGNORE_CONTROLS_FAILURES || autnCheck == AutnValidationRes.OK) {
+
+            // Create new partial native NAS security context and continue key derivation
+            ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+                    request.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsc.keys.rand = rand;
             ctx.nonCurrentNsc.keys.res = res;
             ctx.nonCurrentNsc.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
@@ -258,7 +285,6 @@ public class UeAuthentication {
             // todo
             Logging.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
-            // Other errors
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
         }
 
