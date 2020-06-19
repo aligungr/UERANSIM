@@ -36,7 +36,7 @@ public class UeRegistration {
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
-        registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
+        registrationRequest.ueSecurityCapability = UeSecurity.createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
@@ -69,43 +69,6 @@ public class UeRegistration {
 
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
-    }
-
-    private static IEUeSecurityCapability createSecurityCapabilityIe() {
-        var ie = new IEUeSecurityCapability();
-        ie.supported_5G_EA0 = Bit.ONE;
-        ie.supported_128_5G_EA1 = Bit.ONE;
-        ie.supported_128_5G_EA2 = Bit.ONE;
-        ie.supported_128_5G_EA3 = Bit.ONE;
-        ie.supported_5G_EA4 = Bit.ZERO;
-        ie.supported_5G_EA5 = Bit.ZERO;
-        ie.supported_5G_EA6 = Bit.ZERO;
-        ie.supported_5G_EA7 = Bit.ZERO;
-        ie.supported_5G_IA0 = Bit.ONE;
-        ie.supported_128_5G_IA1 = Bit.ONE;
-        ie.supported_128_5G_IA2 = Bit.ONE;
-        ie.supported_128_5G_IA3 = Bit.ONE;
-        ie.supported_5G_IA4 = Bit.ZERO;
-        ie.supported_5G_IA5 = Bit.ZERO;
-        ie.supported_5G_IA6 = Bit.ZERO;
-        ie.supported_5G_IA7 = Bit.ZERO;
-        ie.supported_EEA0 = Bit.ONE;
-        ie.supported_128_EEA1 = Bit.ONE;
-        ie.supported_128_EEA2 = Bit.ONE;
-        ie.supported_128_EEA3 = Bit.ONE;
-        ie.supported_EEA4 = Bit.ZERO;
-        ie.supported_EEA5 = Bit.ZERO;
-        ie.supported_EEA6 = Bit.ZERO;
-        ie.supported_EEA7 = Bit.ZERO;
-        ie.supported_EIA0 = Bit.ONE;
-        ie.supported_128_EIA1 = Bit.ONE;
-        ie.supported_128_EIA2 = Bit.ONE;
-        ie.supported_128_EIA3 = Bit.ONE;
-        ie.supported_EIA4 = Bit.ZERO;
-        ie.supported_EIA5 = Bit.ZERO;
-        ie.supported_EIA6 = Bit.ZERO;
-        ie.supported_EIA7 = Bit.ZERO;
-        return ie;
     }
 
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
