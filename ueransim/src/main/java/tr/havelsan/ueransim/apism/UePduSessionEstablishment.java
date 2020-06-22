@@ -32,7 +32,6 @@ import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
-import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
@@ -45,10 +44,11 @@ public class UePduSessionEstablishment {
 
     public static void sendEstablishmentRequest(SimulationContext ctx, PduSessionEstablishmentConfig config) {
         var pduSessionId = UePduSessionManagement.allocatePduSessionId(ctx);
+        var procedureTransactionId = UePduSessionManagement.allocateProcedureTransactionId(ctx);
 
         var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
         pduSessionEstablishmentRequest.pduSessionId = pduSessionId;
-        pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(config.procedureTransactionId.intValue());
+        pduSessionEstablishmentRequest.pti = procedureTransactionId;
         pduSessionEstablishmentRequest.integrityProtectionMaximumDataRate =
                 new IEIntegrityProtectionMaximumDataRate(
                         IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.FULL_DATA_RATE,
