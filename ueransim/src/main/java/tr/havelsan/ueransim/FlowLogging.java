@@ -60,7 +60,7 @@ public class FlowLogging {
 
     public static void logUnhandledMessage(String receivedMessageName, Class<?>... expectedType) {
         if (expectedType == null || expectedType.length == 0) {
-            Logging.warning(Tag.MESSAGING, "Unhandled message received: %s", receivedMessageName);
+            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", receivedMessageName);
         } else {
             var sb = new StringBuilder();
             for (int i = 0; i < expectedType.length; i++) {
@@ -71,7 +71,7 @@ public class FlowLogging {
             }
 
             var expectedMessages = sb.toString();
-            Logging.warning(Tag.MESSAGING, "Unhandled message received: %s, expected messages were: %s", receivedMessageName, expectedMessages);
+            Logging.error(Tag.MESSAGING, "Unhandled message received: %s, expected messages were: %s", receivedMessageName, expectedMessages);
         }
     }
 
