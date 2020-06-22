@@ -1,6 +1,33 @@
-package tr.havelsan.ueransim.api;
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 ALİ GÜNGÖR
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Ali Güngör (aligng1620@gmail.com)
+ */
+
+package tr.havelsan.ueransim.apimm;
 
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -19,7 +46,6 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
 
@@ -57,8 +83,8 @@ public class UeRegistration {
             }
         }
 
-        if (ctx.lastVisitedRegisteredTai != null) {
-            registrationRequest.lastVisitedRegisteredTai = ctx.lastVisitedRegisteredTai;
+        if (ctx.ueData.lastVisitedRegisteredTai != null) {
+            registrationRequest.lastVisitedRegisteredTai = ctx.ueData.lastVisitedRegisteredTai;
         }
 
         ctx.registrationRequest = registrationRequest;
@@ -74,7 +100,7 @@ public class UeRegistration {
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
-        ctx.taiList = message.taiList;
+        ctx.ueData.taiList = message.taiList;
 
         if (message.t3512Value != null && message.t3512Value.hasValue()) {
             ctx.ueTimers.t3512.start(message.t3512Value);
@@ -110,38 +136,38 @@ public class UeRegistration {
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {
             if (cause.equals(EMmCause.ILLEGAL_UE) || cause.equals(EMmCause.ILLEGAL_ME)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {

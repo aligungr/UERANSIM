@@ -1,32 +1,37 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 ALİ GÜNGÖR
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Ali Güngör (aligng1620@gmail.com)
+ */
+
 package tr.havelsan.ueransim.flows;
 
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
-import tr.havelsan.ueransim.*;
+import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.OutgoingMessage;
+import tr.havelsan.ueransim.apism.UePduSessionEstablishment;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
-import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
-import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.*;
-import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink;
-import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink;
-import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainerType.EPayloadContainerType;
-import tr.havelsan.ueransim.nas.impl.ies.IERequestType.ERequestType;
-import tr.havelsan.ueransim.nas.impl.ies.IESscMode.ESscMode;
-import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
-import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
-import tr.havelsan.ueransim.ngap.ngap_ies.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.octets.OctetString;
-
-import java.util.Collections;
-
-import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceSetupListSURes;
 
 public class PduSessionEstablishmentFlow extends BaseFlow {
 
@@ -39,30 +44,14 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     @Override
     public State main(IncomingMessage message) {
-        var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
-        pduSessionEstablishmentRequest.pduSessionId = EPduSessionIdentity.fromValue(config.pduSessionId.intValue());
-        pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(config.procedureTransactionId.intValue());
-        pduSessionEstablishmentRequest.integrityProtectionMaximumDataRate =
-                new IEIntegrityProtectionMaximumDataRate(
-                        EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.FULL_DATA_RATE,
-                        EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink.FULL_DATA_RATE);
-        pduSessionEstablishmentRequest.pduSessionType = new IEPduSessionType(EPduSessionType.IPV4);
-        pduSessionEstablishmentRequest.sscMode = new IESscMode(ESscMode.SSC_MODE_1);
-
-        var ulNasTransport = new UlNasTransport();
-        ulNasTransport.payloadContainerType = new IEPayloadContainerType(EPayloadContainerType.N1_SM_INFORMATION);
-        ulNasTransport.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduSessionEstablishmentRequest)));
-        ulNasTransport.pduSessionId = new IEPduSessionIdentity2(config.pduSessionId);
-        ulNasTransport.requestType = new IERequestType(ERequestType.INITIAL_REQUEST);
-        ulNasTransport.sNssa = config.sNssai;
-        ulNasTransport.dnn = config.dnn;
-
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
+        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
 
         return this::waitPduSessionEstablishmentAccept;
     }
 
     private State waitPduSessionEstablishmentAccept(IncomingMessage message) {
+
+        /* TODO
         var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);
         if (pduSessionResourceSetupRequest == null) {
             FlowLogging.logUnhandledMessage(message, PDUSessionResourceSetupRequest.class);
@@ -95,7 +84,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null));
-
+        */
         return flowComplete();
     }
 
