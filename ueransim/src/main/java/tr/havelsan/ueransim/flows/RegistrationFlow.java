@@ -4,7 +4,7 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.UeRegistration;
+import tr.havelsan.ueransim.apimm.UeRegistration;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;

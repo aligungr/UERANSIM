@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.apimm;
 
 import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.crypto.KDF;

@@ -1,9 +1,10 @@
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.apimm;
 
 import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.enums.AutnValidationRes;

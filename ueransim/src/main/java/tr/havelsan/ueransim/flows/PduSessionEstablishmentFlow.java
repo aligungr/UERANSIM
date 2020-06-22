@@ -3,26 +3,14 @@ package tr.havelsan.ueransim.flows;
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 import tr.havelsan.ueransim.*;
+import tr.havelsan.ueransim.apism.UePduSession;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
-import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
-import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.*;
-import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink;
-import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink;
-import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainerType.EPayloadContainerType;
-import tr.havelsan.ueransim.nas.impl.ies.IERequestType.ERequestType;
-import tr.havelsan.ueransim.nas.impl.ies.IESscMode.ESscMode;
-import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
-import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.Collections;
 
@@ -39,25 +27,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     @Override
     public State main(IncomingMessage message) {
-        var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
-        pduSessionEstablishmentRequest.pduSessionId = EPduSessionIdentity.fromValue(config.pduSessionId.intValue());
-        pduSessionEstablishmentRequest.pti = EProcedureTransactionIdentity.fromValue(config.procedureTransactionId.intValue());
-        pduSessionEstablishmentRequest.integrityProtectionMaximumDataRate =
-                new IEIntegrityProtectionMaximumDataRate(
-                        EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.FULL_DATA_RATE,
-                        EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink.FULL_DATA_RATE);
-        pduSessionEstablishmentRequest.pduSessionType = new IEPduSessionType(EPduSessionType.IPV4);
-        pduSessionEstablishmentRequest.sscMode = new IESscMode(ESscMode.SSC_MODE_1);
-
-        var ulNasTransport = new UlNasTransport();
-        ulNasTransport.payloadContainerType = new IEPayloadContainerType(EPayloadContainerType.N1_SM_INFORMATION);
-        ulNasTransport.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduSessionEstablishmentRequest)));
-        ulNasTransport.pduSessionId = new IEPduSessionIdentity2(config.pduSessionId);
-        ulNasTransport.requestType = new IERequestType(ERequestType.INITIAL_REQUEST);
-        ulNasTransport.sNssa = config.sNssai;
-        ulNasTransport.dnn = config.dnn;
-
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
+        UePduSession.sendEstablishmentRequest(ctx, config);
 
         return this::waitPduSessionEstablishmentAccept;
     }

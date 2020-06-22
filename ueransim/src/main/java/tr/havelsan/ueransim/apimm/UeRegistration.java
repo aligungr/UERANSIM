@@ -1,6 +1,7 @@
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.apimm;
 
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -19,7 +20,6 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
 

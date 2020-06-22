@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.apimm;
 
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;

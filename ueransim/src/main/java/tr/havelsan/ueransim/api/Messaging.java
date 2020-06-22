@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.*;
+import tr.havelsan.ueransim.apimm.*;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
