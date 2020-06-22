@@ -15,6 +15,10 @@ public class IEPduSessionIdentity2 extends InformationElement3 {
         this.value = value;
     }
 
+    public IEPduSessionIdentity2(int value) {
+        this(new Octet(value));
+    }
+
     @Override
     protected IEPduSessionIdentity2 decodeIE3(OctetInputStream stream) {
         var res = new IEPduSessionIdentity2();

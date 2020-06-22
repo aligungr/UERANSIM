@@ -6,7 +6,6 @@ import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
 public class PduSessionEstablishmentConfig {
-    public final Octet pduSessionId;
     public final Octet procedureTransactionId;
     public final IESNssai sNssai;
     public final IEDnn dnn;
@@ -14,8 +13,7 @@ public class PduSessionEstablishmentConfig {
     public final Octet4 gTpTeid;
     public final int qosFlowIdentifier;
 
-    public PduSessionEstablishmentConfig(Octet pduSessionId, Octet procedureTransactionId, IESNssai sNssai, IEDnn dnn, Octet4 transportLayerAddress, Octet4 gTpTeid, int qosFlowIdentifier) {
-        this.pduSessionId = pduSessionId;
+    public PduSessionEstablishmentConfig(Octet procedureTransactionId, IESNssai sNssai, IEDnn dnn, Octet4 transportLayerAddress, Octet4 gTpTeid, int qosFlowIdentifier) {
         this.procedureTransactionId = procedureTransactionId;
         this.sNssai = sNssai;
         this.dnn = dnn;

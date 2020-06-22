@@ -1,20 +1,11 @@
 package tr.havelsan.ueransim.flows;
 
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
-import tr.havelsan.ueransim.*;
-import tr.havelsan.ueransim.apism.UePduSession;
+import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.IncomingMessage;
+import tr.havelsan.ueransim.OutgoingMessage;
+import tr.havelsan.ueransim.apism.UePduSessionEstablishment;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.ngap.ngap_ies.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.PDUSessionResourceSetupRequest;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
-
-import java.util.Collections;
-
-import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_PDUSessionResourceSetupListSURes;
 
 public class PduSessionEstablishmentFlow extends BaseFlow {
 
@@ -27,12 +18,14 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     @Override
     public State main(IncomingMessage message) {
-        UePduSession.sendEstablishmentRequest(ctx, config);
+        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
 
         return this::waitPduSessionEstablishmentAccept;
     }
 
     private State waitPduSessionEstablishmentAccept(IncomingMessage message) {
+
+        /* TODO
         var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);
         if (pduSessionResourceSetupRequest == null) {
             FlowLogging.logUnhandledMessage(message, PDUSessionResourceSetupRequest.class);
@@ -65,7 +58,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
         send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
                 .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null));
-
+        */
         return flowComplete();
     }
 
