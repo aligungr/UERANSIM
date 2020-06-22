@@ -24,8 +24,15 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.structs;
+package tr.havelsan.ueransim.api.ue.sm;
 
 public class SmContext {
 
+    public PduSession[] pduSessions;
+    public ProcedureTransaction[] procedureTransactions;
+
+    public SmContext() {
+        this.pduSessions = new PduSession[16];
+        this.procedureTransactions = new ProcedureTransaction[255];
+    }
 }

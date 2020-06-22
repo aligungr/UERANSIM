@@ -40,13 +40,23 @@ import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UePduSessionEstablishment {
 
     public static void sendEstablishmentRequest(SimulationContext ctx, PduSessionEstablishmentConfig config) {
+        Logging.funcIn("Sending PDU Session Establishment Request");
+
         var pduSessionId = UePduSessionManagement.allocatePduSessionId(ctx);
+
         var procedureTransactionId = UePduSessionManagement.allocateProcedureTransactionId(ctx);
+        if (procedureTransactionId == null) {
+            Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            Logging.funcOut();
+            return;
+        }
 
         var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
         pduSessionEstablishmentRequest.pduSessionId = pduSessionId;
@@ -66,10 +76,22 @@ public class UePduSessionEstablishment {
         ulNasTransport.sNssa = config.sNssai;
         ulNasTransport.dnn = config.dnn;
 
+        ctx.ueTimers.t3580.start();
+
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
+
+        Logging.funcOut();
     }
 
     public static void handleEstablishmentAccept(SimulationContext ctx, PduSessionEstablishmentAccept message) {
+        Logging.funcIn("Handling: PDU Session Establishment Accept");
+
+        ctx.ueTimers.t3580.stop();
+
+        UePduSessionManagement.releaseProcedureTransactionId(ctx, message.pti);
+
+        Logging.funcOut();
+        return;
 
         /* TODO
         var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);

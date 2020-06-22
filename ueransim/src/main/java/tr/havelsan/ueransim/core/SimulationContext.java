@@ -28,9 +28,9 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
+import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
-import tr.havelsan.ueransim.structs.SmContext;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
 import tr.havelsan.ueransim.structs.UeTimers;

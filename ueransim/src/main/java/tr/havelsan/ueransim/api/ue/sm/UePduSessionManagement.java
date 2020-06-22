@@ -29,6 +29,8 @@ package tr.havelsan.ueransim.api.ue.sm;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class UePduSessionManagement {
 
@@ -37,8 +39,31 @@ public class UePduSessionManagement {
         return EPduSessionIdentity.VAL_8;
     }
 
-    // todo
     public static EProcedureTransactionIdentity allocateProcedureTransactionId(SimulationContext ctx) {
-        return EProcedureTransactionIdentity.VAL_254;
+        var arr = ctx.smCtx.procedureTransactions;
+
+        int id = -1;
+        for (int i = ProcedureTransaction.MIN_ID; i <= ProcedureTransaction.MAX_ID; i++) {
+            if (arr[i] == null) {
+                id = i;
+                break;
+            }
+        }
+
+        if (id == -1) {
+            Logging.error(Tag.PROC, "PTI allocation failed");
+            return null;
+        }
+
+        arr[id] = new ProcedureTransaction();
+
+        var val = EProcedureTransactionIdentity.fromValue(id);
+        Logging.debug(Tag.PROC, "PTI allocated: %s", val);
+        return val;
+    }
+
+    public static void releaseProcedureTransactionId(SimulationContext ctx, EProcedureTransactionIdentity pti) {
+        ctx.smCtx.procedureTransactions[pti.intValue()] = null;
+        Logging.debug(Tag.PROC, "PTI released: %s", pti);
     }
 }
