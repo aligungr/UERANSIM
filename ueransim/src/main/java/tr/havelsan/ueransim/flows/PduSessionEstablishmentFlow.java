@@ -29,7 +29,7 @@ package tr.havelsan.ueransim.flows;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.apism.UePduSessionEstablishment;
+import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 

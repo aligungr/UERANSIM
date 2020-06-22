@@ -24,20 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
+import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 
-public class UeContextManagement {
+public class UePduSessionManagement {
 
-    public static void handleInitialContextSetup(SimulationContext ctx, InitialContextSetupRequest message) {
-        // todo
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
-                null));
+    // todo
+    public static EPduSessionIdentity allocatePduSessionId(SimulationContext ctx) {
+        return EPduSessionIdentity.VAL_8;
+    }
+
+    // todo
+    public static EProcedureTransactionIdentity allocateProcedureTransactionId(SimulationContext ctx) {
+        return EProcedureTransactionIdentity.VAL_254;
     }
 }

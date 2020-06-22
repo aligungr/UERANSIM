@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.apimm;
+package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;

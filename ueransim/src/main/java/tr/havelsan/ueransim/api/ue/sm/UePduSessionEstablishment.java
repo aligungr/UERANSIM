@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.apism;
+package tr.havelsan.ueransim.api.ue.sm;
 
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.api.Messaging;

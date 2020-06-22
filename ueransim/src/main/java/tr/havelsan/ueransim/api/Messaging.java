@@ -27,7 +27,8 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.*;
-import tr.havelsan.ueransim.apimm.*;
+import tr.havelsan.ueransim.api.gnb.GnbContextManagement;
+import tr.havelsan.ueransim.api.ue.mm.*;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -98,7 +99,7 @@ public class Messaging {
 
     public static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
         if (message.ngapMessage instanceof InitialContextSetupRequest) {
-            UeContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
+            GnbContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
         }
 
         var nasMessage = message.getNasMessage(NasMessage.class);
