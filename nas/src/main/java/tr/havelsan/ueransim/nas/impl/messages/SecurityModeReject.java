@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.nas.impl.messages;
 import tr.havelsan.ueransim.nas.core.IMessageBuilder;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
+import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gMmCause;
 
 public class SecurityModeReject extends PlainMmMessage {
@@ -15,6 +16,10 @@ public class SecurityModeReject extends PlainMmMessage {
     public SecurityModeReject(IE5gMmCause mmCause) {
         this();
         this.mmCause = mmCause;
+    }
+
+    public SecurityModeReject(EMmCause mmCause) {
+        this(new IE5gMmCause(mmCause));
     }
 
     @Override

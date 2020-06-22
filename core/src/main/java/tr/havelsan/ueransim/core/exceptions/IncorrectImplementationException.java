@@ -11,6 +11,10 @@ public class IncorrectImplementationException extends RuntimeException {
         this.message = message;
     }
 
+    public IncorrectImplementationException() {
+        this.message = "";
+    }
+
     @Override
     public String getMessage() {
         return message;

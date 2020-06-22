@@ -6,6 +6,9 @@ import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentityList;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
+import tr.havelsan.ueransim.structs.UeConfig;
+import tr.havelsan.ueransim.structs.UeData;
+import tr.havelsan.ueransim.structs.UeTimers;
 
 public class SimulationContext {
     // Connection related

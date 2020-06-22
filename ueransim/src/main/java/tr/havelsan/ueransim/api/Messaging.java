@@ -87,6 +87,8 @@ public class Messaging {
             UeAuthentication.handleAuthenticationRequest(ctx, (AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {
             UeAuthentication.handleAuthenticationResult(ctx, (AuthenticationResult) message);
+        } else if (message instanceof AuthenticationResponse) {
+            UeAuthentication.handleAuthenticationResponse(ctx, (AuthenticationResponse) message);
         } else if (message instanceof AuthenticationReject) {
             UeAuthentication.handleAuthenticationReject(ctx, (AuthenticationReject) message);
         } else if (message instanceof RegistrationReject) {
@@ -95,6 +97,10 @@ public class Messaging {
             UeIdentity.handleIdentityRequest(ctx, (IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
             UeRegistration.handleRegistrationAccept(ctx, (RegistrationAccept) message);
+        } else if (message instanceof ServiceAccept) {
+            UeService.handleServiceAccept(ctx, (ServiceAccept) message);
+        } else if (message instanceof ServiceReject) {
+            UeService.handleServiceReject(ctx, (ServiceReject) message);
         } else if (message instanceof SecurityModeCommand) {
             UeSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
         } else {

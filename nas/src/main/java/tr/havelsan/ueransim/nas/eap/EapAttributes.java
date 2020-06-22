@@ -35,6 +35,10 @@ public final class EapAttributes {
         return attributes.get(EAttributeType.AT_CLIENT_ERROR_CODE).get2(0).intValue();
     }
 
+    public int getKdf() {
+        return attributes.get(EAttributeType.AT_KDF).get2(0).intValue();
+    }
+
     public OctetString getAuts() {
         return attributes.get(EAttributeType.AT_AUTS);
     }
@@ -55,8 +59,8 @@ public final class EapAttributes {
         attributes.put(EAttributeType.AT_AUTN, OctetString.concat(new OctetString("0000"), value));
     }
 
-    public void putKdf(OctetString value) {
-        attributes.put(EAttributeType.AT_KDF, value);
+    public void putKdf(int value) {
+        attributes.put(EAttributeType.AT_KDF, new Octet2(value).toOctetString());
     }
 
     public void putClientErrorCode(int code) {

@@ -1,31 +1,53 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.SendingMessage;
-import tr.havelsan.ueransim.core.SelectedAlgorithms;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvMobileIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IEImeiSvRequest;
-import tr.havelsan.ueransim.nas.impl.ies.IENasMessageContainer;
+import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
+import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeComplete;
+import tr.havelsan.ueransim.nas.impl.messages.SecurityModeReject;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.structs.SelectedAlgorithms;
 import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeSecurity {
-
 
     public static void handleSecurityModeCommand(SimulationContext ctx, SecurityModeCommand message) {
         Logging.funcIn("Handling: Security Mode Command");
 
-        // todo: check for mandatory replayed ue security cap.
+        // todo: check the integriti with new security context
+        {
+            var mac = message._macForNewSC;
+        }
 
-        // todo: check for mandatory ngKSI, current/noncurrent securit context,timers, counts etc
+        // Check replayed UE security capabilities
+        {
+            var replayed = message.replayedUeSecurityCapabilities;
+            var real = createSecurityCapabilityIe();
+            if (!compareSecurityCapabilities(real, replayed)) {
+                Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
+                        new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH)));
+                Logging.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
+                return;
+            }
+        }
 
-        // todo: check other optional fields
+        // Handle EAP-Success message if any.
+        if (message.eapMessage != null) {
+            if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
+                UeAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
+            }
+        }
 
         // Assign selected algorithms to security context, and derive NAS keys
         ctx.nonCurrentNsc.selectedAlgorithms = new SelectedAlgorithms(
@@ -57,5 +79,52 @@ public class UeSecurity {
         Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
 
         Logging.funcOut();
+    }
+
+    public static IEUeSecurityCapability createSecurityCapabilityIe() {
+        var ie = new IEUeSecurityCapability();
+        ie.supported_5G_EA0 = Bit.ONE;
+        ie.supported_128_5G_EA1 = Bit.ONE;
+        ie.supported_128_5G_EA2 = Bit.ONE;
+        ie.supported_128_5G_EA3 = Bit.ONE;
+        ie.supported_5G_EA4 = Bit.ZERO;
+        ie.supported_5G_EA5 = Bit.ZERO;
+        ie.supported_5G_EA6 = Bit.ZERO;
+        ie.supported_5G_EA7 = Bit.ZERO;
+        ie.supported_5G_IA0 = Bit.ONE;
+        ie.supported_128_5G_IA1 = Bit.ONE;
+        ie.supported_128_5G_IA2 = Bit.ONE;
+        ie.supported_128_5G_IA3 = Bit.ONE;
+        ie.supported_5G_IA4 = Bit.ZERO;
+        ie.supported_5G_IA5 = Bit.ZERO;
+        ie.supported_5G_IA6 = Bit.ZERO;
+        ie.supported_5G_IA7 = Bit.ZERO;
+        ie.supported_EEA0 = Bit.ONE;
+        ie.supported_128_EEA1 = Bit.ONE;
+        ie.supported_128_EEA2 = Bit.ONE;
+        ie.supported_128_EEA3 = Bit.ONE;
+        ie.supported_EEA4 = Bit.ZERO;
+        ie.supported_EEA5 = Bit.ZERO;
+        ie.supported_EEA6 = Bit.ZERO;
+        ie.supported_EEA7 = Bit.ZERO;
+        ie.supported_EIA0 = Bit.ONE;
+        ie.supported_128_EIA1 = Bit.ONE;
+        ie.supported_128_EIA2 = Bit.ONE;
+        ie.supported_128_EIA3 = Bit.ONE;
+        ie.supported_EIA4 = Bit.ZERO;
+        ie.supported_EIA5 = Bit.ZERO;
+        ie.supported_EIA6 = Bit.ZERO;
+        ie.supported_EIA7 = Bit.ZERO;
+        return ie;
+    }
+
+    private static boolean compareSecurityCapabilities(IEUeSecurityCapability cap1, IEUeSecurityCapability cap2) {
+        var stream1 = new OctetOutputStream();
+        var stream2 = new OctetOutputStream();
+
+        NasEncoder.ie2346(stream1, cap1);
+        NasEncoder.ie2346(stream2, cap2);
+
+        return stream1.toOctetString().equals(stream2.toOctetString());
     }
 }

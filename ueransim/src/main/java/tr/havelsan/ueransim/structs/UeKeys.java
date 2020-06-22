@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.utils.octets.OctetString;
 

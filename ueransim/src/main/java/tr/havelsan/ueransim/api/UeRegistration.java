@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
@@ -16,6 +17,8 @@ import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
@@ -33,7 +36,7 @@ public class UeRegistration {
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
-        registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
+        registrationRequest.ueSecurityCapability = UeSecurity.createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
@@ -68,43 +71,6 @@ public class UeRegistration {
                 .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
     }
 
-    private static IEUeSecurityCapability createSecurityCapabilityIe() {
-        var ie = new IEUeSecurityCapability();
-        ie.supported_5G_EA0 = Bit.ONE;
-        ie.supported_128_5G_EA1 = Bit.ONE;
-        ie.supported_128_5G_EA2 = Bit.ONE;
-        ie.supported_128_5G_EA3 = Bit.ONE;
-        ie.supported_5G_EA4 = Bit.ZERO;
-        ie.supported_5G_EA5 = Bit.ZERO;
-        ie.supported_5G_EA6 = Bit.ZERO;
-        ie.supported_5G_EA7 = Bit.ZERO;
-        ie.supported_5G_IA0 = Bit.ONE;
-        ie.supported_128_5G_IA1 = Bit.ONE;
-        ie.supported_128_5G_IA2 = Bit.ONE;
-        ie.supported_128_5G_IA3 = Bit.ONE;
-        ie.supported_5G_IA4 = Bit.ZERO;
-        ie.supported_5G_IA5 = Bit.ZERO;
-        ie.supported_5G_IA6 = Bit.ZERO;
-        ie.supported_5G_IA7 = Bit.ZERO;
-        ie.supported_EEA0 = Bit.ONE;
-        ie.supported_128_EEA1 = Bit.ONE;
-        ie.supported_128_EEA2 = Bit.ONE;
-        ie.supported_128_EEA3 = Bit.ONE;
-        ie.supported_EEA4 = Bit.ZERO;
-        ie.supported_EEA5 = Bit.ZERO;
-        ie.supported_EEA6 = Bit.ZERO;
-        ie.supported_EEA7 = Bit.ZERO;
-        ie.supported_EIA0 = Bit.ONE;
-        ie.supported_128_EIA1 = Bit.ONE;
-        ie.supported_128_EIA2 = Bit.ONE;
-        ie.supported_128_EIA3 = Bit.ONE;
-        ie.supported_EIA4 = Bit.ZERO;
-        ie.supported_EIA5 = Bit.ZERO;
-        ie.supported_EIA6 = Bit.ZERO;
-        ie.supported_EIA7 = Bit.ZERO;
-        return ie;
-    }
-
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
@@ -128,6 +94,15 @@ public class UeRegistration {
     }
 
     public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
+        if (message.eapMessage != null) {
+            if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
+                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+            } else {
+                Logging.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
+                        message.eapMessage.eap.code.name());
+            }
+        }
+
         var cause = message.mmCause.value;
 
         var regType = ctx.registrationRequest.registrationType.registrationType;
