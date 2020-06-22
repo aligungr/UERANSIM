@@ -2,8 +2,6 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentityList;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.structs.UeConfig;
@@ -23,8 +21,6 @@ public class SimulationContext {
     public NasSecurityContext currentNsc;
     public NasSecurityContext nonCurrentNsc;
     public UeTimers ueTimers;
-    public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
-    public IE5gsTrackingAreaIdentityList taiList;
     public RegistrationRequest registrationRequest;
 
     // NGAP IE related

@@ -377,8 +377,8 @@ public class UeAuthentication {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
 
                 ctx.ueData.storedGuti = null;
-                ctx.taiList = null;
-                ctx.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
 
