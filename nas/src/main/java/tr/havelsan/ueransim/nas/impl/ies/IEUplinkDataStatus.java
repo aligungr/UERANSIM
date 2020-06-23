@@ -92,6 +92,10 @@ public class IEUplinkDataStatus extends InformationElement4 {
         res.psi13 = new Bit(octet2.getBitI(5));
         res.psi14 = new Bit(octet2.getBitI(6));
         res.psi15 = new Bit(octet2.getBitI(7));
+
+        // Other octets are spare, if any
+        stream.readOctetString(length - 2);
+
         return res;
     }
 

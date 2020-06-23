@@ -27,18 +27,19 @@
 package tr.havelsan.ueransim.nas.impl.ies;
 
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
-import tr.havelsan.ueransim.nas.core.ies.InformationElement4;
+import tr.havelsan.ueransim.nas.core.ies.InformationElement6;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 
-public class IES1UeSecurityCapability extends InformationElement4 {
+public class IEUeParametersUpdateTransparentContainer extends InformationElement6 {
+
     @Override
-    protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
-        throw new NotImplementedException("Not implemented yet: See TS 24.501 9.11.3.48A");
+    protected InformationElement6 decodeIE6(OctetInputStream stream, int length) {
+        throw new NotImplementedException("Not implemented yet. See: 24.501 9.11.3.53A");
     }
 
     @Override
-    public void encodeIE4(OctetOutputStream stream) {
-        throw new NotImplementedException("Not implemented yet: See TS 24.501 9.11.3.48A");
+    public void encodeIE6(OctetOutputStream stream) {
+        throw new NotImplementedException("Not implemented yet. See: 24.501 9.11.3.53A");
     }
 }

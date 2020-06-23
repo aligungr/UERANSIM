@@ -193,6 +193,11 @@ public class IEUeSecurityCapability extends InformationElement4 {
             cap.supported_EIA7 = bits.getBit(0);
         }
 
+        if (length >= 5) {
+            // Other octets are spare, if any
+            stream.readOctetString(length - 4);
+        }
+
         return cap;
     }
 
