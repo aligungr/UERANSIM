@@ -1,7 +1,3 @@
-pduSessionId:
-  value: 8
-procedureTransactionId:
-  value: 254
 sNssai:
   sst:
     value: 1

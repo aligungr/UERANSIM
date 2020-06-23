@@ -1,3 +1,29 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 ALİ GÜNGÖR
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Ali Güngör (aligng1620@gmail.com)
+ */
+
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.core.NasSecurityContext;
@@ -27,16 +53,18 @@ public class NasSecurity {
         if (nasMessage == null) {
             return null;
         }
-        if (!(nasMessage instanceof SecuredMmMessage))
+        if (!(nasMessage instanceof SecuredMmMessage)) {
             return nasMessage;
+        }
 
         SecuredMmMessage securedMmMessage = (SecuredMmMessage) nasMessage;
 
         if (securedMmMessage.securityHeaderType.equals(ESecurityHeaderType.INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT)) {
-            // TODO: integrity check with new security context
             var plainMessage = NasDecoder.nasPdu(securedMmMessage.plainNasMessage);
             if (plainMessage instanceof SecurityModeCommand) {
-                return plainMessage;
+                var smc = (SecurityModeCommand) plainMessage;
+                smc._macForNewSC = securedMmMessage.messageAuthenticationCode;
+                return smc;
             } else {
                 Logging.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
                 return null;

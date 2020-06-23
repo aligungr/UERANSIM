@@ -1,9 +1,36 @@
-package tr.havelsan.ueransim.api;
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 ALİ GÜNGÖR
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Ali Güngör (aligng1620@gmail.com)
+ */
+
+package tr.havelsan.ueransim.api.ue.mm;
 
 import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
@@ -224,23 +251,50 @@ public class UeAuthentication {
 
         NasMessage response = null;
 
+        if (USE_SQN_HACK) {
+            Logging.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+        }
+        if (IGNORE_CONTROLS_FAILURES) {
+            Logging.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
+        }
+
         var rand = request.authParamRAND.value;
+        var autn = request.authParamAUTN.value;
+
+        Logging.debug(Tag.VALUE, "received rand: %s", rand);
+        Logging.debug(Tag.VALUE, "received autn: %s", autn);
+
+        if (USE_SQN_HACK) {
+            ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
+                    calculateMilenage(ctx.ueData, rand).get(MilenageResult.AK));
+        }
+
         var milenage = calculateMilenage(ctx.ueData, rand);
         var res = milenage.get(MilenageResult.RES);
         var ck = milenage.get(MilenageResult.CK);
         var ik = milenage.get(MilenageResult.IK);
         var ckik = OctetString.concat(ck, ik);
-        var ak = milenage.get(MilenageResult.AK);
-        var mac = milenage.get(MilenageResult.MAC_A);
+        var milenageAk = milenage.get(MilenageResult.AK);
+        var milenageMac = milenage.get(MilenageResult.MAC_A);
+        var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
+        var snn = ctx.ueData.snn;
 
-        var autnCheck = UeAuthentication.validateAutn(ak, mac, request.authParamAUTN.value);
-        if (autnCheck == AutnValidationRes.OK) {
+        Logging.debug(Tag.VALUE, "calculated res: %s", res);
+        Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
+        Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
+        Logging.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
+        Logging.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
+        Logging.debug(Tag.VALUE, "used snn: %s", snn);
+        Logging.debug(Tag.VALUE, "used sqn: %s", ctx.ueData.sqn);
 
-            // Derive keys
-            var snn = ctx.ueData.snn;
-            var sqnXorAk = OctetString.xor(ctx.ueData.sqn, ak);
+        var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, autn);
+        Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
-            ctx.nonCurrentNsc = new NasSecurityContext(request.ngKSI.tsc, request.ngKSI.nasKeySetIdentifier);
+        if (IGNORE_CONTROLS_FAILURES || autnCheck == AutnValidationRes.OK) {
+
+            // Create new partial native NAS security context and continue with key derivation
+            ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+                    request.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsc.keys.rand = rand;
             ctx.nonCurrentNsc.keys.res = res;
             ctx.nonCurrentNsc.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
@@ -255,10 +309,8 @@ public class UeAuthentication {
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
         } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
-            // todo
             Logging.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
-            // Other errors
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
         }
 
@@ -351,8 +403,8 @@ public class UeAuthentication {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
 
                 ctx.ueData.storedGuti = null;
-                ctx.taiList = null;
-                ctx.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
 

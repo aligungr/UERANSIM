@@ -1,6 +1,33 @@
-package tr.havelsan.ueransim.api;
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 ALİ GÜNGÖR
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * @author Ali Güngör (aligng1620@gmail.com)
+ */
+
+package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.SendingMessage;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -19,7 +46,6 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeRegistration {
 
@@ -36,7 +62,7 @@ public class UeRegistration {
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
-        registrationRequest.ueSecurityCapability = createSecurityCapabilityIe();
+        registrationRequest.ueSecurityCapability = UeSecurity.createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
@@ -57,8 +83,8 @@ public class UeRegistration {
             }
         }
 
-        if (ctx.lastVisitedRegisteredTai != null) {
-            registrationRequest.lastVisitedRegisteredTai = ctx.lastVisitedRegisteredTai;
+        if (ctx.ueData.lastVisitedRegisteredTai != null) {
+            registrationRequest.lastVisitedRegisteredTai = ctx.ueData.lastVisitedRegisteredTai;
         }
 
         ctx.registrationRequest = registrationRequest;
@@ -71,47 +97,10 @@ public class UeRegistration {
                 .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
     }
 
-    private static IEUeSecurityCapability createSecurityCapabilityIe() {
-        var ie = new IEUeSecurityCapability();
-        ie.supported_5G_EA0 = Bit.ONE;
-        ie.supported_128_5G_EA1 = Bit.ONE;
-        ie.supported_128_5G_EA2 = Bit.ONE;
-        ie.supported_128_5G_EA3 = Bit.ONE;
-        ie.supported_5G_EA4 = Bit.ZERO;
-        ie.supported_5G_EA5 = Bit.ZERO;
-        ie.supported_5G_EA6 = Bit.ZERO;
-        ie.supported_5G_EA7 = Bit.ZERO;
-        ie.supported_5G_IA0 = Bit.ONE;
-        ie.supported_128_5G_IA1 = Bit.ONE;
-        ie.supported_128_5G_IA2 = Bit.ONE;
-        ie.supported_128_5G_IA3 = Bit.ONE;
-        ie.supported_5G_IA4 = Bit.ZERO;
-        ie.supported_5G_IA5 = Bit.ZERO;
-        ie.supported_5G_IA6 = Bit.ZERO;
-        ie.supported_5G_IA7 = Bit.ZERO;
-        ie.supported_EEA0 = Bit.ONE;
-        ie.supported_128_EEA1 = Bit.ONE;
-        ie.supported_128_EEA2 = Bit.ONE;
-        ie.supported_128_EEA3 = Bit.ONE;
-        ie.supported_EEA4 = Bit.ZERO;
-        ie.supported_EEA5 = Bit.ZERO;
-        ie.supported_EEA6 = Bit.ZERO;
-        ie.supported_EEA7 = Bit.ZERO;
-        ie.supported_EIA0 = Bit.ONE;
-        ie.supported_128_EIA1 = Bit.ONE;
-        ie.supported_128_EIA2 = Bit.ONE;
-        ie.supported_128_EIA3 = Bit.ONE;
-        ie.supported_EIA4 = Bit.ZERO;
-        ie.supported_EIA5 = Bit.ZERO;
-        ie.supported_EIA6 = Bit.ZERO;
-        ie.supported_EIA7 = Bit.ZERO;
-        return ie;
-    }
-
     public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
-        ctx.taiList = message.taiList;
+        ctx.ueData.taiList = message.taiList;
 
         if (message.t3512Value != null && message.t3512Value.hasValue()) {
             ctx.ueTimers.t3512.start(message.t3512Value);
@@ -147,38 +136,38 @@ public class UeRegistration {
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {
             if (cause.equals(EMmCause.ILLEGAL_UE) || cause.equals(EMmCause.ILLEGAL_ME)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
                 ctx.ueData.storedGuti = null;
-                ctx.lastVisitedRegisteredTai = null;
-                ctx.taiList = null;
+                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.ueData.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
