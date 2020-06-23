@@ -67,9 +67,18 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         res.emf = EEmergencyServiceFallback3gppIndicator.fromValue(octet.getBitRangeI(4, 5));
         res.iwkN26 = EInterworkingWithoutN26InterfaceIndicator.fromValue(octet.getBitI(6));
         res.mpsi = EMpsIndicator.fromValue(octet.getBitI(7));
-        octet = stream.readOctet();
-        res.emcn3 = EEmergencyServiceSupportNon3gppIndicator.fromValue(octet.getBitI(0));
-        res.mcsi = EMcsIndicator.fromValue(octet.getBitI(1));
+
+        if (length > 1) {
+            octet = stream.readOctet();
+            res.emcn3 = EEmergencyServiceSupportNon3gppIndicator.fromValue(octet.getBitI(0));
+            res.mcsi = EMcsIndicator.fromValue(octet.getBitI(1));
+        }
+
+        if (length > 2) {
+            // The other octet is spare, if any.
+            stream.readOctet();
+        }
+
         return res;
     }
 
@@ -84,10 +93,12 @@ public class IE5gsNetworkFeatureSupport extends InformationElement4 {
         octet = octet.setBit(1, mpsi.intValue());
         stream.writeOctet(octet);
 
-        octet = new Octet();
-        octet = octet.setBit(0, emcn3.intValue());
-        octet = octet.setBit(1, mcsi.intValue());
-        stream.writeOctet(octet);
+        if (emcn3 != null && mcsi != null) {
+            octet = new Octet();
+            octet = octet.setBit(0, emcn3.intValue());
+            octet = octet.setBit(1, mcsi.intValue());
+            stream.writeOctet(octet);
+        }
     }
 
     public static class EEmergencyServiceFallback3gppIndicator extends ProtocolEnum {
