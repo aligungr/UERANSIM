@@ -27,7 +27,9 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.*;
-import tr.havelsan.ueransim.apimm.*;
+import tr.havelsan.ueransim.api.gnb.GnbContextManagement;
+import tr.havelsan.ueransim.api.ue.mm.*;
+import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -98,7 +100,7 @@ public class Messaging {
 
     public static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
         if (message.ngapMessage instanceof InitialContextSetupRequest) {
-            UeContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
+            GnbContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
         }
 
         var nasMessage = message.getNasMessage(NasMessage.class);
@@ -130,6 +132,10 @@ public class Messaging {
             UeService.handleServiceReject(ctx, (ServiceReject) message);
         } else if (message instanceof SecurityModeCommand) {
             UeSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
+        } else if (message instanceof PduSessionEstablishmentAccept) {
+            UePduSessionEstablishment.handleEstablishmentAccept(ctx, (PduSessionEstablishmentAccept) message);
+        } else if (message instanceof PduSessionEstablishmentReject) {
+            UePduSessionEstablishment.handleEstablishmentReject(ctx, (PduSessionEstablishmentReject) message);
         } else {
             FlowLogging.logUnhandledMessage(message);
         }

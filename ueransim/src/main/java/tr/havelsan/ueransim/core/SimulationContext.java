@@ -28,6 +28,7 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.IncomingMessage;
 import tr.havelsan.ueransim.OutgoingMessage;
+import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.structs.UeConfig;
@@ -48,6 +49,7 @@ public class SimulationContext {
     public NasSecurityContext nonCurrentNsc;
     public UeTimers ueTimers;
     public RegistrationRequest registrationRequest;
+    public SmContext smCtx;
 
     // NGAP IE related
     public Long amfUeNgapId;
@@ -59,6 +61,7 @@ public class SimulationContext {
     public SimulationContext() {
         this.messageListener = null;
         this.ueTimers = new UeTimers();
+        this.smCtx = new SmContext();
     }
 
     // todo: use read/write lock instead of synchronized

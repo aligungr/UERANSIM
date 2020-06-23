@@ -24,43 +24,22 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.flows;
+package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.nas.core.ies.InformationElement6;
+import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 
-public class PduSessionEstablishmentFlow extends BaseFlow {
+public class IEUeParametersUpdateTransparentContainer extends InformationElement6 {
 
-    private final PduSessionEstablishmentConfig config;
-
-    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentConfig config) {
-        super(simContext);
-        this.config = config;
+    @Override
+    protected InformationElement6 decodeIE6(OctetInputStream stream, int length) {
+        throw new NotImplementedException("Not implemented yet. See: 24.501 9.11.3.53A");
     }
 
     @Override
-    public State main(IncomingMessage message) {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        // todo
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
+    public void encodeIE6(OctetOutputStream stream) {
+        throw new NotImplementedException("Not implemented yet. See: 24.501 9.11.3.53A");
     }
 }

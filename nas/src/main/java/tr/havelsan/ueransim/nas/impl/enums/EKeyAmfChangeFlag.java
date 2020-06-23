@@ -24,43 +24,19 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.flows;
+package tr.havelsan.ueransim.nas.impl.enums;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 
-public class PduSessionEstablishmentFlow extends BaseFlow {
+public class EKeyAmfChangeFlag extends ProtocolEnum {
+    public static final EKeyAmfChangeFlag CALCULATED = new EKeyAmfChangeFlag(0b0, "a new K_AMF has not been calculated by the network");
+    public static final EKeyAmfChangeFlag NOT_CALCULATED = new EKeyAmfChangeFlag(0b1, "a new K_AMF has been calculated by the network");
 
-    private final PduSessionEstablishmentConfig config;
-
-    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentConfig config) {
-        super(simContext);
-        this.config = config;
+    private EKeyAmfChangeFlag(int value, String name) {
+        super(value, name);
     }
 
-    @Override
-    public State main(IncomingMessage message) {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        // todo
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
+    public static EKeyAmfChangeFlag fromValue(int value) {
+        return fromValueGeneric(EKeyAmfChangeFlag.class, value, null);
     }
 }

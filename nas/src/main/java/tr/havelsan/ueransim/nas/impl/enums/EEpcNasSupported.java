@@ -24,43 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.flows;
+package tr.havelsan.ueransim.nas.impl.enums;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 
-public class PduSessionEstablishmentFlow extends BaseFlow {
+public class EEpcNasSupported extends ProtocolEnum {
+    public static final EEpcNasSupported NOT_SUPPORTED
+            = new EEpcNasSupported(0b0, "S1 mode not supported");
+    public static final EEpcNasSupported SUPPORTED
+            = new EEpcNasSupported(0b1, "S1 mode supported");
 
-    private final PduSessionEstablishmentConfig config;
-
-    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentConfig config) {
-        super(simContext);
-        this.config = config;
+    private EEpcNasSupported(int value, String name) {
+        super(value, name);
     }
 
-    @Override
-    public State main(IncomingMessage message) {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        // todo
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
+    public static EEpcNasSupported fromValue(int value) {
+        return fromValueGeneric(EEpcNasSupported.class, value, null);
     }
 }

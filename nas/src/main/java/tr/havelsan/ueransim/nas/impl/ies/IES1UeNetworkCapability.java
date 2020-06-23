@@ -299,6 +299,11 @@ public class IES1UeNetworkCapability extends InformationElement4 {
             cap.supported_SGC = bits.getBit(6);
         }
 
+        // Other octets are spare, if any
+        if (length >= 8) {
+            stream.readOctetString(length - 7);
+        }
+
         return cap;
     }
 

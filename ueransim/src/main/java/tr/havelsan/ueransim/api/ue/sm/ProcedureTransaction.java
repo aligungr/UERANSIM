@@ -24,43 +24,10 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.flows;
+package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
+public class ProcedureTransaction {
 
-public class PduSessionEstablishmentFlow extends BaseFlow {
-
-    private final PduSessionEstablishmentConfig config;
-
-    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentConfig config) {
-        super(simContext);
-        this.config = config;
-    }
-
-    @Override
-    public State main(IncomingMessage message) {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        // todo
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
-    }
+    public static final int MIN_ID = 1;
+    public static final int MAX_ID = 254;
 }

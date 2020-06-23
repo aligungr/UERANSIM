@@ -24,14 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.apism;
+package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.nas.core.ies.InformationElement4;
+import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 
-public class UePduSessionManagement {
+public class IES1UeSecurityCapability extends InformationElement4 {
+    @Override
+    protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
+        throw new NotImplementedException("Not implemented yet: See TS 24.501 9.11.3.48A");
+    }
 
-    public static EPduSessionIdentity allocatePduSessionId(SimulationContext ctx) {
-        return EPduSessionIdentity.VAL_8;
+    @Override
+    public void encodeIE4(OctetOutputStream stream) {
+        throw new NotImplementedException("Not implemented yet: See TS 24.501 9.11.3.48A");
     }
 }

@@ -24,20 +24,15 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api;
+package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.SendingMessage;
-import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
+public class SmContext {
 
-public class UeContextManagement {
+    public PduSession[] pduSessions;
+    public ProcedureTransaction[] procedureTransactions;
 
-    public static void handleInitialContextSetup(SimulationContext ctx, InitialContextSetupRequest message) {
-        // todo
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
-                null));
+    public SmContext() {
+        this.pduSessions = new PduSession[16];
+        this.procedureTransactions = new ProcedureTransaction[255];
     }
 }

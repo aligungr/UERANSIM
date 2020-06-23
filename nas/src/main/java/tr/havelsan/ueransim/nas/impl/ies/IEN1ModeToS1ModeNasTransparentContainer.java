@@ -24,43 +24,30 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.flows;
+package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.nas.core.ies.InformationElement3;
+import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.octets.Octet;
 
-public class PduSessionEstablishmentFlow extends BaseFlow {
+public class IEN1ModeToS1ModeNasTransparentContainer extends InformationElement3 {
+    public Octet sequenceNumber;
 
-    private final PduSessionEstablishmentConfig config;
+    public IEN1ModeToS1ModeNasTransparentContainer() {
+    }
 
-    public PduSessionEstablishmentFlow(SimulationContext simContext, PduSessionEstablishmentConfig config) {
-        super(simContext);
-        this.config = config;
+    public IEN1ModeToS1ModeNasTransparentContainer(Octet sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 
     @Override
-    public State main(IncomingMessage message) {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
+    protected InformationElement3 decodeIE3(OctetInputStream stream) {
+        return new IEN1ModeToS1ModeNasTransparentContainer(stream.readOctet());
     }
 
     @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        // todo
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
+    public void encodeIE3(OctetOutputStream stream) {
+        stream.writeOctet(sequenceNumber);
     }
 }
