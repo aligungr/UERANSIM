@@ -48,6 +48,10 @@ public class IE5gSmCapability extends InformationElement4 {
         var res = new IE5gSmCapability();
         res.rqos = EReflectiveQoS.fromValue(stream.peekOctetI() & 0b1);
         res.mh6pdu = EMultiHomedIPv6PduSession.fromValue(stream.readOctetI() >> 1 & 0b1);
+
+        // other octets are spare, if any
+        stream.readOctetString(length - 1);
+
         return res;
     }
 

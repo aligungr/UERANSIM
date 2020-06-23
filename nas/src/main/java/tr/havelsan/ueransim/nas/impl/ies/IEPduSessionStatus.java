@@ -72,7 +72,6 @@ public class IEPduSessionStatus extends InformationElement4 {
 
     @Override
     protected InformationElement4 decodeIE4(OctetInputStream stream, int length) {
-        // (other octets are specified as spare (if any))
         var octet0 = stream.readOctet();
         var octet1 = stream.readOctet();
 
@@ -94,6 +93,9 @@ public class IEPduSessionStatus extends InformationElement4 {
         res.psi13 = octet1.getBit(5);
         res.psi14 = octet1.getBit(6);
         res.psi15 = octet1.getBit(7);
+
+        // other octets are specified as spare (if any)
+        stream.readOctetString(length - 2);
 
         return res;
     }
