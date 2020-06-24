@@ -1,11 +1,11 @@
 package tr.havelsan.ueransim.nas.impl.values;
 
 import tr.havelsan.ueransim.nas.core.NasValue;
+import tr.havelsan.ueransim.nas.core.ProtocolEnum;
 import tr.havelsan.ueransim.nas.impl.enums.EQoSFlowIdentifier;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit;
-import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.bits.Bit6;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class VQoSFlowDescription extends NasValue {
 
     public EQoSFlowIdentifier qfi;
-    public Bit3 operationCode;
+    public EOperationCode operationCode;
     public Bit6 numberOfParameters;
     public Bit e;
     public VParameter[] parametersList;
@@ -34,7 +34,7 @@ public class VQoSFlowDescription extends NasValue {
     public VQoSFlowDescription decode(OctetInputStream stream) {
         var res = new VQoSFlowDescription();
         res.qfi = EQoSFlowIdentifier.fromValue(stream.readOctetI() & 0b111111);
-        res.operationCode = new Bit3((stream.readOctetI() >> 5) & 0b111);
+        res.operationCode = EOperationCode.fromValue((stream.readOctetI() >> 5) & 0b111);
         res.numberOfParameters = new Bit6(stream.peekOctetI() & 0b111111);
         res.e = new Bit(stream.readOctet().getBit(6));
         res.parametersList = new VParameter[res.numberOfParameters.intValue()];
@@ -61,6 +61,20 @@ public class VQoSFlowDescription extends NasValue {
             res.identifier = stream.readOctet();
             res.content = stream.readOctetString(stream.readOctetI());
             return res;
+        }
+    }
+
+    public static class EOperationCode extends ProtocolEnum {
+        public static final EOperationCode CREATE_NEW = new EOperationCode(0b001, "Create new QoS flow description");
+        public static final EOperationCode DELETE_EXISTING = new EOperationCode(0b010, "Delete existing QoS flow description");
+        public static final EOperationCode MODIFY_EXISTING = new EOperationCode(0b011, "Modify existing QoS flow description");
+
+        private EOperationCode(int value, String name) {
+            super(value, name);
+        }
+
+        public static EOperationCode fromValue(int value) {
+            return fromValueGeneric(EOperationCode.class, value, null);
         }
     }
 }
