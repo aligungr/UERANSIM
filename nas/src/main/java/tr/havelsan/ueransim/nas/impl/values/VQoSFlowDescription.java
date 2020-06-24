@@ -17,14 +17,14 @@ public class VQoSFlowDescription extends NasValue {
     public EQoSFlowIdentifier qfi;
     public EOperationCode operationCode;
     public Bit6 numberOfParameters;
-    public Bit e;
+    public Bit eBit;
     public VParameter[] parametersList;
 
     @Override
     public void encode(OctetOutputStream stream) {
         stream.writeOctet(qfi.intValue() & 0b111111);
         stream.writeOctet((operationCode.intValue() & 0b111) << 5);
-        stream.writeOctet((e.intValue() << 6) | (numberOfParameters.intValue() & 0b111111));
+        stream.writeOctet((eBit.intValue() << 6) | (numberOfParameters.intValue() & 0b111111));
         if (parametersList != null) {
             Arrays.stream(parametersList).forEach(item -> item.encode(stream));
         }
@@ -36,7 +36,7 @@ public class VQoSFlowDescription extends NasValue {
         res.qfi = EQoSFlowIdentifier.fromValue(stream.readOctetI() & 0b111111);
         res.operationCode = EOperationCode.fromValue((stream.readOctetI() >> 5) & 0b111);
         res.numberOfParameters = new Bit6(stream.peekOctetI() & 0b111111);
-        res.e = new Bit(stream.readOctet().getBit(6));
+        res.eBit = new Bit(stream.readOctet().getBit(6));
         res.parametersList = new VParameter[res.numberOfParameters.intValue()];
         for (int i = 0; i < res.parametersList.length; i++) {
             res.parametersList[i] = new VParameter().decode(stream);
