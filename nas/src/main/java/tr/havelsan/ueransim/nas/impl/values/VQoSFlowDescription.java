@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.nas.impl.values;
 
 import tr.havelsan.ueransim.nas.core.NasValue;
+import tr.havelsan.ueransim.nas.impl.enums.EQoSFlowIdentifier;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 
 public class VQoSFlowDescription extends NasValue {
 
-    public Bit6 qfi;
+    public EQoSFlowIdentifier qfi;
     public Bit3 operationCode;
     public Bit6 numberOfParameters;
     public Bit e;
@@ -32,7 +33,7 @@ public class VQoSFlowDescription extends NasValue {
     @Override
     public VQoSFlowDescription decode(OctetInputStream stream) {
         var res = new VQoSFlowDescription();
-        res.qfi = new Bit6(stream.readOctetI() & 0b111111);
+        res.qfi = EQoSFlowIdentifier.fromValue(stream.readOctetI() & 0b111111);
         res.operationCode = new Bit3((stream.readOctetI() >> 5) & 0b111);
         res.numberOfParameters = new Bit6(stream.peekOctetI() & 0b111111);
         res.e = new Bit(stream.readOctet().getBit(6));
