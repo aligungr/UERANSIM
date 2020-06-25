@@ -64,8 +64,8 @@ public class FlowTesting {
         var configOrder = new HashMap<String, Integer>();
         for (var entry : config.entrySet()) {
             String key = entry.getKey();
-            if (key.matches("^input\\.[a-zA-Z]+$")) {
-                configOrder.put(key.substring("input.".length()), configOrder.size());
+            if (key.matches("^flows\\.[a-zA-Z]+$")) {
+                configOrder.put(key.substring("flows.".length()), configOrder.size());
             }
         }
 
