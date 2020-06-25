@@ -32,7 +32,7 @@ import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class IEQoSRules extends InformationElement6 {
-    public OctetString rawData;
+    public OctetString rawData; // todo
 
     public IEQoSRules() {
     }

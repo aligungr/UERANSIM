@@ -26,5 +26,23 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
+import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IEQoSFlowDescriptions;
+import tr.havelsan.ueransim.nas.impl.ies.IEQoSRules;
+import tr.havelsan.ueransim.nas.impl.ies.IESessionAmbr;
+
 public class PduSession {
+
+    public static final int MIN_ID = 1;
+    public static final int MAX_ID = 15;
+
+    public final EPduSessionIdentity id;
+    public boolean isEstablished;
+    public IEQoSRules authorizedQoSRules;
+    public IESessionAmbr sessionAmbr;
+    public IEQoSFlowDescriptions authorizedQoSFlowDescriptions;
+
+    public PduSession(EPduSessionIdentity id) {
+        this.id = id;
+    }
 }

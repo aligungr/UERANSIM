@@ -50,10 +50,16 @@ public class UePduSessionEstablishment {
         Logging.funcIn("Sending PDU Session Establishment Request");
 
         var pduSessionId = UePduSessionManagement.allocatePduSessionId(ctx);
+        if (pduSessionId == null) {
+            Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            Logging.funcOut();
+            return;
+        }
 
         var procedureTransactionId = UePduSessionManagement.allocateProcedureTransactionId(ctx);
         if (procedureTransactionId == null) {
             Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            UePduSessionManagement.releasePduSession(ctx, pduSessionId);
             Logging.funcOut();
             return;
         }
@@ -86,9 +92,27 @@ public class UePduSessionEstablishment {
     public static void handleEstablishmentAccept(SimulationContext ctx, PduSessionEstablishmentAccept message) {
         Logging.funcIn("Handling: PDU Session Establishment Accept");
 
+        if (message.smCause != null) {
+            Logging.warning(Tag.PROC, "SM cause received in PduSessionEstablishmentAccept: %s", message.smCause.value);
+        }
+
         ctx.ueTimers.t3580.stop();
 
         UePduSessionManagement.releaseProcedureTransactionId(ctx, message.pti);
+
+        var pduSession = ctx.smCtx.pduSessions[message.pduSessionId.intValue()];
+        if (pduSession == null) {
+            Logging.error(Tag.PROC, "PDU session not found: %s", message.pduSessionId);
+            Logging.funcOut();
+            return;
+        }
+
+        pduSession.isEstablished = true;
+        pduSession.authorizedQoSRules = message.authorizedQoSRules;
+        pduSession.sessionAmbr = message.sessionAmbr;
+        pduSession.authorizedQoSFlowDescriptions = message.authorizedQoSFlowDescriptions;
+
+        Logging.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
 
         Logging.funcOut();
         return;
