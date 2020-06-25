@@ -212,7 +212,7 @@ public class NasEncryption {
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
 
-        Logging.debug(Tag.VALUE, "count: %s", count);
+        Logging.debug(Tag.VALUE, "count: %s", count.toOctet4());
         Logging.debug(Tag.VALUE, "bearer: %s", bearer);
         Logging.debug(Tag.VALUE, "direction: %s", direction);
         Logging.debug(Tag.VALUE, "message: %s", message.toHexString(false));
