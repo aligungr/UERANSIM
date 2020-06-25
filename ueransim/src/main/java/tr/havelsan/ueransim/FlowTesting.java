@@ -122,7 +122,7 @@ public class FlowTesting {
             var inputType = ctor.getParameterCount() > 1 ? ctor.getParameterTypes()[1] : null;
 
             if (inputType != null) {
-                String key = "input." + typeNames.get(selection - 1);
+                String key = "flows." + typeNames.get(selection - 1);
                 ctor.newInstance(simContext, readInputFile(key, "" + config.get(key), inputType))
                         .start();
             } else {
