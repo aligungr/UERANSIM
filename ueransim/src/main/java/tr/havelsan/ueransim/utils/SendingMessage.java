@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.utils;
 
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
