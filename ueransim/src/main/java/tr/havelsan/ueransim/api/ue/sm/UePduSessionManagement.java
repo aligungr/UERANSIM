@@ -34,9 +34,27 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class UePduSessionManagement {
 
-    // todo
     public static EPduSessionIdentity allocatePduSessionId(SimulationContext ctx) {
-        return EPduSessionIdentity.VAL_8;
+        var arr = ctx.smCtx.pduSessions;
+
+        int id = -1;
+        for (int i = PduSession.MIN_ID; i <= PduSession.MAX_ID; i++) {
+            if (arr[i] == null) {
+                id = i;
+                break;
+            }
+        }
+
+        if (id == -1) {
+            Logging.error(Tag.PROC, "PDU session allocation failed");
+            return null;
+        }
+
+        arr[id] = new PduSession();
+
+        var val = EPduSessionIdentity.fromValue(id);
+        Logging.debug(Tag.PROC, "PDU session allocated: %s", val);
+        return val;
     }
 
     public static EProcedureTransactionIdentity allocateProcedureTransactionId(SimulationContext ctx) {
@@ -65,5 +83,10 @@ public class UePduSessionManagement {
     public static void releaseProcedureTransactionId(SimulationContext ctx, EProcedureTransactionIdentity pti) {
         ctx.smCtx.procedureTransactions[pti.intValue()] = null;
         Logging.debug(Tag.PROC, "PTI released: %s", pti);
+    }
+
+    public static void releasePduSession(SimulationContext ctx, EPduSessionIdentity psi) {
+        ctx.smCtx.pduSessions[psi.intValue()] = null;
+        Logging.debug(Tag.PROC, "PDU Session released: %s", psi);
     }
 }

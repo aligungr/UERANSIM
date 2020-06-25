@@ -50,10 +50,16 @@ public class UePduSessionEstablishment {
         Logging.funcIn("Sending PDU Session Establishment Request");
 
         var pduSessionId = UePduSessionManagement.allocatePduSessionId(ctx);
+        if (pduSessionId == null) {
+            Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            Logging.funcOut();
+            return;
+        }
 
         var procedureTransactionId = UePduSessionManagement.allocateProcedureTransactionId(ctx);
         if (procedureTransactionId == null) {
             Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            UePduSessionManagement.releasePduSession(ctx, pduSessionId);
             Logging.funcOut();
             return;
         }

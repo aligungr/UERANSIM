@@ -27,4 +27,7 @@
 package tr.havelsan.ueransim.api.ue.sm;
 
 public class PduSession {
+
+    public static final int MIN_ID = 1;
+    public static final int MAX_ID = 15;
 }
