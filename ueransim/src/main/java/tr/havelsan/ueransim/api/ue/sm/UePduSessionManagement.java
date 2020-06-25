@@ -50,9 +50,9 @@ public class UePduSessionManagement {
             return null;
         }
 
-        arr[id] = new PduSession();
-
         var val = EPduSessionIdentity.fromValue(id);
+        arr[id] = new PduSession(val);
+
         Logging.debug(Tag.PROC, "PDU session allocated: %s", val);
         return val;
     }
