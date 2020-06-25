@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api;
 
-import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.crypto.*;
 import tr.havelsan.ueransim.enums.EConnectionIdentifier;

@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.enums.EConnectionIdentifier;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;

@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.api.NasSecurityContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.sctp.ISCTPClient;

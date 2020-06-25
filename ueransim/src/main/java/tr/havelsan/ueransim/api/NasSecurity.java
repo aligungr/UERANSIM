@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api;
 
-import tr.havelsan.ueransim.core.NasSecurityContext;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
