@@ -28,6 +28,7 @@ package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.api.gnb.GnbContextManagement;
+import tr.havelsan.ueransim.api.nas.NasSecurity;
 import tr.havelsan.ueransim.api.ue.mm.*;
 import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.core.SimulationContext;

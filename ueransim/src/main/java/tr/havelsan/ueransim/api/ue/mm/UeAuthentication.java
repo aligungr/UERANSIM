@@ -30,7 +30,7 @@ import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.NasSecurityContext;
+import tr.havelsan.ueransim.api.nas.NasSecurityContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
