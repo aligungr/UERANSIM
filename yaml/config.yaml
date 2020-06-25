@@ -1,6 +1,6 @@
 amf.host: 10.154.14.5
 amf.port: 38419
-amf.mocked: false
+amf.mocked: true
 amf.mockedRemote: mockedRemote.yaml
 
 flows.NgSetupFlow: flows/ngsetup.yaml
