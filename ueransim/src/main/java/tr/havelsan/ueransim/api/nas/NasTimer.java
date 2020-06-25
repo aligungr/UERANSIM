@@ -24,19 +24,31 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.api.nas;
 
-import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer2;
+import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer3;
 
-public class OutgoingMessage {
-    public final NGAP_PDU ngapPdu;
-    public final NasMessage plainNas;
-    public final NasMessage securedNas;
+// todo
+public class NasTimer {
 
-    public OutgoingMessage(NGAP_PDU ngapPdu, NasMessage plainNas, NasMessage securedNas) {
-        this.ngapPdu = ngapPdu;
-        this.plainNas = plainNas;
-        this.securedNas = securedNas;
+    public void start() {
+
+    }
+
+    public void start(IEGprsTimer2 v) {
+
+    }
+
+    public void start(IEGprsTimer3 v) {
+
+    }
+
+    public void stop() {
+
+    }
+
+    public boolean isRunning() {
+        return false;
     }
 }

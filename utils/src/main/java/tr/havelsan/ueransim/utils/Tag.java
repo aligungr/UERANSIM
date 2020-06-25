@@ -33,6 +33,7 @@ public enum Tag {
     PROC,
     NGAP_INTERNAL,
     MESSAGING,
+    CONNECTION,
     FLOWS,
     NAS_SECURITY,
     NOT_IMPL_YET;

@@ -24,10 +24,11 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.utils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
+import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.core.Constants;
 
 import java.lang.reflect.Modifier;

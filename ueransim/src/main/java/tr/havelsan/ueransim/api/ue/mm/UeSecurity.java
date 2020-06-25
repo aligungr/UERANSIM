@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -45,6 +44,7 @@ import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.structs.SelectedAlgorithms;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.SendingMessage;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 

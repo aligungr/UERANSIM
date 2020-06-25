@@ -27,14 +27,14 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.ue.mm.UeRegistration;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
+import tr.havelsan.ueransim.utils.IncomingMessage;
+import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public class RegistrationFlow extends BaseFlow {
     private final RegistrationConfig config;
