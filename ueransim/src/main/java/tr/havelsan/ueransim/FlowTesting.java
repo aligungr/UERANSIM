@@ -80,10 +80,7 @@ public class FlowTesting {
 
         var simContext = UeRanSim.createSimContext(configYaml);
 
-        Console.println(Color.BLUE, "Trying to establish SCTP connection... (%s:%s)", simContext.amfHost, simContext.amfPort);
         simContext.sctpClient.start();
-
-        Console.println(Color.BLUE, "SCTP connection established.");
 
         while (true) {
             Console.printDiv();

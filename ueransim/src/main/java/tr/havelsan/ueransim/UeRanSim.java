@@ -42,9 +42,9 @@ import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.structs.Supi;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
 import tr.havelsan.ueransim.utils.IncomingMessage;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -103,7 +103,7 @@ public class UeRanSim {
             ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
             if (amfMocked) {
-                Console.println(Color.YELLOW_BOLD, "Mocked Remote is enabled.");
+                Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
                 sctpClient = newMockedClient((String) params.get("amf.mockedRemote"));
             }
 
