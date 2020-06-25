@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
@@ -42,6 +43,7 @@ import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.structs.Supi;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
+import tr.havelsan.ueransim.structs.UeTimers;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -109,6 +111,12 @@ public class UeRanSim {
 
             simContext.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
             simContext.sctpClient = sctpClient;
+        }
+
+        // The others
+        {
+            simContext.ueTimers = new UeTimers();
+            simContext.smCtx = new SmContext();
         }
 
         return simContext;

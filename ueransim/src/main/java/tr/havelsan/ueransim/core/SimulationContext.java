@@ -59,12 +59,6 @@ public class SimulationContext {
     // Message callback
     private IMessageListener messageListener;
 
-    public SimulationContext() {
-        this.messageListener = null;
-        this.ueTimers = new UeTimers();
-        this.smCtx = new SmContext();
-    }
-
     // todo: use read/write lock instead of synchronized
 
     public synchronized void registerListener(IMessageListener listener) {
