@@ -41,26 +41,14 @@ public abstract class BaseFlow implements IMessageListener {
     private boolean started;
     private State currentState;
 
-    //======================================================================================================
-    //                                          CONSTRUCTORS
-    //======================================================================================================
-
     public BaseFlow(SimulationContext simContext) {
         this.ctx = simContext;
     }
-
-    //======================================================================================================
-    //                                           MESSAGING
-    //======================================================================================================
 
     @Deprecated
     public final void send(SendingMessage sendingMessage) {
         Messaging.send(ctx, sendingMessage);
     }
-
-    //======================================================================================================
-    //                                            GENERAL
-    //======================================================================================================
 
     public final void start() throws Exception {
         if (started) throw new RuntimeException("already started");
@@ -79,21 +67,12 @@ public abstract class BaseFlow implements IMessageListener {
         ctx.dispatchMessageReceive(incomingMessage);
     }
 
-    //======================================================================================================
-    //                                             STATES
-    //======================================================================================================
-
     private State sinkState(IncomingMessage message) {
         return this::sinkState;
     }
 
     public final State flowComplete() {
         FlowLogging.logFlowComplete(this);
-        return abortFlow();
-    }
-
-    public final State flowFailed(String errorMessage) {
-        FlowLogging.logFlowFailed(this, errorMessage);
         return abortFlow();
     }
 
@@ -104,10 +83,6 @@ public abstract class BaseFlow implements IMessageListener {
     }
 
     public abstract State main(IncomingMessage message) throws Exception;
-
-    //======================================================================================================
-    //                                           OTHERS
-    //======================================================================================================
 
     @FunctionalInterface
     public interface State {
