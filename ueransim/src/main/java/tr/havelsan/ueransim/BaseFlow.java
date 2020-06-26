@@ -58,17 +58,6 @@ public abstract class BaseFlow implements IMessageListener {
         Messaging.send(ctx, sendingMessage);
     }
 
-    private void receive(NGAP_PDU ngapPdu) {
-        var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
-        FlowLogging.logReceivedMessage(incomingMessage);
-        try {
-            this.currentState = this.currentState.accept(incomingMessage);
-        } catch (FlowFailedException exception) {
-            this.currentState = flowFailed(exception.getMessage());
-        }
-        ctx.dispatchMessageReceive(incomingMessage);
-    }
-
     //======================================================================================================
     //                                            GENERAL
     //======================================================================================================
@@ -93,7 +82,16 @@ public abstract class BaseFlow implements IMessageListener {
     }
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
-        receive(Ngap.perDecode(NGAP_PDU.class, receivedBytes));
+        var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
+
+        var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
+        FlowLogging.logReceivedMessage(incomingMessage);
+        try {
+            this.currentState = this.currentState.accept(incomingMessage);
+        } catch (FlowFailedException exception) {
+            this.currentState = flowFailed(exception.getMessage());
+        }
+        ctx.dispatchMessageReceive(incomingMessage);
     }
 
     //======================================================================================================
