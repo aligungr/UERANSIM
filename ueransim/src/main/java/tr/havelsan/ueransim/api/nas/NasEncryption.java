@@ -50,6 +50,8 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasEncryption {
 
+    // todo: make directions again
+
     //======================================================================================================
     //                                          ENCRYPTION
     //======================================================================================================
