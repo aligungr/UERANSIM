@@ -68,6 +68,7 @@ public class Messaging {
             }
         }
 
+        FlowLogging.logReceivedMessage(incomingMessage);
         return incomingMessage;
     }
 

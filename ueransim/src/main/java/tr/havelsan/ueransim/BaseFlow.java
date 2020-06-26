@@ -67,30 +67,15 @@ public abstract class BaseFlow implements IMessageListener {
         this.started = true;
 
         ctx.registerListener(this);
-
-        boolean mainStepFailed = false;
-        try {
-            this.currentState = main(null);
-        } catch (FlowFailedException exception) {
-            this.currentState = flowFailed(exception.getMessage());
-            mainStepFailed = true;
-        }
-
-        if (!mainStepFailed) {
-            this.ctx.sctpClient.receiverLoop(this::receiveSctpData);
-        }
+        this.currentState = main(null);
+        this.ctx.sctpClient.receiverLoop(this::receiveSctpData);
     }
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
 
         var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
-        FlowLogging.logReceivedMessage(incomingMessage);
-        try {
-            this.currentState = this.currentState.accept(incomingMessage);
-        } catch (FlowFailedException exception) {
-            this.currentState = flowFailed(exception.getMessage());
-        }
+        this.currentState = this.currentState.accept(incomingMessage);
         ctx.dispatchMessageReceive(incomingMessage);
     }
 
@@ -118,10 +103,6 @@ public abstract class BaseFlow implements IMessageListener {
         return this::sinkState;
     }
 
-    public final State flowFailed() {
-        return flowFailed(null);
-    }
-
     public abstract State main(IncomingMessage message) throws Exception;
 
     //======================================================================================================
@@ -131,14 +112,5 @@ public abstract class BaseFlow implements IMessageListener {
     @FunctionalInterface
     public interface State {
         State accept(IncomingMessage message);
-    }
-
-    protected static class FlowFailedException extends RuntimeException {
-        public FlowFailedException() {
-        }
-
-        public FlowFailedException(String message) {
-            super(message);
-        }
     }
 }
