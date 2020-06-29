@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.SendingMessage;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
@@ -41,6 +40,7 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.SendingMessage;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 

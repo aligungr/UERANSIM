@@ -24,31 +24,17 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.utils;
 
-import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer2;
-import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer3;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
 
-// todo
-public class NasTimer {
+public class SendingMessage {
+    public final NgapBuilder ngapBuilder;
+    public final NasMessage nasMessage;
 
-    public void start() {
-
-    }
-
-    public void start(IEGprsTimer2 v) {
-
-    }
-
-    public void start(IEGprsTimer3 v) {
-
-    }
-
-    public void stop() {
-
-    }
-
-    public boolean isRunning() {
-        return false;
+    public SendingMessage(NgapBuilder ngapBuilder, NasMessage nasMessage) {
+        this.ngapBuilder = ngapBuilder;
+        this.nasMessage = nasMessage;
     }
 }

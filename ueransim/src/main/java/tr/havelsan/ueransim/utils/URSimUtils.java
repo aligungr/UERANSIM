@@ -24,10 +24,11 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.utils;
 
 import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.spe.BitStringValue;
+import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;

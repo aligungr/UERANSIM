@@ -24,14 +24,12 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.utils;
 
+import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.utils.Json;
-import tr.havelsan.ueransim.utils.Logging;
-import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.Utils;
 
 public class FlowLogging {
 

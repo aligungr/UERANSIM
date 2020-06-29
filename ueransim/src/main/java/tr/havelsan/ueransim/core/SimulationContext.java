@@ -26,14 +26,15 @@
 
 package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.IncomingMessage;
-import tr.havelsan.ueransim.OutgoingMessage;
+import tr.havelsan.ueransim.api.nas.NasSecurityContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
 import tr.havelsan.ueransim.structs.UeTimers;
+import tr.havelsan.ueransim.utils.IncomingMessage;
+import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public class SimulationContext {
     // Connection related
@@ -57,12 +58,6 @@ public class SimulationContext {
 
     // Message callback
     private IMessageListener messageListener;
-
-    public SimulationContext() {
-        this.messageListener = null;
-        this.ueTimers = new UeTimers();
-        this.smCtx = new SmContext();
-    }
 
     // todo: use read/write lock instead of synchronized
 
