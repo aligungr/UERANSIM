@@ -92,7 +92,7 @@ public class SCTPClient implements ISCTPClient {
             for (int i = 0; i < receivedBytes.length; i++) {
                 receivedBytes[i] = incomingBuffer.get(i);
             }
-            handler.handleSCTPMessage(receivedBytes, messageInfo, channel);
+            handler.handleSCTPMessage(receivedBytes);
         }
     }
 

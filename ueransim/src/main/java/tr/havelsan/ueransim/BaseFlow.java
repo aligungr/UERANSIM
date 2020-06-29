@@ -26,8 +26,6 @@
 
 package tr.havelsan.ueransim;
 
-import com.sun.nio.sctp.MessageInfo;
-import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
@@ -45,7 +43,7 @@ public abstract class BaseFlow {
         this.ctx.gnb.sctpClient.receiverLoop(this::receiveSctpData);
     }
 
-    private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
+    private void receiveSctpData(byte[] receivedBytes) {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
         Messaging.handleIncomingMessage(ctx, ngapPdu);
     }

@@ -67,7 +67,7 @@ public class MockedSCTPClient implements ISCTPClient {
                 for (int i = 0; i < response.length; i++) {
                     response[i] = entry[i];
                 }
-                handler.handleSCTPMessage(response, null, null);
+                handler.handleSCTPMessage(response);
             }
         }
     }
