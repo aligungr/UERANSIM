@@ -30,13 +30,29 @@ import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 public class Program {
 
     public static void main(String[] args) {
         MtsInitializer.initMts();
-        Console.addPrintHandler(str -> {
 
+        final String logFile = "app.log";
+
+        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
+        Console.addPrintHandler(str -> {
+            final Path path = Paths.get(logFile);
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
-        Console.println(Color.BLUE, "dsadassad");
     }
 }
