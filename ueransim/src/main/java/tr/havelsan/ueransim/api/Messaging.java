@@ -29,6 +29,7 @@ package tr.havelsan.ueransim.api;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.api.gnb.GnbContextManagement;
 import tr.havelsan.ueransim.api.nas.NasSecurity;
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.api.ue.mm.*;
 import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.core.SimulationContext;
@@ -111,37 +112,7 @@ public class Messaging {
 
         var nasMessage = message.getNasMessage(NasMessage.class);
         if (nasMessage != null) {
-            Messaging.handleNasMessage(ctx, nasMessage);
-        } else {
-            FlowLogging.logUnhandledMessage(message);
-        }
-    }
-
-    public static void handleNasMessage(SimulationContext ctx, NasMessage message) {
-        if (message instanceof AuthenticationRequest) {
-            UeAuthentication.handleAuthenticationRequest(ctx, (AuthenticationRequest) message);
-        } else if (message instanceof AuthenticationResult) {
-            UeAuthentication.handleAuthenticationResult(ctx, (AuthenticationResult) message);
-        } else if (message instanceof AuthenticationResponse) {
-            UeAuthentication.handleAuthenticationResponse(ctx, (AuthenticationResponse) message);
-        } else if (message instanceof AuthenticationReject) {
-            UeAuthentication.handleAuthenticationReject(ctx, (AuthenticationReject) message);
-        } else if (message instanceof RegistrationReject) {
-            UeRegistration.handleRegistrationReject(ctx, (RegistrationReject) message);
-        } else if (message instanceof IdentityRequest) {
-            UeIdentity.handleIdentityRequest(ctx, (IdentityRequest) message);
-        } else if (message instanceof RegistrationAccept) {
-            UeRegistration.handleRegistrationAccept(ctx, (RegistrationAccept) message);
-        } else if (message instanceof ServiceAccept) {
-            UeService.handleServiceAccept(ctx, (ServiceAccept) message);
-        } else if (message instanceof ServiceReject) {
-            UeService.handleServiceReject(ctx, (ServiceReject) message);
-        } else if (message instanceof SecurityModeCommand) {
-            UeSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
-        } else if (message instanceof PduSessionEstablishmentAccept) {
-            UePduSessionEstablishment.handleEstablishmentAccept(ctx, (PduSessionEstablishmentAccept) message);
-        } else if (message instanceof PduSessionEstablishmentReject) {
-            UePduSessionEstablishment.handleEstablishmentReject(ctx, (PduSessionEstablishmentReject) message);
+            UserEquipment.handleNasMessage(ctx, nasMessage);
         } else {
             FlowLogging.logUnhandledMessage(message);
         }
