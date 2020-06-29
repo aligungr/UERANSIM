@@ -28,6 +28,7 @@ package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.api.gnb.GnbMessaging;
+import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
@@ -71,7 +72,7 @@ public class Messaging {
         FlowLogging.logSentMessage(ngapPdu);
     }
 
-    public static void handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
-        GnbMessaging.handleFromNetwork(ctx.gnb, ngapPdu);
+    public static void handleIncomingMessage(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+        GnbMessaging.handleFromNetwork(ctx, ngapPdu);
     }
 }

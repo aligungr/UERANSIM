@@ -45,7 +45,7 @@ public abstract class BaseFlow {
 
     private void receiveSctpData(byte[] receivedBytes) {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
-        Messaging.handleIncomingMessage(ctx, ngapPdu);
+        Messaging.handleIncomingMessage(ctx.gnb, ngapPdu);
     }
 
     public final void flowComplete() {

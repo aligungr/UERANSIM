@@ -1,26 +1,49 @@
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.gnb.GnbInterfaceManagement;
+import tr.havelsan.ueransim.events.GnbCommandEvent;
 import tr.havelsan.ueransim.events.GnbEvent;
+import tr.havelsan.ueransim.events.SctpReceiveEvent;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class GNodeB {
 
     public static void run(GnbSimContext ctx) {
+        try {
+            ctx.sctpClient.start();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        new Thread(() -> {
+            try {
+                ctx.sctpClient.receiverLoop(receivedBytes -> pushEvent(ctx, new SctpReceiveEvent(receivedBytes)));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+
         new Thread(() -> {
             Logging.debug(Tag.FLOWS, "GNodeB has started: %s", ctx.config.gnbId);
             while (true) {
-                while (cycle(ctx)) {
-
+                while (hasEvent(ctx)) {
+                    cycle(ctx);
                 }
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
         }).start();
+    }
+
+    public static boolean hasEvent(GnbSimContext ctx) {
+        synchronized (ctx) {
+            return !ctx.eventQueue.isEmpty();
+        }
     }
 
     public static void pushEvent(GnbSimContext ctx, GnbEvent event) {
@@ -36,19 +59,17 @@ public class GNodeB {
         }
     }
 
-    private static boolean cycle(GnbSimContext ctx) {
-        boolean handled = false;
-
+    private static void cycle(GnbSimContext ctx) {
         var event = popEvent(ctx);
-        if (event != null) {
-            switch (event.cmd) {
+        if (event instanceof SctpReceiveEvent) {
+            Messaging.handleIncomingMessage(ctx, ((SctpReceiveEvent) event).ngapPdu);
+        } else if (event instanceof GnbCommandEvent) {
+            var cmd = ((GnbCommandEvent) event).cmd;
+            switch (cmd) {
                 case "ngsetup":
                     GnbInterfaceManagement.sendNgSetupRequest(ctx);
-                    handled = true;
                     break;
             }
         }
-
-        return handled;
     }
 }

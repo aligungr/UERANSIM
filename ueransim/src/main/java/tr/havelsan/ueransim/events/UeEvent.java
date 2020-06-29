@@ -1,4 +1,4 @@
 package tr.havelsan.ueransim.events;
 
-public class UeEvent extends SimulationEvent {
+public abstract class UeEvent extends SimulationEvent {
 }

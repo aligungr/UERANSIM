@@ -7,7 +7,7 @@ public class EventParser {
             return null;
         }
         if (command.equals("ngsetup")) {
-            return new GnbEvent(command);
+            return new GnbCommandEvent(command);
         }
         return null;
     }
