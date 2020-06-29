@@ -52,7 +52,6 @@ public abstract class BaseFlow implements IMessageListener {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
 
         var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
-        Messaging.handleNgapMessage(ctx, incomingMessage);
         ctx.dispatchMessageReceive(incomingMessage);
     }
 

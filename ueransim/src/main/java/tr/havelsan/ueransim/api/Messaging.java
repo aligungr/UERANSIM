@@ -70,6 +70,7 @@ public class Messaging {
         }
 
         FlowLogging.logReceivedMessage(incomingMessage);
+        Messaging.handleNgapMessage(ctx, incomingMessage);
         return incomingMessage;
     }
 
@@ -105,7 +106,7 @@ public class Messaging {
         return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);
     }
 
-    public static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
+    private static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
         if (message.ngapMessage instanceof InitialContextSetupRequest) {
             GnbContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
         }
