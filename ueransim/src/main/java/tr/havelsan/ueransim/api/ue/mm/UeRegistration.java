@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.api.ue.UeSimulationContext;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -49,7 +50,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class UeRegistration {
 
-    public static void sendRegistration(SimulationContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
+    public static void sendRegistration(UeSimulationContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.currentNsc != null && ctx.currentNsc.ngKsi != null) {
             ngKsi = ctx.currentNsc.ngKsi;
@@ -93,11 +94,11 @@ public class UeRegistration {
         ctx.ueTimers.t3502.stop();
         ctx.ueTimers.t3511.stop();
 
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
+        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.IGNORE)
                 .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
     }
 
-    public static void handleRegistrationAccept(SimulationContext ctx, RegistrationAccept message) {
+    public static void handleRegistrationAccept(UeSimulationContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
         ctx.ueData.taiList = message.taiList;
@@ -114,12 +115,12 @@ public class UeRegistration {
         }
 
         if (sendCompleteMes) {
-            Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
+            Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
                     new RegistrationComplete()));
         }
     }
 
-    public static void handleRegistrationReject(SimulationContext ctx, RegistrationReject message) {
+    public static void handleRegistrationReject(UeSimulationContext ctx, RegistrationReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);

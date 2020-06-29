@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
+import tr.havelsan.ueransim.api.ue.UeSimulationContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceAccept;
@@ -35,7 +36,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class UeService {
 
-    public static void handleServiceAccept(SimulationContext ctx, ServiceAccept message) {
+    public static void handleServiceAccept(UeSimulationContext ctx, ServiceAccept message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
@@ -46,7 +47,7 @@ public class UeService {
         }
     }
 
-    public static void handleServiceReject(SimulationContext ctx, ServiceReject message) {
+    public static void handleServiceReject(UeSimulationContext ctx, ServiceReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);

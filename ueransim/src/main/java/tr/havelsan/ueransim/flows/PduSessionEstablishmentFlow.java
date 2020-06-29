@@ -45,7 +45,7 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
 
     @Override
     public void main() {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
+        UePduSessionEstablishment.sendEstablishmentRequest(ctx.ue, config);
     }
 
     @Override

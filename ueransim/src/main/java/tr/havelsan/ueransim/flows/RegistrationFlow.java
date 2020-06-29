@@ -46,7 +46,7 @@ public class RegistrationFlow extends BaseFlow {
 
     @Override
     public void main() {
-        UeRegistration.sendRegistration(ctx, config, ERegistrationType.INITIAL_REGISTRATION);
+        UeRegistration.sendRegistration(ctx.ue, config, ERegistrationType.INITIAL_REGISTRATION);
     }
 
     @Override

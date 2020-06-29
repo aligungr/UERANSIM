@@ -46,7 +46,7 @@ public class PeriodicRegistrationFlow extends BaseFlow {
 
     @Override
     public void main() {
-        UeRegistration.sendRegistration(ctx, config, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+        UeRegistration.sendRegistration(ctx.ue, config, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
     }
 
     @Override

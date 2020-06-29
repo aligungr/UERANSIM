@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.ue.sm;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.api.ue.UeSimulationContext;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -46,7 +47,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UePduSessionEstablishment {
 
-    public static void sendEstablishmentRequest(SimulationContext ctx, PduSessionEstablishmentConfig config) {
+    public static void sendEstablishmentRequest(UeSimulationContext ctx, PduSessionEstablishmentConfig config) {
         Logging.funcIn("Sending PDU Session Establishment Request");
 
         var pduSessionId = UePduSessionManagement.allocatePduSessionId(ctx);
@@ -84,12 +85,12 @@ public class UePduSessionEstablishment {
 
         ctx.ueTimers.t3580.start();
 
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
+        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
 
         Logging.funcOut();
     }
 
-    public static void handleEstablishmentAccept(SimulationContext ctx, PduSessionEstablishmentAccept message) {
+    public static void handleEstablishmentAccept(UeSimulationContext ctx, PduSessionEstablishmentAccept message) {
         Logging.funcIn("Handling: PDU Session Establishment Accept");
 
         if (message.smCause != null) {
@@ -153,7 +154,7 @@ public class UePduSessionEstablishment {
         */
     }
 
-    public static void handleEstablishmentReject(SimulationContext ctx, PduSessionEstablishmentReject message) {
+    public static void handleEstablishmentReject(UeSimulationContext ctx, PduSessionEstablishmentReject message) {
 
     }
 }

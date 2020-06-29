@@ -26,33 +26,19 @@
 
 package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.api.nas.NasSecurityContext;
-import tr.havelsan.ueransim.api.ue.sm.SmContext;
-import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
+import tr.havelsan.ueransim.api.ue.UeSimulationContext;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
-import tr.havelsan.ueransim.structs.UeConfig;
-import tr.havelsan.ueransim.structs.UeData;
-import tr.havelsan.ueransim.structs.UeTimers;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public class SimulationContext {
-    // Connection related
     public ISCTPClient sctpClient;
     public int streamNumber;
     public String amfHost;
     public int amfPort;
 
-    // UE related
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public NasSecurityContext currentNsc;
-    public NasSecurityContext nonCurrentNsc;
-    public UeTimers ueTimers;
-    public RegistrationRequest registrationRequest;
-    public SmContext smCtx;
+    public UeSimulationContext ue;
 
-    // NGAP IE related
     public Long amfUeNgapId;
     public long ranUeNgapId;
 

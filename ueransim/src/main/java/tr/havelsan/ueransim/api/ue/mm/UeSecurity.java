@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.api.ue.UeSimulationContext;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -50,7 +51,7 @@ import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class UeSecurity {
 
-    public static void handleSecurityModeCommand(SimulationContext ctx, SecurityModeCommand message) {
+    public static void handleSecurityModeCommand(UeSimulationContext ctx, SecurityModeCommand message) {
         Logging.funcIn("Handling: Security Mode Command");
 
         // todo: check the integriti with new security context
@@ -63,7 +64,7 @@ public class UeSecurity {
             var replayed = message.replayedUeSecurityCapabilities;
             var real = createSecurityCapabilityIe();
             if (!compareSecurityCapabilities(real, replayed)) {
-                Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
+                Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE),
                         new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH)));
                 Logging.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
                 return;
@@ -106,7 +107,7 @@ public class UeSecurity {
         response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.registrationRequest));
 
         // Send response
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
 
         Logging.funcOut();
     }

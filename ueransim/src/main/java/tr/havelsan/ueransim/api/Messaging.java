@@ -57,7 +57,7 @@ public class Messaging {
     public static IncomingMessage handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
         var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
-        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx.currentNsc, nasMessage);
+        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx.ue.currentNsc, nasMessage);
         var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
 
         // check for AMF-UE-NGAP-ID
@@ -81,7 +81,7 @@ public class Messaging {
 
         var nasMessage = message.getNasMessage(NasMessage.class);
         if (nasMessage != null) {
-            UserEquipment.handleNasMessage(ctx, nasMessage);
+            UserEquipment.handleNasMessage(ctx.ue, nasMessage);
         } else {
             FlowLogging.logUnhandledMessage(message);
         }
@@ -89,7 +89,7 @@ public class Messaging {
 
     public static OutgoingMessage handleOutgoingMessage(SimulationContext ctx, SendingMessage sendingMessage) {
         // Adding NAS PDU (if any)
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, sendingMessage.nasMessage);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.ue.currentNsc, sendingMessage.nasMessage);
         if (securedNas != null) {
             // NOTE: criticality is hardcoded here, it may be changed
             sendingMessage.ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
@@ -113,7 +113,7 @@ public class Messaging {
         // Adding user location information
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addUserLocationInformationNR(ctx.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
+            sendingMessage.ngapBuilder.addUserLocationInformationNR(ctx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
         }
 
         return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);

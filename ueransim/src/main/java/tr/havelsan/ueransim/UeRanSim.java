@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.api.ue.UeSimulationContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.SimulationContext;
@@ -60,6 +61,7 @@ public class UeRanSim {
         var params = config.getParameters();
 
         var simContext = new SimulationContext();
+        simContext.ue = new UeSimulationContext(simContext);
 
         // Parse UE Data
         {
@@ -73,7 +75,7 @@ public class UeRanSim {
             ueData.amf = new OctetString((String) ud.get("amf"));
             ueData.imei = (String) ud.get("imei");
             ueData.supi = Supi.parse((String) ud.get("supi"));
-            simContext.ueData = ueData;
+            simContext.ue.ueData = ueData;
         }
 
         // Parse UE Config
@@ -85,7 +87,7 @@ public class UeRanSim {
             ueConfig.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
                     ((ImplicitTypedObject) params.get("ue.userLocationInformationNr")), true);
 
-            simContext.ueConfig = ueConfig;
+            simContext.ue.ueConfig = ueConfig;
         }
 
         // Parse RAN-UE-NGAP-ID
@@ -115,8 +117,8 @@ public class UeRanSim {
 
         // The others
         {
-            simContext.ueTimers = new UeTimers();
-            simContext.smCtx = new SmContext();
+            simContext.ue.ueTimers = new UeTimers();
+            simContext.ue.smCtx = new SmContext();
         }
 
         return simContext;
