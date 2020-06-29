@@ -33,7 +33,6 @@ import tr.havelsan.ueransim.core.IMessageListener;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.FlowLogging;
-import tr.havelsan.ueransim.utils.IncomingMessage;
 
 public abstract class BaseFlow implements IMessageListener {
     protected final SimulationContext ctx;
