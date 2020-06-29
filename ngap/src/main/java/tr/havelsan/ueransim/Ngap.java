@@ -51,7 +51,7 @@ import java.nio.charset.StandardCharsets;
 
 public class Ngap {
     private static final boolean TRACE = false;
-    private static Context context;
+    private static final ThreadLocal<Context> context = new ThreadLocal<>();
 
     static {
         try {
@@ -64,8 +64,8 @@ public class Ngap {
     }
 
     private synchronized static Context getContext() {
-        if (context != null)
-            return context;
+        if (context.get() != null)
+            return context.get();
 
         IAbstractSyntax asn;
 
@@ -90,7 +90,8 @@ public class Ngap {
 
         context.setIndentationShift(2);
 
-        return Ngap.context = context;
+        Ngap.context.set(context);
+        return context;
     }
 
     public static byte[] perEncode(Value value) {
@@ -142,9 +143,6 @@ public class Ngap {
         return xerDecode(type, xml.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * This method is different from NAS/5GS version
-     */
     public static PLMNIdentity plmnEncode(VPlmn plmn) {
         int mcc = plmn.mcc.intValue();
         int mcc3 = mcc % 10;
@@ -183,9 +181,6 @@ public class Ngap {
         }
     }
 
-    /**
-     * This method is different from NAS/5GS version
-     */
     public static VPlmn plmnDecode(PLMNIdentity plmn) {
         var bytes = plmn.getValue();
         var stream = new OctetInputStream(bytes);

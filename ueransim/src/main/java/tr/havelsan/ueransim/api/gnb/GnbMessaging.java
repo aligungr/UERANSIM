@@ -47,7 +47,7 @@ public class GnbMessaging {
         Messaging.send2(gnbCtx.simCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), nasMessage);
     }
 
-    public static void handleFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    public static void receiveFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
 
         // check for AMF-UE-NGAP-ID

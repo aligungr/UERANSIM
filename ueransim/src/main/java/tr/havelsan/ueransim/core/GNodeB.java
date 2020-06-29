@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.gnb.GnbInterfaceManagement;
+import tr.havelsan.ueransim.api.gnb.GnbMessaging;
 import tr.havelsan.ueransim.events.GnbCommandEvent;
 import tr.havelsan.ueransim.events.GnbEvent;
 import tr.havelsan.ueransim.events.SctpReceiveEvent;
@@ -62,7 +62,7 @@ public class GNodeB {
     private static void cycle(GnbSimContext ctx) {
         var event = popEvent(ctx);
         if (event instanceof SctpReceiveEvent) {
-            Messaging.handleIncomingMessage(ctx, ((SctpReceiveEvent) event).ngapPdu);
+            GnbMessaging.receiveFromNetwork(ctx, ((SctpReceiveEvent) event).ngapPdu);
         } else if (event instanceof GnbCommandEvent) {
             var cmd = ((GnbCommandEvent) event).cmd;
             switch (cmd) {
