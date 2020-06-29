@@ -30,8 +30,8 @@ import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.api.nas.NasSecurityContext;
+import tr.havelsan.ueransim.api.ue.UeMessaging;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
-import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.*;
@@ -144,7 +144,7 @@ public class UeAuthentication {
 
                 var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
                 var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                UserEquipment.sendNas(ctx, response);
+                UeMessaging.sendNas(ctx, response);
             }
         }
 
@@ -178,7 +178,7 @@ public class UeAuthentication {
                     ueRejectionTimers.run();
 
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                    UserEquipment.sendNas(ctx, response);
+                    UeMessaging.sendNas(ctx, response);
                 }
                 return;
             }
@@ -198,7 +198,7 @@ public class UeAuthentication {
                     eapResponse.attributes.putClientErrorCode(0);
 
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                    UserEquipment.sendNas(ctx, response);
+                    UeMessaging.sendNas(ctx, response);
                     return;
                 }
             }
@@ -236,7 +236,7 @@ public class UeAuthentication {
             var response = new AuthenticationResponse();
             response.eapMessage = new IEEapMessage(akaPrimeResponse);
 
-            UserEquipment.sendNas(ctx, response);
+            UeMessaging.sendNas(ctx, response);
         }
 
         Logging.funcOut();
@@ -311,7 +311,7 @@ public class UeAuthentication {
         }
 
         if (response != null) {
-            UserEquipment.sendNas(ctx, response);
+            UeMessaging.sendNas(ctx, response);
         }
 
         Logging.funcOut();

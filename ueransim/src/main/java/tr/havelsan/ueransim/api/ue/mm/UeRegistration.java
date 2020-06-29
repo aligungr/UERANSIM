@@ -26,8 +26,8 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
+import tr.havelsan.ueransim.api.ue.UeMessaging;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
-import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
@@ -88,7 +88,7 @@ public class UeRegistration {
         ctx.ueTimers.t3502.stop();
         ctx.ueTimers.t3511.stop();
 
-        UserEquipment.sendNas(ctx, registrationRequest);
+        UeMessaging.sendNas(ctx, registrationRequest);
     }
 
     public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
@@ -108,7 +108,7 @@ public class UeRegistration {
         }
 
         if (sendCompleteMes) {
-            UserEquipment.sendNas(ctx, new RegistrationComplete());
+            UeMessaging.sendNas(ctx, new RegistrationComplete());
         }
     }
 

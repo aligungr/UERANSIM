@@ -10,7 +10,7 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.FlowLogging;
 
-public class UserEquipment {
+public class UeMessaging {
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
         Messaging.send2(ctx.simCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), message);
