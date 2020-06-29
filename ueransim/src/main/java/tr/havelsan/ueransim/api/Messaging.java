@@ -74,6 +74,19 @@ public class Messaging {
         return incomingMessage;
     }
 
+    private static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
+        if (message.ngapMessage instanceof InitialContextSetupRequest) {
+            GnbContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
+        }
+
+        var nasMessage = message.getNasMessage(NasMessage.class);
+        if (nasMessage != null) {
+            UserEquipment.handleNasMessage(ctx, nasMessage);
+        } else {
+            FlowLogging.logUnhandledMessage(message);
+        }
+    }
+
     public static OutgoingMessage handleOutgoingMessage(SimulationContext ctx, SendingMessage sendingMessage) {
         // Adding NAS PDU (if any)
         NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, sendingMessage.nasMessage);
@@ -104,18 +117,5 @@ public class Messaging {
         }
 
         return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);
-    }
-
-    private static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
-        if (message.ngapMessage instanceof InitialContextSetupRequest) {
-            GnbContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
-        }
-
-        var nasMessage = message.getNasMessage(NasMessage.class);
-        if (nasMessage != null) {
-            UserEquipment.handleNasMessage(ctx, nasMessage);
-        } else {
-            FlowLogging.logUnhandledMessage(message);
-        }
     }
 }
