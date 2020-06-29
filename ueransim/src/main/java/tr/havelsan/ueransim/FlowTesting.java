@@ -80,12 +80,12 @@ public class FlowTesting {
 
         var simContext = UeRanSim.createSimContext(configYaml);
 
-        simContext.sctpClient.start();
+        simContext.gnb.sctpClient.start();
 
         while (true) {
             Console.printDiv();
 
-            if (!simContext.sctpClient.isOpen())
+            if (!simContext.gnb.sctpClient.isOpen())
                 break;
 
             Console.println(Color.BLUE, "Select a flow:");
@@ -108,7 +108,7 @@ public class FlowTesting {
             Console.println();
 
             if (selection == 0) {
-                simContext.sctpClient.close();
+                simContext.gnb.sctpClient.close();
                 break;
             }
 

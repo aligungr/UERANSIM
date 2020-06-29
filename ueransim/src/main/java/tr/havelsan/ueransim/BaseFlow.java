@@ -44,7 +44,7 @@ public abstract class BaseFlow implements IMessageListener {
     public final void start() throws Exception {
         ctx.registerListener(this);
         main();
-        this.ctx.sctpClient.receiverLoop(this::receiveSctpData);
+        this.ctx.gnb.sctpClient.receiverLoop(this::receiveSctpData);
     }
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
@@ -57,7 +57,7 @@ public abstract class BaseFlow implements IMessageListener {
     public final void flowComplete() {
         FlowLogging.logFlowComplete(this);
         ctx.unregisterListener();
-        ctx.sctpClient.abortReceiver();
+        ctx.gnb.sctpClient.abortReceiver();
     }
 
     public abstract void main();

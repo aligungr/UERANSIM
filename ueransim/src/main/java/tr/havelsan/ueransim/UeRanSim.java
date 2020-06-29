@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.api.gnb.GnbSimContext;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.core.Constants;
@@ -61,6 +62,7 @@ public class UeRanSim {
         var params = config.getParameters();
 
         var simContext = new SimulationContext();
+        simContext.gnb = new GnbSimContext(simContext);
         simContext.ue = new UeSimContext(simContext);
 
         // Parse UE Data
@@ -92,7 +94,7 @@ public class UeRanSim {
 
         // Parse RAN-UE-NGAP-ID
         {
-            simContext.ranUeNgapId = ((Number) params.get("context.ranUeNgapId")).longValue();
+            simContext.gnb.ranUeNgapId = ((Number) params.get("context.ranUeNgapId")).longValue();
         }
 
         // Create SCTP Client
@@ -101,8 +103,8 @@ public class UeRanSim {
             int amfPort = (int) params.get("amf.port");
             boolean amfMocked = (boolean) params.get("amf.mocked");
 
-            simContext.amfHost = amfHost;
-            simContext.amfPort = amfPort;
+            simContext.gnb.amfHost = amfHost;
+            simContext.gnb.amfPort = amfPort;
 
             ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
 
@@ -111,8 +113,8 @@ public class UeRanSim {
                 sctpClient = newMockedClient((String) params.get("amf.mockedRemote"));
             }
 
-            simContext.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
-            simContext.sctpClient = sctpClient;
+            simContext.gnb.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
+            simContext.gnb.sctpClient = sctpClient;
         }
 
         // The others

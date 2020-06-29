@@ -49,7 +49,7 @@ public class Messaging {
 
     public static void send(SimulationContext ctx, SendingMessage sendingMessage) {
         var outgoing = Messaging.handleOutgoingMessage(ctx, sendingMessage);
-        ctx.sctpClient.send(ctx.streamNumber, Ngap.perEncode(outgoing.ngapPdu));
+        ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(outgoing.ngapPdu));
         FlowLogging.logSentMessage(outgoing);
         ctx.dispatchMessageSent(outgoing);
     }
@@ -65,7 +65,7 @@ public class Messaging {
             var ieAmfUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, AMF_UE_NGAP_ID.class);
             if (ieAmfUeNgapId.size() > 0) {
                 var ie = ieAmfUeNgapId.get(ieAmfUeNgapId.size() - 1);
-                ctx.amfUeNgapId = ie.value;
+                ctx.gnb.amfUeNgapId = ie.value;
             }
         }
 
@@ -76,7 +76,7 @@ public class Messaging {
 
     private static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
         if (message.ngapMessage instanceof InitialContextSetupRequest) {
-            GnbContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) message.ngapMessage);
+            GnbContextManagement.handleInitialContextSetup(ctx.gnb, (InitialContextSetupRequest) message.ngapMessage);
         }
 
         var nasMessage = message.getNasMessage(NasMessage.class);
@@ -97,7 +97,7 @@ public class Messaging {
 
         // Adding AMF-UE-NGAP-ID (if any)
         {
-            Long amfUeNgapId = ctx.amfUeNgapId;
+            Long amfUeNgapId = ctx.gnb.amfUeNgapId;
             if (amfUeNgapId != null) {
                 // NOTE: criticality is hardcoded here, it may be changed
                 sendingMessage.ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
@@ -107,7 +107,7 @@ public class Messaging {
         // Adding RAN-UE-NGAP-ID
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addRanUeNgapId(ctx.ranUeNgapId, NgapCriticality.REJECT);
+            sendingMessage.ngapBuilder.addRanUeNgapId(ctx.gnb.ranUeNgapId, NgapCriticality.REJECT);
         }
 
         // Adding user location information

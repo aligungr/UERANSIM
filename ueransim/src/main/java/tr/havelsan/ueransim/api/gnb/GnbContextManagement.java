@@ -36,9 +36,9 @@ import tr.havelsan.ueransim.utils.SendingMessage;
 
 public class GnbContextManagement {
 
-    public static void handleInitialContextSetup(SimulationContext ctx, InitialContextSetupRequest message) {
+    public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
         // todo
-        Messaging.send(ctx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
+        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
                 null));
     }
 }

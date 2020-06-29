@@ -26,21 +26,14 @@
 
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.api.gnb.GnbSimContext;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
-import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public class SimulationContext {
-    public ISCTPClient sctpClient;
-    public int streamNumber;
-    public String amfHost;
-    public int amfPort;
-
     public UeSimContext ue;
-
-    public Long amfUeNgapId;
-    public long ranUeNgapId;
+    public GnbSimContext gnb;
 
     // Message callback
     private IMessageListener messageListener;
