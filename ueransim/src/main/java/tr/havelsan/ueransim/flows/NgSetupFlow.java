@@ -26,11 +26,7 @@
 
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.api.gnb.GnbInterfaceManagement;
-import tr.havelsan.ueransim.core.SimulationContext;
-
-public class NgSetupFlow extends BaseFlow {
+/*public class NgSetupFlow extends BaseFlow {
 
     public NgSetupFlow(SimulationContext simContext) {
         super(simContext);
@@ -41,3 +37,4 @@ public class NgSetupFlow extends BaseFlow {
         GnbInterfaceManagement.sendNgSetupRequest(ctx.gnb);
     }
 }
+*/

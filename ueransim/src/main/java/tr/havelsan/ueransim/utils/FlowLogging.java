@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.utils;
 
-import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
@@ -77,15 +76,15 @@ public class FlowLogging {
         logUnhandledMessage(message.getClass().getSimpleName(), expectedType);
     }
 
-    public static void logFlowComplete(BaseFlow flow) {
+    /*public static void logFlowComplete(BaseFlow flow) {
         Logging.success(Tag.FLOWS, "%s completed", flow.getClass().getSimpleName());
-    }
+    }*/
 
-    public static void logFlowFailed(BaseFlow flow, String errorMessage) {
+    /*public static void logFlowFailed(BaseFlow flow, String errorMessage) {
         if (errorMessage != null && errorMessage.length() > 0) {
             Logging.error(Tag.FLOWS, "%s failed: %s", flow.getClass().getSimpleName(), errorMessage);
         } else {
             Logging.error(Tag.FLOWS, "%s failed", flow.getClass().getSimpleName());
         }
-    }
+    }*/
 }

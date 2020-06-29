@@ -26,12 +26,7 @@
 
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
-
-public class PduSessionEstablishmentFlow extends BaseFlow {
+/*public class PduSessionEstablishmentFlow extends BaseFlow {
 
     private final PduSessionEstablishmentConfig config;
 
@@ -45,3 +40,4 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
         UePduSessionEstablishment.sendEstablishmentRequest(ctx.ue, config);
     }
 }
+*/

@@ -26,13 +26,7 @@
 
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.api.ue.mm.UeRegistration;
-import tr.havelsan.ueransim.configs.RegistrationConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
-
-public class PeriodicRegistrationFlow extends BaseFlow {
+/*public class PeriodicRegistrationFlow extends BaseFlow {
     private final RegistrationConfig config;
 
     public PeriodicRegistrationFlow(SimulationContext simContext, RegistrationConfig config) {
@@ -45,3 +39,4 @@ public class PeriodicRegistrationFlow extends BaseFlow {
         UeRegistration.sendRegistration(ctx.ue, config, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
     }
 }
+*/
