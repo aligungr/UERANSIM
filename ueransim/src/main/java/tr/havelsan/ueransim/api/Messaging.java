@@ -30,11 +30,8 @@ import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.api.gnb.GnbContextManagement;
 import tr.havelsan.ueransim.api.nas.NasSecurity;
 import tr.havelsan.ueransim.api.ue.UserEquipment;
-import tr.havelsan.ueransim.api.ue.mm.*;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
@@ -81,7 +78,7 @@ public class Messaging {
 
         var nasMessage = message.getNasMessage(NasMessage.class);
         if (nasMessage != null) {
-            UserEquipment.handleNasMessage(ctx.ue, nasMessage);
+            UserEquipment.handleNas(ctx.ue, nasMessage);
         } else {
             FlowLogging.logUnhandledMessage(message);
         }

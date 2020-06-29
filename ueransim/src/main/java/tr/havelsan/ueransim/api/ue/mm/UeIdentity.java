@@ -26,9 +26,8 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.UeMessaging;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
@@ -41,12 +40,8 @@ import tr.havelsan.ueransim.nas.impl.ies.IESuciMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityRequest;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.structs.Supi;
 import tr.havelsan.ueransim.utils.Logging;
-import tr.havelsan.ueransim.utils.SendingMessage;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class UeIdentity {
@@ -68,7 +63,7 @@ public class UeIdentity {
             }
         }
 
-        UeMessaging.send(ctx, response);
+        UserEquipment.sendNas(ctx, response);
         Logging.funcOut();
     }
 

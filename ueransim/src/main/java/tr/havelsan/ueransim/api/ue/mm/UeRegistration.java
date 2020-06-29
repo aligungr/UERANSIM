@@ -26,9 +26,8 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.UeMessaging;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
@@ -40,12 +39,7 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
-import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Logging;
-import tr.havelsan.ueransim.utils.SendingMessage;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class UeRegistration {
@@ -94,7 +88,7 @@ public class UeRegistration {
         ctx.ueTimers.t3502.stop();
         ctx.ueTimers.t3511.stop();
 
-        UeMessaging.send(ctx, registrationRequest);
+        UserEquipment.sendNas(ctx, registrationRequest);
     }
 
     public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
@@ -114,7 +108,7 @@ public class UeRegistration {
         }
 
         if (sendCompleteMes) {
-            UeMessaging.send(ctx, new RegistrationComplete());
+            UserEquipment.sendNas(ctx, new RegistrationComplete());
         }
     }
 
