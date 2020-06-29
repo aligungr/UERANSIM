@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.api.ue.UeSimContext;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.utils.Logging;

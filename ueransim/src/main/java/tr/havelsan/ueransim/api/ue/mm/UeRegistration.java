@@ -27,8 +27,8 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.api.ue.UeMessaging;
-import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;

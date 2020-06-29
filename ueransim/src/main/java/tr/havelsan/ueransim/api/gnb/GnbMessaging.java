@@ -27,8 +27,8 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;

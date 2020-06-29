@@ -24,15 +24,17 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.ue;
+package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.api.nas.NasSecurityContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
-import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.events.UeEvent;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
 import tr.havelsan.ueransim.structs.UeTimers;
+
+import java.util.Queue;
 
 public class UeSimContext {
 
@@ -45,6 +47,8 @@ public class UeSimContext {
     public UeTimers ueTimers;
     public RegistrationRequest registrationRequest;
     public SmContext smCtx;
+
+    Queue<UeEvent> commandQueue;
 
     public UeSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;

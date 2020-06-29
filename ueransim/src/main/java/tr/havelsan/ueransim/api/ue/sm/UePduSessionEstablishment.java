@@ -27,8 +27,8 @@
 package tr.havelsan.ueransim.api.ue.sm;
 
 import tr.havelsan.ueransim.api.ue.UeMessaging;
-import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.nas.impl.ies.*;

@@ -26,11 +26,11 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;

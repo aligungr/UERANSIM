@@ -1,14 +1,14 @@
 package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.events.GnbEvent;
+import tr.havelsan.ueransim.events.UeEvent;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class GNodeB {
+public class UserEquipment {
 
-    public static void run(GnbSimContext ctx) {
+    public static void run(UeSimContext ctx) {
         new Thread(() -> {
-            Logging.debug(Tag.FLOWS, "GNodeB has started: %s", ctx.config.gnbId);
+            Logging.debug(Tag.FLOWS, "UE has started.");
             while (true) {
                 cycle(ctx);
                 try {
@@ -20,19 +20,19 @@ public class GNodeB {
         }).start();
     }
 
-    public static void pushEvent(GnbSimContext ctx, GnbEvent cmd) {
+    public static void pushEvent(UeSimContext ctx, UeEvent cmd) {
         synchronized (ctx) {
             ctx.commandQueue.add(cmd);
         }
     }
 
-    private static GnbEvent popEvent(GnbSimContext ctx) {
+    private static UeEvent popEvent(UeSimContext ctx) {
         synchronized (ctx) {
             return ctx.commandQueue.poll();
         }
     }
 
-    private static void cycle(GnbSimContext ctx) {
+    private static void cycle(UeSimContext ctx) {
 
     }
 }

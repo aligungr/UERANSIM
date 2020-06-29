@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.events.GnbEvent;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.structs.GnbConfig;
 

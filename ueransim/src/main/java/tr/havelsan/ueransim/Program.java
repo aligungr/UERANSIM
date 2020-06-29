@@ -27,6 +27,10 @@
 package tr.havelsan.ueransim;
 
 import tr.havelsan.ueransim.core.GNodeB;
+import tr.havelsan.ueransim.core.UserEquipment;
+import tr.havelsan.ueransim.events.EventParser;
+import tr.havelsan.ueransim.events.GnbEvent;
+import tr.havelsan.ueransim.events.UeEvent;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
@@ -39,6 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Scanner;
 
 public class Program {
 
@@ -52,6 +57,24 @@ public class Program {
         GNodeB.run(gnbContext);
 
         var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
+        UserEquipment.run(ueContext);
+
+        var scanner = new Scanner(System.in);
+
+        System.out.println("Type event:");
+        while (true) {
+            String line = scanner.nextLine();
+            var event = EventParser.parse(line);
+            if (event == null) {
+                System.out.println("Event not found: " + line);
+            } else {
+                if (event instanceof GnbEvent) {
+                    GNodeB.pushEvent(gnbContext, (GnbEvent) event);
+                } else if (event instanceof UeEvent) {
+                    UserEquipment.pushEvent(ueContext, (UeEvent) event);
+                }
+            }
+        }
     }
 
     private static void initLogging() {

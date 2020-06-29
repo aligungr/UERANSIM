@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.api.gnb.GnbMessaging;
 import tr.havelsan.ueransim.api.nas.NasSecurity;
 import tr.havelsan.ueransim.api.ue.mm.*;
 import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.FlowLogging;
