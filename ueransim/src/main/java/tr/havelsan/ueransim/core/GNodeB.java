@@ -37,17 +37,18 @@ public class GNodeB {
     }
 
     private static boolean cycle(GnbSimContext ctx) {
+        boolean handled = false;
+
         var event = popEvent(ctx);
-        if (event == null) {
-            return false;
+        if (event != null) {
+            switch (event.cmd) {
+                case "ngsetup":
+                    GnbInterfaceManagement.sendNgSetupRequest(ctx);
+                    handled = true;
+                    break;
+            }
         }
 
-        switch (event.cmd) {
-            case "ngsetup":
-                GnbInterfaceManagement.sendNgSetupRequest(ctx);
-                return true;
-        }
-
-        return false;
+        return handled;
     }
 }
