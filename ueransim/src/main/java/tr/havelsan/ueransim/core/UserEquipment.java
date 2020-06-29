@@ -20,15 +20,16 @@ public class UserEquipment {
         }).start();
     }
 
-    public static void pushEvent(UeSimContext ctx, UeEvent cmd) {
+    public static void pushEvent(UeSimContext ctx, UeEvent event) {
+        Logging.info(Tag.EVENT, "Pushed event: %s", event);
         synchronized (ctx) {
-            ctx.commandQueue.add(cmd);
+            ctx.eventQueue.add(event);
         }
     }
 
     private static UeEvent popEvent(UeSimContext ctx) {
         synchronized (ctx) {
-            return ctx.commandQueue.poll();
+            return ctx.eventQueue.poll();
         }
     }
 

@@ -44,7 +44,7 @@ public class GnbSimContext {
     public Long amfUeNgapId;
     public long ranUeNgapId;
 
-    Queue<GnbEvent> commandQueue = new ArrayDeque<>();
+    Queue<GnbEvent> eventQueue = new ArrayDeque<>();
 
     public GnbSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;

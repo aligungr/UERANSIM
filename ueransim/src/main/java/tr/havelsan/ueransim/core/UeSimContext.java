@@ -34,6 +34,7 @@ import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
 import tr.havelsan.ueransim.structs.UeTimers;
 
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class UeSimContext {
@@ -48,7 +49,7 @@ public class UeSimContext {
     public RegistrationRequest registrationRequest;
     public SmContext smCtx;
 
-    Queue<UeEvent> commandQueue;
+    Queue<UeEvent> eventQueue = new ArrayDeque<>();
 
     public UeSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;

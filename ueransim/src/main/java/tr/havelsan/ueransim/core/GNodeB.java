@@ -20,15 +20,16 @@ public class GNodeB {
         }).start();
     }
 
-    public static void pushEvent(GnbSimContext ctx, GnbEvent cmd) {
+    public static void pushEvent(GnbSimContext ctx, GnbEvent event) {
+        Logging.info(Tag.EVENT, "Pushed event: %s", event);
         synchronized (ctx) {
-            ctx.commandQueue.add(cmd);
+            ctx.eventQueue.add(event);
         }
     }
 
     private static GnbEvent popEvent(GnbSimContext ctx) {
         synchronized (ctx) {
-            return ctx.commandQueue.poll();
+            return ctx.eventQueue.poll();
         }
     }
 
