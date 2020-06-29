@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.api.gnb.GnbInterfaceManagement;
 import tr.havelsan.ueransim.events.GnbEvent;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -10,7 +11,9 @@ public class GNodeB {
         new Thread(() -> {
             Logging.debug(Tag.FLOWS, "GNodeB has started: %s", ctx.config.gnbId);
             while (true) {
-                cycle(ctx);
+                while (cycle(ctx)) {
+
+                }
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -33,7 +36,18 @@ public class GNodeB {
         }
     }
 
-    private static void cycle(GnbSimContext ctx) {
+    private static boolean cycle(GnbSimContext ctx) {
+        var event = popEvent(ctx);
+        if (event == null) {
+            return false;
+        }
 
+        switch (event.cmd) {
+            case "ngsetup":
+                GnbInterfaceManagement.sendNgSetupRequest(ctx);
+                return true;
+        }
+
+        return false;
     }
 }
