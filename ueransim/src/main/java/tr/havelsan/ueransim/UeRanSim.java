@@ -42,10 +42,7 @@ import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.MockedSCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
-import tr.havelsan.ueransim.structs.Supi;
-import tr.havelsan.ueransim.structs.UeConfig;
-import tr.havelsan.ueransim.structs.UeData;
-import tr.havelsan.ueransim.structs.UeTimers;
+import tr.havelsan.ueransim.structs.*;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -64,6 +61,9 @@ public class UeRanSim {
         var simContext = new SimulationContext();
         simContext.gnb = new GnbSimContext(simContext);
         simContext.ue = new UeSimContext(simContext);
+
+        simContext.gnb.config = MtsConstruct.construct(GnbConfig.class,
+                (ImplicitTypedObject) params.get("gnbConfig"), true);
 
         // Parse UE Data
         {

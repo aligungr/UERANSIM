@@ -24,19 +24,19 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.configs;
+package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.ngap2.SupportedTA;
+import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 
-public class NgSetupConfig {
-    public final int gnbId;
-    public final VPlmn gnbPlmn;
-    public final SupportedTA[] supportedTAs;
+public class GnbUeContextManagement {
 
-    public NgSetupConfig(int gnbId, VPlmn gnbPlmn, SupportedTA[] supportedTAs) {
-        this.gnbId = gnbId;
-        this.gnbPlmn = gnbPlmn;
-        this.supportedTAs = supportedTAs;
+    public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
+        // todo
+        Messaging.send2(ctx.simCtx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
+                null);
     }
 }

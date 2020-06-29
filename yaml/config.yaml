@@ -3,7 +3,6 @@ amf.port: 38419
 amf.mocked: true
 amf.mockedRemote: mockedRemote.yaml
 
-flows.NgSetupFlow: flows/ngsetup.yaml
 flows.RegistrationFlow: flows/registration.yaml
 flows.PeriodicRegistrationFlow: flows/registration.yaml
 flows.PduSessionEstablishmentFlow: flows/pduSessionEstablishment.yaml
@@ -12,6 +11,8 @@ flows.UEContextReleaseRequestFlow: flows/ueContextReleaseRequest.yaml
 flows.ServiceRequestFlow: flows/serviceRequest.yaml
 flows.DeregistrationFlow: flows/deregistration.yaml
 flows.NgResetFlow: flows/ngreset.yaml
+
+gnbConfig: '@gnb.yaml'
 
 ueData: '@ueData_i2i.yaml'
 
