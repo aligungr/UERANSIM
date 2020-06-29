@@ -30,7 +30,6 @@ import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.utils.IncomingMessage;
 
 public class PduSessionEstablishmentFlow extends BaseFlow {
 
@@ -44,10 +43,5 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     @Override
     public void main() {
         UePduSessionEstablishment.sendEstablishmentRequest(ctx.ue, config);
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-
     }
 }

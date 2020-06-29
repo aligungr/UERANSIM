@@ -2,6 +2,7 @@ package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
@@ -19,5 +20,9 @@ public class GnbInterfaceManagement {
                         .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX),
                 null
         );
+    }
+
+    public static void handleNgSetupResponse(GnbSimContext ctx, NGSetupResponse message) {
+        // todo
     }
 }

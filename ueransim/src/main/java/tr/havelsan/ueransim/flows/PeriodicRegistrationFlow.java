@@ -31,8 +31,6 @@ import tr.havelsan.ueransim.api.ue.mm.UeRegistration;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
-import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
-import tr.havelsan.ueransim.utils.IncomingMessage;
 
 public class PeriodicRegistrationFlow extends BaseFlow {
     private final RegistrationConfig config;
@@ -45,12 +43,5 @@ public class PeriodicRegistrationFlow extends BaseFlow {
     @Override
     public void main() {
         UeRegistration.sendRegistration(ctx.ue, config, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        if (incomingMessage.getNasMessage(RegistrationAccept.class) != null) {
-            flowComplete();
-        }
     }
 }

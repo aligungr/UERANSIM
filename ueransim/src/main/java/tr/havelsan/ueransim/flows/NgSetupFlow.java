@@ -29,8 +29,6 @@ package tr.havelsan.ueransim.flows;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.api.gnb.GnbInterfaceManagement;
 import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
-import tr.havelsan.ueransim.utils.IncomingMessage;
 
 public class NgSetupFlow extends BaseFlow {
 
@@ -41,12 +39,5 @@ public class NgSetupFlow extends BaseFlow {
     @Override
     public void main() {
         GnbInterfaceManagement.sendNgSetupRequest(ctx.gnb);
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        if (incomingMessage.getNgapMessage(NGSetupResponse.class) != null) {
-            flowComplete();
-        }
     }
 }

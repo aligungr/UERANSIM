@@ -27,19 +27,13 @@
 package tr.havelsan.ueransim.api;
 
 import tr.havelsan.ueransim.Ngap;
-import tr.havelsan.ueransim.api.gnb.GnbUeContextManagement;
-import tr.havelsan.ueransim.api.nas.NasSecurity;
-import tr.havelsan.ueransim.api.ue.UeMessaging;
+import tr.havelsan.ueransim.api.gnb.GnbMessaging;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.FlowLogging;
-import tr.havelsan.ueransim.utils.IncomingMessage;
 
 public class Messaging {
 
@@ -77,36 +71,7 @@ public class Messaging {
         FlowLogging.logSentMessage(ngapPdu);
     }
 
-    public static IncomingMessage handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
-        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
-        var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
-        var decryptedNasMessage = NasSecurity.decryptNasMessage(ctx.ue.currentNsc, nasMessage);
-        var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, decryptedNasMessage);
-
-        // check for AMF-UE-NGAP-ID
-        {
-            var ieAmfUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, AMF_UE_NGAP_ID.class);
-            if (ieAmfUeNgapId.size() > 0) {
-                var ie = ieAmfUeNgapId.get(ieAmfUeNgapId.size() - 1);
-                ctx.gnb.amfUeNgapId = ie.value;
-            }
-        }
-
-        FlowLogging.logReceivedMessage(incomingMessage);
-        Messaging.handleNgapMessage(ctx, incomingMessage);
-        return incomingMessage;
-    }
-
-    private static void handleNgapMessage(SimulationContext ctx, IncomingMessage message) {
-        if (message.ngapMessage instanceof InitialContextSetupRequest) {
-            GnbUeContextManagement.handleInitialContextSetup(ctx.gnb, (InitialContextSetupRequest) message.ngapMessage);
-        }
-
-        var nasMessage = message.getNasMessage(NasMessage.class);
-        if (nasMessage != null) {
-            UeMessaging.handleNas(ctx.ue, nasMessage);
-        } else {
-            FlowLogging.logUnhandledMessage(message);
-        }
+    public static void handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
+        GnbMessaging.handleFromNetwork(ctx.gnb, ngapPdu);
     }
 }

@@ -28,27 +28,8 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.api.gnb.GnbSimContext;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
-import tr.havelsan.ueransim.utils.IncomingMessage;
 
 public class SimulationContext {
     public UeSimContext ue;
     public GnbSimContext gnb;
-
-    // Message callback
-    private IMessageListener messageListener;
-
-    // todo: use read/write lock instead of synchronized
-
-    public synchronized void registerListener(IMessageListener listener) {
-        messageListener = listener;
-    }
-
-    public synchronized void unregisterListener() {
-        messageListener = null;
-    }
-
-    public synchronized void dispatchMessageReceive(IncomingMessage incomingMessage) {
-        var listener = messageListener;
-        if (listener != null) listener.onReceive(incomingMessage);
-    }
 }

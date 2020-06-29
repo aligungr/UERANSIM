@@ -210,10 +210,9 @@ public class NgapInternal {
         return (SequenceValue) otv.getDecodedValue();
     }
 
-    public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {
-        if (ngapPdu == null) return null;
+    public static NasMessage extractNasMessage(SequenceValue ngapMessage) {
+        if (ngapMessage == null) return null;
 
-        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
         var protocolIes = NgapInternal.extractProtocolIe(ngapMessage, NAS_PDU.class);
 
         if (protocolIes.size() == 0) {
@@ -226,5 +225,10 @@ public class NgapInternal {
         }
 
         return NasDecoder.nasPdu(protocolIes.get(0).getValue());
+    }
+
+    public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {
+        if (ngapPdu == null) return null;
+        return extractNasMessage(NgapInternal.extractNgapMessage(ngapPdu));
     }
 }

@@ -16,6 +16,8 @@ public class UeMessaging {
     }
 
     public static void handleNas(UeSimContext ctx, NasMessage message) {
+        message = NasSecurity.decryptNasMessage(ctx.currentNsc, message);
+
         if (message instanceof AuthenticationRequest) {
             UeAuthentication.handleAuthenticationRequest(ctx, (AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {

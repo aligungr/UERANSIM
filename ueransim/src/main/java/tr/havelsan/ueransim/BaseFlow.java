@@ -29,12 +29,11 @@ package tr.havelsan.ueransim;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.core.IMessageListener;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.FlowLogging;
 
-public abstract class BaseFlow implements IMessageListener {
+public abstract class BaseFlow {
     protected final SimulationContext ctx;
 
     public BaseFlow(SimulationContext simContext) {
@@ -42,21 +41,17 @@ public abstract class BaseFlow implements IMessageListener {
     }
 
     public final void start() throws Exception {
-        ctx.registerListener(this);
         main();
         this.ctx.gnb.sctpClient.receiverLoop(this::receiveSctpData);
     }
 
     private void receiveSctpData(byte[] receivedBytes, MessageInfo messageInfo, SctpChannel channel) {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
-
-        var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
-        ctx.dispatchMessageReceive(incomingMessage);
+        Messaging.handleIncomingMessage(ctx, ngapPdu);
     }
 
     public final void flowComplete() {
         FlowLogging.logFlowComplete(this);
-        ctx.unregisterListener();
         ctx.gnb.sctpClient.abortReceiver();
     }
 
