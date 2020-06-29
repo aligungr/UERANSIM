@@ -26,6 +26,8 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
+import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -41,10 +43,17 @@ public class Program {
 
     public static void main(String[] args) {
         MtsInitializer.initMts();
+        initLogging();
 
+        var simContext = AppConfig.createSimContext();
+        var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("gnb.yaml"));
+    }
+
+    private static void initLogging() {
         final String logFile = "app.log";
 
         Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
+        Console.setStandardPrintEnabled(false);
         Console.addPrintHandler(str -> {
             final Path path = Paths.get(logFile);
             try {

@@ -78,7 +78,7 @@ public class FlowTesting {
             return i1.compareTo(i2);
         });
 
-        var simContext = UeRanSim.createSimContext(configYaml);
+        var simContext = AppConfig.createSimContext(configYaml);
 
         simContext.gnb.sctpClient.start();
 

@@ -53,17 +53,40 @@ import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Queue;
 
-public class UeRanSim {
+public class AppConfig {
+
+    public static SimulationContext createSimContext() {
+        return new SimulationContext();
+    }
+
+    public static GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        var ctx = new GnbSimContext(simCtx);
+        ctx.config = MtsConstruct.construct(GnbConfig.class, config, true);
+
+        // Create SCTP Client
+        {
+            boolean amfMocked = config.getBool("amfMocked");
+
+            ISCTPClient sctpClient = new SCTPClient(ctx.config.amfHost, ctx.config.amfPort, Constants.NGAP_PROTOCOL_ID);
+
+            if (amfMocked) {
+                Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
+                sctpClient = newMockedClient(config.getString("amfMockedRemote"));
+            }
+
+            ctx.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
+            ctx.sctpClient = sctpClient;
+        }
+
+        simCtx.gnb = ctx;
+        return ctx;
+    }
 
     public static SimulationContext createSimContext(ImplicitTypedObject config) {
         var params = config.getParameters();
 
         var simContext = new SimulationContext();
-        simContext.gnb = new GnbSimContext(simContext);
         simContext.ue = new UeSimContext(simContext);
-
-        simContext.gnb.config = MtsConstruct.construct(GnbConfig.class,
-                (ImplicitTypedObject) params.get("gnbConfig"), true);
 
         // Parse UE Data
         {
@@ -90,31 +113,6 @@ public class UeRanSim {
                     ((ImplicitTypedObject) params.get("ue.userLocationInformationNr")), true);
 
             simContext.ue.ueConfig = ueConfig;
-        }
-
-        // Parse RAN-UE-NGAP-ID
-        {
-            simContext.gnb.ranUeNgapId = ((Number) params.get("context.ranUeNgapId")).longValue();
-        }
-
-        // Create SCTP Client
-        {
-            String amfHost = params.get("amf.host").toString();
-            int amfPort = (int) params.get("amf.port");
-            boolean amfMocked = (boolean) params.get("amf.mocked");
-
-            simContext.gnb.amfHost = amfHost;
-            simContext.gnb.amfPort = amfPort;
-
-            ISCTPClient sctpClient = new SCTPClient(amfHost, amfPort, Constants.NGAP_PROTOCOL_ID);
-
-            if (amfMocked) {
-                Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
-                sctpClient = newMockedClient((String) params.get("amf.mockedRemote"));
-            }
-
-            simContext.gnb.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
-            simContext.gnb.sctpClient = sctpClient;
         }
 
         // The others

@@ -37,11 +37,9 @@ public class GnbSimContext {
 
     public ISCTPClient sctpClient;
     public int streamNumber;
-    public String amfHost;
-    public int amfPort;
 
     public Long amfUeNgapId;
-    public long ranUeNgapId;
+    public long ranUeNgapId = 1000; // todo
 
     public GnbSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
