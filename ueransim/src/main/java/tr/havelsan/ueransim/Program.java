@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.core.GNodeB;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
@@ -46,7 +47,10 @@ public class Program {
         initLogging();
 
         var simContext = AppConfig.createSimContext();
+
         var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("gnb.yaml"));
+        GNodeB.run(gnbContext);
+
         var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
     }
 

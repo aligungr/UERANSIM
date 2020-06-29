@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;

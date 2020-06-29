@@ -24,11 +24,13 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.structs.GnbConfig;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class GnbSimContext {
     public final SimulationContext simCtx;
@@ -40,6 +42,8 @@ public class GnbSimContext {
 
     public Long amfUeNgapId;
     public long ranUeNgapId;
+
+    Queue<GnbEvent> commandQueue = new ArrayDeque<>();
 
     public GnbSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
