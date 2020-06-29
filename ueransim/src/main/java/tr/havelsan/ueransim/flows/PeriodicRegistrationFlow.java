@@ -32,6 +32,7 @@ import tr.havelsan.ueransim.api.ue.mm.UeRegistration;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
+import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.OutgoingMessage;
@@ -51,12 +52,7 @@ public class PeriodicRegistrationFlow extends BaseFlow {
 
     @Override
     public void onReceive(IncomingMessage incomingMessage) {
-
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-        if (outgoingMessage.plainNas instanceof RegistrationComplete) {
+        if (incomingMessage.getNasMessage(RegistrationAccept.class) != null) {
             flowComplete();
         }
     }

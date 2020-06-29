@@ -48,7 +48,6 @@ public class Messaging {
         var outgoing = Messaging.handleOutgoingMessage(ctx, ngapBuilder, nasMessage);
         ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(outgoing.ngapPdu));
         FlowLogging.logSentMessage(outgoing);
-        ctx.dispatchMessageSent(outgoing);
     }
 
     public static IncomingMessage handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {

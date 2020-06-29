@@ -66,9 +66,4 @@ public class NgSetupFlow extends BaseFlow {
             flowComplete();
         }
     }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
-    }
 }

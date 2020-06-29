@@ -52,9 +52,4 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     public void onReceive(IncomingMessage incomingMessage) {
 
     }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
-    }
 }

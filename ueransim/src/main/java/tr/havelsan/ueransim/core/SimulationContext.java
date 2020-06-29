@@ -52,9 +52,4 @@ public class SimulationContext {
         var listener = messageListener;
         if (listener != null) listener.onReceive(incomingMessage);
     }
-
-    public synchronized void dispatchMessageSent(OutgoingMessage outgoingMessage) {
-        var listener = messageListener;
-        if (listener != null) listener.onSent(outgoingMessage);
-    }
 }
