@@ -47,7 +47,7 @@ import tr.havelsan.ueransim.utils.SendingMessage;
 
 public class Messaging {
 
-    public static void send(SimulationContext ctx, SendingMessage sendingMessage) {
+    public static void send2(SimulationContext ctx, SendingMessage sendingMessage) {
         var outgoing = Messaging.handleOutgoingMessage(ctx, sendingMessage);
         ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(outgoing.ngapPdu));
         FlowLogging.logSentMessage(outgoing);

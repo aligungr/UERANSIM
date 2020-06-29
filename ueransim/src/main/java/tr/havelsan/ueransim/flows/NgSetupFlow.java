@@ -49,7 +49,7 @@ public class NgSetupFlow extends BaseFlow {
 
     @Override
     public void main() {
-        Messaging.send(ctx, new SendingMessage(
+        Messaging.send2(ctx, new SendingMessage(
                 new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
                         .addProtocolIE(URSimUtils.createGlobalGnbId(config.gnbId, config.gnbPlmn), NgapCriticality.REJECT)
                         .addProtocolIE(URSimUtils.createSupportedTAList(config.supportedTAs), NgapCriticality.REJECT)

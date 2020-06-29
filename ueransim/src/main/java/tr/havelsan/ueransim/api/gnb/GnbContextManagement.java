@@ -38,7 +38,7 @@ public class GnbContextManagement {
 
     public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
         // todo
-        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
+        Messaging.send2(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
                 null));
     }
 }

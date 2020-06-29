@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.ue.sm;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.api.ue.UeMessaging;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -84,7 +85,7 @@ public class UePduSessionEstablishment {
 
         ctx.ueTimers.t3580.start();
 
-        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), ulNasTransport));
+        UeMessaging.send(ctx, ulNasTransport);
 
         Logging.funcOut();
     }

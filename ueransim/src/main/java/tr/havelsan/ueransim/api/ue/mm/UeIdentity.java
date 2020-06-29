@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.api.ue.UeMessaging;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
@@ -67,7 +68,7 @@ public class UeIdentity {
             }
         }
 
-        Messaging.send(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), response));
+        UeMessaging.send(ctx, response);
         Logging.funcOut();
     }
 
