@@ -29,7 +29,6 @@ package tr.havelsan.ueransim.core;
 import tr.havelsan.ueransim.api.gnb.GnbSimContext;
 import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.utils.IncomingMessage;
-import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public class SimulationContext {
     public UeSimContext ue;

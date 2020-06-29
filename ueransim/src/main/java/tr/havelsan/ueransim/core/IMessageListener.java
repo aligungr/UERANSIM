@@ -27,7 +27,6 @@
 package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.utils.IncomingMessage;
-import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public interface IMessageListener {
     void onReceive(IncomingMessage incomingMessage);

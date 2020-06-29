@@ -40,14 +40,17 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.FlowLogging;
 import tr.havelsan.ueransim.utils.IncomingMessage;
-import tr.havelsan.ueransim.utils.OutgoingMessage;
 
 public class Messaging {
 
     public static void send2(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
-        var outgoing = Messaging.handleOutgoingMessage(ctx, ngapBuilder, nasMessage);
-        ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(outgoing.ngapPdu));
-        FlowLogging.logSentMessage(outgoing);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.ue.currentNsc, nasMessage);
+        Messaging.handleOutgoingMessage(ctx, ngapBuilder, securedNas);
+
+        var ngapPdu = ngapBuilder.build();
+
+        ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(ngapPdu));
+        FlowLogging.logSentMessage(ngapPdu, nasMessage, securedNas);
     }
 
     public static IncomingMessage handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
@@ -83,12 +86,11 @@ public class Messaging {
         }
     }
 
-    public static OutgoingMessage handleOutgoingMessage(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
+    public static void handleOutgoingMessage(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
         // Adding NAS PDU (if any)
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.ue.currentNsc, nasMessage);
-        if (securedNas != null) {
+        if (nasMessage != null) {
             // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
+            ngapBuilder.addNasPdu(nasMessage, NgapCriticality.REJECT);
         }
 
         // Adding AMF-UE-NGAP-ID (if any)
@@ -111,7 +113,5 @@ public class Messaging {
             // NOTE: criticality is hardcoded here, it may be changed
             ngapBuilder.addUserLocationInformationNR(ctx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
         }
-
-        return new OutgoingMessage(ngapBuilder.build(), nasMessage, securedNas);
     }
 }

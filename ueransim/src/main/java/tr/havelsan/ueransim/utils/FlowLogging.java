@@ -29,6 +29,7 @@ package tr.havelsan.ueransim.utils;
 import tr.havelsan.ueransim.BaseFlow;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 
 public class FlowLogging {
@@ -42,17 +43,17 @@ public class FlowLogging {
         }
     }
 
-    public static void logSentMessage(OutgoingMessage message) {
-        Logging.debug(Tag.MESSAGING, "Sent NGAP: %s", NgapInternal.extractNgapMessage(message.ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(message.ngapPdu)));
+    public static void logSentMessage(NGAP_PDU ngapPdu, NasMessage plainNas, NasMessage securedNas) {
+        Logging.debug(Tag.MESSAGING, "Sent NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
 
-        if (message.plainNas != null) {
-            Logging.debug(Tag.MESSAGING, "Sent Plain NAS: %s", message.plainNas.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Json.toJson(message.plainNas));
+        if (plainNas != null) {
+            Logging.debug(Tag.MESSAGING, "Sent Plain NAS: %s", plainNas.getClass().getSimpleName());
+            Logging.debug(Tag.MESSAGING, Json.toJson(plainNas));
         }
-        if (message.securedNas != null && message.plainNas != message.securedNas) {
-            Logging.debug(Tag.MESSAGING, "Sent Secured NAS: %s", message.securedNas.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Json.toJson(message.securedNas));
+        if (securedNas != null && plainNas != securedNas) {
+            Logging.debug(Tag.MESSAGING, "Sent Secured NAS: %s", securedNas.getClass().getSimpleName());
+            Logging.debug(Tag.MESSAGING, Json.toJson(securedNas));
         }
     }
 

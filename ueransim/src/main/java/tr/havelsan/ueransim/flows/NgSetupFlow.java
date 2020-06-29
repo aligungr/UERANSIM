@@ -36,7 +36,6 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.IncomingMessage;
-import tr.havelsan.ueransim.utils.OutgoingMessage;
 import tr.havelsan.ueransim.utils.URSimUtils;
 
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingDRX;
