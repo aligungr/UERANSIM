@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.api.ue;
 
 import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.api.nas.NasSecurity;
 import tr.havelsan.ueransim.api.ue.mm.*;
 import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -13,7 +14,8 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 public class UeMessaging {
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
-        Messaging.send2(ctx.simCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), message);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, message);
+        Messaging.send2(ctx.simCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), securedNas);
     }
 
     public static void handleNas(UeSimContext ctx, NasMessage message) {

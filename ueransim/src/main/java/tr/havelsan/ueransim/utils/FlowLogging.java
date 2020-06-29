@@ -43,18 +43,9 @@ public class FlowLogging {
         }
     }
 
-    public static void logSentMessage(NGAP_PDU ngapPdu, NasMessage plainNas, NasMessage securedNas) {
+    public static void logSentMessage(NGAP_PDU ngapPdu) {
         Logging.debug(Tag.MESSAGING, "Sent NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
-
-        if (plainNas != null) {
-            Logging.debug(Tag.MESSAGING, "Sent Plain NAS: %s", plainNas.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Json.toJson(plainNas));
-        }
-        if (securedNas != null && plainNas != securedNas) {
-            Logging.debug(Tag.MESSAGING, "Sent Secured NAS: %s", securedNas.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Json.toJson(securedNas));
-        }
     }
 
     public static void logUnhandledMessage(String receivedMessageName, Class<?>... expectedType) {

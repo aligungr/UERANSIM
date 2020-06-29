@@ -44,13 +44,12 @@ import tr.havelsan.ueransim.utils.IncomingMessage;
 public class Messaging {
 
     public static void send2(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.ue.currentNsc, nasMessage);
-        Messaging.handleOutgoingMessage(ctx, ngapBuilder, securedNas);
+        Messaging.handleOutgoingMessage(ctx, ngapBuilder, nasMessage);
 
         var ngapPdu = ngapBuilder.build();
 
         ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(ngapPdu));
-        FlowLogging.logSentMessage(ngapPdu, nasMessage, securedNas);
+        FlowLogging.logSentMessage(ngapPdu);
     }
 
     public static IncomingMessage handleIncomingMessage(SimulationContext ctx, NGAP_PDU ngapPdu) {
