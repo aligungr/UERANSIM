@@ -35,17 +35,17 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.FlowLogging;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.OutgoingMessage;
-import tr.havelsan.ueransim.utils.SendingMessage;
 
 public class Messaging {
 
-    public static void send2(SimulationContext ctx, SendingMessage sendingMessage) {
-        var outgoing = Messaging.handleOutgoingMessage(ctx, sendingMessage);
+    public static void send2(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
+        var outgoing = Messaging.handleOutgoingMessage(ctx, ngapBuilder, nasMessage);
         ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(outgoing.ngapPdu));
         FlowLogging.logSentMessage(outgoing);
         ctx.dispatchMessageSent(outgoing);
@@ -84,12 +84,12 @@ public class Messaging {
         }
     }
 
-    public static OutgoingMessage handleOutgoingMessage(SimulationContext ctx, SendingMessage sendingMessage) {
+    public static OutgoingMessage handleOutgoingMessage(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
         // Adding NAS PDU (if any)
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.ue.currentNsc, sendingMessage.nasMessage);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.ue.currentNsc, nasMessage);
         if (securedNas != null) {
             // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
+            ngapBuilder.addNasPdu(securedNas, NgapCriticality.REJECT);
         }
 
         // Adding AMF-UE-NGAP-ID (if any)
@@ -97,22 +97,22 @@ public class Messaging {
             Long amfUeNgapId = ctx.gnb.amfUeNgapId;
             if (amfUeNgapId != null) {
                 // NOTE: criticality is hardcoded here, it may be changed
-                sendingMessage.ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+                ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
             }
         }
 
         // Adding RAN-UE-NGAP-ID
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addRanUeNgapId(ctx.gnb.ranUeNgapId, NgapCriticality.REJECT);
+            ngapBuilder.addRanUeNgapId(ctx.gnb.ranUeNgapId, NgapCriticality.REJECT);
         }
 
         // Adding user location information
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            sendingMessage.ngapBuilder.addUserLocationInformationNR(ctx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
+            ngapBuilder.addUserLocationInformationNR(ctx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
         }
 
-        return new OutgoingMessage(sendingMessage.ngapBuilder.build(), sendingMessage.nasMessage, securedNas);
+        return new OutgoingMessage(ngapBuilder.build(), nasMessage, securedNas);
     }
 }

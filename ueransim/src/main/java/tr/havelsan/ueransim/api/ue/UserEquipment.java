@@ -9,12 +9,11 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.FlowLogging;
-import tr.havelsan.ueransim.utils.SendingMessage;
 
 public class UserEquipment {
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
-        Messaging.send2(ctx.simCtx, new SendingMessage(new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), message));
+        Messaging.send2(ctx.simCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), message);
     }
 
     public static void handleNas(UeSimContext ctx, NasMessage message) {
