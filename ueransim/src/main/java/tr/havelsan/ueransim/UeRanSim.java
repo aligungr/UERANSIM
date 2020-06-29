@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.api.ue.UeSimulationContext;
+import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.SimulationContext;
@@ -61,7 +61,7 @@ public class UeRanSim {
         var params = config.getParameters();
 
         var simContext = new SimulationContext();
-        simContext.ue = new UeSimulationContext(simContext);
+        simContext.ue = new UeSimContext(simContext);
 
         // Parse UE Data
         {

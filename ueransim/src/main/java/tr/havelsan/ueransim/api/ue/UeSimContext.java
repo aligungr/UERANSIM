@@ -8,7 +8,7 @@ import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeData;
 import tr.havelsan.ueransim.structs.UeTimers;
 
-public class UeSimulationContext {
+public class UeSimContext {
 
     public final SimulationContext simCtx;
 
@@ -20,7 +20,7 @@ public class UeSimulationContext {
     public RegistrationRequest registrationRequest;
     public SmContext smCtx;
 
-    public UeSimulationContext(SimulationContext simCtx) {
+    public UeSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
     }
 }

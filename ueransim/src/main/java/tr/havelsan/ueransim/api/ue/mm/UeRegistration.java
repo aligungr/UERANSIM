@@ -27,9 +27,8 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.UeSimulationContext;
+import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.configs.RegistrationConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
@@ -50,7 +49,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class UeRegistration {
 
-    public static void sendRegistration(UeSimulationContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
+    public static void sendRegistration(UeSimContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.currentNsc != null && ctx.currentNsc.ngKsi != null) {
             ngKsi = ctx.currentNsc.ngKsi;
@@ -98,7 +97,7 @@ public class UeRegistration {
                 .addProtocolIE(new RRCEstablishmentCause(config.rrcEstablishmentCause), NgapCriticality.IGNORE), registrationRequest));
     }
 
-    public static void handleRegistrationAccept(UeSimulationContext ctx, RegistrationAccept message) {
+    public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
         ctx.ueData.taiList = message.taiList;
@@ -120,7 +119,7 @@ public class UeRegistration {
         }
     }
 
-    public static void handleRegistrationReject(UeSimulationContext ctx, RegistrationReject message) {
+    public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);

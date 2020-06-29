@@ -27,9 +27,8 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.UeSimulationContext;
+import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
@@ -51,7 +50,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class UeIdentity {
 
-    public static void handleIdentityRequest(UeSimulationContext ctx, IdentityRequest message) {
+    public static void handleIdentityRequest(UeSimContext ctx, IdentityRequest message) {
         Logging.funcIn("Handling: Identity Request");
 
         IdentityResponse response = new IdentityResponse();
@@ -72,7 +71,7 @@ public class UeIdentity {
         Logging.funcOut();
     }
 
-    public static IESuciMobileIdentity getOrGenerateSuci(UeSimulationContext ctx) {
+    public static IESuciMobileIdentity getOrGenerateSuci(UeSimContext ctx) {
         Logging.funcIn("Get or Generate SUCI");
         if (ctx.ueTimers.t3519.isRunning()) {
             Logging.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");

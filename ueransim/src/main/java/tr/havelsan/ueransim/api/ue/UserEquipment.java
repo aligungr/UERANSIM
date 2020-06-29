@@ -8,7 +8,7 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 
 public class UserEquipment {
 
-    public static void handleNasMessage(UeSimulationContext ctx, NasMessage message) {
+    public static void handleNasMessage(UeSimContext ctx, NasMessage message) {
         if (message instanceof AuthenticationRequest) {
             UeAuthentication.handleAuthenticationRequest(ctx, (AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {

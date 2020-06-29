@@ -31,8 +31,7 @@ import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.api.nas.NasSecurityContext;
-import tr.havelsan.ueransim.api.ue.UeSimulationContext;
-import tr.havelsan.ueransim.core.SimulationContext;
+import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.enums.AutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.eap.*;
@@ -60,7 +59,7 @@ public class UeAuthentication {
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
     private static final boolean USE_SQN_HACK = true; // todo
 
-    public static void handleAuthenticationRequest(UeSimulationContext ctx, AuthenticationRequest message) {
+    public static void handleAuthenticationRequest(UeSimContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
             handleAuthenticationRequestEap(ctx, message);
         } else {
@@ -68,7 +67,7 @@ public class UeAuthentication {
         }
     }
 
-    private static void handleAuthenticationRequestEap(UeSimulationContext ctx, AuthenticationRequest message) {
+    private static void handleAuthenticationRequestEap(UeSimContext ctx, AuthenticationRequest message) {
         Logging.funcIn("Handling: EAP AKA' Authentication Request");
 
         OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
@@ -247,7 +246,7 @@ public class UeAuthentication {
         Logging.funcOut();
     }
 
-    private static void handleAuthenticationRequest5gAka(UeSimulationContext ctx, AuthenticationRequest request) {
+    private static void handleAuthenticationRequest5gAka(UeSimContext ctx, AuthenticationRequest request) {
         Logging.funcIn("Handling: 5G AKA Authentication Request");
 
         NasMessage response = null;
@@ -375,7 +374,7 @@ public class UeAuthentication {
         return true;
     }
 
-    public static void handleAuthenticationResult(UeSimulationContext ctx, AuthenticationResult message) {
+    public static void handleAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
                 UeAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
@@ -388,7 +387,7 @@ public class UeAuthentication {
         }
     }
 
-    public static void handleAuthenticationResponse(UeSimulationContext ctx, AuthenticationResponse message) {
+    public static void handleAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
                 UeAuthentication.handleEapResponseMessage(ctx, message.eapMessage.eap);
@@ -399,7 +398,7 @@ public class UeAuthentication {
         }
     }
 
-    public static void handleAuthenticationReject(UeSimulationContext ctx, AuthenticationReject message) {
+    public static void handleAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
 
@@ -417,7 +416,7 @@ public class UeAuthentication {
         }
     }
 
-    public static void handleEapSuccessMessage(UeSimulationContext ctx, Eap eap) {
+    public static void handleEapSuccessMessage(UeSimContext ctx, Eap eap) {
         Logging.funcIn("Handling: EAP-Success contained in received message");
 
         // do nothing
@@ -426,7 +425,7 @@ public class UeAuthentication {
     }
 
 
-    public static void handleEapFailureMessage(UeSimulationContext ctx, Eap eap) {
+    public static void handleEapFailureMessage(UeSimContext ctx, Eap eap) {
         Logging.funcIn("Handling: EAP-Failure contained in received message");
 
         Logging.debug(Tag.PROC, "Deleting non-current NAS security context");
@@ -435,7 +434,7 @@ public class UeAuthentication {
         Logging.funcOut();
     }
 
-    public static void handleEapResponseMessage(UeSimulationContext ctx, Eap eap) {
+    public static void handleEapResponseMessage(UeSimContext ctx, Eap eap) {
         Logging.funcIn("Handling: EAP contained in received message");
 
         if (eap instanceof EapAkaPrime) {

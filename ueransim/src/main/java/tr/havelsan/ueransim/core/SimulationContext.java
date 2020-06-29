@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.api.ue.UeSimulationContext;
+import tr.havelsan.ueransim.api.ue.UeSimContext;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.OutgoingMessage;
@@ -37,7 +37,7 @@ public class SimulationContext {
     public String amfHost;
     public int amfPort;
 
-    public UeSimulationContext ue;
+    public UeSimContext ue;
 
     public Long amfUeNgapId;
     public long ranUeNgapId;
