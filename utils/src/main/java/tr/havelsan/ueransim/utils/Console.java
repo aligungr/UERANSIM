@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 public class Console {
 
-    private static List<Consumer<String>> printHandlers = new ArrayList<>();
+    private static final List<Consumer<String>> printHandlers = new ArrayList<>();
     private static Color lastColor;
 
     public static synchronized void print(Color color, String format, Object... args) {
