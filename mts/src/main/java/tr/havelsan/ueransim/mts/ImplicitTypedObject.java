@@ -60,4 +60,16 @@ public final class ImplicitTypedObject {
         var value = get(key);
         return value == null ? null : String.valueOf(value);
     }
+
+    public <T> T getConstructed(String key, Class<T> type) {
+        return MtsConstruct.construct(type, (ImplicitTypedObject) get(key), true);
+    }
+
+    public <T> T asConstructed(Class<T> type) {
+        return MtsConstruct.construct(type, this, true);
+    }
+
+    public <T> T getConverted(String key, Class<T> type) {
+        return (T) MtsConvert.convert(get(key), type, true).get(0).value;
+    }
 }

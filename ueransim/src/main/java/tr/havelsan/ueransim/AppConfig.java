@@ -33,24 +33,21 @@ import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
-import tr.havelsan.ueransim.mts.MtsConvert;
 import tr.havelsan.ueransim.mts.MtsDecoder;
-import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.MockedSCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
-import tr.havelsan.ueransim.structs.*;
+import tr.havelsan.ueransim.structs.GnbConfig;
+import tr.havelsan.ueransim.structs.UeConfig;
+import tr.havelsan.ueransim.structs.UeTimers;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
-import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayDeque;
-import java.util.Map;
 import java.util.Queue;
 
 public class AppConfig {
@@ -78,50 +75,27 @@ public class AppConfig {
             ctx.sctpClient = sctpClient;
         }
 
+        ctx.ranUeNgapId = 1000; // todo
+
         simCtx.gnb = ctx;
         return ctx;
     }
 
-    public static SimulationContext createSimContext(ImplicitTypedObject config) {
-        var params = config.getParameters();
-
-        var simContext = new SimulationContext();
-        simContext.ue = new UeSimContext(simContext);
-
-        // Parse UE Data
-        {
-            Map<String, Object> ud = ((ImplicitTypedObject) params.get("ueData")).getParameters();
-
-            var ueData = new UeData();
-            ueData.snn = (String) ud.get("snn");
-            ueData.key = new OctetString((String) ud.get("key"));
-            ueData.op = new OctetString((String) ud.get("op"));
-            ueData.sqn = new OctetString((String) ud.get("sqn"));
-            ueData.amf = new OctetString((String) ud.get("amf"));
-            ueData.imei = (String) ud.get("imei");
-            ueData.supi = Supi.parse((String) ud.get("supi"));
-            simContext.ue.ueData = ueData;
-        }
+    public static UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        var ctx = new UeSimContext(simCtx);
 
         // Parse UE Config
-        {
-            var ueConfig = new UeConfig();
-            ueConfig.smsOverNasSupported = (boolean) params.get("ue.smsOverNas");
-            ueConfig.requestedNssai = (IESNssai[]) MtsConvert.convert(params.get("ue.requestedNssai"), IESNssai[].class,
-                    true).get(0).value;
-            ueConfig.userLocationInformationNr = MtsConstruct.construct(UserLocationInformationNr.class,
-                    ((ImplicitTypedObject) params.get("ue.userLocationInformationNr")), true);
+        ctx.ueConfig = config.asConstructed(UeConfig.class);
 
-            simContext.ue.ueConfig = ueConfig;
-        }
+        ctx.ueTimers = new UeTimers();
+        ctx.smCtx = new SmContext();
 
-        // The others
-        {
-            simContext.ue.ueTimers = new UeTimers();
-            simContext.ue.smCtx = new SmContext();
-        }
+        simCtx.ue = ctx;
+        return ctx;
+    }
 
-        return simContext;
+    public static SimulationContext createSimContext(ImplicitTypedObject config) {
+        throw new RuntimeException("");
     }
 
     private static MockedSCTPClient newMockedClient(String mockedRemoteFile) {

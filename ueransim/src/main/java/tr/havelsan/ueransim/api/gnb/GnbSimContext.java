@@ -39,7 +39,7 @@ public class GnbSimContext {
     public int streamNumber;
 
     public Long amfUeNgapId;
-    public long ranUeNgapId = 1000; // todo
+    public long ranUeNgapId;
 
     public GnbSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;

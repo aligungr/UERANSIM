@@ -47,6 +47,7 @@ public class Program {
 
         var simContext = AppConfig.createSimContext();
         var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("gnb.yaml"));
+        var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
     }
 
     private static void initLogging() {

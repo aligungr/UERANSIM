@@ -55,7 +55,7 @@ public class UeIdentity {
             response.mobileIdentity = getOrGenerateSuci(ctx);
         } else {
             if (message.identityType.value.equals(EIdentityType.IMEI)) {
-                response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
+                response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueConfig.imei);
             } else {
                 response.mobileIdentity = new IENoIdentity();
                 Logging.error(Tag.PROC, "Requested identity is not available: %s",
@@ -75,7 +75,7 @@ public class UeIdentity {
             return ctx.ueData.storedSuci;
         }
 
-        ctx.ueData.storedSuci = generateSuci(ctx.ueData.supi);
+        ctx.ueData.storedSuci = generateSuci(ctx.ueConfig.supi);
         Logging.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
 
         ctx.ueTimers.t3519.start();

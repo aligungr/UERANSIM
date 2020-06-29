@@ -33,7 +33,7 @@ import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.structs.Supi;
-import tr.havelsan.ueransim.structs.UeData;
+import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.Octet;
@@ -49,10 +49,10 @@ public class UeKeyManagement {
     private static final int N_UP_enc_alg = 0x05;
     private static final int N_UP_int_alg = 0x06;
 
-    public static void deriveKeysSeafAmf(UeData ueData, NasSecurityContext nasSecurityContext) {
+    public static void deriveKeysSeafAmf(UeConfig ueConfig, NasSecurityContext nasSecurityContext) {
         var keys = nasSecurityContext.keys;
-        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ueData.snn));
-        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ueData.supi.value), new OctetString("0000"));
+        keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ueConfig.snn));
+        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ueConfig.supi.value), new OctetString("0000"));
 
         Logging.debug(Tag.VALUE, "kSeaf: %s", nasSecurityContext.keys.kSeaf);
         Logging.debug(Tag.VALUE, "kAmf: %s", nasSecurityContext.keys.kAmf);

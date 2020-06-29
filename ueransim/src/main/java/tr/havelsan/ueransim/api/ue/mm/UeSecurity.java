@@ -95,7 +95,7 @@ public class UeSecurity {
         // Append IMEISV if requested
         if (message.imeiSvRequest != null && message.imeiSvRequest.imeiSvRequest.equals(IEImeiSvRequest.EImeiSvRequest.REQUESTED)) {
             // todo: imei vs imeiSv may be dist.
-            response.imeiSv = new IEImeiSvMobileIdentity(ctx.ueData.imei);
+            response.imeiSv = new IEImeiSvMobileIdentity(ctx.ueConfig.imei);
         }
 
         response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.registrationRequest));

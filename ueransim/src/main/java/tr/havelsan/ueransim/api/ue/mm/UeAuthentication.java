@@ -40,7 +40,7 @@ import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.structs.UeData;
+import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -104,10 +104,10 @@ public class UeAuthentication {
 
             if (USE_SQN_HACK) {
                 ctx.ueData.sqn = OctetString.xor(receivedAutn.substring(0, 6),
-                        calculateMilenage(ctx.ueData, receivedRand).get(MilenageResult.AK));
+                        calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, receivedRand).get(MilenageResult.AK));
             }
 
-            var milenage = calculateMilenage(ctx.ueData, receivedRand);
+            var milenage = calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, receivedRand);
             res = milenage.get(MilenageResult.RES);
             var ck = milenage.get(MilenageResult.CK);
             var ik = milenage.get(MilenageResult.IK);
@@ -115,18 +115,18 @@ public class UeAuthentication {
             milenageMac = milenage.get(MilenageResult.MAC_A);
 
             var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
-            var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueData.snn, sqnXorAk);
+            var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueConfig.snn, sqnXorAk);
             var ckPrime = ckPrimeIkPrime[0];
             var ikPrime = ckPrimeIkPrime[1];
 
-            mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueData.supi);
+            mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueConfig.supi);
             kaut = mk.substring(16, 32);
 
             Logging.debug(Tag.VALUE, "ueData.sqn: %s", ctx.ueData.sqn);
-            Logging.debug(Tag.VALUE, "ueData.op: %s", ctx.ueData.op);
-            Logging.debug(Tag.VALUE, "ueData.K: %s", ctx.ueData.key);
-            Logging.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueData.supi);
-            Logging.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueData.snn);
+            Logging.debug(Tag.VALUE, "ueData.op: %s", ctx.ueConfig.op);
+            Logging.debug(Tag.VALUE, "ueData.K: %s", ctx.ueConfig.key);
+            Logging.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueConfig.supi);
+            Logging.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueConfig.snn);
             Logging.debug(Tag.VALUE, "calculated res: %s", res);
             Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
             Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
@@ -216,7 +216,7 @@ public class UeAuthentication {
             ctx.nonCurrentNsc.keys.resStar = null;
             ctx.nonCurrentNsc.keys.kAusf = kAusf;
 
-            UeKeyManagement.deriveKeysSeafAmf(ctx.ueData, ctx.nonCurrentNsc);
+            UeKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
         }
 
         // Send Response
@@ -262,10 +262,10 @@ public class UeAuthentication {
 
         if (USE_SQN_HACK) {
             ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
-                    calculateMilenage(ctx.ueData, rand).get(MilenageResult.AK));
+                    calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, rand).get(MilenageResult.AK));
         }
 
-        var milenage = calculateMilenage(ctx.ueData, rand);
+        var milenage = calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, rand);
         var res = milenage.get(MilenageResult.RES);
         var ck = milenage.get(MilenageResult.CK);
         var ik = milenage.get(MilenageResult.IK);
@@ -273,7 +273,7 @@ public class UeAuthentication {
         var milenageAk = milenage.get(MilenageResult.AK);
         var milenageMac = milenage.get(MilenageResult.MAC_A);
         var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
-        var snn = ctx.ueData.snn;
+        var snn = ctx.ueConfig.snn;
 
         Logging.debug(Tag.VALUE, "calculated res: %s", res);
         Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
@@ -296,7 +296,7 @@ public class UeAuthentication {
             ctx.nonCurrentNsc.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
             ctx.nonCurrentNsc.keys.kAusf = UeKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
 
-            UeKeyManagement.deriveKeysSeafAmf(ctx.ueData, ctx.nonCurrentNsc);
+            UeKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
 
             // Prepare response
             response = new AuthenticationResponse(
@@ -346,13 +346,13 @@ public class UeAuthentication {
         return AutnValidationRes.OK;
     }
 
-    private static Map<MilenageResult, OctetString> calculateMilenage(UeData ueData, OctetString rand) {
+    private static Map<MilenageResult, OctetString> calculateMilenage(UeConfig ueConfig, OctetString sqn, OctetString rand) {
         var factory = BigIntegerBufferFactory.getInstance();
-        var cipher = Ciphers.createRijndaelCipher(ueData.key.toByteArray());
-        byte[] opc = threegpp.milenage.Milenage.calculateOPc(ueData.op.toByteArray(), cipher, factory);
+        var cipher = Ciphers.createRijndaelCipher(ueConfig.key.toByteArray());
+        byte[] opc = threegpp.milenage.Milenage.calculateOPc(ueConfig.op.toByteArray(), cipher, factory);
         var milenage = new threegpp.milenage.Milenage<>(opc, cipher, factory);
         try {
-            var calc = milenage.calculateAll(rand.toByteArray(), ueData.sqn.toByteArray(), ueData.amf.toByteArray(), Executors.newCachedThreadPool());
+            var calc = milenage.calculateAll(rand.toByteArray(), sqn.toByteArray(), ueConfig.amf.toByteArray(), Executors.newCachedThreadPool());
             var res = new HashMap<MilenageResult, OctetString>();
             for (var entry : calc.entrySet()) {
                 res.put(entry.getKey(), new OctetString(entry.getValue()));

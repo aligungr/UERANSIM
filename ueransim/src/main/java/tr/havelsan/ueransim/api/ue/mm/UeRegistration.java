@@ -74,7 +74,7 @@ public class UeRegistration {
                 }
 
             } else {
-                registrationRequest.mobileIdentity = new IEImeiMobileIdentity(ctx.ueData.imei);
+                registrationRequest.mobileIdentity = new IEImeiMobileIdentity(ctx.ueConfig.imei);
             }
         }
 

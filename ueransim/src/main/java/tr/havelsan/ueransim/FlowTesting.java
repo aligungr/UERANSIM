@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
+@Deprecated
 public class FlowTesting {
 
     public static void main(String[] args) throws Exception {
