@@ -44,7 +44,32 @@ import tr.havelsan.ueransim.utils.IncomingMessage;
 public class Messaging {
 
     public static void send2(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
-        Messaging.handleOutgoingMessage(ctx, ngapBuilder, nasMessage);
+        // Adding NAS PDU (if any)
+        if (nasMessage != null) {
+            // NOTE: criticality is hardcoded here, it may be changed
+            ngapBuilder.addNasPdu(nasMessage, NgapCriticality.REJECT);
+        }
+
+        // Adding AMF-UE-NGAP-ID (if any)
+        {
+            Long amfUeNgapId = ctx.gnb.amfUeNgapId;
+            if (amfUeNgapId != null) {
+                // NOTE: criticality is hardcoded here, it may be changed
+                ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+            }
+        }
+
+        // Adding RAN-UE-NGAP-ID
+        {
+            // NOTE: criticality is hardcoded here, it may be changed
+            ngapBuilder.addRanUeNgapId(ctx.gnb.ranUeNgapId, NgapCriticality.REJECT);
+        }
+
+        // Adding user location information
+        {
+            // NOTE: criticality is hardcoded here, it may be changed
+            ngapBuilder.addUserLocationInformationNR(ctx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
+        }
 
         var ngapPdu = ngapBuilder.build();
 
@@ -82,35 +107,6 @@ public class Messaging {
             UeMessaging.handleNas(ctx.ue, nasMessage);
         } else {
             FlowLogging.logUnhandledMessage(message);
-        }
-    }
-
-    public static void handleOutgoingMessage(SimulationContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
-        // Adding NAS PDU (if any)
-        if (nasMessage != null) {
-            // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addNasPdu(nasMessage, NgapCriticality.REJECT);
-        }
-
-        // Adding AMF-UE-NGAP-ID (if any)
-        {
-            Long amfUeNgapId = ctx.gnb.amfUeNgapId;
-            if (amfUeNgapId != null) {
-                // NOTE: criticality is hardcoded here, it may be changed
-                ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
-            }
-        }
-
-        // Adding RAN-UE-NGAP-ID
-        {
-            // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addRanUeNgapId(ctx.gnb.ranUeNgapId, NgapCriticality.REJECT);
-        }
-
-        // Adding user location information
-        {
-            // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addUserLocationInformationNR(ctx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
         }
     }
 }
