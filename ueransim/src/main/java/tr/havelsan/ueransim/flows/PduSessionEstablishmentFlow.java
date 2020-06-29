@@ -44,19 +44,13 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     }
 
     @Override
-    public State main(IncomingMessage message) {
+    public void main(IncomingMessage message) {
         UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
     }
 
     @Override
     public void onReceive(IncomingMessage incomingMessage) {
-        // todo
+
     }
 
     @Override

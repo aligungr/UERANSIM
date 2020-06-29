@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.flows;
 
 import tr.havelsan.ueransim.BaseFlow;
+import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.configs.NgSetupConfig;
 import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
@@ -47,29 +48,20 @@ public class NgSetupFlow extends BaseFlow {
     }
 
     @Override
-    public State main(IncomingMessage message) throws Exception {
-        send(new SendingMessage(
+    public void main(IncomingMessage message) throws Exception {
+        Messaging.send(ctx, new SendingMessage(
                 new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
                         .addProtocolIE(URSimUtils.createGlobalGnbId(config.gnbId, config.gnbPlmn), NgapCriticality.REJECT)
                         .addProtocolIE(URSimUtils.createSupportedTAList(config.supportedTAs), NgapCriticality.REJECT)
                         .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX), null
         ));
-        return this::waitNgSetupResponse;
-    }
-
-    private State waitNgSetupResponse(IncomingMessage message) {
-        var ngSetupResponse = message.getNgapMessage(NGSetupResponse.class);
-        if (ngSetupResponse == null) {
-            FlowLogging.logUnhandledMessage(message, NGSetupResponse.class);
-            return this::waitNgSetupResponse;
-        }
-
-        return flowComplete();
     }
 
     @Override
     public void onReceive(IncomingMessage incomingMessage) {
-
+        if (incomingMessage.getNgapMessage(NGSetupResponse.class) != null) {
+            flowComplete();
+        }
     }
 
     @Override

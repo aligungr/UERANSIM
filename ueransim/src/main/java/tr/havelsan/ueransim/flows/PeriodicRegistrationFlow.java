@@ -45,14 +45,8 @@ public class PeriodicRegistrationFlow extends BaseFlow {
     }
 
     @Override
-    public BaseFlow.State main(IncomingMessage message) {
+    public void main(IncomingMessage message) {
         UeRegistration.sendRegistration(ctx, config, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
-        return this::loop;
-    }
-
-    private BaseFlow.State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
     }
 
     @Override

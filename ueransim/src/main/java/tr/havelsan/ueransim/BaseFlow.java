@@ -34,28 +34,17 @@ import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.utils.FlowLogging;
 import tr.havelsan.ueransim.utils.IncomingMessage;
-import tr.havelsan.ueransim.utils.SendingMessage;
 
 public abstract class BaseFlow implements IMessageListener {
     protected final SimulationContext ctx;
-    private boolean started;
-    private State currentState;
 
     public BaseFlow(SimulationContext simContext) {
         this.ctx = simContext;
     }
 
-    @Deprecated
-    public final void send(SendingMessage sendingMessage) {
-        Messaging.send(ctx, sendingMessage);
-    }
-
     public final void start() throws Exception {
-        if (started) throw new RuntimeException("already started");
-        this.started = true;
-
         ctx.registerListener(this);
-        this.currentState = main(null);
+        main(null);
         this.ctx.sctpClient.receiverLoop(this::receiveSctpData);
     }
 
@@ -63,29 +52,15 @@ public abstract class BaseFlow implements IMessageListener {
         var ngapPdu = Ngap.perDecode(NGAP_PDU.class, receivedBytes);
 
         var incomingMessage = Messaging.handleIncomingMessage(ctx, ngapPdu);
-        this.currentState = this.currentState.accept(incomingMessage);
+        Messaging.handleNgapMessage(ctx, incomingMessage);
         ctx.dispatchMessageReceive(incomingMessage);
     }
 
-    private State sinkState(IncomingMessage message) {
-        return this::sinkState;
-    }
-
-    public final State flowComplete() {
+    public final void flowComplete() {
         FlowLogging.logFlowComplete(this);
-        return abortFlow();
-    }
-
-    public final State abortFlow() {
         ctx.unregisterListener();
         ctx.sctpClient.abortReceiver();
-        return this::sinkState;
     }
 
-    public abstract State main(IncomingMessage message) throws Exception;
-
-    @FunctionalInterface
-    public interface State {
-        State accept(IncomingMessage message);
-    }
+    public abstract void main(IncomingMessage message) throws Exception;
 }
