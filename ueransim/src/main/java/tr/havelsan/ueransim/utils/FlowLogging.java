@@ -33,18 +33,24 @@ import tr.havelsan.ueransim.ngap2.NgapInternal;
 
 public class FlowLogging {
 
-    public static void logReceivedMessage(IncomingMessage incomingMessage) {
-        Logging.debug(Tag.MESSAGING, "Received NGAP: %s", incomingMessage.ngapMessage.getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(incomingMessage.ngapPdu)));
-        if (incomingMessage.nasMessage != null) {
+    public static void logReceivedMessage(NGAP_PDU ngapPdu) {
+        Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+
+        // todo
+        /*if (incomingMessage.nasMessage != null) {
             Logging.debug(Tag.MESSAGING, "Received NAS: %s", incomingMessage.nasMessage.getClass().getSimpleName());
             Logging.debug(Tag.MESSAGING, Json.toJson(incomingMessage.nasMessage));
-        }
+        }*/
     }
 
-    public static void logSentMessage(NGAP_PDU ngapPdu) {
-        Logging.debug(Tag.MESSAGING, "Sent NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
+    public static void logSendingMessage(NGAP_PDU ngapPdu) {
+        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+    }
+
+    public static void logSentMessage() {
+        Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
     public static void logUnhandledMessage(String receivedMessageName, Class<?>... expectedType) {

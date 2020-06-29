@@ -65,7 +65,8 @@ public class Messaging {
 
         var ngapPdu = ngapBuilder.build();
 
+        FlowLogging.logSendingMessage(ngapPdu);
         ctx.gnb.sctpClient.send(ctx.gnb.streamNumber, Ngap.perEncode(ngapPdu));
-        FlowLogging.logSentMessage(ngapPdu);
+        FlowLogging.logSentMessage();
     }
 }
