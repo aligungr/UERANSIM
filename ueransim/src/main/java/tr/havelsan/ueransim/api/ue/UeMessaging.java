@@ -42,7 +42,7 @@ public class UeMessaging {
         GnbMessaging.sendFromUe(ctx.simCtx.gnb, ctx, securedNas);
     }
 
-    public static void handleNas(UeSimContext ctx, NasMessage message) {
+    public static void receiveNas(UeSimContext ctx, NasMessage message) {
         message = NasSecurity.decryptNasMessage(ctx.currentNsc, message);
 
         if (message instanceof AuthenticationRequest) {

@@ -36,7 +36,7 @@ public class GnbNasTransport {
     public static void handleDownlinkNasTransport(GnbSimContext ctx, DownlinkNASTransport message) {
         var nasMessage = NgapInternal.extractNasMessage(message);
         if (nasMessage != null) {
-            UeMessaging.handleNas(ctx.simCtx.ue, nasMessage);
+            UeMessaging.receiveNas(ctx.simCtx.ue, nasMessage);
         }
     }
 }
