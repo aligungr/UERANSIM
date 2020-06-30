@@ -78,7 +78,7 @@ public class Program {
     }
 
     private static void initLogging() {
-        final String logFile = "app.log";
+        final String logFile = "ueransim.log";
 
         Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
         Console.setStandardPrintEnabled(false);
