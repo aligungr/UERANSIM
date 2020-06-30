@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.ngap2;
 
+import fr.marben.asnsdk.japi.spe.ChoiceValue;
 import fr.marben.asnsdk.japi.spe.OpenTypeValue;
 import fr.marben.asnsdk.japi.spe.SequenceValue;
 import fr.marben.asnsdk.japi.spe.Value;
@@ -230,5 +231,14 @@ public class NgapInternal {
     public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {
         if (ngapPdu == null) return null;
         return extractNasMessage(NgapInternal.extractNgapMessage(ngapPdu));
+    }
+
+    public static <T extends ChoiceValue> T newChoice(Class<T> type, short fieldNumber, Value value) {
+        try {
+            var ctor = type.getConstructor(short.class, Value.class);
+            return ctor.newInstance(fieldNumber, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

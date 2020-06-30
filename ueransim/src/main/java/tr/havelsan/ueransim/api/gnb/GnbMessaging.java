@@ -33,6 +33,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
@@ -45,6 +46,10 @@ public class GnbMessaging {
 
     public static void sendFromUe(GnbSimContext gnbCtx, UeSimContext ueCtx, NasMessage nasMessage) {
         GnbMessaging.sendToNetwork(gnbCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), nasMessage);
+    }
+
+    public static void sendToNetwork(GnbSimContext ctx, NgapBuilder ngapBuilder) {
+        sendToNetwork(ctx, ngapBuilder, null);
     }
 
     public static void sendToNetwork(GnbSimContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
@@ -95,7 +100,9 @@ public class GnbMessaging {
         }
 
         if (ngapMessage instanceof NGSetupResponse) {
-            GnbInterfaceManagement.handleNgSetupResponse(ctx, (NGSetupResponse) ngapMessage);
+            GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGSetupResponse) ngapMessage);
+        } else if (ngapMessage instanceof NGSetupFailure) {
+            GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGSetupFailure) ngapMessage);
         } else if (ngapMessage instanceof DownlinkNASTransport) {
             GnbNasTransport.handleDownlinkNasTransport(ctx, (DownlinkNASTransport) ngapMessage);
         } else if (ngapMessage instanceof InitialContextSetupRequest) {

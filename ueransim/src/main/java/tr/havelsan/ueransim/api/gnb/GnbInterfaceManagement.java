@@ -26,29 +26,45 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
+import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
-import tr.havelsan.ueransim.utils.URSimUtils;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingDRX;
 
 public class GnbInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx) {
+        Logging.funcIn("Starting NGSetup procedure");
+
         GnbMessaging.sendToNetwork(ctx,
                 new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
-                        .addProtocolIE(URSimUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn), NgapCriticality.REJECT)
-                        .addProtocolIE(URSimUtils.createSupportedTAList(ctx.config.supportedTAs), NgapCriticality.REJECT)
-                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX),
-                null
+                        .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn), NgapCriticality.REJECT)
+                        .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs), NgapCriticality.REJECT)
+                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, NGAP_Constants__id_DefaultPagingDRX)
         );
+
+        Logging.funcOut();
     }
 
-    public static void handleNgSetupResponse(GnbSimContext ctx, NGSetupResponse message) {
-        // todo
+    public static void receiveNgSetupResponse(GnbSimContext ctx, NGSetupResponse message) {
+        Logging.funcIn("Handling: NGSetupResponse");
+        Logging.success(Tag.PROC, "NGSetup procedure is successful");
+
+        Logging.funcOut();
+    }
+
+    public static void receiveNgSetupFailure(GnbSimContext ctx, NGSetupFailure message) {
+        Logging.funcIn("Handling: NGSetupFailure");
+        Logging.error(Tag.PROC, "NGSetup procedure is failed");
+
+        Logging.funcOut();
     }
 }
