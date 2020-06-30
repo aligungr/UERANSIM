@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.api.Messaging;
+import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -44,7 +44,42 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 public class GnbMessaging {
 
     public static void sendFromUe(GnbSimContext gnbCtx, UeSimContext ueCtx, NasMessage nasMessage) {
-        Messaging.send2(gnbCtx.simCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), nasMessage);
+        GnbMessaging.sendToNetwork(gnbCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), nasMessage);
+    }
+
+    public static void sendToNetwork(GnbSimContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
+        // Adding NAS PDU (if any)
+        if (nasMessage != null) {
+            // NOTE: criticality is hardcoded here, it may be changed
+            ngapBuilder.addNasPdu(nasMessage, NgapCriticality.REJECT);
+        }
+
+        // Adding AMF-UE-NGAP-ID (if any)
+        {
+            Long amfUeNgapId = ctx.amfUeNgapId;
+            if (amfUeNgapId != null) {
+                // NOTE: criticality is hardcoded here, it may be changed
+                ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+            }
+        }
+
+        // Adding RAN-UE-NGAP-ID
+        {
+            // NOTE: criticality is hardcoded here, it may be changed
+            ngapBuilder.addRanUeNgapId(ctx.ranUeNgapId, NgapCriticality.REJECT);
+        }
+
+        // Adding user location information
+        {
+            // NOTE: criticality is hardcoded here, it may be changed
+            ngapBuilder.addUserLocationInformationNR(ctx.simCtx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
+        }
+
+        var ngapPdu = ngapBuilder.build();
+
+        FlowLogging.logSendingMessage(ngapPdu);
+        ctx.sctpClient.send(ctx.streamNumber, Ngap.perEncode(ngapPdu));
+        FlowLogging.logSentMessage();
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {

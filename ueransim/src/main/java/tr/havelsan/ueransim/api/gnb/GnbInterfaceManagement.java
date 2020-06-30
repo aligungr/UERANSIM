@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
@@ -40,7 +39,7 @@ import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingD
 public class GnbInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx) {
-        Messaging.send2(ctx.simCtx,
+        GnbMessaging.sendToNetwork(ctx,
                 new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
                         .addProtocolIE(URSimUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn), NgapCriticality.REJECT)
                         .addProtocolIE(URSimUtils.createSupportedTAList(ctx.config.supportedTAs), NgapCriticality.REJECT)

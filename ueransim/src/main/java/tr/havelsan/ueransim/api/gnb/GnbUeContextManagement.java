@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.api.Messaging;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
@@ -37,7 +36,7 @@ public class GnbUeContextManagement {
 
     public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
         // todo
-        Messaging.send2(ctx.simCtx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
+        GnbMessaging.sendToNetwork(ctx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
                 null);
     }
 }
