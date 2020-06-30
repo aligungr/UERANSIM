@@ -188,7 +188,7 @@ public class UeAuthentication {
         {
             var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
-                Logging.error(Tag.RSLT, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
+                Logging.error(Tag.PROC, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
 
                 if (!IGNORE_CONTROLS_FAILURES) {
@@ -326,20 +326,20 @@ public class UeAuthentication {
 
         // Check MAC
         if (!receivedMAC.equals(mac)) {
-            Logging.error(Tag.RSLT, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
+            Logging.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
             return AutnValidationRes.MAC_FAILURE;
         }
 
         // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
         // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
         if (!BitString.from(receivedAMF).getB(0)) {
-            Logging.error(Tag.RSLT, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
+            Logging.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
             return AutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
         }
 
         // Verify that the received sequence number SQN is in the correct range
         if (!checkSqn(receivedSQN)) {
-            Logging.error(Tag.RSLT, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
+            Logging.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
             return AutnValidationRes.SYNCHRONISATION_FAILURE;
         }
 

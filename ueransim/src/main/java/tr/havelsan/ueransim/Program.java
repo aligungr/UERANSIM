@@ -36,6 +36,8 @@ import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -75,6 +77,12 @@ public class Program {
                 }
             }
         }
+    }
+
+    public static void fail(Throwable t) {
+        t.printStackTrace();
+        Logging.error(Tag.SYSTEM, "%s", t);
+        System.exit(1);
     }
 
     private static void initLogging() {

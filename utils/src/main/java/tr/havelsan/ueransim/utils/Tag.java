@@ -27,9 +27,9 @@
 package tr.havelsan.ueransim.utils;
 
 public enum Tag {
+    SYSTEM,
     CONFIG,
     VALUE,
-    RSLT,
     PROC,
     PROCEDURE_RESULT,
     NGAP_INTERNAL,

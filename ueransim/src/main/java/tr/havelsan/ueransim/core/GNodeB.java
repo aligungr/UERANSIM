@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.core;
 
+import tr.havelsan.ueransim.Program;
 import tr.havelsan.ueransim.api.gnb.GnbInterfaceManagement;
 import tr.havelsan.ueransim.api.gnb.GnbMessaging;
 import tr.havelsan.ueransim.events.GnbCommandEvent;
@@ -41,14 +42,14 @@ public class GNodeB {
         try {
             ctx.sctpClient.start();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Program.fail(e);
         }
 
         new Thread(() -> {
             try {
                 ctx.sctpClient.receiverLoop(receivedBytes -> pushEvent(ctx, new SctpReceiveEvent(receivedBytes)));
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Program.fail(e);
             }
         }).start();
 
@@ -61,7 +62,7 @@ public class GNodeB {
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Program.fail(e);
                 }
             }
         }).start();
