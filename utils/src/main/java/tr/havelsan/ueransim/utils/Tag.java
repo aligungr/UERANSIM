@@ -31,6 +31,7 @@ public enum Tag {
     VALUE,
     RSLT,
     PROC,
+    PROCEDURE_RESULT,
     NGAP_INTERNAL,
     MESSAGING,
     CONNECTION,

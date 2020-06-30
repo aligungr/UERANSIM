@@ -42,7 +42,8 @@ import static tr.havelsan.ueransim.ngap.Values.NGAP_Constants__id_DefaultPagingD
 public class GnbInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx) {
-        Logging.funcIn("Starting NGSetup procedure");
+        Logging.funcIn("Starting: NGSetupRequest");
+        Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
         GnbMessaging.sendToNetwork(ctx,
                 new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
@@ -56,14 +57,14 @@ public class GnbInterfaceManagement {
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGSetupResponse message) {
         Logging.funcIn("Handling: NGSetupResponse");
-        Logging.success(Tag.PROC, "NGSetup procedure is successful");
+        Logging.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
 
         Logging.funcOut();
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGSetupFailure message) {
         Logging.funcIn("Handling: NGSetupFailure");
-        Logging.error(Tag.PROC, "NGSetup procedure is failed");
+        Logging.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
 
         Logging.funcOut();
     }
