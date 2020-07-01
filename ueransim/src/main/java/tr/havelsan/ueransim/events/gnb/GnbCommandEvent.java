@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.events;
+package tr.havelsan.ueransim.events.gnb;
 
 public class GnbCommandEvent extends GnbEvent {
     public final String cmd;

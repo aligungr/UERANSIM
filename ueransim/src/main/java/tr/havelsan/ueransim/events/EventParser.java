@@ -26,6 +26,8 @@
 
 package tr.havelsan.ueransim.events;
 
+import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
+
 public class EventParser {
 
     public static SimulationEvent parse(String command) {

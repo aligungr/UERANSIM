@@ -24,7 +24,10 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.events;
+package tr.havelsan.ueransim.events.gnb;
 
-public abstract class UeEvent extends SimulationEvent {
+import tr.havelsan.ueransim.events.SimulationEvent;
+
+public abstract class GnbEvent extends SimulationEvent {
+
 }

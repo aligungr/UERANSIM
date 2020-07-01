@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.core;
 
-import tr.havelsan.ueransim.events.UeEvent;
+import tr.havelsan.ueransim.events.ue.UeEvent;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
