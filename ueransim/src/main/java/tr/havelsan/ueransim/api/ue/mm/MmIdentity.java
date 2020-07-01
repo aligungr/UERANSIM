@@ -71,16 +71,16 @@ class MmIdentity {
         if (ctx.ueTimers.t3519.isRunning()) {
             Logging.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
             Logging.funcOut();
-            return ctx.ueData.storedSuci;
+            return ctx.mmCtx.storedSuci;
         }
 
-        ctx.ueData.storedSuci = generateSuci(ctx.ueConfig.supi);
+        ctx.mmCtx.storedSuci = generateSuci(ctx.ueConfig.supi);
         Logging.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
 
         ctx.ueTimers.t3519.start();
 
         Logging.funcOut();
-        return ctx.ueData.storedSuci;
+        return ctx.mmCtx.storedSuci;
     }
 
     // TODO:

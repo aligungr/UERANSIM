@@ -28,11 +28,7 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.api.nas.NasSecurityContext;
 import tr.havelsan.ueransim.events.ue.UeEvent;
-import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
-import tr.havelsan.ueransim.structs.SmContext;
-import tr.havelsan.ueransim.structs.UeConfig;
-import tr.havelsan.ueransim.structs.UeData;
-import tr.havelsan.ueransim.structs.UeTimers;
+import tr.havelsan.ueransim.structs.*;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -47,7 +43,8 @@ public class UeSimContext {
     public NasSecurityContext currentNsc;
     public NasSecurityContext nonCurrentNsc;
     public UeTimers ueTimers;
-    public RegistrationRequest registrationRequest;
+
+    public MmContext mmCtx;
     public SmContext smCtx;
 
     Queue<UeEvent> eventQueue = new ArrayDeque<>();

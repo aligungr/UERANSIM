@@ -97,7 +97,7 @@ class MmSecurity {
             response.imeiSv = new IEImeiSvMobileIdentity(ctx.ueConfig.imei);
         }
 
-        response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.registrationRequest));
+        response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.mmCtx.registrationRequest));
 
         // Send response
         MobilityManagement.sendNas(ctx, response);

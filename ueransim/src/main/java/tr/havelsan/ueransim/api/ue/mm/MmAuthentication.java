@@ -397,9 +397,9 @@ class MmAuthentication {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
 
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.taiList = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.taiList = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
 

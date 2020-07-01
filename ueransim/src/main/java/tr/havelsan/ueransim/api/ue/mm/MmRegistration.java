@@ -61,8 +61,8 @@ class MmRegistration {
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
-        if (ctx.ueData.storedGuti != null) {
-            registrationRequest.mobileIdentity = ctx.ueData.storedGuti;
+        if (ctx.mmCtx.storedGuti != null) {
+            registrationRequest.mobileIdentity = ctx.mmCtx.storedGuti;
         } else {
             var suci = MmIdentity.getOrGenerateSuci(ctx);
             if (suci != null) {
@@ -77,11 +77,11 @@ class MmRegistration {
             }
         }
 
-        if (ctx.ueData.lastVisitedRegisteredTai != null) {
-            registrationRequest.lastVisitedRegisteredTai = ctx.ueData.lastVisitedRegisteredTai;
+        if (ctx.mmCtx.lastVisitedRegisteredTai != null) {
+            registrationRequest.lastVisitedRegisteredTai = ctx.mmCtx.lastVisitedRegisteredTai;
         }
 
-        ctx.registrationRequest = registrationRequest;
+        ctx.mmCtx.registrationRequest = registrationRequest;
 
         ctx.ueTimers.t3510.start();
         ctx.ueTimers.t3502.stop();
@@ -93,14 +93,14 @@ class MmRegistration {
     public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
-        ctx.ueData.taiList = message.taiList;
+        ctx.mmCtx.taiList = message.taiList;
 
         if (message.t3512Value != null && message.t3512Value.hasValue()) {
             ctx.ueTimers.t3512.start(message.t3512Value);
         }
 
         if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
-            ctx.ueData.storedGuti = (IE5gGutiMobileIdentity) message.mobileIdentity;
+            ctx.mmCtx.storedGuti = (IE5gGutiMobileIdentity) message.mobileIdentity;
             ctx.ueTimers.t3519.stop();
 
             sendCompleteMes = true;
@@ -123,43 +123,43 @@ class MmRegistration {
 
         var cause = message.mmCause.value;
 
-        var regType = ctx.registrationRequest.registrationType.registrationType;
+        var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {
             if (cause.equals(EMmCause.ILLEGAL_UE) || cause.equals(EMmCause.ILLEGAL_ME)) {
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
-                ctx.ueData.taiList = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
-                ctx.ueData.taiList = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
-                ctx.ueData.taiList = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
-                ctx.ueData.taiList = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
-                ctx.ueData.taiList = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
-                ctx.ueData.storedGuti = null;
-                ctx.ueData.lastVisitedRegisteredTai = null;
-                ctx.ueData.taiList = null;
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
