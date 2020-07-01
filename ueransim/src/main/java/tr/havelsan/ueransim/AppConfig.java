@@ -38,10 +38,7 @@ import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.MockedSCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
-import tr.havelsan.ueransim.structs.GnbConfig;
-import tr.havelsan.ueransim.structs.SmContext;
-import tr.havelsan.ueransim.structs.UeConfig;
-import tr.havelsan.ueransim.structs.UeTimers;
+import tr.havelsan.ueransim.structs.*;
 import tr.havelsan.ueransim.utils.IncomingMessage;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -89,6 +86,7 @@ public class AppConfig {
 
         ctx.ueTimers = new UeTimers();
         ctx.smCtx = new SmContext();
+        ctx.mmCtx = new MmContext();
 
         simCtx.ue = ctx;
         return ctx;
