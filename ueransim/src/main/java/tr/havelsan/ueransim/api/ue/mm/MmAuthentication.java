@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-public class UeAuthentication {
+class MmAuthentication {
 
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
     private static final boolean USE_SQN_HACK = true; // todo
@@ -115,11 +115,11 @@ public class UeAuthentication {
             milenageMac = milenage.get(MilenageResult.MAC_A);
 
             var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
-            var ckPrimeIkPrime = UeKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueConfig.snn, sqnXorAk);
+            var ckPrimeIkPrime = MmKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueConfig.snn, sqnXorAk);
             var ckPrime = ckPrimeIkPrime[0];
             var ikPrime = ckPrimeIkPrime[1];
 
-            mk = UeKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueConfig.supi);
+            mk = MmKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueConfig.supi);
             kaut = mk.substring(16, 32);
 
             Logging.debug(Tag.VALUE, "ueData.sqn: %s", ctx.ueData.sqn);
@@ -155,7 +155,7 @@ public class UeAuthentication {
 
         // Control received AUTN
         {
-            var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
+            var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
             Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
             if (autnCheck != AutnValidationRes.OK) {
@@ -186,7 +186,7 @@ public class UeAuthentication {
 
         // Control received AT_MAC
         {
-            var expectedMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
+            var expectedMac = MmKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
                 Logging.error(Tag.PROC, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
@@ -206,7 +206,7 @@ public class UeAuthentication {
 
         // Create new partial native NAS security context and continue key derivation
         {
-            var kAusf = UeKeyManagement.calculateKAusfForEapAkaPrime(mk);
+            var kAusf = MmKeyManagement.calculateKAusfForEapAkaPrime(mk);
             Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
             ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
@@ -216,7 +216,7 @@ public class UeAuthentication {
             ctx.nonCurrentNsc.keys.resStar = null;
             ctx.nonCurrentNsc.keys.kAusf = kAusf;
 
-            UeKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
+            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
         }
 
         // Send Response
@@ -228,7 +228,7 @@ public class UeAuthentication {
             akaPrimeResponse.attributes.putKdf(1);
 
             // Calculate and put mac value
-            var sendingMac = UeKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
+            var sendingMac = MmKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
             akaPrimeResponse.attributes.putMac(sendingMac);
 
             Logging.debug(Tag.VALUE, "sending eap at_mac: %s", sendingMac);
@@ -283,7 +283,7 @@ public class UeAuthentication {
         Logging.debug(Tag.VALUE, "used snn: %s", snn);
         Logging.debug(Tag.VALUE, "used sqn: %s", ctx.ueData.sqn);
 
-        var autnCheck = UeAuthentication.validateAutn(milenageAk, milenageMac, autn);
+        var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, autn);
         Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
         if (IGNORE_CONTROLS_FAILURES || autnCheck == AutnValidationRes.OK) {
@@ -293,10 +293,10 @@ public class UeAuthentication {
                     request.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsc.keys.rand = rand;
             ctx.nonCurrentNsc.keys.res = res;
-            ctx.nonCurrentNsc.keys.resStar = UeKeyManagement.calculateResStar(ckik, snn, rand, res);
-            ctx.nonCurrentNsc.keys.kAusf = UeKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+            ctx.nonCurrentNsc.keys.resStar = MmKeyManagement.calculateResStar(ckik, snn, rand, res);
+            ctx.nonCurrentNsc.keys.kAusf = MmKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
 
-            UeKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
+            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
 
             // Prepare response
             response = new AuthenticationResponse(
@@ -373,9 +373,9 @@ public class UeAuthentication {
     public static void handleAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
-                UeAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
             } else if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
-                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
@@ -386,7 +386,7 @@ public class UeAuthentication {
     public static void handleAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
-                UeAuthentication.handleEapResponseMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapResponseMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
@@ -404,7 +404,7 @@ public class UeAuthentication {
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
 
-                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());

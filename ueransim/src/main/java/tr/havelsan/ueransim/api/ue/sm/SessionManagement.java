@@ -24,31 +24,14 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.ue;
+package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.api.gnb.GnbMessaging;
-import tr.havelsan.ueransim.api.nas.NasSecurity;
-import tr.havelsan.ueransim.api.ue.mm.MobilityManagement;
-import tr.havelsan.ueransim.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.core.UeSimContext;
-import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 
-public class UeMessaging {
+public class SessionManagement {
 
-    public static void sendNas(UeSimContext ctx, NasMessage message) {
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, message);
-        GnbMessaging.sendFromUe(ctx.simCtx.gnb, ctx, securedNas);
-    }
+    public static void receiveNas(UeSimContext ctx, PlainSmMessage message) {
 
-    public static void receiveNas(UeSimContext ctx, NasMessage message) {
-        message = NasSecurity.decryptNasMessage(ctx.currentNsc, message);
-
-        if (message instanceof PlainMmMessage) {
-            MobilityManagement.receiveNas(ctx, (PlainMmMessage) message);
-        } else {
-            SessionManagement.receiveNas(ctx, (PlainSmMessage) message);
-        }
     }
 }

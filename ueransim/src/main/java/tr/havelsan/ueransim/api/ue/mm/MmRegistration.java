@@ -42,7 +42,7 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class UeRegistration {
+class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
@@ -57,7 +57,7 @@ public class UeRegistration {
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
-        registrationRequest.ueSecurityCapability = UeSecurity.createSecurityCapabilityIe();
+        registrationRequest.ueSecurityCapability = MmSecurity.createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
@@ -65,7 +65,7 @@ public class UeRegistration {
         if (ctx.ueData.storedGuti != null) {
             registrationRequest.mobileIdentity = ctx.ueData.storedGuti;
         } else {
-            var suci = UeIdentity.getOrGenerateSuci(ctx);
+            var suci = MmIdentity.getOrGenerateSuci(ctx);
             if (suci != null) {
                 registrationRequest.mobileIdentity = suci;
 
@@ -115,7 +115,7 @@ public class UeRegistration {
     public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
-                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());

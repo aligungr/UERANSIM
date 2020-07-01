@@ -44,7 +44,7 @@ import tr.havelsan.ueransim.structs.Supi;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class UeIdentity {
+class MmIdentity {
 
     public static void handleIdentityRequest(UeSimContext ctx, IdentityRequest message) {
         Logging.funcIn("Handling: Identity Request");

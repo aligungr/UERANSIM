@@ -33,12 +33,12 @@ import tr.havelsan.ueransim.nas.impl.messages.ServiceReject;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class UeService {
+class MmService {
 
     public static void handleServiceAccept(UeSimContext ctx, ServiceAccept message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
-                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in ServiceAccept, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
@@ -49,7 +49,7 @@ public class UeService {
     public static void handleServiceReject(UeSimContext ctx, ServiceReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
-                UeAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in ServiceReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
