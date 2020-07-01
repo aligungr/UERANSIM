@@ -36,7 +36,7 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class GNodeB {
+public class GnbNode {
 
     public static void run(GnbSimContext ctx) {
         try {

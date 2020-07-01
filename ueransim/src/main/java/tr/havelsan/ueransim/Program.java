@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.core.GNodeB;
+import tr.havelsan.ueransim.core.GnbNode;
 import tr.havelsan.ueransim.core.UserEquipment;
 import tr.havelsan.ueransim.events.EventParser;
 import tr.havelsan.ueransim.events.GnbEvent;
@@ -56,7 +56,7 @@ public class Program {
         var simContext = AppConfig.createSimContext();
 
         var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("gnb.yaml"));
-        GNodeB.run(gnbContext);
+        GnbNode.run(gnbContext);
 
         var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
         UserEquipment.run(ueContext);
@@ -71,7 +71,7 @@ public class Program {
                 System.out.println("Event not found: " + line);
             } else {
                 if (event instanceof GnbEvent) {
-                    GNodeB.pushEvent(gnbContext, (GnbEvent) event);
+                    GnbNode.pushEvent(gnbContext, (GnbEvent) event);
                 } else if (event instanceof UeEvent) {
                     UserEquipment.pushEvent(ueContext, (UeEvent) event);
                 }
