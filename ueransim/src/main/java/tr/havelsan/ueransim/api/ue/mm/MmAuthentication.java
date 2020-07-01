@@ -208,14 +208,14 @@ class MmAuthentication {
             var kAusf = MmKeyManagement.calculateKAusfForEapAkaPrime(mk);
             Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
-            ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+            ctx.nonCurrentNsCtx = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
                     message.ngKSI.nasKeySetIdentifier);
-            ctx.nonCurrentNsc.keys.rand = receivedRand;
-            ctx.nonCurrentNsc.keys.res = res;
-            ctx.nonCurrentNsc.keys.resStar = null;
-            ctx.nonCurrentNsc.keys.kAusf = kAusf;
+            ctx.nonCurrentNsCtx.keys.rand = receivedRand;
+            ctx.nonCurrentNsCtx.keys.res = res;
+            ctx.nonCurrentNsCtx.keys.resStar = null;
+            ctx.nonCurrentNsCtx.keys.kAusf = kAusf;
 
-            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
+            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
         }
 
         // Send Response
@@ -288,18 +288,18 @@ class MmAuthentication {
         if (IGNORE_CONTROLS_FAILURES || autnCheck == AutnValidationRes.OK) {
 
             // Create new partial native NAS security context and continue with key derivation
-            ctx.nonCurrentNsc = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+            ctx.nonCurrentNsCtx = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
                     request.ngKSI.nasKeySetIdentifier);
-            ctx.nonCurrentNsc.keys.rand = rand;
-            ctx.nonCurrentNsc.keys.res = res;
-            ctx.nonCurrentNsc.keys.resStar = MmKeyManagement.calculateResStar(ckik, snn, rand, res);
-            ctx.nonCurrentNsc.keys.kAusf = MmKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+            ctx.nonCurrentNsCtx.keys.rand = rand;
+            ctx.nonCurrentNsCtx.keys.res = res;
+            ctx.nonCurrentNsCtx.keys.resStar = MmKeyManagement.calculateResStar(ckik, snn, rand, res);
+            ctx.nonCurrentNsCtx.keys.kAusf = MmKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
 
-            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsc);
+            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
 
             // Prepare response
             response = new AuthenticationResponse(
-                    new IEAuthenticationResponseParameter(ctx.nonCurrentNsc.keys.resStar), null);
+                    new IEAuthenticationResponseParameter(ctx.nonCurrentNsCtx.keys.resStar), null);
 
         } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
@@ -400,8 +400,8 @@ class MmAuthentication {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.taiList = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
 
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
@@ -424,7 +424,7 @@ class MmAuthentication {
         Logging.funcIn("Handling: EAP-Failure contained in received message");
 
         Logging.debug(Tag.PROC, "Deleting non-current NAS security context");
-        ctx.nonCurrentNsc = null;
+        ctx.nonCurrentNsCtx = null;
 
         Logging.funcOut();
     }

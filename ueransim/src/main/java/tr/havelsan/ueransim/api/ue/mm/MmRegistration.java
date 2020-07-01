@@ -45,8 +45,8 @@ class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
-        if (ctx.currentNsc != null && ctx.currentNsc.ngKsi != null) {
-            ngKsi = ctx.currentNsc.ngKsi;
+        if (ctx.currentNsCtx != null && ctx.currentNsCtx.ngKsi != null) {
+            ngKsi = ctx.currentNsCtx.ngKsi;
         }
 
         var registrationRequest = new RegistrationRequest();
@@ -130,38 +130,38 @@ class MmRegistration {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
-                ctx.currentNsc = null;
-                ctx.nonCurrentNsc = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
             } else if (cause.equals(EMmCause.CONGESTION)) {
                 if (message.t3346value != null && message.t3346value.hasValue()) {
                     ctx.ueTimers.t3346.stop();

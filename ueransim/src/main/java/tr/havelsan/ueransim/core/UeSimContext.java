@@ -40,12 +40,12 @@ public class UeSimContext {
 
     public UeData ueData;
     public UeConfig ueConfig;
-    public NasSecurityContext currentNsc;
-    public NasSecurityContext nonCurrentNsc;
     public UeTimers ueTimers;
 
     public MmContext mmCtx;
     public SmContext smCtx;
+    public NasSecurityContext currentNsCtx;
+    public NasSecurityContext nonCurrentNsCtx;
 
     Queue<UeEvent> eventQueue = new ArrayDeque<>();
 

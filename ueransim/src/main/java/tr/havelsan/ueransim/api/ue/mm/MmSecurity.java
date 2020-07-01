@@ -74,19 +74,19 @@ class MmSecurity {
         }
 
         // Assign selected algorithms to security context, and derive NAS keys
-        ctx.nonCurrentNsc.selectedAlgorithms = new SelectedAlgorithms(
+        ctx.nonCurrentNsCtx.selectedAlgorithms = new SelectedAlgorithms(
                 message.selectedNasSecurityAlgorithms.typeOfIntegrityProtectionAlgorithm,
                 message.selectedNasSecurityAlgorithms.typeOfCipheringAlgorithm
         );
-        MmKeyManagement.deriveNasKeys(ctx.nonCurrentNsc);
+        MmKeyManagement.deriveNasKeys(ctx.nonCurrentNsCtx);
 
-        Logging.debug(Tag.VALUE, "kNasEnc: %s", ctx.nonCurrentNsc.keys.kNasEnc);
-        Logging.debug(Tag.VALUE, "kNasInt: %s", ctx.nonCurrentNsc.keys.kNasInt);
-        Logging.debug(Tag.VALUE, "selectedIntAlg: %s", ctx.nonCurrentNsc.selectedAlgorithms.integrity);
-        Logging.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nonCurrentNsc.selectedAlgorithms.ciphering);
+        Logging.debug(Tag.VALUE, "kNasEnc: %s", ctx.nonCurrentNsCtx.keys.kNasEnc);
+        Logging.debug(Tag.VALUE, "kNasInt: %s", ctx.nonCurrentNsCtx.keys.kNasInt);
+        Logging.debug(Tag.VALUE, "selectedIntAlg: %s", ctx.nonCurrentNsCtx.selectedAlgorithms.integrity);
+        Logging.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nonCurrentNsCtx.selectedAlgorithms.ciphering);
 
         // Set non-current NAS Security Context as current one.
-        ctx.currentNsc = ctx.nonCurrentNsc.deepCopy();
+        ctx.currentNsCtx = ctx.nonCurrentNsCtx.deepCopy();
 
         // Prepare response
         var response = new SecurityModeComplete();

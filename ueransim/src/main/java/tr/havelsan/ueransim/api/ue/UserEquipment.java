@@ -41,14 +41,14 @@ public class UserEquipment {
     public static void sendNas(UeSimContext ctx, NasMessage message) {
         Debugging.assertThread(ctx);
 
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, message);
+        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
         GnbMessaging.sendFromUe(ctx.simCtx.gnb, ctx, securedNas);
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
         Debugging.assertThread(ctx);
 
-        message = NasSecurity.decryptNasMessage(ctx.currentNsc, message);
+        message = NasSecurity.decryptNasMessage(ctx.currentNsCtx, message);
 
         if (message instanceof PlainMmMessage) {
             MobilityManagement.receiveMm(ctx, (PlainMmMessage) message);
