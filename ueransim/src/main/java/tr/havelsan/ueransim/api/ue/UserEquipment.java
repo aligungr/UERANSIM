@@ -34,15 +34,20 @@ import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
+import tr.havelsan.ueransim.utils.Debugging;
 
 public class UserEquipment {
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
+        Debugging.assertThread(ctx);
+
         NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, message);
         GnbMessaging.sendFromUe(ctx.simCtx.gnb, ctx, securedNas);
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
+        Debugging.assertThread(ctx);
+
         message = NasSecurity.decryptNasMessage(ctx.currentNsc, message);
 
         if (message instanceof PlainMmMessage) {

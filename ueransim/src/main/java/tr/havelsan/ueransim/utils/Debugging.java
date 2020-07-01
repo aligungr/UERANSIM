@@ -26,7 +26,13 @@
 
 package tr.havelsan.ueransim.utils;
 
+import tr.havelsan.ueransim.core.UeSimContext;
+
 public class Debugging {
+
+    public static void assertThread(UeSimContext ueSimContext) {
+        assertThread(ueSimContext.thread);
+    }
 
     public static void assertThread(Thread thread) {
         if (Thread.currentThread() != thread) {

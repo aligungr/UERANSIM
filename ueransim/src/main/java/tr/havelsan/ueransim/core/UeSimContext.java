@@ -40,6 +40,7 @@ import java.util.Queue;
 public class UeSimContext {
 
     public final SimulationContext simCtx;
+    public Thread thread; // todo: make final
 
     public UeData ueData;
     public UeConfig ueConfig;
