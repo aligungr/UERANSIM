@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.ue.sm;
+package tr.havelsan.ueransim.structs;
 
 public class SmContext {
 

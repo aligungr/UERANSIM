@@ -40,22 +40,22 @@ import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class UePduSessionEstablishment {
+class SmPduSessionEstablishment {
 
     public static void sendEstablishmentRequest(UeSimContext ctx, PduSessionEstablishmentConfig config) {
         Logging.funcIn("Sending PDU Session Establishment Request");
 
-        var pduSessionId = UePduSessionManagement.allocatePduSessionId(ctx);
+        var pduSessionId = SmPduSessionManagement.allocatePduSessionId(ctx);
         if (pduSessionId == null) {
             Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
             Logging.funcOut();
             return;
         }
 
-        var procedureTransactionId = UePduSessionManagement.allocateProcedureTransactionId(ctx);
+        var procedureTransactionId = SmPduSessionManagement.allocateProcedureTransactionId(ctx);
         if (procedureTransactionId == null) {
             Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
-            UePduSessionManagement.releasePduSession(ctx, pduSessionId);
+            SmPduSessionManagement.releasePduSession(ctx, pduSessionId);
             Logging.funcOut();
             return;
         }
@@ -85,7 +85,7 @@ public class UePduSessionEstablishment {
         Logging.funcOut();
     }
 
-    public static void handleEstablishmentAccept(UeSimContext ctx, PduSessionEstablishmentAccept message) {
+    public static void receiveEstablishmentAccept(UeSimContext ctx, PduSessionEstablishmentAccept message) {
         Logging.funcIn("Handling: PDU Session Establishment Accept");
 
         if (message.smCause != null) {
@@ -94,7 +94,7 @@ public class UePduSessionEstablishment {
 
         ctx.ueTimers.t3580.stop();
 
-        UePduSessionManagement.releaseProcedureTransactionId(ctx, message.pti);
+        SmPduSessionManagement.releaseProcedureTransactionId(ctx, message.pti);
 
         var pduSession = ctx.smCtx.pduSessions[message.pduSessionId.intValue()];
         if (pduSession == null) {
@@ -149,7 +149,7 @@ public class UePduSessionEstablishment {
         */
     }
 
-    public static void handleEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {
+    public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {
 
     }
 }

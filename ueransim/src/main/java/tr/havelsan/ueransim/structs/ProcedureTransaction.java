@@ -24,25 +24,10 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.ue.sm;
+package tr.havelsan.ueransim.structs;
 
-import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IEQoSFlowDescriptions;
-import tr.havelsan.ueransim.nas.impl.ies.IEQoSRules;
-import tr.havelsan.ueransim.nas.impl.ies.IESessionAmbr;
-
-public class PduSession {
+public class ProcedureTransaction {
 
     public static final int MIN_ID = 1;
-    public static final int MAX_ID = 15;
-
-    public final EPduSessionIdentity id;
-    public boolean isEstablished;
-    public IEQoSRules authorizedQoSRules;
-    public IESessionAmbr sessionAmbr;
-    public IEQoSFlowDescriptions authorizedQoSFlowDescriptions;
-
-    public PduSession(EPduSessionIdentity id) {
-        this.id = id;
-    }
+    public static final int MAX_ID = 254;
 }

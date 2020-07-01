@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.api.ue.sm.SmContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.SimulationContext;
@@ -40,6 +39,7 @@ import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.sctp.MockedSCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.structs.GnbConfig;
+import tr.havelsan.ueransim.structs.SmContext;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.structs.UeTimers;
 import tr.havelsan.ueransim.utils.IncomingMessage;

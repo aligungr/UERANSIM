@@ -115,7 +115,7 @@ class MmRegistration {
     public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
-                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());

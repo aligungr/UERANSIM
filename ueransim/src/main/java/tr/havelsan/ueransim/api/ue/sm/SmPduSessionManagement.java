@@ -29,10 +29,12 @@ package tr.havelsan.ueransim.api.ue.sm;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
+import tr.havelsan.ueransim.structs.PduSession;
+import tr.havelsan.ueransim.structs.ProcedureTransaction;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class UePduSessionManagement {
+class SmPduSessionManagement {
 
     public static EPduSessionIdentity allocatePduSessionId(UeSimContext ctx) {
         var arr = ctx.smCtx.pduSessions;

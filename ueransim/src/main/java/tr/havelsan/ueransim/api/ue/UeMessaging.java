@@ -46,9 +46,9 @@ public class UeMessaging {
         message = NasSecurity.decryptNasMessage(ctx.currentNsc, message);
 
         if (message instanceof PlainMmMessage) {
-            MobilityManagement.receiveNas(ctx, (PlainMmMessage) message);
+            MobilityManagement.receiveMm(ctx, (PlainMmMessage) message);
         } else {
-            SessionManagement.receiveNas(ctx, (PlainSmMessage) message);
+            SessionManagement.receiveSm(ctx, (PlainSmMessage) message);
         }
     }
 }

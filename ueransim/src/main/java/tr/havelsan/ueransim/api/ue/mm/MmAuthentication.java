@@ -55,15 +55,15 @@ class MmAuthentication {
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
     private static final boolean USE_SQN_HACK = true; // todo
 
-    public static void handleAuthenticationRequest(UeSimContext ctx, AuthenticationRequest message) {
+    public static void receiveAuthenticationRequest(UeSimContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
-            handleAuthenticationRequestEap(ctx, message);
+            receiveAuthenticationRequestEap(ctx, message);
         } else {
-            handleAuthenticationRequest5gAka(ctx, message);
+            receiveAuthenticationRequest5gAka(ctx, message);
         }
     }
 
-    private static void handleAuthenticationRequestEap(UeSimContext ctx, AuthenticationRequest message) {
+    private static void receiveAuthenticationRequestEap(UeSimContext ctx, AuthenticationRequest message) {
         Logging.funcIn("Handling: EAP AKA' Authentication Request");
 
         OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
@@ -242,7 +242,7 @@ class MmAuthentication {
         Logging.funcOut();
     }
 
-    private static void handleAuthenticationRequest5gAka(UeSimContext ctx, AuthenticationRequest request) {
+    private static void receiveAuthenticationRequest5gAka(UeSimContext ctx, AuthenticationRequest request) {
         Logging.funcIn("Handling: 5G AKA Authentication Request");
 
         NasMessage response = null;
@@ -370,12 +370,12 @@ class MmAuthentication {
         return true;
     }
 
-    public static void handleAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
+    public static void receiveAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
-                MmAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.receiveEapSuccessMessage(ctx, message.eapMessage.eap);
             } else if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
-                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
@@ -383,10 +383,10 @@ class MmAuthentication {
         }
     }
 
-    public static void handleAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
+    public static void receiveAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
-                MmAuthentication.handleEapResponseMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.receiveEapResponseMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
@@ -394,7 +394,7 @@ class MmAuthentication {
         }
     }
 
-    public static void handleAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
+    public static void receiveAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
 
@@ -404,7 +404,7 @@ class MmAuthentication {
                 ctx.currentNsc = null;
                 ctx.nonCurrentNsc = null;
 
-                MmAuthentication.handleEapFailureMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
@@ -412,7 +412,7 @@ class MmAuthentication {
         }
     }
 
-    public static void handleEapSuccessMessage(UeSimContext ctx, Eap eap) {
+    public static void receiveEapSuccessMessage(UeSimContext ctx, Eap eap) {
         Logging.funcIn("Handling: EAP-Success contained in received message");
 
         // do nothing
@@ -421,7 +421,7 @@ class MmAuthentication {
     }
 
 
-    public static void handleEapFailureMessage(UeSimContext ctx, Eap eap) {
+    public static void receiveEapFailureMessage(UeSimContext ctx, Eap eap) {
         Logging.funcIn("Handling: EAP-Failure contained in received message");
 
         Logging.debug(Tag.PROC, "Deleting non-current NAS security context");
@@ -430,7 +430,7 @@ class MmAuthentication {
         Logging.funcOut();
     }
 
-    public static void handleEapResponseMessage(UeSimContext ctx, Eap eap) {
+    public static void receiveEapResponseMessage(UeSimContext ctx, Eap eap) {
         Logging.funcIn("Handling: EAP contained in received message");
 
         if (eap instanceof EapAkaPrime) {

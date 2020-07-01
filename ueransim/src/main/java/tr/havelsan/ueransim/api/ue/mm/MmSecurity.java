@@ -68,7 +68,7 @@ class MmSecurity {
         // Handle EAP-Success message if any.
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
-                MmAuthentication.handleEapSuccessMessage(ctx, message.eapMessage.eap);
+                MmAuthentication.receiveEapSuccessMessage(ctx, message.eapMessage.eap);
             } else {
                 Logging.warning(Tag.PROC, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
             }

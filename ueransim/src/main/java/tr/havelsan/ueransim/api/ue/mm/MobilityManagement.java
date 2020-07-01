@@ -33,15 +33,15 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 
 public class MobilityManagement {
 
-    public static void receiveNas(UeSimContext ctx, PlainMmMessage message) {
+    public static void receiveMm(UeSimContext ctx, PlainMmMessage message) {
         if (message instanceof AuthenticationRequest) {
-            MmAuthentication.handleAuthenticationRequest(ctx, (AuthenticationRequest) message);
+            MmAuthentication.receiveAuthenticationRequest(ctx, (AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {
-            MmAuthentication.handleAuthenticationResult(ctx, (AuthenticationResult) message);
+            MmAuthentication.receiveAuthenticationResult(ctx, (AuthenticationResult) message);
         } else if (message instanceof AuthenticationResponse) {
-            MmAuthentication.handleAuthenticationResponse(ctx, (AuthenticationResponse) message);
+            MmAuthentication.receiveAuthenticationResponse(ctx, (AuthenticationResponse) message);
         } else if (message instanceof AuthenticationReject) {
-            MmAuthentication.handleAuthenticationReject(ctx, (AuthenticationReject) message);
+            MmAuthentication.receiveAuthenticationReject(ctx, (AuthenticationReject) message);
         } else if (message instanceof RegistrationReject) {
             MmRegistration.handleRegistrationReject(ctx, (RegistrationReject) message);
         } else if (message instanceof IdentityRequest) {
