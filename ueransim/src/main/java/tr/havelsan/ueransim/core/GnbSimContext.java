@@ -34,7 +34,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class GnbSimContext {
-    public final SimulationContext simCtx;
+    public final SimulationContext simCtx; // todo: remove this
 
     public GnbConfig config;
 
