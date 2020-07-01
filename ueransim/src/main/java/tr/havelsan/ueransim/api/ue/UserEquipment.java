@@ -35,7 +35,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 
-public class UeMessaging {
+public class UserEquipment {
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
         NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsc, message);

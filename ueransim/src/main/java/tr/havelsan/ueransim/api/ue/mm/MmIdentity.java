@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.api.ue.UeMessaging;
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
@@ -63,7 +63,7 @@ class MmIdentity {
             }
         }
 
-        UeMessaging.sendNas(ctx, response);
+        UserEquipment.sendNas(ctx, response);
         Logging.funcOut();
     }
 

@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.api.ue.UeMessaging;
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.eap.Eap;
@@ -59,7 +59,7 @@ class MmSecurity {
             var replayed = message.replayedUeSecurityCapabilities;
             var real = createSecurityCapabilityIe();
             if (!compareSecurityCapabilities(real, replayed)) {
-                UeMessaging.sendNas(ctx, new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH));
+                UserEquipment.sendNas(ctx, new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH));
                 Logging.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
                 return;
             }
@@ -101,7 +101,7 @@ class MmSecurity {
         response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.registrationRequest));
 
         // Send response
-        UeMessaging.sendNas(ctx, response);
+        UserEquipment.sendNas(ctx, response);
 
         Logging.funcOut();
     }
