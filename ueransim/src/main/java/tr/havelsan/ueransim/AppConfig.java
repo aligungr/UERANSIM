@@ -85,8 +85,8 @@ public class AppConfig {
         ctx.ueConfig = config.asConstructed(UeConfig.class);
 
         ctx.ueTimers = new UeTimers();
-        ctx.smCtx = new SmContext();
         ctx.mmCtx = new MmContext();
+        ctx.smCtx = new SmContext();
 
         simCtx.ue = ctx;
         return ctx;
