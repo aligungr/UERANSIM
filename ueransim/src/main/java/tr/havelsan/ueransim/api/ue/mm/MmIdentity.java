@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
@@ -49,7 +48,7 @@ class MmIdentity {
     public static void handleIdentityRequest(UeSimContext ctx, IdentityRequest message) {
         Logging.funcIn("Handling: Identity Request");
 
-        IdentityResponse response = new IdentityResponse();
+        var response = new IdentityResponse();
 
         if (message.identityType.value.equals(EIdentityType.SUCI)) {
             response.mobileIdentity = getOrGenerateSuci(ctx);
@@ -63,7 +62,7 @@ class MmIdentity {
             }
         }
 
-        UserEquipment.sendNas(ctx, response);
+        MobilityManagement.sendNas(ctx, response);
         Logging.funcOut();
     }
 

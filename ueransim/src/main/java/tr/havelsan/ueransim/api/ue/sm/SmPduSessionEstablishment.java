@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -80,7 +79,7 @@ class SmPduSessionEstablishment {
 
         ctx.ueTimers.t3580.start();
 
-        UserEquipment.sendNas(ctx, ulNasTransport);
+        SessionManagement.sendNas(ctx, ulNasTransport);
 
         Logging.funcOut();
     }

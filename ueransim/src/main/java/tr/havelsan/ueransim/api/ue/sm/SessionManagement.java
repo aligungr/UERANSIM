@@ -26,13 +26,19 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
+import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.utils.FlowLogging;
 
 public class SessionManagement {
+
+    public static void sendNas(UeSimContext ctx, UlNasTransport message) {
+        UserEquipment.sendNas(ctx, message);
+    }
 
     public static void receiveSm(UeSimContext ctx, PlainSmMessage message) {
         if (message instanceof PduSessionEstablishmentAccept) {

@@ -26,12 +26,17 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
+import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.FlowLogging;
 
 public class MobilityManagement {
+
+    public static void sendNas(UeSimContext ctx, PlainMmMessage message) {
+        UserEquipment.sendNas(ctx, message);
+    }
 
     public static void receiveMm(UeSimContext ctx, PlainMmMessage message) {
         if (message instanceof AuthenticationRequest) {
