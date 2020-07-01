@@ -30,7 +30,7 @@ import tr.havelsan.ueransim.events.UeEvent;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class UserEquipment {
+public class UeNode {
 
     public static void run(UeSimContext ctx) {
         new Thread(() -> {

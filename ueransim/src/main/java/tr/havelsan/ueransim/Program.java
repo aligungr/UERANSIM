@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim;
 
 import tr.havelsan.ueransim.core.GnbNode;
-import tr.havelsan.ueransim.core.UserEquipment;
+import tr.havelsan.ueransim.core.UeNode;
 import tr.havelsan.ueransim.events.EventParser;
 import tr.havelsan.ueransim.events.GnbEvent;
 import tr.havelsan.ueransim.events.UeEvent;
@@ -59,7 +59,7 @@ public class Program {
         GnbNode.run(gnbContext);
 
         var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
-        UserEquipment.run(ueContext);
+        UeNode.run(ueContext);
 
         var scanner = new Scanner(System.in);
 
@@ -73,7 +73,7 @@ public class Program {
                 if (event instanceof GnbEvent) {
                     GnbNode.pushEvent(gnbContext, (GnbEvent) event);
                 } else if (event instanceof UeEvent) {
-                    UserEquipment.pushEvent(ueContext, (UeEvent) event);
+                    UeNode.pushEvent(ueContext, (UeEvent) event);
                 }
             }
         }
