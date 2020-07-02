@@ -26,8 +26,8 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.core.GnbNode;
-import tr.havelsan.ueransim.core.UeNode;
+import tr.havelsan.ueransim.core.nodes.GnbNode;
+import tr.havelsan.ueransim.core.nodes.UeNode;
 import tr.havelsan.ueransim.events.EventParser;
 import tr.havelsan.ueransim.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.events.ue.UeEvent;
@@ -71,9 +71,9 @@ public class Program {
                 System.out.println("Event not found: " + line);
             } else {
                 if (event instanceof GnbEvent) {
-                    GnbNode.pushEvent(gnbContext, (GnbEvent) event);
+                    gnbContext.pushEvent((GnbEvent) event);
                 } else if (event instanceof UeEvent) {
-                    UeNode.pushEvent(ueContext, (UeEvent) event);
+                    ueContext.pushEvent((UeEvent) event);
                 }
             }
         }

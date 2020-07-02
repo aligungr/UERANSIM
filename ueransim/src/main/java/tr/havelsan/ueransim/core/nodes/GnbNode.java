@@ -24,10 +24,13 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.core.nodes;
 
 import tr.havelsan.ueransim.Program;
 import tr.havelsan.ueransim.api.gnb.GnbMessaging;
+import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.core.threads.NodeLooperThread;
+import tr.havelsan.ueransim.core.threads.SctpRecevierThread;
 
 public class GnbNode {
 

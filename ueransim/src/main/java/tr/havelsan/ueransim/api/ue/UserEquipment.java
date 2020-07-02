@@ -29,7 +29,6 @@ package tr.havelsan.ueransim.api.ue;
 import tr.havelsan.ueransim.api.nas.NasSecurity;
 import tr.havelsan.ueransim.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.api.ue.sm.SessionManagement;
-import tr.havelsan.ueransim.core.GnbNode;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -44,7 +43,7 @@ public class UserEquipment {
         Debugging.assertThread(ctx);
 
         NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
-        GnbNode.pushEvent(ctx.simCtx.gnb, new GnbUplinkNasEvent(ctx.simId, NasEncoder.nasPdu(securedNas)));
+        ctx.simCtx.gnb.pushEvent(new GnbUplinkNasEvent(ctx.simId, NasEncoder.nasPdu(securedNas)));
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
@@ -57,5 +56,9 @@ public class UserEquipment {
         } else {
             SessionManagement.receiveSm(ctx, (PlainSmMessage) message);
         }
+    }
+
+    public static void cycle(UeSimContext ctx) {
+
     }
 }

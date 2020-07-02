@@ -24,37 +24,13 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.core.threads;
 
 import tr.havelsan.ueransim.Program;
-import tr.havelsan.ueransim.utils.Logging;
-import tr.havelsan.ueransim.utils.Tag;
 
-import java.util.function.Consumer;
+public abstract class BaseThread extends Thread {
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
-
-    private final T simContext;
-    private final Consumer<T> looper;
-
-    public NodeLooperThread(T simContext, Consumer<T> looper) {
-        this.simContext = simContext;
-        this.looper = looper;
-    }
-
-    @Override
-    public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.simCtxId);
-        while (true) {
-            looper.accept(simContext);
-            while (simContext.hasEvent()) {
-                looper.accept(simContext);
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Program.fail(e);
-            }
-        }
+    public BaseThread() {
+        super.setUncaughtExceptionHandler((thread, throwable) -> Program.fail(throwable));
     }
 }

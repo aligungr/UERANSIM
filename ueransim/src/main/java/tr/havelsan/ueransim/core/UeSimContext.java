@@ -30,16 +30,14 @@ import tr.havelsan.ueransim.api.nas.NasSecurityContext;
 import tr.havelsan.ueransim.events.ue.UeEvent;
 import tr.havelsan.ueransim.structs.*;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.UUID;
 
-public class UeSimContext {
+public class UeSimContext extends BaseSimContext<UeEvent> {
 
     public final UUID simId;
 
     public final SimulationContext simCtx; // todo: remove this
-    public Thread thread; // todo: make final
+    public Thread thread; // todo: make final and gnb'ye de ekle
 
     public UeData ueData;
     public UeConfig ueConfig;
@@ -49,8 +47,6 @@ public class UeSimContext {
     public SmContext smCtx;
     public NasSecurityContext currentNsCtx;
     public NasSecurityContext nonCurrentNsCtx;
-
-    Queue<UeEvent> eventQueue = new ArrayDeque<>();
 
     public UeSimContext(SimulationContext simCtx) {
         this.simId = UUID.randomUUID();

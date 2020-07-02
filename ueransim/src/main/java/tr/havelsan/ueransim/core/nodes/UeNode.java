@@ -24,13 +24,16 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.core.nodes;
 
-import tr.havelsan.ueransim.Program;
+import tr.havelsan.ueransim.api.ue.UserEquipment;
+import tr.havelsan.ueransim.core.UeSimContext;
+import tr.havelsan.ueransim.core.threads.NodeLooperThread;
 
-public abstract class BaseThread extends Thread {
+public class UeNode {
 
-    public BaseThread() {
-        super.setUncaughtExceptionHandler((thread, throwable) -> Program.fail(throwable));
+    public static void run(UeSimContext ctx) {
+        var looperThread = new NodeLooperThread<>(ctx, UserEquipment::cycle);
+        looperThread.start();
     }
 }
