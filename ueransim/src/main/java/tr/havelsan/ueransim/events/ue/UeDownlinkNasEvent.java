@@ -26,19 +26,19 @@
 
 package tr.havelsan.ueransim.events.ue;
 
-import java.util.Arrays;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UeDownlinkNasEvent extends UeEvent {
-    public final byte[] nasPdu;
+    public final OctetString nasPdu;
 
-    public UeDownlinkNasEvent(byte[] nasPdu) {
+    public UeDownlinkNasEvent(OctetString nasPdu) {
         this.nasPdu = nasPdu;
     }
 
     @Override
     public String toString() {
         return "UeDownlinkNasEvent{" +
-                "nasPdu=" + Arrays.toString(nasPdu) +
+                "nasPdu=" + nasPdu +
                 '}';
     }
 }

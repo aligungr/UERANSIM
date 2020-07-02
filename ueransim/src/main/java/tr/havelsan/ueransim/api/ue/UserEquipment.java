@@ -39,6 +39,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.utils.Debugging;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
@@ -47,21 +48,43 @@ public class UserEquipment {
     public static void sendNas(UeSimContext ctx, NasMessage message) {
         Debugging.assertThread(ctx);
 
-        NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
+        Logging.funcIn("Sending NAS message: %s", message.getClass().getSimpleName());
 
-        ctx.simCtx.gnb.pushEvent(new GnbUplinkNasEvent(ctx.simId, NasEncoder.nasPdu(securedNas)));
+        var securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
+        var securedNasPdu = NasEncoder.nasPduS(securedNas);
+
+        Logging.debug(Tag.MESSAGING, "Plain NAS as JSON: %s", Json.toJson(message));
+        Logging.debug(Tag.MESSAGING, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
+        Logging.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(securedNas));
+        Logging.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
+
+        ctx.simCtx.gnb.pushEvent(new GnbUplinkNasEvent(ctx.simId, securedNasPdu));
+
+        Logging.funcOut();
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
         Debugging.assertThread(ctx);
 
+        Logging.funcIn("Receiving NAS message: %s", message.getClass().getSimpleName());
+
+        Logging.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(message));
+        Logging.debug(Tag.MESSAGING, "Secured NAS PDU: %s", NasEncoder.nasPduS(message));
+
         message = NasSecurity.decryptNasMessage(ctx.currentNsCtx, message);
 
-        if (message instanceof PlainMmMessage) {
-            MobilityManagement.receiveMm(ctx, (PlainMmMessage) message);
-        } else {
-            SessionManagement.receiveSm(ctx, (PlainSmMessage) message);
+        Logging.debug(Tag.MESSAGING, "Plain NAS as JSON %s", Json.toJson(message));
+        Logging.debug(Tag.MESSAGING, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
+
+        if (message != null) {
+            if (message instanceof PlainMmMessage) {
+                MobilityManagement.receiveMm(ctx, (PlainMmMessage) message);
+            } else {
+                SessionManagement.receiveSm(ctx, (PlainSmMessage) message);
+            }
         }
+
+        Logging.funcOut();
     }
 
     public static void cycle(UeSimContext ctx) {

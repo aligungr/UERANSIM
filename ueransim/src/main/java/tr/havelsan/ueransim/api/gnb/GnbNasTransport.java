@@ -45,7 +45,7 @@ public class GnbNasTransport {
 
         var nasMessage = NgapInternal.extractNasMessage(message);
         if (nasMessage != null) {
-            ctx.simCtx.ue.pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPdu(nasMessage)));
+            ctx.simCtx.ue.pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
     }
 

@@ -26,14 +26,15 @@
 
 package tr.havelsan.ueransim.events.gnb;
 
-import java.util.Arrays;
+import tr.havelsan.ueransim.utils.octets.OctetString;
+
 import java.util.UUID;
 
 public class GnbUplinkNasEvent extends GnbEvent {
     public final UUID ue;
-    public final byte[] nasPdu;
+    public final OctetString nasPdu;
 
-    public GnbUplinkNasEvent(UUID ue, byte[] nasPdu) {
+    public GnbUplinkNasEvent(UUID ue, OctetString nasPdu) {
         this.ue = ue;
         this.nasPdu = nasPdu;
     }
@@ -42,7 +43,7 @@ public class GnbUplinkNasEvent extends GnbEvent {
     public String toString() {
         return "GnbUplinkNasEvent{" +
                 "ue=" + ue +
-                ", nasPdu=" + Arrays.toString(nasPdu) +
+                ", nasPdu=" + nasPdu +
                 '}';
     }
 }

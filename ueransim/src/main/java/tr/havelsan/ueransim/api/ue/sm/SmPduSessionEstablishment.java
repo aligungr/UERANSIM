@@ -37,7 +37,6 @@ import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.octets.OctetString;
 
 class SmPduSessionEstablishment {
 
@@ -71,7 +70,7 @@ class SmPduSessionEstablishment {
 
         var ulNasTransport = new UlNasTransport();
         ulNasTransport.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
-        ulNasTransport.payloadContainer = new IEPayloadContainer(new OctetString(NasEncoder.nasPdu(pduSessionEstablishmentRequest)));
+        ulNasTransport.payloadContainer = new IEPayloadContainer(NasEncoder.nasPduS(pduSessionEstablishmentRequest));
         ulNasTransport.pduSessionId = new IEPduSessionIdentity2(pduSessionId.intValue());
         ulNasTransport.requestType = new IERequestType(IERequestType.ERequestType.INITIAL_REQUEST);
         ulNasTransport.sNssa = config.sNssai;
