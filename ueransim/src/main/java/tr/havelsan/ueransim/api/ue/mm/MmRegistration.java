@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
-import tr.havelsan.ueransim.configs.RegistrationConfig;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
@@ -43,7 +42,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 class MmRegistration {
 
-    public static void sendRegistration(UeSimContext ctx, RegistrationConfig config, ERegistrationType registrationType) {
+    public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType) {
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.currentNsCtx != null && ctx.currentNsCtx.ngKsi != null) {
             ngKsi = ctx.currentNsCtx.ngKsi;
