@@ -92,10 +92,6 @@ public class AppConfig {
         return ctx;
     }
 
-    public static SimulationContext createSimContext(ImplicitTypedObject config) {
-        throw new RuntimeException("");
-    }
-
     private static MockedSCTPClient newMockedClient(String mockedRemoteFile) {
         var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
 
