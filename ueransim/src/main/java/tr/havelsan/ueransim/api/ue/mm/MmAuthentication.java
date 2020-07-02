@@ -103,7 +103,7 @@ class MmAuthentication {
 
             if (USE_SQN_HACK) {
                 ctx.ueData.sqn = OctetString.xor(receivedAutn.substring(0, 6),
-                        calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, receivedRand).get(MilenageResult.AK));
+                        calculateMilenage(ctx.ueConfig, new OctetString("000000000000"), receivedRand).get(MilenageResult.AK));
             }
 
             var milenage = calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, receivedRand);
@@ -351,7 +351,8 @@ class MmAuthentication {
         byte[] opc = threegpp.milenage.Milenage.calculateOPc(ueConfig.op.toByteArray(), cipher, factory);
         var milenage = new threegpp.milenage.Milenage<>(opc, cipher, factory);
         try {
-            var calc = milenage.calculateAll(rand.toByteArray(), sqn.toByteArray(), ueConfig.amf.toByteArray(), Executors.newCachedThreadPool());
+            var calc = milenage.calculateAll(rand.toByteArray(), sqn.toByteArray(),
+                    ueConfig.amf.toByteArray(), Executors.newCachedThreadPool());
             var res = new HashMap<MilenageResult, OctetString>();
             for (var entry : calc.entrySet()) {
                 res.put(entry.getKey(), new OctetString(entry.getValue()));

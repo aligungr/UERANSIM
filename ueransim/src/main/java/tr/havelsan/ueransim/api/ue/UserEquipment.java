@@ -32,6 +32,8 @@ import tr.havelsan.ueransim.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.ue.UeCommandEvent;
+import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
@@ -76,6 +78,10 @@ public class UserEquipment {
                     Logging.error(Tag.EVENT, "UeCommandEvent not recognized: %s", cmd);
                     break;
             }
+        } else if (event instanceof UeDownlinkNasEvent) {
+            Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
+
+            receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasEvent) event).nasPdu));
         }
     }
 }

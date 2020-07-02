@@ -50,5 +50,9 @@ public class UeSimContext extends BaseSimContext<UeEvent> {
     public UeSimContext(SimulationContext simCtx) {
         this.simId = UUID.randomUUID();
         this.simCtx = simCtx;
+        this.ueTimers = new UeTimers();
+        this.mmCtx = new MmContext();
+        this.smCtx = new SmContext();
+        this.ueData = new UeData();
     }
 }
