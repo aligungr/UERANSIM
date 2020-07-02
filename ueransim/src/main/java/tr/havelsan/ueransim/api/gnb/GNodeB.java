@@ -43,9 +43,9 @@ import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.Debugging;
-import tr.havelsan.ueransim.utils.FlowLogging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
 
 public class GNodeB {
 
@@ -87,9 +87,11 @@ public class GNodeB {
 
         var ngapPdu = ngapBuilder.build();
 
-        FlowLogging.logSendingMessage(ngapPdu);
+        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+
         ctx.sctpClient.send(ctx.streamNumber, Ngap.perEncode(ngapPdu));
-        FlowLogging.logSentMessage();
+        Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {
@@ -115,7 +117,7 @@ public class GNodeB {
         } else if (ngapMessage instanceof InitialContextSetupRequest) {
             GnbUeContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) ngapMessage);
         } else {
-            FlowLogging.logUnhandledMessage(ngapMessage.getClass().getSimpleName());
+            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
     }
 
@@ -127,7 +129,9 @@ public class GNodeB {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
-            FlowLogging.logReceivedMessage(ngapPdu);
+            Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
+            Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+
             GNodeB.receiveFromNetwork(ctx, ngapPdu);
         } else if (event instanceof GnbCommandEvent) {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
