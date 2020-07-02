@@ -30,10 +30,7 @@ import tr.havelsan.ueransim.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.sctp.ISCTPClient;
 import tr.havelsan.ueransim.structs.GnbConfig;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-public class GnbSimContext {
+public class GnbSimContext extends BaseSimContext<GnbEvent> {
     public final SimulationContext simCtx; // todo: remove this
 
     public GnbConfig config;
@@ -43,8 +40,6 @@ public class GnbSimContext {
 
     public Long amfUeNgapId;
     public long ranUeNgapId;
-
-    Queue<GnbEvent> eventQueue = new ArrayDeque<>();
 
     public GnbSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;

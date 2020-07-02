@@ -29,6 +29,8 @@ package tr.havelsan.ueransim.api.gnb;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.UeSimContext;
+import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
+import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
@@ -109,6 +111,22 @@ public class GnbMessaging {
             GnbUeContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) ngapMessage);
         } else {
             FlowLogging.logUnhandledMessage(ngapMessage.getClass().getSimpleName());
+        }
+    }
+
+    public static void cycle(GnbSimContext ctx) {
+        var event = ctx.popEvent();
+        if (event instanceof SctpReceiveEvent) {
+            var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
+            FlowLogging.logReceivedMessage(ngapPdu);
+            GnbMessaging.receiveFromNetwork(ctx, ngapPdu);
+        } else if (event instanceof GnbCommandEvent) {
+            var cmd = ((GnbCommandEvent) event).cmd;
+            switch (cmd) {
+                case "ngsetup":
+                    GnbInterfaceManagement.sendNgSetupRequest(ctx);
+                    break;
+            }
         }
     }
 }

@@ -24,19 +24,37 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.sctp;
+package tr.havelsan.ueransim.core;
 
-// todo: rename this: ISctpClient
-public interface ISCTPClient {
-    void start() throws Exception;
+import tr.havelsan.ueransim.events.SimulationEvent;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
-    void send(int streamNumber, byte[] data);
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.UUID;
 
-    void receiverLoop(ISCTPHandler handler) throws Exception;
+public class BaseSimContext<T extends SimulationEvent> {
 
-    void close();
+    public final UUID simCtxId = UUID.randomUUID();
+    private final Queue<T> eventQueue = new ArrayDeque<>();
 
-    void abortReceiver();
+    public boolean hasEvent() {
+        synchronized (this) {
+            return !eventQueue.isEmpty();
+        }
+    }
 
-    boolean isOpen();
+    public void pushEvent(T event) {
+        Logging.info(Tag.EVENT, "Pushed event: %s", event);
+        synchronized (this) {
+            eventQueue.add(event);
+        }
+    }
+
+    public T popEvent() {
+        synchronized (this) {
+            return eventQueue.poll();
+        }
+    }
 }

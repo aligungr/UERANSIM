@@ -24,19 +24,27 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.sctp;
+package tr.havelsan.ueransim.core;
 
-// todo: rename this: ISctpClient
-public interface ISCTPClient {
-    void start() throws Exception;
+import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
+import tr.havelsan.ueransim.sctp.ISCTPClient;
 
-    void send(int streamNumber, byte[] data);
+public class SctpRecevierThread extends BaseThread {
 
-    void receiverLoop(ISCTPHandler handler) throws Exception;
+    private final GnbSimContext ctx;
+    private final ISCTPClient sctpClient;
 
-    void close();
+    public SctpRecevierThread(GnbSimContext ctx, ISCTPClient sctpClient) {
+        this.ctx = ctx;
+        this.sctpClient = sctpClient;
+    }
 
-    void abortReceiver();
-
-    boolean isOpen();
+    @Override
+    public void run() {
+        try {
+            sctpClient.receiverLoop(receivedBytes -> ctx.pushEvent(new SctpReceiveEvent(receivedBytes)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

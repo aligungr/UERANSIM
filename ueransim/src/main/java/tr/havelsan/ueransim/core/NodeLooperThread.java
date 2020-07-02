@@ -24,19 +24,37 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.sctp;
+package tr.havelsan.ueransim.core;
 
-// todo: rename this: ISctpClient
-public interface ISCTPClient {
-    void start() throws Exception;
+import tr.havelsan.ueransim.Program;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
-    void send(int streamNumber, byte[] data);
+import java.util.function.Consumer;
 
-    void receiverLoop(ISCTPHandler handler) throws Exception;
+public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
 
-    void close();
+    private final T simContext;
+    private final Consumer<T> looper;
 
-    void abortReceiver();
+    public NodeLooperThread(T simContext, Consumer<T> looper) {
+        this.simContext = simContext;
+        this.looper = looper;
+    }
 
-    boolean isOpen();
+    @Override
+    public void run() {
+        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.simCtxId);
+        while (true) {
+            looper.accept(simContext);
+            while (simContext.hasEvent()) {
+                looper.accept(simContext);
+            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                Program.fail(e);
+            }
+        }
+    }
 }

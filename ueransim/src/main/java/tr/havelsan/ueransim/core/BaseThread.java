@@ -24,19 +24,13 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.sctp;
+package tr.havelsan.ueransim.core;
 
-// todo: rename this: ISctpClient
-public interface ISCTPClient {
-    void start() throws Exception;
+import tr.havelsan.ueransim.Program;
 
-    void send(int streamNumber, byte[] data);
+public abstract class BaseThread extends Thread {
 
-    void receiverLoop(ISCTPHandler handler) throws Exception;
-
-    void close();
-
-    void abortReceiver();
-
-    boolean isOpen();
+    public BaseThread() {
+        super.setUncaughtExceptionHandler((thread, throwable) -> Program.fail(throwable));
+    }
 }
