@@ -26,11 +26,13 @@
 
 package tr.havelsan.ueransim.api.ue;
 
-import tr.havelsan.ueransim.api.gnb.GnbMessaging;
 import tr.havelsan.ueransim.api.nas.NasSecurity;
 import tr.havelsan.ueransim.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.api.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.core.GnbNode;
 import tr.havelsan.ueransim.core.UeSimContext;
+import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
+import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
@@ -42,7 +44,7 @@ public class UserEquipment {
         Debugging.assertThread(ctx);
 
         NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
-        GnbMessaging.sendFromUe(ctx.simCtx.gnb, ctx, securedNas);
+        GnbNode.pushEvent(ctx.simCtx.gnb, new GnbUplinkNasEvent(ctx.simId, NasEncoder.nasPdu(securedNas)));
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {

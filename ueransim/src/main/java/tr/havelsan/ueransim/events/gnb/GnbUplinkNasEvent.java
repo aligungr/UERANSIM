@@ -24,36 +24,25 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.events.gnb;
 
-import tr.havelsan.ueransim.api.nas.NasSecurityContext;
-import tr.havelsan.ueransim.events.ue.UeEvent;
-import tr.havelsan.ueransim.structs.*;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.Arrays;
 import java.util.UUID;
 
-public class UeSimContext {
+public class GnbUplinkNasEvent extends GnbEvent {
+    public final UUID ue;
+    public final byte[] nasPdu;
 
-    public final UUID simId;
+    public GnbUplinkNasEvent(UUID ue, byte[] nasPdu) {
+        this.ue = ue;
+        this.nasPdu = nasPdu;
+    }
 
-    public final SimulationContext simCtx; // todo: remove this
-    public Thread thread; // todo: make final
-
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public UeTimers ueTimers;
-
-    public MmContext mmCtx;
-    public SmContext smCtx;
-    public NasSecurityContext currentNsCtx;
-    public NasSecurityContext nonCurrentNsCtx;
-
-    Queue<UeEvent> eventQueue = new ArrayDeque<>();
-
-    public UeSimContext(SimulationContext simCtx) {
-        this.simId = UUID.randomUUID();
-        this.simCtx = simCtx;
+    @Override
+    public String toString() {
+        return "GnbUplinkNasEvent{" +
+                "ue=" + ue +
+                ", nasPdu=" + Arrays.toString(nasPdu) +
+                '}';
     }
 }
