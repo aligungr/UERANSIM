@@ -24,20 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.events.ue;
 
-import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
-import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
+import java.util.Arrays;
 
-public class GnbNasTransport {
+public class UeDownlinkNasEvent extends UeEvent {
+    public final byte[] nasPdu;
 
-    public static void handleDownlinkNasTransport(GnbSimContext ctx, DownlinkNASTransport message) {
-        var nasMessage = NgapInternal.extractNasMessage(message);
-        if (nasMessage != null) {
-            ctx.simCtx.ue.pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPdu(nasMessage)));
-        }
+    public UeDownlinkNasEvent(byte[] nasPdu) {
+        this.nasPdu = nasPdu;
+    }
+
+    @Override
+    public String toString() {
+        return "UeDownlinkNasEvent{" +
+                "nasPdu=" + Arrays.toString(nasPdu) +
+                '}';
     }
 }

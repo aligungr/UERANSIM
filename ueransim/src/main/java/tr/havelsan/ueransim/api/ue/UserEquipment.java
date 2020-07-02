@@ -43,6 +43,7 @@ public class UserEquipment {
         Debugging.assertThread(ctx);
 
         NasMessage securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
+
         ctx.simCtx.gnb.pushEvent(new GnbUplinkNasEvent(ctx.simId, NasEncoder.nasPdu(securedNas)));
     }
 
