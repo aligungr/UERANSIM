@@ -35,7 +35,6 @@ public enum Tag {
     NGAP_INTERNAL,
     MESSAGING,
     CONNECTION,
-    FLOWS,
     EVENT,
     NAS_SECURITY,
     NOT_IMPL_YET;
