@@ -31,11 +31,14 @@ import tr.havelsan.ueransim.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
+import tr.havelsan.ueransim.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.utils.Debugging;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class UserEquipment {
 
@@ -60,6 +63,19 @@ public class UserEquipment {
     }
 
     public static void cycle(UeSimContext ctx) {
+        var event = ctx.popEvent();
+        if (event instanceof UeCommandEvent) {
+            Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
 
+            var cmd = ((UeCommandEvent) event).cmd;
+            switch (cmd) {
+                case "initial-registration":
+                    MobilityManagement.executeCommand(ctx, cmd);
+                    break;
+                default:
+                    Logging.error(Tag.EVENT, "UeCommandEvent not recognized: %s", cmd);
+                    break;
+            }
+        }
     }
 }

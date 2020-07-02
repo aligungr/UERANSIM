@@ -35,12 +35,15 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class GnbInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx) {
+        Debugging.assertThread(ctx);
+
         Logging.funcIn("Starting: NGSetupRequest");
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
@@ -55,6 +58,8 @@ public class GnbInterfaceManagement {
     }
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGSetupResponse message) {
+        Debugging.assertThread(ctx);
+
         Logging.funcIn("Handling: NGSetupResponse");
         Logging.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
 
@@ -62,6 +67,8 @@ public class GnbInterfaceManagement {
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGSetupFailure message) {
+        Debugging.assertThread(ctx);
+
         Logging.funcIn("Handling: NGSetupFailure");
         Logging.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
 

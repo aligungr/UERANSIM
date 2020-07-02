@@ -24,28 +24,19 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core.nodes;
+package tr.havelsan.ueransim.events.ue;
 
-import tr.havelsan.ueransim.Program;
-import tr.havelsan.ueransim.api.gnb.GNodeB;
-import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.core.threads.NodeLooperThread;
-import tr.havelsan.ueransim.core.threads.SctpRecevierThread;
+public class UeCommandEvent extends UeEvent {
+    public final String cmd;
 
-public class GnbNode {
+    public UeCommandEvent(String cmd) {
+        this.cmd = cmd;
+    }
 
-    public static void run(GnbSimContext ctx) {
-        try {
-            ctx.sctpClient.start();
-        } catch (Exception e) {
-            Program.fail(e);
-        }
-
-        var sctpReceiverThread = new SctpRecevierThread(ctx, ctx.sctpClient);
-        sctpReceiverThread.start();
-
-        var looperThread = new NodeLooperThread<>(ctx, GNodeB::cycle);
-        ctx.setLooperThread(looperThread);
-        looperThread.start();
+    @Override
+    public String toString() {
+        return "UeCommandEvent{" +
+                "cmd='" + cmd + '\'' +
+                '}';
     }
 }

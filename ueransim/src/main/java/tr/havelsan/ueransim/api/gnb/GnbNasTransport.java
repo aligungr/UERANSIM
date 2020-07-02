@@ -31,10 +31,13 @@ import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.utils.Debugging;
 
 public class GnbNasTransport {
 
     public static void handleDownlinkNasTransport(GnbSimContext ctx, DownlinkNASTransport message) {
+        Debugging.assertThread(ctx);
+
         var nasMessage = NgapInternal.extractNasMessage(message);
         if (nasMessage != null) {
             ctx.simCtx.ue.pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPdu(nasMessage)));

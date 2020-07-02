@@ -36,8 +36,22 @@ import java.util.UUID;
 
 public class BaseSimContext<T extends SimulationEvent> {
 
-    public final UUID simCtxId = UUID.randomUUID();
-    private final Queue<T> eventQueue = new ArrayDeque<>();
+    public final UUID simCtxId;
+    private final Queue<T> eventQueue;
+    private Thread looperThread;
+
+    public BaseSimContext() {
+        this.simCtxId = UUID.randomUUID();
+        this.eventQueue = new ArrayDeque<>();
+    }
+
+    public Thread getLooperThread() {
+        return looperThread;
+    }
+
+    public void setLooperThread(Thread looperThread) {
+        this.looperThread = looperThread;
+    }
 
     public boolean hasEvent() {
         synchronized (this) {

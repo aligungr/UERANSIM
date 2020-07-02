@@ -34,6 +34,7 @@ public class UeNode {
 
     public static void run(UeSimContext ctx) {
         var looperThread = new NodeLooperThread<>(ctx, UserEquipment::cycle);
+        ctx.setLooperThread(looperThread);
         looperThread.start();
     }
 }

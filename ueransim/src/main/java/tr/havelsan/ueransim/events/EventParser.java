@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.events;
 
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
+import tr.havelsan.ueransim.events.ue.UeCommandEvent;
 
 public class EventParser {
 
@@ -36,6 +37,9 @@ public class EventParser {
         }
         if (command.equals("ngsetup")) {
             return new GnbCommandEvent(command);
+        }
+        if (command.equals("initial-registration")) {
+            return new UeCommandEvent(command);
         }
         return null;
     }

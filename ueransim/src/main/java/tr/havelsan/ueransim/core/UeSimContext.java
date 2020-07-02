@@ -37,7 +37,6 @@ public class UeSimContext extends BaseSimContext<UeEvent> {
     public final UUID simId;
 
     public final SimulationContext simCtx; // todo: remove this
-    public Thread thread; // todo: make final and gnb'ye de ekle
 
     public UeData ueData;
     public UeConfig ueConfig;

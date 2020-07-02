@@ -26,12 +26,12 @@
 
 package tr.havelsan.ueransim.utils;
 
-import tr.havelsan.ueransim.core.UeSimContext;
+import tr.havelsan.ueransim.core.BaseSimContext;
 
 public class Debugging {
 
-    public static void assertThread(UeSimContext ueSimContext) {
-        assertThread(ueSimContext.thread);
+    public static void assertThread(BaseSimContext<?> ueSimContext) {
+        assertThread(ueSimContext.getLooperThread());
     }
 
     public static void assertThread(Thread thread) {

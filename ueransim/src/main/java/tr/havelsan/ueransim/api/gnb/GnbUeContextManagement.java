@@ -31,10 +31,13 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.utils.Debugging;
 
 public class GnbUeContextManagement {
 
     public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
+        Debugging.assertThread(ctx);
+
         // todo
         GNodeB.sendToNetwork(ctx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
                 null);

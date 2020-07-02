@@ -40,15 +40,22 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.FlowLogging;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class GNodeB {
 
     public static void sendToNetwork(GnbSimContext ctx, NgapBuilder ngapBuilder) {
+        Debugging.assertThread(ctx);
+
         sendToNetwork(ctx, ngapBuilder, null);
     }
 
     public static void sendToNetwork(GnbSimContext ctx, NgapBuilder ngapBuilder, NasMessage nasMessage) {
+        Debugging.assertThread(ctx);
+
         // Adding NAS PDU (if any)
         if (nasMessage != null) {
             // NOTE: criticality is hardcoded here, it may be changed
@@ -84,6 +91,8 @@ public class GNodeB {
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+        Debugging.assertThread(ctx);
+
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
 
         // check for AMF-UE-NGAP-ID
@@ -109,16 +118,25 @@ public class GNodeB {
     }
 
     public static void cycle(GnbSimContext ctx) {
+        Debugging.assertThread(ctx);
+
         var event = ctx.popEvent();
         if (event instanceof SctpReceiveEvent) {
+            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
             FlowLogging.logReceivedMessage(ngapPdu);
             GNodeB.receiveFromNetwork(ctx, ngapPdu);
         } else if (event instanceof GnbCommandEvent) {
+            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+
             var cmd = ((GnbCommandEvent) event).cmd;
             switch (cmd) {
                 case "ngsetup":
                     GnbInterfaceManagement.sendNgSetupRequest(ctx);
+                    break;
+                default:
+                    Logging.error(Tag.EVENT, "GnbCommandEvent not recognized: %s", cmd);
                     break;
             }
         }

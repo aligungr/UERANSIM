@@ -29,9 +29,12 @@ package tr.havelsan.ueransim.api.ue.mm;
 import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
+import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.FlowLogging;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class MobilityManagement {
 
@@ -66,6 +69,17 @@ public class MobilityManagement {
             MmSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
         } else {
             FlowLogging.logUnhandledMessage(message);
+        }
+    }
+
+    public static void executeCommand(UeSimContext ctx, String cmd) {
+        switch (cmd) {
+            case "initial-registration":
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+                break;
+            default:
+                Logging.error(Tag.EVENT, "MobilityManagement.executeCommand, command not recognized: %s", cmd);
+                break;
         }
     }
 }
