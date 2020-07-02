@@ -27,20 +27,29 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
+import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Debugging;
 
 public class GnbNasTransport {
 
-    public static void handleDownlinkNasTransport(GnbSimContext ctx, DownlinkNASTransport message) {
+    public static void receiveDownlinkNasTransport(GnbSimContext ctx, DownlinkNASTransport message) {
         Debugging.assertThread(ctx);
 
         var nasMessage = NgapInternal.extractNasMessage(message);
         if (nasMessage != null) {
             ctx.simCtx.ue.pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPdu(nasMessage)));
         }
+    }
+
+    public static void receiveUplinkNasTransport(GnbSimContext ctx, UeSimContext ueCtx, NasMessage nasMessage) {
+        GNodeB.sendToNetwork(ctx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.REJECT), nasMessage);
     }
 }

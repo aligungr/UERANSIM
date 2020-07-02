@@ -29,7 +29,9 @@ package tr.havelsan.ueransim.api.gnb;
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
+import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
+import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
@@ -109,7 +111,7 @@ public class GNodeB {
         } else if (ngapMessage instanceof NGSetupFailure) {
             GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGSetupFailure) ngapMessage);
         } else if (ngapMessage instanceof DownlinkNASTransport) {
-            GnbNasTransport.handleDownlinkNasTransport(ctx, (DownlinkNASTransport) ngapMessage);
+            GnbNasTransport.receiveDownlinkNasTransport(ctx, (DownlinkNASTransport) ngapMessage);
         } else if (ngapMessage instanceof InitialContextSetupRequest) {
             GnbUeContextManagement.handleInitialContextSetup(ctx, (InitialContextSetupRequest) ngapMessage);
         } else {
@@ -139,6 +141,10 @@ public class GNodeB {
                     Logging.error(Tag.EVENT, "GnbCommandEvent not recognized: %s", cmd);
                     break;
             }
+        } else if (event instanceof GnbUplinkNasEvent) {
+            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+            // todo: use ue id and find related ue
+            GnbNasTransport.receiveUplinkNasTransport(ctx, ctx.simCtx.ue, NasDecoder.nasPdu(((GnbUplinkNasEvent) event).nasPdu));
         }
     }
 }
