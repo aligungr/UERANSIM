@@ -36,7 +36,7 @@ public class GnbUeContextManagement {
 
     public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
         // todo
-        GnbMessaging.sendToNetwork(ctx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
+        GNodeB.sendToNetwork(ctx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
                 null);
     }
 }

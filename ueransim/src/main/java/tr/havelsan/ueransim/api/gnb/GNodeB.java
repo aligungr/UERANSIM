@@ -28,7 +28,6 @@ package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -41,14 +40,9 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.FlowLogging;
 
-public class GnbMessaging {
-
-    public static void sendFromUe(GnbSimContext gnbCtx, UeSimContext ueCtx, NasMessage nasMessage) {
-        GnbMessaging.sendToNetwork(gnbCtx, new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.IGNORE), nasMessage);
-    }
+public class GNodeB {
 
     public static void sendToNetwork(GnbSimContext ctx, NgapBuilder ngapBuilder) {
         sendToNetwork(ctx, ngapBuilder, null);
@@ -119,7 +113,7 @@ public class GnbMessaging {
         if (event instanceof SctpReceiveEvent) {
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
             FlowLogging.logReceivedMessage(ngapPdu);
-            GnbMessaging.receiveFromNetwork(ctx, ngapPdu);
+            GNodeB.receiveFromNetwork(ctx, ngapPdu);
         } else if (event instanceof GnbCommandEvent) {
             var cmd = ((GnbCommandEvent) event).cmd;
             switch (cmd) {

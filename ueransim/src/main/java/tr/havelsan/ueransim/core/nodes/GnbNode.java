@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim.core.nodes;
 
 import tr.havelsan.ueransim.Program;
-import tr.havelsan.ueransim.api.gnb.GnbMessaging;
+import tr.havelsan.ueransim.api.gnb.GNodeB;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.threads.NodeLooperThread;
 import tr.havelsan.ueransim.core.threads.SctpRecevierThread;
@@ -44,7 +44,7 @@ public class GnbNode {
         var sctpReceiverThread = new SctpRecevierThread(ctx, ctx.sctpClient);
         sctpReceiverThread.start();
 
-        var looperThread = new NodeLooperThread<>(ctx, GnbMessaging::cycle);
+        var looperThread = new NodeLooperThread<>(ctx, GNodeB::cycle);
         looperThread.start();
     }
 }
