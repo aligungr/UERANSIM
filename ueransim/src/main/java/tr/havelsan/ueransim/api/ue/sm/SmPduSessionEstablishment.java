@@ -79,7 +79,7 @@ class SmPduSessionEstablishment {
 
         ctx.ueTimers.t3580.start();
 
-        SessionManagement.sendNas(ctx, ulNasTransport);
+        SessionManagement.sendSm(ctx, ulNasTransport);
 
         Logging.funcOut();
     }

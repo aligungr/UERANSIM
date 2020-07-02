@@ -62,7 +62,7 @@ class MmIdentity {
             }
         }
 
-        MobilityManagement.sendNas(ctx, response);
+        MobilityManagement.sendMm(ctx, response);
         Logging.funcOut();
     }
 

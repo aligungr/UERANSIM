@@ -37,7 +37,7 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 
 public class SessionManagement {
 
-    public static void sendNas(UeSimContext ctx, UlNasTransport message) {
+    public static void sendSm(UeSimContext ctx, UlNasTransport message) {
         Debugging.assertThread(ctx);
 
         UserEquipment.sendNas(ctx, message);

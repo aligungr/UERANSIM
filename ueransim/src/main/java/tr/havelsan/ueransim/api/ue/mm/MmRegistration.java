@@ -87,7 +87,7 @@ class MmRegistration {
         ctx.ueTimers.t3502.stop();
         ctx.ueTimers.t3511.stop();
 
-        MobilityManagement.sendNas(ctx, registrationRequest);
+        MobilityManagement.sendMm(ctx, registrationRequest);
     }
 
     public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
@@ -107,7 +107,7 @@ class MmRegistration {
         }
 
         if (sendCompleteMes) {
-            MobilityManagement.sendNas(ctx, new RegistrationComplete());
+            MobilityManagement.sendMm(ctx, new RegistrationComplete());
         }
     }
 

@@ -143,7 +143,7 @@ class MmAuthentication {
 
                 var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
                 var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                MobilityManagement.sendNas(ctx, response);
+                MobilityManagement.sendMm(ctx, response);
             }
         }
 
@@ -177,7 +177,7 @@ class MmAuthentication {
                     ueRejectionTimers.run();
 
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                    MobilityManagement.sendNas(ctx, response);
+                    MobilityManagement.sendMm(ctx, response);
                 }
                 return;
             }
@@ -197,7 +197,7 @@ class MmAuthentication {
                     eapResponse.attributes.putClientErrorCode(0);
 
                     var response = new AuthenticationReject(new IEEapMessage(eapResponse));
-                    MobilityManagement.sendNas(ctx, response);
+                    MobilityManagement.sendMm(ctx, response);
                     return;
                 }
             }
@@ -235,7 +235,7 @@ class MmAuthentication {
             var response = new AuthenticationResponse();
             response.eapMessage = new IEEapMessage(akaPrimeResponse);
 
-            MobilityManagement.sendNas(ctx, response);
+            MobilityManagement.sendMm(ctx, response);
         }
 
         Logging.funcOut();
@@ -310,7 +310,7 @@ class MmAuthentication {
         }
 
         if (response != null) {
-            MobilityManagement.sendNas(ctx, response);
+            MobilityManagement.sendMm(ctx, response);
         }
 
         Logging.funcOut();

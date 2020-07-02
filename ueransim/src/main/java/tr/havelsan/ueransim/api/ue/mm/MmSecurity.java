@@ -58,7 +58,7 @@ class MmSecurity {
             var replayed = message.replayedUeSecurityCapabilities;
             var real = createSecurityCapabilityIe();
             if (!compareSecurityCapabilities(real, replayed)) {
-                MobilityManagement.sendNas(ctx, new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH));
+                MobilityManagement.sendMm(ctx, new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH));
                 Logging.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
                 return;
             }
@@ -100,7 +100,7 @@ class MmSecurity {
         response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.mmCtx.registrationRequest));
 
         // Send response
-        MobilityManagement.sendNas(ctx, response);
+        MobilityManagement.sendMm(ctx, response);
 
         Logging.funcOut();
     }

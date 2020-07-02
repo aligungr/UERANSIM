@@ -35,7 +35,7 @@ import tr.havelsan.ueransim.utils.FlowLogging;
 
 public class MobilityManagement {
 
-    public static void sendNas(UeSimContext ctx, PlainMmMessage message) {
+    public static void sendMm(UeSimContext ctx, PlainMmMessage message) {
         Debugging.assertThread(ctx);
 
         UserEquipment.sendNas(ctx, message);
