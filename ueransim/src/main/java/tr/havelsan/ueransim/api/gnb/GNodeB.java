@@ -35,6 +35,7 @@ import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
@@ -139,7 +140,7 @@ public class GNodeB {
                 throw new NotImplementedException("send error indication");
             }
 
-            var ieRanUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, AMF_UE_NGAP_ID.class);
+            var ieRanUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, RAN_UE_NGAP_ID.class);
             if (ieRanUeNgapId.size() > 0) {
                 long ranUeNgapId = ieRanUeNgapId.get(ieRanUeNgapId.size() - 1).value;
                 associatedUe = GnbUeManagement.findUe(ctx, ranUeNgapId);
