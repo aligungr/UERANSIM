@@ -44,7 +44,6 @@ public final class ImplicitTypedObject {
     }
 
     public long getLong(String key) {
-        // todo: make this safe like getInt
         return ((Number) get(key)).longValue();
     }
 
