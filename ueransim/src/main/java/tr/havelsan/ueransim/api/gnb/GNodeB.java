@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
@@ -40,6 +41,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -65,16 +67,10 @@ public class GNodeB {
     public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NgapBuilder ngapBuilder) {
         Debugging.assertThread(ctx);
 
-        /*
-        // Adding NAS PDU (if any)
-        if (nasMessage != null) {
-            // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addNasPdu(nasMessage, NgapCriticality.REJECT);
-        }
 
         // Adding AMF-UE-NGAP-ID (if any)
         {
-            Long amfUeNgapId = ctx.amfUeNgapId;
+            Long amfUeNgapId = ctx.ueContexts.get(ueId).amfUeNgapId;
             if (amfUeNgapId != null) {
                 // NOTE: criticality is hardcoded here, it may be changed
                 ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
@@ -84,15 +80,14 @@ public class GNodeB {
         // Adding RAN-UE-NGAP-ID
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addRanUeNgapId(ctx.ranUeNgapId, NgapCriticality.REJECT);
+            ngapBuilder.addRanUeNgapId(ctx.ueContexts.get(ueId).ranUeNgapId, NgapCriticality.REJECT);
         }
 
         // Adding user location information
         {
             // NOTE: criticality is hardcoded here, it may be changed
-            // todo
-            //ngapBuilder.addUserLocationInformationNR(ctx.simCtx.ue.ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
-        }*/
+            ngapBuilder.addUserLocationInformationNR(Simulation.findUe(ctx.simCtx, ueId).ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
+        }
 
         var ngapPdu = ngapBuilder.build();
 

@@ -31,6 +31,7 @@ import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapCriticality;
@@ -49,6 +50,8 @@ public class GnbNasTransport {
             ngap = new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.REJECT);
         } else {
             ngap = new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.REJECT);
+            ngap.addProtocolIE(new RRCEstablishmentCause(RRCEstablishmentCause.ASN_mo_Data));
+
             GnbUeManagement.allocateUeNgapId(ctx, ueId);
         }
 
