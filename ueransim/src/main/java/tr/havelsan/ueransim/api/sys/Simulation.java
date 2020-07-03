@@ -56,4 +56,12 @@ public class Simulation {
             return ctx.gnbMap.get(id);
         }
     }
+
+    public static void connectUeToGnb(UeSimContext ueContext, GnbSimContext gnbContext) {
+        synchronized (ueContext) {
+            synchronized (gnbContext) {
+                ueContext.connectedGnb = gnbContext.ctxId;
+            }
+        }
+    }
 }

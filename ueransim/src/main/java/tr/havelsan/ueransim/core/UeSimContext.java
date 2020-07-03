@@ -31,11 +31,15 @@ import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.events.ue.UeEvent;
 import tr.havelsan.ueransim.structs.*;
 
+import java.util.UUID;
+
 public class UeSimContext extends BaseSimContext<UeEvent> {
 
     public UeData ueData;
     public UeConfig ueConfig;
     public UeTimers ueTimers;
+
+    public UUID connectedGnb;
 
     public MmContext mmCtx;
     public SmContext smCtx;
