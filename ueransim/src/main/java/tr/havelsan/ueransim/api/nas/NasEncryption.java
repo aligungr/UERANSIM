@@ -126,14 +126,15 @@ public class NasEncryption {
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
         Logging.funcIn("NasEncryption.decrypt");
 
-        var count = securityContext.downlinkCount;
+        var estimatedCount = securityContext.estimatedDownlinkCount(protectedNasMessage.sequenceNumber);
+
         var cnId = securityContext.connectionIdentifier;
         var intKey = securityContext.keys.kNasInt;
         var encKey = securityContext.keys.kNasEnc;
         var intAlg = securityContext.selectedAlgorithms.integrity;
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
-        var mac = computeMac(intAlg, count, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray());
+        var mac = computeMac(intAlg, estimatedCount, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray());
 
         Logging.debug(Tag.VALUE, "computed mac: %s", mac);
         Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
@@ -145,9 +146,9 @@ public class NasEncryption {
             }
         }
 
-        securityContext.countOnDecrypt(protectedNasMessage.sequenceNumber);
+        securityContext.updateDownlinkCount(estimatedCount);
 
-        var decryptedData = decryptData(encAlg, count, cnId, encKey, protectedNasMessage.securityHeaderType,
+        var decryptedData = decryptData(encAlg, estimatedCount, cnId, encKey, protectedNasMessage.securityHeaderType,
                 protectedNasMessage.plainNasMessage.toByteArray());
         var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
