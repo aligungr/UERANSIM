@@ -59,6 +59,7 @@ public class Program {
         GnbNode.run(gnbContext);
 
         var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
+        ueContext.gnb = gnbContext;
         UeNode.run(ueContext);
 
         var scanner = new Scanner(System.in);

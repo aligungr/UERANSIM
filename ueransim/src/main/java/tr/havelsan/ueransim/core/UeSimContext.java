@@ -36,7 +36,7 @@ public class UeSimContext extends BaseSimContext<UeEvent> {
 
     public final UUID simId;
 
-    public final SimulationContext simCtx; // todo: remove this
+    public GnbSimContext gnb;
 
     public UeData ueData;
     public UeConfig ueConfig;
@@ -47,9 +47,8 @@ public class UeSimContext extends BaseSimContext<UeEvent> {
     public NasSecurityContext currentNsCtx;
     public NasSecurityContext nonCurrentNsCtx;
 
-    public UeSimContext(SimulationContext simCtx) {
+    public UeSimContext() {
         this.simId = UUID.randomUUID();
-        this.simCtx = simCtx;
         this.ueTimers = new UeTimers();
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();

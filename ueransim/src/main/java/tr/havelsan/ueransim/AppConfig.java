@@ -80,7 +80,7 @@ public class AppConfig {
     }
 
     public static UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        var ctx = new UeSimContext(simCtx);
+        var ctx = new UeSimContext();
 
         // Parse UE Config
         ctx.ueConfig = config.asConstructed(UeConfig.class);
