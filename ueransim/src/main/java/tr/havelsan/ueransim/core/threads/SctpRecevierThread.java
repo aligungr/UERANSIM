@@ -28,14 +28,14 @@ package tr.havelsan.ueransim.core.threads;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
-import tr.havelsan.ueransim.sctp.ISCTPClient;
+import tr.havelsan.ueransim.sctp.ISctpClient;
 
 public class SctpRecevierThread extends BaseThread {
 
     private final GnbSimContext ctx;
-    private final ISCTPClient sctpClient;
+    private final ISctpClient sctpClient;
 
-    public SctpRecevierThread(GnbSimContext ctx, ISCTPClient sctpClient) {
+    public SctpRecevierThread(GnbSimContext ctx, ISctpClient sctpClient) {
         this.ctx = ctx;
         this.sctpClient = sctpClient;
     }

@@ -29,7 +29,7 @@ package tr.havelsan.ueransim.sctp;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class MockedSCTPClient implements ISCTPClient {
+public class MockedSCTPClient implements ISctpClient {
     private final Queue<Byte[]> queue;
     private final IMockedRemote mockedRemote;
 

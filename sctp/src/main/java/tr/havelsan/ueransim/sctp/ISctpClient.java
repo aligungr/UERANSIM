@@ -26,8 +26,7 @@
 
 package tr.havelsan.ueransim.sctp;
 
-// todo: rename this: ISctpClient
-public interface ISCTPClient {
+public interface ISctpClient {
     void start() throws Exception;
 
     void send(int streamNumber, byte[] data);

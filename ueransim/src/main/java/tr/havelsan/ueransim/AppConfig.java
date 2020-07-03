@@ -35,7 +35,7 @@ import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.sctp.ISCTPClient;
+import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.sctp.MockedSCTPClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
 import tr.havelsan.ueransim.structs.GnbConfig;
@@ -62,7 +62,7 @@ public class AppConfig {
         {
             boolean amfMocked = config.getBool("amfMocked");
 
-            ISCTPClient sctpClient = new SCTPClient(ctx.config.amfHost, ctx.config.amfPort, Constants.NGAP_PROTOCOL_ID);
+            ISctpClient sctpClient = new SCTPClient(ctx.config.amfHost, ctx.config.amfPort, Constants.NGAP_PROTOCOL_ID);
 
             if (amfMocked) {
                 Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");

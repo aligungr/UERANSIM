@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.events.gnb.GnbEvent;
-import tr.havelsan.ueransim.sctp.ISCTPClient;
+import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.structs.GnbConfig;
 
 public class GnbSimContext extends BaseSimContext<GnbEvent> {
@@ -35,7 +35,7 @@ public class GnbSimContext extends BaseSimContext<GnbEvent> {
 
     public GnbConfig config;
 
-    public ISCTPClient sctpClient;
+    public ISctpClient sctpClient;
     public int streamNumber;
 
     public Long amfUeNgapId;
