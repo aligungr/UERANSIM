@@ -28,7 +28,7 @@ package tr.havelsan.ueransim.flows.deprecated;
 
 ////import tr.havelsan.ueransim.*;
 ////import tr.havelsan.ueransim.configs.ServiceRequestFlowConfig;
-////import tr.havelsan.ueransim.core.SimulationContext;
+////import tr.havelsan.ueransim.api.sys.SimulationContext;
 ////import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 ////import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
 ////import tr.havelsan.ueransim.nas.impl.ies.IEServiceType;

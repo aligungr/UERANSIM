@@ -24,29 +24,36 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.api.sys;
 
-import tr.havelsan.ueransim.api.nas.NasSecurityContext;
-import tr.havelsan.ueransim.api.sys.SimulationContext;
-import tr.havelsan.ueransim.events.ue.UeEvent;
-import tr.havelsan.ueransim.structs.*;
+import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.core.UeSimContext;
 
-public class UeSimContext extends BaseSimContext<UeEvent> {
+import java.util.UUID;
 
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public UeTimers ueTimers;
+public class Simulation {
 
-    public MmContext mmCtx;
-    public SmContext smCtx;
-    public NasSecurityContext currentNsCtx;
-    public NasSecurityContext nonCurrentNsCtx;
+    public static void registerUe(SimulationContext ctx, UeSimContext ue) {
+        synchronized (ctx) {
+            ctx.ueMap.put(ue.ctxId, ue);
+        }
+    }
 
-    public UeSimContext(SimulationContext simCtx) {
-        super(simCtx);
-        this.ueTimers = new UeTimers();
-        this.mmCtx = new MmContext();
-        this.smCtx = new SmContext();
-        this.ueData = new UeData();
+    public static void registerGnb(SimulationContext ctx, GnbSimContext gnb) {
+        synchronized (ctx) {
+            ctx.gnbMap.put(gnb.ctxId, gnb);
+        }
+    }
+
+    public static UeSimContext findUe(SimulationContext ctx, UUID id) {
+        synchronized (ctx) {
+            return ctx.ueMap.get(id);
+        }
+    }
+
+    public static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
+        synchronized (ctx) {
+            return ctx.gnbMap.get(id);
+        }
     }
 }

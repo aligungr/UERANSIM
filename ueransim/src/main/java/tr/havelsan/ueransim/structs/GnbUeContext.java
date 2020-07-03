@@ -24,29 +24,9 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.structs;
 
-import tr.havelsan.ueransim.api.nas.NasSecurityContext;
-import tr.havelsan.ueransim.api.sys.SimulationContext;
-import tr.havelsan.ueransim.events.ue.UeEvent;
-import tr.havelsan.ueransim.structs.*;
-
-public class UeSimContext extends BaseSimContext<UeEvent> {
-
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public UeTimers ueTimers;
-
-    public MmContext mmCtx;
-    public SmContext smCtx;
-    public NasSecurityContext currentNsCtx;
-    public NasSecurityContext nonCurrentNsCtx;
-
-    public UeSimContext(SimulationContext simCtx) {
-        super(simCtx);
-        this.ueTimers = new UeTimers();
-        this.mmCtx = new MmContext();
-        this.smCtx = new SmContext();
-        this.ueData = new UeData();
-    }
+public class GnbUeContext {
+    public Long amfUeNgapId;
+    public long ranUeNgapId;
 }

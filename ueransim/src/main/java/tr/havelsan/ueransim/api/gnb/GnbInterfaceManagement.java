@@ -47,7 +47,7 @@ public class GnbInterfaceManagement {
         Logging.funcIn("Starting: NGSetupRequest");
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
-        GNodeB.sendToNetwork(ctx,
+        GNodeB.sendToNetworkNonUe(ctx,
                 new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
                         .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn), NgapCriticality.REJECT)
                         .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs), NgapCriticality.REJECT)

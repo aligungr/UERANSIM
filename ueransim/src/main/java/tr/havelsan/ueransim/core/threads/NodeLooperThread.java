@@ -45,7 +45,7 @@ public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThr
 
     @Override
     public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.simCtxId);
+        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.ctxId);
         while (true) {
             looper.accept(simContext);
             while (simContext.hasEvent()) {

@@ -26,9 +26,9 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.core.SimulationContext;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
@@ -73,19 +73,15 @@ public class AppConfig {
             ctx.sctpClient = sctpClient;
         }
 
-        ctx.ranUeNgapId = 1000; // todo
-
-        simCtx.gnb = ctx;
         return ctx;
     }
 
     public static UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        var ctx = new UeSimContext();
+        var ctx = new UeSimContext(simCtx);
 
         // Parse UE Config
         ctx.ueConfig = config.asConstructed(UeConfig.class);
 
-        simCtx.ue = ctx;
         return ctx;
     }
 

@@ -29,7 +29,7 @@
 ////import fr.marben.asnsdk.japi.spe.ContainingOctetStringValue;
 ////import tr.havelsan.ueransim.*;
 ////import tr.havelsan.ueransim.configs.PduSessionReleaseConfig;
-////import tr.havelsan.ueransim.core.SimulationContext;
+////import tr.havelsan.ueransim.api.sys.SimulationContext;
 ////import tr.havelsan.ueransim.nas.NasEncoder;
 ////import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 ////import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;

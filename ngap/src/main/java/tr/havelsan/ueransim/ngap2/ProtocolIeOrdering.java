@@ -47,7 +47,7 @@ class ProtocolIeOrdering {
         protocolIEs.removeIf(ie -> !list.contains(ie.value.getClass()));
     }
 
-    private static List<Class<?>> findProtocolIeOrdering(Class<?> procedureClass) {
+    public static List<Class<?>> findProtocolIeOrdering(Class<?> procedureClass) {
         var order = new Class<?>[0];
 
         if (procedureClass == tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNonUEAssociatedNRPPaTransport.class) {

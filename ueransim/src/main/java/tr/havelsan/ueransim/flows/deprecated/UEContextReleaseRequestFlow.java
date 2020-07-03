@@ -28,7 +28,7 @@ package tr.havelsan.ueransim.flows.deprecated;
 
 ////import tr.havelsan.ueransim.*;
 ////import tr.havelsan.ueransim.configs.UEContextReleaseRequestConfig;
-////import tr.havelsan.ueransim.core.SimulationContext;
+////import tr.havelsan.ueransim.api.sys.SimulationContext;
 ////import tr.havelsan.ueransim.ngap.ngap_ies.Cause;
 ////import tr.havelsan.ueransim.ngap.ngap_ies.CauseMisc;
 ////import tr.havelsan.ueransim.ngap.ngap_pdu_contents.UEContextReleaseCommand;

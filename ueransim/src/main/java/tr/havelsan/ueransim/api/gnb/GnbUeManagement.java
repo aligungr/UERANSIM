@@ -24,9 +24,33 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.api.gnb;
 
-public class SimulationContext {
-    public UeSimContext ue;
-    public GnbSimContext gnb;
+import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.structs.GnbUeContext;
+import tr.havelsan.ueransim.utils.Debugging;
+
+import java.util.UUID;
+
+public class GnbUeManagement {
+
+    public static void allocateUeNgapId(GnbSimContext ctx, UUID ueId) {
+        Debugging.assertThread(ctx);
+
+        var gnbUeCtx = new GnbUeContext();
+        gnbUeCtx.ranUeNgapId = ++ctx.ueNgapIdCounter;
+        gnbUeCtx.amfUeNgapId = null;
+
+        ctx.ueContexts.put(ueId, gnbUeCtx);
+    }
+
+    public static UUID findUe(GnbSimContext ctx, long ranUeNgapId) {
+        // todo: make O(1)
+        for (var entry : ctx.ueContexts.entrySet()) {
+            if (entry.getValue().ranUeNgapId == ranUeNgapId) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }

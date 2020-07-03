@@ -33,13 +33,14 @@ import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapProcedure;
 import tr.havelsan.ueransim.utils.Debugging;
 
+import java.util.UUID;
+
 public class GnbUeContextManagement {
 
-    public static void handleInitialContextSetup(GnbSimContext ctx, InitialContextSetupRequest message) {
+    public static void handleInitialContextSetup(GnbSimContext ctx, UUID associatedUe, InitialContextSetupRequest message) {
         Debugging.assertThread(ctx);
 
         // todo
-        GNodeB.sendToNetwork(ctx, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT),
-                null);
+        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NgapBuilder(NgapProcedure.InitialContextSetupResponse, NgapCriticality.REJECT));
     }
 }

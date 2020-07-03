@@ -24,29 +24,20 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.api.sys;
 
-import tr.havelsan.ueransim.api.nas.NasSecurityContext;
-import tr.havelsan.ueransim.api.sys.SimulationContext;
-import tr.havelsan.ueransim.events.ue.UeEvent;
-import tr.havelsan.ueransim.structs.*;
+import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.core.UeSimContext;
 
-public class UeSimContext extends BaseSimContext<UeEvent> {
+import java.util.HashMap;
+import java.util.UUID;
 
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public UeTimers ueTimers;
+public class SimulationContext {
+    HashMap<UUID, GnbSimContext> gnbMap;
+    HashMap<UUID, UeSimContext> ueMap;
 
-    public MmContext mmCtx;
-    public SmContext smCtx;
-    public NasSecurityContext currentNsCtx;
-    public NasSecurityContext nonCurrentNsCtx;
-
-    public UeSimContext(SimulationContext simCtx) {
-        super(simCtx);
-        this.ueTimers = new UeTimers();
-        this.mmCtx = new MmContext();
-        this.smCtx = new SmContext();
-        this.ueData = new UeData();
+    public SimulationContext() {
+        this.gnbMap = new HashMap<>();
+        this.ueMap = new HashMap<>();
     }
 }

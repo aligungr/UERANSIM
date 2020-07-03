@@ -36,6 +36,7 @@ import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.NAS_PDU;
+import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
@@ -240,5 +241,10 @@ public class NgapInternal {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isUeAssociated(SequenceValue ngapMessage) {
+        var ies = ProtocolIeOrdering.findProtocolIeOrdering(ngapMessage.getClass());
+        return ies.contains(RAN_UE_NGAP_ID.class);
     }
 }
