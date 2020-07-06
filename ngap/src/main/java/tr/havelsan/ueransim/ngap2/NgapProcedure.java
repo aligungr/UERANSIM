@@ -26,6 +26,10 @@
 
 package tr.havelsan.ueransim.ngap2;
 
+import tr.havelsan.ueransim.ngap.Values;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
+
 public enum NgapProcedure {
     AMFConfigurationUpdateAcknowledge,
     AMFConfigurationUpdateFailure,
@@ -194,6 +198,7 @@ public enum NgapProcedure {
                 return NgapPduDescription.UNSUCCESSFUL_OUTCOME;
 
             default:
+                Logging.error(Tag.NGAP_INTERNAL, "no pdu description for: %s", this);
                 throw new RuntimeException();
         }
     }
@@ -281,7 +286,147 @@ public enum NgapProcedure {
             case HandoverCommand:
             case HandoverRequest:
                 return NgapCriticality.REJECT;
+            default:
+                Logging.error(Tag.NGAP_INTERNAL, "no criticality for: %s", this);
+                throw new RuntimeException();
         }
-        return NgapCriticality.IGNORE;
+    }
+
+    public int procedureCode() {
+        switch (this) {
+            case AMFConfigurationUpdateAcknowledge:
+            case AMFConfigurationUpdateFailure:
+            case AMFConfigurationUpdate:
+                return Values.NGAP_Constants__id_AMFConfigurationUpdate;
+            case AMFStatusIndication:
+                return Values.NGAP_Constants__id_AMFStatusIndication;
+            case CellTrafficTrace:
+                return Values.NGAP_Constants__id_CellTrafficTrace;
+            case DeactivateTrace:
+                return Values.NGAP_Constants__id_DeactivateTrace;
+            case DownlinkNASTransport:
+                return Values.NGAP_Constants__id_DownlinkNASTransport;
+            case DownlinkNonUEAssociatedNRPPaTransport:
+                return Values.NGAP_Constants__id_DownlinkNonUEAssociatedNRPPaTransport;
+            case DownlinkRANConfigurationTransfer:
+                return Values.NGAP_Constants__id_DownlinkRANConfigurationTransfer;
+            case DownlinkRANStatusTransfer:
+                return Values.NGAP_Constants__id_DownlinkRANStatusTransfer;
+            case DownlinkUEAssociatedNRPPaTransport:
+                return Values.NGAP_Constants__id_DownlinkUEAssociatedNRPPaTransport;
+            case ErrorIndication:
+                return Values.NGAP_Constants__id_ErrorIndication;
+            case HandoverCancelAcknowledge:
+            case HandoverCancel:
+                return Values.NGAP_Constants__id_HandoverCancel;
+            case HandoverCommand:
+            case HandoverPreparationFailure:
+            case HandoverRequired:
+                return Values.NGAP_Constants__id_HandoverPreparation;
+            case HandoverFailure:
+            case HandoverRequestAcknowledge:
+            case HandoverRequest:
+                return Values.NGAP_Constants__id_HandoverResourceAllocation;
+            case HandoverNotify:
+                return Values.NGAP_Constants__id_HandoverNotification;
+            case InitialContextSetupFailure:
+            case InitialContextSetupResponse:
+            case InitialContextSetupRequest:
+                return Values.NGAP_Constants__id_InitialContextSetup;
+            case InitialUEMessage:
+                return Values.NGAP_Constants__id_InitialUEMessage;
+            case LocationReportingControl:
+                return Values.NGAP_Constants__id_LocationReportingControl;
+            case LocationReportingFailureIndication:
+                return Values.NGAP_Constants__id_LocationReportingFailureIndication;
+            case LocationReport:
+                return Values.NGAP_Constants__id_LocationReport;
+            case NASNonDeliveryIndication:
+                return Values.NGAP_Constants__id_NASNonDeliveryIndication;
+            case NGResetAcknowledge:
+            case NGReset:
+                return Values.NGAP_Constants__id_NGReset;
+            case NGSetupFailure:
+            case NGSetupRequest:
+            case NGSetupResponse:
+                return Values.NGAP_Constants__id_NGSetup;
+            case OverloadStart:
+                return Values.NGAP_Constants__id_OverloadStart;
+            case OverloadStop:
+                return Values.NGAP_Constants__id_OverloadStop;
+            case Paging:
+                return Values.NGAP_Constants__id_Paging;
+            case PathSwitchRequestAcknowledge:
+            case PathSwitchRequestFailure:
+            case PathSwitchRequest:
+                return Values.NGAP_Constants__id_PathSwitchRequest;
+            case PDUSessionResourceModifyConfirm:
+            case PDUSessionResourceModifyIndication:
+                return Values.NGAP_Constants__id_PDUSessionResourceModifyIndication;
+            case PDUSessionResourceModifyRequest:
+            case PDUSessionResourceModifyResponse:
+                return Values.NGAP_Constants__id_PDUSessionResourceModify;
+            case PDUSessionResourceNotify:
+                return Values.NGAP_Constants__id_PDUSessionResourceNotify;
+            case PDUSessionResourceReleaseCommand:
+            case PDUSessionResourceReleaseResponse:
+                return Values.NGAP_Constants__id_PDUSessionResourceRelease;
+            case PDUSessionResourceSetupRequest:
+            case PDUSessionResourceSetupResponse:
+                return Values.NGAP_Constants__id_PDUSessionResourceSetup;
+            case PrivateMessage:
+                return Values.NGAP_Constants__id_PrivateMessage;
+            case PWSCancelRequest:
+            case PWSCancelResponse:
+                return Values.NGAP_Constants__id_PWSCancel;
+            case PWSFailureIndication:
+                return Values.NGAP_Constants__id_PWSFailureIndication;
+            case PWSRestartIndication:
+                return Values.NGAP_Constants__id_PWSRestartIndication;
+            case RANConfigurationUpdateAcknowledge:
+            case RANConfigurationUpdateFailure:
+            case RANConfigurationUpdate:
+                return Values.NGAP_Constants__id_RANConfigurationUpdate;
+            case RerouteNASRequest:
+                return Values.NGAP_Constants__id_RerouteNASRequest;
+            case RRCInactiveTransitionReport:
+                return Values.NGAP_Constants__id_RRCInactiveTransitionReport;
+            case TraceFailureIndication:
+                return Values.NGAP_Constants__id_TraceFailureIndication;
+            case TraceStart:
+                return Values.NGAP_Constants__id_TraceStart;
+            case UEContextModificationFailure:
+            case UEContextModificationRequest:
+            case UEContextModificationResponse:
+                return Values.NGAP_Constants__id_UEContextModification;
+            case UEContextReleaseCommand:
+            case UEContextReleaseComplete:
+                return Values.NGAP_Constants__id_UEContextRelease;
+            case UEContextReleaseRequest:
+                return Values.NGAP_Constants__id_UEContextReleaseRequest;
+            case UERadioCapabilityCheckRequest:
+            case UERadioCapabilityCheckResponse:
+                return Values.NGAP_Constants__id_UERadioCapabilityCheck;
+            case UERadioCapabilityInfoIndication:
+                return Values.NGAP_Constants__id_UERadioCapabilityInfoIndication;
+            case UETNLABindingReleaseRequest:
+                return Values.NGAP_Constants__id_UETNLABindingRelease;
+            case UplinkNASTransport:
+                return Values.NGAP_Constants__id_UplinkNASTransport;
+            case UplinkNonUEAssociatedNRPPaTransport:
+                return Values.NGAP_Constants__id_UplinkNonUEAssociatedNRPPaTransport;
+            case UplinkRANConfigurationTransfer:
+                return Values.NGAP_Constants__id_UplinkRANConfigurationTransfer;
+            case UplinkRANStatusTransfer:
+                return Values.NGAP_Constants__id_UplinkRANStatusTransfer;
+            case UplinkUEAssociatedNRPPaTransport:
+                return Values.NGAP_Constants__id_UplinkUEAssociatedNRPPaTransport;
+            case WriteReplaceWarningRequest:
+            case WriteReplaceWarningResponse:
+                return Values.NGAP_Constants__id_WriteReplaceWarning;
+            default:
+                Logging.error(Tag.NGAP_INTERNAL, "no procedure code for: %s", this);
+                throw new RuntimeException();
+        }
     }
 }

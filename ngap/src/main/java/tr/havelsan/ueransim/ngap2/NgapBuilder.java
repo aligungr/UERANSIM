@@ -136,7 +136,7 @@ public class NgapBuilder {
     }
 
     public NGAP_PDU build() {
-        int procedureCode = NgapInternal.findProcedureCode(procedure);
+        int procedureCode = procedure.procedureCode();
         Value procedureContent = NgapInternal.createProcedureValue(procedure);
 
         ProtocolIeOrdering.processProtocolIEs(protocolIEs, procedureContent);
