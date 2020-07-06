@@ -48,14 +48,12 @@ import java.util.List;
 
 public class NgapBuilder {
 
-    private NgapCriticality procedureCriticality;
     private NgapProcedure procedure;
     private List<ProtocolIE> protocolIEs;
 
-    public NgapBuilder(NgapProcedure procedure, NgapCriticality criticality) {
+    public NgapBuilder(NgapProcedure procedure) {
         this.protocolIEs = new ArrayList<>();
         this.procedure = procedure;
-        this.procedureCriticality = criticality;
     }
 
     public NgapBuilder addProtocolIE(Value value, NgapCriticality criticality, Integer ieId) {
@@ -153,21 +151,21 @@ public class NgapBuilder {
                 case INITIATING_MESSAGE: {
                     var desc = new InitiatingMessage();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(procedureCriticality.getAsnValue());
+                    desc.criticality = new Criticality(NgapCriticality.IGNORE.getAsnValue());
                     desc.value = new OpenTypeValue(procedureContent);
                     return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, desc);
                 }
                 case SUCCESSFUL_OUTCOME: {
                     var desc = new SuccessfulOutcome();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(procedureCriticality.getAsnValue());
+                    desc.criticality = new Criticality(NgapCriticality.IGNORE.getAsnValue());
                     desc.value = new OpenTypeValue(procedureContent);
                     return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, desc);
                 }
                 case UNSUCCESSFUL_OUTCOME: {
                     var desc = new UnsuccessfulOutcome();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(procedureCriticality.getAsnValue());
+                    desc.criticality = new Criticality(NgapCriticality.IGNORE.getAsnValue());
                     desc.value = new OpenTypeValue(procedureContent);
                     return new NGAP_PDU(NGAP_PDU.ASN_unsuccessfulOutcome, desc);
                 }

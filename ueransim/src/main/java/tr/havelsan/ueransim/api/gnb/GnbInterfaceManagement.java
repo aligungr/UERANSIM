@@ -48,7 +48,7 @@ public class GnbInterfaceManagement {
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
         GNodeB.sendToNetworkNonUe(ctx,
-                new NgapBuilder(NgapProcedure.NGSetupRequest, NgapCriticality.REJECT)
+                new NgapBuilder(NgapProcedure.NGSetupRequest)
                         .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn), NgapCriticality.REJECT)
                         .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs), NgapCriticality.REJECT)
                         .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, Values.NGAP_Constants__id_DefaultPagingDRX)

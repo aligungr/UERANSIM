@@ -47,9 +47,9 @@ public class GnbNasTransport {
         NgapBuilder ngap;
 
         if (ctx.ueContexts.containsKey(ueId)) {
-            ngap = new NgapBuilder(NgapProcedure.UplinkNASTransport, NgapCriticality.REJECT);
+            ngap = new NgapBuilder(NgapProcedure.UplinkNASTransport);
         } else {
-            ngap = new NgapBuilder(NgapProcedure.InitialUEMessage, NgapCriticality.REJECT);
+            ngap = new NgapBuilder(NgapProcedure.InitialUEMessage);
             ngap.addProtocolIE(new RRCEstablishmentCause(RRCEstablishmentCause.ASN_mo_Data));
 
             GnbUeManagement.allocateUeNgapId(ctx, ueId);
