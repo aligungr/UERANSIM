@@ -197,4 +197,91 @@ public enum NgapProcedure {
                 throw new RuntimeException();
         }
     }
+
+    public NgapCriticality procedureCriticality() {
+        switch (this) {
+            case AMFStatusIndication:
+            case CellTrafficTrace:
+            case DeactivateTrace:
+            case DownlinkNASTransport:
+            case DownlinkNonUEAssociatedNRPPaTransport:
+            case DownlinkRANConfigurationTransfer:
+            case DownlinkRANStatusTransfer:
+            case DownlinkUEAssociatedNRPPaTransport:
+            case ErrorIndication:
+            case InitialUEMessage:
+            case LocationReportingControl:
+            case LocationReportingFailureIndication:
+            case LocationReport:
+            case NASNonDeliveryIndication:
+            case OverloadStart:
+            case Paging:
+            case PDUSessionResourceNotify:
+            case PrivateMessage:
+            case PWSFailureIndication:
+            case PWSRestartIndication:
+            case RRCInactiveTransitionReport:
+            case TraceFailureIndication:
+            case TraceStart:
+            case UEContextReleaseRequest:
+            case UERadioCapabilityInfoIndication:
+            case UETNLABindingReleaseRequest:
+            case UplinkNASTransport:
+            case UplinkNonUEAssociatedNRPPaTransport:
+            case UplinkRANConfigurationTransfer:
+            case UplinkRANStatusTransfer:
+            case UplinkUEAssociatedNRPPaTransport:
+            case HandoverNotify:
+                return NgapCriticality.IGNORE;
+
+            case AMFConfigurationUpdateAcknowledge:
+            case AMFConfigurationUpdateFailure:
+            case AMFConfigurationUpdate:
+            case HandoverCancel:
+            case InitialContextSetupFailure:
+            case InitialContextSetupRequest:
+            case InitialContextSetupResponse:
+            case NGReset:
+            case NGSetupFailure:
+            case NGSetupRequest:
+            case NGSetupResponse:
+            case OverloadStop:
+            case PDUSessionResourceModifyConfirm:
+            case PDUSessionResourceModifyIndication:
+            case PDUSessionResourceModifyRequest:
+            case PDUSessionResourceModifyResponse:
+            case PDUSessionResourceReleaseCommand:
+            case PDUSessionResourceReleaseResponse:
+            case PDUSessionResourceSetupRequest:
+            case PDUSessionResourceSetupResponse:
+            case PWSCancelRequest:
+            case PWSCancelResponse:
+            case RANConfigurationUpdateAcknowledge:
+            case RANConfigurationUpdateFailure:
+            case RANConfigurationUpdate:
+            case RerouteNASRequest:
+            case UEContextModificationFailure:
+            case UEContextModificationRequest:
+            case UEContextModificationResponse:
+            case UEContextReleaseCommand:
+            case UEContextReleaseComplete:
+            case UERadioCapabilityCheckRequest:
+            case UERadioCapabilityCheckResponse:
+            case WriteReplaceWarningRequest:
+            case WriteReplaceWarningResponse:
+            case HandoverCancelAcknowledge:
+            case NGResetAcknowledge:
+            case PathSwitchRequestAcknowledge:
+            case PathSwitchRequestFailure:
+            case PathSwitchRequest:
+            case HandoverRequired:
+            case HandoverRequestAcknowledge:
+            case HandoverPreparationFailure:
+            case HandoverFailure:
+            case HandoverCommand:
+            case HandoverRequest:
+                return NgapCriticality.REJECT;
+        }
+        return NgapCriticality.IGNORE;
+    }
 }

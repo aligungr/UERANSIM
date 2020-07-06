@@ -151,21 +151,21 @@ public class NgapBuilder {
                 case INITIATING_MESSAGE: {
                     var desc = new InitiatingMessage();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(NgapCriticality.IGNORE.getAsnValue());
+                    desc.criticality = new Criticality(procedure.procedureCriticality().getAsnValue());
                     desc.value = new OpenTypeValue(procedureContent);
                     return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, desc);
                 }
                 case SUCCESSFUL_OUTCOME: {
                     var desc = new SuccessfulOutcome();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(NgapCriticality.IGNORE.getAsnValue());
+                    desc.criticality = new Criticality(procedure.procedureCriticality().getAsnValue());
                     desc.value = new OpenTypeValue(procedureContent);
                     return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, desc);
                 }
                 case UNSUCCESSFUL_OUTCOME: {
                     var desc = new UnsuccessfulOutcome();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(NgapCriticality.IGNORE.getAsnValue());
+                    desc.criticality = new Criticality(procedure.procedureCriticality().getAsnValue());
                     desc.value = new OpenTypeValue(procedureContent);
                     return new NGAP_PDU(NGAP_PDU.ASN_unsuccessfulOutcome, desc);
                 }
