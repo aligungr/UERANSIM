@@ -1,0 +1,2592 @@
+[
+  {
+    "name": "PDUSessionResourceSetupRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANPagingPriority",
+        "criticality": 1,
+        "type": "RANPagingPriority",
+        "presence": 0
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 0,
+        "type": "NAS-PDU",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceSetupListSUReq",
+        "criticality": 0,
+        "type": "PDUSessionResourceSetupListSUReq",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceSetupResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceSetupListSURes",
+        "criticality": 1,
+        "type": "PDUSessionResourceSetupListSURes",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToSetupListSURes",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToSetupListSURes",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceReleaseCommand",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANPagingPriority",
+        "criticality": 1,
+        "type": "RANPagingPriority",
+        "presence": 0
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 1,
+        "type": "NAS-PDU",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceToReleaseListRelCmd",
+        "criticality": 0,
+        "type": "PDUSessionResourceToReleaseListRelCmd",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceReleaseResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceReleasedListRelRes",
+        "criticality": 1,
+        "type": "PDUSessionResourceReleasedListRelRes",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceModifyRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANPagingPriority",
+        "criticality": 1,
+        "type": "RANPagingPriority",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceModifyListModReq",
+        "criticality": 0,
+        "type": "PDUSessionResourceModifyListModReq",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceModifyResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceModifyListModRes",
+        "criticality": 1,
+        "type": "PDUSessionResourceModifyListModRes",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToModifyListModRes",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToModifyListModRes",
+        "presence": 0
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceNotify",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceNotifyList",
+        "criticality": 0,
+        "type": "PDUSessionResourceNotifyList",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceReleasedListNot",
+        "criticality": 1,
+        "type": "PDUSessionResourceReleasedListNot",
+        "presence": 0
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceModifyIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceModifyListModInd",
+        "criticality": 0,
+        "type": "PDUSessionResourceModifyListModInd",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "PDUSessionResourceModifyConfirm",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceModifyListModCfm",
+        "criticality": 1,
+        "type": "PDUSessionResourceModifyListModCfm",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToModifyListModCfm",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToModifyListModCfm",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "InitialContextSetupRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-OldAMF",
+        "criticality": 0,
+        "type": "AMFName",
+        "presence": 0
+      },
+      {
+        "id": "id-UEAggregateMaximumBitRate",
+        "criticality": 0,
+        "type": "UEAggregateMaximumBitRate",
+        "presence": 1
+      },
+      {
+        "id": "id-CoreNetworkAssistanceInformation",
+        "criticality": 1,
+        "type": "CoreNetworkAssistanceInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-GUAMI",
+        "criticality": 0,
+        "type": "GUAMI",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceSetupListCxtReq",
+        "criticality": 0,
+        "type": "PDUSessionResourceSetupListCxtReq",
+        "presence": 0
+      },
+      {
+        "id": "id-AllowedNSSAI",
+        "criticality": 0,
+        "type": "AllowedNSSAI",
+        "presence": 2
+      },
+      {
+        "id": "id-UESecurityCapabilities",
+        "criticality": 0,
+        "type": "UESecurityCapabilities",
+        "presence": 2
+      },
+      {
+        "id": "id-SecurityKey",
+        "criticality": 0,
+        "type": "SecurityKey",
+        "presence": 2
+      },
+      {
+        "id": "id-TraceActivation",
+        "criticality": 1,
+        "type": "TraceActivation",
+        "presence": 0
+      },
+      {
+        "id": "id-MobilityRestrictionList",
+        "criticality": 1,
+        "type": "MobilityRestrictionList",
+        "presence": 0
+      },
+      {
+        "id": "id-UERadioCapability",
+        "criticality": 1,
+        "type": "UERadioCapability",
+        "presence": 0
+      },
+      {
+        "id": "id-IndexToRFSP",
+        "criticality": 1,
+        "type": "IndexToRFSP",
+        "presence": 0
+      },
+      {
+        "id": "id-MaskedIMEISV",
+        "criticality": 1,
+        "type": "MaskedIMEISV",
+        "presence": 0
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 1,
+        "type": "NAS-PDU",
+        "presence": 0
+      },
+      {
+        "id": "id-EmergencyFallbackIndicator",
+        "criticality": 0,
+        "type": "EmergencyFallbackIndicator",
+        "presence": 0
+      },
+      {
+        "id": "id-RRCInactiveTransitionReportRequest",
+        "criticality": 1,
+        "type": "RRCInactiveTransitionReportRequest",
+        "presence": 0
+      },
+      {
+        "id": "id-UERadioCapabilityForPaging",
+        "criticality": 1,
+        "type": "UERadioCapabilityForPaging",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "InitialContextSetupResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceSetupListCxtRes",
+        "criticality": 1,
+        "type": "PDUSessionResourceSetupListCxtRes",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToSetupListCxtRes",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToSetupListCxtRes",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "InitialContextSetupFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToSetupListCxtFail",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToSetupListCxtFail",
+        "presence": 0
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UEContextReleaseRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceListCxtRelReq",
+        "criticality": 0,
+        "type": "PDUSessionResourceListCxtRelReq",
+        "presence": 0
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "UEContextReleaseCommand",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-UE-NGAP-IDs",
+        "criticality": 0,
+        "type": "UE-NGAP-IDs",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "UEContextReleaseComplete",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-InfoOnRecommendedCellsAndRANNodesForPaging",
+        "criticality": 1,
+        "type": "InfoOnRecommendedCellsAndRANNodesForPaging",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceListCxtRelCpl",
+        "criticality": 0,
+        "type": "PDUSessionResourceListCxtRelCpl",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UEContextModificationRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANPagingPriority",
+        "criticality": 1,
+        "type": "RANPagingPriority",
+        "presence": 0
+      },
+      {
+        "id": "id-SecurityKey",
+        "criticality": 0,
+        "type": "SecurityKey",
+        "presence": 0
+      },
+      {
+        "id": "id-IndexToRFSP",
+        "criticality": 1,
+        "type": "IndexToRFSP",
+        "presence": 0
+      },
+      {
+        "id": "id-UEAggregateMaximumBitRate",
+        "criticality": 1,
+        "type": "UEAggregateMaximumBitRate",
+        "presence": 0
+      },
+      {
+        "id": "id-UESecurityCapabilities",
+        "criticality": 0,
+        "type": "UESecurityCapabilities",
+        "presence": 0
+      },
+      {
+        "id": "id-CoreNetworkAssistanceInformation",
+        "criticality": 1,
+        "type": "CoreNetworkAssistanceInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-EmergencyFallbackIndicator",
+        "criticality": 0,
+        "type": "EmergencyFallbackIndicator",
+        "presence": 0
+      },
+      {
+        "id": "id-NewAMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 0
+      },
+      {
+        "id": "id-RRCInactiveTransitionReportRequest",
+        "criticality": 1,
+        "type": "RRCInactiveTransitionReportRequest",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UEContextModificationResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RRCState",
+        "criticality": 1,
+        "type": "RRCState",
+        "presence": 0
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UEContextModificationFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "RRCInactiveTransitionReport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RRCState",
+        "criticality": 1,
+        "type": "RRCState",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "HandoverRequired",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-HandoverType",
+        "criticality": 0,
+        "type": "HandoverType",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-TargetID",
+        "criticality": 0,
+        "type": "TargetID",
+        "presence": 2
+      },
+      {
+        "id": "id-DirectForwardingPathAvailability",
+        "criticality": 1,
+        "type": "DirectForwardingPathAvailability",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceListHORqd",
+        "criticality": 0,
+        "type": "PDUSessionResourceListHORqd",
+        "presence": 2
+      },
+      {
+        "id": "id-SourceToTarget-TransparentContainer",
+        "criticality": 0,
+        "type": "SourceToTarget-TransparentContainer",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "HandoverCommand",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-HandoverType",
+        "criticality": 0,
+        "type": "HandoverType",
+        "presence": 2
+      },
+      {
+        "id": "id-NASSecurityParametersFromNGRAN",
+        "criticality": 0,
+        "type": "NASSecurityParametersFromNGRAN",
+        "presence": 1
+      },
+      {
+        "id": "id-PDUSessionResourceHandoverList",
+        "criticality": 1,
+        "type": "PDUSessionResourceHandoverList",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceToReleaseListHOCmd",
+        "criticality": 1,
+        "type": "PDUSessionResourceToReleaseListHOCmd",
+        "presence": 0
+      },
+      {
+        "id": "id-TargetToSource-TransparentContainer",
+        "criticality": 0,
+        "type": "TargetToSource-TransparentContainer",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "HandoverPreparationFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "HandoverRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-HandoverType",
+        "criticality": 0,
+        "type": "HandoverType",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-UEAggregateMaximumBitRate",
+        "criticality": 0,
+        "type": "UEAggregateMaximumBitRate",
+        "presence": 2
+      },
+      {
+        "id": "id-CoreNetworkAssistanceInformation",
+        "criticality": 1,
+        "type": "CoreNetworkAssistanceInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-UESecurityCapabilities",
+        "criticality": 0,
+        "type": "UESecurityCapabilities",
+        "presence": 2
+      },
+      {
+        "id": "id-SecurityContext",
+        "criticality": 0,
+        "type": "SecurityContext",
+        "presence": 2
+      },
+      {
+        "id": "id-NewSecurityContextInd",
+        "criticality": 0,
+        "type": "NewSecurityContextInd",
+        "presence": 0
+      },
+      {
+        "id": "id-NASC",
+        "criticality": 0,
+        "type": "NAS-PDU",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceSetupListHOReq",
+        "criticality": 0,
+        "type": "PDUSessionResourceSetupListHOReq",
+        "presence": 2
+      },
+      {
+        "id": "id-AllowedNSSAI",
+        "criticality": 0,
+        "type": "AllowedNSSAI",
+        "presence": 2
+      },
+      {
+        "id": "id-TraceActivation",
+        "criticality": 1,
+        "type": "TraceActivation",
+        "presence": 0
+      },
+      {
+        "id": "id-MaskedIMEISV",
+        "criticality": 1,
+        "type": "MaskedIMEISV",
+        "presence": 0
+      },
+      {
+        "id": "id-SourceToTarget-TransparentContainer",
+        "criticality": 0,
+        "type": "SourceToTarget-TransparentContainer",
+        "presence": 2
+      },
+      {
+        "id": "id-MobilityRestrictionList",
+        "criticality": 1,
+        "type": "MobilityRestrictionList",
+        "presence": 0
+      },
+      {
+        "id": "id-LocationReportingRequestType",
+        "criticality": 1,
+        "type": "LocationReportingRequestType",
+        "presence": 0
+      },
+      {
+        "id": "id-RRCInactiveTransitionReportRequest",
+        "criticality": 1,
+        "type": "RRCInactiveTransitionReportRequest",
+        "presence": 0
+      },
+      {
+        "id": "id-GUAMI",
+        "criticality": 0,
+        "type": "GUAMI",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "HandoverRequestAcknowledge",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceAdmittedList",
+        "criticality": 1,
+        "type": "PDUSessionResourceAdmittedList",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToSetupListHOAck",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToSetupListHOAck",
+        "presence": 0
+      },
+      {
+        "id": "id-TargetToSource-TransparentContainer",
+        "criticality": 0,
+        "type": "TargetToSource-TransparentContainer",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "HandoverFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "HandoverNotify",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PathSwitchRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-SourceAMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 2
+      },
+      {
+        "id": "id-UESecurityCapabilities",
+        "criticality": 1,
+        "type": "UESecurityCapabilities",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceToBeSwitchedDLList",
+        "criticality": 0,
+        "type": "PDUSessionResourceToBeSwitchedDLList",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceFailedToSetupListPSReq",
+        "criticality": 1,
+        "type": "PDUSessionResourceFailedToSetupListPSReq",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PathSwitchRequestAcknowledge",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UESecurityCapabilities",
+        "criticality": 0,
+        "type": "UESecurityCapabilities",
+        "presence": 0
+      },
+      {
+        "id": "id-SecurityContext",
+        "criticality": 0,
+        "type": "SecurityContext",
+        "presence": 2
+      },
+      {
+        "id": "id-NewSecurityContextInd",
+        "criticality": 1,
+        "type": "NewSecurityContextInd",
+        "presence": 0
+      },
+      {
+        "id": "id-PDUSessionResourceSwitchedList",
+        "criticality": 1,
+        "type": "PDUSessionResourceSwitchedList",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceReleasedListPSAck",
+        "criticality": 1,
+        "type": "PDUSessionResourceReleasedListPSAck",
+        "presence": 0
+      },
+      {
+        "id": "id-AllowedNSSAI",
+        "criticality": 0,
+        "type": "AllowedNSSAI",
+        "presence": 2
+      },
+      {
+        "id": "id-CoreNetworkAssistanceInformation",
+        "criticality": 1,
+        "type": "CoreNetworkAssistanceInformation",
+        "presence": 0
+      },
+      {
+        "id": "id-RRCInactiveTransitionReportRequest",
+        "criticality": 1,
+        "type": "RRCInactiveTransitionReportRequest",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PathSwitchRequestFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-PDUSessionResourceReleasedListPSFail",
+        "criticality": 1,
+        "type": "PDUSessionResourceReleasedListPSFail",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "HandoverCancel",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "HandoverCancelAcknowledge",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UplinkRANStatusTransfer",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANStatusTransfer-TransparentContainer",
+        "criticality": 0,
+        "type": "RANStatusTransfer-TransparentContainer",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "DownlinkRANStatusTransfer",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANStatusTransfer-TransparentContainer",
+        "criticality": 0,
+        "type": "RANStatusTransfer-TransparentContainer",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "Paging",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-UEPagingIdentity",
+        "criticality": 1,
+        "type": "UEPagingIdentity",
+        "presence": 2
+      },
+      {
+        "id": "id-PagingDRX",
+        "criticality": 1,
+        "type": "PagingDRX",
+        "presence": 0
+      },
+      {
+        "id": "id-TAIListForPaging",
+        "criticality": 1,
+        "type": "TAIListForPaging",
+        "presence": 2
+      },
+      {
+        "id": "id-PagingPriority",
+        "criticality": 1,
+        "type": "PagingPriority",
+        "presence": 0
+      },
+      {
+        "id": "id-UERadioCapabilityForPaging",
+        "criticality": 1,
+        "type": "UERadioCapabilityForPaging",
+        "presence": 0
+      },
+      {
+        "id": "id-PagingOrigin",
+        "criticality": 1,
+        "type": "PagingOrigin",
+        "presence": 0
+      },
+      {
+        "id": "id-AssistanceDataForPaging",
+        "criticality": 1,
+        "type": "AssistanceDataForPaging",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "InitialUEMessage",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 0,
+        "type": "NAS-PDU",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 0,
+        "type": "UserLocationInformation",
+        "presence": 2
+      },
+      {
+        "id": "id-RRCEstablishmentCause",
+        "criticality": 1,
+        "type": "RRCEstablishmentCause",
+        "presence": 2
+      },
+      {
+        "id": "id-FiveG-S-TMSI",
+        "criticality": 0,
+        "type": "FiveG-S-TMSI",
+        "presence": 0
+      },
+      {
+        "id": "id-AMFSetID",
+        "criticality": 1,
+        "type": "AMFSetID",
+        "presence": 0
+      },
+      {
+        "id": "id-UEContextRequest",
+        "criticality": 1,
+        "type": "UEContextRequest",
+        "presence": 0
+      },
+      {
+        "id": "id-AllowedNSSAI",
+        "criticality": 0,
+        "type": "AllowedNSSAI",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "DownlinkNASTransport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-OldAMF",
+        "criticality": 0,
+        "type": "AMFName",
+        "presence": 0
+      },
+      {
+        "id": "id-RANPagingPriority",
+        "criticality": 1,
+        "type": "RANPagingPriority",
+        "presence": 0
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 0,
+        "type": "NAS-PDU",
+        "presence": 2
+      },
+      {
+        "id": "id-MobilityRestrictionList",
+        "criticality": 1,
+        "type": "MobilityRestrictionList",
+        "presence": 0
+      },
+      {
+        "id": "id-IndexToRFSP",
+        "criticality": 1,
+        "type": "IndexToRFSP",
+        "presence": 0
+      },
+      {
+        "id": "id-UEAggregateMaximumBitRate",
+        "criticality": 1,
+        "type": "UEAggregateMaximumBitRate",
+        "presence": 0
+      },
+      {
+        "id": "id-AllowedNSSAI",
+        "criticality": 0,
+        "type": "AllowedNSSAI",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UplinkNASTransport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 0,
+        "type": "NAS-PDU",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "NASNonDeliveryIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-NAS-PDU",
+        "criticality": 1,
+        "type": "NAS-PDU",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "RerouteNASRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 0
+      },
+      {
+        "id": "id-NGAP-Message",
+        "criticality": 0,
+        "type": "NGAP-Message",
+        "presence": 2
+      },
+      {
+        "id": "id-AMFSetID",
+        "criticality": 0,
+        "type": "AMFSetID",
+        "presence": 2
+      },
+      {
+        "id": "id-AllowedNSSAI",
+        "criticality": 0,
+        "type": "AllowedNSSAI",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "NGSetupRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-GlobalRANNodeID",
+        "criticality": 0,
+        "type": "GlobalRANNodeID",
+        "presence": 2
+      },
+      {
+        "id": "id-RANNodeName",
+        "criticality": 1,
+        "type": "RANNodeName",
+        "presence": 0
+      },
+      {
+        "id": "id-SupportedTAList",
+        "criticality": 0,
+        "type": "SupportedTAList",
+        "presence": 2
+      },
+      {
+        "id": "id-DefaultPagingDRX",
+        "criticality": 1,
+        "type": "PagingDRX",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "NGSetupResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMFName",
+        "criticality": 0,
+        "type": "AMFName",
+        "presence": 2
+      },
+      {
+        "id": "id-ServedGUAMIList",
+        "criticality": 0,
+        "type": "ServedGUAMIList",
+        "presence": 2
+      },
+      {
+        "id": "id-RelativeAMFCapacity",
+        "criticality": 1,
+        "type": "RelativeAMFCapacity",
+        "presence": 2
+      },
+      {
+        "id": "id-PLMNSupportList",
+        "criticality": 0,
+        "type": "PLMNSupportList",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "NGSetupFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-TimeToWait",
+        "criticality": 1,
+        "type": "TimeToWait",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "RANConfigurationUpdate",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-RANNodeName",
+        "criticality": 1,
+        "type": "RANNodeName",
+        "presence": 0
+      },
+      {
+        "id": "id-SupportedTAList",
+        "criticality": 0,
+        "type": "SupportedTAList",
+        "presence": 0
+      },
+      {
+        "id": "id-DefaultPagingDRX",
+        "criticality": 1,
+        "type": "PagingDRX",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "RANConfigurationUpdateAcknowledge",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "RANConfigurationUpdateFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-TimeToWait",
+        "criticality": 1,
+        "type": "TimeToWait",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "AMFConfigurationUpdate",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMFName",
+        "criticality": 0,
+        "type": "AMFName",
+        "presence": 0
+      },
+      {
+        "id": "id-ServedGUAMIList",
+        "criticality": 0,
+        "type": "ServedGUAMIList",
+        "presence": 0
+      },
+      {
+        "id": "id-RelativeAMFCapacity",
+        "criticality": 1,
+        "type": "RelativeAMFCapacity",
+        "presence": 0
+      },
+      {
+        "id": "id-PLMNSupportList",
+        "criticality": 0,
+        "type": "PLMNSupportList",
+        "presence": 0
+      },
+      {
+        "id": "id-AMF-TNLAssociationToAddList",
+        "criticality": 1,
+        "type": "AMF-TNLAssociationToAddList",
+        "presence": 0
+      },
+      {
+        "id": "id-AMF-TNLAssociationToRemoveList",
+        "criticality": 1,
+        "type": "AMF-TNLAssociationToRemoveList",
+        "presence": 0
+      },
+      {
+        "id": "id-AMF-TNLAssociationToUpdateList",
+        "criticality": 1,
+        "type": "AMF-TNLAssociationToUpdateList",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "AMFConfigurationUpdateAcknowledge",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-TNLAssociationSetupList",
+        "criticality": 1,
+        "type": "AMF-TNLAssociationSetupList",
+        "presence": 0
+      },
+      {
+        "id": "id-AMF-TNLAssociationFailedToSetupList",
+        "criticality": 1,
+        "type": "TNLAssociationList",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "AMFConfigurationUpdateFailure",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-TimeToWait",
+        "criticality": 1,
+        "type": "TimeToWait",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "AMFStatusIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-UnavailableGUAMIList",
+        "criticality": 0,
+        "type": "UnavailableGUAMIList",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "NGReset",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      },
+      {
+        "id": "id-ResetType",
+        "criticality": 0,
+        "type": "ResetType",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "NGResetAcknowledge",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-UE-associatedLogicalNG-connectionList",
+        "criticality": 1,
+        "type": "UE-associatedLogicalNG-connectionList",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "ErrorIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 0
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 0
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "OverloadStart",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMFOverloadResponse",
+        "criticality": 0,
+        "type": "OverloadResponse",
+        "presence": 0
+      },
+      {
+        "id": "id-AMFTrafficLoadReductionIndication",
+        "criticality": 1,
+        "type": "TrafficLoadReductionIndication",
+        "presence": 0
+      },
+      {
+        "id": "id-OverloadStartNSSAIList",
+        "criticality": 1,
+        "type": "OverloadStartNSSAIList",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "OverloadStop",
+    "isProtocolIe": true,
+    "ies": []
+  },
+  {
+    "name": "UplinkRANConfigurationTransfer",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-SONConfigurationTransferUL",
+        "criticality": 1,
+        "type": "SONConfigurationTransfer",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "DownlinkRANConfigurationTransfer",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-SONConfigurationTransferDL",
+        "criticality": 1,
+        "type": "SONConfigurationTransfer",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "WriteReplaceWarningRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-MessageIdentifier",
+        "criticality": 0,
+        "type": "MessageIdentifier",
+        "presence": 2
+      },
+      {
+        "id": "id-SerialNumber",
+        "criticality": 0,
+        "type": "SerialNumber",
+        "presence": 2
+      },
+      {
+        "id": "id-WarningAreaList",
+        "criticality": 1,
+        "type": "WarningAreaList",
+        "presence": 0
+      },
+      {
+        "id": "id-RepetitionPeriod",
+        "criticality": 0,
+        "type": "RepetitionPeriod",
+        "presence": 2
+      },
+      {
+        "id": "id-NumberOfBroadcastsRequested",
+        "criticality": 0,
+        "type": "NumberOfBroadcastsRequested",
+        "presence": 2
+      },
+      {
+        "id": "id-WarningType",
+        "criticality": 1,
+        "type": "WarningType",
+        "presence": 0
+      },
+      {
+        "id": "id-WarningSecurityInfo",
+        "criticality": 1,
+        "type": "WarningSecurityInfo",
+        "presence": 0
+      },
+      {
+        "id": "id-DataCodingScheme",
+        "criticality": 1,
+        "type": "DataCodingScheme",
+        "presence": 0
+      },
+      {
+        "id": "id-WarningMessageContents",
+        "criticality": 1,
+        "type": "WarningMessageContents",
+        "presence": 0
+      },
+      {
+        "id": "id-ConcurrentWarningMessageInd",
+        "criticality": 0,
+        "type": "ConcurrentWarningMessageInd",
+        "presence": 0
+      },
+      {
+        "id": "id-WarningAreaCoordinates",
+        "criticality": 1,
+        "type": "WarningAreaCoordinates",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "WriteReplaceWarningResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-MessageIdentifier",
+        "criticality": 0,
+        "type": "MessageIdentifier",
+        "presence": 2
+      },
+      {
+        "id": "id-SerialNumber",
+        "criticality": 0,
+        "type": "SerialNumber",
+        "presence": 2
+      },
+      {
+        "id": "id-BroadcastCompletedAreaList",
+        "criticality": 1,
+        "type": "BroadcastCompletedAreaList",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PWSCancelRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-MessageIdentifier",
+        "criticality": 0,
+        "type": "MessageIdentifier",
+        "presence": 2
+      },
+      {
+        "id": "id-SerialNumber",
+        "criticality": 0,
+        "type": "SerialNumber",
+        "presence": 2
+      },
+      {
+        "id": "id-WarningAreaList",
+        "criticality": 1,
+        "type": "WarningAreaList",
+        "presence": 0
+      },
+      {
+        "id": "id-CancelAllWarningMessages",
+        "criticality": 0,
+        "type": "CancelAllWarningMessages",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PWSCancelResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-MessageIdentifier",
+        "criticality": 0,
+        "type": "MessageIdentifier",
+        "presence": 2
+      },
+      {
+        "id": "id-SerialNumber",
+        "criticality": 0,
+        "type": "SerialNumber",
+        "presence": 2
+      },
+      {
+        "id": "id-BroadcastCancelledAreaList",
+        "criticality": 1,
+        "type": "BroadcastCancelledAreaList",
+        "presence": 0
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PWSRestartIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-CellIDListForRestart",
+        "criticality": 0,
+        "type": "CellIDListForRestart",
+        "presence": 2
+      },
+      {
+        "id": "id-GlobalRANNodeID",
+        "criticality": 0,
+        "type": "GlobalRANNodeID",
+        "presence": 2
+      },
+      {
+        "id": "id-TAIListForRestart",
+        "criticality": 0,
+        "type": "TAIListForRestart",
+        "presence": 2
+      },
+      {
+        "id": "id-EmergencyAreaIDListForRestart",
+        "criticality": 0,
+        "type": "EmergencyAreaIDListForRestart",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PWSFailureIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-PWSFailedCellIDList",
+        "criticality": 0,
+        "type": "PWSFailedCellIDList",
+        "presence": 2
+      },
+      {
+        "id": "id-GlobalRANNodeID",
+        "criticality": 0,
+        "type": "GlobalRANNodeID",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "DownlinkUEAssociatedNRPPaTransport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RoutingID",
+        "criticality": 0,
+        "type": "RoutingID",
+        "presence": 2
+      },
+      {
+        "id": "id-NRPPa-PDU",
+        "criticality": 0,
+        "type": "NRPPa-PDU",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "UplinkUEAssociatedNRPPaTransport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RoutingID",
+        "criticality": 0,
+        "type": "RoutingID",
+        "presence": 2
+      },
+      {
+        "id": "id-NRPPa-PDU",
+        "criticality": 0,
+        "type": "NRPPa-PDU",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "DownlinkNonUEAssociatedNRPPaTransport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-RoutingID",
+        "criticality": 0,
+        "type": "RoutingID",
+        "presence": 2
+      },
+      {
+        "id": "id-NRPPa-PDU",
+        "criticality": 0,
+        "type": "NRPPa-PDU",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "UplinkNonUEAssociatedNRPPaTransport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-RoutingID",
+        "criticality": 0,
+        "type": "RoutingID",
+        "presence": 2
+      },
+      {
+        "id": "id-NRPPa-PDU",
+        "criticality": 0,
+        "type": "NRPPa-PDU",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "TraceStart",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-TraceActivation",
+        "criticality": 1,
+        "type": "TraceActivation",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "TraceFailureIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-NGRANTraceID",
+        "criticality": 1,
+        "type": "NGRANTraceID",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "DeactivateTrace",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-NGRANTraceID",
+        "criticality": 1,
+        "type": "NGRANTraceID",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "CellTrafficTrace",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-NGRANTraceID",
+        "criticality": 1,
+        "type": "NGRANTraceID",
+        "presence": 2
+      },
+      {
+        "id": "id-NGRAN-CGI",
+        "criticality": 1,
+        "type": "NGRAN-CGI",
+        "presence": 2
+      },
+      {
+        "id": "id-TraceCollectionEntityIPAddress",
+        "criticality": 1,
+        "type": "TransportLayerAddress",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "LocationReportingControl",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-LocationReportingRequestType",
+        "criticality": 1,
+        "type": "LocationReportingRequestType",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "LocationReportingFailureIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-Cause",
+        "criticality": 1,
+        "type": "Cause",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "LocationReport",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UserLocationInformation",
+        "criticality": 1,
+        "type": "UserLocationInformation",
+        "presence": 2
+      },
+      {
+        "id": "id-UEPresenceInAreaOfInterestList",
+        "criticality": 1,
+        "type": "UEPresenceInAreaOfInterestList",
+        "presence": 0
+      },
+      {
+        "id": "id-LocationReportingRequestType",
+        "criticality": 1,
+        "type": "LocationReportingRequestType",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "UETNLABindingReleaseRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      }
+    ]
+  },
+  {
+    "name": "UERadioCapabilityInfoIndication",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UERadioCapability",
+        "criticality": 1,
+        "type": "UERadioCapability",
+        "presence": 2
+      },
+      {
+        "id": "id-UERadioCapabilityForPaging",
+        "criticality": 1,
+        "type": "UERadioCapabilityForPaging",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UERadioCapabilityCheckRequest",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 0,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-UERadioCapability",
+        "criticality": 1,
+        "type": "UERadioCapability",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "UERadioCapabilityCheckResponse",
+    "isProtocolIe": true,
+    "ies": [
+      {
+        "id": "id-AMF-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "AMF-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-RAN-UE-NGAP-ID",
+        "criticality": 1,
+        "type": "RAN-UE-NGAP-ID",
+        "presence": 2
+      },
+      {
+        "id": "id-IMSVoiceSupportIndicator",
+        "criticality": 0,
+        "type": "IMSVoiceSupportIndicator",
+        "presence": 2
+      },
+      {
+        "id": "id-CriticalityDiagnostics",
+        "criticality": 1,
+        "type": "CriticalityDiagnostics",
+        "presence": 0
+      }
+    ]
+  },
+  {
+    "name": "PrivateMessage",
+    "isProtocolIe": false,
+    "ies": []
+  }
+]
