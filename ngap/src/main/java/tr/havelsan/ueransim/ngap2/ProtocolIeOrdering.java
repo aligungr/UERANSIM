@@ -31,7 +31,7 @@ import fr.marben.asnsdk.japi.spe.Value;
 import java.util.Comparator;
 import java.util.List;
 
-// TODO: Optimize this
+@Deprecated
 class ProtocolIeOrdering {
 
     /**

@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.ngap2;
 
+@Deprecated
 public enum NgapPduDescription {
     INITIATING_MESSAGE,
     SUCCESSFUL_OUTCOME,

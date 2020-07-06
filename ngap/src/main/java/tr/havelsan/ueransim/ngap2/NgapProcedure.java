@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
+@Deprecated
 public enum NgapProcedure {
     AMFConfigurationUpdateAcknowledge,
     AMFConfigurationUpdateFailure,
