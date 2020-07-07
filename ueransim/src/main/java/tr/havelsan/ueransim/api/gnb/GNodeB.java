@@ -42,7 +42,6 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -73,21 +72,18 @@ public class GNodeB {
         {
             Long amfUeNgapId = ctx.ueContexts.get(ueId).amfUeNgapId;
             if (amfUeNgapId != null) {
-                // NOTE: criticality is hardcoded here, it may be changed
-                ngapBuilder.addAmfUeNgapId(amfUeNgapId, NgapCriticality.IGNORE);
+                ngapBuilder.addAmfUeNgapId(amfUeNgapId);
             }
         }
 
         // Adding RAN-UE-NGAP-ID
         {
-            // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addRanUeNgapId(ctx.ueContexts.get(ueId).ranUeNgapId, NgapCriticality.REJECT);
+            ngapBuilder.addRanUeNgapId(ctx.ueContexts.get(ueId).ranUeNgapId);
         }
 
         // Adding user location information
         {
-            // NOTE: criticality is hardcoded here, it may be changed
-            ngapBuilder.addUserLocationInformationNR(Simulation.findUe(ctx.simCtx, ueId).ueConfig.userLocationInformationNr, NgapCriticality.IGNORE);
+            ngapBuilder.addUserLocationInformationNR(Simulation.findUe(ctx.simCtx, ueId).ueConfig.userLocationInformationNr);
         }
 
         var ngapPdu = ngapBuilder.build();

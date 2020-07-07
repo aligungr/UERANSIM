@@ -34,9 +34,8 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.ngap2.NgapMessageType;
 import tr.havelsan.ueransim.utils.Debugging;
 
 import java.util.UUID;
@@ -47,16 +46,16 @@ public class GnbNasTransport {
         NgapBuilder ngap;
 
         if (ctx.ueContexts.containsKey(ueId)) {
-            ngap = new NgapBuilder(NgapProcedure.UplinkNASTransport);
+            ngap = new NgapBuilder(NgapMessageType.UplinkNASTransport);
         } else {
-            ngap = new NgapBuilder(NgapProcedure.InitialUEMessage);
+            ngap = new NgapBuilder(NgapMessageType.InitialUEMessage);
             ngap.addProtocolIE(new RRCEstablishmentCause(RRCEstablishmentCause.ASN_mo_Data));
 
             GnbUeManagement.allocateUeNgapId(ctx, ueId);
         }
 
         if (nasMessage != null) {
-            ngap.addNasPdu(nasMessage, NgapCriticality.REJECT);
+            ngap.addNasPdu(nasMessage);
         }
 
         GNodeB.sendToNetworkUeAssociated(ctx, ueId, ngap);

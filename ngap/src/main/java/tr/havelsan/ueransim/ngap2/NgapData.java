@@ -29,9 +29,14 @@ package tr.havelsan.ueransim.ngap2;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class NgapData {
 
@@ -39,12 +44,9 @@ public class NgapData {
     private static HashMap<String, Integer> ieIds;
     private static HashMap<String, PduContent> pduContents;
     private static HashMap<String, ProcedureInfo> procedures;
+    private static HashSet<String> ieTypeNames;
 
     static {
-        initialize();
-    }
-
-    private static void initialize() {
         var gson = new Gson();
 
         Runnable readNgapConstants = () -> {
@@ -78,9 +80,98 @@ public class NgapData {
             procedures = gson.fromJson(json.get("procedures"), TypeToken.getParameterized(HashMap.class, String.class, ProcedureInfo.class).getType());
         };
 
+        Runnable readIeTypeNames = () -> {
+            ieTypeNames = new HashSet<>();
+            for (var pduContent : pduContents.values()) {
+                for (var ie : pduContent.ies) {
+                    ieTypeNames.add(ie.type);
+                }
+            }
+        };
+
         readNgapConstants.run();
         readNgapPduContents.run();
         readNgapPduDescriptions.run();
+        readIeTypeNames.run();
+    }
+
+    public static NgapPduType findPduType(NgapMessageType messageType) {
+        for (var item : procedures.values()) {
+            if (messageType.name().equals(item.initiatingMessage)) {
+                return NgapPduType.INITIATING_MESSAGE;
+            }
+            if (messageType.name().equals(item.successfulOutcome)) {
+                return NgapPduType.SUCCESSFUL_OUTCOME;
+            }
+            if (messageType.name().equals(item.unsuccessfulOutcome)) {
+                return NgapPduType.UNSUCCESSFUL_OUTCOME;
+            }
+        }
+        Logging.error(Tag.NGAP_INTERNAL, "failed to findPduType of message: %s", messageType.name());
+        throw new RuntimeException();
+    }
+
+    public static NgapCriticality findMessageCriticality(NgapMessageType messageType) {
+        for (var item : procedures.values()) {
+            if (messageType.name().equals(item.initiatingMessage)) {
+                return NgapCriticality.fromAsnValue(item.criticality);
+            }
+            if (messageType.name().equals(item.successfulOutcome)) {
+                return NgapCriticality.fromAsnValue(item.criticality);
+            }
+            if (messageType.name().equals(item.unsuccessfulOutcome)) {
+                return NgapCriticality.fromAsnValue(item.criticality);
+            }
+        }
+        Logging.error(Tag.NGAP_INTERNAL, "failed to findMessageCriticality of message: %s", messageType.name());
+        throw new RuntimeException();
+    }
+
+    public static int findProcedureCode(NgapMessageType messageType) {
+        for (var item : procedures.values()) {
+            if (messageType.name().equals(item.initiatingMessage)) {
+                return procedureCodeIds.get(item.procedureCode);
+            }
+            if (messageType.name().equals(item.successfulOutcome)) {
+                return procedureCodeIds.get(item.procedureCode);
+            }
+            if (messageType.name().equals(item.unsuccessfulOutcome)) {
+                return procedureCodeIds.get(item.procedureCode);
+            }
+        }
+        Logging.error(Tag.NGAP_INTERNAL, "failed to findProcedureCode of message: %s", messageType.name());
+        throw new RuntimeException();
+    }
+
+    public static int findIeId(NgapMessageType messageType, String ieAsnTypeName) {
+        var ies = pduContents.get(messageType.name()).ies;
+        for (PduContent.InformationElement element : ies) {
+            if (element.type.equals(ieAsnTypeName)) {
+                return ieIds.get(element.id);
+            }
+        }
+        Logging.error(Tag.NGAP_INTERNAL, "failed to findIeId");
+        throw new RuntimeException();
+    }
+
+    public static NgapCriticality findIeCriticality(NgapMessageType messageType, String ieAsnTypeName) {
+        var ies = pduContents.get(messageType.name()).ies;
+        for (PduContent.InformationElement element : ies) {
+            if (element.type.equals(ieAsnTypeName)) {
+                return NgapCriticality.fromAsnValue(element.criticality);
+            }
+        }
+        Logging.error(Tag.NGAP_INTERNAL, "failed to findIeId");
+        throw new RuntimeException();
+    }
+
+    public static Iterable<String> ieTypeNames() {
+        return ieTypeNames;
+    }
+
+    public static List<String> findIeListOfMessage(NgapMessageType messageType) {
+        var ies = pduContents.get(messageType.name()).ies;
+        return Utils.streamToList(Arrays.stream(ies).map(informationElement -> informationElement.type));
     }
 
     public static class PduContent {

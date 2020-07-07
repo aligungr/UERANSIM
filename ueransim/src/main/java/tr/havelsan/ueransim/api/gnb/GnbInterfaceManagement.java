@@ -28,13 +28,11 @@ package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapCriticality;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.ngap2.NgapMessageType;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -48,10 +46,10 @@ public class GnbInterfaceManagement {
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
         GNodeB.sendToNetworkNonUe(ctx,
-                new NgapBuilder(NgapProcedure.NGSetupRequest)
-                        .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn), NgapCriticality.REJECT)
-                        .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs), NgapCriticality.REJECT)
-                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64), NgapCriticality.IGNORE, Values.NGAP_Constants__id_DefaultPagingDRX)
+                new NgapBuilder(NgapMessageType.NGSetupRequest)
+                        .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn))
+                        .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs))
+                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64))
         );
 
         Logging.funcOut();

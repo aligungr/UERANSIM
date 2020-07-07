@@ -32,7 +32,6 @@ import fr.marben.asnsdk.japi.spe.SequenceValue;
 import fr.marben.asnsdk.japi.spe.Value;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.NAS_PDU;
@@ -45,26 +44,46 @@ import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static tr.havelsan.ueransim.core.Constants.NGAP_PDU_CONTENTS;
 
 public class NgapInternal {
 
-    public static String getProcedureClassName(NgapProcedure procedure) {
-        return NGAP_PDU_CONTENTS + "." + procedure.name();
+    public static void sortProtocolIEs(NgapMessageType messageType, List<Value> protocolIEs) {
+        var sortingList = NgapData.findIeListOfMessage(messageType);
+        protocolIEs.sort(Comparator.comparingInt(ie -> {
+            int index = sortingList.indexOf(findIeAsnTypeName(ie));
+            if (index == -1) index = Integer.MAX_VALUE;
+            return index;
+        }));
     }
 
-    public static Class<?> getProcedureClass(NgapProcedure procedure) {
+    public static String findIeAsnTypeName(Value protocolIe) {
+        for (var item : NgapData.ieTypeNames()) {
+            if (item.replace("-", "_").equals(protocolIe.getClass().getSimpleName())) {
+                return item;
+            }
+        }
+        Logging.error(Tag.NGAP_INTERNAL, "failed to findIeAsnTypeName");
+        throw new RuntimeException();
+    }
+
+    public static String getMessageTypeClassName(NgapMessageType messageType) {
+        return NGAP_PDU_CONTENTS + "." + messageType.name();
+    }
+
+    public static Class<?> getMessageClass(NgapMessageType messageType) {
         try {
-            return Class.forName(getProcedureClassName(procedure));
+            return Class.forName(getMessageTypeClassName(messageType));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Value createProcedureValue(NgapProcedure procedure) {
-        Class<?> clazz = getProcedureClass(procedure);
+    public static Value createMessageValue(NgapMessageType messageType) {
+        Class<?> clazz = getMessageClass(messageType);
         try {
             return (Value) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
@@ -80,26 +99,17 @@ public class NgapInternal {
         }
     }
 
-    public static int findConstantId(Value value) {
-        String fieldName = "NGAP_Constants__id_" + value.getClass().getSimpleName();
+    public static void appendProtocolIe(NgapMessageType messageType, Value messageValue, NgapCriticality criticality, Value value, int ieId) {
         try {
-            return (int) Values.class.getField(fieldName).get(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void appendProtocolIe(NgapProcedure procedure, Value procedureContent, NgapCriticality criticality, Value value, Integer ieId) {
-        try {
-            var procedureClassName = getProcedureClassName(procedure);
-            var protocolIEsClassName = procedureClassName + "$ProtocolIEs";
+            var messageClassName = getMessageTypeClassName(messageType);
+            var protocolIEsClassName = messageClassName + "$ProtocolIEs";
             var sequenceClassName = protocolIEsClassName + "$SEQUENCE";
 
             Class<?> classProtocolIEs = Class.forName(protocolIEsClassName);
             Class<?> classSequence = Class.forName(sequenceClassName);
 
-            var fieldProtocolIEs = procedureContent.getClass().getField("protocolIEs");
-            var protocolIEs = fieldProtocolIEs.get(procedureContent);
+            var fieldProtocolIEs = messageValue.getClass().getField("protocolIEs");
+            var protocolIEs = fieldProtocolIEs.get(messageValue);
             var valueList = new ArrayList<>();
             var fieldValueList = classProtocolIEs.getField("valueList");
             if (protocolIEs == null) {
@@ -108,11 +118,7 @@ public class NgapInternal {
             } else {
                 valueList = (ArrayList) fieldValueList.get(protocolIEs);
             }
-            fieldProtocolIEs.set(procedureContent, protocolIEs);
-
-            if (ieId == null) {
-                ieId = findConstantId(value);
-            }
+            fieldProtocolIEs.set(messageValue, protocolIEs);
 
             var sequence = classSequence.getConstructor().newInstance();
             setField(sequence, "id", new ProtocolIE_ID(ieId));
@@ -125,19 +131,19 @@ public class NgapInternal {
         }
     }
 
-    public static <T extends Value> List<T> extractProtocolIe(Value procedureContent, Class<T> ieType) {
+    public static <T extends Value> List<T> extractProtocolIe(Value messageContent, Class<T> ieType) {
         try {
             var list = new ArrayList<T>();
-            if (procedureContent != null) {
-                var procedureClassName = procedureContent.getClass().getName();
-                var protocolIEsClassName = procedureClassName + "$ProtocolIEs";
+            if (messageContent != null) {
+                var messageClassName = messageContent.getClass().getName();
+                var protocolIEsClassName = messageClassName + "$ProtocolIEs";
                 var sequenceClassName = protocolIEsClassName + "$SEQUENCE";
 
                 Class<?> classProtocolIEs = Class.forName(protocolIEsClassName);
                 Class<?> classSequence = Class.forName(sequenceClassName);
 
-                var fieldProtocolIEs = procedureContent.getClass().getField("protocolIEs");
-                var protocolIEs = fieldProtocolIEs.get(procedureContent);
+                var fieldProtocolIEs = messageContent.getClass().getField("protocolIEs");
+                var protocolIEs = fieldProtocolIEs.get(messageContent);
                 var fieldValueList = classProtocolIEs.getField("valueList");
                 if (protocolIEs != null) {
                     var valueList = (ArrayList) fieldValueList.get(protocolIEs);
@@ -218,8 +224,9 @@ public class NgapInternal {
         }
     }
 
+    // todo: this is incorrect
     public static boolean isUeAssociated(SequenceValue ngapMessage) {
-        var ies = ProtocolIeOrdering.findProtocolIeOrdering(ngapMessage.getClass());
-        return ies.contains(RAN_UE_NGAP_ID.class);
+        var ies = extractProtocolIe(ngapMessage, RAN_UE_NGAP_ID.class);
+        return ies.size() > 0;
     }
 }

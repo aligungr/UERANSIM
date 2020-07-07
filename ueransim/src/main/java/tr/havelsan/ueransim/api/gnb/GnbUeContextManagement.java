@@ -29,7 +29,7 @@ package tr.havelsan.ueransim.api.gnb;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapProcedure;
+import tr.havelsan.ueransim.ngap2.NgapMessageType;
 import tr.havelsan.ueransim.utils.Debugging;
 
 import java.util.UUID;
@@ -40,6 +40,6 @@ public class GnbUeContextManagement {
         Debugging.assertThread(ctx);
 
         // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NgapBuilder(NgapProcedure.InitialContextSetupResponse));
+        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NgapBuilder(NgapMessageType.InitialContextSetupResponse));
     }
 }

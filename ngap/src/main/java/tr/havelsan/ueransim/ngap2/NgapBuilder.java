@@ -33,7 +33,6 @@ import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.Values;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
 import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
@@ -48,56 +47,48 @@ import java.util.List;
 
 public class NgapBuilder {
 
-    private NgapProcedure procedure;
-    private List<ProtocolIE> protocolIEs;
+    private NgapMessageType messageType;
+    private List<Value> protocolIEs;
 
-    public NgapBuilder(NgapProcedure procedure) {
+    public NgapBuilder(NgapMessageType messageType) {
         this.protocolIEs = new ArrayList<>();
-        this.procedure = procedure;
-    }
-
-    public NgapBuilder addProtocolIE(Value value, NgapCriticality criticality, Integer ieId) {
-        this.protocolIEs.add(new ProtocolIE(value, criticality, ieId));
-        return this;
-    }
-
-    public NgapBuilder addProtocolIE(Value value, NgapCriticality criticality) {
-        return addProtocolIE(value, criticality, null);
+        this.messageType = messageType;
     }
 
     public NgapBuilder addProtocolIE(Value value) {
-        return addProtocolIE(value, NgapCriticality.REJECT, null);
+        this.protocolIEs.add(value);
+        return this;
     }
 
-    public NgapBuilder addRanUeNgapId(long value, NgapCriticality criticality) {
-        return addProtocolIE(new RAN_UE_NGAP_ID(value), criticality, Values.NGAP_Constants__id_RAN_UE_NGAP_ID);
+    public NgapBuilder addRanUeNgapId(long value) {
+        return addProtocolIE(new RAN_UE_NGAP_ID(value));
     }
 
-    public NgapBuilder addAmfUeNgapId(long value, NgapCriticality criticality) {
-        return addProtocolIE(new AMF_UE_NGAP_ID(value), criticality, Values.NGAP_Constants__id_AMF_UE_NGAP_ID);
+    public NgapBuilder addAmfUeNgapId(long value) {
+        return addProtocolIE(new AMF_UE_NGAP_ID(value));
     }
 
-    public NgapBuilder addNasPdu(byte[] value, NgapCriticality criticality) {
-        return addProtocolIE(new NAS_PDU(value), criticality, Values.NGAP_Constants__id_NAS_PDU);
+    public NgapBuilder addNasPdu(byte[] value) {
+        return addProtocolIE(new NAS_PDU(value));
     }
 
-    public NgapBuilder addNasPdu(String hex, NgapCriticality criticality) {
-        return addNasPdu(Utils.hexStringToByteArray(hex), criticality);
+    public NgapBuilder addNasPdu(String hex) {
+        return addNasPdu(Utils.hexStringToByteArray(hex));
     }
 
-    public NgapBuilder addNasPdu(NasMessage nasMessage, NgapCriticality criticality) {
-        return addNasPdu(NasEncoder.nasPdu(nasMessage), criticality);
+    public NgapBuilder addNasPdu(NasMessage nasMessage) {
+        return addNasPdu(NasEncoder.nasPdu(nasMessage));
     }
 
-    public NgapBuilder addUserLocationInformationNR(UserLocationInformationNr userLocationInformationNr, NgapCriticality criticality) {
+    public NgapBuilder addUserLocationInformationNR(UserLocationInformationNr userLocationInformationNr) {
         try {
-            return addProtocolIE(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, Ngap.createUserLocationInformationNr(userLocationInformationNr)), criticality, Values.NGAP_Constants__id_UserLocationInformation);
+            return addProtocolIE(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, Ngap.createUserLocationInformationNr(userLocationInformationNr)));
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public NgapBuilder addCause(NgapCause cause, NgapCriticality criticality) {
+    public NgapBuilder addCause(NgapCause cause) {
         int fieldNum = cause.getFieldNumber();
         Value value;
 
@@ -128,45 +119,46 @@ public class NgapBuilder {
             throw new RuntimeException(e);
         }
 
-        return addProtocolIE(c, criticality, Values.NGAP_Constants__id_Cause);
-    }
-
-    public NgapBuilder addCause(NgapCause cause) {
-        return addCause(cause, NgapCriticality.IGNORE);
+        return addProtocolIE(c);
     }
 
     public NGAP_PDU build() {
-        int procedureCode = procedure.procedureCode();
-        Value procedureContent = NgapInternal.createProcedureValue(procedure);
+        Value messageValue = NgapInternal.createMessageValue(messageType);
 
-        ProtocolIeOrdering.processProtocolIEs(protocolIEs, procedureContent);
+        NgapInternal.sortProtocolIEs(messageType, protocolIEs);
         for (var protocolIe : protocolIEs) {
-            NgapInternal.appendProtocolIe(procedure, procedureContent, protocolIe.criticality, protocolIe.value, protocolIe.id);
+            var asnTypeName = NgapInternal.findIeAsnTypeName(protocolIe);
+            var criticality = NgapData.findIeCriticality(messageType, asnTypeName);
+            var id = NgapData.findIeId(messageType, asnTypeName);
+
+            NgapInternal.appendProtocolIe(messageType, messageValue, criticality, protocolIe, id);
         }
 
-        var pduDescription = procedure.pduDescription();
+        int procedureCode = NgapData.findProcedureCode(messageType);
+        var pduType = NgapData.findPduType(messageType);
+        var messageCriticality = NgapData.findMessageCriticality(messageType);
 
         try {
-            switch (pduDescription) {
+            switch (pduType) {
                 case INITIATING_MESSAGE: {
                     var desc = new InitiatingMessage();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(procedure.procedureCriticality().getAsnValue());
-                    desc.value = new OpenTypeValue(procedureContent);
+                    desc.criticality = new Criticality(messageCriticality.getAsnValue());
+                    desc.value = new OpenTypeValue(messageValue);
                     return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, desc);
                 }
                 case SUCCESSFUL_OUTCOME: {
                     var desc = new SuccessfulOutcome();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(procedure.procedureCriticality().getAsnValue());
-                    desc.value = new OpenTypeValue(procedureContent);
+                    desc.criticality = new Criticality(messageCriticality.getAsnValue());
+                    desc.value = new OpenTypeValue(messageValue);
                     return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, desc);
                 }
                 case UNSUCCESSFUL_OUTCOME: {
                     var desc = new UnsuccessfulOutcome();
                     desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(procedure.procedureCriticality().getAsnValue());
-                    desc.value = new OpenTypeValue(procedureContent);
+                    desc.criticality = new Criticality(messageCriticality.getAsnValue());
+                    desc.value = new OpenTypeValue(messageValue);
                     return new NGAP_PDU(NGAP_PDU.ASN_unsuccessfulOutcome, desc);
                 }
                 default:
@@ -174,18 +166,6 @@ public class NgapBuilder {
             }
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    static class ProtocolIE {
-        final Value value;
-        final NgapCriticality criticality;
-        final Integer id;
-
-        public ProtocolIE(Value value, NgapCriticality criticality, Integer id) {
-            this.value = value;
-            this.criticality = criticality;
-            this.id = id;
         }
     }
 }
