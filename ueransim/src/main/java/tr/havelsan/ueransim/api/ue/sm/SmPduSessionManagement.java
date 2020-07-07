@@ -83,12 +83,12 @@ class SmPduSessionManagement {
     }
 
     public static void releaseProcedureTransactionId(UeSimContext ctx, EProcedureTransactionIdentity pti) {
-        ctx.smCtx.procedureTransactions[pti.intValue()] = null;
+        ctx.smCtx.procedureTransactions[pti.intValue()] = ProcedureTransaction.RELEASED;
         Logging.debug(Tag.PROC, "PTI released: %s", pti);
     }
 
     public static void releasePduSession(UeSimContext ctx, EPduSessionIdentity psi) {
-        ctx.smCtx.pduSessions[psi.intValue()] = null;
+        ctx.smCtx.pduSessions[psi.intValue()] = PduSession.RELEASED;
         Logging.debug(Tag.PROC, "PDU Session released: %s", psi);
     }
 }

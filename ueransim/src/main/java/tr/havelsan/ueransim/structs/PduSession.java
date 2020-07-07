@@ -36,6 +36,8 @@ public class PduSession {
     public static final int MIN_ID = 1;
     public static final int MAX_ID = 15;
 
+    public static final PduSession RELEASED = new PduSession(EPduSessionIdentity.NO_VAL);
+
     public final EPduSessionIdentity id;
     public boolean isEstablished;
     public IEQoSRules authorizedQoSRules;
