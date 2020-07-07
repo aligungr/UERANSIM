@@ -2,7 +2,10 @@
 5G UE/gNodeB Simulator
 
 ##  Status  
-**3GPP Version:** 15.2.0
+**3GPP Version:** 15.2.0  
+**Access Type:** 5G-SA (Standalone Access)  
+**Connection Type:** 3GPP Access  
+
 
 ##  Requirements
 1. Ubuntu 16.04 or later 
