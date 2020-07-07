@@ -31,6 +31,13 @@ import tr.havelsan.ueransim.events.ue.UeCommandEvent;
 
 public class EventParser {
 
+    public static String[] possibleEvents() {
+        return new String[]{
+                "ngsetup",
+                "initial-registration"
+        };
+    }
+
     public static SimulationEvent parse(String command) {
         if (command == null) {
             return null;

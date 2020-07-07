@@ -35,10 +35,7 @@ import tr.havelsan.ueransim.events.ue.UeEvent;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
-import tr.havelsan.ueransim.utils.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +65,7 @@ public class Program {
 
         var scanner = new Scanner(System.in);
 
+        System.out.println("Possible events:" + Json.toJson(EventParser.possibleEvents()));
         System.out.println("Type event:");
         while (true) {
             String line = scanner.nextLine();
