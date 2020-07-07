@@ -33,7 +33,8 @@ import java.util.function.Consumer;
 
 public class Console {
 
-    private static List<Consumer<String>> printHandlers = new ArrayList<>();
+    private static final List<Consumer<String>> printHandlers = new ArrayList<>();
+    private static boolean standardPrintEnabled = true;
     private static Color lastColor;
 
     public static synchronized void print(Color color, String format, Object... args) {
@@ -78,6 +79,10 @@ public class Console {
         printHandlers.add(handler);
     }
 
+    public synchronized static void setStandardPrintEnabled(boolean standardPrintEnabled) {
+        Console.standardPrintEnabled = standardPrintEnabled;
+    }
+
     public static synchronized void println() {
         outputLine();
     }
@@ -91,7 +96,9 @@ public class Console {
     }
 
     private synchronized static void output(String string) {
-        System.out.print(string);
+        if (standardPrintEnabled) {
+            System.out.print(string);
+        }
 
         for (var handler : printHandlers)
             handler.accept(string);

@@ -1,0 +1,346 @@
+{
+  "elementary-class-1": [
+    "aMFConfigurationUpdate",
+    "handoverCancel",
+    "handoverPreparation",
+    "handoverResourceAllocation",
+    "initialContextSetup",
+    "nGReset",
+    "nGSetup",
+    "pathSwitchRequest",
+    "pDUSessionResourceModify",
+    "pDUSessionResourceModifyIndication",
+    "pDUSessionResourceRelease",
+    "pDUSessionResourceSetup",
+    "pWSCancel",
+    "rANConfigurationUpdate",
+    "uEContextModification",
+    "uEContextRelease",
+    "uERadioCapabilityCheck",
+    "writeReplaceWarning"
+  ],
+  "elementary-class-2": [
+    "aMFStatusIndication",
+    "cellTrafficTrace",
+    "deactivateTrace",
+    "downlinkNASTransport",
+    "downlinkNonUEAssociatedNRPPaTransport",
+    "downlinkRANConfigurationTransfer",
+    "downlinkRANStatusTransfer",
+    "downlinkUEAssociatedNRPPaTransport",
+    "errorIndication",
+    "handoverNotification",
+    "initialUEMessage",
+    "locationReport",
+    "locationReportingControl",
+    "locationReportingFailureIndication",
+    "nASNonDeliveryIndication",
+    "overloadStart",
+    "overloadStop",
+    "paging",
+    "pDUSessionResourceNotify",
+    "privateMessage",
+    "pWSFailureIndication",
+    "pWSRestartIndication",
+    "rerouteNASRequest",
+    "rRCInactiveTransitionReport",
+    "traceFailureIndication",
+    "traceStart",
+    "uEContextReleaseRequest",
+    "uERadioCapabilityInfoIndication",
+    "uETNLABindingRelease",
+    "uplinkNASTransport",
+    "uplinkNonUEAssociatedNRPPaTransport",
+    "uplinkRANConfigurationTransfer",
+    "uplinkRANStatusTransfer",
+    "uplinkUEAssociatedNRPPaTransport"
+  ],
+  "procedures": {
+    "aMFConfigurationUpdate": {
+      "initiatingMessage": "AMFConfigurationUpdate",
+      "successfulOutcome": "AMFConfigurationUpdateAcknowledge",
+      "unsuccessfulOutcome": "AMFConfigurationUpdateFailure",
+      "procedureCode": "id-AMFConfigurationUpdate",
+      "criticality": "reject"
+    },
+    "aMFStatusIndication": {
+      "initiatingMessage": "AMFStatusIndication",
+      "procedureCode": "id-AMFStatusIndication",
+      "criticality": "ignore"
+    },
+    "cellTrafficTrace": {
+      "initiatingMessage": "CellTrafficTrace",
+      "procedureCode": "id-CellTrafficTrace",
+      "criticality": "ignore"
+    },
+    "deactivateTrace": {
+      "initiatingMessage": "DeactivateTrace",
+      "procedureCode": "id-DeactivateTrace",
+      "criticality": "ignore"
+    },
+    "downlinkNASTransport": {
+      "initiatingMessage": "DownlinkNASTransport",
+      "procedureCode": "id-DownlinkNASTransport",
+      "criticality": "ignore"
+    },
+    "downlinkNonUEAssociatedNRPPaTransport": {
+      "initiatingMessage": "DownlinkNonUEAssociatedNRPPaTransport",
+      "procedureCode": "id-DownlinkNonUEAssociatedNRPPaTransport",
+      "criticality": "ignore"
+    },
+    "downlinkRANConfigurationTransfer": {
+      "initiatingMessage": "DownlinkRANConfigurationTransfer",
+      "procedureCode": "id-DownlinkRANConfigurationTransfer",
+      "criticality": "ignore"
+    },
+    "downlinkRANStatusTransfer": {
+      "initiatingMessage": "DownlinkRANStatusTransfer",
+      "procedureCode": "id-DownlinkRANStatusTransfer",
+      "criticality": "ignore"
+    },
+    "downlinkUEAssociatedNRPPaTransport": {
+      "initiatingMessage": "DownlinkUEAssociatedNRPPaTransport",
+      "procedureCode": "id-DownlinkUEAssociatedNRPPaTransport",
+      "criticality": "ignore"
+    },
+    "errorIndication": {
+      "initiatingMessage": "ErrorIndication",
+      "procedureCode": "id-ErrorIndication",
+      "criticality": "ignore"
+    },
+    "handoverCancel": {
+      "initiatingMessage": "HandoverCancel",
+      "successfulOutcome": "HandoverCancelAcknowledge",
+      "procedureCode": "id-HandoverCancel",
+      "criticality": "reject"
+    },
+    "handoverNotification": {
+      "initiatingMessage": "HandoverNotify",
+      "procedureCode": "id-HandoverNotification",
+      "criticality": "ignore"
+    },
+    "handoverPreparation": {
+      "initiatingMessage": "HandoverRequired",
+      "successfulOutcome": "HandoverCommand",
+      "unsuccessfulOutcome": "HandoverPreparationFailure",
+      "procedureCode": "id-HandoverPreparation",
+      "criticality": "reject"
+    },
+    "handoverResourceAllocation": {
+      "initiatingMessage": "HandoverRequest",
+      "successfulOutcome": "HandoverRequestAcknowledge",
+      "unsuccessfulOutcome": "HandoverFailure",
+      "procedureCode": "id-HandoverResourceAllocation",
+      "criticality": "reject"
+    },
+    "initialContextSetup": {
+      "initiatingMessage": "InitialContextSetupRequest",
+      "successfulOutcome": "InitialContextSetupResponse",
+      "unsuccessfulOutcome": "InitialContextSetupFailure",
+      "procedureCode": "id-InitialContextSetup",
+      "criticality": "reject"
+    },
+    "initialUEMessage": {
+      "initiatingMessage": "InitialUEMessage",
+      "procedureCode": "id-InitialUEMessage",
+      "criticality": "ignore"
+    },
+    "locationReport": {
+      "initiatingMessage": "LocationReport",
+      "procedureCode": "id-LocationReport",
+      "criticality": "ignore"
+    },
+    "locationReportingControl": {
+      "initiatingMessage": "LocationReportingControl",
+      "procedureCode": "id-LocationReportingControl",
+      "criticality": "ignore"
+    },
+    "locationReportingFailureIndication": {
+      "initiatingMessage": "LocationReportingFailureIndication",
+      "procedureCode": "id-LocationReportingFailureIndication",
+      "criticality": "ignore"
+    },
+    "nASNonDeliveryIndication": {
+      "initiatingMessage": "NASNonDeliveryIndication",
+      "procedureCode": "id-NASNonDeliveryIndication",
+      "criticality": "ignore"
+    },
+    "nGReset": {
+      "initiatingMessage": "NGReset",
+      "successfulOutcome": "NGResetAcknowledge",
+      "procedureCode": "id-NGReset",
+      "criticality": "reject"
+    },
+    "nGSetup": {
+      "initiatingMessage": "NGSetupRequest",
+      "successfulOutcome": "NGSetupResponse",
+      "unsuccessfulOutcome": "NGSetupFailure",
+      "procedureCode": "id-NGSetup",
+      "criticality": "reject"
+    },
+    "overloadStart": {
+      "initiatingMessage": "OverloadStart",
+      "procedureCode": "id-OverloadStart",
+      "criticality": "ignore"
+    },
+    "overloadStop": {
+      "initiatingMessage": "OverloadStop",
+      "procedureCode": "id-OverloadStop",
+      "criticality": "reject"
+    },
+    "paging": {
+      "initiatingMessage": "Paging",
+      "procedureCode": "id-Paging",
+      "criticality": "ignore"
+    },
+    "pathSwitchRequest": {
+      "initiatingMessage": "PathSwitchRequest",
+      "successfulOutcome": "PathSwitchRequestAcknowledge",
+      "unsuccessfulOutcome": "PathSwitchRequestFailure",
+      "procedureCode": "id-PathSwitchRequest",
+      "criticality": "reject"
+    },
+    "pDUSessionResourceModify": {
+      "initiatingMessage": "PDUSessionResourceModifyRequest",
+      "successfulOutcome": "PDUSessionResourceModifyResponse",
+      "procedureCode": "id-PDUSessionResourceModify",
+      "criticality": "reject"
+    },
+    "pDUSessionResourceModifyIndication": {
+      "initiatingMessage": "PDUSessionResourceModifyIndication",
+      "successfulOutcome": "PDUSessionResourceModifyConfirm",
+      "procedureCode": "id-PDUSessionResourceModifyIndication",
+      "criticality": "reject"
+    },
+    "pDUSessionResourceNotify": {
+      "initiatingMessage": "PDUSessionResourceNotify",
+      "procedureCode": "id-PDUSessionResourceNotify",
+      "criticality": "ignore"
+    },
+    "pDUSessionResourceRelease": {
+      "initiatingMessage": "PDUSessionResourceReleaseCommand",
+      "successfulOutcome": "PDUSessionResourceReleaseResponse",
+      "procedureCode": "id-PDUSessionResourceRelease",
+      "criticality": "reject"
+    },
+    "pDUSessionResourceSetup": {
+      "initiatingMessage": "PDUSessionResourceSetupRequest",
+      "successfulOutcome": "PDUSessionResourceSetupResponse",
+      "procedureCode": "id-PDUSessionResourceSetup",
+      "criticality": "reject"
+    },
+    "privateMessage": {
+      "initiatingMessage": "PrivateMessage",
+      "procedureCode": "id-PrivateMessage",
+      "criticality": "ignore"
+    },
+    "pWSCancel": {
+      "initiatingMessage": "PWSCancelRequest",
+      "successfulOutcome": "PWSCancelResponse",
+      "procedureCode": "id-PWSCancel",
+      "criticality": "reject"
+    },
+    "pWSFailureIndication": {
+      "initiatingMessage": "PWSFailureIndication",
+      "procedureCode": "id-PWSFailureIndication",
+      "criticality": "ignore"
+    },
+    "pWSRestartIndication": {
+      "initiatingMessage": "PWSRestartIndication",
+      "procedureCode": "id-PWSRestartIndication",
+      "criticality": "ignore"
+    },
+    "rANConfigurationUpdate": {
+      "initiatingMessage": "RANConfigurationUpdate",
+      "successfulOutcome": "RANConfigurationUpdateAcknowledge",
+      "unsuccessfulOutcome": "RANConfigurationUpdateFailure",
+      "procedureCode": "id-RANConfigurationUpdate",
+      "criticality": "reject"
+    },
+    "rerouteNASRequest": {
+      "initiatingMessage": "RerouteNASRequest",
+      "procedureCode": "id-RerouteNASRequest",
+      "criticality": "reject"
+    },
+    "rRCInactiveTransitionReport": {
+      "initiatingMessage": "RRCInactiveTransitionReport",
+      "procedureCode": "id-RRCInactiveTransitionReport",
+      "criticality": "ignore"
+    },
+    "traceFailureIndication": {
+      "initiatingMessage": "TraceFailureIndication",
+      "procedureCode": "id-TraceFailureIndication",
+      "criticality": "ignore"
+    },
+    "traceStart": {
+      "initiatingMessage": "TraceStart",
+      "procedureCode": "id-TraceStart",
+      "criticality": "ignore"
+    },
+    "uEContextModification": {
+      "initiatingMessage": "UEContextModificationRequest",
+      "successfulOutcome": "UEContextModificationResponse",
+      "unsuccessfulOutcome": "UEContextModificationFailure",
+      "procedureCode": "id-UEContextModification",
+      "criticality": "reject"
+    },
+    "uEContextRelease": {
+      "initiatingMessage": "UEContextReleaseCommand",
+      "successfulOutcome": "UEContextReleaseComplete",
+      "procedureCode": "id-UEContextRelease",
+      "criticality": "reject"
+    },
+    "uEContextReleaseRequest": {
+      "initiatingMessage": "UEContextReleaseRequest",
+      "procedureCode": "id-UEContextReleaseRequest",
+      "criticality": "ignore"
+    },
+    "uERadioCapabilityCheck": {
+      "initiatingMessage": "UERadioCapabilityCheckRequest",
+      "successfulOutcome": "UERadioCapabilityCheckResponse",
+      "procedureCode": "id-UERadioCapabilityCheck",
+      "criticality": "reject"
+    },
+    "uERadioCapabilityInfoIndication": {
+      "initiatingMessage": "UERadioCapabilityInfoIndication",
+      "procedureCode": "id-UERadioCapabilityInfoIndication",
+      "criticality": "ignore"
+    },
+    "uETNLABindingRelease": {
+      "initiatingMessage": "UETNLABindingReleaseRequest",
+      "procedureCode": "id-UETNLABindingRelease",
+      "criticality": "ignore"
+    },
+    "uplinkNASTransport": {
+      "initiatingMessage": "UplinkNASTransport",
+      "procedureCode": "id-UplinkNASTransport",
+      "criticality": "ignore"
+    },
+    "uplinkNonUEAssociatedNRPPaTransport": {
+      "initiatingMessage": "UplinkNonUEAssociatedNRPPaTransport",
+      "procedureCode": "id-UplinkNonUEAssociatedNRPPaTransport",
+      "criticality": "ignore"
+    },
+    "uplinkRANConfigurationTransfer": {
+      "initiatingMessage": "UplinkRANConfigurationTransfer",
+      "procedureCode": "id-UplinkRANConfigurationTransfer",
+      "criticality": "ignore"
+    },
+    "uplinkRANStatusTransfer": {
+      "initiatingMessage": "UplinkRANStatusTransfer",
+      "procedureCode": "id-UplinkRANStatusTransfer",
+      "criticality": "ignore"
+    },
+    "uplinkUEAssociatedNRPPaTransport": {
+      "initiatingMessage": "UplinkUEAssociatedNRPPaTransport",
+      "procedureCode": "id-UplinkUEAssociatedNRPPaTransport",
+      "criticality": "ignore"
+    },
+    "writeReplaceWarning": {
+      "initiatingMessage": "WriteReplaceWarningRequest",
+      "successfulOutcome": "WriteReplaceWarningResponse",
+      "procedureCode": "id-WriteReplaceWarning",
+      "criticality": "reject"
+    }
+  }
+}

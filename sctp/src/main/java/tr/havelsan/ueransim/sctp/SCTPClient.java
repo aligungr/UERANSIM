@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
-public class SCTPClient implements ISCTPClient {
+public class SCTPClient implements ISctpClient {
     private static final int RECEIVER_BUFFER_SIZE = 1073741824;
 
     private final String host;
@@ -92,7 +92,7 @@ public class SCTPClient implements ISCTPClient {
             for (int i = 0; i < receivedBytes.length; i++) {
                 receivedBytes[i] = incomingBuffer.get(i);
             }
-            handler.handleSCTPMessage(receivedBytes, messageInfo, channel);
+            handler.handleSCTPMessage(receivedBytes);
         }
     }
 

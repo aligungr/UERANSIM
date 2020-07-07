@@ -26,15 +26,7 @@
 
 package tr.havelsan.ueransim.flows;
 
-import tr.havelsan.ueransim.BaseFlow;
-import tr.havelsan.ueransim.api.Messaging;
-import tr.havelsan.ueransim.api.ue.sm.UePduSessionEstablishment;
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
-import tr.havelsan.ueransim.core.SimulationContext;
-import tr.havelsan.ueransim.utils.IncomingMessage;
-import tr.havelsan.ueransim.utils.OutgoingMessage;
-
-public class PduSessionEstablishmentFlow extends BaseFlow {
+/*public class PduSessionEstablishmentFlow extends BaseFlow {
 
     private final PduSessionEstablishmentConfig config;
 
@@ -44,23 +36,8 @@ public class PduSessionEstablishmentFlow extends BaseFlow {
     }
 
     @Override
-    public State main(IncomingMessage message) {
-        UePduSessionEstablishment.sendEstablishmentRequest(ctx, config);
-        return this::loop;
-    }
-
-    private State loop(IncomingMessage message) {
-        Messaging.handleNgapMessage(ctx, message);
-        return this::loop;
-    }
-
-    @Override
-    public void onReceive(IncomingMessage incomingMessage) {
-        // todo
-    }
-
-    @Override
-    public void onSent(OutgoingMessage outgoingMessage) {
-
+    public void main() {
+        UePduSessionEstablishment.sendEstablishmentRequest(ctx.ue, config);
     }
 }
+*/

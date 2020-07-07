@@ -27,31 +27,37 @@
 package tr.havelsan.ueransim;
 
 import fr.marben.asnsdk.japi.Context;
+import fr.marben.asnsdk.japi.InvalidStructureException;
 import fr.marben.asnsdk.japi.Loader;
+import fr.marben.asnsdk.japi.spe.BitStringValue;
 import fr.marben.asnsdk.japi.spe.Value;
 import fr.marben.asnsdk.japi.vi.IAbstractSyntax;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
+import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap.RuntimeConfiguration;
 import tr.havelsan.ueransim.ngap.ValueFactory;
 import tr.havelsan.ueransim.ngap.ngap_ies.*;
+import tr.havelsan.ueransim.ngap2.SupportedTA;
 import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet3;
+import tr.havelsan.ueransim.utils.octets.Octet4;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class Ngap {
     private static final boolean TRACE = false;
-    private static Context context;
+    private static final ThreadLocal<Context> context = new ThreadLocal<>();
 
     static {
         try {
@@ -64,8 +70,8 @@ public class Ngap {
     }
 
     private synchronized static Context getContext() {
-        if (context != null)
-            return context;
+        if (context.get() != null)
+            return context.get();
 
         IAbstractSyntax asn;
 
@@ -90,7 +96,8 @@ public class Ngap {
 
         context.setIndentationShift(2);
 
-        return Ngap.context = context;
+        Ngap.context.set(context);
+        return context;
     }
 
     public static byte[] perEncode(Value value) {
@@ -142,9 +149,6 @@ public class Ngap {
         return xerDecode(type, xml.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * This method is different from NAS/5GS version
-     */
     public static PLMNIdentity plmnEncode(VPlmn plmn) {
         int mcc = plmn.mcc.intValue();
         int mcc3 = mcc % 10;
@@ -183,9 +187,6 @@ public class Ngap {
         }
     }
 
-    /**
-     * This method is different from NAS/5GS version
-     */
     public static VPlmn plmnDecode(PLMNIdentity plmn) {
         var bytes = plmn.getValue();
         var stream = new OctetInputStream(bytes);
@@ -225,5 +226,67 @@ public class Ngap {
         userLocationInformationNr.tAI.pLMNIdentity = Ngap.plmnEncode(nr.tai.plmn);
         userLocationInformationNr.timeStamp = new TimeStamp(nr.timeStamp.toByteArray());
         return userLocationInformationNr;
+    }
+
+    public static GlobalRANNodeID createGlobalGnbId(int globalGnbId, VPlmn gnbPlmn) {
+        try {
+            var res = new GlobalGNB_ID();
+            res.gNB_ID =
+                    new GNB_ID(
+                            GNB_ID.ASN_gNB_ID, new BitStringValue(new Octet4(globalGnbId).toByteArray(true), 32));
+            res.pLMNIdentity = Ngap.plmnEncode(gnbPlmn);
+            return new GlobalRANNodeID(GlobalRANNodeID.ASN_globalGNB_ID, res);
+        } catch (InvalidStructureException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static SliceSupportList createSliceSupportList(IESNssai[] taiSliceSupportNssais) {
+        var list = new ArrayList<SliceSupportItem>();
+
+        if (taiSliceSupportNssais != null) {
+            for (var nssai : taiSliceSupportNssais) {
+                var item = new SliceSupportItem();
+                item.s_NSSAI = new S_NSSAI();
+                item.s_NSSAI.sD = new SD(nssai.sd.value.toByteArray());
+                item.s_NSSAI.sST = new SST(nssai.sst.value.toByteArray());
+                list.add(item);
+            }
+        }
+
+        var res = new SliceSupportList();
+        res.valueList = list;
+        return res;
+    }
+
+    private static BroadcastPLMNList createBroadcastPlmnList(
+            SupportedTA.BroadcastPlmn[] broadcastPlmns) {
+        var list = new ArrayList<BroadcastPLMNItem>();
+
+        for (var broadcastPlmn : broadcastPlmns) {
+            var item = new BroadcastPLMNItem();
+            item.pLMNIdentity = Ngap.plmnEncode(broadcastPlmn.plmn);
+            item.tAISliceSupportList = createSliceSupportList(broadcastPlmn.taiSliceSupportNssais);
+            list.add(item);
+        }
+
+        var res = new BroadcastPLMNList();
+        res.valueList = list;
+        return res;
+    }
+
+    public static SupportedTAList createSupportedTAList(SupportedTA[] supportedTAs) {
+        var list = new ArrayList<SupportedTAItem>();
+
+        for (var supportedTa : supportedTAs) {
+            var supportedTaiItem = new SupportedTAItem();
+            supportedTaiItem.tAC = new TAC(supportedTa.tac.toByteArray());
+            supportedTaiItem.broadcastPLMNList = createBroadcastPlmnList(supportedTa.broadcastPlmns);
+            list.add(supportedTaiItem);
+        }
+
+        var res = new SupportedTAList();
+        res.valueList = list;
+        return res;
     }
 }
