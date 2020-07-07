@@ -66,8 +66,8 @@ public class Program {
         var scanner = new Scanner(System.in);
 
         System.out.println("Possible events:" + Json.toJson(EventParser.possibleEvents()));
-        System.out.println("Type event:");
         while (true) {
+            System.out.println("Type event:");
             String line = scanner.nextLine();
             var event = EventParser.parse(line);
             if (event == null) {
@@ -78,6 +78,7 @@ public class Program {
                 } else if (event instanceof UeEvent) {
                     ueContext.pushEvent((UeEvent) event);
                 }
+                System.out.println("Event pushed.");
             }
         }
     }
