@@ -107,6 +107,8 @@ class MmRegistration {
 
         if (sendCompleteMes) {
             MobilityManagement.sendMm(ctx, new RegistrationComplete());
+
+            Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
         }
     }
 
