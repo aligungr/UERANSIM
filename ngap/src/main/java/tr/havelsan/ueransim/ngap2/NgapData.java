@@ -143,10 +143,10 @@ public class NgapData {
         throw new RuntimeException();
     }
 
-    public static int findIeId(NgapMessageType messageType, String ieAsnTypeName) {
+    public static int findIeId(NgapMessageType messageType, NgapIeType ieType) {
         var ies = pduContents.get(messageType.name()).ies;
         for (PduContent.InformationElement element : ies) {
-            if (element.type.equals(ieAsnTypeName)) {
+            if (element.type.equals(ieType.typeName)) {
                 return ieIds.get(element.id);
             }
         }
@@ -154,19 +154,15 @@ public class NgapData {
         throw new RuntimeException();
     }
 
-    public static NgapCriticality findIeCriticality(NgapMessageType messageType, String ieAsnTypeName) {
+    public static NgapCriticality findIeCriticality(NgapMessageType messageType, NgapIeType ieType) {
         var ies = pduContents.get(messageType.name()).ies;
         for (PduContent.InformationElement element : ies) {
-            if (element.type.equals(ieAsnTypeName)) {
+            if (element.type.equals(ieType.typeName)) {
                 return NgapCriticality.fromAsnValue(element.criticality);
             }
         }
         Logging.error(Tag.NGAP_INTERNAL, "failed to findIeId");
         throw new RuntimeException();
-    }
-
-    public static Iterable<String> ieTypeNames() {
-        return ieTypeNames;
     }
 
     public static List<String> findIeListOfMessage(NgapMessageType messageType) {

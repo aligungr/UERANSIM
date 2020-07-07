@@ -36,6 +36,7 @@ import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap.ngap_ies.UserLocationInformation;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
@@ -70,20 +71,26 @@ public class GNodeB {
 
         // Adding AMF-UE-NGAP-ID (if any)
         {
-            Long amfUeNgapId = ctx.ueContexts.get(ueId).amfUeNgapId;
-            if (amfUeNgapId != null) {
-                ngapBuilder.addAmfUeNgapId(amfUeNgapId);
+            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, AMF_UE_NGAP_ID.class)) {
+                Long amfUeNgapId = ctx.ueContexts.get(ueId).amfUeNgapId;
+                if (amfUeNgapId != null) {
+                    ngapBuilder.addAmfUeNgapId(amfUeNgapId);
+                }
             }
         }
 
         // Adding RAN-UE-NGAP-ID
         {
-            ngapBuilder.addRanUeNgapId(ctx.ueContexts.get(ueId).ranUeNgapId);
+            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, RAN_UE_NGAP_ID.class)) {
+                ngapBuilder.addRanUeNgapId(ctx.ueContexts.get(ueId).ranUeNgapId);
+            }
         }
 
         // Adding user location information
         {
-            ngapBuilder.addUserLocationInformationNR(Simulation.findUe(ctx.simCtx, ueId).ueConfig.userLocationInformationNr);
+            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, UserLocationInformation.class)) {
+                ngapBuilder.addUserLocationInformationNR(Simulation.findUe(ctx.simCtx, ueId).ueConfig.userLocationInformationNr);
+            }
         }
 
         var ngapPdu = ngapBuilder.build();

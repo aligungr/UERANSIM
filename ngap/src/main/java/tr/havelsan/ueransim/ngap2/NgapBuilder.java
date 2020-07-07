@@ -47,8 +47,8 @@ import java.util.List;
 
 public class NgapBuilder {
 
-    private NgapMessageType messageType;
-    private List<Value> protocolIEs;
+    public final NgapMessageType messageType;
+    private final List<Value> protocolIEs;
 
     public NgapBuilder(NgapMessageType messageType) {
         this.protocolIEs = new ArrayList<>();
@@ -127,9 +127,9 @@ public class NgapBuilder {
 
         NgapInternal.sortProtocolIEs(messageType, protocolIEs);
         for (var protocolIe : protocolIEs) {
-            var asnTypeName = NgapInternal.findIeAsnTypeName(protocolIe);
-            var criticality = NgapData.findIeCriticality(messageType, asnTypeName);
-            var id = NgapData.findIeId(messageType, asnTypeName);
+            var ieType = NgapInternal.findIeAsnType(protocolIe);
+            var criticality = NgapData.findIeCriticality(messageType, ieType);
+            var id = NgapData.findIeId(messageType, ieType);
 
             NgapInternal.appendProtocolIe(messageType, messageValue, criticality, protocolIe, id);
         }

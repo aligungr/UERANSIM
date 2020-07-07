@@ -49,25 +49,24 @@ import java.util.List;
 
 import static tr.havelsan.ueransim.core.Constants.NGAP_PDU_CONTENTS;
 
+// TODO: This utility is invalid for PrivateMessage, privateIE and related.
 public class NgapInternal {
 
     public static void sortProtocolIEs(NgapMessageType messageType, List<Value> protocolIEs) {
         var sortingList = NgapData.findIeListOfMessage(messageType);
         protocolIEs.sort(Comparator.comparingInt(ie -> {
-            int index = sortingList.indexOf(findIeAsnTypeName(ie));
+            int index = sortingList.indexOf(findIeAsnType(ie).typeName);
             if (index == -1) index = Integer.MAX_VALUE;
             return index;
         }));
     }
 
-    public static String findIeAsnTypeName(Value protocolIe) {
-        for (var item : NgapData.ieTypeNames()) {
-            if (item.replace("-", "_").equals(protocolIe.getClass().getSimpleName())) {
-                return item;
-            }
-        }
-        Logging.error(Tag.NGAP_INTERNAL, "failed to findIeAsnTypeName");
-        throw new RuntimeException();
+    public static NgapIeType findIeAsnType(Value protocolIe) {
+        return NgapIeType.valueOf(protocolIe.getClass().getSimpleName());
+    }
+
+    public static NgapIeType findIeAsnType(Class<? extends Value> protocolIeType) {
+        return NgapIeType.valueOf(protocolIeType.getSimpleName());
     }
 
     public static String getMessageTypeClassName(NgapMessageType messageType) {
@@ -224,9 +223,13 @@ public class NgapInternal {
         }
     }
 
-    // todo: this is incorrect
     public static boolean isUeAssociated(SequenceValue ngapMessage) {
         var ies = extractProtocolIe(ngapMessage, RAN_UE_NGAP_ID.class);
         return ies.size() > 0;
+    }
+
+    public static boolean isProtocolIeUsable(NgapMessageType messageType, Class<? extends Value> protocolIeType) {
+        var x = NgapData.findIeListOfMessage(messageType);
+        return x.contains(findIeAsnType(protocolIeType).typeName);
     }
 }
