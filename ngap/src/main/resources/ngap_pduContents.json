@@ -1,7 +1,7 @@
 [
   {
     "name": "PDUSessionResourceSetupRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -37,7 +37,7 @@
   },
   {
     "name": "PDUSessionResourceSetupResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -73,7 +73,7 @@
   },
   {
     "name": "PDUSessionResourceReleaseCommand",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -109,7 +109,7 @@
   },
   {
     "name": "PDUSessionResourceReleaseResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -145,7 +145,7 @@
   },
   {
     "name": "PDUSessionResourceModifyRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -175,7 +175,7 @@
   },
   {
     "name": "PDUSessionResourceModifyResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -217,7 +217,7 @@
   },
   {
     "name": "PDUSessionResourceNotify",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -253,7 +253,7 @@
   },
   {
     "name": "PDUSessionResourceModifyIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -277,7 +277,7 @@
   },
   {
     "name": "PDUSessionResourceModifyConfirm",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -313,7 +313,7 @@
   },
   {
     "name": "InitialContextSetupRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -433,7 +433,7 @@
   },
   {
     "name": "InitialContextSetupResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -469,7 +469,7 @@
   },
   {
     "name": "InitialContextSetupFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -505,7 +505,7 @@
   },
   {
     "name": "UEContextReleaseRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -535,7 +535,7 @@
   },
   {
     "name": "UEContextReleaseCommand",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-UE-NGAP-IDs",
@@ -553,7 +553,7 @@
   },
   {
     "name": "UEContextReleaseComplete",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -595,7 +595,7 @@
   },
   {
     "name": "UEContextModificationRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -667,7 +667,7 @@
   },
   {
     "name": "UEContextModificationResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -703,7 +703,7 @@
   },
   {
     "name": "UEContextModificationFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -733,7 +733,7 @@
   },
   {
     "name": "RRCInactiveTransitionReport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -763,7 +763,7 @@
   },
   {
     "name": "HandoverRequired",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -817,7 +817,7 @@
   },
   {
     "name": "HandoverCommand",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -871,7 +871,7 @@
   },
   {
     "name": "HandoverPreparationFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -901,7 +901,7 @@
   },
   {
     "name": "HandoverRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1015,7 +1015,7 @@
   },
   {
     "name": "HandoverRequestAcknowledge",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1057,7 +1057,7 @@
   },
   {
     "name": "HandoverFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1081,7 +1081,7 @@
   },
   {
     "name": "HandoverNotify",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1105,7 +1105,7 @@
   },
   {
     "name": "PathSwitchRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-RAN-UE-NGAP-ID",
@@ -1147,7 +1147,7 @@
   },
   {
     "name": "PathSwitchRequestAcknowledge",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1219,7 +1219,7 @@
   },
   {
     "name": "PathSwitchRequestFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1249,7 +1249,7 @@
   },
   {
     "name": "HandoverCancel",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1273,7 +1273,7 @@
   },
   {
     "name": "HandoverCancelAcknowledge",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1297,7 +1297,7 @@
   },
   {
     "name": "UplinkRANStatusTransfer",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1321,7 +1321,7 @@
   },
   {
     "name": "DownlinkRANStatusTransfer",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1345,7 +1345,7 @@
   },
   {
     "name": "Paging",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-UEPagingIdentity",
@@ -1393,7 +1393,7 @@
   },
   {
     "name": "InitialUEMessage",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-RAN-UE-NGAP-ID",
@@ -1447,7 +1447,7 @@
   },
   {
     "name": "DownlinkNASTransport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1507,7 +1507,7 @@
   },
   {
     "name": "UplinkNASTransport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1537,7 +1537,7 @@
   },
   {
     "name": "NASNonDeliveryIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1567,7 +1567,7 @@
   },
   {
     "name": "RerouteNASRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-RAN-UE-NGAP-ID",
@@ -1603,7 +1603,7 @@
   },
   {
     "name": "NGSetupRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-GlobalRANNodeID",
@@ -1633,7 +1633,7 @@
   },
   {
     "name": "NGSetupResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMFName",
@@ -1669,7 +1669,7 @@
   },
   {
     "name": "NGSetupFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-Cause",
@@ -1693,7 +1693,7 @@
   },
   {
     "name": "RANConfigurationUpdate",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-RANNodeName",
@@ -1717,7 +1717,7 @@
   },
   {
     "name": "RANConfigurationUpdateAcknowledge",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-CriticalityDiagnostics",
@@ -1729,7 +1729,7 @@
   },
   {
     "name": "RANConfigurationUpdateFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-Cause",
@@ -1753,7 +1753,7 @@
   },
   {
     "name": "AMFConfigurationUpdate",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMFName",
@@ -1801,7 +1801,7 @@
   },
   {
     "name": "AMFConfigurationUpdateAcknowledge",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-TNLAssociationSetupList",
@@ -1825,7 +1825,7 @@
   },
   {
     "name": "AMFConfigurationUpdateFailure",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-Cause",
@@ -1849,7 +1849,7 @@
   },
   {
     "name": "AMFStatusIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-UnavailableGUAMIList",
@@ -1861,7 +1861,7 @@
   },
   {
     "name": "NGReset",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-Cause",
@@ -1879,7 +1879,7 @@
   },
   {
     "name": "NGResetAcknowledge",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-UE-associatedLogicalNG-connectionList",
@@ -1897,7 +1897,7 @@
   },
   {
     "name": "ErrorIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -1927,7 +1927,7 @@
   },
   {
     "name": "OverloadStart",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMFOverloadResponse",
@@ -1951,12 +1951,12 @@
   },
   {
     "name": "OverloadStop",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": []
   },
   {
     "name": "UplinkRANConfigurationTransfer",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-SONConfigurationTransferUL",
@@ -1968,7 +1968,7 @@
   },
   {
     "name": "DownlinkRANConfigurationTransfer",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-SONConfigurationTransferDL",
@@ -1980,7 +1980,7 @@
   },
   {
     "name": "WriteReplaceWarningRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-MessageIdentifier",
@@ -2052,7 +2052,7 @@
   },
   {
     "name": "WriteReplaceWarningResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-MessageIdentifier",
@@ -2082,7 +2082,7 @@
   },
   {
     "name": "PWSCancelRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-MessageIdentifier",
@@ -2112,7 +2112,7 @@
   },
   {
     "name": "PWSCancelResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-MessageIdentifier",
@@ -2142,7 +2142,7 @@
   },
   {
     "name": "PWSRestartIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-CellIDListForRestart",
@@ -2172,7 +2172,7 @@
   },
   {
     "name": "PWSFailureIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-PWSFailedCellIDList",
@@ -2190,7 +2190,7 @@
   },
   {
     "name": "DownlinkUEAssociatedNRPPaTransport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2220,7 +2220,7 @@
   },
   {
     "name": "UplinkUEAssociatedNRPPaTransport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2250,7 +2250,7 @@
   },
   {
     "name": "DownlinkNonUEAssociatedNRPPaTransport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-RoutingID",
@@ -2268,7 +2268,7 @@
   },
   {
     "name": "UplinkNonUEAssociatedNRPPaTransport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-RoutingID",
@@ -2286,7 +2286,7 @@
   },
   {
     "name": "TraceStart",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2310,7 +2310,7 @@
   },
   {
     "name": "TraceFailureIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2340,7 +2340,7 @@
   },
   {
     "name": "DeactivateTrace",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2364,7 +2364,7 @@
   },
   {
     "name": "CellTrafficTrace",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2400,7 +2400,7 @@
   },
   {
     "name": "LocationReportingControl",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2424,7 +2424,7 @@
   },
   {
     "name": "LocationReportingFailureIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2448,7 +2448,7 @@
   },
   {
     "name": "LocationReport",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2484,7 +2484,7 @@
   },
   {
     "name": "UETNLABindingReleaseRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2502,7 +2502,7 @@
   },
   {
     "name": "UERadioCapabilityInfoIndication",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2532,7 +2532,7 @@
   },
   {
     "name": "UERadioCapabilityCheckRequest",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2556,7 +2556,7 @@
   },
   {
     "name": "UERadioCapabilityCheckResponse",
-    "isProtocolIe": true,
+    "isPrivate": false,
     "ies": [
       {
         "id": "id-AMF-UE-NGAP-ID",
@@ -2586,7 +2586,7 @@
   },
   {
     "name": "PrivateMessage",
-    "isProtocolIe": false,
+    "isPrivate": true,
     "ies": []
   }
 ]
