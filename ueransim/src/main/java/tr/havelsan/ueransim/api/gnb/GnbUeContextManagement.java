@@ -26,9 +26,13 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
+import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
+import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.ngap2.NgapMessageType;
 import tr.havelsan.ueransim.utils.Debugging;
 
@@ -41,5 +45,10 @@ public class GnbUeContextManagement {
 
         // todo
         GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NgapBuilder(NgapMessageType.InitialContextSetupResponse));
+
+        var nasMessage = NgapInternal.extractNasMessage(message);
+        if (nasMessage != null) {
+            Simulation.findUe(ctx.simCtx, associatedUe).pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
+        }
     }
 }

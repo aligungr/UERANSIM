@@ -42,31 +42,31 @@ import java.util.UUID;
 
 public class GnbNasTransport {
 
-    public static void receiveUplinkNasTransport(GnbSimContext ctx, UUID ueId, NasMessage nasMessage) {
+    public static void receiveUplinkNasTransport(GnbSimContext ctx, UUID associatedUe, NasMessage nasMessage) {
         NgapBuilder ngap;
 
-        if (ctx.ueContexts.containsKey(ueId)) {
+        if (ctx.ueContexts.containsKey(associatedUe)) {
             ngap = new NgapBuilder(NgapMessageType.UplinkNASTransport);
         } else {
             ngap = new NgapBuilder(NgapMessageType.InitialUEMessage);
             ngap.addProtocolIE(new RRCEstablishmentCause(RRCEstablishmentCause.ASN_mo_Data));
 
-            GnbUeManagement.allocateUeNgapId(ctx, ueId);
+            GnbUeManagement.allocateUeNgapId(ctx, associatedUe);
         }
 
         if (nasMessage != null) {
             ngap.addNasPdu(nasMessage);
         }
 
-        GNodeB.sendToNetworkUeAssociated(ctx, ueId, ngap);
+        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, ngap);
     }
 
-    public static void receiveDownlinkNasTransport(GnbSimContext ctx, UUID ueId, DownlinkNASTransport message) {
+    public static void receiveDownlinkNasTransport(GnbSimContext ctx, UUID associatedUe, DownlinkNASTransport message) {
         Debugging.assertThread(ctx);
 
         var nasMessage = NgapInternal.extractNasMessage(message);
         if (nasMessage != null) {
-            Simulation.findUe(ctx.simCtx, ueId).pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
+            Simulation.findUe(ctx.simCtx, associatedUe).pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
     }
 }
