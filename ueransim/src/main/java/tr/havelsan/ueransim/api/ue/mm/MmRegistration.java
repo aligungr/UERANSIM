@@ -107,9 +107,8 @@ class MmRegistration {
 
         if (sendCompleteMes) {
             MobilityManagement.sendMm(ctx, new RegistrationComplete());
-
-            Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
         }
+        Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
     }
 
     public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
