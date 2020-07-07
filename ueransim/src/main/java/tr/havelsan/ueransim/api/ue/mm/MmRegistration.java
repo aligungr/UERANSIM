@@ -43,6 +43,8 @@ import tr.havelsan.ueransim.utils.Tag;
 class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType) {
+        Logging.funcIn("Starting: Registration procedure");
+
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.currentNsCtx != null && ctx.currentNsCtx.ngKsi != null) {
             ngKsi = ctx.currentNsCtx.ngKsi;
@@ -87,9 +89,13 @@ class MmRegistration {
         ctx.ueTimers.t3511.stop();
 
         MobilityManagement.sendMm(ctx, registrationRequest);
+
+        Logging.funcOut();
     }
 
     public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
+        Logging.funcIn("Handling: Registration Accept");
+
         boolean sendCompleteMes = false;
 
         ctx.mmCtx.taiList = message.taiList;
@@ -108,10 +114,14 @@ class MmRegistration {
         if (sendCompleteMes) {
             MobilityManagement.sendMm(ctx, new RegistrationComplete());
         }
+
         Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
+        Logging.funcOut();
     }
 
     public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
+        Logging.funcIn("Starting: Registration reject");
+
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
@@ -190,5 +200,7 @@ class MmRegistration {
         } else {
             // todo
         }
+
+        Logging.funcOut();
     }
 }

@@ -371,6 +371,8 @@ class MmAuthentication {
     }
 
     public static void receiveAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
+        Logging.funcIn("Handling: Authentication Result");
+
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
                 MmAuthentication.receiveEapSuccessMessage(ctx, message.eapMessage.eap);
@@ -381,9 +383,13 @@ class MmAuthentication {
                         message.eapMessage.eap.code.name());
             }
         }
+
+        Logging.funcOut();
     }
 
     public static void receiveAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
+        Logging.funcIn("Handling: Authentication Result");
+
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
                 MmAuthentication.receiveEapResponseMessage(ctx, message.eapMessage.eap);
@@ -392,9 +398,13 @@ class MmAuthentication {
                         message.eapMessage.eap.code.name());
             }
         }
+
+        Logging.funcOut();
     }
 
     public static void receiveAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
+        Logging.funcIn("Handling: Authentication Reject");
+
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
 
@@ -410,6 +420,8 @@ class MmAuthentication {
                         message.eapMessage.eap.code.name());
             }
         }
+
+        Logging.funcOut();
     }
 
     public static void receiveEapSuccessMessage(UeSimContext ctx, Eap eap) {

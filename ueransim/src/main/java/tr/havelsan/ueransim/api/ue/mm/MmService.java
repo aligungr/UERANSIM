@@ -36,6 +36,8 @@ import tr.havelsan.ueransim.utils.Tag;
 class MmService {
 
     public static void handleServiceAccept(UeSimContext ctx, ServiceAccept message) {
+        Logging.funcIn("Handling: Service Accept");
+
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
@@ -44,9 +46,13 @@ class MmService {
                         message.eapMessage.eap.code.name());
             }
         }
+
+        Logging.funcOut();
     }
 
     public static void handleServiceReject(UeSimContext ctx, ServiceReject message) {
+        Logging.funcIn("Handling: Service Accept");
+
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
@@ -55,5 +61,7 @@ class MmService {
                         message.eapMessage.eap.code.name());
             }
         }
+
+        Logging.funcOut();
     }
 }
