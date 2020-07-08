@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.api.sys.SimulationContext;
-import tr.havelsan.ueransim.events.SimulationEvent;
+import tr.havelsan.ueransim.events.BaseEvent;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
@@ -35,7 +35,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.UUID;
 
-public class BaseSimContext<T extends SimulationEvent> {
+public class BaseSimContext<T extends BaseEvent> {
     public final SimulationContext simCtx;
     public final UUID ctxId;
     private final Queue<T> eventQueue;

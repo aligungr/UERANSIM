@@ -48,7 +48,7 @@ public class GnbUeContextManagement {
 
         var nasMessage = NgapInternal.extractNasMessage(message);
         if (nasMessage != null) {
-            Simulation.findUe(ctx.simCtx, associatedUe).pushEvent(new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
+            Simulation.pushUeEvent(ctx.simCtx, associatedUe, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
     }
 }

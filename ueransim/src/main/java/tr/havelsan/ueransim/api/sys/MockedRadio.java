@@ -24,9 +24,15 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.events.ue;
+package tr.havelsan.ueransim.api.sys;
 
-import tr.havelsan.ueransim.events.BaseEvent;
+import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
 
-public abstract class UeEvent extends BaseEvent {
+import java.util.UUID;
+
+public class MockedRadio {
+
+    public static UserLocationInformationNr findLocationOfUe(SimulationContext ctx, UUID ueId) {
+        return Simulation.findUe(ctx, ueId).ueConfig.userLocationInformationNr;
+    }
 }

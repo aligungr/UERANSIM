@@ -59,8 +59,7 @@ public class UserEquipment {
         Logging.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(securedNas));
         Logging.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
 
-        var gnb = Simulation.findGnb(ctx.simCtx, ctx.connectedGnb);
-        gnb.pushEvent(new GnbUplinkNasEvent(ctx.ctxId, securedNasPdu));
+        Simulation.pushGnbEvent(ctx.simCtx, ctx.connectedGnb, new GnbUplinkNasEvent(ctx.ctxId, securedNasPdu));
 
         Logging.funcOut();
     }

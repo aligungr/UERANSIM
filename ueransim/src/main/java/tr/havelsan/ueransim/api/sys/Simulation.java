@@ -28,6 +28,11 @@ package tr.havelsan.ueransim.api.sys;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.UeSimContext;
+import tr.havelsan.ueransim.events.BaseEvent;
+import tr.havelsan.ueransim.events.gnb.GnbEvent;
+import tr.havelsan.ueransim.events.ue.UeEvent;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.UUID;
 
@@ -45,13 +50,13 @@ public class Simulation {
         }
     }
 
-    public static UeSimContext findUe(SimulationContext ctx, UUID id) {
+    static UeSimContext findUe(SimulationContext ctx, UUID id) {
         synchronized (ctx) {
             return ctx.ueMap.get(id);
         }
     }
 
-    public static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
+    static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
         synchronized (ctx) {
             return ctx.gnbMap.get(id);
         }
@@ -62,6 +67,34 @@ public class Simulation {
             synchronized (gnbContext) {
                 ueContext.connectedGnb = gnbContext.ctxId;
             }
+        }
+    }
+
+    public static void pushEvent(SimulationContext ctx, BaseEvent event) {
+        // todo
+    }
+
+    public static void pushUeEvent(SimulationContext ctx, UUID ueId, UeEvent event) {
+        UeSimContext ue;
+        synchronized (ctx) {
+            ue = findUe(ctx, ueId);
+        }
+        if (ue == null) {
+            Logging.error(Tag.SYSTEM, "Simulation.pushUeEvent: could not find UE Sim Context with id: %s", ueId);
+        } else {
+            ue.pushEvent(event);
+        }
+    }
+
+    public static void pushGnbEvent(SimulationContext ctx, UUID gnbId, GnbEvent event) {
+        GnbSimContext gnb;
+        synchronized (ctx) {
+            gnb = findGnb(ctx, gnbId);
+        }
+        if (gnb == null) {
+            Logging.error(Tag.SYSTEM, "Simulation.pushGnbEvent: could not find gNB Sim Context with id: %s", gnbId);
+        } else {
+            gnb.pushEvent(event);
         }
     }
 }

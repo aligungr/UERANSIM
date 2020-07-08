@@ -26,5 +26,5 @@
 
 package tr.havelsan.ueransim.events;
 
-public abstract class SimulationEvent {
+public abstract class BaseEvent {
 }

@@ -26,8 +26,8 @@
 
 package tr.havelsan.ueransim.events.gnb;
 
-import tr.havelsan.ueransim.events.SimulationEvent;
+import tr.havelsan.ueransim.events.BaseEvent;
 
-public abstract class GnbEvent extends SimulationEvent {
+public abstract class GnbEvent extends BaseEvent {
 
 }

@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.Ngap;
-import tr.havelsan.ueransim.api.sys.Simulation;
+import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
@@ -89,7 +89,7 @@ public class GNodeB {
         // Adding user location information
         {
             if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, UserLocationInformation.class)) {
-                ngapBuilder.addUserLocationInformationNR(Simulation.findUe(ctx.simCtx, ueId).ueConfig.userLocationInformationNr);
+                ngapBuilder.addUserLocationInformationNR(MockedRadio.findLocationOfUe(ctx.simCtx, ueId));
             }
         }
 

@@ -38,7 +38,7 @@ public class EventParser {
         };
     }
 
-    public static SimulationEvent parse(String command) {
+    public static BaseEvent parse(String command) {
         if (command == null) {
             return null;
         }
