@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
-public class SCTPClient implements ISctpClient {
+public class SctpClient implements ISctpClient {
     private static final int RECEIVER_BUFFER_SIZE = 1073741824;
 
     private final String host;
@@ -46,7 +46,7 @@ public class SCTPClient implements ISctpClient {
     private SctpChannel channel;
     private boolean receiving;
 
-    public SCTPClient(String host, int port, int protocolId, ISctpAssociationHandler sctpAssociationHandler) {
+    public SctpClient(String host, int port, int protocolId, ISctpAssociationHandler sctpAssociationHandler) {
         this.host = host;
         this.port = port;
         this.protocolId = protocolId;
