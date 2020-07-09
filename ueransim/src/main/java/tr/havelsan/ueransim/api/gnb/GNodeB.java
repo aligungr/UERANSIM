@@ -38,10 +38,7 @@ import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.UserLocationInformation;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
@@ -110,17 +107,17 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void receiveFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
 
         if (NgapInternal.isUeAssociated(ngapMessage)) {
-            receiveFromNetworkUeAssociated(ctx, ngapPdu);
+            receiveFromNetworkUeAssociated(ctx, associatedAmf, ngapPdu);
         } else {
-            receiveFromNetworkNonUe(ctx, ngapPdu);
+            receiveFromNetworkNonUe(ctx, associatedAmf, ngapPdu);
         }
     }
 
-    private static void receiveFromNetworkNonUe(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    private static void receiveFromNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
@@ -134,7 +131,7 @@ public class GNodeB {
         }
     }
 
-    private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
@@ -177,6 +174,8 @@ public class GNodeB {
             GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (DownlinkNASTransport) ngapMessage);
         } else if (ngapMessage instanceof InitialContextSetupRequest) {
             GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (InitialContextSetupRequest) ngapMessage);
+        } else if (ngapMessage instanceof RerouteNASRequest) {
+            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (RerouteNASRequest) ngapMessage);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
@@ -193,7 +192,7 @@ public class GNodeB {
             Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
             Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
 
-            GNodeB.receiveFromNetwork(ctx, ngapPdu);
+            GNodeB.receiveFromNetwork(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
         } else if (event instanceof SctpAssociationSetupEvent) {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 

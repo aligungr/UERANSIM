@@ -265,7 +265,7 @@ public final class BitString {
 
     @Override
     public String toString() {
-        return toBinaryString(true);
+        return toBinaryString(false);
     }
 
     @Override
@@ -279,5 +279,19 @@ public final class BitString {
     @Override
     public int hashCode() {
         return Objects.hash(bits);
+    }
+
+    public int intValue() {
+        if (bitLength() > 32) {
+            throw new IllegalStateException("BitString has more than 31 bits");
+        }
+        return Integer.parseInt(toBinaryString(false), 2);
+    }
+
+    public long longValue() {
+        if (bitLength() > 64) {
+            throw new IllegalStateException("BitString has more than 63 bits");
+        }
+        return Long.parseLong(toBinaryString(false), 2);
     }
 }

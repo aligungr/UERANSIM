@@ -28,24 +28,26 @@ package tr.havelsan.ueransim.events.gnb;
 
 import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.structs.Guami;
 
 public class SctpReceiveEvent extends GnbEvent {
+    public final Guami associatedAmf;
     public final NGAP_PDU ngapPdu;
 
-    public SctpReceiveEvent(byte[] ngapPdu) {
-        this(Ngap.perDecode(NGAP_PDU.class, ngapPdu));
+    public SctpReceiveEvent(byte[] ngapPdu, Guami associatedAmf) {
+        this(Ngap.perDecode(NGAP_PDU.class, ngapPdu), associatedAmf);
     }
 
-    public SctpReceiveEvent(NGAP_PDU ngapPdu) {
+    public SctpReceiveEvent(NGAP_PDU ngapPdu, Guami associatedAmf) {
         this.ngapPdu = ngapPdu;
+        this.associatedAmf = associatedAmf;
     }
 
     @Override
     public String toString() {
-        var n = ngapPdu == null ? "null" : NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName();
         return "SctpReceiveEvent{" +
-                "ngapPdu=" + n +
+                "ngapPdu=" + ngapPdu +
+                ", associatedAmf=" + associatedAmf +
                 '}';
     }
 }

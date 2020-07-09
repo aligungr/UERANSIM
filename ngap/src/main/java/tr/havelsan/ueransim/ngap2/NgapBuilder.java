@@ -55,6 +55,16 @@ public class NgapBuilder {
         this.messageType = messageType;
     }
 
+    // WARNING: This method may cause IEs to be mutated.
+    // Do not reuse the passed IE!
+    public static NgapBuilder wrapMessage(Value value) {
+        var nb = new NgapBuilder(NgapMessageType.valueOf(value.getClass().getSimpleName()));
+        for (var protocolIe : NgapInternal.extractProtocolIe(value, Value.class)) {
+            nb.addProtocolIE(protocolIe);
+        }
+        return nb;
+    }
+
     public NgapBuilder addProtocolIE(Value value) {
         this.protocolIEs.add(value);
         return this;

@@ -41,7 +41,7 @@ public class GnbNode {
         }
 
         for (var amfCtx : ctx.amfContexts.values()) {
-            new SctpRecevierThread(ctx, amfCtx.sctpClient).start();
+            new SctpRecevierThread(ctx, amfCtx.guami, amfCtx.sctpClient).start();
         }
 
         var looperThread = new NodeLooperThread<>(ctx, GNodeB::cycle);
