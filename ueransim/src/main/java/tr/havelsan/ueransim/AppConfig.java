@@ -67,11 +67,11 @@ public class AppConfig {
 
                 ISctpClient sctpClient;
                 if (amfConfig.isMocked) {
-                    sctpClient = new SctpClient(amfConfig.host, amfConfig.port,
-                            Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
-                } else {
                     Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
                     sctpClient = newMockedClient(amfConfig.mockingFile, gnbSctpAssociationHandler);
+                } else {
+                    sctpClient = new SctpClient(amfConfig.host, amfConfig.port,
+                            Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
                 }
 
                 if (amfConfig.guami == null) {
