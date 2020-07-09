@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.api.ue.mm;
 
 import tr.havelsan.ueransim.core.UeSimContext;
+import tr.havelsan.ueransim.enums.ERmState;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
@@ -115,6 +116,9 @@ class MmRegistration {
             MobilityManagement.sendMm(ctx, new RegistrationComplete());
         }
 
+        Logging.info(Tag.STATE, "UE enters RM_REGISTERED state");
+        ctx.mmCtx.rmState = ERmState.RM_REGISTERED;
+
         Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
         Logging.funcOut();
     }
@@ -200,6 +204,9 @@ class MmRegistration {
         } else {
             // todo
         }
+
+        Logging.info(Tag.STATE, "UE enters RM_DEREGISTERED state");
+        ctx.mmCtx.rmState = ERmState.RM_DEREGISTERED;
 
         Logging.funcOut();
     }
