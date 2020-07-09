@@ -36,14 +36,14 @@ public class Guami {
     public final EMccValue mcc;
     public final EMncValue mnc;
     public final Octet amfRegionId;
-    public final Bit10 value;
+    public final Bit10 amfSetId;
     public final Bit6 amfPointer;
 
-    public Guami(EMccValue mcc, EMncValue mnc, Octet amfRegionId, Bit10 value, Bit6 amfPointer) {
+    public Guami(EMccValue mcc, EMncValue mnc, Octet amfRegionId, Bit10 amfSetId, Bit6 amfPointer) {
         this.mcc = mcc;
         this.mnc = mnc;
         this.amfRegionId = amfRegionId;
-        this.value = value;
+        this.amfSetId = amfSetId;
         this.amfPointer = amfPointer;
     }
 }

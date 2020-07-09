@@ -59,6 +59,6 @@ public class GnbUeManagement {
 
     private static void selectAmfForUe(GnbSimContext ctx, GnbUeContext ueCtx) {
         // todo:
-        ueCtx.associatedAmf = ctx.config.defaultAmf;
+        ueCtx.associatedAmf = ctx.config.amfConfigs[0].guami;
     }
 }

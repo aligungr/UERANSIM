@@ -62,20 +62,16 @@ public class AppConfig {
 
         // Create AMF gNB contexts and SCTP Clients
         {
-            if (ctx.config.defaultAmf == null) {
-                throw new RuntimeException("ctx.config.defaultAmf == null");
-            }
-
             for (var amfConfig : ctx.config.amfConfigs) {
                 var gnbSctpAssociationHandler = new GnbSctpAssociationHandler(ctx, amfConfig.guami);
 
                 ISctpClient sctpClient;
-                if (amfConfig.amfMocked) {
-                    sctpClient = new SctpClient(amfConfig.amfHost, amfConfig.amfPort,
+                if (amfConfig.isMocked) {
+                    sctpClient = new SctpClient(amfConfig.host, amfConfig.port,
                             Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
                 } else {
                     Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
-                    sctpClient = newMockedClient(amfConfig.amfMockedRemote, gnbSctpAssociationHandler);
+                    sctpClient = newMockedClient(amfConfig.mockingFile, gnbSctpAssociationHandler);
                 }
 
                 if (amfConfig.guami == null) {

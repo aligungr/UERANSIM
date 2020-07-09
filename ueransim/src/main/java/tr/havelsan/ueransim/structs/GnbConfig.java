@@ -34,15 +34,13 @@ public class GnbConfig {
     public final VPlmn gnbPlmn;
 
     public final GnbAmfConfig[] amfConfigs;
-    public final Guami defaultAmf;
 
     public final SupportedTA[] supportedTAs;
 
-    public GnbConfig(int gnbId, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, Guami defaultAmf, SupportedTA[] supportedTAs) {
+    public GnbConfig(int gnbId, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs) {
         this.gnbId = gnbId;
         this.gnbPlmn = gnbPlmn;
         this.amfConfigs = amfConfigs;
-        this.defaultAmf = defaultAmf;
         this.supportedTAs = supportedTAs;
     }
 }

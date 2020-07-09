@@ -28,16 +28,16 @@ package tr.havelsan.ueransim.structs;
 
 public class GnbAmfConfig {
     public final Guami guami;
-    public final String amfHost;
-    public final int amfPort;
-    public final boolean amfMocked;
-    public final String amfMockedRemote;
+    public final String host;
+    public final int port;
+    public final boolean isMocked;
+    public final String mockingFile;
 
-    public GnbAmfConfig(Guami guami, String amfHost, int amfPort, boolean amfMocked, String amfMockedRemote) {
+    public GnbAmfConfig(Guami guami, String host, int port, boolean isMocked, String mockingFile) {
         this.guami = guami;
-        this.amfHost = amfHost;
-        this.amfPort = amfPort;
-        this.amfMocked = amfMocked;
-        this.amfMockedRemote = amfMockedRemote;
+        this.host = host;
+        this.port = port;
+        this.isMocked = isMocked;
+        this.mockingFile = mockingFile;
     }
 }
