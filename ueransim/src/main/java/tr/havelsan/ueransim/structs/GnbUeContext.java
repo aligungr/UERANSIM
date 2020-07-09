@@ -29,4 +29,5 @@ package tr.havelsan.ueransim.structs;
 public class GnbUeContext {
     public Long amfUeNgapId;
     public long ranUeNgapId;
+    public Guami associatedAmf;
 }

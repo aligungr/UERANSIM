@@ -41,15 +41,16 @@ public class SCTPClient implements ISctpClient {
     private final String host;
     private final int port;
     private final int protocolId;
+    private final SctpNotificationHandler associationHandler;
 
     private SctpChannel channel;
-    private AssociationHandler associationHandler;
     private boolean receiving;
 
-    public SCTPClient(String host, int port, int protocolId) {
+    public SCTPClient(String host, int port, int protocolId, ISctpAssociationHandler sctpAssociationHandler) {
         this.host = host;
         this.port = port;
         this.protocolId = protocolId;
+        this.associationHandler = new SctpNotificationHandler(sctpAssociationHandler);
     }
 
     @Override
@@ -60,7 +61,6 @@ public class SCTPClient implements ISctpClient {
 
         var serverAddress = new InetSocketAddress(host, port);
         this.channel = SctpChannel.open(serverAddress, 0, 0);
-        this.associationHandler = new AssociationHandler();
         this.receiving = true;
 
         Logging.info(Tag.CONNECTION, "SCTP connection established");
@@ -79,7 +79,7 @@ public class SCTPClient implements ISctpClient {
     }
 
     @Override
-    public void receiverLoop(ISCTPHandler handler) throws Exception {
+    public void receiverLoop(ISctpHandler handler) throws Exception {
         receiving = true;
 
         MessageInfo messageInfo;

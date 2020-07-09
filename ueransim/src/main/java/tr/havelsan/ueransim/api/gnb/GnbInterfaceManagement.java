@@ -33,19 +33,20 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapMessageType;
+import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class GnbInterfaceManagement {
 
-    public static void sendNgSetupRequest(GnbSimContext ctx) {
+    public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Starting: NGSetupRequest");
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
-        GNodeB.sendToNetworkNonUe(ctx,
+        GNodeB.sendToNetworkNonUe(ctx, associatedAmf,
                 new NgapBuilder(NgapMessageType.NGSetupRequest)
                         .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn))
                         .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs))

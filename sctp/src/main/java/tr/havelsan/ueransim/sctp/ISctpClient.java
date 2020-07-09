@@ -31,7 +31,7 @@ public interface ISctpClient {
 
     void send(int streamNumber, byte[] data);
 
-    void receiverLoop(ISCTPHandler handler) throws Exception;
+    void receiverLoop(ISctpHandler handler) throws Exception;
 
     void close();
 

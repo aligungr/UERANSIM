@@ -24,8 +24,26 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.sctp;
+package tr.havelsan.ueransim.structs;
 
-public interface ISCTPHandler {
-    void handleSCTPMessage(byte[] receivedBytes) throws Exception;
+import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
+import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
+import tr.havelsan.ueransim.utils.bits.Bit10;
+import tr.havelsan.ueransim.utils.bits.Bit6;
+import tr.havelsan.ueransim.utils.octets.Octet;
+
+public class Guami {
+    public final EMccValue mcc;
+    public final EMncValue mnc;
+    public final Octet amfRegionId;
+    public final Bit10 value;
+    public final Bit6 amfPointer;
+
+    public Guami(EMccValue mcc, EMncValue mnc, Octet amfRegionId, Bit10 value, Bit6 amfPointer) {
+        this.mcc = mcc;
+        this.mnc = mnc;
+        this.amfRegionId = amfRegionId;
+        this.value = value;
+        this.amfPointer = amfPointer;
+    }
 }

@@ -33,7 +33,13 @@ import com.sun.nio.sctp.ShutdownNotification;
 
 import java.io.PrintStream;
 
-public class AssociationHandler extends AbstractNotificationHandler<PrintStream> {
+class SctpNotificationHandler extends AbstractNotificationHandler<PrintStream> {
+
+    private final ISctpAssociationHandler sctpAssociationHandler;
+
+    public SctpNotificationHandler(ISctpAssociationHandler sctpAssociationHandler) {
+        this.sctpAssociationHandler = sctpAssociationHandler;
+    }
 
     @Override
     public HandlerResult handleNotification(AssociationChangeNotification notification, PrintStream attachment) {
@@ -44,6 +50,7 @@ public class AssociationHandler extends AbstractNotificationHandler<PrintStream>
                     "New association setup with %d outbound streams" + ", and %d inbound streams.\n",
                     outbound, inbound
             );
+            sctpAssociationHandler.onSetup();
         }
         return HandlerResult.CONTINUE;
     }
@@ -51,6 +58,7 @@ public class AssociationHandler extends AbstractNotificationHandler<PrintStream>
     @Override
     public HandlerResult handleNotification(ShutdownNotification notification, PrintStream attachment) {
         attachment.print("The association has been shutdown.\n");
+        sctpAssociationHandler.onShutdown();
         return HandlerResult.RETURN;
     }
 }

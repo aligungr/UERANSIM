@@ -29,16 +29,18 @@ package tr.havelsan.ueransim.sctp;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class MockedSCTPClient implements ISctpClient {
+public class MockedSctpClient implements ISctpClient {
     private final Queue<Byte[]> queue;
     private final IMockedRemote mockedRemote;
+    private final ISctpAssociationHandler sctpAssociationHandler;
 
     private boolean receiving;
     private boolean isOpen;
 
-    public MockedSCTPClient(IMockedRemote mockedRemote) {
+    public MockedSctpClient(IMockedRemote mockedRemote, ISctpAssociationHandler sctpAssociationHandler) {
         this.queue = new ArrayDeque<>();
         this.mockedRemote = mockedRemote;
+        this.sctpAssociationHandler = sctpAssociationHandler;
 
         this.receiving = false;
         this.isOpen = false;
@@ -47,6 +49,7 @@ public class MockedSCTPClient implements ISctpClient {
     @Override
     public void start() throws Exception {
         isOpen = true;
+        sctpAssociationHandler.onSetup();
     }
 
     @Override
@@ -55,7 +58,7 @@ public class MockedSCTPClient implements ISctpClient {
     }
 
     @Override
-    public void receiverLoop(ISCTPHandler handler) throws Exception {
+    public void receiverLoop(ISctpHandler handler) throws Exception {
         receiving = true;
 
         while (receiving && isOpen) {
@@ -75,6 +78,7 @@ public class MockedSCTPClient implements ISctpClient {
     @Override
     public void close() {
         isOpen = false;
+        sctpAssociationHandler.onShutdown();
     }
 
     @Override

@@ -24,41 +24,20 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.structs;
 
-import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.structs.GnbUeContext;
-import tr.havelsan.ueransim.utils.Debugging;
+public class GnbAmfConfig {
+    public final Guami guami;
+    public final String amfHost;
+    public final int amfPort;
+    public final boolean amfMocked;
+    public final String amfMockedRemote;
 
-import java.util.UUID;
-
-public class GnbUeManagement {
-
-    public static void allocateUeNgapId(GnbSimContext ctx, UUID ueId) {
-        Debugging.assertThread(ctx);
-
-        var gnbUeCtx = new GnbUeContext();
-        gnbUeCtx.ranUeNgapId = ++ctx.ueNgapIdCounter;
-        gnbUeCtx.amfUeNgapId = null;
-
-        ctx.ueContexts.put(ueId, gnbUeCtx);
-        selectAmfForUe(ctx, gnbUeCtx);
-    }
-
-    public static UUID findUe(GnbSimContext ctx, long ranUeNgapId) {
-        Debugging.assertThread(ctx);
-
-        // todo: make O(1)
-        for (var entry : ctx.ueContexts.entrySet()) {
-            if (entry.getValue().ranUeNgapId == ranUeNgapId) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    private static void selectAmfForUe(GnbSimContext ctx, GnbUeContext ueCtx) {
-        // todo:
-        ueCtx.associatedAmf = ctx.config.defaultAmf;
+    public GnbAmfConfig(Guami guami, String amfHost, int amfPort, boolean amfMocked, String amfMockedRemote) {
+        this.guami = guami;
+        this.amfHost = amfHost;
+        this.amfPort = amfPort;
+        this.amfMocked = amfMocked;
+        this.amfMockedRemote = amfMockedRemote;
     }
 }

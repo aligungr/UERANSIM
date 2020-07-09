@@ -24,41 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.events.gnb;
 
-import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.structs.GnbUeContext;
-import tr.havelsan.ueransim.utils.Debugging;
+import tr.havelsan.ueransim.structs.Guami;
 
-import java.util.UUID;
+public class SctpAssociationSetupEvent extends GnbEvent {
+    public final Guami guami;
 
-public class GnbUeManagement {
-
-    public static void allocateUeNgapId(GnbSimContext ctx, UUID ueId) {
-        Debugging.assertThread(ctx);
-
-        var gnbUeCtx = new GnbUeContext();
-        gnbUeCtx.ranUeNgapId = ++ctx.ueNgapIdCounter;
-        gnbUeCtx.amfUeNgapId = null;
-
-        ctx.ueContexts.put(ueId, gnbUeCtx);
-        selectAmfForUe(ctx, gnbUeCtx);
+    public SctpAssociationSetupEvent(Guami guami) {
+        this.guami = guami;
     }
 
-    public static UUID findUe(GnbSimContext ctx, long ranUeNgapId) {
-        Debugging.assertThread(ctx);
-
-        // todo: make O(1)
-        for (var entry : ctx.ueContexts.entrySet()) {
-            if (entry.getValue().ranUeNgapId == ranUeNgapId) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    private static void selectAmfForUe(GnbSimContext ctx, GnbUeContext ueCtx) {
-        // todo:
-        ueCtx.associatedAmf = ctx.config.defaultAmf;
+    @Override
+    public String toString() {
+        return "SctpAssociationSetupEvent{" +
+                "guami=" + guami +
+                '}';
     }
 }

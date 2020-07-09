@@ -26,14 +26,12 @@
 
 package tr.havelsan.ueransim.events;
 
-import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.events.ue.UeCommandEvent;
 
 public class EventParser {
 
     public static String[] possibleEvents() {
         return new String[]{
-                "ngsetup",
                 "initial-registration"
         };
     }
@@ -41,9 +39,6 @@ public class EventParser {
     public static BaseEvent parse(String command) {
         if (command == null) {
             return null;
-        }
-        if (command.equals("ngsetup")) {
-            return new GnbCommandEvent(command);
         }
         if (command.equals("initial-registration")) {
             return new UeCommandEvent(command);

@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.api.gnb.GnbSctpAssociationHandler;
 import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
@@ -36,8 +37,9 @@ import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
 import tr.havelsan.ueransim.sctp.ISctpClient;
-import tr.havelsan.ueransim.sctp.MockedSCTPClient;
+import tr.havelsan.ueransim.sctp.MockedSctpClient;
 import tr.havelsan.ueransim.sctp.SCTPClient;
+import tr.havelsan.ueransim.structs.GnbAmfContext;
 import tr.havelsan.ueransim.structs.GnbConfig;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.utils.IncomingMessage;
@@ -58,19 +60,34 @@ public class AppConfig {
         var ctx = new GnbSimContext(simCtx);
         ctx.config = MtsConstruct.construct(GnbConfig.class, config, true);
 
-        // Create SCTP Client
+        // Create AMF gNB contexts and SCTP Clients
         {
-            boolean amfMocked = config.getBool("amfMocked");
-
-            ISctpClient sctpClient = new SCTPClient(ctx.config.amfHost, ctx.config.amfPort, Constants.NGAP_PROTOCOL_ID);
-
-            if (amfMocked) {
-                Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
-                sctpClient = newMockedClient(config.getString("amfMockedRemote"));
+            if (ctx.config.defaultAmf == null) {
+                throw new RuntimeException("ctx.config.defaultAmf == null");
             }
 
-            ctx.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
-            ctx.sctpClient = sctpClient;
+            for (var amfConfig : ctx.config.amfConfigs) {
+                var gnbSctpAssociationHandler = new GnbSctpAssociationHandler(ctx, amfConfig.guami);
+
+                ISctpClient sctpClient;
+                if (amfConfig.amfMocked) {
+                    sctpClient = new SCTPClient(amfConfig.amfHost, amfConfig.amfPort,
+                            Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
+                } else {
+                    Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
+                    sctpClient = newMockedClient(amfConfig.amfMockedRemote, gnbSctpAssociationHandler);
+                }
+
+                if (amfConfig.guami == null) {
+                    throw new RuntimeException("amfConfig.guami == null");
+                }
+
+                var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
+                amfGnbCtx.sctpClient = sctpClient;
+                amfGnbCtx.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
+
+                ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
+            }
         }
 
         return ctx;
@@ -85,10 +102,10 @@ public class AppConfig {
         return ctx;
     }
 
-    private static MockedSCTPClient newMockedClient(String mockedRemoteFile) {
+    private static MockedSctpClient newMockedClient(String mockedRemoteFile, GnbSctpAssociationHandler gnbSctpAssociationHandler) {
         var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
 
-        return new MockedSCTPClient(new MockedSCTPClient.IMockedRemote() {
+        return new MockedSctpClient(new MockedSctpClient.IMockedRemote() {
             int messageIndex = 0;
 
             @Override
@@ -121,6 +138,6 @@ public class AppConfig {
                 }
                 messageIndex++;
             }
-        });
+        }, gnbSctpAssociationHandler);
     }
 }

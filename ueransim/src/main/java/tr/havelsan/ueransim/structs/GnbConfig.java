@@ -30,22 +30,19 @@ import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap2.SupportedTA;
 
 public class GnbConfig {
-    public final String amfHost;
-    public final int amfPort;
-    public final boolean amfMocked;
-    public final String amfMockedRemote;
-
     public final int gnbId;
     public final VPlmn gnbPlmn;
+
+    public final GnbAmfConfig[] amfConfigs;
+    public final Guami defaultAmf;
+
     public final SupportedTA[] supportedTAs;
 
-    public GnbConfig(String amfHost, int amfPort, boolean amfMocked, String amfMockedRemote, int gnbId, VPlmn gnbPlmn, SupportedTA[] supportedTAs) {
-        this.amfHost = amfHost;
-        this.amfPort = amfPort;
-        this.amfMocked = amfMocked;
-        this.amfMockedRemote = amfMockedRemote;
+    public GnbConfig(int gnbId, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, Guami defaultAmf, SupportedTA[] supportedTAs) {
         this.gnbId = gnbId;
         this.gnbPlmn = gnbPlmn;
+        this.amfConfigs = amfConfigs;
+        this.defaultAmf = defaultAmf;
         this.supportedTAs = supportedTAs;
     }
 }
