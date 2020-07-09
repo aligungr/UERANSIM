@@ -38,4 +38,37 @@ public final class ImplicitTypedObject {
     public LinkedHashMap<String, Object> getParameters() {
         return parameters;
     }
+
+    public Object get(String key) {
+        return getParameters().get(key);
+    }
+
+    public long getLong(String key) {
+        return ((Number) get(key)).longValue();
+    }
+
+    public int getInt(String key) {
+        return Math.toIntExact(getLong(key));
+    }
+
+    public boolean getBool(String key) {
+        return (boolean) get(key);
+    }
+
+    public String getString(String key) {
+        var value = get(key);
+        return value == null ? null : String.valueOf(value);
+    }
+
+    public <T> T getConstructed(String key, Class<T> type) {
+        return MtsConstruct.construct(type, (ImplicitTypedObject) get(key), true);
+    }
+
+    public <T> T asConstructed(Class<T> type) {
+        return MtsConstruct.construct(type, this, true);
+    }
+
+    public <T> T getConverted(String key, Class<T> type) {
+        return (T) MtsConvert.convert(get(key), type, true).get(0).value;
+    }
 }

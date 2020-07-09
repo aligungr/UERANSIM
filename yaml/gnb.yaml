@@ -1,0 +1,22 @@
+amfHost: 10.154.14.5
+amfPort: 38419
+amfMocked: false
+amfMockedRemote: mockedRemote.yaml
+
+gnbId: 1
+gnbPlmn:
+  mcc: 1
+  mnc: 1
+supportedTAs:
+  - tac:
+      hex: '000075'
+    broadcastPlmns:
+      - plmn:
+          mcc: 1
+          mnc: 1
+        taiSliceSupportNssais:
+          - sst:
+              value: 1
+            sd:
+              value:
+                hex: '09afaf'

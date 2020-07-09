@@ -26,11 +26,14 @@
 
 package tr.havelsan.ueransim.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// todo: use log4j instead
 public class Logging {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -71,6 +74,14 @@ public class Logging {
 
         String spacing = (" ").repeat(Math.max(0, depth * 2));
         String tagging = tag == null ? "" : "[" + tag + "] ";
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Throwable) {
+                var sw = new StringWriter();
+                ((Throwable) args[i]).printStackTrace(new PrintWriter(sw));
+                args[i] = sw.toString();
+            }
+        }
 
         String str = String.format(Locale.ENGLISH, message, args);
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);

@@ -31,6 +31,35 @@ public enum NgapCriticality {
     IGNORE,
     NOTIFY;
 
+    public static NgapCriticality fromAsnValue(int value) {
+        switch (value) {
+            case 0:
+                return REJECT;
+            case 1:
+                return IGNORE;
+            case 2:
+                return NOTIFY;
+            default:
+                throw new RuntimeException("NgapCriticality.fromAsnValue invalid value: " + value);
+        }
+    }
+
+    public static NgapCriticality fromAsnValue(String value) {
+        switch (value) {
+            case "REJECT":
+            case "reject":
+                return REJECT;
+            case "IGNORE":
+            case "ignore":
+                return IGNORE;
+            case "NOTIFY":
+            case "notify":
+                return NOTIFY;
+            default:
+                throw new RuntimeException("NgapCriticality.fromAsnValue invalid value: " + value);
+        }
+    }
+
     int getAsnValue() {
         switch (this) {
             case REJECT:

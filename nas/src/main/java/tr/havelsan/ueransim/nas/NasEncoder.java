@@ -31,6 +31,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit4;
 import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasEncoder {
 
@@ -41,6 +42,13 @@ public class NasEncoder {
         var stream = new OctetOutputStream();
         pdu.encodeMessage(stream);
         return stream.toByteArray();
+    }
+
+    /**
+     * Encodes NAS/5GS PDU into octet string
+     */
+    public static OctetString nasPduS(NasMessage pdu) {
+        return new OctetString(nasPdu(pdu));
     }
 
     /**
