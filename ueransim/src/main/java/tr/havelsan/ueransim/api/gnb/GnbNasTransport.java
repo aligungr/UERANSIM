@@ -51,7 +51,7 @@ public class GnbNasTransport {
             ngap = new NgapBuilder(NgapMessageType.InitialUEMessage);
             ngap.addProtocolIE(new RRCEstablishmentCause(RRCEstablishmentCause.ASN_mo_Data));
 
-            GnbUeManagement.allocateUeNgapId(ctx, associatedUe);
+            GnbUeManagement.createUeContext(ctx, associatedUe);
         }
 
         if (nasMessage != null) {

@@ -34,7 +34,7 @@ import java.util.UUID;
 
 public class GnbUeManagement {
 
-    public static void allocateUeNgapId(GnbSimContext ctx, UUID ueId) {
+    public static void createUeContext(GnbSimContext ctx, UUID ueId) {
         Debugging.assertThread(ctx);
 
         var gnbUeCtx = new GnbUeContext();
@@ -58,7 +58,9 @@ public class GnbUeManagement {
     }
 
     private static void selectAmfForUe(GnbSimContext ctx, GnbUeContext ueCtx) {
-        // todo:
+        Debugging.assertThread(ctx);
+
+        // todo: always first configured AMF is selected for now
         ueCtx.associatedAmf = ctx.config.amfConfigs[0].guami;
     }
 }
