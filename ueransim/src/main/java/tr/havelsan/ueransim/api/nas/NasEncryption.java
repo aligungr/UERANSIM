@@ -197,8 +197,8 @@ public class NasEncryption {
     //                                          COMMON
     //======================================================================================================
 
-    private static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
-                                     boolean isUplink, OctetString key, byte[] plainMessage) {
+    public static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
+                                    boolean isUplink, OctetString key, byte[] plainMessage) {
         Logging.funcIn("Computing Mac");
 
         var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));

@@ -24,19 +24,9 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.enums;
 
-public enum Tag {
-    SYSTEM,
-    STATE,
-    CONFIG,
-    VALUE,
-    PROC,
-    PROCEDURE_RESULT,
-    NGAP_INTERNAL,
-    MESSAGING,
-    CONNECTION,
-    EVENT,
-    NAS_SECURITY,
-    NOT_IMPL_YET;
+public enum ECmState {
+    CM_IDLE,
+    CM_CONNECTED
 }

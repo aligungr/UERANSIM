@@ -26,10 +26,16 @@
 
 package tr.havelsan.ueransim.utils.bits;
 
+import tr.havelsan.ueransim.utils.octets.Octet;
+
 public final class Bit6 extends BitN {
 
     public Bit6(int value) {
         super(value, 6);
+    }
+
+    public Bit6(String hex) {
+        this(new Octet(hex).intValue());
     }
 
     public Bit6(Bit bit5, Bit bit4, Bit bit3, Bit bit2, Bit bit1, Bit bit0) {

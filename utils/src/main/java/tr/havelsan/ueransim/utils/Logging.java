@@ -29,12 +29,17 @@ package tr.havelsan.ueransim.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 // todo: use log4j instead
 public class Logging {
+
+    private static final List<Consumer<LogEntry>> printHandlers = new ArrayList<>();
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private static final AtomicInteger functionDepth = new AtomicInteger(0);
@@ -84,8 +89,16 @@ public class Logging {
         }
 
         String str = String.format(Locale.ENGLISH, message, args);
+
+        for (var handler : printHandlers)
+            handler.accept(new LogEntry(severity, color, depth, tag, str));
+
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
         Console.println(color, display);
+    }
+
+    public static void addLogHandler(Consumer<LogEntry> handler) {
+        printHandlers.add(handler);
     }
 
     private static String getTime() {

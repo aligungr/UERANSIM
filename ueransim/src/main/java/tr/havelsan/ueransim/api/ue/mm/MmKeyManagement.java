@@ -41,7 +41,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.nio.charset.StandardCharsets;
 
-class MmKeyManagement {
+public class MmKeyManagement {
     private static final int N_NAS_enc_alg = 0x01;
     private static final int N_NAS_int_alg = 0x02;
     private static final int N_RRC_enc_alg = 0x03;

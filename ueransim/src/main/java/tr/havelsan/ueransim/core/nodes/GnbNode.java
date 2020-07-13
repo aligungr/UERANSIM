@@ -26,23 +26,23 @@
 
 package tr.havelsan.ueransim.core.nodes;
 
-import tr.havelsan.ueransim.Program;
 import tr.havelsan.ueransim.api.gnb.GNodeB;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.threads.NodeLooperThread;
 import tr.havelsan.ueransim.core.threads.SctpRecevierThread;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class GnbNode {
 
     public static void run(GnbSimContext ctx) {
-        try {
-            ctx.sctpClient.start();
-        } catch (Exception e) {
-            Program.fail(e);
+        if (ctx.amfContexts.isEmpty()) {
+            Logging.error(Tag.SYSTEM, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
         }
 
-        var sctpReceiverThread = new SctpRecevierThread(ctx, ctx.sctpClient);
-        sctpReceiverThread.start();
+        for (var amfCtx : ctx.amfContexts.values()) {
+            new SctpRecevierThread(ctx, amfCtx.guami, amfCtx.sctpClient).start();
+        }
 
         var looperThread = new NodeLooperThread<>(ctx, GNodeB::cycle);
         ctx.setLooperThread(looperThread);

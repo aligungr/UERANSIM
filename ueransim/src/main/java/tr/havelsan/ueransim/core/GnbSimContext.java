@@ -28,9 +28,10 @@ package tr.havelsan.ueransim.core;
 
 import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.events.gnb.GnbEvent;
-import tr.havelsan.ueransim.sctp.ISctpClient;
+import tr.havelsan.ueransim.structs.GnbAmfContext;
 import tr.havelsan.ueransim.structs.GnbConfig;
 import tr.havelsan.ueransim.structs.GnbUeContext;
+import tr.havelsan.ueransim.structs.Guami;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -38,14 +39,14 @@ import java.util.UUID;
 public class GnbSimContext extends BaseSimContext<GnbEvent> {
     public GnbConfig config;
 
-    public ISctpClient sctpClient;
-    public int streamNumber;
+    public HashMap<Guami, GnbAmfContext> amfContexts;
 
     public HashMap<UUID, GnbUeContext> ueContexts;
     public long ueNgapIdCounter;
 
     public GnbSimContext(SimulationContext simCtx) {
         super(simCtx);
+        this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
     }
 }

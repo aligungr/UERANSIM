@@ -26,6 +26,8 @@
 
 package tr.havelsan.ueransim.structs;
 
+import tr.havelsan.ueransim.enums.ECmState;
+import tr.havelsan.ueransim.enums.ERmState;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gsTrackingAreaIdentityList;
@@ -34,6 +36,9 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 
 public class MmContext {
 
+    public ERmState rmState;
+    public ECmState cmState;
+
     public RegistrationRequest registrationRequest;
 
     public IESuciMobileIdentity storedSuci;
@@ -41,4 +46,9 @@ public class MmContext {
 
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IE5gsTrackingAreaIdentityList taiList;
+
+    public MmContext() {
+        this.rmState = ERmState.RM_DEREGISTERED;
+        this.cmState = ECmState.CM_IDLE;
+    }
 }

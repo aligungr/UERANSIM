@@ -24,19 +24,17 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.structs;
 
-public enum Tag {
-    SYSTEM,
-    STATE,
-    CONFIG,
-    VALUE,
-    PROC,
-    PROCEDURE_RESULT,
-    NGAP_INTERNAL,
-    MESSAGING,
-    CONNECTION,
-    EVENT,
-    NAS_SECURITY,
-    NOT_IMPL_YET;
+import tr.havelsan.ueransim.sctp.ISctpClient;
+
+public class GnbAmfContext {
+    public final Guami guami;
+    public ISctpClient sctpClient;
+    public int streamNumber;
+
+    public GnbAmfContext(Guami guami) {
+        this.guami = guami;
+    }
+
 }

@@ -33,7 +33,7 @@ import tr.havelsan.ueransim.nas.impl.messages.ServiceReject;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-class MmService {
+public class MmService {
 
     public static void handleServiceAccept(UeSimContext ctx, ServiceAccept message) {
         Logging.funcIn("Handling: Service Accept");

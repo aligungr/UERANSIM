@@ -24,19 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.events.gnb;
 
-public enum Tag {
-    SYSTEM,
-    STATE,
-    CONFIG,
-    VALUE,
-    PROC,
-    PROCEDURE_RESULT,
-    NGAP_INTERNAL,
-    MESSAGING,
-    CONNECTION,
-    EVENT,
-    NAS_SECURITY,
-    NOT_IMPL_YET;
+import tr.havelsan.ueransim.structs.Guami;
+
+public class SctpAssociationSetupEvent extends GnbEvent {
+    public final Guami guami;
+
+    public SctpAssociationSetupEvent(Guami guami) {
+        this.guami = guami;
+    }
+
+    @Override
+    public String toString() {
+        return "SctpAssociationSetupEvent{" +
+                "guami=" + guami +
+                '}';
+    }
 }

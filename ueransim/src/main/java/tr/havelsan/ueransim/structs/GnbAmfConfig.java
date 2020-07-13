@@ -24,19 +24,20 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.structs;
 
-public enum Tag {
-    SYSTEM,
-    STATE,
-    CONFIG,
-    VALUE,
-    PROC,
-    PROCEDURE_RESULT,
-    NGAP_INTERNAL,
-    MESSAGING,
-    CONNECTION,
-    EVENT,
-    NAS_SECURITY,
-    NOT_IMPL_YET;
+public class GnbAmfConfig {
+    public final Guami guami;
+    public final String host;
+    public final int port;
+    public final boolean isMocked;
+    public final String mockingFile;
+
+    public GnbAmfConfig(Guami guami, String host, int port, boolean isMocked, String mockingFile) {
+        this.guami = guami;
+        this.host = host;
+        this.port = port;
+        this.isMocked = isMocked;
+        this.mockingFile = mockingFile;
+    }
 }

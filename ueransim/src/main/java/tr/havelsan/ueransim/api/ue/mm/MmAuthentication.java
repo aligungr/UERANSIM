@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-class MmAuthentication {
+public class MmAuthentication {
 
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
     private static final boolean USE_SQN_HACK = true; // todo

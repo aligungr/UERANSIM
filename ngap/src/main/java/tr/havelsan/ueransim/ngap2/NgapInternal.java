@@ -167,6 +167,12 @@ public class NgapInternal {
         }
     }
 
+    public static <T extends Value> T extractLastProtocolIe(Value messageContent, Class<T> ieType) {
+        var list = extractProtocolIe(messageContent, ieType);
+        if (list.isEmpty()) return null;
+        return list.get(list.size() - 1);
+    }
+
     public static SequenceValue extractNgapMessage(NGAP_PDU ngapPdu) {
         if (ngapPdu == null) {
             return null;

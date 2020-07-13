@@ -43,7 +43,7 @@ import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 
-class MmSecurity {
+public class MmSecurity {
 
     public static void handleSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
         Logging.funcIn("Handling: Security Mode Command");

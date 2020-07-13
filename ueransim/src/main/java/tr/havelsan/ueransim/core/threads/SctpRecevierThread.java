@@ -29,21 +29,25 @@ package tr.havelsan.ueransim.core.threads;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.sctp.ISctpClient;
+import tr.havelsan.ueransim.structs.Guami;
 
 public class SctpRecevierThread extends BaseThread {
 
     private final GnbSimContext ctx;
     private final ISctpClient sctpClient;
+    private final Guami amf;
 
-    public SctpRecevierThread(GnbSimContext ctx, ISctpClient sctpClient) {
+    public SctpRecevierThread(GnbSimContext ctx, Guami amf, ISctpClient sctpClient) {
         this.ctx = ctx;
+        this.amf = amf;
         this.sctpClient = sctpClient;
     }
 
     @Override
     public void run() {
         try {
-            sctpClient.receiverLoop(receivedBytes -> ctx.pushEvent(new SctpReceiveEvent(receivedBytes)));
+            sctpClient.start();
+            sctpClient.receiverLoop(receivedBytes -> ctx.pushEvent(new SctpReceiveEvent(receivedBytes, amf)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

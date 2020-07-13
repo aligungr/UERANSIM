@@ -32,18 +32,17 @@ import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
+import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap.ngap_ies.UserLocationInformation;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
+import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapBuilder;
 import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -53,7 +52,7 @@ import java.util.UUID;
 
 public class GNodeB {
 
-    public static void sendToNetworkNonUe(GnbSimContext ctx, NgapBuilder ngapBuilder) {
+    public static void sendToNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NgapBuilder ngapBuilder) {
         Debugging.assertThread(ctx);
 
         var ngapPdu = ngapBuilder.build();
@@ -61,18 +60,22 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
 
-        ctx.sctpClient.send(ctx.streamNumber, Ngap.perEncode(ngapPdu));
+        var amfCtx = ctx.amfContexts.get(associatedAmf);
+        amfCtx.sctpClient.send(amfCtx.streamNumber, Ngap.perEncode(ngapPdu));
+
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
     public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NgapBuilder ngapBuilder) {
         Debugging.assertThread(ctx);
 
+        // Find UE gNB context
+        var ueCtx = ctx.ueContexts.get(ueId);
 
         // Adding AMF-UE-NGAP-ID (if any)
         {
             if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, AMF_UE_NGAP_ID.class)) {
-                Long amfUeNgapId = ctx.ueContexts.get(ueId).amfUeNgapId;
+                Long amfUeNgapId = ueCtx.amfUeNgapId;
                 if (amfUeNgapId != null) {
                     ngapBuilder.addAmfUeNgapId(amfUeNgapId);
                 }
@@ -82,7 +85,7 @@ public class GNodeB {
         // Adding RAN-UE-NGAP-ID
         {
             if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, RAN_UE_NGAP_ID.class)) {
-                ngapBuilder.addRanUeNgapId(ctx.ueContexts.get(ueId).ranUeNgapId);
+                ngapBuilder.addRanUeNgapId(ueCtx.ranUeNgapId);
             }
         }
 
@@ -98,21 +101,23 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
 
-        ctx.sctpClient.send(ctx.streamNumber, Ngap.perEncode(ngapPdu));
+        var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
+        amfCtx.sctpClient.send(amfCtx.streamNumber, Ngap.perEncode(ngapPdu));
+
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void receiveFromNetwork(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
 
         if (NgapInternal.isUeAssociated(ngapMessage)) {
-            receiveFromNetworkUeAssociated(ctx, ngapPdu);
+            receiveFromNetworkUeAssociated(ctx, associatedAmf, ngapPdu);
         } else {
-            receiveFromNetworkNonUe(ctx, ngapPdu);
+            receiveFromNetworkNonUe(ctx, associatedAmf, ngapPdu);
         }
     }
 
-    private static void receiveFromNetworkNonUe(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    private static void receiveFromNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
@@ -126,7 +131,7 @@ public class GNodeB {
         }
     }
 
-    private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, NGAP_PDU ngapPdu) {
+    private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
         var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
@@ -169,6 +174,8 @@ public class GNodeB {
             GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (DownlinkNASTransport) ngapMessage);
         } else if (ngapMessage instanceof InitialContextSetupRequest) {
             GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (InitialContextSetupRequest) ngapMessage);
+        } else if (ngapMessage instanceof RerouteNASRequest) {
+            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (RerouteNASRequest) ngapMessage);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
@@ -185,15 +192,16 @@ public class GNodeB {
             Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
             Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
 
-            GNodeB.receiveFromNetwork(ctx, ngapPdu);
+            GNodeB.receiveFromNetwork(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
+        } else if (event instanceof SctpAssociationSetupEvent) {
+            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+
+            GnbInterfaceManagement.sendNgSetupRequest(ctx, ((SctpAssociationSetupEvent) event).guami);
         } else if (event instanceof GnbCommandEvent) {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 
             var cmd = ((GnbCommandEvent) event).cmd;
             switch (cmd) {
-                case "ngsetup":
-                    GnbInterfaceManagement.sendNgSetupRequest(ctx);
-                    break;
                 default:
                     Logging.error(Tag.EVENT, "GnbCommandEvent not recognized: %s", cmd);
                     break;

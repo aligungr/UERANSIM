@@ -24,19 +24,29 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.api.gnb;
 
-public enum Tag {
-    SYSTEM,
-    STATE,
-    CONFIG,
-    VALUE,
-    PROC,
-    PROCEDURE_RESULT,
-    NGAP_INTERNAL,
-    MESSAGING,
-    CONNECTION,
-    EVENT,
-    NAS_SECURITY,
-    NOT_IMPL_YET;
+import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
+import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
+import tr.havelsan.ueransim.structs.Guami;
+
+public class GnbSctpAssociationHandler implements ISctpAssociationHandler {
+    private final GnbSimContext gnbCtx;
+    private final Guami guami;
+
+    public GnbSctpAssociationHandler(GnbSimContext gnbCtx, Guami guami) {
+        this.gnbCtx = gnbCtx;
+        this.guami = guami;
+    }
+
+    @Override
+    public void onSetup() {
+        gnbCtx.pushEvent(new SctpAssociationSetupEvent(guami));
+    }
+
+    @Override
+    public void onShutdown() {
+
+    }
 }
