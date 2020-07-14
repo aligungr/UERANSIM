@@ -248,7 +248,7 @@ public class Ngap {
             for (var nssai : taiSliceSupportNssais) {
                 var item = new SliceSupportItem();
                 item.s_NSSAI = new S_NSSAI();
-                item.s_NSSAI.sD = new SD(nssai.sd.value.toByteArray());
+                //item.s_NSSAI.sD = new SD(nssai.sd.value.toByteArray()); todo
                 item.s_NSSAI.sST = new SST(nssai.sst.value.toByteArray());
                 list.add(item);
             }
