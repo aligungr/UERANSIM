@@ -17,7 +17,3 @@ JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_NgapJni_sum
 #ifdef __cplusplus
 }
 #endif
-
-void test() {
-  int x = 34;
-}
