@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim;
+package tr.havelsan.ueransim.ngap3;
 
 import tr.havelsan.ueransim.utils.Utils;
 
@@ -46,11 +46,11 @@ public class NgapJni {
         Utils.loadLibraryFromResource("libngap-native.so");
     }
 
-    private static native byte[] convertEncoding(byte[] data, int fromEncoding, int toEncoding, int[] result);
+    private static native byte[] convertEncoding(byte[] data, int fromEncoding, int toEncoding, int[] result, int pduType);
 
-    private static byte[] convert(byte[] data, int fromEncoding, int toEncoding) {
+    private static byte[] convert(byte[] data, int fromEncoding, int toEncoding, int pduType) {
         int[] resCode = new int[1];
-        var converted = convertEncoding(data, fromEncoding, toEncoding, resCode);
+        var converted = convertEncoding(data, fromEncoding, toEncoding, resCode, pduType);
         if (resCode[0] == RESULT_DECODING_FAILED) {
             throw new RuntimeException("NgapJni convertEncoding RESULT_DECODING_FAILED");
         }
@@ -60,17 +60,17 @@ public class NgapJni {
         return converted;
     }
 
-    public static String aperToXer(byte[] data) {
-        var converted = convert(data, ATS_ALIGNED_CANONICAL_PER, ATS_CANONICAL_XER);
+    public static String aperToXer(byte[] data, int pduType) {
+        var converted = convert(data, ATS_ALIGNED_CANONICAL_PER, ATS_CANONICAL_XER, pduType);
         return new String(converted);
     }
 
-    public static String aperToPlainText(byte[] data) {
-        var converted = convert(data, ATS_ALIGNED_CANONICAL_PER, ATS_NONSTANDARD_PLAINTEXT);
+    public static String aperToPlainText(byte[] data, int pduType) {
+        var converted = convert(data, ATS_ALIGNED_CANONICAL_PER, ATS_NONSTANDARD_PLAINTEXT, pduType);
         return new String(converted);
     }
 
-    public static byte[] xerToAper(String xer) {
-        return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_ALIGNED_CANONICAL_PER);
+    public static byte[] xerToAper(String xer, int pduType) {
+        return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_ALIGNED_CANONICAL_PER, pduType);
     }
 }
