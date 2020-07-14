@@ -48,9 +48,9 @@ public class NgapJni {
 
     private static native byte[] convertEncoding(byte[] data, int fromEncoding, int toEncoding, int[] result, int pduType);
 
-    private static byte[] convert(byte[] data, int fromEncoding, int toEncoding, int pduType) {
+    private static byte[] convert(byte[] data, int fromEncoding, int toEncoding, NgapDataUnitType pduType) {
         int[] resCode = new int[1];
-        var converted = convertEncoding(data, fromEncoding, toEncoding, resCode, pduType);
+        var converted = convertEncoding(data, fromEncoding, toEncoding, resCode, pduType.value);
         if (resCode[0] == RESULT_DECODING_FAILED) {
             throw new RuntimeException("NgapJni convertEncoding RESULT_DECODING_FAILED");
         }
@@ -60,17 +60,17 @@ public class NgapJni {
         return converted;
     }
 
-    public static String aperToXer(byte[] data, int pduType) {
+    public static String aperToXer(byte[] data, NgapDataUnitType pduType) {
         var converted = convert(data, ATS_ALIGNED_CANONICAL_PER, ATS_CANONICAL_XER, pduType);
         return new String(converted);
     }
 
-    public static String aperToPlainText(byte[] data, int pduType) {
+    public static String aperToPlainText(byte[] data, NgapDataUnitType pduType) {
         var converted = convert(data, ATS_ALIGNED_CANONICAL_PER, ATS_NONSTANDARD_PLAINTEXT, pduType);
         return new String(converted);
     }
 
-    public static byte[] xerToAper(String xer, int pduType) {
+    public static byte[] xerToAper(String xer, NgapDataUnitType pduType) {
         return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_ALIGNED_CANONICAL_PER, pduType);
     }
 }
