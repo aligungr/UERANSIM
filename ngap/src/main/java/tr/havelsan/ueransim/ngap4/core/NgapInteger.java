@@ -29,12 +29,12 @@ package tr.havelsan.ueransim.ngap4.core;
 public class NgapInteger extends NgapValue {
 
     @Override
-    public String getAsnName() {
+    protected String getAsnName() {
         return "INTEGER";
     }
 
     @Override
-    public String getXmlTagName() {
+    protected String getXmlTagName() {
         return "INTEGER";
     }
 }

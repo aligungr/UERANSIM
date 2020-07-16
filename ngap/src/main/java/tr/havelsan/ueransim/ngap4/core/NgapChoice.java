@@ -27,4 +27,8 @@
 package tr.havelsan.ueransim.ngap4.core;
 
 public abstract class NgapChoice extends NgapValue {
+
+    protected abstract String[] getMemberNames();
+
+    protected abstract String[] getMemberIdentifiers();
 }

@@ -29,12 +29,12 @@ package tr.havelsan.ueransim.ngap4.core;
 public class NgapOctetString extends NgapValue {
 
     @Override
-    public String getAsnName() {
+    protected String getAsnName() {
         return "OCTET STRING";
     }
 
     @Override
-    public String getXmlTagName() {
+    protected String getXmlTagName() {
         return "OCTET_STRING";
     }
 }

@@ -1,0 +1,28 @@
+package tr.havelsan.ueransim.ngap4.ies.enumerations;
+
+import tr.havelsan.ueransim.ngap4.core.NgapEnumerated;
+
+public class NGAP_CauseProtocol extends NgapEnumerated {
+
+    public static final NGAP_CauseProtocol TRANSFER_SYNTAX_ERROR = new NGAP_CauseProtocol("transfer-syntax-error");
+    public static final NGAP_CauseProtocol ABSTRACT_SYNTAX_ERROR_REJECT = new NGAP_CauseProtocol("abstract-syntax-error-reject");
+    public static final NGAP_CauseProtocol ABSTRACT_SYNTAX_ERROR_IGNORE_AND_NOTIFY = new NGAP_CauseProtocol("abstract-syntax-error-ignore-and-notify");
+    public static final NGAP_CauseProtocol MESSAGE_NOT_COMPATIBLE_WITH_RECEIVER_STATE = new NGAP_CauseProtocol("message-not-compatible-with-receiver-state");
+    public static final NGAP_CauseProtocol SEMANTIC_ERROR = new NGAP_CauseProtocol("semantic-error");
+    public static final NGAP_CauseProtocol ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE = new NGAP_CauseProtocol("abstract-syntax-error-falsely-constructed-message");
+    public static final NGAP_CauseProtocol UNSPECIFIED = new NGAP_CauseProtocol("unspecified");
+
+    protected NGAP_CauseProtocol(String sValue) {
+        super(sValue);
+    }
+
+    @Override
+    protected String getAsnName() {
+        return "CauseProtocol";
+    }
+
+    @Override
+    protected String getXmlTagName() {
+        return "CauseProtocol";
+    }
+}
