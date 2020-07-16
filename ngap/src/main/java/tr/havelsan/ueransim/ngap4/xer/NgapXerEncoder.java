@@ -26,12 +26,67 @@
 
 package tr.havelsan.ueransim.ngap4.xer;
 
-import tr.havelsan.ueransim.ngap4.core.NgapValue;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.ngap4.core.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 
 public class NgapXerEncoder {
 
+    public static String encode(NgapValue value) {
+        var factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        var document = builder.newDocument();
 
-    public static void encodeIe(NgapValue value) {
+        var node = encodeIe(document, value);
 
+        var tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        var writer = new StringWriter();
+        try {
+            transformer.transform(new DOMSource(node), new StreamResult(writer));
+        } catch (TransformerException e) {
+            throw new RuntimeException(e);
+        }
+        return writer.getBuffer().toString().replaceAll("[\n\r]", "");
+    }
+
+    private static Node encodeIe(Document document, NgapValue value) {
+        if (value instanceof NgapBitString) {
+            return document.createTextNode(((NgapBitString) value).value.toBinaryString(false));
+        }
+        if (value instanceof NgapOctetString) {
+            return document.createTextNode(((NgapOctetString) value).value.toHexString(false));
+        }
+        if (value instanceof NgapPrintableString) {
+            return document.createTextNode(((NgapPrintableString) value).value);
+        }
+        if (value instanceof NgapInteger) {
+            return document.createTextNode(Long.toString(((NgapInteger) value).value));
+        }
+        if (value instanceof NgapEnumerated) {
+            return document.createTextNode(((NgapEnumerated) value).sValue);
+        }
+
+        throw new NotImplementedException("");
     }
 }
