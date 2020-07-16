@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_ExpectedActivityPeriod extends NgapInteger {
 
+    public NGAP_ExpectedActivityPeriod(Octet value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedActivityPeriod(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedActivityPeriod(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedActivityPeriod(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedActivityPeriod(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "ExpectedActivityPeriod";

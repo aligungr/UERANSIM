@@ -14,6 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_AMFName extends NgapPrintableString {
 
+    public NGAP_AMFName(String value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "AMFName";

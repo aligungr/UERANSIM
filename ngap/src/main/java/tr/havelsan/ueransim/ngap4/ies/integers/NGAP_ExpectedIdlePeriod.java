@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_ExpectedIdlePeriod extends NgapInteger {
 
+    public NGAP_ExpectedIdlePeriod(Octet value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedIdlePeriod(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedIdlePeriod(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedIdlePeriod(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_ExpectedIdlePeriod(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "ExpectedIdlePeriod";

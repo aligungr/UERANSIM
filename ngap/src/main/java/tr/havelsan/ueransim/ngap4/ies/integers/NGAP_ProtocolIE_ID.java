@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_ProtocolIE_ID extends NgapInteger {
 
+    public NGAP_ProtocolIE_ID(Octet value) {
+        super(value);
+    }
+
+    public NGAP_ProtocolIE_ID(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_ProtocolIE_ID(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_ProtocolIE_ID(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_ProtocolIE_ID(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "ProtocolIE-ID";

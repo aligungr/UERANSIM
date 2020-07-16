@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_AMF_UE_NGAP_ID extends NgapInteger {
 
+    public NGAP_AMF_UE_NGAP_ID(Octet value) {
+        super(value);
+    }
+
+    public NGAP_AMF_UE_NGAP_ID(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_AMF_UE_NGAP_ID(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_AMF_UE_NGAP_ID(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_AMF_UE_NGAP_ID(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "AMF-UE-NGAP-ID";

@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_RelativeAMFCapacity extends NgapInteger {
 
+    public NGAP_RelativeAMFCapacity(Octet value) {
+        super(value);
+    }
+
+    public NGAP_RelativeAMFCapacity(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_RelativeAMFCapacity(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_RelativeAMFCapacity(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_RelativeAMFCapacity(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "RelativeAMFCapacity";

@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_RANPagingPriority extends NgapInteger {
 
+    public NGAP_RANPagingPriority(Octet value) {
+        super(value);
+    }
+
+    public NGAP_RANPagingPriority(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_RANPagingPriority(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_RANPagingPriority(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_RANPagingPriority(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "RANPagingPriority";

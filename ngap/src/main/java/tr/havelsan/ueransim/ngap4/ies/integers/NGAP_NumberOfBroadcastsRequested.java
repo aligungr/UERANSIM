@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_NumberOfBroadcastsRequested extends NgapInteger {
 
+    public NGAP_NumberOfBroadcastsRequested(Octet value) {
+        super(value);
+    }
+
+    public NGAP_NumberOfBroadcastsRequested(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_NumberOfBroadcastsRequested(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_NumberOfBroadcastsRequested(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_NumberOfBroadcastsRequested(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "NumberOfBroadcastsRequested";

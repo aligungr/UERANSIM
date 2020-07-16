@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_PacketLossRate extends NgapInteger {
 
+    public NGAP_PacketLossRate(Octet value) {
+        super(value);
+    }
+
+    public NGAP_PacketLossRate(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_PacketLossRate(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_PacketLossRate(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_PacketLossRate(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "PacketLossRate";

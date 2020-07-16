@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_PagingAttemptCount extends NgapInteger {
 
+    public NGAP_PagingAttemptCount(Octet value) {
+        super(value);
+    }
+
+    public NGAP_PagingAttemptCount(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_PagingAttemptCount(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_PagingAttemptCount(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_PagingAttemptCount(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "PagingAttemptCount";

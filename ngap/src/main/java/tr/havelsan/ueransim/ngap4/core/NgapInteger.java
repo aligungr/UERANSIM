@@ -26,7 +26,34 @@
 
 package tr.havelsan.ueransim.ngap4.core;
 
+import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.octets.Octet2;
+import tr.havelsan.ueransim.utils.octets.Octet3;
+import tr.havelsan.ueransim.utils.octets.Octet4;
+
 public class NgapInteger extends NgapValue {
+
+    public long value;
+
+    public NgapInteger(long value) {
+        this.value = value;
+    }
+
+    public NgapInteger(Octet value) {
+        this(value.longValue());
+    }
+
+    public NgapInteger(Octet2 value) {
+        this(value.longValue());
+    }
+
+    public NgapInteger(Octet3 value) {
+        this(value.longValue());
+    }
+
+    public NgapInteger(Octet4 value) {
+        this(value.longValue());
+    }
 
     @Override
     protected String getAsnName() {

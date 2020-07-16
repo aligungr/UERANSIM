@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_LocationReportingReferenceID extends NgapInteger {
 
+    public NGAP_LocationReportingReferenceID(Octet value) {
+        super(value);
+    }
+
+    public NGAP_LocationReportingReferenceID(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_LocationReportingReferenceID(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_LocationReportingReferenceID(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_LocationReportingReferenceID(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "LocationReportingReferenceID";

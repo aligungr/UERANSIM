@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_PriorityLevelARP extends NgapInteger {
 
+    public NGAP_PriorityLevelARP(Octet value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelARP(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelARP(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelARP(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelARP(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "PriorityLevelARP";

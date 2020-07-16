@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_IndexToRFSP extends NgapInteger {
 
+    public NGAP_IndexToRFSP(Octet value) {
+        super(value);
+    }
+
+    public NGAP_IndexToRFSP(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_IndexToRFSP(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_IndexToRFSP(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_IndexToRFSP(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "IndexToRFSP";

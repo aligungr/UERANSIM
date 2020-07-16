@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_ReferenceID extends NgapInteger {
 
+    public NGAP_ReferenceID(Octet value) {
+        super(value);
+    }
+
+    public NGAP_ReferenceID(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_ReferenceID(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_ReferenceID(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_ReferenceID(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "ReferenceID";

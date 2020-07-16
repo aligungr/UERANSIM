@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_PDUSessionID extends NgapInteger {
 
+    public NGAP_PDUSessionID(Octet value) {
+        super(value);
+    }
+
+    public NGAP_PDUSessionID(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_PDUSessionID(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_PDUSessionID(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_PDUSessionID(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "PDUSessionID";

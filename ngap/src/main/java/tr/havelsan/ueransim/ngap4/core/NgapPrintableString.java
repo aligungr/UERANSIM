@@ -28,6 +28,12 @@ package tr.havelsan.ueransim.ngap4.core;
 
 public class NgapPrintableString extends NgapValue {
 
+    public String value;
+
+    public NgapPrintableString(String value) {
+        this.value = value;
+    }
+
     @Override
     protected String getAsnName() {
         return "PrintableString";

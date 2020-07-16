@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_NextHopChainingCount extends NgapInteger {
 
+    public NGAP_NextHopChainingCount(Octet value) {
+        super(value);
+    }
+
+    public NGAP_NextHopChainingCount(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_NextHopChainingCount(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_NextHopChainingCount(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_NextHopChainingCount(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "NextHopChainingCount";

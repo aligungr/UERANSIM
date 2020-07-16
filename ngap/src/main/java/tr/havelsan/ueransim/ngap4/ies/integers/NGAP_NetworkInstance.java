@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_NetworkInstance extends NgapInteger {
 
+    public NGAP_NetworkInstance(Octet value) {
+        super(value);
+    }
+
+    public NGAP_NetworkInstance(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_NetworkInstance(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_NetworkInstance(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_NetworkInstance(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "NetworkInstance";

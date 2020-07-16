@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_E_RAB_ID extends NgapInteger {
 
+    public NGAP_E_RAB_ID(Octet value) {
+        super(value);
+    }
+
+    public NGAP_E_RAB_ID(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_E_RAB_ID(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_E_RAB_ID(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_E_RAB_ID(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "E-RAB-ID";

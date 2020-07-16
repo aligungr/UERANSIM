@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_TimeUEStayedInCellEnhancedGranularity extends NgapInteger {
 
+    public NGAP_TimeUEStayedInCellEnhancedGranularity(Octet value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCellEnhancedGranularity(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCellEnhancedGranularity(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCellEnhancedGranularity(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCellEnhancedGranularity(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "TimeUEStayedInCellEnhancedGranularity";

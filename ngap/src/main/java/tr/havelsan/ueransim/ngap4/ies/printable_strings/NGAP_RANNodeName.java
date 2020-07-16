@@ -14,6 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_RANNodeName extends NgapPrintableString {
 
+    public NGAP_RANNodeName(String value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "RANNodeName";

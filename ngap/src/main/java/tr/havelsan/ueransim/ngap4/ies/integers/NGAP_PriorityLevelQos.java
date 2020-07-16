@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_PriorityLevelQos extends NgapInteger {
 
+    public NGAP_PriorityLevelQos(Octet value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelQos(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelQos(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelQos(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_PriorityLevelQos(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "PriorityLevelQos";

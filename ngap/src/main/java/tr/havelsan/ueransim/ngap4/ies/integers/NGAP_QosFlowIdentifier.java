@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_QosFlowIdentifier extends NgapInteger {
 
+    public NGAP_QosFlowIdentifier(Octet value) {
+        super(value);
+    }
+
+    public NGAP_QosFlowIdentifier(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_QosFlowIdentifier(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_QosFlowIdentifier(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_QosFlowIdentifier(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "QosFlowIdentifier";

@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_FiveQI extends NgapInteger {
 
+    public NGAP_FiveQI(Octet value) {
+        super(value);
+    }
+
+    public NGAP_FiveQI(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_FiveQI(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_FiveQI(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_FiveQI(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "FiveQI";

@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_TimeUEStayedInCell extends NgapInteger {
 
+    public NGAP_TimeUEStayedInCell(Octet value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCell(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCell(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCell(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_TimeUEStayedInCell(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "TimeUEStayedInCell";

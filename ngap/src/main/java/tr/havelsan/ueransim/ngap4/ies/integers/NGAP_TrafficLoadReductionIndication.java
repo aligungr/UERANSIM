@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_TrafficLoadReductionIndication extends NgapInteger {
 
+    public NGAP_TrafficLoadReductionIndication(Octet value) {
+        super(value);
+    }
+
+    public NGAP_TrafficLoadReductionIndication(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_TrafficLoadReductionIndication(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_TrafficLoadReductionIndication(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_TrafficLoadReductionIndication(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "TrafficLoadReductionIndication";

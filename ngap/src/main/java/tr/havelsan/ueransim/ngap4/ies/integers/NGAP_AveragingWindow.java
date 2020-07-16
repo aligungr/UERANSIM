@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_AveragingWindow extends NgapInteger {
 
+    public NGAP_AveragingWindow(Octet value) {
+        super(value);
+    }
+
+    public NGAP_AveragingWindow(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_AveragingWindow(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_AveragingWindow(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_AveragingWindow(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "AveragingWindow";

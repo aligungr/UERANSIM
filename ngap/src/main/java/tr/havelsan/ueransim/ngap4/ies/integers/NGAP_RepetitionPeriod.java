@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_RepetitionPeriod extends NgapInteger {
 
+    public NGAP_RepetitionPeriod(Octet value) {
+        super(value);
+    }
+
+    public NGAP_RepetitionPeriod(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_RepetitionPeriod(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_RepetitionPeriod(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_RepetitionPeriod(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "RepetitionPeriod";

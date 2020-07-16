@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_ProcedureCode extends NgapInteger {
 
+    public NGAP_ProcedureCode(Octet value) {
+        super(value);
+    }
+
+    public NGAP_ProcedureCode(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_ProcedureCode(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_ProcedureCode(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_ProcedureCode(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "ProcedureCode";

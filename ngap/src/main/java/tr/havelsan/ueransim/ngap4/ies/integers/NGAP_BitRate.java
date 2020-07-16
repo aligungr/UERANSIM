@@ -14,6 +14,26 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 public class NGAP_BitRate extends NgapInteger {
 
+    public NGAP_BitRate(Octet value) {
+        super(value);
+    }
+
+    public NGAP_BitRate(Octet2 value) {
+        super(value);
+    }
+
+    public NGAP_BitRate(Octet3 value) {
+        super(value);
+    }
+
+    public NGAP_BitRate(Octet4 value) {
+        super(value);
+    }
+
+    public NGAP_BitRate(long value) {
+        super(value);
+    }
+
     @Override
     protected String getAsnName() {
         return "BitRate";
