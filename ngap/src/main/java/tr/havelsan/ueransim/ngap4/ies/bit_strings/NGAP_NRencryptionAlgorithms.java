@@ -48,8 +48,8 @@ public class NGAP_NRencryptionAlgorithms extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_NRencryptionAlgorithms(String hex) {
-        super(hex);
+    public NGAP_NRencryptionAlgorithms(String bits) {
+        super(bits);
     }
 
     @Override

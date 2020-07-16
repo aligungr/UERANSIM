@@ -48,8 +48,8 @@ public class NGAP_DataCodingScheme extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_DataCodingScheme(String hex) {
-        super(hex);
+    public NGAP_DataCodingScheme(String bits) {
+        super(bits);
     }
 
     @Override

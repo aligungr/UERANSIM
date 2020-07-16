@@ -48,8 +48,8 @@ public class NGAP_MessageIdentifier extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_MessageIdentifier(String hex) {
-        super(hex);
+    public NGAP_MessageIdentifier(String bits) {
+        super(bits);
     }
 
     @Override

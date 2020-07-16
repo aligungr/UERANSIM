@@ -24,7 +24,7 @@ public class NGAP_LastVisitedGERANCellInformation extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_LastVisitedGERANCellInformation(Octet... octets) {
+    public NGAP_LastVisitedGERANCellInformation(Octet[] octets) {
         super(octets);
     }
 

@@ -48,8 +48,8 @@ public class NGAP_AMFSetID extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_AMFSetID(String hex) {
-        super(hex);
+    public NGAP_AMFSetID(String bits) {
+        super(bits);
     }
 
     @Override

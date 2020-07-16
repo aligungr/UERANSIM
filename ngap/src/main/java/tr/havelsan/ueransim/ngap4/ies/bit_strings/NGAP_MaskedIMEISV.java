@@ -48,8 +48,8 @@ public class NGAP_MaskedIMEISV extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_MaskedIMEISV(String hex) {
-        super(hex);
+    public NGAP_MaskedIMEISV(String bits) {
+        super(bits);
     }
 
     @Override

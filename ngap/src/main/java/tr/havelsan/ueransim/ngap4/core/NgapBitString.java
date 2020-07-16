@@ -67,7 +67,7 @@ public class NgapBitString extends NgapValue {
     }
 
     public NgapBitString(String hex) {
-        this(BitString.fromHex(hex));
+        this(BitString.fromBits(hex));
     }
 
     @Override

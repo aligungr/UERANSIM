@@ -24,7 +24,7 @@ public class NGAP_NGAP_Message extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_NGAP_Message(Octet... octets) {
+    public NGAP_NGAP_Message(Octet[] octets) {
         super(octets);
     }
 

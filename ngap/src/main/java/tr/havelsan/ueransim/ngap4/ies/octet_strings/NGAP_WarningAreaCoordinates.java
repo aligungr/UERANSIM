@@ -24,7 +24,7 @@ public class NGAP_WarningAreaCoordinates extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_WarningAreaCoordinates(Octet... octets) {
+    public NGAP_WarningAreaCoordinates(Octet[] octets) {
         super(octets);
     }
 

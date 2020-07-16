@@ -48,8 +48,8 @@ public class NGAP_AMFRegionID extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_AMFRegionID(String hex) {
-        super(hex);
+    public NGAP_AMFRegionID(String bits) {
+        super(bits);
     }
 
     @Override

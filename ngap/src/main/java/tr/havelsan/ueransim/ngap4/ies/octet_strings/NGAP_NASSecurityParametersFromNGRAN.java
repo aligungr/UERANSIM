@@ -24,7 +24,7 @@ public class NGAP_NASSecurityParametersFromNGRAN extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_NASSecurityParametersFromNGRAN(Octet... octets) {
+    public NGAP_NASSecurityParametersFromNGRAN(Octet[] octets) {
         super(octets);
     }
 

@@ -48,8 +48,8 @@ public class NGAP_NRintegrityProtectionAlgorithms extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_NRintegrityProtectionAlgorithms(String hex) {
-        super(hex);
+    public NGAP_NRintegrityProtectionAlgorithms(String bits) {
+        super(bits);
     }
 
     @Override

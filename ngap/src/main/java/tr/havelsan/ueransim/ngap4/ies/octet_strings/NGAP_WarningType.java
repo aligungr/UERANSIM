@@ -24,7 +24,7 @@ public class NGAP_WarningType extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_WarningType(Octet... octets) {
+    public NGAP_WarningType(Octet[] octets) {
         super(octets);
     }
 

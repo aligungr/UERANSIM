@@ -48,8 +48,8 @@ public class NGAP_SerialNumber extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_SerialNumber(String hex) {
-        super(hex);
+    public NGAP_SerialNumber(String bits) {
+        super(bits);
     }
 
     @Override

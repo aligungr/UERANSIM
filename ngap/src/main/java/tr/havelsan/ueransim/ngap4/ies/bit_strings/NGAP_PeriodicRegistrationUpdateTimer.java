@@ -48,8 +48,8 @@ public class NGAP_PeriodicRegistrationUpdateTimer extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_PeriodicRegistrationUpdateTimer(String hex) {
-        super(hex);
+    public NGAP_PeriodicRegistrationUpdateTimer(String bits) {
+        super(bits);
     }
 
     @Override

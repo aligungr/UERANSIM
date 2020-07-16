@@ -24,7 +24,7 @@ public class NGAP_RoutingID extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_RoutingID(Octet... octets) {
+    public NGAP_RoutingID(Octet[] octets) {
         super(octets);
     }
 

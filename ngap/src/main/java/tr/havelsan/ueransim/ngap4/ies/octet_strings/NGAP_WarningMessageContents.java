@@ -24,7 +24,7 @@ public class NGAP_WarningMessageContents extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_WarningMessageContents(Octet... octets) {
+    public NGAP_WarningMessageContents(Octet[] octets) {
         super(octets);
     }
 

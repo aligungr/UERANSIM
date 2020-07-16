@@ -24,7 +24,7 @@ public class NGAP_NAS_PDU extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_NAS_PDU(Octet... octets) {
+    public NGAP_NAS_PDU(Octet[] octets) {
         super(octets);
     }
 

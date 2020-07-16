@@ -24,7 +24,7 @@ public class NGAP_TimeStamp extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_TimeStamp(Octet... octets) {
+    public NGAP_TimeStamp(Octet[] octets) {
         super(octets);
     }
 

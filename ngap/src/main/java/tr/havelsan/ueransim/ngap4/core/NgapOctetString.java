@@ -43,7 +43,7 @@ public class NgapOctetString extends NgapValue {
         this(value.toOctetString());
     }
 
-    public NgapOctetString(Octet... octets) {
+    public NgapOctetString(Octet[] octets) {
         this(new OctetString(octets));
     }
 

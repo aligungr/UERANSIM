@@ -24,7 +24,7 @@ public class NGAP_PortNumber extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_PortNumber(Octet... octets) {
+    public NGAP_PortNumber(Octet[] octets) {
         super(octets);
     }
 

@@ -48,8 +48,8 @@ public class NGAP_InterfacesToTrace extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_InterfacesToTrace(String hex) {
-        super(hex);
+    public NGAP_InterfacesToTrace(String bits) {
+        super(bits);
     }
 
     @Override

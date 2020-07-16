@@ -24,7 +24,7 @@ public class NGAP_SST extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_SST(Octet... octets) {
+    public NGAP_SST(Octet[] octets) {
         super(octets);
     }
 

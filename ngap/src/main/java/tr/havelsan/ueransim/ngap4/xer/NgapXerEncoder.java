@@ -74,18 +74,29 @@ public class NgapXerEncoder {
         if (value instanceof NgapBitString) {
             return document.createTextNode(((NgapBitString) value).value.toBinaryString(false));
         }
+
         if (value instanceof NgapOctetString) {
             return document.createTextNode(((NgapOctetString) value).value.toHexString(false));
         }
+
         if (value instanceof NgapPrintableString) {
             return document.createTextNode(((NgapPrintableString) value).value);
         }
+
         if (value instanceof NgapInteger) {
             return document.createTextNode(Long.toString(((NgapInteger) value).value));
         }
+
         if (value instanceof NgapEnumerated) {
-            return document.createTextNode(((NgapEnumerated) value).sValue);
+            return document.createElement(((NgapEnumerated) value).sValue);
         }
+
+        if (value instanceof NgapChoice) {
+            var choice = (NgapChoice) value;
+
+
+        }
+
 
         throw new NotImplementedException("");
     }

@@ -48,8 +48,8 @@ public class NGAP_TransportLayerAddress extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_TransportLayerAddress(String hex) {
-        super(hex);
+    public NGAP_TransportLayerAddress(String bits) {
+        super(bits);
     }
 
     @Override

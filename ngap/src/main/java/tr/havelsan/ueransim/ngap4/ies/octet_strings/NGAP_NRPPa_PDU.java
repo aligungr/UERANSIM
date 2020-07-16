@@ -24,7 +24,7 @@ public class NGAP_NRPPa_PDU extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_NRPPa_PDU(Octet... octets) {
+    public NGAP_NRPPa_PDU(Octet[] octets) {
         super(octets);
     }
 

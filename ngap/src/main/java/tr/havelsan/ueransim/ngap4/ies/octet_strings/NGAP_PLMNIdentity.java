@@ -24,7 +24,7 @@ public class NGAP_PLMNIdentity extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_PLMNIdentity(Octet... octets) {
+    public NGAP_PLMNIdentity(Octet[] octets) {
         super(octets);
     }
 

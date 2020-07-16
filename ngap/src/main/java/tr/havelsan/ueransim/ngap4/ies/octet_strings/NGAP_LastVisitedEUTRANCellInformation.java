@@ -24,7 +24,7 @@ public class NGAP_LastVisitedEUTRANCellInformation extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_LastVisitedEUTRANCellInformation(Octet... octets) {
+    public NGAP_LastVisitedEUTRANCellInformation(Octet[] octets) {
         super(octets);
     }
 

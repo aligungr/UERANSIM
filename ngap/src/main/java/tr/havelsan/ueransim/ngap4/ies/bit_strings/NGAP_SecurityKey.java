@@ -48,8 +48,8 @@ public class NGAP_SecurityKey extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_SecurityKey(String hex) {
-        super(hex);
+    public NGAP_SecurityKey(String bits) {
+        super(bits);
     }
 
     @Override

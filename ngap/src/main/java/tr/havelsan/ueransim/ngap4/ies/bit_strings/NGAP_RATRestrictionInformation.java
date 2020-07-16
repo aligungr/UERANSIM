@@ -48,8 +48,8 @@ public class NGAP_RATRestrictionInformation extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_RATRestrictionInformation(String hex) {
-        super(hex);
+    public NGAP_RATRestrictionInformation(String bits) {
+        super(bits);
     }
 
     @Override

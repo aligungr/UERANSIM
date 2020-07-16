@@ -48,8 +48,8 @@ public class NGAP_NRCellIdentity extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_NRCellIdentity(String hex) {
-        super(hex);
+    public NGAP_NRCellIdentity(String bits) {
+        super(bits);
     }
 
     @Override

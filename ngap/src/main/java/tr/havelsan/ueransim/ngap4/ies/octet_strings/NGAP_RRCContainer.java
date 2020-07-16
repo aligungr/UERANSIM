@@ -24,7 +24,7 @@ public class NGAP_RRCContainer extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_RRCContainer(Octet... octets) {
+    public NGAP_RRCContainer(Octet[] octets) {
         super(octets);
     }
 

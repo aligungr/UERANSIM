@@ -48,8 +48,8 @@ public class NGAP_AMFPointer extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_AMFPointer(String hex) {
-        super(hex);
+    public NGAP_AMFPointer(String bits) {
+        super(bits);
     }
 
     @Override

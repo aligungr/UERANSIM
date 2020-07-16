@@ -24,7 +24,7 @@ public class NGAP_SourceToTarget_TransparentContainer extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_SourceToTarget_TransparentContainer(Octet... octets) {
+    public NGAP_SourceToTarget_TransparentContainer(Octet[] octets) {
         super(octets);
     }
 

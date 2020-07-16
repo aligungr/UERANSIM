@@ -24,7 +24,7 @@ public class NGAP_UERadioCapability extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_UERadioCapability(Octet... octets) {
+    public NGAP_UERadioCapability(Octet[] octets) {
         super(octets);
     }
 

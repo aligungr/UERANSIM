@@ -24,7 +24,7 @@ public class NGAP_EPS_TAC extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_EPS_TAC(Octet... octets) {
+    public NGAP_EPS_TAC(Octet[] octets) {
         super(octets);
     }
 

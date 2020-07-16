@@ -48,8 +48,8 @@ public class NGAP_EUTRAintegrityProtectionAlgorithms extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_EUTRAintegrityProtectionAlgorithms(String hex) {
-        super(hex);
+    public NGAP_EUTRAintegrityProtectionAlgorithms(String bits) {
+        super(bits);
     }
 
     @Override

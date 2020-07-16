@@ -24,7 +24,7 @@ public class NGAP_FiveG_TMSI extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_FiveG_TMSI(Octet... octets) {
+    public NGAP_FiveG_TMSI(Octet[] octets) {
         super(octets);
     }
 

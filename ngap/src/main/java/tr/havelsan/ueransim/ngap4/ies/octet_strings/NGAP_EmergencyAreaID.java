@@ -24,7 +24,7 @@ public class NGAP_EmergencyAreaID extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_EmergencyAreaID(Octet... octets) {
+    public NGAP_EmergencyAreaID(Octet[] octets) {
         super(octets);
     }
 

@@ -24,7 +24,7 @@ public class NGAP_NGRANTraceID extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_NGRANTraceID(Octet... octets) {
+    public NGAP_NGRANTraceID(Octet[] octets) {
         super(octets);
     }
 

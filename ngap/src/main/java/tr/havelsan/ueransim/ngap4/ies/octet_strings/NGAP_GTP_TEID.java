@@ -24,7 +24,7 @@ public class NGAP_GTP_TEID extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_GTP_TEID(Octet... octets) {
+    public NGAP_GTP_TEID(Octet[] octets) {
         super(octets);
     }
 

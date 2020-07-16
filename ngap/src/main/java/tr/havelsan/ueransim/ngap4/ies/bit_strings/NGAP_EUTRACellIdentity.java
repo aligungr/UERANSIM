@@ -48,8 +48,8 @@ public class NGAP_EUTRACellIdentity extends NgapBitString {
         super(hex, bitLength);
     }
 
-    public NGAP_EUTRACellIdentity(String hex) {
-        super(hex);
+    public NGAP_EUTRACellIdentity(String bits) {
+        super(bits);
     }
 
     @Override

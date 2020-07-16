@@ -24,7 +24,7 @@ public class NGAP_UERadioCapabilityForPagingOfNR extends NgapOctetString {
         super(value);
     }
 
-    public NGAP_UERadioCapabilityForPagingOfNR(Octet... octets) {
+    public NGAP_UERadioCapabilityForPagingOfNR(Octet[] octets) {
         super(octets);
     }
 
