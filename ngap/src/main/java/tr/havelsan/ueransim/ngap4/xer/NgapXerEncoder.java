@@ -26,5 +26,12 @@
 
 package tr.havelsan.ueransim.ngap4.xer;
 
+import tr.havelsan.ueransim.ngap4.core.NgapValue;
+
 public class NgapXerEncoder {
+
+
+    public static void encodeIe(NgapValue value) {
+
+    }
 }

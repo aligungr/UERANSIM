@@ -35,6 +35,8 @@ import tr.havelsan.ueransim.events.ue.UeEvent;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
 import tr.havelsan.ueransim.utils.*;
 
 import java.io.IOException;
@@ -48,6 +50,13 @@ import java.util.Scanner;
 public class Program {
 
     public static void main(String[] args) {
+        {
+            var x = new NGAP_AMF_UE_NGAP_ID();
+
+            NgapXerEncoder.encodeIe(x);
+        }
+
+
         MtsInitializer.initMts();
         initLogging();
 

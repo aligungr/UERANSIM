@@ -26,7 +26,49 @@
 
 package tr.havelsan.ueransim.ngap4.core;
 
+import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.octets.OctetString;
+
 public class NgapBitString extends NgapValue {
+
+    public BitString value;
+
+    public NgapBitString(BitString value) {
+        this.value = value;
+    }
+
+    public NgapBitString(OctetString octetString, int bitLength) {
+        this(BitString.from(octetString, bitLength));
+    }
+
+    public NgapBitString(OctetString octetString) {
+        this(BitString.from(octetString));
+    }
+
+    public NgapBitString(Octet[] octets, int bitLength) {
+        this(BitString.from(octets, bitLength));
+    }
+
+    public NgapBitString(Octet[] octets) {
+        this(BitString.from(octets));
+    }
+
+    public NgapBitString(byte[] octets, int bitLength) {
+        this(BitString.from(octets, bitLength));
+    }
+
+    public NgapBitString(byte[] octets) {
+        this(BitString.from(octets));
+    }
+
+    public NgapBitString(String hex, int bitLength) {
+        this(BitString.fromHex(hex, bitLength));
+    }
+
+    public NgapBitString(String hex) {
+        this(BitString.fromHex(hex));
+    }
 
     @Override
     protected String getAsnName() {
