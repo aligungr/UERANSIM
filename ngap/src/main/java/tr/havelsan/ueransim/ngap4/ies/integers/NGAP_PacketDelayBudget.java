@@ -12,7 +12,13 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_PacketDelayBudget extends NgapInteger {
+
+    public NGAP_PacketDelayBudget(long value) {
+        super(value);
+    }
 
     public NGAP_PacketDelayBudget(Octet value) {
         super(value);
@@ -27,10 +33,6 @@ public class NGAP_PacketDelayBudget extends NgapInteger {
     }
 
     public NGAP_PacketDelayBudget(Octet4 value) {
-        super(value);
-    }
-
-    public NGAP_PacketDelayBudget(long value) {
         super(value);
     }
 

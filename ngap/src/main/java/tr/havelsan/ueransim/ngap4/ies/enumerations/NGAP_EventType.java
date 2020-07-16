@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_EventType extends NgapEnumerated {
 
     public static final NGAP_EventType DIRECT = new NGAP_EventType("direct");

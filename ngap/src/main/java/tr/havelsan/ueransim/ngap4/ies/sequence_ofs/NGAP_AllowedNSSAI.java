@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_AllowedNSSAI extends NgapSequenceOf<NGAP_AllowedNSSAI_Item> {
+
+    public NGAP_AllowedNSSAI() {
+        super();
+    }
+
+    public NGAP_AllowedNSSAI(List<NGAP_AllowedNSSAI_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

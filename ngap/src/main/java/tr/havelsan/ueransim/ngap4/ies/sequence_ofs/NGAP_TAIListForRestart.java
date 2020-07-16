@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TAIListForRestart extends NgapSequenceOf<NGAP_TAI> {
+
+    public NGAP_TAIListForRestart() {
+        super();
+    }
+
+    public NGAP_TAIListForRestart(List<NGAP_TAI> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

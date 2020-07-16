@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_ServiceAreaInformation extends NgapSequenceOf<NGAP_ServiceAreaInformation_Item> {
+
+    public NGAP_ServiceAreaInformation() {
+        super();
+    }
+
+    public NGAP_ServiceAreaInformation(List<NGAP_ServiceAreaInformation_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

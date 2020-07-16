@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TNLAssociationUsage extends NgapEnumerated {
 
     public static final NGAP_TNLAssociationUsage UE = new NGAP_TNLAssociationUsage("ue");

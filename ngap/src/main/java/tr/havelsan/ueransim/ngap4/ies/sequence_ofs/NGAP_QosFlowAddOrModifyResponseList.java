@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_QosFlowAddOrModifyResponseList extends NgapSequenceOf<NGAP_QosFlowAddOrModifyResponseItem> {
+
+    public NGAP_QosFlowAddOrModifyResponseList() {
+        super();
+    }
+
+    public NGAP_QosFlowAddOrModifyResponseList(List<NGAP_QosFlowAddOrModifyResponseItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

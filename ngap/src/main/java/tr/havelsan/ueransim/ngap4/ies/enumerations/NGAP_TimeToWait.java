@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TimeToWait extends NgapEnumerated {
 
     public static final NGAP_TimeToWait V1S = new NGAP_TimeToWait("v1s");

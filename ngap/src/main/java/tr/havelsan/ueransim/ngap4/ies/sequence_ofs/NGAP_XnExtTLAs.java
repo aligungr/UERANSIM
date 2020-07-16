@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_XnExtTLAs extends NgapSequenceOf<NGAP_XnExtTLA_Item> {
+
+    public NGAP_XnExtTLAs() {
+        super();
+    }
+
+    public NGAP_XnExtTLAs(List<NGAP_XnExtTLA_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

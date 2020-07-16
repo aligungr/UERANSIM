@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_NASSecurityParametersFromNGRAN extends NgapOctetString {
 
     public NGAP_NASSecurityParametersFromNGRAN(OctetString value) {

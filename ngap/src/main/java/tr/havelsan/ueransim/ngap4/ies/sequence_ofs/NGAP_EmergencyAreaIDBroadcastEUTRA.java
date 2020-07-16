@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_EmergencyAreaIDBroadcastEUTRA extends NgapSequenceOf<NGAP_EmergencyAreaIDBroadcastEUTRA_Item> {
+
+    public NGAP_EmergencyAreaIDBroadcastEUTRA() {
+        super();
+    }
+
+    public NGAP_EmergencyAreaIDBroadcastEUTRA(List<NGAP_EmergencyAreaIDBroadcastEUTRA_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

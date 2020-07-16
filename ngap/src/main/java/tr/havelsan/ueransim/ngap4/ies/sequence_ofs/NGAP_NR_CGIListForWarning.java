@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_NR_CGIListForWarning extends NgapSequenceOf<NGAP_NR_CGI> {
+
+    public NGAP_NR_CGIListForWarning() {
+        super();
+    }
+
+    public NGAP_NR_CGIListForWarning(List<NGAP_NR_CGI> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

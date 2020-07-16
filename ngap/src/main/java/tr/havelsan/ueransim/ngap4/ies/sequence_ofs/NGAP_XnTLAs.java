@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_XnTLAs extends NgapSequenceOf<NGAP_TransportLayerAddress> {
+
+    public NGAP_XnTLAs() {
+        super();
+    }
+
+    public NGAP_XnTLAs(List<NGAP_TransportLayerAddress> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

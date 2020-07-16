@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_NotificationCause extends NgapEnumerated {
 
     public static final NGAP_NotificationCause FULFILLED = new NGAP_NotificationCause("fulfilled");

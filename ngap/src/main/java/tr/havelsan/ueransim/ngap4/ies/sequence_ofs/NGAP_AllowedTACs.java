@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_AllowedTACs extends NgapSequenceOf<NGAP_TAC> {
+
+    public NGAP_AllowedTACs() {
+        super();
+    }
+
+    public NGAP_AllowedTACs(List<NGAP_TAC> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

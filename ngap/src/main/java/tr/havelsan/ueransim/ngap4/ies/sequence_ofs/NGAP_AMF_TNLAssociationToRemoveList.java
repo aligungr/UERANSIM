@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_AMF_TNLAssociationToRemoveList extends NgapSequenceOf<NGAP_AMF_TNLAssociationToRemoveItem> {
+
+    public NGAP_AMF_TNLAssociationToRemoveList() {
+        super();
+    }
+
+    public NGAP_AMF_TNLAssociationToRemoveList(List<NGAP_AMF_TNLAssociationToRemoveItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

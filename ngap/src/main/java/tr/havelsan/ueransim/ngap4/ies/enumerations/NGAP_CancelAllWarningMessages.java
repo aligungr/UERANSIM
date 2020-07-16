@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_CancelAllWarningMessages extends NgapEnumerated {
 
     public static final NGAP_CancelAllWarningMessages TRUE = new NGAP_CancelAllWarningMessages("true");

@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_ResetAll extends NgapEnumerated {
 
     public static final NGAP_ResetAll RESET_ALL = new NGAP_ResetAll("reset-all");

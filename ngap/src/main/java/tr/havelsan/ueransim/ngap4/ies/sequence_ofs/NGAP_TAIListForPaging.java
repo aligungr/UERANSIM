@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TAIListForPaging extends NgapSequenceOf<NGAP_TAIListForPagingItem> {
+
+    public NGAP_TAIListForPaging() {
+        super();
+    }
+
+    public NGAP_TAIListForPaging(List<NGAP_TAIListForPagingItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

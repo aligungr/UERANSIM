@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_E_RABInformationList extends NgapSequenceOf<NGAP_E_RABInformationItem> {
+
+    public NGAP_E_RABInformationList() {
+        super();
+    }
+
+    public NGAP_E_RABInformationList(List<NGAP_E_RABInformationItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

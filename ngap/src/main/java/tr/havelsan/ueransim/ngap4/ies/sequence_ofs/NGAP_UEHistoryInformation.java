@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_UEHistoryInformation extends NgapSequenceOf<NGAP_LastVisitedCellItem> {
+
+    public NGAP_UEHistoryInformation() {
+        super();
+    }
+
+    public NGAP_UEHistoryInformation(List<NGAP_LastVisitedCellItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

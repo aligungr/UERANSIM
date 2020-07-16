@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_OverloadStartNSSAIList extends NgapSequenceOf<NGAP_OverloadStartNSSAIItem> {
+
+    public NGAP_OverloadStartNSSAIList() {
+        super();
+    }
+
+    public NGAP_OverloadStartNSSAIList(List<NGAP_OverloadStartNSSAIItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

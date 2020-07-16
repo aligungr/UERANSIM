@@ -12,7 +12,13 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_NumberOfBroadcastsRequested extends NgapInteger {
+
+    public NGAP_NumberOfBroadcastsRequested(long value) {
+        super(value);
+    }
 
     public NGAP_NumberOfBroadcastsRequested(Octet value) {
         super(value);
@@ -27,10 +33,6 @@ public class NGAP_NumberOfBroadcastsRequested extends NgapInteger {
     }
 
     public NGAP_NumberOfBroadcastsRequested(Octet4 value) {
-        super(value);
-    }
-
-    public NGAP_NumberOfBroadcastsRequested(long value) {
         super(value);
     }
 

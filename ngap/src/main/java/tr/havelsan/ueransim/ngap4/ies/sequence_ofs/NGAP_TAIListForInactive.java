@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TAIListForInactive extends NgapSequenceOf<NGAP_TAIListForInactiveItem> {
+
+    public NGAP_TAIListForInactive() {
+        super();
+    }
+
+    public NGAP_TAIListForInactive(List<NGAP_TAIListForInactiveItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

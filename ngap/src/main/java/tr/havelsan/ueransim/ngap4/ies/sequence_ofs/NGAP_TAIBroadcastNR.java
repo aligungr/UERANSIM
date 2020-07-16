@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TAIBroadcastNR extends NgapSequenceOf<NGAP_TAIBroadcastNR_Item> {
+
+    public NGAP_TAIBroadcastNR() {
+        super();
+    }
+
+    public NGAP_TAIBroadcastNR(List<NGAP_TAIBroadcastNR_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

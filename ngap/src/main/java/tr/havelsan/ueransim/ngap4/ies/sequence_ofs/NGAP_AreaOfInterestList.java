@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_AreaOfInterestList extends NgapSequenceOf<NGAP_AreaOfInterestItem> {
+
+    public NGAP_AreaOfInterestList() {
+        super();
+    }
+
+    public NGAP_AreaOfInterestList(List<NGAP_AreaOfInterestItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

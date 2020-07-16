@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TraceDepth extends NgapEnumerated {
 
     public static final NGAP_TraceDepth MINIMUM = new NGAP_TraceDepth("minimum");

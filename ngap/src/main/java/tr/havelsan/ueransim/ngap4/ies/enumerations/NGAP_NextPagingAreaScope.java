@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_NextPagingAreaScope extends NgapEnumerated {
 
     public static final NGAP_NextPagingAreaScope SAME = new NGAP_NextPagingAreaScope("same");

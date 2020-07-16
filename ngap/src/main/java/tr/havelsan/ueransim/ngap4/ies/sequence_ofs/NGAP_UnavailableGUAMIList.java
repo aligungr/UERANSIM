@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_UnavailableGUAMIList extends NgapSequenceOf<NGAP_UnavailableGUAMIItem> {
+
+    public NGAP_UnavailableGUAMIList() {
+        super();
+    }
+
+    public NGAP_UnavailableGUAMIList(List<NGAP_UnavailableGUAMIItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

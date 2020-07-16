@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_CellIDBroadcastEUTRA extends NgapSequenceOf<NGAP_CellIDBroadcastEUTRA_Item> {
+
+    public NGAP_CellIDBroadcastEUTRA() {
+        super();
+    }
+
+    public NGAP_CellIDBroadcastEUTRA(List<NGAP_CellIDBroadcastEUTRA_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

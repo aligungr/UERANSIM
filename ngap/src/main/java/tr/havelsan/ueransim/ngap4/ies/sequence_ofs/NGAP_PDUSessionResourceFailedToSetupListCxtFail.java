@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_PDUSessionResourceFailedToSetupListCxtFail extends NgapSequenceOf<NGAP_PDUSessionResourceFailedToSetupItemCxtFail> {
+
+    public NGAP_PDUSessionResourceFailedToSetupListCxtFail() {
+        super();
+    }
+
+    public NGAP_PDUSessionResourceFailedToSetupListCxtFail(List<NGAP_PDUSessionResourceFailedToSetupItemCxtFail> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_CompletedCellsInTAI_NR extends NgapSequenceOf<NGAP_CompletedCellsInTAI_NR_Item> {
+
+    public NGAP_CompletedCellsInTAI_NR() {
+        super();
+    }
+
+    public NGAP_CompletedCellsInTAI_NR(List<NGAP_CompletedCellsInTAI_NR_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

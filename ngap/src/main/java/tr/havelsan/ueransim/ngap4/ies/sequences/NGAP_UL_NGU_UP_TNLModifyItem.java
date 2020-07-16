@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_UL_NGU_UP_TNLModifyItem extends NgapSequence {
 
     public NGAP_UPTransportLayerInformation uL_NGU_UP_TNLInformation;

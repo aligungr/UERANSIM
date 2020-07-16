@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TAICancelledEUTRA extends NgapSequenceOf<NGAP_TAICancelledEUTRA_Item> {
+
+    public NGAP_TAICancelledEUTRA() {
+        super();
+    }
+
+    public NGAP_TAICancelledEUTRA(List<NGAP_TAICancelledEUTRA_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

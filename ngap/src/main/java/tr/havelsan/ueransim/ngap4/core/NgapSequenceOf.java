@@ -26,7 +26,20 @@
 
 package tr.havelsan.ueransim.ngap4.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class NgapSequenceOf<T extends NgapValue> extends NgapValue {
+
+    public List<T> list;
+
+    public NgapSequenceOf() {
+        this(new ArrayList<>());
+    }
+
+    public NgapSequenceOf(List<T> list) {
+        this.list = list;
+    }
 
     protected abstract Class<T> getItemType();
 }

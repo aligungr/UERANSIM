@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_QosFlowInformationList extends NgapSequenceOf<NGAP_QosFlowInformationItem> {
+
+    public NGAP_QosFlowInformationList() {
+        super();
+    }
+
+    public NGAP_QosFlowInformationList(List<NGAP_QosFlowInformationItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

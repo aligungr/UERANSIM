@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_SliceOverloadList extends NgapSequenceOf<NGAP_SliceOverloadItem> {
+
+    public NGAP_SliceOverloadList() {
+        super();
+    }
+
+    public NGAP_SliceOverloadList(List<NGAP_SliceOverloadItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

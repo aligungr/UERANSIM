@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_CriticalityDiagnostics_IE_List extends NgapSequenceOf<NGAP_CriticalityDiagnostics_IE_Item> {
+
+    public NGAP_CriticalityDiagnostics_IE_List() {
+        super();
+    }
+
+    public NGAP_CriticalityDiagnostics_IE_List(List<NGAP_CriticalityDiagnostics_IE_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

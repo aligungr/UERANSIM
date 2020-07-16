@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_PDUSessionResourceModifyListModInd extends NgapSequenceOf<NGAP_PDUSessionResourceModifyItemModInd> {
+
+    public NGAP_PDUSessionResourceModifyListModInd() {
+        super();
+    }
+
+    public NGAP_PDUSessionResourceModifyListModInd(List<NGAP_PDUSessionResourceModifyItemModInd> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

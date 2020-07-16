@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_EmergencyAreaIDCancelledNR extends NgapSequenceOf<NGAP_EmergencyAreaIDCancelledNR_Item> {
+
+    public NGAP_EmergencyAreaIDCancelledNR() {
+        super();
+    }
+
+    public NGAP_EmergencyAreaIDCancelledNR(List<NGAP_EmergencyAreaIDCancelledNR_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

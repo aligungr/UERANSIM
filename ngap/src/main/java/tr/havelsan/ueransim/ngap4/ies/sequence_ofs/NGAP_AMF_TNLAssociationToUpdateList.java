@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_AMF_TNLAssociationToUpdateList extends NgapSequenceOf<NGAP_AMF_TNLAssociationToUpdateItem> {
+
+    public NGAP_AMF_TNLAssociationToUpdateList() {
+        super();
+    }
+
+    public NGAP_AMF_TNLAssociationToUpdateList(List<NGAP_AMF_TNLAssociationToUpdateItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

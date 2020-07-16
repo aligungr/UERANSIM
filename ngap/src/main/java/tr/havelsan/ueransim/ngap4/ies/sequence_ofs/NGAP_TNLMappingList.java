@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_TNLMappingList extends NgapSequenceOf<NGAP_TNLMappingItem> {
+
+    public NGAP_TNLMappingList() {
+        super();
+    }
+
+    public NGAP_TNLMappingList(List<NGAP_TNLMappingItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

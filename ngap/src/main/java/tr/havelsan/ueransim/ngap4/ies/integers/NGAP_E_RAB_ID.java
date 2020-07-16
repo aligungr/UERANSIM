@@ -12,7 +12,13 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_E_RAB_ID extends NgapInteger {
+
+    public NGAP_E_RAB_ID(long value) {
+        super(value);
+    }
 
     public NGAP_E_RAB_ID(Octet value) {
         super(value);
@@ -27,10 +33,6 @@ public class NGAP_E_RAB_ID extends NgapInteger {
     }
 
     public NGAP_E_RAB_ID(Octet4 value) {
-        super(value);
-    }
-
-    public NGAP_E_RAB_ID(long value) {
         super(value);
     }
 

@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_CellIDCancelledNR extends NgapSequenceOf<NGAP_CellIDCancelledNR_Item> {
+
+    public NGAP_CellIDCancelledNR() {
+        super();
+    }
+
+    public NGAP_CellIDCancelledNR(List<NGAP_CellIDCancelledNR_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

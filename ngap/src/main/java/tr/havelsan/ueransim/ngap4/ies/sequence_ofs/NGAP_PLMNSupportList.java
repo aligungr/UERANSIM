@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_PLMNSupportList extends NgapSequenceOf<NGAP_PLMNSupportItem> {
+
+    public NGAP_PLMNSupportList() {
+        super();
+    }
+
+    public NGAP_PLMNSupportList(List<NGAP_PLMNSupportItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

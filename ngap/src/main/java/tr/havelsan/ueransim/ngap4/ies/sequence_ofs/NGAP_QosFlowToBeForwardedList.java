@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_QosFlowToBeForwardedList extends NgapSequenceOf<NGAP_QosFlowToBeForwardedItem> {
+
+    public NGAP_QosFlowToBeForwardedList() {
+        super();
+    }
+
+    public NGAP_QosFlowToBeForwardedList(List<NGAP_QosFlowToBeForwardedItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

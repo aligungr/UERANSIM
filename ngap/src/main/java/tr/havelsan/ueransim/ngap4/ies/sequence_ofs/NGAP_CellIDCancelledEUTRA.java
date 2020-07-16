@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_CellIDCancelledEUTRA extends NgapSequenceOf<NGAP_CellIDCancelledEUTRA_Item> {
+
+    public NGAP_CellIDCancelledEUTRA() {
+        super();
+    }
+
+    public NGAP_CellIDCancelledEUTRA(List<NGAP_CellIDCancelledEUTRA_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

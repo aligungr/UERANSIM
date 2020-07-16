@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_UE_associatedLogicalNG_connectionItem extends NgapSequence {
 
     public NGAP_AMF_UE_NGAP_ID aMF_UE_NGAP_ID;

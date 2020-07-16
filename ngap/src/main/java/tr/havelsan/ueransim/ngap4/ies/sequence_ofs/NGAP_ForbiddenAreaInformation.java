@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_ForbiddenAreaInformation extends NgapSequenceOf<NGAP_ForbiddenAreaInformation_Item> {
+
+    public NGAP_ForbiddenAreaInformation() {
+        super();
+    }
+
+    public NGAP_ForbiddenAreaInformation(List<NGAP_ForbiddenAreaInformation_Item> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

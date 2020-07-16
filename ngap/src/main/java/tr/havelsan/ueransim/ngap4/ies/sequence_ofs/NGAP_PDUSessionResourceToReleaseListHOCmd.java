@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_PDUSessionResourceToReleaseListHOCmd extends NgapSequenceOf<NGAP_PDUSessionResourceToReleaseItemHOCmd> {
+
+    public NGAP_PDUSessionResourceToReleaseListHOCmd() {
+        super();
+    }
+
+    public NGAP_PDUSessionResourceToReleaseListHOCmd(List<NGAP_PDUSessionResourceToReleaseItemHOCmd> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {

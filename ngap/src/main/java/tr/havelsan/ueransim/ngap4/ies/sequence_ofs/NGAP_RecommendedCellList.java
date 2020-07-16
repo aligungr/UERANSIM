@@ -12,7 +12,17 @@ import tr.havelsan.ueransim.ngap4.ies.choices.*;
 import tr.havelsan.ueransim.ngap4.ies.integers.*;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
+import java.util.List;
+
 public class NGAP_RecommendedCellList extends NgapSequenceOf<NGAP_RecommendedCellItem> {
+
+    public NGAP_RecommendedCellList() {
+        super();
+    }
+
+    public NGAP_RecommendedCellList(List<NGAP_RecommendedCellItem> value) {
+        super(value);
+    }
 
     @Override
     protected String getAsnName() {
