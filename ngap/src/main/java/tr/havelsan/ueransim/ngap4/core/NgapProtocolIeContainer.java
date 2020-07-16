@@ -26,7 +26,5 @@
 
 package tr.havelsan.ueransim.ngap4.core;
 
-public abstract class NgapSequenceOf<T extends NgapValue> extends NgapValue {
-
-    public abstract Class<T> getItemType();
+public abstract class NgapProtocolIeContainer extends NgapValue {
 }
