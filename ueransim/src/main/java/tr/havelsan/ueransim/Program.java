@@ -50,13 +50,6 @@ import java.util.Scanner;
 public class Program {
 
     public static void main(String[] args) {
-        {
-            var x = new NGAP_AMF_UE_NGAP_ID();
-
-            NgapXerEncoder.encodeIe(x);
-        }
-
-
         MtsInitializer.initMts();
         initLogging();
 
