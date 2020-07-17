@@ -28,7 +28,7 @@ package tr.havelsan.ueransim.ngap4.pdu;
 
 import tr.havelsan.ueransim.ngap4.core.NGAP_Value;
 
-public class NGAP_ProtocolIeContainer extends NGAP_Value {
+public class NGAP_ProtocolIEContainer extends NGAP_Value {
     // todo
     @Override
     public String getAsnName() {

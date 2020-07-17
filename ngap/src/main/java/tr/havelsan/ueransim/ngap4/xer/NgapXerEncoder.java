@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.ngap4.core.*;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_ProtocolIeContainer;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_ProtocolIEContainer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -245,7 +245,7 @@ public class NgapXerEncoder {
             return list;
         }
 
-        if (value instanceof NGAP_ProtocolIeContainer) {
+        if (value instanceof NGAP_ProtocolIEContainer) {
             throw new NotImplementedException("todo");
         }
 

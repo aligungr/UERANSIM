@@ -17,7 +17,7 @@ import java.util.List;
 
 public class NGAP_PDUSessionResourceSetupRequestTransfer extends NGAP_Sequence {
 
-    public NGAP_ProtocolIeContainer protocolIEs;
+    public NGAP_ProtocolIEContainer protocolIEs;
 
     @Override
     public String getAsnName() {
