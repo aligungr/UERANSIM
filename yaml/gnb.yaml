@@ -29,6 +29,6 @@ supportedTAs:
         taiSliceSupportNssais:
           - sst:
               value: 1
-            sd:
-              value:
-                hex: '09afaf'
+#            sd:
+#              value:
+#                hex: '09afaf'
