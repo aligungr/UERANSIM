@@ -32,6 +32,9 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_TriggeringMessage;
 import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_ProcedureCode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class NGAP_Message extends NGAP_Value {
 
     public final NgapMessageType messageType;
@@ -40,11 +43,14 @@ public abstract class NGAP_Message extends NGAP_Value {
     public final NGAP_ProcedureCode procedureCode;
     public final NGAP_Criticality criticality;
 
+    public final List<NGAP_Value> ies;
+
     public NGAP_Message(NgapMessageType messageType) {
         this.triggeringMessage = NgapData.findTriggeringMessage(messageType);
         this.procedureCode = new NGAP_ProcedureCode(NgapData.findProcedureCode(messageType));
         this.criticality = NgapData.findMessageCriticality(messageType);
         this.messageType = messageType;
+        this.ies = new ArrayList<>();
     }
 
     @Override

@@ -42,6 +42,7 @@ import tr.havelsan.ueransim.ngap4.ies.octet_strings.*;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap4.ies.sequences.*;
+import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
 import tr.havelsan.ueransim.utils.*;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -58,25 +59,9 @@ public class Program {
 
     public static void main(String[] args) {
         {
-            BitString.fromBits("01").toIntArray();
 
-            var x = new NGAP_BroadcastPLMNItem();
-            x.pLMNIdentity = new NGAP_PLMNIdentity("000111");
-            x.tAISliceSupportList = new NGAP_SliceSupportList();
+            var x = new NGAP_NGSetupRequest();
 
-            var item1 = new NGAP_SliceSupportItem();
-            item1.s_NSSAI = new NGAP_S_NSSAI();
-            item1.s_NSSAI.sD = new NGAP_SD("000000");
-            item1.s_NSSAI.sST = new NGAP_SST("01");
-
-            var item2 = new NGAP_SliceSupportItem();
-            item2.s_NSSAI = new NGAP_S_NSSAI();
-            item2.s_NSSAI.sD = new NGAP_SD("111111");
-            item2.s_NSSAI.sST = new NGAP_SST("11");
-
-
-            x.tAISliceSupportList.list.add(item1);
-            x.tAISliceSupportList.list.add(item2);
 
             var xx = NgapXerEncoder.encode(x);
             System.out.println(xx);

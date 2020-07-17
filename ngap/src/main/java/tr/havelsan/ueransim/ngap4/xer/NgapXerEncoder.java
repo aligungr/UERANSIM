@@ -242,6 +242,38 @@ public class NgapXerEncoder {
             throw new NotImplementedException("todo");
         }
 
+        if (value instanceof NGAP_Message) {
+            var msg = (NGAP_Message) value;
+            var pdu = document.createElement("NGAP_PDU");
+
+            // todo: unsuccessfull outcome is a typo.
+            var triggeringMessage = document.createElement(msg.triggeringMessage.sValue);
+            pdu.appendChild(triggeringMessage);
+
+            var procedureCode = document.createElement("procedureCode");
+            procedureCode.appendChild(encodeIe(document, msg.procedureCode, false).get(0));
+            triggeringMessage.appendChild(procedureCode);
+
+            var criticality = document.createElement("criticality");
+            criticality.appendChild(encodeIe(document, msg.criticality, false).get(0));
+            triggeringMessage.appendChild(criticality);
+
+            var val = document.createElement("value");
+            triggeringMessage.appendChild(val);
+
+            var message = document.createElement(msg.messageType.name());
+            val.appendChild(message);
+
+            var protocolIes = document.createElement("protocolIEs");
+            message.appendChild(protocolIes);
+
+            // todo:
+
+
+            list.add(pdu);
+            return list;
+        }
+
         throw new RuntimeException("unrecognized type in NgapXerEncoder.encodeIe");
     }
 }
