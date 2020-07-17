@@ -17,12 +17,10 @@ public class NGAP_PDUSessionResourceModifyConfirm extends NGAP_Sequence {
         return new String[]{"protocolIEs"};
     }
 
-
     @Override
     public String[] getMemberNames() {
         return new String[]{"protocolIEs"};
     }
-
     @Override
     public String getAsnName() {
         return "PDUSessionResourceModifyConfirm";

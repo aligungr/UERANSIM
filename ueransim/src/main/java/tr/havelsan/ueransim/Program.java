@@ -35,6 +35,7 @@ import tr.havelsan.ueransim.events.ue.UeEvent;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.ngap2.NgapMessageType;
 import tr.havelsan.ueransim.ngap4.ies.bit_strings.NGAP_NRCellIdentity;
 import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_UserLocationInformation;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
@@ -46,10 +47,7 @@ import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap4.ies.sequences.*;
 import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap4.msg.NGAP_UplinkNASTransport;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_InitiatingMessage;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_MessageChoice;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_ProtocolIEContainer;
+import tr.havelsan.ueransim.ngap4.pdu.*;
 import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
 import tr.havelsan.ueransim.utils.*;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -73,6 +71,8 @@ public class Program {
             x.initiatingMessage.value = new NGAP_MessageChoice();
             x.initiatingMessage.value.uplinkNASTransport = new NGAP_UplinkNASTransport();
             x.initiatingMessage.value.uplinkNASTransport.protocolIEs = new NGAP_ProtocolIEContainer();
+            x.initiatingMessage.value.uplinkNASTransport.protocolIEs.list.add(new NGAP_ProtocolIE(NgapMessageType.UplinkNASTransport));
+            x.initiatingMessage.value.uplinkNASTransport.protocolIEs.list.add(new NGAP_ProtocolIE(NgapMessageType.UplinkNASTransport));
 
             var xx = NgapXerEncoder.encode(x);
             System.out.println(xx);

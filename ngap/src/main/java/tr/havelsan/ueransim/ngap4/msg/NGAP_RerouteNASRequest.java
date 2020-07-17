@@ -17,12 +17,10 @@ public class NGAP_RerouteNASRequest extends NGAP_Sequence {
         return new String[]{"protocolIEs"};
     }
 
-
     @Override
     public String[] getMemberNames() {
         return new String[]{"protocolIEs"};
     }
-
     @Override
     public String getAsnName() {
         return "RerouteNASRequest";

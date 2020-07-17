@@ -17,12 +17,10 @@ public class NGAP_LocationReport extends NGAP_Sequence {
         return new String[]{"protocolIEs"};
     }
 
-
     @Override
     public String[] getMemberNames() {
         return new String[]{"protocolIEs"};
     }
-
     @Override
     public String getAsnName() {
         return "LocationReport";
