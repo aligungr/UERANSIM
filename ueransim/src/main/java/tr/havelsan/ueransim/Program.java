@@ -59,9 +59,7 @@ public class Program {
 
     public static void main(String[] args) {
         {
-
             var x = new NGAP_NGSetupRequest();
-
 
             var xx = NgapXerEncoder.encode(x);
             System.out.println(xx);

@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.ngap4.core.*;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_ProtocolIeContainer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -237,10 +238,6 @@ public class NgapXerEncoder {
 
         if (value instanceof NGAP_ProtocolIeContainer) {
             throw new NotImplementedException("todo");
-        }
-
-        if (value instanceof NGAP_Message) {
-            return list;
         }
 
         throw new RuntimeException("unrecognized type in NgapXerEncoder.encodeIe");
