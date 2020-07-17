@@ -10,8 +10,8 @@ smsOverNasSupported: true
 requestedNssai:
   - sst:
       value: 1
-    sd:
-      hex: 09afaf
+#    sd:
+#      hex: 09afaf
 
 userLocationInformationNr:
   nrCgi:
