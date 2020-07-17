@@ -214,13 +214,10 @@ public class NgapXerEncoder {
 
         if (value instanceof NGAP_SequenceOf<?>) {
             var sequenceOf = (NGAP_SequenceOf<?>) value;
-            var itemType = sequenceOf.getItemType();
-            var tagName = itemType.getConstructor().newInstance().getXmlTagName();
-
             var root = document.createElement(sequenceOf.getXmlTagName());
 
             for (var item : sequenceOf.list) {
-                var element = document.createElement(tagName);
+                var element = document.createElement(((NGAP_Value) item).getXmlTagName());
                 for (var inner : encodeIe(document, item, false)) {
                     element.appendChild(inner);
                 }
@@ -243,34 +240,6 @@ public class NgapXerEncoder {
         }
 
         if (value instanceof NGAP_Message) {
-            var msg = (NGAP_Message) value;
-            var pdu = document.createElement("NGAP_PDU");
-
-            // todo: unsuccessfull outcome is a typo.
-            var triggeringMessage = document.createElement(msg.triggeringMessage.sValue);
-            pdu.appendChild(triggeringMessage);
-
-            var procedureCode = document.createElement("procedureCode");
-            procedureCode.appendChild(encodeIe(document, msg.procedureCode, false).get(0));
-            triggeringMessage.appendChild(procedureCode);
-
-            var criticality = document.createElement("criticality");
-            criticality.appendChild(encodeIe(document, msg.criticality, false).get(0));
-            triggeringMessage.appendChild(criticality);
-
-            var val = document.createElement("value");
-            triggeringMessage.appendChild(val);
-
-            var message = document.createElement(msg.messageType.name());
-            val.appendChild(message);
-
-            var protocolIes = document.createElement("protocolIEs");
-            message.appendChild(protocolIes);
-
-            // todo:
-
-
-            list.add(pdu);
             return list;
         }
 

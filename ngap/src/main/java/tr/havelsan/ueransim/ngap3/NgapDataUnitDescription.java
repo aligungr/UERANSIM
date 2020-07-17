@@ -24,28 +24,10 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.ngap4.core;
+package tr.havelsan.ueransim.ngap3;
 
-import tr.havelsan.ueransim.ngap2.NgapData;
-import tr.havelsan.ueransim.ngap2.NgapMessageType;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class NGAP_Message extends NGAP_Value {
-
-
-    public NGAP_Message(NgapMessageType messageType) {
-
-    }
-
-    @Override
-    public String getAsnName() {
-        return null;
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return null;
-    }
+public enum NgapDataUnitDescription {
+    INITIATING_MESSAGE,
+    SUCCESSFUL_OUTCOME,
+    UNSUCCESSFUL_OUTCOME;
 }

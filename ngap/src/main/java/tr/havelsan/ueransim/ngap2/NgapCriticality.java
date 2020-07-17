@@ -24,28 +24,23 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.ngap4.core;
+package tr.havelsan.ueransim.ngap2;
 
-import tr.havelsan.ueransim.ngap2.NgapData;
-import tr.havelsan.ueransim.ngap2.NgapMessageType;
+public enum NgapCriticality {
+    REJECT,
+    IGNORE,
+    NOTIFY;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class NGAP_Message extends NGAP_Value {
-
-
-    public NGAP_Message(NgapMessageType messageType) {
-
-    }
-
-    @Override
-    public String getAsnName() {
-        return null;
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return null;
+    public int intValue() {
+        switch (this) {
+            case REJECT:
+                return 0;
+            case IGNORE:
+                return 1;
+            case NOTIFY:
+                return 2;
+            default:
+                throw new RuntimeException();
+        }
     }
 }
