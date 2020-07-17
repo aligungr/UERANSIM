@@ -35,7 +35,7 @@ public class NGAP_UnsuccessfulOutcome extends NGAP_Sequence {
 
     public NGAP_ProcedureCode procedureCode;
     public NGAP_Criticality criticality;
-    public NGAP_NGAP_Message value;
+    public NGAP_MessageChoice value;
 
     @Override
     public String[] getMemberNames() {

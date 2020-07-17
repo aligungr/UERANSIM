@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim.ngap4.xer;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.ngap4.core.*;
@@ -150,7 +151,7 @@ public class NgapXerEncoder {
             Object object = null;
 
             for (int i = 0; i < identifiers.length; i++) {
-                var field = type.getDeclaredField(identifiers[i]);
+                var field = type.getField(identifiers[i]);
                 var obj = field.get(choice);
                 if (obj != null) {
                     if (j == -1) {
@@ -162,19 +163,27 @@ public class NgapXerEncoder {
                 }
             }
 
-            var element = document.createElement(choice.getMemberNames()[j]);
-            var node = encodeIe(document, object, false);
+            Element element = null;
 
-            for (var item : node) {
-                element.appendChild(item);
+            if (j != -1) {
+                element = document.createElement(choice.getMemberNames()[j]);
+                var node = encodeIe(document, object, false);
+
+                for (var item : node) {
+                    element.appendChild(item);
+                }
             }
 
             if (isRoot) {
                 var root = document.createElement(choice.getXmlTagName());
-                root.appendChild(element);
+                if (element != null) {
+                    root.appendChild(element);
+                }
                 list.add(root);
             } else {
-                list.add(element);
+                if (element != null) {
+                    list.add(element);
+                }
             }
 
             return list;
@@ -190,7 +199,7 @@ public class NgapXerEncoder {
             var root = document.createElement(sequence.getXmlTagName());
 
             for (int i = 0; i < identifiers.length; i++) {
-                var field = type.getDeclaredField(identifiers[i]);
+                var field = type.getField(identifiers[i]);
                 var obj = field.get(sequence);
                 if (obj != null) {
                     var element = document.createElement(names[i]);

@@ -37,12 +37,18 @@ import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.ngap4.ies.bit_strings.NGAP_NRCellIdentity;
 import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_UserLocationInformation;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
 import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_ProcedureCode;
 import tr.havelsan.ueransim.ngap4.ies.octet_strings.*;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap4.ies.sequences.*;
 import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupRequest;
+import tr.havelsan.ueransim.ngap4.msg.NGAP_UplinkNASTransport;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_InitiatingMessage;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_MessageChoice;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
 import tr.havelsan.ueransim.utils.*;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -59,7 +65,12 @@ public class Program {
 
     public static void main(String[] args) {
         {
-            var x = new NGAP_NGSetupRequest();
+            var x = new NGAP_PDU();
+            x.initiatingMessage = new NGAP_InitiatingMessage();
+            x.initiatingMessage.criticality = NGAP_Criticality.IGNORE;
+            x.initiatingMessage.procedureCode = new NGAP_ProcedureCode(46);
+            x.initiatingMessage.value = new NGAP_MessageChoice();
+            x.initiatingMessage.value.uplinkNASTransport = new NGAP_UplinkNASTransport();
 
             var xx = NgapXerEncoder.encode(x);
             System.out.println(xx);

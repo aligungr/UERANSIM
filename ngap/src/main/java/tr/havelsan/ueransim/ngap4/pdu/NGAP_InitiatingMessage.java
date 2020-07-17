@@ -29,13 +29,12 @@ package tr.havelsan.ueransim.ngap4.pdu;
 import tr.havelsan.ueransim.ngap4.core.NGAP_Sequence;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
 import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_ProcedureCode;
-import tr.havelsan.ueransim.ngap4.ies.octet_strings.NGAP_NGAP_Message;
 
 public class NGAP_InitiatingMessage extends NGAP_Sequence {
 
     public NGAP_ProcedureCode procedureCode;
     public NGAP_Criticality criticality;
-    public NGAP_NGAP_Message value;
+    public NGAP_MessageChoice value;
 
     @Override
     public String[] getMemberNames() {
