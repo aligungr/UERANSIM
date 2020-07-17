@@ -20,22 +20,22 @@ public class NGAP_S_NSSAI extends NgapSequence {
     public NGAP_SD sD;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "S-NSSAI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "S-NSSAI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"sST", "sD"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"sST", "sD"};
     }
 }

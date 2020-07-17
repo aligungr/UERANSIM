@@ -25,12 +25,12 @@ public class NGAP_TAIBroadcastNR extends NgapSequenceOf<NGAP_TAIBroadcastNR_Item
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIBroadcastNR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIBroadcastNR";
     }
 

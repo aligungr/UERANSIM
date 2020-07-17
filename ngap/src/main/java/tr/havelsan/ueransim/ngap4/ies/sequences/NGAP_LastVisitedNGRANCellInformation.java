@@ -23,22 +23,22 @@ public class NGAP_LastVisitedNGRANCellInformation extends NgapSequence {
     public NGAP_Cause hOCauseValue;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LastVisitedNGRANCellInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LastVisitedNGRANCellInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"globalCellID", "cellType", "timeUEStayedInCell", "timeUEStayedInCellEnhancedGranularity", "hOCauseValue"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"globalCellID", "cellType", "timeUEStayedInCell", "timeUEStayedInCellEnhancedGranularity", "hOCauseValue"};
     }
 }

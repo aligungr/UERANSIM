@@ -25,12 +25,12 @@ public class NGAP_AllowedNSSAI extends NgapSequenceOf<NGAP_AllowedNSSAI_Item> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AllowedNSSAI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AllowedNSSAI";
     }
 

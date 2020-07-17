@@ -20,22 +20,22 @@ public class NGAP_AssistanceDataForPaging extends NgapSequence {
     public NGAP_PagingAttemptInformation pagingAttemptInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AssistanceDataForPaging";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AssistanceDataForPaging";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"assistanceDataForRecommendedCells", "pagingAttemptInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"assistanceDataForRecommendedCells", "pagingAttemptInformation"};
     }
 }

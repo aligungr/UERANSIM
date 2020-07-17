@@ -21,22 +21,22 @@ public class NGAP_OverloadStartNSSAIItem extends NgapSequence {
     public NGAP_TrafficLoadReductionIndication sliceTrafficLoadReductionIndication;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "OverloadStartNSSAIItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "OverloadStartNSSAIItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"sliceOverloadList", "sliceOverloadResponse", "sliceTrafficLoadReductionIndication"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"sliceOverloadList", "sliceOverloadResponse", "sliceTrafficLoadReductionIndication"};
     }
 }

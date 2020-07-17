@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceToReleaseListRelCmd extends NgapSequenceOf<N
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceToReleaseListRelCmd";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceToReleaseListRelCmd";
     }
 

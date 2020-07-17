@@ -20,22 +20,22 @@ public class NGAP_CellIDCancelledEUTRA_Item extends NgapSequence {
     public NGAP_NumberOfBroadcasts numberOfBroadcasts;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellIDCancelledEUTRA-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellIDCancelledEUTRA-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eUTRA-CGI", "numberOfBroadcasts"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eUTRA_CGI", "numberOfBroadcasts"};
     }
 }

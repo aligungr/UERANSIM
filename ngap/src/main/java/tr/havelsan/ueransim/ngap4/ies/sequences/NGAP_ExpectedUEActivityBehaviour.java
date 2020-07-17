@@ -21,22 +21,22 @@ public class NGAP_ExpectedUEActivityBehaviour extends NgapSequence {
     public NGAP_SourceOfUEActivityBehaviourInformation sourceOfUEActivityBehaviourInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedUEActivityBehaviour";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedUEActivityBehaviour";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"expectedActivityPeriod", "expectedIdlePeriod", "sourceOfUEActivityBehaviourInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"expectedActivityPeriod", "expectedIdlePeriod", "sourceOfUEActivityBehaviourInformation"};
     }
 }

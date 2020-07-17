@@ -20,22 +20,22 @@ public class NGAP_TAIBroadcastEUTRA_Item extends NgapSequence {
     public NGAP_CompletedCellsInTAI_EUTRA completedCellsInTAI_EUTRA;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIBroadcastEUTRA-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIBroadcastEUTRA-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"tAI", "completedCellsInTAI-EUTRA"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"tAI", "completedCellsInTAI_EUTRA"};
     }
 }

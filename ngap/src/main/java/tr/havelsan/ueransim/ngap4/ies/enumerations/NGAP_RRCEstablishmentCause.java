@@ -27,17 +27,17 @@ public class NGAP_RRCEstablishmentCause extends NgapEnumerated {
     public static final NGAP_RRCEstablishmentCause MPS_PRIORITYACCESS = new NGAP_RRCEstablishmentCause("mps-PriorityAccess");
     public static final NGAP_RRCEstablishmentCause MCS_PRIORITYACCESS = new NGAP_RRCEstablishmentCause("mcs-PriorityAccess");
 
-    protected NGAP_RRCEstablishmentCause(String sValue) {
+    public NGAP_RRCEstablishmentCause(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RRCEstablishmentCause";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RRCEstablishmentCause";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_TAICancelledNR extends NgapSequenceOf<NGAP_TAICancelledNR_Item
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAICancelledNR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAICancelledNR";
     }
 

@@ -19,22 +19,22 @@ public class NGAP_MultipleTNLInformation extends NgapSequence {
     public NGAP_TNLInformationList tNLInformationList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "MultipleTNLInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "MultipleTNLInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"tNLInformationList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"tNLInformationList"};
     }
 }

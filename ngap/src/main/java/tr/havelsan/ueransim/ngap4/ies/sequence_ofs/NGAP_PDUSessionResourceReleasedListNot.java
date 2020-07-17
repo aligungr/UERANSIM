@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceReleasedListNot extends NgapSequenceOf<NGAP_
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceReleasedListNot";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceReleasedListNot";
     }
 

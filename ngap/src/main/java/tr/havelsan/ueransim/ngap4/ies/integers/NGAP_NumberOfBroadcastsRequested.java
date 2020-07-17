@@ -37,12 +37,12 @@ public class NGAP_NumberOfBroadcastsRequested extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NumberOfBroadcastsRequested";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NumberOfBroadcastsRequested";
     }
 }

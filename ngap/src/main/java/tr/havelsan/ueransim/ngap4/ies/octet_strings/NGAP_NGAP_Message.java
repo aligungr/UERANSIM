@@ -41,12 +41,12 @@ public class NGAP_NGAP_Message extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NGAP-Message";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NGAP-Message";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceReleasedListPSFail extends NgapSequenceOf<NG
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceReleasedListPSFail";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceReleasedListPSFail";
     }
 

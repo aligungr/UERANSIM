@@ -18,17 +18,17 @@ public class NGAP_DL_NGU_TNLInformationReused extends NgapEnumerated {
 
     public static final NGAP_DL_NGU_TNLInformationReused TRUE = new NGAP_DL_NGU_TNLInformationReused("true");
 
-    protected NGAP_DL_NGU_TNLInformationReused(String sValue) {
+    public NGAP_DL_NGU_TNLInformationReused(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DL-NGU-TNLInformationReused";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DL-NGU-TNLInformationReused";
     }
 }

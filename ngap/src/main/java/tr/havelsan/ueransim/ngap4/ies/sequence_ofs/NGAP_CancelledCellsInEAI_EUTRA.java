@@ -25,12 +25,12 @@ public class NGAP_CancelledCellsInEAI_EUTRA extends NgapSequenceOf<NGAP_Cancelle
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CancelledCellsInEAI-EUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CancelledCellsInEAI-EUTRA";
     }
 

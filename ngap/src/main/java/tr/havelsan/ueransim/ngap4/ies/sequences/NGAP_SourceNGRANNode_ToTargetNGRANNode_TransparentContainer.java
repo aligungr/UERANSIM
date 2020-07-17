@@ -24,22 +24,22 @@ public class NGAP_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer extends
     public NGAP_UEHistoryInformation uEHistoryInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SourceNGRANNode-ToTargetNGRANNode-TransparentContainer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SourceNGRANNode-ToTargetNGRANNode-TransparentContainer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"rRCContainer", "pDUSessionResourceInformationList", "e-RABInformationList", "targetCell-ID", "indexToRFSP", "uEHistoryInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"rRCContainer", "pDUSessionResourceInformationList", "e_RABInformationList", "targetCell_ID", "indexToRFSP", "uEHistoryInformation"};
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_CriticalityDiagnostics_IE_List extends NgapSequenceOf<NGAP_Cri
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CriticalityDiagnostics-IE-List";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CriticalityDiagnostics-IE-List";
     }
 

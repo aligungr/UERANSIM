@@ -28,7 +28,6 @@ package tr.havelsan.ueransim.ngap4.xer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.ngap4.core.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +37,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NgapXerEncoder {
 
@@ -51,7 +52,16 @@ public class NgapXerEncoder {
         }
         var document = builder.newDocument();
 
-        var node = encodeIe(document, value);
+        List<Node> nodes;
+        try {
+            nodes = encodeIe(document, value, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        for (var item : nodes) {
+            document.appendChild(item);
+        }
 
         var tf = TransformerFactory.newInstance();
         Transformer transformer;
@@ -63,41 +73,170 @@ public class NgapXerEncoder {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         var writer = new StringWriter();
         try {
-            transformer.transform(new DOMSource(node), new StreamResult(writer));
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException e) {
             throw new RuntimeException(e);
         }
         return writer.getBuffer().toString().replaceAll("[\n\r]", "");
     }
 
-    private static Node encodeIe(Document document, NgapValue value) {
+    private static List<Node> encodeIe(Document document, Object value, boolean isRoot) throws Exception {
+        List<Node> list = new ArrayList<>();
+
         if (value instanceof NgapBitString) {
-            return document.createTextNode(((NgapBitString) value).value.toBinaryString(false));
+            if (isRoot) {
+                var root = document.createElement(((NgapBitString) value).getXmlTagName());
+                root.appendChild(document.createTextNode(((NgapBitString) value).value.toBinaryString(false)));
+                list.add(root);
+            } else {
+                list.add(document.createTextNode(((NgapBitString) value).value.toBinaryString(false)));
+            }
+            return list;
         }
 
         if (value instanceof NgapOctetString) {
-            return document.createTextNode(((NgapOctetString) value).value.toHexString(false));
+            if (isRoot) {
+                var root = document.createElement(((NgapOctetString) value).getXmlTagName());
+                root.appendChild(document.createTextNode(((NgapOctetString) value).value.toHexString(false)));
+                list.add(root);
+            } else {
+                list.add(document.createTextNode(((NgapOctetString) value).value.toHexString(false)));
+            }
+            return list;
         }
 
         if (value instanceof NgapPrintableString) {
-            return document.createTextNode(((NgapPrintableString) value).value);
+            if (isRoot) {
+                var root = document.createElement(((NgapPrintableString) value).getXmlTagName());
+                root.appendChild(document.createTextNode(((NgapPrintableString) value).value));
+                list.add(root);
+            } else {
+                list.add(document.createTextNode(((NgapPrintableString) value).value));
+            }
+            return list;
         }
 
         if (value instanceof NgapInteger) {
-            return document.createTextNode(Long.toString(((NgapInteger) value).value));
+            if (isRoot) {
+                var root = document.createElement(((NgapInteger) value).getXmlTagName());
+                root.appendChild(document.createTextNode(Long.toString(((NgapInteger) value).value)));
+                list.add(root);
+            } else {
+                list.add(document.createTextNode(Long.toString(((NgapInteger) value).value)));
+            }
+            return list;
         }
 
         if (value instanceof NgapEnumerated) {
-            return document.createElement(((NgapEnumerated) value).sValue);
+            if (isRoot) {
+                var root = document.createElement(((NgapEnumerated) value).getXmlTagName());
+                root.appendChild(document.createElement(((NgapEnumerated) value).sValue));
+                list.add(root);
+            } else {
+                list.add(document.createElement(((NgapEnumerated) value).sValue));
+            }
+            return list;
         }
 
         if (value instanceof NgapChoice) {
             var choice = (NgapChoice) value;
+            var type = choice.getClass();
 
+            var identifiers = choice.getMemberIdentifiers();
 
+            int j = -1;
+            Object object = null;
+
+            for (int i = 0; i < identifiers.length; i++) {
+                var field = type.getDeclaredField(identifiers[i]);
+                var obj = field.get(choice);
+                if (obj != null) {
+                    if (j == -1) {
+                        j = i;
+                        object = obj;
+                    } else {
+                        throw new RuntimeException("multiple non-null fields in choice value");
+                    }
+                }
+            }
+
+            var element = document.createElement(choice.getMemberNames()[j]);
+            var node = encodeIe(document, object, false);
+
+            for (var item : node) {
+                element.appendChild(item);
+            }
+
+            if (isRoot) {
+                var root = document.createElement(choice.getXmlTagName());
+                root.appendChild(element);
+                list.add(root);
+            } else {
+                list.add(element);
+            }
+
+            return list;
         }
 
+        if (value instanceof NgapSequence) {
+            var sequence = (NgapSequence) value;
+            var type = sequence.getClass();
 
-        throw new NotImplementedException("");
+            var identifiers = sequence.getMemberIdentifiers();
+            var names = sequence.getMemberNames();
+
+            var root = document.createElement(sequence.getXmlTagName());
+
+            for (int i = 0; i < identifiers.length; i++) {
+                var field = type.getDeclaredField(identifiers[i]);
+                var obj = field.get(sequence);
+                if (obj != null) {
+                    var element = document.createElement(names[i]);
+                    for (var item : encodeIe(document, obj, false)) {
+                        element.appendChild(item);
+                    }
+
+                    if (isRoot) {
+                        root.appendChild(element);
+                    } else {
+                        list.add(element);
+                    }
+                }
+            }
+
+            if (isRoot) {
+                list.add(root);
+            }
+
+            return list;
+        }
+
+        if (value instanceof NgapSequenceOf<?>) {
+            var sequenceOf = (NgapSequenceOf<?>) value;
+            var itemType = sequenceOf.getItemType();
+            var tagName = itemType.getConstructor().newInstance().getXmlTagName();
+
+            var root = document.createElement(sequenceOf.getXmlTagName());
+
+            for (var item : sequenceOf.list) {
+                var element = document.createElement(tagName);
+                for (var inner : encodeIe(document, item, false)) {
+                    element.appendChild(inner);
+                }
+
+                if (isRoot) {
+                    root.appendChild(element);
+                } else {
+                    list.add(element);
+                }
+            }
+
+            if (isRoot) {
+                list.add(root);
+            }
+            return list;
+        }
+
+        throw new RuntimeException("unrecognized type in NgapXerEncoder.encodeIe");
     }
 }

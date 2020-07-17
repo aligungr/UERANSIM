@@ -19,22 +19,22 @@ public class NGAP_AreaOfInterestRANNodeItem extends NgapSequence {
     public NGAP_GlobalRANNodeID globalRANNodeID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AreaOfInterestRANNodeItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AreaOfInterestRANNodeItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"globalRANNodeID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"globalRANNodeID"};
     }
 }

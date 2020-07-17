@@ -25,12 +25,12 @@ public class NGAP_TAIListForInactive extends NgapSequenceOf<NGAP_TAIListForInact
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIListForInactive";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIListForInactive";
     }
 

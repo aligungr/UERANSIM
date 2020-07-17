@@ -22,17 +22,17 @@ public class NGAP_PDUSessionType extends NgapEnumerated {
     public static final NGAP_PDUSessionType ETHERNET = new NGAP_PDUSessionType("ethernet");
     public static final NGAP_PDUSessionType UNSTRUCTURED = new NGAP_PDUSessionType("unstructured");
 
-    protected NGAP_PDUSessionType(String sValue) {
+    public NGAP_PDUSessionType(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionType";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionType";
     }
 }

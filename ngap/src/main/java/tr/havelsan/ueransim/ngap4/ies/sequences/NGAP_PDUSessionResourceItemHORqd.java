@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceItemHORqd extends NgapSequence {
     public NgapOctetString handoverRequiredTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceItemHORqd";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceItemHORqd";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "handoverRequiredTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "handoverRequiredTransfer"};
     }
 }

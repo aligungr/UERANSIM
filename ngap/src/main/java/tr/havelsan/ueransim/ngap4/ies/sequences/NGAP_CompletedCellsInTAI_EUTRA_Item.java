@@ -19,22 +19,22 @@ public class NGAP_CompletedCellsInTAI_EUTRA_Item extends NgapSequence {
     public NGAP_EUTRA_CGI eUTRA_CGI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CompletedCellsInTAI-EUTRA-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CompletedCellsInTAI-EUTRA-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eUTRA-CGI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eUTRA_CGI"};
     }
 }

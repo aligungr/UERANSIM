@@ -41,12 +41,12 @@ public class NGAP_SD extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SD";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SD";
     }
 }

@@ -41,12 +41,12 @@ public class NGAP_NGRANTraceID extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NGRANTraceID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NGRANTraceID";
     }
 }

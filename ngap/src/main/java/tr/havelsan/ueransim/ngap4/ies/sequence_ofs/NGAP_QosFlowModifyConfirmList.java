@@ -25,12 +25,12 @@ public class NGAP_QosFlowModifyConfirmList extends NgapSequenceOf<NGAP_QosFlowMo
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowModifyConfirmList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowModifyConfirmList";
     }
 

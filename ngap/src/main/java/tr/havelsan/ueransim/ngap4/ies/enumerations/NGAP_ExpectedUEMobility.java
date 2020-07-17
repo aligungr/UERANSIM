@@ -19,17 +19,17 @@ public class NGAP_ExpectedUEMobility extends NgapEnumerated {
     public static final NGAP_ExpectedUEMobility STATIONARY = new NGAP_ExpectedUEMobility("stationary");
     public static final NGAP_ExpectedUEMobility MOBILE = new NGAP_ExpectedUEMobility("mobile");
 
-    protected NGAP_ExpectedUEMobility(String sValue) {
+    public NGAP_ExpectedUEMobility(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedUEMobility";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedUEMobility";
     }
 }

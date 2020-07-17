@@ -25,12 +25,12 @@ public class NGAP_QosFlowAddOrModifyRequestList extends NgapSequenceOf<NGAP_QosF
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowAddOrModifyRequestList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowAddOrModifyRequestList";
     }
 

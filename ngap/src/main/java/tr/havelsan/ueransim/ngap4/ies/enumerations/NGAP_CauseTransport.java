@@ -19,17 +19,17 @@ public class NGAP_CauseTransport extends NgapEnumerated {
     public static final NGAP_CauseTransport TRANSPORT_RESOURCE_UNAVAILABLE = new NGAP_CauseTransport("transport-resource-unavailable");
     public static final NGAP_CauseTransport UNSPECIFIED = new NGAP_CauseTransport("unspecified");
 
-    protected NGAP_CauseTransport(String sValue) {
+    public NGAP_CauseTransport(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CauseTransport";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CauseTransport";
     }
 }

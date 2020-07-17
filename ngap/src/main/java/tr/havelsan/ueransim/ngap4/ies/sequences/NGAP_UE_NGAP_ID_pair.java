@@ -20,22 +20,22 @@ public class NGAP_UE_NGAP_ID_pair extends NgapSequence {
     public NGAP_RAN_UE_NGAP_ID rAN_UE_NGAP_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UE-NGAP-ID-pair";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UE-NGAP-ID-pair";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"aMF-UE-NGAP-ID", "rAN-UE-NGAP-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"aMF_UE_NGAP_ID", "rAN_UE_NGAP_ID"};
     }
 }

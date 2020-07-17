@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceFailedToSetupItemHOAck extends NgapSequence 
     public NgapOctetString handoverResourceAllocationUnsuccessfulTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToSetupItemHOAck";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToSetupItemHOAck";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "handoverResourceAllocationUnsuccessfulTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "handoverResourceAllocationUnsuccessfulTransfer"};
     }
 }

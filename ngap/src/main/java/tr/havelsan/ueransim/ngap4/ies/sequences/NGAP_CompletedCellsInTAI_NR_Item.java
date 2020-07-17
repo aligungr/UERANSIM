@@ -19,22 +19,22 @@ public class NGAP_CompletedCellsInTAI_NR_Item extends NgapSequence {
     public NGAP_NR_CGI nR_CGI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CompletedCellsInTAI-NR-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CompletedCellsInTAI-NR-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nR-CGI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nR_CGI"};
     }
 }

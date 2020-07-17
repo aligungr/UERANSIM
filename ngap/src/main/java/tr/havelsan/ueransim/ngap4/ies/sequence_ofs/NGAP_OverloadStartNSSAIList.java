@@ -25,12 +25,12 @@ public class NGAP_OverloadStartNSSAIList extends NgapSequenceOf<NGAP_OverloadSta
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "OverloadStartNSSAIList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "OverloadStartNSSAIList";
     }
 

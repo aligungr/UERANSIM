@@ -22,22 +22,22 @@ public class NGAP_UESecurityCapabilities extends NgapSequence {
     public NGAP_EUTRAintegrityProtectionAlgorithms eUTRAintegrityProtectionAlgorithms;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UESecurityCapabilities";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UESecurityCapabilities";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nRencryptionAlgorithms", "nRintegrityProtectionAlgorithms", "eUTRAencryptionAlgorithms", "eUTRAintegrityProtectionAlgorithms"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nRencryptionAlgorithms", "nRintegrityProtectionAlgorithms", "eUTRAencryptionAlgorithms", "eUTRAintegrityProtectionAlgorithms"};
     }
 }

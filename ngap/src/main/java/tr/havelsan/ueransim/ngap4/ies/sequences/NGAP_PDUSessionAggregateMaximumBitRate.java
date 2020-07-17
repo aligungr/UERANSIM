@@ -20,22 +20,22 @@ public class NGAP_PDUSessionAggregateMaximumBitRate extends NgapSequence {
     public NGAP_BitRate pDUSessionAggregateMaximumBitRateUL;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionAggregateMaximumBitRate";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionAggregateMaximumBitRate";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionAggregateMaximumBitRateDL", "pDUSessionAggregateMaximumBitRateUL"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionAggregateMaximumBitRateDL", "pDUSessionAggregateMaximumBitRateUL"};
     }
 }

@@ -21,17 +21,17 @@ public class NGAP_OverloadAction extends NgapEnumerated {
     public static final NGAP_OverloadAction PERMIT_EMERGENCY_SESSIONS_AND_MOBILE_TERMINATED_SERVICES_ONLY = new NGAP_OverloadAction("permit-emergency-sessions-and-mobile-terminated-services-only");
     public static final NGAP_OverloadAction PERMIT_HIGH_PRIORITY_SESSIONS_AND_MOBILE_TERMINATED_SERVICES_ONLY = new NGAP_OverloadAction("permit-high-priority-sessions-and-mobile-terminated-services-only");
 
-    protected NGAP_OverloadAction(String sValue) {
+    public NGAP_OverloadAction(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "OverloadAction";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "OverloadAction";
     }
 }

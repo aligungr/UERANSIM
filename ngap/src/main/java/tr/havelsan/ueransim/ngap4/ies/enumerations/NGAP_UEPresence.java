@@ -20,17 +20,17 @@ public class NGAP_UEPresence extends NgapEnumerated {
     public static final NGAP_UEPresence OUT = new NGAP_UEPresence("out");
     public static final NGAP_UEPresence UNKNOWN = new NGAP_UEPresence("unknown");
 
-    protected NGAP_UEPresence(String sValue) {
+    public NGAP_UEPresence(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEPresence";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEPresence";
     }
 }

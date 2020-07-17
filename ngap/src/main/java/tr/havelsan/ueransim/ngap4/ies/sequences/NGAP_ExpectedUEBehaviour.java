@@ -22,22 +22,22 @@ public class NGAP_ExpectedUEBehaviour extends NgapSequence {
     public NGAP_ExpectedUEMovingTrajectory expectedUEMovingTrajectory;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedUEBehaviour";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedUEBehaviour";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"expectedUEActivityBehaviour", "expectedHOInterval", "expectedUEMobility", "expectedUEMovingTrajectory"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"expectedUEActivityBehaviour", "expectedHOInterval", "expectedUEMobility", "expectedUEMovingTrajectory"};
     }
 }

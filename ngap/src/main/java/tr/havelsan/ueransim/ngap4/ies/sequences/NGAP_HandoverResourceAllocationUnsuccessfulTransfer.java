@@ -20,22 +20,22 @@ public class NGAP_HandoverResourceAllocationUnsuccessfulTransfer extends NgapSeq
     public NGAP_CriticalityDiagnostics criticalityDiagnostics;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "HandoverResourceAllocationUnsuccessfulTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "HandoverResourceAllocationUnsuccessfulTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"cause", "criticalityDiagnostics"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"cause", "criticalityDiagnostics"};
     }
 }

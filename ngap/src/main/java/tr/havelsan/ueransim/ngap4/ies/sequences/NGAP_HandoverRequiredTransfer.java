@@ -19,22 +19,22 @@ public class NGAP_HandoverRequiredTransfer extends NgapSequence {
     public NGAP_DirectForwardingPathAvailability directForwardingPathAvailability;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "HandoverRequiredTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "HandoverRequiredTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"directForwardingPathAvailability"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"directForwardingPathAvailability"};
     }
 }

@@ -21,22 +21,22 @@ public class NGAP_QosFlowAddOrModifyRequestItem extends NgapSequence {
     public NGAP_E_RAB_ID e_RAB_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowAddOrModifyRequestItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowAddOrModifyRequestItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier", "qosFlowLevelQosParameters", "e-RAB-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier", "qosFlowLevelQosParameters", "e_RAB_ID"};
     }
 }

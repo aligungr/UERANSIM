@@ -41,12 +41,12 @@ public class NGAP_TimeStamp extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TimeStamp";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TimeStamp";
     }
 }

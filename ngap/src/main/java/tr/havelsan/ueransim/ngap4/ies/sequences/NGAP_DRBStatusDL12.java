@@ -19,22 +19,22 @@ public class NGAP_DRBStatusDL12 extends NgapSequence {
     public NGAP_COUNTValueForPDCP_SN12 dL_COUNTValue;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBStatusDL12";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBStatusDL12";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dL-COUNTValue"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dL_COUNTValue"};
     }
 }

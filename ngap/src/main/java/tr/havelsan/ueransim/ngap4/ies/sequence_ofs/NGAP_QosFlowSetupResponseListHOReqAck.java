@@ -25,12 +25,12 @@ public class NGAP_QosFlowSetupResponseListHOReqAck extends NgapSequenceOf<NGAP_Q
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowSetupResponseListHOReqAck";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowSetupResponseListHOReqAck";
     }
 

@@ -19,22 +19,22 @@ public class NGAP_AMF_TNLAssociationToRemoveItem extends NgapSequence {
     public NGAP_CPTransportLayerInformation aMF_TNLAssociationAddress;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AMF-TNLAssociationToRemoveItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AMF-TNLAssociationToRemoveItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"aMF-TNLAssociationAddress"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"aMF_TNLAssociationAddress"};
     }
 }

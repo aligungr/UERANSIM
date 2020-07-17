@@ -37,12 +37,12 @@ public class NGAP_QosFlowIdentifier extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowIdentifier";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowIdentifier";
     }
 }

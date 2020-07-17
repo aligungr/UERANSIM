@@ -25,12 +25,12 @@ public class NGAP_TAICancelledEUTRA extends NgapSequenceOf<NGAP_TAICancelledEUTR
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAICancelledEUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAICancelledEUTRA";
     }
 

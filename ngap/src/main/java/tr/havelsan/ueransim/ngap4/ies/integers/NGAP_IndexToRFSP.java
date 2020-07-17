@@ -37,12 +37,12 @@ public class NGAP_IndexToRFSP extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "IndexToRFSP";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "IndexToRFSP";
     }
 }

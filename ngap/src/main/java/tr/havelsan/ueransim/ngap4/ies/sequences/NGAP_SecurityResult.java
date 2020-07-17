@@ -20,22 +20,22 @@ public class NGAP_SecurityResult extends NgapSequence {
     public NGAP_ConfidentialityProtectionResult confidentialityProtectionResult;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SecurityResult";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SecurityResult";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"integrityProtectionResult", "confidentialityProtectionResult"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"integrityProtectionResult", "confidentialityProtectionResult"};
     }
 }

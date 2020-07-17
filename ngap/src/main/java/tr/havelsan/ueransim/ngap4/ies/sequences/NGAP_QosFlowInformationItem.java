@@ -20,22 +20,22 @@ public class NGAP_QosFlowInformationItem extends NgapSequence {
     public NGAP_DLForwarding dLForwarding;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowInformationItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowInformationItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier", "dLForwarding"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier", "dLForwarding"};
     }
 }

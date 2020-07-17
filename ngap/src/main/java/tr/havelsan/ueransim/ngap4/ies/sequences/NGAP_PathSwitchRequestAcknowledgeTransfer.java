@@ -20,22 +20,22 @@ public class NGAP_PathSwitchRequestAcknowledgeTransfer extends NgapSequence {
     public NGAP_SecurityIndication securityIndication;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PathSwitchRequestAcknowledgeTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PathSwitchRequestAcknowledgeTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uL-NGU-UP-TNLInformation", "securityIndication"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uL_NGU_UP_TNLInformation", "securityIndication"};
     }
 }

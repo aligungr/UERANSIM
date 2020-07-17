@@ -20,22 +20,22 @@ public class NGAP_E_RABInformationItem extends NgapSequence {
     public NGAP_DLForwarding dLForwarding;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "E-RABInformationItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "E-RABInformationItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"e-RAB-ID", "dLForwarding"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"e_RAB_ID", "dLForwarding"};
     }
 }

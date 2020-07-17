@@ -18,17 +18,17 @@ public class NGAP_CancelAllWarningMessages extends NgapEnumerated {
 
     public static final NGAP_CancelAllWarningMessages TRUE = new NGAP_CancelAllWarningMessages("true");
 
-    protected NGAP_CancelAllWarningMessages(String sValue) {
+    public NGAP_CancelAllWarningMessages(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CancelAllWarningMessages";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CancelAllWarningMessages";
     }
 }

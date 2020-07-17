@@ -25,12 +25,12 @@ public class NGAP_SupportedTAList extends NgapSequenceOf<NGAP_SupportedTAItem> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SupportedTAList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SupportedTAList";
     }
 

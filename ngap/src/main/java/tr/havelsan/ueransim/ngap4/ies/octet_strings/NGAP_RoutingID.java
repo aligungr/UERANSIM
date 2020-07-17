@@ -41,12 +41,12 @@ public class NGAP_RoutingID extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RoutingID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RoutingID";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_UEPresenceInAreaOfInterestList extends NgapSequenceOf<NGAP_UEP
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEPresenceInAreaOfInterestList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEPresenceInAreaOfInterestList";
     }
 

@@ -20,22 +20,22 @@ public class NGAP_GTPTunnel extends NgapSequence {
     public NGAP_GTP_TEID gTP_TEID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GTPTunnel";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GTPTunnel";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"transportLayerAddress", "gTP-TEID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"transportLayerAddress", "gTP_TEID"};
     }
 }

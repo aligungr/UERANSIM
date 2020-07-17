@@ -20,22 +20,22 @@ public class NGAP_CancelledCellsInTAI_NR_Item extends NgapSequence {
     public NGAP_NumberOfBroadcasts numberOfBroadcasts;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CancelledCellsInTAI-NR-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CancelledCellsInTAI-NR-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nR-CGI", "numberOfBroadcasts"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nR_CGI", "numberOfBroadcasts"};
     }
 }

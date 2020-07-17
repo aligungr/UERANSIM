@@ -20,22 +20,22 @@ public class NGAP_DRBsToQosFlowsMappingItem extends NgapSequence {
     public NGAP_AssociatedQosFlowList associatedQosFlowList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBsToQosFlowsMappingItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBsToQosFlowsMappingItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dRB-ID", "associatedQosFlowList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dRB_ID", "associatedQosFlowList"};
     }
 }

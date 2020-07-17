@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceFailedToSetupListHOAck extends NgapSequenceO
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToSetupListHOAck";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToSetupListHOAck";
     }
 

@@ -41,12 +41,12 @@ public class NGAP_EmergencyAreaID extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyAreaID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyAreaID";
     }
 }

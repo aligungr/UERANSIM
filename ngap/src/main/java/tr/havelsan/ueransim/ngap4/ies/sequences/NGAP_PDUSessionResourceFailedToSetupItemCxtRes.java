@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceFailedToSetupItemCxtRes extends NgapSequence
     public NgapOctetString pDUSessionResourceSetupUnsuccessfulTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToSetupItemCxtRes";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToSetupItemCxtRes";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "pDUSessionResourceSetupUnsuccessfulTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "pDUSessionResourceSetupUnsuccessfulTransfer"};
     }
 }

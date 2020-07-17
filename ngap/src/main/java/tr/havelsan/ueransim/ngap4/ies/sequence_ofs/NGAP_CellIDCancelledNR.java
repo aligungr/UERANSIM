@@ -25,12 +25,12 @@ public class NGAP_CellIDCancelledNR extends NgapSequenceOf<NGAP_CellIDCancelledN
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellIDCancelledNR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellIDCancelledNR";
     }
 

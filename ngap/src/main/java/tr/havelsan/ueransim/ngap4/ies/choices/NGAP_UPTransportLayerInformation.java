@@ -19,22 +19,22 @@ public class NGAP_UPTransportLayerInformation extends NgapChoice {
     public NGAP_GTPTunnel gTPTunnel;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UPTransportLayerInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UPTransportLayerInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"gTPTunnel"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"gTPTunnel"};
     }
 }

@@ -19,22 +19,22 @@ public class NGAP_SingleTNLInformation extends NgapSequence {
     public NGAP_UPTransportLayerInformation uPTransportLayerInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SingleTNLInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SingleTNLInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uPTransportLayerInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uPTransportLayerInformation"};
     }
 }

@@ -20,22 +20,22 @@ public class NGAP_UserPlaneSecurityInformation extends NgapSequence {
     public NGAP_SecurityIndication securityIndication;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UserPlaneSecurityInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UserPlaneSecurityInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"securityResult", "securityIndication"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"securityResult", "securityIndication"};
     }
 }

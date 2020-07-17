@@ -20,17 +20,17 @@ public class NGAP_Criticality extends NgapEnumerated {
     public static final NGAP_Criticality IGNORE = new NGAP_Criticality("ignore");
     public static final NGAP_Criticality NOTIFY = new NGAP_Criticality("notify");
 
-    protected NGAP_Criticality(String sValue) {
+    public NGAP_Criticality(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "Criticality";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "Criticality";
     }
 }

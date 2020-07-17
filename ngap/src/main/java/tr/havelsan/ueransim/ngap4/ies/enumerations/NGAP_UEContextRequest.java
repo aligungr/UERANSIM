@@ -18,17 +18,17 @@ public class NGAP_UEContextRequest extends NgapEnumerated {
 
     public static final NGAP_UEContextRequest REQUESTED = new NGAP_UEContextRequest("requested");
 
-    protected NGAP_UEContextRequest(String sValue) {
+    public NGAP_UEContextRequest(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEContextRequest";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEContextRequest";
     }
 }

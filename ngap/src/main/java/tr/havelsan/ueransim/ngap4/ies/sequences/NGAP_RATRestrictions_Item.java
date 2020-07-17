@@ -20,22 +20,22 @@ public class NGAP_RATRestrictions_Item extends NgapSequence {
     public NGAP_RATRestrictionInformation rATRestrictionInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RATRestrictions-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RATRestrictions-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "rATRestrictionInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "rATRestrictionInformation"};
     }
 }

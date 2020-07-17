@@ -19,22 +19,22 @@ public class NGAP_SONInformationReply extends NgapSequence {
     public NGAP_XnTNLConfigurationInfo xnTNLConfigurationInfo;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SONInformationReply";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SONInformationReply";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"xnTNLConfigurationInfo"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"xnTNLConfigurationInfo"};
     }
 }

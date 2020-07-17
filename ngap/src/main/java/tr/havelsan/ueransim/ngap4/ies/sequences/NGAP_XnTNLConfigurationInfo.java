@@ -20,22 +20,22 @@ public class NGAP_XnTNLConfigurationInfo extends NgapSequence {
     public NGAP_XnExtTLAs xnExtendedTransportLayerAddresses;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "XnTNLConfigurationInfo";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "XnTNLConfigurationInfo";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"xnTransportLayerAddresses", "xnExtendedTransportLayerAddresses"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"xnTransportLayerAddresses", "xnExtendedTransportLayerAddresses"};
     }
 }

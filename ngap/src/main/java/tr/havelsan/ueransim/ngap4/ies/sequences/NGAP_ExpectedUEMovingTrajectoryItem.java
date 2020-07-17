@@ -20,22 +20,22 @@ public class NGAP_ExpectedUEMovingTrajectoryItem extends NgapSequence {
     public long timeStayedInCell;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedUEMovingTrajectoryItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedUEMovingTrajectoryItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nGRAN-CGI", "timeStayedInCell"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nGRAN_CGI", "timeStayedInCell"};
     }
 }

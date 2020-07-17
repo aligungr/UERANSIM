@@ -18,17 +18,17 @@ public class NGAP_TimerApproachForGUAMIRemoval extends NgapEnumerated {
 
     public static final NGAP_TimerApproachForGUAMIRemoval APPLY_TIMER = new NGAP_TimerApproachForGUAMIRemoval("apply-timer");
 
-    protected NGAP_TimerApproachForGUAMIRemoval(String sValue) {
+    public NGAP_TimerApproachForGUAMIRemoval(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TimerApproachForGUAMIRemoval";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TimerApproachForGUAMIRemoval";
     }
 }

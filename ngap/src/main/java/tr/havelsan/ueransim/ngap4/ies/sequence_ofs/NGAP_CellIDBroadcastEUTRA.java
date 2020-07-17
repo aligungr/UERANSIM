@@ -25,12 +25,12 @@ public class NGAP_CellIDBroadcastEUTRA extends NgapSequenceOf<NGAP_CellIDBroadca
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellIDBroadcastEUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellIDBroadcastEUTRA";
     }
 

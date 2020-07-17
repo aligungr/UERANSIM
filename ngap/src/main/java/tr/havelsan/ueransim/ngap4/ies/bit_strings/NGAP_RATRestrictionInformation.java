@@ -53,12 +53,12 @@ public class NGAP_RATRestrictionInformation extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RATRestrictionInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RATRestrictionInformation";
     }
 }

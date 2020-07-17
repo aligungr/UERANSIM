@@ -41,12 +41,12 @@ public class NGAP_TargetToSource_TransparentContainer extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TargetToSource-TransparentContainer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TargetToSource-TransparentContainer";
     }
 }

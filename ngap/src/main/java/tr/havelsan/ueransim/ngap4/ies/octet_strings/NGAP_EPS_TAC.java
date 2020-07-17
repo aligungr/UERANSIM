@@ -41,12 +41,12 @@ public class NGAP_EPS_TAC extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EPS-TAC";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EPS-TAC";
     }
 }

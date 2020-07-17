@@ -71,12 +71,12 @@ public class NgapBitString extends NgapValue {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "BIT STRING";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "BIT_STRING";
     }
 }

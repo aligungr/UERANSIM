@@ -18,17 +18,17 @@ public class NGAP_ResetAll extends NgapEnumerated {
 
     public static final NGAP_ResetAll RESET_ALL = new NGAP_ResetAll("reset-all");
 
-    protected NGAP_ResetAll(String sValue) {
+    public NGAP_ResetAll(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ResetAll";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ResetAll";
     }
 }

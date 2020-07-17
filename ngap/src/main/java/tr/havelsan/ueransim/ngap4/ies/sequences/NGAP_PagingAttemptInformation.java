@@ -21,22 +21,22 @@ public class NGAP_PagingAttemptInformation extends NgapSequence {
     public NGAP_NextPagingAreaScope nextPagingAreaScope;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PagingAttemptInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PagingAttemptInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pagingAttemptCount", "intendedNumberOfPagingAttempts", "nextPagingAreaScope"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pagingAttemptCount", "intendedNumberOfPagingAttempts", "nextPagingAreaScope"};
     }
 }

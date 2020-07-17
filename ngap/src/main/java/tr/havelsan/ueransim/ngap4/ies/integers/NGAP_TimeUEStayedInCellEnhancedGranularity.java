@@ -37,12 +37,12 @@ public class NGAP_TimeUEStayedInCellEnhancedGranularity extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TimeUEStayedInCellEnhancedGranularity";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TimeUEStayedInCellEnhancedGranularity";
     }
 }

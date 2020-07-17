@@ -20,22 +20,22 @@ public class NGAP_PacketErrorRate extends NgapSequence {
     public long pERExponent;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PacketErrorRate";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PacketErrorRate";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pERScalar", "pERExponent"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pERScalar", "pERExponent"};
     }
 }

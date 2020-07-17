@@ -56,12 +56,12 @@ public class NgapInteger extends NgapValue {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "INTEGER";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "INTEGER";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_UEHistoryInformation extends NgapSequenceOf<NGAP_LastVisitedCe
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEHistoryInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEHistoryInformation";
     }
 

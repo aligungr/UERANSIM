@@ -18,17 +18,17 @@ public class NGAP_DataForwardingNotPossible extends NgapEnumerated {
 
     public static final NGAP_DataForwardingNotPossible DATA_FORWARDING_NOT_POSSIBLE = new NGAP_DataForwardingNotPossible("data-forwarding-not-possible");
 
-    protected NGAP_DataForwardingNotPossible(String sValue) {
+    public NGAP_DataForwardingNotPossible(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DataForwardingNotPossible";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DataForwardingNotPossible";
     }
 }

@@ -37,12 +37,12 @@ public class NGAP_AveragingWindow extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AveragingWindow";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AveragingWindow";
     }
 }

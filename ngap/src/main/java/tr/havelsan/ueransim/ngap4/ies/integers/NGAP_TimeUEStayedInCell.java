@@ -37,12 +37,12 @@ public class NGAP_TimeUEStayedInCell extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TimeUEStayedInCell";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TimeUEStayedInCell";
     }
 }

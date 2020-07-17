@@ -35,12 +35,12 @@ public class NgapPrintableString extends NgapValue {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PrintableString";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PrintableString";
     }
 }

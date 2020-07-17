@@ -20,17 +20,17 @@ public class NGAP_Presence extends NgapEnumerated {
     public static final NGAP_Presence CONDITIONAL = new NGAP_Presence("conditional");
     public static final NGAP_Presence MANDATORY = new NGAP_Presence("mandatory");
 
-    protected NGAP_Presence(String sValue) {
+    public NGAP_Presence(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "Presence";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "Presence";
     }
 }

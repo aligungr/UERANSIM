@@ -22,22 +22,22 @@ public class NGAP_LocationReportingRequestType extends NgapSequence {
     public NGAP_LocationReportingReferenceID locationReportingReferenceIDToBeCancelled;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LocationReportingRequestType";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LocationReportingRequestType";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eventType", "reportArea", "areaOfInterestList", "locationReportingReferenceIDToBeCancelled"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eventType", "reportArea", "areaOfInterestList", "locationReportingReferenceIDToBeCancelled"};
     }
 }

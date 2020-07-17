@@ -20,22 +20,22 @@ public class NGAP_ForbiddenAreaInformation_Item extends NgapSequence {
     public NGAP_ForbiddenTACs forbiddenTACs;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ForbiddenAreaInformation-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ForbiddenAreaInformation-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "forbiddenTACs"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "forbiddenTACs"};
     }
 }

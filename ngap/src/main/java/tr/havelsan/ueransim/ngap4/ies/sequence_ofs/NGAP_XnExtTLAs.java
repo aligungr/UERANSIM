@@ -25,12 +25,12 @@ public class NGAP_XnExtTLAs extends NgapSequenceOf<NGAP_XnExtTLA_Item> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "XnExtTLAs";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "XnExtTLAs";
     }
 

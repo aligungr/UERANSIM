@@ -25,12 +25,12 @@ public class NGAP_QosFlowSetupResponseListSURes extends NgapSequenceOf<NGAP_QosF
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowSetupResponseListSURes";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowSetupResponseListSURes";
     }
 

@@ -19,22 +19,22 @@ public class NGAP_PDUSessionResourceItemCxtRelReq extends NgapSequence {
     public NGAP_PDUSessionID pDUSessionID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceItemCxtRelReq";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceItemCxtRelReq";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID"};
     }
 }

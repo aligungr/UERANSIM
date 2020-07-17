@@ -20,22 +20,22 @@ public class NGAP_QosFlowPerTNLInformation extends NgapSequence {
     public NGAP_AssociatedQosFlowList associatedQosFlowList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowPerTNLInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowPerTNLInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uPTransportLayerInformation", "associatedQosFlowList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uPTransportLayerInformation", "associatedQosFlowList"};
     }
 }

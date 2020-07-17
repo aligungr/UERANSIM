@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceHandoverList extends NgapSequenceOf<NGAP_PDU
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceHandoverList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceHandoverList";
     }
 

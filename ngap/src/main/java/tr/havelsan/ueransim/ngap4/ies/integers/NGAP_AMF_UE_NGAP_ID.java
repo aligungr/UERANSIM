@@ -37,12 +37,12 @@ public class NGAP_AMF_UE_NGAP_ID extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AMF-UE-NGAP-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AMF-UE-NGAP-ID";
     }
 }

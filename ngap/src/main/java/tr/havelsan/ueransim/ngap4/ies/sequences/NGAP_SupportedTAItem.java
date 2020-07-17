@@ -20,22 +20,22 @@ public class NGAP_SupportedTAItem extends NgapSequence {
     public NGAP_BroadcastPLMNList broadcastPLMNList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SupportedTAItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SupportedTAItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"tAC", "broadcastPLMNList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"tAC", "broadcastPLMNList"};
     }
 }

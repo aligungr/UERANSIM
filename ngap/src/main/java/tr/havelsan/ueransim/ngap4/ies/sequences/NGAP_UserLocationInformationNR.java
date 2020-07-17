@@ -21,22 +21,22 @@ public class NGAP_UserLocationInformationNR extends NgapSequence {
     public NGAP_TimeStamp timeStamp;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UserLocationInformationNR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UserLocationInformationNR";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nR-CGI", "tAI", "timeStamp"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nR_CGI", "tAI", "timeStamp"};
     }
 }

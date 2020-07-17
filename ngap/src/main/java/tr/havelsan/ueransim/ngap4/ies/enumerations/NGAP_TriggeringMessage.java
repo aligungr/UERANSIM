@@ -20,17 +20,17 @@ public class NGAP_TriggeringMessage extends NgapEnumerated {
     public static final NGAP_TriggeringMessage SUCCESSFUL_OUTCOME = new NGAP_TriggeringMessage("successful-outcome");
     public static final NGAP_TriggeringMessage UNSUCCESSFULL_OUTCOME = new NGAP_TriggeringMessage("unsuccessfull-outcome");
 
-    protected NGAP_TriggeringMessage(String sValue) {
+    public NGAP_TriggeringMessage(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TriggeringMessage";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TriggeringMessage";
     }
 }

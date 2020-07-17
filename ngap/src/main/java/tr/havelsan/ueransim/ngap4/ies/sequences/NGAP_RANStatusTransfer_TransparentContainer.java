@@ -19,22 +19,22 @@ public class NGAP_RANStatusTransfer_TransparentContainer extends NgapSequence {
     public NGAP_DRBsSubjectToStatusTransferList dRBsSubjectToStatusTransferList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RANStatusTransfer-TransparentContainer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RANStatusTransfer-TransparentContainer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dRBsSubjectToStatusTransferList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dRBsSubjectToStatusTransferList"};
     }
 }

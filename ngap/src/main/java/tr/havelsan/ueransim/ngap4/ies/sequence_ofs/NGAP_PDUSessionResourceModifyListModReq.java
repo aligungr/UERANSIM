@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceModifyListModReq extends NgapSequenceOf<NGAP
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceModifyListModReq";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceModifyListModReq";
     }
 

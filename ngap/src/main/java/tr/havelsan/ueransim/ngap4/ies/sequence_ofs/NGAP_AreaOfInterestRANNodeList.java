@@ -25,12 +25,12 @@ public class NGAP_AreaOfInterestRANNodeList extends NgapSequenceOf<NGAP_AreaOfIn
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AreaOfInterestRANNodeList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AreaOfInterestRANNodeList";
     }
 

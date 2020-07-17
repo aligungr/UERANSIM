@@ -20,17 +20,17 @@ public class NGAP_TNLAssociationUsage extends NgapEnumerated {
     public static final NGAP_TNLAssociationUsage NON_UE = new NGAP_TNLAssociationUsage("non-ue");
     public static final NGAP_TNLAssociationUsage BOTH = new NGAP_TNLAssociationUsage("both");
 
-    protected NGAP_TNLAssociationUsage(String sValue) {
+    public NGAP_TNLAssociationUsage(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLAssociationUsage";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLAssociationUsage";
     }
 }

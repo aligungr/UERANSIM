@@ -20,22 +20,22 @@ public class NGAP_EmergencyAreaIDCancelledNR_Item extends NgapSequence {
     public NGAP_CancelledCellsInEAI_NR cancelledCellsInEAI_NR;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyAreaIDCancelledNR-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyAreaIDCancelledNR-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"emergencyAreaID", "cancelledCellsInEAI-NR"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"emergencyAreaID", "cancelledCellsInEAI_NR"};
     }
 }

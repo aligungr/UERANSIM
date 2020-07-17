@@ -37,12 +37,12 @@ public class NGAP_PriorityLevelARP extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PriorityLevelARP";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PriorityLevelARP";
     }
 }

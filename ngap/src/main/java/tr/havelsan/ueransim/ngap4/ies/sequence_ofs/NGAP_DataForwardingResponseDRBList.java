@@ -25,12 +25,12 @@ public class NGAP_DataForwardingResponseDRBList extends NgapSequenceOf<NGAP_Data
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DataForwardingResponseDRBList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DataForwardingResponseDRBList";
     }
 

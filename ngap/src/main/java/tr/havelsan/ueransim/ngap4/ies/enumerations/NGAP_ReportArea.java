@@ -18,17 +18,17 @@ public class NGAP_ReportArea extends NgapEnumerated {
 
     public static final NGAP_ReportArea CELL = new NGAP_ReportArea("cell");
 
-    protected NGAP_ReportArea(String sValue) {
+    public NGAP_ReportArea(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ReportArea";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ReportArea";
     }
 }

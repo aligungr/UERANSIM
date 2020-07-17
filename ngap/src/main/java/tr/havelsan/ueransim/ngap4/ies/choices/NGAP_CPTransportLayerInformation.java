@@ -19,22 +19,22 @@ public class NGAP_CPTransportLayerInformation extends NgapChoice {
     public NGAP_TransportLayerAddress endpointIPAddress;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CPTransportLayerInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CPTransportLayerInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"endpointIPAddress"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"endpointIPAddress"};
     }
 }

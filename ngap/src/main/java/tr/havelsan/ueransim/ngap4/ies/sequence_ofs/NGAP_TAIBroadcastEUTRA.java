@@ -25,12 +25,12 @@ public class NGAP_TAIBroadcastEUTRA extends NgapSequenceOf<NGAP_TAIBroadcastEUTR
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIBroadcastEUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIBroadcastEUTRA";
     }
 

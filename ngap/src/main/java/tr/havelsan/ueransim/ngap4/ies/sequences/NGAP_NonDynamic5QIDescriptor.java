@@ -22,22 +22,22 @@ public class NGAP_NonDynamic5QIDescriptor extends NgapSequence {
     public NGAP_MaximumDataBurstVolume maximumDataBurstVolume;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NonDynamic5QIDescriptor";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NonDynamic5QIDescriptor";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"fiveQI", "priorityLevelQos", "averagingWindow", "maximumDataBurstVolume"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"fiveQI", "priorityLevelQos", "averagingWindow", "maximumDataBurstVolume"};
     }
 }

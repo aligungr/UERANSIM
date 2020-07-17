@@ -25,12 +25,12 @@ public class NGAP_SliceOverloadList extends NgapSequenceOf<NGAP_SliceOverloadIte
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SliceOverloadList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SliceOverloadList";
     }
 

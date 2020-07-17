@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceSwitchedList extends NgapSequenceOf<NGAP_PDU
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceSwitchedList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceSwitchedList";
     }
 

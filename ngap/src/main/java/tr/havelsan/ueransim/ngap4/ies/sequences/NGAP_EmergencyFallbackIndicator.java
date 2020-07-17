@@ -20,22 +20,22 @@ public class NGAP_EmergencyFallbackIndicator extends NgapSequence {
     public NGAP_EmergencyServiceTargetCN emergencyServiceTargetCN;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyFallbackIndicator";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyFallbackIndicator";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"emergencyFallbackRequestIndicator", "emergencyServiceTargetCN"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"emergencyFallbackRequestIndicator", "emergencyServiceTargetCN"};
     }
 }

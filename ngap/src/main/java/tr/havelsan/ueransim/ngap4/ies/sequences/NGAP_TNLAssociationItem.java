@@ -20,22 +20,22 @@ public class NGAP_TNLAssociationItem extends NgapSequence {
     public NGAP_Cause cause;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLAssociationItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLAssociationItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"tNLAssociationAddress", "cause"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"tNLAssociationAddress", "cause"};
     }
 }

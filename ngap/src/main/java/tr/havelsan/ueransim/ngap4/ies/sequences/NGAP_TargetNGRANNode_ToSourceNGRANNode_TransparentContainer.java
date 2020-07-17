@@ -19,22 +19,22 @@ public class NGAP_TargetNGRANNode_ToSourceNGRANNode_TransparentContainer extends
     public NGAP_RRCContainer rRCContainer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TargetNGRANNode-ToSourceNGRANNode-TransparentContainer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TargetNGRANNode-ToSourceNGRANNode-TransparentContainer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"rRCContainer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"rRCContainer"};
     }
 }

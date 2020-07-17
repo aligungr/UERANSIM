@@ -19,22 +19,22 @@ public class NGAP_AMF_TNLAssociationSetupItem extends NgapSequence {
     public NGAP_CPTransportLayerInformation aMF_TNLAssociationAddress;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AMF-TNLAssociationSetupItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AMF-TNLAssociationSetupItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"aMF-TNLAssociationAddress"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"aMF_TNLAssociationAddress"};
     }
 }

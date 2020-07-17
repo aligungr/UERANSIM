@@ -25,12 +25,12 @@ public class NGAP_TNLAssociationList extends NgapSequenceOf<NGAP_TNLAssociationI
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLAssociationList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLAssociationList";
     }
 

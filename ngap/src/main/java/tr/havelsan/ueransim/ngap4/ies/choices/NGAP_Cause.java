@@ -23,22 +23,22 @@ public class NGAP_Cause extends NgapChoice {
     public NGAP_CauseMisc misc;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "Cause";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "Cause";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"radioNetwork", "transport", "nas", "protocol", "misc"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"radioNetwork", "transport", "nas", "protocol", "misc"};
     }
 }

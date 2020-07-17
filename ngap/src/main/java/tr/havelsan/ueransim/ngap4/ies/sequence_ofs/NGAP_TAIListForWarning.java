@@ -25,12 +25,12 @@ public class NGAP_TAIListForWarning extends NgapSequenceOf<NGAP_TAI> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIListForWarning";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIListForWarning";
     }
 

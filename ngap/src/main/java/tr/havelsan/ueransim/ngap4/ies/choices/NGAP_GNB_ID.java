@@ -19,22 +19,22 @@ public class NGAP_GNB_ID extends NgapChoice {
     public NgapBitString gNB_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GNB-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GNB-ID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"gNB-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"gNB_ID"};
     }
 }

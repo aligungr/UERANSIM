@@ -25,12 +25,12 @@ public class NGAP_RATRestrictions extends NgapSequenceOf<NGAP_RATRestrictions_It
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RATRestrictions";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RATRestrictions";
     }
 

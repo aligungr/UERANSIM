@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceSetupListCxtRes extends NgapSequenceOf<NGAP_
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceSetupListCxtRes";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceSetupListCxtRes";
     }
 

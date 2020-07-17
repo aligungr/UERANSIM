@@ -41,5 +41,5 @@ public abstract class NgapSequenceOf<T extends NgapValue> extends NgapValue {
         this.list = list;
     }
 
-    protected abstract Class<T> getItemType();
+    public abstract Class<T> getItemType();
 }

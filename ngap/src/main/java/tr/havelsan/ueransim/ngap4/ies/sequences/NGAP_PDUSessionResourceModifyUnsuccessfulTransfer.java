@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceModifyUnsuccessfulTransfer extends NgapSeque
     public NGAP_CriticalityDiagnostics criticalityDiagnostics;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceModifyUnsuccessfulTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceModifyUnsuccessfulTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"cause", "criticalityDiagnostics"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"cause", "criticalityDiagnostics"};
     }
 }

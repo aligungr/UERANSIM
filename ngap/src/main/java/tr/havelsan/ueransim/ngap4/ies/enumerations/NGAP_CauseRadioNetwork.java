@@ -62,17 +62,17 @@ public class NGAP_CauseRadioNetwork extends NgapEnumerated {
     public static final NGAP_CauseRadioNetwork UE_MAX_INTEGRITY_PROTECTED_DATA_RATE_REASON = new NGAP_CauseRadioNetwork("ue-max-integrity-protected-data-rate-reason");
     public static final NGAP_CauseRadioNetwork RELEASE_DUE_TO_CN_DETECTED_MOBILITY = new NGAP_CauseRadioNetwork("release-due-to-cn-detected-mobility");
 
-    protected NGAP_CauseRadioNetwork(String sValue) {
+    public NGAP_CauseRadioNetwork(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CauseRadioNetwork";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CauseRadioNetwork";
     }
 }

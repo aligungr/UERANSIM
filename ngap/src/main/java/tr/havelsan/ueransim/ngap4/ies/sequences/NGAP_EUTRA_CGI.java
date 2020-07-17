@@ -20,22 +20,22 @@ public class NGAP_EUTRA_CGI extends NgapSequence {
     public NGAP_EUTRACellIdentity eUTRACellIdentity;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EUTRA-CGI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EUTRA-CGI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "eUTRACellIdentity"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "eUTRACellIdentity"};
     }
 }

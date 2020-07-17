@@ -18,17 +18,17 @@ public class NGAP_SONInformationRequest extends NgapEnumerated {
 
     public static final NGAP_SONInformationRequest XN_TNL_CONFIGURATION_INFO = new NGAP_SONInformationRequest("xn-TNL-configuration-info");
 
-    protected NGAP_SONInformationRequest(String sValue) {
+    public NGAP_SONInformationRequest(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SONInformationRequest";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SONInformationRequest";
     }
 }

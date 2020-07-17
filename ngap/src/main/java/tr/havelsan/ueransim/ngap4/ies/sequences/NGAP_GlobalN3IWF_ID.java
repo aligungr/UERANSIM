@@ -20,22 +20,22 @@ public class NGAP_GlobalN3IWF_ID extends NgapSequence {
     public NGAP_N3IWF_ID n3IWF_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GlobalN3IWF-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GlobalN3IWF-ID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "n3IWF-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "n3IWF_ID"};
     }
 }

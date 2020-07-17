@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceListCxtRelReq extends NgapSequenceOf<NGAP_PD
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceListCxtRelReq";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceListCxtRelReq";
     }
 

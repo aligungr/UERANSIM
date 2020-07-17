@@ -19,22 +19,22 @@ public class NGAP_QosFlowAcceptedItem extends NgapSequence {
     public NGAP_QosFlowIdentifier qosFlowIdentifier;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowAcceptedItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowAcceptedItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier"};
     }
 }

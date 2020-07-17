@@ -25,12 +25,12 @@ public class NGAP_AreaOfInterestTAIList extends NgapSequenceOf<NGAP_AreaOfIntere
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AreaOfInterestTAIList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AreaOfInterestTAIList";
     }
 

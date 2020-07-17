@@ -20,22 +20,22 @@ public class NGAP_UEAggregateMaximumBitRate extends NgapSequence {
     public NGAP_BitRate uEAggregateMaximumBitRateUL;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEAggregateMaximumBitRate";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEAggregateMaximumBitRate";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uEAggregateMaximumBitRateDL", "uEAggregateMaximumBitRateUL"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uEAggregateMaximumBitRateDL", "uEAggregateMaximumBitRateUL"};
     }
 }

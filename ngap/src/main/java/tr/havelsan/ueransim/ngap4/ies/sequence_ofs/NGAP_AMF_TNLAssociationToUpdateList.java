@@ -25,12 +25,12 @@ public class NGAP_AMF_TNLAssociationToUpdateList extends NgapSequenceOf<NGAP_AMF
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AMF-TNLAssociationToUpdateList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AMF-TNLAssociationToUpdateList";
     }
 

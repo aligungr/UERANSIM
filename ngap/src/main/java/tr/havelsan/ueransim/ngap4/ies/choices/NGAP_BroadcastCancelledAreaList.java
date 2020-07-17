@@ -24,22 +24,22 @@ public class NGAP_BroadcastCancelledAreaList extends NgapChoice {
     public NGAP_EmergencyAreaIDCancelledNR emergencyAreaIDCancelledNR;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "BroadcastCancelledAreaList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "BroadcastCancelledAreaList";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"cellIDCancelledEUTRA", "tAICancelledEUTRA", "emergencyAreaIDCancelledEUTRA", "cellIDCancelledNR", "tAICancelledNR", "emergencyAreaIDCancelledNR"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"cellIDCancelledEUTRA", "tAICancelledEUTRA", "emergencyAreaIDCancelledEUTRA", "cellIDCancelledNR", "tAICancelledNR", "emergencyAreaIDCancelledNR"};
     }
 }

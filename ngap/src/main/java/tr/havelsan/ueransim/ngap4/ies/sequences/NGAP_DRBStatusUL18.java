@@ -20,22 +20,22 @@ public class NGAP_DRBStatusUL18 extends NgapSequence {
     public NgapBitString receiveStatusOfUL_PDCP_SDUs;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBStatusUL18";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBStatusUL18";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uL-COUNTValue", "receiveStatusOfUL-PDCP-SDUs"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uL_COUNTValue", "receiveStatusOfUL_PDCP_SDUs"};
     }
 }

@@ -37,12 +37,12 @@ public class NGAP_ExpectedActivityPeriod extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedActivityPeriod";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedActivityPeriod";
     }
 }

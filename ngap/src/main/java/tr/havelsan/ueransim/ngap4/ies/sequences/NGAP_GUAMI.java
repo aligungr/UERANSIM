@@ -22,22 +22,22 @@ public class NGAP_GUAMI extends NgapSequence {
     public NGAP_AMFPointer aMFPointer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GUAMI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GUAMI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "aMFRegionID", "aMFSetID", "aMFPointer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "aMFRegionID", "aMFSetID", "aMFPointer"};
     }
 }

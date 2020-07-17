@@ -20,22 +20,22 @@ public class NGAP_AMFPagingTarget extends NgapChoice {
     public NGAP_TAI tAI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AMFPagingTarget";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AMFPagingTarget";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"globalRANNodeID", "tAI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"globalRANNodeID", "tAI"};
     }
 }

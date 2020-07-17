@@ -53,12 +53,12 @@ public class NGAP_InterfacesToTrace extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "InterfacesToTrace";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "InterfacesToTrace";
     }
 }

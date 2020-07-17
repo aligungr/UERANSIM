@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceReleasedItemPSFail extends NgapSequence {
     public NgapOctetString pathSwitchRequestUnsuccessfulTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceReleasedItemPSFail";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceReleasedItemPSFail";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "pathSwitchRequestUnsuccessfulTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "pathSwitchRequestUnsuccessfulTransfer"};
     }
 }

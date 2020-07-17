@@ -20,22 +20,22 @@ public class NGAP_QosFlowNotifyItem extends NgapSequence {
     public NGAP_NotificationCause notificationCause;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowNotifyItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowNotifyItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier", "notificationCause"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier", "notificationCause"};
     }
 }

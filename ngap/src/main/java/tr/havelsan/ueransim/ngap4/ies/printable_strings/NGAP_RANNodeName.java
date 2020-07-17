@@ -21,12 +21,12 @@ public class NGAP_RANNodeName extends NgapPrintableString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RANNodeName";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RANNodeName";
     }
 }

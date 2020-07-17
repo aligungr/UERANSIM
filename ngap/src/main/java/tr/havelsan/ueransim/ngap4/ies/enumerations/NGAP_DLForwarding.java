@@ -18,17 +18,17 @@ public class NGAP_DLForwarding extends NgapEnumerated {
 
     public static final NGAP_DLForwarding DL_FORWARDING_PROPOSED = new NGAP_DLForwarding("dl-forwarding-proposed");
 
-    protected NGAP_DLForwarding(String sValue) {
+    public NGAP_DLForwarding(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DLForwarding";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DLForwarding";
     }
 }

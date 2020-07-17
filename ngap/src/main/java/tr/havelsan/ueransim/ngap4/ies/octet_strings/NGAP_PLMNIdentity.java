@@ -41,12 +41,12 @@ public class NGAP_PLMNIdentity extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PLMNIdentity";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PLMNIdentity";
     }
 }

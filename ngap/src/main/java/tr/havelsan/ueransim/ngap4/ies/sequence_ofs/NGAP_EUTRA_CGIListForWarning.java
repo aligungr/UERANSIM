@@ -25,12 +25,12 @@ public class NGAP_EUTRA_CGIListForWarning extends NgapSequenceOf<NGAP_EUTRA_CGI>
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EUTRA-CGIListForWarning";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EUTRA-CGIListForWarning";
     }
 

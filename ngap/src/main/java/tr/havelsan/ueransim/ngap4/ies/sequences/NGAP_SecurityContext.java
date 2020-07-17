@@ -20,22 +20,22 @@ public class NGAP_SecurityContext extends NgapSequence {
     public NGAP_SecurityKey nextHopNH;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SecurityContext";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SecurityContext";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nextHopChainingCount", "nextHopNH"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nextHopChainingCount", "nextHopNH"};
     }
 }

@@ -41,12 +41,12 @@ public class NGAP_NRPPa_PDU extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NRPPa-PDU";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NRPPa-PDU";
     }
 }

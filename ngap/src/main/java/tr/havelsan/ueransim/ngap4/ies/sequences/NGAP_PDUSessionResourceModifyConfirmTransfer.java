@@ -21,22 +21,22 @@ public class NGAP_PDUSessionResourceModifyConfirmTransfer extends NgapSequence {
     public NGAP_QosFlowList qosFlowFailedToModifyList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceModifyConfirmTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceModifyConfirmTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowModifyConfirmList", "tNLMappingList", "qosFlowFailedToModifyList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowModifyConfirmList", "tNLMappingList", "qosFlowFailedToModifyList"};
     }
 }

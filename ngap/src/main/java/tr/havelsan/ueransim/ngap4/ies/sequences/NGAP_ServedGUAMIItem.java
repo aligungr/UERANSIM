@@ -20,22 +20,22 @@ public class NGAP_ServedGUAMIItem extends NgapSequence {
     public NGAP_AMFName backupAMFName;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ServedGUAMIItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ServedGUAMIItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"gUAMI", "backupAMFName"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"gUAMI", "backupAMFName"};
     }
 }

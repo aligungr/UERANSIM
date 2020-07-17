@@ -37,12 +37,12 @@ public class NGAP_PacketDelayBudget extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PacketDelayBudget";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PacketDelayBudget";
     }
 }

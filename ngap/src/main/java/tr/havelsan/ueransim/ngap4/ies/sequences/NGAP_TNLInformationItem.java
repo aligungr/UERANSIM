@@ -19,22 +19,22 @@ public class NGAP_TNLInformationItem extends NgapSequence {
     public NGAP_QosFlowPerTNLInformation qosFlowPerTNLInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLInformationItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLInformationItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowPerTNLInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowPerTNLInformation"};
     }
 }

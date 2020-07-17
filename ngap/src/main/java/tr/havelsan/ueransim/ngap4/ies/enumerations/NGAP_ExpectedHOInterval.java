@@ -24,17 +24,17 @@ public class NGAP_ExpectedHOInterval extends NgapEnumerated {
     public static final NGAP_ExpectedHOInterval SEC180 = new NGAP_ExpectedHOInterval("sec180");
     public static final NGAP_ExpectedHOInterval LONG_TIME = new NGAP_ExpectedHOInterval("long-time");
 
-    protected NGAP_ExpectedHOInterval(String sValue) {
+    public NGAP_ExpectedHOInterval(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedHOInterval";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedHOInterval";
     }
 }

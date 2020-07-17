@@ -41,12 +41,12 @@ public class NGAP_LastVisitedGERANCellInformation extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LastVisitedGERANCellInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LastVisitedGERANCellInformation";
     }
 }

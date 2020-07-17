@@ -53,12 +53,12 @@ public class NGAP_SecurityKey extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SecurityKey";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SecurityKey";
     }
 }

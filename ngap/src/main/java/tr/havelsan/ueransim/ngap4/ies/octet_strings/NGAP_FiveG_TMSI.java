@@ -41,12 +41,12 @@ public class NGAP_FiveG_TMSI extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "FiveG-TMSI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "FiveG-TMSI";
     }
 }

@@ -21,22 +21,22 @@ public class NGAP_UserLocationInformation extends NgapChoice {
     public NGAP_UserLocationInformationN3IWF userLocationInformationN3IWF;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UserLocationInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UserLocationInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"userLocationInformationEUTRA", "userLocationInformationNR", "userLocationInformationN3IWF"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"userLocationInformationEUTRA", "userLocationInformationNR", "userLocationInformationN3IWF"};
     }
 }

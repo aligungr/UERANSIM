@@ -22,22 +22,22 @@ public class NGAP_PathSwitchRequestTransfer extends NgapSequence {
     public NGAP_QosFlowAcceptedList qosFlowAcceptedList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PathSwitchRequestTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PathSwitchRequestTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dL-NGU-UP-TNLInformation", "dL-NGU-TNLInformationReused", "userPlaneSecurityInformation", "qosFlowAcceptedList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dL_NGU_UP_TNLInformation", "dL_NGU_TNLInformationReused", "userPlaneSecurityInformation", "qosFlowAcceptedList"};
     }
 }

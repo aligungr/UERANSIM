@@ -21,12 +21,12 @@ public class NGAP_AMFName extends NgapPrintableString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AMFName";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AMFName";
     }
 }

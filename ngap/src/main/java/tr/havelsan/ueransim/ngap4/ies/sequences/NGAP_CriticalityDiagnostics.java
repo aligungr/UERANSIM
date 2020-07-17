@@ -22,22 +22,22 @@ public class NGAP_CriticalityDiagnostics extends NgapSequence {
     public NGAP_CriticalityDiagnostics_IE_List iEsCriticalityDiagnostics;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CriticalityDiagnostics";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CriticalityDiagnostics";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"procedureCode", "triggeringMessage", "procedureCriticality", "iEsCriticalityDiagnostics"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"procedureCode", "triggeringMessage", "procedureCriticality", "iEsCriticalityDiagnostics"};
     }
 }

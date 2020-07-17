@@ -53,12 +53,12 @@ public class NGAP_SerialNumber extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SerialNumber";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SerialNumber";
     }
 }

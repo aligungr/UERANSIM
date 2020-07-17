@@ -53,12 +53,12 @@ public class NGAP_EUTRAintegrityProtectionAlgorithms extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EUTRAintegrityProtectionAlgorithms";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EUTRAintegrityProtectionAlgorithms";
     }
 }

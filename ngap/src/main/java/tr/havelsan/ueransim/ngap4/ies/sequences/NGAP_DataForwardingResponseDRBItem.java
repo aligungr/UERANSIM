@@ -21,22 +21,22 @@ public class NGAP_DataForwardingResponseDRBItem extends NgapSequence {
     public NGAP_UPTransportLayerInformation uLForwardingUP_TNLInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DataForwardingResponseDRBItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DataForwardingResponseDRBItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dRB-ID", "dLForwardingUP-TNLInformation", "uLForwardingUP-TNLInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dRB_ID", "dLForwardingUP_TNLInformation", "uLForwardingUP_TNLInformation"};
     }
 }

@@ -37,12 +37,12 @@ public class NGAP_ProtocolIE_ID extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ProtocolIE-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ProtocolIE-ID";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_NR_CGIList extends NgapSequenceOf<NGAP_NR_CGI> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NR-CGIList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NR-CGIList";
     }
 

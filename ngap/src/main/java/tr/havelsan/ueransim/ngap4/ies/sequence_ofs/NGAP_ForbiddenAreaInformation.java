@@ -25,12 +25,12 @@ public class NGAP_ForbiddenAreaInformation extends NgapSequenceOf<NGAP_Forbidden
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ForbiddenAreaInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ForbiddenAreaInformation";
     }
 

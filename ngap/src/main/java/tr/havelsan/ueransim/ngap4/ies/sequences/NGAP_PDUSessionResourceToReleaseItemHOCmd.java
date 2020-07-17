@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceToReleaseItemHOCmd extends NgapSequence {
     public NgapOctetString handoverPreparationUnsuccessfulTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceToReleaseItemHOCmd";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceToReleaseItemHOCmd";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "handoverPreparationUnsuccessfulTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "handoverPreparationUnsuccessfulTransfer"};
     }
 }

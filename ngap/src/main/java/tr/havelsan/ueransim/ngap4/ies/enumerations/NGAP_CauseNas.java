@@ -21,17 +21,17 @@ public class NGAP_CauseNas extends NgapEnumerated {
     public static final NGAP_CauseNas DEREGISTER = new NGAP_CauseNas("deregister");
     public static final NGAP_CauseNas UNSPECIFIED = new NGAP_CauseNas("unspecified");
 
-    protected NGAP_CauseNas(String sValue) {
+    public NGAP_CauseNas(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CauseNas";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CauseNas";
     }
 }

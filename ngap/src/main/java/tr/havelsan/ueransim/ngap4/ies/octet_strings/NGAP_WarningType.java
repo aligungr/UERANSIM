@@ -41,12 +41,12 @@ public class NGAP_WarningType extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "WarningType";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "WarningType";
     }
 }

@@ -37,12 +37,12 @@ public class NGAP_LocationReportingReferenceID extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LocationReportingReferenceID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LocationReportingReferenceID";
     }
 }

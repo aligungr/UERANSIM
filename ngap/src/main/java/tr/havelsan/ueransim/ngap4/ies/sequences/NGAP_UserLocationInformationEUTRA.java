@@ -21,22 +21,22 @@ public class NGAP_UserLocationInformationEUTRA extends NgapSequence {
     public NGAP_TimeStamp timeStamp;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UserLocationInformationEUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UserLocationInformationEUTRA";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eUTRA-CGI", "tAI", "timeStamp"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eUTRA_CGI", "tAI", "timeStamp"};
     }
 }

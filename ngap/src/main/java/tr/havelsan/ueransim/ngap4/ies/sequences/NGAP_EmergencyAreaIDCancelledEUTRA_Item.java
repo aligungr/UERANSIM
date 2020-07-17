@@ -20,22 +20,22 @@ public class NGAP_EmergencyAreaIDCancelledEUTRA_Item extends NgapSequence {
     public NGAP_CancelledCellsInEAI_EUTRA cancelledCellsInEAI_EUTRA;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyAreaIDCancelledEUTRA-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyAreaIDCancelledEUTRA-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"emergencyAreaID", "cancelledCellsInEAI-EUTRA"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"emergencyAreaID", "cancelledCellsInEAI_EUTRA"};
     }
 }

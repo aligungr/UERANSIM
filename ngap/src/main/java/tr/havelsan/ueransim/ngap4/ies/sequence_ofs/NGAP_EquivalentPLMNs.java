@@ -25,12 +25,12 @@ public class NGAP_EquivalentPLMNs extends NgapSequenceOf<NGAP_PLMNIdentity> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EquivalentPLMNs";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EquivalentPLMNs";
     }
 

@@ -19,22 +19,22 @@ public class NGAP_RecommendedRANNodeItem extends NgapSequence {
     public NGAP_AMFPagingTarget aMFPagingTarget;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RecommendedRANNodeItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RecommendedRANNodeItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"aMFPagingTarget"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"aMFPagingTarget"};
     }
 }

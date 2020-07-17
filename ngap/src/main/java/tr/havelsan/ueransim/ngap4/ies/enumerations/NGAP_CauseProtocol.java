@@ -24,17 +24,17 @@ public class NGAP_CauseProtocol extends NgapEnumerated {
     public static final NGAP_CauseProtocol ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE = new NGAP_CauseProtocol("abstract-syntax-error-falsely-constructed-message");
     public static final NGAP_CauseProtocol UNSPECIFIED = new NGAP_CauseProtocol("unspecified");
 
-    protected NGAP_CauseProtocol(String sValue) {
+    public NGAP_CauseProtocol(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CauseProtocol";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CauseProtocol";
     }
 }

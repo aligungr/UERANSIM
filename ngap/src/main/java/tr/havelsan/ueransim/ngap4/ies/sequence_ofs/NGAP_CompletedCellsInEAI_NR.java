@@ -25,12 +25,12 @@ public class NGAP_CompletedCellsInEAI_NR extends NgapSequenceOf<NGAP_CompletedCe
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CompletedCellsInEAI-NR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CompletedCellsInEAI-NR";
     }
 

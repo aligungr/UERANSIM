@@ -37,12 +37,12 @@ public class NGAP_IntendedNumberOfPagingAttempts extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "IntendedNumberOfPagingAttempts";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "IntendedNumberOfPagingAttempts";
     }
 }

@@ -37,12 +37,12 @@ public class NGAP_NetworkInstance extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NetworkInstance";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NetworkInstance";
     }
 }

@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceFailedToModifyItemModCfm extends NgapSequenc
     public NgapOctetString pDUSessionResourceModifyIndicationUnsuccessfulTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToModifyItemModCfm";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToModifyItemModCfm";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "pDUSessionResourceModifyIndicationUnsuccessfulTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "pDUSessionResourceModifyIndicationUnsuccessfulTransfer"};
     }
 }

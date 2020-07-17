@@ -23,22 +23,22 @@ public class NGAP_PDUSessionResourceModifyResponseTransfer extends NgapSequence 
     public NGAP_QosFlowList qosFlowFailedToAddOrModifyList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceModifyResponseTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceModifyResponseTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dL-NGU-UP-TNLInformation", "uL-NGU-UP-TNLInformation", "qosFlowAddOrModifyResponseList", "additionalQosFlowPerTNLInformation", "qosFlowFailedToAddOrModifyList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dL_NGU_UP_TNLInformation", "uL_NGU_UP_TNLInformation", "qosFlowAddOrModifyResponseList", "additionalQosFlowPerTNLInformation", "qosFlowFailedToAddOrModifyList"};
     }
 }

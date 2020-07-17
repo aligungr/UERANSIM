@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceNotifyTransfer extends NgapSequence {
     public NGAP_QosFlowList qosFlowReleasedList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceNotifyTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceNotifyTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowNotifyList", "qosFlowReleasedList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowNotifyList", "qosFlowReleasedList"};
     }
 }

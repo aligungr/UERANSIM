@@ -41,12 +41,12 @@ public class NGAP_LastVisitedUTRANCellInformation extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LastVisitedUTRANCellInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LastVisitedUTRANCellInformation";
     }
 }

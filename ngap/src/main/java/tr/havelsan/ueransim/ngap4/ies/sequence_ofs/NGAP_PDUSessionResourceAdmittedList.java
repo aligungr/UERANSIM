@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceAdmittedList extends NgapSequenceOf<NGAP_PDU
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceAdmittedList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceAdmittedList";
     }
 

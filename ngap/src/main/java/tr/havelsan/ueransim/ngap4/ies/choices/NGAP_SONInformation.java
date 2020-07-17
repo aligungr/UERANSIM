@@ -20,22 +20,22 @@ public class NGAP_SONInformation extends NgapChoice {
     public NGAP_SONInformationReply sONInformationReply;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SONInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SONInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"sONInformationRequest", "sONInformationReply"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"sONInformationRequest", "sONInformationReply"};
     }
 }

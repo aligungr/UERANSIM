@@ -25,12 +25,12 @@ public class NGAP_TAIListForRestart extends NgapSequenceOf<NGAP_TAI> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIListForRestart";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIListForRestart";
     }
 

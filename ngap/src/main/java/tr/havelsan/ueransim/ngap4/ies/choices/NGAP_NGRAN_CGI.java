@@ -20,22 +20,22 @@ public class NGAP_NGRAN_CGI extends NgapChoice {
     public NGAP_EUTRA_CGI eUTRA_CGI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NGRAN-CGI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NGRAN-CGI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nR-CGI", "eUTRA-CGI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nR_CGI", "eUTRA_CGI"};
     }
 }

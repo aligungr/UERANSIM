@@ -21,22 +21,22 @@ public class NGAP_AllocationAndRetentionPriority extends NgapSequence {
     public NGAP_Pre_emptionVulnerability pre_emptionVulnerability;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AllocationAndRetentionPriority";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AllocationAndRetentionPriority";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"priorityLevelARP", "pre-emptionCapability", "pre-emptionVulnerability"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"priorityLevelARP", "pre_emptionCapability", "pre_emptionVulnerability"};
     }
 }

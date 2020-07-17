@@ -23,22 +23,22 @@ public class NGAP_QosFlowLevelQosParameters extends NgapSequence {
     public NGAP_AdditionalQosFlowInformation additionalQosFlowInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowLevelQosParameters";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowLevelQosParameters";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosCharacteristics", "allocationAndRetentionPriority", "gBR-QosInformation", "reflectiveQosAttribute", "additionalQosFlowInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosCharacteristics", "allocationAndRetentionPriority", "gBR_QosInformation", "reflectiveQosAttribute", "additionalQosFlowInformation"};
     }
 }

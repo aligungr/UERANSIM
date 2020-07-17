@@ -25,12 +25,12 @@ public class NGAP_ExpectedUEMovingTrajectory extends NgapSequenceOf<NGAP_Expecte
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedUEMovingTrajectory";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedUEMovingTrajectory";
     }
 

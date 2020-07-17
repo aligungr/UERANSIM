@@ -21,22 +21,22 @@ public class NGAP_PDUSessionResourceInformationItem extends NgapSequence {
     public NGAP_DRBsToQosFlowsMappingList dRBsToQosFlowsMappingList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceInformationItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceInformationItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "qosFlowInformationList", "dRBsToQosFlowsMappingList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "qosFlowInformationList", "dRBsToQosFlowsMappingList"};
     }
 }

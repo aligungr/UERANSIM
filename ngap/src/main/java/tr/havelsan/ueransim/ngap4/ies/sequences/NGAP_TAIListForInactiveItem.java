@@ -19,22 +19,22 @@ public class NGAP_TAIListForInactiveItem extends NgapSequence {
     public NGAP_TAI tAI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIListForInactiveItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIListForInactiveItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"tAI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"tAI"};
     }
 }

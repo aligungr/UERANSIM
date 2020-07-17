@@ -53,12 +53,12 @@ public class NGAP_TransportLayerAddress extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TransportLayerAddress";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TransportLayerAddress";
     }
 }

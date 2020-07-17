@@ -25,12 +25,12 @@ public class NGAP_CompletedCellsInTAI_EUTRA extends NgapSequenceOf<NGAP_Complete
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CompletedCellsInTAI-EUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CompletedCellsInTAI-EUTRA";
     }
 

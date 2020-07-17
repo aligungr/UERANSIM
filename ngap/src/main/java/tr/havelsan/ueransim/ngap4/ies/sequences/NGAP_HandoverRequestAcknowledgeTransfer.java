@@ -24,22 +24,22 @@ public class NGAP_HandoverRequestAcknowledgeTransfer extends NgapSequence {
     public NGAP_DataForwardingResponseDRBList dataForwardingResponseDRBList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "HandoverRequestAcknowledgeTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "HandoverRequestAcknowledgeTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dL-NGU-UP-TNLInformation", "dLForwardingUP-TNLInformation", "securityResult", "qosFlowSetupResponseList", "qosFlowFailedToSetupList", "dataForwardingResponseDRBList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dL_NGU_UP_TNLInformation", "dLForwardingUP_TNLInformation", "securityResult", "qosFlowSetupResponseList", "qosFlowFailedToSetupList", "dataForwardingResponseDRBList"};
     }
 }

@@ -18,17 +18,17 @@ public class NGAP_PagingOrigin extends NgapEnumerated {
 
     public static final NGAP_PagingOrigin NON_3GPP = new NGAP_PagingOrigin("non-3gpp");
 
-    protected NGAP_PagingOrigin(String sValue) {
+    public NGAP_PagingOrigin(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PagingOrigin";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PagingOrigin";
     }
 }

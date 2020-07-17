@@ -21,22 +21,22 @@ public class NGAP_FiveG_S_TMSI extends NgapSequence {
     public NGAP_FiveG_TMSI fiveG_TMSI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "FiveG-S-TMSI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "FiveG-S-TMSI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"aMFSetID", "aMFPointer", "fiveG-TMSI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"aMFSetID", "aMFPointer", "fiveG_TMSI"};
     }
 }

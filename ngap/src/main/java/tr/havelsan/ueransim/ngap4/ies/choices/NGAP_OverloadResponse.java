@@ -19,22 +19,22 @@ public class NGAP_OverloadResponse extends NgapChoice {
     public NGAP_OverloadAction overloadAction;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "OverloadResponse";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "OverloadResponse";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"overloadAction"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"overloadAction"};
     }
 }

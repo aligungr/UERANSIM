@@ -53,12 +53,12 @@ public class NGAP_MessageIdentifier extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "MessageIdentifier";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "MessageIdentifier";
     }
 }

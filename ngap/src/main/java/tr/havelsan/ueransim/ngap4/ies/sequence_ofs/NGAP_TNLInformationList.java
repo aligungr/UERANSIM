@@ -25,12 +25,12 @@ public class NGAP_TNLInformationList extends NgapSequenceOf<NGAP_TNLInformationI
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLInformationList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLInformationList";
     }
 

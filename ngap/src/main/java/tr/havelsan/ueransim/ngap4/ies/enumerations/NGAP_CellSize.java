@@ -21,17 +21,17 @@ public class NGAP_CellSize extends NgapEnumerated {
     public static final NGAP_CellSize MEDIUM = new NGAP_CellSize("medium");
     public static final NGAP_CellSize LARGE = new NGAP_CellSize("large");
 
-    protected NGAP_CellSize(String sValue) {
+    public NGAP_CellSize(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellSize";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellSize";
     }
 }

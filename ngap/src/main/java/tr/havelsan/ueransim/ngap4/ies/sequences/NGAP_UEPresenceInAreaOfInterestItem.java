@@ -20,22 +20,22 @@ public class NGAP_UEPresenceInAreaOfInterestItem extends NgapSequence {
     public NGAP_UEPresence uEPresence;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEPresenceInAreaOfInterestItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEPresenceInAreaOfInterestItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"locationReportingReferenceID", "uEPresence"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"locationReportingReferenceID", "uEPresence"};
     }
 }

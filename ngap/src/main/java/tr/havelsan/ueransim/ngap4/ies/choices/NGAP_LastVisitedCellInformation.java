@@ -22,22 +22,22 @@ public class NGAP_LastVisitedCellInformation extends NgapChoice {
     public NGAP_LastVisitedGERANCellInformation gERANCell;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LastVisitedCellInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LastVisitedCellInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nGRANCell", "eUTRANCell", "uTRANCell", "gERANCell"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nGRANCell", "eUTRANCell", "uTRANCell", "gERANCell"};
     }
 }

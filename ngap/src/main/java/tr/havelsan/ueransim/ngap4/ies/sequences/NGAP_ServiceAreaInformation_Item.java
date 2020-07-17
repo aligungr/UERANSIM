@@ -21,22 +21,22 @@ public class NGAP_ServiceAreaInformation_Item extends NgapSequence {
     public NGAP_NotAllowedTACs notAllowedTACs;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ServiceAreaInformation-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ServiceAreaInformation-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "allowedTACs", "notAllowedTACs"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "allowedTACs", "notAllowedTACs"};
     }
 }

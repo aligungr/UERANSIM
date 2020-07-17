@@ -41,12 +41,12 @@ public class NGAP_NAS_PDU extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NAS-PDU";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NAS-PDU";
     }
 }

@@ -20,17 +20,17 @@ public class NGAP_ConfidentialityProtectionIndication extends NgapEnumerated {
     public static final NGAP_ConfidentialityProtectionIndication PREFERRED = new NGAP_ConfidentialityProtectionIndication("preferred");
     public static final NGAP_ConfidentialityProtectionIndication NOT_NEEDED = new NGAP_ConfidentialityProtectionIndication("not-needed");
 
-    protected NGAP_ConfidentialityProtectionIndication(String sValue) {
+    public NGAP_ConfidentialityProtectionIndication(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ConfidentialityProtectionIndication";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ConfidentialityProtectionIndication";
     }
 }

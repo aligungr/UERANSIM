@@ -20,22 +20,22 @@ public class NGAP_QosCharacteristics extends NgapChoice {
     public NGAP_Dynamic5QIDescriptor dynamic5QI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosCharacteristics";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosCharacteristics";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nonDynamic5QI", "dynamic5QI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nonDynamic5QI", "dynamic5QI"};
     }
 }

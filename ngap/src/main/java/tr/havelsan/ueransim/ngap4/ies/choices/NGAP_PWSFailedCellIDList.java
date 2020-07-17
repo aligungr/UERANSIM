@@ -20,22 +20,22 @@ public class NGAP_PWSFailedCellIDList extends NgapChoice {
     public NGAP_NR_CGIList nR_CGI_PWSFailedList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PWSFailedCellIDList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PWSFailedCellIDList";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eUTRA-CGI-PWSFailedList", "nR-CGI-PWSFailedList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eUTRA_CGI_PWSFailedList", "nR_CGI_PWSFailedList"};
     }
 }

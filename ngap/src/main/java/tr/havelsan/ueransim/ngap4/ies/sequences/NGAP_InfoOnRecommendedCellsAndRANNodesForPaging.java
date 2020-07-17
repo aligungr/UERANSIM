@@ -20,22 +20,22 @@ public class NGAP_InfoOnRecommendedCellsAndRANNodesForPaging extends NgapSequenc
     public NGAP_RecommendedRANNodesForPaging recommendRANNodesForPaging;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "InfoOnRecommendedCellsAndRANNodesForPaging";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "InfoOnRecommendedCellsAndRANNodesForPaging";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"recommendedCellsForPaging", "recommendRANNodesForPaging"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"recommendedCellsForPaging", "recommendRANNodesForPaging"};
     }
 }

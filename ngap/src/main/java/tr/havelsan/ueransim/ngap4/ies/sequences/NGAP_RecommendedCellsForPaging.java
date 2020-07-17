@@ -19,22 +19,22 @@ public class NGAP_RecommendedCellsForPaging extends NgapSequence {
     public NGAP_RecommendedCellList recommendedCellList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RecommendedCellsForPaging";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RecommendedCellsForPaging";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"recommendedCellList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"recommendedCellList"};
     }
 }

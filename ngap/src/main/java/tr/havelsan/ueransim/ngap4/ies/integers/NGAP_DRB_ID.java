@@ -37,12 +37,12 @@ public class NGAP_DRB_ID extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRB-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRB-ID";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_TAIListForPaging extends NgapSequenceOf<NGAP_TAIListForPagingI
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIListForPaging";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIListForPaging";
     }
 

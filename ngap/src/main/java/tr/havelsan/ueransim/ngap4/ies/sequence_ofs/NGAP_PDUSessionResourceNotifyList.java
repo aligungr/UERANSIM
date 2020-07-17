@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceNotifyList extends NgapSequenceOf<NGAP_PDUSe
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceNotifyList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceNotifyList";
     }
 

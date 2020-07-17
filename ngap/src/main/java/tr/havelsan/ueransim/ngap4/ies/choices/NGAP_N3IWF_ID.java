@@ -19,22 +19,22 @@ public class NGAP_N3IWF_ID extends NgapChoice {
     public NgapBitString n3IWF_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "N3IWF-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "N3IWF-ID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"n3IWF-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"n3IWF_ID"};
     }
 }

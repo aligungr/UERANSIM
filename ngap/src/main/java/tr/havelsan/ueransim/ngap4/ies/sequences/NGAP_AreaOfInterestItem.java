@@ -20,22 +20,22 @@ public class NGAP_AreaOfInterestItem extends NgapSequence {
     public NGAP_LocationReportingReferenceID locationReportingReferenceID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AreaOfInterestItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AreaOfInterestItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"areaOfInterest", "locationReportingReferenceID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"areaOfInterest", "locationReportingReferenceID"};
     }
 }

@@ -18,17 +18,17 @@ public class NGAP_EmergencyFallbackRequestIndicator extends NgapEnumerated {
 
     public static final NGAP_EmergencyFallbackRequestIndicator EMERGENCY_FALLBACK_REQUESTED = new NGAP_EmergencyFallbackRequestIndicator("emergency-fallback-requested");
 
-    protected NGAP_EmergencyFallbackRequestIndicator(String sValue) {
+    public NGAP_EmergencyFallbackRequestIndicator(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyFallbackRequestIndicator";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyFallbackRequestIndicator";
     }
 }

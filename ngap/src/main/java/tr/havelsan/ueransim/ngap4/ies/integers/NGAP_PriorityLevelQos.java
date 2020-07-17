@@ -37,12 +37,12 @@ public class NGAP_PriorityLevelQos extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PriorityLevelQos";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PriorityLevelQos";
     }
 }

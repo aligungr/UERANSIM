@@ -41,12 +41,12 @@ public class NGAP_WarningMessageContents extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "WarningMessageContents";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "WarningMessageContents";
     }
 }

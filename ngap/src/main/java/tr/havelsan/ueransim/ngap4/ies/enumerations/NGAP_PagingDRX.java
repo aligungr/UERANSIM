@@ -21,17 +21,17 @@ public class NGAP_PagingDRX extends NgapEnumerated {
     public static final NGAP_PagingDRX V128 = new NGAP_PagingDRX("v128");
     public static final NGAP_PagingDRX V256 = new NGAP_PagingDRX("v256");
 
-    protected NGAP_PagingDRX(String sValue) {
+    public NGAP_PagingDRX(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PagingDRX";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PagingDRX";
     }
 }

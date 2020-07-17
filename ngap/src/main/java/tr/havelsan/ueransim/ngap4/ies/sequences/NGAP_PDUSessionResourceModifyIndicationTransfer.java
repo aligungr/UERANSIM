@@ -19,22 +19,22 @@ public class NGAP_PDUSessionResourceModifyIndicationTransfer extends NgapSequenc
     public NGAP_UP_TNLInformation dL_UP_TNLInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceModifyIndicationTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceModifyIndicationTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dL-UP-TNLInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dL_UP_TNLInformation"};
     }
 }

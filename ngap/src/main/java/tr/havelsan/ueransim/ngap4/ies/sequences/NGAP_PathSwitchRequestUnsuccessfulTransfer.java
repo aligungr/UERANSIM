@@ -19,22 +19,22 @@ public class NGAP_PathSwitchRequestUnsuccessfulTransfer extends NgapSequence {
     public NGAP_Cause cause;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PathSwitchRequestUnsuccessfulTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PathSwitchRequestUnsuccessfulTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"cause"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"cause"};
     }
 }

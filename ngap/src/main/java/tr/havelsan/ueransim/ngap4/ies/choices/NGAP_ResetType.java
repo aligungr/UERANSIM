@@ -20,22 +20,22 @@ public class NGAP_ResetType extends NgapChoice {
     public NGAP_UE_associatedLogicalNG_connectionList partOfNG_Interface;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ResetType";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ResetType";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nG-Interface", "partOfNG-Interface"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nG_Interface", "partOfNG_Interface"};
     }
 }

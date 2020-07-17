@@ -19,17 +19,17 @@ public class NGAP_MaximumIntegrityProtectedDataRate extends NgapEnumerated {
     public static final NGAP_MaximumIntegrityProtectedDataRate BITRATE64KBS = new NGAP_MaximumIntegrityProtectedDataRate("bitrate64kbs");
     public static final NGAP_MaximumIntegrityProtectedDataRate MAXIMUM_UE_RATE = new NGAP_MaximumIntegrityProtectedDataRate("maximum-UE-rate");
 
-    protected NGAP_MaximumIntegrityProtectedDataRate(String sValue) {
+    public NGAP_MaximumIntegrityProtectedDataRate(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "MaximumIntegrityProtectedDataRate";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "MaximumIntegrityProtectedDataRate";
     }
 }

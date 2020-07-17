@@ -21,22 +21,22 @@ public class NGAP_UnavailableGUAMIItem extends NgapSequence {
     public NGAP_AMFName backupAMFName;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UnavailableGUAMIItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UnavailableGUAMIItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"gUAMI", "timerApproachForGUAMIRemoval", "backupAMFName"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"gUAMI", "timerApproachForGUAMIRemoval", "backupAMFName"};
     }
 }

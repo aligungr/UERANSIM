@@ -20,22 +20,22 @@ public class NGAP_TAI extends NgapSequence {
     public NGAP_TAC tAC;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "tAC"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "tAC"};
     }
 }

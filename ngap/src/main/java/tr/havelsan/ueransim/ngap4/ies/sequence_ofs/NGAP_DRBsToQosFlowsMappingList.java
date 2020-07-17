@@ -25,12 +25,12 @@ public class NGAP_DRBsToQosFlowsMappingList extends NgapSequenceOf<NGAP_DRBsToQo
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBsToQosFlowsMappingList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBsToQosFlowsMappingList";
     }
 

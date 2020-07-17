@@ -25,17 +25,17 @@ public class NGAP_PagingPriority extends NgapEnumerated {
     public static final NGAP_PagingPriority PRIOLEVEL7 = new NGAP_PagingPriority("priolevel7");
     public static final NGAP_PagingPriority PRIOLEVEL8 = new NGAP_PagingPriority("priolevel8");
 
-    protected NGAP_PagingPriority(String sValue) {
+    public NGAP_PagingPriority(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PagingPriority";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PagingPriority";
     }
 }

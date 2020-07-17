@@ -25,12 +25,12 @@ public class NGAP_E_RABInformationList extends NgapSequenceOf<NGAP_E_RABInformat
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "E-RABInformationList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "E-RABInformationList";
     }
 

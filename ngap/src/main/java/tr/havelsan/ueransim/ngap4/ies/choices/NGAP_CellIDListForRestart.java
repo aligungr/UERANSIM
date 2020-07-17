@@ -20,22 +20,22 @@ public class NGAP_CellIDListForRestart extends NgapChoice {
     public NGAP_NR_CGIList nR_CGIListforRestart;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellIDListForRestart";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellIDListForRestart";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eUTRA-CGIListforRestart", "nR-CGIListforRestart"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eUTRA_CGIListforRestart", "nR_CGIListforRestart"};
     }
 }

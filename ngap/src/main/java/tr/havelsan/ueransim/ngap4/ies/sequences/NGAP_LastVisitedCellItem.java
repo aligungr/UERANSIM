@@ -19,22 +19,22 @@ public class NGAP_LastVisitedCellItem extends NgapSequence {
     public NGAP_LastVisitedCellInformation lastVisitedCellInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "LastVisitedCellItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "LastVisitedCellItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"lastVisitedCellInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"lastVisitedCellInformation"};
     }
 }

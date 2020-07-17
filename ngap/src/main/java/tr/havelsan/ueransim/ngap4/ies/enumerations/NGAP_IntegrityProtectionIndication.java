@@ -20,17 +20,17 @@ public class NGAP_IntegrityProtectionIndication extends NgapEnumerated {
     public static final NGAP_IntegrityProtectionIndication PREFERRED = new NGAP_IntegrityProtectionIndication("preferred");
     public static final NGAP_IntegrityProtectionIndication NOT_NEEDED = new NGAP_IntegrityProtectionIndication("not-needed");
 
-    protected NGAP_IntegrityProtectionIndication(String sValue) {
+    public NGAP_IntegrityProtectionIndication(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "IntegrityProtectionIndication";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "IntegrityProtectionIndication";
     }
 }

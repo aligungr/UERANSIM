@@ -19,22 +19,22 @@ public class NGAP_UEPagingIdentity extends NgapChoice {
     public NGAP_FiveG_S_TMSI fiveG_S_TMSI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEPagingIdentity";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEPagingIdentity";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"fiveG-S-TMSI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"fiveG_S_TMSI"};
     }
 }

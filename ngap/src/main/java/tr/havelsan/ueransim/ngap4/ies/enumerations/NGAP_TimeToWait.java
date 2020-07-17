@@ -23,17 +23,17 @@ public class NGAP_TimeToWait extends NgapEnumerated {
     public static final NGAP_TimeToWait V20S = new NGAP_TimeToWait("v20s");
     public static final NGAP_TimeToWait V60S = new NGAP_TimeToWait("v60s");
 
-    protected NGAP_TimeToWait(String sValue) {
+    public NGAP_TimeToWait(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TimeToWait";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TimeToWait";
     }
 }

@@ -19,22 +19,22 @@ public class NGAP_QosFlowToBeForwardedItem extends NgapSequence {
     public NGAP_QosFlowIdentifier qosFlowIdentifier;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowToBeForwardedItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowToBeForwardedItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier"};
     }
 }

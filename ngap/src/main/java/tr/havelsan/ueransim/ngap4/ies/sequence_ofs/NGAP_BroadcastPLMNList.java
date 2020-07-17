@@ -25,12 +25,12 @@ public class NGAP_BroadcastPLMNList extends NgapSequenceOf<NGAP_BroadcastPLMNIte
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "BroadcastPLMNList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "BroadcastPLMNList";
     }
 

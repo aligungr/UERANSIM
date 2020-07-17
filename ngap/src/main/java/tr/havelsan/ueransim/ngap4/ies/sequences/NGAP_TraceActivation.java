@@ -22,22 +22,22 @@ public class NGAP_TraceActivation extends NgapSequence {
     public NGAP_TransportLayerAddress traceCollectionEntityIPAddress;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TraceActivation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TraceActivation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nGRANTraceID", "interfacesToTrace", "traceDepth", "traceCollectionEntityIPAddress"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nGRANTraceID", "interfacesToTrace", "traceDepth", "traceCollectionEntityIPAddress"};
     }
 }

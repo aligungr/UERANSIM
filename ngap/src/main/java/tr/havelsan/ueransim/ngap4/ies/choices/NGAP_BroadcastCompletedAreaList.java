@@ -24,22 +24,22 @@ public class NGAP_BroadcastCompletedAreaList extends NgapChoice {
     public NGAP_EmergencyAreaIDBroadcastNR emergencyAreaIDBroadcastNR;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "BroadcastCompletedAreaList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "BroadcastCompletedAreaList";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"cellIDBroadcastEUTRA", "tAIBroadcastEUTRA", "emergencyAreaIDBroadcastEUTRA", "cellIDBroadcastNR", "tAIBroadcastNR", "emergencyAreaIDBroadcastNR"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"cellIDBroadcastEUTRA", "tAIBroadcastEUTRA", "emergencyAreaIDBroadcastEUTRA", "cellIDBroadcastNR", "tAIBroadcastNR", "emergencyAreaIDBroadcastNR"};
     }
 }

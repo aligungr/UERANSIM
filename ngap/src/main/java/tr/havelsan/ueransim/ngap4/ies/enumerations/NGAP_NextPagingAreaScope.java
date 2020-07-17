@@ -19,17 +19,17 @@ public class NGAP_NextPagingAreaScope extends NgapEnumerated {
     public static final NGAP_NextPagingAreaScope SAME = new NGAP_NextPagingAreaScope("same");
     public static final NGAP_NextPagingAreaScope CHANGED = new NGAP_NextPagingAreaScope("changed");
 
-    protected NGAP_NextPagingAreaScope(String sValue) {
+    public NGAP_NextPagingAreaScope(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NextPagingAreaScope";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NextPagingAreaScope";
     }
 }

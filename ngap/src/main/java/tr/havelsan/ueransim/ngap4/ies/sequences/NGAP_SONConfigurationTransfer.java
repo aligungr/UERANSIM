@@ -22,22 +22,22 @@ public class NGAP_SONConfigurationTransfer extends NgapSequence {
     public NGAP_XnTNLConfigurationInfo xnTNLConfigurationInfo;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SONConfigurationTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SONConfigurationTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"targetRANNodeID", "sourceRANNodeID", "sONInformation", "xnTNLConfigurationInfo"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"targetRANNodeID", "sourceRANNodeID", "sONInformation", "xnTNLConfigurationInfo"};
     }
 }

@@ -20,22 +20,22 @@ public class NGAP_QosFlowSetupResponseItemHOReqAck extends NgapSequence {
     public NGAP_DataForwardingAccepted dataForwardingAccepted;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowSetupResponseItemHOReqAck";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowSetupResponseItemHOReqAck";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier", "dataForwardingAccepted"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier", "dataForwardingAccepted"};
     }
 }

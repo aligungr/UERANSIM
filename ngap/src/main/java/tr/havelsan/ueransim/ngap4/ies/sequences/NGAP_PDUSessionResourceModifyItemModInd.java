@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceModifyItemModInd extends NgapSequence {
     public NgapOctetString pDUSessionResourceModifyIndicationTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceModifyItemModInd";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceModifyItemModInd";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "pDUSessionResourceModifyIndicationTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "pDUSessionResourceModifyIndicationTransfer"};
     }
 }

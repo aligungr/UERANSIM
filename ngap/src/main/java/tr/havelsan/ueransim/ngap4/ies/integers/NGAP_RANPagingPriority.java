@@ -37,12 +37,12 @@ public class NGAP_RANPagingPriority extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RANPagingPriority";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RANPagingPriority";
     }
 }

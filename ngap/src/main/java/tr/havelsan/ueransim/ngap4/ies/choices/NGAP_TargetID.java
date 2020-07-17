@@ -20,22 +20,22 @@ public class NGAP_TargetID extends NgapChoice {
     public NGAP_TargeteNB_ID targeteNB_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TargetID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TargetID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"targetRANNodeID", "targeteNB-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"targetRANNodeID", "targeteNB_ID"};
     }
 }

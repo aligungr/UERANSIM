@@ -21,22 +21,22 @@ public class NGAP_AreaOfInterest extends NgapSequence {
     public NGAP_AreaOfInterestRANNodeList areaOfInterestRANNodeList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AreaOfInterest";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AreaOfInterest";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"areaOfInterestTAIList", "areaOfInterestCellList", "areaOfInterestRANNodeList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"areaOfInterestTAIList", "areaOfInterestCellList", "areaOfInterestRANNodeList"};
     }
 }

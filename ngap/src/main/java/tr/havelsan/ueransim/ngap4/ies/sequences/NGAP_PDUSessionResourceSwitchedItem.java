@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceSwitchedItem extends NgapSequence {
     public NgapOctetString pathSwitchRequestAcknowledgeTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceSwitchedItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceSwitchedItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "pathSwitchRequestAcknowledgeTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "pathSwitchRequestAcknowledgeTransfer"};
     }
 }

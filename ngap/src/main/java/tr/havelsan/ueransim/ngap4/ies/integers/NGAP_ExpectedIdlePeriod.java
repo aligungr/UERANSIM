@@ -37,12 +37,12 @@ public class NGAP_ExpectedIdlePeriod extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ExpectedIdlePeriod";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ExpectedIdlePeriod";
     }
 }

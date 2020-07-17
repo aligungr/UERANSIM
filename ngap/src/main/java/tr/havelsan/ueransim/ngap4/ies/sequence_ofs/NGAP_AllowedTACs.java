@@ -25,12 +25,12 @@ public class NGAP_AllowedTACs extends NgapSequenceOf<NGAP_TAC> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AllowedTACs";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AllowedTACs";
     }
 

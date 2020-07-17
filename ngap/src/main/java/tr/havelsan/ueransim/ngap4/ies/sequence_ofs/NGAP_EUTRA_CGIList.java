@@ -25,12 +25,12 @@ public class NGAP_EUTRA_CGIList extends NgapSequenceOf<NGAP_EUTRA_CGI> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EUTRA-CGIList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EUTRA-CGIList";
     }
 

@@ -25,12 +25,12 @@ public class NGAP_DRBsSubjectToStatusTransferList extends NgapSequenceOf<NGAP_DR
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBsSubjectToStatusTransferList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBsSubjectToStatusTransferList";
     }
 

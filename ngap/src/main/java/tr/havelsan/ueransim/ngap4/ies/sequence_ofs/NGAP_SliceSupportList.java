@@ -25,12 +25,12 @@ public class NGAP_SliceSupportList extends NgapSequenceOf<NGAP_SliceSupportItem>
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SliceSupportList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SliceSupportList";
     }
 

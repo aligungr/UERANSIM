@@ -25,12 +25,12 @@ public class NGAP_QosFlowList extends NgapSequenceOf<NGAP_QosFlowItem> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowList";
     }
 

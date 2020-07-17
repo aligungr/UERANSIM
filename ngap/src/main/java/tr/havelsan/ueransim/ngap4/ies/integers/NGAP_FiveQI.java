@@ -37,12 +37,12 @@ public class NGAP_FiveQI extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "FiveQI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "FiveQI";
     }
 }

@@ -21,22 +21,22 @@ public class NGAP_CriticalityDiagnostics_IE_Item extends NgapSequence {
     public NGAP_TypeOfError typeOfError;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CriticalityDiagnostics-IE-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CriticalityDiagnostics-IE-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"iECriticality", "iE-ID", "typeOfError"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"iECriticality", "iE_ID", "typeOfError"};
     }
 }

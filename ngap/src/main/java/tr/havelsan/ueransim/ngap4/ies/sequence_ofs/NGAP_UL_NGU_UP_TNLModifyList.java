@@ -25,12 +25,12 @@ public class NGAP_UL_NGU_UP_TNLModifyList extends NgapSequenceOf<NGAP_UL_NGU_UP_
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UL-NGU-UP-TNLModifyList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UL-NGU-UP-TNLModifyList";
     }
 

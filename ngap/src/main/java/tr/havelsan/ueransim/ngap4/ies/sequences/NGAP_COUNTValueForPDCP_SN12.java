@@ -20,22 +20,22 @@ public class NGAP_COUNTValueForPDCP_SN12 extends NgapSequence {
     public long hFN_PDCP_SN12;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "COUNTValueForPDCP-SN12";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "COUNTValueForPDCP-SN12";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDCP-SN12", "hFN-PDCP-SN12"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDCP_SN12", "hFN_PDCP_SN12"};
     }
 }

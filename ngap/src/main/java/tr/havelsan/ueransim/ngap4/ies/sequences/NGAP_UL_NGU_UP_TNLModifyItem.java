@@ -20,22 +20,22 @@ public class NGAP_UL_NGU_UP_TNLModifyItem extends NgapSequence {
     public NGAP_UPTransportLayerInformation dL_NGU_UP_TNLInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UL-NGU-UP-TNLModifyItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UL-NGU-UP-TNLModifyItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uL-NGU-UP-TNLInformation", "dL-NGU-UP-TNLInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uL_NGU_UP_TNLInformation", "dL_NGU_UP_TNLInformation"};
     }
 }

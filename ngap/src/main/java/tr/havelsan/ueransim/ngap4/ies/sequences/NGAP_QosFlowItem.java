@@ -20,22 +20,22 @@ public class NGAP_QosFlowItem extends NgapSequence {
     public NGAP_Cause cause;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "QosFlowItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "QosFlowItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier", "cause"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier", "cause"};
     }
 }

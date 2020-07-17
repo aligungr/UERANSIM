@@ -37,12 +37,12 @@ public class NGAP_ProcedureCode extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ProcedureCode";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ProcedureCode";
     }
 }

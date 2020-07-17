@@ -25,12 +25,12 @@ public class NGAP_CellIDCancelledEUTRA extends NgapSequenceOf<NGAP_CellIDCancell
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellIDCancelledEUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellIDCancelledEUTRA";
     }
 

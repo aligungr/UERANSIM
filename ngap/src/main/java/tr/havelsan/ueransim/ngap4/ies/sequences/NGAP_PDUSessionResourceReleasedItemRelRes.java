@@ -20,22 +20,22 @@ public class NGAP_PDUSessionResourceReleasedItemRelRes extends NgapSequence {
     public NgapOctetString pDUSessionResourceReleaseResponseTransfer;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceReleasedItemRelRes";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceReleasedItemRelRes";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pDUSessionID", "pDUSessionResourceReleaseResponseTransfer"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pDUSessionID", "pDUSessionResourceReleaseResponseTransfer"};
     }
 }

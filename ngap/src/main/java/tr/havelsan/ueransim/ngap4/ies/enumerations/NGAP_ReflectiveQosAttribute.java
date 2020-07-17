@@ -18,17 +18,17 @@ public class NGAP_ReflectiveQosAttribute extends NgapEnumerated {
 
     public static final NGAP_ReflectiveQosAttribute SUBJECT_TO = new NGAP_ReflectiveQosAttribute("subject-to");
 
-    protected NGAP_ReflectiveQosAttribute(String sValue) {
+    public NGAP_ReflectiveQosAttribute(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ReflectiveQosAttribute";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ReflectiveQosAttribute";
     }
 }

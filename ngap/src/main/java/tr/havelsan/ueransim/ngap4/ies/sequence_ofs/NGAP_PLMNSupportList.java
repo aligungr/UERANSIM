@@ -25,12 +25,12 @@ public class NGAP_PLMNSupportList extends NgapSequenceOf<NGAP_PLMNSupportItem> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PLMNSupportList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PLMNSupportList";
     }
 

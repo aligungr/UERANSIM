@@ -19,22 +19,22 @@ public class NGAP_AreaOfInterestCellItem extends NgapSequence {
     public NGAP_NGRAN_CGI nGRAN_CGI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AreaOfInterestCellItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AreaOfInterestCellItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"nGRAN-CGI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"nGRAN_CGI"};
     }
 }

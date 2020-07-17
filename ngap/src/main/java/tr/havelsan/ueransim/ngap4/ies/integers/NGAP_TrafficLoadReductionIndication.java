@@ -37,12 +37,12 @@ public class NGAP_TrafficLoadReductionIndication extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TrafficLoadReductionIndication";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TrafficLoadReductionIndication";
     }
 }

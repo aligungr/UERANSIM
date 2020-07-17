@@ -25,12 +25,12 @@ public class NGAP_RecommendedRANNodeList extends NgapSequenceOf<NGAP_Recommended
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RecommendedRANNodeList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RecommendedRANNodeList";
     }
 

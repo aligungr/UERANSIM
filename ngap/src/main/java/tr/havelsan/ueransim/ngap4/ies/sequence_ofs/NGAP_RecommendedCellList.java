@@ -25,12 +25,12 @@ public class NGAP_RecommendedCellList extends NgapSequenceOf<NGAP_RecommendedCel
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RecommendedCellList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RecommendedCellList";
     }
 

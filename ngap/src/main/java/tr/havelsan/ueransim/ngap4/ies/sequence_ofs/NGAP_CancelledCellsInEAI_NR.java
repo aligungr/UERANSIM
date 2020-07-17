@@ -25,12 +25,12 @@ public class NGAP_CancelledCellsInEAI_NR extends NgapSequenceOf<NGAP_CancelledCe
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CancelledCellsInEAI-NR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CancelledCellsInEAI-NR";
     }
 

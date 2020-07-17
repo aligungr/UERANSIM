@@ -37,12 +37,12 @@ public class NGAP_E_RAB_ID extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "E-RAB-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "E-RAB-ID";
     }
 }

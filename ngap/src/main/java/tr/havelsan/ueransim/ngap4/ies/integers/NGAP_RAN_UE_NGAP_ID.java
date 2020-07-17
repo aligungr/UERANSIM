@@ -37,12 +37,12 @@ public class NGAP_RAN_UE_NGAP_ID extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RAN-UE-NGAP-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RAN-UE-NGAP-ID";
     }
 }

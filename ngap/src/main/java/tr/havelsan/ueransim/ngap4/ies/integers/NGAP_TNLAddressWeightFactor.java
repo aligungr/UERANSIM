@@ -37,12 +37,12 @@ public class NGAP_TNLAddressWeightFactor extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLAddressWeightFactor";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLAddressWeightFactor";
     }
 }

@@ -53,12 +53,12 @@ public class NGAP_PeriodicRegistrationUpdateTimer extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PeriodicRegistrationUpdateTimer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PeriodicRegistrationUpdateTimer";
     }
 }

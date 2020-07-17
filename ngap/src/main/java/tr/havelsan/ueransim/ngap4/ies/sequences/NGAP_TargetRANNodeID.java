@@ -20,22 +20,22 @@ public class NGAP_TargetRANNodeID extends NgapSequence {
     public NGAP_TAI selectedTAI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TargetRANNodeID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TargetRANNodeID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"globalRANNodeID", "selectedTAI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"globalRANNodeID", "selectedTAI"};
     }
 }

@@ -19,22 +19,22 @@ public class NGAP_PDUSessionResourceSetupRequestTransfer extends NgapSequence {
     public NgapProtocolIeContainer protocolIEs;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceSetupRequestTransfer";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceSetupRequestTransfer";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"protocolIEs"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"protocolIEs"};
     }
 }

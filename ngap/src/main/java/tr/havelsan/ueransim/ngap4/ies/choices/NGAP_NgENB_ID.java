@@ -21,22 +21,22 @@ public class NGAP_NgENB_ID extends NgapChoice {
     public NgapBitString longMacroNgENB_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NgENB-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NgENB-ID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"macroNgENB-ID", "shortMacroNgENB-ID", "longMacroNgENB-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"macroNgENB_ID", "shortMacroNgENB_ID", "longMacroNgENB_ID"};
     }
 }

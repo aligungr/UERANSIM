@@ -20,22 +20,22 @@ public class NGAP_EPS_TAI extends NgapSequence {
     public NGAP_EPS_TAC ePS_TAC;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EPS-TAI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EPS-TAI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "ePS-TAC"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "ePS_TAC"};
     }
 }

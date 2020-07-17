@@ -25,12 +25,12 @@ public class NGAP_EmergencyAreaIDBroadcastNR extends NgapSequenceOf<NGAP_Emergen
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyAreaIDBroadcastNR";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyAreaIDBroadcastNR";
     }
 

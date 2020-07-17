@@ -20,22 +20,22 @@ public class NGAP_NR_CGI extends NgapSequence {
     public NGAP_NRCellIdentity nRCellIdentity;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NR-CGI";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NR-CGI";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "nRCellIdentity"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "nRCellIdentity"};
     }
 }

@@ -21,22 +21,22 @@ public class NGAP_GlobalRANNodeID extends NgapChoice {
     public NGAP_GlobalN3IWF_ID globalN3IWF_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GlobalRANNodeID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GlobalRANNodeID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"globalGNB-ID", "globalNgENB-ID", "globalN3IWF-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"globalGNB_ID", "globalNgENB_ID", "globalN3IWF_ID"};
     }
 }

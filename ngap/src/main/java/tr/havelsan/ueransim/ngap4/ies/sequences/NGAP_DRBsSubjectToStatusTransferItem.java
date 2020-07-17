@@ -21,22 +21,22 @@ public class NGAP_DRBsSubjectToStatusTransferItem extends NgapSequence {
     public NGAP_DRBStatusDL dRBStatusDL;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBsSubjectToStatusTransferItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBsSubjectToStatusTransferItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dRB-ID", "dRBStatusUL", "dRBStatusDL"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dRB_ID", "dRBStatusUL", "dRBStatusDL"};
     }
 }

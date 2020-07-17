@@ -25,12 +25,12 @@ public class NGAP_EmergencyAreaIDListForRestart extends NgapSequenceOf<NGAP_Emer
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "EmergencyAreaIDListForRestart";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "EmergencyAreaIDListForRestart";
     }
 

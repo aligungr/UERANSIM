@@ -24,22 +24,22 @@ public class NGAP_CoreNetworkAssistanceInformation extends NgapSequence {
     public NGAP_ExpectedUEBehaviour expectedUEBehaviour;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CoreNetworkAssistanceInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CoreNetworkAssistanceInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"uEIdentityIndexValue", "uESpecificDRX", "periodicRegistrationUpdateTimer", "mICOModeIndication", "tAIListForInactive", "expectedUEBehaviour"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"uEIdentityIndexValue", "uESpecificDRX", "periodicRegistrationUpdateTimer", "mICOModeIndication", "tAIListForInactive", "expectedUEBehaviour"};
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceSetupListHOReq extends NgapSequenceOf<NGAP_P
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceSetupListHOReq";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceSetupListHOReq";
     }
 

@@ -19,22 +19,22 @@ public class NGAP_UEIdentityIndexValue extends NgapChoice {
     public NgapBitString indexLength10;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UEIdentityIndexValue";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UEIdentityIndexValue";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"indexLength10"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"indexLength10"};
     }
 }

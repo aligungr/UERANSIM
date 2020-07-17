@@ -19,22 +19,22 @@ public class NGAP_CellType extends NgapSequence {
     public NGAP_CellSize cellSize;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "CellType";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "CellType";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"cellSize"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"cellSize"};
     }
 }

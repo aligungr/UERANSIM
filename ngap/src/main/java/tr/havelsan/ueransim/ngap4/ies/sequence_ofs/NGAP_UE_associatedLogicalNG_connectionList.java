@@ -25,12 +25,12 @@ public class NGAP_UE_associatedLogicalNG_connectionList extends NgapSequenceOf<N
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UE-associatedLogicalNG-connectionList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UE-associatedLogicalNG-connectionList";
     }
 

@@ -53,12 +53,12 @@ public class NGAP_NRencryptionAlgorithms extends NgapBitString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NRencryptionAlgorithms";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NRencryptionAlgorithms";
     }
 }

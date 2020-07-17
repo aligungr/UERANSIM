@@ -20,22 +20,22 @@ public class NGAP_DRBStatusUL extends NgapChoice {
     public NGAP_DRBStatusUL18 dRBStatusUL18;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "DRBStatusUL";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "DRBStatusUL";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"dRBStatusUL12", "dRBStatusUL18"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"dRBStatusUL12", "dRBStatusUL18"};
     }
 }

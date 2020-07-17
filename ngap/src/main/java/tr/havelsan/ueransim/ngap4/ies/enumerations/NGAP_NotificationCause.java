@@ -19,17 +19,17 @@ public class NGAP_NotificationCause extends NgapEnumerated {
     public static final NGAP_NotificationCause FULFILLED = new NGAP_NotificationCause("fulfilled");
     public static final NGAP_NotificationCause NOT_FULFILLED = new NGAP_NotificationCause("not-fulfilled");
 
-    protected NGAP_NotificationCause(String sValue) {
+    public NGAP_NotificationCause(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NotificationCause";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NotificationCause";
     }
 }

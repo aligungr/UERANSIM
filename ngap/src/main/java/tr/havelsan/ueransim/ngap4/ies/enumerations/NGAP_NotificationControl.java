@@ -18,17 +18,17 @@ public class NGAP_NotificationControl extends NgapEnumerated {
 
     public static final NGAP_NotificationControl NOTIFICATION_REQUESTED = new NGAP_NotificationControl("notification-requested");
 
-    protected NGAP_NotificationControl(String sValue) {
+    public NGAP_NotificationControl(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NotificationControl";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NotificationControl";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceFailedToSetupListSURes extends NgapSequenceO
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToSetupListSURes";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToSetupListSURes";
     }
 

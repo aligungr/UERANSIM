@@ -22,22 +22,22 @@ public class NGAP_WarningAreaList extends NgapChoice {
     public NGAP_EmergencyAreaIDList emergencyAreaIDList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "WarningAreaList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "WarningAreaList";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"eUTRA-CGIListForWarning", "nR-CGIListForWarning", "tAIListForWarning", "emergencyAreaIDList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"eUTRA_CGIListForWarning", "nR_CGIListForWarning", "tAIListForWarning", "emergencyAreaIDList"};
     }
 }

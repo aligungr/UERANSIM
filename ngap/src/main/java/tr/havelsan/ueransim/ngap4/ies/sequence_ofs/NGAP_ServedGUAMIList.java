@@ -25,12 +25,12 @@ public class NGAP_ServedGUAMIList extends NgapSequenceOf<NGAP_ServedGUAMIItem> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ServedGUAMIList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ServedGUAMIList";
     }
 

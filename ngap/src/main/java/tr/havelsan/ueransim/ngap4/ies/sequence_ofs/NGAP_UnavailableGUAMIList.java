@@ -25,12 +25,12 @@ public class NGAP_UnavailableGUAMIList extends NgapSequenceOf<NGAP_UnavailableGU
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UnavailableGUAMIList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UnavailableGUAMIList";
     }
 

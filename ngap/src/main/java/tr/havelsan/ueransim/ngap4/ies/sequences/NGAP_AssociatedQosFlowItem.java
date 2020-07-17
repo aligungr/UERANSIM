@@ -20,22 +20,22 @@ public class NGAP_AssociatedQosFlowItem extends NgapSequence {
     public long qosFlowMappingIndication;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AssociatedQosFlowItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AssociatedQosFlowItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"qosFlowIdentifier", "qosFlowMappingIndication"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"qosFlowIdentifier", "qosFlowMappingIndication"};
     }
 }

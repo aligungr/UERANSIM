@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceFailedToSetupListPSReq extends NgapSequenceO
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToSetupListPSReq";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToSetupListPSReq";
     }
 

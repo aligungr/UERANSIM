@@ -41,12 +41,12 @@ public class NGAP_UERadioCapabilityForPagingOfEUTRA extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UERadioCapabilityForPagingOfEUTRA";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UERadioCapabilityForPagingOfEUTRA";
     }
 }

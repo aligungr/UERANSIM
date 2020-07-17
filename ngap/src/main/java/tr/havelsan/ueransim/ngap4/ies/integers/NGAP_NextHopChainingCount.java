@@ -37,12 +37,12 @@ public class NGAP_NextHopChainingCount extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NextHopChainingCount";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NextHopChainingCount";
     }
 }

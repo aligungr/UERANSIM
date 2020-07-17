@@ -23,22 +23,22 @@ public class NGAP_MobilityRestrictionList extends NgapSequence {
     public NGAP_ServiceAreaInformation serviceAreaInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "MobilityRestrictionList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "MobilityRestrictionList";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"servingPLMN", "equivalentPLMNs", "rATRestrictions", "forbiddenAreaInformation", "serviceAreaInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"servingPLMN", "equivalentPLMNs", "rATRestrictions", "forbiddenAreaInformation", "serviceAreaInformation"};
     }
 }

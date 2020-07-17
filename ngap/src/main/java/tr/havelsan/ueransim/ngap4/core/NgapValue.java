@@ -28,7 +28,7 @@ package tr.havelsan.ueransim.ngap4.core;
 
 public abstract class NgapValue {
 
-    protected abstract String getAsnName();
+    public abstract String getAsnName();
 
-    protected abstract String getXmlTagName();
+    public abstract String getXmlTagName();
 }

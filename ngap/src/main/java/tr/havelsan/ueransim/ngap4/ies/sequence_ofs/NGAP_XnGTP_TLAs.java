@@ -25,12 +25,12 @@ public class NGAP_XnGTP_TLAs extends NgapSequenceOf<NGAP_TransportLayerAddress> 
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "XnGTP-TLAs";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "XnGTP-TLAs";
     }
 

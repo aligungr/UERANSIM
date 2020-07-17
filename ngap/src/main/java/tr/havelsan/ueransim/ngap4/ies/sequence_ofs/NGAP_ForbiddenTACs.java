@@ -25,12 +25,12 @@ public class NGAP_ForbiddenTACs extends NgapSequenceOf<NGAP_TAC> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ForbiddenTACs";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ForbiddenTACs";
     }
 

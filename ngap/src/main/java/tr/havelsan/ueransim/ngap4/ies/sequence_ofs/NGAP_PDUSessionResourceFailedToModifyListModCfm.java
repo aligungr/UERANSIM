@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceFailedToModifyListModCfm extends NgapSequenc
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToModifyListModCfm";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToModifyListModCfm";
     }
 

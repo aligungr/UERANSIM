@@ -25,12 +25,12 @@ public class NGAP_PDUSessionResourceFailedToSetupListCxtRes extends NgapSequence
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PDUSessionResourceFailedToSetupListCxtRes";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PDUSessionResourceFailedToSetupListCxtRes";
     }
 

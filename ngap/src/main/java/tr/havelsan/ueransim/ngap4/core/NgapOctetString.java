@@ -60,12 +60,12 @@ public class NgapOctetString extends NgapValue {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "OCTET STRING";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "OCTET_STRING";
     }
 }

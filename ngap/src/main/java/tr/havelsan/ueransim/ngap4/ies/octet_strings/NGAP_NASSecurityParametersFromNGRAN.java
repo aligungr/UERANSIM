@@ -41,12 +41,12 @@ public class NGAP_NASSecurityParametersFromNGRAN extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NASSecurityParametersFromNGRAN";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NASSecurityParametersFromNGRAN";
     }
 }

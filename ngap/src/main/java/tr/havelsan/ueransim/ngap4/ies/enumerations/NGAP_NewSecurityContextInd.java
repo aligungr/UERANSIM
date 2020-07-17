@@ -18,17 +18,17 @@ public class NGAP_NewSecurityContextInd extends NgapEnumerated {
 
     public static final NGAP_NewSecurityContextInd TRUE = new NGAP_NewSecurityContextInd("true");
 
-    protected NGAP_NewSecurityContextInd(String sValue) {
+    public NGAP_NewSecurityContextInd(String sValue) {
         super(sValue);
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "NewSecurityContextInd";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "NewSecurityContextInd";
     }
 }

@@ -25,12 +25,12 @@ public class NGAP_ServiceAreaInformation extends NgapSequenceOf<NGAP_ServiceArea
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "ServiceAreaInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "ServiceAreaInformation";
     }
 

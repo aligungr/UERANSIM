@@ -20,22 +20,22 @@ public class NGAP_UserLocationInformationN3IWF extends NgapSequence {
     public NGAP_PortNumber portNumber;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UserLocationInformationN3IWF";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UserLocationInformationN3IWF";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"iPAddress", "portNumber"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"iPAddress", "portNumber"};
     }
 }

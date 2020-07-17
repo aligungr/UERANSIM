@@ -41,12 +41,12 @@ public class NGAP_UERadioCapability extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UERadioCapability";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UERadioCapability";
     }
 }

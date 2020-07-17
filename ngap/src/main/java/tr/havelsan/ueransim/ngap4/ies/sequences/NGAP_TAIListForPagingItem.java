@@ -19,22 +19,22 @@ public class NGAP_TAIListForPagingItem extends NgapSequence {
     public NGAP_TAI tAI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TAIListForPagingItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TAIListForPagingItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"tAI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"tAI"};
     }
 }

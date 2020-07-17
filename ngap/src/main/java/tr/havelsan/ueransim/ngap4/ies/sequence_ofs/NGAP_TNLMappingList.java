@@ -25,12 +25,12 @@ public class NGAP_TNLMappingList extends NgapSequenceOf<NGAP_TNLMappingItem> {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TNLMappingList";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TNLMappingList";
     }
 

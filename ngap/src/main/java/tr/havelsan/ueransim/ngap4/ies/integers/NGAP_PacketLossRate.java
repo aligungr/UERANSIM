@@ -37,12 +37,12 @@ public class NGAP_PacketLossRate extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PacketLossRate";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PacketLossRate";
     }
 }

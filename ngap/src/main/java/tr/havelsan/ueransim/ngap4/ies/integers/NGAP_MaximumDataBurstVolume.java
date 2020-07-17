@@ -37,12 +37,12 @@ public class NGAP_MaximumDataBurstVolume extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "MaximumDataBurstVolume";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "MaximumDataBurstVolume";
     }
 }

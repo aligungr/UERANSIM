@@ -20,22 +20,22 @@ public class NGAP_PLMNSupportItem extends NgapSequence {
     public NGAP_SliceSupportList sliceSupportList;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "PLMNSupportItem";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "PLMNSupportItem";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "sliceSupportList"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "sliceSupportList"};
     }
 }

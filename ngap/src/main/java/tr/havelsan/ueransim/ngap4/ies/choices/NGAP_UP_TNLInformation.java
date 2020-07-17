@@ -20,22 +20,22 @@ public class NGAP_UP_TNLInformation extends NgapChoice {
     public NGAP_MultipleTNLInformation multipleTNLInformation;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "UP-TNLInformation";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "UP-TNLInformation";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"singleTNLInformation", "multipleTNLInformation"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"singleTNLInformation", "multipleTNLInformation"};
     }
 }

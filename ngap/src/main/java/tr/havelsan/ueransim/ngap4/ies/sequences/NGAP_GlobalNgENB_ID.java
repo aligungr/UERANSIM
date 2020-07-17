@@ -20,22 +20,22 @@ public class NGAP_GlobalNgENB_ID extends NgapSequence {
     public NGAP_NgENB_ID ngENB_ID;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GlobalNgENB-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GlobalNgENB-ID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"pLMNIdentity", "ngENB-ID"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"pLMNIdentity", "ngENB_ID"};
     }
 }

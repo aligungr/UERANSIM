@@ -37,12 +37,12 @@ public class NGAP_RelativeAMFCapacity extends NgapInteger {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "RelativeAMFCapacity";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "RelativeAMFCapacity";
     }
 }

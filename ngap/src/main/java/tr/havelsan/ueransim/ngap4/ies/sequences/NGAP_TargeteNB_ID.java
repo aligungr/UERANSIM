@@ -20,22 +20,22 @@ public class NGAP_TargeteNB_ID extends NgapSequence {
     public NGAP_EPS_TAI selected_EPS_TAI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "TargeteNB-ID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "TargeteNB-ID";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"globalENB-ID", "selected-EPS-TAI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"globalENB_ID", "selected_EPS_TAI"};
     }
 }

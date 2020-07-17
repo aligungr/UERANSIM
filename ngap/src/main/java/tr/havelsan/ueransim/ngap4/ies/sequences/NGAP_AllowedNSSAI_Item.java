@@ -19,22 +19,22 @@ public class NGAP_AllowedNSSAI_Item extends NgapSequence {
     public NGAP_S_NSSAI s_NSSAI;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "AllowedNSSAI-Item";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "AllowedNSSAI-Item";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"s-NSSAI"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"s_NSSAI"};
     }
 }

@@ -21,22 +21,22 @@ public class NGAP_SecurityIndication extends NgapSequence {
     public NGAP_MaximumIntegrityProtectedDataRate maximumIntegrityProtectedDataRate;
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "SecurityIndication";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "SecurityIndication";
     }
 
     @Override
-    protected String[] getMemberNames() {
+    public String[] getMemberNames() {
         return new String[]{"integrityProtectionIndication", "confidentialityProtectionIndication", "maximumIntegrityProtectedDataRate"};
     }
 
     @Override
-    protected String[] getMemberIdentifiers() {
+    public String[] getMemberIdentifiers() {
         return new String[]{"integrityProtectionIndication", "confidentialityProtectionIndication", "maximumIntegrityProtectedDataRate"};
     }
 }

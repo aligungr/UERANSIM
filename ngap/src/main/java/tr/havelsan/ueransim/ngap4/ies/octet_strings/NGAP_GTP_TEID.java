@@ -41,12 +41,12 @@ public class NGAP_GTP_TEID extends NgapOctetString {
     }
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return "GTP-TEID";
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return "GTP-TEID";
     }
 }

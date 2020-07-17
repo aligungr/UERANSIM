@@ -29,12 +29,12 @@ package tr.havelsan.ueransim.ngap4.core;
 public class NgapMessage extends NgapValue {
 
     @Override
-    protected String getAsnName() {
+    public String getAsnName() {
         return null;
     }
 
     @Override
-    protected String getXmlTagName() {
+    public String getXmlTagName() {
         return null;
     }
 }
