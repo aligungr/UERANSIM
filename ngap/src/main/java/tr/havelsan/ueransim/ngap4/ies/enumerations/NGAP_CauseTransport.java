@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CauseTransport extends NgapEnumerated {
+public class NGAP_CauseTransport extends NGAP_Enumerated {
 
     public static final NGAP_CauseTransport TRANSPORT_RESOURCE_UNAVAILABLE = new NGAP_CauseTransport("transport-resource-unavailable");
     public static final NGAP_CauseTransport UNSPECIFIED = new NGAP_CauseTransport("unspecified");
 
-    public NGAP_CauseTransport(String sValue) {
+    protected NGAP_CauseTransport(String sValue) {
         super(sValue);
     }
 

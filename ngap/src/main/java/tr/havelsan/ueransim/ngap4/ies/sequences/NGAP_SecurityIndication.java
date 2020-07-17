@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SecurityIndication extends NgapSequence {
+public class NGAP_SecurityIndication extends NGAP_Sequence {
 
     public NGAP_IntegrityProtectionIndication integrityProtectionIndication;
     public NGAP_ConfidentialityProtectionIndication confidentialityProtectionIndication;

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_FiveG_S_TMSI extends NgapSequence {
+public class NGAP_FiveG_S_TMSI extends NGAP_Sequence {
 
     public NGAP_AMFSetID aMFSetID;
     public NGAP_AMFPointer aMFPointer;

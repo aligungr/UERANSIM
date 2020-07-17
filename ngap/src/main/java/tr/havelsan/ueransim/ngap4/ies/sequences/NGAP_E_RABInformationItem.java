@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_E_RABInformationItem extends NgapSequence {
+public class NGAP_E_RABInformationItem extends NGAP_Sequence {
 
     public NGAP_E_RAB_ID e_RAB_ID;
     public NGAP_DLForwarding dLForwarding;

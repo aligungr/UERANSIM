@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ForbiddenAreaInformation extends NgapSequenceOf<NGAP_ForbiddenAreaInformation_Item> {
+public class NGAP_ForbiddenAreaInformation extends NGAP_SequenceOf<NGAP_ForbiddenAreaInformation_Item> {
 
     public NGAP_ForbiddenAreaInformation() {
         super();

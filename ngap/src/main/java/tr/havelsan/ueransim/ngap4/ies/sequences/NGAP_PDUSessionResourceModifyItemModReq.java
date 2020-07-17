@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceModifyItemModReq extends NgapSequence {
+public class NGAP_PDUSessionResourceModifyItemModReq extends NGAP_Sequence {
 
     public NGAP_PDUSessionID pDUSessionID;
     public NGAP_NAS_PDU nAS_PDU;
-    public NgapOctetString pDUSessionResourceModifyRequestTransfer;
+    public NGAP_OctetString pDUSessionResourceModifyRequestTransfer;
 
     @Override
     public String getAsnName() {

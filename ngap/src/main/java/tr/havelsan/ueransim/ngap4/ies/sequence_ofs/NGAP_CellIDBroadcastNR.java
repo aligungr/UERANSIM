@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CellIDBroadcastNR extends NgapSequenceOf<NGAP_CellIDBroadcastNR_Item> {
+public class NGAP_CellIDBroadcastNR extends NGAP_SequenceOf<NGAP_CellIDBroadcastNR_Item> {
 
     public NGAP_CellIDBroadcastNR() {
         super();

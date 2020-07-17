@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SupportedTAItem extends NgapSequence {
+public class NGAP_SupportedTAItem extends NGAP_Sequence {
 
     public NGAP_TAC tAC;
     public NGAP_BroadcastPLMNList broadcastPLMNList;

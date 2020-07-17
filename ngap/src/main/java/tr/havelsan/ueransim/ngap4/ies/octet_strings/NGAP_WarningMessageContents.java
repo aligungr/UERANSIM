@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_WarningMessageContents extends NgapOctetString {
+public class NGAP_WarningMessageContents extends NGAP_OctetString {
 
     public NGAP_WarningMessageContents(OctetString value) {
         super(value);

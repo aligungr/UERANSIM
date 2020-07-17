@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NRencryptionAlgorithms extends NgapBitString {
+public class NGAP_NRencryptionAlgorithms extends NGAP_BitString {
 
     public NGAP_NRencryptionAlgorithms(BitString value) {
         super(value);

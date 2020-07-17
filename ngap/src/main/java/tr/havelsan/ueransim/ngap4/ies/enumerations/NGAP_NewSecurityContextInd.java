@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NewSecurityContextInd extends NgapEnumerated {
+public class NGAP_NewSecurityContextInd extends NGAP_Enumerated {
 
     public static final NGAP_NewSecurityContextInd TRUE = new NGAP_NewSecurityContextInd("true");
 
-    public NGAP_NewSecurityContextInd(String sValue) {
+    protected NGAP_NewSecurityContextInd(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAIListForPaging extends NgapSequenceOf<NGAP_TAIListForPagingItem> {
+public class NGAP_TAIListForPaging extends NGAP_SequenceOf<NGAP_TAIListForPagingItem> {
 
     public NGAP_TAIListForPaging() {
         super();

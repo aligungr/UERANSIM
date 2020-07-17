@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_InfoOnRecommendedCellsAndRANNodesForPaging extends NgapSequence {
+public class NGAP_InfoOnRecommendedCellsAndRANNodesForPaging extends NGAP_Sequence {
 
     public NGAP_RecommendedCellsForPaging recommendedCellsForPaging;
     public NGAP_RecommendedRANNodesForPaging recommendRANNodesForPaging;

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TimeStamp extends NgapOctetString {
+public class NGAP_TimeStamp extends NGAP_OctetString {
 
     public NGAP_TimeStamp(OctetString value) {
         super(value);

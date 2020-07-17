@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UERadioCapabilityForPaging extends NgapSequence {
+public class NGAP_UERadioCapabilityForPaging extends NGAP_Sequence {
 
     public NGAP_UERadioCapabilityForPagingOfNR uERadioCapabilityForPagingOfNR;
     public NGAP_UERadioCapabilityForPagingOfEUTRA uERadioCapabilityForPagingOfEUTRA;

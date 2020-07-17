@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ReportArea extends NgapEnumerated {
+public class NGAP_ReportArea extends NGAP_Enumerated {
 
     public static final NGAP_ReportArea CELL = new NGAP_ReportArea("cell");
 
-    public NGAP_ReportArea(String sValue) {
+    protected NGAP_ReportArea(String sValue) {
         super(sValue);
     }
 

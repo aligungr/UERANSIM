@@ -14,9 +14,9 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceModifyRequestTransfer extends NgapSequence {
+public class NGAP_PDUSessionResourceModifyRequestTransfer extends NGAP_Sequence {
 
-    public NgapProtocolIeContainer protocolIEs;
+    public NGAP_ProtocolIeContainer protocolIEs;
 
     @Override
     public String getAsnName() {

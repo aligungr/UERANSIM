@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ServiceAreaInformation extends NgapSequenceOf<NGAP_ServiceAreaInformation_Item> {
+public class NGAP_ServiceAreaInformation extends NGAP_SequenceOf<NGAP_ServiceAreaInformation_Item> {
 
     public NGAP_ServiceAreaInformation() {
         super();

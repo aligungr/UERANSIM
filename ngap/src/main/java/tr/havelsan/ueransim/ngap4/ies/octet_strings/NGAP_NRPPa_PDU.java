@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NRPPa_PDU extends NgapOctetString {
+public class NGAP_NRPPa_PDU extends NGAP_OctetString {
 
     public NGAP_NRPPa_PDU(OctetString value) {
         super(value);

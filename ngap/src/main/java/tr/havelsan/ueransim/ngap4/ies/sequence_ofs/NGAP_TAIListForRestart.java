@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAIListForRestart extends NgapSequenceOf<NGAP_TAI> {
+public class NGAP_TAIListForRestart extends NGAP_SequenceOf<NGAP_TAI> {
 
     public NGAP_TAIListForRestart() {
         super();

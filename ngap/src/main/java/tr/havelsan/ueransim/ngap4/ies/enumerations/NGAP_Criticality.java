@@ -14,13 +14,13 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_Criticality extends NgapEnumerated {
+public class NGAP_Criticality extends NGAP_Enumerated {
 
     public static final NGAP_Criticality REJECT = new NGAP_Criticality("reject");
     public static final NGAP_Criticality IGNORE = new NGAP_Criticality("ignore");
     public static final NGAP_Criticality NOTIFY = new NGAP_Criticality("notify");
 
-    public NGAP_Criticality(String sValue) {
+    protected NGAP_Criticality(String sValue) {
         super(sValue);
     }
 

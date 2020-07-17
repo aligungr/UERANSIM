@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_GlobalGNB_ID extends NgapSequence {
+public class NGAP_GlobalGNB_ID extends NGAP_Sequence {
 
     public NGAP_PLMNIdentity pLMNIdentity;
     public NGAP_GNB_ID gNB_ID;

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_XnExtTLAs extends NgapSequenceOf<NGAP_XnExtTLA_Item> {
+public class NGAP_XnExtTLAs extends NGAP_SequenceOf<NGAP_XnExtTLA_Item> {
 
     public NGAP_XnExtTLAs() {
         super();

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TrafficLoadReductionIndication extends NgapInteger {
+public class NGAP_TrafficLoadReductionIndication extends NGAP_Integer {
 
     public NGAP_TrafficLoadReductionIndication(long value) {
         super(value);

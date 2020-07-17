@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SourceOfUEActivityBehaviourInformation extends NgapEnumerated {
+public class NGAP_SourceOfUEActivityBehaviourInformation extends NGAP_Enumerated {
 
     public static final NGAP_SourceOfUEActivityBehaviourInformation SUBSCRIPTION_INFORMATION = new NGAP_SourceOfUEActivityBehaviourInformation("subscription-information");
     public static final NGAP_SourceOfUEActivityBehaviourInformation STATISTICS = new NGAP_SourceOfUEActivityBehaviourInformation("statistics");
 
-    public NGAP_SourceOfUEActivityBehaviourInformation(String sValue) {
+    protected NGAP_SourceOfUEActivityBehaviourInformation(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_GUAMI extends NgapSequence {
+public class NGAP_GUAMI extends NGAP_Sequence {
 
     public NGAP_PLMNIdentity pLMNIdentity;
     public NGAP_AMFRegionID aMFRegionID;

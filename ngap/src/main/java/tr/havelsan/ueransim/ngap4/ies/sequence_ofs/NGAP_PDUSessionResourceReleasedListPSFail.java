@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceReleasedListPSFail extends NgapSequenceOf<NGAP_PDUSessionResourceReleasedItemPSFail> {
+public class NGAP_PDUSessionResourceReleasedListPSFail extends NGAP_SequenceOf<NGAP_PDUSessionResourceReleasedItemPSFail> {
 
     public NGAP_PDUSessionResourceReleasedListPSFail() {
         super();

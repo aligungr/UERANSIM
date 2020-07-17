@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UERadioCapabilityForPagingOfNR extends NgapOctetString {
+public class NGAP_UERadioCapabilityForPagingOfNR extends NGAP_OctetString {
 
     public NGAP_UERadioCapabilityForPagingOfNR(OctetString value) {
         super(value);

@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DelayCritical extends NgapEnumerated {
+public class NGAP_DelayCritical extends NGAP_Enumerated {
 
     public static final NGAP_DelayCritical DELAY_CRITICAL = new NGAP_DelayCritical("delay-critical");
     public static final NGAP_DelayCritical NON_DELAY_CRITICAL = new NGAP_DelayCritical("non-delay-critical");
 
-    public NGAP_DelayCritical(String sValue) {
+    protected NGAP_DelayCritical(String sValue) {
         super(sValue);
     }
 

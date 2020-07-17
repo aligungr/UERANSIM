@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_RATRestrictionInformation extends NgapBitString {
+public class NGAP_RATRestrictionInformation extends NGAP_BitString {
 
     public NGAP_RATRestrictionInformation(BitString value) {
         super(value);

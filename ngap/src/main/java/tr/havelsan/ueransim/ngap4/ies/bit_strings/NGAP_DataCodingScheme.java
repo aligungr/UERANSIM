@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DataCodingScheme extends NgapBitString {
+public class NGAP_DataCodingScheme extends NGAP_BitString {
 
     public NGAP_DataCodingScheme(BitString value) {
         super(value);

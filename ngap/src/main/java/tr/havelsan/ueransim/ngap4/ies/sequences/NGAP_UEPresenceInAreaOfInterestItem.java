@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UEPresenceInAreaOfInterestItem extends NgapSequence {
+public class NGAP_UEPresenceInAreaOfInterestItem extends NGAP_Sequence {
 
     public NGAP_LocationReportingReferenceID locationReportingReferenceID;
     public NGAP_UEPresence uEPresence;

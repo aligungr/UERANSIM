@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EmergencyAreaIDCancelledEUTRA extends NgapSequenceOf<NGAP_EmergencyAreaIDCancelledEUTRA_Item> {
+public class NGAP_EmergencyAreaIDCancelledEUTRA extends NGAP_SequenceOf<NGAP_EmergencyAreaIDCancelledEUTRA_Item> {
 
     public NGAP_EmergencyAreaIDCancelledEUTRA() {
         super();

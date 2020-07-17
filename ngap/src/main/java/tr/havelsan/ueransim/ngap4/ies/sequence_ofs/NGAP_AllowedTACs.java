@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AllowedTACs extends NgapSequenceOf<NGAP_TAC> {
+public class NGAP_AllowedTACs extends NGAP_SequenceOf<NGAP_TAC> {
 
     public NGAP_AllowedTACs() {
         super();

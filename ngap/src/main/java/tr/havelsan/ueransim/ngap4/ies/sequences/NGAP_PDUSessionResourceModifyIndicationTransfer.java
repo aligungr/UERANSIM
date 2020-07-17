@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceModifyIndicationTransfer extends NgapSequence {
+public class NGAP_PDUSessionResourceModifyIndicationTransfer extends NGAP_Sequence {
 
     public NGAP_UP_TNLInformation dL_UP_TNLInformation;
 

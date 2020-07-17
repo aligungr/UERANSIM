@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_MaximumDataBurstVolume extends NgapInteger {
+public class NGAP_MaximumDataBurstVolume extends NGAP_Integer {
 
     public NGAP_MaximumDataBurstVolume(long value) {
         super(value);

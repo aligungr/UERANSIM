@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PagingOrigin extends NgapEnumerated {
+public class NGAP_PagingOrigin extends NGAP_Enumerated {
 
     public static final NGAP_PagingOrigin NON_3GPP = new NGAP_PagingOrigin("non-3gpp");
 
-    public NGAP_PagingOrigin(String sValue) {
+    protected NGAP_PagingOrigin(String sValue) {
         super(sValue);
     }
 

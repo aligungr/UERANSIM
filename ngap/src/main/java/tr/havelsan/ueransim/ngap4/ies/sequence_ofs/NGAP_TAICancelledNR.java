@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAICancelledNR extends NgapSequenceOf<NGAP_TAICancelledNR_Item> {
+public class NGAP_TAICancelledNR extends NGAP_SequenceOf<NGAP_TAICancelledNR_Item> {
 
     public NGAP_TAICancelledNR() {
         super();

@@ -14,10 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_COUNTValueForPDCP_SN12 extends NgapSequence {
+public class NGAP_COUNTValueForPDCP_SN12 extends NGAP_Sequence {
 
-    public long pDCP_SN12;
-    public long hFN_PDCP_SN12;
+    public NGAP_Integer pDCP_SN12;
+    public NGAP_Integer hFN_PDCP_SN12;
 
     @Override
     public String getAsnName() {

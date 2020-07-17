@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EmergencyAreaIDBroadcastNR extends NgapSequenceOf<NGAP_EmergencyAreaIDBroadcastNR_Item> {
+public class NGAP_EmergencyAreaIDBroadcastNR extends NGAP_SequenceOf<NGAP_EmergencyAreaIDBroadcastNR_Item> {
 
     public NGAP_EmergencyAreaIDBroadcastNR() {
         super();

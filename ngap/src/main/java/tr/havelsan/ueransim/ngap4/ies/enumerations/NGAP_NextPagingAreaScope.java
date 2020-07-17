@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NextPagingAreaScope extends NgapEnumerated {
+public class NGAP_NextPagingAreaScope extends NGAP_Enumerated {
 
     public static final NGAP_NextPagingAreaScope SAME = new NGAP_NextPagingAreaScope("same");
     public static final NGAP_NextPagingAreaScope CHANGED = new NGAP_NextPagingAreaScope("changed");
 
-    public NGAP_NextPagingAreaScope(String sValue) {
+    protected NGAP_NextPagingAreaScope(String sValue) {
         super(sValue);
     }
 

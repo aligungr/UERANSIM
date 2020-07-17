@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TNLMappingList extends NgapSequenceOf<NGAP_TNLMappingItem> {
+public class NGAP_TNLMappingList extends NGAP_SequenceOf<NGAP_TNLMappingItem> {
 
     public NGAP_TNLMappingList() {
         super();

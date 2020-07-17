@@ -14,10 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AssociatedQosFlowItem extends NgapSequence {
+public class NGAP_AssociatedQosFlowItem extends NGAP_Sequence {
 
     public NGAP_QosFlowIdentifier qosFlowIdentifier;
-    public long qosFlowMappingIndication;
+    public NGAP_Integer qosFlowMappingIndication;
 
     @Override
     public String getAsnName() {

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SONInformation extends NgapChoice {
+public class NGAP_SONInformation extends NGAP_Choice {
 
     public NGAP_SONInformationRequest sONInformationRequest;
     public NGAP_SONInformationReply sONInformationReply;

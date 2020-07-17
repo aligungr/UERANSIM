@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SliceSupportList extends NgapSequenceOf<NGAP_SliceSupportItem> {
+public class NGAP_SliceSupportList extends NGAP_SequenceOf<NGAP_SliceSupportItem> {
 
     public NGAP_SliceSupportList() {
         super();

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AreaOfInterestTAIList extends NgapSequenceOf<NGAP_AreaOfInterestTAIItem> {
+public class NGAP_AreaOfInterestTAIList extends NGAP_SequenceOf<NGAP_AreaOfInterestTAIItem> {
 
     public NGAP_AreaOfInterestTAIList() {
         super();

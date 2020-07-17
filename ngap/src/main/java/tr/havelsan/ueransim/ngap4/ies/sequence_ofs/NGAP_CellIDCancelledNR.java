@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CellIDCancelledNR extends NgapSequenceOf<NGAP_CellIDCancelledNR_Item> {
+public class NGAP_CellIDCancelledNR extends NGAP_SequenceOf<NGAP_CellIDCancelledNR_Item> {
 
     public NGAP_CellIDCancelledNR() {
         super();

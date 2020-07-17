@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DRBStatusUL extends NgapChoice {
+public class NGAP_DRBStatusUL extends NGAP_Choice {
 
     public NGAP_DRBStatusUL12 dRBStatusUL12;
     public NGAP_DRBStatusUL18 dRBStatusUL18;

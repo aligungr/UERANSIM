@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_HandoverResourceAllocationUnsuccessfulTransfer extends NgapSequence {
+public class NGAP_HandoverResourceAllocationUnsuccessfulTransfer extends NGAP_Sequence {
 
     public NGAP_Cause cause;
     public NGAP_CriticalityDiagnostics criticalityDiagnostics;

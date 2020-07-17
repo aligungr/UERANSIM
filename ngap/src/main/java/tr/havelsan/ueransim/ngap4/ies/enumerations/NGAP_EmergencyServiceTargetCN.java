@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EmergencyServiceTargetCN extends NgapEnumerated {
+public class NGAP_EmergencyServiceTargetCN extends NGAP_Enumerated {
 
     public static final NGAP_EmergencyServiceTargetCN FIVEGC = new NGAP_EmergencyServiceTargetCN("fiveGC");
     public static final NGAP_EmergencyServiceTargetCN EPC = new NGAP_EmergencyServiceTargetCN("epc");
 
-    public NGAP_EmergencyServiceTargetCN(String sValue) {
+    protected NGAP_EmergencyServiceTargetCN(String sValue) {
         super(sValue);
     }
 

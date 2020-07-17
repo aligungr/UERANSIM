@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DRBsToQosFlowsMappingList extends NgapSequenceOf<NGAP_DRBsToQosFlowsMappingItem> {
+public class NGAP_DRBsToQosFlowsMappingList extends NGAP_SequenceOf<NGAP_DRBsToQosFlowsMappingItem> {
 
     public NGAP_DRBsToQosFlowsMappingList() {
         super();

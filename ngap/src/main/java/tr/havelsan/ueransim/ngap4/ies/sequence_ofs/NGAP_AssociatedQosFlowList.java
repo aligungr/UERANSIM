@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AssociatedQosFlowList extends NgapSequenceOf<NGAP_AssociatedQosFlowItem> {
+public class NGAP_AssociatedQosFlowList extends NGAP_SequenceOf<NGAP_AssociatedQosFlowItem> {
 
     public NGAP_AssociatedQosFlowList() {
         super();

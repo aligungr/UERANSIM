@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_IntegrityProtectionResult extends NgapEnumerated {
+public class NGAP_IntegrityProtectionResult extends NGAP_Enumerated {
 
     public static final NGAP_IntegrityProtectionResult PERFORMED = new NGAP_IntegrityProtectionResult("performed");
     public static final NGAP_IntegrityProtectionResult NOT_PERFORMED = new NGAP_IntegrityProtectionResult("not-performed");
 
-    public NGAP_IntegrityProtectionResult(String sValue) {
+    protected NGAP_IntegrityProtectionResult(String sValue) {
         super(sValue);
     }
 

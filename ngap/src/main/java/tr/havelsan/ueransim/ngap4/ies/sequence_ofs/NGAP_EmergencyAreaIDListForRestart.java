@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EmergencyAreaIDListForRestart extends NgapSequenceOf<NGAP_EmergencyAreaID> {
+public class NGAP_EmergencyAreaIDListForRestart extends NGAP_SequenceOf<NGAP_EmergencyAreaID> {
 
     public NGAP_EmergencyAreaIDListForRestart() {
         super();

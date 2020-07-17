@@ -40,6 +40,8 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_TriggeringMessage;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.util.ArrayList;
@@ -145,34 +147,32 @@ public class NgapBuilder {
         }
 
         int procedureCode = NgapData.findProcedureCode(messageType);
-        var pduType = NgapData.findPduType(messageType);
+        var pduType = NgapData.findTriggeringMessage(messageType);
         var messageCriticality = NgapData.findMessageCriticality(messageType);
 
+        var criticality = messageCriticality == NGAP_Criticality.REJECT ? 0 : messageCriticality == NGAP_Criticality.IGNORE ? 1 : 2;
+
         try {
-            switch (pduType) {
-                case INITIATING_MESSAGE: {
-                    var desc = new InitiatingMessage();
-                    desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(messageCriticality.getAsnValue());
-                    desc.value = new OpenTypeValue(messageValue);
-                    return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, desc);
-                }
-                case SUCCESSFUL_OUTCOME: {
-                    var desc = new SuccessfulOutcome();
-                    desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(messageCriticality.getAsnValue());
-                    desc.value = new OpenTypeValue(messageValue);
-                    return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, desc);
-                }
-                case UNSUCCESSFUL_OUTCOME: {
-                    var desc = new UnsuccessfulOutcome();
-                    desc.procedureCode = new ProcedureCode(procedureCode);
-                    desc.criticality = new Criticality(messageCriticality.getAsnValue());
-                    desc.value = new OpenTypeValue(messageValue);
-                    return new NGAP_PDU(NGAP_PDU.ASN_unsuccessfulOutcome, desc);
-                }
-                default:
-                    throw new RuntimeException();
+            if (pduType == NGAP_TriggeringMessage.INITIATING_MESSAGE) {
+                var desc = new InitiatingMessage();
+                desc.procedureCode = new ProcedureCode(procedureCode);
+                desc.criticality = new Criticality(criticality);
+                desc.value = new OpenTypeValue(messageValue);
+                return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, desc);
+            } else if (pduType == NGAP_TriggeringMessage.SUCCESSFUL_OUTCOME) {
+                var desc = new SuccessfulOutcome();
+                desc.procedureCode = new ProcedureCode(procedureCode);
+                desc.criticality = new Criticality(criticality);
+                desc.value = new OpenTypeValue(messageValue);
+                return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, desc);
+            } else if (pduType == NGAP_TriggeringMessage.UNSUCCESSFULL_OUTCOME) {
+                var desc = new UnsuccessfulOutcome();
+                desc.procedureCode = new ProcedureCode(procedureCode);
+                desc.criticality = new Criticality(criticality);
+                desc.value = new OpenTypeValue(messageValue);
+                return new NGAP_PDU(NGAP_PDU.ASN_unsuccessfulOutcome, desc);
+            } else {
+                throw new RuntimeException();
             }
         } catch (InvalidStructureException e) {
             throw new RuntimeException(e);

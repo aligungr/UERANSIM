@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAC extends NgapOctetString {
+public class NGAP_TAC extends NGAP_OctetString {
 
     public NGAP_TAC(OctetString value) {
         super(value);

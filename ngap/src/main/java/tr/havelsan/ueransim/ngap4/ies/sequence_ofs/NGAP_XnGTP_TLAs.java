@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_XnGTP_TLAs extends NgapSequenceOf<NGAP_TransportLayerAddress> {
+public class NGAP_XnGTP_TLAs extends NGAP_SequenceOf<NGAP_TransportLayerAddress> {
 
     public NGAP_XnGTP_TLAs() {
         super();

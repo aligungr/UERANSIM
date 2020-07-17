@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CompletedCellsInEAI_NR extends NgapSequenceOf<NGAP_CompletedCellsInEAI_NR_Item> {
+public class NGAP_CompletedCellsInEAI_NR extends NGAP_SequenceOf<NGAP_CompletedCellsInEAI_NR_Item> {
 
     public NGAP_CompletedCellsInEAI_NR() {
         super();

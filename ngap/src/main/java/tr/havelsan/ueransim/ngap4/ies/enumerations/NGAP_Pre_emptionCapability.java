@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_Pre_emptionCapability extends NgapEnumerated {
+public class NGAP_Pre_emptionCapability extends NGAP_Enumerated {
 
     public static final NGAP_Pre_emptionCapability SHALL_NOT_TRIGGER_PRE_EMPTION = new NGAP_Pre_emptionCapability("shall-not-trigger-pre-emption");
     public static final NGAP_Pre_emptionCapability MAY_TRIGGER_PRE_EMPTION = new NGAP_Pre_emptionCapability("may-trigger-pre-emption");
 
-    public NGAP_Pre_emptionCapability(String sValue) {
+    protected NGAP_Pre_emptionCapability(String sValue) {
         super(sValue);
     }
 

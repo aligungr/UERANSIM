@@ -14,14 +14,14 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CauseNas extends NgapEnumerated {
+public class NGAP_CauseNas extends NGAP_Enumerated {
 
     public static final NGAP_CauseNas NORMAL_RELEASE = new NGAP_CauseNas("normal-release");
     public static final NGAP_CauseNas AUTHENTICATION_FAILURE = new NGAP_CauseNas("authentication-failure");
     public static final NGAP_CauseNas DEREGISTER = new NGAP_CauseNas("deregister");
     public static final NGAP_CauseNas UNSPECIFIED = new NGAP_CauseNas("unspecified");
 
-    public NGAP_CauseNas(String sValue) {
+    protected NGAP_CauseNas(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_RRCEstablishmentCause extends NgapEnumerated {
+public class NGAP_RRCEstablishmentCause extends NGAP_Enumerated {
 
     public static final NGAP_RRCEstablishmentCause EMERGENCY = new NGAP_RRCEstablishmentCause("emergency");
     public static final NGAP_RRCEstablishmentCause HIGHPRIORITYACCESS = new NGAP_RRCEstablishmentCause("highPriorityAccess");
@@ -27,7 +27,7 @@ public class NGAP_RRCEstablishmentCause extends NgapEnumerated {
     public static final NGAP_RRCEstablishmentCause MPS_PRIORITYACCESS = new NGAP_RRCEstablishmentCause("mps-PriorityAccess");
     public static final NGAP_RRCEstablishmentCause MCS_PRIORITYACCESS = new NGAP_RRCEstablishmentCause("mcs-PriorityAccess");
 
-    public NGAP_RRCEstablishmentCause(String sValue) {
+    protected NGAP_RRCEstablishmentCause(String sValue) {
         super(sValue);
     }
 

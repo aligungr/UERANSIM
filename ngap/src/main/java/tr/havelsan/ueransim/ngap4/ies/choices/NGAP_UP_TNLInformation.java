@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UP_TNLInformation extends NgapChoice {
+public class NGAP_UP_TNLInformation extends NGAP_Choice {
 
     public NGAP_SingleTNLInformation singleTNLInformation;
     public NGAP_MultipleTNLInformation multipleTNLInformation;

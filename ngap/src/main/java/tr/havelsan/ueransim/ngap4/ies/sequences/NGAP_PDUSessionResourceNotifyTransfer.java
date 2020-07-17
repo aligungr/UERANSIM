@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceNotifyTransfer extends NgapSequence {
+public class NGAP_PDUSessionResourceNotifyTransfer extends NGAP_Sequence {
 
     public NGAP_QosFlowNotifyList qosFlowNotifyList;
     public NGAP_QosFlowList qosFlowReleasedList;

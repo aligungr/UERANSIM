@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CriticalityDiagnostics extends NgapSequence {
+public class NGAP_CriticalityDiagnostics extends NGAP_Sequence {
 
     public NGAP_ProcedureCode procedureCode;
     public NGAP_TriggeringMessage triggeringMessage;

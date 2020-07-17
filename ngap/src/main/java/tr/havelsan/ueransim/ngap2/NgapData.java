@@ -29,6 +29,8 @@ package tr.havelsan.ueransim.ngap2;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_TriggeringMessage;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
@@ -95,32 +97,32 @@ public class NgapData {
         readIeTypeNames.run();
     }
 
-    public static NgapPduType findPduType(NgapMessageType messageType) {
+    public static NGAP_TriggeringMessage findTriggeringMessage(NgapMessageType messageType) {
         for (var item : procedures.values()) {
             if (messageType.name().equals(item.initiatingMessage)) {
-                return NgapPduType.INITIATING_MESSAGE;
+                return NGAP_TriggeringMessage.INITIATING_MESSAGE;
             }
             if (messageType.name().equals(item.successfulOutcome)) {
-                return NgapPduType.SUCCESSFUL_OUTCOME;
+                return NGAP_TriggeringMessage.SUCCESSFUL_OUTCOME;
             }
             if (messageType.name().equals(item.unsuccessfulOutcome)) {
-                return NgapPduType.UNSUCCESSFUL_OUTCOME;
+                return NGAP_TriggeringMessage.UNSUCCESSFULL_OUTCOME;
             }
         }
         Logging.error(Tag.NGAP_INTERNAL, "failed to findPduType of message: %s", messageType.name());
         throw new RuntimeException();
     }
 
-    public static NgapCriticality findMessageCriticality(NgapMessageType messageType) {
+    public static NGAP_Criticality findMessageCriticality(NgapMessageType messageType) {
         for (var item : procedures.values()) {
             if (messageType.name().equals(item.initiatingMessage)) {
-                return NgapCriticality.fromAsnValue(item.criticality);
+                return criticalityFromValue(item.criticality);
             }
             if (messageType.name().equals(item.successfulOutcome)) {
-                return NgapCriticality.fromAsnValue(item.criticality);
+                return criticalityFromValue(item.criticality);
             }
             if (messageType.name().equals(item.unsuccessfulOutcome)) {
-                return NgapCriticality.fromAsnValue(item.criticality);
+                return criticalityFromValue(item.criticality);
             }
         }
         Logging.error(Tag.NGAP_INTERNAL, "failed to findMessageCriticality of message: %s", messageType.name());
@@ -154,11 +156,36 @@ public class NgapData {
         throw new RuntimeException();
     }
 
-    public static NgapCriticality findIeCriticality(NgapMessageType messageType, NgapIeType ieType) {
+    private static NGAP_Criticality criticalityFromValue(String value) {
+        switch (value) {
+            case "reject":
+                return NGAP_Criticality.REJECT;
+            case "ignore":
+                return NGAP_Criticality.IGNORE;
+            case "notify":
+                return NGAP_Criticality.NOTIFY;
+        }
+        throw new IllegalArgumentException();
+
+    }
+
+    private static NGAP_Criticality criticalityFromValue(int value) {
+        switch (value) {
+            case 0:
+                return NGAP_Criticality.REJECT;
+            case 1:
+                return NGAP_Criticality.IGNORE;
+            case 2:
+                return NGAP_Criticality.NOTIFY;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public static NGAP_Criticality findIeCriticality(NgapMessageType messageType, NgapIeType ieType) {
         var ies = pduContents.get(messageType.name()).ies;
         for (PduContent.InformationElement element : ies) {
             if (element.type.equals(ieType.typeName)) {
-                return NgapCriticality.fromAsnValue(element.criticality);
+                return criticalityFromValue(element.criticality);
             }
         }
         Logging.error(Tag.NGAP_INTERNAL, "failed to findIeId");

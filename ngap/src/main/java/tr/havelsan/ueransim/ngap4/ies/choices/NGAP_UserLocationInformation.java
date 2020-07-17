@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UserLocationInformation extends NgapChoice {
+public class NGAP_UserLocationInformation extends NGAP_Choice {
 
     public NGAP_UserLocationInformationEUTRA userLocationInformationEUTRA;
     public NGAP_UserLocationInformationNR userLocationInformationNR;

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_QosFlowPerTNLInformation extends NgapSequence {
+public class NGAP_QosFlowPerTNLInformation extends NGAP_Sequence {
 
     public NGAP_UPTransportLayerInformation uPTransportLayerInformation;
     public NGAP_AssociatedQosFlowList associatedQosFlowList;

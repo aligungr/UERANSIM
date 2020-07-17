@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CauseMisc extends NgapEnumerated {
+public class NGAP_CauseMisc extends NGAP_Enumerated {
 
     public static final NGAP_CauseMisc CONTROL_PROCESSING_OVERLOAD = new NGAP_CauseMisc("control-processing-overload");
     public static final NGAP_CauseMisc NOT_ENOUGH_USER_PLANE_PROCESSING_RESOURCES = new NGAP_CauseMisc("not-enough-user-plane-processing-resources");
@@ -23,7 +23,7 @@ public class NGAP_CauseMisc extends NgapEnumerated {
     public static final NGAP_CauseMisc UNKNOWN_PLMN = new NGAP_CauseMisc("unknown-PLMN");
     public static final NGAP_CauseMisc UNSPECIFIED = new NGAP_CauseMisc("unspecified");
 
-    public NGAP_CauseMisc(String sValue) {
+    protected NGAP_CauseMisc(String sValue) {
         super(sValue);
     }
 

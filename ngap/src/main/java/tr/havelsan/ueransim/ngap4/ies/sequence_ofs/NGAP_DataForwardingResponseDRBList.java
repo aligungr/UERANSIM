@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DataForwardingResponseDRBList extends NgapSequenceOf<NGAP_DataForwardingResponseDRBItem> {
+public class NGAP_DataForwardingResponseDRBList extends NGAP_SequenceOf<NGAP_DataForwardingResponseDRBItem> {
 
     public NGAP_DataForwardingResponseDRBList() {
         super();

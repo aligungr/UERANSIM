@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ConcurrentWarningMessageInd extends NgapEnumerated {
+public class NGAP_ConcurrentWarningMessageInd extends NGAP_Enumerated {
 
     public static final NGAP_ConcurrentWarningMessageInd TRUE = new NGAP_ConcurrentWarningMessageInd("true");
 
-    public NGAP_ConcurrentWarningMessageInd(String sValue) {
+    protected NGAP_ConcurrentWarningMessageInd(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionType extends NgapEnumerated {
+public class NGAP_PDUSessionType extends NGAP_Enumerated {
 
     public static final NGAP_PDUSessionType IPV4 = new NGAP_PDUSessionType("ipv4");
     public static final NGAP_PDUSessionType IPV6 = new NGAP_PDUSessionType("ipv6");
@@ -22,7 +22,7 @@ public class NGAP_PDUSessionType extends NgapEnumerated {
     public static final NGAP_PDUSessionType ETHERNET = new NGAP_PDUSessionType("ethernet");
     public static final NGAP_PDUSessionType UNSTRUCTURED = new NGAP_PDUSessionType("unstructured");
 
-    public NGAP_PDUSessionType(String sValue) {
+    protected NGAP_PDUSessionType(String sValue) {
         super(sValue);
     }
 

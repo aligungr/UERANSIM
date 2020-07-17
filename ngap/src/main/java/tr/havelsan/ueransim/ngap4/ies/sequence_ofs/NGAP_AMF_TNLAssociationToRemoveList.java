@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AMF_TNLAssociationToRemoveList extends NgapSequenceOf<NGAP_AMF_TNLAssociationToRemoveItem> {
+public class NGAP_AMF_TNLAssociationToRemoveList extends NGAP_SequenceOf<NGAP_AMF_TNLAssociationToRemoveItem> {
 
     public NGAP_AMF_TNLAssociationToRemoveList() {
         super();

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_QosFlowAddOrModifyRequestItem extends NgapSequence {
+public class NGAP_QosFlowAddOrModifyRequestItem extends NGAP_Sequence {
 
     public NGAP_QosFlowIdentifier qosFlowIdentifier;
     public NGAP_QosFlowLevelQosParameters qosFlowLevelQosParameters;

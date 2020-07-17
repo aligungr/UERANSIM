@@ -14,10 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PacketErrorRate extends NgapSequence {
+public class NGAP_PacketErrorRate extends NGAP_Sequence {
 
-    public long pERScalar;
-    public long pERExponent;
+    public NGAP_Integer pERScalar;
+    public NGAP_Integer pERExponent;
 
     @Override
     public String getAsnName() {

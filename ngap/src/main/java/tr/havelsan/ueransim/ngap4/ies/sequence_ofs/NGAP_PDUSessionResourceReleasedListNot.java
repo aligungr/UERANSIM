@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceReleasedListNot extends NgapSequenceOf<NGAP_PDUSessionResourceReleasedItemNot> {
+public class NGAP_PDUSessionResourceReleasedListNot extends NGAP_SequenceOf<NGAP_PDUSessionResourceReleasedItemNot> {
 
     public NGAP_PDUSessionResourceReleasedListNot() {
         super();

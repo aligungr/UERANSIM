@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NonDynamic5QIDescriptor extends NgapSequence {
+public class NGAP_NonDynamic5QIDescriptor extends NGAP_Sequence {
 
     public NGAP_FiveQI fiveQI;
     public NGAP_PriorityLevelQos priorityLevelQos;

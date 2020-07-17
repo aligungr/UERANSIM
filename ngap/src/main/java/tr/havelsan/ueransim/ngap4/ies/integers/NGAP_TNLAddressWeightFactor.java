@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TNLAddressWeightFactor extends NgapInteger {
+public class NGAP_TNLAddressWeightFactor extends NGAP_Integer {
 
     public NGAP_TNLAddressWeightFactor(long value) {
         super(value);

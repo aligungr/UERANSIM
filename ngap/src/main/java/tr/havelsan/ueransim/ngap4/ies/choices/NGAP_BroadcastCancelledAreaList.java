@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_BroadcastCancelledAreaList extends NgapChoice {
+public class NGAP_BroadcastCancelledAreaList extends NGAP_Choice {
 
     public NGAP_CellIDCancelledEUTRA cellIDCancelledEUTRA;
     public NGAP_TAICancelledEUTRA tAICancelledEUTRA;

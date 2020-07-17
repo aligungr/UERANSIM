@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UserLocationInformationN3IWF extends NgapSequence {
+public class NGAP_UserLocationInformationN3IWF extends NGAP_Sequence {
 
     public NGAP_TransportLayerAddress iPAddress;
     public NGAP_PortNumber portNumber;

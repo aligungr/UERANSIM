@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SecurityKey extends NgapBitString {
+public class NGAP_SecurityKey extends NGAP_BitString {
 
     public NGAP_SecurityKey(BitString value) {
         super(value);

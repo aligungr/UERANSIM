@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AMFName extends NgapPrintableString {
+public class NGAP_AMFName extends NGAP_PrintableString {
 
     public NGAP_AMFName(String value) {
         super(value);

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_E_RAB_ID extends NgapInteger {
+public class NGAP_E_RAB_ID extends NGAP_Integer {
 
     public NGAP_E_RAB_ID(long value) {
         super(value);

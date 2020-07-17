@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ReflectiveQosAttribute extends NgapEnumerated {
+public class NGAP_ReflectiveQosAttribute extends NGAP_Enumerated {
 
     public static final NGAP_ReflectiveQosAttribute SUBJECT_TO = new NGAP_ReflectiveQosAttribute("subject-to");
 
-    public NGAP_ReflectiveQosAttribute(String sValue) {
+    protected NGAP_ReflectiveQosAttribute(String sValue) {
         super(sValue);
     }
 

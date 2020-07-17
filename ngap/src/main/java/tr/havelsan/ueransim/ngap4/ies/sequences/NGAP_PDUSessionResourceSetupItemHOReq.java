@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceSetupItemHOReq extends NgapSequence {
+public class NGAP_PDUSessionResourceSetupItemHOReq extends NGAP_Sequence {
 
     public NGAP_PDUSessionID pDUSessionID;
     public NGAP_S_NSSAI s_NSSAI;
-    public NgapOctetString handoverRequestTransfer;
+    public NGAP_OctetString handoverRequestTransfer;
 
     @Override
     public String getAsnName() {

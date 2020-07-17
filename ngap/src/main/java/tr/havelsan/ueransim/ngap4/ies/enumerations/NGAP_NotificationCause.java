@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NotificationCause extends NgapEnumerated {
+public class NGAP_NotificationCause extends NGAP_Enumerated {
 
     public static final NGAP_NotificationCause FULFILLED = new NGAP_NotificationCause("fulfilled");
     public static final NGAP_NotificationCause NOT_FULFILLED = new NGAP_NotificationCause("not-fulfilled");
 
-    public NGAP_NotificationCause(String sValue) {
+    protected NGAP_NotificationCause(String sValue) {
         super(sValue);
     }
 

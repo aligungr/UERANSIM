@@ -14,13 +14,13 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TNLAssociationUsage extends NgapEnumerated {
+public class NGAP_TNLAssociationUsage extends NGAP_Enumerated {
 
     public static final NGAP_TNLAssociationUsage UE = new NGAP_TNLAssociationUsage("ue");
     public static final NGAP_TNLAssociationUsage NON_UE = new NGAP_TNLAssociationUsage("non-ue");
     public static final NGAP_TNLAssociationUsage BOTH = new NGAP_TNLAssociationUsage("both");
 
-    public NGAP_TNLAssociationUsage(String sValue) {
+    protected NGAP_TNLAssociationUsage(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DRBsSubjectToStatusTransferList extends NgapSequenceOf<NGAP_DRBsSubjectToStatusTransferItem> {
+public class NGAP_DRBsSubjectToStatusTransferList extends NGAP_SequenceOf<NGAP_DRBsSubjectToStatusTransferItem> {
 
     public NGAP_DRBsSubjectToStatusTransferList() {
         super();

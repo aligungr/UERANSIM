@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PacketDelayBudget extends NgapInteger {
+public class NGAP_PacketDelayBudget extends NGAP_Integer {
 
     public NGAP_PacketDelayBudget(long value) {
         super(value);

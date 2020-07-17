@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UEContextRequest extends NgapEnumerated {
+public class NGAP_UEContextRequest extends NGAP_Enumerated {
 
     public static final NGAP_UEContextRequest REQUESTED = new NGAP_UEContextRequest("requested");
 
-    public NGAP_UEContextRequest(String sValue) {
+    protected NGAP_UEContextRequest(String sValue) {
         super(sValue);
     }
 

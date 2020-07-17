@@ -14,10 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DRBStatusUL12 extends NgapSequence {
+public class NGAP_DRBStatusUL12 extends NGAP_Sequence {
 
     public NGAP_COUNTValueForPDCP_SN12 uL_COUNTValue;
-    public NgapBitString receiveStatusOfUL_PDCP_SDUs;
+    public NGAP_BitString receiveStatusOfUL_PDCP_SDUs;
 
     @Override
     public String getAsnName() {

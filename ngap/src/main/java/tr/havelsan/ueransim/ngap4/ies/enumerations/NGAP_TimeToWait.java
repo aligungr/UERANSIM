@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TimeToWait extends NgapEnumerated {
+public class NGAP_TimeToWait extends NGAP_Enumerated {
 
     public static final NGAP_TimeToWait V1S = new NGAP_TimeToWait("v1s");
     public static final NGAP_TimeToWait V2S = new NGAP_TimeToWait("v2s");
@@ -23,7 +23,7 @@ public class NGAP_TimeToWait extends NgapEnumerated {
     public static final NGAP_TimeToWait V20S = new NGAP_TimeToWait("v20s");
     public static final NGAP_TimeToWait V60S = new NGAP_TimeToWait("v60s");
 
-    public NGAP_TimeToWait(String sValue) {
+    protected NGAP_TimeToWait(String sValue) {
         super(sValue);
     }
 

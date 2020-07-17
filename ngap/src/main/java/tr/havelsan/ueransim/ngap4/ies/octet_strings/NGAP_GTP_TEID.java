@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_GTP_TEID extends NgapOctetString {
+public class NGAP_GTP_TEID extends NGAP_OctetString {
 
     public NGAP_GTP_TEID(OctetString value) {
         super(value);

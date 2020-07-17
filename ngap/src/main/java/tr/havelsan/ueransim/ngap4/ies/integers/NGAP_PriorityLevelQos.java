@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PriorityLevelQos extends NgapInteger {
+public class NGAP_PriorityLevelQos extends NGAP_Integer {
 
     public NGAP_PriorityLevelQos(long value) {
         super(value);

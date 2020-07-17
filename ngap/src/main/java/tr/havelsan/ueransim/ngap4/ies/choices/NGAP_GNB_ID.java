@@ -14,9 +14,9 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_GNB_ID extends NgapChoice {
+public class NGAP_GNB_ID extends NGAP_Choice {
 
-    public NgapBitString gNB_ID;
+    public NGAP_BitString gNB_ID;
 
     @Override
     public String getAsnName() {

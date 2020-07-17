@@ -14,9 +14,9 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UEIdentityIndexValue extends NgapChoice {
+public class NGAP_UEIdentityIndexValue extends NGAP_Choice {
 
-    public NgapBitString indexLength10;
+    public NGAP_BitString indexLength10;
 
     @Override
     public String getAsnName() {

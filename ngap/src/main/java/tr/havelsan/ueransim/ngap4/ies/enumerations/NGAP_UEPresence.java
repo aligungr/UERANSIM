@@ -14,13 +14,13 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UEPresence extends NgapEnumerated {
+public class NGAP_UEPresence extends NGAP_Enumerated {
 
     public static final NGAP_UEPresence IN = new NGAP_UEPresence("in");
     public static final NGAP_UEPresence OUT = new NGAP_UEPresence("out");
     public static final NGAP_UEPresence UNKNOWN = new NGAP_UEPresence("unknown");
 
-    public NGAP_UEPresence(String sValue) {
+    protected NGAP_UEPresence(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAICancelledEUTRA extends NgapSequenceOf<NGAP_TAICancelledEUTRA_Item> {
+public class NGAP_TAICancelledEUTRA extends NGAP_SequenceOf<NGAP_TAICancelledEUTRA_Item> {
 
     public NGAP_TAICancelledEUTRA() {
         super();

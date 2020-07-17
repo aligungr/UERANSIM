@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_MaskedIMEISV extends NgapBitString {
+public class NGAP_MaskedIMEISV extends NGAP_BitString {
 
     public NGAP_MaskedIMEISV(BitString value) {
         super(value);

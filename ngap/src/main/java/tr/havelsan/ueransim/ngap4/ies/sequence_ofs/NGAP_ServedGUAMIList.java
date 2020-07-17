@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ServedGUAMIList extends NgapSequenceOf<NGAP_ServedGUAMIItem> {
+public class NGAP_ServedGUAMIList extends NGAP_SequenceOf<NGAP_ServedGUAMIItem> {
 
     public NGAP_ServedGUAMIList() {
         super();

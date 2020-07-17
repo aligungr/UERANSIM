@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EUTRACellIdentity extends NgapBitString {
+public class NGAP_EUTRACellIdentity extends NGAP_BitString {
 
     public NGAP_EUTRACellIdentity(BitString value) {
         super(value);

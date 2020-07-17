@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_OverloadStartNSSAIList extends NgapSequenceOf<NGAP_OverloadStartNSSAIItem> {
+public class NGAP_OverloadStartNSSAIList extends NGAP_SequenceOf<NGAP_OverloadStartNSSAIItem> {
 
     public NGAP_OverloadStartNSSAIList() {
         super();

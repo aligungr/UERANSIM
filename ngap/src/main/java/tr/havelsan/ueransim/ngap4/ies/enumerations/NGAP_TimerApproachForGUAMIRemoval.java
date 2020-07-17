@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TimerApproachForGUAMIRemoval extends NgapEnumerated {
+public class NGAP_TimerApproachForGUAMIRemoval extends NGAP_Enumerated {
 
     public static final NGAP_TimerApproachForGUAMIRemoval APPLY_TIMER = new NGAP_TimerApproachForGUAMIRemoval("apply-timer");
 
-    public NGAP_TimerApproachForGUAMIRemoval(String sValue) {
+    protected NGAP_TimerApproachForGUAMIRemoval(String sValue) {
         super(sValue);
     }
 

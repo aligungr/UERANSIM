@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ExpectedUEMovingTrajectory extends NgapSequenceOf<NGAP_ExpectedUEMovingTrajectoryItem> {
+public class NGAP_ExpectedUEMovingTrajectory extends NGAP_SequenceOf<NGAP_ExpectedUEMovingTrajectoryItem> {
 
     public NGAP_ExpectedUEMovingTrajectory() {
         super();

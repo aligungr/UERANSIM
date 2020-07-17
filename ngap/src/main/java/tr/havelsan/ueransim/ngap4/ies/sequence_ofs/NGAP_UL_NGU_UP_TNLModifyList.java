@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UL_NGU_UP_TNLModifyList extends NgapSequenceOf<NGAP_UL_NGU_UP_TNLModifyItem> {
+public class NGAP_UL_NGU_UP_TNLModifyList extends NGAP_SequenceOf<NGAP_UL_NGU_UP_TNLModifyItem> {
 
     public NGAP_UL_NGU_UP_TNLModifyList() {
         super();

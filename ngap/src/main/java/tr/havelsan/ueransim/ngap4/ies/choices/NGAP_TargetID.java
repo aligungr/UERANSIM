@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TargetID extends NgapChoice {
+public class NGAP_TargetID extends NGAP_Choice {
 
     public NGAP_TargetRANNodeID targetRANNodeID;
     public NGAP_TargeteNB_ID targeteNB_ID;

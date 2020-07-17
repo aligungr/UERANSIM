@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AdditionalQosFlowInformation extends NgapEnumerated {
+public class NGAP_AdditionalQosFlowInformation extends NGAP_Enumerated {
 
     public static final NGAP_AdditionalQosFlowInformation MORE_LIKELY = new NGAP_AdditionalQosFlowInformation("more-likely");
 
-    public NGAP_AdditionalQosFlowInformation(String sValue) {
+    protected NGAP_AdditionalQosFlowInformation(String sValue) {
         super(sValue);
     }
 

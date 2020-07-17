@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_InterfacesToTrace extends NgapBitString {
+public class NGAP_InterfacesToTrace extends NGAP_BitString {
 
     public NGAP_InterfacesToTrace(BitString value) {
         super(value);

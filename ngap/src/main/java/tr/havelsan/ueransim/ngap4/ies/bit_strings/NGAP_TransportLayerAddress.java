@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TransportLayerAddress extends NgapBitString {
+public class NGAP_TransportLayerAddress extends NGAP_BitString {
 
     public NGAP_TransportLayerAddress(BitString value) {
         super(value);

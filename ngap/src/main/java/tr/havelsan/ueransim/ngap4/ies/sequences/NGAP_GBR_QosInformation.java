@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_GBR_QosInformation extends NgapSequence {
+public class NGAP_GBR_QosInformation extends NGAP_Sequence {
 
     public NGAP_BitRate maximumFlowBitRateDL;
     public NGAP_BitRate maximumFlowBitRateUL;

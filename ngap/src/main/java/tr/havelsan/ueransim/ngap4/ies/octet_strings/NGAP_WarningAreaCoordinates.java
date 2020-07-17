@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_WarningAreaCoordinates extends NgapOctetString {
+public class NGAP_WarningAreaCoordinates extends NGAP_OctetString {
 
     public NGAP_WarningAreaCoordinates(OctetString value) {
         super(value);

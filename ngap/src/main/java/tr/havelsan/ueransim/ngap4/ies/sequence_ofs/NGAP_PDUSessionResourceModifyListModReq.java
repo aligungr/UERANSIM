@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceModifyListModReq extends NgapSequenceOf<NGAP_PDUSessionResourceModifyItemModReq> {
+public class NGAP_PDUSessionResourceModifyListModReq extends NGAP_SequenceOf<NGAP_PDUSessionResourceModifyItemModReq> {
 
     public NGAP_PDUSessionResourceModifyListModReq() {
         super();

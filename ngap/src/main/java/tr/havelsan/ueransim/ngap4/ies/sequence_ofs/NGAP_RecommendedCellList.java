@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_RecommendedCellList extends NgapSequenceOf<NGAP_RecommendedCellItem> {
+public class NGAP_RecommendedCellList extends NGAP_SequenceOf<NGAP_RecommendedCellItem> {
 
     public NGAP_RecommendedCellList() {
         super();

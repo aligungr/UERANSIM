@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_LastVisitedNGRANCellInformation extends NgapSequence {
+public class NGAP_LastVisitedNGRANCellInformation extends NGAP_Sequence {
 
     public NGAP_NGRAN_CGI globalCellID;
     public NGAP_CellType cellType;

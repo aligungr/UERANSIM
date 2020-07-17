@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ExpectedUEBehaviour extends NgapSequence {
+public class NGAP_ExpectedUEBehaviour extends NGAP_Sequence {
 
     public NGAP_ExpectedUEActivityBehaviour expectedUEActivityBehaviour;
     public NGAP_ExpectedHOInterval expectedHOInterval;

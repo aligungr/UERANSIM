@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EUTRA_CGIListForWarning extends NgapSequenceOf<NGAP_EUTRA_CGI> {
+public class NGAP_EUTRA_CGIListForWarning extends NGAP_SequenceOf<NGAP_EUTRA_CGI> {
 
     public NGAP_EUTRA_CGIListForWarning() {
         super();

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ProcedureCode extends NgapInteger {
+public class NGAP_ProcedureCode extends NGAP_Integer {
 
     public NGAP_ProcedureCode(long value) {
         super(value);

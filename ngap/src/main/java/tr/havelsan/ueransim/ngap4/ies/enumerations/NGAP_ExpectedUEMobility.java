@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ExpectedUEMobility extends NgapEnumerated {
+public class NGAP_ExpectedUEMobility extends NGAP_Enumerated {
 
     public static final NGAP_ExpectedUEMobility STATIONARY = new NGAP_ExpectedUEMobility("stationary");
     public static final NGAP_ExpectedUEMobility MOBILE = new NGAP_ExpectedUEMobility("mobile");
 
-    public NGAP_ExpectedUEMobility(String sValue) {
+    protected NGAP_ExpectedUEMobility(String sValue) {
         super(sValue);
     }
 

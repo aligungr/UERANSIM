@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceInformationItem extends NgapSequence {
+public class NGAP_PDUSessionResourceInformationItem extends NGAP_Sequence {
 
     public NGAP_PDUSessionID pDUSessionID;
     public NGAP_QosFlowInformationList qosFlowInformationList;

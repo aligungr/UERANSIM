@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_RATRestrictions extends NgapSequenceOf<NGAP_RATRestrictions_Item> {
+public class NGAP_RATRestrictions extends NGAP_SequenceOf<NGAP_RATRestrictions_Item> {
 
     public NGAP_RATRestrictions() {
         super();

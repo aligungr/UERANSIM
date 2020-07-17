@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_MICOModeIndication extends NgapEnumerated {
+public class NGAP_MICOModeIndication extends NGAP_Enumerated {
 
     public static final NGAP_MICOModeIndication TRUE = new NGAP_MICOModeIndication("true");
 
-    public NGAP_MICOModeIndication(String sValue) {
+    protected NGAP_MICOModeIndication(String sValue) {
         super(sValue);
     }
 

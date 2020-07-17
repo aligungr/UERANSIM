@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_LastVisitedUTRANCellInformation extends NgapOctetString {
+public class NGAP_LastVisitedUTRANCellInformation extends NGAP_OctetString {
 
     public NGAP_LastVisitedUTRANCellInformation(OctetString value) {
         super(value);

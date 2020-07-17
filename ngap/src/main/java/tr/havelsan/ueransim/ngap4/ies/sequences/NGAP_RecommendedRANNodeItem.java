@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_RecommendedRANNodeItem extends NgapSequence {
+public class NGAP_RecommendedRANNodeItem extends NGAP_Sequence {
 
     public NGAP_AMFPagingTarget aMFPagingTarget;
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CriticalityDiagnostics_IE_List extends NgapSequenceOf<NGAP_CriticalityDiagnostics_IE_Item> {
+public class NGAP_CriticalityDiagnostics_IE_List extends NGAP_SequenceOf<NGAP_CriticalityDiagnostics_IE_Item> {
 
     public NGAP_CriticalityDiagnostics_IE_List() {
         super();

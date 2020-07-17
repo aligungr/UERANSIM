@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_IMSVoiceSupportIndicator extends NgapEnumerated {
+public class NGAP_IMSVoiceSupportIndicator extends NGAP_Enumerated {
 
     public static final NGAP_IMSVoiceSupportIndicator SUPPORTED = new NGAP_IMSVoiceSupportIndicator("supported");
     public static final NGAP_IMSVoiceSupportIndicator NOT_SUPPORTED = new NGAP_IMSVoiceSupportIndicator("not-supported");
 
-    public NGAP_IMSVoiceSupportIndicator(String sValue) {
+    protected NGAP_IMSVoiceSupportIndicator(String sValue) {
         super(sValue);
     }
 

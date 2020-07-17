@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PagingAttemptInformation extends NgapSequence {
+public class NGAP_PagingAttemptInformation extends NGAP_Sequence {
 
     public NGAP_PagingAttemptCount pagingAttemptCount;
     public NGAP_IntendedNumberOfPagingAttempts intendedNumberOfPagingAttempts;

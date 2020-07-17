@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_MobilityRestrictionList extends NgapSequence {
+public class NGAP_MobilityRestrictionList extends NGAP_Sequence {
 
     public NGAP_PLMNIdentity servingPLMN;
     public NGAP_EquivalentPLMNs equivalentPLMNs;

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_FiveG_TMSI extends NgapOctetString {
+public class NGAP_FiveG_TMSI extends NGAP_OctetString {
 
     public NGAP_FiveG_TMSI(OctetString value) {
         super(value);

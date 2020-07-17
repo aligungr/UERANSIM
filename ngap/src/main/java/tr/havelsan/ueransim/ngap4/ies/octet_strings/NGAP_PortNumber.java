@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PortNumber extends NgapOctetString {
+public class NGAP_PortNumber extends NGAP_OctetString {
 
     public NGAP_PortNumber(OctetString value) {
         super(value);

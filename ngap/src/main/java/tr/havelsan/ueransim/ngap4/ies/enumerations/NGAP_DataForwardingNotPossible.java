@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DataForwardingNotPossible extends NgapEnumerated {
+public class NGAP_DataForwardingNotPossible extends NGAP_Enumerated {
 
     public static final NGAP_DataForwardingNotPossible DATA_FORWARDING_NOT_POSSIBLE = new NGAP_DataForwardingNotPossible("data-forwarding-not-possible");
 
-    public NGAP_DataForwardingNotPossible(String sValue) {
+    protected NGAP_DataForwardingNotPossible(String sValue) {
         super(sValue);
     }
 

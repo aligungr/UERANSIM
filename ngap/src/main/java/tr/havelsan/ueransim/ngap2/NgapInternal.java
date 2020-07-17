@@ -40,6 +40,7 @@ import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
@@ -98,7 +99,7 @@ public class NgapInternal {
         }
     }
 
-    public static void appendProtocolIe(NgapMessageType messageType, Value messageValue, NgapCriticality criticality, Value value, int ieId) {
+    public static void appendProtocolIe(NgapMessageType messageType, Value messageValue, NGAP_Criticality criticality, Value value, int ieId) {
         try {
             var messageClassName = getMessageTypeClassName(messageType);
             var protocolIEsClassName = messageClassName + "$ProtocolIEs";
@@ -121,7 +122,7 @@ public class NgapInternal {
 
             var sequence = classSequence.getConstructor().newInstance();
             setField(sequence, "id", new ProtocolIE_ID(ieId));
-            setField(sequence, "criticality", new Criticality(criticality.getAsnValue()));
+            setField(sequence, "criticality", new Criticality(criticality == NGAP_Criticality.REJECT ? 0 : criticality == NGAP_Criticality.IGNORE ? 1 : 2));
             setField(sequence, "value", new OpenTypeValue(value));
 
             valueList.add(sequence);

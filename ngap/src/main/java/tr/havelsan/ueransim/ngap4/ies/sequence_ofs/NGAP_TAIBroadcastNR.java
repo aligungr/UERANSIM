@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAIBroadcastNR extends NgapSequenceOf<NGAP_TAIBroadcastNR_Item> {
+public class NGAP_TAIBroadcastNR extends NGAP_SequenceOf<NGAP_TAIBroadcastNR_Item> {
 
     public NGAP_TAIBroadcastNR() {
         super();

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UnavailableGUAMIList extends NgapSequenceOf<NGAP_UnavailableGUAMIItem> {
+public class NGAP_UnavailableGUAMIList extends NGAP_SequenceOf<NGAP_UnavailableGUAMIItem> {
 
     public NGAP_UnavailableGUAMIList() {
         super();

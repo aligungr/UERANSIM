@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DL_NGU_TNLInformationReused extends NgapEnumerated {
+public class NGAP_DL_NGU_TNLInformationReused extends NGAP_Enumerated {
 
     public static final NGAP_DL_NGU_TNLInformationReused TRUE = new NGAP_DL_NGU_TNLInformationReused("true");
 
-    public NGAP_DL_NGU_TNLInformationReused(String sValue) {
+    protected NGAP_DL_NGU_TNLInformationReused(String sValue) {
         super(sValue);
     }
 

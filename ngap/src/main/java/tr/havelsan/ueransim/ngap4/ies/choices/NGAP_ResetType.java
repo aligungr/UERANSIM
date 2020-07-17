@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ResetType extends NgapChoice {
+public class NGAP_ResetType extends NGAP_Choice {
 
     public NGAP_ResetAll nG_Interface;
     public NGAP_UE_associatedLogicalNG_connectionList partOfNG_Interface;

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ExpectedHOInterval extends NgapEnumerated {
+public class NGAP_ExpectedHOInterval extends NGAP_Enumerated {
 
     public static final NGAP_ExpectedHOInterval SEC15 = new NGAP_ExpectedHOInterval("sec15");
     public static final NGAP_ExpectedHOInterval SEC30 = new NGAP_ExpectedHOInterval("sec30");
@@ -24,7 +24,7 @@ public class NGAP_ExpectedHOInterval extends NgapEnumerated {
     public static final NGAP_ExpectedHOInterval SEC180 = new NGAP_ExpectedHOInterval("sec180");
     public static final NGAP_ExpectedHOInterval LONG_TIME = new NGAP_ExpectedHOInterval("long-time");
 
-    public NGAP_ExpectedHOInterval(String sValue) {
+    protected NGAP_ExpectedHOInterval(String sValue) {
         super(sValue);
     }
 

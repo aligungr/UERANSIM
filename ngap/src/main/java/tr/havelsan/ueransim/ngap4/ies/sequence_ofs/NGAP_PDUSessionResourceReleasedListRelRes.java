@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceReleasedListRelRes extends NgapSequenceOf<NGAP_PDUSessionResourceReleasedItemRelRes> {
+public class NGAP_PDUSessionResourceReleasedListRelRes extends NGAP_SequenceOf<NGAP_PDUSessionResourceReleasedItemRelRes> {
 
     public NGAP_PDUSessionResourceReleasedListRelRes() {
         super();

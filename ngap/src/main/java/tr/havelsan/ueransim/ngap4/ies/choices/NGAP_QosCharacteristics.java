@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_QosCharacteristics extends NgapChoice {
+public class NGAP_QosCharacteristics extends NGAP_Choice {
 
     public NGAP_NonDynamic5QIDescriptor nonDynamic5QI;
     public NGAP_Dynamic5QIDescriptor dynamic5QI;

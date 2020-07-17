@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TargeteNB_ID extends NgapSequence {
+public class NGAP_TargeteNB_ID extends NGAP_Sequence {
 
     public NGAP_GlobalNgENB_ID globalENB_ID;
     public NGAP_EPS_TAI selected_EPS_TAI;

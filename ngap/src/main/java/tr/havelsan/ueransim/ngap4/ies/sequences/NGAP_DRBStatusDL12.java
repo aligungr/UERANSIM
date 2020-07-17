@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DRBStatusDL12 extends NgapSequence {
+public class NGAP_DRBStatusDL12 extends NGAP_Sequence {
 
     public NGAP_COUNTValueForPDCP_SN12 dL_COUNTValue;
 

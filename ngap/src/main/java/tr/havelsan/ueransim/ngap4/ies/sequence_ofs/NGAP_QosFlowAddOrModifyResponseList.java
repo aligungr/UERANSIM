@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_QosFlowAddOrModifyResponseList extends NgapSequenceOf<NGAP_QosFlowAddOrModifyResponseItem> {
+public class NGAP_QosFlowAddOrModifyResponseList extends NGAP_SequenceOf<NGAP_QosFlowAddOrModifyResponseItem> {
 
     public NGAP_QosFlowAddOrModifyResponseList() {
         super();

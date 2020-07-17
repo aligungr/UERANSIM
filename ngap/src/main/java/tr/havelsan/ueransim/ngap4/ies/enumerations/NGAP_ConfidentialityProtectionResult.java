@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ConfidentialityProtectionResult extends NgapEnumerated {
+public class NGAP_ConfidentialityProtectionResult extends NGAP_Enumerated {
 
     public static final NGAP_ConfidentialityProtectionResult PERFORMED = new NGAP_ConfidentialityProtectionResult("performed");
     public static final NGAP_ConfidentialityProtectionResult NOT_PERFORMED = new NGAP_ConfidentialityProtectionResult("not-performed");
 
-    public NGAP_ConfidentialityProtectionResult(String sValue) {
+    protected NGAP_ConfidentialityProtectionResult(String sValue) {
         super(sValue);
     }
 

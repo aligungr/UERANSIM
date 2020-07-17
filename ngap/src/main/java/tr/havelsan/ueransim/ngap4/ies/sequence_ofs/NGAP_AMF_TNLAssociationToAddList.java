@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AMF_TNLAssociationToAddList extends NgapSequenceOf<NGAP_AMF_TNLAssociationToAddItem> {
+public class NGAP_AMF_TNLAssociationToAddList extends NGAP_SequenceOf<NGAP_AMF_TNLAssociationToAddItem> {
 
     public NGAP_AMF_TNLAssociationToAddList() {
         super();

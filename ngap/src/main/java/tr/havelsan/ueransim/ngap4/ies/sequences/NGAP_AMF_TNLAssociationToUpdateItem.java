@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AMF_TNLAssociationToUpdateItem extends NgapSequence {
+public class NGAP_AMF_TNLAssociationToUpdateItem extends NGAP_Sequence {
 
     public NGAP_CPTransportLayerInformation aMF_TNLAssociationAddress;
     public NGAP_TNLAssociationUsage tNLAssociationUsage;

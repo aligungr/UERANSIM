@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_QosFlowSetupResponseListHOReqAck extends NgapSequenceOf<NGAP_QosFlowSetupResponseItemHOReqAck> {
+public class NGAP_QosFlowSetupResponseListHOReqAck extends NGAP_SequenceOf<NGAP_QosFlowSetupResponseItemHOReqAck> {
 
     public NGAP_QosFlowSetupResponseListHOReqAck() {
         super();

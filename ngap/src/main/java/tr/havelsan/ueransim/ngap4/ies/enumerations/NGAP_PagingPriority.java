@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PagingPriority extends NgapEnumerated {
+public class NGAP_PagingPriority extends NGAP_Enumerated {
 
     public static final NGAP_PagingPriority PRIOLEVEL1 = new NGAP_PagingPriority("priolevel1");
     public static final NGAP_PagingPriority PRIOLEVEL2 = new NGAP_PagingPriority("priolevel2");
@@ -25,7 +25,7 @@ public class NGAP_PagingPriority extends NgapEnumerated {
     public static final NGAP_PagingPriority PRIOLEVEL7 = new NGAP_PagingPriority("priolevel7");
     public static final NGAP_PagingPriority PRIOLEVEL8 = new NGAP_PagingPriority("priolevel8");
 
-    public NGAP_PagingPriority(String sValue) {
+    protected NGAP_PagingPriority(String sValue) {
         super(sValue);
     }
 

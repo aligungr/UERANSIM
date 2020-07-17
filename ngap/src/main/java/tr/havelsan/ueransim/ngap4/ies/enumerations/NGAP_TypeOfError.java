@@ -14,12 +14,12 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TypeOfError extends NgapEnumerated {
+public class NGAP_TypeOfError extends NGAP_Enumerated {
 
     public static final NGAP_TypeOfError NOT_UNDERSTOOD = new NGAP_TypeOfError("not-understood");
     public static final NGAP_TypeOfError MISSING = new NGAP_TypeOfError("missing");
 
-    public NGAP_TypeOfError(String sValue) {
+    protected NGAP_TypeOfError(String sValue) {
         super(sValue);
     }
 

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer extends NgapSequence {
+public class NGAP_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer extends NGAP_Sequence {
 
     public NGAP_RRCContainer rRCContainer;
     public NGAP_PDUSessionResourceInformationList pDUSessionResourceInformationList;

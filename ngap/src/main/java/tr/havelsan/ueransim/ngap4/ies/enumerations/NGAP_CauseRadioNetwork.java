@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CauseRadioNetwork extends NgapEnumerated {
+public class NGAP_CauseRadioNetwork extends NGAP_Enumerated {
 
     public static final NGAP_CauseRadioNetwork UNSPECIFIED = new NGAP_CauseRadioNetwork("unspecified");
     public static final NGAP_CauseRadioNetwork TXNRELOCOVERALL_EXPIRY = new NGAP_CauseRadioNetwork("txnrelocoverall-expiry");
@@ -62,7 +62,7 @@ public class NGAP_CauseRadioNetwork extends NgapEnumerated {
     public static final NGAP_CauseRadioNetwork UE_MAX_INTEGRITY_PROTECTED_DATA_RATE_REASON = new NGAP_CauseRadioNetwork("ue-max-integrity-protected-data-rate-reason");
     public static final NGAP_CauseRadioNetwork RELEASE_DUE_TO_CN_DETECTED_MOBILITY = new NGAP_CauseRadioNetwork("release-due-to-cn-detected-mobility");
 
-    public NGAP_CauseRadioNetwork(String sValue) {
+    protected NGAP_CauseRadioNetwork(String sValue) {
         super(sValue);
     }
 

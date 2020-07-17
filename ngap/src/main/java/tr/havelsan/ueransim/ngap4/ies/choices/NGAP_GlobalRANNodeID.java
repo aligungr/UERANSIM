@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_GlobalRANNodeID extends NgapChoice {
+public class NGAP_GlobalRANNodeID extends NGAP_Choice {
 
     public NGAP_GlobalGNB_ID globalGNB_ID;
     public NGAP_GlobalNgENB_ID globalNgENB_ID;

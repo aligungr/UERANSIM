@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UEPagingIdentity extends NgapChoice {
+public class NGAP_UEPagingIdentity extends NGAP_Choice {
 
     public NGAP_FiveG_S_TMSI fiveG_S_TMSI;
 

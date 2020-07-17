@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NGRANTraceID extends NgapOctetString {
+public class NGAP_NGRANTraceID extends NGAP_OctetString {
 
     public NGAP_NGRANTraceID(OctetString value) {
         super(value);

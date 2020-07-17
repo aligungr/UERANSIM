@@ -14,13 +14,13 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_HandoverType extends NgapEnumerated {
+public class NGAP_HandoverType extends NGAP_Enumerated {
 
     public static final NGAP_HandoverType INTRA5GS = new NGAP_HandoverType("intra5gs");
     public static final NGAP_HandoverType FIVEGS_TO_EPS = new NGAP_HandoverType("fivegs-to-eps");
     public static final NGAP_HandoverType EPS_TO_5GS = new NGAP_HandoverType("eps-to-5gs");
 
-    public NGAP_HandoverType(String sValue) {
+    protected NGAP_HandoverType(String sValue) {
         super(sValue);
     }
 

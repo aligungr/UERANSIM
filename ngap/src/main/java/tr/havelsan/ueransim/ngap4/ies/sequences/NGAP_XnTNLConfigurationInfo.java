@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_XnTNLConfigurationInfo extends NgapSequence {
+public class NGAP_XnTNLConfigurationInfo extends NGAP_Sequence {
 
     public NGAP_XnTLAs xnTransportLayerAddresses;
     public NGAP_XnExtTLAs xnExtendedTransportLayerAddresses;

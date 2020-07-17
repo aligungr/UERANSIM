@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UERadioCapability extends NgapOctetString {
+public class NGAP_UERadioCapability extends NGAP_OctetString {
 
     public NGAP_UERadioCapability(OctetString value) {
         super(value);

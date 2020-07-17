@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UserLocationInformationNR extends NgapSequence {
+public class NGAP_UserLocationInformationNR extends NGAP_Sequence {
 
     public NGAP_NR_CGI nR_CGI;
     public NGAP_TAI tAI;

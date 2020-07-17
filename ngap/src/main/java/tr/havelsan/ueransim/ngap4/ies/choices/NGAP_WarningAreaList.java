@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_WarningAreaList extends NgapChoice {
+public class NGAP_WarningAreaList extends NGAP_Choice {
 
     public NGAP_EUTRA_CGIListForWarning eUTRA_CGIListForWarning;
     public NGAP_NR_CGIListForWarning nR_CGIListForWarning;

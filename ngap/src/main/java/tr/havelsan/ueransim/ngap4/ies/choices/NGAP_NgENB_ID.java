@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NgENB_ID extends NgapChoice {
+public class NGAP_NgENB_ID extends NGAP_Choice {
 
-    public NgapBitString macroNgENB_ID;
-    public NgapBitString shortMacroNgENB_ID;
-    public NgapBitString longMacroNgENB_ID;
+    public NGAP_BitString macroNgENB_ID;
+    public NGAP_BitString shortMacroNgENB_ID;
+    public NGAP_BitString longMacroNgENB_ID;
 
     @Override
     public String getAsnName() {

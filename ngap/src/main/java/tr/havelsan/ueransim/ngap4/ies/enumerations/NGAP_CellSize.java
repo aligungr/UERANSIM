@@ -14,14 +14,14 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CellSize extends NgapEnumerated {
+public class NGAP_CellSize extends NGAP_Enumerated {
 
     public static final NGAP_CellSize VERYSMALL = new NGAP_CellSize("verysmall");
     public static final NGAP_CellSize SMALL = new NGAP_CellSize("small");
     public static final NGAP_CellSize MEDIUM = new NGAP_CellSize("medium");
     public static final NGAP_CellSize LARGE = new NGAP_CellSize("large");
 
-    public NGAP_CellSize(String sValue) {
+    protected NGAP_CellSize(String sValue) {
         super(sValue);
     }
 

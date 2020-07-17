@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PagingAttemptCount extends NgapInteger {
+public class NGAP_PagingAttemptCount extends NGAP_Integer {
 
     public NGAP_PagingAttemptCount(long value) {
         super(value);

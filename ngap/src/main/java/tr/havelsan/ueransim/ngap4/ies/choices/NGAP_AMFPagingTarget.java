@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AMFPagingTarget extends NgapChoice {
+public class NGAP_AMFPagingTarget extends NGAP_Choice {
 
     public NGAP_GlobalRANNodeID globalRANNodeID;
     public NGAP_TAI tAI;

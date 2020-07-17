@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UE_associatedLogicalNG_connectionList extends NgapSequenceOf<NGAP_UE_associatedLogicalNG_connectionItem> {
+public class NGAP_UE_associatedLogicalNG_connectionList extends NGAP_SequenceOf<NGAP_UE_associatedLogicalNG_connectionItem> {
 
     public NGAP_UE_associatedLogicalNG_connectionList() {
         super();

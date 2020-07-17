@@ -28,6 +28,7 @@ package tr.havelsan.ueransim.ngap4.xer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.ngap4.core.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -42,7 +43,7 @@ import java.util.List;
 
 public class NgapXerEncoder {
 
-    public static String encode(NgapValue value) {
+    public static String encode(NGAP_Value value) {
         var factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         try {
@@ -83,63 +84,63 @@ public class NgapXerEncoder {
     private static List<Node> encodeIe(Document document, Object value, boolean isRoot) throws Exception {
         List<Node> list = new ArrayList<>();
 
-        if (value instanceof NgapBitString) {
+        if (value instanceof NGAP_BitString) {
             if (isRoot) {
-                var root = document.createElement(((NgapBitString) value).getXmlTagName());
-                root.appendChild(document.createTextNode(((NgapBitString) value).value.toBinaryString(false)));
+                var root = document.createElement(((NGAP_BitString) value).getXmlTagName());
+                root.appendChild(document.createTextNode(((NGAP_BitString) value).value.toBinaryString(false)));
                 list.add(root);
             } else {
-                list.add(document.createTextNode(((NgapBitString) value).value.toBinaryString(false)));
+                list.add(document.createTextNode(((NGAP_BitString) value).value.toBinaryString(false)));
             }
             return list;
         }
 
-        if (value instanceof NgapOctetString) {
+        if (value instanceof NGAP_OctetString) {
             if (isRoot) {
-                var root = document.createElement(((NgapOctetString) value).getXmlTagName());
-                root.appendChild(document.createTextNode(((NgapOctetString) value).value.toHexString(false)));
+                var root = document.createElement(((NGAP_OctetString) value).getXmlTagName());
+                root.appendChild(document.createTextNode(((NGAP_OctetString) value).value.toHexString(false)));
                 list.add(root);
             } else {
-                list.add(document.createTextNode(((NgapOctetString) value).value.toHexString(false)));
+                list.add(document.createTextNode(((NGAP_OctetString) value).value.toHexString(false)));
             }
             return list;
         }
 
-        if (value instanceof NgapPrintableString) {
+        if (value instanceof NGAP_PrintableString) {
             if (isRoot) {
-                var root = document.createElement(((NgapPrintableString) value).getXmlTagName());
-                root.appendChild(document.createTextNode(((NgapPrintableString) value).value));
+                var root = document.createElement(((NGAP_PrintableString) value).getXmlTagName());
+                root.appendChild(document.createTextNode(((NGAP_PrintableString) value).value));
                 list.add(root);
             } else {
-                list.add(document.createTextNode(((NgapPrintableString) value).value));
+                list.add(document.createTextNode(((NGAP_PrintableString) value).value));
             }
             return list;
         }
 
-        if (value instanceof NgapInteger) {
+        if (value instanceof NGAP_Integer) {
             if (isRoot) {
-                var root = document.createElement(((NgapInteger) value).getXmlTagName());
-                root.appendChild(document.createTextNode(Long.toString(((NgapInteger) value).value)));
+                var root = document.createElement(((NGAP_Integer) value).getXmlTagName());
+                root.appendChild(document.createTextNode(Long.toString(((NGAP_Integer) value).value)));
                 list.add(root);
             } else {
-                list.add(document.createTextNode(Long.toString(((NgapInteger) value).value)));
+                list.add(document.createTextNode(Long.toString(((NGAP_Integer) value).value)));
             }
             return list;
         }
 
-        if (value instanceof NgapEnumerated) {
+        if (value instanceof NGAP_Enumerated) {
             if (isRoot) {
-                var root = document.createElement(((NgapEnumerated) value).getXmlTagName());
-                root.appendChild(document.createElement(((NgapEnumerated) value).sValue));
+                var root = document.createElement(((NGAP_Enumerated) value).getXmlTagName());
+                root.appendChild(document.createElement(((NGAP_Enumerated) value).sValue));
                 list.add(root);
             } else {
-                list.add(document.createElement(((NgapEnumerated) value).sValue));
+                list.add(document.createElement(((NGAP_Enumerated) value).sValue));
             }
             return list;
         }
 
-        if (value instanceof NgapChoice) {
-            var choice = (NgapChoice) value;
+        if (value instanceof NGAP_Choice) {
+            var choice = (NGAP_Choice) value;
             var type = choice.getClass();
 
             var identifiers = choice.getMemberIdentifiers();
@@ -178,8 +179,8 @@ public class NgapXerEncoder {
             return list;
         }
 
-        if (value instanceof NgapSequence) {
-            var sequence = (NgapSequence) value;
+        if (value instanceof NGAP_Sequence) {
+            var sequence = (NGAP_Sequence) value;
             var type = sequence.getClass();
 
             var identifiers = sequence.getMemberIdentifiers();
@@ -211,8 +212,8 @@ public class NgapXerEncoder {
             return list;
         }
 
-        if (value instanceof NgapSequenceOf<?>) {
-            var sequenceOf = (NgapSequenceOf<?>) value;
+        if (value instanceof NGAP_SequenceOf<?>) {
+            var sequenceOf = (NGAP_SequenceOf<?>) value;
             var itemType = sequenceOf.getItemType();
             var tagName = itemType.getConstructor().newInstance().getXmlTagName();
 
@@ -235,6 +236,10 @@ public class NgapXerEncoder {
                 list.add(root);
             }
             return list;
+        }
+
+        if (value instanceof NGAP_ProtocolIeContainer) {
+            throw new NotImplementedException("todo");
         }
 
         throw new RuntimeException("unrecognized type in NgapXerEncoder.encodeIe");

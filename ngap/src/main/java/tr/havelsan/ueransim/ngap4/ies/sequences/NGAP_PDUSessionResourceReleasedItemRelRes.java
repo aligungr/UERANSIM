@@ -14,10 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceReleasedItemRelRes extends NgapSequence {
+public class NGAP_PDUSessionResourceReleasedItemRelRes extends NGAP_Sequence {
 
     public NGAP_PDUSessionID pDUSessionID;
-    public NgapOctetString pDUSessionResourceReleaseResponseTransfer;
+    public NGAP_OctetString pDUSessionResourceReleaseResponseTransfer;
 
     @Override
     public String getAsnName() {

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NASSecurityParametersFromNGRAN extends NgapOctetString {
+public class NGAP_NASSecurityParametersFromNGRAN extends NGAP_OctetString {
 
     public NGAP_NASSecurityParametersFromNGRAN(OctetString value) {
         super(value);

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_TAIListForInactive extends NgapSequenceOf<NGAP_TAIListForInactiveItem> {
+public class NGAP_TAIListForInactive extends NGAP_SequenceOf<NGAP_TAIListForInactiveItem> {
 
     public NGAP_TAIListForInactive() {
         super();

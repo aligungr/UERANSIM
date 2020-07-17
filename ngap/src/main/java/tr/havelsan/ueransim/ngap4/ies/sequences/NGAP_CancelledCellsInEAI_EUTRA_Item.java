@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CancelledCellsInEAI_EUTRA_Item extends NgapSequence {
+public class NGAP_CancelledCellsInEAI_EUTRA_Item extends NGAP_Sequence {
 
     public NGAP_EUTRA_CGI eUTRA_CGI;
     public NGAP_NumberOfBroadcasts numberOfBroadcasts;

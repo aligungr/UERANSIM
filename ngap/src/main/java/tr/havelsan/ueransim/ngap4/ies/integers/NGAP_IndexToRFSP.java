@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_IndexToRFSP extends NgapInteger {
+public class NGAP_IndexToRFSP extends NGAP_Integer {
 
     public NGAP_IndexToRFSP(long value) {
         super(value);

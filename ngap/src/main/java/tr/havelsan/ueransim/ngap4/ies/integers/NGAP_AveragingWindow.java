@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AveragingWindow extends NgapInteger {
+public class NGAP_AveragingWindow extends NGAP_Integer {
 
     public NGAP_AveragingWindow(long value) {
         super(value);

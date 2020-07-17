@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CancelAllWarningMessages extends NgapEnumerated {
+public class NGAP_CancelAllWarningMessages extends NGAP_Enumerated {
 
     public static final NGAP_CancelAllWarningMessages TRUE = new NGAP_CancelAllWarningMessages("true");
 
-    public NGAP_CancelAllWarningMessages(String sValue) {
+    protected NGAP_CancelAllWarningMessages(String sValue) {
         super(sValue);
     }
 

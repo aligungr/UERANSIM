@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_RecommendedRANNodeList extends NgapSequenceOf<NGAP_RecommendedRANNodeItem> {
+public class NGAP_RecommendedRANNodeList extends NGAP_SequenceOf<NGAP_RecommendedRANNodeItem> {
 
     public NGAP_RecommendedRANNodeList() {
         super();

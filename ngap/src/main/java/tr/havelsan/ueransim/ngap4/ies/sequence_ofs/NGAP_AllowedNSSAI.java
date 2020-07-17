@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AllowedNSSAI extends NgapSequenceOf<NGAP_AllowedNSSAI_Item> {
+public class NGAP_AllowedNSSAI extends NGAP_SequenceOf<NGAP_AllowedNSSAI_Item> {
 
     public NGAP_AllowedNSSAI() {
         super();

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_QosFlowModifyConfirmList extends NgapSequenceOf<NGAP_QosFlowModifyConfirmItem> {
+public class NGAP_QosFlowModifyConfirmList extends NGAP_SequenceOf<NGAP_QosFlowModifyConfirmItem> {
 
     public NGAP_QosFlowModifyConfirmList() {
         super();

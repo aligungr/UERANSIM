@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_BroadcastPLMNList extends NgapSequenceOf<NGAP_BroadcastPLMNItem> {
+public class NGAP_BroadcastPLMNList extends NGAP_SequenceOf<NGAP_BroadcastPLMNItem> {
 
     public NGAP_BroadcastPLMNList() {
         super();

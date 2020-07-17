@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ResetAll extends NgapEnumerated {
+public class NGAP_ResetAll extends NGAP_Enumerated {
 
     public static final NGAP_ResetAll RESET_ALL = new NGAP_ResetAll("reset-all");
 
-    public NGAP_ResetAll(String sValue) {
+    protected NGAP_ResetAll(String sValue) {
         super(sValue);
     }
 

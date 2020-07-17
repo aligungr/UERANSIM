@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_AMFPointer extends NgapBitString {
+public class NGAP_AMFPointer extends NGAP_BitString {
 
     public NGAP_AMFPointer(BitString value) {
         super(value);

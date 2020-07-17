@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NAS_PDU extends NgapOctetString {
+public class NGAP_NAS_PDU extends NGAP_OctetString {
 
     public NGAP_NAS_PDU(OctetString value) {
         super(value);

@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SerialNumber extends NgapBitString {
+public class NGAP_SerialNumber extends NGAP_BitString {
 
     public NGAP_SerialNumber(BitString value) {
         super(value);

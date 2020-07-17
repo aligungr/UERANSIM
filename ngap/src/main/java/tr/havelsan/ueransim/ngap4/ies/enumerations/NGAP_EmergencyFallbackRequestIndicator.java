@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_EmergencyFallbackRequestIndicator extends NgapEnumerated {
+public class NGAP_EmergencyFallbackRequestIndicator extends NGAP_Enumerated {
 
     public static final NGAP_EmergencyFallbackRequestIndicator EMERGENCY_FALLBACK_REQUESTED = new NGAP_EmergencyFallbackRequestIndicator("emergency-fallback-requested");
 
-    public NGAP_EmergencyFallbackRequestIndicator(String sValue) {
+    protected NGAP_EmergencyFallbackRequestIndicator(String sValue) {
         super(sValue);
     }
 

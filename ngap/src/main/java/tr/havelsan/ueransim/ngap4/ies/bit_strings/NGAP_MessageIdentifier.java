@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_MessageIdentifier extends NgapBitString {
+public class NGAP_MessageIdentifier extends NGAP_BitString {
 
     public NGAP_MessageIdentifier(BitString value) {
         super(value);

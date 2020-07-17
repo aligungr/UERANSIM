@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PLMNSupportItem extends NgapSequence {
+public class NGAP_PLMNSupportItem extends NGAP_Sequence {
 
     public NGAP_PLMNIdentity pLMNIdentity;
     public NGAP_SliceSupportList sliceSupportList;

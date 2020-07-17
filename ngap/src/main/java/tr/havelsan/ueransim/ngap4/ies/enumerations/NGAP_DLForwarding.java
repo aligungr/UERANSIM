@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DLForwarding extends NgapEnumerated {
+public class NGAP_DLForwarding extends NGAP_Enumerated {
 
     public static final NGAP_DLForwarding DL_FORWARDING_PROPOSED = new NGAP_DLForwarding("dl-forwarding-proposed");
 
-    public NGAP_DLForwarding(String sValue) {
+    protected NGAP_DLForwarding(String sValue) {
         super(sValue);
     }
 

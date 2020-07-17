@@ -14,10 +14,10 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PDUSessionResourceToBeSwitchedDLItem extends NgapSequence {
+public class NGAP_PDUSessionResourceToBeSwitchedDLItem extends NGAP_Sequence {
 
     public NGAP_PDUSessionID pDUSessionID;
-    public NgapOctetString pathSwitchRequestTransfer;
+    public NGAP_OctetString pathSwitchRequestTransfer;
 
     @Override
     public String getAsnName() {

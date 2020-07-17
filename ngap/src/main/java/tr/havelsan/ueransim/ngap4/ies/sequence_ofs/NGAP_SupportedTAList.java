@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SupportedTAList extends NgapSequenceOf<NGAP_SupportedTAItem> {
+public class NGAP_SupportedTAList extends NGAP_SequenceOf<NGAP_SupportedTAItem> {
 
     public NGAP_SupportedTAList() {
         super();

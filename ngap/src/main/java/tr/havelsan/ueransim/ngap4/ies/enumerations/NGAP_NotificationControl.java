@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NotificationControl extends NgapEnumerated {
+public class NGAP_NotificationControl extends NGAP_Enumerated {
 
     public static final NGAP_NotificationControl NOTIFICATION_REQUESTED = new NGAP_NotificationControl("notification-requested");
 
-    public NGAP_NotificationControl(String sValue) {
+    protected NGAP_NotificationControl(String sValue) {
         super(sValue);
     }
 

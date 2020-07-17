@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_UEHistoryInformation extends NgapSequenceOf<NGAP_LastVisitedCellItem> {
+public class NGAP_UEHistoryInformation extends NGAP_SequenceOf<NGAP_LastVisitedCellItem> {
 
     public NGAP_UEHistoryInformation() {
         super();

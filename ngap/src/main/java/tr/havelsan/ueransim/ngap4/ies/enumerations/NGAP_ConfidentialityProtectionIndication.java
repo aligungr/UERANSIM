@@ -14,13 +14,13 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ConfidentialityProtectionIndication extends NgapEnumerated {
+public class NGAP_ConfidentialityProtectionIndication extends NGAP_Enumerated {
 
     public static final NGAP_ConfidentialityProtectionIndication REQUIRED = new NGAP_ConfidentialityProtectionIndication("required");
     public static final NGAP_ConfidentialityProtectionIndication PREFERRED = new NGAP_ConfidentialityProtectionIndication("preferred");
     public static final NGAP_ConfidentialityProtectionIndication NOT_NEEDED = new NGAP_ConfidentialityProtectionIndication("not-needed");
 
-    public NGAP_ConfidentialityProtectionIndication(String sValue) {
+    protected NGAP_ConfidentialityProtectionIndication(String sValue) {
         super(sValue);
     }
 

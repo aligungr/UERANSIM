@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_NR_CGIListForWarning extends NgapSequenceOf<NGAP_NR_CGI> {
+public class NGAP_NR_CGIListForWarning extends NGAP_SequenceOf<NGAP_NR_CGI> {
 
     public NGAP_NR_CGIListForWarning() {
         super();

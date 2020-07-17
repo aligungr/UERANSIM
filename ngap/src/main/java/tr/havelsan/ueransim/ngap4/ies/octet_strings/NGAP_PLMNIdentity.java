@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_PLMNIdentity extends NgapOctetString {
+public class NGAP_PLMNIdentity extends NGAP_OctetString {
 
     public NGAP_PLMNIdentity(OctetString value) {
         super(value);

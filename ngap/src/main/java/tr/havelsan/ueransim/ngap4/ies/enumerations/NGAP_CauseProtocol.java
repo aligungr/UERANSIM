@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_CauseProtocol extends NgapEnumerated {
+public class NGAP_CauseProtocol extends NGAP_Enumerated {
 
     public static final NGAP_CauseProtocol TRANSFER_SYNTAX_ERROR = new NGAP_CauseProtocol("transfer-syntax-error");
     public static final NGAP_CauseProtocol ABSTRACT_SYNTAX_ERROR_REJECT = new NGAP_CauseProtocol("abstract-syntax-error-reject");
@@ -24,7 +24,7 @@ public class NGAP_CauseProtocol extends NgapEnumerated {
     public static final NGAP_CauseProtocol ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE = new NGAP_CauseProtocol("abstract-syntax-error-falsely-constructed-message");
     public static final NGAP_CauseProtocol UNSPECIFIED = new NGAP_CauseProtocol("unspecified");
 
-    public NGAP_CauseProtocol(String sValue) {
+    protected NGAP_CauseProtocol(String sValue) {
         super(sValue);
     }
 

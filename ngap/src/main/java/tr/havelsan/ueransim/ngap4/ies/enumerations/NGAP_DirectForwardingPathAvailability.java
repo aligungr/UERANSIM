@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_DirectForwardingPathAvailability extends NgapEnumerated {
+public class NGAP_DirectForwardingPathAvailability extends NGAP_Enumerated {
 
     public static final NGAP_DirectForwardingPathAvailability DIRECT_PATH_AVAILABLE = new NGAP_DirectForwardingPathAvailability("direct-path-available");
 
-    public NGAP_DirectForwardingPathAvailability(String sValue) {
+    protected NGAP_DirectForwardingPathAvailability(String sValue) {
         super(sValue);
     }
 

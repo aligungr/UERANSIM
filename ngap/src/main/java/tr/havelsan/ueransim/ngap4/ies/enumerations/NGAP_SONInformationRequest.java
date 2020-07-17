@@ -14,11 +14,11 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SONInformationRequest extends NgapEnumerated {
+public class NGAP_SONInformationRequest extends NGAP_Enumerated {
 
     public static final NGAP_SONInformationRequest XN_TNL_CONFIGURATION_INFO = new NGAP_SONInformationRequest("xn-TNL-configuration-info");
 
-    public NGAP_SONInformationRequest(String sValue) {
+    protected NGAP_SONInformationRequest(String sValue) {
         super(sValue);
     }
 

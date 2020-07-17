@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_ProtocolExtensionID extends NgapInteger {
+public class NGAP_ProtocolExtensionID extends NGAP_Integer {
 
     public NGAP_ProtocolExtensionID(long value) {
         super(value);

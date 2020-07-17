@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
 
 import java.util.List;
 
-public class NGAP_SourceToTarget_TransparentContainer extends NgapOctetString {
+public class NGAP_SourceToTarget_TransparentContainer extends NGAP_OctetString {
 
     public NGAP_SourceToTarget_TransparentContainer(OctetString value) {
         super(value);
