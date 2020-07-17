@@ -41,6 +41,7 @@ import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_UserLocationInformation;
 import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_Criticality;
 import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_ProcedureCode;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_ProtocolIE_ID;
 import tr.havelsan.ueransim.ngap4.ies.octet_strings.*;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SliceSupportList;
@@ -63,23 +64,6 @@ import java.util.Scanner;
 public class Program {
 
     public static void main(String[] args) {
-        {
-            var x = new NGAP_PDU();
-            x.initiatingMessage = new NGAP_InitiatingMessage();
-            x.initiatingMessage.criticality = NGAP_Criticality.IGNORE;
-            x.initiatingMessage.procedureCode = new NGAP_ProcedureCode(46);
-            x.initiatingMessage.value = new NGAP_MessageChoice();
-            x.initiatingMessage.value.uplinkNASTransport = new NGAP_UplinkNASTransport();
-            x.initiatingMessage.value.uplinkNASTransport.protocolIEs = new NGAP_ProtocolIEContainer();
-            x.initiatingMessage.value.uplinkNASTransport.protocolIEs.list.add(new NGAP_ProtocolIE(NgapMessageType.UplinkNASTransport));
-            x.initiatingMessage.value.uplinkNASTransport.protocolIEs.list.add(new NGAP_ProtocolIE(NgapMessageType.UplinkNASTransport));
-
-            var xx = NgapXerEncoder.encode(x);
-            System.out.println(xx);
-            System.exit(0);
-        }
-
-
         MtsInitializer.initMts();
         initLogging();
 
