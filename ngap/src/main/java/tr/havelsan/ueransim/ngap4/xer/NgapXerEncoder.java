@@ -253,31 +253,37 @@ public class NgapXerEncoder {
             var factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             var doc = builder.parse(new InputSource(new StringReader(xer)));
-            return decode(doc.getDocumentElement(), type);
+            return decode(doc.getDocumentElement(), type, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static <T extends NGAP_Value> NGAP_Value decode(Node node, Class<T> type) throws Exception {
+    private static <T extends NGAP_Value> NGAP_Value decode(Node node, Class<T> type, boolean explicitTag) throws Exception {
         if (NGAP_Choice.class.isAssignableFrom(type)) {
             var choice = (NGAP_Choice) type.getDeclaredConstructor().newInstance();
 
-            var element = (Element) node;
-            if (!element.getTagName().equals(choice.getXmlTagName())) {
-                throw new RuntimeException("bad element name");
-            }
+            Element child;
 
-            var children = element.getChildNodes();
-            if (children.getLength() == 0) {
-                return choice;
-            }
+            if (explicitTag) {
+                var element = (Element) node;
+                if (!element.getTagName().equals(choice.getXmlTagName())) {
+                    throw new RuntimeException("bad element name");
+                }
 
-            if (children.getLength() > 1) {
-                throw new RuntimeException("multiple children found in choice element");
-            }
+                var children = element.getChildNodes();
+                if (children.getLength() == 0) {
+                    return choice;
+                }
 
-            var child = (Element) children.item(0);
+                if (children.getLength() > 1) {
+                    throw new RuntimeException("multiple children found in choice element");
+                }
+
+                child = (Element) children.item(0);
+            } else {
+                child = (Element) node;
+            }
 
             int memberIndex = -1;
             var memberNames = choice.getMemberNames();
@@ -295,7 +301,7 @@ public class NgapXerEncoder {
 
             var field = type.getField(choice.getMemberIdentifiers()[memberIndex]);
             var fieldType = (Class<? extends NGAP_Value>) field.getType();
-            field.set(choice, decode(child, fieldType));
+            field.set(choice, decode(child, fieldType, false));
 
             return choice;
         }
