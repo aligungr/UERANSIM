@@ -83,11 +83,11 @@ public class NgapXerEncoder {
         return writer.getBuffer().toString().replaceAll("[\n\r]", "");
     }
 
-    private static List<Node> encode(Document document, Object value, boolean isRoot) throws Exception {
+    private static List<Node> encode(Document document, Object value, boolean explicitTag) throws Exception {
         List<Node> list = new ArrayList<>();
 
         if (value instanceof NGAP_BitString) {
-            if (isRoot) {
+            if (explicitTag) {
                 var root = document.createElement(((NGAP_BitString) value).getXmlTagName());
                 root.appendChild(document.createTextNode(((NGAP_BitString) value).value.toBinaryString(false)));
                 list.add(root);
@@ -98,7 +98,7 @@ public class NgapXerEncoder {
         }
 
         if (value instanceof NGAP_OctetString) {
-            if (isRoot) {
+            if (explicitTag) {
                 var root = document.createElement(((NGAP_OctetString) value).getXmlTagName());
                 root.appendChild(document.createTextNode(((NGAP_OctetString) value).value.toHexString(false)));
                 list.add(root);
@@ -109,7 +109,7 @@ public class NgapXerEncoder {
         }
 
         if (value instanceof NGAP_PrintableString) {
-            if (isRoot) {
+            if (explicitTag) {
                 var root = document.createElement(((NGAP_PrintableString) value).getXmlTagName());
                 root.appendChild(document.createTextNode(((NGAP_PrintableString) value).value));
                 list.add(root);
@@ -120,7 +120,7 @@ public class NgapXerEncoder {
         }
 
         if (value instanceof NGAP_Integer) {
-            if (isRoot) {
+            if (explicitTag) {
                 var root = document.createElement(((NGAP_Integer) value).getXmlTagName());
                 root.appendChild(document.createTextNode(Long.toString(((NGAP_Integer) value).value)));
                 list.add(root);
@@ -131,7 +131,7 @@ public class NgapXerEncoder {
         }
 
         if (value instanceof NGAP_Enumerated) {
-            if (isRoot) {
+            if (explicitTag) {
                 var root = document.createElement(((NGAP_Enumerated) value).getXmlTagName());
                 root.appendChild(document.createElement(((NGAP_Enumerated) value).sValue));
                 list.add(root);
@@ -174,7 +174,7 @@ public class NgapXerEncoder {
                 }
             }
 
-            if (isRoot) {
+            if (explicitTag) {
                 var root = document.createElement(choice.getXmlTagName());
                 if (element != null) {
                     root.appendChild(element);
@@ -207,7 +207,7 @@ public class NgapXerEncoder {
                         element.appendChild(item);
                     }
 
-                    if (isRoot) {
+                    if (explicitTag) {
                         root.appendChild(element);
                     } else {
                         list.add(element);
@@ -215,7 +215,7 @@ public class NgapXerEncoder {
                 }
             }
 
-            if (isRoot) {
+            if (explicitTag) {
                 list.add(root);
             }
 
@@ -232,14 +232,14 @@ public class NgapXerEncoder {
                     element.appendChild(inner);
                 }
 
-                if (isRoot) {
+                if (explicitTag) {
                     root.appendChild(element);
                 } else {
                     list.add(element);
                 }
             }
 
-            if (isRoot) {
+            if (explicitTag) {
                 list.add(root);
             }
             return list;
