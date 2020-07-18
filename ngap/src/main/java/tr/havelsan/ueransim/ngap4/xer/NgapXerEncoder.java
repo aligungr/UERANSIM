@@ -29,6 +29,7 @@ package tr.havelsan.ueransim.ngap4.xer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import tr.havelsan.ueransim.ngap4.core.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,6 +38,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +57,7 @@ public class NgapXerEncoder {
 
         List<Node> nodes;
         try {
-            nodes = encodeIe(document, value, true);
+            nodes = encode(document, value, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -81,7 +83,7 @@ public class NgapXerEncoder {
         return writer.getBuffer().toString().replaceAll("[\n\r]", "");
     }
 
-    private static List<Node> encodeIe(Document document, Object value, boolean isRoot) throws Exception {
+    private static List<Node> encode(Document document, Object value, boolean isRoot) throws Exception {
         List<Node> list = new ArrayList<>();
 
         if (value instanceof NGAP_BitString) {
@@ -165,7 +167,7 @@ public class NgapXerEncoder {
 
             if (j != -1) {
                 element = document.createElement(choice.getMemberNames()[j]);
-                var node = encodeIe(document, object, false);
+                var node = encode(document, object, false);
 
                 for (var item : node) {
                     element.appendChild(item);
@@ -201,7 +203,7 @@ public class NgapXerEncoder {
                 var obj = field.get(sequence);
                 if (obj != null) {
                     var element = document.createElement(names[i]);
-                    for (var item : encodeIe(document, obj, false)) {
+                    for (var item : encode(document, obj, false)) {
                         element.appendChild(item);
                     }
 
@@ -226,7 +228,7 @@ public class NgapXerEncoder {
 
             for (var item : sequenceOf.list) {
                 var element = document.createElement(((NGAP_Value) item).getXmlTagName());
-                for (var inner : encodeIe(document, item, false)) {
+                for (var inner : encode(document, item, false)) {
                     element.appendChild(inner);
                 }
 
@@ -244,5 +246,23 @@ public class NgapXerEncoder {
         }
 
         throw new RuntimeException("unrecognized type in NgapXerEncoder.encodeIe");
+    }
+
+    public static NGAP_Value decode(String xer, Class<? extends NGAP_Value> type) {
+        var factory = DocumentBuilderFactory.newInstance();
+
+        Document doc;
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            doc = builder.parse(new InputSource(new StringReader(xer)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return decode(doc.getDocumentElement(), type);
+    }
+
+    private static NGAP_Value decode(Node node, Class<? extends NGAP_Value> type) {
+        return null;
     }
 }
