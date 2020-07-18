@@ -248,21 +248,58 @@ public class NgapXerEncoder {
         throw new RuntimeException("unrecognized type in NgapXerEncoder.encodeIe");
     }
 
-    public static NGAP_Value decode(String xer, Class<? extends NGAP_Value> type) {
-        var factory = DocumentBuilderFactory.newInstance();
-
-        Document doc;
+    public static <T extends NGAP_Value> NGAP_Value decode(String xer, Class<T> type) {
         try {
+            var factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            doc = builder.parse(new InputSource(new StringReader(xer)));
+            var doc = builder.parse(new InputSource(new StringReader(xer)));
+            return decode(doc.getDocumentElement(), type);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return decode(doc.getDocumentElement(), type);
     }
 
-    private static NGAP_Value decode(Node node, Class<? extends NGAP_Value> type) {
+    private static <T extends NGAP_Value> NGAP_Value decode(Node node, Class<T> type) throws Exception {
+        if (NGAP_Choice.class.isAssignableFrom(type)) {
+            var choice = (NGAP_Choice) type.getDeclaredConstructor().newInstance();
+
+            var element = (Element) node;
+            if (!element.getTagName().equals(choice.getXmlTagName())) {
+                throw new RuntimeException("bad element name");
+            }
+
+            var children = element.getChildNodes();
+            if (children.getLength() == 0) {
+                return choice;
+            }
+
+            if (children.getLength() > 1) {
+                throw new RuntimeException("multiple children found in choice element");
+            }
+
+            var child = (Element) children.item(0);
+
+            int memberIndex = -1;
+            var memberNames = choice.getMemberNames();
+
+            for (int i = 0; i < memberNames.length; i++) {
+                if (child.getTagName().equals(memberNames[i])) {
+                    memberIndex = i;
+                    break;
+                }
+            }
+
+            if (memberIndex == -1) {
+                throw new RuntimeException("member '" + child.getTagName() + "' not found for choice");
+            }
+
+            var field = type.getField(choice.getMemberIdentifiers()[memberIndex]);
+            var fieldType = (Class<? extends NGAP_Value>) field.getType();
+            field.set(choice, decode(child, fieldType));
+
+            return choice;
+        }
+
         return null;
     }
 }
