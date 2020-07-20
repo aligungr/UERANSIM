@@ -330,6 +330,33 @@ public class NgapXerEncoder {
             return type.getConstructor(long.class).newInstance(Long.parseLong(child.getNodeValue()));
         }
 
+        if (NGAP_BitString.class.isAssignableFrom(type)) {
+            if (nodes.getLength() > 1) {
+                throw new RuntimeException("multiple children in bit string value");
+            }
+
+            var child = nodes.item(0);
+            return type.getConstructor(String.class).newInstance(child.getNodeValue());
+        }
+
+        if (NGAP_OctetString.class.isAssignableFrom(type)) {
+            if (nodes.getLength() > 1) {
+                throw new RuntimeException("multiple children in octet string value");
+            }
+
+            var child = nodes.item(0);
+            return type.getConstructor(String.class).newInstance(child.getNodeValue());
+        }
+
+        if (NGAP_PrintableString.class.isAssignableFrom(type)) {
+            if (nodes.getLength() > 1) {
+                throw new RuntimeException("multiple children in printable string value");
+            }
+
+            var child = nodes.item(0);
+            return type.getConstructor(String.class).newInstance(child.getNodeValue());
+        }
+
         if (NGAP_Enumerated.class.isAssignableFrom(type)) {
             if (nodes.getLength() > 1) {
                 throw new RuntimeException("multiple children in integer value");
