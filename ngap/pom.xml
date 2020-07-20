@@ -16,7 +16,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <executions>
                     <execution>
-                        <id>crypto-native make command</id>
+                        <id>ngap-native make command</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>exec</goal>
