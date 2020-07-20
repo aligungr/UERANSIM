@@ -26,17 +26,16 @@
 
 package tr.havelsan.ueransim.utils;
 
-import fr.marben.asnsdk.japi.spe.ExtSequenceValue;
-import fr.marben.asnsdk.japi.spe.SequenceValue;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
 public class IncomingMessage {
     public final NGAP_PDU ngapPdu;
-    public final SequenceValue ngapMessage;
+    public final NGAP_BaseMessage ngapMessage;
     public final NasMessage nasMessage;
 
-    public IncomingMessage(NGAP_PDU ngapPdu, SequenceValue ngapMessage, NasMessage nasMessage) {
+    public IncomingMessage(NGAP_PDU ngapPdu, NGAP_BaseMessage ngapMessage, NasMessage nasMessage) {
         this.ngapPdu = ngapPdu;
         this.ngapMessage = ngapMessage;
         this.nasMessage = nasMessage;
@@ -52,7 +51,7 @@ public class IncomingMessage {
         return null;
     }
 
-    public <T extends ExtSequenceValue> T getNgapMessage(Class<T> messageType) {
+    public <T extends NGAP_BaseMessage> T getNgapMessage(Class<T> messageType) {
         if (ngapMessage == null) {
             return null;
         }

@@ -1,0 +1,31 @@
+package tr.havelsan.ueransim.ngap0.ies.sequences;
+
+import tr.havelsan.ueransim.ngap0.core.*;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.*;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.*;
+
+public class NGAP_GTPTunnel extends NGAP_Sequence {
+
+    public NGAP_TransportLayerAddress transportLayerAddress;
+    public NGAP_GTP_TEID gTP_TEID;
+
+    @Override
+    public String getAsnName() {
+        return "GTPTunnel";
+    }
+
+    @Override
+    public String getXmlTagName() {
+        return "GTPTunnel";
+    }
+
+    @Override
+    public String[] getMemberNames() {
+        return new String[]{"transportLayerAddress", "gTP-TEID"};
+    }
+
+    @Override
+    public String[] getMemberIdentifiers() {
+        return new String[]{"transportLayerAddress", "gTP_TEID"};
+    }
+}

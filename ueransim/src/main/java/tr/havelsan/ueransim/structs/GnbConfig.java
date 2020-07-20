@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.ngap2.SupportedTA;
+import tr.havelsan.ueransim.ngap1.SupportedTA;
 
 public class GnbConfig {
     public final int gnbId;

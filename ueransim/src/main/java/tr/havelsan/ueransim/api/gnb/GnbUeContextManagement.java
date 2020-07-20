@@ -30,23 +30,21 @@ import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.ngap2.NgapMessageType;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupResponse;
 import tr.havelsan.ueransim.utils.Debugging;
 
 import java.util.UUID;
 
 public class GnbUeContextManagement {
 
-    public static void handleInitialContextSetup(GnbSimContext ctx, UUID associatedUe, InitialContextSetupRequest message) {
+    public static void handleInitialContextSetup(GnbSimContext ctx, UUID associatedUe, NGAP_InitialContextSetupRequest message) {
         Debugging.assertThread(ctx);
 
         // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NgapBuilder(NgapMessageType.InitialContextSetupResponse));
+        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NGAP_InitialContextSetupResponse());
 
-        var nasMessage = NgapInternal.extractNasMessage(message);
+        var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
             Simulation.pushUeEvent(ctx.simCtx, associatedUe, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
