@@ -26,8 +26,8 @@
 
 package tr.havelsan.ueransim.events.gnb;
 
-import tr.havelsan.ueransim.ngap3.NgapEncoding;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.structs.Guami;
 
 public class SctpReceiveEvent extends GnbEvent {

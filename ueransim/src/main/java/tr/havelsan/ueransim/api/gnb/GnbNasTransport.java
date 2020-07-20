@@ -31,19 +31,20 @@ import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap2.NgapUtils;
-import tr.havelsan.ueransim.ngap3.NgapDataUnitType;
-import tr.havelsan.ueransim.ngap3.NgapEncoding;
-import tr.havelsan.ueransim.ngap4.core.NGAP_BaseMessage;
-import tr.havelsan.ueransim.ngap4.ies.bit_strings.NGAP_AMFSetID;
-import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_RRCEstablishmentCause;
-import tr.havelsan.ueransim.ngap4.ies.octet_strings.NGAP_NAS_PDU;
-import tr.havelsan.ueransim.ngap4.ies.octet_strings.NGAP_NGAP_Message;
-import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_AllowedNSSAI;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_InitialUEMessage;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_RerouteNASRequest;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_UplinkNASTransport;
+import tr.havelsan.ueransim.ngap0.Ngap;
+import tr.havelsan.ueransim.ngap1.NgapUtils;
+import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
+import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_AMFSetID;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RRCEstablishmentCause;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NGAP_Message;
+import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_DownlinkNASTransport;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialUEMessage;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_RerouteNASRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_UplinkNASTransport;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -101,7 +102,7 @@ public class GnbNasTransport {
 
         var initialUeMessage = (NGAP_InitialUEMessage) NgapEncoding.decodeAper(ngapMessage.value, NgapDataUnitType.InitialUEMessage);
 
-        var ngapBuilder = NgapUtils.deepClone(initialUeMessage);
+        var ngapBuilder = Ngap.deepClone(initialUeMessage);
         if (allowedNssai != null) {
             ngapBuilder.addProtocolIe(allowedNssai);
         }

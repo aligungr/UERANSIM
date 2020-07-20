@@ -30,8 +30,8 @@ import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_InitialContextSetupResponse;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupResponse;
 import tr.havelsan.ueransim.utils.Debugging;
 
 import java.util.UUID;

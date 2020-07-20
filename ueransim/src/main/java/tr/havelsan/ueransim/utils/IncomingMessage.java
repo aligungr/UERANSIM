@@ -27,8 +27,8 @@
 package tr.havelsan.ueransim.utils;
 
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap4.core.NGAP_BaseMessage;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
 public class IncomingMessage {
     public final NGAP_PDU ngapPdu;

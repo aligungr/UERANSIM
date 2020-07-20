@@ -34,15 +34,16 @@ import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.ngap2.NgapUtils;
-import tr.havelsan.ueransim.ngap3.NgapEncoding;
-import tr.havelsan.ueransim.ngap4.core.NGAP_BaseMessage;
-import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_UserLocationInformation;
-import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap4.msg.*;
-import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
-import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
+import tr.havelsan.ueransim.ngap0.Ngap;
+import tr.havelsan.ueransim.ngap1.NgapUtils;
+import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap0.msg.*;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -111,7 +112,10 @@ public class GNodeB {
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
-        var ngapMessage = NgapUtils.getMessageFromPdu(ngapPdu);
+        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
+        if (ngapMessage == null) {
+            return;
+        }
 
         if (ngapMessage.isUeAssociated()) {
             receiveFromNetworkUeAssociated(ctx, associatedAmf, ngapPdu);
@@ -123,7 +127,7 @@ public class GNodeB {
     private static void receiveFromNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
-        var ngapMessage = NgapUtils.getMessageFromPdu(ngapPdu);
+        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
 
         if (ngapMessage instanceof NGAP_NGSetupResponse) {
             GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
@@ -137,7 +141,7 @@ public class GNodeB {
     private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
-        var ngapMessage = NgapUtils.getMessageFromPdu(ngapPdu);
+        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
         UUID associatedUe;
 
         // Find associated UE

@@ -27,11 +27,11 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.ngap2.NgapUtils;
-import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_PagingDRX;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupFailure;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupRequest;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupResponse;
+import tr.havelsan.ueransim.ngap1.NgapUtils;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;

@@ -1,0 +1,35 @@
+package tr.havelsan.ueransim.ngap0.ies.sequences;
+
+import tr.havelsan.ueransim.ngap0.core.*;
+import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.*;
+import tr.havelsan.ueransim.ngap0.ies.choices.*;
+
+public class NGAP_HandoverRequestAcknowledgeTransfer extends NGAP_Sequence {
+
+    public NGAP_UPTransportLayerInformation dL_NGU_UP_TNLInformation;
+    public NGAP_UPTransportLayerInformation dLForwardingUP_TNLInformation;
+    public NGAP_SecurityResult securityResult;
+    public NGAP_QosFlowSetupResponseListHOReqAck qosFlowSetupResponseList;
+    public NGAP_QosFlowList qosFlowFailedToSetupList;
+    public NGAP_DataForwardingResponseDRBList dataForwardingResponseDRBList;
+
+    @Override
+    public String getAsnName() {
+        return "HandoverRequestAcknowledgeTransfer";
+    }
+
+    @Override
+    public String getXmlTagName() {
+        return "HandoverRequestAcknowledgeTransfer";
+    }
+
+    @Override
+    public String[] getMemberNames() {
+        return new String[]{"dL-NGU-UP-TNLInformation", "dLForwardingUP-TNLInformation", "securityResult", "qosFlowSetupResponseList", "qosFlowFailedToSetupList", "dataForwardingResponseDRBList"};
+    }
+
+    @Override
+    public String[] getMemberIdentifiers() {
+        return new String[]{"dL_NGU_UP_TNLInformation", "dLForwardingUP_TNLInformation", "securityResult", "qosFlowSetupResponseList", "qosFlowFailedToSetupList", "dataForwardingResponseDRBList"};
+    }
+}

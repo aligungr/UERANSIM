@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.sys;
 
-import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
+import tr.havelsan.ueransim.ngap1.UserLocationInformationNr;
 
 import java.util.UUID;
 

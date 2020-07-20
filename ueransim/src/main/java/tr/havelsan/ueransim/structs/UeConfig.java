@@ -27,7 +27,7 @@
 package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
-import tr.havelsan.ueransim.ngap2.UserLocationInformationNr;
+import tr.havelsan.ueransim.ngap1.UserLocationInformationNr;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UeConfig {
