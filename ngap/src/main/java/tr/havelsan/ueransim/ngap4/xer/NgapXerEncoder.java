@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import tr.havelsan.ueransim.ngap4.core.*;
+import tr.havelsan.ueransim.ngap4.pdu.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -255,10 +256,89 @@ public class NgapXerEncoder {
             var factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             var doc = builder.parse(new InputSource(new StringReader(xer)));
-            return decode(doc.getChildNodes().item(0).getChildNodes(), type);
+            return decodeRoot(doc.getChildNodes().item(0), type);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String getXmlTagNameOfClass(Class<? extends NGAP_Value> type) {
+        try {
+            if (NGAP_BitString.class.isAssignableFrom(type)) {
+                return type.getDeclaredConstructor(String.class).newInstance("").getXmlTagName();
+            }
+            if (NGAP_OctetString.class.isAssignableFrom(type)) {
+                return type.getDeclaredConstructor(String.class).newInstance("").getXmlTagName();
+            }
+            if (NGAP_PrintableString.class.isAssignableFrom(type)) {
+                return type.getDeclaredConstructor(String.class).newInstance("").getXmlTagName();
+            }
+            if (NGAP_Integer.class.isAssignableFrom(type)) {
+                return type.getDeclaredConstructor(long.class).newInstance(0).getXmlTagName();
+            }
+            if (NGAP_Enumerated.class.isAssignableFrom(type)) {
+                var ctor = type.getDeclaredConstructor(String.class);
+                ctor.setAccessible(true);
+                return ctor.newInstance("").getXmlTagName();
+            }
+            return type.getDeclaredConstructor().newInstance().getXmlTagName();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Class<? extends NGAP_Value> findTypeFromTagName(String tag) throws Exception {
+        if (NGAP_ProtocolIE.newInstanceFromTag(tag) != null) {
+            return NGAP_ProtocolIE.class;
+        }
+
+        Class<? extends NGAP_Value>[] arr = new Class[]{
+                NGAP_InitiatingMessage.class,
+                NGAP_PDU.class,
+                NGAP_ProtocolIEContainer.class,
+                NGAP_SuccessfulOutcome.class,
+                NGAP_UnsuccessfulOutcome.class,
+
+                NGAP_BitString.class,
+                NGAP_Integer.class,
+                NGAP_OctetString.class,
+                NGAP_PrintableString.class,
+        };
+
+        for (var item : arr) {
+            if (getXmlTagNameOfClass(item).equals(tag)) {
+                return item;
+            }
+        }
+
+        for (var item : NGAP_MessageChoice.class.getFields()) {
+            var t = item.getType();
+            if (!NGAP_Value.class.isAssignableFrom(t)) {
+                continue;
+            }
+            if (getXmlTagNameOfClass((Class<? extends NGAP_Value>) t).equals(tag)) {
+                return (Class<? extends NGAP_Value>) t;
+            }
+        }
+
+        for (var item : NGAP_IEChoice.class.getFields()) {
+            var t = item.getType();
+            if (!NGAP_Value.class.isAssignableFrom(t)) {
+                continue;
+            }
+            if (getXmlTagNameOfClass((Class<? extends NGAP_Value>) t).equals(tag)) {
+                return (Class<? extends NGAP_Value>) t;
+            }
+        }
+
+        throw new RuntimeException("type not found for tag: " + tag);
+    }
+
+    private static <T extends NGAP_Value> NGAP_Value decodeRoot(Node node, Class<T> type) throws Exception {
+        String tagName = node instanceof Element ? ((Element) node).getTagName() : "";
+        var neededType = findTypeFromTagName(tagName);
+
+        return decode(node.getChildNodes(), neededType, tagName);
     }
 
     private static int findMemberIndex(NGAP_Choice choice, String memberName) {
@@ -281,7 +361,7 @@ public class NgapXerEncoder {
         return -1;
     }
 
-    private static <T extends NGAP_Value> NGAP_Value decode(NodeList nodes, Class<T> type) throws Exception {
+    private static <T extends NGAP_Value> NGAP_Value decode(NodeList nodes, Class<T> type, String rootTag) throws Exception {
         if (NGAP_Choice.class.isAssignableFrom(type)) {
             var choice = (NGAP_Choice) type.getDeclaredConstructor().newInstance();
 
@@ -297,7 +377,7 @@ public class NgapXerEncoder {
                 }
 
                 var field = type.getField(choice.getMemberIdentifiers()[memberIndex]);
-                var decoded = decode(child.getChildNodes(), (Class<NGAP_Value>) field.getType());
+                var decoded = decode(child.getChildNodes(), (Class<NGAP_Value>) field.getType(), child.getTagName());
                 field.set(choice, decoded);
             }
 
@@ -305,7 +385,13 @@ public class NgapXerEncoder {
         }
 
         if (NGAP_Sequence.class.isAssignableFrom(type)) {
-            var sequence = (NGAP_Sequence) type.getDeclaredConstructor().newInstance();
+            NGAP_Sequence sequence;
+
+            if (NGAP_ProtocolIE.class.isAssignableFrom(type)) {
+                sequence = NGAP_ProtocolIE.newInstanceFromTag(rootTag);
+            } else {
+                sequence = (NGAP_Sequence) type.getDeclaredConstructor().newInstance();
+            }
 
             for (int i = 0; i < nodes.getLength(); i++) {
                 var child = (Element) nodes.item(i);
@@ -314,11 +400,22 @@ public class NgapXerEncoder {
                     throw new RuntimeException("invalid member name in sequence value");
                 }
                 var field = type.getField(sequence.getMemberIdentifiers()[memberIndex]);
-                var decoded = decode(child.getChildNodes(), (Class<NGAP_Value>) field.getType());
+                var decoded = decode(child.getChildNodes(), (Class<NGAP_Value>) field.getType(), child.getTagName());
                 field.set(sequence, decoded);
             }
 
             return sequence;
+        }
+
+        if (NGAP_SequenceOf.class.isAssignableFrom(type)) {
+            var sequenceOf = (NGAP_SequenceOf) type.getDeclaredConstructor().newInstance();
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                var child = (Element) nodes.item(i);
+                sequenceOf.list.add(decodeRoot(child, sequenceOf.getItemType()));
+            }
+
+            return sequenceOf;
         }
 
         if (NGAP_Integer.class.isAssignableFrom(type)) {

@@ -97,11 +97,11 @@ public class NGAP_MessageChoice extends NGAP_Choice {
 
     @Override
     public String getAsnName() {
-        return "value";
+        throw new IllegalStateException();
     }
 
     @Override
     public String getXmlTagName() {
-        return "value";
+        throw new IllegalStateException();
     }
 }
