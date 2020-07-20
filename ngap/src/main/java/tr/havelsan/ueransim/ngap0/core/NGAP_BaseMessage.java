@@ -107,7 +107,9 @@ public abstract class NGAP_BaseMessage extends NGAP_Sequence {
     }
 
     public NasMessage getNasMessage() {
-        return NasDecoder.nasPdu(getProtocolIe(NGAP_NAS_PDU.class).value);
+        var ie = getProtocolIe(NGAP_NAS_PDU.class);
+        if (ie == null) return null;
+        return NasDecoder.nasPdu(ie.value);
     }
 
     public boolean isProtocolIeUsable(Class<? extends NGAP_Value> type) {
