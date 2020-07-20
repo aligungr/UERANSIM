@@ -32,6 +32,7 @@ import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.ngap3.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap3.NgapEncoding;
 import tr.havelsan.ueransim.ngap4.core.NGAP_BaseMessage;
@@ -99,11 +100,11 @@ public class GnbNasTransport {
         var amfSetId = message.getProtocolIe(NGAP_AMFSetID.class);
         var allowedNssai = message.getProtocolIe(NGAP_AllowedNSSAI.class);
 
-        var initialUeMessage = NgapEncoding.decodeAper(ngapMessage.value, NgapDataUnitType.InitialUEMessage);
+        var initialUeMessage = (NGAP_InitialUEMessage) NgapEncoding.decodeAper(ngapMessage.value, NgapDataUnitType.InitialUEMessage);
 
-        var ngapBuilder = NgapBuilder.wrapMessage(initialUeMessage);
+        var ngapBuilder = NgapUtils.deepCopy(initialUeMessage);
         if (allowedNssai != null) {
-            ngapBuilder.addProtocolIE(allowedNssai);
+            ngapBuilder.addProtocolIe(allowedNssai);
         }
 
         var newAmf = GnbUeManagement.selectNewAmfForReAllocation(ctx, associatedAmf, new Bit10(amfSetId.value.intValue()));

@@ -32,7 +32,9 @@ import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.ngap4.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap4.core.NGAP_BitString;
+import tr.havelsan.ueransim.ngap4.core.NGAP_Value;
 import tr.havelsan.ueransim.ngap4.ies.bit_strings.NGAP_NRCellIdentity;
 import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_GNB_ID;
 import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_GlobalRANNodeID;
@@ -41,11 +43,23 @@ import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SupportedTAList;
 import tr.havelsan.ueransim.ngap4.ies.sequences.*;
+import tr.havelsan.ueransim.ngap4.msg.NGAP_InitialUEMessage;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
 public class NgapUtils {
+
+    public static NGAP_BaseMessage getMessageFromPdu(NGAP_PDU pdu) {
+        // todo:
+        throw new RuntimeException();
+    }
+
+    public static <T extends NGAP_Value> T deepCopy(T value) {
+        // todo:
+        throw new RuntimeException();
+    }
 
     public static NGAP_PLMNIdentity plmnEncode(VPlmn plmn) {
         int mcc = plmn.mcc.intValue();

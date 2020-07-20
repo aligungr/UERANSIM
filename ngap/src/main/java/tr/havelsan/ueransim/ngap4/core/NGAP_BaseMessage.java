@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap4.ies.octet_strings.NGAP_NAS_PDU;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
 
 public abstract class NGAP_BaseMessage extends NGAP_Sequence {
 
@@ -69,6 +70,11 @@ public abstract class NGAP_BaseMessage extends NGAP_Sequence {
     public boolean isUeAssociated() {
         //var ies = extractProtocolIe(ngapMessage, RAN_UE_NGAP_ID.class);
         //return ies.size() > 0;
+        // todo
+        throw new RuntimeException();
+    }
+
+    public NGAP_PDU buildPdu() {
         // todo
         throw new RuntimeException();
     }

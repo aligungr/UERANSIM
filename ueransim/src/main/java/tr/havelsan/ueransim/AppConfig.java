@@ -34,9 +34,8 @@ import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.ngap2.NgapUtils;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.ngap3.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.sctp.MockedSctpClient;
 import tr.havelsan.ueransim.sctp.SctpClient;
@@ -107,9 +106,9 @@ public class AppConfig {
 
             @Override
             public void onMessage(byte[] data, Queue<Byte[]> queue) {
-                var ngapPdu = NgapUtils.perDecode(NGAP_PDU.class, data);
-                var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
-                var nasMessage = NgapInternal.extractNasMessage(ngapPdu);
+                var ngapPdu = NgapEncoding.decodeAper(data);
+                var ngapMessage = NgapUtils.getMessageFromPdu(ngapPdu);
+                var nasMessage = ngapMessage.getNasMessage();
                 var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, nasMessage);
                 Queue<String> outs = new ArrayDeque<>();
                 onMessage(incomingMessage, outs);

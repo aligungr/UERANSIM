@@ -26,13 +26,12 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupResponse;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapMessageType;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.NGAP_PagingDRX;
+import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupFailure;
+import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupRequest;
+import tr.havelsan.ueransim.ngap4.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -46,17 +45,16 @@ public class GnbInterfaceManagement {
         Logging.funcIn("Starting: NGSetupRequest");
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
-        GNodeB.sendToNetworkNonUe(ctx, associatedAmf,
-                new NgapBuilder(NgapMessageType.NGSetupRequest)
-                        .addProtocolIE(NgapUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn))
-                        .addProtocolIE(NgapUtils.createSupportedTAList(ctx.config.supportedTAs))
-                        .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64))
-        );
+        var msg = new NGAP_NGSetupRequest();
+        msg.addProtocolIe(NgapUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn));
+        msg.addProtocolIe(NgapUtils.createSupportedTAList(ctx.config.supportedTAs));
+        msg.addProtocolIe(NGAP_PagingDRX.V64);
 
+        GNodeB.sendToNetworkNonUe(ctx, associatedAmf, msg);
         Logging.funcOut();
     }
 
-    public static void receiveNgSetupResponse(GnbSimContext ctx, NGSetupResponse message) {
+    public static void receiveNgSetupResponse(GnbSimContext ctx, NGAP_NGSetupResponse message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling: NGSetupResponse");
@@ -65,7 +63,7 @@ public class GnbInterfaceManagement {
         Logging.funcOut();
     }
 
-    public static void receiveNgSetupFailure(GnbSimContext ctx, NGSetupFailure message) {
+    public static void receiveNgSetupFailure(GnbSimContext ctx, NGAP_NGSetupFailure message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling: NGSetupFailure");
