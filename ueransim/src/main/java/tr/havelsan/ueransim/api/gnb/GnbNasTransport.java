@@ -26,28 +26,30 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMFSetID;
-import tr.havelsan.ueransim.ngap.ngap_ies.AllowedNSSAI;
-import tr.havelsan.ueransim.ngap.ngap_ies.RRCEstablishmentCause;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.InitialUEMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGAP_Message;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.RerouteNASRequest;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
-import tr.havelsan.ueransim.ngap2.NgapMessageType;
+import tr.havelsan.ueransim.ngap0.Ngap;
+import tr.havelsan.ueransim.ngap1.NgapUtils;
+import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
+import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_AMFSetID;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RRCEstablishmentCause;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NGAP_Message;
+import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_DownlinkNASTransport;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialUEMessage;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_RerouteNASRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_UplinkNASTransport;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit10;
-import tr.havelsan.ueransim.utils.bits.BitString;
 
 import java.util.UUID;
 
@@ -58,18 +60,17 @@ public class GnbNasTransport {
 
         Logging.funcIn("Handling Uplink NAS Transport");
 
-        NgapBuilder ngap;
+        NGAP_BaseMessage ngap;
         if (ctx.ueContexts.containsKey(associatedUe)) {
-            ngap = new NgapBuilder(NgapMessageType.UplinkNASTransport);
+            ngap = new NGAP_UplinkNASTransport();
         } else {
-            ngap = new NgapBuilder(NgapMessageType.InitialUEMessage);
-            ngap.addProtocolIE(new RRCEstablishmentCause(RRCEstablishmentCause.ASN_mo_Data));
-
+            ngap = new NGAP_InitialUEMessage();
+            ngap.addProtocolIe(NGAP_RRCEstablishmentCause.MO_DATA);
             GnbUeManagement.createUeContext(ctx, associatedUe);
         }
 
         if (nasMessage != null) {
-            ngap.addNasPdu(nasMessage);
+            ngap.addProtocolIe(new NGAP_NAS_PDU(NasEncoder.nasPdu(nasMessage)));
         }
 
         GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, ngap);
@@ -77,12 +78,12 @@ public class GnbNasTransport {
         Logging.funcOut();
     }
 
-    public static void receiveDownlinkNasTransport(GnbSimContext ctx, UUID associatedUe, DownlinkNASTransport message) {
+    public static void receiveDownlinkNasTransport(GnbSimContext ctx, UUID associatedUe, NGAP_DownlinkNASTransport message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling Downlink NAS Transport");
 
-        var nasMessage = NgapInternal.extractNasMessage(message);
+        var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
             Simulation.pushUeEvent(ctx.simCtx, associatedUe, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
@@ -90,24 +91,23 @@ public class GnbNasTransport {
         Logging.funcOut();
     }
 
-    public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, UUID associatedUe, RerouteNASRequest message) {
+    public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, UUID associatedUe, NGAP_RerouteNASRequest message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling Reroute NAS Request");
 
-        var ngapMessage = NgapInternal.extractLastProtocolIe(message, NGAP_Message.class);
-        var amfSetId = NgapInternal.extractLastProtocolIe(message, AMFSetID.class);
-        var allowedNssai = NgapInternal.extractLastProtocolIe(message, AllowedNSSAI.class);
+        var ngapMessage = message.getProtocolIe(NGAP_NGAP_Message.class);
+        var amfSetId = message.getProtocolIe(NGAP_AMFSetID.class);
+        var allowedNssai = message.getProtocolIe(NGAP_AllowedNSSAI.class);
 
-        var initialUeMessage = Ngap.perDecode(InitialUEMessage.class, ngapMessage.getValue());
+        var initialUeMessage = (NGAP_InitialUEMessage) NgapEncoding.decodeAper(ngapMessage.value, NgapDataUnitType.InitialUEMessage);
 
-        var ngapBuilder = NgapBuilder.wrapMessage(initialUeMessage);
+        var ngapBuilder = Ngap.deepClone(initialUeMessage);
         if (allowedNssai != null) {
-            ngapBuilder.addProtocolIE(allowedNssai);
+            ngapBuilder.addProtocolIe(allowedNssai);
         }
 
-        var newAmf = GnbUeManagement.selectNewAmfForReAllocation(ctx, associatedAmf,
-                new Bit10(BitString.from(amfSetId.getValue(), 10).intValue()));
+        var newAmf = GnbUeManagement.selectNewAmfForReAllocation(ctx, associatedAmf, new Bit10(amfSetId.value.intValue()));
 
         if (newAmf != null) {
             Logging.info(Tag.PROC, "New AMF selected for re-allocation. AMF: %s", newAmf);

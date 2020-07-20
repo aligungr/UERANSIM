@@ -43,6 +43,9 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 public class NasDecoder {
 
     public static NasMessage nasPdu(byte[] data) {
+        if (data == null) {
+            return null;
+        }
         return nasPdu(new OctetInputStream(data));
     }
 
@@ -51,6 +54,9 @@ public class NasDecoder {
     }
 
     public static NasMessage nasPdu(OctetString data) {
+        if (data == null) {
+            return null;
+        }
         return nasPdu(data.toByteArray());
     }
 

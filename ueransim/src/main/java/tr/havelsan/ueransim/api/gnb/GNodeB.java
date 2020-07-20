@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
@@ -35,13 +34,16 @@ import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.UserLocationInformation;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.ngap0.Ngap;
+import tr.havelsan.ueransim.ngap1.NgapUtils;
+import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap0.msg.*;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -52,21 +54,21 @@ import java.util.UUID;
 
 public class GNodeB {
 
-    public static void sendToNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NgapBuilder ngapBuilder) {
+    public static void sendToNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
-        var ngapPdu = ngapBuilder.build();
+        var ngapPdu = message.buildPdu();
 
-        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, Ngap.perEncode(ngapPdu));
+        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NgapBuilder ngapBuilder) {
+    public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
         // Find UE gNB context
@@ -74,43 +76,48 @@ public class GNodeB {
 
         // Adding AMF-UE-NGAP-ID (if any)
         {
-            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, AMF_UE_NGAP_ID.class)) {
+            if (message.isProtocolIeUsable(NGAP_AMF_UE_NGAP_ID.class)) {
                 Long amfUeNgapId = ueCtx.amfUeNgapId;
                 if (amfUeNgapId != null) {
-                    ngapBuilder.addAmfUeNgapId(amfUeNgapId);
+                    message.addProtocolIe(new NGAP_AMF_UE_NGAP_ID(amfUeNgapId));
                 }
             }
         }
 
         // Adding RAN-UE-NGAP-ID
         {
-            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, RAN_UE_NGAP_ID.class)) {
-                ngapBuilder.addRanUeNgapId(ueCtx.ranUeNgapId);
+            if (message.isProtocolIeUsable(NGAP_RAN_UE_NGAP_ID.class)) {
+                message.addProtocolIe(new NGAP_RAN_UE_NGAP_ID(ueCtx.ranUeNgapId));
             }
         }
 
         // Adding user location information
         {
-            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, UserLocationInformation.class)) {
-                ngapBuilder.addUserLocationInformationNR(MockedRadio.findLocationOfUe(ctx.simCtx, ueId));
+            if (message.isProtocolIeUsable(NGAP_UserLocationInformation.class)) {
+                var ie = new NGAP_UserLocationInformation();
+                ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(MockedRadio.findLocationOfUe(ctx.simCtx, ueId));
+                message.addProtocolIe(ie);
             }
         }
 
-        var ngapPdu = ngapBuilder.build();
+        var ngapPdu = message.buildPdu();
 
-        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, Ngap.perEncode(ngapPdu));
+        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
-        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
+        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
+        if (ngapMessage == null) {
+            return;
+        }
 
-        if (NgapInternal.isUeAssociated(ngapMessage)) {
+        if (ngapMessage.isUeAssociated()) {
             receiveFromNetworkUeAssociated(ctx, associatedAmf, ngapPdu);
         } else {
             receiveFromNetworkNonUe(ctx, associatedAmf, ngapPdu);
@@ -120,12 +127,12 @@ public class GNodeB {
     private static void receiveFromNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
-        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
+        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
 
-        if (ngapMessage instanceof NGSetupResponse) {
-            GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGSetupResponse) ngapMessage);
-        } else if (ngapMessage instanceof NGSetupFailure) {
-            GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGSetupFailure) ngapMessage);
+        if (ngapMessage instanceof NGAP_NGSetupResponse) {
+            GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
+            GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
@@ -134,23 +141,23 @@ public class GNodeB {
     private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
-        var ngapMessage = NgapInternal.extractNgapMessage(ngapPdu);
+        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
         UUID associatedUe;
 
         // Find associated UE
         {
-            var ieAmfUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, AMF_UE_NGAP_ID.class);
+            var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
             long amfUeNgapId;
-            if (ieAmfUeNgapId.size() > 0) {
-                amfUeNgapId = ieAmfUeNgapId.get(ieAmfUeNgapId.size() - 1).value;
+            if (ieAmfUeNgapId != null) {
+                amfUeNgapId = ieAmfUeNgapId.value;
             } else {
                 // todo: send error indication
                 throw new NotImplementedException("send error indication");
             }
 
-            var ieRanUeNgapId = NgapInternal.extractProtocolIe(ngapMessage, RAN_UE_NGAP_ID.class);
-            if (ieRanUeNgapId.size() > 0) {
-                long ranUeNgapId = ieRanUeNgapId.get(ieRanUeNgapId.size() - 1).value;
+            var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
+            if (ieRanUeNgapId != null) {
+                long ranUeNgapId = ieRanUeNgapId.value;
                 associatedUe = GnbUeManagement.findUe(ctx, ranUeNgapId);
                 if (associatedUe == null) {
                     // todo: send error indication
@@ -170,12 +177,12 @@ public class GNodeB {
             }
         }
 
-        if (ngapMessage instanceof DownlinkNASTransport) {
-            GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (DownlinkNASTransport) ngapMessage);
-        } else if (ngapMessage instanceof InitialContextSetupRequest) {
-            GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (InitialContextSetupRequest) ngapMessage);
-        } else if (ngapMessage instanceof RerouteNASRequest) {
-            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (RerouteNASRequest) ngapMessage);
+        if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
+            GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (NGAP_DownlinkNASTransport) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
+            GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (NGAP_InitialContextSetupRequest) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
+            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (NGAP_RerouteNASRequest) ngapMessage);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
@@ -190,7 +197,7 @@ public class GNodeB {
 
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
             Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+            Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
             GNodeB.receiveFromNetwork(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
         } else if (event instanceof SctpAssociationSetupEvent) {
