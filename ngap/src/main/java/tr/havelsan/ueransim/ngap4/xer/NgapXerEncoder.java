@@ -306,6 +306,46 @@ public class NgapXerEncoder {
             return choice;
         }
 
+        if (NGAP_Sequence.class.isAssignableFrom(type)) {
+            var sequence = (NGAP_Sequence) type.getDeclaredConstructor().newInstance();
+
+            if (explicitTag) {
+                var element = (Element) node;
+                if (!element.getTagName().equals(sequence.getXmlTagName())) {
+                    throw new RuntimeException("bad element name");
+                }
+                node = element;
+            }
+
+            var memberNames = sequence.getMemberNames();
+            var memberIdentifiers = sequence.getMemberIdentifiers();
+
+            var children = node.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                var child = (Element) children.item(i);
+
+                int memberIndex = -1;
+                for (int j = 0; j < memberNames.length; j++) {
+                    if (child.getTagName().equals(memberNames[j])) {
+                        memberIndex = j;
+                        break;
+                    }
+                }
+
+                if (memberIndex == -1) {
+                    throw new RuntimeException("member '" + child.getTagName() + "' not found for sequence");
+                }
+
+                var memberIdentifier = memberIdentifiers[memberIndex];
+                var field = type.getField(memberIdentifier);
+                var fieldType = (Class<? extends NGAP_Value>) field.getType();
+                field.set(sequence, decode(child, fieldType, false));
+                return sequence;
+            }
+
+            children.toString();
+        }
+
         return null;
     }
 }
