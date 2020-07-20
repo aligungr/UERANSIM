@@ -11,10 +11,29 @@ public class NGAP_ProtocolIE extends NGAP_Sequence {
 
     public NGAP_ProtocolIE_ID id;
     public NGAP_Criticality criticality;
-    public NGAP_IEChoice value;
 
     public NGAP_ProtocolIE(NgapMessageType messageType) {
         this.messageType = messageType;
+    }
+
+    @Override
+    public String[] getMemberIdentifiers() {
+        return new String[]{"id", "criticality", "value"};
+    }
+
+    @Override
+    public String[] getMemberNames() {
+        return new String[]{"id", "criticality", "value"};
+    }
+
+    @Override
+    public String getAsnName() {
+        return messageTypeToAsnName(messageType);
+    }
+
+    @Override
+    public String getXmlTagName() {
+        return messageTypeToAsnName(messageType);
     }
 
     private static String messageTypeToAsnName(NgapMessageType type) {
@@ -175,25 +194,5 @@ public class NGAP_ProtocolIE extends NGAP_Sequence {
                 return "UERadioCapabilityCheckResponseIEs";
         }
         throw new RuntimeException();
-    }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{"id", "criticality", "value"};
-    }
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{"id", "criticality", "value"};
-    }
-
-    @Override
-    public String getAsnName() {
-        return messageTypeToAsnName(messageType);
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return messageTypeToAsnName(messageType);
     }
 }

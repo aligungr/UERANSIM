@@ -29,6 +29,7 @@ package tr.havelsan.ueransim.ngap4.xer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import tr.havelsan.ueransim.ngap4.core.*;
 
@@ -42,6 +43,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class NgapXerEncoder {
 
@@ -253,55 +255,51 @@ public class NgapXerEncoder {
             var factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             var doc = builder.parse(new InputSource(new StringReader(xer)));
-            return decode(doc.getDocumentElement(), type, true);
+            return decode(doc.getChildNodes().item(0).getChildNodes(), type);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static <T extends NGAP_Value> NGAP_Value decode(Node node, Class<T> type, boolean explicitTag) throws Exception {
+    private static int findMemberIndex(NGAP_Choice choice, String memberName) {
+        var names = choice.getMemberNames();
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].equals(memberName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static int findMemberIndex(NGAP_Sequence choice, String memberName) {
+        var names = choice.getMemberNames();
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].equals(memberName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static <T extends NGAP_Value> NGAP_Value decode(NodeList nodes, Class<T> type) throws Exception {
         if (NGAP_Choice.class.isAssignableFrom(type)) {
             var choice = (NGAP_Choice) type.getDeclaredConstructor().newInstance();
 
-            Element child;
-
-            if (explicitTag) {
-                var element = (Element) node;
-                if (!element.getTagName().equals(choice.getXmlTagName())) {
-                    throw new RuntimeException("bad element name");
-                }
-
-                var children = element.getChildNodes();
-                if (children.getLength() == 0) {
-                    return choice;
-                }
-
-                if (children.getLength() > 1) {
-                    throw new RuntimeException("multiple children found in choice element");
-                }
-
-                child = (Element) children.item(0);
-            } else {
-                child = (Element) node;
+            if (nodes.getLength() > 1) {
+                throw new RuntimeException("multiple children in choice value");
             }
 
-            int memberIndex = -1;
-            var memberNames = choice.getMemberNames();
-
-            for (int i = 0; i < memberNames.length; i++) {
-                if (child.getTagName().equals(memberNames[i])) {
-                    memberIndex = i;
-                    break;
+            if (nodes.getLength() > 0) {
+                var child = (Element) nodes.item(0);
+                var memberIndex = findMemberIndex(choice, child.getTagName());
+                if (memberIndex == -1) {
+                    throw new RuntimeException("invalid member name in choice value");
                 }
-            }
 
-            if (memberIndex == -1) {
-                throw new RuntimeException("member '" + child.getTagName() + "' not found for choice");
+                var field = type.getField(choice.getMemberIdentifiers()[memberIndex]);
+                var decoded = decode(child.getChildNodes(), (Class<NGAP_Value>) field.getType());
+                field.set(choice, decoded);
             }
-
-            var field = type.getField(choice.getMemberIdentifiers()[memberIndex]);
-            var fieldType = (Class<? extends NGAP_Value>) field.getType();
-            field.set(choice, decode(child, fieldType, false));
 
             return choice;
         }
@@ -309,41 +307,38 @@ public class NgapXerEncoder {
         if (NGAP_Sequence.class.isAssignableFrom(type)) {
             var sequence = (NGAP_Sequence) type.getDeclaredConstructor().newInstance();
 
-            if (explicitTag) {
-                var element = (Element) node;
-                if (!element.getTagName().equals(sequence.getXmlTagName())) {
-                    throw new RuntimeException("bad element name");
-                }
-                node = element;
-            }
-
-            var memberNames = sequence.getMemberNames();
-            var memberIdentifiers = sequence.getMemberIdentifiers();
-
-            var children = node.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                var child = (Element) children.item(i);
-
-                int memberIndex = -1;
-                for (int j = 0; j < memberNames.length; j++) {
-                    if (child.getTagName().equals(memberNames[j])) {
-                        memberIndex = j;
-                        break;
-                    }
-                }
-
+            for (int i = 0; i < nodes.getLength(); i++) {
+                var child = (Element) nodes.item(i);
+                var memberIndex = findMemberIndex(sequence, child.getTagName());
                 if (memberIndex == -1) {
-                    throw new RuntimeException("member '" + child.getTagName() + "' not found for sequence");
+                    throw new RuntimeException("invalid member name in sequence value");
                 }
-
-                var memberIdentifier = memberIdentifiers[memberIndex];
-                var field = type.getField(memberIdentifier);
-                var fieldType = (Class<? extends NGAP_Value>) field.getType();
-                field.set(sequence, decode(child, fieldType, false));
-                return sequence;
+                var field = type.getField(sequence.getMemberIdentifiers()[memberIndex]);
+                var decoded = decode(child.getChildNodes(), (Class<NGAP_Value>) field.getType());
+                field.set(sequence, decoded);
             }
 
-            children.toString();
+            return sequence;
+        }
+
+        if (NGAP_Integer.class.isAssignableFrom(type)) {
+            if (nodes.getLength() > 1) {
+                throw new RuntimeException("multiple children in integer value");
+            }
+
+            var child = nodes.item(0);
+            return type.getConstructor(long.class).newInstance(Long.parseLong(child.getNodeValue()));
+        }
+
+        if (NGAP_Enumerated.class.isAssignableFrom(type)) {
+            if (nodes.getLength() > 1) {
+                throw new RuntimeException("multiple children in integer value");
+            }
+
+            var child = (Element) nodes.item(0);
+            var fieldName = child.getTagName().toUpperCase(Locale.ENGLISH).replace("-", "_");
+            var field = type.getField(fieldName);
+            return (T) field.get(null);
         }
 
         return null;
