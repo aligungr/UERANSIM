@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap.ngap_ies.PagingDRX;
 import tr.havelsan.ueransim.ngap.ngap_pdu_contents.NGSetupFailure;
@@ -48,8 +48,8 @@ public class GnbInterfaceManagement {
 
         GNodeB.sendToNetworkNonUe(ctx, associatedAmf,
                 new NgapBuilder(NgapMessageType.NGSetupRequest)
-                        .addProtocolIE(Ngap.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn))
-                        .addProtocolIE(Ngap.createSupportedTAList(ctx.config.supportedTAs))
+                        .addProtocolIE(NgapUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn))
+                        .addProtocolIE(NgapUtils.createSupportedTAList(ctx.config.supportedTAs))
                         .addProtocolIE(new PagingDRX(PagingDRX.ASN_v64))
         );
 

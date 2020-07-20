@@ -24,23 +24,21 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.ngap2;
+package tr.havelsan.ueransim.ngap4.core;
 
-public enum NgapCriticality {
-    REJECT,
-    IGNORE,
-    NOTIFY;
+public abstract class NGAP_BaseMessage extends NGAP_Sequence {
 
-    public int intValue() {
-        switch (this) {
-            case REJECT:
-                return 0;
-            case IGNORE:
-                return 1;
-            case NOTIFY:
-                return 2;
-            default:
-                throw new RuntimeException();
-        }
-    }
+    public abstract int getPduType();
+
+    public abstract int getCriticality();
+
+    public abstract int getProcedureCode();
+
+    public abstract int[] getIeId();
+
+    public abstract int[] getIeCriticality();
+
+    public abstract Class<? extends NGAP_Value>[] getIeTypes();
+
+    public abstract int[] getIePresence();
 }

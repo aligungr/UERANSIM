@@ -26,21 +26,22 @@
 
 package tr.havelsan.ueransim.ngap2;
 
-import fr.marben.asnsdk.japi.InvalidStructureException;
-import fr.marben.asnsdk.japi.spe.OpenTypeValue;
-import fr.marben.asnsdk.japi.spe.Value;
-import tr.havelsan.ueransim.Ngap;
 import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProcedureCode;
-import tr.havelsan.ueransim.ngap.ngap_ies.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
 import tr.havelsan.ueransim.ngap3.NgapDataUnitDescription;
+import tr.havelsan.ueransim.ngap4.core.NGAP_Enumerated;
+import tr.havelsan.ueransim.ngap4.core.NGAP_Value;
+import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_Cause;
+import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_UserLocationInformation;
+import tr.havelsan.ueransim.ngap4.ies.enumerations.*;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_ProcedureCode;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_RAN_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap4.ies.octet_strings.NGAP_NAS_PDU;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_InitiatingMessage;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_SuccessfulOutcome;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_UnsuccessfulOutcome;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ import java.util.List;
 public class NgapBuilder {
 
     public final NgapMessageType messageType;
-    private final List<Value> protocolIEs;
+    private final List<NGAP_Value> protocolIEs;
 
     public NgapBuilder(NgapMessageType messageType) {
         this.protocolIEs = new ArrayList<>();
@@ -58,7 +59,7 @@ public class NgapBuilder {
 
     // WARNING: This method may cause IEs to be mutated.
     // Do not reuse the passed IE, and do not pass reused IE!
-    public static NgapBuilder wrapMessage(Value value) {
+    public static NgapBuilder wrapMessage(NGAP_Value value) {
         var nb = new NgapBuilder(NgapMessageType.valueOf(value.getClass().getSimpleName()));
         for (var protocolIe : NgapInternal.extractProtocolIe(value, Value.class)) {
             nb.addProtocolIE(protocolIe);
@@ -66,21 +67,21 @@ public class NgapBuilder {
         return nb;
     }
 
-    public NgapBuilder addProtocolIE(Value value) {
+    public NgapBuilder addProtocolIE(NGAP_Value value) {
         this.protocolIEs.add(value);
         return this;
     }
 
     public NgapBuilder addRanUeNgapId(long value) {
-        return addProtocolIE(new RAN_UE_NGAP_ID(value));
+        return addProtocolIE(new NGAP_RAN_UE_NGAP_ID(value));
     }
 
     public NgapBuilder addAmfUeNgapId(long value) {
-        return addProtocolIE(new AMF_UE_NGAP_ID(value));
+        return addProtocolIE(new NGAP_RAN_UE_NGAP_ID(value));
     }
 
     public NgapBuilder addNasPdu(byte[] value) {
-        return addProtocolIE(new NAS_PDU(value));
+        return addProtocolIE(new NGAP_NAS_PDU(value));
     }
 
     public NgapBuilder addNasPdu(String hex) {
@@ -92,49 +93,34 @@ public class NgapBuilder {
     }
 
     public NgapBuilder addUserLocationInformationNR(UserLocationInformationNr userLocationInformationNr) {
-        try {
-            return addProtocolIE(new UserLocationInformation(UserLocationInformation.ASN_userLocationInformationNR, Ngap.createUserLocationInformationNr(userLocationInformationNr)));
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
+        var ie = new NGAP_UserLocationInformation();
+        ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(userLocationInformationNr);
+        addProtocolIE(ie);
+        return this;
     }
 
-    public NgapBuilder addCause(NgapCause cause) {
-        int fieldNum = cause.getFieldNumber();
-        Value value;
+    public NgapBuilder addCause(NGAP_Enumerated cause) {
+        var ie = new NGAP_Cause();
 
-        switch (fieldNum) {
-            case Cause.ASN_radioNetwork:
-                value = new CauseRadioNetwork(cause.getAsnValue());
-                break;
-            case Cause.ASN_transport:
-                value = new CauseTransport(cause.getAsnValue());
-                break;
-            case Cause.ASN_nas:
-                value = new CauseNas(cause.getAsnValue());
-                break;
-            case Cause.ASN_protocol:
-                value = new CauseProtocol(cause.getAsnValue());
-                break;
-            case Cause.ASN_misc:
-                value = new CauseMisc(cause.getAsnValue());
-                break;
-            default:
-                throw new ReservedOrInvalidValueException("cause field number");
+        if (cause instanceof NGAP_CauseRadioNetwork) {
+            ie.radioNetwork = (NGAP_CauseRadioNetwork) cause;
+        } else if (cause instanceof NGAP_CauseTransport) {
+            ie.transport = (NGAP_CauseTransport) cause;
+        } else if (cause instanceof NGAP_CauseNas) {
+            ie.nas = (NGAP_CauseNas) cause;
+        } else if (cause instanceof NGAP_CauseProtocol) {
+            ie.protocol = (NGAP_CauseProtocol) cause;
+        } else if (cause instanceof NGAP_CauseMisc) {
+            ie.misc = (NGAP_CauseMisc) cause;
+        } else {
+            throw new ReservedOrInvalidValueException("enumerated value is not a cause");
         }
 
-        Cause c;
-        try {
-            c = new Cause(cause.getFieldNumber(), value);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-
-        return addProtocolIE(c);
+        return addProtocolIE(ie);
     }
 
     public NGAP_PDU build() {
-        Value messageValue = NgapInternal.createMessageValue(messageType);
+        NGAP_Value messageValue = NgapInternal.createMessageValue(messageType);
 
         NgapInternal.sortProtocolIEs(messageType, protocolIEs);
         for (var protocolIe : protocolIEs) {
@@ -149,32 +135,25 @@ public class NgapBuilder {
         var pduType = NgapData.findMessageDescription(messageType);
         var messageCriticality = NgapData.findMessageCriticality(messageType);
 
-        var criticality = messageCriticality.intValue();
+        var pdu = new NGAP_PDU();
 
-        try {
-            if (pduType == NgapDataUnitDescription.INITIATING_MESSAGE) {
-                var desc = new InitiatingMessage();
-                desc.procedureCode = new ProcedureCode(procedureCode);
-                desc.criticality = new Criticality(criticality);
-                desc.value = new OpenTypeValue(messageValue);
-                return new NGAP_PDU(NGAP_PDU.ASN_initiatingMessage, desc);
-            } else if (pduType == NgapDataUnitDescription.SUCCESSFUL_OUTCOME) {
-                var desc = new SuccessfulOutcome();
-                desc.procedureCode = new ProcedureCode(procedureCode);
-                desc.criticality = new Criticality(criticality);
-                desc.value = new OpenTypeValue(messageValue);
-                return new NGAP_PDU(NGAP_PDU.ASN_successfulOutcome, desc);
-            } else if (pduType == NgapDataUnitDescription.UNSUCCESSFUL_OUTCOME) {
-                var desc = new UnsuccessfulOutcome();
-                desc.procedureCode = new ProcedureCode(procedureCode);
-                desc.criticality = new Criticality(criticality);
-                desc.value = new OpenTypeValue(messageValue);
-                return new NGAP_PDU(NGAP_PDU.ASN_unsuccessfulOutcome, desc);
-            } else {
-                throw new RuntimeException();
-            }
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
+        if (pduType == NgapDataUnitDescription.INITIATING_MESSAGE) {
+            pdu.initiatingMessage = new NGAP_InitiatingMessage();
+            pdu.initiatingMessage.procedureCode = new NGAP_ProcedureCode(procedureCode);
+            pdu.initiatingMessage.criticality = messageCriticality;
+            pdu.initiatingMessage.value = new NGAP_OpenTypeValue(messageValue);
+        } else if (pduType == NgapDataUnitDescription.SUCCESSFUL_OUTCOME) {
+            pdu.successfulOutcome = new NGAP_SuccessfulOutcome();
+            pdu.successfulOutcome.procedureCode = new NGAP_ProcedureCode(procedureCode);
+            pdu.successfulOutcome.criticality = messageCriticality;
+            pdu.successfulOutcome.value = new OpenTypeValue(messageValue);
+        } else if (pduType == NgapDataUnitDescription.UNSUCCESSFUL_OUTCOME) {
+            pdu.unsuccessfulOutcome = new NGAP_UnsuccessfulOutcome();
+            pdu.unsuccessfulOutcome.procedureCode = new NGAP_ProcedureCode(procedureCode);
+            pdu.unsuccessfulOutcome.criticality = messageCriticality;
+            pdu.unsuccessfulOutcome.value = new OpenTypeValue(messageValue);
         }
+
+        return pdu;
     }
 }

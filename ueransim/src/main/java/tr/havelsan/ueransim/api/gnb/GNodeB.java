@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
@@ -58,10 +58,10 @@ public class GNodeB {
         var ngapPdu = ngapBuilder.build();
 
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapUtils.xerEncode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, Ngap.perEncode(ngapPdu));
+        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapUtils.perEncode(ngapPdu));
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
@@ -99,10 +99,10 @@ public class GNodeB {
         var ngapPdu = ngapBuilder.build();
 
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapUtils.xerEncode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, Ngap.perEncode(ngapPdu));
+        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapUtils.perEncode(ngapPdu));
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
@@ -190,7 +190,7 @@ public class GNodeB {
 
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
             Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Utils.xmlToJson(Ngap.xerEncode(ngapPdu)));
+            Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapUtils.xerEncode(ngapPdu)));
 
             GNodeB.receiveFromNetwork(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
         } else if (event instanceof SctpAssociationSetupEvent) {

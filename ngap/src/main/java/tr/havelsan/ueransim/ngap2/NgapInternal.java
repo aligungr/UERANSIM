@@ -26,20 +26,8 @@
 
 package tr.havelsan.ueransim.ngap2;
 
-import fr.marben.asnsdk.japi.spe.ChoiceValue;
-import fr.marben.asnsdk.japi.spe.OpenTypeValue;
-import fr.marben.asnsdk.japi.spe.SequenceValue;
-import fr.marben.asnsdk.japi.spe.Value;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.Criticality;
-import tr.havelsan.ueransim.ngap.ngap_commondatatypes.ProtocolIE_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.NAS_PDU;
-import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.InitiatingMessage;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.SuccessfulOutcome;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.UnsuccessfulOutcome;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
@@ -213,20 +201,6 @@ public class NgapInternal {
         }
 
         return NasDecoder.nasPdu(protocolIes.get(0).getValue());
-    }
-
-    public static NasMessage extractNasMessage(NGAP_PDU ngapPdu) {
-        if (ngapPdu == null) return null;
-        return extractNasMessage(NgapInternal.extractNgapMessage(ngapPdu));
-    }
-
-    public static <T extends ChoiceValue> T newChoice(Class<T> type, short fieldNumber, Value value) {
-        try {
-            var ctor = type.getConstructor(short.class, Value.class);
-            return ctor.newInstance(fieldNumber, value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static boolean isUeAssociated(SequenceValue ngapMessage) {

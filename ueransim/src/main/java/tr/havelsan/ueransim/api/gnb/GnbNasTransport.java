@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
@@ -99,7 +99,7 @@ public class GnbNasTransport {
         var amfSetId = NgapInternal.extractLastProtocolIe(message, AMFSetID.class);
         var allowedNssai = NgapInternal.extractLastProtocolIe(message, AllowedNSSAI.class);
 
-        var initialUeMessage = Ngap.perDecode(InitialUEMessage.class, ngapMessage.getValue());
+        var initialUeMessage = NgapUtils.perDecode(InitialUEMessage.class, ngapMessage.getValue());
 
         var ngapBuilder = NgapBuilder.wrapMessage(initialUeMessage);
         if (allowedNssai != null) {

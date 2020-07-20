@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim.events.gnb;
 
-import tr.havelsan.ueransim.Ngap;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
 import tr.havelsan.ueransim.structs.Guami;
 
@@ -35,7 +35,7 @@ public class SctpReceiveEvent extends GnbEvent {
     public final NGAP_PDU ngapPdu;
 
     public SctpReceiveEvent(byte[] ngapPdu, Guami associatedAmf) {
-        this(Ngap.perDecode(NGAP_PDU.class, ngapPdu), associatedAmf);
+        this(NgapUtils.perDecode(NGAP_PDU.class, ngapPdu), associatedAmf);
     }
 
     public SctpReceiveEvent(NGAP_PDU ngapPdu, Guami associatedAmf) {
