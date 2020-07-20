@@ -29,7 +29,6 @@ package tr.havelsan.ueransim.api.gnb;
 import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
-import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap2.NgapUtils;
@@ -102,7 +101,7 @@ public class GnbNasTransport {
 
         var initialUeMessage = (NGAP_InitialUEMessage) NgapEncoding.decodeAper(ngapMessage.value, NgapDataUnitType.InitialUEMessage);
 
-        var ngapBuilder = NgapUtils.deepCopy(initialUeMessage);
+        var ngapBuilder = NgapUtils.deepClone(initialUeMessage);
         if (allowedNssai != null) {
             ngapBuilder.addProtocolIe(allowedNssai);
         }

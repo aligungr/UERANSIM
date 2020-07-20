@@ -43,8 +43,9 @@ import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap4.ies.sequence_ofs.NGAP_SupportedTAList;
 import tr.havelsan.ueransim.ngap4.ies.sequences.*;
-import tr.havelsan.ueransim.ngap4.msg.NGAP_InitialUEMessage;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_MessageChoice;
 import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
@@ -52,13 +53,21 @@ import tr.havelsan.ueransim.utils.octets.Octet4;
 public class NgapUtils {
 
     public static NGAP_BaseMessage getMessageFromPdu(NGAP_PDU pdu) {
-        // todo:
-        throw new RuntimeException();
+        NGAP_MessageChoice choice;
+        if (pdu.initiatingMessage != null) {
+            choice = pdu.initiatingMessage.value;
+        } else if (pdu.successfulOutcome != null) {
+            choice = pdu.successfulOutcome.value;
+        } else if (pdu.unsuccessfulOutcome != null) {
+            choice = pdu.unsuccessfulOutcome.value;
+        } else {
+            return null;
+        }
+        return (NGAP_BaseMessage) choice.getPresentValue();
     }
 
-    public static <T extends NGAP_Value> T deepCopy(T value) {
-        // todo:
-        throw new RuntimeException();
+    public static <T extends NGAP_Value> T deepClone(T value) {
+        return (T) NgapXerEncoder.decode(NgapXerEncoder.encode(value), value.getClass());
     }
 
     public static NGAP_PLMNIdentity plmnEncode(VPlmn plmn) {

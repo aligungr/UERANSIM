@@ -31,4 +31,18 @@ public abstract class NGAP_Choice extends NGAP_Value {
     public abstract String[] getMemberNames();
 
     public abstract String[] getMemberIdentifiers();
+
+    public NGAP_Value getPresentValue() {
+        var cls = getClass();
+        for (String id : getMemberIdentifiers()) {
+            try {
+                var field = cls.getField(id);
+                var value = field.get(this);
+                if (value != null) return (NGAP_Value) value;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
 }
