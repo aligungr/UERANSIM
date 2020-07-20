@@ -38,7 +38,7 @@ import java.util.List;
 import static tr.havelsan.ueransim.core.Constants.NGAP_PDU_CONTENTS;
 
 // TODO: This utility is invalid for PrivateMessage, privateIE and related.
-public class NgapInternal {
+/*public class NgapInternal {
 
     public static void sortProtocolIEs(NgapMessageType messageType, List<Value> protocolIEs) {
         var sortingList = NgapData.findIeListOfMessage(messageType);
@@ -213,3 +213,4 @@ public class NgapInternal {
         return x.contains(findIeAsnType(protocolIeType).typeName);
     }
 }
+*/

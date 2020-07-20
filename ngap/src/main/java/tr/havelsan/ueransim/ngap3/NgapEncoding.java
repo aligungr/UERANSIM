@@ -24,30 +24,32 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.events.gnb;
+package tr.havelsan.ueransim.ngap3;
 
-import tr.havelsan.ueransim.ngap3.NgapEncoding;
+import tr.havelsan.ueransim.ngap4.core.NGAP_Value;
 import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
-import tr.havelsan.ueransim.structs.Guami;
+import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class SctpReceiveEvent extends GnbEvent {
-    public final Guami associatedAmf;
-    public final NGAP_PDU ngapPdu;
+public class NgapEncoding {
 
-    public SctpReceiveEvent(byte[] ngapPdu, Guami associatedAmf) {
-        this(NgapEncoding.decodeAper(ngapPdu), associatedAmf);
+    public static NGAP_PDU decodeAper(byte[] pdu) {
+        return (NGAP_PDU) decodeAper(pdu, NgapDataUnitType.NGAP_PDU);
     }
 
-    public SctpReceiveEvent(NGAP_PDU ngapPdu, Guami associatedAmf) {
-        this.ngapPdu = ngapPdu;
-        this.associatedAmf = associatedAmf;
+    public static NGAP_Value decodeAper(byte[] pdu, NgapDataUnitType type) {
+        return NgapXerEncoder.decode(NgapJni.aperToXer(pdu, type), NGAP_PDU.class);
     }
 
-    @Override
-    public String toString() {
-        return "SctpReceiveEvent{" +
-                "ngapPdu=" + ngapPdu +
-                ", associatedAmf=" + associatedAmf +
-                '}';
+    public static NGAP_PDU decodeAper(OctetString pdu) {
+        return decodeAper(pdu.toByteArray());
+    }
+
+    public static NGAP_Value decodeAper(OctetString pdu, NgapDataUnitType type) {
+        return decodeAper(pdu.toByteArray(), type);
+    }
+
+    public static byte[] encodeAper(NGAP_PDU pdu) {
+        return NgapJni.xerToAper(NgapXerEncoder.encode(pdu), NgapDataUnitType.NGAP_PDU);
     }
 }

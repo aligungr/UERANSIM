@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.ngap2.NgapUtils;
 import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
@@ -35,13 +34,14 @@ import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.ngap.ngap_ies.AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap.ngap_ies.UserLocationInformation;
-import tr.havelsan.ueransim.ngap.ngap_pdu_contents.*;
-import tr.havelsan.ueransim.ngap.ngap_pdu_descriptions.NGAP_PDU;
-import tr.havelsan.ueransim.ngap2.NgapBuilder;
-import tr.havelsan.ueransim.ngap2.NgapInternal;
+import tr.havelsan.ueransim.ngap2.NgapUtils;
+import tr.havelsan.ueransim.ngap3.NgapEncoding;
+import tr.havelsan.ueransim.ngap4.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap4.ies.choices.NGAP_UserLocationInformation;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_RAN_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap4.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.ngap4.xer.NgapXerEncoder;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -52,21 +52,21 @@ import java.util.UUID;
 
 public class GNodeB {
 
-    public static void sendToNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NgapBuilder ngapBuilder) {
+    public static void sendToNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
-        var ngapPdu = ngapBuilder.build();
+        var ngapPdu = message.build();
 
-        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapUtils.xerEncode(ngapPdu)));
+        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapUtils.perEncode(ngapPdu));
+        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NgapBuilder ngapBuilder) {
+    public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
         // Find UE gNB context
@@ -74,35 +74,37 @@ public class GNodeB {
 
         // Adding AMF-UE-NGAP-ID (if any)
         {
-            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, AMF_UE_NGAP_ID.class)) {
+            if (message.isProtocolIeUsable(NGAP_AMF_UE_NGAP_ID.class)) {
                 Long amfUeNgapId = ueCtx.amfUeNgapId;
                 if (amfUeNgapId != null) {
-                    ngapBuilder.addAmfUeNgapId(amfUeNgapId);
+                    message.addProtocolIe(new NGAP_AMF_UE_NGAP_ID(amfUeNgapId));
                 }
             }
         }
 
         // Adding RAN-UE-NGAP-ID
         {
-            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, RAN_UE_NGAP_ID.class)) {
-                ngapBuilder.addRanUeNgapId(ueCtx.ranUeNgapId);
+            if (message.isProtocolIeUsable(NGAP_RAN_UE_NGAP_ID.class)) {
+                message.addProtocolIe(new NGAP_RAN_UE_NGAP_ID(ueCtx.ranUeNgapId));
             }
         }
 
         // Adding user location information
         {
-            if (NgapInternal.isProtocolIeUsable(ngapBuilder.messageType, UserLocationInformation.class)) {
-                ngapBuilder.addUserLocationInformationNR(MockedRadio.findLocationOfUe(ctx.simCtx, ueId));
+            if (message.isProtocolIeUsable(NGAP_UserLocationInformation.class)) {
+                var ie = new NGAP_UserLocationInformation();
+                ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(MockedRadio.findLocationOfUe(ctx.simCtx, ueId));
+                message.addProtocolIe(ie);
             }
         }
 
-        var ngapPdu = ngapBuilder.build();
+        var ngapPdu = message.build();
 
-        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", NgapInternal.extractNgapMessage(ngapPdu).getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapUtils.xerEncode(ngapPdu)));
+        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
+        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapUtils.perEncode(ngapPdu));
+        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }

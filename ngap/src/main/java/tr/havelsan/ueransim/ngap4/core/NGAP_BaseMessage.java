@@ -26,6 +26,11 @@
 
 package tr.havelsan.ueransim.ngap4.core;
 
+import tr.havelsan.ueransim.nas.NasDecoder;
+import tr.havelsan.ueransim.nas.core.messages.NasMessage;
+import tr.havelsan.ueransim.ngap4.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap4.ies.octet_strings.NGAP_NAS_PDU;
+
 public abstract class NGAP_BaseMessage extends NGAP_Sequence {
 
     public abstract int getPduType();
@@ -41,4 +46,30 @@ public abstract class NGAP_BaseMessage extends NGAP_Sequence {
     public abstract Class<? extends NGAP_Value>[] getIeTypes();
 
     public abstract int[] getIePresence();
+
+    public void addProtocolIe(NGAP_Value ie) {
+        // todo
+        throw new RuntimeException();
+    }
+
+    public <T extends NGAP_Value> T getProtocolIe(Class<T> type) {
+        // todo
+        throw new RuntimeException();
+    }
+
+    public NasMessage getNasMessage() {
+        return NasDecoder.nasPdu(getProtocolIe(NGAP_NAS_PDU.class).value);
+    }
+
+    public boolean isProtocolIeUsable(Class<? extends NGAP_Value> type) {
+        // todo
+        throw new RuntimeException();
+    }
+
+    public boolean isUeAssociated() {
+        //var ies = extractProtocolIe(ngapMessage, RAN_UE_NGAP_ID.class);
+        //return ies.size() > 0;
+        // todo
+        throw new RuntimeException();
+    }
 }

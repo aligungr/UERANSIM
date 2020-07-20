@@ -47,7 +47,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NgapBuilder {
+/*public class NgapBuilder {
 
     public final NgapMessageType messageType;
     private final List<NGAP_Value> protocolIEs;
@@ -157,3 +157,4 @@ public class NgapBuilder {
         return pdu;
     }
 }
+*/
