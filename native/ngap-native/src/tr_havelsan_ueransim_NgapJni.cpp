@@ -6,7 +6,7 @@ static constexpr int RESULT_OK = 0;
 static constexpr int RESULT_DECODING_FAILED = 1;
 static constexpr int RESULT_ENCODING_FAILED = 2;
 
-extern "C" JNIEXPORT jbyteArray JNICALL Java_tr_havelsan_ueransim_ngap3_NgapJni_convertEncoding(JNIEnv *pEnv, jclass cls, jbyteArray data, jint fromEncoding, jint toEncoding, jintArray result, jint pduType)
+extern "C" JNIEXPORT jbyteArray JNICALL Java_tr_havelsan_ueransim_ngap0_NgapJni_convertEncoding(JNIEnv *pEnv, jclass cls, jbyteArray data, jint fromEncoding, jint toEncoding, jintArray result, jint pduType)
 {
   auto pdu_type = static_cast<PduType>(pduType);
   asn_TYPE_descriptor_t* desc = pdu_type_description(pdu_type);
