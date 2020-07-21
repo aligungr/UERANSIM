@@ -112,80 +112,68 @@ public class GNodeB {
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
+        Debugging.assertThread(ctx);
+
         var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
         if (ngapMessage == null) {
             return;
         }
 
-        if (ngapMessage.isUeAssociated()) {
-            receiveFromNetworkUeAssociated(ctx, associatedAmf, ngapPdu);
-        } else {
-            receiveFromNetworkNonUe(ctx, associatedAmf, ngapPdu);
-        }
-    }
-
-    private static void receiveFromNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
-        Debugging.assertThread(ctx);
-
-        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
-
         if (ngapMessage instanceof NGAP_NGSetupResponse) {
             GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
         } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
             GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
+            var associatedUe = findAssociatedUe(ctx, associatedAmf, ngapMessage);
+            GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (NGAP_DownlinkNASTransport) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
+            var associatedUe = findAssociatedUe(ctx, associatedAmf, ngapMessage);
+            GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (NGAP_InitialContextSetupRequest) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
+            var associatedUe = findAssociatedUe(ctx, associatedAmf, ngapMessage);
+            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (NGAP_RerouteNASRequest) ngapMessage);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
     }
 
-    private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
+    private static UUID findAssociatedUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage ngapMessage) {
         Debugging.assertThread(ctx);
 
-        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
         UUID associatedUe;
 
         // Find associated UE
-        {
-            var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
-            long amfUeNgapId;
-            if (ieAmfUeNgapId != null) {
-                amfUeNgapId = ieAmfUeNgapId.value;
-            } else {
-                // todo: send error indication
-                throw new NotImplementedException("send error indication");
-            }
-
-            var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
-            if (ieRanUeNgapId != null) {
-                long ranUeNgapId = ieRanUeNgapId.value;
-                associatedUe = GnbUeManagement.findUe(ctx, ranUeNgapId);
-                if (associatedUe == null) {
-                    // todo: send error indication
-                    throw new NotImplementedException("send error indication");
-                }
-            } else {
-                // todo: send error indication
-                throw new NotImplementedException("send error indication");
-            }
-
-            var gnbUeContext = ctx.ueContexts.get(associatedUe);
-            if (gnbUeContext.amfUeNgapId == null) {
-                gnbUeContext.amfUeNgapId = amfUeNgapId;
-            } else if (amfUeNgapId != gnbUeContext.amfUeNgapId) {
-                // todo: either send error indication or update amf-ui-ngap-id
-                throw new NotImplementedException("");
-            }
-        }
-
-        if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
-            GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (NGAP_DownlinkNASTransport) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
-            GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (NGAP_InitialContextSetupRequest) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
-            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (NGAP_RerouteNASRequest) ngapMessage);
+        var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
+        long amfUeNgapId;
+        if (ieAmfUeNgapId != null) {
+            amfUeNgapId = ieAmfUeNgapId.value;
         } else {
-            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
+            // todo: send error indication
+            throw new NotImplementedException("send error indication");
         }
+
+        var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
+        if (ieRanUeNgapId != null) {
+            long ranUeNgapId = ieRanUeNgapId.value;
+            associatedUe = GnbUeManagement.findUe(ctx, ranUeNgapId);
+            if (associatedUe == null) {
+                // todo: send error indication
+                throw new NotImplementedException("send error indication");
+            }
+        } else {
+            // todo: send error indication
+            throw new NotImplementedException("send error indication");
+        }
+
+        var gnbUeContext = ctx.ueContexts.get(associatedUe);
+        if (gnbUeContext.amfUeNgapId == null) {
+            gnbUeContext.amfUeNgapId = amfUeNgapId;
+        } else if (amfUeNgapId != gnbUeContext.amfUeNgapId) {
+            // todo: either send error indication or update amf-ui-ngap-id
+            throw new NotImplementedException("");
+        }
+
+        return associatedUe;
     }
 
     public static void cycle(GnbSimContext ctx) {
