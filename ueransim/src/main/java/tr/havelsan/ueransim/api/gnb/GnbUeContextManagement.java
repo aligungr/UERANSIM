@@ -30,10 +30,11 @@ import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupRequest;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupResponse;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_UEContextReleaseCommand;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_UEContextReleaseComplete;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_IndexToRFSP;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RANPagingPriority;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
+import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 
@@ -42,14 +43,14 @@ public class GnbUeContextManagement {
     public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
         Debugging.assertThread(ctx);
 
-        var associatedUe = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NGAP_InitialContextSetupResponse());
+        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            Simulation.pushUeEvent(ctx.simCtx, associatedUe, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
+            Simulation.pushUeEvent(ctx.simCtx, ueId, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
     }
 
@@ -58,10 +59,24 @@ public class GnbUeContextManagement {
 
         Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
 
-        var associatedUe = GnbUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
+        var ueId = GnbUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
 
         // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NGAP_UEContextReleaseComplete());
+        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_UEContextReleaseComplete());
+
+        Logging.funcOut();
+    }
+
+    public static void receiveContextModificationRequest(GnbSimContext ctx, NGAP_UEContextModificationRequest message) {
+        Debugging.assertThread(ctx);
+
+        Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
+
+        var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        var ue = ctx.ueContexts.get(ueId);
+
+        // todo
+        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
 
         Logging.funcOut();
     }
