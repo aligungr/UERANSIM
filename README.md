@@ -11,16 +11,17 @@
   - Initial Registration
   - Periodic Registration
 - UE | Authentication
-  - EAP AKA' proc.
-  - 5G AKA proc.
+  - EAP AKA'
+  - 5G AKA
 - gNB | Interface Management
   - NG Setup proc.
 - gNB | UE Context Management
-  - Initial Context Setup proc.
+  - Initial Context Setup
+  - UE Context Release (AMF initiated)
 - gNB | NAS Transport
   - Initial UE Message
   - Uplink/Downlink NAS Transport
-- *todo...*
+- ***todo...***
       
 ##  Requirements
 1. Ubuntu 16.04 or later 

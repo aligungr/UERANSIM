@@ -33,6 +33,7 @@ import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupResponse;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_UEContextReleaseCommand;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_UEContextReleaseComplete;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 
@@ -60,6 +61,7 @@ public class GnbUeContextManagement {
         var associatedUe = GnbUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
 
         // todo
+        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NGAP_UEContextReleaseComplete());
 
         Logging.funcOut();
     }
