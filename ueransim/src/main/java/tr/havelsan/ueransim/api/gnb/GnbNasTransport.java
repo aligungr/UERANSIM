@@ -32,7 +32,6 @@ import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.Ngap;
-import tr.havelsan.ueransim.ngap1.NgapUtils;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
@@ -78,10 +77,12 @@ public class GnbNasTransport {
         Logging.funcOut();
     }
 
-    public static void receiveDownlinkNasTransport(GnbSimContext ctx, UUID associatedUe, NGAP_DownlinkNASTransport message) {
+    public static void receiveDownlinkNasTransport(GnbSimContext ctx, NGAP_DownlinkNASTransport message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling Downlink NAS Transport");
+
+        var associatedUe = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
@@ -91,10 +92,12 @@ public class GnbNasTransport {
         Logging.funcOut();
     }
 
-    public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, UUID associatedUe, NGAP_RerouteNASRequest message) {
+    public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling Reroute NAS Request");
+
+        var associatedUe = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var ngapMessage = message.getProtocolIe(NGAP_NGAP_Message.class);
         var amfSetId = message.getProtocolIe(NGAP_AMFSetID.class);
@@ -102,9 +105,9 @@ public class GnbNasTransport {
 
         var initialUeMessage = (NGAP_InitialUEMessage) NgapEncoding.decodeAper(ngapMessage.value, NgapDataUnitType.InitialUEMessage);
 
-        var ngapBuilder = Ngap.deepClone(initialUeMessage);
+        var newMessage = Ngap.deepClone(initialUeMessage);
         if (allowedNssai != null) {
-            ngapBuilder.addProtocolIe(allowedNssai);
+            newMessage.addProtocolIe(allowedNssai);
         }
 
         var newAmf = GnbUeManagement.selectNewAmfForReAllocation(ctx, associatedAmf, new Bit10(amfSetId.value.intValue()));
@@ -115,7 +118,7 @@ public class GnbNasTransport {
             var ueCtx = ctx.ueContexts.get(associatedUe);
             ueCtx.associatedAmf = newAmf;
 
-            GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, ngapBuilder);
+            GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, newMessage);
         } else {
             Logging.error(Tag.PROC, "AMF selection for re-allocation failed. Could not find a suitable AMF.");
         }
