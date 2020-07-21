@@ -32,14 +32,17 @@ import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialContextSetupResponse;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_UEContextReleaseCommand;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_UEContextReleaseComplete;
 import tr.havelsan.ueransim.utils.Debugging;
-
-import java.util.UUID;
+import tr.havelsan.ueransim.utils.Logging;
 
 public class GnbUeContextManagement {
 
-    public static void handleInitialContextSetup(GnbSimContext ctx, UUID associatedUe, NGAP_InitialContextSetupRequest message) {
+    public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
         Debugging.assertThread(ctx);
+
+        var associatedUe = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         // todo
         GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NGAP_InitialContextSetupResponse());
@@ -48,5 +51,18 @@ public class GnbUeContextManagement {
         if (nasMessage != null) {
             Simulation.pushUeEvent(ctx.simCtx, associatedUe, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
+    }
+
+    public static void receiveContextReleaseCommand(GnbSimContext ctx, NGAP_UEContextReleaseCommand message) {
+        Debugging.assertThread(ctx);
+
+        Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
+
+        var associatedUe = GnbUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
+
+        // todo
+        GNodeB.sendToNetworkUeAssociated(ctx, associatedUe, new NGAP_UEContextReleaseComplete());
+
+        Logging.funcOut();
     }
 }

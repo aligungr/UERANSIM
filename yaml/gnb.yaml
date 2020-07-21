@@ -14,8 +14,8 @@ amfConfigs:
         hex: '5580'
       amfPointer:
         hex: 'a8'
-    host: 10.154.14.5
-    port: 38412
+    host: 10.154.14.19
+    port: 38421
     isMocked: false
     mockingFile: mockedAmf.yaml
 

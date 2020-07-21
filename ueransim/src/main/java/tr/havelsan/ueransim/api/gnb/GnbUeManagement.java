@@ -27,6 +27,11 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.structs.GnbUeContext;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
@@ -50,12 +55,24 @@ public class GnbUeManagement {
         selectAmfForUe(ctx, gnbUeCtx);
     }
 
-    public static UUID findUe(GnbSimContext ctx, long ranUeNgapId) {
+    private static UUID findUeByRanId(GnbSimContext ctx, long ranUeNgapId) {
         Debugging.assertThread(ctx);
 
         // todo: make O(1)
         for (var entry : ctx.ueContexts.entrySet()) {
             if (entry.getValue().ranUeNgapId == ranUeNgapId) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private static UUID findUeByAmfId(GnbSimContext ctx, long amfUeNgapId) {
+        Debugging.assertThread(ctx);
+
+        // todo: make O(1)
+        for (var entry : ctx.ueContexts.entrySet()) {
+            if (entry.getValue().amfUeNgapId == amfUeNgapId) {
                 return entry.getKey();
             }
         }
@@ -97,5 +114,62 @@ public class GnbUeManagement {
 
         Logging.funcOut();
         return res;
+    }
+
+    private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_AMF_UE_NGAP_ID amfUeNgapId, NGAP_RAN_UE_NGAP_ID ranUeNgapId) {
+        Debugging.assertThread(ctx);
+
+        if (amfUeNgapId == null || ranUeNgapId == null) {
+            return null;
+        }
+
+        long amf = amfUeNgapId.value;
+        long ran = ranUeNgapId.value;
+
+        var associatedUe = GnbUeManagement.findUeByRanId(ctx, ran);
+        if (associatedUe == null) {
+            return null;
+        }
+
+        var gnbUeContext = ctx.ueContexts.get(associatedUe);
+        if (gnbUeContext.amfUeNgapId == null) {
+            gnbUeContext.amfUeNgapId = amf;
+        } else if (amf != gnbUeContext.amfUeNgapId) {
+            // todo: either send error indication or update amf-ui-ngap-id
+            throw new NotImplementedException("");
+        }
+
+        return associatedUe;
+    }
+
+    private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_UE_NGAP_IDs ueNgapIDs) {
+        Debugging.assertThread(ctx);
+        if (ueNgapIDs == null) {
+            return null;
+        }
+        if (ueNgapIDs.uE_NGAP_ID_pair != null) {
+            return findAssociatedUeId(ctx, ueNgapIDs.uE_NGAP_ID_pair.aMF_UE_NGAP_ID, ueNgapIDs.uE_NGAP_ID_pair.rAN_UE_NGAP_ID);
+        }
+        if (ueNgapIDs.aMF_UE_NGAP_ID != null) {
+            return findUeByAmfId(ctx, ueNgapIDs.aMF_UE_NGAP_ID.value);
+        }
+        return null;
+    }
+
+    // todo: send error indication if null
+    public static UUID findAssociatedUeIdDefault(GnbSimContext ctx, NGAP_BaseMessage ngapMessage) {
+        Debugging.assertThread(ctx);
+
+        var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
+        var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
+        return findAssociatedUeId(ctx, ieAmfUeNgapId, ieRanUeNgapId);
+    }
+
+    // todo: send error indication if null
+    public static UUID findAssociatedUeForUeNgapIds(GnbSimContext ctx, NGAP_BaseMessage message) {
+        Debugging.assertThread(ctx);
+
+        var ie = message.getProtocolIe(NGAP_UE_NGAP_IDs.class);
+        return findAssociatedUeId(ctx, ie);
     }
 }
