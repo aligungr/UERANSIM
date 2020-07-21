@@ -53,8 +53,9 @@ public class MmRegistration {
 
         var registrationRequest = new RegistrationRequest();
         registrationRequest.registrationType = new IE5gsRegistrationType(
-                registrationType.equals(ERegistrationType.EMERGENCY_REGISTRATION) ? EFollowOnRequest.FOR_PENDING :
-                        EFollowOnRequest.NO_FOR_PENDING,
+                //registrationType.equals(ERegistrationType.EMERGENCY_REGISTRATION) ? EFollowOnRequest.FOR_PENDING :
+                //        EFollowOnRequest.NO_FOR_PENDING,
+                EFollowOnRequest.FOR_PENDING,
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);

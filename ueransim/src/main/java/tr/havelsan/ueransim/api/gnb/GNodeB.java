@@ -130,6 +130,8 @@ public class GNodeB {
             GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
         } else if (ngapMessage instanceof NGAP_UEContextReleaseCommand) {
             GnbUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
+        } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
+            GnbUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }

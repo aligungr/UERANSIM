@@ -18,6 +18,7 @@
 - gNB | UE Context Management
   - Initial Context Setup
   - UE Context Release (AMF initiated)
+  - UE Context Modification
 - gNB | NAS Transport
   - Initial UE Message
   - Uplink/Downlink NAS Transport
