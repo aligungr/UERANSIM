@@ -48,7 +48,26 @@ public class NGAP_InitialContextSetupRequest extends NGAP_BaseMessage {
 
     @Override
     public Class<? extends NGAP_Value>[] getIeTypes() {
-        return new Class[]{NGAP_AMF_UE_NGAP_ID.class, NGAP_RAN_UE_NGAP_ID.class, NGAP_AMFName.class, NGAP_UEAggregateMaximumBitRate.class, NGAP_CoreNetworkAssistanceInformation.class, NGAP_GUAMI.class, NGAP_PDUSessionResourceSetupListCxtReq.class, NGAP_AllowedNSSAI.class, NGAP_UESecurityCapabilities.class, NGAP_SecurityKey.class, NGAP_TraceActivation.class, NGAP_MobilityRestrictionList.class, NGAP_UERadioCapability.class, NGAP_IndexToRFSP.class, NGAP_MaskedIMEISV.class, NGAP_NAS_PDU.class, NGAP_EmergencyFallbackIndicator.class, NGAP_RRCInactiveTransitionReportRequest.class, NGAP_UERadioCapabilityForPaging.class};
+        return new Class[]{NGAP_AMF_UE_NGAP_ID.class
+                , NGAP_RAN_UE_NGAP_ID.class
+                , NGAP_AMFName.class
+                , NGAP_UEAggregateMaximumBitRate.class
+                , NGAP_CoreNetworkAssistanceInformation.class
+                , NGAP_GUAMI.class//
+                , NGAP_PDUSessionResourceSetupListCxtReq.class
+                , NGAP_AllowedNSSAI.class//
+                , NGAP_UESecurityCapabilities.class//
+                , NGAP_SecurityKey.class//
+                , NGAP_TraceActivation.class
+                , NGAP_MobilityRestrictionList.class
+                , NGAP_UERadioCapability.class
+                , NGAP_IndexToRFSP.class
+                , NGAP_MaskedIMEISV.class
+                , NGAP_NAS_PDU.class
+                , NGAP_EmergencyFallbackIndicator.class
+                , NGAP_RRCInactiveTransitionReportRequest.class
+                , NGAP_UERadioCapabilityForPaging.class
+        };
     }
 
     @Override
