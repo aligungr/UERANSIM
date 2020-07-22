@@ -28,6 +28,7 @@ package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingPriority;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_IndexToRFSP;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_UERadioCapability;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_MobilityRestrictionList;
@@ -47,4 +48,5 @@ public class GnbUeContext {
     public NGAP_UERadioCapability radioCapability;
     public NGAP_UESecurityCapabilities securityCapabilities;
     public NGAP_SecurityKey securityKey;
+    public NGAP_PagingPriority pagingPriority;
 }
