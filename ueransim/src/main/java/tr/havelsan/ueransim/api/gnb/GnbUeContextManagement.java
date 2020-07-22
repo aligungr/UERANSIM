@@ -86,6 +86,8 @@ public class GnbUeContextManagement {
         // todo: NG-RAN node shall release all related signalling and user data transport resources
         // ...
 
+        ctx.ueContexts.remove(ueId);
+
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
         GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
