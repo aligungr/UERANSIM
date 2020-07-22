@@ -94,16 +94,23 @@ public abstract class NGAP_BaseMessage extends NGAP_Sequence {
         sortProtocolIes();
     }
 
-    public <T extends NGAP_Value> T getProtocolIe(Class<T> type) {
+    public <T extends NGAP_Value> T getProtocolIe(Class<T> type, int occurrenceIndex) {
         if (protocolIEs == null) protocolIEs = new NGAP_ProtocolIEContainer();
 
+        int occurrence = -1;
         for (var item : protocolIEs.list) {
             var pres = item.value.getPresentValue();
             if (type == pres.getClass()) {
-                return (T) pres;
+                occurrence++;
+                if (occurrence == occurrenceIndex)
+                    return (T) pres;
             }
         }
         return null;
+    }
+
+    public <T extends NGAP_Value> T getProtocolIe(Class<T> type) {
+        return getProtocolIe(type, 0);
     }
 
     public NasMessage getNasMessage() {

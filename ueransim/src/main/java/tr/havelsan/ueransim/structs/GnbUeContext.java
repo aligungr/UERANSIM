@@ -26,8 +26,27 @@
 
 package tr.havelsan.ueransim.structs;
 
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingPriority;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_IndexToRFSP;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_UERadioCapability;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_MobilityRestrictionList;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
+import tr.havelsan.ueransim.utils.bits.BitString;
+
 public class GnbUeContext {
     public Long amfUeNgapId;
     public long ranUeNgapId;
     public Guami associatedAmf;
+
+    public NGAP_IndexToRFSP indexToRfsp;
+    public NGAP_MaskedIMEISV maskedImeiSv;
+    public NGAP_UEAggregateMaximumBitRate aggregateMaximumBitRate;
+    public NGAP_MobilityRestrictionList mobilityRestrictions;
+    public NGAP_UERadioCapability radioCapability;
+    public NGAP_UESecurityCapabilities securityCapabilities;
+    public NGAP_SecurityKey securityKey;
+    public NGAP_PagingPriority pagingPriority;
 }

@@ -30,28 +30,55 @@ import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.nas.NasEncoder;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingPriority;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_IndexToRFSP;
-import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RANPagingPriority;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_UERadioCapability;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_MobilityRestrictionList;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
 import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
 
 public class GnbUeContextManagement {
 
     public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
         Debugging.assertThread(ctx);
 
-        var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        Logging.funcIn("Handling: Initial Context Setup Request");
 
-        // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
+        var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        var ue = ctx.ueContexts.get(ueId);
+
+        ue.indexToRfsp = message.getProtocolIe(NGAP_IndexToRFSP.class);
+        ue.maskedImeiSv = message.getProtocolIe(NGAP_MaskedIMEISV.class);
+        ue.aggregateMaximumBitRate = message.getProtocolIe(NGAP_UEAggregateMaximumBitRate.class);
+        ue.mobilityRestrictions = message.getProtocolIe(NGAP_MobilityRestrictionList.class);
+        ue.radioCapability = message.getProtocolIe(NGAP_UERadioCapability.class);
+        ue.securityKey = message.getProtocolIe(NGAP_SecurityKey.class);
+
+        var secCaps = message.getProtocolIe(NGAP_UESecurityCapabilities.class);
+        if (isUeSecurityCapabilitiesValid(ctx, secCaps)) {
+            ue.securityCapabilities = secCaps;
+            GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
+        } else {
+            var response = new NGAP_InitialContextSetupFailure();
+            response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
+
+            GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
+        }
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
             Simulation.pushUeEvent(ctx.simCtx, ueId, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
         }
+
+        Logging.funcOut();
     }
 
     public static void receiveContextReleaseCommand(GnbSimContext ctx, NGAP_UEContextReleaseCommand message) {
@@ -61,8 +88,14 @@ public class GnbUeContextManagement {
 
         var ueId = GnbUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
 
-        // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_UEContextReleaseComplete());
+        // todo: NG-RAN node shall release all related signalling and user data transport resources
+        // ...
+
+        ctx.ueContexts.remove(ueId);
+
+        // send release complete message
+        var response = new NGAP_UEContextReleaseComplete();
+        GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
 
         Logging.funcOut();
     }
@@ -75,9 +108,55 @@ public class GnbUeContextManagement {
         var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
         var ue = ctx.ueContexts.get(ueId);
 
-        // todo
-        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
+        var ieSecurityKey = message.getProtocolIe(NGAP_SecurityKey.class);
+        if (ieSecurityKey != null) {
+            ue.securityKey = ieSecurityKey;
+        }
 
+        var ieSecCaps = message.getProtocolIe(NGAP_UESecurityCapabilities.class);
+        if (ieSecCaps != null) {
+            if (isUeSecurityCapabilitiesValid(ctx, ieSecCaps)) {
+                ue.securityCapabilities = ieSecCaps;
+            } else {
+                var response = new NGAP_UEContextModificationFailure();
+                response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
+
+                GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
+                Logging.funcOut();
+                return;
+            }
+        }
+
+        var ieIndexToRfsp = message.getProtocolIe(NGAP_IndexToRFSP.class);
+        if (ieIndexToRfsp != null) {
+            ue.indexToRfsp = ieIndexToRfsp;
+        }
+
+        var iePagingPriority = message.getProtocolIe(NGAP_PagingPriority.class);
+        if (iePagingPriority != null) {
+            ue.pagingPriority = iePagingPriority;
+        }
+
+        var ieAggMaxBitRate = message.getProtocolIe(NGAP_UEAggregateMaximumBitRate.class);
+        if (ieAggMaxBitRate != null) {
+            ue.aggregateMaximumBitRate = ieAggMaxBitRate;
+        }
+
+        var ieNewAmfUeNgapId = message.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class, 1);
+        if (ieNewAmfUeNgapId != null) {
+            long old = ue.amfUeNgapId;
+            ue.amfUeNgapId = ieNewAmfUeNgapId.value;
+            Logging.info(Tag.PROC, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
+        }
+
+        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
         Logging.funcOut();
+    }
+
+    private static boolean isUeSecurityCapabilitiesValid(GnbSimContext ctx, NGAP_UESecurityCapabilities capabilities) {
+        Debugging.assertThread(ctx);
+
+        // todo: check if UE security capabilities are valid
+        return true;
     }
 }
