@@ -34,6 +34,7 @@ import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.events.ue.UeTimerExpireEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -89,6 +90,8 @@ public class UserEquipment {
     }
 
     public static void cycle(UeSimContext ctx) {
+        ctx.ueTimers.performTick(ctx);
+
         var event = ctx.popEvent();
         if (event instanceof UeCommandEvent) {
             Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
@@ -106,6 +109,15 @@ public class UserEquipment {
             Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
 
             receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasEvent) event).nasPdu));
+        } else if (event instanceof UeTimerExpireEvent) {
+            var timer = ((UeTimerExpireEvent) event).timer;
+            Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+
+            if (timer.isMmTimer) {
+                MobilityManagement.receiveTimerExpire(ctx, timer);
+            } else {
+                SessionManagement.receiveTimerExpire(ctx, timer);
+            }
         }
     }
 }

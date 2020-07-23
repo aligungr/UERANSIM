@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
+import tr.havelsan.ueransim.api.nas.NasTimer;
 import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
@@ -69,6 +70,12 @@ public class MobilityManagement {
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
+    }
+
+    public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
+        Debugging.assertThread(ctx);
+
+        // todo
     }
 
     public static void executeCommand(UeSimContext ctx, String cmd) {
