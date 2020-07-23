@@ -32,6 +32,7 @@ import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
+import tr.havelsan.ueransim.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -118,22 +119,32 @@ public class GNodeB {
             return;
         }
 
-        if (ngapMessage instanceof NGAP_NGSetupResponse) {
-            GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
-            GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
-            GnbNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
-            GnbUeContextManagement.receiveInitialContextSetup(ctx, (NGAP_InitialContextSetupRequest) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
-            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_UEContextReleaseCommand) {
-            GnbUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
-            GnbUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
-        } else {
-            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
+        try {
+            if (ngapMessage instanceof NGAP_NGSetupResponse) {
+                GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
+                GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
+                GnbNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
+                GnbUeContextManagement.receiveInitialContextSetup(ctx, (NGAP_InitialContextSetupRequest) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
+                GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_UEContextReleaseCommand) {
+                GnbUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
+                GnbUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
+            } else {
+                Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
+            }
+        } catch (NgapErrorException e) {
+            var errorIndication = new NGAP_ErrorIndication();
+            errorIndication.addProtocolIe(e.cause);
+            if (e.associatedUe != null) {
+                GNodeB.sendToNetworkUeAssociated(ctx, e.associatedUe, errorIndication);
+            } else {
+                GNodeB.sendToNetworkNonUe(ctx, associatedAmf, errorIndication);
+            }
         }
     }
 

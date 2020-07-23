@@ -14,7 +14,8 @@
   - EAP AKA'
   - 5G AKA
 - gNB | Interface Management
-  - NG Setup proc.
+  - NG Setup
+  - Error Indication
 - gNB | UE Context Management
   - Initial Context Setup
   - UE Context Release (AMF initiated)

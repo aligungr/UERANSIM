@@ -37,6 +37,7 @@ public enum Tag {
     MESSAGING,
     CONNECTION,
     EVENT,
+    NAS_TIMER,
     NAS_SECURITY,
     NOT_IMPL_YET;
 }

@@ -27,9 +27,11 @@
 package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseRadioNetwork;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.structs.GnbUeContext;
@@ -120,7 +122,7 @@ public class GnbUeManagement {
         Debugging.assertThread(ctx);
 
         if (amfUeNgapId == null || ranUeNgapId == null) {
-            return null;
+            throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
         }
 
         long amf = amfUeNgapId.value;
@@ -128,15 +130,14 @@ public class GnbUeManagement {
 
         var associatedUe = GnbUeManagement.findUeByRanId(ctx, ran);
         if (associatedUe == null) {
-            return null;
+            throw new NgapErrorException(NGAP_CauseRadioNetwork.UNKNOWN_LOCAL_UE_NGAP_ID);
         }
 
         var gnbUeContext = ctx.ueContexts.get(associatedUe);
         if (gnbUeContext.amfUeNgapId == null) {
             gnbUeContext.amfUeNgapId = amf;
         } else if (amf != gnbUeContext.amfUeNgapId) {
-            // todo: either send error indication or update amf-ui-ngap-id
-            throw new NotImplementedException("");
+            throw new NgapErrorException(NGAP_CauseRadioNetwork.INCONSISTENT_REMOTE_UE_NGAP_ID);
         }
 
         return associatedUe;
@@ -145,18 +146,19 @@ public class GnbUeManagement {
     private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_UE_NGAP_IDs ueNgapIDs) {
         Debugging.assertThread(ctx);
         if (ueNgapIDs == null) {
-            return null;
+            throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
         }
         if (ueNgapIDs.uE_NGAP_ID_pair != null) {
             return findAssociatedUeId(ctx, ueNgapIDs.uE_NGAP_ID_pair.aMF_UE_NGAP_ID, ueNgapIDs.uE_NGAP_ID_pair.rAN_UE_NGAP_ID);
         }
         if (ueNgapIDs.aMF_UE_NGAP_ID != null) {
-            return findUeByAmfId(ctx, ueNgapIDs.aMF_UE_NGAP_ID.value);
+            var ue = findUeByAmfId(ctx, ueNgapIDs.aMF_UE_NGAP_ID.value);
+            if (ue != null) return ue;
+            throw new NgapErrorException(NGAP_CauseRadioNetwork.INCONSISTENT_REMOTE_UE_NGAP_ID);
         }
-        return null;
+        throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
     }
 
-    // todo: send error indication if null
     public static UUID findAssociatedUeIdDefault(GnbSimContext ctx, NGAP_BaseMessage ngapMessage) {
         Debugging.assertThread(ctx);
 
@@ -165,7 +167,6 @@ public class GnbUeManagement {
         return findAssociatedUeId(ctx, ieAmfUeNgapId, ieRanUeNgapId);
     }
 
-    // todo: send error indication if null
     public static UUID findAssociatedUeForUeNgapIds(GnbSimContext ctx, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
