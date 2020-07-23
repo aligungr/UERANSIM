@@ -29,26 +29,63 @@ package tr.havelsan.ueransim.api.nas;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer2;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer3;
 
-// todo
 public class NasTimer {
+    private int interval;
+    private long startMillis;
+    private boolean isRunning;
+
+    public NasTimer(int interval) {
+        this.interval = interval;
+    }
 
     public void start() {
-
+        startMillis = System.currentTimeMillis();
+        isRunning = true;
     }
 
     public void start(IEGprsTimer2 v) {
+        if (!v.hasValue()) return;
 
+        interval = v.value.intValue();
+        startMillis = System.currentTimeMillis();
+        isRunning = true;
     }
 
     public void start(IEGprsTimer3 v) {
+        if (!v.hasValue()) return;
 
+        var secs = 0;
+        int val = v.timerValue.intValue();
+
+        if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_2SEC) secs = val * 2;
+        else if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_1MIN) secs = val * 60;
+        else if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_10MIN) secs = val * 60 * 10;
+        else if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_1HOUR) secs = val * 60 * 60;
+        else if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_10HOUR) secs = val * 60 * 60 * 10;
+        else if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_30HOUR) secs = val * 60 * 60 * 30;
+        else if (v.unit == IEGprsTimer3.EGprsTimerValueUnit3.MULTIPLES_OF_320HOUR) secs = val * 60 * 60 * 320;
+
+        interval = secs;
+        startMillis = System.currentTimeMillis();
+        isRunning = true;
     }
 
     public void stop() {
-
+        startMillis = System.currentTimeMillis();
+        isRunning = false;
     }
 
     public boolean isRunning() {
+        return isRunning;
+    }
+
+    public boolean performTick() {
+        if (isRunning) {
+            if ((System.currentTimeMillis() - startMillis) / 1000 > interval) {
+                stop();
+                return true;
+            }
+        }
         return false;
     }
 }

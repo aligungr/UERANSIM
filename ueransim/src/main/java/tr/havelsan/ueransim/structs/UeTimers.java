@@ -55,26 +55,26 @@ public class UeTimers {
     public final NasTimer t3585; /* SM - ... */
 
     public UeTimers() {
-        this.t3346 = new NasTimer();
-        this.t3396 = new NasTimer();
-        this.t3444 = new NasTimer();
-        this.t3445 = new NasTimer();
-        this.t3502 = new NasTimer();
-        this.t3510 = new NasTimer();
-        this.t3511 = new NasTimer();
-        this.t3512 = new NasTimer();
-        this.t3516 = new NasTimer();
-        this.t3517 = new NasTimer();
-        this.t3519 = new NasTimer();
-        this.t3520 = new NasTimer();
-        this.t3521 = new NasTimer();
-        this.t3525 = new NasTimer();
-        this.t3540 = new NasTimer();
-        this.t3580 = new NasTimer();
-        this.t3581 = new NasTimer();
-        this.t3582 = new NasTimer();
-        this.t3583 = new NasTimer();
-        this.t3584 = new NasTimer();
-        this.t3585 = new NasTimer();
+        this.t3346 = new NasTimer(Integer.MAX_VALUE);
+        this.t3396 = new NasTimer(Integer.MAX_VALUE);
+        this.t3444 = new NasTimer(12 * 60 * 60);
+        this.t3445 = new NasTimer(12 * 60 * 60);
+        this.t3502 = new NasTimer(12 * 60);
+        this.t3510 = new NasTimer(15);
+        this.t3511 = new NasTimer(10);
+        this.t3512 = new NasTimer(54 * 60);
+        this.t3516 = new NasTimer(30);
+        this.t3517 = new NasTimer(15);
+        this.t3519 = new NasTimer(60);
+        this.t3520 = new NasTimer(15);
+        this.t3521 = new NasTimer(15);
+        this.t3525 = new NasTimer(60);
+        this.t3540 = new NasTimer(10);
+        this.t3580 = new NasTimer(16);
+        this.t3581 = new NasTimer(16);
+        this.t3582 = new NasTimer(16);
+        this.t3583 = new NasTimer(60);
+        this.t3584 = new NasTimer(Integer.MAX_VALUE);
+        this.t3585 = new NasTimer(Integer.MAX_VALUE);
     }
 }
