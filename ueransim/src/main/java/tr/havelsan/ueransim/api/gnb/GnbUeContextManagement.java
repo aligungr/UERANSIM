@@ -103,7 +103,7 @@ public class GnbUeContextManagement {
     public static void receiveContextModificationRequest(GnbSimContext ctx, NGAP_UEContextModificationRequest message) {
         Debugging.assertThread(ctx);
 
-        Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
+        Logging.funcIn("Handling: UE Context Modification Request");
 
         var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
         var ue = ctx.ueContexts.get(ueId);
