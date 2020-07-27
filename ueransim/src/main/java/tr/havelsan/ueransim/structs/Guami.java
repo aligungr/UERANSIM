@@ -46,4 +46,15 @@ public class Guami {
         this.amfSetId = amfSetId;
         this.amfPointer = amfPointer;
     }
+
+    @Override
+    public String toString() {
+        return "Guami{" +
+                "mcc=" + mcc +
+                ", mnc=" + mnc +
+                ", amfRegionId=" + amfRegionId +
+                ", amfSetId=" + amfSetId +
+                ", amfPointer=" + amfPointer +
+                '}';
+    }
 }
