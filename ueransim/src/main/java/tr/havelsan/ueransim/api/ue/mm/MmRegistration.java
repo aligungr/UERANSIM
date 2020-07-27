@@ -38,13 +38,16 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
+import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType) {
-        Logging.funcIn("Starting: Registration procedure");
+        Debugging.assertThread(ctx);
+
+        Logging.funcIn("Starting: Registration procedure (%s)", registrationType);
 
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.currentNsCtx != null && ctx.currentNsCtx.ngKsi != null) {

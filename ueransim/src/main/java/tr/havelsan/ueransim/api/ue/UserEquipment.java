@@ -99,6 +99,7 @@ public class UserEquipment {
             var cmd = ((UeCommandEvent) event).cmd;
             switch (cmd) {
                 case "initial-registration":
+                case "periodic-registration":
                     MobilityManagement.executeCommand(ctx, cmd);
                     break;
                 default:
