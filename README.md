@@ -28,10 +28,12 @@
 ##  Requirements
 1. Ubuntu 16.04 or later 
 2. OpenJDK 11 or later
+3. g++/gcc version 6.4.0 or later
 
 ## Dependencies
 ```
-$ sudo apt install git
+$ sudo apt update
+$ sudo apt upgrade
 $ sudo apt install make
 $ sudo apt install g++
 $ sudo apt install openjdk-11-jdk
