@@ -261,7 +261,7 @@ public class MmAuthentication {
 
         if (USE_SQN_HACK) {
             ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
-                    calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, rand).get(MilenageResult.AK));
+                    calculateMilenage(ctx.ueConfig, new OctetString("000000000000"), rand).get(MilenageResult.AK));
         }
 
         var milenage = calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, rand);
