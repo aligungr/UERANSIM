@@ -112,6 +112,6 @@ public class SctpClient implements ISctpClient {
 
     @Override
     public boolean isOpen() {
-        return channel.isOpen();
+        return channel != null && channel.isOpen();
     }
 }
