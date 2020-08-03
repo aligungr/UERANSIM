@@ -29,10 +29,7 @@ package tr.havelsan.ueransim.api.ue.mm;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.enums.ERmState;
 import tr.havelsan.ueransim.nas.eap.Eap;
-import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
-import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
-import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
-import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
+import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
@@ -66,6 +63,13 @@ public class MmRegistration {
         registrationRequest.updateType = new IE5gsUpdateType(
                 ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
+
+        if (!registrationType.equals(ERegistrationType.PERIODIC_REGISTRATION_UPDATING)) {
+            registrationRequest.mmCapability = new IE5gMmCapability();
+            registrationRequest.mmCapability.s1Mode = EEpcNasSupported.NOT_SUPPORTED;
+            registrationRequest.mmCapability.hoAttach = EHandoverAttachSupported.NOT_SUPPORTED;
+            registrationRequest.mmCapability.lpp = ELtePositioningProtocolCapability.NOT_SUPPORTED;
+        }
 
         if (ctx.mmCtx.storedGuti != null) {
             registrationRequest.mobileIdentity = ctx.mmCtx.storedGuti;
