@@ -51,9 +51,9 @@ public class IE5gMmCapability extends InformationElement4 {
     protected IE5gMmCapability decodeIE4(OctetInputStream stream, int length) {
         var res = new IE5gMmCapability();
         var octet = stream.readOctet();
-        s1Mode = EEpcNasSupported.fromValue(octet.getBitI(0));
-        hoAttach = EHandoverAttachSupported.fromValue(octet.getBitI(1));
-        lpp = ELtePositioningProtocolCapability.fromValue(octet.getBitI(2));
+        res.s1Mode = EEpcNasSupported.fromValue(octet.getBitI(0));
+        res.hoAttach = EHandoverAttachSupported.fromValue(octet.getBitI(1));
+        res.lpp = ELtePositioningProtocolCapability.fromValue(octet.getBitI(2));
 
         // other octets are spare (if any)
         stream.readOctetString(length - 1);
