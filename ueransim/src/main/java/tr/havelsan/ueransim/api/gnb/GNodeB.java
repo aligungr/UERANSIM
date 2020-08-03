@@ -63,7 +63,12 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+
+        if (amfCtx.sctpClient.isOpen()) {
+            amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+        } else {
+            Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
+        }
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
@@ -106,7 +111,12 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+
+        if (amfCtx.sctpClient.isOpen()) {
+            amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+        } else {
+            Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
+        }
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
