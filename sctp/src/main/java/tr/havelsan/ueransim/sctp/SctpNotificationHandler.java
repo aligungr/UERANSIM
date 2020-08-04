@@ -46,10 +46,10 @@ class SctpNotificationHandler extends AbstractNotificationHandler<PrintStream> {
         if (notification.event() == AssociationChangeNotification.AssocChangeEvent.COMM_UP) {
             int outbound = notification.association().maxOutboundStreams();
             int inbound = notification.association().maxInboundStreams();
-            attachment.printf(
+            /*attachment.printf(
                     "New association setup with %d outbound streams" + ", and %d inbound streams.\n",
                     outbound, inbound
-            );
+            );*/
             sctpAssociationHandler.onSetup();
         }
         return HandlerResult.CONTINUE;
@@ -57,7 +57,7 @@ class SctpNotificationHandler extends AbstractNotificationHandler<PrintStream> {
 
     @Override
     public HandlerResult handleNotification(ShutdownNotification notification, PrintStream attachment) {
-        attachment.print("The association has been shutdown.\n");
+        //attachment.print("The association has been shutdown.\n");
         sctpAssociationHandler.onShutdown();
         return HandlerResult.RETURN;
     }

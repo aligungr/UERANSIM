@@ -49,9 +49,8 @@ public class Program {
 
     public static void main(String[] args) {
         MtsInitializer.initMts();
-        initLogging();
-
         AppConfig.initialize();
+        initLogging();
 
         var simContext = AppConfig.createSimContext();
 
