@@ -35,7 +35,6 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.ngap0.Ngap;
-import tr.havelsan.ueransim.ngap1.NgapUtils;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.sctp.MockedSctpClient;
@@ -53,9 +52,14 @@ import java.util.Queue;
 
 public class AppConfig {
 
+    public static String PROFILE;
+
     public static void initialize() {
-        var config = (ImplicitTypedObject) MtsDecoder.decode("ueransim.yaml");
-        Constants.USE_LONG_MNC = config.getBool("use-long-mnc");
+        var root = (ImplicitTypedObject) MtsDecoder.decode("config/root.yaml");
+        PROFILE = "config/" + root.getString("selected-profile") + "/";
+
+        var general = (ImplicitTypedObject) MtsDecoder.decode(PROFILE + "general.yaml");
+        Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
     }
 
     public static SimulationContext createSimContext() {
