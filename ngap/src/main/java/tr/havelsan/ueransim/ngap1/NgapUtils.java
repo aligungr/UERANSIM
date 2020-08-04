@@ -59,7 +59,7 @@ public class NgapUtils {
         int mnc = plmn.mnc.intValue();
         boolean longMnc = plmn.mnc.isLongMnc();
 
-        if (Constants.ALWAYS_LONG_MNC)
+        if (Constants.USE_LONG_MNC)
             longMnc = true;
 
         if (longMnc) {

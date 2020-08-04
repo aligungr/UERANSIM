@@ -51,13 +51,15 @@ public class Program {
         MtsInitializer.initMts();
         initLogging();
 
+        AppConfig.initialize();
+
         var simContext = AppConfig.createSimContext();
 
         var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("gnb.yaml"));
         Simulation.registerGnb(simContext, gnbContext);
         GnbNode.run(gnbContext);
 
-        var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue_i2i.yaml"));
+        var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode("ue.yaml"));
         Simulation.registerUe(simContext, ueContext);
         UeNode.run(ueContext);
 

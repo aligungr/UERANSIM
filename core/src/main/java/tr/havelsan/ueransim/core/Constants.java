@@ -34,6 +34,5 @@ public final class Constants {
     public static final int NGAP_PROTOCOL_ID = 60;
     public static final int DEFAULT_STREAM_NUMBER = 1;
 
-    // here assumed always 3 digit, but it can be changed to false for actual production, no problem.
-    public static final boolean ALWAYS_LONG_MNC = true;
+    public static boolean USE_LONG_MNC = true;
 }
