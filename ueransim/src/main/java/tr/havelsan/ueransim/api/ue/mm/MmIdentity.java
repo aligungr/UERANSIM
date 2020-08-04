@@ -91,7 +91,7 @@ public class MmIdentity {
         if (supi.type.equals("imsi")) {
             String imsi = supi.value;
             String mcc = imsi.substring(0, 3);
-            String mnc = imsi.substring(3, Constants.ALWAYS_LONG_MNC ? 6 : 5);
+            String mnc = imsi.substring(3, Constants.USE_LONG_MNC ? 6 : 5);
             String msin = imsi.substring(mcc.length() + mnc.length());
 
             IEImsiMobileIdentity res = new IEImsiMobileIdentity();

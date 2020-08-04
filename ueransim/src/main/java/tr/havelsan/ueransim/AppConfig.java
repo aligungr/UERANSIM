@@ -53,6 +53,11 @@ import java.util.Queue;
 
 public class AppConfig {
 
+    public static void initialize() {
+        var config = (ImplicitTypedObject) MtsDecoder.decode("ueransim.yaml");
+        Constants.USE_LONG_MNC = config.getBool("use-long-mnc");
+    }
+
     public static SimulationContext createSimContext() {
         return new SimulationContext();
     }

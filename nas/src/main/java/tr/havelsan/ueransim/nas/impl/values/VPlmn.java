@@ -90,7 +90,7 @@ public class VPlmn extends NasValue {
         int mnc = this.mnc.intValue();
         boolean longMnc = this.mnc.isLongMnc();
 
-        if (Constants.ALWAYS_LONG_MNC)
+        if (Constants.USE_LONG_MNC)
             longMnc = true;
 
         int mnc1 = longMnc ? (mnc % 1000) / 100 : (mnc % 100) / 10;
