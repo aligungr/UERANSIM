@@ -132,7 +132,9 @@ public class MmRegistration {
     }
 
     public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
-        Logging.funcIn("Starting: Registration reject");
+        Logging.funcIn("Handling: Registration reject");
+
+        Logging.error(Tag.PROCEDURE_RESULT, "Registration failed");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
