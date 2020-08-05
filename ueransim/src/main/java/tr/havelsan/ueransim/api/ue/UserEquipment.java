@@ -102,6 +102,9 @@ public class UserEquipment {
                 case "periodic-registration":
                     MobilityManagement.executeCommand(ctx, cmd);
                     break;
+                case "pdu-session-establishment":
+                    SessionManagement.executeCommand(ctx, cmd);
+                    break;
                 default:
                     Logging.error(Tag.EVENT, "UeCommandEvent not recognized: %s", cmd);
                     break;

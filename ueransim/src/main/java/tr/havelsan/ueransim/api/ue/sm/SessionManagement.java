@@ -62,4 +62,17 @@ public class SessionManagement {
 
         // todo
     }
+
+    public static void executeCommand(UeSimContext ctx, String cmd) {
+        Debugging.assertThread(ctx);
+
+        switch (cmd) {
+            case "pdu-session-establishment":
+                SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
+                break;
+            default:
+                Logging.error(Tag.EVENT, "SessionManagement.executeCommand, command not recognized: %s", cmd);
+                break;
+        }
+    }
 }

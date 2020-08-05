@@ -6,12 +6,13 @@ imei: '356938035643809'
 supi: 'imsi-286010000000001'
 
 smsOverNasSupported: false
+dnn: 'internet'
 
 requestedNssai:
   - sst:
       value: 1
     sd:
-      hex: 010203
+      hex: '010203'
 
 userLocationInformationNr:
   nrCgi:

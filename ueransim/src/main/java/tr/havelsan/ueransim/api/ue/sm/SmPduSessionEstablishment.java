@@ -26,7 +26,6 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
-import tr.havelsan.ueransim.configs.PduSessionEstablishmentConfig;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -40,7 +39,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 class SmPduSessionEstablishment {
 
-    public static void sendEstablishmentRequest(UeSimContext ctx, PduSessionEstablishmentConfig config) {
+    public static void sendEstablishmentRequest(UeSimContext ctx) {
         Logging.funcIn("Sending PDU Session Establishment Request");
 
         var pduSessionId = SmPduSessionManagement.allocatePduSessionId(ctx);
@@ -73,8 +72,8 @@ class SmPduSessionEstablishment {
         ulNasTransport.payloadContainer = new IEPayloadContainer(NasEncoder.nasPduS(pduSessionEstablishmentRequest));
         ulNasTransport.pduSessionId = new IEPduSessionIdentity2(pduSessionId.intValue());
         ulNasTransport.requestType = new IERequestType(IERequestType.ERequestType.INITIAL_REQUEST);
-        ulNasTransport.sNssa = config.sNssai;
-        ulNasTransport.dnn = config.dnn;
+        ulNasTransport.sNssa = ctx.ueConfig.requestedNssai[0];
+        ulNasTransport.dnn = ctx.ueConfig.dnn;
 
         ctx.ueTimers.t3580.start();
 
@@ -109,42 +108,6 @@ class SmPduSessionEstablishment {
         Logging.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
 
         Logging.funcOut();
-        return;
-
-        /* TODO
-        var pduSessionResourceSetupRequest = message.getNgapMessage(PDUSessionResourceSetupRequest.class);
-        if (pduSessionResourceSetupRequest == null) {
-            FlowLogging.logUnhandledMessage(message, PDUSessionResourceSetupRequest.class);
-            return this::waitPduSessionEstablishmentAccept;
-        }
-
-        var gtpTunnel = new GTPTunnel();
-        gtpTunnel.transportLayerAddress = new TransportLayerAddress(config.transportLayerAddress.toByteArray(), 32);
-        gtpTunnel.gTP_TEID = new GTP_TEID(config.gTpTeid.toByteArray());
-
-        var transfer = new PDUSessionResourceSetupResponseTransfer();
-        transfer.qosFlowPerTNLInformation = new QosFlowPerTNLInformation();
-        try {
-            transfer.qosFlowPerTNLInformation.uPTransportLayerInformation = new UPTransportLayerInformation(UPTransportLayerInformation.ASN_gTPTunnel, gtpTunnel);
-        } catch (InvalidStructureException e) {
-            throw new RuntimeException(e);
-        }
-        transfer.qosFlowPerTNLInformation.associatedQosFlowList = new AssociatedQosFlowList();
-
-        var associatedFlowItem = new AssociatedQosFlowItem();
-        associatedFlowItem.qosFlowIdentifier = new QosFlowIdentifier(config.qosFlowIdentifier);
-        transfer.qosFlowPerTNLInformation.associatedQosFlowList.valueList = Collections.singletonList(associatedFlowItem);
-
-        var list = new PDUSessionResourceSetupListSURes();
-        var item = new PDUSessionResourceSetupItemSURes();
-
-        item.pDUSessionID = new PDUSessionID(config.pduSessionId.intValue());
-        item.pDUSessionResourceSetupResponseTransfer = new ContainingOctetStringValue(transfer);
-        list.valueList = Collections.singletonList(item);
-
-        send(new SendingMessage(new NgapBuilder(NgapProcedure.PDUSessionResourceSetupResponse, NgapCriticality.REJECT)
-                .addProtocolIE(list, NgapCriticality.IGNORE, NGAP_Constants__id_PDUSessionResourceSetupListSURes), null));
-        */
     }
 
     public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {
