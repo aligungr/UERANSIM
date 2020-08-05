@@ -32,24 +32,23 @@
 
 ## Dependencies
 ```
-$ sudo apt update
-$ sudo apt upgrade
-$ sudo apt install make
-$ sudo apt install g++
-$ sudo apt install openjdk-11-jdk
-$ sudo apt install maven
-$ sudo apt install libsctp-dev lksctp-tools
+sudo apt update
+sudo apt upgrade
+sudo apt install make
+sudo apt install g++
+sudo apt install openjdk-11-jdk
+sudo apt install maven
+sudo apt install libsctp-dev lksctp-tools
 ```
 
 ## Building
-You should be able to compile maven project located at `UERANSIM/pom.xml`  
-
-All native libraries and Java source codes are compiled automatically on `maven compile`.
+```
+./build.sh
+```
 
 ## Usage
-1. Make sure that `config` folder is located at the same directory with `ueransim-1.0.8.jar`
-2. Select a configuration profile by modifying `config/root.yaml`.
-3. (Optional)  You can further modify the profile configurations if you want. (`config/custom`, `config/havelsan`, etc.)
-4. Run `java -jar ueransim-1.0.8.jar` to start the application.
-5. Use `tail -f app.log` to monitor logs realtime.
-6. Use terminal to trigger test events such as `initial-registration`
+1. Select a configuration profile by modifying `config/root.yaml`.
+2. (Optional)  You can further modify the profile configurations if you want. (`config/havelsan`, `config/free5gc`, etc.)
+3. Execute `./run.sh` to start the application.
+4. Use `tail -f app.log` to monitor logs realtime.
+5. Use terminal to trigger test events such as `initial-registration`
