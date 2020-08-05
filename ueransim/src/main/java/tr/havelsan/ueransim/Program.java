@@ -68,7 +68,7 @@ public class Program {
 
         System.out.println("Possible events:" + Json.toJson(EventParser.possibleEvents()));
         while (true) {
-            System.out.println("Type event:");
+            System.out.println("Enter event to execute:");
             String line = scanner.nextLine();
             var event = EventParser.parse(line);
             if (event == null) {
