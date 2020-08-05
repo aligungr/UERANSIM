@@ -92,7 +92,7 @@ public enum NgapProtocolIeType {
 
     public static NgapProtocolIeType fromAsnName(String name) {
         if (name.endsWith("-IEs"))
-            name = name.substring(0, name.length() - "-IEs".length() + "_IEs".length());
+            name = name.substring(0, name.length() - "-IEs".length()) + "_IEs";
         for (var item : NgapProtocolIeType.values()) {
             if (item.name().equals(name))
                 return item;
