@@ -1,9 +1,9 @@
 snn: '5G:mnc093.mcc208.3gppnetwork.org'
-key: '465b5ce8b199b49faa5f0a2ee238a001'
-op: 'cdc202d5123e20f62b6d676ac72cb318'
+key: '8baf473f2f8fd09487cccbd7097c6862'
+op: '8e27b6af0e692e750f32667a3b14605d'
 amf: '8000'
 imei: '356938035643809'
-supi: 'imsi-208930000000001'
+supi: 'imsi-208930000000003'
 
 smsOverNasSupported: true
 
