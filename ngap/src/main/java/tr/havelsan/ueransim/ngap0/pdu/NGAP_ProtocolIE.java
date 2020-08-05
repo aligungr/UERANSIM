@@ -27,10 +27,6 @@ public class NGAP_ProtocolIE extends NGAP_Sequence {
         return new String[]{"id", "criticality", "value"};
     }
 
-    public static NGAP_ProtocolIE newInstanceFromTag(String tag) {
-        return new NGAP_ProtocolIE(NgapProtocolIeType.fromAsnName(tag));
-    }
-
     @Override
     public String getAsnName() {
         return protocolIeType.getAsnName();
@@ -39,5 +35,11 @@ public class NGAP_ProtocolIE extends NGAP_Sequence {
     @Override
     public String getXmlTagName() {
         return protocolIeType.getAsnName();
+    }
+
+    public static NGAP_ProtocolIE newInstanceFromTag(String tag) {
+        var type = NgapProtocolIeType.fromAsnName(tag);
+        if (type == null) return null;
+        return new NGAP_ProtocolIE(type);
     }
 }

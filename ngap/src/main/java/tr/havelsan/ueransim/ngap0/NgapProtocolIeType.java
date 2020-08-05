@@ -86,14 +86,8 @@ public enum NgapProtocolIeType {
     public static NgapProtocolIeType fromAsnName(String name) {
         if (name.endsWith("-IEs"))
             name = name.substring(0, name.length() - "-IEs".length() + "_IEs".length());
-        return NgapProtocolIeType.valueOf(name);
-    }
-
-    public static NgapProtocolIeType forMessage(String message) {
         for (var item : NgapProtocolIeType.values()) {
-            if (item.name().equals(message + "IEs"))
-                return item;
-            if (item.name().equals(message + "_IEs"))
+            if (item.name().equals(name))
                 return item;
         }
         return null;
@@ -104,5 +98,15 @@ public enum NgapProtocolIeType {
         if (name.endsWith("_IEs"))
             return name.substring(0, name.length() - "_IEs".length() + "-IEs".length());
         return name;
+    }
+
+    public static NgapProtocolIeType forMessage(String message) {
+        for (var item : NgapProtocolIeType.values()) {
+            if (item.name().equals(message + "IEs"))
+                return item;
+            if (item.name().equals(message + "_IEs"))
+                return item;
+        }
+        return null;
     }
 }
