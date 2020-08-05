@@ -83,6 +83,13 @@ public enum NgapProtocolIeType {
     UERadioCapabilityCheckRequestIEs,
     UERadioCapabilityCheckResponseIEs;
 
+    public String getAsnName() {
+        var name = this.name();
+        if (name.endsWith("_IEs"))
+            return name.substring(0, name.length() - "_IEs".length()) + "-IEs";
+        return name;
+    }
+
     public static NgapProtocolIeType fromAsnName(String name) {
         if (name.endsWith("-IEs"))
             name = name.substring(0, name.length() - "-IEs".length() + "_IEs".length());
@@ -91,13 +98,6 @@ public enum NgapProtocolIeType {
                 return item;
         }
         return null;
-    }
-
-    public String getAsnName() {
-        var name = this.name();
-        if (name.endsWith("_IEs"))
-            return name.substring(0, name.length() - "_IEs".length() + "-IEs".length());
-        return name;
     }
 
     public static NgapProtocolIeType forMessage(String message) {
