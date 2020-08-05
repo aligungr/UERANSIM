@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.ngap0.pdu;
 
 import tr.havelsan.ueransim.ngap0.msg.*;
+import tr.havelsan.ueransim.ngap0.pdu.*;
 import tr.havelsan.ueransim.ngap0.core.*;
 
 public class NGAP_MessageChoice extends NGAP_Choice {

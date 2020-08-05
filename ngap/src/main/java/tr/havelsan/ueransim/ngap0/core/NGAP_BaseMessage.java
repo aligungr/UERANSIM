@@ -29,6 +29,7 @@ package tr.havelsan.ueransim.ngap0.core;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.NgapMessageType;
+import tr.havelsan.ueransim.ngap0.NgapProtocolIeType;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_Criticality;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_ProcedureCode;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_ProtocolIE_ID;
@@ -58,6 +59,8 @@ public abstract class NGAP_BaseMessage extends NGAP_Sequence {
 
     public abstract NgapMessageType getMessageType();
 
+    public abstract NgapProtocolIeType getProtocolIeType();
+
     private int indexOfIeType(Class<? extends NGAP_Value> type) {
         int i = 0;
         for (var item : getIeTypes()) {
@@ -82,7 +85,7 @@ public abstract class NGAP_BaseMessage extends NGAP_Sequence {
         if (isProtocolIeUsable(ie.getClass())) {
             var crt = getIeCriticality()[ind];
 
-            var protocolIe = new NGAP_ProtocolIE(getMessageType());
+            var protocolIe = new NGAP_ProtocolIE(getProtocolIeType());
             protocolIe.id = new NGAP_ProtocolIE_ID(getIeId()[ind]);
             protocolIe.criticality = crt == 0 ? NGAP_Criticality.REJECT : crt == 1 ? NGAP_Criticality.IGNORE : NGAP_Criticality.NOTIFY;
             protocolIe.value = new NGAP_IEChoice();
