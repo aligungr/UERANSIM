@@ -144,6 +144,8 @@ public class GNodeB {
                 GnbUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
             } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
                 GnbUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_PDUSessionResourceSetupRequest) {
+                GnbPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
             } else {
                 Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
             }
