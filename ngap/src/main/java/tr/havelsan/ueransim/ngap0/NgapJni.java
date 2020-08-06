@@ -55,7 +55,7 @@ public class NgapJni {
             throw new RuntimeException("NgapJni convertEncoding RESULT_DECODING_FAILED");
         }
         if (resCode[0] == RESULT_ENCODING_FAILED) {
-            throw new RuntimeException("NgapJni convertEncoding RESULT_DECODING_FAILED");
+            throw new RuntimeException("NgapJni convertEncoding RESULT_ENCODING_FAILED");
         }
         return converted;
     }

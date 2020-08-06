@@ -98,7 +98,7 @@ public class NgapPduSessionManagement {
 
                 var res = new NGAP_PDUSessionResourceFailedToSetupItemSURes();
                 res.pDUSessionID = item.pDUSessionID;
-                res.pDUSessionResourceSetupUnsuccessfulTransfer = new NGAP_OctetString(NgapEncoding.encodeAper(tr, NgapDataUnitType.PDUSessionResourceSetupRequestTransfer));
+                res.pDUSessionResourceSetupUnsuccessfulTransfer = new NGAP_OctetString(NgapEncoding.encodeAper(tr, NgapDataUnitType.PDUSessionResourceSetupUnsuccessfulTransfer));
                 failedList.list.add(res);
             }
         }
