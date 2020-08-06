@@ -38,9 +38,6 @@ public class NgapPduSessionManagement {
         var successList = new NGAP_PDUSessionResourceSetupListSURes();
         var failedList = new NGAP_PDUSessionResourceFailedToSetupListSURes();
 
-        response.addProtocolIe(successList);
-        response.addProtocolIe(failedList);
-
         var associatedUe = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeIdDefault(ctx, message));
 
         var list = message.getProtocolIe(NGAP_PDUSessionResourceSetupListSUReq.class);
@@ -108,6 +105,13 @@ public class NgapPduSessionManagement {
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
             Simulation.pushUeEvent(ctx.simCtx, associatedUe.ueCtxId, new UeDownlinkNasEvent(nasPdu.value));
+        }
+
+        if (!successList.list.isEmpty()) {
+            response.addProtocolIe(successList);
+        }
+        if (!failedList.list.isEmpty()) {
+            response.addProtocolIe(failedList);
         }
 
         GNodeB.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
