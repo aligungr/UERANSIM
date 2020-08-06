@@ -51,4 +51,8 @@ public class NgapEncoding {
     public static byte[] encodeAper(NGAP_PDU pdu) {
         return NgapJni.xerToAper(NgapXerEncoder.encode(pdu), NgapDataUnitType.NGAP_PDU);
     }
+
+    public static byte[] encodeAper(NGAP_Value value, NgapDataUnitType type) {
+        return NgapJni.xerToAper(NgapXerEncoder.encode(value), type);
+    }
 }

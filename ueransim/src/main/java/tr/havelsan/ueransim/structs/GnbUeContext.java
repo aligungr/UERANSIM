@@ -36,7 +36,11 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
 import tr.havelsan.ueransim.utils.bits.BitString;
 
+import java.util.UUID;
+
 public class GnbUeContext {
+    public final UUID ueCtxId;
+
     public Long amfUeNgapId;
     public long ranUeNgapId;
     public Guami associatedAmf;
@@ -49,4 +53,8 @@ public class GnbUeContext {
     public NGAP_UESecurityCapabilities securityCapabilities;
     public NGAP_SecurityKey securityKey;
     public NGAP_PagingPriority pagingPriority;
+
+    public GnbUeContext(UUID ueCtxId) {
+        this.ueCtxId = ueCtxId;
+    }
 }

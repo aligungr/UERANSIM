@@ -49,7 +49,7 @@ public class NgapUeManagement {
     public static void createUeContext(GnbSimContext ctx, UUID ueId) {
         Debugging.assertThread(ctx);
 
-        var gnbUeCtx = new GnbUeContext();
+        var gnbUeCtx = new GnbUeContext(ueId);
         gnbUeCtx.ranUeNgapId = ++ctx.ueNgapIdCounter;
         gnbUeCtx.amfUeNgapId = null;
 
