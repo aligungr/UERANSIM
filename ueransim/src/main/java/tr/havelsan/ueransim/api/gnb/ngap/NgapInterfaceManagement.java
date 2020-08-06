@@ -24,8 +24,9 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.api.gnb.ngap;
 
+import tr.havelsan.ueransim.api.gnb.GNodeB;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap1.NgapUtils;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
@@ -37,7 +38,7 @@ import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class GnbInterfaceManagement {
+public class NgapInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
         Debugging.assertThread(ctx);
@@ -50,7 +51,7 @@ public class GnbInterfaceManagement {
         msg.addProtocolIe(NgapUtils.createSupportedTAList(ctx.config.supportedTAs));
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
-        GNodeB.sendToNetworkNonUe(ctx, associatedAmf, msg);
+        GNodeB.sendNgapNonUe(ctx, associatedAmf, msg);
         Logging.funcOut();
     }
 

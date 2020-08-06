@@ -24,18 +24,18 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.api.gnb.ngap;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
 import tr.havelsan.ueransim.structs.Guami;
 
-public class GnbSctpAssociationHandler implements ISctpAssociationHandler {
+public class NgapSctpAssociationHandler implements ISctpAssociationHandler {
     private final GnbSimContext gnbCtx;
     private final Guami guami;
 
-    public GnbSctpAssociationHandler(GnbSimContext gnbCtx, Guami guami) {
+    public NgapSctpAssociationHandler(GnbSimContext gnbCtx, Guami guami) {
         this.gnbCtx = gnbCtx;
         this.guami = guami;
     }

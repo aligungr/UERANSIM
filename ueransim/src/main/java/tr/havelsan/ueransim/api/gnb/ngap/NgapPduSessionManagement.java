@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.api.gnb.ngap;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 
-public class GnbPduSessionManagement {
+public class NgapPduSessionManagement {
 
     // todo
     public static void receiveResourceSetupRequest(GnbSimContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
@@ -19,7 +19,7 @@ public class GnbPduSessionManagement {
 
         Logging.funcIn("Handling PDU Session Resource Setup Request");
 
-        var associatedUe = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var pagingPriority = message.getProtocolIe(NGAP_RANPagingPriority.class);
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);

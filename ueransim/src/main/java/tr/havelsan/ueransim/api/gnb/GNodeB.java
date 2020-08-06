@@ -26,6 +26,10 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
+import tr.havelsan.ueransim.api.gnb.ngap.NgapInterfaceManagement;
+import tr.havelsan.ueransim.api.gnb.ngap.NgapNasTransport;
+import tr.havelsan.ueransim.api.gnb.ngap.NgapPduSessionManagement;
+import tr.havelsan.ueransim.api.gnb.ngap.NgapUeContextManagement;
 import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
@@ -54,7 +58,7 @@ import java.util.UUID;
 
 public class GNodeB {
 
-    public static void sendToNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
+    public static void sendNgapNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
         var ngapPdu = message.buildPdu();
@@ -73,7 +77,7 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void sendToNetworkUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
+    public static void sendNgapUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
         Debugging.assertThread(ctx);
 
         // Find UE gNB context
@@ -121,7 +125,7 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
+    public static void receiveNgap(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
         var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
@@ -131,21 +135,21 @@ public class GNodeB {
 
         try {
             if (ngapMessage instanceof NGAP_NGSetupResponse) {
-                GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
+                NgapInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
             } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
-                GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
+                NgapInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
             } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
-                GnbNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
+                NgapNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
             } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
-                GnbUeContextManagement.receiveInitialContextSetup(ctx, (NGAP_InitialContextSetupRequest) ngapMessage);
+                NgapUeContextManagement.receiveInitialContextSetup(ctx, (NGAP_InitialContextSetupRequest) ngapMessage);
             } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
-                GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
+                NgapNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
             } else if (ngapMessage instanceof NGAP_UEContextReleaseCommand) {
-                GnbUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
+                NgapUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
             } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
-                GnbUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
+                NgapUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
             } else if (ngapMessage instanceof NGAP_PDUSessionResourceSetupRequest) {
-                GnbPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
+                NgapPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
             } else {
                 Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
             }
@@ -153,9 +157,9 @@ public class GNodeB {
             var errorIndication = new NGAP_ErrorIndication();
             errorIndication.addProtocolIe(e.cause);
             if (e.associatedUe != null) {
-                GNodeB.sendToNetworkUeAssociated(ctx, e.associatedUe, errorIndication);
+                GNodeB.sendNgapUeAssociated(ctx, e.associatedUe, errorIndication);
             } else {
-                GNodeB.sendToNetworkNonUe(ctx, associatedAmf, errorIndication);
+                GNodeB.sendNgapNonUe(ctx, associatedAmf, errorIndication);
             }
         }
     }
@@ -171,11 +175,11 @@ public class GNodeB {
             Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
             Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-            GNodeB.receiveFromNetwork(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
+            GNodeB.receiveNgap(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
         } else if (event instanceof SctpAssociationSetupEvent) {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 
-            GnbInterfaceManagement.sendNgSetupRequest(ctx, ((SctpAssociationSetupEvent) event).guami);
+            NgapInterfaceManagement.sendNgSetupRequest(ctx, ((SctpAssociationSetupEvent) event).guami);
         } else if (event instanceof GnbCommandEvent) {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 
@@ -189,7 +193,7 @@ public class GNodeB {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 
             var e = (GnbUplinkNasEvent) event;
-            GnbNasTransport.receiveUplinkNasTransport(ctx, e.ue, NasDecoder.nasPdu(e.nasPdu));
+            NgapNasTransport.receiveUplinkNasTransport(ctx, e.ue, NasDecoder.nasPdu(e.nasPdu));
         }
     }
 }

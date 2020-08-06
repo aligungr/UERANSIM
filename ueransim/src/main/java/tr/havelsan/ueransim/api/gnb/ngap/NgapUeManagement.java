@@ -24,7 +24,7 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.api.gnb.ngap;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.exceptions.NgapErrorException;
@@ -44,7 +44,7 @@ import tr.havelsan.ueransim.utils.bits.Bit10;
 
 import java.util.UUID;
 
-public class GnbUeManagement {
+public class NgapUeManagement {
 
     public static void createUeContext(GnbSimContext ctx, UUID ueId) {
         Debugging.assertThread(ctx);
@@ -128,7 +128,7 @@ public class GnbUeManagement {
         long amf = amfUeNgapId.value;
         long ran = ranUeNgapId.value;
 
-        var associatedUe = GnbUeManagement.findUeByRanId(ctx, ran);
+        var associatedUe = NgapUeManagement.findUeByRanId(ctx, ran);
         if (associatedUe == null) {
             throw new NgapErrorException(NGAP_CauseRadioNetwork.UNKNOWN_LOCAL_UE_NGAP_ID);
         }
