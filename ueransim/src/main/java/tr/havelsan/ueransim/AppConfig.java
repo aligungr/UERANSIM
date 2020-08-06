@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.api.gnb.GnbSctpAssociationHandler;
+import tr.havelsan.ueransim.api.gnb.ngap.NgapSctpAssociationHandler;
 import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
@@ -72,7 +72,7 @@ public class AppConfig {
         // Create AMF gNB contexts and SCTP Clients
         {
             for (var amfConfig : ctx.config.amfConfigs) {
-                var gnbSctpAssociationHandler = new GnbSctpAssociationHandler(ctx, amfConfig.guami);
+                var gnbSctpAssociationHandler = new NgapSctpAssociationHandler(ctx, amfConfig.guami);
 
                 ISctpClient sctpClient;
                 if (amfConfig.isMocked) {
@@ -107,7 +107,7 @@ public class AppConfig {
         return ctx;
     }
 
-    private static MockedSctpClient newMockedClient(String mockedRemoteFile, GnbSctpAssociationHandler gnbSctpAssociationHandler) {
+    private static MockedSctpClient newMockedClient(String mockedRemoteFile, NgapSctpAssociationHandler ngapSctpAssociationHandler) {
         var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
 
         return new MockedSctpClient(new MockedSctpClient.IMockedRemote() {
@@ -143,6 +143,6 @@ public class AppConfig {
                 }
                 messageIndex++;
             }
-        }, gnbSctpAssociationHandler);
+        }, ngapSctpAssociationHandler);
     }
 }

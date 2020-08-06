@@ -33,7 +33,8 @@ public class EventParser {
     public static String[] possibleEvents() {
         return new String[]{
                 "initial-registration",
-                "periodic-registration"
+                "periodic-registration",
+                "pdu-session-establishment"
         };
     }
 
@@ -41,7 +42,7 @@ public class EventParser {
         if (command == null) {
             return null;
         }
-        if (command.equals("initial-registration") || command.equals("periodic-registration")) {
+        if (command.equals("initial-registration") || command.equals("periodic-registration") || command.equals("pdu-session-establishment")) {
             return new UeCommandEvent(command);
         }
         return null;

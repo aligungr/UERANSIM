@@ -23,6 +23,8 @@
 - gNB | NAS Transport
   - Initial UE Message
   - Uplink/Downlink NAS Transport
+- PDU Session Establishment
+  - in progress
 - ***todo...***
       
 ##  Requirements

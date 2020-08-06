@@ -24,8 +24,9 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb;
+package tr.havelsan.ueransim.api.gnb.ngap;
 
+import tr.havelsan.ueransim.api.gnb.GNodeB;
 import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.ue.UeDownlinkNasEvent;
@@ -45,14 +46,14 @@ import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
-public class GnbUeContextManagement {
+public class NgapUeContextManagement {
 
     public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Handling: Initial Context Setup Request");
 
-        var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
         var ue = ctx.ueContexts.get(ueId);
 
         ue.indexToRfsp = message.getProtocolIe(NGAP_IndexToRFSP.class);
@@ -65,12 +66,12 @@ public class GnbUeContextManagement {
         var secCaps = message.getProtocolIe(NGAP_UESecurityCapabilities.class);
         if (isUeSecurityCapabilitiesValid(ctx, secCaps)) {
             ue.securityCapabilities = secCaps;
-            GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
+            GNodeB.sendNgapUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
         } else {
             var response = new NGAP_InitialContextSetupFailure();
             response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
-            GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
+            GNodeB.sendNgapUeAssociated(ctx, ueId, response);
         }
 
         var nasMessage = message.getNasMessage();
@@ -86,14 +87,14 @@ public class GnbUeContextManagement {
 
         Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
 
-        var ueId = GnbUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
+        var ueId = NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
 
         // todo: NG-RAN node shall release all related signalling and user data transport resources
         // ...
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
-        GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
+        GNodeB.sendNgapUeAssociated(ctx, ueId, response);
 
         ctx.ueContexts.remove(ueId);
 
@@ -105,7 +106,7 @@ public class GnbUeContextManagement {
 
         Logging.funcIn("Handling: UE Context Modification Request");
 
-        var ueId = GnbUeManagement.findAssociatedUeIdDefault(ctx, message);
+        var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
         var ue = ctx.ueContexts.get(ueId);
 
         var ieSecurityKey = message.getProtocolIe(NGAP_SecurityKey.class);
@@ -121,7 +122,7 @@ public class GnbUeContextManagement {
                 var response = new NGAP_UEContextModificationFailure();
                 response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
-                GNodeB.sendToNetworkUeAssociated(ctx, ueId, response);
+                GNodeB.sendNgapUeAssociated(ctx, ueId, response);
                 Logging.funcOut();
                 return;
             }
@@ -149,7 +150,7 @@ public class GnbUeContextManagement {
             Logging.info(Tag.PROC, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
         }
 
-        GNodeB.sendToNetworkUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
+        GNodeB.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
         Logging.funcOut();
     }
 

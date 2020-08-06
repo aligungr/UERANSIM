@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.ngap0.pdu;
 
+import tr.havelsan.ueransim.ngap0.NgapMessageType;
 import tr.havelsan.ueransim.ngap0.core.*;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.*;
 import tr.havelsan.ueransim.ngap0.ies.sequences.*;
