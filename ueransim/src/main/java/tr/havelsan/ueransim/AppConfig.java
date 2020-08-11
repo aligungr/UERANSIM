@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.api.gnb.ngap.NgapSctpAssociationHandler;
+import tr.havelsan.ueransim.api.gnb.sctp.NgapSctpAssociationHandler;
 import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;

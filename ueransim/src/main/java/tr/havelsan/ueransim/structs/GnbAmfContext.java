@@ -27,14 +27,15 @@
 package tr.havelsan.ueransim.structs;
 
 import tr.havelsan.ueransim.sctp.ISctpClient;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
 public class GnbAmfContext {
     public final Guami guami;
     public ISctpClient sctpClient;
-    public int streamNumber;
+    public SctpAssociation association;
+    public int nextStream; // next available SCTP stream for uplink
 
     public GnbAmfContext(Guami guami) {
         this.guami = guami;
     }
-
 }

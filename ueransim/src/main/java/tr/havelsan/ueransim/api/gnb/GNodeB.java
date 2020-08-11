@@ -69,7 +69,7 @@ public class GNodeB {
         var amfCtx = ctx.amfContexts.get(associatedAmf);
 
         if (amfCtx.sctpClient.isOpen()) {
-            amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+            amfCtx.sctpClient.send(0, NgapEncoding.encodeAper(ngapPdu));
         } else {
             Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
         }
@@ -117,7 +117,7 @@ public class GNodeB {
         var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
 
         if (amfCtx.sctpClient.isOpen()) {
-            amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+            amfCtx.sctpClient.send(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu));
         } else {
             Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
         }
@@ -125,7 +125,7 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
-    public static void receiveNgap(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
+    public static void receiveNgap(GnbSimContext ctx, Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
         Debugging.assertThread(ctx);
 
         var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
@@ -134,6 +134,9 @@ public class GNodeB {
         }
 
         try {
+            // todo: check if non-ue associated uses stream number 0, raise error if not.
+            // todo: check ue associated signalling uses correct stream number, and assing stream number if it is not assigned yet.
+
             if (ngapMessage instanceof NGAP_NGSetupResponse) {
                 NgapInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
             } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
@@ -168,21 +171,20 @@ public class GNodeB {
         Debugging.assertThread(ctx);
 
         var event = ctx.popEvent();
-        if (event instanceof SctpReceiveEvent) {
-            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+        Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
 
+        if (event instanceof SctpReceiveEvent) {
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
             Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
             Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-            GNodeB.receiveNgap(ctx, ((SctpReceiveEvent) event).associatedAmf, ngapPdu);
+            GNodeB.receiveNgap(ctx, ((SctpReceiveEvent) event).associatedAmf, ((SctpReceiveEvent) event).streamNumber, ngapPdu);
         } else if (event instanceof SctpAssociationSetupEvent) {
-            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+            var amfCtx = ctx.amfContexts.get(((SctpAssociationSetupEvent) event).guami);
+            amfCtx.association = ((SctpAssociationSetupEvent) event).association;
 
-            NgapInterfaceManagement.sendNgSetupRequest(ctx, ((SctpAssociationSetupEvent) event).guami);
+            NgapInterfaceManagement.sendNgSetupRequest(ctx, amfCtx.guami);
         } else if (event instanceof GnbCommandEvent) {
-            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
-
             var cmd = ((GnbCommandEvent) event).cmd;
             switch (cmd) {
                 default:
@@ -190,8 +192,6 @@ public class GNodeB {
                     break;
             }
         } else if (event instanceof GnbUplinkNasEvent) {
-            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
-
             var e = (GnbUplinkNasEvent) event;
             NgapNasTransport.receiveUplinkNasTransport(ctx, e.ue, NasDecoder.nasPdu(e.nasPdu));
         }

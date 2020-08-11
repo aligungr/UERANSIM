@@ -26,19 +26,23 @@
 
 package tr.havelsan.ueransim.events.gnb;
 
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.structs.Guami;
 
 public class SctpAssociationSetupEvent extends GnbEvent {
     public final Guami guami;
+    public final SctpAssociation association;
 
-    public SctpAssociationSetupEvent(Guami guami) {
+    public SctpAssociationSetupEvent(Guami guami, SctpAssociation association) {
         this.guami = guami;
+        this.association = association;
     }
 
     @Override
     public String toString() {
         return "SctpAssociationSetupEvent{" +
                 "guami=" + guami +
+                ", association=" + association +
                 '}';
     }
 }

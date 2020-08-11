@@ -24,11 +24,12 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.api.gnb.ngap;
+package tr.havelsan.ueransim.api.gnb.sctp;
 
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.structs.Guami;
 
 public class NgapSctpAssociationHandler implements ISctpAssociationHandler {
@@ -41,8 +42,8 @@ public class NgapSctpAssociationHandler implements ISctpAssociationHandler {
     }
 
     @Override
-    public void onSetup() {
-        gnbCtx.pushEvent(new SctpAssociationSetupEvent(guami));
+    public void onSetup(SctpAssociation association) {
+        gnbCtx.pushEvent(new SctpAssociationSetupEvent(guami, association));
     }
 
     @Override
