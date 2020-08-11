@@ -40,9 +40,9 @@ import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
-import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
@@ -191,7 +191,10 @@ public class GNodeB {
             }
         } catch (NgapErrorException e) {
             var errorIndication = new NGAP_ErrorIndication();
-            errorIndication.addProtocolIe(e.cause);
+            var ngapCause = new NGAP_Cause();
+            ngapCause.setPresentValue(e.cause);
+
+            errorIndication.addProtocolIe(ngapCause);
             if (e.associatedUe != null) {
                 GNodeB.sendNgapUeAssociated(ctx, e.associatedUe, errorIndication);
             } else {
@@ -204,7 +207,9 @@ public class GNodeB {
         Debugging.assertThread(ctx);
 
         var event = ctx.popEvent();
-        Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+        if (event != null) {
+            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
+        }
 
         if (event instanceof SctpReceiveEvent) {
             var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;

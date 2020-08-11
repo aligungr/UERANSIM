@@ -43,7 +43,7 @@ class SctpNotificationHandler extends AbstractNotificationHandler<PrintStream> {
 
     @Override
     public HandlerResult handleNotification(AssociationChangeNotification notification, PrintStream attachment) {
-        if (notification.event() != AssociationChangeNotification.AssocChangeEvent.COMM_UP) {
+        if (notification.event() == AssociationChangeNotification.AssocChangeEvent.COMM_UP) {
             sctpAssociationHandler.onSetup(new SctpAssociation(notification.association().associationID(),
                     notification.association().maxInboundStreams(),
                     notification.association().maxOutboundStreams()));
@@ -54,7 +54,6 @@ class SctpNotificationHandler extends AbstractNotificationHandler<PrintStream> {
 
     @Override
     public HandlerResult handleNotification(ShutdownNotification notification, PrintStream attachment) {
-        //attachment.print("The association has been shutdown.\n");
         sctpAssociationHandler.onShutdown();
         return HandlerResult.RETURN;
     }
