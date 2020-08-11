@@ -26,10 +26,7 @@
 
 package tr.havelsan.ueransim.api.gnb;
 
-import tr.havelsan.ueransim.api.gnb.ngap.NgapInterfaceManagement;
-import tr.havelsan.ueransim.api.gnb.ngap.NgapNasTransport;
-import tr.havelsan.ueransim.api.gnb.ngap.NgapPduSessionManagement;
-import tr.havelsan.ueransim.api.gnb.ngap.NgapUeContextManagement;
+import tr.havelsan.ueransim.api.gnb.ngap.*;
 import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
@@ -42,7 +39,11 @@ import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.msg.*;
@@ -134,8 +135,40 @@ public class GNodeB {
         }
 
         try {
-            // todo: check if non-ue associated uses stream number 0, raise error if not.
-            // todo: check ue associated signalling uses correct stream number, and assing stream number if it is not assigned yet.
+            NGAP_Value ie = ngapMessage.getProtocolIe(NGAP_UE_NGAP_IDs.class);
+            if (ie != null) {
+                if (stream == 0) {
+                    Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
+                    throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                }
+                var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, ngapMessage));
+                if (ueCtx.downlinkStream == 0) {
+                    ueCtx.downlinkStream = stream;
+                } else if (ueCtx.downlinkStream != stream) {
+                    Logging.error(Tag.CONNECTION, "received stream number is inconsistent. received %d, expected :%d", stream, ueCtx.downlinkStream);
+                    throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                }
+            } else {
+                ie = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
+                if (ie != null) {
+                    if (stream == 0) {
+                        Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
+                        throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                    }
+                    var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeIdDefault(ctx, ngapMessage));
+                    if (ueCtx.downlinkStream == 0) {
+                        ueCtx.downlinkStream = stream;
+                    } else if (ueCtx.downlinkStream != stream) {
+                        Logging.error(Tag.CONNECTION, "received stream number is inconsistent. received %d, expected :%d", stream, ueCtx.downlinkStream);
+                        throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                    }
+                } else {
+                    if (stream != 0) {
+                        Logging.error(Tag.CONNECTION, "received stream number != 0 in non-UE-associated signalling");
+                        throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                    }
+                }
+            }
 
             if (ngapMessage instanceof NGAP_NGSetupResponse) {
                 NgapInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
