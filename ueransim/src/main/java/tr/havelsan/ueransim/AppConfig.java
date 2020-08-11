@@ -89,7 +89,6 @@ public class AppConfig {
 
                 var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
                 amfGnbCtx.sctpClient = sctpClient;
-                amfGnbCtx.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
 
                 ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
             }
