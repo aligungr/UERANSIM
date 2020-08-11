@@ -44,6 +44,8 @@ public class GnbUeContext {
     public Long amfUeNgapId;
     public long ranUeNgapId;
     public Guami associatedAmf;
+    public int uplinkStream;
+    public int downlinkStream;
 
     public NGAP_IndexToRFSP indexToRfsp;
     public NGAP_MaskedIMEISV maskedImeiSv;

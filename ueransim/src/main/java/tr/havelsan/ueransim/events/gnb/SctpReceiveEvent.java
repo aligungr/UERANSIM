@@ -33,21 +33,24 @@ import tr.havelsan.ueransim.structs.Guami;
 public class SctpReceiveEvent extends GnbEvent {
     public final Guami associatedAmf;
     public final NGAP_PDU ngapPdu;
+    public final int streamNumber;
 
-    public SctpReceiveEvent(byte[] ngapPdu, Guami associatedAmf) {
-        this(NgapEncoding.decodeAper(ngapPdu), associatedAmf);
+    public SctpReceiveEvent(byte[] ngapPdu, Guami associatedAmf, int streamNumber) {
+        this(NgapEncoding.decodeAper(ngapPdu), associatedAmf, streamNumber);
     }
 
-    public SctpReceiveEvent(NGAP_PDU ngapPdu, Guami associatedAmf) {
+    public SctpReceiveEvent(NGAP_PDU ngapPdu, Guami associatedAmf, int streamNumber) {
         this.ngapPdu = ngapPdu;
         this.associatedAmf = associatedAmf;
+        this.streamNumber = streamNumber;
     }
 
     @Override
     public String toString() {
         return "SctpReceiveEvent{" +
-                "ngapPdu=" + ngapPdu +
-                ", associatedAmf=" + associatedAmf +
+                "associatedAmf=" + associatedAmf +
+                ", ngapPdu=" + ngapPdu +
+                ", streamNumber=" + streamNumber +
                 '}';
     }
 }

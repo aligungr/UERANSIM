@@ -28,7 +28,7 @@ package tr.havelsan.ueransim.sctp;
 
 public interface ISctpAssociationHandler {
 
-    void onSetup();
+    void onSetup(SctpAssociation sctpAssociation);
 
     void onShutdown();
 }

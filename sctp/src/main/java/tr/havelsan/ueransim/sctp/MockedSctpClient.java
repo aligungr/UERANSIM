@@ -49,7 +49,7 @@ public class MockedSctpClient implements ISctpClient {
     @Override
     public void start() throws Exception {
         isOpen = true;
-        sctpAssociationHandler.onSetup();
+        sctpAssociationHandler.onSetup(new SctpAssociation(1, 7, 7));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MockedSctpClient implements ISctpClient {
                 for (int i = 0; i < response.length; i++) {
                     response[i] = entry[i];
                 }
-                handler.handleSCTPMessage(response);
+                handler.handleSCTPMessage(response, 0);
             }
         }
     }

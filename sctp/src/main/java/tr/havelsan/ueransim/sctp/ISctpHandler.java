@@ -27,5 +27,5 @@
 package tr.havelsan.ueransim.sctp;
 
 public interface ISctpHandler {
-    void handleSCTPMessage(byte[] receivedBytes) throws Exception;
+    void handleSCTPMessage(byte[] receivedBytes, int streamNumber) throws Exception;
 }
