@@ -32,3 +32,5 @@ supportedTAs:
             sd:
               value:
                 hex: '010203'
+
+ignoreStreamIds: true

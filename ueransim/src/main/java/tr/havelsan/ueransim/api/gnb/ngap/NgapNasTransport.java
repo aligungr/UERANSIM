@@ -61,9 +61,19 @@ public class NgapNasTransport {
         if (ctx.ueContexts.containsKey(associatedUe)) {
             ngap = new NGAP_UplinkNASTransport();
         } else {
+            NgapUeManagement.createUeContext(ctx, associatedUe);
+
             ngap = new NGAP_InitialUEMessage();
             ngap.addProtocolIe(NGAP_RRCEstablishmentCause.MO_DATA);
-            NgapUeManagement.createUeContext(ctx, associatedUe);
+
+            var ueCtx = ctx.ueContexts.get(associatedUe);
+            var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
+
+            amfCtx.nextStream = (amfCtx.nextStream + 1) % amfCtx.association.outbound;
+            if ((amfCtx.nextStream == 0) && (amfCtx.association.outbound > 1)) {
+                amfCtx.nextStream += 1;
+            }
+            ueCtx.uplinkStream = amfCtx.nextStream;
         }
 
         if (nasMessage != null) {

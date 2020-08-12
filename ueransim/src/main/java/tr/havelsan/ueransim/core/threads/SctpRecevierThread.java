@@ -47,7 +47,7 @@ public class SctpRecevierThread extends BaseThread {
     public void run() {
         try {
             sctpClient.start();
-            sctpClient.receiverLoop(receivedBytes -> ctx.pushEvent(new SctpReceiveEvent(receivedBytes, amf)));
+            sctpClient.receiverLoop((receivedBytes, streamNumber) -> ctx.pushEvent(new SctpReceiveEvent(receivedBytes, amf, streamNumber)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -32,15 +32,15 @@ import tr.havelsan.ueransim.ngap1.SupportedTA;
 public class GnbConfig {
     public final int gnbId;
     public final VPlmn gnbPlmn;
-
     public final GnbAmfConfig[] amfConfigs;
-
     public final SupportedTA[] supportedTAs;
+    public final boolean ignoreStreamIds;
 
-    public GnbConfig(int gnbId, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs) {
+    public GnbConfig(int gnbId, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds) {
         this.gnbId = gnbId;
         this.gnbPlmn = gnbPlmn;
         this.amfConfigs = amfConfigs;
         this.supportedTAs = supportedTAs;
+        this.ignoreStreamIds = ignoreStreamIds;
     }
 }

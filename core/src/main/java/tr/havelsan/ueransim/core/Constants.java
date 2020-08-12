@@ -32,7 +32,6 @@ public final class Constants {
     public static final String NGAP_PDU_CONTENTS = "tr.havelsan.ueransim.ngap.ngap_pdu_contents";
 
     public static final int NGAP_PROTOCOL_ID = 60;
-    public static final int DEFAULT_STREAM_NUMBER = 1;
 
     public static boolean USE_LONG_MNC = true;
 }
