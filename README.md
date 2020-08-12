@@ -13,6 +13,10 @@
 - UE | Authentication
   - EAP AKA'
   - 5G AKA
+- UE | MM Common Procedures
+  - Security Mode Control
+  - Identification
+  - Generic UE Configuration Update
 - gNB | Interface Management
   - NG Setup
   - Error Indication

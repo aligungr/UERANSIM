@@ -67,6 +67,8 @@ public class MobilityManagement {
             MmService.handleServiceReject(ctx, (ServiceReject) message);
         } else if (message instanceof SecurityModeCommand) {
             MmSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
+        } else if (message instanceof ConfigurationUpdateCommand) {
+            MmConfiguration.receiveConfigurationUpdate(ctx, (ConfigurationUpdateCommand) message);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
