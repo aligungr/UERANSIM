@@ -1,0 +1,29 @@
+snn: '5G:mnc070.mcc901.3gppnetwork.org'
+key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
+op: 'E8ED289DEBA952E4283B54E88E6183CA'
+amf: '8000'
+imei: '356938035643803'
+supi: 'imsi-901700000000003'
+
+smsOverNasSupported: true
+dnn: 'internet'
+
+requestedNssai:
+  - sst:
+      value: 1
+    sd:
+      hex: '010203'
+
+userLocationInformationNr:
+  nrCgi:
+    plmn:
+      mcc: 901
+      mnc: 70
+    nrCellIdentity:
+      hex: '01b2c3d4e0'
+  tai:
+    mcc: 901
+    mnc: 70
+    tac: '000001'
+  timeStamp:
+    hex: 5b5fa680
