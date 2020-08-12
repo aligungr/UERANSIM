@@ -48,9 +48,12 @@ sudo apt install libsctp-dev lksctp-tools
 ```
 
 ## Building
-```
-./build.sh
-```
+1. Make sure that `JAVA_HOME` variable is set.
+2. Run the following command:
+    ```
+    ./build.sh
+    ```
+
 
 ## Usage
 1. Select a configuration profile by modifying `config/root.yaml`.
