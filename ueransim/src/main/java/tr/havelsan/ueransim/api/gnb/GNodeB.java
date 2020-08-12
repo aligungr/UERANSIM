@@ -135,27 +135,14 @@ public class GNodeB {
         }
 
         try {
-            NGAP_Value ie = ngapMessage.getProtocolIe(NGAP_UE_NGAP_IDs.class);
-            if (ie != null) {
-                if (stream == 0) {
-                    Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
-                    throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                }
-                var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, ngapMessage));
-                if (ueCtx.downlinkStream == 0) {
-                    ueCtx.downlinkStream = stream;
-                } else if (ueCtx.downlinkStream != stream) {
-                    Logging.error(Tag.CONNECTION, "received stream number is inconsistent. received %d, expected :%d", stream, ueCtx.downlinkStream);
-                    throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                }
-            } else {
-                ie = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
+            if (!ctx.config.ignoreStreamIds) {
+                NGAP_Value ie = ngapMessage.getProtocolIe(NGAP_UE_NGAP_IDs.class);
                 if (ie != null) {
                     if (stream == 0) {
                         Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
                         throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
                     }
-                    var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeIdDefault(ctx, ngapMessage));
+                    var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, ngapMessage));
                     if (ueCtx.downlinkStream == 0) {
                         ueCtx.downlinkStream = stream;
                     } else if (ueCtx.downlinkStream != stream) {
@@ -163,9 +150,24 @@ public class GNodeB {
                         throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
                     }
                 } else {
-                    if (stream != 0) {
-                        Logging.error(Tag.CONNECTION, "received stream number != 0 in non-UE-associated signalling");
-                        throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                    ie = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
+                    if (ie != null) {
+                        if (stream == 0) {
+                            Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
+                            throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                        }
+                        var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeIdDefault(ctx, ngapMessage));
+                        if (ueCtx.downlinkStream == 0) {
+                            ueCtx.downlinkStream = stream;
+                        } else if (ueCtx.downlinkStream != stream) {
+                            Logging.error(Tag.CONNECTION, "received stream number is inconsistent. received %d, expected :%d", stream, ueCtx.downlinkStream);
+                            throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                        }
+                    } else {
+                        if (stream != 0) {
+                            Logging.error(Tag.CONNECTION, "received stream number != 0 in non-UE-associated signalling");
+                            throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
+                        }
                     }
                 }
             }
