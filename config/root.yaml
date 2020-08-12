@@ -1,5 +1,6 @@
 # Possible profiles are
 #  - custom
+#  - open5gs
 #  - free5gc
 #  - havelsan
 selected-profile: 'custom'
