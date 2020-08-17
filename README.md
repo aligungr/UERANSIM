@@ -1,8 +1,8 @@
 # UERANSIM
-5G UE/gNodeB Simulator
+Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN emulator with additional capability of load testing.
 
 ##  General Info  
-**3GPP Version:** 15.2.0  
+**3GPP Release:** 15.2.0  
 **Access Type:** 5G-SA (Standalone Access)  
 **Connection Type:** 3GPP Access  
 
@@ -28,7 +28,7 @@
   - Initial UE Message
   - Uplink/Downlink NAS Transport
 - PDU Session Establishment
-  - in progress
+  - ***in progress***
 - ***todo...***
       
 ##  Requirements
