@@ -52,7 +52,7 @@ sudo apt install libsctp-dev lksctp-tools
 ./build.sh
 ```
 
-## Usage
+## Running
 1. Select a configuration profile by modifying `config/root.yaml`.
 2. (Optional)  You can further modify the profile configurations if you want. (`config/open5gs`, `config/free5gc`, etc.)
 3. Execute `./run.sh` to start the application.
