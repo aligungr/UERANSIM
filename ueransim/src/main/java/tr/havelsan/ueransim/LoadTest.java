@@ -158,14 +158,14 @@ public class LoadTest {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
                 loadTestConsole.println(null, "\u2714 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
-            } else if (message instanceof RegistrationAccept) {
-                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-                long delta = System.currentTimeMillis() - registrationTimers.get(supi);
-                loadTestConsole.println(null, "\u2714 [Registration] [ue: %s] [%d ms]", supi, delta);
             } else if (message instanceof RegistrationReject) {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 long delta = System.currentTimeMillis() - registrationTimers.get(supi);
                 loadTestConsole.println(null, "\u2718 [Registration] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof RegistrationAccept) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                long delta = System.currentTimeMillis() - registrationTimers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Registration] [ue: %s] [%d ms]", supi, delta);
             }
         }
     }
