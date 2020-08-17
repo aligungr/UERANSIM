@@ -26,81 +26,33 @@
 
 package tr.havelsan.ueransim.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Console {
 
-    private static final List<Consumer<String>> printHandlers = new ArrayList<>();
-    private static boolean standardPrintEnabled = true;
-    private static Color lastColor;
+    private static final BaseConsole c = new BaseConsole();
 
-    public static synchronized void print(Color color, String format, Object... args) {
-        if (color == null) color = Color.RESET;
-
-        String string = String.format(format, args);
-
-        String s;
-
-        if (!Objects.equals(lastColor, color)) {
-            lastColor = color;
-            s = color + string + Color.RESET;
-        } else {
-            s = string;
-        }
-
-        output(s);
+    public static void print(Color color, String format, Object... args) {
+        c.print(color, format, args);
     }
 
-    public static synchronized void println(Color color, String format, Object... args) {
-        if (color == null) color = Color.RESET;
-
-        String string = String.format(format, args);
-
-        String s;
-
-        if (!Objects.equals(lastColor, color)) {
-            lastColor = color;
-            s = color + string + Color.RESET;
-        } else {
-            s = string;
-        }
-
-        outputLine(s);
+    public static void println(Color color, String format, Object... args) {
+        c.println(color, format, args);
     }
 
-    public static synchronized void printDiv() {
-        println(lastColor, "-----------------------------------------------------------------------------");
+    public static void printDiv() {
+        c.printDiv();
     }
 
-    public synchronized static void addPrintHandler(Consumer<String> handler) {
-        printHandlers.add(handler);
+    public static void addPrintHandler(Consumer<String> handler) {
+        c.addPrintHandler(handler);
     }
 
-    public synchronized static void setStandardPrintEnabled(boolean standardPrintEnabled) {
-        Console.standardPrintEnabled = standardPrintEnabled;
+    public static void setStandardPrintEnabled(boolean standardPrintEnabled) {
+        c.setStandardPrintEnabled(standardPrintEnabled);
     }
 
-    public static synchronized void println() {
-        outputLine();
-    }
-
-    private synchronized static void outputLine() {
-        outputLine("");
-    }
-
-    private synchronized static void outputLine(String string) {
-        output(String.format("%s%n", string));
-    }
-
-    private synchronized static void output(String string) {
-        if (standardPrintEnabled) {
-            System.out.print(string);
-        }
-
-        for (var handler : printHandlers)
-            handler.accept(string);
+    public static void println() {
+        c.println();
     }
 }

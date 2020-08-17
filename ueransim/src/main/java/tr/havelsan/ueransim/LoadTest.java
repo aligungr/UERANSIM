@@ -22,10 +22,7 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.structs.GnbConfig;
 import tr.havelsan.ueransim.structs.UeConfig;
-import tr.havelsan.ueransim.utils.Color;
-import tr.havelsan.ueransim.utils.Console;
-import tr.havelsan.ueransim.utils.Json;
-import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +36,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class LoadTest {
+
+    private static final BaseConsole loadTestConsole = new BaseConsole();
 
     public static void main(String[] args) {
         MtsInitializer.initMts();
@@ -105,8 +104,11 @@ public class LoadTest {
 
     private static void initLogging() {
         final String logFile = "app.log";
+        final String loadTestFile = "loadtest.log";
 
-        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
+        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All default logs are written to: %s", logFile);
+        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All load testing logs are written to: %s", loadTestFile);
+
         Console.setStandardPrintEnabled(false);
         Console.addPrintHandler(str -> {
             final Path path = Paths.get(logFile);
@@ -117,6 +119,18 @@ public class LoadTest {
                 throw new RuntimeException(e);
             }
         });
+
+        loadTestConsole.setStandardPrintEnabled(false);
+        loadTestConsole.addPrintHandler(str -> {
+            final Path path = Paths.get(loadTestFile);
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        loadTestConsole.printDiv();
     }
 
     private static class NodeMessagingListener implements INodeMessagingListener {
@@ -139,19 +153,19 @@ public class LoadTest {
             if (message instanceof NGAP_NGSetupFailure) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
-                System.out.printf("[[ NGSetup failed in %d ms | gnbId: %d ]]\n", delta, gnbId);
+                loadTestConsole.println(null, "\u274c [NGSetup] [%d ms] [gnbId: %d]", delta, gnbId);
             } else if (message instanceof NGAP_NGSetupResponse) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
-                System.out.printf("[[ NGSetup succeeded in %d ms | gnbId: %d ]]\n", delta, gnbId);
+                loadTestConsole.println(null, "\u2714 [NGSetup] [%d ms] [gnbId: %d]", delta, gnbId);
             } else if (message instanceof RegistrationAccept) {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 long delta = System.currentTimeMillis() - registrationTimers.get(supi);
-                System.out.printf("[[ RegistrationAccept succeeded in %d ms | ue: %s ]]\n", delta, supi);
+                loadTestConsole.println(null, "\u2714 [Registration] [%d ms] [ue: %s]", delta, supi);
             } else if (message instanceof RegistrationReject) {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 long delta = System.currentTimeMillis() - registrationTimers.get(supi);
-                System.out.printf("[[ RegistrationAccept rejected in %d ms | ue: %s ]]\n", delta, supi);
+                loadTestConsole.println(null, "\u274c [Registration] [%d ms] [ue: %s]", delta, supi);
             }
         }
     }
