@@ -21,10 +21,12 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.structs.GnbConfig;
+import tr.havelsan.ueransim.structs.Supi;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.utils.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,8 +68,8 @@ public class LoadTest {
         for (int i = 0; i < COUNT; i++) {
             var ref = ((ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "ue.yaml")).asConstructed(UeConfig.class);
 
-            var supi = ref.supi.toString().substring(0, ref.supi.toString().length() - String.valueOf(COUNT).length());
-            supi += Utils.padLeft(i + "", String.valueOf(COUNT).length(), '0');
+            var imsiNumber = new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString();
+            var supi = new Supi("imsi", imsiNumber).toString();
 
             var config = new UeConfig(ref.snn, ref.key.toHexString(), ref.op.toHexString(), ref.amf.toHexString(), ref.imei, supi, ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr, new String(ref.dnn.data.toByteArray(), StandardCharsets.US_ASCII));
             ues.add(AppConfig.createUeSimContext(simContext, config));
