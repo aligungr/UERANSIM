@@ -153,7 +153,7 @@ public class LoadTest {
             if (message instanceof NGAP_NGSetupFailure) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
-                loadTestConsole.println(null, "\u274c [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
+                loadTestConsole.println(null, "\u2718 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
             } else if (message instanceof NGAP_NGSetupResponse) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
@@ -165,7 +165,7 @@ public class LoadTest {
             } else if (message instanceof RegistrationReject) {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 long delta = System.currentTimeMillis() - registrationTimers.get(supi);
-                loadTestConsole.println(null, "\u274c [Registration] [ue: %s] [%d ms]", supi, delta);
+                loadTestConsole.println(null, "\u2718 [Registration] [ue: %s] [%d ms]", supi, delta);
             }
         }
     }
