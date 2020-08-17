@@ -33,4 +33,4 @@ supportedTAs:
 #              value:
 #                hex: '09afaf'
 
-ignoreStreamIds: false
+ignoreStreamIds: true
