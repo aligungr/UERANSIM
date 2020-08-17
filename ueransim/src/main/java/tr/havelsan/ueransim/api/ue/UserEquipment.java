@@ -61,6 +61,7 @@ public class UserEquipment {
         Logging.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
 
         Simulation.pushGnbEvent(ctx.simCtx, ctx.connectedGnb, new GnbUplinkNasEvent(ctx.ctxId, securedNasPdu));
+        Simulation.triggerOnSend(ctx, message);
 
         Logging.funcOut();
     }
@@ -77,6 +78,8 @@ public class UserEquipment {
 
         Logging.debug(Tag.MESSAGING, "Plain NAS as JSON %s", Json.toJson(message));
         Logging.debug(Tag.MESSAGING, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
+
+        Simulation.triggerOnReceive(ctx, message);
 
         if (message != null) {
             if (message instanceof PlainMmMessage) {

@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.api.sys;
 
+import tr.havelsan.ueransim.core.BaseSimContext;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.events.BaseEvent;
@@ -68,6 +69,16 @@ public class Simulation {
                 ueContext.connectedGnb = gnbContext.ctxId;
             }
         }
+    }
+
+    public static void triggerOnSend(BaseSimContext<?> ctx, Object msg) {
+        var listener = ctx.simCtx.nodeMessagingListener;
+        if (listener != null) listener.onSend(ctx, ctx);
+    }
+
+    public static void triggerOnReceive(BaseSimContext<?> ctx, Object msg) {
+        var listener = ctx.simCtx.nodeMessagingListener;
+        if (listener != null) listener.onReceive(ctx, ctx);
     }
 
     public static void pushEvent(SimulationContext ctx, BaseEvent event) {

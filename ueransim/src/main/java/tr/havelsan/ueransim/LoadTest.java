@@ -1,6 +1,8 @@
 package tr.havelsan.ueransim;
 
+import tr.havelsan.ueransim.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.api.sys.Simulation;
+import tr.havelsan.ueransim.core.BaseSimContext;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.core.nodes.GnbNode;
@@ -13,7 +15,6 @@ import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.structs.GnbConfig;
-import tr.havelsan.ueransim.structs.GnbUeContext;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.utils.Color;
 import tr.havelsan.ueransim.utils.Console;
@@ -36,7 +37,7 @@ public class LoadTest {
         AppConfig.initialize();
         initLogging();
 
-        var simContext = AppConfig.createSimContext();
+        var simContext = AppConfig.createSimContext(new NodeMessagingListener());
 
         final int COUNT = 100;
 
@@ -108,5 +109,18 @@ public class LoadTest {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private static class NodeMessagingListener implements INodeMessagingListener {
+
+        @Override
+        public void onSend(BaseSimContext<?> ctx, Object message) {
+            //System.out.println("after Send");
+        }
+
+        @Override
+        public void onReceive(BaseSimContext<?> ctx, Object message) {
+            //System.out.println("on Receive");
+        }
     }
 }
