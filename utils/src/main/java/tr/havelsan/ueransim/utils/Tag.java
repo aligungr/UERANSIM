@@ -27,14 +27,17 @@
 package tr.havelsan.ueransim.utils;
 
 public enum Tag {
+    SYSTEM,
+    STATE,
     CONFIG,
     VALUE,
-    RSLT,
     PROC,
+    PROCEDURE_RESULT,
     NGAP_INTERNAL,
     MESSAGING,
     CONNECTION,
-    FLOWS,
+    EVENT,
+    NAS_TIMER,
     NAS_SECURITY,
     NOT_IMPL_YET;
 }

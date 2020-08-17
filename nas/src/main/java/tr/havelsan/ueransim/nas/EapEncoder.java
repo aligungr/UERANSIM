@@ -43,25 +43,30 @@ public class EapEncoder {
 
         innerStream.writeOctet(pdu.code.intValue());
         innerStream.writeOctet(pdu.id);
-        innerStream.writeOctet2(0); // dummy length
-        innerStream.writeOctet(pdu.EAPType.intValue());
 
-        if (pdu.EAPType.equals(Eap.EEapType.EAP_AKA_PRIME)) {
-            encodeAKAPrime(innerStream, (EapAkaPrime) pdu);
-        } else if (pdu.EAPType.equals(Eap.EEapType.NOTIFICATION)) {
-            encodeNotification(innerStream);
-        } else if (pdu.EAPType.equals(Eap.EEapType.IDENTITY)) {
-            encodeIdentity(innerStream);
+        if (pdu.EAPType == null) {
+            innerStream.writeOctet2(4);
         } else {
-            throw new NotImplementedException("eap type not implemented yet: " + pdu.EAPType.name());
+            innerStream.writeOctet2(0); // dummy length
+            innerStream.writeOctet(pdu.EAPType.intValue());
+
+            if (pdu.EAPType.equals(Eap.EEapType.EAP_AKA_PRIME)) {
+                encodeAKAPrime(innerStream, (EapAkaPrime) pdu);
+            } else if (pdu.EAPType.equals(Eap.EEapType.NOTIFICATION)) {
+                encodeNotification(innerStream);
+            } else if (pdu.EAPType.equals(Eap.EEapType.IDENTITY)) {
+                encodeIdentity(innerStream);
+            } else {
+                throw new NotImplementedException("eap type not implemented yet: " + pdu.EAPType.name());
+            }
+
+            var octets = innerStream.toOctetArray();
+            var realLength = new Octet2(octets.length).toOctetArray();
+            octets[2] = realLength[0];
+            octets[3] = realLength[1];
+
+            stream.writeOctets(octets);
         }
-
-        var octets = innerStream.toOctetArray();
-        var realLength = new Octet2(octets.length).toOctetArray();
-        octets[2] = realLength[0];
-        octets[3] = realLength[1];
-
-        stream.writeOctets(octets);
     }
 
     /**

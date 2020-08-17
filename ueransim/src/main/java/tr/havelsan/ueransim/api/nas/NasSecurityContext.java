@@ -58,11 +58,21 @@ public class NasSecurityContext {
         this.keys = new UeKeys();
     }
 
-    public void countOnDecrypt(Octet sequenceNumber) {
-        if (downlinkCount.sqn.longValue() > sequenceNumber.longValue()) {
-            downlinkCount.overflow = new Octet2((uplinkCount.overflow.longValue() + 1) & 0xFFFF);
+    public void updateDownlinkCount(NasCount validatedCount) {
+        downlinkCount.overflow = validatedCount.overflow;
+        downlinkCount.sqn = validatedCount.sqn;
+    }
+
+    public NasCount estimatedDownlinkCount(Octet sequenceNumber) {
+        var count = new NasCount();
+        count.sqn = downlinkCount.sqn;
+        count.overflow = downlinkCount.overflow;
+
+        if (count.sqn.longValue() > sequenceNumber.longValue()) {
+            count.overflow = new Octet2((count.overflow.longValue() + 1) & 0xFFFF);
         }
-        downlinkCount.sqn = sequenceNumber;
+        count.sqn = sequenceNumber;
+        return count;
     }
 
     public void countOnEncrypt() {

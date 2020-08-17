@@ -1,0 +1,29 @@
+snn: '5G:mnc093.mcc208.3gppnetwork.org'
+key: '8baf473f2f8fd09487cccbd7097c6862'
+op: '8e27b6af0e692e750f32667a3b14605d'
+amf: '8000'
+imei: '356938035643809'
+supi: 'imsi-208930000000003'
+
+smsOverNasSupported: true
+dnn: 'internet'
+
+requestedNssai:
+  - sst:
+      value: 1
+    sd:
+      hex: '010203'
+
+userLocationInformationNr:
+  nrCgi:
+    plmn:
+      mcc: 208
+      mnc: 93
+    nrCellIdentity:
+      hex: '01b2c3d4e0'
+  tai:
+    mcc: 208
+    mnc: 93
+    tac: '000001'
+  timeStamp:
+    hex: 5b5fa680

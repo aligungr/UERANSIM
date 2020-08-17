@@ -92,6 +92,19 @@ public final class BitString {
         return from(new OctetString(hex));
     }
 
+    public static BitString fromBits(String s) {
+        var res = new BitString();
+        for (int i = 0; i < s.length(); i++) {
+            boolean b;
+            char c = s.charAt(i);
+            if (c == '0') b = false;
+            else if (c == '1') b = true;
+            else throw new IllegalArgumentException();
+            res.set(i, b);
+        }
+        return res;
+    }
+
     public static BitString xor(BitString a, BitString b) {
         if (a.bitLength() != b.bitLength()) {
             throw new IllegalArgumentException("bit lengths must be the same");
@@ -265,7 +278,7 @@ public final class BitString {
 
     @Override
     public String toString() {
-        return toBinaryString(true);
+        return toBinaryString(false);
     }
 
     @Override
@@ -279,5 +292,19 @@ public final class BitString {
     @Override
     public int hashCode() {
         return Objects.hash(bits);
+    }
+
+    public int intValue() {
+        if (bitLength() > 32) {
+            throw new IllegalStateException("BitString has more than 31 bits");
+        }
+        return Integer.parseInt(toBinaryString(false), 2);
+    }
+
+    public long longValue() {
+        if (bitLength() > 64) {
+            throw new IllegalStateException("BitString has more than 63 bits");
+        }
+        return Long.parseLong(toBinaryString(false), 2);
     }
 }

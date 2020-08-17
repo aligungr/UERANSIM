@@ -1,0 +1,36 @@
+gnbId: 1
+
+gnbPlmn:
+  mcc: 1
+  mnc: 1
+
+amfConfigs:
+  - guami:
+      mcc: 1
+      mnc: 1
+      amfRegionId:
+        hex: '2a'
+      amfSetId:
+        hex: '5580'
+      amfPointer:
+        hex: 'a8'
+    host: 10.154.14.19
+    port: 38421
+    isMocked: false
+    mockingFile: mockedAmf.yaml
+
+supportedTAs:
+  - tac:
+      hex: '000075'
+    broadcastPlmns:
+      - plmn:
+          mcc: 1
+          mnc: 1
+        taiSliceSupportNssais:
+          - sst:
+              value: 1
+#            sd:
+#              value:
+#                hex: '09afaf'
+
+ignoreStreamIds: false

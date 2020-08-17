@@ -62,7 +62,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>tr.havelsan.ueransim.FlowTesting</mainClass>
+                            <mainClass>tr.havelsan.ueransim.Program</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -82,7 +82,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>tr.havelsan.ueransim.FlowTesting</mainClass>
+                                    <mainClass>tr.havelsan.ueransim.Program</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>
@@ -104,12 +104,6 @@
     </build>
 
     <dependencies>
-
-        <dependency>
-            <groupId>fr.marben</groupId>
-            <artifactId>asnsdk</artifactId>
-            <version>1.0</version>
-        </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>

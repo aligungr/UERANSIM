@@ -1,9 +1,0 @@
-ngKSI:
-  value: 7
-tmsi:
-  amfSetId:
-    value: 342
-  amfPointer:
-    value: 42
-  tmsi:
-    hex: "00000001"
