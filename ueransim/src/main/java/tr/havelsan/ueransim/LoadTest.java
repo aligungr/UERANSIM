@@ -39,7 +39,7 @@ public class LoadTest {
 
         var simContext = AppConfig.createSimContext(new NodeMessagingListener());
 
-        final int COUNT = 100;
+        final int COUNT = 5;
 
         var gnbs = new ArrayList<GnbSimContext>();
         var ues = new ArrayList<UeSimContext>();
