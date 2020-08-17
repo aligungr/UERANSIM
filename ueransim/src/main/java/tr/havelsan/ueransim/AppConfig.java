@@ -27,6 +27,7 @@
 package tr.havelsan.ueransim;
 
 import tr.havelsan.ueransim.api.gnb.sctp.NgapSctpAssociationHandler;
+import tr.havelsan.ueransim.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
@@ -61,8 +62,8 @@ public class AppConfig {
         Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
     }
 
-    public static SimulationContext createSimContext() {
-        return new SimulationContext();
+    public static SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
+        return new SimulationContext(nodeMessagingListener);
     }
 
     public static GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
