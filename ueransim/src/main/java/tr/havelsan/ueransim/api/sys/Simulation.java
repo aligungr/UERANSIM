@@ -73,12 +73,12 @@ public class Simulation {
 
     public static void triggerOnSend(BaseSimContext<?> ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
-        if (listener != null) listener.onSend(ctx, ctx);
+        if (listener != null) listener.onSend(ctx, msg);
     }
 
     public static void triggerOnReceive(BaseSimContext<?> ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
-        if (listener != null) listener.onReceive(ctx, ctx);
+        if (listener != null) listener.onReceive(ctx, msg);
     }
 
     public static void pushEvent(SimulationContext ctx, BaseEvent event) {

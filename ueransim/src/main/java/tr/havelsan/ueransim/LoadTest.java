@@ -14,6 +14,12 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
+import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
+import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
+import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.structs.GnbConfig;
 import tr.havelsan.ueransim.structs.UeConfig;
 import tr.havelsan.ueransim.utils.Color;
@@ -28,6 +34,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class LoadTest {
@@ -112,15 +120,39 @@ public class LoadTest {
     }
 
     private static class NodeMessagingListener implements INodeMessagingListener {
+        private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
+        private final Map<String, Long> registrationTimers = new HashMap<>();
 
         @Override
         public void onSend(BaseSimContext<?> ctx, Object message) {
-            //System.out.println("after Send");
+            if (message instanceof NGAP_NGSetupRequest) {
+                int gnbId = ((GnbSimContext) ctx).config.gnbId;
+                ngSetupTimers.put(gnbId, System.currentTimeMillis());
+            } else if (message instanceof RegistrationRequest) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                registrationTimers.put(supi, System.currentTimeMillis());
+            }
         }
 
         @Override
         public void onReceive(BaseSimContext<?> ctx, Object message) {
-            //System.out.println("on Receive");
+            if (message instanceof NGAP_NGSetupFailure) {
+                int gnbId = ((GnbSimContext) ctx).config.gnbId;
+                long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
+                System.out.printf("[[ NGSetup failed in %d ms | gnbId: %d ]]\n", delta, gnbId);
+            } else if (message instanceof NGAP_NGSetupResponse) {
+                int gnbId = ((GnbSimContext) ctx).config.gnbId;
+                long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
+                System.out.printf("[[ NGSetup succeeded in %d ms | gnbId: %d ]]\n", delta, gnbId);
+            } else if (message instanceof RegistrationAccept) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                long delta = System.currentTimeMillis() - registrationTimers.get(supi);
+                System.out.printf("[[ RegistrationAccept succeeded in %d ms | ue: %s ]]\n", delta, supi);
+            } else if (message instanceof RegistrationReject) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                long delta = System.currentTimeMillis() - registrationTimers.get(supi);
+                System.out.printf("[[ RegistrationAccept rejected in %d ms | ue: %s ]]\n", delta, supi);
+            }
         }
     }
 }
