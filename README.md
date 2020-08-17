@@ -1,8 +1,8 @@
 # UERANSIM
-5G UE/gNodeB Simulator
+Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN emulator with additional capability of load testing.
 
 ##  General Info  
-**3GPP Version:** 15.2.0  
+**3GPP Release:** 15.2.0  
 **Access Type:** 5G-SA (Standalone Access)  
 **Connection Type:** 3GPP Access  
 
@@ -28,7 +28,7 @@
   - Initial UE Message
   - Uplink/Downlink NAS Transport
 - PDU Session Establishment
-  - in progress
+  - ***in progress***
 - ***todo...***
       
 ##  Requirements
@@ -55,7 +55,7 @@ sudo apt install libsctp-dev lksctp-tools
     ```
 
 
-## Usage
+## Running
 1. Select a configuration profile by modifying `config/root.yaml`.
 2. (Optional)  You can further modify the profile configurations if you want. (`config/open5gs`, `config/free5gc`, etc.)
 3. Execute `./run.sh` to start the application.

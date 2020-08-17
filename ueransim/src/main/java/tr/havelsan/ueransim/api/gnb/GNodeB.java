@@ -28,6 +28,7 @@ package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.api.gnb.ngap.*;
 import tr.havelsan.ueransim.api.sys.MockedRadio;
+import tr.havelsan.ueransim.api.sys.Simulation;
 import tr.havelsan.ueransim.core.GnbSimContext;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
@@ -76,6 +77,8 @@ public class GNodeB {
         }
 
         Logging.debug(Tag.MESSAGING, "Sent.");
+
+        Simulation.triggerOnSend(ctx, message);
     }
 
     public static void sendNgapUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
@@ -124,6 +127,8 @@ public class GNodeB {
         }
 
         Logging.debug(Tag.MESSAGING, "Sent.");
+
+        Simulation.triggerOnSend(ctx, message);
     }
 
     public static void receiveNgap(GnbSimContext ctx, Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
@@ -133,6 +138,8 @@ public class GNodeB {
         if (ngapMessage == null) {
             return;
         }
+
+        Simulation.triggerOnReceive(ctx, ngapMessage);
 
         try {
             if (!ctx.config.ignoreStreamIds) {

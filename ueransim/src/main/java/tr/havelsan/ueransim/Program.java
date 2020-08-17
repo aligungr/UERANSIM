@@ -52,7 +52,7 @@ public class Program {
         AppConfig.initialize();
         initLogging();
 
-        var simContext = AppConfig.createSimContext();
+        var simContext = AppConfig.createSimContext(null);
 
         var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "gnb.yaml"));
         Simulation.registerGnb(simContext, gnbContext);

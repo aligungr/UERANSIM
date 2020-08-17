@@ -35,9 +35,15 @@ import java.util.UUID;
 public class SimulationContext {
     HashMap<UUID, GnbSimContext> gnbMap;
     HashMap<UUID, UeSimContext> ueMap;
+    INodeMessagingListener nodeMessagingListener;
 
     public SimulationContext() {
+        this(null);
+    }
+
+    public SimulationContext(INodeMessagingListener nodeMessagingListener) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
+        this.nodeMessagingListener = nodeMessagingListener;
     }
 }
