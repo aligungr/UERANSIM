@@ -48,7 +48,7 @@ public class LoadTest {
 
         var simContext = AppConfig.createSimContext(new NodeMessagingListener());
 
-        final int COUNT = 5;
+        final int COUNT = 3;
 
         var gnbs = new ArrayList<GnbSimContext>();
         var ues = new ArrayList<UeSimContext>();
@@ -68,7 +68,7 @@ public class LoadTest {
         for (int i = 0; i < COUNT; i++) {
             var ref = ((ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "ue.yaml")).asConstructed(UeConfig.class);
 
-            var imsiNumber = new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString();
+            var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
             var supi = new Supi("imsi", imsiNumber).toString();
 
             var config = new UeConfig(ref.snn, ref.key.toHexString(), ref.op.toHexString(), ref.amf.toHexString(), ref.imei, supi, ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr, new String(ref.dnn.data.toByteArray(), StandardCharsets.US_ASCII));
