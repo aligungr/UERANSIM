@@ -100,7 +100,7 @@ public class Logging {
         Console.println(color, display);
 
         if (severity == Severity.ERROR && Constants.TREAT_ERRORS_AS_FATAL) {
-            throw new FatalTreatedErrorException(display);
+            throw new FatalTreatedErrorException(str);
         }
     }
 
