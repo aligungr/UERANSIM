@@ -48,7 +48,7 @@ public class NasEncoder {
      * Encodes NAS/5GS PDU into octet string
      */
     public static OctetString nasPduS(NasMessage pdu) {
-        return new OctetString(nasPdu(pdu));
+        return pdu == null ? null : new OctetString(nasPdu(pdu));
     }
 
     /**
