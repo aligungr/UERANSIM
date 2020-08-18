@@ -60,6 +60,7 @@ public class AppConfig {
 
         var general = (ImplicitTypedObject) MtsDecoder.decode(PROFILE + "general.yaml");
         Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
+        Constants.TREAT_ERRORS_AS_FATAL = general.getBool("treat-errors-as-fatal");
     }
 
     public static SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
