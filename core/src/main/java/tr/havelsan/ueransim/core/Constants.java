@@ -34,4 +34,5 @@ public final class Constants {
     public static final int NGAP_PROTOCOL_ID = 60;
 
     public static boolean USE_LONG_MNC = true;
+    public static boolean TREAT_ERRORS_AS_FATAL = false;
 }

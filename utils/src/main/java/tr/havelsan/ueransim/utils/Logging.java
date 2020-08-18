@@ -26,6 +26,9 @@
 
 package tr.havelsan.ueransim.utils;
 
+import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.core.exceptions.FatalTreatedErrorException;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -95,6 +98,10 @@ public class Logging {
 
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
         Console.println(color, display);
+
+        if (severity == Severity.ERROR && Constants.TREAT_ERRORS_AS_FATAL) {
+            throw new FatalTreatedErrorException(display);
+        }
     }
 
     public static void addLogHandler(Consumer<LogEntry> handler) {

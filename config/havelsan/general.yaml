@@ -1,1 +1,2 @@
 use-long-mnc: true
+treat-errors-as-fatal: true
