@@ -14,9 +14,7 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsConstruct;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsInitializer;
-import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
-import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
-import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
+import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
@@ -48,12 +46,12 @@ public class LoadTest {
 
         var simContext = AppConfig.createSimContext(new NodeMessagingListener());
 
-        final int COUNT = 3;
+        final int COUNT = 50;
 
         var gnbs = new ArrayList<GnbSimContext>();
         var ues = new ArrayList<UeSimContext>();
 
-        for (int i = 0; i < COUNT; i++) {
+        for (int i = 0; i < 1; i++) {
             var ref = MtsConstruct.construct(GnbConfig.class, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "gnb.yaml"), true);
 
             var config = new GnbConfig(i + 1, ref.gnbPlmn, ref.amfConfigs, ref.supportedTAs, ref.ignoreStreamIds);
@@ -81,7 +79,7 @@ public class LoadTest {
         }
 
         for (int i = 0; i < COUNT; i++) {
-            Simulation.connectUeToGnb(ues.get(i), gnbs.get(i));
+            Simulation.connectUeToGnb(ues.get(i), gnbs.get(0));
         }
 
         var scanner = new Scanner(System.in);
@@ -138,6 +136,11 @@ public class LoadTest {
     private static class NodeMessagingListener implements INodeMessagingListener {
         private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
         private final Map<String, Long> registrationTimers = new HashMap<>();
+        private final Map<String, Long> authenticationTimers = new HashMap<>();
+        private final Map<String, Long> securityModeControlTimers = new HashMap<>();
+        private final Map<String, Long> phase1Timers = new HashMap<>();
+        private final Map<String, Long> phase2Timers = new HashMap<>();
+        private final Map<String, Long> phase3Timers = new HashMap<>();
 
         @Override
         public void onSend(BaseSimContext<?> ctx, Object message) {
@@ -147,6 +150,19 @@ public class LoadTest {
             } else if (message instanceof RegistrationRequest) {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 registrationTimers.put(supi, System.currentTimeMillis());
+                phase1Timers.put(supi, System.currentTimeMillis());
+            } else if (message instanceof AuthenticationResponse) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                phase2Timers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - authenticationTimers.get(supi);
+                loadTestConsole.println(null, "\u2714     [Authentication (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof SecurityModeComplete) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                phase3Timers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - securityModeControlTimers.get(supi);
+                loadTestConsole.println(null, "\u2714     [Security Mode Control (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
             }
         }
 
@@ -168,6 +184,21 @@ public class LoadTest {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 long delta = System.currentTimeMillis() - registrationTimers.get(supi);
                 loadTestConsole.println(null, "\u2714 [Registration] [ue: %s] [%d ms]", supi, delta);
+
+                long delta2 = System.currentTimeMillis() - phase3Timers.get(supi);
+                loadTestConsole.println(null, "\u2714     [Phase 3 (Network)] [SecurityModeControl-RegistrationAccept] [ue: %s] [%d ms]", supi, delta2);
+            } else if (message instanceof AuthenticationRequest) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                authenticationTimers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - phase1Timers.get(supi);
+                loadTestConsole.println(null, "\u2714     [Phase 1 (Network)] [Registration-Authentication] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof SecurityModeCommand) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                securityModeControlTimers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - phase2Timers.get(supi);
+                loadTestConsole.println(null, "\u2714     [Phase 2 (Network)] [Authentication-SecurityModeControl] [ue: %s] [%d ms]", supi, delta);
             }
         }
     }
