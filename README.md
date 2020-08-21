@@ -81,7 +81,7 @@ sudo apt install g++
 
 **Q3. How to increase the number of UE and RANs?**
 
-Multiple UE and RAN feature (as well as load testing) is currently under development. However if you want to pre-access this feature, just check the LoadTest.java file. You can directly run the main method of tr.havelsan.ueransim.LoadTest class.
+Multiple UE and RAN feature (as well as load testing) is currently under development. However if you want to pre-access this feature, just check the LoadTest.java file. You can directly run the main method of tr.havelsan.ueransim.app.LoadTest class.
 
 Also don't forget to check app.log and loadtest.log files with tail -f command.
 

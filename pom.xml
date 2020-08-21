@@ -62,7 +62,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>tr.havelsan.ueransim.Program</mainClass>
+                            <mainClass>tr.havelsan.ueransim.app.Program</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -82,7 +82,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>tr.havelsan.ueransim.Program</mainClass>
+                                    <mainClass>tr.havelsan.ueransim.app.Program</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>
