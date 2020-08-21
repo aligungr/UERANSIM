@@ -68,6 +68,8 @@ sudo apt install libsctp-dev lksctp-tools
 
 This error usually happens if you are using some Linux VM container in Windows. Windows does not support SCTP protokol, therefore *physical Linux machine is required*. Otherwise SCTP won't work.
 
+If you are using physical Linux machine, but still encounter this issue, make sure that you have Ubuntu 16.04 or later.
+
 **Q2. I can't build native libraries.**
 
 Make sure that you set the `JAVA_HOME` environment variable, and have correct version of gcc/g++. You can check the current version with `gcc -v`. In order to upgrade gcc/g++ run the following command:
