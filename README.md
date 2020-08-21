@@ -61,3 +61,28 @@ sudo apt install libsctp-dev lksctp-tools
 3. Execute `./run.sh` to start the application.
 4. Use `tail -f app.log` to monitor logs realtime.
 5. Use terminal to trigger test events such as `initial-registration`
+
+## FAQ
+
+**Q1. Why am I getting java.net.SocketException: Protocol not supported exception?**  
+
+This error usually happens if you are using some Linux VM container in Windows. Windows does not support SCTP protokol, therefore *physical Linux machine is required*. Otherwise SCTP won't work.
+
+**Q2. I can't build native libraries.**
+
+Make sure that you set the `JAVA_HOME` environment variable, and have correct version of gcc/g++. You can check the current version with `gcc -v`. In order to upgrade gcc/g++ run the following command:
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install g++
+``` 
+
+**Q3. How to increase the number of UE and RANs?**
+
+Multiple UE and RAN feature (as well as load testing) is currently under development. However if you want to pre-access this feature, just check the LoadTest.java file. You can directly run the main method of tr.havelsan.ueransim.LoadTest class.
+
+Also don't forget to check app.log and loadtest.log files with tail -f command.
+
+**Q4. Are user plane functionalities supported?**
+
+Not yet, but in progress now. 
