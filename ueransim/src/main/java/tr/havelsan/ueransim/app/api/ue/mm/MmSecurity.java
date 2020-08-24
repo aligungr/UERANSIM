@@ -45,7 +45,7 @@ import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class MmSecurity {
 
-    public static void handleSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
+    public static void receiveSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
         Logging.funcIn("Handling: Security Mode Command");
 
         // todo: check the integriti with new security context

@@ -35,7 +35,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class MmService {
 
-    public static void handleServiceAccept(UeSimContext ctx, ServiceAccept message) {
+    public static void receiveServiceAccept(UeSimContext ctx, ServiceAccept message) {
         Logging.funcIn("Handling: Service Accept");
 
         if (message.eapMessage != null) {
@@ -50,7 +50,7 @@ public class MmService {
         Logging.funcOut();
     }
 
-    public static void handleServiceReject(UeSimContext ctx, ServiceReject message) {
+    public static void receiveServiceReject(UeSimContext ctx, ServiceReject message) {
         Logging.funcIn("Handling: Service Accept");
 
         if (message.eapMessage != null) {

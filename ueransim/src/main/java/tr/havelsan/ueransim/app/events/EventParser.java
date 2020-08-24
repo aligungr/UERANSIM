@@ -27,24 +27,19 @@
 package tr.havelsan.ueransim.app.events;
 
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
+import tr.havelsan.ueransim.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class EventParser {
 
     public static String[] possibleEvents() {
-        return new String[]{
-                "initial-registration",
-                "periodic-registration",
-                "pdu-session-establishment"
-        };
+        return new ArrayList<>(Utils.streamToList(Arrays.stream(UeCommandEvent.Command.values()).map(x -> x.cmd)))
+                .toArray(new String[0]);
     }
 
     public static BaseEvent parse(String command) {
-        if (command == null) {
-            return null;
-        }
-        if (command.equals("initial-registration") || command.equals("periodic-registration") || command.equals("pdu-session-establishment")) {
-            return new UeCommandEvent(command);
-        }
-        return null;
+        return new UeCommandEvent(UeCommandEvent.Command.fromValue(command));
     }
 }

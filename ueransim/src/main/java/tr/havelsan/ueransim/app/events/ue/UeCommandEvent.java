@@ -27,9 +27,9 @@
 package tr.havelsan.ueransim.app.events.ue;
 
 public class UeCommandEvent extends UeEvent {
-    public final String cmd;
+    public final Command cmd;
 
-    public UeCommandEvent(String cmd) {
+    public UeCommandEvent(Command cmd) {
         this.cmd = cmd;
     }
 
@@ -38,5 +38,37 @@ public class UeCommandEvent extends UeEvent {
         return "UeCommandEvent{" +
                 "cmd='" + cmd + '\'' +
                 '}';
+    }
+
+    public enum Command {
+        INITIAL_REGISTRATION("initial-registration"),
+        PERIODIC_REGISTRATION("periodic-registration"),
+        DEREGISTRATION("de-registration"),
+        PDU_SESSION_ESTABLISHMENT("pdu-session-establishment");
+
+        public final String cmd;
+
+        Command(String cmd) {
+            this.cmd = cmd;
+        }
+
+        public static Command fromValue(String cmd) {
+            for (var item : values()) {
+                if (item.cmd.equals(cmd))
+                    return item;
+            }
+            return null;
+        }
+
+        public boolean isMmCommand() {
+            switch (this) {
+                case INITIAL_REGISTRATION:
+                case PERIODIC_REGISTRATION:
+                case DEREGISTRATION:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }
