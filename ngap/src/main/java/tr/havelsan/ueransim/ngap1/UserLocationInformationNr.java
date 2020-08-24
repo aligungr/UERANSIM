@@ -31,6 +31,7 @@ import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UserLocationInformationNr {
+
     public final NrCgi nrCgi;
     public final VTrackingAreaIdentity tai;
 
