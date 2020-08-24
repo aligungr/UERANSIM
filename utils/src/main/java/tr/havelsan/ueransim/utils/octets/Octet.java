@@ -42,12 +42,12 @@ public final class Octet extends OctetN {
         this((long)value);
     }
 
-    public Octet(long value) {
-        super(value, 1);
-    }
-
     public Octet(String hex) {
         this(Utils.toLong(hex));
+    }
+
+    public Octet(long value) {
+        super(value, 1);
     }
 
     @Override

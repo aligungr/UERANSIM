@@ -172,14 +172,12 @@ public class NgapUtils {
 
     public static NGAP_SupportedTAList createSupportedTAList(SupportedTA[] supportedTAs) {
         var res = new NGAP_SupportedTAList();
-
         for (var supportedTa : supportedTAs) {
             var supportedTaiItem = new NGAP_SupportedTAItem();
             supportedTaiItem.tAC = new NGAP_TAC(supportedTa.tac.toByteArray());
             supportedTaiItem.broadcastPLMNList = createBroadcastPlmnList(supportedTa.broadcastPlmns);
             res.list.add(supportedTaiItem);
         }
-
         return res;
     }
 }
