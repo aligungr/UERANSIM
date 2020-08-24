@@ -33,12 +33,10 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 public class UserLocationInformationNr {
     public final NrCgi nrCgi;
     public final VTrackingAreaIdentity tai;
-    public final OctetString timeStamp;
 
-    public UserLocationInformationNr(NrCgi nrCgi, VTrackingAreaIdentity tai, OctetString timeStamp) {
+    public UserLocationInformationNr(NrCgi nrCgi, VTrackingAreaIdentity tai) {
         this.nrCgi = nrCgi;
         this.tai = tai;
-        this.timeStamp = timeStamp;
     }
 
     public static class NrCgi {

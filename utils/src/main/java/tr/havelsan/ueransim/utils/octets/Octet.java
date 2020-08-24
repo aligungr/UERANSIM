@@ -38,6 +38,10 @@ public final class Octet extends OctetN {
         this(0);
     }
 
+    public Octet(int value) {
+        this((long)value);
+    }
+
     public Octet(long value) {
         super(value, 1);
     }
