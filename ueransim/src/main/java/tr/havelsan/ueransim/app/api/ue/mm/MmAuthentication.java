@@ -144,6 +144,7 @@ public class MmAuthentication {
                 var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
                 var response = new AuthenticationReject(new IEEapMessage(eapResponse));
                 MobilityManagement.sendMm(ctx, response);
+                return;
             }
         }
 

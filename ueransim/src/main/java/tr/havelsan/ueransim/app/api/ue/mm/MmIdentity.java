@@ -45,7 +45,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class MmIdentity {
 
-    public static void handleIdentityRequest(UeSimContext ctx, IdentityRequest message) {
+    public static void receiveIdentityRequest(UeSimContext ctx, IdentityRequest message) {
         Logging.funcIn("Handling: Identity Request");
 
         var response = new IdentityResponse();

@@ -29,6 +29,7 @@ package tr.havelsan.ueransim.app.api.ue.sm;
 import tr.havelsan.ueransim.app.api.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
@@ -63,11 +64,11 @@ public class SessionManagement {
         // todo
     }
 
-    public static void executeCommand(UeSimContext ctx, String cmd) {
+    public static void executeCommand(UeSimContext ctx, UeCommandEvent.Command cmd) {
         Debugging.assertThread(ctx);
 
         switch (cmd) {
-            case "pdu-session-establishment":
+            case PDU_SESSION_ESTABLISHMENT:
                 SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
                 break;
             default:
