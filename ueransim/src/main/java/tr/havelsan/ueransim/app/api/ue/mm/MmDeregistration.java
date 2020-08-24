@@ -10,7 +10,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class MmDeregistration {
 
-    public static void sendDeregistration(UeSimContext ctx) {
+    public static void sendDeregistration(UeSimContext ctx, IEDeRegistrationType.ESwitchOff switchOff) {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Starting: UE initiated de-registration procedure");
@@ -19,7 +19,7 @@ public class MmDeregistration {
         request.deRegistrationType = new IEDeRegistrationType();
         request.deRegistrationType.accessType = IEDeRegistrationType.EDeRegistrationAccessType.THREEGPP_ACCESS;
         request.deRegistrationType.reRegistrationRequired = IEDeRegistrationType.EReRegistrationRequired.NOT_REQUIRED;
-        request.deRegistrationType.switchOff = IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION;
+        request.deRegistrationType.switchOff = switchOff;
         request.ngKSI = ctx.currentNsCtx.ngKsi;
 
         if (ctx.mmCtx.storedGuti != null) {
@@ -29,6 +29,8 @@ public class MmDeregistration {
         }
 
         MobilityManagement.sendMm(ctx, request);
+
+        // todo: T3521
 
         Logging.funcOut();
     }
