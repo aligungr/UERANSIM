@@ -28,7 +28,9 @@ import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
+import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating;
+import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeTerminated;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
@@ -69,6 +71,29 @@ public class MmDeregistration {
         ctx.mmCtx.storedSuci = null;
 
         Logging.success(Tag.PROCEDURE_RESULT, "De-registration is successful");
+        Logging.funcOut();
+    }
+
+    public static void receiveDeregistrationRequest(UeSimContext ctx, DeRegistrationRequestUeTerminated message) {
+        Debugging.assertThread(ctx);
+
+        Logging.funcIn("Handling: Network-initiated de-registration procedure");
+
+        if (message.deRegistrationType.reRegistrationRequired.equals(IEDeRegistrationType.EReRegistrationRequired.REQUIRED)) {
+            ctx.ueTimers.t3346.stop();
+            ctx.ueTimers.t3396.stop();
+            ctx.ueTimers.t3584.stop();
+            ctx.ueTimers.t3585.stop();
+
+        } else {
+            if (message.mmCause != null) {
+                var cause = message.mmCause.value;
+                // todo
+            }
+        }
+
+        MobilityManagement.sendMm(ctx, new DeRegistrationAcceptUeTerminated());
+
         Logging.funcOut();
     }
 }
