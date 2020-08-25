@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.utils.octets;
@@ -38,12 +36,16 @@ public final class Octet extends OctetN {
         this(0);
     }
 
-    public Octet(long value) {
-        super(value, 1);
+    public Octet(int value) {
+        this((long)value);
     }
 
     public Octet(String hex) {
         this(Utils.toLong(hex));
+    }
+
+    public Octet(long value) {
+        super(value, 1);
     }
 
     @Override

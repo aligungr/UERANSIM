@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.ue.mm;
@@ -102,7 +100,7 @@ public class MmRegistration {
         Logging.funcOut();
     }
 
-    public static void handleRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
+    public static void receiveRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
         Logging.funcIn("Handling: Registration Accept");
 
         boolean sendCompleteMes = false;
@@ -131,7 +129,7 @@ public class MmRegistration {
         Logging.funcOut();
     }
 
-    public static void handleRegistrationReject(UeSimContext ctx, RegistrationReject message) {
+    public static void receiveRegistrationReject(UeSimContext ctx, RegistrationReject message) {
         Logging.funcIn("Handling: Registration reject");
 
         Logging.error(Tag.PROCEDURE_RESULT, "Registration failed");

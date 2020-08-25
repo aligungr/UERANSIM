@@ -10,6 +10,8 @@ Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN em
 - UE | Registration
   - Initial Registration
   - Periodic Registration
+  - UE-initiated De-registration
+  - Network-initiated De-registration
 - UE | Authentication
   - EAP AKA'
   - 5G AKA
@@ -81,9 +83,9 @@ sudo apt install g++
 
 **Q3. How to increase the number of UE and RANs?**
 
-Multiple UE and RAN feature (as well as load testing) is currently under development. However if you want to pre-access this feature, just check the LoadTest.java file. You can directly run the main method of tr.havelsan.ueransim.app.LoadTest class.
+Multiple UE and RAN feature (as well as load testing) is currently under development. However if you want to pre-access this feature, just check the LoadTest.java file. You can directly run the main method of `tr.havelsan.ueransim.app.LoadTest` class.
 
-Also don't forget to check app.log and loadtest.log files with tail -f command.
+Also don't forget to check `app.log` and `loadtest.log` files with `tail -f` command.
 
 **Q4. Are user plane functionalities supported?**
 

@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.ue.mm;
@@ -35,7 +33,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class MmService {
 
-    public static void handleServiceAccept(UeSimContext ctx, ServiceAccept message) {
+    public static void receiveServiceAccept(UeSimContext ctx, ServiceAccept message) {
         Logging.funcIn("Handling: Service Accept");
 
         if (message.eapMessage != null) {
@@ -50,7 +48,7 @@ public class MmService {
         Logging.funcOut();
     }
 
-    public static void handleServiceReject(UeSimContext ctx, ServiceReject message) {
+    public static void receiveServiceReject(UeSimContext ctx, ServiceReject message) {
         Logging.funcIn("Handling: Service Accept");
 
         if (message.eapMessage != null) {

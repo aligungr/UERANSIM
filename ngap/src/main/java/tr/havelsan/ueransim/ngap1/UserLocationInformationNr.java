@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.ngap1;
@@ -31,14 +29,13 @@ import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UserLocationInformationNr {
+
     public final NrCgi nrCgi;
     public final VTrackingAreaIdentity tai;
-    public final OctetString timeStamp;
 
-    public UserLocationInformationNr(NrCgi nrCgi, VTrackingAreaIdentity tai, OctetString timeStamp) {
+    public UserLocationInformationNr(NrCgi nrCgi, VTrackingAreaIdentity tai) {
         this.nrCgi = nrCgi;
         this.tai = tai;
-        this.timeStamp = timeStamp;
     }
 
     public static class NrCgi {

@@ -25,5 +25,4 @@ userLocationInformationNr:
     mcc: 901
     mnc: 70
     tac: '000001'
-  timeStamp:
-    hex: 5b5fa680
+

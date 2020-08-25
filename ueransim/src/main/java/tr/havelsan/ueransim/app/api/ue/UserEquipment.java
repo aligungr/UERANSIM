@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.ue;
@@ -35,12 +33,12 @@ import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
+import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Logging;
 import tr.havelsan.ueransim.utils.Tag;
@@ -100,17 +98,10 @@ public class UserEquipment {
             Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
 
             var cmd = ((UeCommandEvent) event).cmd;
-            switch (cmd) {
-                case "initial-registration":
-                case "periodic-registration":
-                    MobilityManagement.executeCommand(ctx, cmd);
-                    break;
-                case "pdu-session-establishment":
-                    SessionManagement.executeCommand(ctx, cmd);
-                    break;
-                default:
-                    Logging.error(Tag.EVENT, "UeCommandEvent not recognized: %s", cmd);
-                    break;
+            if (cmd.isMmCommand()) {
+                MobilityManagement.executeCommand(ctx, cmd);
+            } else {
+                SessionManagement.executeCommand(ctx, cmd);
             }
         } else if (event instanceof UeDownlinkNasEvent) {
             Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);

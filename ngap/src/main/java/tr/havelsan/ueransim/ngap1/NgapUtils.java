@@ -20,12 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.ngap1;
 
+import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
@@ -42,6 +41,7 @@ import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_SupportedTAList;
 import tr.havelsan.ueransim.ngap0.ies.sequences.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
@@ -122,7 +122,7 @@ public class NgapUtils {
         userLocationInformationNr.tAI = new NGAP_TAI();
         userLocationInformationNr.tAI.tAC = new NGAP_TAC(nr.tai.tac.toByteArray());
         userLocationInformationNr.tAI.pLMNIdentity = NgapUtils.plmnEncode(nr.tai.plmn);
-        userLocationInformationNr.timeStamp = new NGAP_TimeStamp(nr.timeStamp.toByteArray());
+        userLocationInformationNr.timeStamp = new NGAP_TimeStamp(new Octet4(TimeStamp.getCurrentTime().getSeconds()).toByteArray());
         return userLocationInformationNr;
     }
 
@@ -170,14 +170,12 @@ public class NgapUtils {
 
     public static NGAP_SupportedTAList createSupportedTAList(SupportedTA[] supportedTAs) {
         var res = new NGAP_SupportedTAList();
-
         for (var supportedTa : supportedTAs) {
             var supportedTaiItem = new NGAP_SupportedTAItem();
             supportedTaiItem.tAC = new NGAP_TAC(supportedTa.tac.toByteArray());
             supportedTaiItem.broadcastPLMNList = createBroadcastPlmnList(supportedTa.broadcastPlmns);
             res.list.add(supportedTaiItem);
         }
-
         return res;
     }
 }
