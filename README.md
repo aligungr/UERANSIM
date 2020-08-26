@@ -2,7 +2,7 @@
 Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN emulator with additional capability of load testing.
 
 ##  General Info  
-**3GPP Release:** 15.2.0  
+**3GPP Release:** R15  
 **Access Type:** 5G-SA (Standalone Access)  
 **Connection Type:** 3GPP Access  
 
