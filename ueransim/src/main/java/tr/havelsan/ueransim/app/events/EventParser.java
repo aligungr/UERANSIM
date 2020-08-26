@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class EventParser {
 
@@ -38,6 +39,9 @@ public class EventParser {
     }
 
     public static BaseEvent parse(String command) {
-        return new UeCommandEvent(UeCommandEvent.Command.fromValue(command));
+        var ueCmd = UeCommandEvent.Command.fromValue(command);
+        if (ueCmd == null)
+            return null;
+        return new UeCommandEvent(ueCmd);
     }
 }
