@@ -10,8 +10,7 @@ Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN em
 - UE | Registration
   - Initial Registration
   - Periodic Registration
-  - UE-initiated De-registration
-  - Network-initiated De-registration
+  - UE/Network Initiated de-registration
 - UE | Authentication
   - EAP AKA'
   - 5G AKA
