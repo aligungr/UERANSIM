@@ -71,6 +71,8 @@ public class MobilityManagement {
             MmConfiguration.receiveConfigurationUpdate(ctx, (ConfigurationUpdateCommand) message);
         } else if (message instanceof DeRegistrationAcceptUeOriginating) {
             MmDeregistration.receiveDeregistrationAccept(ctx, (DeRegistrationAcceptUeOriginating) message);
+        } else if (message instanceof DeRegistrationRequestUeTerminated) {
+            MmDeregistration.receiveDeregistrationRequest(ctx, (DeRegistrationRequestUeTerminated) message);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
