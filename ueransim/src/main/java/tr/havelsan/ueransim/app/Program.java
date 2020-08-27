@@ -28,9 +28,10 @@ import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.core.nodes.UeNode;
 import tr.havelsan.ueransim.app.events.EventParser;
-import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
+import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.*;
 
@@ -45,19 +46,22 @@ import java.util.Scanner;
 public class Program {
 
     private final MtsContext defaultMts;
+    private final MtsContext testingMts;
     private final AppConfig app;
 
     public Program() {
         this.defaultMts = new MtsContext();
+        this.testingMts = new MtsContext();
 
-        MtsInitializer.initMts(defaultMts);
+        MtsInitializer.initDefaultMts(defaultMts);
+        MtsInitializer.initTestingMts(testingMts);
 
         this.app = new AppConfig(defaultMts);
 
         initLogging();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new Program().run();
     }
 
@@ -71,7 +75,7 @@ public class Program {
         final String logFile = "app.log";
 
         Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
-        Console.setStandardPrintEnabled(false);
+        Console.setStandardPrintEnabled(true);
         Console.addPrintHandler(str -> {
             final Path path = Paths.get(logFile);
             try {
@@ -83,12 +87,50 @@ public class Program {
         });
     }
 
-    public void run() {
+    public void run() throws Exception {
+        var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
+        var tests = Utils.streamToList(testing.getParameters().entrySet().stream());
+
+        System.out.println("List of possible tests:");
+        for (int i = 0; i < tests.size(); i++) {
+            System.out.println((i + 1) + ") " + tests.get(i).getKey());
+        }
+
+        System.out.println("Selection: ");
+
+        var scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+
+        int number = -1;
+        try {
+            number = Integer.parseInt(line);
+        } catch (Exception ignored) {
+        }
+
+        if (number < 1 || number > tests.size()) {
+            System.err.println("Invalid selection: " + number);
+            return;
+        }
+
+        var testName = tests.get(number - 1).getKey();
+        var testObjects = (Object[]) tests.get(number - 1).getValue();
+        var testCommands = new TestCommand[testObjects.length];
+        for (int i = 0; i < testCommands.length; i++) {
+            testCommands[i] = (TestCommand) testObjects[i];
+        }
+
+        runTest(testName, testCommands);
+    }
+
+    private void runTest(String testName, TestCommand[] testCommands) throws Exception {
         var simContext = app.createSimContext(null);
 
         var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
         Simulation.registerGnb(simContext, gnbContext);
         GnbNode.run(gnbContext);
+
+        // todo: ensure gnbs are good to go
+        Thread.sleep(2000);
 
         var ueContext = app.createUeSimContext(simContext, app.createUeConfig());
         Simulation.registerUe(simContext, ueContext);
@@ -96,23 +138,20 @@ public class Program {
 
         Simulation.connectUeToGnb(ueContext, gnbContext);
 
-        var scanner = new Scanner(System.in);
+        for (var command : testCommands) {
 
-        System.out.println("Possible events:" + Json.toJson(EventParser.possibleEvents()));
-        while (true) {
-            System.out.println("Enter event to execute:");
-            String line = scanner.nextLine();
-            var event = EventParser.parse(line);
-            if (event == null) {
-                System.out.println("Event not found: " + line);
-            } else {
-                if (event instanceof GnbEvent) {
-                    gnbContext.pushEvent((GnbEvent) event);
-                } else if (event instanceof UeEvent) {
-                    ueContext.pushEvent((UeEvent) event);
-                }
-                System.out.println("Event pushed.");
+            if (command instanceof TestCommand_Sleep) {
+                Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
+            } else if (command instanceof TestCommand_InitialRegistration) {
+                ueContext.pushEvent((UeEvent) EventParser.parse("initial-registration"));
+            } else if (command instanceof TestCommand_PeriodicRegistration) {
+                ueContext.pushEvent((UeEvent) EventParser.parse("periodic-registration"));
+            } else if (command instanceof TestCommand_Deregistration) {
+                ueContext.pushEvent((UeEvent) EventParser.parse("de-registration"));
+            } else if (command instanceof TestCommand_PduSessionEstablishment) {
+                ueContext.pushEvent((UeEvent) EventParser.parse("pdu-session-establishment"));
             }
+
         }
     }
 }

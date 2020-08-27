@@ -1,0 +1,21 @@
+initial-registration:
+  - "@type": INITIAL_REGISTRATION
+
+periodic-registration:
+  - "@type": INITIAL_REGISTRATION
+  - "@type": SLEEP
+    duration: 60
+  - "@type": PERIODIC_REGISTRATION
+
+deregistration:
+  - "@type": INITIAL_REGISTRATION
+  - "@type": SLEEP
+    duration: 1
+  - "@type": DEREGISTRATION
+    isSwitchOff: false
+
+pdu-session-establishment:
+  - "@type": INITIAL_REGISTRATION
+  - "@type": SLEEP
+    duration: 1
+  - "@type": PDU_SESSION_ESTABLISHMENT

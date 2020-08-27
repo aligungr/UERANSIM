@@ -26,11 +26,10 @@ package tr.havelsan.ueransim.app.mts;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
+import tr.havelsan.ueransim.app.testing.*;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.MtsContext;
-import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsException;
-import tr.havelsan.ueransim.mts.TypeRegistry;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.Utils;
 
@@ -41,7 +40,7 @@ import java.nio.file.Paths;
 
 public class MtsInitializer {
 
-    public static void initMts(MtsContext mts) {
+    public static void initDefaultMts(MtsContext mts) {
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
             var classInfoList = scanResult.getAllClasses();
             for (var classInfo : classInfoList) {
@@ -86,5 +85,15 @@ public class MtsInitializer {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static void initTestingMts(MtsContext mts) {
+        initDefaultMts(mts);
+
+        mts.typeRegistry.registerTypeName("SLEEP", TestCommand_Sleep.class);
+        mts.typeRegistry.registerTypeName("INITIAL_REGISTRATION", TestCommand_InitialRegistration.class);
+        mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCommand_PeriodicRegistration.class);
+        mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCommand_Deregistration.class);
+        mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCommand_PduSessionEstablishment.class);
     }
 }
