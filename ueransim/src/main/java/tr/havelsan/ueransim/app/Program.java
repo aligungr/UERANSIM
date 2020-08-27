@@ -28,7 +28,7 @@ import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.core.nodes.UeNode;
-import tr.havelsan.ueransim.app.events.EventParser;
+import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.app.structs.Supi;
@@ -165,13 +165,13 @@ public class Program {
             if (command instanceof TestCommand_Sleep) {
                 Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
             } else if (command instanceof TestCommand_InitialRegistration) {
-                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("initial-registration")));
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
             } else if (command instanceof TestCommand_PeriodicRegistration) {
-                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("periodic-registration")));
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
             } else if (command instanceof TestCommand_Deregistration) {
-                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("de-registration")));
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
             } else if (command instanceof TestCommand_PduSessionEstablishment) {
-                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("pdu-session-establishment")));
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
             }
         }
     }

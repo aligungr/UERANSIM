@@ -33,6 +33,7 @@ import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
+import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -98,11 +99,7 @@ public class UserEquipment {
             Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
 
             var cmd = ((UeCommandEvent) event).cmd;
-            if (cmd.isMmCommand()) {
-                MobilityManagement.executeCommand(ctx, cmd);
-            } else {
-                SessionManagement.executeCommand(ctx, cmd);
-            }
+            executeCommand(ctx, cmd);
         } else if (event instanceof UeDownlinkNasEvent) {
             Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
 
@@ -115,6 +112,14 @@ public class UserEquipment {
                 MobilityManagement.receiveTimerExpire(ctx, timer);
             } else {
                 SessionManagement.receiveTimerExpire(ctx, timer);
+            }
+        }
+    }
+
+    private static void executeCommand(UeSimContext ctx, TestCommand cmd) {
+        if (!MobilityManagement.executeCommand(ctx, cmd)) {
+            if (!SessionManagement.executeCommand(ctx, cmd)) {
+                Logging.error(Tag.EVENT, "invalid command: %s", cmd);
             }
         }
     }
