@@ -10,12 +10,12 @@ periodic-registration:
 deregistration:
   - "@type": INITIAL_REGISTRATION
   - "@type": SLEEP
-    duration: 1
+    duration: 5
   - "@type": DEREGISTRATION
     isSwitchOff: false
 
 pdu-session-establishment:
   - "@type": INITIAL_REGISTRATION
   - "@type": SLEEP
-    duration: 1
+    duration: 5
   - "@type": PDU_SESSION_ESTABLISHMENT
