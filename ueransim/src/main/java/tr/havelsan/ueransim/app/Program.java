@@ -45,21 +45,27 @@ import java.util.Scanner;
 
 public class Program {
 
-    public static void main(String[] args) {
-        var mts = new MtsContext();
-        MtsInitializer.initMts(mts);
+    private final MtsContext defaultMts;
+    private final AppConfig app;
 
-        var app = new AppConfig(mts);
+    public Program() {
+        this.defaultMts = new MtsContext();
+
+        MtsInitializer.initMts(defaultMts);
+
+        this.app = new AppConfig(defaultMts);
 
         initLogging();
+    }
 
+    public void run() {
         var simContext = app.createSimContext(null);
 
-        var gnbContext = app.createGnbSimContext(simContext, (ImplicitTypedObject) mts.decoder.decode(app.profile + "gnb.yaml"));
+        var gnbContext = app.createGnbSimContext(simContext, (ImplicitTypedObject) defaultMts.decoder.decode(app.profile + "gnb.yaml"));
         Simulation.registerGnb(simContext, gnbContext);
         GnbNode.run(gnbContext);
 
-        var ueContext = app.createUeSimContext(simContext, (ImplicitTypedObject) mts.decoder.decode(app.profile + "ue.yaml"));
+        var ueContext = app.createUeSimContext(simContext, (ImplicitTypedObject) defaultMts.decoder.decode(app.profile + "ue.yaml"));
         Simulation.registerUe(simContext, ueContext);
         UeNode.run(ueContext);
 
@@ -83,6 +89,10 @@ public class Program {
                 System.out.println("Event pushed.");
             }
         }
+    }
+
+    public static void main(String[] args) {
+       new Program().run();
     }
 
     public static void fail(Throwable t) {
