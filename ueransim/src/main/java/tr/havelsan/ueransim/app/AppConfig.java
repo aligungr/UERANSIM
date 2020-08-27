@@ -27,21 +27,20 @@ package tr.havelsan.ueransim.app;
 import tr.havelsan.ueransim.app.api.gnb.sctp.NgapSctpAssociationHandler;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.utils.IncomingMessage;
-import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.GnbAmfContext;
+import tr.havelsan.ueransim.app.structs.GnbConfig;
+import tr.havelsan.ueransim.app.structs.UeConfig;
+import tr.havelsan.ueransim.app.utils.IncomingMessage;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
-import tr.havelsan.ueransim.mts.MtsConstruct;
-import tr.havelsan.ueransim.mts.MtsDecoder;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.sctp.MockedSctpClient;
 import tr.havelsan.ueransim.sctp.SctpClient;
-import tr.havelsan.ueransim.app.structs.GnbAmfContext;
-import tr.havelsan.ueransim.app.structs.GnbConfig;
-import tr.havelsan.ueransim.app.structs.UeConfig;
 import tr.havelsan.ueransim.utils.*;
 
 import java.util.ArrayDeque;
@@ -49,28 +48,31 @@ import java.util.Queue;
 
 public class AppConfig {
 
-    public static String PROFILE;
+    public final MtsContext mts;
+    public final String profile;
 
-    public static void initialize() {
-        var root = (ImplicitTypedObject) MtsDecoder.decode("config/profile.yaml");
+    public AppConfig(MtsContext mts) {
+        this.mts = mts;
+
+        var root = (ImplicitTypedObject) mts.decoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
-        PROFILE = "config/" + profile + "/";
+        this.profile = "config/" + profile + "/";
         Console.println(Color.BLUE_BOLD_BRIGHT, "INFO: Selected profile: \"%s\"", profile);
 
-        var general = (ImplicitTypedObject) MtsDecoder.decode(PROFILE + "general.yaml");
+        var general = (ImplicitTypedObject) mts.decoder.decode(this.profile + "general.yaml");
         Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
         Constants.TREAT_ERRORS_AS_FATAL = general.getBool("treat-errors-as-fatal");
     }
 
-    public static SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
+    public SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
         return new SimulationContext(nodeMessagingListener);
     }
 
-    public static GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        return createGnbSimContext(simCtx, MtsConstruct.construct(GnbConfig.class, config, true));
+    public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        return createGnbSimContext(simCtx, mts.construct.construct(GnbConfig.class, config, true));
     }
 
-    public static GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
+    public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
         var ctx = new GnbSimContext(simCtx);
         ctx.config = config;
 
@@ -102,18 +104,18 @@ public class AppConfig {
         return ctx;
     }
 
-    public static UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        return createUeSimContext(simCtx, config.asConstructed(UeConfig.class));
+    public UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        return createUeSimContext(simCtx, config.asConstructed(mts, UeConfig.class));
     }
 
-    public static UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
+    public UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
         var ctx = new UeSimContext(simCtx);
         ctx.ueConfig = config;
         return ctx;
     }
 
-    private static MockedSctpClient newMockedClient(String mockedRemoteFile, NgapSctpAssociationHandler ngapSctpAssociationHandler) {
-        var mockedRemote = ((ImplicitTypedObject) MtsDecoder.decode(mockedRemoteFile)).getParameters();
+    private MockedSctpClient newMockedClient(String mockedRemoteFile, NgapSctpAssociationHandler ngapSctpAssociationHandler) {
+        var mockedRemote = ((ImplicitTypedObject) mts.decoder.decode(mockedRemoteFile)).getParameters();
 
         return new MockedSctpClient(new MockedSctpClient.IMockedRemote() {
             int messageIndex = 0;

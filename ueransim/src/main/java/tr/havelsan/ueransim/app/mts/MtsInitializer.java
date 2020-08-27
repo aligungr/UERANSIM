@@ -27,6 +27,7 @@ package tr.havelsan.ueransim.app.mts;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.mts.MtsDecoder;
 import tr.havelsan.ueransim.mts.MtsException;
 import tr.havelsan.ueransim.mts.TypeRegistry;
@@ -40,7 +41,7 @@ import java.nio.file.Paths;
 
 public class MtsInitializer {
 
-    public static void initMts() {
+    public static void initMts(MtsContext mts) {
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
             var classInfoList = scanResult.getAllClasses();
             for (var classInfo : classInfoList) {
@@ -52,7 +53,7 @@ public class MtsInitializer {
                 }
 
                 String typeName = Utils.getTypeName(clazz);
-                TypeRegistry.registerTypeName(typeName, clazz);
+                mts.typeRegistry.registerTypeName(typeName, clazz);
             }
         }
 
@@ -68,12 +69,12 @@ public class MtsInitializer {
         };
 
         for (var type : otherTypes) {
-            TypeRegistry.registerTypeName(type.getSimpleName(), type);
+            mts.typeRegistry.registerTypeName(type.getSimpleName(), type);
         }
 
-        TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
+        mts.typeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
 
-        MtsDecoder.setFileProvider((searchDir, path) -> {
+        mts.decoder.setFileProvider((searchDir, path) -> {
             try {
                 String content = Files.readString(Paths.get(searchDir, path));
                 if (path.endsWith(".yaml"))

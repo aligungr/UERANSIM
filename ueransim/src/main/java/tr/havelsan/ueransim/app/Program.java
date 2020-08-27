@@ -31,7 +31,7 @@ import tr.havelsan.ueransim.app.events.EventParser;
 import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
-import tr.havelsan.ueransim.mts.MtsDecoder;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.utils.*;
 
@@ -46,17 +46,20 @@ import java.util.Scanner;
 public class Program {
 
     public static void main(String[] args) {
-        MtsInitializer.initMts();
-        AppConfig.initialize();
+        var mts = new MtsContext();
+        MtsInitializer.initMts(mts);
+
+        var app = new AppConfig(mts);
+
         initLogging();
 
-        var simContext = AppConfig.createSimContext(null);
+        var simContext = app.createSimContext(null);
 
-        var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "gnb.yaml"));
+        var gnbContext = app.createGnbSimContext(simContext, (ImplicitTypedObject) mts.decoder.decode(app.profile + "gnb.yaml"));
         Simulation.registerGnb(simContext, gnbContext);
         GnbNode.run(gnbContext);
 
-        var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "ue.yaml"));
+        var ueContext = app.createUeSimContext(simContext, (ImplicitTypedObject) mts.decoder.decode(app.profile + "ue.yaml"));
         Simulation.registerUe(simContext, ueContext);
         UeNode.run(ueContext);
 
