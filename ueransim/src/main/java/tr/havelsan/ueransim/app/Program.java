@@ -30,9 +30,8 @@ import tr.havelsan.ueransim.app.core.nodes.UeNode;
 import tr.havelsan.ueransim.app.events.EventParser;
 import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
-import tr.havelsan.ueransim.mts.ImplicitTypedObject;
-import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.*;
 
 import java.io.IOException;
@@ -58,14 +57,40 @@ public class Program {
         initLogging();
     }
 
+    public static void main(String[] args) {
+        new Program().run();
+    }
+
+    public static void fail(Throwable t) {
+        t.printStackTrace();
+        Logging.error(Tag.SYSTEM, "%s", t);
+        System.exit(1);
+    }
+
+    private static void initLogging() {
+        final String logFile = "app.log";
+
+        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
+        Console.setStandardPrintEnabled(false);
+        Console.addPrintHandler(str -> {
+            final Path path = Paths.get(logFile);
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public void run() {
         var simContext = app.createSimContext(null);
 
-        var gnbContext = app.createGnbSimContext(simContext, (ImplicitTypedObject) defaultMts.decoder.decode(app.profile + "gnb.yaml"));
+        var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
         Simulation.registerGnb(simContext, gnbContext);
         GnbNode.run(gnbContext);
 
-        var ueContext = app.createUeSimContext(simContext, (ImplicitTypedObject) defaultMts.decoder.decode(app.profile + "ue.yaml"));
+        var ueContext = app.createUeSimContext(simContext, app.createUeConfig());
         Simulation.registerUe(simContext, ueContext);
         UeNode.run(ueContext);
 
@@ -89,31 +114,5 @@ public class Program {
                 System.out.println("Event pushed.");
             }
         }
-    }
-
-    public static void main(String[] args) {
-       new Program().run();
-    }
-
-    public static void fail(Throwable t) {
-        t.printStackTrace();
-        Logging.error(Tag.SYSTEM, "%s", t);
-        System.exit(1);
-    }
-
-    private static void initLogging() {
-        final String logFile = "app.log";
-
-        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
-        Console.setStandardPrintEnabled(false);
-        Console.addPrintHandler(str -> {
-            final Path path = Paths.get(logFile);
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 }

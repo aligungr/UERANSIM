@@ -49,7 +49,7 @@ import java.util.Queue;
 public class AppConfig {
 
     public final MtsContext mts;
-    public final String profile;
+    private final String profile;
 
     public AppConfig(MtsContext mts) {
         this.mts = mts;
@@ -112,6 +112,14 @@ public class AppConfig {
         var ctx = new UeSimContext(simCtx);
         ctx.ueConfig = config;
         return ctx;
+    }
+
+    public GnbConfig createGnbConfig() {
+        return mts.constructor.construct(GnbConfig.class, ((ImplicitTypedObject) mts.decoder.decode(profile + "gnb.yaml")), true);
+    }
+
+    public UeConfig createUeConfig() {
+        return mts.constructor.construct(UeConfig.class, ((ImplicitTypedObject) mts.decoder.decode(profile + "ue.yaml")), true);
     }
 
     private MockedSctpClient newMockedClient(String mockedRemoteFile, NgapSctpAssociationHandler ngapSctpAssociationHandler) {
