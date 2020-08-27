@@ -52,7 +52,7 @@ public class AppConfig {
     public static String PROFILE;
 
     public static void initialize() {
-        var root = (ImplicitTypedObject) MtsDecoder.decode("config/root.yaml");
+        var root = (ImplicitTypedObject) MtsDecoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
         PROFILE = "config/" + profile + "/";
         Console.println(Color.BLUE_BOLD_BRIGHT, "INFO: Selected profile: \"%s\"", profile);

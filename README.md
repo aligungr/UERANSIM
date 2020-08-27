@@ -57,7 +57,7 @@ sudo apt install libsctp-dev lksctp-tools
 
 
 ## Running
-1. Select a configuration profile by modifying `config/root.yaml`.
+1. Select a configuration profile by modifying `config/profile.yaml`.
 2. (Optional)  You can further modify the profile configurations if you want. (`config/open5gs`, `config/free5gc`, etc.)
 3. Execute `./run.sh` to start the application.
 4. Use `tail -f app.log` to monitor logs realtime.
