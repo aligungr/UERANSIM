@@ -1,21 +1,25 @@
-initial-registration:
-  - "@type": INITIAL_REGISTRATION
+test-cases:
+  initial-registration:
+    - "@type": INITIAL_REGISTRATION
 
-periodic-registration:
-  - "@type": INITIAL_REGISTRATION
-  - "@type": SLEEP
-    duration: 60
-  - "@type": PERIODIC_REGISTRATION
+  periodic-registration:
+    - "@type": INITIAL_REGISTRATION
+    - "@type": SLEEP
+      duration: 60
+    - "@type": PERIODIC_REGISTRATION
 
-deregistration:
-  - "@type": INITIAL_REGISTRATION
-  - "@type": SLEEP
-    duration: 5
-  - "@type": DEREGISTRATION
-    isSwitchOff: false
+  deregistration:
+    - "@type": INITIAL_REGISTRATION
+    - "@type": SLEEP
+      duration: 5
+    - "@type": DEREGISTRATION
+      isSwitchOff: false
 
-pdu-session-establishment:
-  - "@type": INITIAL_REGISTRATION
-  - "@type": SLEEP
-    duration: 5
-  - "@type": PDU_SESSION_ESTABLISHMENT
+  pdu-session-establishment:
+    - "@type": INITIAL_REGISTRATION
+    - "@type": SLEEP
+      duration: 5
+    - "@type": PDU_SESSION_ESTABLISHMENT
+
+load-testing:
+  number-of-UE: 1

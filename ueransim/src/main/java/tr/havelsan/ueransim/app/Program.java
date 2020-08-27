@@ -33,7 +33,10 @@ import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.app.testing.*;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
-import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.utils.Console;
+import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -88,7 +91,7 @@ public class Program {
 
     public void run() throws Exception {
         var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
-        var tests = Utils.streamToList(testing.getParameters().entrySet().stream());
+        var tests = Utils.streamToList(((ImplicitTypedObject) testing.get("test-cases")).getParameters().entrySet().stream());
 
         System.out.println("List of possible tests:");
         for (int i = 0; i < tests.size(); i++) {
