@@ -25,11 +25,14 @@
 package tr.havelsan.ueransim.app;
 
 import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.core.nodes.UeNode;
 import tr.havelsan.ueransim.app.events.EventParser;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
+import tr.havelsan.ueransim.app.structs.Supi;
+import tr.havelsan.ueransim.app.structs.UeConfig;
 import tr.havelsan.ueransim.app.testing.*;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
@@ -39,11 +42,13 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Program {
@@ -91,11 +96,15 @@ public class Program {
 
     public void run() throws Exception {
         var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
-        var tests = Utils.streamToList(((ImplicitTypedObject) testing.get("test-cases")).getParameters().entrySet().stream());
+
+        var loadTesting = (ImplicitTypedObject) testing.get("load-testing");
+        var numberOfUe = loadTesting.getInt("number-of-UE");
+
+        var testCases = Utils.streamToList(((ImplicitTypedObject) testing.get("test-cases")).getParameters().entrySet().stream());
 
         System.out.println("List of possible tests:");
-        for (int i = 0; i < tests.size(); i++) {
-            System.out.println((i + 1) + ") " + tests.get(i).getKey());
+        for (int i = 0; i < testCases.size(); i++) {
+            System.out.println((i + 1) + ") " + testCases.get(i).getKey());
         }
 
         System.out.println("Selection: ");
@@ -109,22 +118,22 @@ public class Program {
         } catch (Exception ignored) {
         }
 
-        if (number < 1 || number > tests.size()) {
+        if (number < 1 || number > testCases.size()) {
             System.err.println("Invalid selection: " + number);
             return;
         }
 
-        var testName = tests.get(number - 1).getKey();
-        var testObjects = (Object[]) tests.get(number - 1).getValue();
+        var testName = testCases.get(number - 1).getKey();
+        var testObjects = (Object[]) testCases.get(number - 1).getValue();
         var testCommands = new TestCommand[testObjects.length];
         for (int i = 0; i < testCommands.length; i++) {
             testCommands[i] = (TestCommand) testObjects[i];
         }
 
-        runTest(testName, testCommands);
+        runTest(numberOfUe, testName, testCommands);
     }
 
-    private void runTest(String testName, TestCommand[] testCommands) throws Exception {
+    private void runTest(int numberOfUe, String testName, TestCommand[] testCommands) throws Exception {
         var simContext = app.createSimContext(null);
 
         var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
@@ -134,26 +143,36 @@ public class Program {
         // todo: ensure gnbs are good to go
         Thread.sleep(2000);
 
-        var ueContext = app.createUeSimContext(simContext, app.createUeConfig());
-        Simulation.registerUe(simContext, ueContext);
-        UeNode.run(ueContext);
+        var ueContexts = new ArrayList<UeSimContext>();
+        for (int i = 0; i < numberOfUe; i++) {
+            var ref = app.createUeConfig();
+            var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
+            var supi = new Supi("imsi", imsiNumber).toString();
+            var config = new UeConfig(ref.snn, ref.key.toHexString(), ref.op.toHexString(), ref.amf.toHexString(), ref.imei,
+                    supi, ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr,
+                    new String(ref.dnn.data.toByteArray(), StandardCharsets.US_ASCII));
 
-        Simulation.connectUeToGnb(ueContext, gnbContext);
+            var ueContext = app.createUeSimContext(simContext, config);
+
+            Simulation.registerUe(simContext, ueContext);
+            UeNode.run(ueContext);
+
+            Simulation.connectUeToGnb(ueContext, gnbContext);
+            ueContexts.add(ueContext);
+        }
 
         for (var command : testCommands) {
-
             if (command instanceof TestCommand_Sleep) {
                 Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
             } else if (command instanceof TestCommand_InitialRegistration) {
-                ueContext.pushEvent((UeEvent) EventParser.parse("initial-registration"));
+                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("initial-registration")));
             } else if (command instanceof TestCommand_PeriodicRegistration) {
-                ueContext.pushEvent((UeEvent) EventParser.parse("periodic-registration"));
+                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("periodic-registration")));
             } else if (command instanceof TestCommand_Deregistration) {
-                ueContext.pushEvent((UeEvent) EventParser.parse("de-registration"));
+                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("de-registration")));
             } else if (command instanceof TestCommand_PduSessionEstablishment) {
-                ueContext.pushEvent((UeEvent) EventParser.parse("pdu-session-establishment"));
+                ueContexts.forEach(ue -> ue.pushEvent((UeEvent) EventParser.parse("pdu-session-establishment")));
             }
-
         }
     }
 }
