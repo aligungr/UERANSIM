@@ -264,7 +264,7 @@ public class MtsConvert {
 
         for (int i = 0; i < sourceArray.length; i++) {
             if (sourceArray[i] instanceof ImplicitTypedObject) {
-                sourceArray[i] = ctx.construct.construct(targetType, (ImplicitTypedObject) sourceArray[i], includeCustoms);
+                sourceArray[i] = ctx.constructor.construct(targetType, (ImplicitTypedObject) sourceArray[i], includeCustoms);
             }
 
             var conversions = convert(sourceArray[i], targetType, includeCustoms);

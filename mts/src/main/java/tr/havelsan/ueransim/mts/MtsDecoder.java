@@ -202,7 +202,7 @@ public class MtsDecoder {
                 if (type == null) {
                     throw new MtsException("declared type not registered: %s", typeName);
                 }
-                return ctx.construct.construct(type, properties, true);
+                return ctx.constructor.construct(type, properties, true);
             } else {
                 return new ImplicitTypedObject(properties);
             }

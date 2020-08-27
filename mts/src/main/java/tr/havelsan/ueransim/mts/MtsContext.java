@@ -27,14 +27,14 @@ package tr.havelsan.ueransim.mts;
 public class MtsContext {
 
     public final TypeRegistry typeRegistry;
-    public final MtsConvert convert;
-    public final MtsConstruct construct;
+    public final MtsConvert converter;
+    public final MtsConstruct constructor;
     public final MtsDecoder decoder;
 
     public MtsContext() {
         this.typeRegistry = new TypeRegistry();
-        this.convert = new MtsConvert(this);
-        this.construct = new MtsConstruct(this);
+        this.converter = new MtsConvert(this);
+        this.constructor = new MtsConstruct(this);
         this.decoder = new MtsDecoder(this);
     }
 }

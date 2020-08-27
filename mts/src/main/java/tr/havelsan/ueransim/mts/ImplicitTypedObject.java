@@ -59,14 +59,14 @@ public final class ImplicitTypedObject {
     }
 
     public <T> T getConstructed(MtsContext mts, String key, Class<T> type) {
-        return mts.construct.construct(type, (ImplicitTypedObject) get(key), true);
+        return mts.constructor.construct(type, (ImplicitTypedObject) get(key), true);
     }
 
     public <T> T asConstructed(MtsContext mts, Class<T> type) {
-        return mts.construct.construct(type, this, true);
+        return mts.constructor.construct(type, this, true);
     }
 
     public <T> T getConverted(MtsContext mts,String key, Class<T> type) {
-        return (T) mts.convert.convert(get(key), type, true).get(0).value;
+        return (T) mts.converter.convert(get(key), type, true).get(0).value;
     }
 }

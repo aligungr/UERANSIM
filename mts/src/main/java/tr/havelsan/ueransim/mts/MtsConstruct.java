@@ -78,7 +78,7 @@ public class MtsConstruct {
                     return false;
                 }
             }
-            if (!ctx.convert.isConvertable(object.getClass(), param.getType(), includeCustoms))
+            if (!ctx.converter.isConvertable(object.getClass(), param.getType(), includeCustoms))
                 return false;
         }
         return true;
@@ -89,7 +89,7 @@ public class MtsConstruct {
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
-            var conversion = ctx.convert.convert(object, param.getType(), includeCustoms);
+            var conversion = ctx.converter.convert(object, param.getType(), includeCustoms);
             if (conversion.stream().noneMatch(c -> c.depth == 0 && (c.level == ConversionLevel.SAME_TYPE))) {
                 return false;
             }
@@ -144,7 +144,7 @@ public class MtsConstruct {
                 value = construct(param.getType(), (ImplicitTypedObject) value, includeCustoms);
             }
 
-            var conversions = ctx.convert.convert(value, param.getType(), includeCustoms);
+            var conversions = ctx.converter.convert(value, param.getType(), includeCustoms);
 
             var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
             var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));

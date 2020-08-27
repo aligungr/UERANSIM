@@ -69,7 +69,7 @@ public class AppConfig {
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        return createGnbSimContext(simCtx, mts.construct.construct(GnbConfig.class, config, true));
+        return createGnbSimContext(simCtx, mts.constructor.construct(GnbConfig.class, config, true));
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
