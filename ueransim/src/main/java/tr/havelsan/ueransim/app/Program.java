@@ -74,7 +74,6 @@ public class Program {
     private static void initLogging() {
         final String logFile = "app.log";
 
-        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
         Console.setStandardPrintEnabled(true);
         Console.addPrintHandler(str -> {
             final Path path = Paths.get(logFile);
