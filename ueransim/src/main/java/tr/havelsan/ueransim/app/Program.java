@@ -69,6 +69,9 @@ public class Program {
     private final AppConfig app;
     private final BaseConsole loadTestConsole;
 
+    private ImplicitTypedObject testCases;
+    private ImplicitTypedObject loadTesting;
+
     public Program() {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
@@ -81,6 +84,11 @@ public class Program {
         this.loadTestConsole = new BaseConsole();
 
         initLogging();
+
+        var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
+
+        loadTesting = (ImplicitTypedObject) testing.get("load-testing");
+        testCases = (ImplicitTypedObject) testing.get("test-cases");
     }
 
     public static void main(String[] args) throws Exception {
@@ -127,12 +135,7 @@ public class Program {
     }
 
     public void run() throws Exception {
-        var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
-
-        var loadTesting = (ImplicitTypedObject) testing.get("load-testing");
-        var numberOfUe = loadTesting.getInt("number-of-UE");
-
-        var testCases = Utils.streamToList(((ImplicitTypedObject) testing.get("test-cases")).getParameters().entrySet().stream());
+        var testCases = Utils.streamToList(this.testCases.getParameters().entrySet().stream());
 
         System.out.println("List of possible tests:");
         for (int i = 0; i < testCases.size(); i++) {
@@ -155,17 +158,21 @@ public class Program {
             return;
         }
 
-        var testName = testCases.get(number - 1).getKey();
-        var testObjects = (Object[]) testCases.get(number - 1).getValue();
+        runTest(testCases.get(number - 1).getKey());
+    }
+
+    public void runTest(String testName) throws Exception {
+        var testObjects = (Object[])testCases.get(testName);
         var testCommands = new TestCommand[testObjects.length];
         for (int i = 0; i < testCommands.length; i++) {
             testCommands[i] = (TestCommand) testObjects[i];
         }
-
-        runTest(numberOfUe, testName, testCommands);
+        runTest(testName, testCommands);
     }
 
-    private void runTest(int numberOfUe, String testName, TestCommand[] testCommands) throws Exception {
+    private void runTest(String testName, TestCommand[] testCommands) throws Exception {
+        var numberOfUe = loadTesting.getInt("number-of-UE");
+
         var simContext = app.createSimContext(new NodeMessagingListener());
 
         var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
