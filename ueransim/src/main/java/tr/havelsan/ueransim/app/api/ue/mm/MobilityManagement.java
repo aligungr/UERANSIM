@@ -36,8 +36,8 @@ import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 public class MobilityManagement {
 
@@ -99,8 +99,8 @@ public class MobilityManagement {
             MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
             return true;
         } else if (cmd instanceof TestCommand_Deregistration) {
-            // todo: switch off
-            MmDeregistration.sendDeregistration(ctx, IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
+            MmDeregistration.sendDeregistration(ctx, ((TestCommand_Deregistration) cmd).isSwitchOff
+                    ? IEDeRegistrationType.ESwitchOff.SWITCH_OFF : IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
             return true;
         }
 
