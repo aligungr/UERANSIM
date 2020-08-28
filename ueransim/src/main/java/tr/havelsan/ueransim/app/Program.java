@@ -199,6 +199,10 @@ public class Program {
         runTest(testCases.get(number - 1).getKey());
     }
 
+    public String[] testCaseNames() {
+        return testCases.getParameters().keySet().toArray(new String[0]);
+    }
+
     public void runTest(String testName) throws Exception {
         var testObjects = (Object[])testCases.get(testName);
         var testCommands = new TestCommand[testObjects.length];
