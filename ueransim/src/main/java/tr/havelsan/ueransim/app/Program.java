@@ -204,7 +204,7 @@ public class Program {
     }
 
     public void runTest(String testName) throws Exception {
-        var testObjects = (Object[])testCases.get(testName);
+        var testObjects = (Object[]) testCases.get(testName);
         if (testObjects == null) {
             throw new RuntimeException("test case not found: " + testName);
         }
@@ -302,7 +302,7 @@ public class Program {
 
                 long delta = System.currentTimeMillis() - phase2Timers.get(supi);
                 loadTestConsole.println(null, "\u2714 [Phase 2 (Network)] [Authentication-SecurityModeControl] [ue: %s] [%d ms]", supi, delta);
-            }else if (message instanceof DeRegistrationAcceptUeOriginating) {
+            } else if (message instanceof DeRegistrationAcceptUeOriginating) {
                 String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
                 long delta = System.currentTimeMillis() - deregistrationTimers.get(supi);
                 loadTestConsole.println(null, "\u2714 [De-Registration] [ue: %s] [%d ms]", supi, delta);
