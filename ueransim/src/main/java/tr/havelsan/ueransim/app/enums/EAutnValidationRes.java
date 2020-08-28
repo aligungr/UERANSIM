@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.enums;
 
-public enum AutnValidationRes {
+public enum EAutnValidationRes {
     OK,
     MAC_FAILURE,
     AMF_SEPARATION_BIT_FAILURE,
