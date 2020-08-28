@@ -42,12 +42,14 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
-import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -92,6 +94,8 @@ public class Program {
     }
 
     private void initLogging() {
+        new File("logs").mkdir();
+
         final String logFile = "logs/app.log";
         final String loadTestFile = "logs/loadtest.log";
 
