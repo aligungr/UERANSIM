@@ -137,15 +137,4 @@ public class AnsiColor {
     public static String colorize(String text, AnsiColorFormat attributes) {
         return colorize(text, attributes.toArray());
     }
-
-    /**
-     * Easter egg. Just an alias of method "colorize".
-     *
-     * @param text       String to format.
-     * @param ansiColorAttributes ANSI attributes to format a text.
-     * @return The formatted string, ready to be printed.
-     */
-    public static String makeItFabulous(String text, AnsiColorAttribute... ansiColorAttributes) {
-        return colorize(text, ansiColorAttributes);
-    }
 }
