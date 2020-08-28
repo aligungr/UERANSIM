@@ -43,14 +43,17 @@ public class AnsiColor {
      * Every Ansi escape code begins with this PREFIX.
      */
     public static final String PREFIX = ESC + "[";
+
     /**
      * Two options must be separated by this SEPARATOR.
      */
     public static final String SEPARATOR = ";";
+
     /**
      * Every Ansi escape code must end with this POSTFIX.
      */
     public static final String POSTFIX = "m";
+
     /**
      * Shorthand for the Ansi code that resets to the terminal's default format.
      */
@@ -103,10 +106,13 @@ public class AnsiColor {
          * is noticeable when the background is colored. This method ensures those
          * two rules, even when the original message contains newlines.
          */
-        for (String line : lines) {
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
             output.append(ansiCode);
             output.append(line);
             output.append(RESET);
+            if (i != lines.length -1)
+                output.append(NEWLINE);
             if (endsWithLine)
                 output.append(NEWLINE);
         }
