@@ -68,11 +68,11 @@ public class Program {
     private final MtsContext testingMts;
     private final AppConfig app;
     private final BaseConsole loadTestConsole;
+    private final ImplicitTypedObject testCases;
+    private final ImplicitTypedObject loadTesting;
+    private ArrayList<UeSimContext> ueContexts;
 
-    private ImplicitTypedObject testCases;
-    private ImplicitTypedObject loadTesting;
-
-    public Program() {
+    public Program() throws Exception {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
 
@@ -89,10 +89,12 @@ public class Program {
 
         loadTesting = (ImplicitTypedObject) testing.get("load-testing");
         testCases = (ImplicitTypedObject) testing.get("test-cases");
+
+        initialize();
     }
 
     public static void main(String[] args) throws Exception {
-        new Program().run();
+        new Program().runUserPrompt();
     }
 
     public static void fail(Throwable t) {
@@ -134,15 +136,51 @@ public class Program {
         loadTestConsole.printDiv();
     }
 
-    public void run() throws Exception {
+    private void initialize() throws Exception {
+        var numberOfUe = loadTesting.getInt("number-of-UE");
+
+        var simContext = app.createSimContext(new NodeMessagingListener());
+
+        var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
+        Simulation.registerGnb(simContext, gnbContext);
+        GnbNode.run(gnbContext);
+
+        // todo: ensure gnbs are good to go
+        Thread.sleep(1500);
+
+        ueContexts = new ArrayList<>();
+        for (int i = 0; i < numberOfUe; i++) {
+            var ref = app.createUeConfig();
+            var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
+            var supi = new Supi("imsi", imsiNumber).toString();
+            var config = new UeConfig(ref.snn, ref.key.toHexString(), ref.op.toHexString(), ref.amf.toHexString(), ref.imei,
+                    supi, ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr,
+                    new String(ref.dnn.data.toByteArray(), StandardCharsets.US_ASCII));
+
+            var ueContext = app.createUeSimContext(simContext, config);
+
+            Simulation.registerUe(simContext, ueContext);
+            UeNode.run(ueContext);
+
+            Simulation.connectUeToGnb(ueContext, gnbContext);
+            ueContexts.add(ueContext);
+        }
+    }
+
+    public void runUserPrompt() throws Exception {
+        Thread.sleep(250);
+
+        Console.println(AnsiPalette.PAINT_DIVIDER, "=============================================================================");
+
         var testCases = Utils.streamToList(this.testCases.getParameters().entrySet().stream());
 
-        System.out.println("List of possible tests:");
+        Console.println(AnsiPalette.PAINT_INPUT, "List of possible tests:");
         for (int i = 0; i < testCases.size(); i++) {
-            System.out.println((i + 1) + ") " + testCases.get(i).getKey());
+            Console.print(AnsiPalette.PAINT_INPUT, (i + 1) + ") ");
+            Console.println(null, testCases.get(i).getKey());
         }
 
-        System.out.println("Selection: ");
+        Console.print(AnsiPalette.PAINT_INPUT, "Selection: ");
 
         var scanner = new Scanner(System.in);
         String line = scanner.nextLine();
@@ -171,35 +209,6 @@ public class Program {
     }
 
     private void runTest(String testName, TestCommand[] testCommands) throws Exception {
-        var numberOfUe = loadTesting.getInt("number-of-UE");
-
-        var simContext = app.createSimContext(new NodeMessagingListener());
-
-        var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
-        Simulation.registerGnb(simContext, gnbContext);
-        GnbNode.run(gnbContext);
-
-        // todo: ensure gnbs are good to go
-        Thread.sleep(2000);
-
-        var ueContexts = new ArrayList<UeSimContext>();
-        for (int i = 0; i < numberOfUe; i++) {
-            var ref = app.createUeConfig();
-            var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
-            var supi = new Supi("imsi", imsiNumber).toString();
-            var config = new UeConfig(ref.snn, ref.key.toHexString(), ref.op.toHexString(), ref.amf.toHexString(), ref.imei,
-                    supi, ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr,
-                    new String(ref.dnn.data.toByteArray(), StandardCharsets.US_ASCII));
-
-            var ueContext = app.createUeSimContext(simContext, config);
-
-            Simulation.registerUe(simContext, ueContext);
-            UeNode.run(ueContext);
-
-            Simulation.connectUeToGnb(ueContext, gnbContext);
-            ueContexts.add(ueContext);
-        }
-
         for (var command : testCommands) {
             if (command instanceof TestCommand_Sleep) {
                 Thread.sleep(((TestCommand_Sleep) command).duration * 1000);

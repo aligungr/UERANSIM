@@ -34,4 +34,7 @@ public class AnsiPalette {
     public static final AnsiColorFormat PAINT_IMPORTANT_INFO = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_BLUE_TEXT(), AnsiColorAttribute.BOLD());
     public static final AnsiColorFormat PAINT_IMPORTANT_WARNING = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_YELLOW_TEXT(), AnsiColorAttribute.BOLD());
 
+    public static final AnsiColorFormat PAINT_DIVIDER = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_BLUE_TEXT(), AnsiColorAttribute.BOLD());
+    public static final AnsiColorFormat PAINT_INPUT = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_BLUE_TEXT(), AnsiColorAttribute.BOLD());
+
 }
