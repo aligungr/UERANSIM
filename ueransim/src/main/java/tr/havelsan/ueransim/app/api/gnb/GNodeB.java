@@ -50,7 +50,7 @@ import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.ngap1.NgapUtils;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 

@@ -22,38 +22,35 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.threads;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.app.Program;
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-import java.util.function.Consumer;
+class AnsiBackColorAttribute extends ColorAttribute {
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
+    /**
+     * {@inheritDoc}
+     */
+    AnsiBackColorAttribute(int colorNumber) {
+        super(colorNumber);
+    }
 
-    private final T simContext;
-    private final Consumer<T> looper;
-
-    public NodeLooperThread(T simContext, Consumer<T> looper) {
-        this.simContext = simContext;
-        this.looper = looper;
+    /**
+     * {@inheritDoc}
+     */
+    AnsiBackColorAttribute(int r, int g, int b) {
+        super(r, g, b);
     }
 
     @Override
-    public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.ctxId);
-        while (true) {
-            looper.accept(simContext);
-            while (simContext.hasEvent()) {
-                looper.accept(simContext);
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Program.fail(e);
-            }
-        }
+    protected String getColorAnsiPrefix() {
+        String ANSI_8BIT_COLOR_PREFIX = "48;5;";
+        String ANSI_TRUE_COLOR_PREFIX = "48;2;";
+
+        return isTrueColor() ? ANSI_TRUE_COLOR_PREFIX : ANSI_8BIT_COLOR_PREFIX;
     }
+
 }

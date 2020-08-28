@@ -22,38 +22,16 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.threads;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.app.Program;
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+public class AnsiPalette {
 
-import java.util.function.Consumer;
+    public static final AnsiColorFormat PAINT_LOG_NORMAL = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_WHITE_TEXT());
+    public static final AnsiColorFormat PAINT_LOG_SUCCESS = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_GREEN_TEXT(), AnsiColorAttribute.BOLD());
+    public static final AnsiColorFormat PAINT_LOG_WARNING = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_YELLOW_TEXT(), AnsiColorAttribute.BOLD());
+    public static final AnsiColorFormat PAINT_LOG_ERROR = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_RED_TEXT(), AnsiColorAttribute.BOLD());
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
+    public static final AnsiColorFormat PAINT_IMPORTANT_INFO = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_BLUE_TEXT(), AnsiColorAttribute.BOLD());
+    public static final AnsiColorFormat PAINT_IMPORTANT_WARNING = new AnsiColorFormat(AnsiColorAttribute.BRIGHT_YELLOW_TEXT(), AnsiColorAttribute.BOLD());
 
-    private final T simContext;
-    private final Consumer<T> looper;
-
-    public NodeLooperThread(T simContext, Consumer<T> looper) {
-        this.simContext = simContext;
-        this.looper = looper;
-    }
-
-    @Override
-    public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.ctxId);
-        while (true) {
-            looper.accept(simContext);
-            while (simContext.hasEvent()) {
-                looper.accept(simContext);
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Program.fail(e);
-            }
-        }
-    }
 }

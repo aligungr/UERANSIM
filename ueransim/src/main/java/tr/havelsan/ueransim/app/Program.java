@@ -32,7 +32,6 @@ import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.core.nodes.UeNode;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-import tr.havelsan.ueransim.app.events.ue.UeEvent;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.app.structs.Supi;
 import tr.havelsan.ueransim.app.structs.UeConfig;
@@ -44,6 +43,10 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.utils.console.BaseConsole;
+import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Logging;
+import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -92,8 +95,8 @@ public class Program {
         final String logFile = "logs/app.log";
         final String loadTestFile = "logs/loadtest.log";
 
-        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All default logs are written to: %s", logFile);
-        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All load testing logs are written to: %s", loadTestFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All default logs are written to: %s", logFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
 
         Console.setStandardPrintEnabled(true);
         Console.addPrintHandler(str -> {

@@ -29,7 +29,7 @@ import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.app.structs.PduSession;
 import tr.havelsan.ueransim.app.structs.ProcedureTransaction;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 class SmPduSessionManagement {

@@ -22,20 +22,35 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.utils.jcolor;
 
-public class LogEntry {
-    public final Severity severity;
-    public final Color color;
-    public final int depth;
-    public final Tag tag;
-    public final String message;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-    public LogEntry(Severity severity, Color color, int depth, Tag tag, String message) {
-        this.severity = severity;
-        this.color = color;
-        this.depth = depth;
-        this.tag = tag;
-        this.message = message;
+class TextColorAttribute extends ColorAttribute {
+
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int colorNumber) {
+        super(colorNumber);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int r, int g, int b) {
+        super(r, g, b);
+    }
+
+    @Override
+    protected String getColorAnsiPrefix() {
+        String ANSI_8BIT_COLOR_PREFIX = "38;5;";
+        String ANSI_TRUE_COLOR_PREFIX = "38;2;";
+
+        return isTrueColor() ? ANSI_TRUE_COLOR_PREFIX : ANSI_8BIT_COLOR_PREFIX;
+    }
+
 }

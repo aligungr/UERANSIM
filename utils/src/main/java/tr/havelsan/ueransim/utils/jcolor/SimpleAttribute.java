@@ -22,38 +22,29 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.threads;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.app.Program;
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-import java.util.function.Consumer;
+class SimpleAttribute extends AnsiColorAttribute {
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
+    private final String _code;
 
-    private final T simContext;
-    private final Consumer<T> looper;
-
-    public NodeLooperThread(T simContext, Consumer<T> looper) {
-        this.simContext = simContext;
-        this.looper = looper;
+    /**
+     * Constructor. Maps an attribute to an Ansi code.
+     *
+     * @param code Ansi code that represents the attribute.
+     */
+    SimpleAttribute(String code) {
+        _code = code;
     }
 
     @Override
-    public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.ctxId);
-        while (true) {
-            looper.accept(simContext);
-            while (simContext.hasEvent()) {
-                looper.accept(simContext);
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Program.fail(e);
-            }
-        }
+    public String toString() {
+        return _code;
     }
+
 }

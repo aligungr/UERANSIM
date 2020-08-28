@@ -22,54 +22,41 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.utils.console;
+
+import tr.havelsan.ueransim.utils.jcolor.AnsiColor;
+import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class BaseConsole {
     private final List<Consumer<String>> printHandlers = new ArrayList<>();
     private boolean standardPrintEnabled = true;
-    private Color lastColor;
 
-    public synchronized void print(Color color, String format, Object... args) {
-        if (color == null) color = Color.RESET;
-
+    public synchronized void print(AnsiColorFormat ansiColor, String format, Object... args) {
         String string = String.format(format, args);
 
-        String s;
-
-        if (!Objects.equals(lastColor, color)) {
-            lastColor = color;
-            s = color + string + Color.RESET;
+        if (ansiColor == null) {
+            output(string);
         } else {
-            s = string;
+            output(AnsiColor.colorize(string, ansiColor));
         }
-
-        output(s);
     }
 
-    public synchronized void println(Color color, String format, Object... args) {
-        if (color == null) color = Color.RESET;
-
+    public synchronized void println(AnsiColorFormat ansiColor, String format, Object... args) {
         String string = String.format(format, args);
 
-        String s;
-
-        if (!Objects.equals(lastColor, color)) {
-            lastColor = color;
-            s = color + string + Color.RESET;
+        if (ansiColor == null) {
+            outputLine(string);
         } else {
-            s = string;
+            outputLine(AnsiColor.colorize(string, ansiColor));
         }
-
-        outputLine(s);
     }
 
     public synchronized void printDiv() {
-        println(lastColor, "-----------------------------------------------------------------------------");
+        println(null, "-----------------------------------------------------------------------------");
     }
 
     public void addPrintHandler(Consumer<String> handler) {

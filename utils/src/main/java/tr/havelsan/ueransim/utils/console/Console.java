@@ -22,38 +22,37 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.threads;
+package tr.havelsan.ueransim.utils.console;
 
-import tr.havelsan.ueransim.app.Program;
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 
 import java.util.function.Consumer;
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
+public class Console {
 
-    private final T simContext;
-    private final Consumer<T> looper;
+    private static final BaseConsole c = new BaseConsole();
 
-    public NodeLooperThread(T simContext, Consumer<T> looper) {
-        this.simContext = simContext;
-        this.looper = looper;
+    public static void print(AnsiColorFormat ansiColor, String format, Object... args) {
+        c.print(ansiColor, format, args);
     }
 
-    @Override
-    public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.ctxId);
-        while (true) {
-            looper.accept(simContext);
-            while (simContext.hasEvent()) {
-                looper.accept(simContext);
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Program.fail(e);
-            }
-        }
+    public static void println(AnsiColorFormat ansiColor, String format, Object... args) {
+        c.println(ansiColor, format, args);
+    }
+
+    public static void printDiv() {
+        c.printDiv();
+    }
+
+    public static void addPrintHandler(Consumer<String> handler) {
+        c.addPrintHandler(handler);
+    }
+
+    public static void setStandardPrintEnabled(boolean standardPrintEnabled) {
+        c.setStandardPrintEnabled(standardPrintEnabled);
+    }
+
+    public static void println() {
+        c.println();
     }
 }

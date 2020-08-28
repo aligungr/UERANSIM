@@ -48,7 +48,7 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupResponse;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 public class NgapPduSessionManagement {
 

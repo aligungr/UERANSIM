@@ -42,6 +42,9 @@ import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.sctp.MockedSctpClient;
 import tr.havelsan.ueransim.sctp.SctpClient;
 import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Logging;
+import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -57,7 +60,7 @@ public class AppConfig {
         var root = (ImplicitTypedObject) mts.decoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
         this.profile = "config/" + profile + "/";
-        Console.println(Color.BLUE_BOLD_BRIGHT, "INFO: Selected profile: \"%s\"", profile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_INFO, "INFO: Selected profile: \"%s\"", profile);
 
         var general = (ImplicitTypedObject) mts.decoder.decode(this.profile + "general.yaml");
         Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
