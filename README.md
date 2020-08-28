@@ -60,7 +60,7 @@ sudo apt install libsctp-dev lksctp-tools
 1. Select a configuration profile by modifying `config/profile.yaml`.
 2. (Optional)  You can further modify the profile configurations if you want. (`config/open5gs`, `config/free5gc`, etc.)
 3. Execute `./run.sh` to start the application.
-4. Use `tail -f app.log` to monitor logs realtime.
+4. Use `tail -f logs/app.log` and `tail -f logs/loadtest.log` to monitor logs realtime.
 5. Use terminal to trigger test events such as `initial-registration`
 
 ## FAQ
@@ -82,7 +82,7 @@ sudo apt install g++
 
 **Q3. How to increase the number of UE and RANs?**
 
-Multiple UE and RAN feature (as well as load testing) is currently under development.
+In order to increase the number of UEs, you can change the `number-of-UE` value in `config/testing.yaml`. Multiple RAN feature is in progress now.
 
 **Q4. Are user plane functionalities supported?**
 
