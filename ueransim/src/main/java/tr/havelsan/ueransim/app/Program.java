@@ -24,62 +24,67 @@
 
 package tr.havelsan.ueransim.app;
 
+import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.core.BaseSimContext;
+import tr.havelsan.ueransim.app.core.GnbSimContext;
+import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.core.nodes.UeNode;
-import tr.havelsan.ueransim.app.events.EventParser;
-import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
-import tr.havelsan.ueransim.app.events.ue.UeEvent;
-import tr.havelsan.ueransim.mts.ImplicitTypedObject;
-import tr.havelsan.ueransim.mts.MtsDecoder;
+import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
-import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.app.structs.Supi;
+import tr.havelsan.ueransim.app.structs.UeConfig;
+import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
+import tr.havelsan.ueransim.mts.MtsContext;
+import tr.havelsan.ueransim.nas.impl.messages.*;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.console.BaseConsole;
+import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Logging;
+import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
+import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Program {
 
-    public static void main(String[] args) {
-        MtsInitializer.initMts();
-        AppConfig.initialize();
+    private final MtsContext defaultMts;
+    private final MtsContext testingMts;
+    private final AppConfig app;
+    private final BaseConsole loadTestConsole;
+
+    public Program() {
+        this.defaultMts = new MtsContext();
+        this.testingMts = new MtsContext();
+
+        MtsInitializer.initDefaultMts(defaultMts);
+        MtsInitializer.initTestingMts(testingMts);
+
+        this.app = new AppConfig(defaultMts);
+
+        this.loadTestConsole = new BaseConsole();
+
         initLogging();
+    }
 
-        var simContext = AppConfig.createSimContext(null);
-
-        var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "gnb.yaml"));
-        Simulation.registerGnb(simContext, gnbContext);
-        GnbNode.run(gnbContext);
-
-        var ueContext = AppConfig.createUeSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "ue.yaml"));
-        Simulation.registerUe(simContext, ueContext);
-        UeNode.run(ueContext);
-
-        Simulation.connectUeToGnb(ueContext, gnbContext);
-
-        var scanner = new Scanner(System.in);
-
-        System.out.println("Possible events:" + Json.toJson(EventParser.possibleEvents()));
-        while (true) {
-            System.out.println("Enter event to execute:");
-            String line = scanner.nextLine();
-            var event = EventParser.parse(line);
-            if (event == null) {
-                System.out.println("Event not found: " + line);
-            } else {
-                if (event instanceof GnbEvent) {
-                    gnbContext.pushEvent((GnbEvent) event);
-                } else if (event instanceof UeEvent) {
-                    ueContext.pushEvent((UeEvent) event);
-                }
-                System.out.println("Event pushed.");
-            }
-        }
+    public static void main(String[] args) throws Exception {
+        new Program().run();
     }
 
     public static void fail(Throwable t) {
@@ -88,11 +93,16 @@ public class Program {
         System.exit(1);
     }
 
-    private static void initLogging() {
-        final String logFile = "app.log";
+    private void initLogging() {
+        new File("logs").mkdir();
 
-        Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All logs are written to: %s", logFile);
-        Console.setStandardPrintEnabled(false);
+        final String logFile = "logs/app.log";
+        final String loadTestFile = "logs/loadtest.log";
+
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All default logs are written to: %s", logFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
+
+        Console.setStandardPrintEnabled(true);
         Console.addPrintHandler(str -> {
             final Path path = Paths.get(logFile);
             try {
@@ -102,5 +112,169 @@ public class Program {
                 throw new RuntimeException(e);
             }
         });
+
+        loadTestConsole.setStandardPrintEnabled(false);
+        loadTestConsole.addPrintHandler(str -> {
+            final Path path = Paths.get(loadTestFile);
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        loadTestConsole.printDiv();
+    }
+
+    public void run() throws Exception {
+        var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
+
+        var loadTesting = (ImplicitTypedObject) testing.get("load-testing");
+        var numberOfUe = loadTesting.getInt("number-of-UE");
+
+        var testCases = Utils.streamToList(((ImplicitTypedObject) testing.get("test-cases")).getParameters().entrySet().stream());
+
+        System.out.println("List of possible tests:");
+        for (int i = 0; i < testCases.size(); i++) {
+            System.out.println((i + 1) + ") " + testCases.get(i).getKey());
+        }
+
+        System.out.println("Selection: ");
+
+        var scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+
+        int number = -1;
+        try {
+            number = Integer.parseInt(line);
+        } catch (Exception ignored) {
+        }
+
+        if (number < 1 || number > testCases.size()) {
+            System.err.println("Invalid selection: " + number);
+            return;
+        }
+
+        var testName = testCases.get(number - 1).getKey();
+        var testObjects = (Object[]) testCases.get(number - 1).getValue();
+        var testCommands = new TestCommand[testObjects.length];
+        for (int i = 0; i < testCommands.length; i++) {
+            testCommands[i] = (TestCommand) testObjects[i];
+        }
+
+        runTest(numberOfUe, testName, testCommands);
+    }
+
+    private void runTest(int numberOfUe, String testName, TestCommand[] testCommands) throws Exception {
+        var simContext = app.createSimContext(new NodeMessagingListener());
+
+        var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
+        Simulation.registerGnb(simContext, gnbContext);
+        GnbNode.run(gnbContext);
+
+        // todo: ensure gnbs are good to go
+        Thread.sleep(2000);
+
+        var ueContexts = new ArrayList<UeSimContext>();
+        for (int i = 0; i < numberOfUe; i++) {
+            var ref = app.createUeConfig();
+            var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
+            var supi = new Supi("imsi", imsiNumber).toString();
+            var config = new UeConfig(ref.snn, ref.key.toHexString(), ref.op.toHexString(), ref.amf.toHexString(), ref.imei,
+                    supi, ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr,
+                    new String(ref.dnn.data.toByteArray(), StandardCharsets.US_ASCII));
+
+            var ueContext = app.createUeSimContext(simContext, config);
+
+            Simulation.registerUe(simContext, ueContext);
+            UeNode.run(ueContext);
+
+            Simulation.connectUeToGnb(ueContext, gnbContext);
+            ueContexts.add(ueContext);
+        }
+
+        for (var command : testCommands) {
+            if (command instanceof TestCommand_Sleep) {
+                Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
+            } else if (command instanceof TestCommand_InitialRegistration) {
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+            } else if (command instanceof TestCommand_PeriodicRegistration) {
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+            } else if (command instanceof TestCommand_Deregistration) {
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+            } else if (command instanceof TestCommand_PduSessionEstablishment) {
+                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+            }
+        }
+    }
+
+    private class NodeMessagingListener implements INodeMessagingListener {
+        private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
+        private final Map<String, Long> registrationTimers = new HashMap<>();
+        private final Map<String, Long> authenticationTimers = new HashMap<>();
+        private final Map<String, Long> securityModeControlTimers = new HashMap<>();
+        private final Map<String, Long> phase1Timers = new HashMap<>();
+        private final Map<String, Long> phase2Timers = new HashMap<>();
+        private final Map<String, Long> phase3Timers = new HashMap<>();
+
+        @Override
+        public void onSend(BaseSimContext<?> ctx, Object message) {
+            if (message instanceof NGAP_NGSetupRequest) {
+                int gnbId = ((GnbSimContext) ctx).config.gnbId;
+                ngSetupTimers.put(gnbId, System.currentTimeMillis());
+            } else if (message instanceof RegistrationRequest) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                registrationTimers.put(supi, System.currentTimeMillis());
+                phase1Timers.put(supi, System.currentTimeMillis());
+            } else if (message instanceof AuthenticationResponse) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                phase2Timers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - authenticationTimers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Authentication (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof SecurityModeComplete) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                phase3Timers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - securityModeControlTimers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Security Mode Control (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
+            }
+        }
+
+        @Override
+        public void onReceive(BaseSimContext<?> ctx, Object message) {
+            if (message instanceof NGAP_NGSetupFailure) {
+                int gnbId = ((GnbSimContext) ctx).config.gnbId;
+                long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
+                loadTestConsole.println(null, "\u2718 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
+            } else if (message instanceof NGAP_NGSetupResponse) {
+                int gnbId = ((GnbSimContext) ctx).config.gnbId;
+                long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
+                loadTestConsole.println(null, "\u2714 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
+            } else if (message instanceof RegistrationReject) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                long delta = System.currentTimeMillis() - registrationTimers.get(supi);
+                loadTestConsole.println(null, "\u2718 [Registration] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof RegistrationAccept) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                long delta = System.currentTimeMillis() - registrationTimers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Registration] [ue: %s] [%d ms]", supi, delta);
+
+                long delta2 = System.currentTimeMillis() - phase3Timers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Phase 3 (Network)] [SecurityModeControl-RegistrationAccept] [ue: %s] [%d ms]", supi, delta2);
+            } else if (message instanceof AuthenticationRequest) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                authenticationTimers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - phase1Timers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Phase 1 (Network)] [Registration-Authentication] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof SecurityModeCommand) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                securityModeControlTimers.put(supi, System.currentTimeMillis());
+
+                long delta = System.currentTimeMillis() - phase2Timers.get(supi);
+                loadTestConsole.println(null, "\u2714 [Phase 2 (Network)] [Authentication-SecurityModeControl] [ue: %s] [%d ms]", supi, delta);
+            }
+        }
     }
 }

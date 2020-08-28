@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.app.core.threads;
 
 import tr.havelsan.ueransim.app.Program;
 import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.function.Consumer;

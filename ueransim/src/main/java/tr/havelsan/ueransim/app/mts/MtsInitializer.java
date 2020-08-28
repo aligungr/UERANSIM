@@ -26,10 +26,10 @@ package tr.havelsan.ueransim.app.mts;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
+import tr.havelsan.ueransim.app.testing.*;
 import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.mts.MtsDecoder;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.mts.MtsException;
-import tr.havelsan.ueransim.mts.TypeRegistry;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.Utils;
 
@@ -40,7 +40,7 @@ import java.nio.file.Paths;
 
 public class MtsInitializer {
 
-    public static void initMts() {
+    public static void initDefaultMts(MtsContext mts) {
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().ignoreClassVisibility().whitelistPackages(Constants.NAS_IMPL_PREFIX).scan()) {
             var classInfoList = scanResult.getAllClasses();
             for (var classInfo : classInfoList) {
@@ -52,7 +52,7 @@ public class MtsInitializer {
                 }
 
                 String typeName = Utils.getTypeName(clazz);
-                TypeRegistry.registerTypeName(typeName, clazz);
+                mts.typeRegistry.registerTypeName(typeName, clazz);
             }
         }
 
@@ -68,12 +68,12 @@ public class MtsInitializer {
         };
 
         for (var type : otherTypes) {
-            TypeRegistry.registerTypeName(type.getSimpleName(), type);
+            mts.typeRegistry.registerTypeName(type.getSimpleName(), type);
         }
 
-        TypeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
+        mts.typeRegistry.registerCustomType(new MtsProtocolEnumRegistry());
 
-        MtsDecoder.setFileProvider((searchDir, path) -> {
+        mts.decoder.setFileProvider((searchDir, path) -> {
             try {
                 String content = Files.readString(Paths.get(searchDir, path));
                 if (path.endsWith(".yaml"))
@@ -85,5 +85,15 @@ public class MtsInitializer {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static void initTestingMts(MtsContext mts) {
+        initDefaultMts(mts);
+
+        mts.typeRegistry.registerTypeName("SLEEP", TestCommand_Sleep.class);
+        mts.typeRegistry.registerTypeName("INITIAL_REGISTRATION", TestCommand_InitialRegistration.class);
+        mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCommand_PeriodicRegistration.class);
+        mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCommand_Deregistration.class);
+        mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCommand_PduSessionEstablishment.class);
     }
 }

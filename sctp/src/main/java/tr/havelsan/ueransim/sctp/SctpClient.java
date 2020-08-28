@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.sctp;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 import java.io.IOException;

@@ -31,7 +31,7 @@ import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeTerminated;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmDeregistration {

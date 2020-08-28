@@ -34,7 +34,7 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmRegistration {

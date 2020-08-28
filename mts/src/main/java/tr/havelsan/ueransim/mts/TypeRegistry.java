@@ -35,12 +35,12 @@ import java.util.*;
 public final class TypeRegistry {
     static final boolean ALLOW_DEEP_CONVERSION = false;
 
-    private static final BiMap<String, Class<?>> types;
-    private static final Map<Class<?>, ICustomConstruct<?>> customConstructs;
-    private static final Set<ICustomIsConvertable> customIsConvertables;
-    private static final Map<Class<?>, ICustomConverter<?>> customConverters;
+    private final BiMap<String, Class<?>> types;
+    private final Map<Class<?>, ICustomConstruct<?>> customConstructs;
+    private final Set<ICustomIsConvertable> customIsConvertables;
+    private final Map<Class<?>, ICustomConverter<?>> customConverters;
 
-    static {
+    public TypeRegistry() {
         types = new BiMap<>();
         customConstructs = new HashMap<>();
         customIsConvertables = new HashSet<>();
@@ -73,7 +73,7 @@ public final class TypeRegistry {
             registerTypeName(type.getSimpleName(), type);
     }
 
-    public static void registerTypeName(String name, Class<?> type) {
+    public void registerTypeName(String name, Class<?> type) {
         if (types.containsKey(name))
             throw new IncorrectImplementationException(name + " already exists");
         if (types.containsValue(type))
@@ -81,7 +81,7 @@ public final class TypeRegistry {
         types.put(name, type);
     }
 
-    private static <T> void registerCustomConstruct(Class<T> type, ICustomConstruct<T> constructor) {
+    private <T> void registerCustomConstruct(Class<T> type, ICustomConstruct<T> constructor) {
         if (customConstructs.containsKey(type))
             throw new IncorrectImplementationException(type + " already exists");
         for (var clazz : customConstructs.keySet()) {
@@ -91,13 +91,13 @@ public final class TypeRegistry {
         customConstructs.put(type, constructor);
     }
 
-    private static void registerCustomIsConvertable(ICustomIsConvertable customIsConvertable) {
+    private void registerCustomIsConvertable(ICustomIsConvertable customIsConvertable) {
         if (customIsConvertables.contains(customIsConvertable))
             throw new IncorrectImplementationException("ICustomIsConvertable already exists");
         customIsConvertables.add(customIsConvertable);
     }
 
-    private static <T> void registerCustomConverter(Class<T> type, ICustomConverter<T> customConverter) {
+    private <T> void registerCustomConverter(Class<T> type, ICustomConverter<T> customConverter) {
         if (customConverters.containsKey(type))
             throw new IncorrectImplementationException(type + " already exists");
         for (var clazz : customConverters.keySet()) {
@@ -107,30 +107,30 @@ public final class TypeRegistry {
         customConverters.put(type, customConverter);
     }
 
-    public static <T> void registerCustomType(ICustomTypeRegistry<T> customTypeRegistry) {
+    public <T> void registerCustomType(ICustomTypeRegistry<T> customTypeRegistry) {
         registerCustomIsConvertable(customTypeRegistry);
         registerCustomConverter(customTypeRegistry.getRegisteringClass(), customTypeRegistry);
         registerCustomConstruct(customTypeRegistry.getRegisteringClass(), customTypeRegistry);
     }
 
-    public static boolean isCustomConvertable(Class<?> from, Class<?> to) {
+    public boolean isCustomConvertable(Class<?> from, Class<?> to) {
         return customIsConvertables.stream().anyMatch(c -> c.isConvertable(from, to));
     }
 
-    public static Class<?> getClassByName(String name) {
+    public Class<?> getClassByName(String name) {
         return types.getValue(name);
     }
 
-    public static String getClassName(Class<?> type) {
+    public String getClassName(Class<?> type) {
         return types.getKey(type);
     }
 
-    public static List<Class<?>> getClassesAssignableTo(Class<?>... typeArgs) {
+    public List<Class<?>> getClassesAssignableTo(Class<?>... typeArgs) {
         return Utils.streamToList(types.valueSet().stream()
                 .filter(cls -> Arrays.stream(typeArgs).anyMatch(type -> type.isAssignableFrom(cls))));
     }
 
-    public static <T> ICustomConstruct<T> getCustomConstruct(Class<T> type) {
+    public <T> ICustomConstruct<T> getCustomConstruct(Class<T> type) {
         for (var clazz : customConstructs.keySet()) {
             if (clazz.isAssignableFrom(type))
                 return (ICustomConstruct<T>) customConstructs.get(clazz);
@@ -138,7 +138,7 @@ public final class TypeRegistry {
         return null;
     }
 
-    public static <T> ICustomConverter<T> getCustomConverter(Class<T> type) {
+    public <T> ICustomConverter<T> getCustomConverter(Class<T> type) {
         for (var clazz : customConverters.keySet()) {
             if (clazz.isAssignableFrom(type))
                 return (ICustomConverter<T>) customConverters.get(clazz);

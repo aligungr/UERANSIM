@@ -38,7 +38,7 @@ import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.app.structs.UeConfig;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetString;

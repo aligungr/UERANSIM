@@ -41,7 +41,7 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
 import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NgapUeContextManagement {

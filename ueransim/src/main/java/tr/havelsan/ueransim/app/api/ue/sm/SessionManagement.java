@@ -27,13 +27,14 @@ package tr.havelsan.ueransim.app.api.ue.sm;
 import tr.havelsan.ueransim.app.api.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
+import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.testing.TestCommand_PduSessionEstablishment;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class SessionManagement {
@@ -62,16 +63,14 @@ public class SessionManagement {
         // todo
     }
 
-    public static void executeCommand(UeSimContext ctx, UeCommandEvent.Command cmd) {
+    public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
         Debugging.assertThread(ctx);
 
-        switch (cmd) {
-            case PDU_SESSION_ESTABLISHMENT:
-                SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
-                break;
-            default:
-                Logging.error(Tag.EVENT, "SessionManagement.executeCommand, command not recognized: %s", cmd);
-                break;
+        if (cmd instanceof TestCommand_PduSessionEstablishment) {
+            SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
+            return true;
         }
+
+        return false;
     }
 }
