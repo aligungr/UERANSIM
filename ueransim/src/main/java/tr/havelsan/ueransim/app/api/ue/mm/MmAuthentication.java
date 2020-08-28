@@ -29,7 +29,7 @@ import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.app.api.nas.NasSecurityContext;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.enums.AutnValidationRes;
+import tr.havelsan.ueransim.app.enums.EAutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
@@ -156,12 +156,12 @@ public class MmAuthentication {
             var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
             Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
-            if (autnCheck != AutnValidationRes.OK) {
+            if (autnCheck != EAutnValidationRes.OK) {
                 EapAkaPrime eapResponse = null;
 
-                if (autnCheck == AutnValidationRes.MAC_FAILURE) {
+                if (autnCheck == EAutnValidationRes.MAC_FAILURE) {
                     eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
-                } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
+                } else if (autnCheck == EAutnValidationRes.SYNCHRONISATION_FAILURE) {
                     // todo
                     //eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_SYNCHRONIZATION_FAILURE);
                     //eapResponse.attributes.putAuts(...);
@@ -284,7 +284,7 @@ public class MmAuthentication {
         var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, autn);
         Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
-        if (IGNORE_CONTROLS_FAILURES || autnCheck == AutnValidationRes.OK) {
+        if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes.OK) {
 
             // Create new partial native NAS security context and continue with key derivation
             ctx.nonCurrentNsCtx = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
@@ -300,9 +300,9 @@ public class MmAuthentication {
             response = new AuthenticationResponse(
                     new IEAuthenticationResponseParameter(ctx.nonCurrentNsCtx.keys.resStar), null);
 
-        } else if (autnCheck == AutnValidationRes.MAC_FAILURE) {
+        } else if (autnCheck == EAutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
-        } else if (autnCheck == AutnValidationRes.SYNCHRONISATION_FAILURE) {
+        } else if (autnCheck == EAutnValidationRes.SYNCHRONISATION_FAILURE) {
             Logging.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
@@ -315,7 +315,7 @@ public class MmAuthentication {
         Logging.funcOut();
     }
 
-    private static AutnValidationRes validateAutn(OctetString ak, OctetString mac, OctetString autn) {
+    private static EAutnValidationRes validateAutn(OctetString ak, OctetString mac, OctetString autn) {
         // Decode AUTN
         var receivedSQNxorAK = autn.substring(0, 6);
         var receivedSQN = OctetString.xor(receivedSQNxorAK, ak);
@@ -325,23 +325,23 @@ public class MmAuthentication {
         // Check MAC
         if (!receivedMAC.equals(mac)) {
             Logging.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
-            return AutnValidationRes.MAC_FAILURE;
+            return EAutnValidationRes.MAC_FAILURE;
         }
 
         // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
         // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
         if (!BitString.from(receivedAMF).getB(0)) {
             Logging.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
-            return AutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
+            return EAutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
         }
 
         // Verify that the received sequence number SQN is in the correct range
         if (!checkSqn(receivedSQN)) {
             Logging.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
-            return AutnValidationRes.SYNCHRONISATION_FAILURE;
+            return EAutnValidationRes.SYNCHRONISATION_FAILURE;
         }
 
-        return AutnValidationRes.OK;
+        return EAutnValidationRes.OK;
     }
 
     private static Map<MilenageResult, OctetString> calculateMilenage(UeConfig ueConfig, OctetString sqn, OctetString rand) {
