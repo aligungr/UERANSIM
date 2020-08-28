@@ -22,20 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.app.testing;
 
-public class LogEntry {
-    public final Severity severity;
-    public final Color color;
-    public final int depth;
-    public final Tag tag;
-    public final String message;
-
-    public LogEntry(Severity severity, Color color, int depth, Tag tag, String message) {
-        this.severity = severity;
-        this.color = color;
-        this.depth = depth;
-        this.tag = tag;
-        this.message = message;
-    }
+public class TestCommand_PeriodicRegistration extends TestCommand {
 }

@@ -28,7 +28,7 @@ import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceAccept;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceReject;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmService {

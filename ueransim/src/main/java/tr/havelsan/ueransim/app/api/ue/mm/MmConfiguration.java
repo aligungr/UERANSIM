@@ -30,7 +30,7 @@ import tr.havelsan.ueransim.nas.impl.ies.IEConfigurationUpdateIndication;
 import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateCommand;
 import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateComplete;
 import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 public class MmConfiguration {
 

@@ -37,11 +37,17 @@ import java.util.function.Function;
 
 public class MtsConvert {
 
-    public static boolean isConvertable(Class<?> from, Class<?> to, boolean includeCustoms) {
+    private final MtsContext ctx;
+
+    MtsConvert(MtsContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public boolean isConvertable(Class<?> from, Class<?> to, boolean includeCustoms) {
         return isConvertable(from, to, new HashSet<>(), includeCustoms);
     }
 
-    private static boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams, boolean includeCustoms) {
+    private boolean isConvertable(Class<?> from, Class<?> to, HashSet<Class<?>> visitedSingleParams, boolean includeCustoms) {
         if (from.equals(to))
             return true;
         if (to.isAssignableFrom(from))
@@ -58,7 +64,7 @@ public class MtsConvert {
             return Traits.isArray(from) && Traits.isArray(to);
         }
         if (includeCustoms) {
-            if (TypeRegistry.isCustomConvertable(from, to))
+            if (ctx.typeRegistry.isCustomConvertable(from, to))
                 return true;
         }
 
@@ -163,14 +169,14 @@ public class MtsConvert {
     /**
      * Returns conversion result as list as sorted. (The less index means more preferable conversion)
      */
-    public static List<Conversion<?>> convert(Object from, Class<?> to, boolean includeCustoms) {
+    public List<Conversion<?>> convert(Object from, Class<?> to, boolean includeCustoms) {
         List<Conversion<?>> list = new ArrayList<>();
         convert(from, to, list, new HashSet<>(), 0, includeCustoms);
         list.sort(Comparator.comparingInt(a -> a.level.getLevel()));
         return list;
     }
 
-    private static void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth, boolean includeCustoms) {
+    private void convert(Object from, Class<?> to, List<Conversion<?>> list, HashSet<Class<?>> visitedSingleParams, int depth, boolean includeCustoms) {
         if (from == null) {
             list.add(new Conversion<>(ConversionLevel.LEVEL_NULL_CONVERSION, null, depth));
             return;
@@ -193,7 +199,7 @@ public class MtsConvert {
             }
             return;
         } else if (includeCustoms) {
-            var customConverter = TypeRegistry.getCustomConverter(to);
+            var customConverter = ctx.typeRegistry.getCustomConverter(to);
             if (customConverter != null) {
                 customConverter.convert(from, to, list, depth);
                 return;
@@ -232,7 +238,7 @@ public class MtsConvert {
         }
     }
 
-    private static void convertArray(Object from, Class<?> to, List<Conversion<?>> list, int depth, boolean includeCustoms) {
+    private void convertArray(Object from, Class<?> to, List<Conversion<?>> list, int depth, boolean includeCustoms) {
         Class<?> elementType = to.getComponentType();
 
         // This function converts primitive arrays to wrapper arrays.
@@ -258,7 +264,7 @@ public class MtsConvert {
 
         for (int i = 0; i < sourceArray.length; i++) {
             if (sourceArray[i] instanceof ImplicitTypedObject) {
-                sourceArray[i] = MtsConstruct.construct(targetType, (ImplicitTypedObject) sourceArray[i], includeCustoms);
+                sourceArray[i] = ctx.constructor.construct(targetType, (ImplicitTypedObject) sourceArray[i], includeCustoms);
             }
 
             var conversions = convert(sourceArray[i], targetType, includeCustoms);

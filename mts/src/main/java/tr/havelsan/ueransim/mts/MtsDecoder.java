@@ -35,13 +35,18 @@ import java.util.LinkedHashMap;
 
 public class MtsDecoder {
 
-    private static IFileProvider fileProvider = (searchDir, path) -> null;
+    private final MtsContext ctx;
+    private IFileProvider fileProvider = (searchDir, path) -> null;
 
-    public static void setFileProvider(IFileProvider fileProvider) {
-        MtsDecoder.fileProvider = fileProvider;
+    MtsDecoder(MtsContext ctx) {
+        this.ctx = ctx;
     }
 
-    public static Object decode(String filePath) {
+    public void setFileProvider(IFileProvider fileProvider) {
+        this.fileProvider = fileProvider;
+    }
+
+    public Object decode(String filePath) {
         var json = fileProvider.readFile("", filePath);
         if (json == null)
             throw new MtsException("referenced file not found: %s", filePath);
@@ -51,16 +56,16 @@ public class MtsDecoder {
         return decode(jsonElement);
     }
 
-    private static JsonElement parseJson(String json) {
+    private JsonElement parseJson(String json) {
         return new Gson().fromJson(json, JsonElement.class);
     }
 
-    private static String dirPath(String filePath) {
+    private String dirPath(String filePath) {
         String path = new File(filePath).getParent();
         return path == null ? "./" : path;
     }
 
-    private static JsonElement resolveJsonRefs(String searchDir, JsonElement element) {
+    private JsonElement resolveJsonRefs(String searchDir, JsonElement element) {
         if (element == null) {
             return null;
         } else if (element.isJsonNull()) {
@@ -137,7 +142,7 @@ public class MtsDecoder {
         }
     }
 
-    public static Object decode(JsonElement json) {
+    public Object decode(JsonElement json) {
         if (json == null || json.isJsonNull())
             return null;
         if (json.isJsonPrimitive()) {
@@ -193,11 +198,11 @@ public class MtsDecoder {
             }
 
             if (typeName != null) {
-                var type = TypeRegistry.getClassByName(typeName);
+                var type = ctx.typeRegistry.getClassByName(typeName);
                 if (type == null) {
                     throw new MtsException("declared type not registered: %s", typeName);
                 }
-                return MtsConstruct.construct(type, properties, true);
+                return ctx.constructor.construct(type, properties, true);
             } else {
                 return new ImplicitTypedObject(properties);
             }

@@ -22,26 +22,35 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-import tr.havelsan.ueransim.utils.Utils;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+class TextColorAttribute extends ColorAttribute {
 
-public class EventParser {
-
-    public static String[] possibleEvents() {
-        return new ArrayList<>(Utils.streamToList(Arrays.stream(UeCommandEvent.Command.values()).map(x -> x.cmd)))
-                .toArray(new String[0]);
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int colorNumber) {
+        super(colorNumber);
     }
 
-    public static BaseEvent parse(String command) {
-        var ueCmd = UeCommandEvent.Command.fromValue(command);
-        if (ueCmd == null)
-            return null;
-        return new UeCommandEvent(ueCmd);
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int r, int g, int b) {
+        super(r, g, b);
     }
+
+    @Override
+    protected String getColorAnsiPrefix() {
+        String ANSI_8BIT_COLOR_PREFIX = "38;5;";
+        String ANSI_TRUE_COLOR_PREFIX = "38;2;";
+
+        return isTrueColor() ? ANSI_TRUE_COLOR_PREFIX : ANSI_8BIT_COLOR_PREFIX;
+    }
+
 }

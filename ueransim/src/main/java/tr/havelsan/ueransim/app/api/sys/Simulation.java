@@ -30,7 +30,7 @@ import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.events.BaseEvent;
 import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.UUID;

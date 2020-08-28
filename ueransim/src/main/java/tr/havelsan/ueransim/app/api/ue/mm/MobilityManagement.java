@@ -27,13 +27,16 @@ package tr.havelsan.ueransim.app.api.ue.mm;
 import tr.havelsan.ueransim.app.api.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
+import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.testing.TestCommand_Deregistration;
+import tr.havelsan.ueransim.app.testing.TestCommand_InitialRegistration;
+import tr.havelsan.ueransim.app.testing.TestCommand_PeriodicRegistration;
 import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MobilityManagement {
@@ -86,22 +89,21 @@ public class MobilityManagement {
         }
     }
 
-    public static void executeCommand(UeSimContext ctx, UeCommandEvent.Command cmd) {
+    public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
         Debugging.assertThread(ctx);
 
-        switch (cmd) {
-            case INITIAL_REGISTRATION:
-                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
-                break;
-            case PERIODIC_REGISTRATION:
-                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
-                break;
-            case DEREGISTRATION:
-                MmDeregistration.sendDeregistration(ctx, IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
-                break;
-            default:
-                Logging.error(Tag.EVENT, "MobilityManagement.executeCommand, command not recognized: %s", cmd);
-                break;
+        if (cmd instanceof TestCommand_InitialRegistration) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+            return true;
+        } else if (cmd instanceof TestCommand_PeriodicRegistration) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+            return true;
+        } else if (cmd instanceof TestCommand_Deregistration) {
+            // todo: switch off
+            MmDeregistration.sendDeregistration(ctx, IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
+            return true;
         }
+
+        return false;
     }
 }

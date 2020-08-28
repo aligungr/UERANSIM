@@ -22,35 +22,41 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import java.util.function.Consumer;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-public class Console {
+import java.util.ArrayList;
+import java.util.Arrays;
 
-    private static final BaseConsole c = new BaseConsole();
+/**
+ * Abstracts an Array of {@link AnsiColorAttribute}s.
+ * Use it if you find this more readable than Attribute[].
+ */
+public class AnsiColorFormat {
 
-    public static void print(Color color, String format, Object... args) {
-        c.print(color, format, args);
+    // Starts with capacity=2 because that's how many attributes are used on average
+    private final ArrayList<AnsiColorAttribute> _AnsiColor_attributes = new ArrayList<>(2);
+
+    /**
+     * @param ansiColorAttributes All ANSI attributes to format a text.
+     */
+    public AnsiColorFormat(AnsiColorAttribute... ansiColorAttributes) {
+        _AnsiColor_attributes.addAll(Arrays.asList(ansiColorAttributes));
     }
 
-    public static void println(Color color, String format, Object... args) {
-        c.println(color, format, args);
+    /**
+     * @param text String to format.
+     * @return The formatted string, ready to be printed.
+     */
+    public String format(String text) {
+        return AnsiColor.colorize(text, this.toArray());
     }
 
-    public static void printDiv() {
-        c.printDiv();
-    }
-
-    public static void addPrintHandler(Consumer<String> handler) {
-        c.addPrintHandler(handler);
-    }
-
-    public static void setStandardPrintEnabled(boolean standardPrintEnabled) {
-        c.setStandardPrintEnabled(standardPrintEnabled);
-    }
-
-    public static void println() {
-        c.println();
+    protected AnsiColorAttribute[] toArray() {
+        return _AnsiColor_attributes.toArray(new AnsiColorAttribute[0]);
     }
 }

@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.app.core;
 
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.events.BaseEvent;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.ArrayDeque;
