@@ -205,6 +205,10 @@ public class Program {
 
     public void runTest(String testName) throws Exception {
         var testObjects = (Object[])testCases.get(testName);
+        if (testObjects == null) {
+            throw new RuntimeException("test case not found: " + testName);
+        }
+
         var testCommands = new TestCommand[testObjects.length];
         for (int i = 0; i < testCommands.length; i++) {
             testCommands[i] = (TestCommand) testObjects[i];
