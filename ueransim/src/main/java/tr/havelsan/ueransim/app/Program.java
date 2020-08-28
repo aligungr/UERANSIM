@@ -89,8 +89,8 @@ public class Program {
     }
 
     private void initLogging() {
-        final String logFile = "app.log";
-        final String loadTestFile = "loadtest.log";
+        final String logFile = "logs/app.log";
+        final String loadTestFile = "logs/loadtest.log";
 
         Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All default logs are written to: %s", logFile);
         Console.println(Color.YELLOW_BOLD_BRIGHT, "WARNING: All load testing logs are written to: %s", loadTestFile);
