@@ -240,6 +240,7 @@ public class Program {
         private final Map<String, Long> phase1Timers = new HashMap<>();
         private final Map<String, Long> phase2Timers = new HashMap<>();
         private final Map<String, Long> phase3Timers = new HashMap<>();
+        private final Map<String, Long> deregistrationTimers = new HashMap<>();
 
         @Override
         public void onSend(BaseSimContext<?> ctx, Object message) {
@@ -262,6 +263,9 @@ public class Program {
 
                 long delta = System.currentTimeMillis() - securityModeControlTimers.get(supi);
                 loadTestConsole.println(null, "\u2714 [Security Mode Control (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
+            } else if (message instanceof DeRegistrationRequestUeOriginating) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                deregistrationTimers.put(supi, System.currentTimeMillis());
             }
         }
 
@@ -298,6 +302,10 @@ public class Program {
 
                 long delta = System.currentTimeMillis() - phase2Timers.get(supi);
                 loadTestConsole.println(null, "\u2714 [Phase 2 (Network)] [Authentication-SecurityModeControl] [ue: %s] [%d ms]", supi, delta);
+            }else if (message instanceof DeRegistrationAcceptUeOriginating) {
+                String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
+                long delta = System.currentTimeMillis() - deregistrationTimers.get(supi);
+                loadTestConsole.println(null, "\u2714 [De-Registration] [ue: %s] [%d ms]", supi, delta);
             }
         }
     }
