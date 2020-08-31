@@ -163,6 +163,14 @@ public class MobilityManagement {
             return;
         }
 
+        if (ctx.mmCtx.mmState == EMmState.MM_DEREGISTERED_INITIATED) {
+            return;
+        }
+
+        if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NA) {
+            return;
+        }
+
         if (UserEquipment.AUTO) {
             throw new NotImplementedException("unhandled UE MM state");
         }

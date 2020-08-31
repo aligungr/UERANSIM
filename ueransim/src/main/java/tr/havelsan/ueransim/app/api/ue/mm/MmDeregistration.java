@@ -25,14 +25,16 @@
 package tr.havelsan.ueransim.app.api.ue.mm;
 
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.enums.EMmState;
+import tr.havelsan.ueransim.app.enums.EMmSubState;
 import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeTerminated;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 public class MmDeregistration {
 
@@ -40,6 +42,8 @@ public class MmDeregistration {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Starting: UE initiated de-registration procedure");
+
+        MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED_INITIATED, EMmSubState.MM_DEREGISTERED_INITIATED__NA);
 
         var request = new DeRegistrationRequestUeOriginating();
         request.deRegistrationType = new IEDeRegistrationType();
@@ -56,7 +60,10 @@ public class MmDeregistration {
 
         MobilityManagement.sendMm(ctx, request);
 
-        // todo: T3521
+        if (!switchOff.equals(IEDeRegistrationType.ESwitchOff.SWITCH_OFF)
+                && (ctx.mmCtx.mmState == EMmState.MM_REGISTERED || ctx.mmCtx.mmState == EMmState.MM_REGISTERED_INITIATED)) {
+            ctx.ueTimers.t3521.start();
+        }
 
         Logging.funcOut();
     }
@@ -70,10 +77,13 @@ public class MmDeregistration {
         ctx.ueTimers.t3519.stop();
         ctx.mmCtx.storedSuci = null;
 
+        MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
+
         Logging.success(Tag.PROCEDURE_RESULT, "De-registration is successful");
         Logging.funcOut();
     }
 
+    // todo
     public static void receiveDeregistrationRequest(UeSimContext ctx, DeRegistrationRequestUeTerminated message) {
         Debugging.assertThread(ctx);
 
@@ -88,11 +98,12 @@ public class MmDeregistration {
         } else {
             if (message.mmCause != null) {
                 var cause = message.mmCause.value;
-                // todo
             }
         }
 
         MobilityManagement.sendMm(ctx, new DeRegistrationAcceptUeTerminated());
+
+        MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
 
         Logging.funcOut();
     }
