@@ -46,6 +46,8 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class UserEquipment {
 
+    public static boolean AUTO = false;
+
     public static void sendNas(UeSimContext ctx, NasMessage message) {
         Debugging.assertThread(ctx);
 
@@ -93,6 +95,7 @@ public class UserEquipment {
 
     public static void cycle(UeSimContext ctx) {
         ctx.ueTimers.performTick(ctx);
+        MobilityManagement.cycle(ctx);
 
         var event = ctx.popEvent();
         if (event instanceof UeCommandEvent) {

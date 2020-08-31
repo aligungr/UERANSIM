@@ -27,11 +27,15 @@ package tr.havelsan.ueransim.app.api.ue.mm;
 import tr.havelsan.ueransim.app.api.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.enums.EMmState;
+import tr.havelsan.ueransim.app.enums.EMmSubState;
+import tr.havelsan.ueransim.app.enums.ERmState;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.app.testing.TestCommand_Deregistration;
 import tr.havelsan.ueransim.app.testing.TestCommand_InitialRegistration;
 import tr.havelsan.ueransim.app.testing.TestCommand_PeriodicRegistration;
 import tr.havelsan.ueransim.app.utils.Debugging;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
@@ -85,7 +89,15 @@ public class MobilityManagement {
         Debugging.assertThread(ctx);
 
         if (timer.timerCode == 3512) {
-            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+            if (UserEquipment.AUTO && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
+                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+            }
+        }
+
+        if (timer.timerCode == 3346) {
+            if (UserEquipment.AUTO && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+            }
         }
     }
 
@@ -105,5 +117,54 @@ public class MobilityManagement {
         }
 
         return false;
+    }
+
+    public static void switchState(UeSimContext ctx, EMmState state, EMmSubState subState) {
+        Debugging.assertThread(ctx);
+
+        ctx.mmCtx.mmState = state;
+        ctx.mmCtx.mmSubState = subState;
+
+        Logging.info(Tag.STATE, "UE switches to state: %s/%s", state, subState);
+    }
+
+    public static void switchState(UeSimContext ctx, ERmState state) {
+        Debugging.assertThread(ctx);
+
+        ctx.mmCtx.rmState = state;
+        Logging.info(Tag.STATE, "UE switches to state: %s", state);
+    }
+
+    public static void cycle(UeSimContext ctx) {
+        Debugging.assertThread(ctx);
+
+        if (ctx.mmCtx.mmState == EMmState.MM_NULL) {
+            switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+            return;
+        }
+
+        if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__PLMN_SEARCH) {
+            switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE);
+            return;
+        }
+
+        if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
+            if (UserEquipment.AUTO && !ctx.ueTimers.t3346.isRunning()) {
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+            }
+            return;
+        }
+
+        if (ctx.mmCtx.mmState == EMmState.MM_REGISTERED_INITIATED) {
+            return;
+        }
+
+        if (ctx.mmCtx.mmSubState == EMmSubState.MM_REGISTERED__NORMAL_SERVICE) {
+            return;
+        }
+
+        if (UserEquipment.AUTO) {
+            throw new NotImplementedException("unhandled UE MM state");
+        }
     }
 }
