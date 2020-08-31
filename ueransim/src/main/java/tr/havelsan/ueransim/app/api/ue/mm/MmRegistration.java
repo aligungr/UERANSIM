@@ -25,7 +25,10 @@
 package tr.havelsan.ueransim.app.api.ue.mm;
 
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.enums.EMmState;
+import tr.havelsan.ueransim.app.enums.EMmSubState;
 import tr.havelsan.ueransim.app.enums.ERmState;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.ies.*;
@@ -43,6 +46,8 @@ public class MmRegistration {
         Debugging.assertThread(ctx);
 
         Logging.funcIn("Starting: Registration procedure (%s)", registrationType);
+
+        MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED_INITIATED, EMmSubState.MM_REGISTERED_INITIATED__NA);
 
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
         if (ctx.currentNsCtx != null && ctx.currentNsCtx.ngKsi != null) {
@@ -122,8 +127,8 @@ public class MmRegistration {
             MobilityManagement.sendMm(ctx, new RegistrationComplete());
         }
 
-        Logging.info(Tag.STATE, "UE enters RM_REGISTERED state");
-        ctx.mmCtx.rmState = ERmState.RM_REGISTERED;
+        MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
+        MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
         Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
         Logging.funcOut();
@@ -154,67 +159,89 @@ public class MmRegistration {
                 ctx.mmCtx.taiList = null;
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
                 ctx.mmCtx.taiList = null;
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
             } else if (cause.equals(EMmCause.CONGESTION)) {
                 if (message.t3346value != null && message.t3346value.hasValue()) {
+
+                    MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__ATTEMPTING_REGISTRATION);
                     ctx.ueTimers.t3346.stop();
 
                     if (message.securityHeaderType.isIntegrityProtected()) {
                         ctx.ueTimers.t3346.start(message.t3346value);
                     } else {
-                        // todo
+                        ctx.ueTimers.t3346.start(new IEGprsTimer2(5));
                     }
+
                 } else {
-                    // todo
+                    // todo abnormal case see 5.5.1.2.7.
+                    throw new NotImplementedException("");
                 }
             } else if (cause.equals(EMmCause.N1_MODE_NOT_ALLOWED)) {
-                // todo
+                ctx.mmCtx.storedGuti = null;
+                ctx.mmCtx.lastVisitedRegisteredTai = null;
+                ctx.mmCtx.taiList = null;
+                ctx.currentNsCtx = null;
+                ctx.nonCurrentNsCtx = null;
+                MobilityManagement.switchState(ctx, EMmState.MM_NULL, EMmSubState.MM_NULL__NA);
             } else if (cause.equals(EMmCause.NON_3GPP_ACCESS_TO_CN_NOT_ALLOWED)) {
                 // todo
+                throw new NotImplementedException("");
             } else if (cause.equals(EMmCause.SERVING_NETWORK_NOT_AUTHORIZED)) {
                 // todo
+                throw new NotImplementedException("");
+            } else {
+                // todo
+                throw new NotImplementedException("");
             }
         } else if (regType.equals(ERegistrationType.EMERGENCY_REGISTRATION)) {
             if (cause.equals(EMmCause.PEI_NOT_ACCEPTED)) {
                 // todo
+                throw new NotImplementedException("");
             } else {
                 // todo: abnormal case
+                throw new NotImplementedException("");
             }
         } else {
             // todo
+            throw new NotImplementedException("");
         }
 
-        Logging.info(Tag.STATE, "UE enters RM_DEREGISTERED state");
-        ctx.mmCtx.rmState = ERmState.RM_DEREGISTERED;
+        MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
 
         Logging.funcOut();
     }

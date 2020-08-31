@@ -39,6 +39,10 @@ public class IEGprsTimer2 extends InformationElement4 {
         this.value = value;
     }
 
+    public IEGprsTimer2(int value) {
+        this(new Octet(value));
+    }
+
     public boolean hasValue() {
         return value.intValue() != 0;
     }
