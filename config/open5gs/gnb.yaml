@@ -16,7 +16,7 @@ amfConfigs:
         hex: '5580'
       amfPointer:
         hex: 'a8'
-    host: 127.0.0.2
+    host: 127.0.0.5
     port: 38412
     isMocked: false
     mockingFile: mockedAmf.yaml
