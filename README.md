@@ -73,7 +73,12 @@ If you are using physical Linux machine, but still encounter this issue, make su
 
 **Q2. Why am I getting java.net.ConnectException: Connection refused exception?**  
 
-This error means that gNB cannot access to AMF over the network. Make sure that you set the IP address and port correctly in `gnb.yaml` file. Also make sure that AMF is running and healthy and accessible by your local network.  
+This error means SCTP connection could not established between RAN and AMF. Therefore make sure these 3 following conditions:
+
+1. AMF is running and listening NGAP port (38412).
+2. AMF's NGAP IP address and port number exactly matches with gnb.yaml config file.
+3. AMF is reachable by RAN over the network.
+  
 
 **Q3. I can't build native libraries.**
 
