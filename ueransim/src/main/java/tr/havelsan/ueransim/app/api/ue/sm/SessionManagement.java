@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.app.testing.TestCommand_PduSessionEstablishment;
+import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
@@ -36,6 +37,7 @@ import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainer;
 import tr.havelsan.ueransim.nas.impl.ies.IEPayloadContainerType;
 import tr.havelsan.ueransim.nas.impl.ies.IEPduSessionIdentity2;
 import tr.havelsan.ueransim.nas.impl.ies.IERequestType;
+import tr.havelsan.ueransim.nas.impl.messages.DlNasTransport;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
@@ -58,6 +60,12 @@ public class SessionManagement {
         ulNasTransport.dnn = ctx.ueConfig.dnn;
 
         MobilityManagement.sendMm(ctx, ulNasTransport);
+    }
+
+    public static void receiveDl(UeSimContext ctx, DlNasTransport message) {
+        Debugging.assertThread(ctx);
+
+        receiveSm(ctx, (PlainSmMessage) NasDecoder.nasPdu(message.payloadContainer.payload));
     }
 
     public static void receiveSm(UeSimContext ctx, PlainSmMessage message) {
