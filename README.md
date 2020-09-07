@@ -28,8 +28,8 @@ Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN em
 - gNB | NAS Transport
   - Initial UE Message
   - Uplink/Downlink NAS Transport
-- PDU Session Establishment
-  - ***in progress***
+- Session Management
+  - PDU Session Establishment
 - ***todo...***
       
 ##  Requirements
