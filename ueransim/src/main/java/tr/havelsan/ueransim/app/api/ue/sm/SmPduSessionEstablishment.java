@@ -65,17 +65,9 @@ class SmPduSessionEstablishment {
         pduSessionEstablishmentRequest.pduSessionType = new IEPduSessionType(EPduSessionType.IPV4);
         pduSessionEstablishmentRequest.sscMode = new IESscMode(IESscMode.ESscMode.SSC_MODE_1);
 
-        var ulNasTransport = new UlNasTransport();
-        ulNasTransport.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
-        ulNasTransport.payloadContainer = new IEPayloadContainer(NasEncoder.nasPduS(pduSessionEstablishmentRequest));
-        ulNasTransport.pduSessionId = new IEPduSessionIdentity2(pduSessionId.intValue());
-        ulNasTransport.requestType = new IERequestType(IERequestType.ERequestType.INITIAL_REQUEST);
-        ulNasTransport.sNssa = ctx.ueConfig.requestedNssai[0];
-        ulNasTransport.dnn = ctx.ueConfig.dnn;
-
         ctx.ueTimers.t3580.start();
 
-        SessionManagement.sendSm(ctx, ulNasTransport);
+        SessionManagement.sendSm(ctx, pduSessionId, pduSessionEstablishmentRequest);
 
         Logging.funcOut();
     }
