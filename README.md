@@ -77,7 +77,7 @@ This error means SCTP connection could not established between RAN and AMF. Ther
 
 1. AMF is running and listening NGAP port (38412).
 2. AMF's NGAP IP address and port number exactly matches with gnb.yaml config file.
-3. AMF is reachable by RAN over the network.
+3. AMF is reachable by RAN over the network. (Firewall etc.)
   
 
 **Q3. I can't build native libraries.**
