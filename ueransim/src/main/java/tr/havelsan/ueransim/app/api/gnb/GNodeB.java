@@ -25,7 +25,7 @@
 package tr.havelsan.ueransim.app.api.gnb;
 
 import tr.havelsan.ueransim.app.api.gnb.ngap.*;
-import tr.havelsan.ueransim.app.api.sys.MockedRadio;
+import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.events.gnb.GnbCommandEvent;
@@ -33,7 +33,10 @@ import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.app.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.app.events.gnb.SctpReceiveEvent;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.NasDecoder;
+import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
@@ -47,12 +50,9 @@ import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
-import tr.havelsan.ueransim.ngap1.NgapUtils;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.util.UUID;
 
@@ -106,7 +106,8 @@ public class GNodeB {
         {
             if (message.isProtocolIeUsable(NGAP_UserLocationInformation.class)) {
                 var ie = new NGAP_UserLocationInformation();
-                ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(MockedRadio.findLocationOfUe(ctx.simCtx, ueId));
+                ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(ctx.config.gnbPlmn,
+                        new VTrackingAreaIdentity(ctx.config.gnbPlmn, ctx.config.tac), ctx.config.nci);
                 message.addProtocolIe(ie);
             }
         }

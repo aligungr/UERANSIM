@@ -13,16 +13,3 @@ requestedNssai:
       value: 1
     sd:
       hex: '010203'
-
-userLocationInformationNr:
-  nrCgi:
-    plmn:
-      mcc: 901
-      mnc: 70
-    nrCellIdentity:
-      hex: '01b2c3d4e0'
-  tai:
-    mcc: 901
-    mnc: 70
-    tac: '000001'
-

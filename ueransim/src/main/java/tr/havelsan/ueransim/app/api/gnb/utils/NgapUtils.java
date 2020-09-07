@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.ngap1;
+package tr.havelsan.ueransim.app.api.gnb.utils;
 
 import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.core.Constants;
@@ -31,6 +31,7 @@ import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BitString;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_NRCellIdentity;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_GNB_ID;
@@ -41,9 +42,10 @@ import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_SupportedTAList;
 import tr.havelsan.ueransim.ngap0.ies.sequences.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
-import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NgapUtils {
 
@@ -114,14 +116,14 @@ public class NgapUtils {
         return res;
     }
 
-    public static NGAP_UserLocationInformationNR createUserLocationInformationNr(UserLocationInformationNr nr) {
+    public static NGAP_UserLocationInformationNR createUserLocationInformationNr(VPlmn plmn, VTrackingAreaIdentity tai, BitString nrCellIdentity) {
         var userLocationInformationNr = new NGAP_UserLocationInformationNR();
         userLocationInformationNr.nR_CGI = new NGAP_NR_CGI();
-        userLocationInformationNr.nR_CGI.pLMNIdentity = NgapUtils.plmnEncode(nr.nrCgi.plmn);
-        userLocationInformationNr.nR_CGI.nRCellIdentity = new NGAP_NRCellIdentity(nr.nrCgi.nrCellIdentity.toByteArray(), 36);
+        userLocationInformationNr.nR_CGI.pLMNIdentity = NgapUtils.plmnEncode(plmn);
+        userLocationInformationNr.nR_CGI.nRCellIdentity = new NGAP_NRCellIdentity(nrCellIdentity);
         userLocationInformationNr.tAI = new NGAP_TAI();
-        userLocationInformationNr.tAI.tAC = new NGAP_TAC(nr.tai.tac.toByteArray());
-        userLocationInformationNr.tAI.pLMNIdentity = NgapUtils.plmnEncode(nr.tai.plmn);
+        userLocationInformationNr.tAI.tAC = new NGAP_TAC(tai.tac.toByteArray());
+        userLocationInformationNr.tAI.pLMNIdentity = NgapUtils.plmnEncode(tai.plmn);
         userLocationInformationNr.timeStamp = new NGAP_TimeStamp(new Octet4(TimeStamp.getCurrentTime().getSeconds()).toByteArray());
         return userLocationInformationNr;
     }
