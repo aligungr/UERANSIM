@@ -154,7 +154,7 @@ public class Program {
             var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
             var supi = new Supi("imsi", imsiNumber).toString();
             var config = new UeConfig(ref.snn, ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi),
-                    ref.smsOverNasSupported, ref.requestedNssai, ref.userLocationInformationNr, ref.dnn);
+                    ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
 
             var ueContext = app.createUeSimContext(simContext, config);
 

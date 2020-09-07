@@ -25,17 +25,22 @@
 package tr.havelsan.ueransim.app.structs;
 
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.ngap1.SupportedTA;
+import tr.havelsan.ueransim.app.api.gnb.utils.SupportedTA;
+import tr.havelsan.ueransim.utils.bits.BitString;
 
 public class GnbConfig {
     public final int gnbId;
+    public final int tac;
+    public final BitString nci;
     public final VPlmn gnbPlmn;
     public final GnbAmfConfig[] amfConfigs;
     public final SupportedTA[] supportedTAs;
     public final boolean ignoreStreamIds;
 
-    public GnbConfig(int gnbId, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds) {
+    public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds) {
         this.gnbId = gnbId;
+        this.tac = tac;
+        this.nci = BitString.fromBits(nci);
         this.gnbPlmn = gnbPlmn;
         this.amfConfigs = amfConfigs;
         this.supportedTAs = supportedTAs;

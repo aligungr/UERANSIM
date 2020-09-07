@@ -22,29 +22,28 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.ngap1;
+package tr.havelsan.ueransim.app.api.gnb.utils;
 
+import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.utils.octets.Octet3;
 
-public class UserLocationInformationNr {
+public class SupportedTA {
+    public final Octet3 tac;
+    public final BroadcastPlmn[] broadcastPlmns;
 
-    public final NrCgi nrCgi;
-    public final VTrackingAreaIdentity tai;
-
-    public UserLocationInformationNr(NrCgi nrCgi, VTrackingAreaIdentity tai) {
-        this.nrCgi = nrCgi;
-        this.tai = tai;
+    public SupportedTA(Octet3 tac, BroadcastPlmn[] broadcastPlmns) {
+        this.tac = tac;
+        this.broadcastPlmns = broadcastPlmns;
     }
 
-    public static class NrCgi {
+    public static class BroadcastPlmn {
         public final VPlmn plmn;
-        public final OctetString nrCellIdentity;
+        public final IESNssai[] taiSliceSupportNssais;
 
-        public NrCgi(VPlmn plmn, OctetString nrCellIdentity) {
+        public BroadcastPlmn(VPlmn plmn, IESNssai[] taiSliceSupportNssais) {
             this.plmn = plmn;
-            this.nrCellIdentity = nrCellIdentity;
+            this.taiSliceSupportNssais = taiSliceSupportNssais;
         }
     }
 }
