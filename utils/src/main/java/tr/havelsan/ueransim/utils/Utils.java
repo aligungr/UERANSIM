@@ -44,6 +44,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
@@ -509,5 +511,16 @@ public final class Utils {
         res[2] = new Octet(length >> 8 & 0xFF);
         res[3] = new Octet(length & 0xFF);
         return new OctetString(res);
+    }
+
+    /**
+     * Returns the IPv4 address of the local host
+     */
+    public static byte[] getLocalAddress() {
+        try {
+            return Inet4Address.getLocalHost().getAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

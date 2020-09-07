@@ -32,6 +32,6 @@ public class RrcPduSessionManagement {
 
     // todo
     public static boolean pduResourceSetup(GnbSimContext ctx, GnbUeContext ueCtx, PduSessionResource resource) {
-        return false;
+        return true;
     }
 }

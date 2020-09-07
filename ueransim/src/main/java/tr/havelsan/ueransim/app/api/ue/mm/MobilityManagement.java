@@ -26,6 +26,7 @@ package tr.havelsan.ueransim.app.api.ue.mm;
 
 import tr.havelsan.ueransim.app.api.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
+import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
@@ -80,6 +81,8 @@ public class MobilityManagement {
             MmDeregistration.receiveDeregistrationAccept(ctx, (DeRegistrationAcceptUeOriginating) message);
         } else if (message instanceof DeRegistrationRequestUeTerminated) {
             MmDeregistration.receiveDeregistrationRequest(ctx, (DeRegistrationRequestUeTerminated) message);
+        } else if (message instanceof DlNasTransport) {
+            SessionManagement.receiveDl(ctx, (DlNasTransport) message);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }

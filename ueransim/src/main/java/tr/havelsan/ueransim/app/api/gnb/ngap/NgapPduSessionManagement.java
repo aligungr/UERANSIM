@@ -29,25 +29,27 @@ import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.app.structs.PduSessionResource;
+import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_TransportLayerAddress;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UPTransportLayerInformation;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UP_TNLInformation;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_DataForwardingNotPossible;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PDUSessionType;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_NetworkInstance;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_GTP_TEID;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
-import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_PDUSessionResourceFailedToSetupListSURes;
-import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_PDUSessionResourceSetupListSUReq;
-import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_PDUSessionResourceSetupListSURes;
-import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_QosFlowSetupRequestList;
+import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.*;
 import tr.havelsan.ueransim.ngap0.ies.sequences.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupResponse;
-import tr.havelsan.ueransim.app.structs.PduSessionResource;
-import tr.havelsan.ueransim.app.utils.Debugging;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Logging;
 
 public class NgapPduSessionManagement {
@@ -105,11 +107,24 @@ public class NgapPduSessionManagement {
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
+                tr.qosFlowPerTNLInformation = new NGAP_QosFlowPerTNLInformation();
+                tr.qosFlowPerTNLInformation.associatedQosFlowList = new NGAP_AssociatedQosFlowList();
 
+                for (var qosFlow : resource.qosFlows) {
+                    var associatedQosFlowItem = new NGAP_AssociatedQosFlowItem();
+                    associatedQosFlowItem.qosFlowIdentifier = qosFlow.qosFlowIdentifier;
+
+                    tr.qosFlowPerTNLInformation.associatedQosFlowList.list.add(associatedQosFlowItem);
+                }
+
+                tr.qosFlowPerTNLInformation.uPTransportLayerInformation = new NGAP_UPTransportLayerInformation();
+                tr.qosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel = new NGAP_GTPTunnel();
+                tr.qosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID("00000001"); // TODO
+                tr.qosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
 
                 var res = new NGAP_PDUSessionResourceSetupItemSURes();
                 res.pDUSessionID = item.pDUSessionID;
-                res.pDUSessionResourceSetupResponseTransfer = new NGAP_OctetString(NgapEncoding.encodeAper(tr, NgapDataUnitType.PDUSessionResourceSetupRequestTransfer));
+                res.pDUSessionResourceSetupResponseTransfer = new NGAP_OctetString(NgapEncoding.encodeAper(tr, NgapDataUnitType.PDUSessionResourceSetupResponseTransfer));
                 successList.list.add(res);
             } else {
                 var tr = new NGAP_PDUSessionResourceSetupUnsuccessfulTransfer();
@@ -138,6 +153,8 @@ public class NgapPduSessionManagement {
         }
 
         GNodeB.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
+
+        Logging.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
 
         Logging.funcOut();
     }
