@@ -59,7 +59,7 @@ public enum NgapDataUnitType {
     AreaOfInterestRANNodeList(32),
     AreaOfInterestTAIItem(33),
     AreaOfInterestTAIList(34),
-    asn_constant(35),
+    //asn_constant(35),
     AssistanceDataForPaging(36),
     AssistanceDataForRecommendedCells(37),
     AssociatedQosFlowItem(38),
