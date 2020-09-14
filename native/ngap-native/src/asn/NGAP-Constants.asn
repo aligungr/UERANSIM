@@ -1,4 +1,4 @@
--- 3GPP TS 38.413 V15.2.0 (2018-12)
+-- 3GPP TS 38.413 V15.6.0 (2019-12)
 -- 9.4.7	Constant Definitions
 -- **************************************************************
 --
@@ -85,6 +85,7 @@ id-UplinkRANConfigurationTransfer			ProcedureCode ::= 48
 id-UplinkRANStatusTransfer					ProcedureCode ::= 49
 id-UplinkUEAssociatedNRPPaTransport			ProcedureCode ::= 50
 id-WriteReplaceWarning						ProcedureCode ::= 51
+id-SecondaryRATDataUsageReport				ProcedureCode ::= 52
 
 -- **************************************************************
 --
@@ -121,7 +122,8 @@ maxProtocolIEs							INTEGER ::= 65535
 	maxnoofE-RABs						INTEGER ::= 256
 	maxnoofErrors						INTEGER ::= 256
 	maxnoofForbTACs						INTEGER ::= 4096
-	maxnoofMultiConnectivities			INTEGER ::= 4
+	maxnoofMultiConnectivity				INTEGER ::= 4
+	maxnoofMultiConnectivityMinusOne	INTEGER ::= 3
 	maxnoofNGConnectionsToReset			INTEGER ::= 65536
 	maxnoofPDUSessions					INTEGER ::= 256
 	maxnoofPLMNs						INTEGER ::= 12
@@ -138,10 +140,11 @@ maxProtocolIEs							INTEGER ::= 65535
 	maxnoofTAIforRestart				INTEGER ::= 2048
 	maxnoofTAIforWarning				INTEGER ::= 65535
 	maxnoofTAIinAoI						INTEGER ::= 16
+	maxnoofTimePeriods					INTEGER ::= 2
 	maxnoofTNLAssociations				INTEGER ::= 32
-	maxnoofXnExtTLAs					INTEGER ::= 2
+	maxnoofXnExtTLAs					INTEGER ::= 16
 	maxnoofXnGTP-TLAs					INTEGER ::= 16
-	maxnoofXnTLAs						INTEGER ::= 16
+	maxnoofXnTLAs						INTEGER ::= 2
 
 -- **************************************************************
 --
@@ -167,7 +170,7 @@ maxProtocolIEs							INTEGER ::= 65535
 	id-Cause												ProtocolIE-ID ::= 15
 	id-CellIDListForRestart									ProtocolIE-ID ::= 16
 	id-ConcurrentWarningMessageInd							ProtocolIE-ID ::= 17
-	id-CoreNetworkAssistanceInformation						ProtocolIE-ID ::= 18
+	id-CoreNetworkAssistanceInformationForInactive			ProtocolIE-ID ::= 18
 	id-CriticalityDiagnostics								ProtocolIE-ID ::= 19
 	id-DataCodingScheme										ProtocolIE-ID ::= 20
 	id-DefaultPagingDRX										ProtocolIE-ID ::= 21
@@ -292,5 +295,38 @@ maxProtocolIEs							INTEGER ::= 65535
 	id-UL-NGU-UP-TNLInformation								ProtocolIE-ID ::= 139
 	id-UL-NGU-UP-TNLModifyList								ProtocolIE-ID ::= 140
 	id-WarningAreaCoordinates								ProtocolIE-ID ::= 141
+	id-PDUSessionResourceSecondaryRATUsageList				ProtocolIE-ID ::= 142
+	id-HandoverFlag											ProtocolIE-ID ::= 143
+	id-SecondaryRATUsageInformation							ProtocolIE-ID ::= 144
+	id-PDUSessionResourceReleaseResponseTransfer			ProtocolIE-ID ::= 145
+	id-RedirectionVoiceFallback								ProtocolIE-ID ::= 146
+	id-UERetentionInformation								ProtocolIE-ID ::= 147
+	id-S-NSSAI												ProtocolIE-ID ::= 148
+	id-PSCellInformation									ProtocolIE-ID ::= 149
+	id-LastEUTRAN-PLMNIdentity								ProtocolIE-ID ::= 150
+	id-MaximumIntegrityProtectedDataRate-DL					ProtocolIE-ID ::= 151
+	id-AdditionalDLForwardingUPTNLInformation				ProtocolIE-ID ::= 152
+	id-AdditionalDLUPTNLInformationForHOList				ProtocolIE-ID ::= 153
+	id-AdditionalNGU-UP-TNLInformation						ProtocolIE-ID ::= 154
+	id-AdditionalDLQosFlowPerTNLInformation					ProtocolIE-ID ::= 155
+	id-SecurityResult										ProtocolIE-ID ::= 156
+	id-ENDC-SONConfigurationTransferDL						ProtocolIE-ID ::= 157
+	id-ENDC-SONConfigurationTransferUL						ProtocolIE-ID ::= 158
+	id-OldAssociatedQosFlowList-ULendmarkerexpected			ProtocolIE-ID ::= 159
+	id-CNTypeRestrictionsForEquivalent						ProtocolIE-ID ::= 160
+	id-CNTypeRestrictionsForServing							ProtocolIE-ID ::= 161
+	id-NewGUAMI												ProtocolIE-ID ::= 162
+	id-ULForwarding											ProtocolIE-ID ::= 163
+	id-ULForwardingUP-TNLInformation						ProtocolIE-ID ::= 164
+	id-CNAssistedRANTuning									ProtocolIE-ID ::= 165
+	id-CommonNetworkInstance								ProtocolIE-ID ::= 166
+	id-NGRAN-TNLAssociationToRemoveList						ProtocolIE-ID ::= 167
+	id-TNLAssociationTransportLayerAddressNGRAN				ProtocolIE-ID ::= 168
+	id-EndpointIPAddressAndPort								ProtocolIE-ID ::= 169
+	id-LocationReportingAdditionalInfo						ProtocolIE-ID ::= 170
+	id-SourceToTarget-AMFInformationReroute					ProtocolIE-ID ::= 171
+	id-AdditionalULForwardingUPTNLInformation				ProtocolIE-ID ::= 172
+	id-SCTP-TLAs											ProtocolIE-ID ::= 173
+
 
 END
