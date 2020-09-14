@@ -35,4 +35,4 @@ supportedTAs:
               value:
                 hex: '010203'
 
-ignoreStreamIds: false
+ignoreStreamIds: true
