@@ -21,7 +21,7 @@ asn_TYPE_member_t asn_MBR_NGAP_DRBStatusDL18_1[] = {
 	{ ATF_POINTER, 1, offsetof(struct NGAP_DRBStatusDL18, iE_Extension),
 		(ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P36,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P39,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app.structs;
 
-import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UP_TNLInformation;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_DataForwardingNotPossible;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PDUSessionType;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_NetworkInstance;
@@ -38,7 +37,6 @@ public class PduSessionResource {
     public int pduSessionId;
 
     public NGAP_PDUSessionAggregateMaximumBitRate aggregateMaximumBitRate;
-    public NGAP_UP_TNLInformation tnlInfo;
     public NGAP_DataForwardingNotPossible dataForwardingNotPossible;
     public NGAP_PDUSessionType type;
     public NGAP_SecurityIndication securityIndication;

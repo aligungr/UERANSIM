@@ -28,7 +28,7 @@ struct NGAP_ProtocolExtensionContainer;
 typedef struct NGAP_SecurityIndication {
 	NGAP_IntegrityProtectionIndication_t	 integrityProtectionIndication;
 	NGAP_ConfidentialityProtectionIndication_t	 confidentialityProtectionIndication;
-	NGAP_MaximumIntegrityProtectedDataRate_t	*maximumIntegrityProtectedDataRate;	/* OPTIONAL */
+	NGAP_MaximumIntegrityProtectedDataRate_t	*maximumIntegrityProtectedDataRate_UL;	/* OPTIONAL */
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

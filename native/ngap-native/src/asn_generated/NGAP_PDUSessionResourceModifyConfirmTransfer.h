@@ -13,6 +13,7 @@
 
 /* Including external dependencies */
 #include "NGAP_QosFlowModifyConfirmList.h"
+#include "NGAP_UPTransportLayerInformation.h"
 #include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
@@ -20,15 +21,16 @@ extern "C" {
 #endif
 
 /* Forward declarations */
-struct NGAP_TNLMappingList;
-struct NGAP_QosFlowList;
+struct NGAP_UPTransportLayerInformationPairList;
+struct NGAP_QosFlowListWithCause;
 struct NGAP_ProtocolExtensionContainer;
 
 /* NGAP_PDUSessionResourceModifyConfirmTransfer */
 typedef struct NGAP_PDUSessionResourceModifyConfirmTransfer {
 	NGAP_QosFlowModifyConfirmList_t	 qosFlowModifyConfirmList;
-	struct NGAP_TNLMappingList	*tNLMappingList;	/* OPTIONAL */
-	struct NGAP_QosFlowList	*qosFlowFailedToModifyList;	/* OPTIONAL */
+	NGAP_UPTransportLayerInformation_t	 uLNGU_UP_TNLInformation;
+	struct NGAP_UPTransportLayerInformationPairList	*additionalNG_UUPTNLInformation;	/* OPTIONAL */
+	struct NGAP_QosFlowListWithCause	*qosFlowFailedToModifyList;	/* OPTIONAL */
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

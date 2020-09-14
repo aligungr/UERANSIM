@@ -30,7 +30,7 @@ asn_TYPE_member_t asn_MBR_NGAP_QosFlowNotifyItem_1[] = {
 	{ ATF_POINTER, 1, offsetof(struct NGAP_QosFlowNotifyItem, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (2 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P131,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P137,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

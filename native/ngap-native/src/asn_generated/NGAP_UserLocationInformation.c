@@ -47,7 +47,7 @@ asn_TYPE_member_t asn_MBR_NGAP_UserLocationInformation_1[] = {
 	{ ATF_POINTER, 0, offsetof(struct NGAP_UserLocationInformation, choice.choice_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (3 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolIE_SingleContainer_128P25,
+		&asn_DEF_NGAP_ProtocolIE_SingleContainer_128P24,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

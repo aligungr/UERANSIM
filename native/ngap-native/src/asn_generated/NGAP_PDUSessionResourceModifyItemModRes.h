@@ -26,7 +26,7 @@ struct NGAP_ProtocolExtensionContainer;
 /* NGAP_PDUSessionResourceModifyItemModRes */
 typedef struct NGAP_PDUSessionResourceModifyItemModRes {
 	NGAP_PDUSessionID_t	 pDUSessionID;
-	OCTET_STRING_t	*pDUSessionResourceModifyResponseTransfer;	/* OPTIONAL */
+	OCTET_STRING_t	 pDUSessionResourceModifyResponseTransfer;
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

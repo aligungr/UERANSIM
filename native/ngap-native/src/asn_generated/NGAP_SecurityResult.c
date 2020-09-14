@@ -30,7 +30,7 @@ asn_TYPE_member_t asn_MBR_NGAP_SecurityResult_1[] = {
 	{ ATF_POINTER, 1, offsetof(struct NGAP_SecurityResult, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (2 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P145,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P155,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

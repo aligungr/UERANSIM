@@ -27,19 +27,19 @@ asn_TYPE_member_t asn_MBR_NGAP_SecurityIndication_1[] = {
 		0, 0, /* No default value */
 		"confidentialityProtectionIndication"
 		},
-	{ ATF_POINTER, 2, offsetof(struct NGAP_SecurityIndication, maximumIntegrityProtectedDataRate),
+	{ ATF_POINTER, 2, offsetof(struct NGAP_SecurityIndication, maximumIntegrityProtectedDataRate_UL),
 		(ASN_TAG_CLASS_CONTEXT | (2 << 2)),
 		-1,	/* IMPLICIT tag at current level */
 		&asn_DEF_NGAP_MaximumIntegrityProtectedDataRate,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
-		"maximumIntegrityProtectedDataRate"
+		"maximumIntegrityProtectedDataRate-UL"
 		},
 	{ ATF_POINTER, 1, offsetof(struct NGAP_SecurityIndication, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (3 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P144,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P154,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
@@ -53,7 +53,7 @@ static const ber_tlv_tag_t asn_DEF_NGAP_SecurityIndication_tags_1[] = {
 static const asn_TYPE_tag2member_t asn_MAP_NGAP_SecurityIndication_tag2el_1[] = {
     { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* integrityProtectionIndication */
     { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* confidentialityProtectionIndication */
-    { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 }, /* maximumIntegrityProtectedDataRate */
+    { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 }, /* maximumIntegrityProtectedDataRate-UL */
     { (ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0 } /* iE-Extensions */
 };
 asn_SEQUENCE_specifics_t asn_SPC_NGAP_SecurityIndication_specs_1 = {

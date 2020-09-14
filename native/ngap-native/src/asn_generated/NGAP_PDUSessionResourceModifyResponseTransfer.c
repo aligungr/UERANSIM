@@ -9,8 +9,8 @@
 
 #include "NGAP_UPTransportLayerInformation.h"
 #include "NGAP_QosFlowAddOrModifyResponseList.h"
-#include "NGAP_QosFlowPerTNLInformation.h"
-#include "NGAP_QosFlowList.h"
+#include "NGAP_QosFlowPerTNLInformationList.h"
+#include "NGAP_QosFlowListWithCause.h"
 #include "NGAP_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceModifyResponseTransfer_1[] = {
 	{ ATF_POINTER, 6, offsetof(struct NGAP_PDUSessionResourceModifyResponseTransfer, dL_NGU_UP_TNLInformation),
@@ -40,19 +40,19 @@ static asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceModifyResponseTransfer_1
 		0, 0, /* No default value */
 		"qosFlowAddOrModifyResponseList"
 		},
-	{ ATF_POINTER, 3, offsetof(struct NGAP_PDUSessionResourceModifyResponseTransfer, additionalQosFlowPerTNLInformation),
+	{ ATF_POINTER, 3, offsetof(struct NGAP_PDUSessionResourceModifyResponseTransfer, additionalDLQosFlowPerTNLInformation),
 		(ASN_TAG_CLASS_CONTEXT | (3 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_QosFlowPerTNLInformation,
+		&asn_DEF_NGAP_QosFlowPerTNLInformationList,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
-		"additionalQosFlowPerTNLInformation"
+		"additionalDLQosFlowPerTNLInformation"
 		},
 	{ ATF_POINTER, 2, offsetof(struct NGAP_PDUSessionResourceModifyResponseTransfer, qosFlowFailedToAddOrModifyList),
 		(ASN_TAG_CLASS_CONTEXT | (4 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_QosFlowList,
+		&asn_DEF_NGAP_QosFlowListWithCause,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
@@ -61,7 +61,7 @@ static asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceModifyResponseTransfer_1
 	{ ATF_POINTER, 1, offsetof(struct NGAP_PDUSessionResourceModifyResponseTransfer, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (5 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P96,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P100,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
@@ -76,7 +76,7 @@ static const asn_TYPE_tag2member_t asn_MAP_NGAP_PDUSessionResourceModifyResponse
     { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* dL-NGU-UP-TNLInformation */
     { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* uL-NGU-UP-TNLInformation */
     { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 }, /* qosFlowAddOrModifyResponseList */
-    { (ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0 }, /* additionalQosFlowPerTNLInformation */
+    { (ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0 }, /* additionalDLQosFlowPerTNLInformation */
     { (ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0, 0 }, /* qosFlowFailedToAddOrModifyList */
     { (ASN_TAG_CLASS_CONTEXT | (5 << 2)), 5, 0, 0 } /* iE-Extensions */
 };

@@ -44,7 +44,7 @@ asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceModifyItemModRes_1[] = {
 		0, 0, /* No default value */
 		"pDUSessionID"
 		},
-	{ ATF_POINTER, 2, offsetof(struct NGAP_PDUSessionResourceModifyItemModRes, pDUSessionResourceModifyResponseTransfer),
+	{ ATF_NOFLAGS, 0, offsetof(struct NGAP_PDUSessionResourceModifyItemModRes, pDUSessionResourceModifyResponseTransfer),
 		(ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		-1,	/* IMPLICIT tag at current level */
 		&asn_DEF_OCTET_STRING,
@@ -56,14 +56,14 @@ asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceModifyItemModRes_1[] = {
 	{ ATF_POINTER, 1, offsetof(struct NGAP_PDUSessionResourceModifyItemModRes, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (2 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P101,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P105,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
 		"iE-Extensions"
 		},
 };
-static const int asn_MAP_NGAP_PDUSessionResourceModifyItemModRes_oms_1[] = { 1, 2 };
+static const int asn_MAP_NGAP_PDUSessionResourceModifyItemModRes_oms_1[] = { 2 };
 static const ber_tlv_tag_t asn_DEF_NGAP_PDUSessionResourceModifyItemModRes_tags_1[] = {
 	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
 };
@@ -78,7 +78,7 @@ asn_SEQUENCE_specifics_t asn_SPC_NGAP_PDUSessionResourceModifyItemModRes_specs_1
 	asn_MAP_NGAP_PDUSessionResourceModifyItemModRes_tag2el_1,
 	3,	/* Count of tags in the map */
 	asn_MAP_NGAP_PDUSessionResourceModifyItemModRes_oms_1,	/* Optional members */
-	2, 0,	/* Root/Additions */
+	1, 0,	/* Root/Additions */
 	3,	/* First extension addition */
 };
 asn_TYPE_descriptor_t asn_DEF_NGAP_PDUSessionResourceModifyItemModRes = {
