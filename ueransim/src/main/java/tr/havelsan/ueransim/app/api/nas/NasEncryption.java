@@ -77,7 +77,7 @@ public class NasEncryption {
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
         var encryptedData = encryptData(encAlg, count, cnId, plainNasMessage, encKey);
-        var mac = computeMac(intAlg, count, cnId, true, intKey, plainNasMessage);
+        var mac = computeMac(intAlg, count, cnId, true, intKey, encryptedData.toByteArray());
 
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = sht;
