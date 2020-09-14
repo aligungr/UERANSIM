@@ -92,7 +92,3 @@ sudo apt install g++
 **Q4. How to increase the number of UE and RANs?**
 
 In order to increase the number of UEs, you can change the `number-of-UE` value in `config/testing.yaml`. Multiple RAN feature is in progress now.
-
-**Q5. Are user plane functionalities supported?**
-
-Not yet, but in progress now. 
