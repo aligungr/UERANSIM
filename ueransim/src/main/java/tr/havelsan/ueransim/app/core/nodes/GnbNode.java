@@ -28,8 +28,8 @@ import tr.havelsan.ueransim.app.api.gnb.GNodeB;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.threads.NodeLooperThread;
 import tr.havelsan.ueransim.app.core.threads.SctpRecevierThread;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 public class GnbNode {
 
