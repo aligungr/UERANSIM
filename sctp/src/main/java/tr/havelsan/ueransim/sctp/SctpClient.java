@@ -34,7 +34,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 public class SctpClient implements ISctpClient {
-    private static final int RECEIVER_BUFFER_SIZE = 64000;
+    private static final int RECEIVER_BUFFER_SIZE = 65536;
 
     private final String host;
     private final int port;
