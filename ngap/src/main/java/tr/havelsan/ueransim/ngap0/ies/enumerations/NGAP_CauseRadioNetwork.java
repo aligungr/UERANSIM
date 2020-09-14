@@ -1,27 +1,3 @@
-/*
- * MIT License
- *
- * Copyright (c) 2020 ALİ GÜNGÖR
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package tr.havelsan.ueransim.ngap0.ies.enumerations;
 
 import tr.havelsan.ueransim.ngap0.core.*;
@@ -86,6 +62,9 @@ public class NGAP_CauseRadioNetwork extends NGAP_Enumerated {
     public static final NGAP_CauseRadioNetwork RESOURCES_NOT_AVAILABLE_FOR_THE_SLICE = new NGAP_CauseRadioNetwork("resources-not-available-for-the-slice");
     public static final NGAP_CauseRadioNetwork UE_MAX_INTEGRITY_PROTECTED_DATA_RATE_REASON = new NGAP_CauseRadioNetwork("ue-max-integrity-protected-data-rate-reason");
     public static final NGAP_CauseRadioNetwork RELEASE_DUE_TO_CN_DETECTED_MOBILITY = new NGAP_CauseRadioNetwork("release-due-to-cn-detected-mobility");
+    public static final NGAP_CauseRadioNetwork N26_INTERFACE_NOT_AVAILABLE = new NGAP_CauseRadioNetwork("n26-interface-not-available");
+    public static final NGAP_CauseRadioNetwork RELEASE_DUE_TO_PRE_EMPTION = new NGAP_CauseRadioNetwork("release-due-to-pre-emption");
+    public static final NGAP_CauseRadioNetwork MULTIPLE_LOCATION_REPORTING_REFERENCE_ID_INSTANCES = new NGAP_CauseRadioNetwork("multiple-location-reporting-reference-ID-instances");
 
     protected NGAP_CauseRadioNetwork(String sValue) {
         super(sValue);
