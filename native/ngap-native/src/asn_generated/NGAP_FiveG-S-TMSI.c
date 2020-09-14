@@ -39,7 +39,7 @@ asn_TYPE_member_t asn_MBR_NGAP_FiveG_S_TMSI_1[] = {
 	{ ATF_POINTER, 1, offsetof(struct NGAP_FiveG_S_TMSI, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (3 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P52,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P56,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

@@ -21,8 +21,8 @@ extern "C" {
 /* Forward declarations */
 struct NGAP_UPTransportLayerInformation;
 struct NGAP_QosFlowAddOrModifyResponseList;
-struct NGAP_QosFlowPerTNLInformation;
-struct NGAP_QosFlowList;
+struct NGAP_QosFlowPerTNLInformationList;
+struct NGAP_QosFlowListWithCause;
 struct NGAP_ProtocolExtensionContainer;
 
 /* NGAP_PDUSessionResourceModifyResponseTransfer */
@@ -30,8 +30,8 @@ typedef struct NGAP_PDUSessionResourceModifyResponseTransfer {
 	struct NGAP_UPTransportLayerInformation	*dL_NGU_UP_TNLInformation;	/* OPTIONAL */
 	struct NGAP_UPTransportLayerInformation	*uL_NGU_UP_TNLInformation;	/* OPTIONAL */
 	struct NGAP_QosFlowAddOrModifyResponseList	*qosFlowAddOrModifyResponseList;	/* OPTIONAL */
-	struct NGAP_QosFlowPerTNLInformation	*additionalQosFlowPerTNLInformation;	/* OPTIONAL */
-	struct NGAP_QosFlowList	*qosFlowFailedToAddOrModifyList;	/* OPTIONAL */
+	struct NGAP_QosFlowPerTNLInformationList	*additionalDLQosFlowPerTNLInformation;	/* OPTIONAL */
+	struct NGAP_QosFlowListWithCause	*qosFlowFailedToAddOrModifyList;	/* OPTIONAL */
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

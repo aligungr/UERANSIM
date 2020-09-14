@@ -26,7 +26,8 @@ static const asn_INTEGER_enum_map_t asn_MAP_NGAP_RRCEstablishmentCause_value2enu
 	{ 6,	12,	"mo-VideoCall" },
 	{ 7,	6,	"mo-SMS" },
 	{ 8,	18,	"mps-PriorityAccess" },
-	{ 9,	18,	"mcs-PriorityAccess" }
+	{ 9,	18,	"mcs-PriorityAccess" },
+	{ 10,	12,	"notAvailable" }
 	/* This list is extensible */
 };
 static const unsigned int asn_MAP_NGAP_RRCEstablishmentCause_enum2value_1[] = {
@@ -39,13 +40,14 @@ static const unsigned int asn_MAP_NGAP_RRCEstablishmentCause_enum2value_1[] = {
 	6,	/* mo-VideoCall(6) */
 	5,	/* mo-VoiceCall(5) */
 	8,	/* mps-PriorityAccess(8) */
-	2	/* mt-Access(2) */
+	2,	/* mt-Access(2) */
+	10	/* notAvailable(10) */
 	/* This list is extensible */
 };
 const asn_INTEGER_specifics_t asn_SPC_NGAP_RRCEstablishmentCause_specs_1 = {
 	asn_MAP_NGAP_RRCEstablishmentCause_value2enum_1,	/* "tag" => N; sorted by tag */
 	asn_MAP_NGAP_RRCEstablishmentCause_enum2value_1,	/* N => "tag"; sorted by N */
-	10,	/* Number of elements in the maps */
+	11,	/* Number of elements in the maps */
 	11,	/* Extensions before this member */
 	1,	/* Strict enumeration */
 	0,	/* Native long size */

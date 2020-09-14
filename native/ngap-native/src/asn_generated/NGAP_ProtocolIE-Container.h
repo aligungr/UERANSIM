@@ -99,6 +99,7 @@ struct NGAP_UETNLABindingReleaseRequestIEs;
 struct NGAP_UERadioCapabilityInfoIndicationIEs;
 struct NGAP_UERadioCapabilityCheckRequestIEs;
 struct NGAP_UERadioCapabilityCheckResponseIEs;
+struct NGAP_SecondaryRATDataUsageReportIEs;
 
 /* NGAP_ProtocolIE-Container */
 typedef struct NGAP_ProtocolIE_Container_125P0 {
@@ -575,6 +576,12 @@ typedef struct NGAP_ProtocolIE_Container_125P78 {
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } NGAP_ProtocolIE_Container_125P78_t;
+typedef struct NGAP_ProtocolIE_Container_125P79 {
+	A_SEQUENCE_OF(struct NGAP_SecondaryRATDataUsageReportIEs) list;
+	
+	/* Context for parsing across buffer boundaries */
+	asn_struct_ctx_t _asn_ctx;
+} NGAP_ProtocolIE_Container_125P79_t;
 
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_Container_125P0;
@@ -893,6 +900,10 @@ extern asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_Container_125P78;
 extern asn_SET_OF_specifics_t asn_SPC_NGAP_ProtocolIE_Container_125P78_specs_157;
 extern asn_TYPE_member_t asn_MBR_NGAP_ProtocolIE_Container_125P78_157[1];
 extern asn_per_constraints_t asn_PER_type_NGAP_ProtocolIE_Container_125P78_constr_157;
+extern asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_Container_125P79;
+extern asn_SET_OF_specifics_t asn_SPC_NGAP_ProtocolIE_Container_125P79_specs_159;
+extern asn_TYPE_member_t asn_MBR_NGAP_ProtocolIE_Container_125P79_159[1];
+extern asn_per_constraints_t asn_PER_type_NGAP_ProtocolIE_Container_125P79_constr_159;
 
 #ifdef __cplusplus
 }

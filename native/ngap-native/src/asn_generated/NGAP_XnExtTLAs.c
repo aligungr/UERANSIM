@@ -10,7 +10,7 @@
 #include "NGAP_XnExtTLA-Item.h"
 asn_per_constraints_t asn_PER_type_NGAP_XnExtTLAs_constr_1 CC_NOTUSED = {
 	{ APC_UNCONSTRAINED,	-1, -1,  0,  0 },
-	{ APC_CONSTRAINED,	 1,  1,  1,  2 }	/* (SIZE(1..2)) */,
+	{ APC_CONSTRAINED,	 4,  4,  1,  16 }	/* (SIZE(1..16)) */,
 	0, 0	/* No PER value map */
 };
 asn_TYPE_member_t asn_MBR_NGAP_XnExtTLAs_1[] = {

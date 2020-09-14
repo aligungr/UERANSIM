@@ -20,13 +20,13 @@ extern "C" {
 
 /* Forward declarations */
 struct NGAP_QosFlowNotifyList;
-struct NGAP_QosFlowList;
+struct NGAP_QosFlowListWithCause;
 struct NGAP_ProtocolExtensionContainer;
 
 /* NGAP_PDUSessionResourceNotifyTransfer */
 typedef struct NGAP_PDUSessionResourceNotifyTransfer {
 	struct NGAP_QosFlowNotifyList	*qosFlowNotifyList;	/* OPTIONAL */
-	struct NGAP_QosFlowList	*qosFlowReleasedList;	/* OPTIONAL */
+	struct NGAP_QosFlowListWithCause	*qosFlowReleasedList;	/* OPTIONAL */
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

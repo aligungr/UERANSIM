@@ -7,28 +7,28 @@
 
 #include "NGAP_PDUSessionResourceSetupResponseTransfer.h"
 
-#include "NGAP_QosFlowPerTNLInformation.h"
+#include "NGAP_QosFlowPerTNLInformationList.h"
 #include "NGAP_SecurityResult.h"
-#include "NGAP_QosFlowList.h"
+#include "NGAP_QosFlowListWithCause.h"
 #include "NGAP_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceSetupResponseTransfer_1[] = {
-	{ ATF_NOFLAGS, 0, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, qosFlowPerTNLInformation),
+	{ ATF_NOFLAGS, 0, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, dLQosFlowPerTNLInformation),
 		(ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		-1,	/* IMPLICIT tag at current level */
 		&asn_DEF_NGAP_QosFlowPerTNLInformation,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
-		"qosFlowPerTNLInformation"
+		"dLQosFlowPerTNLInformation"
 		},
-	{ ATF_POINTER, 4, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, additionalQosFlowPerTNLInformation),
+	{ ATF_POINTER, 4, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, additionalDLQosFlowPerTNLInformation),
 		(ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_QosFlowPerTNLInformation,
+		&asn_DEF_NGAP_QosFlowPerTNLInformationList,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
-		"additionalQosFlowPerTNLInformation"
+		"additionalDLQosFlowPerTNLInformation"
 		},
 	{ ATF_POINTER, 3, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, securityResult),
 		(ASN_TAG_CLASS_CONTEXT | (2 << 2)),
@@ -42,7 +42,7 @@ static asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceSetupResponseTransfer_1[
 	{ ATF_POINTER, 2, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, qosFlowFailedToSetupList),
 		(ASN_TAG_CLASS_CONTEXT | (3 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_QosFlowList,
+		&asn_DEF_NGAP_QosFlowListWithCause,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
@@ -51,7 +51,7 @@ static asn_TYPE_member_t asn_MBR_NGAP_PDUSessionResourceSetupResponseTransfer_1[
 	{ ATF_POINTER, 1, offsetof(struct NGAP_PDUSessionResourceSetupResponseTransfer, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (4 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P117,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P122,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */
@@ -63,8 +63,8 @@ static const ber_tlv_tag_t asn_DEF_NGAP_PDUSessionResourceSetupResponseTransfer_
 	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
 };
 static const asn_TYPE_tag2member_t asn_MAP_NGAP_PDUSessionResourceSetupResponseTransfer_tag2el_1[] = {
-    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* qosFlowPerTNLInformation */
-    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* additionalQosFlowPerTNLInformation */
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* dLQosFlowPerTNLInformation */
+    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* additionalDLQosFlowPerTNLInformation */
     { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 }, /* securityResult */
     { (ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0 }, /* qosFlowFailedToSetupList */
     { (ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0, 0 } /* iE-Extensions */

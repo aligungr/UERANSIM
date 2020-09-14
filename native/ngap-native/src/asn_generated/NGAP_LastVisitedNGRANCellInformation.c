@@ -58,7 +58,7 @@ asn_TYPE_member_t asn_MBR_NGAP_LastVisitedNGRANCellInformation_1[] = {
 	{ ATF_POINTER, 1, offsetof(struct NGAP_LastVisitedNGRANCellInformation, iE_Extensions),
 		(ASN_TAG_CLASS_CONTEXT | (5 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_NGAP_ProtocolExtensionContainer_176P67,
+		&asn_DEF_NGAP_ProtocolExtensionContainer_176P71,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

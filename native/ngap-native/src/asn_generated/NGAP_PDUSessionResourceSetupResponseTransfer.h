@@ -20,17 +20,17 @@ extern "C" {
 #endif
 
 /* Forward declarations */
-struct NGAP_QosFlowPerTNLInformation;
+struct NGAP_QosFlowPerTNLInformationList;
 struct NGAP_SecurityResult;
-struct NGAP_QosFlowList;
+struct NGAP_QosFlowListWithCause;
 struct NGAP_ProtocolExtensionContainer;
 
 /* NGAP_PDUSessionResourceSetupResponseTransfer */
 typedef struct NGAP_PDUSessionResourceSetupResponseTransfer {
-	NGAP_QosFlowPerTNLInformation_t	 qosFlowPerTNLInformation;
-	struct NGAP_QosFlowPerTNLInformation	*additionalQosFlowPerTNLInformation;	/* OPTIONAL */
+	NGAP_QosFlowPerTNLInformation_t	 dLQosFlowPerTNLInformation;
+	struct NGAP_QosFlowPerTNLInformationList	*additionalDLQosFlowPerTNLInformation;	/* OPTIONAL */
 	struct NGAP_SecurityResult	*securityResult;	/* OPTIONAL */
-	struct NGAP_QosFlowList	*qosFlowFailedToSetupList;	/* OPTIONAL */
+	struct NGAP_QosFlowListWithCause	*qosFlowFailedToSetupList;	/* OPTIONAL */
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

@@ -17,6 +17,8 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_ProtocolExtensionField.c	\
 	ngap/NGAP_PrivateIE-Container.c	\
 	ngap/NGAP_PrivateIE-Field.c	\
+	ngap/NGAP_AdditionalDLUPTNLInformationForHOList.c	\
+	ngap/NGAP_AdditionalDLUPTNLInformationForHOItem.c	\
 	ngap/NGAP_AdditionalQosFlowInformation.c	\
 	ngap/NGAP_AllocationAndRetentionPriority.c	\
 	ngap/NGAP_AllowedNSSAI.c	\
@@ -81,6 +83,11 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_CellIDListForRestart.c	\
 	ngap/NGAP_CellSize.c	\
 	ngap/NGAP_CellType.c	\
+	ngap/NGAP_CNAssistedRANTuning.c	\
+	ngap/NGAP_CNTypeRestrictionsForEquivalent.c	\
+	ngap/NGAP_CNTypeRestrictionsForEquivalentItem.c	\
+	ngap/NGAP_CNTypeRestrictionsForServing.c	\
+	ngap/NGAP_CommonNetworkInstance.c	\
 	ngap/NGAP_CompletedCellsInEAI-EUTRA.c	\
 	ngap/NGAP_CompletedCellsInEAI-EUTRA-Item.c	\
 	ngap/NGAP_CompletedCellsInEAI-NR.c	\
@@ -92,7 +99,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_ConcurrentWarningMessageInd.c	\
 	ngap/NGAP_ConfidentialityProtectionIndication.c	\
 	ngap/NGAP_ConfidentialityProtectionResult.c	\
-	ngap/NGAP_CoreNetworkAssistanceInformation.c	\
+	ngap/NGAP_CoreNetworkAssistanceInformationForInactive.c	\
 	ngap/NGAP_COUNTValueForPDCP-SN12.c	\
 	ngap/NGAP_COUNTValueForPDCP-SN18.c	\
 	ngap/NGAP_CPTransportLayerInformation.c	\
@@ -134,6 +141,8 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_EmergencyFallbackIndicator.c	\
 	ngap/NGAP_EmergencyFallbackRequestIndicator.c	\
 	ngap/NGAP_EmergencyServiceTargetCN.c	\
+	ngap/NGAP_EN-DCSONConfigurationTransfer.c	\
+	ngap/NGAP_EndpointIPAddressAndPort.c	\
 	ngap/NGAP_EquivalentPLMNs.c	\
 	ngap/NGAP_EPS-TAC.c	\
 	ngap/NGAP_EPS-TAI.c	\
@@ -171,6 +180,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_GTPTunnel.c	\
 	ngap/NGAP_GUAMI.c	\
 	ngap/NGAP_HandoverCommandTransfer.c	\
+	ngap/NGAP_HandoverFlag.c	\
 	ngap/NGAP_HandoverPreparationUnsuccessfulTransfer.c	\
 	ngap/NGAP_HandoverRequestAcknowledgeTransfer.c	\
 	ngap/NGAP_HandoverRequiredTransfer.c	\
@@ -189,6 +199,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_LastVisitedGERANCellInformation.c	\
 	ngap/NGAP_LastVisitedNGRANCellInformation.c	\
 	ngap/NGAP_LastVisitedUTRANCellInformation.c	\
+	ngap/NGAP_LocationReportingAdditionalInfo.c	\
 	ngap/NGAP_LocationReportingReferenceID.c	\
 	ngap/NGAP_LocationReportingRequestType.c	\
 	ngap/NGAP_MaskedIMEISV.c	\
@@ -197,7 +208,6 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_MaximumIntegrityProtectedDataRate.c	\
 	ngap/NGAP_MICOModeIndication.c	\
 	ngap/NGAP_MobilityRestrictionList.c	\
-	ngap/NGAP_MultipleTNLInformation.c	\
 	ngap/NGAP_N3IWF-ID.c	\
 	ngap/NGAP_NAS-PDU.c	\
 	ngap/NGAP_NASSecurityParametersFromNGRAN.c	\
@@ -207,6 +217,8 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_NextPagingAreaScope.c	\
 	ngap/NGAP_NgENB-ID.c	\
 	ngap/NGAP_NGRAN-CGI.c	\
+	ngap/NGAP_NGRAN-TNLAssociationToRemoveList.c	\
+	ngap/NGAP_NGRAN-TNLAssociationToRemoveItem.c	\
 	ngap/NGAP_NGRANTraceID.c	\
 	ngap/NGAP_NonDynamic5QIDescriptor.c	\
 	ngap/NGAP_NotAllowedTACs.c	\
@@ -261,6 +273,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_PDUSessionResourceInformationItem.c	\
 	ngap/NGAP_PDUSessionResourceListCxtRelCpl.c	\
 	ngap/NGAP_PDUSessionResourceItemCxtRelCpl.c	\
+	ngap/NGAP_PDUSessionResourceReleaseResponseTransfer-OCTET-STRING.c	\
 	ngap/NGAP_PDUSessionResourceListCxtRelReq.c	\
 	ngap/NGAP_PDUSessionResourceItemCxtRelReq.c	\
 	ngap/NGAP_PDUSessionResourceListHORqd.c	\
@@ -293,6 +306,8 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_PDUSessionResourceReleasedListRelRes.c	\
 	ngap/NGAP_PDUSessionResourceReleasedItemRelRes.c	\
 	ngap/NGAP_PDUSessionResourceReleaseResponseTransfer.c	\
+	ngap/NGAP_PDUSessionResourceSecondaryRATUsageList.c	\
+	ngap/NGAP_PDUSessionResourceSecondaryRATUsageItem.c	\
 	ngap/NGAP_PDUSessionResourceSetupListCxtReq.c	\
 	ngap/NGAP_PDUSessionResourceSetupItemCxtReq.c	\
 	ngap/NGAP_PDUSessionResourceSetupListCxtRes.c	\
@@ -315,6 +330,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_PDUSessionResourceToReleaseListRelCmd.c	\
 	ngap/NGAP_PDUSessionResourceToReleaseItemRelCmd.c	\
 	ngap/NGAP_PDUSessionType.c	\
+	ngap/NGAP_PDUSessionUsageReport.c	\
 	ngap/NGAP_PeriodicRegistrationUpdateTimer.c	\
 	ngap/NGAP_PLMNIdentity.c	\
 	ngap/NGAP_PLMNSupportList.c	\
@@ -336,21 +352,25 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_QosFlowInformationList.c	\
 	ngap/NGAP_QosFlowInformationItem.c	\
 	ngap/NGAP_QosFlowLevelQosParameters.c	\
-	ngap/NGAP_QosFlowList.c	\
-	ngap/NGAP_QosFlowItem.c	\
+	ngap/NGAP_QosFlowListWithCause.c	\
+	ngap/NGAP_QosFlowWithCauseItem.c	\
 	ngap/NGAP_QosFlowModifyConfirmList.c	\
 	ngap/NGAP_QosFlowModifyConfirmItem.c	\
 	ngap/NGAP_QosFlowNotifyList.c	\
 	ngap/NGAP_QosFlowNotifyItem.c	\
 	ngap/NGAP_QosFlowPerTNLInformation.c	\
+	ngap/NGAP_QosFlowPerTNLInformationList.c	\
+	ngap/NGAP_QosFlowPerTNLInformationItem.c	\
 	ngap/NGAP_QosFlowSetupRequestList.c	\
 	ngap/NGAP_QosFlowSetupRequestItem.c	\
-	ngap/NGAP_QosFlowSetupResponseListHOReqAck.c	\
-	ngap/NGAP_QosFlowSetupResponseItemHOReqAck.c	\
+	ngap/NGAP_QosFlowListWithDataForwarding.c	\
+	ngap/NGAP_QosFlowItemWithDataForwarding.c	\
 	ngap/NGAP_QosFlowSetupResponseListSURes.c	\
 	ngap/NGAP_QosFlowSetupResponseItemSURes.c	\
 	ngap/NGAP_QosFlowToBeForwardedList.c	\
 	ngap/NGAP_QosFlowToBeForwardedItem.c	\
+	ngap/NGAP_QoSFlowsUsageReportList.c	\
+	ngap/NGAP_QoSFlowsUsageReport-Item.c	\
 	ngap/NGAP_RANNodeName.c	\
 	ngap/NGAP_RANPagingPriority.c	\
 	ngap/NGAP_RANStatusTransfer-TransparentContainer.c	\
@@ -364,6 +384,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_RecommendedRANNodesForPaging.c	\
 	ngap/NGAP_RecommendedRANNodeList.c	\
 	ngap/NGAP_RecommendedRANNodeItem.c	\
+	ngap/NGAP_RedirectionVoiceFallback.c	\
 	ngap/NGAP_ReflectiveQosAttribute.c	\
 	ngap/NGAP_ReferenceID.c	\
 	ngap/NGAP_RelativeAMFCapacity.c	\
@@ -376,7 +397,10 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_RRCEstablishmentCause.c	\
 	ngap/NGAP_RRCInactiveTransitionReportRequest.c	\
 	ngap/NGAP_RRCState.c	\
+	ngap/NGAP_SCTP-TLAs.c	\
 	ngap/NGAP_SD.c	\
+	ngap/NGAP_SecondaryRATUsageInformation.c	\
+	ngap/NGAP_SecondaryRATDataUsageReportTransfer.c	\
 	ngap/NGAP_SecurityContext.c	\
 	ngap/NGAP_SecurityIndication.c	\
 	ngap/NGAP_SecurityKey.c	\
@@ -386,7 +410,6 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_ServedGUAMIItem.c	\
 	ngap/NGAP_ServiceAreaInformation.c	\
 	ngap/NGAP_ServiceAreaInformation-Item.c	\
-	ngap/NGAP_SingleTNLInformation.c	\
 	ngap/NGAP_SliceOverloadList.c	\
 	ngap/NGAP_SliceOverloadItem.c	\
 	ngap/NGAP_SliceSupportList.c	\
@@ -400,6 +423,10 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_SourceOfUEActivityBehaviourInformation.c	\
 	ngap/NGAP_SourceRANNodeID.c	\
 	ngap/NGAP_SourceToTarget-TransparentContainer.c	\
+	ngap/NGAP_SourceToTarget-AMFInformationReroute.c	\
+	ngap/NGAP_ConfiguredNSSAI.c	\
+	ngap/NGAP_RejectedNSSAIinPLMN.c	\
+	ngap/NGAP_RejectedNSSAIinTA.c	\
 	ngap/NGAP_SST.c	\
 	ngap/NGAP_SupportedTAList.c	\
 	ngap/NGAP_SupportedTAItem.c	\
@@ -433,10 +460,6 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_TNLAssociationList.c	\
 	ngap/NGAP_TNLAssociationItem.c	\
 	ngap/NGAP_TNLAssociationUsage.c	\
-	ngap/NGAP_TNLInformationList.c	\
-	ngap/NGAP_TNLInformationItem.c	\
-	ngap/NGAP_TNLMappingList.c	\
-	ngap/NGAP_TNLMappingItem.c	\
 	ngap/NGAP_TraceActivation.c	\
 	ngap/NGAP_TraceDepth.c	\
 	ngap/NGAP_TrafficLoadReductionIndication.c	\
@@ -458,18 +481,25 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_UERadioCapabilityForPaging.c	\
 	ngap/NGAP_UERadioCapabilityForPagingOfNR.c	\
 	ngap/NGAP_UERadioCapabilityForPagingOfEUTRA.c	\
+	ngap/NGAP_UERetentionInformation.c	\
 	ngap/NGAP_UESecurityCapabilities.c	\
 	ngap/NGAP_UL-NGU-UP-TNLModifyList.c	\
 	ngap/NGAP_UL-NGU-UP-TNLModifyItem.c	\
 	ngap/NGAP_UnavailableGUAMIList.c	\
 	ngap/NGAP_UnavailableGUAMIItem.c	\
-	ngap/NGAP_UP-TNLInformation.c	\
+	ngap/NGAP_ULForwarding.c	\
 	ngap/NGAP_UPTransportLayerInformation.c	\
+	ngap/NGAP_UPTransportLayerInformationList.c	\
+	ngap/NGAP_UPTransportLayerInformationItem.c	\
+	ngap/NGAP_UPTransportLayerInformationPairList.c	\
+	ngap/NGAP_UPTransportLayerInformationPairItem.c	\
 	ngap/NGAP_UserLocationInformation.c	\
 	ngap/NGAP_UserLocationInformationEUTRA.c	\
 	ngap/NGAP_UserLocationInformationN3IWF.c	\
 	ngap/NGAP_UserLocationInformationNR.c	\
 	ngap/NGAP_UserPlaneSecurityInformation.c	\
+	ngap/NGAP_VolumeTimedReportList.c	\
+	ngap/NGAP_VolumeTimedReport-Item.c	\
 	ngap/NGAP_WarningAreaCoordinates.c	\
 	ngap/NGAP_WarningAreaList.c	\
 	ngap/NGAP_WarningMessageContents.c	\
@@ -559,6 +589,7 @@ ASN_MODULE_SRCS=	\
 	ngap/NGAP_UERadioCapabilityCheckRequest.c	\
 	ngap/NGAP_UERadioCapabilityCheckResponse.c	\
 	ngap/NGAP_PrivateMessage.c	\
+	ngap/NGAP_SecondaryRATDataUsageReport.c	\
 	ngap/NGAP_NGAP-PDU.c	\
 	ngap/NGAP_InitiatingMessage.c	\
 	ngap/NGAP_SuccessfulOutcome.c	\
@@ -583,6 +614,8 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_ProtocolExtensionField.h	\
 	ngap/NGAP_PrivateIE-Container.h	\
 	ngap/NGAP_PrivateIE-Field.h	\
+	ngap/NGAP_AdditionalDLUPTNLInformationForHOList.h	\
+	ngap/NGAP_AdditionalDLUPTNLInformationForHOItem.h	\
 	ngap/NGAP_AdditionalQosFlowInformation.h	\
 	ngap/NGAP_AllocationAndRetentionPriority.h	\
 	ngap/NGAP_AllowedNSSAI.h	\
@@ -647,6 +680,11 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_CellIDListForRestart.h	\
 	ngap/NGAP_CellSize.h	\
 	ngap/NGAP_CellType.h	\
+	ngap/NGAP_CNAssistedRANTuning.h	\
+	ngap/NGAP_CNTypeRestrictionsForEquivalent.h	\
+	ngap/NGAP_CNTypeRestrictionsForEquivalentItem.h	\
+	ngap/NGAP_CNTypeRestrictionsForServing.h	\
+	ngap/NGAP_CommonNetworkInstance.h	\
 	ngap/NGAP_CompletedCellsInEAI-EUTRA.h	\
 	ngap/NGAP_CompletedCellsInEAI-EUTRA-Item.h	\
 	ngap/NGAP_CompletedCellsInEAI-NR.h	\
@@ -658,7 +696,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_ConcurrentWarningMessageInd.h	\
 	ngap/NGAP_ConfidentialityProtectionIndication.h	\
 	ngap/NGAP_ConfidentialityProtectionResult.h	\
-	ngap/NGAP_CoreNetworkAssistanceInformation.h	\
+	ngap/NGAP_CoreNetworkAssistanceInformationForInactive.h	\
 	ngap/NGAP_COUNTValueForPDCP-SN12.h	\
 	ngap/NGAP_COUNTValueForPDCP-SN18.h	\
 	ngap/NGAP_CPTransportLayerInformation.h	\
@@ -700,6 +738,8 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_EmergencyFallbackIndicator.h	\
 	ngap/NGAP_EmergencyFallbackRequestIndicator.h	\
 	ngap/NGAP_EmergencyServiceTargetCN.h	\
+	ngap/NGAP_EN-DCSONConfigurationTransfer.h	\
+	ngap/NGAP_EndpointIPAddressAndPort.h	\
 	ngap/NGAP_EquivalentPLMNs.h	\
 	ngap/NGAP_EPS-TAC.h	\
 	ngap/NGAP_EPS-TAI.h	\
@@ -737,6 +777,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_GTPTunnel.h	\
 	ngap/NGAP_GUAMI.h	\
 	ngap/NGAP_HandoverCommandTransfer.h	\
+	ngap/NGAP_HandoverFlag.h	\
 	ngap/NGAP_HandoverPreparationUnsuccessfulTransfer.h	\
 	ngap/NGAP_HandoverRequestAcknowledgeTransfer.h	\
 	ngap/NGAP_HandoverRequiredTransfer.h	\
@@ -755,6 +796,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_LastVisitedGERANCellInformation.h	\
 	ngap/NGAP_LastVisitedNGRANCellInformation.h	\
 	ngap/NGAP_LastVisitedUTRANCellInformation.h	\
+	ngap/NGAP_LocationReportingAdditionalInfo.h	\
 	ngap/NGAP_LocationReportingReferenceID.h	\
 	ngap/NGAP_LocationReportingRequestType.h	\
 	ngap/NGAP_MaskedIMEISV.h	\
@@ -763,7 +805,6 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_MaximumIntegrityProtectedDataRate.h	\
 	ngap/NGAP_MICOModeIndication.h	\
 	ngap/NGAP_MobilityRestrictionList.h	\
-	ngap/NGAP_MultipleTNLInformation.h	\
 	ngap/NGAP_N3IWF-ID.h	\
 	ngap/NGAP_NAS-PDU.h	\
 	ngap/NGAP_NASSecurityParametersFromNGRAN.h	\
@@ -773,6 +814,8 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_NextPagingAreaScope.h	\
 	ngap/NGAP_NgENB-ID.h	\
 	ngap/NGAP_NGRAN-CGI.h	\
+	ngap/NGAP_NGRAN-TNLAssociationToRemoveList.h	\
+	ngap/NGAP_NGRAN-TNLAssociationToRemoveItem.h	\
 	ngap/NGAP_NGRANTraceID.h	\
 	ngap/NGAP_NonDynamic5QIDescriptor.h	\
 	ngap/NGAP_NotAllowedTACs.h	\
@@ -827,6 +870,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_PDUSessionResourceInformationItem.h	\
 	ngap/NGAP_PDUSessionResourceListCxtRelCpl.h	\
 	ngap/NGAP_PDUSessionResourceItemCxtRelCpl.h	\
+	ngap/NGAP_PDUSessionResourceReleaseResponseTransfer-OCTET-STRING.h	\
 	ngap/NGAP_PDUSessionResourceListCxtRelReq.h	\
 	ngap/NGAP_PDUSessionResourceItemCxtRelReq.h	\
 	ngap/NGAP_PDUSessionResourceListHORqd.h	\
@@ -859,6 +903,8 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_PDUSessionResourceReleasedListRelRes.h	\
 	ngap/NGAP_PDUSessionResourceReleasedItemRelRes.h	\
 	ngap/NGAP_PDUSessionResourceReleaseResponseTransfer.h	\
+	ngap/NGAP_PDUSessionResourceSecondaryRATUsageList.h	\
+	ngap/NGAP_PDUSessionResourceSecondaryRATUsageItem.h	\
 	ngap/NGAP_PDUSessionResourceSetupListCxtReq.h	\
 	ngap/NGAP_PDUSessionResourceSetupItemCxtReq.h	\
 	ngap/NGAP_PDUSessionResourceSetupListCxtRes.h	\
@@ -881,6 +927,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_PDUSessionResourceToReleaseListRelCmd.h	\
 	ngap/NGAP_PDUSessionResourceToReleaseItemRelCmd.h	\
 	ngap/NGAP_PDUSessionType.h	\
+	ngap/NGAP_PDUSessionUsageReport.h	\
 	ngap/NGAP_PeriodicRegistrationUpdateTimer.h	\
 	ngap/NGAP_PLMNIdentity.h	\
 	ngap/NGAP_PLMNSupportList.h	\
@@ -902,21 +949,25 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_QosFlowInformationList.h	\
 	ngap/NGAP_QosFlowInformationItem.h	\
 	ngap/NGAP_QosFlowLevelQosParameters.h	\
-	ngap/NGAP_QosFlowList.h	\
-	ngap/NGAP_QosFlowItem.h	\
+	ngap/NGAP_QosFlowListWithCause.h	\
+	ngap/NGAP_QosFlowWithCauseItem.h	\
 	ngap/NGAP_QosFlowModifyConfirmList.h	\
 	ngap/NGAP_QosFlowModifyConfirmItem.h	\
 	ngap/NGAP_QosFlowNotifyList.h	\
 	ngap/NGAP_QosFlowNotifyItem.h	\
 	ngap/NGAP_QosFlowPerTNLInformation.h	\
+	ngap/NGAP_QosFlowPerTNLInformationList.h	\
+	ngap/NGAP_QosFlowPerTNLInformationItem.h	\
 	ngap/NGAP_QosFlowSetupRequestList.h	\
 	ngap/NGAP_QosFlowSetupRequestItem.h	\
-	ngap/NGAP_QosFlowSetupResponseListHOReqAck.h	\
-	ngap/NGAP_QosFlowSetupResponseItemHOReqAck.h	\
+	ngap/NGAP_QosFlowListWithDataForwarding.h	\
+	ngap/NGAP_QosFlowItemWithDataForwarding.h	\
 	ngap/NGAP_QosFlowSetupResponseListSURes.h	\
 	ngap/NGAP_QosFlowSetupResponseItemSURes.h	\
 	ngap/NGAP_QosFlowToBeForwardedList.h	\
 	ngap/NGAP_QosFlowToBeForwardedItem.h	\
+	ngap/NGAP_QoSFlowsUsageReportList.h	\
+	ngap/NGAP_QoSFlowsUsageReport-Item.h	\
 	ngap/NGAP_RANNodeName.h	\
 	ngap/NGAP_RANPagingPriority.h	\
 	ngap/NGAP_RANStatusTransfer-TransparentContainer.h	\
@@ -930,6 +981,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_RecommendedRANNodesForPaging.h	\
 	ngap/NGAP_RecommendedRANNodeList.h	\
 	ngap/NGAP_RecommendedRANNodeItem.h	\
+	ngap/NGAP_RedirectionVoiceFallback.h	\
 	ngap/NGAP_ReflectiveQosAttribute.h	\
 	ngap/NGAP_ReferenceID.h	\
 	ngap/NGAP_RelativeAMFCapacity.h	\
@@ -942,7 +994,10 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_RRCEstablishmentCause.h	\
 	ngap/NGAP_RRCInactiveTransitionReportRequest.h	\
 	ngap/NGAP_RRCState.h	\
+	ngap/NGAP_SCTP-TLAs.h	\
 	ngap/NGAP_SD.h	\
+	ngap/NGAP_SecondaryRATUsageInformation.h	\
+	ngap/NGAP_SecondaryRATDataUsageReportTransfer.h	\
 	ngap/NGAP_SecurityContext.h	\
 	ngap/NGAP_SecurityIndication.h	\
 	ngap/NGAP_SecurityKey.h	\
@@ -952,7 +1007,6 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_ServedGUAMIItem.h	\
 	ngap/NGAP_ServiceAreaInformation.h	\
 	ngap/NGAP_ServiceAreaInformation-Item.h	\
-	ngap/NGAP_SingleTNLInformation.h	\
 	ngap/NGAP_SliceOverloadList.h	\
 	ngap/NGAP_SliceOverloadItem.h	\
 	ngap/NGAP_SliceSupportList.h	\
@@ -966,6 +1020,10 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_SourceOfUEActivityBehaviourInformation.h	\
 	ngap/NGAP_SourceRANNodeID.h	\
 	ngap/NGAP_SourceToTarget-TransparentContainer.h	\
+	ngap/NGAP_SourceToTarget-AMFInformationReroute.h	\
+	ngap/NGAP_ConfiguredNSSAI.h	\
+	ngap/NGAP_RejectedNSSAIinPLMN.h	\
+	ngap/NGAP_RejectedNSSAIinTA.h	\
 	ngap/NGAP_SST.h	\
 	ngap/NGAP_SupportedTAList.h	\
 	ngap/NGAP_SupportedTAItem.h	\
@@ -999,10 +1057,6 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_TNLAssociationList.h	\
 	ngap/NGAP_TNLAssociationItem.h	\
 	ngap/NGAP_TNLAssociationUsage.h	\
-	ngap/NGAP_TNLInformationList.h	\
-	ngap/NGAP_TNLInformationItem.h	\
-	ngap/NGAP_TNLMappingList.h	\
-	ngap/NGAP_TNLMappingItem.h	\
 	ngap/NGAP_TraceActivation.h	\
 	ngap/NGAP_TraceDepth.h	\
 	ngap/NGAP_TrafficLoadReductionIndication.h	\
@@ -1024,18 +1078,25 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_UERadioCapabilityForPaging.h	\
 	ngap/NGAP_UERadioCapabilityForPagingOfNR.h	\
 	ngap/NGAP_UERadioCapabilityForPagingOfEUTRA.h	\
+	ngap/NGAP_UERetentionInformation.h	\
 	ngap/NGAP_UESecurityCapabilities.h	\
 	ngap/NGAP_UL-NGU-UP-TNLModifyList.h	\
 	ngap/NGAP_UL-NGU-UP-TNLModifyItem.h	\
 	ngap/NGAP_UnavailableGUAMIList.h	\
 	ngap/NGAP_UnavailableGUAMIItem.h	\
-	ngap/NGAP_UP-TNLInformation.h	\
+	ngap/NGAP_ULForwarding.h	\
 	ngap/NGAP_UPTransportLayerInformation.h	\
+	ngap/NGAP_UPTransportLayerInformationList.h	\
+	ngap/NGAP_UPTransportLayerInformationItem.h	\
+	ngap/NGAP_UPTransportLayerInformationPairList.h	\
+	ngap/NGAP_UPTransportLayerInformationPairItem.h	\
 	ngap/NGAP_UserLocationInformation.h	\
 	ngap/NGAP_UserLocationInformationEUTRA.h	\
 	ngap/NGAP_UserLocationInformationN3IWF.h	\
 	ngap/NGAP_UserLocationInformationNR.h	\
 	ngap/NGAP_UserPlaneSecurityInformation.h	\
+	ngap/NGAP_VolumeTimedReportList.h	\
+	ngap/NGAP_VolumeTimedReport-Item.h	\
 	ngap/NGAP_WarningAreaCoordinates.h	\
 	ngap/NGAP_WarningAreaList.h	\
 	ngap/NGAP_WarningMessageContents.h	\
@@ -1125,6 +1186,7 @@ ASN_MODULE_HDRS=	\
 	ngap/NGAP_UERadioCapabilityCheckRequest.h	\
 	ngap/NGAP_UERadioCapabilityCheckResponse.h	\
 	ngap/NGAP_PrivateMessage.h	\
+	ngap/NGAP_SecondaryRATDataUsageReport.h	\
 	ngap/NGAP_NGAP-PDU.h	\
 	ngap/NGAP_InitiatingMessage.h	\
 	ngap/NGAP_SuccessfulOutcome.h	\

@@ -12,6 +12,7 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include "NGAP_QosFlowPerTNLInformation.h"
 #include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
@@ -19,12 +20,13 @@ extern "C" {
 #endif
 
 /* Forward declarations */
-struct NGAP_UP_TNLInformation;
+struct NGAP_QosFlowPerTNLInformationList;
 struct NGAP_ProtocolExtensionContainer;
 
 /* NGAP_PDUSessionResourceModifyIndicationTransfer */
 typedef struct NGAP_PDUSessionResourceModifyIndicationTransfer {
-	struct NGAP_UP_TNLInformation	*dL_UP_TNLInformation;	/* OPTIONAL */
+	NGAP_QosFlowPerTNLInformation_t	 dLQosFlowPerTNLInformation;
+	struct NGAP_QosFlowPerTNLInformationList	*additionalDLQosFlowPerTNLInformation;	/* OPTIONAL */
 	struct NGAP_ProtocolExtensionContainer	*iE_Extensions;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

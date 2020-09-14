@@ -87,6 +87,7 @@ per_type_encoder_f NGAP_ProcedureCode_encode_aper;
 #define NGAP_ProcedureCode_id_UplinkRANStatusTransfer	((NGAP_ProcedureCode_t)49)
 #define NGAP_ProcedureCode_id_UplinkUEAssociatedNRPPaTransport	((NGAP_ProcedureCode_t)50)
 #define NGAP_ProcedureCode_id_WriteReplaceWarning	((NGAP_ProcedureCode_t)51)
+#define NGAP_ProcedureCode_id_SecondaryRATDataUsageReport	((NGAP_ProcedureCode_t)52)
 
 #ifdef __cplusplus
 }

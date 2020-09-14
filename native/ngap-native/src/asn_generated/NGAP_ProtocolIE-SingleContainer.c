@@ -100,10 +100,6 @@
  * so here we adjust the DEF accordingly.
  */
 /*
- * This type is implemented using NGAP_UP_TNLInformation_ExtIEs,
- * so here we adjust the DEF accordingly.
- */
-/*
  * This type is implemented using NGAP_UPTransportLayerInformation_ExtIEs,
  * so here we adjust the DEF accordingly.
  */
@@ -566,9 +562,9 @@ asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P23 = {
 	sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P23_tags_24)
 		/sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P23_tags_24[0]), /* 1 */
 	{ 0, 0, SEQUENCE_constraint },
-	asn_MBR_NGAP_UP_TNLInformation_ExtIEs_93,
+	asn_MBR_NGAP_UPTransportLayerInformation_ExtIEs_93,
 	3,	/* Elements count */
-	&asn_SPC_NGAP_UP_TNLInformation_ExtIEs_specs_93	/* Additional specs */
+	&asn_SPC_NGAP_UPTransportLayerInformation_ExtIEs_specs_93	/* Additional specs */
 };
 
 static const ber_tlv_tag_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P24_tags_25[] = {
@@ -585,9 +581,9 @@ asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P24 = {
 	sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P24_tags_25)
 		/sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P24_tags_25[0]), /* 1 */
 	{ 0, 0, SEQUENCE_constraint },
-	asn_MBR_NGAP_UPTransportLayerInformation_ExtIEs_97,
+	asn_MBR_NGAP_UserLocationInformation_ExtIEs_97,
 	3,	/* Elements count */
-	&asn_SPC_NGAP_UPTransportLayerInformation_ExtIEs_specs_97	/* Additional specs */
+	&asn_SPC_NGAP_UserLocationInformation_ExtIEs_specs_97	/* Additional specs */
 };
 
 static const ber_tlv_tag_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P25_tags_26[] = {
@@ -604,27 +600,8 @@ asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P25 = {
 	sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P25_tags_26)
 		/sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P25_tags_26[0]), /* 1 */
 	{ 0, 0, SEQUENCE_constraint },
-	asn_MBR_NGAP_UserLocationInformation_ExtIEs_101,
+	asn_MBR_NGAP_WarningAreaList_ExtIEs_101,
 	3,	/* Elements count */
-	&asn_SPC_NGAP_UserLocationInformation_ExtIEs_specs_101	/* Additional specs */
-};
-
-static const ber_tlv_tag_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27[] = {
-	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
-};
-asn_TYPE_descriptor_t asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26 = {
-	"ProtocolIE-SingleContainer",
-	"ProtocolIE-SingleContainer",
-	&asn_OP_SEQUENCE,
-	asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27,
-	sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27)
-		/sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27[0]), /* 1 */
-	asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27,	/* Same as above */
-	sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27)
-		/sizeof(asn_DEF_NGAP_ProtocolIE_SingleContainer_128P26_tags_27[0]), /* 1 */
-	{ 0, 0, SEQUENCE_constraint },
-	asn_MBR_NGAP_WarningAreaList_ExtIEs_105,
-	3,	/* Elements count */
-	&asn_SPC_NGAP_WarningAreaList_ExtIEs_specs_105	/* Additional specs */
+	&asn_SPC_NGAP_WarningAreaList_ExtIEs_specs_101	/* Additional specs */
 };
 
