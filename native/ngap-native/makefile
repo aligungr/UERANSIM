@@ -1,7 +1,7 @@
 BASE_FLAGS = -Wall -O2 -fPIC -DASN_DISABLE_OER_SUPPORT
 
 libngap-native.so: libngap-generated.a libngap-basis.a
-	g++ -shared $(BASE_FLAGS) -o libngap-native.so -Wl,--whole-archive libngap-basis.a -Wl,--no-whole-archive libngap-generated.a
+	g++ -std=c++14 -shared $(BASE_FLAGS) -o libngap-native.so -Wl,--whole-archive libngap-basis.a -Wl,--no-whole-archive libngap-generated.a
 
 libngap-generated.a: $(wildcard src/asn_generated/*.c) $(wildcard src/asn_generated/*.h)
 	cd src/asn_generated && gcc -c $(BASE_FLAGS) -I. *.c
