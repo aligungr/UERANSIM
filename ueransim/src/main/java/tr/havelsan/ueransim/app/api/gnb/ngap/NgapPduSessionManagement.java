@@ -37,7 +37,6 @@ import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_TransportLayerAddress;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UPTransportLayerInformation;
-import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UP_TNLInformation;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_DataForwardingNotPossible;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PDUSessionType;
@@ -81,9 +80,6 @@ public class NgapPduSessionManagement {
                 if (value instanceof NGAP_PDUSessionAggregateMaximumBitRate) {
                     resource.aggregateMaximumBitRate = (NGAP_PDUSessionAggregateMaximumBitRate) value;
                 }
-                if (value instanceof NGAP_UP_TNLInformation) {
-                    resource.tnlInfo = (NGAP_UP_TNLInformation) value;
-                }
                 if (value instanceof NGAP_DataForwardingNotPossible) {
                     resource.dataForwardingNotPossible = (NGAP_DataForwardingNotPossible) value;
                 }
@@ -107,20 +103,20 @@ public class NgapPduSessionManagement {
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
-                tr.qosFlowPerTNLInformation = new NGAP_QosFlowPerTNLInformation();
-                tr.qosFlowPerTNLInformation.associatedQosFlowList = new NGAP_AssociatedQosFlowList();
+                tr.dLQosFlowPerTNLInformation = new NGAP_QosFlowPerTNLInformation();
+                tr.dLQosFlowPerTNLInformation.associatedQosFlowList = new NGAP_AssociatedQosFlowList();
 
                 for (var qosFlow : resource.qosFlows) {
                     var associatedQosFlowItem = new NGAP_AssociatedQosFlowItem();
                     associatedQosFlowItem.qosFlowIdentifier = qosFlow.qosFlowIdentifier;
 
-                    tr.qosFlowPerTNLInformation.associatedQosFlowList.list.add(associatedQosFlowItem);
+                    tr.dLQosFlowPerTNLInformation.associatedQosFlowList.list.add(associatedQosFlowItem);
                 }
 
-                tr.qosFlowPerTNLInformation.uPTransportLayerInformation = new NGAP_UPTransportLayerInformation();
-                tr.qosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel = new NGAP_GTPTunnel();
-                tr.qosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID("00000001"); // TODO
-                tr.qosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
+                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation = new NGAP_UPTransportLayerInformation();
+                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel = new NGAP_GTPTunnel();
+                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID("00000001"); // TODO
+                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
 
                 var res = new NGAP_PDUSessionResourceSetupItemSURes();
                 res.pDUSessionID = item.pDUSessionID;
