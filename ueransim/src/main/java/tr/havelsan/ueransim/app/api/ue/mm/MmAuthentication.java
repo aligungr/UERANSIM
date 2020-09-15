@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.app.api.ue.mm;
 import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
-import tr.havelsan.ueransim.app.api.nas.NasSecurityContext;
+import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EAutnValidationRes;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;

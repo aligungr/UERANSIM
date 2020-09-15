@@ -24,13 +24,12 @@
 
 package tr.havelsan.ueransim.app.api.ue;
 
-import tr.havelsan.ueransim.app.api.nas.NasSecurity;
+import tr.havelsan.ueransim.app.api.ue.nas.NasSecurity;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
-import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;

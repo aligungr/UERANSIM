@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.structs;
 
-import tr.havelsan.ueransim.app.api.nas.NasTimer;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
 

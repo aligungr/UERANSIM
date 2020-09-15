@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.core;
 
-import tr.havelsan.ueransim.app.api.nas.NasSecurityContext;
+import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
 import tr.havelsan.ueransim.app.structs.*;

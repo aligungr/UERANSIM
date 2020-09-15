@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.api.nas.NasSecurityContext;
+import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.crypto.Mac;
 import tr.havelsan.ueransim.crypto.PRF;

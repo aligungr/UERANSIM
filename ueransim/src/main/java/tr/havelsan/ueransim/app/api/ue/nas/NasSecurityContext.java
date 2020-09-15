@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.nas;
+package tr.havelsan.ueransim.app.api.ue.nas;
 
 import tr.havelsan.ueransim.app.enums.EConnectionIdentifier;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
