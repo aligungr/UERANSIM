@@ -22,32 +22,32 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.nodes;
+package tr.havelsan.ueransim.app.api.gnb.mr;
 
-import tr.havelsan.ueransim.app.api.gnb.mr.MrTask;
-import tr.havelsan.ueransim.app.api.gnb.ngap.NgapTask;
-import tr.havelsan.ueransim.app.api.gnb.sctp.SctpTask;
+import tr.havelsan.itms.Itms;
+import tr.havelsan.itms.ItmsTask;
+import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
+import tr.havelsan.ueransim.app.itms.GnbUplinkNasWrapper;
+import tr.havelsan.ueransim.nas.NasDecoder;
 
-public class GnbNode {
+public class MrTask extends ItmsTask {
 
-    public static final int TASK_SCTP = 1;
-    public static final int TASK_NGAP = 2;
-    public static final int TASK_MR = 3;
+    private final GnbSimContext ctx;
 
-    public static void run(GnbSimContext ctx) {
-        var itms = ctx.itms;
+    public MrTask(Itms itms, int taskId, GnbSimContext ctx) {
+        super(itms, taskId);
+        this.ctx = ctx;
+    }
 
-        var sctpTask = new SctpTask(itms, TASK_SCTP, ctx);
-        var ngapTask = new NgapTask(itms, TASK_NGAP, ctx);
-        var mrTask = new MrTask(itms, TASK_MR, ctx);
-
-        itms.createTask(sctpTask);
-        itms.createTask(ngapTask);
-        itms.createTask(mrTask);
-
-        itms.startTask(sctpTask);
-        itms.startTask(ngapTask);
-        itms.startTask(mrTask);
+    @Override
+    public void main() {
+        while (true) {
+            var msg = itms.receiveMessage(this);
+            if (msg instanceof GnbUplinkNasWrapper) {
+                var w = (GnbUplinkNasWrapper) msg;
+                NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
+            }
+        }
     }
 }

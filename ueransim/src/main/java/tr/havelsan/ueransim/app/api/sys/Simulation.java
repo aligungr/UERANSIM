@@ -49,13 +49,13 @@ public class Simulation {
         }
     }
 
-    static UeSimContext findUe(SimulationContext ctx, UUID id) {
+    public static UeSimContext findUe(SimulationContext ctx, UUID id) {
         synchronized (ctx) {
             return ctx.ueMap.get(id);
         }
     }
 
-    static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
+    public static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
         synchronized (ctx) {
             return ctx.gnbMap.get(id);
         }

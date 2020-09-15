@@ -22,26 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.gnb;
+package tr.havelsan.ueransim.app.itms;
 
-import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
-import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.console.Logging;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class GNodeB {
+import java.util.UUID;
 
-    public static void cycle(GnbSimContext ctx) {
-        var event = ctx.popEvent();
-        if (event != null) {
-            Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
-        }
+public class GnbUplinkNasWrapper {
+    public final UUID ue;
+    public final OctetString nasPdu;
 
-        if (event instanceof GnbUplinkNasEvent) {
-            var e = (GnbUplinkNasEvent) event;
-            NgapNasTransport.receiveUplinkNasTransport(ctx, e.ue, NasDecoder.nasPdu(e.nasPdu));
-        }
+    public GnbUplinkNasWrapper(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
+        this.nasPdu = nasPdu;
     }
 }

@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
 import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
