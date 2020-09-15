@@ -24,27 +24,13 @@
 
 package tr.havelsan.ueransim.app.api.gnb;
 
-import tr.havelsan.ueransim.app.api.gnb.ngap.*;
-import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
-import tr.havelsan.ueransim.app.events.gnb.SctpAssociationSetupEvent;
-import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.nas.NasDecoder;
-import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
-import tr.havelsan.ueransim.ngap0.NgapEncoding;
-import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
-import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
-import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
-import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Logging;
-
-import java.util.UUID;
 
 public class GNodeB {
 
@@ -54,12 +40,7 @@ public class GNodeB {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
         }
 
-        if (event instanceof SctpAssociationSetupEvent) {
-            var amfCtx = ctx.amfContexts.get(((SctpAssociationSetupEvent) event).guami);
-            amfCtx.association = ((SctpAssociationSetupEvent) event).association;
-
-            NgapInterfaceManagement.sendNgSetupRequest(ctx, amfCtx.guami);
-        } else if (event instanceof GnbCommandEvent) {
+        if (event instanceof GnbCommandEvent) {
             var cmd = ((GnbCommandEvent) event).cmd;
             switch (cmd) {
                 default:

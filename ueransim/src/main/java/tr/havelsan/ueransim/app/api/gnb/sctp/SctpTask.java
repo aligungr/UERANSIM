@@ -30,9 +30,14 @@ import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
 import tr.havelsan.ueransim.app.itms.NgapSendWrapper;
+import tr.havelsan.ueransim.app.itms.SctpAssociationSetupWrapper;
 import tr.havelsan.ueransim.app.structs.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
+import tr.havelsan.ueransim.sctp.SctpClient;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Logging;
 
@@ -62,10 +67,24 @@ public class SctpTask extends ItmsTask {
         for (var amf : ctx.amfContexts.values()) {
             amfs.put(amf.guami, amf);
 
+            var associationHandler = new ISctpAssociationHandler() {
+                @Override
+                public void onSetup(SctpAssociation sctpAssociation) {
+                    itms.sendMessage(GnbNode.TASK_NGAP, new SctpAssociationSetupWrapper(amf.guami, sctpAssociation));
+                    setupCount.incrementAndGet();
+                }
+
+                @Override
+                public void onShutdown() {
+
+                }
+            };
+
+            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
+
             new Thread(() -> {
                 try {
                     amf.sctpClient.start();
-                    setupCount.incrementAndGet();
                     amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
                             -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
                 } catch (Exception e) {
@@ -74,13 +93,9 @@ public class SctpTask extends ItmsTask {
             }).start();
         }
 
-        Logging.info(Tag.CONNECTION, "Waiting for SCTP connections.");
-
         while (setupCount.get() != ctx.amfContexts.size()) {
             // do nothing
         }
-
-        Logging.info(Tag.CONNECTION, "SCTP connections established.");
 
         while (true) {
             var msg = itms.receiveMessage(this);

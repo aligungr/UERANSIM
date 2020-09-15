@@ -22,25 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events.gnb;
+package tr.havelsan.ueransim.app.itms;
 
-import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-public class SctpAssociationSetupEvent extends GnbEvent {
+public class SctpAssociationSetupWrapper {
+
     public final Guami guami;
     public final SctpAssociation association;
 
-    public SctpAssociationSetupEvent(Guami guami, SctpAssociation association) {
+    public SctpAssociationSetupWrapper(Guami guami, SctpAssociation association) {
         this.guami = guami;
         this.association = association;
-    }
-
-    @Override
-    public String toString() {
-        return "SctpAssociationSetupEvent{" +
-                "guami=" + guami +
-                ", association=" + association +
-                '}';
     }
 }

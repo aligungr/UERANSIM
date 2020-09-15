@@ -32,6 +32,8 @@ public class GnbAmfContext {
     public ISctpClient sctpClient;
     public SctpAssociation association;
     public int nextStream; // next available SCTP stream for uplink
+    public String host;
+    public int port;
 
     public GnbAmfContext(Guami guami) {
         this.guami = guami;

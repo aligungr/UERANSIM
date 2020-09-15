@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
+import tr.havelsan.ueransim.app.itms.SctpAssociationSetupWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
@@ -59,6 +60,9 @@ public class NgapTask extends ItmsTask {
             var msg = itms.receiveMessage(this);
             if (msg instanceof NgapReceiveWrapper) {
                 receiveNgap(((NgapReceiveWrapper) msg).associatedAmf, ((NgapReceiveWrapper) msg).stream, ((NgapReceiveWrapper) msg).ngapPdu);
+            }
+            else if (msg instanceof SctpAssociationSetupWrapper) {
+                NgapInterfaceManagement.sendNgSetupRequest(ctx, ((SctpAssociationSetupWrapper) msg).guami);
             }
         }
     }

@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app;
 
-import tr.havelsan.ueransim.app.api.gnb.sctp.NgapSctpAssociationHandler;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
@@ -32,22 +31,11 @@ import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.structs.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.UeConfig;
-import tr.havelsan.ueransim.app.utils.IncomingMessage;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
-import tr.havelsan.ueransim.ngap0.Ngap;
-import tr.havelsan.ueransim.ngap0.NgapEncoding;
-import tr.havelsan.ueransim.sctp.ISctpClient;
-import tr.havelsan.ueransim.sctp.MockedSctpClient;
-import tr.havelsan.ueransim.sctp.SctpClient;
-import tr.havelsan.ueransim.utils.*;
 import tr.havelsan.ueransim.utils.console.Console;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 public class AppConfig {
 
@@ -79,20 +67,16 @@ public class AppConfig {
         var ctx = new GnbSimContext(simCtx);
         ctx.config = config;
 
-        // Create AMF gNB contexts and SCTP Clients
+        // Create AMF gNB contexts
         {
             for (var amfConfig : ctx.config.amfConfigs) {
-                var gnbSctpAssociationHandler = new NgapSctpAssociationHandler(ctx, amfConfig.guami);
-
-                ISctpClient sctpClient = new SctpClient(amfConfig.host, amfConfig.port,
-                        Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
-
                 if (amfConfig.guami == null) {
                     throw new RuntimeException("amfConfig.guami == null");
                 }
 
                 var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
-                amfGnbCtx.sctpClient = sctpClient;
+                amfGnbCtx.host = amfConfig.host;
+                amfGnbCtx.port = amfConfig.port;
 
                 ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
             }
