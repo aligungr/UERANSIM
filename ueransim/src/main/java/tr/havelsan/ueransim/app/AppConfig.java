@@ -84,14 +84,8 @@ public class AppConfig {
             for (var amfConfig : ctx.config.amfConfigs) {
                 var gnbSctpAssociationHandler = new NgapSctpAssociationHandler(ctx, amfConfig.guami);
 
-                ISctpClient sctpClient;
-                if (amfConfig.isMocked) {
-                    Logging.warning(Tag.CONNECTION, "Mocked Remote is enabled.");
-                    sctpClient = newMockedClient(amfConfig.mockingFile, gnbSctpAssociationHandler);
-                } else {
-                    sctpClient = new SctpClient(amfConfig.host, amfConfig.port,
-                            Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
-                }
+                ISctpClient sctpClient = new SctpClient(amfConfig.host, amfConfig.port,
+                        Constants.NGAP_PROTOCOL_ID, gnbSctpAssociationHandler);
 
                 if (amfConfig.guami == null) {
                     throw new RuntimeException("amfConfig.guami == null");
@@ -123,44 +117,5 @@ public class AppConfig {
 
     public UeConfig createUeConfig() {
         return mts.constructor.construct(UeConfig.class, ((ImplicitTypedObject) mts.decoder.decode(profile + "ue.yaml")), true);
-    }
-
-    private MockedSctpClient newMockedClient(String mockedRemoteFile, NgapSctpAssociationHandler ngapSctpAssociationHandler) {
-        var mockedRemote = ((ImplicitTypedObject) mts.decoder.decode(mockedRemoteFile)).getParameters();
-
-        return new MockedSctpClient(new MockedSctpClient.IMockedRemote() {
-            int messageIndex = 0;
-
-            @Override
-            public void onMessage(byte[] data, Queue<Byte[]> queue) {
-                var ngapPdu = NgapEncoding.decodeAper(data);
-                var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
-                var nasMessage = ngapMessage.getNasMessage();
-                var incomingMessage = new IncomingMessage(ngapPdu, ngapMessage, nasMessage);
-                Queue<String> outs = new ArrayDeque<>();
-                onMessage(incomingMessage, outs);
-                while (!outs.isEmpty()) {
-                    var out = outs.remove();
-                    byte[] pdu = Utils.hexStringToByteArray(out);
-                    Byte[] res = new Byte[pdu.length];
-                    for (int i = 0; i < res.length; i++) {
-                        res[i] = pdu[i];
-                    }
-                    queue.add(res);
-                }
-            }
-
-            private void onMessage(IncomingMessage message, Queue<String> queue) {
-                var mockedValues = (Object[]) mockedRemote.get("messages-in-order");
-                Object mockedValue = mockedValues[messageIndex];
-                if (mockedValue != null) {
-                    String str = mockedValue.toString();
-                    if (str.length() > 0) {
-                        queue.add(str);
-                    }
-                }
-                messageIndex++;
-            }
-        }, ngapSctpAssociationHandler);
     }
 }

@@ -28,14 +28,10 @@ public class GnbAmfConfig {
     public final Guami guami;
     public final String host;
     public final int port;
-    public final boolean isMocked;
-    public final String mockingFile;
 
-    public GnbAmfConfig(Guami guami, String host, int port, boolean isMocked, String mockingFile) {
+    public GnbAmfConfig(Guami guami, String host, int port) {
         this.guami = guami;
         this.host = host;
         this.port = port;
-        this.isMocked = isMocked;
-        this.mockingFile = mockingFile;
     }
 }
