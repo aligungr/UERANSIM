@@ -70,6 +70,7 @@ public class SctpTask extends ItmsTask {
             var associationHandler = new ISctpAssociationHandler() {
                 @Override
                 public void onSetup(SctpAssociation sctpAssociation) {
+                    amf.association = sctpAssociation;
                     itms.sendMessage(GnbNode.TASK_NGAP, new SctpAssociationSetupWrapper(amf.guami, sctpAssociation));
                     setupCount.incrementAndGet();
                 }
