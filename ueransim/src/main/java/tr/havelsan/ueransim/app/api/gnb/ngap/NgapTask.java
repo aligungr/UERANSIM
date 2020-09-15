@@ -26,11 +26,10 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.itms.Itms;
 import tr.havelsan.itms.ItmsTask;
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.itms.NgapReceiveMessage;
+import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
@@ -58,8 +57,8 @@ public class NgapTask extends ItmsTask {
     public void main() {
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof NgapReceiveMessage) {
-                receiveNgap(((NgapReceiveMessage) msg).associatedAmf, ((NgapReceiveMessage) msg).stream, ((NgapReceiveMessage) msg).ngapPdu);
+            if (msg instanceof NgapReceiveWrapper) {
+                receiveNgap(((NgapReceiveWrapper) msg).associatedAmf, ((NgapReceiveWrapper) msg).stream, ((NgapReceiveWrapper) msg).ngapPdu);
             }
         }
     }

@@ -27,6 +27,8 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
+import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.itms.NgapSendWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -49,21 +51,12 @@ public class NgapTransfer {
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        var amfCtx = ctx.amfContexts.get(associatedAmf);
-
-        if (amfCtx.sctpClient.isOpen()) {
-            amfCtx.sctpClient.send(0, NgapEncoding.encodeAper(ngapPdu));
-        } else {
-            Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
-        }
-
-        Logging.debug(Tag.MESSAGING, "Sent.");
+        ctx.itms.sendMessage(GnbNode.TASK_SCTP, new NgapSendWrapper(0, NgapEncoding.encodeAper(ngapPdu)));
 
         Simulation.triggerOnSend(ctx, message);
     }
 
     public static void sendNgapUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
-        // Find UE gNB context
         var ueCtx = ctx.ueContexts.get(ueId);
 
         // Adding AMF-UE-NGAP-ID (if any)
@@ -98,17 +91,8 @@ public class NgapTransfer {
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
-
-        if (amfCtx.sctpClient.isOpen()) {
-            amfCtx.sctpClient.send(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu));
-        } else {
-            Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
-        }
-
-        Logging.debug(Tag.MESSAGING, "Sent.");
+        ctx.itms.sendMessage(GnbNode.TASK_SCTP, new NgapSendWrapper(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu)));
 
         Simulation.triggerOnSend(ctx, message);
     }
-
 }

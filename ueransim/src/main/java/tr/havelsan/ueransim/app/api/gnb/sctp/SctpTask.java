@@ -28,7 +28,8 @@ import tr.havelsan.itms.Itms;
 import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
-import tr.havelsan.ueransim.app.itms.NgapReceiveMessage;
+import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
+import tr.havelsan.ueransim.app.itms.NgapSendWrapper;
 import tr.havelsan.ueransim.app.structs.GnbAmfContext;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpHandler;
@@ -57,17 +58,29 @@ public class SctpTask extends ItmsTask implements ISctpHandler {
             break;
         }
 
-        try {
-            amf.sctpClient.start();
-            amf.sctpClient.receiverLoop(this);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        new Thread(() -> {
+            try {
+                amf.sctpClient.start();
+                amf.sctpClient.receiverLoop(this);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+
+        while (true) {
+            if (!amf.sctpClient.isOpen())
+                continue;
+
+            var msg = itms.receiveMessage(this);
+            if (msg instanceof NgapSendWrapper) {
+                amf.sctpClient.send(((NgapSendWrapper) msg).streamNumber, ((NgapSendWrapper) msg).data);
+            }
         }
     }
 
     @Override
     public void handleSCTPMessage(byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
-        itms.sendMessage(GnbNode.TASK_NGAP, new NgapReceiveMessage(amf.guami, streamNumber, pdu));
+        itms.sendMessage(GnbNode.TASK_NGAP, new NgapReceiveWrapper(amf.guami, streamNumber, pdu));
     }
 }
