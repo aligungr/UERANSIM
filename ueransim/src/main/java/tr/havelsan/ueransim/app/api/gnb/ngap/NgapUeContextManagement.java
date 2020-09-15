@@ -61,12 +61,12 @@ public class NgapUeContextManagement {
         var secCaps = message.getProtocolIe(NGAP_UESecurityCapabilities.class);
         if (isUeSecurityCapabilitiesValid(ctx, secCaps)) {
             ue.securityCapabilities = secCaps;
-            GNodeB.sendNgapUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
+            NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
         } else {
             var response = new NGAP_InitialContextSetupFailure();
             response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
-            GNodeB.sendNgapUeAssociated(ctx, ueId, response);
+            NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
         }
 
         var nasMessage = message.getNasMessage();
@@ -87,7 +87,7 @@ public class NgapUeContextManagement {
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
-        GNodeB.sendNgapUeAssociated(ctx, ueId, response);
+        NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
 
         ctx.ueContexts.remove(ueId);
 
@@ -113,7 +113,7 @@ public class NgapUeContextManagement {
                 var response = new NGAP_UEContextModificationFailure();
                 response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
-                GNodeB.sendNgapUeAssociated(ctx, ueId, response);
+                NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
                 Logging.funcOut();
                 return;
             }
@@ -141,7 +141,7 @@ public class NgapUeContextManagement {
             Logging.info(Tag.PROC, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
         }
 
-        GNodeB.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
+        NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
         Logging.funcOut();
     }
 

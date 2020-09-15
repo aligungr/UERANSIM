@@ -46,7 +46,7 @@ public class NgapInterfaceManagement {
         msg.addProtocolIe(NgapUtils.createSupportedTAList(ctx.config.supportedTAs));
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
-        GNodeB.sendNgapNonUe(ctx, associatedAmf, msg);
+        NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
         Logging.funcOut();
     }
 

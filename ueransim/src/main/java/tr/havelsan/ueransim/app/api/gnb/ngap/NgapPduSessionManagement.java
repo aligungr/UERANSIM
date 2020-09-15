@@ -145,7 +145,7 @@ public class NgapPduSessionManagement {
             response.addProtocolIe(failedList);
         }
 
-        GNodeB.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
+        NgapTransfer.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
 
         Logging.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
 

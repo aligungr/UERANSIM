@@ -75,7 +75,7 @@ public class NgapNasTransport {
             ngap.addProtocolIe(new NGAP_NAS_PDU(NasEncoder.nasPdu(nasMessage)));
         }
 
-        GNodeB.sendNgapUeAssociated(ctx, associatedUe, ngap);
+        NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
 
         Logging.funcOut();
     }
@@ -117,7 +117,7 @@ public class NgapNasTransport {
             var ueCtx = ctx.ueContexts.get(associatedUe);
             ueCtx.associatedAmf = newAmf;
 
-            GNodeB.sendNgapUeAssociated(ctx, associatedUe, newMessage);
+            NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, newMessage);
         } else {
             Logging.error(Tag.PROC, "AMF selection for re-allocation failed. Could not find a suitable AMF.");
         }

@@ -139,9 +139,9 @@ public class NgapTask extends ItmsTask {
 
             errorIndication.addProtocolIe(ngapCause);
             if (e.associatedUe != null) {
-                GNodeB.sendNgapUeAssociated(ctx, e.associatedUe, errorIndication);
+                NgapTransfer.sendNgapUeAssociated(ctx, e.associatedUe, errorIndication);
             } else {
-                GNodeB.sendNgapNonUe(ctx, associatedAmf, errorIndication);
+                NgapTransfer.sendNgapNonUe(ctx, associatedAmf, errorIndication);
             }
         }
     }
