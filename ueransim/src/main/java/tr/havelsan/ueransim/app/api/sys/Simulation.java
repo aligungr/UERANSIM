@@ -79,10 +79,6 @@ public class Simulation {
         if (listener != null) listener.onReceive(ctx, msg);
     }
 
-    public static void pushEvent(SimulationContext ctx, BaseEvent event) {
-        // todo
-    }
-
     public static void pushUeEvent(SimulationContext ctx, UUID ueId, UeEvent event) {
         UeSimContext ue;
         synchronized (ctx) {
@@ -92,18 +88,6 @@ public class Simulation {
             Logging.error(Tag.SYSTEM, "Simulation.pushUeEvent: could not find UE Sim Context with id: %s", ueId);
         } else {
             ue.pushEvent(event);
-        }
-    }
-
-    public static void pushGnbEvent(SimulationContext ctx, UUID gnbId, GnbEvent event) {
-        GnbSimContext gnb;
-        synchronized (ctx) {
-            gnb = findGnb(ctx, gnbId);
-        }
-        if (gnb == null) {
-            Logging.error(Tag.SYSTEM, "Simulation.pushGnbEvent: could not find gNB Sim Context with id: %s", gnbId);
-        } else {
-            gnb.pushEvent(event);
         }
     }
 }
