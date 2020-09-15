@@ -57,7 +57,7 @@ public class SctpTask extends ItmsTask {
             return;
         }
 
-        AtomicInteger setupCount = new AtomicInteger(0);
+        var setupCount = new AtomicInteger(0);
 
         for (var amf : ctx.amfContexts.values()) {
             amfs.put(amf.guami, amf);
