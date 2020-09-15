@@ -24,13 +24,17 @@
 
 package tr.havelsan.ueransim.app.itms;
 
+import tr.havelsan.ueransim.app.structs.Guami;
+
 public class NgapSendWrapper {
 
     public final int streamNumber;
     public final byte[] data;
+    public final Guami associatedAmf;
 
-    public NgapSendWrapper(int streamNumber, byte[] data) {
+    public NgapSendWrapper(int streamNumber, byte[] data, Guami associatedAmf) {
         this.streamNumber = streamNumber;
         this.data = data;
+        this.associatedAmf = associatedAmf;
     }
 }

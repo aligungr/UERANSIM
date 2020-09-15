@@ -31,19 +31,23 @@ import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
 import tr.havelsan.ueransim.app.itms.NgapSendWrapper;
 import tr.havelsan.ueransim.app.structs.GnbAmfContext;
+import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
-import tr.havelsan.ueransim.sctp.ISctpHandler;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Logging;
 
-public class SctpTask extends ItmsTask implements ISctpHandler {
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class SctpTask extends ItmsTask {
 
     private final GnbSimContext ctx;
-    private GnbAmfContext amf;
+    private final HashMap<Guami, GnbAmfContext> amfs;
 
     public SctpTask(Itms itms, int taskId, GnbSimContext ctx) {
         super(itms, taskId);
         this.ctx = ctx;
+        this.amfs = new HashMap<>();
     }
 
     @Override
@@ -53,34 +57,42 @@ public class SctpTask extends ItmsTask implements ISctpHandler {
             return;
         }
 
-        for (var c : ctx.amfContexts.values()) {
-            amf = c;
-            break;
+        AtomicInteger setupCount = new AtomicInteger(0);
+
+        for (var amf : ctx.amfContexts.values()) {
+            amfs.put(amf.guami, amf);
+
+            new Thread(() -> {
+                try {
+                    amf.sctpClient.start();
+                    setupCount.incrementAndGet();
+                    amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
+                            -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
         }
 
-        new Thread(() -> {
-            try {
-                amf.sctpClient.start();
-                amf.sctpClient.receiverLoop(this);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+        Logging.info(Tag.CONNECTION, "Waiting for SCTP connections.");
+
+        while (setupCount.get() != ctx.amfContexts.size()) {
+            // do nothing
+        }
+
+        Logging.info(Tag.CONNECTION, "SCTP connections established.");
 
         while (true) {
-            if (!amf.sctpClient.isOpen())
-                continue;
-
             var msg = itms.receiveMessage(this);
             if (msg instanceof NgapSendWrapper) {
-                amf.sctpClient.send(((NgapSendWrapper) msg).streamNumber, ((NgapSendWrapper) msg).data);
+                var wrapper = (NgapSendWrapper) msg;
+                amfs.get(wrapper.associatedAmf).sctpClient.send(wrapper.streamNumber, wrapper.data);
             }
         }
     }
 
-    @Override
-    public void handleSCTPMessage(byte[] receivedBytes, int streamNumber) {
+    public void handleSCTPMessage(Guami associatedAmf, byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
-        itms.sendMessage(GnbNode.TASK_NGAP, new NgapReceiveWrapper(amf.guami, streamNumber, pdu));
+        itms.sendMessage(GnbNode.TASK_NGAP, new NgapReceiveWrapper(associatedAmf, streamNumber, pdu));
     }
 }
