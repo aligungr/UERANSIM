@@ -41,15 +41,12 @@ import tr.havelsan.ueransim.nas.impl.messages.DlNasTransport;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class SessionManagement {
 
     public static void sendSm(UeSimContext ctx, EPduSessionIdentity psi, PlainSmMessage message) {
-        Debugging.assertThread(ctx);
-
         // TODO
         var ulNasTransport = new UlNasTransport();
         ulNasTransport.payloadContainerType = new IEPayloadContainerType(IEPayloadContainerType.EPayloadContainerType.N1_SM_INFORMATION);
@@ -63,14 +60,10 @@ public class SessionManagement {
     }
 
     public static void receiveDl(UeSimContext ctx, DlNasTransport message) {
-        Debugging.assertThread(ctx);
-
         receiveSm(ctx, (PlainSmMessage) NasDecoder.nasPdu(message.payloadContainer.payload));
     }
 
     public static void receiveSm(UeSimContext ctx, PlainSmMessage message) {
-        Debugging.assertThread(ctx);
-
         if (message instanceof PduSessionEstablishmentAccept) {
             SmPduSessionEstablishment.receiveEstablishmentAccept(ctx, (PduSessionEstablishmentAccept) message);
         } else if (message instanceof PduSessionEstablishmentReject) {
@@ -81,14 +74,10 @@ public class SessionManagement {
     }
 
     public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
-        Debugging.assertThread(ctx);
-
         // todo
     }
 
     public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
-        Debugging.assertThread(ctx);
-
         if (cmd instanceof TestCommand_PduSessionEstablishment) {
             SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
             return true;

@@ -36,15 +36,12 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Starting: Registration procedure (%s)", registrationType);
 
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED_INITIATED, EMmSubState.MM_REGISTERED_INITIATED__NA);

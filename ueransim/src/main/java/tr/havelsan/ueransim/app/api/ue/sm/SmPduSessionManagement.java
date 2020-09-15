@@ -27,7 +27,6 @@ package tr.havelsan.ueransim.app.api.ue.sm;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.structs.PduSession;
 import tr.havelsan.ueransim.app.structs.ProcedureTransaction;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.utils.Tag;
@@ -36,8 +35,6 @@ import tr.havelsan.ueransim.utils.console.Logging;
 class SmPduSessionManagement {
 
     public static EPduSessionIdentity allocatePduSessionId(UeSimContext ctx) {
-        Debugging.assertThread(ctx);
-
         var arr = ctx.smCtx.pduSessions;
 
         int id = -1;
@@ -61,8 +58,6 @@ class SmPduSessionManagement {
     }
 
     public static EProcedureTransactionIdentity allocateProcedureTransactionId(UeSimContext ctx) {
-        Debugging.assertThread(ctx);
-
         var arr = ctx.smCtx.procedureTransactions;
 
         int id = -1;
@@ -86,15 +81,11 @@ class SmPduSessionManagement {
     }
 
     public static void releaseProcedureTransactionId(UeSimContext ctx, EProcedureTransactionIdentity pti) {
-        Debugging.assertThread(ctx);
-
         ctx.smCtx.procedureTransactions[pti.intValue()] = ProcedureTransaction.RELEASED;
         Logging.debug(Tag.PROC, "PTI released: %s", pti);
     }
 
     public static void releasePduSession(UeSimContext ctx, EPduSessionIdentity psi) {
-        Debugging.assertThread(ctx);
-
         ctx.smCtx.pduSessions[psi.intValue()] = PduSession.RELEASED;
         Logging.debug(Tag.PROC, "PDU Session released: %s", psi);
     }

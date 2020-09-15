@@ -22,32 +22,52 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.threads;
+package tr.havelsan.ueransim.app.api.gnb.sctp;
 
+import tr.havelsan.itms.Itms;
+import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.gnb.SctpReceiveEvent;
-import tr.havelsan.ueransim.sctp.ISctpClient;
-import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.itms.NgapReceiveMessage;
+import tr.havelsan.ueransim.app.structs.GnbAmfContext;
+import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.sctp.ISctpHandler;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Logging;
 
-public class SctpRecevierThread extends BaseThread {
+public class SctpTask extends ItmsTask implements ISctpHandler {
 
     private final GnbSimContext ctx;
-    private final ISctpClient sctpClient;
-    private final Guami amf;
+    private GnbAmfContext amf;
 
-    public SctpRecevierThread(GnbSimContext ctx, Guami amf, ISctpClient sctpClient) {
+    public SctpTask(Itms itms, int taskId, GnbSimContext ctx) {
+        super(itms, taskId);
         this.ctx = ctx;
-        this.amf = amf;
-        this.sctpClient = sctpClient;
     }
 
     @Override
-    public void run() {
+    public void main() {
+        if (ctx.amfContexts.isEmpty()) {
+            Logging.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
+            return;
+        }
+
+        for (var c : ctx.amfContexts.values()) {
+            amf = c;
+            break;
+        }
+
         try {
-            sctpClient.start();
-            sctpClient.receiverLoop((receivedBytes, streamNumber) -> ctx.pushEvent(new SctpReceiveEvent(receivedBytes, amf, streamNumber)));
+            amf.sctpClient.start();
+            amf.sctpClient.receiverLoop(this);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void handleSCTPMessage(byte[] receivedBytes, int streamNumber) {
+        var pdu = NgapEncoding.decodeAper(receivedBytes);
+        itms.sendMessage(GnbNode.TASK_NGAP, new NgapReceiveMessage(amf.guami, streamNumber, pdu));
     }
 }

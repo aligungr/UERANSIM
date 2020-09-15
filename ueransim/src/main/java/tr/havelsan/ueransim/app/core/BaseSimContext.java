@@ -24,6 +24,7 @@
 
 package tr.havelsan.ueransim.app.core;
 
+import tr.havelsan.itms.Itms;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.events.BaseEvent;
 import tr.havelsan.ueransim.utils.console.Logging;
@@ -36,12 +37,14 @@ import java.util.UUID;
 public class BaseSimContext<T extends BaseEvent> {
     public final SimulationContext simCtx;
     public final UUID ctxId;
+    public final Itms itms;
     private final Queue<T> eventQueue;
     private Thread looperThread;
 
     public BaseSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
         this.ctxId = UUID.randomUUID();
+        this.itms = new Itms();
         this.eventQueue = new ArrayDeque<>();
     }
 

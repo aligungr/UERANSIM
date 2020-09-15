@@ -22,19 +22,41 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.utils;
+package tr.havelsan.itms;
 
-import tr.havelsan.ueransim.app.core.BaseSimContext;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class Debugging {
+public class Itms {
 
-    public static void assertThread(BaseSimContext<?> ueSimContext) {
-        assertThread(ueSimContext.getLooperThread());
+    private final ConcurrentHashMap<Integer, ItmsTask> taskMap;
+
+    public Itms() {
+        this.taskMap = new ConcurrentHashMap<>();
     }
 
-    public static void assertThread(Thread thread) {
-        if (Thread.currentThread() != thread) {
-            throw new IllegalThreadStateException();
-        }
+    public void createTask(ItmsTask task) {
+        // TODO: statements together are not atomic
+        if (taskMap.containsKey(task.taskId))
+            throw new IllegalStateException("task id already exists");
+        taskMap.put(task.taskId, task);
+    }
+
+    public void startTask(ItmsTask task) {
+        task.start();
+    }
+
+    public Object receiveMessage(ItmsTask task) {
+        return task.receiveMessage();
+    }
+
+    public void sendMessage(ItmsTask task, Object msg) {
+        task.putMessage(msg);
+    }
+
+    public void sendMessage(int taskId, Object msg) {
+        var task = taskMap.get(taskId);
+        if (task == null)
+            throw new IllegalStateException("task id not found");
+        sendMessage(task, msg);
     }
 }

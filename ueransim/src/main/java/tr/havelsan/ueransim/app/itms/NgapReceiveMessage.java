@@ -22,33 +22,20 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events.gnb;
+package tr.havelsan.ueransim.app.itms;
 
-import tr.havelsan.ueransim.ngap0.NgapEncoding;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
-public class SctpReceiveEvent extends GnbEvent {
+public class NgapReceiveMessage {
+
     public final Guami associatedAmf;
+    public final int stream;
     public final NGAP_PDU ngapPdu;
-    public final int streamNumber;
 
-    public SctpReceiveEvent(byte[] ngapPdu, Guami associatedAmf, int streamNumber) {
-        this(NgapEncoding.decodeAper(ngapPdu), associatedAmf, streamNumber);
-    }
-
-    public SctpReceiveEvent(NGAP_PDU ngapPdu, Guami associatedAmf, int streamNumber) {
-        this.ngapPdu = ngapPdu;
+    public NgapReceiveMessage(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
         this.associatedAmf = associatedAmf;
-        this.streamNumber = streamNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "SctpReceiveEvent{" +
-                "associatedAmf=" + associatedAmf +
-                ", ngapPdu=" + ngapPdu +
-                ", streamNumber=" + streamNumber +
-                '}';
+        this.stream = stream;
+        this.ngapPdu = ngapPdu;
     }
 }

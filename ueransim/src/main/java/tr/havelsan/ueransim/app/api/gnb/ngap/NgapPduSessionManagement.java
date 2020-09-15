@@ -30,7 +30,6 @@ import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
@@ -54,8 +53,6 @@ import tr.havelsan.ueransim.utils.console.Logging;
 public class NgapPduSessionManagement {
 
     public static void receiveResourceSetupRequest(GnbSimContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling PDU Session Resource Setup Request");
 
         var response = new NGAP_PDUSessionResourceSetupResponse();

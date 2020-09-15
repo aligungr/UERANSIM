@@ -35,7 +35,6 @@ import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.app.testing.TestCommand_Deregistration;
 import tr.havelsan.ueransim.app.testing.TestCommand_InitialRegistration;
 import tr.havelsan.ueransim.app.testing.TestCommand_PeriodicRegistration;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
@@ -47,14 +46,10 @@ import tr.havelsan.ueransim.utils.console.Logging;
 public class MobilityManagement {
 
     public static void sendMm(UeSimContext ctx, PlainMmMessage message) {
-        Debugging.assertThread(ctx);
-
         UserEquipment.sendNas(ctx, message);
     }
 
     public static void receiveMm(UeSimContext ctx, PlainMmMessage message) {
-        Debugging.assertThread(ctx);
-
         if (message instanceof AuthenticationRequest) {
             MmAuthentication.receiveAuthenticationRequest(ctx, (AuthenticationRequest) message);
         } else if (message instanceof AuthenticationResult) {
@@ -89,8 +84,6 @@ public class MobilityManagement {
     }
 
     public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
-        Debugging.assertThread(ctx);
-
         if (timer.timerCode == 3512) {
             if (UserEquipment.AUTO && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
@@ -105,8 +98,6 @@ public class MobilityManagement {
     }
 
     public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
-        Debugging.assertThread(ctx);
-
         if (cmd instanceof TestCommand_InitialRegistration) {
             MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
             return true;
@@ -123,8 +114,6 @@ public class MobilityManagement {
     }
 
     public static void switchState(UeSimContext ctx, EMmState state, EMmSubState subState) {
-        Debugging.assertThread(ctx);
-
         ctx.mmCtx.mmState = state;
         ctx.mmCtx.mmSubState = subState;
 
@@ -132,15 +121,11 @@ public class MobilityManagement {
     }
 
     public static void switchState(UeSimContext ctx, ERmState state) {
-        Debugging.assertThread(ctx);
-
         ctx.mmCtx.rmState = state;
         Logging.info(Tag.STATE, "UE switches to state: %s", state);
     }
 
     public static void cycle(UeSimContext ctx) {
-        Debugging.assertThread(ctx);
-
         if (ctx.mmCtx.mmState == EMmState.MM_NULL) {
             switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
             return;

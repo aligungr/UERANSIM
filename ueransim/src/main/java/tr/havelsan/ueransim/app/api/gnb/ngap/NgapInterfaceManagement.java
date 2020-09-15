@@ -32,15 +32,12 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NgapInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Starting: NGSetupRequest");
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
@@ -54,8 +51,6 @@ public class NgapInterfaceManagement {
     }
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGAP_NGSetupResponse message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: NGSetupResponse");
         Logging.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
 
@@ -63,8 +58,6 @@ public class NgapInterfaceManagement {
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGAP_NGSetupFailure message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: NGSetupFailure");
         Logging.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
 

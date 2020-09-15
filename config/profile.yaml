@@ -3,4 +3,4 @@
 #  - open5gs
 #  - free5gc
 #  - havelsan
-selected-profile: 'free5gc'
+selected-profile: 'open5gs'

@@ -40,15 +40,12 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_MobilityRestrictionList;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
 import tr.havelsan.ueransim.ngap0.msg.*;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NgapUeContextManagement {
 
     public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: Initial Context Setup Request");
 
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -81,8 +78,6 @@ public class NgapUeContextManagement {
     }
 
     public static void receiveContextReleaseCommand(GnbSimContext ctx, NGAP_UEContextReleaseCommand message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
 
         var ueId = NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
@@ -100,8 +95,6 @@ public class NgapUeContextManagement {
     }
 
     public static void receiveContextModificationRequest(GnbSimContext ctx, NGAP_UEContextModificationRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: UE Context Modification Request");
 
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -153,8 +146,6 @@ public class NgapUeContextManagement {
     }
 
     private static boolean isUeSecurityCapabilitiesValid(GnbSimContext ctx, NGAP_UESecurityCapabilities capabilities) {
-        Debugging.assertThread(ctx);
-
         // todo: check if UE security capabilities are valid
         return true;
     }

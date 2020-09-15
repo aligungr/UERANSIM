@@ -34,7 +34,6 @@ import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
 import tr.havelsan.ueransim.app.testing.TestCommand;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -49,8 +48,6 @@ public class UserEquipment {
     public static boolean AUTO = false;
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Sending NAS message: %s", message.getClass().getSimpleName());
 
         var securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
@@ -68,8 +65,6 @@ public class UserEquipment {
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Receiving NAS message: %s", message.getClass().getSimpleName());
 
         Logging.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(message));

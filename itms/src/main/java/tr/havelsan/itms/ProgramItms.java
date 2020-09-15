@@ -22,33 +22,15 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.nodes;
+package tr.havelsan.itms;
 
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
-import tr.havelsan.ueransim.app.api.gnb.ngap.NgapTask;
-import tr.havelsan.ueransim.app.api.gnb.sctp.SctpTask;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.threads.NodeLooperThread;
+public class ProgramItms {
 
-public class GnbNode {
+    private static final int SCTP_TASK = 1;
 
-    public static final int TASK_SCTP = 1;
-    public static final int TASK_NGAP = 2;
+    public static void main(String[] args) {
 
-    public static void run(GnbSimContext ctx) {
-        var itms = ctx.itms;
-
-        var sctpTask = new SctpTask(itms, TASK_SCTP, ctx);
-        var ngapTask = new NgapTask(itms, TASK_NGAP, ctx);
-
-        itms.createTask(sctpTask);
-        itms.createTask(ngapTask);
-
-        itms.startTask(sctpTask);
-        itms.startTask(ngapTask);
-
-        var looperThread = new NodeLooperThread<>(ctx, GNodeB::cycle);
-        ctx.setLooperThread(looperThread);
-        looperThread.start();
+        var itms = new Itms();
     }
+
 }

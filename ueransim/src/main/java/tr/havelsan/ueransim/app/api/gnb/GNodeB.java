@@ -31,25 +31,15 @@ import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.app.events.gnb.SctpAssociationSetupEvent;
-import tr.havelsan.ueransim.app.events.gnb.SctpReceiveEvent;
-import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
-import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
-import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
-import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
-import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
-import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.ngap0.msg.*;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Logging;
@@ -59,8 +49,6 @@ import java.util.UUID;
 public class GNodeB {
 
     public static void sendNgapNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
-        Debugging.assertThread(ctx);
-
         var ngapPdu = message.buildPdu();
 
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
@@ -80,8 +68,6 @@ public class GNodeB {
     }
 
     public static void sendNgapUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
-        Debugging.assertThread(ctx);
-
         // Find UE gNB context
         var ueCtx = ctx.ueContexts.get(ueId);
 
@@ -130,102 +116,15 @@ public class GNodeB {
         Simulation.triggerOnSend(ctx, message);
     }
 
-    public static void receiveNgap(GnbSimContext ctx, Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
-        Debugging.assertThread(ctx);
 
-        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
-        if (ngapMessage == null) {
-            return;
-        }
-
-        Simulation.triggerOnReceive(ctx, ngapMessage);
-
-        try {
-            if (!ctx.config.ignoreStreamIds) {
-                NGAP_Value ie = ngapMessage.getProtocolIe(NGAP_UE_NGAP_IDs.class);
-                if (ie != null) {
-                    if (stream == 0) {
-                        Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
-                        throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                    }
-                    var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, ngapMessage));
-                    if (ueCtx.downlinkStream == 0) {
-                        ueCtx.downlinkStream = stream;
-                    } else if (ueCtx.downlinkStream != stream) {
-                        Logging.error(Tag.CONNECTION, "received stream number is inconsistent. received %d, expected :%d", stream, ueCtx.downlinkStream);
-                        throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                    }
-                } else {
-                    ie = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
-                    if (ie != null) {
-                        if (stream == 0) {
-                            Logging.error(Tag.CONNECTION, "received stream number == 0 in UE-associated signalling");
-                            throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                        }
-                        var ueCtx = ctx.ueContexts.get(NgapUeManagement.findAssociatedUeIdDefault(ctx, ngapMessage));
-                        if (ueCtx.downlinkStream == 0) {
-                            ueCtx.downlinkStream = stream;
-                        } else if (ueCtx.downlinkStream != stream) {
-                            Logging.error(Tag.CONNECTION, "received stream number is inconsistent. received %d, expected :%d", stream, ueCtx.downlinkStream);
-                            throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                        }
-                    } else {
-                        if (stream != 0) {
-                            Logging.error(Tag.CONNECTION, "received stream number != 0 in non-UE-associated signalling");
-                            throw new NgapErrorException(NGAP_CauseProtocol.UNSPECIFIED);
-                        }
-                    }
-                }
-            }
-
-            if (ngapMessage instanceof NGAP_NGSetupResponse) {
-                NgapInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
-                NgapInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
-                NgapNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
-                NgapUeContextManagement.receiveInitialContextSetup(ctx, (NGAP_InitialContextSetupRequest) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
-                NgapNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_UEContextReleaseCommand) {
-                NgapUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
-                NgapUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
-            } else if (ngapMessage instanceof NGAP_PDUSessionResourceSetupRequest) {
-                NgapPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
-            } else {
-                Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
-            }
-        } catch (NgapErrorException e) {
-            var errorIndication = new NGAP_ErrorIndication();
-            var ngapCause = new NGAP_Cause();
-            ngapCause.setPresentValue(e.cause);
-
-            errorIndication.addProtocolIe(ngapCause);
-            if (e.associatedUe != null) {
-                GNodeB.sendNgapUeAssociated(ctx, e.associatedUe, errorIndication);
-            } else {
-                GNodeB.sendNgapNonUe(ctx, associatedAmf, errorIndication);
-            }
-        }
-    }
 
     public static void cycle(GnbSimContext ctx) {
-        Debugging.assertThread(ctx);
-
         var event = ctx.popEvent();
         if (event != null) {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
         }
 
-        if (event instanceof SctpReceiveEvent) {
-            var ngapPdu = ((SctpReceiveEvent) event).ngapPdu;
-            Logging.debug(Tag.MESSAGING, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
-            Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
-
-            GNodeB.receiveNgap(ctx, ((SctpReceiveEvent) event).associatedAmf, ((SctpReceiveEvent) event).streamNumber, ngapPdu);
-        } else if (event instanceof SctpAssociationSetupEvent) {
+        if (event instanceof SctpAssociationSetupEvent) {
             var amfCtx = ctx.amfContexts.get(((SctpAssociationSetupEvent) event).guami);
             amfCtx.association = ((SctpAssociationSetupEvent) event).association;
 

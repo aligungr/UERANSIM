@@ -34,7 +34,6 @@ import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.app.structs.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
@@ -45,8 +44,6 @@ import java.util.UUID;
 public class NgapUeManagement {
 
     public static void createUeContext(GnbSimContext ctx, UUID ueId) {
-        Debugging.assertThread(ctx);
-
         var gnbUeCtx = new GnbUeContext(ueId);
         gnbUeCtx.ranUeNgapId = ++ctx.ueNgapIdCounter;
         gnbUeCtx.amfUeNgapId = null;
@@ -56,8 +53,6 @@ public class NgapUeManagement {
     }
 
     private static UUID findUeByRanId(GnbSimContext ctx, long ranUeNgapId) {
-        Debugging.assertThread(ctx);
-
         // todo: make O(1)
         for (var entry : ctx.ueContexts.entrySet()) {
             if (entry.getValue().ranUeNgapId == ranUeNgapId) {
@@ -68,8 +63,6 @@ public class NgapUeManagement {
     }
 
     private static UUID findUeByAmfId(GnbSimContext ctx, long amfUeNgapId) {
-        Debugging.assertThread(ctx);
-
         // todo: make O(1)
         for (var entry : ctx.ueContexts.entrySet()) {
             if (entry.getValue().amfUeNgapId == amfUeNgapId) {
@@ -80,15 +73,11 @@ public class NgapUeManagement {
     }
 
     private static void selectAmfForUe(GnbSimContext ctx, GnbUeContext ueCtx) {
-        Debugging.assertThread(ctx);
-
         // todo: always first configured AMF is selected for now
         ueCtx.associatedAmf = ctx.config.amfConfigs[0].guami;
     }
 
     public static Guami selectNewAmfForReAllocation(GnbSimContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: Select AMF from AMFSetId");
         Logging.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
 
@@ -117,8 +106,6 @@ public class NgapUeManagement {
     }
 
     private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_AMF_UE_NGAP_ID amfUeNgapId, NGAP_RAN_UE_NGAP_ID ranUeNgapId) {
-        Debugging.assertThread(ctx);
-
         if (amfUeNgapId == null || ranUeNgapId == null) {
             throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
         }
@@ -142,7 +129,6 @@ public class NgapUeManagement {
     }
 
     private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_UE_NGAP_IDs ueNgapIDs) {
-        Debugging.assertThread(ctx);
         if (ueNgapIDs == null) {
             throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
         }
@@ -158,16 +144,12 @@ public class NgapUeManagement {
     }
 
     public static UUID findAssociatedUeIdDefault(GnbSimContext ctx, NGAP_BaseMessage ngapMessage) {
-        Debugging.assertThread(ctx);
-
         var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
         var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
         return findAssociatedUeId(ctx, ieAmfUeNgapId, ieRanUeNgapId);
     }
 
     public static UUID findAssociatedUeForUeNgapIds(GnbSimContext ctx, NGAP_BaseMessage message) {
-        Debugging.assertThread(ctx);
-
         var ie = message.getProtocolIe(NGAP_UE_NGAP_IDs.class);
         return findAssociatedUeId(ctx, ie);
     }

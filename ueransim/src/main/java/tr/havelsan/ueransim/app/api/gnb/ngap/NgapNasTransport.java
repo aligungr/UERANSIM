@@ -41,7 +41,6 @@ import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NGAP_Message;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
 import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit10;
@@ -51,8 +50,6 @@ import java.util.UUID;
 public class NgapNasTransport {
 
     public static void receiveUplinkNasTransport(GnbSimContext ctx, UUID associatedUe, NasMessage nasMessage) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling Uplink NAS Transport");
 
         NGAP_BaseMessage ngap;
@@ -84,8 +81,6 @@ public class NgapNasTransport {
     }
 
     public static void receiveDownlinkNasTransport(GnbSimContext ctx, NGAP_DownlinkNASTransport message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling Downlink NAS Transport");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -99,8 +94,6 @@ public class NgapNasTransport {
     }
 
     public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling Reroute NAS Request");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
