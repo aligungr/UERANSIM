@@ -77,28 +77,4 @@ public class UeTimers {
         this.t3584 = new NasTimer(3584, false, Integer.MAX_VALUE);
         this.t3585 = new NasTimer(3585, false, Integer.MAX_VALUE);
     }
-
-    public void performTick(UeSimContext ctx) {
-        if (t3346.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3346));
-        if (t3396.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3396));
-        if (t3444.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3444));
-        if (t3445.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3445));
-        if (t3502.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3502));
-        if (t3510.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3510));
-        if (t3511.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3511));
-        if (t3512.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3512));
-        if (t3516.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3516));
-        if (t3517.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3517));
-        if (t3519.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3519));
-        if (t3520.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3520));
-        if (t3521.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3521));
-        if (t3525.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3525));
-        if (t3540.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3540));
-        if (t3580.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3580));
-        if (t3581.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3581));
-        if (t3582.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3582));
-        if (t3583.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3583));
-        if (t3584.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3584));
-        if (t3585.performTick()) ctx.pushEvent(new UeTimerExpireEvent(t3585));
-    }
 }

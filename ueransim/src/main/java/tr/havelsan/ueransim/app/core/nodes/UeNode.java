@@ -25,12 +25,23 @@
 package tr.havelsan.ueransim.app.core.nodes;
 
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
+import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.threads.NodeLooperThread;
 
 public class UeNode {
 
+    public static final int TASK_TIMERS = 1;
+
     public static void run(UeSimContext ctx) {
+        var itms = ctx.itms;
+
+        var timersTask = new TimersTask(itms, TASK_TIMERS, ctx);
+
+        itms.createTask(timersTask);
+
+        itms.startTask(timersTask);
+
         var looperThread = new NodeLooperThread<>(ctx, UserEquipment::cycle);
         ctx.setLooperThread(looperThread);
         looperThread.start();

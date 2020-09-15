@@ -45,14 +45,14 @@ public class NasTimer {
         this.interval = defaultInterval;
     }
 
-    public void start() {
+    public synchronized void start() {
         startMillis = System.currentTimeMillis();
         isRunning = true;
 
         Logging.debug(Tag.NAS_TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
-    public void start(IEGprsTimer2 v) {
+    public synchronized void start(IEGprsTimer2 v) {
         if (!v.hasValue()) {
             Logging.warning(Tag.NAS_TIMER, "NAS Timer %s start called but no value provided", timerCode);
             return;
@@ -65,7 +65,7 @@ public class NasTimer {
         Logging.debug(Tag.NAS_TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
-    public void start(IEGprsTimer3 v) {
+    public synchronized void start(IEGprsTimer3 v) {
         if (!v.hasValue()) {
             Logging.warning(Tag.NAS_TIMER, "NAS Timer %s start called but no value provided", timerCode);
             return;
@@ -89,7 +89,7 @@ public class NasTimer {
         Logging.debug(Tag.NAS_TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
-    public void stop() {
+    public synchronized void stop() {
         if (isRunning) {
             startMillis = System.currentTimeMillis();
             isRunning = false;
@@ -98,11 +98,11 @@ public class NasTimer {
         }
     }
 
-    public boolean isRunning() {
+    public synchronized boolean isRunning() {
         return isRunning;
     }
 
-    public boolean performTick() {
+    public synchronized boolean performTick() {
         if (isRunning) {
             long currentMs = System.currentTimeMillis();
             long deltaSec = (currentMs - startMillis) / 1000;
@@ -122,7 +122,7 @@ public class NasTimer {
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return "NasTimer{" +
                 "timerCode=" + timerCode +
                 '}';

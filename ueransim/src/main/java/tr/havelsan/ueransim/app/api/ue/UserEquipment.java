@@ -92,7 +92,6 @@ public class UserEquipment {
     }
 
     public static void cycle(UeSimContext ctx) {
-        ctx.ueTimers.performTick(ctx);
         MobilityManagement.cycle(ctx);
 
         var event = ctx.popEvent();
