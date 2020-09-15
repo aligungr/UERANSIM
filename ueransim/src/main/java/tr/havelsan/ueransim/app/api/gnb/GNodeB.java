@@ -26,7 +26,6 @@ package tr.havelsan.ueransim.app.api.gnb;
 
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.app.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
@@ -40,14 +39,7 @@ public class GNodeB {
             Logging.info(Tag.EVENT, "GnbEvent is handling: %s", event);
         }
 
-        if (event instanceof GnbCommandEvent) {
-            var cmd = ((GnbCommandEvent) event).cmd;
-            switch (cmd) {
-                default:
-                    Logging.error(Tag.EVENT, "GnbCommandEvent not recognized: %s", cmd);
-                    break;
-            }
-        } else if (event instanceof GnbUplinkNasEvent) {
+        if (event instanceof GnbUplinkNasEvent) {
             var e = (GnbUplinkNasEvent) event;
             NgapNasTransport.receiveUplinkNasTransport(ctx, e.ue, NasDecoder.nasPdu(e.nasPdu));
         }
