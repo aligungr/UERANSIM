@@ -31,7 +31,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.function.Consumer;
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThread {
+public final class NodeLooperThread<T extends BaseSimContext<?>> extends Thread {
 
     private final T simContext;
     private final Consumer<T> looper;
@@ -39,6 +39,7 @@ public final class NodeLooperThread<T extends BaseSimContext<?>> extends BaseThr
     public NodeLooperThread(T simContext, Consumer<T> looper) {
         this.simContext = simContext;
         this.looper = looper;
+        super.setUncaughtExceptionHandler((thread, throwable) -> Program.fail(throwable));
     }
 
     @Override
