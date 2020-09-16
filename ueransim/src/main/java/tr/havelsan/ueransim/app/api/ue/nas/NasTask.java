@@ -56,6 +56,7 @@ public class NasTask extends ItmsTask {
 
     @Override
     public void main() {
+        // TODO: Make this task sleepable/wakeable like other tasks.
         while (true) {
             MobilityManagement.cycle(ctx);
 
