@@ -72,6 +72,10 @@ public abstract class ItmsTask {
         }
     }
 
+    Object receiveMessageNonBlocking() {
+        return msgQueue.poll();
+    }
+
     private void onException(Exception e) {
         // TODO
     }

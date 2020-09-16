@@ -49,6 +49,10 @@ public class Itms {
         return task.receiveMessage();
     }
 
+    public Object receiveMessageNonBlocking(ItmsTask task) {
+        return task.receiveMessageNonBlocking();
+    }
+
     public void sendMessage(ItmsTask task, Object msg) {
         task.putMessage(msg);
     }

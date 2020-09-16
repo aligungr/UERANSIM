@@ -31,7 +31,9 @@ import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
+import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
 import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Logging;
 
@@ -49,6 +51,11 @@ public class NasTask extends ItmsTask {
 
         while (true) {
             MobilityManagement.cycle(ctx);
+
+            var msg = ctx.itms.receiveMessageNonBlocking(this);
+            if (msg instanceof UeDownlinkNasWrapper) {
+                NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasWrapper) msg).nasPdu));
+            }
 
             var event = ctx.popEvent();
             if (event instanceof UeCommandEvent) {
