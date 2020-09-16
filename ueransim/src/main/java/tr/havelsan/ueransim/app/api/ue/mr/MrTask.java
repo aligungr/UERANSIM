@@ -26,9 +26,9 @@ package tr.havelsan.ueransim.app.api.ue.mr;
 
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.api.UeNode;
-import tr.havelsan.ueransim.app.itms.wrappers.UeDownlinkNasWrapper;
 
 public class MrTask extends ItmsTask {
 
@@ -43,8 +43,8 @@ public class MrTask extends ItmsTask {
     public void main() {
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof UeDownlinkNasWrapper) {
-                var w = (UeDownlinkNasWrapper) msg;
+            if (msg instanceof DownlinkNasWrapper) {
+                var w = (DownlinkNasWrapper) msg;
                 ctx.itms.sendMessage(UeNode.TASK_NAS, w);
             }
         }

@@ -29,7 +29,7 @@ import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.api.GnbNode;
-import tr.havelsan.ueransim.app.itms.wrappers.GnbUplinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.UplinkNasWrapper;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
@@ -52,7 +52,7 @@ public class NasTransport {
         Logging.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
 
         // TODO
-        Simulation.findGnb(ctx.simCtx, ctx.connectedGnb).itms.sendMessage(GnbNode.TASK_MR, new GnbUplinkNasWrapper(ctx.ctxId, securedNasPdu));
+        Simulation.findGnb(ctx.simCtx, ctx.connectedGnb).itms.sendMessage(GnbNode.TASK_MR, new UplinkNasWrapper(ctx.ctxId, securedNasPdu));
 
         Simulation.triggerOnSend(ctx, message);
 

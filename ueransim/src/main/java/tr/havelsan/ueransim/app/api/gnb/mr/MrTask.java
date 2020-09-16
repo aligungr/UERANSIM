@@ -30,9 +30,8 @@ import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.UeNode;
-import tr.havelsan.ueransim.app.itms.wrappers.GnbDownlinkNasWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.GnbUplinkNasWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UeDownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.UplinkNasWrapper;
 import tr.havelsan.ueransim.nas.NasDecoder;
 
 public class MrTask extends ItmsTask {
@@ -48,14 +47,14 @@ public class MrTask extends ItmsTask {
     public void main() {
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof GnbUplinkNasWrapper) {
-                var w = (GnbUplinkNasWrapper) msg;
+            if (msg instanceof UplinkNasWrapper) {
+                var w = (UplinkNasWrapper) msg;
                 NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
             }
-            else if (msg instanceof GnbDownlinkNasWrapper) {
-                var w = (GnbDownlinkNasWrapper) msg;
+            else if (msg instanceof DownlinkNasWrapper) {
+                var w = (DownlinkNasWrapper) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(UeNode.TASK_MR, new UeDownlinkNasWrapper(w.nasPdu));
+                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(UeNode.TASK_MR, new DownlinkNasWrapper(w.ue, w.nasPdu));
             }
         }
     }

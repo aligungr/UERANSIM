@@ -28,9 +28,9 @@ import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UeDownlinkNasWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.nas.NasDecoder;
@@ -56,13 +56,12 @@ public class NasTask extends ItmsTask {
 
     @Override
     public void main() {
-
         while (true) {
             MobilityManagement.cycle(ctx);
 
             var msg = ctx.itms.receiveMessageNonBlocking(this);
-            if (msg instanceof UeDownlinkNasWrapper) {
-                NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasWrapper) msg).nasPdu));
+            if (msg instanceof DownlinkNasWrapper) {
+                NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((DownlinkNasWrapper) msg).nasPdu));
             } else if (msg instanceof NasTimerExpireWrapper) {
                 var timer = ((NasTimerExpireWrapper) msg).timer;
                 Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);

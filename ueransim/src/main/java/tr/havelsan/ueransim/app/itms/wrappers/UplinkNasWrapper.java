@@ -28,11 +28,11 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.UUID;
 
-public class GnbUplinkNasWrapper {
+public class UplinkNasWrapper {
     public final UUID ue;
     public final OctetString nasPdu;
 
-    public GnbUplinkNasWrapper(UUID ue, OctetString nasPdu) {
+    public UplinkNasWrapper(UUID ue, OctetString nasPdu) {
         this.ue = ue;
         this.nasPdu = nasPdu;
     }

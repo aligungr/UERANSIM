@@ -26,10 +26,14 @@ package tr.havelsan.ueransim.app.itms.wrappers;
 
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class UeDownlinkNasWrapper {
+import java.util.UUID;
+
+public class DownlinkNasWrapper {
+    public final UUID ue;
     public final OctetString nasPdu;
 
-    public UeDownlinkNasWrapper(OctetString nasPdu) {
+    public DownlinkNasWrapper(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
         this.nasPdu = nasPdu;
     }
 }
