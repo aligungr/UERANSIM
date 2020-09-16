@@ -24,9 +24,8 @@ static int tun_alloc(char *dev, int flags)
 {
     struct ifreq ifr;
     int fd, err;
-    const char *clonedev = "/dev/net/tun";
 
-    if ((fd = open(clonedev, O_RDWR)) < 0)
+    if ((fd = open("/dev/net/tun", O_RDWR)) < 0)
     {
         perror("Opening /dev/net/tun");
         return fd;
