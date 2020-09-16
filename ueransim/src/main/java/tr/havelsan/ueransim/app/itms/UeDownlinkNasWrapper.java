@@ -22,30 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.ue.mr;
+package tr.havelsan.ueransim.app.itms;
 
-import tr.havelsan.itms.Itms;
-import tr.havelsan.itms.ItmsTask;
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class MrTask extends ItmsTask {
+public class UeDownlinkNasWrapper {
+    public final OctetString nasPdu;
 
-    private final UeSimContext ctx;
-
-    public MrTask(Itms itms, int taskId, UeSimContext ctx) {
-        super(itms, taskId);
-        this.ctx = ctx;
-    }
-
-    @Override
-    public void main() {
-        while (true) {
-            var msg = itms.receiveMessage(this);
-            if (msg instanceof UeDownlinkNasWrapper) {
-                var w = (UeDownlinkNasWrapper) msg;
-                //todo
-            }
-        }
+    public UeDownlinkNasWrapper(OctetString nasPdu) {
+        this.nasPdu = nasPdu;
     }
 }
