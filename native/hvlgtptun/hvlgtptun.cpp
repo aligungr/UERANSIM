@@ -15,8 +15,9 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#define BUFSIZE 65535
-#define PORT 55555
+static constexpr int BUFFER_SIZE = 65535;
+static constexpr int TUN_PORT = 49971;
+static constexpr int UERANSIM_PORT = 49972;
 
 bool debug;
 
@@ -54,13 +55,12 @@ static int tun_alloc(char *dev, int flags)
 
 static int bridge_alloc()
 {
-    return 1;
+    return -1;
 }
 
 int main(int argc, char *argv[])
 {
     char tun_name[IFNAMSIZ];
-    char buffer[BUFSIZE];
 
     strcpy(tun_name, "hvlgtptun");
     int tun_fd = tun_alloc(tun_name, IFF_TUN | IFF_NO_PI);
@@ -68,15 +68,17 @@ int main(int argc, char *argv[])
     if (tun_fd < 0)
     {
         perror("Allocating interface");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     int bridge_fd = bridge_alloc();
     if (bridge_fd < 0)
     {
         perror("Bridge setup");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
+
+    int8_t buffer[BUFFER_SIZE];
 
     while (1)
     {
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
         {
             perror("Reading from interface");
             close(tun_fd);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
 
         printf("Read %d bytes from device %s\n", nread, tun_name);
