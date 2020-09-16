@@ -24,13 +24,12 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
 import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.api.GnbNode;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
@@ -54,8 +53,6 @@ import tr.havelsan.ueransim.utils.console.Logging;
 public class NgapPduSessionManagement {
 
     public static void receiveResourceSetupRequest(GnbSimContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling PDU Session Resource Setup Request");
 
         var response = new NGAP_PDUSessionResourceSetupResponse();
@@ -99,7 +96,7 @@ public class NgapPduSessionManagement {
 
             if (RrcPduSessionManagement.pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
-                    Simulation.pushUeEvent(ctx.simCtx, associatedUe.ueCtxId, new UeDownlinkNasEvent(item.pDUSessionNAS_PDU.value));
+                    ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
@@ -138,7 +135,7 @@ public class NgapPduSessionManagement {
 
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
-            Simulation.pushUeEvent(ctx.simCtx, associatedUe.ueCtxId, new UeDownlinkNasEvent(nasPdu.value));
+            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(associatedUe.ueCtxId, nasPdu.value));
         }
 
         if (!successList.list.isEmpty()) {
@@ -148,7 +145,7 @@ public class NgapPduSessionManagement {
             response.addProtocolIe(failedList);
         }
 
-        GNodeB.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
+        NgapTransfer.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
 
         Logging.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
 

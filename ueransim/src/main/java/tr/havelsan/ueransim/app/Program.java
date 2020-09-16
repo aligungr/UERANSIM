@@ -26,15 +26,16 @@ package tr.havelsan.ueransim.app;
 
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.core.nodes.GnbNode;
-import tr.havelsan.ueransim.app.core.nodes.UeNode;
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-import tr.havelsan.ueransim.app.mts.MtsInitializer;
+import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.api.GnbNode;
+import tr.havelsan.ueransim.app.api.UeNode;
+import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.app.structs.Supi;
-import tr.havelsan.ueransim.app.structs.UeConfig;
+import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.testing.*;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
@@ -72,7 +73,7 @@ public class Program {
     private final ImplicitTypedObject loadTesting;
     private ArrayList<UeSimContext> ueContexts;
 
-    public Program() throws Exception {
+    public Program() {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
 
@@ -136,7 +137,7 @@ public class Program {
         loadTestConsole.printDiv();
     }
 
-    private void initialize() throws Exception {
+    private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
         var simContext = app.createSimContext(new NodeMessagingListener());
@@ -146,7 +147,7 @@ public class Program {
         GnbNode.run(gnbContext);
 
         // todo: ensure gnbs are good to go
-        Thread.sleep(1500);
+        Utils.sleep(1500);
 
         ueContexts = new ArrayList<>();
         for (int i = 0; i < numberOfUe; i++) {
@@ -167,7 +168,7 @@ public class Program {
     }
 
     public void runUserPrompt() throws Exception {
-        Thread.sleep(250);
+        Utils.sleep(250);
 
         Console.println(AnsiPalette.PAINT_DIVIDER, "=============================================================================");
 
@@ -215,18 +216,18 @@ public class Program {
         runTest(testName, testCommands);
     }
 
-    private void runTest(String testName, TestCommand[] testCommands) throws Exception {
+    private void runTest(String testName, TestCommand[] testCommands) {
         for (var command : testCommands) {
             if (command instanceof TestCommand_Sleep) {
-                Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
+                Utils.sleep(((TestCommand_Sleep) command).duration * 1000);
             } else if (command instanceof TestCommand_InitialRegistration) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_PeriodicRegistration) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_Deregistration) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_PduSessionEstablishment) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             }
         }
     }
@@ -242,7 +243,7 @@ public class Program {
         private final Map<String, Long> deregistrationTimers = new HashMap<>();
 
         @Override
-        public void onSend(BaseSimContext<?> ctx, Object message) {
+        public void onSend(BaseSimContext ctx, Object message) {
             if (message instanceof NGAP_NGSetupRequest) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 ngSetupTimers.put(gnbId, System.currentTimeMillis());
@@ -269,7 +270,7 @@ public class Program {
         }
 
         @Override
-        public void onReceive(BaseSimContext<?> ctx, Object message) {
+        public void onReceive(BaseSimContext ctx, Object message) {
             if (message instanceof NGAP_NGSetupFailure) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);

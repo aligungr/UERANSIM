@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.Ngap;
@@ -35,24 +35,23 @@ import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_AMFSetID;
-import tr.havelsan.ueransim.ngap0.ies.enumerations.*;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NGAP_Message;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
-import tr.havelsan.ueransim.ngap0.msg.*;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.console.Logging;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_DownlinkNASTransport;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialUEMessage;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_RerouteNASRequest;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_UplinkNASTransport;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit10;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.util.UUID;
 
 public class NgapNasTransport {
 
     public static void receiveUplinkNasTransport(GnbSimContext ctx, UUID associatedUe, NasMessage nasMessage) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling Uplink NAS Transport");
 
         NGAP_BaseMessage ngap;
@@ -78,29 +77,25 @@ public class NgapNasTransport {
             ngap.addProtocolIe(new NGAP_NAS_PDU(NasEncoder.nasPdu(nasMessage)));
         }
 
-        GNodeB.sendNgapUeAssociated(ctx, associatedUe, ngap);
+        NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
 
         Logging.funcOut();
     }
 
     public static void receiveDownlinkNasTransport(GnbSimContext ctx, NGAP_DownlinkNASTransport message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling Downlink NAS Transport");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            Simulation.pushUeEvent(ctx.simCtx, associatedUe, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
+            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(associatedUe, NasEncoder.nasPduS(nasMessage)));
         }
 
         Logging.funcOut();
     }
 
     public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling Reroute NAS Request");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -124,7 +119,7 @@ public class NgapNasTransport {
             var ueCtx = ctx.ueContexts.get(associatedUe);
             ueCtx.associatedAmf = newAmf;
 
-            GNodeB.sendNgapUeAssociated(ctx, associatedUe, newMessage);
+            NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, newMessage);
         } else {
             Logging.error(Tag.PROC, "AMF selection for re-allocation failed. Could not find a suitable AMF.");
         }

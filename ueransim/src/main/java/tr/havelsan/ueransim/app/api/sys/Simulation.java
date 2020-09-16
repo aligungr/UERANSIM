@@ -24,14 +24,9 @@
 
 package tr.havelsan.ueransim.app.api.sys;
 
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.events.BaseEvent;
-import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
-import tr.havelsan.ueransim.app.events.ue.UeEvent;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
 import java.util.UUID;
 
@@ -49,13 +44,13 @@ public class Simulation {
         }
     }
 
-    static UeSimContext findUe(SimulationContext ctx, UUID id) {
+    public static UeSimContext findUe(SimulationContext ctx, UUID id) {
         synchronized (ctx) {
             return ctx.ueMap.get(id);
         }
     }
 
-    static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
+    public static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
         synchronized (ctx) {
             return ctx.gnbMap.get(id);
         }
@@ -69,41 +64,13 @@ public class Simulation {
         }
     }
 
-    public static void triggerOnSend(BaseSimContext<?> ctx, Object msg) {
+    public static void triggerOnSend(BaseSimContext ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
         if (listener != null) listener.onSend(ctx, msg);
     }
 
-    public static void triggerOnReceive(BaseSimContext<?> ctx, Object msg) {
+    public static void triggerOnReceive(BaseSimContext ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
         if (listener != null) listener.onReceive(ctx, msg);
-    }
-
-    public static void pushEvent(SimulationContext ctx, BaseEvent event) {
-        // todo
-    }
-
-    public static void pushUeEvent(SimulationContext ctx, UUID ueId, UeEvent event) {
-        UeSimContext ue;
-        synchronized (ctx) {
-            ue = findUe(ctx, ueId);
-        }
-        if (ue == null) {
-            Logging.error(Tag.SYSTEM, "Simulation.pushUeEvent: could not find UE Sim Context with id: %s", ueId);
-        } else {
-            ue.pushEvent(event);
-        }
-    }
-
-    public static void pushGnbEvent(SimulationContext ctx, UUID gnbId, GnbEvent event) {
-        GnbSimContext gnb;
-        synchronized (ctx) {
-            gnb = findGnb(ctx, gnbId);
-        }
-        if (gnb == null) {
-            Logging.error(Tag.SYSTEM, "Simulation.pushGnbEvent: could not find gNB Sim Context with id: %s", gnbId);
-        } else {
-            gnb.pushEvent(event);
-        }
     }
 }

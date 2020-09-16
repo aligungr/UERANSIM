@@ -24,10 +24,11 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.api.GnbNode;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
@@ -40,15 +41,12 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_MobilityRestrictionList;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
 import tr.havelsan.ueransim.ngap0.msg.*;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NgapUeContextManagement {
 
     public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: Initial Context Setup Request");
 
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -64,25 +62,23 @@ public class NgapUeContextManagement {
         var secCaps = message.getProtocolIe(NGAP_UESecurityCapabilities.class);
         if (isUeSecurityCapabilitiesValid(ctx, secCaps)) {
             ue.securityCapabilities = secCaps;
-            GNodeB.sendNgapUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
+            NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_InitialContextSetupResponse());
         } else {
             var response = new NGAP_InitialContextSetupFailure();
             response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
-            GNodeB.sendNgapUeAssociated(ctx, ueId, response);
+            NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
         }
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            Simulation.pushUeEvent(ctx.simCtx, ueId, new UeDownlinkNasEvent(NasEncoder.nasPduS(nasMessage)));
+            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(ueId, NasEncoder.nasPduS(nasMessage)));
         }
 
         Logging.funcOut();
     }
 
     public static void receiveContextReleaseCommand(GnbSimContext ctx, NGAP_UEContextReleaseCommand message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: UE Context Release Command (AMF initiated)");
 
         var ueId = NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
@@ -92,7 +88,7 @@ public class NgapUeContextManagement {
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
-        GNodeB.sendNgapUeAssociated(ctx, ueId, response);
+        NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
 
         ctx.ueContexts.remove(ueId);
 
@@ -100,8 +96,6 @@ public class NgapUeContextManagement {
     }
 
     public static void receiveContextModificationRequest(GnbSimContext ctx, NGAP_UEContextModificationRequest message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: UE Context Modification Request");
 
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -120,7 +114,7 @@ public class NgapUeContextManagement {
                 var response = new NGAP_UEContextModificationFailure();
                 response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
-                GNodeB.sendNgapUeAssociated(ctx, ueId, response);
+                NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
                 Logging.funcOut();
                 return;
             }
@@ -148,13 +142,11 @@ public class NgapUeContextManagement {
             Logging.info(Tag.PROC, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
         }
 
-        GNodeB.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
+        NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
         Logging.funcOut();
     }
 
     private static boolean isUeSecurityCapabilitiesValid(GnbSimContext ctx, NGAP_UESecurityCapabilities capabilities) {
-        Debugging.assertThread(ctx);
-
         // todo: check if UE security capabilities are valid
         return true;
     }

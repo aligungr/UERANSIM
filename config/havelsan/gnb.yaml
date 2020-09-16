@@ -18,8 +18,6 @@ amfConfigs:
         hex: 'a8'
     host: 10.154.14.19
     port: 38421
-    isMocked: false
-    mockingFile: mockedAmf.yaml
 
 supportedTAs:
   - tac:

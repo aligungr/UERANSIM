@@ -24,14 +24,12 @@
 
 package tr.havelsan.ueransim.app.api.ue.sm;
 
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.nas.NasEncoder;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
-import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 

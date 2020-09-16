@@ -24,23 +24,19 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.gnb.GNodeB;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NgapInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Starting: NGSetupRequest");
         Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
@@ -49,13 +45,11 @@ public class NgapInterfaceManagement {
         msg.addProtocolIe(NgapUtils.createSupportedTAList(ctx.config.supportedTAs));
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
-        GNodeB.sendNgapNonUe(ctx, associatedAmf, msg);
+        NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
         Logging.funcOut();
     }
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGAP_NGSetupResponse message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: NGSetupResponse");
         Logging.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
 
@@ -63,8 +57,6 @@ public class NgapInterfaceManagement {
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGAP_NGSetupFailure message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: NGSetupFailure");
         Logging.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
 

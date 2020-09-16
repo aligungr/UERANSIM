@@ -24,10 +24,9 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
-import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;
@@ -39,8 +38,6 @@ import tr.havelsan.ueransim.utils.console.Logging;
 public class MmDeregistration {
 
     public static void sendDeregistration(UeSimContext ctx, IEDeRegistrationType.ESwitchOff switchOff) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Starting: UE initiated de-registration procedure");
 
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED_INITIATED, EMmSubState.MM_DEREGISTERED_INITIATED__NA);
@@ -69,8 +66,6 @@ public class MmDeregistration {
     }
 
     public static void receiveDeregistrationAccept(UeSimContext ctx, DeRegistrationAcceptUeOriginating message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: UE-initiated de-registration procedure completion");
 
         ctx.ueTimers.t3521.stop();
@@ -85,8 +80,6 @@ public class MmDeregistration {
 
     // todo
     public static void receiveDeregistrationRequest(UeSimContext ctx, DeRegistrationRequestUeTerminated message) {
-        Debugging.assertThread(ctx);
-
         Logging.funcIn("Handling: Network-initiated de-registration procedure");
 
         if (message.deRegistrationType.reRegistrationRequired.equals(IEDeRegistrationType.EReRegistrationRequired.REQUIRED)) {
