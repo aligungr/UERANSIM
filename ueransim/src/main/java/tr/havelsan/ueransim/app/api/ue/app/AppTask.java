@@ -22,38 +22,29 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.threads;
+package tr.havelsan.ueransim.app.api.ue.app;
 
-import tr.havelsan.ueransim.app.Program;
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.itms.Itms;
+import tr.havelsan.itms.ItmsTask;
+import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.core.nodes.UeNode;
+import tr.havelsan.ueransim.app.itms.UeTestCommandWrapper;
 
-import java.util.function.Consumer;
+public class AppTask extends ItmsTask {
 
-public final class NodeLooperThread<T extends BaseSimContext<?>> extends Thread {
+    private final UeSimContext ctx;
 
-    private final T simContext;
-    private final Consumer<T> looper;
-
-    public NodeLooperThread(T simContext, Consumer<T> looper) {
-        this.simContext = simContext;
-        this.looper = looper;
-        super.setUncaughtExceptionHandler((thread, throwable) -> Program.fail(throwable));
+    public AppTask(Itms itms, int taskId, UeSimContext ctx) {
+        super(itms, taskId);
+        this.ctx = ctx;
     }
 
     @Override
-    public void run() {
-        Logging.debug(Tag.SYSTEM, "%s has started: %s", simContext.getClass().getSimpleName(), simContext.ctxId);
+    public void main() {
         while (true) {
-            looper.accept(simContext);
-            while (simContext.hasEvent()) {
-                looper.accept(simContext);
-            }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Program.fail(e);
+            var msg = ctx.itms.receiveMessage(this);
+            if (msg instanceof UeTestCommandWrapper) {
+                ctx.itms.sendMessage(UeNode.TASK_NAS, msg);
             }
         }
     }

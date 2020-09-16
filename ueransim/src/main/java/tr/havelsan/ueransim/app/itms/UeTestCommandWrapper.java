@@ -22,21 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events.ue;
+package tr.havelsan.ueransim.app.itms;
 
 import tr.havelsan.ueransim.app.testing.TestCommand;
 
-public class UeCommandEvent extends UeEvent {
+public class UeTestCommandWrapper {
     public final TestCommand cmd;
 
-    public UeCommandEvent(TestCommand cmd) {
+    public UeTestCommandWrapper(TestCommand cmd) {
         this.cmd = cmd;
-    }
-
-    @Override
-    public String toString() {
-        return "UeCommandEvent{" +
-                "cmd=" + cmd +
-                '}';
     }
 }

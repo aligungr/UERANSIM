@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events.ue;
+package tr.havelsan.ueransim.app.events;
 
 import tr.havelsan.ueransim.app.events.BaseEvent;
 
-public abstract class UeEvent extends BaseEvent {
+public abstract class GnbEvent extends BaseEvent {
+
 }

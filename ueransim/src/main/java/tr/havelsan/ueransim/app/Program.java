@@ -31,7 +31,7 @@ import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.core.nodes.UeNode;
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
+import tr.havelsan.ueransim.app.itms.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.app.structs.Supi;
 import tr.havelsan.ueransim.app.structs.UeConfig;
@@ -220,13 +220,13 @@ public class Program {
             if (command instanceof TestCommand_Sleep) {
                 Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
             } else if (command instanceof TestCommand_InitialRegistration) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(UeNode.TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_PeriodicRegistration) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(UeNode.TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_Deregistration) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(UeNode.TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_PduSessionEstablishment) {
-                ueContexts.forEach(ue -> ue.pushEvent(new UeCommandEvent(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(UeNode.TASK_APP, new UeTestCommandWrapper(command)));
             }
         }
     }

@@ -29,9 +29,9 @@ import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
 import tr.havelsan.ueransim.app.itms.NasTimerExpireWrapper;
 import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
@@ -46,6 +46,14 @@ public class NasTask extends ItmsTask {
         this.ctx = ctx;
     }
 
+    private static void executeCommand(UeSimContext ctx, TestCommand cmd) {
+        if (!MobilityManagement.executeCommand(ctx, cmd)) {
+            if (!SessionManagement.executeCommand(ctx, cmd)) {
+                Logging.error(Tag.EVENT, "invalid command: %s", cmd);
+            }
+        }
+    }
+
     @Override
     public void main() {
 
@@ -55,8 +63,7 @@ public class NasTask extends ItmsTask {
             var msg = ctx.itms.receiveMessageNonBlocking(this);
             if (msg instanceof UeDownlinkNasWrapper) {
                 NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasWrapper) msg).nasPdu));
-            }
-            if (msg instanceof NasTimerExpireWrapper) {
+            } else if (msg instanceof NasTimerExpireWrapper) {
                 var timer = ((NasTimerExpireWrapper) msg).timer;
                 Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
 
@@ -65,22 +72,8 @@ public class NasTask extends ItmsTask {
                 } else {
                     SessionManagement.receiveTimerExpire(ctx, timer);
                 }
-            }
-
-            var event = ctx.popEvent();
-            if (event instanceof UeCommandEvent) {
-                Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
-
-                var cmd = ((UeCommandEvent) event).cmd;
-                executeCommand(ctx, cmd);
-            }
-        }
-    }
-
-    private static void executeCommand(UeSimContext ctx, TestCommand cmd) {
-        if (!MobilityManagement.executeCommand(ctx, cmd)) {
-            if (!SessionManagement.executeCommand(ctx, cmd)) {
-                Logging.error(Tag.EVENT, "invalid command: %s", cmd);
+            } else if (msg instanceof UeTestCommandWrapper) {
+                executeCommand(ctx, ((UeTestCommandWrapper) msg).cmd);
             }
         }
     }

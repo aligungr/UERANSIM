@@ -25,7 +25,7 @@
 package tr.havelsan.ueransim.app.core;
 
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
+import tr.havelsan.ueransim.app.events.GnbEvent;
 import tr.havelsan.ueransim.app.structs.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.GnbUeContext;
