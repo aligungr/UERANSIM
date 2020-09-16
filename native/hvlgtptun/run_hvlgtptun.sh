@@ -1,0 +1,1 @@
+gcc hvlgtptun.c -Wall -o build/hvlgtptun && ./build/hvlgtptun
