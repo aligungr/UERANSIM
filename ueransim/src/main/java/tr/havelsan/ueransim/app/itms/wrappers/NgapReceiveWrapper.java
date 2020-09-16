@@ -22,28 +22,20 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.structs;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.nas.impl.values.VPlmn;
-import tr.havelsan.ueransim.app.api.gnb.utils.SupportedTA;
-import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
-public class GnbConfig {
-    public final int gnbId;
-    public final int tac;
-    public final BitString nci;
-    public final VPlmn gnbPlmn;
-    public final GnbAmfConfig[] amfConfigs;
-    public final SupportedTA[] supportedTAs;
-    public final boolean ignoreStreamIds;
+public class NgapReceiveWrapper {
 
-    public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds) {
-        this.gnbId = gnbId;
-        this.tac = tac;
-        this.nci = BitString.fromBits(nci);
-        this.gnbPlmn = gnbPlmn;
-        this.amfConfigs = amfConfigs;
-        this.supportedTAs = supportedTAs;
-        this.ignoreStreamIds = ignoreStreamIds;
+    public final Guami associatedAmf;
+    public final int stream;
+    public final NGAP_PDU ngapPdu;
+
+    public NgapReceiveWrapper(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
+        this.associatedAmf = associatedAmf;
+        this.stream = stream;
+        this.ngapPdu = ngapPdu;
     }
 }

@@ -31,7 +31,7 @@ import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
 import tr.havelsan.ueransim.app.structs.Supi;
-import tr.havelsan.ueransim.app.structs.UeConfig;
+import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.octets.Octet;

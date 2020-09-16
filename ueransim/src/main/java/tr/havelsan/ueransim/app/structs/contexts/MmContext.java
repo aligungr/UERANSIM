@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.structs;
+package tr.havelsan.ueransim.app.structs.contexts;
 
 import tr.havelsan.ueransim.app.enums.ECmState;
 import tr.havelsan.ueransim.app.enums.EMmState;

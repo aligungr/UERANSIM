@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.itms;
+package tr.havelsan.ueransim.app.itms;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

@@ -22,18 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.structs.configs;
 
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.app.structs.Guami;
 
-import java.util.UUID;
+public class GnbAmfConfig {
+    public final Guami guami;
+    public final String host;
+    public final int port;
 
-public class GnbDownlinkNasWrapper {
-    public final UUID ue;
-    public final OctetString nasPdu;
-
-    public GnbDownlinkNasWrapper(UUID ue, OctetString nasPdu) {
-        this.ue = ue;
-        this.nasPdu = nasPdu;
+    public GnbAmfConfig(Guami guami, String host, int port) {
+        this.guami = guami;
+        this.host = host;
+        this.port = port;
     }
 }

@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core;
+package tr.havelsan.ueransim.app.structs.simctx;
 
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.structs.GnbAmfContext;
-import tr.havelsan.ueransim.app.structs.GnbConfig;
-import tr.havelsan.ueransim.app.structs.GnbUeContext;
+import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
+import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.Guami;
 
 import java.util.HashMap;

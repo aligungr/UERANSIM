@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;

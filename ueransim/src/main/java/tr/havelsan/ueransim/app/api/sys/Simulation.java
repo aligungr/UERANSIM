@@ -24,9 +24,9 @@
 
 package tr.havelsan.ueransim.app.api.sys;
 
-import tr.havelsan.ueransim.app.core.BaseSimContext;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
 import java.util.UUID;
 

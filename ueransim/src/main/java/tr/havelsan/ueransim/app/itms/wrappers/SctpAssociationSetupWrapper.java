@@ -22,16 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.structs;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-public class GnbAmfConfig {
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
+
+public class SctpAssociationSetupWrapper {
+
     public final Guami guami;
-    public final String host;
-    public final int port;
+    public final SctpAssociation association;
 
-    public GnbAmfConfig(Guami guami, String host, int port) {
+    public SctpAssociationSetupWrapper(Guami guami, SctpAssociation association) {
         this.guami = guami;
-        this.host = host;
-        this.port = port;
+        this.association = association;
     }
 }

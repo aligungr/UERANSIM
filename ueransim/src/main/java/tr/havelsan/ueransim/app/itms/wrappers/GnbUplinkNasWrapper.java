@@ -22,14 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class NasTimerExpireWrapper {
-    public final NasTimer timer;
+import java.util.UUID;
 
-    public NasTimerExpireWrapper(NasTimer timer) {
-        this.timer = timer;
+public class GnbUplinkNasWrapper {
+    public final UUID ue;
+    public final OctetString nasPdu;
+
+    public GnbUplinkNasWrapper(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
+        this.nasPdu = nasPdu;
     }
 }

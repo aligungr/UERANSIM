@@ -22,14 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.structs.contexts;
 
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.app.structs.PduSession;
+import tr.havelsan.ueransim.app.structs.ProcedureTransaction;
 
-public class UeDownlinkNasWrapper {
-    public final OctetString nasPdu;
+public class SmContext {
 
-    public UeDownlinkNasWrapper(OctetString nasPdu) {
-        this.nasPdu = nasPdu;
+    public PduSession[] pduSessions;
+    public ProcedureTransaction[] procedureTransactions;
+
+    public SmContext() {
+        this.pduSessions = new PduSession[16];
+        this.procedureTransactions = new ProcedureTransaction[255];
     }
 }

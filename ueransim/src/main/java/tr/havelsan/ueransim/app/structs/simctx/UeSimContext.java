@@ -22,45 +22,35 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.itms;
+package tr.havelsan.ueransim.app.structs.simctx;
 
-import java.util.concurrent.ConcurrentHashMap;
+import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
+import tr.havelsan.ueransim.app.api.sys.SimulationContext;
+import tr.havelsan.ueransim.app.structs.*;
+import tr.havelsan.ueransim.app.structs.configs.UeConfig;
+import tr.havelsan.ueransim.app.structs.contexts.MmContext;
+import tr.havelsan.ueransim.app.structs.contexts.SmContext;
 
-public class Itms {
+import java.util.UUID;
 
-    private final ConcurrentHashMap<Integer, ItmsTask> taskMap;
+public class UeSimContext extends BaseSimContext {
 
-    public Itms() {
-        this.taskMap = new ConcurrentHashMap<>();
-    }
+    public UeData ueData;
+    public UeConfig ueConfig;
+    public UeTimers ueTimers;
 
-    public void createTask(ItmsTask task) {
-        // TODO: statements together are not atomic
-        if (taskMap.containsKey(task.taskId))
-            throw new IllegalStateException("task id already exists");
-        taskMap.put(task.taskId, task);
-    }
+    public UUID connectedGnb;
 
-    public void startTask(ItmsTask task) {
-        task.start();
-    }
+    public MmContext mmCtx;
+    public SmContext smCtx;
+    public NasSecurityContext currentNsCtx;
+    public NasSecurityContext nonCurrentNsCtx;
 
-    public Object receiveMessage(ItmsTask task) {
-        return task.receiveMessage();
-    }
-
-    public Object receiveMessageNonBlocking(ItmsTask task) {
-        return task.receiveMessageNonBlocking();
-    }
-
-    public void sendMessage(ItmsTask task, Object msg) {
-        task.putMessage(msg);
-    }
-
-    public void sendMessage(int taskId, Object msg) {
-        var task = taskMap.get(taskId);
-        if (task == null)
-            throw new IllegalStateException("task id not found");
-        sendMessage(task, msg);
+    public UeSimContext(SimulationContext simCtx) {
+        super(simCtx);
+        this.ueTimers = new UeTimers();
+        this.mmCtx = new MmContext();
+        this.smCtx = new SmContext();
+        this.ueData = new UeData();
     }
 }

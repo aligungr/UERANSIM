@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.sm;
 
-import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.structs.PduSession;
 import tr.havelsan.ueransim.app.structs.ProcedureTransaction;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;

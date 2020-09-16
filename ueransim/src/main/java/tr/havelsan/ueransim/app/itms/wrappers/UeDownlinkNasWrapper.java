@@ -22,32 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
-import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.structs.*;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-import java.util.UUID;
+public class UeDownlinkNasWrapper {
+    public final OctetString nasPdu;
 
-public class UeSimContext extends BaseSimContext {
-
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public UeTimers ueTimers;
-
-    public UUID connectedGnb;
-
-    public MmContext mmCtx;
-    public SmContext smCtx;
-    public NasSecurityContext currentNsCtx;
-    public NasSecurityContext nonCurrentNsCtx;
-
-    public UeSimContext(SimulationContext simCtx) {
-        super(simCtx);
-        this.ueTimers = new UeTimers();
-        this.mmCtx = new MmContext();
-        this.smCtx = new SmContext();
-        this.ueData = new UeData();
+    public UeDownlinkNasWrapper(OctetString nasPdu) {
+        this.nasPdu = nasPdu;
     }
 }

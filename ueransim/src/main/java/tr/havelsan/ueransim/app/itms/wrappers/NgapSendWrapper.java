@@ -22,14 +22,19 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.structs.Guami;
 
-public class UeTestCommandWrapper {
-    public final TestCommand cmd;
+public class NgapSendWrapper {
 
-    public UeTestCommandWrapper(TestCommand cmd) {
-        this.cmd = cmd;
+    public final int streamNumber;
+    public final byte[] data;
+    public final Guami associatedAmf;
+
+    public NgapSendWrapper(int streamNumber, byte[] data, Guami associatedAmf) {
+        this.streamNumber = streamNumber;
+        this.data = data;
+        this.associatedAmf = associatedAmf;
     }
 }

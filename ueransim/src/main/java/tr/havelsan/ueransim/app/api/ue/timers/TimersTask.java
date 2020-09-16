@@ -24,12 +24,12 @@
 
 package tr.havelsan.ueransim.app.api.ue.timers;
 
-import tr.havelsan.itms.Itms;
-import tr.havelsan.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.core.UeNode;
-import tr.havelsan.ueransim.app.itms.NasTimerExpireWrapper;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.api.UeNode;
+import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
 
 public class TimersTask extends ItmsTask {
 

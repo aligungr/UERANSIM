@@ -22,20 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.structs;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.sctp.ISctpClient;
-import tr.havelsan.ueransim.sctp.SctpAssociation;
+import tr.havelsan.ueransim.app.testing.TestCommand;
 
-public class GnbAmfContext {
-    public final Guami guami;
-    public ISctpClient sctpClient;
-    public SctpAssociation association;
-    public int nextStream; // next available SCTP stream for uplink
-    public String host;
-    public int port;
+public class UeTestCommandWrapper {
+    public final TestCommand cmd;
 
-    public GnbAmfContext(Guami guami) {
-        this.guami = guami;
+    public UeTestCommandWrapper(TestCommand cmd) {
+        this.cmd = cmd;
     }
 }

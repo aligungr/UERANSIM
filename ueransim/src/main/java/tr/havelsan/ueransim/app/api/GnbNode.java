@@ -22,18 +22,32 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.api;
 
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.app.api.gnb.mr.MrTask;
+import tr.havelsan.ueransim.app.api.gnb.ngap.NgapTask;
+import tr.havelsan.ueransim.app.api.gnb.sctp.SctpTask;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 
-import java.util.UUID;
+public class GnbNode {
 
-public class GnbUplinkNasWrapper {
-    public final UUID ue;
-    public final OctetString nasPdu;
+    public static final int TASK_SCTP = 1;
+    public static final int TASK_NGAP = 2;
+    public static final int TASK_MR = 3;
 
-    public GnbUplinkNasWrapper(UUID ue, OctetString nasPdu) {
-        this.ue = ue;
-        this.nasPdu = nasPdu;
+    public static void run(GnbSimContext ctx) {
+        var itms = ctx.itms;
+
+        var sctpTask = new SctpTask(itms, TASK_SCTP, ctx);
+        var ngapTask = new NgapTask(itms, TASK_NGAP, ctx);
+        var mrTask = new MrTask(itms, TASK_MR, ctx);
+
+        itms.createTask(sctpTask);
+        itms.createTask(ngapTask);
+        itms.createTask(mrTask);
+
+        itms.startTask(sctpTask);
+        itms.startTask(ngapTask);
+        itms.startTask(mrTask);
     }
 }

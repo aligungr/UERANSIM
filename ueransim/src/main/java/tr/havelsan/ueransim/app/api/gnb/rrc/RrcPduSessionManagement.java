@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.gnb.rrc;
 
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.structs.GnbUeContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 
 public class RrcPduSessionManagement {

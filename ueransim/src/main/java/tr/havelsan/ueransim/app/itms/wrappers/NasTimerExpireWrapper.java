@@ -22,19 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 
-public class NgapSendWrapper {
+public class NasTimerExpireWrapper {
+    public final NasTimer timer;
 
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
-
-    public NgapSendWrapper(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public NasTimerExpireWrapper(NasTimer timer) {
+        this.timer = timer;
     }
 }

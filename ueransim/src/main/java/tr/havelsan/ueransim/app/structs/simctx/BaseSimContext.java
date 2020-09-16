@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core;
+package tr.havelsan.ueransim.app.structs.simctx;
 
-import tr.havelsan.itms.Itms;
+import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 
 import java.util.UUID;

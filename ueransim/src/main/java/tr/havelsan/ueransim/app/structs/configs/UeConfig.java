@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.structs;
+package tr.havelsan.ueransim.app.structs.configs;
 
+import tr.havelsan.ueransim.app.structs.Supi;
 import tr.havelsan.ueransim.nas.impl.ies.IEDnn;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.utils.octets.OctetString;

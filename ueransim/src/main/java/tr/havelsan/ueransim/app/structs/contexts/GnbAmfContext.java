@@ -22,20 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.structs.contexts;
 
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.sctp.ISctpClient;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-public class NgapReceiveWrapper {
+public class GnbAmfContext {
+    public final Guami guami;
+    public ISctpClient sctpClient;
+    public SctpAssociation association;
+    public int nextStream; // next available SCTP stream for uplink
+    public String host;
+    public int port;
 
-    public final Guami associatedAmf;
-    public final int stream;
-    public final NGAP_PDU ngapPdu;
-
-    public NgapReceiveWrapper(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
-        this.associatedAmf = associatedAmf;
-        this.stream = stream;
-        this.ngapPdu = ngapPdu;
+    public GnbAmfContext(Guami guami) {
+        this.guami = guami;
     }
 }

@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.sys;
 
-import tr.havelsan.ueransim.app.core.BaseSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 
 public interface INodeMessagingListener {
 

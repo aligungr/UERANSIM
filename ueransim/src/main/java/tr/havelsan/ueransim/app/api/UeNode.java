@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core;
+package tr.havelsan.ueransim.app.api;
 
 import tr.havelsan.ueransim.app.api.ue.app.AppTask;
 import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
-import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
 public class UeNode {
 

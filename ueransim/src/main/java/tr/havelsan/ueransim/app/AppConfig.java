@@ -26,11 +26,11 @@ package tr.havelsan.ueransim.app;
 
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.structs.GnbAmfContext;
-import tr.havelsan.ueransim.app.structs.GnbConfig;
-import tr.havelsan.ueransim.app.structs.UeConfig;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
+import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;

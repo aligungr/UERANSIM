@@ -43,7 +43,6 @@
         <module>ueransim</module>
         <module>crypto</module>
         <module>gtp</module>
-        <module>itms</module>
     </modules>
 
     <build>

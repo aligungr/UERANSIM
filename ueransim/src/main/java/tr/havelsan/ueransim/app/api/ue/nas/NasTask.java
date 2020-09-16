@@ -24,14 +24,14 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
-import tr.havelsan.itms.Itms;
-import tr.havelsan.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
-import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.itms.NasTimerExpireWrapper;
-import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
-import tr.havelsan.ueransim.app.itms.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.UeDownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;

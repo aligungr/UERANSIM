@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.mts;
+package tr.havelsan.ueransim.app.utils;
 
 import tr.havelsan.ueransim.mts.*;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;

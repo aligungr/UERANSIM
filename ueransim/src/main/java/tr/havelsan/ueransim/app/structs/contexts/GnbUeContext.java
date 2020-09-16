@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.structs;
+package tr.havelsan.ueransim.app.structs.contexts;
 
+import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingPriority;

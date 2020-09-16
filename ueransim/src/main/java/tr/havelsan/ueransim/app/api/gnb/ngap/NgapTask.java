@@ -24,13 +24,13 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.itms.Itms;
-import tr.havelsan.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
-import tr.havelsan.ueransim.app.itms.SctpAssociationSetupWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.NgapReceiveWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.SctpAssociationSetupWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;

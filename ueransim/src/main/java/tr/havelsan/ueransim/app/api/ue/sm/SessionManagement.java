@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.app.api.ue.sm;
 
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
-import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.app.testing.TestCommand_PduSessionEstablishment;
 import tr.havelsan.ueransim.nas.NasDecoder;
