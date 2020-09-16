@@ -26,6 +26,7 @@ package tr.havelsan.ueransim.app.api.ue.mm;
 
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EMmState;
@@ -46,7 +47,7 @@ import tr.havelsan.ueransim.utils.console.Logging;
 public class MobilityManagement {
 
     public static void sendMm(UeSimContext ctx, PlainMmMessage message) {
-        UserEquipment.sendNas(ctx, message);
+        NasTransport.sendNas(ctx, message);
     }
 
     public static void receiveMm(UeSimContext ctx, PlainMmMessage message) {
