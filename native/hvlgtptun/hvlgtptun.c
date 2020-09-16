@@ -20,7 +20,6 @@
 #define DEVICE "hvlgtptun"
 
 int debug;
-char *progname;
 
 int tun_alloc(char *dev, int flags)
 {
