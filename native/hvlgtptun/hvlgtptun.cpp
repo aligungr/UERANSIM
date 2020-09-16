@@ -1,6 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <string>
 #include <unistd.h>
 #include <net/if.h>
 #include <linux/if_tun.h>
@@ -14,6 +15,9 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <stdarg.h>
+
+#include "udp_client.hpp"
+#include "udp_server.hpp"
 
 static constexpr int BUFFER_SIZE = 65535;
 static constexpr int TUN_PORT = 49971;
@@ -55,6 +59,17 @@ static int tun_alloc(char *dev, int flags)
 
 static int bridge_alloc()
 {
+    /*udp_server server{"127.0.0.1", TUN_PORT};
+
+    while (true) {
+        char buffer[BUFFER_SIZE];
+
+        server.recv(buffer, BUFFER_SIZE);
+        puts("received");
+    }*/
+
+
+    
     return -1;
 }
 
@@ -74,7 +89,7 @@ int main(int argc, char *argv[])
     int bridge_fd = bridge_alloc();
     if (bridge_fd < 0)
     {
-        perror("Bridge setup");
+        perror("Bridge setup failure");
         exit(EXIT_FAILURE);
     }
 
