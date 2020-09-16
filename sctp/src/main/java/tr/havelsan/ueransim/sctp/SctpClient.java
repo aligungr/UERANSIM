@@ -26,8 +26,8 @@ package tr.havelsan.ueransim.sctp;
 
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -57,8 +57,7 @@ public class SctpClient implements ISctpClient {
 
         Logging.info(Tag.CONNECTION, "Trying to establish SCTP connection... (%s:%s)", host, port);
 
-        var serverAddress = new InetSocketAddress(host, port);
-        this.channel = SctpChannel.open(serverAddress, 0, 0);
+        this.channel = SctpChannel.open(new InetSocketAddress(host, port), 0, 0);
         this.receiving = true;
 
         Logging.info(Tag.CONNECTION, "SCTP connection established");
