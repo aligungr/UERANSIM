@@ -22,32 +22,39 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.nodes;
+package tr.havelsan.ueransim.app.core;
 
-import tr.havelsan.ueransim.app.api.gnb.mr.MrTask;
-import tr.havelsan.ueransim.app.api.gnb.ngap.NgapTask;
-import tr.havelsan.ueransim.app.api.gnb.sctp.SctpTask;
-import tr.havelsan.ueransim.app.core.GnbSimContext;
+import tr.havelsan.ueransim.app.api.ue.app.AppTask;
+import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTask;
+import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
+import tr.havelsan.ueransim.app.core.UeSimContext;
 
-public class GnbNode {
+public class UeNode {
 
-    public static final int TASK_SCTP = 1;
-    public static final int TASK_NGAP = 2;
-    public static final int TASK_MR = 3;
+    public static final int TASK_MR = 1;
+    public static final int TASK_NAS = 2;
+    public static final int TASK_NAS_TIMERS = 3; // todo no need for seperate task
+    public static final int TASK_APP = 4;
 
-    public static void run(GnbSimContext ctx) {
+    public static final boolean AUTO = false;
+
+    public static void run(UeSimContext ctx) {
         var itms = ctx.itms;
 
-        var sctpTask = new SctpTask(itms, TASK_SCTP, ctx);
-        var ngapTask = new NgapTask(itms, TASK_NGAP, ctx);
+        var timersTask = new TimersTask(itms, TASK_NAS_TIMERS, ctx);
         var mrTask = new MrTask(itms, TASK_MR, ctx);
+        var nasTask = new NasTask(itms, TASK_NAS, ctx);
+        var appTask = new AppTask(itms, TASK_APP, ctx);
 
-        itms.createTask(sctpTask);
-        itms.createTask(ngapTask);
+        itms.createTask(timersTask);
         itms.createTask(mrTask);
+        itms.createTask(nasTask);
+        itms.createTask(appTask);
 
-        itms.startTask(sctpTask);
-        itms.startTask(ngapTask);
+        itms.startTask(timersTask);
         itms.startTask(mrTask);
+        itms.startTask(nasTask);
+        itms.startTask(appTask);
     }
 }

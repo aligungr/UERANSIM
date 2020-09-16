@@ -29,8 +29,8 @@ import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.BaseSimContext;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.core.nodes.GnbNode;
-import tr.havelsan.ueransim.app.core.nodes.UeNode;
+import tr.havelsan.ueransim.app.core.GnbNode;
+import tr.havelsan.ueransim.app.core.UeNode;
 import tr.havelsan.ueransim.app.itms.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.app.structs.Supi;
@@ -242,7 +242,7 @@ public class Program {
         private final Map<String, Long> deregistrationTimers = new HashMap<>();
 
         @Override
-        public void onSend(BaseSimContext<?> ctx, Object message) {
+        public void onSend(BaseSimContext ctx, Object message) {
             if (message instanceof NGAP_NGSetupRequest) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 ngSetupTimers.put(gnbId, System.currentTimeMillis());
@@ -269,7 +269,7 @@ public class Program {
         }
 
         @Override
-        public void onReceive(BaseSimContext<?> ctx, Object message) {
+        public void onReceive(BaseSimContext ctx, Object message) {
             if (message instanceof NGAP_NGSetupFailure) {
                 int gnbId = ((GnbSimContext) ctx).config.gnbId;
                 long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);

@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.app.api.gnb.sctp;
 import tr.havelsan.itms.Itms;
 import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.core.GnbNode;
 import tr.havelsan.ueransim.app.itms.NgapReceiveWrapper;
 import tr.havelsan.ueransim.app.itms.NgapSendWrapper;
 import tr.havelsan.ueransim.app.itms.SctpAssociationSetupWrapper;

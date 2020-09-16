@@ -64,12 +64,12 @@ public class Simulation {
         }
     }
 
-    public static void triggerOnSend(BaseSimContext<?> ctx, Object msg) {
+    public static void triggerOnSend(BaseSimContext ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
         if (listener != null) listener.onSend(ctx, msg);
     }
 
-    public static void triggerOnReceive(BaseSimContext<?> ctx, Object msg) {
+    public static void triggerOnReceive(BaseSimContext ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
         if (listener != null) listener.onReceive(ctx, msg);
     }

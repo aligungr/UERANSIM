@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.core.GnbNode;
 import tr.havelsan.ueransim.app.itms.GnbDownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;

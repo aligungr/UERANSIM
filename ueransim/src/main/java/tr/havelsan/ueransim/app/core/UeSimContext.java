@@ -26,12 +26,11 @@ package tr.havelsan.ueransim.app.core;
 
 import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.events.UeEvent;
 import tr.havelsan.ueransim.app.structs.*;
 
 import java.util.UUID;
 
-public class UeSimContext extends BaseSimContext<UeEvent> {
+public class UeSimContext extends BaseSimContext {
 
     public UeData ueData;
     public UeConfig ueConfig;

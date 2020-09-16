@@ -26,26 +26,19 @@ package tr.havelsan.ueransim.app.core;
 
 import tr.havelsan.itms.Itms;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.events.BaseEvent;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.UUID;
 
-public class BaseSimContext<T extends BaseEvent> {
+public class BaseSimContext {
     public final SimulationContext simCtx;
     public final UUID ctxId;
     public final Itms itms;
-    private final Queue<T> eventQueue;
     private Thread looperThread;
 
     public BaseSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
         this.ctxId = UUID.randomUUID();
         this.itms = new Itms();
-        this.eventQueue = new ArrayDeque<>();
     }
 
     public Thread getLooperThread() {
@@ -54,24 +47,5 @@ public class BaseSimContext<T extends BaseEvent> {
 
     public void setLooperThread(Thread looperThread) {
         this.looperThread = looperThread;
-    }
-
-    public boolean hasEvent() {
-        synchronized (this) {
-            return !eventQueue.isEmpty();
-        }
-    }
-
-    public void pushEvent(T event) {
-        Logging.info(Tag.EVENT, "Pushed event: %s", event);
-        synchronized (this) {
-            eventQueue.add(event);
-        }
-    }
-
-    public T popEvent() {
-        synchronized (this) {
-            return eventQueue.poll();
-        }
     }
 }

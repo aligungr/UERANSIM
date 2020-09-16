@@ -25,7 +25,6 @@
 package tr.havelsan.ueransim.app.core;
 
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.events.GnbEvent;
 import tr.havelsan.ueransim.app.structs.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.GnbUeContext;
@@ -34,7 +33,7 @@ import tr.havelsan.ueransim.app.structs.Guami;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class GnbSimContext extends BaseSimContext<GnbEvent> {
+public class GnbSimContext extends BaseSimContext {
     public GnbConfig config;
 
     public HashMap<Guami, GnbAmfContext> amfContexts;

@@ -32,11 +32,11 @@ public interface INodeMessagingListener {
      * Triggered when a simulation node has send a message.
      * WARNING: Do not mutate any of the parameters.
      */
-    void onSend(BaseSimContext<?> ctx, Object message);
+    void onSend(BaseSimContext ctx, Object message);
 
     /**
      * Triggered when a simulation node has recevied a message.
      * WARNING: Do not mutate any of the parameters.
      */
-    void onReceive(BaseSimContext<?> ctx, Object message);
+    void onReceive(BaseSimContext ctx, Object message);
 }

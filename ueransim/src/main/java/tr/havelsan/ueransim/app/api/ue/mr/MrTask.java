@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.app.api.ue.mr;
 import tr.havelsan.itms.Itms;
 import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.core.nodes.UeNode;
+import tr.havelsan.ueransim.app.core.UeNode;
 import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
 
 public class MrTask extends ItmsTask {

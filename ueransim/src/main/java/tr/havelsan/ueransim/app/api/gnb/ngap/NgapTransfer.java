@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.core.GnbNode;
 import tr.havelsan.ueransim.app.itms.NgapSendWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;

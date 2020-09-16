@@ -29,7 +29,7 @@ import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.core.nodes.UeNode;
+import tr.havelsan.ueransim.app.core.UeNode;
 import tr.havelsan.ueransim.app.itms.GnbDownlinkNasWrapper;
 import tr.havelsan.ueransim.app.itms.GnbUplinkNasWrapper;
 import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
