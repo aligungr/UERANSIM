@@ -63,4 +63,8 @@ public class Itms {
             throw new IllegalStateException("task id not found");
         sendMessage(task, msg);
     }
+
+    public ItmsTask findTask(int taskId) {
+        return taskMap.get(taskId);
+    }
 }

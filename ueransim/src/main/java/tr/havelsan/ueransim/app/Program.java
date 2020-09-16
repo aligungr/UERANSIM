@@ -24,6 +24,7 @@
 
 package tr.havelsan.ueransim.app;
 
+import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.ItmsId;
@@ -146,8 +147,10 @@ public class Program {
         Simulation.registerGnb(simContext, gnbContext);
         GnbNode.run(gnbContext);
 
-        // todo: ensure gnbs are good to go
-        Utils.sleep(1500);
+        while (!((GnbAppTask)gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
+            // just wait until the gNB says my initial SCTP connection is ready.
+            Utils.sleep(100);
+        }
 
         ueContexts = new ArrayList<>();
         for (int i = 0; i < numberOfUe; i++) {

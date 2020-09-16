@@ -30,11 +30,11 @@ import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
-public class AppTask extends ItmsTask {
+public class UeAppTask extends ItmsTask {
 
     private final UeSimContext ctx;
 
-    public AppTask(Itms itms, int taskId, UeSimContext ctx) {
+    public UeAppTask(Itms itms, int taskId, UeSimContext ctx) {
         super(itms, taskId);
         this.ctx = ctx;
     }

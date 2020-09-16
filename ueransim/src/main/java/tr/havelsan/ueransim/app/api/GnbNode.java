@@ -24,6 +24,7 @@
 
 package tr.havelsan.ueransim.app.api;
 
+import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.gnb.mr.MrTask;
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.app.api.gnb.sctp.SctpTask;
@@ -38,13 +39,16 @@ public class GnbNode {
         var sctpTask = new SctpTask(itms, ItmsId.GNB_TASK_SCTP, ctx);
         var ngapTask = new NgapTask(itms, ItmsId.GNB_TASK_NGAP, ctx);
         var mrTask = new MrTask(itms, ItmsId.GNB_TASK_MR, ctx);
+        var appTask = new GnbAppTask(itms, ItmsId.GNB_TASK_APP, ctx);
 
         itms.createTask(sctpTask);
         itms.createTask(ngapTask);
         itms.createTask(mrTask);
+        itms.createTask(appTask);
 
         itms.startTask(sctpTask);
         itms.startTask(ngapTask);
         itms.startTask(mrTask);
+        itms.startTask(appTask);
     }
 }
