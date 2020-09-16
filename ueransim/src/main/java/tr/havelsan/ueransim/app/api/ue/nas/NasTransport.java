@@ -24,6 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
+import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
@@ -51,8 +52,7 @@ public class NasTransport {
         Logging.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(securedNas));
         Logging.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
 
-        // TODO
-        Simulation.findGnb(ctx.simCtx, ctx.connectedGnb).itms.sendMessage(GnbNode.TASK_MR, new UplinkNasWrapper(ctx.ctxId, securedNasPdu));
+        ctx.itms.sendMessage(UeNode.TASK_MR, new UplinkNasWrapper(ctx.ctxId, securedNasPdu));
 
         Simulation.triggerOnSend(ctx, message);
 

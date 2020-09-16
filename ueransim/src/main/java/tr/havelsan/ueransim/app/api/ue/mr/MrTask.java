@@ -24,9 +24,12 @@
 
 package tr.havelsan.ueransim.app.api.ue.mr;
 
+import tr.havelsan.ueransim.app.api.GnbNode;
+import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.UplinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.api.UeNode;
 
@@ -44,8 +47,11 @@ public class MrTask extends ItmsTask {
         while (true) {
             var msg = itms.receiveMessage(this);
             if (msg instanceof DownlinkNasWrapper) {
-                var w = (DownlinkNasWrapper) msg;
-                ctx.itms.sendMessage(UeNode.TASK_NAS, w);
+                ctx.itms.sendMessage(UeNode.TASK_NAS, msg);
+            }
+            else if (msg instanceof UplinkNasWrapper) {
+                // TODO
+                Simulation.findGnb(ctx.simCtx, ctx.connectedGnb).itms.sendMessage(GnbNode.TASK_MR, msg);
             }
         }
     }
