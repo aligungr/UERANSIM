@@ -22,22 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events.ue;
+package tr.havelsan.ueransim.app.itms;
 
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 
-public class UeTimerExpireEvent extends UeEvent {
-
+public class NasTimerExpireWrapper {
     public final NasTimer timer;
 
-    public UeTimerExpireEvent(NasTimer timer) {
+    public NasTimerExpireWrapper(NasTimer timer) {
         this.timer = timer;
-    }
-
-    @Override
-    public String toString() {
-        return "UeTimerExpireEvent{" +
-                "timer=" + timer +
-                '}';
     }
 }

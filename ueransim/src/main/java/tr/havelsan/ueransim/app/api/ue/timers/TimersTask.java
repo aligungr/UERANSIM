@@ -26,8 +26,10 @@ package tr.havelsan.ueransim.app.api.ue.timers;
 
 import tr.havelsan.itms.Itms;
 import tr.havelsan.itms.ItmsTask;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
+import tr.havelsan.ueransim.app.core.nodes.UeNode;
+import tr.havelsan.ueransim.app.itms.NasTimerExpireWrapper;
 
 public class TimersTask extends ItmsTask {
 
@@ -49,27 +51,31 @@ public class TimersTask extends ItmsTask {
 
             var timers = ctx.ueTimers;
 
-            if (timers.t3346.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3346));
-            if (timers.t3396.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3396));
-            if (timers.t3444.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3444));
-            if (timers.t3445.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3445));
-            if (timers.t3502.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3502));
-            if (timers.t3510.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3510));
-            if (timers.t3511.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3511));
-            if (timers.t3512.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3512));
-            if (timers.t3516.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3516));
-            if (timers.t3517.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3517));
-            if (timers.t3519.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3519));
-            if (timers.t3520.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3520));
-            if (timers.t3521.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3521));
-            if (timers.t3525.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3525));
-            if (timers.t3540.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3540));
-            if (timers.t3580.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3580));
-            if (timers.t3581.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3581));
-            if (timers.t3582.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3582));
-            if (timers.t3583.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3583));
-            if (timers.t3584.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3584));
-            if (timers.t3585.performTick()) ctx.pushEvent(new UeTimerExpireEvent(timers.t3585));
+            if (timers.t3346.performTick()) sendExpireMsg(timers.t3346);
+            if (timers.t3396.performTick()) sendExpireMsg(timers.t3396);
+            if (timers.t3444.performTick()) sendExpireMsg(timers.t3444);
+            if (timers.t3445.performTick()) sendExpireMsg(timers.t3445);
+            if (timers.t3502.performTick()) sendExpireMsg(timers.t3502);
+            if (timers.t3510.performTick()) sendExpireMsg(timers.t3510);
+            if (timers.t3511.performTick()) sendExpireMsg(timers.t3511);
+            if (timers.t3512.performTick()) sendExpireMsg(timers.t3512);
+            if (timers.t3516.performTick()) sendExpireMsg(timers.t3516);
+            if (timers.t3517.performTick()) sendExpireMsg(timers.t3517);
+            if (timers.t3519.performTick()) sendExpireMsg(timers.t3519);
+            if (timers.t3520.performTick()) sendExpireMsg(timers.t3520);
+            if (timers.t3521.performTick()) sendExpireMsg(timers.t3521);
+            if (timers.t3525.performTick()) sendExpireMsg(timers.t3525);
+            if (timers.t3540.performTick()) sendExpireMsg(timers.t3540);
+            if (timers.t3580.performTick()) sendExpireMsg(timers.t3580);
+            if (timers.t3581.performTick()) sendExpireMsg(timers.t3581);
+            if (timers.t3582.performTick()) sendExpireMsg(timers.t3582);
+            if (timers.t3583.performTick()) sendExpireMsg(timers.t3583);
+            if (timers.t3584.performTick()) sendExpireMsg(timers.t3584);
+            if (timers.t3585.performTick()) sendExpireMsg(timers.t3585);
         }
+    }
+
+    private void sendExpireMsg(NasTimer timer) {
+        ctx.itms.sendMessage(UeNode.TASK_NAS, new NasTimerExpireWrapper(timer));
     }
 }

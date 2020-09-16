@@ -30,7 +30,7 @@ import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
+import tr.havelsan.ueransim.app.itms.NasTimerExpireWrapper;
 import tr.havelsan.ueransim.app.itms.UeDownlinkNasWrapper;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.nas.NasDecoder;
@@ -56,15 +56,8 @@ public class NasTask extends ItmsTask {
             if (msg instanceof UeDownlinkNasWrapper) {
                 NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasWrapper) msg).nasPdu));
             }
-
-            var event = ctx.popEvent();
-            if (event instanceof UeCommandEvent) {
-                Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
-
-                var cmd = ((UeCommandEvent) event).cmd;
-                executeCommand(ctx, cmd);
-            } else if (event instanceof UeTimerExpireEvent) {
-                var timer = ((UeTimerExpireEvent) event).timer;
+            if (msg instanceof NasTimerExpireWrapper) {
+                var timer = ((NasTimerExpireWrapper) msg).timer;
                 Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
 
                 if (timer.isMmTimer) {
@@ -72,6 +65,14 @@ public class NasTask extends ItmsTask {
                 } else {
                     SessionManagement.receiveTimerExpire(ctx, timer);
                 }
+            }
+
+            var event = ctx.popEvent();
+            if (event instanceof UeCommandEvent) {
+                Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
+
+                var cmd = ((UeCommandEvent) event).cmd;
+                executeCommand(ctx, cmd);
             }
         }
     }
