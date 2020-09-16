@@ -33,19 +33,10 @@ public class BaseSimContext {
     public final SimulationContext simCtx;
     public final UUID ctxId;
     public final Itms itms;
-    private Thread looperThread;
 
     public BaseSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
         this.ctxId = UUID.randomUUID();
         this.itms = new Itms();
-    }
-
-    public Thread getLooperThread() {
-        return looperThread;
-    }
-
-    public void setLooperThread(Thread looperThread) {
-        this.looperThread = looperThread;
     }
 }
