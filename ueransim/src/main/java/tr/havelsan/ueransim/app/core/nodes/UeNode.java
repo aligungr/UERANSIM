@@ -24,31 +24,32 @@
 
 package tr.havelsan.ueransim.app.core.nodes;
 
-import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.core.threads.NodeLooperThread;
 
 public class UeNode {
 
-    public static final int TASK_TIMERS = 1;
-    public static final int TASK_MR = 2;
+    public static final int TASK_MR = 1;
+    public static final int TASK_NAS = 2;
+    public static final int TASK_NAS_TIMERS = 3; // todo no need for seperate task
+
+    public static final boolean AUTO = false;
 
     public static void run(UeSimContext ctx) {
         var itms = ctx.itms;
 
-        var timersTask = new TimersTask(itms, TASK_TIMERS, ctx);
+        var timersTask = new TimersTask(itms, TASK_NAS_TIMERS, ctx);
         var mrTask = new MrTask(itms, TASK_MR, ctx);
+        var nasTask = new NasTask(itms, TASK_NAS, ctx);
 
         itms.createTask(timersTask);
         itms.createTask(mrTask);
+        itms.createTask(nasTask);
 
         itms.startTask(timersTask);
         itms.startTask(mrTask);
-
-        var looperThread = new NodeLooperThread<>(ctx, UserEquipment::cycle);
-        ctx.setLooperThread(looperThread);
-        looperThread.start();
+        itms.startTask(nasTask);
     }
 }

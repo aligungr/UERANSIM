@@ -25,10 +25,10 @@
 package tr.havelsan.ueransim.app.api.ue.mm;
 
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
-import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.core.nodes.UeNode;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
 import tr.havelsan.ueransim.app.enums.ERmState;
@@ -86,13 +86,13 @@ public class MobilityManagement {
 
     public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
         if (timer.timerCode == 3512) {
-            if (UserEquipment.AUTO && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
+            if (UeNode.AUTO && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
             }
         }
 
         if (timer.timerCode == 3346) {
-            if (UserEquipment.AUTO && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
+            if (UeNode.AUTO && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
             }
         }
@@ -138,7 +138,7 @@ public class MobilityManagement {
         }
 
         if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
-            if (UserEquipment.AUTO && !ctx.ueTimers.t3346.isRunning()) {
+            if (UeNode.AUTO && !ctx.ueTimers.t3346.isRunning()) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
             }
             return;
@@ -160,7 +160,7 @@ public class MobilityManagement {
             return;
         }
 
-        if (UserEquipment.AUTO) {
+        if (UeNode.AUTO) {
             throw new NotImplementedException("unhandled UE MM state");
         }
     }

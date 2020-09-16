@@ -22,8 +22,10 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.ue;
+package tr.havelsan.ueransim.app.api.ue.nas;
 
+import tr.havelsan.itms.Itms;
+import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
@@ -33,27 +35,36 @@ import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Logging;
 
-public class UserEquipment {
+public class NasTask extends ItmsTask {
 
-    public static boolean AUTO = false;
+    private final UeSimContext ctx;
 
-    public static void cycle(UeSimContext ctx) {
-        MobilityManagement.cycle(ctx);
+    public NasTask(Itms itms, int taskId, UeSimContext ctx) {
+        super(itms, taskId);
+        this.ctx = ctx;
+    }
 
-        var event = ctx.popEvent();
-        if (event instanceof UeCommandEvent) {
-            Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
+    @Override
+    public void main() {
 
-            var cmd = ((UeCommandEvent) event).cmd;
-            executeCommand(ctx, cmd);
-        } else if (event instanceof UeTimerExpireEvent) {
-            var timer = ((UeTimerExpireEvent) event).timer;
-            Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+        while (true) {
+            MobilityManagement.cycle(ctx);
 
-            if (timer.isMmTimer) {
-                MobilityManagement.receiveTimerExpire(ctx, timer);
-            } else {
-                SessionManagement.receiveTimerExpire(ctx, timer);
+            var event = ctx.popEvent();
+            if (event instanceof UeCommandEvent) {
+                Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
+
+                var cmd = ((UeCommandEvent) event).cmd;
+                executeCommand(ctx, cmd);
+            } else if (event instanceof UeTimerExpireEvent) {
+                var timer = ((UeTimerExpireEvent) event).timer;
+                Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+
+                if (timer.isMmTimer) {
+                    MobilityManagement.receiveTimerExpire(ctx, timer);
+                } else {
+                    SessionManagement.receiveTimerExpire(ctx, timer);
+                }
             }
         }
     }
