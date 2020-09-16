@@ -27,11 +27,6 @@ package tr.havelsan.ueransim.app.api.sys;
 import tr.havelsan.ueransim.app.core.BaseSimContext;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.events.BaseEvent;
-import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
-import tr.havelsan.ueransim.app.events.ue.UeEvent;
-import tr.havelsan.ueransim.utils.console.Logging;
-import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.UUID;
 
@@ -77,17 +72,5 @@ public class Simulation {
     public static void triggerOnReceive(BaseSimContext<?> ctx, Object msg) {
         var listener = ctx.simCtx.nodeMessagingListener;
         if (listener != null) listener.onReceive(ctx, msg);
-    }
-
-    public static void pushUeEvent(SimulationContext ctx, UUID ueId, UeEvent event) {
-        UeSimContext ue;
-        synchronized (ctx) {
-            ue = findUe(ctx, ueId);
-        }
-        if (ue == null) {
-            Logging.error(Tag.SYSTEM, "Simulation.pushUeEvent: could not find UE Sim Context with id: %s", ueId);
-        } else {
-            ue.pushEvent(event);
-        }
     }
 }

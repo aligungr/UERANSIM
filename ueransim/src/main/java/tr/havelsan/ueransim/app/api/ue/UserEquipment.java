@@ -31,7 +31,6 @@ import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.core.nodes.GnbNode;
 import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
 import tr.havelsan.ueransim.app.events.ue.UeTimerExpireEvent;
 import tr.havelsan.ueransim.app.itms.GnbUplinkNasWrapper;
 import tr.havelsan.ueransim.app.testing.TestCommand;
@@ -100,10 +99,6 @@ public class UserEquipment {
 
             var cmd = ((UeCommandEvent) event).cmd;
             executeCommand(ctx, cmd);
-        } else if (event instanceof UeDownlinkNasEvent) {
-            Logging.info(Tag.EVENT, "UeEvent is handling: %s", event);
-
-            receiveNas(ctx, NasDecoder.nasPdu(((UeDownlinkNasEvent) event).nasPdu));
         } else if (event instanceof UeTimerExpireEvent) {
             var timer = ((UeTimerExpireEvent) event).timer;
             Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);

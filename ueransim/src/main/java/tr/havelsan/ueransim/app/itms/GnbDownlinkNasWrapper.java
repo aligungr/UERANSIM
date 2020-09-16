@@ -22,21 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events.ue;
+package tr.havelsan.ueransim.app.itms;
 
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class UeDownlinkNasEvent extends UeEvent {
+import java.util.UUID;
+
+public class GnbDownlinkNasWrapper {
+    public final UUID ue;
     public final OctetString nasPdu;
 
-    public UeDownlinkNasEvent(OctetString nasPdu) {
+    public GnbDownlinkNasWrapper(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
         this.nasPdu = nasPdu;
-    }
-
-    @Override
-    public String toString() {
-        return "UeDownlinkNasEvent{" +
-                "nasPdu=" + nasPdu +
-                '}';
     }
 }

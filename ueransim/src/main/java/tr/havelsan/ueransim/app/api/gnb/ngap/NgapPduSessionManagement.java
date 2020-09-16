@@ -25,9 +25,9 @@
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.GnbSimContext;
-import tr.havelsan.ueransim.app.events.ue.UeDownlinkNasEvent;
+import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.itms.GnbDownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -95,7 +95,7 @@ public class NgapPduSessionManagement {
 
             if (RrcPduSessionManagement.pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
-                    Simulation.pushUeEvent(ctx.simCtx, associatedUe.ueCtxId, new UeDownlinkNasEvent(item.pDUSessionNAS_PDU.value));
+                    ctx.itms.sendMessage(GnbNode.TASK_MR, new GnbDownlinkNasWrapper(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
@@ -134,7 +134,7 @@ public class NgapPduSessionManagement {
 
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
-            Simulation.pushUeEvent(ctx.simCtx, associatedUe.ueCtxId, new UeDownlinkNasEvent(nasPdu.value));
+            ctx.itms.sendMessage(GnbNode.TASK_MR, new GnbDownlinkNasWrapper(associatedUe.ueCtxId, nasPdu.value));
         }
 
         if (!successList.list.isEmpty()) {
