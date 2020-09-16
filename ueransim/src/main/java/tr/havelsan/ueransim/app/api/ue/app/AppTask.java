@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.api.ue.app;
 
 import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.api.UeNode;
@@ -44,7 +45,7 @@ public class AppTask extends ItmsTask {
         while (true) {
             var msg = ctx.itms.receiveMessage(this);
             if (msg instanceof UeTestCommandWrapper) {
-                ctx.itms.sendMessage(UeNode.TASK_NAS, msg);
+                ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             }
         }
     }

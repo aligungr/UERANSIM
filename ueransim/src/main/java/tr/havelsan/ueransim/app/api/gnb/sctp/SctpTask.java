@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.api.gnb.sctp;
 
 import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.GnbNode;
@@ -71,7 +72,7 @@ public class SctpTask extends ItmsTask {
                 @Override
                 public void onSetup(SctpAssociation sctpAssociation) {
                     amf.association = sctpAssociation;
-                    itms.sendMessage(GnbNode.TASK_NGAP, new SctpAssociationSetupWrapper(amf.guami, sctpAssociation));
+                    itms.sendMessage(ItmsId.GNB_TASK_NGAP, new SctpAssociationSetupWrapper(amf.guami, sctpAssociation));
                     setupCount.incrementAndGet();
                 }
 
@@ -109,6 +110,6 @@ public class SctpTask extends ItmsTask {
 
     public void handleSCTPMessage(Guami associatedAmf, byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
-        itms.sendMessage(GnbNode.TASK_NGAP, new NgapReceiveWrapper(associatedAmf, streamNumber, pdu));
+        itms.sendMessage(ItmsId.GNB_TASK_NGAP, new NgapReceiveWrapper(associatedAmf, streamNumber, pdu));
     }
 }

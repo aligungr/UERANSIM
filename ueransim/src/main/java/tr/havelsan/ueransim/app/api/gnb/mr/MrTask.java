@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.api.gnb.mr;
 
 import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
@@ -54,7 +55,7 @@ public class MrTask extends ItmsTask {
             else if (msg instanceof DownlinkNasWrapper) {
                 var w = (DownlinkNasWrapper) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(UeNode.TASK_MR, new DownlinkNasWrapper(w.ue, w.nasPdu));
+                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new DownlinkNasWrapper(w.ue, w.nasPdu));
             }
         }
     }

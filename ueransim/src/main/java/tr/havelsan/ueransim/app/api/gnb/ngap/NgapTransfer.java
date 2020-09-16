@@ -26,6 +26,8 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.itms.wrappers.NgapSendWrapper;
@@ -51,7 +53,7 @@ public class NgapTransfer {
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        ctx.itms.sendMessage(GnbNode.TASK_SCTP, new NgapSendWrapper(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new NgapSendWrapper(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
 
         Simulation.triggerOnSend(ctx, message);
     }
@@ -91,7 +93,7 @@ public class NgapTransfer {
         Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        ctx.itms.sendMessage(GnbNode.TASK_SCTP, new NgapSendWrapper(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new NgapSendWrapper(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
 
         Simulation.triggerOnSend(ctx, message);
     }

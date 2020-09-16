@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.api.ue.timers;
 
 import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
@@ -76,6 +77,6 @@ public class TimersTask extends ItmsTask {
     }
 
     private void sendExpireMsg(NasTimer timer) {
-        ctx.itms.sendMessage(UeNode.TASK_NAS, new NasTimerExpireWrapper(timer));
+        ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, new NasTimerExpireWrapper(timer));
     }
 }

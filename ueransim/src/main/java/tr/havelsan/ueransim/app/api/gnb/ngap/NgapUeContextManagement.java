@@ -24,6 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
@@ -70,7 +72,7 @@ public class NgapUeContextManagement {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.itms.sendMessage(GnbNode.TASK_MR, new DownlinkNasWrapper(ueId, NasEncoder.nasPduS(nasMessage)));
+            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(ueId, NasEncoder.nasPduS(nasMessage)));
         }
 
         Logging.funcOut();

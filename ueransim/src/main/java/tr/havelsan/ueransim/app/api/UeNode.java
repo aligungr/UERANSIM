@@ -28,24 +28,20 @@ import tr.havelsan.ueransim.app.api.ue.app.AppTask;
 import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
 public class UeNode {
-
-    public static final int TASK_MR = 1;
-    public static final int TASK_NAS = 2;
-    public static final int TASK_NAS_TIMERS = 3; // todo no need for seperate task
-    public static final int TASK_APP = 4;
 
     public static final boolean AUTO = false;
 
     public static void run(UeSimContext ctx) {
         var itms = ctx.itms;
 
-        var timersTask = new TimersTask(itms, TASK_NAS_TIMERS, ctx);
-        var mrTask = new MrTask(itms, TASK_MR, ctx);
-        var nasTask = new NasTask(itms, TASK_NAS, ctx);
-        var appTask = new AppTask(itms, TASK_APP, ctx);
+        var timersTask = new TimersTask(itms, ItmsId.UE_TASK_NAS_TIMERS, ctx);
+        var mrTask = new MrTask(itms, ItmsId.UE_TASK_MR, ctx);
+        var nasTask = new NasTask(itms, ItmsId.UE_TASK_NAS, ctx);
+        var appTask = new AppTask(itms, ItmsId.UE_TASK_APP, ctx);
 
         itms.createTask(timersTask);
         itms.createTask(mrTask);
