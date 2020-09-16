@@ -73,7 +73,7 @@ public class Program {
     private final ImplicitTypedObject loadTesting;
     private ArrayList<UeSimContext> ueContexts;
 
-    public Program() throws Exception {
+    public Program() {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
 
@@ -137,7 +137,7 @@ public class Program {
         loadTestConsole.printDiv();
     }
 
-    private void initialize() throws Exception {
+    private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
         var simContext = app.createSimContext(new NodeMessagingListener());
@@ -147,7 +147,7 @@ public class Program {
         GnbNode.run(gnbContext);
 
         // todo: ensure gnbs are good to go
-        Thread.sleep(1500);
+        Utils.sleep(1500);
 
         ueContexts = new ArrayList<>();
         for (int i = 0; i < numberOfUe; i++) {
@@ -168,7 +168,7 @@ public class Program {
     }
 
     public void runUserPrompt() throws Exception {
-        Thread.sleep(250);
+        Utils.sleep(250);
 
         Console.println(AnsiPalette.PAINT_DIVIDER, "=============================================================================");
 
@@ -216,10 +216,10 @@ public class Program {
         runTest(testName, testCommands);
     }
 
-    private void runTest(String testName, TestCommand[] testCommands) throws Exception {
+    private void runTest(String testName, TestCommand[] testCommands) {
         for (var command : testCommands) {
             if (command instanceof TestCommand_Sleep) {
-                Thread.sleep(((TestCommand_Sleep) command).duration * 1000);
+                Utils.sleep(((TestCommand_Sleep) command).duration * 1000);
             } else if (command instanceof TestCommand_InitialRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCommand_PeriodicRegistration) {

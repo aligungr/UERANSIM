@@ -40,6 +40,7 @@ import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
 import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.sctp.SctpClient;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.util.HashMap;
@@ -96,7 +97,8 @@ public class SctpTask extends ItmsTask {
         }
 
         while (setupCount.get() != ctx.amfContexts.size()) {
-            // do nothing
+            // just wait
+            Utils.sleep(1000);
         }
 
         while (true) {

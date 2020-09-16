@@ -31,6 +31,7 @@ import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
+import tr.havelsan.ueransim.utils.Utils;
 
 public class TimersTask extends ItmsTask {
 
@@ -44,11 +45,7 @@ public class TimersTask extends ItmsTask {
     @Override
     public void main() {
         while (true) {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            Utils.sleep(1500);
 
             var timers = ctx.ueTimers;
 
