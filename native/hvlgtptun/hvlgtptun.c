@@ -17,7 +17,6 @@
 
 #define BUFSIZE 65535
 #define PORT 55555
-#define DEVICE "hvlgtptun"
 
 int debug;
 
@@ -123,7 +122,7 @@ int main(int argc, char *argv[])
     char tun_name[IFNAMSIZ];
     char buffer[BUFSIZE];
 
-    strcpy(tun_name, DEVICE);
+    strcpy(tun_name, "hvlgtptun");
     int tun_fd = tun_alloc(tun_name, IFF_TUN | IFF_NO_PI);
 
     if (tun_fd < 0)
