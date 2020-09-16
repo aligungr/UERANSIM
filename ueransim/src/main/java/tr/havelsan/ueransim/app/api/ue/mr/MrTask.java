@@ -22,33 +22,23 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.core.nodes;
+package tr.havelsan.ueransim.app.api.ue.mr;
 
-import tr.havelsan.ueransim.app.api.ue.UserEquipment;
-import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
-import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
+import tr.havelsan.itms.Itms;
+import tr.havelsan.itms.ItmsTask;
 import tr.havelsan.ueransim.app.core.UeSimContext;
-import tr.havelsan.ueransim.app.core.threads.NodeLooperThread;
 
-public class UeNode {
+public class MrTask extends ItmsTask {
 
-    public static final int TASK_TIMERS = 1;
-    public static final int TASK_MR = 2;
+    private final UeSimContext ctx;
 
-    public static void run(UeSimContext ctx) {
-        var itms = ctx.itms;
+    public MrTask(Itms itms, int taskId, UeSimContext ctx) {
+        super(itms, taskId);
+        this.ctx = ctx;
+    }
 
-        var timersTask = new TimersTask(itms, TASK_TIMERS, ctx);
-        var mrTask = new MrTask(itms, TASK_MR, ctx);
+    @Override
+    public void main() {
 
-        itms.createTask(timersTask);
-        itms.createTask(mrTask);
-
-        itms.startTask(timersTask);
-        itms.startTask(mrTask);
-
-        var looperThread = new NodeLooperThread<>(ctx, UserEquipment::cycle);
-        ctx.setLooperThread(looperThread);
-        looperThread.start();
     }
 }
