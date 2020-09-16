@@ -27,9 +27,8 @@ package tr.havelsan.ueransim.app.api.ue.app;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
 public class AppTask extends ItmsTask {
 

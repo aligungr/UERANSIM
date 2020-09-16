@@ -32,6 +32,6 @@ public class ItmsId {
 
     public static final int UE_TASK_MR = 1;
     public static final int UE_TASK_NAS = 2;
-    public static final int UE_TASK_NAS_TIMERS = 3; // todo no need for seperate task
+    public static final int UE_TASK_NAS_TIMERS = 3;
     public static final int UE_TASK_APP = 4;
 }

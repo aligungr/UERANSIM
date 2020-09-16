@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.app.api;
 import tr.havelsan.ueransim.app.api.ue.app.AppTask;
 import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTask;
-import tr.havelsan.ueransim.app.api.ue.timers.TimersTask;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimersTask;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
@@ -38,7 +38,7 @@ public class UeNode {
     public static void run(UeSimContext ctx) {
         var itms = ctx.itms;
 
-        var timersTask = new TimersTask(itms, ItmsId.UE_TASK_NAS_TIMERS, ctx);
+        var timersTask = new NasTimersTask(itms, ItmsId.UE_TASK_NAS_TIMERS, ctx);
         var mrTask = new MrTask(itms, ItmsId.UE_TASK_MR, ctx);
         var nasTask = new NasTask(itms, ItmsId.UE_TASK_NAS, ctx);
         var appTask = new AppTask(itms, ItmsId.UE_TASK_APP, ctx);

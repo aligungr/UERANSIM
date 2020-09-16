@@ -22,22 +22,20 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.ue.timers;
+package tr.havelsan.ueransim.app.api.ue.nas;
 
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.utils.Utils;
 
-public class TimersTask extends ItmsTask {
+public class NasTimersTask extends ItmsTask {
 
     private final UeSimContext ctx;
 
-    public TimersTask(Itms itms, int taskId, UeSimContext ctx) {
+    public NasTimersTask(Itms itms, int taskId, UeSimContext ctx) {
         super(itms, taskId);
         this.ctx = ctx;
     }
@@ -45,6 +43,7 @@ public class TimersTask extends ItmsTask {
     @Override
     public void main() {
         while (true) {
+            // TODO: Sleep olmasında sakınca yok ama sleep olmadığında timer tik atmıyor, bug var.
             Utils.sleep(1500);
 
             var timers = ctx.ueTimers;
