@@ -117,6 +117,11 @@ void my_err(char *msg, ...)
     va_end(argp);
 }
 
+int bridge_alloc()
+{
+    return -1;
+}
+
 int main(int argc, char *argv[])
 {
     char tun_name[IFNAMSIZ];
@@ -128,6 +133,13 @@ int main(int argc, char *argv[])
     if (tun_fd < 0)
     {
         perror("Allocating interface");
+        exit(1);
+    }
+
+    int bridge_fd = bridge_alloc();
+    if (bridge_fd < 0)
+    {
+        perror("Bridge setup");
         exit(1);
     }
 
