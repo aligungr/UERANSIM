@@ -88,6 +88,11 @@ public class SctpTask extends ItmsTask {
             new Thread(() -> {
                 try {
                     amf.sctpClient.start();
+                } catch (Exception e) {
+                    Logging.error(Tag.CONNECTION, "SCTP connection could not established: " + e.getMessage());
+                    return;
+                }
+                try {
                     amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
                             -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
                 } catch (Exception e) {
