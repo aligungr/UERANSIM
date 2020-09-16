@@ -15,7 +15,7 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#define BUFSIZE 65536
+#define BUFSIZE 65535
 #define PORT 55555
 #define DEVICE "hvlgtptun"
 
