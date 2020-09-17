@@ -101,7 +101,7 @@ static int cread(int fd, void *buf, size_t nbytes)
 int main(int argc, char *argv[])
 {
     int tun_fd = tun_alloc();
-    int bridge_fd = bridge_alloc();
+    int bridge_fd = bridge_alloc(); // TODO: ensure it is from UERANSIM
     int maxfd = std::max(tun_fd, bridge_fd);
 
     int8_t buffer[BUFFER_SIZE];
