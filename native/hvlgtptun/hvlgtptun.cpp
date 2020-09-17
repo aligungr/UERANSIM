@@ -68,23 +68,6 @@ static int bridge_alloc()
     }
 
     return fd;
-
-    /*sockaddr_in client_address;
-	socklen_t client_address_len = 0;
-
-    while (true) {
-        char buffer[BUFFER_SIZE];
-
-        int len = recvfrom(fd, buffer, BUFFER_SIZE, 0, (sockaddr *)&client_address, &client_address_len);
-
-        sendto(fd, buffer, len, 0, (struct sockaddr *)&client_address, sizeof(client_address));
-
-        puts("received");
-    }
-
-
-    close(fd);
-    return -1;*/
 }
 
 static int cread(int fd, void *buf, size_t nbytes)
