@@ -28,25 +28,3 @@ int udp_server::recv(char *msg, size_t max_size)
 {
     return ::recv(f_socket, msg, max_size, 0);
 }
-
-int udp_server::timed_recv(char *msg, size_t max_size, int max_wait_ms)
-{
-    fd_set s;
-    FD_ZERO(&s);
-    FD_SET(f_socket, &s);
-    struct timeval timeout;
-    timeout.tv_sec = max_wait_ms / 1000;
-    timeout.tv_usec = (max_wait_ms % 1000) * 1000;
-    int retval = select(f_socket + 1, &s, &s, &s, &timeout);
-    if (retval == -1)
-    {
-        return -1;
-    }
-    if (retval > 0)
-    {
-        return ::recv(f_socket, msg, max_size, 0);
-    }
-
-    errno = EAGAIN;
-    return -1;
-}
