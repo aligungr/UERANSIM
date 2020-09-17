@@ -8,24 +8,11 @@
 
 udp_server::udp_server(const std::string &addr, int port) : f_port(port), f_addr(addr)
 {
-    int r = udp_utils::get_address_info(addr, port, &f_addrinfo);
-    if (r != 0 || f_addrinfo == NULL)
-    {
-        perror("invalid address or port for UDP socket");
-        exit(EXIT_FAILURE);
-    }
-    f_socket = socket(f_addrinfo->ai_family, SOCK_DGRAM | SOCK_CLOEXEC, IPPROTO_UDP);
-    if (f_socket == -1)
-    {
-        freeaddrinfo(f_addrinfo);
-        perror("could not create UDP socket");
-        exit(EXIT_FAILURE);
-    }
-    r = bind(f_socket, f_addrinfo->ai_addr, f_addrinfo->ai_addrlen);
+    udp_utils::get_address_info(addr, port, &f_addrinfo);
+    f_socket = udp_utils::new_socket();
+    int r = bind(f_socket, f_addrinfo->ai_addr, f_addrinfo->ai_addrlen);
     if (r != 0)
     {
-        freeaddrinfo(f_addrinfo);
-        close(f_socket);
         perror("could not create UDP socket");
         exit(EXIT_FAILURE);
     }
