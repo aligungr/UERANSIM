@@ -106,6 +106,8 @@ int main(int argc, char *argv[])
 
     int8_t buffer[BUFFER_SIZE];
 
+    auto urs = udp_utils::in_address("127.0.0.1", UERANSIM_PORT);
+
     while (1)
     {
         fd_set fds;
@@ -129,12 +131,16 @@ int main(int argc, char *argv[])
         {
             int nread = cread(tun_fd, buffer, sizeof(buffer));
 
+            sendto(bridge_fd, buffer, nread, 0, (struct sockaddr *)&urs, sizeof(urs));
+
             printf("Read %d bytes from TUN\n", nread);
         }
 
         if (FD_ISSET(bridge_fd, &fds))
         {
             int nread = read(bridge_fd, buffer, sizeof(buffer));
+
+            write(tun_fd, buffer, nread);
 
             printf("Read %d bytes from Bridge\n", nread);
         }

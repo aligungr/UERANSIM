@@ -1,3 +1,7 @@
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "utils.hpp"
 
 addrinfo udp_utils::make_hints()
@@ -51,4 +55,15 @@ int udp_utils::new_socket(const std::string &src_addr, int src_port)
         exit(EXIT_FAILURE);
     }
     return fd;
+}
+
+sockaddr_in udp_utils::in_address(const std::string &addr, int port)
+{
+    sockaddr_in sin;
+    memset(&sin, 0, sizeof(sin));
+
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = inet_addr(addr.c_str());
+    sin.sin_port = htons(port);
+    return sin;
 }
