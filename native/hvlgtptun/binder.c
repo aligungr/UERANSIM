@@ -12,7 +12,7 @@ int (*real_setsockopt)(int, int, int, const void *, socklen_t);
 int (*real_bind)(int, const struct sockaddr *, socklen_t);
 int (*real_connect)(int, const struct sockaddr *, socklen_t);
 
-char *bind_addr_env = "10.81.0.0";
+char *bind_addr_env = "10.81.0.0"; // TODO: IP per UE
 unsigned long int bind_addr_saddr;
 unsigned long int inaddr_any_saddr;
 struct sockaddr_in local_sockaddr_in[] = {0};
