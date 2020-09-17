@@ -18,21 +18,6 @@ udp_client::~udp_client()
     close(f_socket);
 }
 
-int udp_client::get_socket() const
-{
-    return f_socket;
-}
-
-int udp_client::get_port() const
-{
-    return f_port;
-}
-
-std::string udp_client::get_addr() const
-{
-    return f_addr;
-}
-
 int udp_client::send(const char *msg, size_t size)
 {
     return sendto(f_socket, msg, size, 0, f_addrinfo->ai_addr, f_addrinfo->ai_addrlen);

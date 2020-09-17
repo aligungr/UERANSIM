@@ -24,21 +24,6 @@ udp_server::~udp_server()
     close(f_socket);
 }
 
-int udp_server::get_socket() const
-{
-    return f_socket;
-}
-
-int udp_server::get_port() const
-{
-    return f_port;
-}
-
-std::string udp_server::get_addr() const
-{
-    return f_addr;
-}
-
 int udp_server::recv(char *msg, size_t max_size)
 {
     return ::recv(f_socket, msg, max_size, 0);
