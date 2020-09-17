@@ -1,1 +1,1 @@
-mkdir -p build && gcc -nostartfiles -fpic -shared -Wall binder.c -o build/binder.so -ldl -D_GNU_SOURCE && LD_PRELOAD=./build/binder.so $@
+gcc -nostartfiles -fpic -shared -Wall binder.c -o binder.so -ldl -D_GNU_SOURCE && LD_PRELOAD=./binder.so $@

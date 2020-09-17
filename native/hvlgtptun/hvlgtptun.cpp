@@ -103,15 +103,43 @@ int main(int argc, char *argv[])
         FD_SET(tun_fd, &fds);
         FD_SET(bridge_fd, &fds);
 
-        int nread = read(tun_fd, buffer, sizeof(buffer));
+        int ret = select(maxfd + 1, &fds, NULL, NULL, NULL);
 
-        if (nread < 0)
+        if (ret < 0 && errno == EINTR)
+            continue;
+
+        if (ret < 0)
         {
-            perror("Reading");
-            close(tun_fd);
+            perror("select()");
             exit(EXIT_FAILURE);
         }
 
-        printf("Read %d bytes\n", nread);
+        if (FD_ISSET(tun_fd, &fds))
+        {
+            int nread = read(tun_fd, buffer, sizeof(buffer));
+
+            if (nread < 0)
+            {
+                perror("Reading");
+                close(tun_fd);
+                exit(EXIT_FAILURE);
+            }
+
+            printf("Read %d bytes from TUN\n", nread);
+        }
+
+        if (FD_ISSET(bridge_fd, &fds))
+        {
+            int nread = read(bridge_fd, buffer, sizeof(buffer));
+
+            if (nread < 0)
+            {
+                perror("Reading");
+                close(tun_fd);
+                exit(EXIT_FAILURE);
+            }
+
+            printf("Read %d bytes from Bridge\n", nread);
+        }
     }
 }

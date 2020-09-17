@@ -1,1 +1,1 @@
-mkdir -p build && g++ hvlgtptun.cpp utils.cpp -Wall -fno-exceptions -o build/hvlgtptun && ./build/hvlgtptun
+g++ hvlgtptun.cpp utils.cpp -Wall -fno-exceptions -o hvlgtptun && ./hvlgtptun
