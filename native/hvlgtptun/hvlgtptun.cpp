@@ -87,6 +87,17 @@ static int bridge_alloc()
     return -1;*/
 }
 
+static int cread(int fd, void *buf, size_t nbytes)
+{
+    int r = ::read(fd, buf, nbytes);
+    if (r < 0)
+    {
+        perror("Reading");
+        exit(EXIT_FAILURE);
+    }
+    return r;
+}
+
 int main(int argc, char *argv[])
 {
     int tun_fd = tun_alloc();
@@ -116,14 +127,7 @@ int main(int argc, char *argv[])
 
         if (FD_ISSET(tun_fd, &fds))
         {
-            int nread = read(tun_fd, buffer, sizeof(buffer));
-
-            if (nread < 0)
-            {
-                perror("Reading from TUN");
-                close(tun_fd);
-                exit(EXIT_FAILURE);
-            }
+            int nread = cread(tun_fd, buffer, sizeof(buffer));
 
             printf("Read %d bytes from TUN\n", nread);
         }
@@ -131,13 +135,6 @@ int main(int argc, char *argv[])
         if (FD_ISSET(bridge_fd, &fds))
         {
             int nread = read(bridge_fd, buffer, sizeof(buffer));
-
-            if (nread < 0)
-            {
-                perror("Reading from Bridge");
-                close(tun_fd);
-                exit(EXIT_FAILURE);
-            }
 
             printf("Read %d bytes from Bridge\n", nread);
         }
