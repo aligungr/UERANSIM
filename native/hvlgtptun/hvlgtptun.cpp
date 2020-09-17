@@ -16,8 +16,6 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#include "udp_client.hpp"
-#include "udp_server.hpp"
 #include "utils.hpp"
 
 static constexpr int BUFFER_SIZE = 65535;
@@ -26,8 +24,11 @@ static constexpr int UERANSIM_PORT = 49972;
 
 bool debug;
 
-static int tun_alloc(char *dev, int flags)
+static int tun_alloc()
 {
+    char tun_name[IFNAMSIZ];
+    strcpy(tun_name, "hvlgtptun");
+
     struct ifreq ifr;
     int fd, err;
 
@@ -39,12 +40,10 @@ static int tun_alloc(char *dev, int flags)
 
     memset(&ifr, 0, sizeof(ifr));
 
-    ifr.ifr_flags = flags;
+    ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
 
-    if (*dev)
-    {
-        strncpy(ifr.ifr_name, dev, IFNAMSIZ);
-    }
+    if (*tun_name)
+        strncpy(ifr.ifr_name, tun_name, IFNAMSIZ);
 
     if ((err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0)
     {
@@ -53,16 +52,24 @@ static int tun_alloc(char *dev, int flags)
         return err;
     }
 
-    strcpy(dev, ifr.ifr_name);
+    strcpy(tun_name, ifr.ifr_name);
 
     return fd;
 }
 
 static int bridge_alloc()
 {
-    /*int fd = udp_utils::new_socket("127.0.0.1", TUN_PORT);
+    int fd = udp_utils::new_socket("127.0.0.1", TUN_PORT);
 
-    sockaddr_in client_address;
+    if (fd < 0)
+    {
+        perror("Creating bridge socket");
+        return fd;
+    }
+
+    return fd;
+
+    /*sockaddr_in client_address;
 	socklen_t client_address_len = 0;
 
     while (true) {
@@ -82,36 +89,29 @@ static int bridge_alloc()
 
 int main(int argc, char *argv[])
 {
-    char tun_name[IFNAMSIZ];
-
-    strcpy(tun_name, "hvlgtptun");
-    int tun_fd = tun_alloc(tun_name, IFF_TUN | IFF_NO_PI);
-
-    if (tun_fd < 0)
-    {
-        perror("Allocating interface");
-        exit(EXIT_FAILURE);
-    }
-
+    int tun_fd = tun_alloc();
     int bridge_fd = bridge_alloc();
-    if (bridge_fd < 0)
-    {
-        perror("Bridge setup failure");
-        exit(EXIT_FAILURE);
-    }
+    int maxfd = std::max(tun_fd, bridge_fd);
 
     int8_t buffer[BUFFER_SIZE];
 
     while (1)
     {
+        fd_set fds;
+
+        FD_ZERO(&fds);
+        FD_SET(tun_fd, &fds);
+        FD_SET(bridge_fd, &fds);
+
         int nread = read(tun_fd, buffer, sizeof(buffer));
+
         if (nread < 0)
         {
-            perror("Reading from interface");
+            perror("Reading");
             close(tun_fd);
             exit(EXIT_FAILURE);
         }
 
-        printf("Read %d bytes from device %s\n", nread, tun_name);
+        printf("Read %d bytes\n", nread);
     }
 }
