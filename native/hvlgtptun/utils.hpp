@@ -15,4 +15,6 @@ namespace udp_utils
     int get_address_info(const std::string &addr, int port, addrinfo** info_out);
 
     int new_socket();
+
+    int new_socket(const std::string& src_addr, int src_port);
 }

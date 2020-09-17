@@ -10,7 +10,7 @@ addrinfo udp_utils::make_hints()
     return hints;
 }
 
-int udp_utils::get_address_info(const std::string& addr, int port, addrinfo** info_out)
+int udp_utils::get_address_info(const std::string &addr, int port, addrinfo **info_out)
 {
     char decimal_port[16];
     snprintf(decimal_port, sizeof(decimal_port), "%d", port);
@@ -23,7 +23,7 @@ int udp_utils::get_address_info(const std::string& addr, int port, addrinfo** in
         perror("invalid address or port for UDP socket");
         exit(EXIT_FAILURE);
     }
-    
+
     return r;
 }
 
@@ -33,6 +33,21 @@ int udp_utils::new_socket()
     if (fd < 0)
     {
         perror("could not create UDP socket");
+        exit(EXIT_FAILURE);
+    }
+    return fd;
+}
+
+int udp_utils::new_socket(const std::string &src_addr, int src_port)
+{
+    struct addrinfo *f_addrinfo;
+
+    udp_utils::get_address_info(src_addr, src_port, &f_addrinfo);
+    int fd = udp_utils::new_socket();
+    int r = bind(fd, f_addrinfo->ai_addr, f_addrinfo->ai_addrlen);
+    if (r != 0)
+    {
+        perror("could bind UDP socket");
         exit(EXIT_FAILURE);
     }
     return fd;

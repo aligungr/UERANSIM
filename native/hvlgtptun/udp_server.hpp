@@ -15,5 +15,4 @@ private:
     int f_socket;
     int f_port;
     std::string f_addr;
-    struct addrinfo *f_addrinfo;
 };
