@@ -18,6 +18,7 @@
 
 #include "udp_client.hpp"
 #include "udp_server.hpp"
+#include "utils.hpp"
 
 static constexpr int BUFFER_SIZE = 65535;
 static constexpr int TUN_PORT = 49971;
@@ -59,18 +60,24 @@ static int tun_alloc(char *dev, int flags)
 
 static int bridge_alloc()
 {
-    /*udp_server server{"127.0.0.1", TUN_PORT};
+    /*int fd = udp_utils::new_socket("127.0.0.1", TUN_PORT);
+
+    sockaddr_in client_address;
+	socklen_t client_address_len = 0;
 
     while (true) {
         char buffer[BUFFER_SIZE];
 
-        server.recv(buffer, BUFFER_SIZE);
+        int len = recvfrom(fd, buffer, BUFFER_SIZE, 0, (sockaddr *)&client_address, &client_address_len);
+
+        sendto(fd, buffer, len, 0, (struct sockaddr *)&client_address, sizeof(client_address));
+
         puts("received");
-    }*/
+    }
 
 
-    
-    return -1;
+    close(fd);
+    return -1;*/
 }
 
 int main(int argc, char *argv[])
