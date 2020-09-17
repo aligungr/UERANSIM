@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 
             if (nread < 0)
             {
-                perror("Reading");
+                perror("Reading from TUN");
                 close(tun_fd);
                 exit(EXIT_FAILURE);
             }
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
             if (nread < 0)
             {
-                perror("Reading");
+                perror("Reading from Bridge");
                 close(tun_fd);
                 exit(EXIT_FAILURE);
             }
