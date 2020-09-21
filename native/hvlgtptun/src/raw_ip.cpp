@@ -25,7 +25,7 @@ int main(void)
     struct sockaddr_in sin;
     sin.sin_family = AF_INET;
     sin.sin_port = htons(80); // aslında kullanılmıyor "sanırım". çünkü ip packetini komple biz veriyoruz.
-    sin.sin_addr.s_addr = inet_addr("1.2.3.4"); // keza.
+    sin.sin_addr.s_addr = inet_addr("1.2.3.4"); // ama bu kullanılıyor bazen. en azından rotalama için kullanıldığını müşahede ettim. IP paketi aynı olduğu halde network interface'i farklı seçimine sebep oldu.
 
     std::string hardcoded = "45000054f56640004001840dc0a80125d8ef26780800ba0300010001a70c695f0000000069bb050000000000101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637";
     std::vector<char> bytes = HexToBytes(hardcoded);
