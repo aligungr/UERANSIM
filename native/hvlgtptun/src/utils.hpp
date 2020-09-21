@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <vector>
 
 namespace udp_utils
 {
@@ -21,3 +22,17 @@ namespace udp_utils
     sockaddr_in in_address(const std::string &addr, int port);
 
 } // namespace udp_utils
+
+inline std::vector<char> HexToBytes(const std::string &hex)
+{
+    std::vector<char> bytes;
+
+    for (unsigned int i = 0; i < hex.length(); i += 2)
+    {
+        std::string byteString = hex.substr(i, 2);
+        char byte = (char)strtol(byteString.c_str(), nullptr, 16);
+        bytes.push_back(byte);
+    }
+
+    return bytes;
+}
