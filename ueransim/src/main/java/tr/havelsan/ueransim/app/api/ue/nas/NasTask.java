@@ -77,11 +77,6 @@ public class NasTask extends ItmsTask {
             } else if (msg instanceof UeTestCommandWrapper) {
                 executeCommand(ctx, ((UeTestCommandWrapper) msg).cmd);
             } else if (msg instanceof ConnectionReleaseWrapper) {
-                ctx.mmCtx.cmState = ECmState.CM_IDLE;
-                ctx.mmCtx.lastVisitedRegisteredTai = null;
-                ctx.mmCtx.storedGuti = null;
-                ctx.mmCtx.taiList = null;
-                ctx.mmCtx.storedSuci = null;
                 ctx.nonCurrentNsCtx = null;
                 ctx.currentNsCtx = null;
             }
