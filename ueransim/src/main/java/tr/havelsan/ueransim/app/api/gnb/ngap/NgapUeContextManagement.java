@@ -26,6 +26,7 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
@@ -85,6 +86,8 @@ public class NgapUeContextManagement {
 
         // todo: NG-RAN node shall release all related signalling and user data transport resources
         // ...
+
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new ConnectionReleaseWrapper(ueId));
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
