@@ -41,7 +41,6 @@ import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.console.Logger;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.HashMap;
