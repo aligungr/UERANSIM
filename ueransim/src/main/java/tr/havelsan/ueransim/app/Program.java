@@ -24,20 +24,20 @@
 
 package tr.havelsan.ueransim.app;
 
+import tr.havelsan.ueransim.app.api.GnbNode;
+import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.structs.Supi;
+import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.api.GnbNode;
-import tr.havelsan.ueransim.app.api.UeNode;
-import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
-import tr.havelsan.ueransim.app.utils.MtsInitializer;
-import tr.havelsan.ueransim.app.structs.Supi;
-import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -167,7 +167,7 @@ public class Program {
     public void runUserPrompt() throws Exception {
         Utils.sleep(250);
 
-        Console.println(AnsiPalette.PAINT_DIVIDER, "=============================================================================");
+        Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
 
         var testCases = Utils.streamToList(this.testCases.getParameters().entrySet().stream());
 

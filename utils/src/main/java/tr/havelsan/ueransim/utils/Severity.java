@@ -35,14 +35,9 @@ public enum Severity {
 
     public boolean dispatch() {
         switch (this) {
-            case WARNING:
             case SUCCESS:
             case ERROR:
                 return true;
-            case DEBUG:
-            case INFO:
-            case FUNC_IN:
-            case FUNC_OUT:
             default:
                 return false;
         }
