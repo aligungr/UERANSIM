@@ -90,10 +90,10 @@ public class MtsInitializer {
     public static void initTestingMts(MtsContext mts) {
         initDefaultMts(mts);
 
-        mts.typeRegistry.registerTypeName("SLEEP", TestCommand_Sleep.class);
-        mts.typeRegistry.registerTypeName("INITIAL_REGISTRATION", TestCommand_InitialRegistration.class);
-        mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCommand_PeriodicRegistration.class);
-        mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCommand_Deregistration.class);
-        mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCommand_PduSessionEstablishment.class);
+        mts.typeRegistry.registerTypeName("SLEEP", TestCmd_Sleep.class);
+        mts.typeRegistry.registerTypeName("INITIAL_REGISTRATION", TestCmd_InitialRegistration.class);
+        mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCmd_PeriodicRegistration.class);
+        mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCmd_Deregistration.class);
+        mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCmd_PduSessionEstablishment.class);
     }
 }

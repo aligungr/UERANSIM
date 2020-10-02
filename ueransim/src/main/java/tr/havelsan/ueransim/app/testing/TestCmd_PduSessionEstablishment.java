@@ -24,5 +24,5 @@
 
 package tr.havelsan.ueransim.app.testing;
 
-public class TestCommand_PduSessionEstablishment extends TestCommand {
+public class TestCmd_PduSessionEstablishment extends TestCmd {
 }

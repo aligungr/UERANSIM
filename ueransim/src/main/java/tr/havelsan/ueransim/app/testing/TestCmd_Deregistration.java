@@ -24,5 +24,11 @@
 
 package tr.havelsan.ueransim.app.testing;
 
-public abstract class TestCommand {
+public class TestCmd_Deregistration extends TestCmd {
+
+    public boolean isSwitchOff;
+
+    public TestCmd_Deregistration(boolean isSwitchOff) {
+        this.isSwitchOff = isSwitchOff;
+    }
 }

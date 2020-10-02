@@ -85,6 +85,7 @@ public class Program {
 
         initLogging();
 
+        testingMts.setTypeKeyword("@cmd");
         var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
 
         loadTesting = (ImplicitTypedObject) testing.get("load-testing");
@@ -206,24 +207,24 @@ public class Program {
             throw new RuntimeException("test case not found: " + testName);
         }
 
-        var testCommands = new TestCommand[testObjects.length];
+        var testCommands = new TestCmd[testObjects.length];
         for (int i = 0; i < testCommands.length; i++) {
-            testCommands[i] = (TestCommand) testObjects[i];
+            testCommands[i] = (TestCmd) testObjects[i];
         }
         runTest(testName, testCommands);
     }
 
-    private void runTest(String testName, TestCommand[] testCommands) {
-        for (var command : testCommands) {
-            if (command instanceof TestCommand_Sleep) {
-                Utils.sleep(((TestCommand_Sleep) command).duration * 1000);
-            } else if (command instanceof TestCommand_InitialRegistration) {
+    private void runTest(String testName, TestCmd[] testCmds) {
+        for (var command : testCmds) {
+            if (command instanceof TestCmd_Sleep) {
+                Utils.sleep(((TestCmd_Sleep) command).duration * 1000);
+            } else if (command instanceof TestCmd_InitialRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
-            } else if (command instanceof TestCommand_PeriodicRegistration) {
+            } else if (command instanceof TestCmd_PeriodicRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
-            } else if (command instanceof TestCommand_Deregistration) {
+            } else if (command instanceof TestCmd_Deregistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
-            } else if (command instanceof TestCommand_PduSessionEstablishment) {
+            } else if (command instanceof TestCmd_PduSessionEstablishment) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             }
         }

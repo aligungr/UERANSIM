@@ -1,25 +1,37 @@
 test-cases:
+
   initial-registration:
-    - "@type": INITIAL_REGISTRATION
+    - "@cmd": INITIAL_REGISTRATION
+      followOn: NO_FOR_PENDING    # Possible values: NO_FOR_PENDING, FOR_PENDING
 
   periodic-registration:
-    - "@type": INITIAL_REGISTRATION
-    - "@type": SLEEP
-      duration: 60
-    - "@type": PERIODIC_REGISTRATION
+    - "@cmd": INITIAL_REGISTRATION
+      followOn: NO_FOR_PENDING
 
-  deregistration:
-    - "@type": INITIAL_REGISTRATION
-    - "@type": SLEEP
+    - "@cmd": SLEEP
+      duration: 60
+
+    - "@cmd": PERIODIC_REGISTRATION
+      followOn: NO_FOR_PENDING
+
+  de-registration:
+    - "@cmd": INITIAL_REGISTRATION
+      followOn: FOR_PENDING
+
+    - "@cmd": SLEEP
       duration: 5
-    - "@type": DEREGISTRATION
+
+    - "@cmd": DEREGISTRATION
       isSwitchOff: false
 
   pdu-session-establishment:
-    - "@type": INITIAL_REGISTRATION
-    - "@type": SLEEP
+    - "@cmd": INITIAL_REGISTRATION
+      followOn: FOR_PENDING
+
+    - "@cmd": SLEEP
       duration: 15
-    - "@type": PDU_SESSION_ESTABLISHMENT
+
+    - "@cmd": PDU_SESSION_ESTABLISHMENT
 
 load-testing:
   number-of-UE: 1

@@ -24,12 +24,12 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.testing.TestCmd;
 
 public class UeTestCommandWrapper {
-    public final TestCommand cmd;
+    public final TestCmd cmd;
 
-    public UeTestCommandWrapper(TestCommand cmd) {
+    public UeTestCommandWrapper(TestCmd cmd) {
         this.cmd = cmd;
     }
 }

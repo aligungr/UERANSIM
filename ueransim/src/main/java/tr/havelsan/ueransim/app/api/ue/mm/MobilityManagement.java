@@ -24,20 +24,21 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
+import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
 import tr.havelsan.ueransim.app.enums.ERmState;
-import tr.havelsan.ueransim.app.testing.TestCommand;
-import tr.havelsan.ueransim.app.testing.TestCommand_Deregistration;
-import tr.havelsan.ueransim.app.testing.TestCommand_InitialRegistration;
-import tr.havelsan.ueransim.app.testing.TestCommand_PeriodicRegistration;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.testing.TestCmd;
+import tr.havelsan.ueransim.app.testing.TestCmd_Deregistration;
+import tr.havelsan.ueransim.app.testing.TestCmd_InitialRegistration;
+import tr.havelsan.ueransim.app.testing.TestCmd_PeriodicRegistration;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
+import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -87,26 +88,26 @@ public class MobilityManagement {
     public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
         if (timer.timerCode == 3512) {
             if (UeNode.AUTO && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
-                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING, EFollowOnRequest.NO_FOR_PENDING);
             }
         }
 
         if (timer.timerCode == 3346) {
             if (UeNode.AUTO && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
-                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.NO_FOR_PENDING);
             }
         }
     }
 
-    public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
-        if (cmd instanceof TestCommand_InitialRegistration) {
-            MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+    public static boolean executeCommand(UeSimContext ctx, TestCmd cmd) {
+        if (cmd instanceof TestCmd_InitialRegistration) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, ((TestCmd_InitialRegistration) cmd).followOn);
             return true;
-        } else if (cmd instanceof TestCommand_PeriodicRegistration) {
-            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+        } else if (cmd instanceof TestCmd_PeriodicRegistration) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING, ((TestCmd_PeriodicRegistration) cmd).followOn);
             return true;
-        } else if (cmd instanceof TestCommand_Deregistration) {
-            MmDeregistration.sendDeregistration(ctx, ((TestCommand_Deregistration) cmd).isSwitchOff
+        } else if (cmd instanceof TestCmd_Deregistration) {
+            MmDeregistration.sendDeregistration(ctx, ((TestCmd_Deregistration) cmd).isSwitchOff
                     ? IEDeRegistrationType.ESwitchOff.SWITCH_OFF : IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
             return true;
         }
@@ -139,7 +140,7 @@ public class MobilityManagement {
 
         if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
             if (UeNode.AUTO && !ctx.ueTimers.t3346.isRunning()) {
-                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.NO_FOR_PENDING);
             }
             return;
         }

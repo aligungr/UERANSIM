@@ -34,7 +34,7 @@ import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.testing.TestCmd;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
 
@@ -48,7 +48,7 @@ public class NasTask extends ItmsTask {
         this.ctx = ctx;
     }
 
-    private static void executeCommand(UeSimContext ctx, TestCommand cmd) {
+    private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
         if (!MobilityManagement.executeCommand(ctx, cmd)) {
             if (!SessionManagement.executeCommand(ctx, cmd)) {
                 ctx.logger.error(Tag.EVENT, "invalid command: %s", cmd);

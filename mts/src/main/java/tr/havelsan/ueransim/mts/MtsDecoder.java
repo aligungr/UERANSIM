@@ -178,7 +178,7 @@ public class MtsDecoder {
             var jsonObject = json.getAsJsonObject();
             String typeName = null;
 
-            var typeDecl = jsonObject.has("@type") ? jsonObject.get("@type") : null;
+            var typeDecl = jsonObject.has(ctx.getTypeKeyword()) ? jsonObject.get(ctx.getTypeKeyword()) : null;
             if (typeDecl != null) {
                 if (!typeDecl.isJsonPrimitive() || !typeDecl.getAsJsonPrimitive().isString()) {
                     throw new MtsException("invalid type declaration");
@@ -188,7 +188,7 @@ public class MtsDecoder {
 
             var properties = new LinkedHashMap<String, Object>();
             for (var entry : jsonObject.entrySet()) {
-                if (entry.getKey().equals("@type")) {
+                if (entry.getKey().equals(ctx.getTypeKeyword())) {
                     // do nothing
                 } else if (entry.getKey().startsWith("@")) {
                     throw new MtsException("unrecognized keyword: %s", entry.getKey());

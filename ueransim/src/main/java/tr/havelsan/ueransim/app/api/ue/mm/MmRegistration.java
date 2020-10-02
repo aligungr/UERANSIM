@@ -40,7 +40,7 @@ import tr.havelsan.ueransim.utils.Tag;
 
 public class MmRegistration {
 
-    public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType) {
+    public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType, EFollowOnRequest followOn) {
         ctx.logger.funcIn("Starting: Registration procedure (%s)", registrationType);
 
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED_INITIATED, EMmSubState.MM_REGISTERED_INITIATED__NA);
@@ -51,11 +51,7 @@ public class MmRegistration {
         }
 
         var registrationRequest = new RegistrationRequest();
-        registrationRequest.registrationType = new IE5gsRegistrationType(
-                //registrationType.equals(ERegistrationType.EMERGENCY_REGISTRATION) ? EFollowOnRequest.FOR_PENDING :
-                //        EFollowOnRequest.NO_FOR_PENDING,
-                EFollowOnRequest.FOR_PENDING,
-                registrationType);
+        registrationRequest.registrationType = new IE5gsRegistrationType(followOn, registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
         registrationRequest.ueSecurityCapability = MmSecurity.createSecurityCapabilityIe();

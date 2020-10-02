@@ -24,11 +24,11 @@
 
 package tr.havelsan.ueransim.app.api.ue.sm;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.testing.TestCommand;
-import tr.havelsan.ueransim.app.testing.TestCommand_PduSessionEstablishment;
+import tr.havelsan.ueransim.app.testing.TestCmd;
+import tr.havelsan.ueransim.app.testing.TestCmd_PduSessionEstablishment;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
@@ -41,7 +41,6 @@ import tr.havelsan.ueransim.nas.impl.messages.DlNasTransport;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
-
 import tr.havelsan.ueransim.utils.Tag;
 
 public class SessionManagement {
@@ -77,8 +76,8 @@ public class SessionManagement {
         // todo
     }
 
-    public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
-        if (cmd instanceof TestCommand_PduSessionEstablishment) {
+    public static boolean executeCommand(UeSimContext ctx, TestCmd cmd) {
+        if (cmd instanceof TestCmd_PduSessionEstablishment) {
             SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
             return true;
         }
