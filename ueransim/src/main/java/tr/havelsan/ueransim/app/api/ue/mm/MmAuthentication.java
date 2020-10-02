@@ -38,7 +38,6 @@ import tr.havelsan.ueransim.nas.impl.ies.IEAuthenticationResponseParameter;
 import tr.havelsan.ueransim.nas.impl.ies.IEEapMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -61,7 +60,7 @@ public class MmAuthentication {
     }
 
     private static void receiveAuthenticationRequestEap(UeSimContext ctx, AuthenticationRequest message) {
-        Logging.funcIn("Handling: EAP AKA' Authentication Request");
+        ctx.logger.funcIn("Handling: EAP AKA' Authentication Request");
 
         OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
         EapAkaPrime receivedEap;
@@ -85,18 +84,18 @@ public class MmAuthentication {
             receivedAutn = receivedEap.attributes.getAutn();
             receivedKdf = receivedEap.attributes.getKdf();
 
-            Logging.debug(Tag.VALUE, "received at_rand: %s", receivedRand);
-            Logging.debug(Tag.VALUE, "received at_mac: %s", receivedMac);
-            Logging.debug(Tag.VALUE, "received at_autn: %s", receivedAutn);
+            ctx.logger.debug(Tag.VALUE, "received at_rand: %s", receivedRand);
+            ctx.logger.debug(Tag.VALUE, "received at_mac: %s", receivedMac);
+            ctx.logger.debug(Tag.VALUE, "received at_autn: %s", receivedAutn);
         }
 
         // Derive keys
         {
             if (USE_SQN_HACK) {
-                Logging.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+                ctx.logger.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
             }
             if (IGNORE_CONTROLS_FAILURES) {
-                Logging.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
+                ctx.logger.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
             }
 
             if (USE_SQN_HACK) {
@@ -119,19 +118,19 @@ public class MmAuthentication {
             mk = MmKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueConfig.supi);
             kaut = mk.substring(16, 32);
 
-            Logging.debug(Tag.VALUE, "ueData.sqn: %s", ctx.ueData.sqn);
-            Logging.debug(Tag.VALUE, "ueData.op: %s", ctx.ueConfig.op);
-            Logging.debug(Tag.VALUE, "ueData.K: %s", ctx.ueConfig.key);
-            Logging.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueConfig.supi);
-            Logging.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueConfig.snn);
-            Logging.debug(Tag.VALUE, "calculated res: %s", res);
-            Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
-            Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
-            Logging.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
-            Logging.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
-            Logging.debug(Tag.VALUE, "calculated ckPrime: %s", ckPrime);
-            Logging.debug(Tag.VALUE, "calculated ikPrime: %s", ikPrime);
-            Logging.debug(Tag.VALUE, "calculated kaut: %s", kaut);
+            ctx.logger.debug(Tag.VALUE, "ueData.sqn: %s", ctx.ueData.sqn);
+            ctx.logger.debug(Tag.VALUE, "ueData.op: %s", ctx.ueConfig.op);
+            ctx.logger.debug(Tag.VALUE, "ueData.K: %s", ctx.ueConfig.key);
+            ctx.logger.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueConfig.supi);
+            ctx.logger.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueConfig.snn);
+            ctx.logger.debug(Tag.VALUE, "calculated res: %s", res);
+            ctx.logger.debug(Tag.VALUE, "calculated ck: %s", ck);
+            ctx.logger.debug(Tag.VALUE, "calculated ik: %s", ik);
+            ctx.logger.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
+            ctx.logger.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
+            ctx.logger.debug(Tag.VALUE, "calculated ckPrime: %s", ckPrime);
+            ctx.logger.debug(Tag.VALUE, "calculated ikPrime: %s", ikPrime);
+            ctx.logger.debug(Tag.VALUE, "calculated kaut: %s", kaut);
         }
 
         // Control received KDF
@@ -153,8 +152,8 @@ public class MmAuthentication {
 
         // Control received AUTN
         {
-            var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
-            Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
+            var autnCheck = MmAuthentication.validateAutn(ctx, milenageAk, milenageMac, receivedAutn);
+            ctx.logger.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
             if (autnCheck != EAutnValidationRes.OK) {
                 EapAkaPrime eapResponse = null;
@@ -166,7 +165,7 @@ public class MmAuthentication {
                     //eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_SYNCHRONIZATION_FAILURE);
                     //eapResponse.attributes.putAuts(...);
 
-                    Logging.warning(Tag.NOT_IMPL_YET, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
+                    ctx.logger.warning(Tag.NOT_IMPL_YET, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
                 } else {
                     eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                     eapResponse.attributes.putClientErrorCode(0);
@@ -186,7 +185,7 @@ public class MmAuthentication {
         {
             var expectedMac = MmKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
-                Logging.error(Tag.PROC, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
+                ctx.logger.error(Tag.PROC, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
 
                 if (!IGNORE_CONTROLS_FAILURES) {
@@ -205,9 +204,9 @@ public class MmAuthentication {
         // Create new partial native NAS security context and continue key derivation
         {
             var kAusf = MmKeyManagement.calculateKAusfForEapAkaPrime(mk);
-            Logging.debug(Tag.VALUE, "kAusf: %s", kAusf);
+            ctx.logger.debug(Tag.VALUE, "kAusf: %s", kAusf);
 
-            ctx.nonCurrentNsCtx = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+            ctx.nonCurrentNsCtx = new NasSecurityContext(ctx, ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
                     message.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsCtx.keys.rand = receivedRand;
             ctx.nonCurrentNsCtx.keys.res = res;
@@ -215,6 +214,8 @@ public class MmAuthentication {
             ctx.nonCurrentNsCtx.keys.kAusf = kAusf;
 
             MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
+            ctx.logger.debug(Tag.VALUE, "kSeaf: %s", ctx.nonCurrentNsCtx.keys.kSeaf);
+            ctx.logger.debug(Tag.VALUE, "kAmf: %s", ctx.nonCurrentNsCtx.keys.kAmf);
         }
 
         // Send Response
@@ -229,7 +230,7 @@ public class MmAuthentication {
             var sendingMac = MmKeyManagement.calculateMacForEapAkaPrime(kaut, akaPrimeResponse);
             akaPrimeResponse.attributes.putMac(sendingMac);
 
-            Logging.debug(Tag.VALUE, "sending eap at_mac: %s", sendingMac);
+            ctx.logger.debug(Tag.VALUE, "sending eap at_mac: %s", sendingMac);
 
             var response = new AuthenticationResponse();
             response.eapMessage = new IEEapMessage(akaPrimeResponse);
@@ -237,26 +238,26 @@ public class MmAuthentication {
             MobilityManagement.sendMm(ctx, response);
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     private static void receiveAuthenticationRequest5gAka(UeSimContext ctx, AuthenticationRequest request) {
-        Logging.funcIn("Handling: 5G AKA Authentication Request");
+        ctx.logger.funcIn("Handling: 5G AKA Authentication Request");
 
         PlainMmMessage response = null;
 
         if (USE_SQN_HACK) {
-            Logging.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+            ctx.logger.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
         }
         if (IGNORE_CONTROLS_FAILURES) {
-            Logging.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
+            ctx.logger.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
         }
 
         var rand = request.authParamRAND.value;
         var autn = request.authParamAUTN.value;
 
-        Logging.debug(Tag.VALUE, "received rand: %s", rand);
-        Logging.debug(Tag.VALUE, "received autn: %s", autn);
+        ctx.logger.debug(Tag.VALUE, "received rand: %s", rand);
+        ctx.logger.debug(Tag.VALUE, "received autn: %s", autn);
 
         if (USE_SQN_HACK) {
             ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
@@ -273,21 +274,21 @@ public class MmAuthentication {
         var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
         var snn = ctx.ueConfig.snn;
 
-        Logging.debug(Tag.VALUE, "calculated res: %s", res);
-        Logging.debug(Tag.VALUE, "calculated ck: %s", ck);
-        Logging.debug(Tag.VALUE, "calculated ik: %s", ik);
-        Logging.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
-        Logging.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
-        Logging.debug(Tag.VALUE, "used snn: %s", snn);
-        Logging.debug(Tag.VALUE, "used sqn: %s", ctx.ueData.sqn);
+        ctx.logger.debug(Tag.VALUE, "calculated res: %s", res);
+        ctx.logger.debug(Tag.VALUE, "calculated ck: %s", ck);
+        ctx.logger.debug(Tag.VALUE, "calculated ik: %s", ik);
+        ctx.logger.debug(Tag.VALUE, "calculated milenageAk: %s", milenageAk);
+        ctx.logger.debug(Tag.VALUE, "calculated milenageMac: %s", milenageMac);
+        ctx.logger.debug(Tag.VALUE, "used snn: %s", snn);
+        ctx.logger.debug(Tag.VALUE, "used sqn: %s", ctx.ueData.sqn);
 
-        var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, autn);
-        Logging.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
+        var autnCheck = validateAutn(ctx, milenageAk, milenageMac, autn);
+        ctx.logger.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
         if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes.OK) {
 
             // Create new partial native NAS security context and continue with key derivation
-            ctx.nonCurrentNsCtx = new NasSecurityContext(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
+            ctx.nonCurrentNsCtx = new NasSecurityContext(ctx, ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT,
                     request.ngKSI.nasKeySetIdentifier);
             ctx.nonCurrentNsCtx.keys.rand = rand;
             ctx.nonCurrentNsCtx.keys.res = res;
@@ -303,7 +304,7 @@ public class MmAuthentication {
         } else if (autnCheck == EAutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
         } else if (autnCheck == EAutnValidationRes.SYNCHRONISATION_FAILURE) {
-            Logging.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+            ctx.logger.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
         }
@@ -312,10 +313,10 @@ public class MmAuthentication {
             MobilityManagement.sendMm(ctx, response);
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
-    private static EAutnValidationRes validateAutn(OctetString ak, OctetString mac, OctetString autn) {
+    private static EAutnValidationRes validateAutn(UeSimContext ctx, OctetString ak, OctetString mac, OctetString autn) {
         // Decode AUTN
         var receivedSQNxorAK = autn.substring(0, 6);
         var receivedSQN = OctetString.xor(receivedSQNxorAK, ak);
@@ -324,20 +325,20 @@ public class MmAuthentication {
 
         // Check MAC
         if (!receivedMAC.equals(mac)) {
-            Logging.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
+            ctx.logger.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
             return EAutnValidationRes.MAC_FAILURE;
         }
 
         // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
         // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
         if (!BitString.from(receivedAMF).getB(0)) {
-            Logging.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
+            ctx.logger.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
             return EAutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
         }
 
         // Verify that the received sequence number SQN is in the correct range
         if (!checkSqn(receivedSQN)) {
-            Logging.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
+            ctx.logger.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
             return EAutnValidationRes.SYNCHRONISATION_FAILURE;
         }
 
@@ -370,7 +371,7 @@ public class MmAuthentication {
     }
 
     public static void receiveAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
-        Logging.funcIn("Handling: Authentication Result");
+        ctx.logger.funcIn("Handling: Authentication Result");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
@@ -378,31 +379,31 @@ public class MmAuthentication {
             } else if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
+                ctx.logger.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
-        Logging.funcIn("Handling: Authentication Result");
+        ctx.logger.funcIn("Handling: Authentication Result");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
                 MmAuthentication.receiveEapResponseMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
+                ctx.logger.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
-        Logging.funcIn("Handling: Authentication Reject");
+        ctx.logger.funcIn("Handling: Authentication Reject");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
@@ -415,46 +416,46 @@ public class MmAuthentication {
 
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
+                ctx.logger.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveEapSuccessMessage(UeSimContext ctx, Eap eap) {
-        Logging.funcIn("Handling: EAP-Success contained in received message");
+        ctx.logger.funcIn("Handling: EAP-Success contained in received message");
 
         // do nothing
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
 
     public static void receiveEapFailureMessage(UeSimContext ctx, Eap eap) {
-        Logging.funcIn("Handling: EAP-Failure contained in received message");
+        ctx.logger.funcIn("Handling: EAP-Failure contained in received message");
 
-        Logging.debug(Tag.PROC, "Deleting non-current NAS security context");
+        ctx.logger.debug(Tag.PROC, "Deleting non-current NAS security context");
         ctx.nonCurrentNsCtx = null;
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveEapResponseMessage(UeSimContext ctx, Eap eap) {
-        Logging.funcIn("Handling: EAP contained in received message");
+        ctx.logger.funcIn("Handling: EAP contained in received message");
 
         if (eap instanceof EapAkaPrime) {
             var akaPrime = (EapAkaPrime) eap;
 
         } else if (eap instanceof EapIdentity) {
-            Logging.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
+            ctx.logger.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
         } else if (eap instanceof EapNotification) {
-            Logging.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
+            ctx.logger.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
         } else {
-            Logging.warning(Tag.PROC, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
+            ctx.logger.warning(Tag.PROC, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 }

@@ -31,10 +31,24 @@ public class MtsContext {
     public final MtsConstruct constructor;
     public final MtsDecoder decoder;
 
+    private String typeKeyword = "@type";
+
     public MtsContext() {
         this.typeRegistry = new TypeRegistry();
         this.converter = new MtsConvert(this);
         this.constructor = new MtsConstruct(this);
         this.decoder = new MtsDecoder(this);
+    }
+
+    public String getTypeKeyword() {
+        return typeKeyword;
+    }
+
+    public void setTypeKeyword(String typeKeyword) {
+        if (!typeKeyword.startsWith("@"))
+            throw new IllegalArgumentException("keyword must start with '@'");
+        if (typeKeyword.equals("@ref"))
+            throw new IllegalArgumentException("invalid keyword");
+        this.typeKeyword = typeKeyword;
     }
 }

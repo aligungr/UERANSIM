@@ -36,7 +36,6 @@ import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeComplete;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeReject;
 import tr.havelsan.ueransim.app.structs.SelectedAlgorithms;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
@@ -44,7 +43,7 @@ import tr.havelsan.ueransim.utils.bits.Bit;
 public class MmSecurity {
 
     public static void receiveSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
-        Logging.funcIn("Handling: Security Mode Command");
+        ctx.logger.funcIn("Handling: Security Mode Command");
 
         // todo: check the integriti with new security context
         {
@@ -57,7 +56,7 @@ public class MmSecurity {
             var real = createSecurityCapabilityIe();
             if (!compareSecurityCapabilities(real, replayed)) {
                 MobilityManagement.sendMm(ctx, new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH));
-                Logging.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
+                ctx.logger.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
                 return;
             }
         }
@@ -67,7 +66,7 @@ public class MmSecurity {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
                 MmAuthentication.receiveEapSuccessMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
+                ctx.logger.warning(Tag.PROC, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
             }
         }
 
@@ -78,10 +77,10 @@ public class MmSecurity {
         );
         MmKeyManagement.deriveNasKeys(ctx.nonCurrentNsCtx);
 
-        Logging.debug(Tag.VALUE, "kNasEnc: %s", ctx.nonCurrentNsCtx.keys.kNasEnc);
-        Logging.debug(Tag.VALUE, "kNasInt: %s", ctx.nonCurrentNsCtx.keys.kNasInt);
-        Logging.debug(Tag.VALUE, "selectedIntAlg: %s", ctx.nonCurrentNsCtx.selectedAlgorithms.integrity);
-        Logging.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nonCurrentNsCtx.selectedAlgorithms.ciphering);
+        ctx.logger.debug(Tag.VALUE, "kNasEnc: %s", ctx.nonCurrentNsCtx.keys.kNasEnc);
+        ctx.logger.debug(Tag.VALUE, "kNasInt: %s", ctx.nonCurrentNsCtx.keys.kNasInt);
+        ctx.logger.debug(Tag.VALUE, "selectedIntAlg: %s", ctx.nonCurrentNsCtx.selectedAlgorithms.integrity);
+        ctx.logger.debug(Tag.VALUE, "selectedEncAlg: %s", ctx.nonCurrentNsCtx.selectedAlgorithms.ciphering);
 
         // Set non-current NAS Security Context as current one.
         ctx.currentNsCtx = ctx.nonCurrentNsCtx.deepCopy();
@@ -100,7 +99,7 @@ public class MmSecurity {
         // Send response
         MobilityManagement.sendMm(ctx, response);
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static IEUeSecurityCapability createSecurityCapabilityIe() {

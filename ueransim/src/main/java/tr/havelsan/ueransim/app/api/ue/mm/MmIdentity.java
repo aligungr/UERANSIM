@@ -38,13 +38,13 @@ import tr.havelsan.ueransim.nas.impl.messages.IdentityRequest;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
 import tr.havelsan.ueransim.app.structs.Supi;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmIdentity {
 
     public static void receiveIdentityRequest(UeSimContext ctx, IdentityRequest message) {
-        Logging.funcIn("Handling: Identity Request");
+        ctx.logger.funcIn("Handling: Identity Request");
 
         var response = new IdentityResponse();
 
@@ -55,29 +55,29 @@ public class MmIdentity {
                 response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueConfig.imei);
             } else {
                 response.mobileIdentity = new IENoIdentity();
-                Logging.error(Tag.PROC, "Requested identity is not available: %s",
+                ctx.logger.error(Tag.PROC, "Requested identity is not available: %s",
                         message.identityType.value.name());
             }
         }
 
         MobilityManagement.sendMm(ctx, response);
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static IESuciMobileIdentity getOrGenerateSuci(UeSimContext ctx) {
-        Logging.funcIn("Get or Generate SUCI");
+        ctx.logger.funcIn("Get or Generate SUCI");
         if (ctx.ueTimers.t3519.isRunning()) {
-            Logging.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
-            Logging.funcOut();
+            ctx.logger.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
+            ctx.logger.funcOut();
             return ctx.mmCtx.storedSuci;
         }
 
         ctx.mmCtx.storedSuci = generateSuci(ctx.ueConfig.supi);
-        Logging.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
+        ctx.logger.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
 
         ctx.ueTimers.t3519.start();
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
         return ctx.mmCtx.storedSuci;
     }
 

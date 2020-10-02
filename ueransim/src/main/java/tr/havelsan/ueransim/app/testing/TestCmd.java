@@ -24,5 +24,5 @@
 
 package tr.havelsan.ueransim.app.testing;
 
-public class TestCommand_InitialRegistration extends TestCommand {
+public abstract class TestCmd {
 }

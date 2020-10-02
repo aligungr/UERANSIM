@@ -24,11 +24,12 @@
 
 package tr.havelsan.ueransim.app.testing;
 
-public class TestCommand_Deregistration extends TestCommand {
+import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
-    public boolean isSwitchOff;
+public class TestCmd_PeriodicRegistration extends TestCmd {
+    public final EFollowOnRequest followOn;
 
-    public TestCommand_Deregistration(boolean isSwitchOff) {
-        this.isSwitchOff = isSwitchOff;
+    public TestCmd_PeriodicRegistration(EFollowOnRequest followOn) {
+        this.followOn = followOn;
     }
 }

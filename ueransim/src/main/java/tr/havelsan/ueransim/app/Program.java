@@ -24,20 +24,20 @@
 
 package tr.havelsan.ueransim.app;
 
+import tr.havelsan.ueransim.app.api.GnbNode;
+import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.structs.Supi;
+import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.api.GnbNode;
-import tr.havelsan.ueransim.app.api.UeNode;
-import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
-import tr.havelsan.ueransim.app.utils.MtsInitializer;
-import tr.havelsan.ueransim.app.structs.Supi;
-import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -87,6 +87,7 @@ public class Program {
 
         initLogging();
 
+        testingMts.setTypeKeyword("@cmd");
         var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
 
         loadTesting = (ImplicitTypedObject) testing.get("load-testing");
@@ -99,24 +100,19 @@ public class Program {
         new Program().runUserPrompt();
     }
 
-    public static void fail(Throwable t) {
-        t.printStackTrace();
-        Logging.error(Tag.SYSTEM, "%s", t);
-        System.exit(1);
-    }
-
     private void initLogging() {
         new File("logs").mkdir();
 
-        final String logFile = "logs/app.log";
+        final String appLogFile = "logs/app.log";
         final String loadTestFile = "logs/loadtest.log";
 
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All default logs are written to: %s", logFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All generic logs are written to: %s", appLogFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log files: logs/*");
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
 
         Console.setStandardPrintEnabled(true);
         Console.addPrintHandler(str -> {
-            final Path path = Paths.get(logFile);
+            final Path path = Paths.get(appLogFile);
             try {
                 Files.write(path, str.getBytes(StandardCharsets.UTF_8),
                         Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
@@ -124,6 +120,7 @@ public class Program {
                 throw new RuntimeException(e);
             }
         });
+        Console.printDiv();
 
         loadTestConsole.setStandardPrintEnabled(false);
         loadTestConsole.addPrintHandler(str -> {
@@ -173,7 +170,7 @@ public class Program {
     public void runUserPrompt() throws Exception {
         Utils.sleep(250);
 
-        Console.println(AnsiPalette.PAINT_DIVIDER, "=============================================================================");
+        Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
 
         var testCases = Utils.streamToList(this.testCases.getParameters().entrySet().stream());
 
@@ -183,7 +180,7 @@ public class Program {
             Console.println(null, testCases.get(i).getKey());
         }
 
-        Console.print(AnsiPalette.PAINT_INPUT, "Selection: ");
+        Console.println(AnsiPalette.PAINT_INPUT, "Selection: ");
 
         var scanner = new Scanner(System.in);
         String line = scanner.nextLine();
@@ -212,24 +209,26 @@ public class Program {
             throw new RuntimeException("test case not found: " + testName);
         }
 
-        var testCommands = new TestCommand[testObjects.length];
+        var testCommands = new TestCmd[testObjects.length];
         for (int i = 0; i < testCommands.length; i++) {
-            testCommands[i] = (TestCommand) testObjects[i];
+            testCommands[i] = (TestCmd) testObjects[i];
         }
         runTest(testName, testCommands);
     }
 
-    private void runTest(String testName, TestCommand[] testCommands) {
-        for (var command : testCommands) {
-            if (command instanceof TestCommand_Sleep) {
-                Utils.sleep(((TestCommand_Sleep) command).duration * 1000);
-            } else if (command instanceof TestCommand_InitialRegistration) {
+    private void runTest(String testName, TestCmd[] testCmds) {
+        for (var command : testCmds) {
+            if (command instanceof TestCmd_Sleep) {
+                var cmd = (TestCmd_Sleep) command;
+                Logging.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
+                Utils.sleep(cmd.duration * 1000);
+            } else if (command instanceof TestCmd_InitialRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
-            } else if (command instanceof TestCommand_PeriodicRegistration) {
+            } else if (command instanceof TestCmd_PeriodicRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
-            } else if (command instanceof TestCommand_Deregistration) {
+            } else if (command instanceof TestCmd_Deregistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
-            } else if (command instanceof TestCommand_PduSessionEstablishment) {
+            } else if (command instanceof TestCmd_PduSessionEstablishment) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             }
         }

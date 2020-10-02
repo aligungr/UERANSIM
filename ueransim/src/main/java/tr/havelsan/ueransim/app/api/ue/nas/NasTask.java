@@ -24,18 +24,20 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
-import tr.havelsan.ueransim.app.itms.Itms;
-import tr.havelsan.ueransim.app.itms.ItmsTask;
+
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
-import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.testing.TestCmd;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 
 public class NasTask extends ItmsTask {
 
@@ -46,10 +48,10 @@ public class NasTask extends ItmsTask {
         this.ctx = ctx;
     }
 
-    private static void executeCommand(UeSimContext ctx, TestCommand cmd) {
+    private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
         if (!MobilityManagement.executeCommand(ctx, cmd)) {
             if (!SessionManagement.executeCommand(ctx, cmd)) {
-                Logging.error(Tag.EVENT, "invalid command: %s", cmd);
+                ctx.logger.error(Tag.EVENT, "invalid command: %s", cmd);
             }
         }
     }
@@ -65,7 +67,7 @@ public class NasTask extends ItmsTask {
                 NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((DownlinkNasWrapper) msg).nasPdu));
             } else if (msg instanceof NasTimerExpireWrapper) {
                 var timer = ((NasTimerExpireWrapper) msg).timer;
-                Logging.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+                ctx.logger.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
 
                 if (timer.isMmTimer) {
                     MobilityManagement.receiveTimerExpire(ctx, timer);
@@ -74,6 +76,8 @@ public class NasTask extends ItmsTask {
                 }
             } else if (msg instanceof UeTestCommandWrapper) {
                 executeCommand(ctx, ((UeTestCommandWrapper) msg).cmd);
+            } else if (msg instanceof ConnectionReleaseWrapper) {
+                // TODO
             }
         }
     }

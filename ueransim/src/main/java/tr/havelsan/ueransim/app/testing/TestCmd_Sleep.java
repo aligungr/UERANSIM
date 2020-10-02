@@ -24,5 +24,11 @@
 
 package tr.havelsan.ueransim.app.testing;
 
-public class TestCommand_PeriodicRegistration extends TestCommand {
+public class TestCmd_Sleep extends TestCmd {
+
+    public final int duration;
+
+    public TestCmd_Sleep(int duration) {
+        this.duration = duration;
+    }
 }

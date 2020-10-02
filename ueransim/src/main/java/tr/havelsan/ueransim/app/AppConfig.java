@@ -35,7 +35,15 @@ import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Logger;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class AppConfig {
 
@@ -55,6 +63,26 @@ public class AppConfig {
         Constants.TREAT_ERRORS_AS_FATAL = general.getBool("treat-errors-as-fatal");
     }
 
+    private static Logger createLoggerFor(String name) {
+        var logger = new Logger(name);
+
+        if (name.contains("."))
+            throw new IllegalArgumentException("name contains '.'");
+
+        logger.getConsole().setStandardPrintEnabled(false);
+        logger.getConsole().addPrintHandler(str -> {
+            final Path path = Paths.get("logs/" + name + ".log");
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return logger;
+    }
+
     public SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
         return new SimulationContext(nodeMessagingListener);
     }
@@ -66,6 +94,7 @@ public class AppConfig {
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
         var ctx = new GnbSimContext(simCtx);
         ctx.config = config;
+        ctx.logger = createLoggerFor("gnb-" + config.gnbId);
 
         // Create AMF gNB contexts
         {
@@ -92,6 +121,7 @@ public class AppConfig {
     public UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
         var ctx = new UeSimContext(simCtx);
         ctx.ueConfig = config;
+        ctx.logger = createLoggerFor("ue-" + config.supi.toString());
         return ctx;
     }
 
