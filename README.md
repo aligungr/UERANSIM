@@ -70,9 +70,9 @@ sudo apt install libsctp-dev lksctp-tools
 
 **Q1. Why am I getting java.net.SocketException: Protocol not supported exception?**  
 
-This error usually happens if you are using some Linux VM container in Windows. Windows does not support SCTP protokol, therefore *physical Linux machine is required*. Otherwise SCTP won't work.
+This error usually happens if you are using some Linux VM container in Windows. Windows does not support SCTP protokol, therefore physical Linux machine is required. Otherwise SCTP won't work.
 
-If you are using physical Linux machine, but still encounter this issue, make sure that you have Ubuntu 16.04 or later.
+Also it is possible that your specific Linux distribution does not support SCTP. However Ubuntu 16.04 and later should support it. 
 
 **Q2. Why am I getting java.net.ConnectException: Connection refused exception?**  
 
