@@ -48,12 +48,12 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupResponse;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 
 public class NgapPduSessionManagement {
 
     public static void receiveResourceSetupRequest(GnbSimContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
-        Logging.funcIn("Handling PDU Session Resource Setup Request");
+        ctx.logger.funcIn("Handling PDU Session Resource Setup Request");
 
         var response = new NGAP_PDUSessionResourceSetupResponse();
         var successList = new NGAP_PDUSessionResourceSetupListSURes();
@@ -147,8 +147,8 @@ public class NgapPduSessionManagement {
 
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
 
-        Logging.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
+        ctx.logger.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 }

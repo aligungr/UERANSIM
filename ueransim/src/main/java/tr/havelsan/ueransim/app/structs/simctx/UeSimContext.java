@@ -30,11 +30,19 @@ import tr.havelsan.ueransim.app.structs.*;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.contexts.MmContext;
 import tr.havelsan.ueransim.app.structs.contexts.SmContext;
+import tr.havelsan.ueransim.utils.console.Logger;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 public class UeSimContext extends BaseSimContext {
 
+    public Logger logger;
     public UeData ueData;
     public UeConfig ueConfig;
     public UeTimers ueTimers;
@@ -48,7 +56,7 @@ public class UeSimContext extends BaseSimContext {
 
     public UeSimContext(SimulationContext simCtx) {
         super(simCtx);
-        this.ueTimers = new UeTimers();
+        this.ueTimers = new UeTimers(this);
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();
         this.ueData = new UeData();

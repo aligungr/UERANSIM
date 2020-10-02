@@ -26,10 +26,8 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.itms.wrappers.NgapSendWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
@@ -41,7 +39,6 @@ import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
-import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.util.UUID;
 
@@ -50,8 +47,8 @@ public class NgapTransfer {
     public static void sendNgapNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
         var ngapPdu = message.buildPdu();
 
-        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
+        ctx.logger.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
+        ctx.logger.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new NgapSendWrapper(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
 
@@ -90,8 +87,8 @@ public class NgapTransfer {
 
         var ngapPdu = message.buildPdu();
 
-        Logging.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
-        Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
+        ctx.logger.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
+        ctx.logger.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new NgapSendWrapper(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
 

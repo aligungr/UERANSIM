@@ -24,11 +24,12 @@
 
 package tr.havelsan.ueransim.app.testing;
 
-public class TestCommand_Sleep extends TestCommand {
+import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
-    public final int duration;
+public class TestCmd_InitialRegistration extends TestCmd {
+    public final EFollowOnRequest followOn;
 
-    public TestCommand_Sleep(int duration) {
-        this.duration = duration;
+    public TestCmd_InitialRegistration(EFollowOnRequest followOn) {
+        this.followOn = followOn;
     }
 }

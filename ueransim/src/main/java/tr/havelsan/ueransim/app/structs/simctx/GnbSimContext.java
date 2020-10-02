@@ -29,15 +29,23 @@ import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Logger;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class GnbSimContext extends BaseSimContext {
+    public Logger logger;
     public GnbConfig config;
 
     public HashMap<Guami, GnbAmfContext> amfContexts;
-
     public HashMap<UUID, GnbUeContext> ueContexts;
     public long ueNgapIdCounter;
 

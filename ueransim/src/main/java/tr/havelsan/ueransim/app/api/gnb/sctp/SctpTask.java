@@ -41,7 +41,6 @@ import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.sctp.SctpClient;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
-import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,7 +59,7 @@ public class SctpTask extends ItmsTask {
     @Override
     public void main() {
         if (ctx.amfContexts.isEmpty()) {
-            Logging.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
+            ctx.logger.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
             return;
         }
 
@@ -83,13 +82,13 @@ public class SctpTask extends ItmsTask {
                 }
             };
 
-            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
+            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, ctx.logger, associationHandler);
 
             new Thread(() -> {
                 try {
                     amf.sctpClient.start();
                 } catch (Exception e) {
-                    Logging.error(Tag.CONNECTION, "SCTP connection could not established: " + e.getMessage());
+                    ctx.logger.error(Tag.CONNECTION, "SCTP connection could not established: " + e.getMessage());
                     return;
                 }
                 try {

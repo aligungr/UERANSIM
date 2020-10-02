@@ -31,14 +31,14 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NgapInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
-        Logging.funcIn("Starting: NGSetupRequest");
-        Logging.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
+        ctx.logger.funcIn("Starting: NGSetupRequest");
+        ctx.logger.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
         var msg = new NGAP_NGSetupRequest();
         msg.addProtocolIe(NgapUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn));
@@ -46,20 +46,20 @@ public class NgapInterfaceManagement {
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
         NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGAP_NGSetupResponse message) {
-        Logging.funcIn("Handling: NGSetupResponse");
-        Logging.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
+        ctx.logger.funcIn("Handling: NGSetupResponse");
+        ctx.logger.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGAP_NGSetupFailure message) {
-        Logging.funcIn("Handling: NGSetupFailure");
-        Logging.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
+        ctx.logger.funcIn("Handling: NGSetupFailure");
+        ctx.logger.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 }
