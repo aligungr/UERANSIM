@@ -14,6 +14,9 @@ Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN em
 - UE | Authentication
   - EAP AKA'
   - 5G AKA
+- NAS Encryption
+    - EA1, EA2, EA3
+    - IA1, IA2, IA3
 - UE | MM Common Procedures
   - Security Mode Control
   - Identification
