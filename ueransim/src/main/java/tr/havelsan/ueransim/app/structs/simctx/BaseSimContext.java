@@ -34,12 +34,10 @@ public class BaseSimContext {
     public final SimulationContext simCtx;
     public final UUID ctxId;
     public final Itms itms;
-    public Logger logger;
 
     public BaseSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
         this.ctxId = UUID.randomUUID();
         this.itms = new Itms();
-        this.logger = new Logger();
     }
 }

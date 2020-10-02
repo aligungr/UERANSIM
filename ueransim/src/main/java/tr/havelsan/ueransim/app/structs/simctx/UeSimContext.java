@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.app.structs.*;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.contexts.MmContext;
 import tr.havelsan.ueransim.app.structs.contexts.SmContext;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +42,7 @@ import java.util.UUID;
 
 public class UeSimContext extends BaseSimContext {
 
+    public Logger logger;
     public UeData ueData;
     public UeConfig ueConfig;
     public UeTimers ueTimers;
@@ -58,16 +60,5 @@ public class UeSimContext extends BaseSimContext {
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();
         this.ueData = new UeData();
-
-        logger.getConsole().setStandardPrintEnabled(false);
-        logger.getConsole().addPrintHandler(str -> {
-            final Path path = Paths.get("logs/ue-" + ueConfig.supi.toString() + ".log");
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 }

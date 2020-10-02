@@ -31,5 +31,20 @@ public enum Severity {
     WARNING,
     ERROR,
     FUNC_IN,
-    FUNC_OUT,
+    FUNC_OUT;
+
+    public boolean dispatch() {
+        switch (this) {
+            case WARNING:
+            case SUCCESS:
+            case ERROR:
+                return true;
+            case DEBUG:
+            case INFO:
+            case FUNC_IN:
+            case FUNC_OUT:
+            default:
+                return false;
+        }
+    }
 }

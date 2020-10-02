@@ -40,7 +40,6 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.BitString;
-import tr.havelsan.ueransim.utils.console.Logger;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.HashMap;
@@ -51,7 +50,6 @@ public class MmAuthentication {
 
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
     private static final boolean USE_SQN_HACK = true; // todo
-    private static final Logger logger = new Logger();
 
     public static void receiveAuthenticationRequest(UeSimContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
@@ -154,7 +152,7 @@ public class MmAuthentication {
 
         // Control received AUTN
         {
-            var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, receivedAutn);
+            var autnCheck = MmAuthentication.validateAutn(ctx, milenageAk, milenageMac, receivedAutn);
             ctx.logger.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
             if (autnCheck != EAutnValidationRes.OK) {
@@ -284,7 +282,7 @@ public class MmAuthentication {
         ctx.logger.debug(Tag.VALUE, "used snn: %s", snn);
         ctx.logger.debug(Tag.VALUE, "used sqn: %s", ctx.ueData.sqn);
 
-        var autnCheck = MmAuthentication.validateAutn(milenageAk, milenageMac, autn);
+        var autnCheck = validateAutn(ctx, milenageAk, milenageMac, autn);
         ctx.logger.debug(Tag.VALUE, "autnCheck: %s", autnCheck);
 
         if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes.OK) {
@@ -318,7 +316,7 @@ public class MmAuthentication {
         ctx.logger.funcOut();
     }
 
-    private static EAutnValidationRes validateAutn(OctetString ak, OctetString mac, OctetString autn) {
+    private static EAutnValidationRes validateAutn(UeSimContext ctx, OctetString ak, OctetString mac, OctetString autn) {
         // Decode AUTN
         var receivedSQNxorAK = autn.substring(0, 6);
         var receivedSQN = OctetString.xor(receivedSQNxorAK, ak);
@@ -327,20 +325,20 @@ public class MmAuthentication {
 
         // Check MAC
         if (!receivedMAC.equals(mac)) {
-            logger.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
+            ctx.logger.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
             return EAutnValidationRes.MAC_FAILURE;
         }
 
         // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
         // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
         if (!BitString.from(receivedAMF).getB(0)) {
-            logger.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
+            ctx.logger.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
             return EAutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
         }
 
         // Verify that the received sequence number SQN is in the correct range
         if (!checkSqn(receivedSQN)) {
-            logger.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
+            ctx.logger.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
             return EAutnValidationRes.SYNCHRONISATION_FAILURE;
         }
 

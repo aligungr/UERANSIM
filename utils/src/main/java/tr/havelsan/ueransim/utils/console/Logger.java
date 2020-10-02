@@ -24,6 +24,11 @@ public class Logger {
     private final List<Consumer<LogEntry>> printHandlers = new ArrayList<>();
     private final AtomicInteger functionDepth = new AtomicInteger(0);
     private final BaseConsole console = new BaseConsole();
+    private final String loggerName;
+
+    public Logger(String loggerName) {
+        this.loggerName = loggerName;
+    }
 
     public BaseConsole getConsole() {
         return console;
@@ -83,6 +88,12 @@ public class Logger {
 
         if (severity == Severity.ERROR && Constants.TREAT_ERRORS_AS_FATAL) {
             throw new FatalTreatedErrorException(str);
+        }
+
+        if (!loggerName.equals(Logging.GLOBAL_LOGGER)) {
+            if (severity.dispatch()) {
+                Console.println(ansiColorFormat, String.format(Locale.ENGLISH, "%s[%s] [%s] %s%s", getTime(), loggerName, severity, tagging, str));
+            }
         }
     }
 

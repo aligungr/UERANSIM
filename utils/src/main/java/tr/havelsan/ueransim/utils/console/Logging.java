@@ -31,7 +31,9 @@ import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 
 public class Logging {
 
-    private static final Logger logger = new Logger();
+    public static final String GLOBAL_LOGGER = "global";
+
+    private static final Logger logger = new Logger(GLOBAL_LOGGER);
 
     public static void debug(Tag tag, String message, Object... args) {
         logger.debug(tag, message, args);

@@ -42,10 +42,10 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class GnbSimContext extends BaseSimContext {
+    public Logger logger;
     public GnbConfig config;
 
     public HashMap<Guami, GnbAmfContext> amfContexts;
-
     public HashMap<UUID, GnbUeContext> ueContexts;
     public long ueNgapIdCounter;
 
@@ -53,17 +53,5 @@ public class GnbSimContext extends BaseSimContext {
         super(simCtx);
         this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
-        this.logger = new Logger();
-
-        logger.getConsole().setStandardPrintEnabled(false);
-        logger.getConsole().addPrintHandler(str -> {
-            final Path path = Paths.get("logs/gnb-" + config.gnbId + ".log");
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 }

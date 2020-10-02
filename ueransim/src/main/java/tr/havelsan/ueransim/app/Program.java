@@ -100,10 +100,24 @@ public class Program {
     private void initLogging() {
         new File("logs").mkdir();
 
+        final String appLogFile = "logs/app.log";
         final String loadTestFile = "logs/loadtest.log";
 
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All generic logs are written to: %s", appLogFile);
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log file.");
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
+
+        Console.setStandardPrintEnabled(true);
+        Console.addPrintHandler(str -> {
+            final Path path = Paths.get(appLogFile);
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Console.printDiv();
 
         loadTestConsole.setStandardPrintEnabled(false);
         loadTestConsole.addPrintHandler(str -> {
@@ -163,7 +177,7 @@ public class Program {
             Console.println(null, testCases.get(i).getKey());
         }
 
-        Console.print(AnsiPalette.PAINT_INPUT, "Selection: ");
+        Console.println(AnsiPalette.PAINT_INPUT, "Selection: ");
 
         var scanner = new Scanner(System.in);
         String line = scanner.nextLine();

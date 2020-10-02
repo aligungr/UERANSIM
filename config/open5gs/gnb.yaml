@@ -16,7 +16,7 @@ amfConfigs:
         hex: '5580'
       amfPointer:
         hex: 'a8'
-    host: 127.0.0.5
+    host: 10.154.22.48
     port: 38412
 
 supportedTAs:
