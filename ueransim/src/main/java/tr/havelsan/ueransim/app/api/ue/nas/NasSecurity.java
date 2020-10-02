@@ -29,7 +29,7 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.SecuredMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 import tr.havelsan.ueransim.utils.Tag;
 
 public class NasSecurity {
@@ -63,19 +63,19 @@ public class NasSecurity {
                 smc._macForNewSC = securedMmMessage.messageAuthenticationCode;
                 return smc;
             } else {
-                Logging.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
+                nsc.ueCtx.logger.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
                 return null;
             }
         }
 
         if (securedMmMessage.securityHeaderType.equals(ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT)) {
-            Logging.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
+            nsc.ueCtx.logger.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
             return null;
         }
 
         var decrypted = NasEncryption.decrypt(securedMmMessage, nsc);
         if (decrypted == null) {
-            Logging.error(Tag.NAS_SECURITY, "MAC mismatch in NAS encryption. Ignoring received NAS Message.");
+            nsc.ueCtx.logger.error(Tag.NAS_SECURITY, "MAC mismatch in NAS encryption. Ignoring received NAS Message.");
             return null;
         } else {
             return decrypted;

@@ -48,7 +48,7 @@ public class UeSimContext extends BaseSimContext {
 
     public UeSimContext(SimulationContext simCtx) {
         super(simCtx);
-        this.ueTimers = new UeTimers();
+        this.ueTimers = new UeTimers(this);
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();
         this.ueData = new UeData();

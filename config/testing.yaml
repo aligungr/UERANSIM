@@ -18,7 +18,7 @@ test-cases:
   pdu-session-establishment:
     - "@type": INITIAL_REGISTRATION
     - "@type": SLEEP
-      duration: 5
+      duration: 15
     - "@type": PDU_SESSION_ESTABLISHMENT
 
 load-testing:

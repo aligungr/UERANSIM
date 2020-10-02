@@ -34,7 +34,6 @@ import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit10;
@@ -78,8 +77,8 @@ public class NgapUeManagement {
     }
 
     public static Guami selectNewAmfForReAllocation(GnbSimContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
-        Logging.funcIn("Handling: Select AMF from AMFSetId");
-        Logging.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
+        ctx.logger.funcIn("Handling: Select AMF from AMFSetId");
+        ctx.logger.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
 
         Guami res = null;
 
@@ -101,7 +100,7 @@ public class NgapUeManagement {
             res = amfs.get(0).guami;
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
         return res;
     }
 

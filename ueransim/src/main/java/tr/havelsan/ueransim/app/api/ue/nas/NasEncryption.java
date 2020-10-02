@@ -38,7 +38,6 @@ import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.app.structs.NasCount;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.Bit5;
@@ -77,7 +76,7 @@ public class NasEncryption {
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
         var encryptedData = encryptData(encAlg, count, cnId, plainNasMessage, encKey);
-        var mac = computeMac(intAlg, count, cnId, true, intKey, encryptedData.toByteArray());
+        var mac = computeMac(intAlg, count, cnId, true, intKey, encryptedData.toByteArray(), securityContext);
 
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = sht;
@@ -122,7 +121,9 @@ public class NasEncryption {
     //======================================================================================================
 
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
-        Logging.funcIn("NasEncryption.decrypt");
+        var logger = securityContext.ueCtx.logger;
+
+        logger.funcIn("NasEncryption.decrypt");
 
         var estimatedCount = securityContext.estimatedDownlinkCount(protectedNasMessage.sequenceNumber);
 
@@ -132,14 +133,14 @@ public class NasEncryption {
         var intAlg = securityContext.selectedAlgorithms.integrity;
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
-        var mac = computeMac(intAlg, estimatedCount, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray());
+        var mac = computeMac(intAlg, estimatedCount, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray(), securityContext);
 
-        Logging.debug(Tag.VALUE, "computed mac: %s", mac);
-        Logging.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
+        logger.debug(Tag.VALUE, "computed mac: %s", mac);
+        logger.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
 
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!intAlg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-                Logging.funcOut();
+                logger.funcOut();
                 return null;
             }
         }
@@ -147,19 +148,21 @@ public class NasEncryption {
         securityContext.updateDownlinkCount(estimatedCount);
 
         var decryptedData = decryptData(encAlg, estimatedCount, cnId, encKey, protectedNasMessage.securityHeaderType,
-                protectedNasMessage.plainNasMessage.toByteArray());
+                protectedNasMessage.plainNasMessage.toByteArray(), securityContext);
         var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
-        Logging.funcOut();
+        logger.funcOut();
         return decryptedMsg;
     }
 
     private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
-                                           OctetString key, ESecurityHeaderType sht, byte[] data) {
-        Logging.funcIn("NasEncryption.decryptData");
+                                           OctetString key, ESecurityHeaderType sht, byte[] data, NasSecurityContext securityContext) {
+        var logger = securityContext.ueCtx.logger;
+
+        logger.funcIn("NasEncryption.decryptData");
 
         if (!sht.isCiphered()) {
-            Logging.funcOut();
+            logger.funcOut();
             return new OctetString(data);
         }
 
@@ -183,11 +186,11 @@ public class NasEncryption {
         }
 
         if (res == null) {
-            Logging.funcOut();
+            logger.funcOut();
             throw new RuntimeException("invalid ciphering alg");
         }
 
-        Logging.funcOut();
+        logger.funcOut();
         return new OctetString(res);
     }
 
@@ -196,15 +199,17 @@ public class NasEncryption {
     //======================================================================================================
 
     public static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
-                                    boolean isUplink, OctetString key, byte[] plainMessage) {
-        Logging.funcIn("Computing Mac");
+                                    boolean isUplink, OctetString key, byte[] plainMessage, NasSecurityContext securityContext) {
+        var logger = securityContext.ueCtx.logger;
+
+        logger.funcIn("Computing Mac");
 
         var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));
 
-        Logging.debug(Tag.VALUE, "alg: %s", alg);
+        logger.debug(Tag.VALUE, "alg: %s", alg);
 
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-            Logging.funcOut();
+            logger.funcOut();
             return new Octet4(0);
         }
 
@@ -212,11 +217,11 @@ public class NasEncryption {
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
 
-        Logging.debug(Tag.VALUE, "count: %s", count.toOctet4());
-        Logging.debug(Tag.VALUE, "bearer: %s", bearer);
-        Logging.debug(Tag.VALUE, "direction: %s", direction);
-        Logging.debug(Tag.VALUE, "message: %s", message.toHexString(false));
-        Logging.debug(Tag.VALUE, "key: %s", key);
+        logger.debug(Tag.VALUE, "count: %s", count.toOctet4());
+        logger.debug(Tag.VALUE, "bearer: %s", bearer);
+        logger.debug(Tag.VALUE, "direction: %s", direction);
+        logger.debug(Tag.VALUE, "message: %s", message.toHexString(false));
+        logger.debug(Tag.VALUE, "key: %s", key);
 
         Octet4 res = null;
 
@@ -231,11 +236,11 @@ public class NasEncryption {
         }
 
         if (res == null) {
-            Logging.funcOut();
+            logger.funcOut();
             throw new RuntimeException("invalid integrity alg");
         }
 
-        Logging.funcOut();
+        logger.funcOut();
         return res;
     }
 

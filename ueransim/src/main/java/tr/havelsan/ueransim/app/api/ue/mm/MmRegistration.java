@@ -36,13 +36,13 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType) {
-        Logging.funcIn("Starting: Registration procedure (%s)", registrationType);
+        ctx.logger.funcIn("Starting: Registration procedure (%s)", registrationType);
 
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED_INITIATED, EMmSubState.MM_REGISTERED_INITIATED__NA);
 
@@ -99,11 +99,11 @@ public class MmRegistration {
 
         MobilityManagement.sendMm(ctx, registrationRequest);
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
-        Logging.funcIn("Handling: Registration Accept");
+        ctx.logger.funcIn("Handling: Registration Accept");
 
         boolean sendCompleteMes = false;
 
@@ -127,20 +127,20 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
-        Logging.success(Tag.PROCEDURE_RESULT, "Registration is successful");
-        Logging.funcOut();
+        ctx.logger.success(Tag.PROCEDURE_RESULT, "Registration is successful");
+        ctx.logger.funcOut();
     }
 
     public static void receiveRegistrationReject(UeSimContext ctx, RegistrationReject message) {
-        Logging.funcIn("Handling: Registration reject");
+        ctx.logger.funcIn("Handling: Registration reject");
 
-        Logging.error(Tag.PROCEDURE_RESULT, "Registration failed");
+        ctx.logger.error(Tag.PROCEDURE_RESULT, "Registration failed");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
+                ctx.logger.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
@@ -240,6 +240,6 @@ public class MmRegistration {
 
         MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 }

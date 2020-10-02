@@ -42,7 +42,7 @@ import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 
 public class MobilityManagement {
 
@@ -80,7 +80,7 @@ public class MobilityManagement {
         } else if (message instanceof DlNasTransport) {
             SessionManagement.receiveDl(ctx, (DlNasTransport) message);
         } else {
-            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
+            ctx.logger.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
     }
 
@@ -118,12 +118,12 @@ public class MobilityManagement {
         ctx.mmCtx.mmState = state;
         ctx.mmCtx.mmSubState = subState;
 
-        Logging.info(Tag.STATE, "UE switches to state: %s/%s", state, subState);
+        ctx.logger.info(Tag.STATE, "UE switches to state: %s/%s", state, subState);
     }
 
     public static void switchState(UeSimContext ctx, ERmState state) {
         ctx.mmCtx.rmState = state;
-        Logging.info(Tag.STATE, "UE switches to state: %s", state);
+        ctx.logger.info(Tag.STATE, "UE switches to state: %s", state);
     }
 
     public static void cycle(UeSimContext ctx) {

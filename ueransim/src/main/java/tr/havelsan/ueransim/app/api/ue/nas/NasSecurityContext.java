@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.api.ue.nas;
 
 import tr.havelsan.ueransim.app.enums.EConnectionIdentifier;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -37,6 +38,7 @@ import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
 
 public class NasSecurityContext {
+    public final UeSimContext ueCtx;
     public IENasKeySetIdentifier ngKsi;
 
     public NasCount downlinkCount;
@@ -47,7 +49,8 @@ public class NasSecurityContext {
     public UeKeys keys;
     public SelectedAlgorithms selectedAlgorithms;
 
-    public NasSecurityContext(ETypeOfSecurityContext tsc, Bit3 ngKsi) {
+    public NasSecurityContext(UeSimContext ueCtx, ETypeOfSecurityContext tsc, Bit3 ngKsi) {
+        this.ueCtx = ueCtx;
         this.ngKsi = new IENasKeySetIdentifier(tsc, ngKsi);
         this.downlinkCount = new NasCount();
         this.uplinkCount = new NasCount();
@@ -81,7 +84,7 @@ public class NasSecurityContext {
     }
 
     public NasSecurityContext deepCopy() {
-        var ctx = new NasSecurityContext(this.ngKsi.tsc, this.ngKsi.nasKeySetIdentifier);
+        var ctx = new NasSecurityContext(this.ueCtx, this.ngKsi.tsc, this.ngKsi.nasKeySetIdentifier);
         ctx.downlinkCount = this.downlinkCount.deepCopy();
         ctx.uplinkCount = this.uplinkCount.deepCopy();
         ctx.connectionIdentifier = this.connectionIdentifier;

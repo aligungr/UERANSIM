@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -45,5 +46,6 @@ public class GnbSimContext extends BaseSimContext {
         super(simCtx);
         this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
+        this.logger = new Logger();
     }
 }

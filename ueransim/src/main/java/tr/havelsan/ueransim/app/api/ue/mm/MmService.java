@@ -28,38 +28,38 @@ import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceAccept;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceReject;
-import tr.havelsan.ueransim.utils.console.Logging;
+
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmService {
 
     public static void receiveServiceAccept(UeSimContext ctx, ServiceAccept message) {
-        Logging.funcIn("Handling: Service Accept");
+        ctx.logger.funcIn("Handling: Service Accept");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "network sent EAP with type of %s in ServiceAccept, ignoring EAP IE.",
+                ctx.logger.warning(Tag.PROC, "network sent EAP with type of %s in ServiceAccept, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveServiceReject(UeSimContext ctx, ServiceReject message) {
-        Logging.funcIn("Handling: Service Accept");
+        ctx.logger.funcIn("Handling: Service Accept");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Logging.warning(Tag.PROC, "network sent EAP with type of %s in ServiceReject, ignoring EAP IE.",
+                ctx.logger.warning(Tag.PROC, "network sent EAP with type of %s in ServiceReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 }

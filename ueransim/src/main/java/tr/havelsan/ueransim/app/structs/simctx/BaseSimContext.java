@@ -26,6 +26,7 @@ package tr.havelsan.ueransim.app.structs.simctx;
 
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.UUID;
 
@@ -33,10 +34,12 @@ public class BaseSimContext {
     public final SimulationContext simCtx;
     public final UUID ctxId;
     public final Itms itms;
+    public Logger logger;
 
     public BaseSimContext(SimulationContext simCtx) {
         this.simCtx = simCtx;
         this.ctxId = UUID.randomUUID();
         this.itms = new Itms();
+        this.logger = new Logger();
     }
 }

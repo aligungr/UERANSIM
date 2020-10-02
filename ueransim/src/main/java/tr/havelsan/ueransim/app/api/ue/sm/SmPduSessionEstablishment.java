@@ -30,26 +30,25 @@ import tr.havelsan.ueransim.nas.impl.ies.*;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 class SmPduSessionEstablishment {
 
     public static void sendEstablishmentRequest(UeSimContext ctx) {
-        Logging.funcIn("Sending PDU Session Establishment Request");
+        ctx.logger.funcIn("Sending PDU Session Establishment Request");
 
         var pduSessionId = SmPduSessionManagement.allocatePduSessionId(ctx);
         if (pduSessionId == null) {
-            Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
-            Logging.funcOut();
+            ctx.logger.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            ctx.logger.funcOut();
             return;
         }
 
         var procedureTransactionId = SmPduSessionManagement.allocateProcedureTransactionId(ctx);
         if (procedureTransactionId == null) {
-            Logging.error(Tag.PROC, "PDU Session Establishment Request could not send");
+            ctx.logger.error(Tag.PROC, "PDU Session Establishment Request could not send");
             SmPduSessionManagement.releasePduSession(ctx, pduSessionId);
-            Logging.funcOut();
+            ctx.logger.funcOut();
             return;
         }
 
@@ -67,14 +66,14 @@ class SmPduSessionEstablishment {
 
         SessionManagement.sendSm(ctx, pduSessionId, pduSessionEstablishmentRequest);
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveEstablishmentAccept(UeSimContext ctx, PduSessionEstablishmentAccept message) {
-        Logging.funcIn("Handling: PDU Session Establishment Accept");
+        ctx.logger.funcIn("Handling: PDU Session Establishment Accept");
 
         if (message.smCause != null) {
-            Logging.warning(Tag.PROC, "SM cause received in PduSessionEstablishmentAccept: %s", message.smCause.value);
+            ctx.logger.warning(Tag.PROC, "SM cause received in PduSessionEstablishmentAccept: %s", message.smCause.value);
         }
 
         ctx.ueTimers.t3580.stop();
@@ -83,8 +82,8 @@ class SmPduSessionEstablishment {
 
         var pduSession = ctx.smCtx.pduSessions[message.pduSessionId.intValue()];
         if (pduSession == null) {
-            Logging.error(Tag.PROC, "PDU session not found: %s", message.pduSessionId);
-            Logging.funcOut();
+            ctx.logger.error(Tag.PROC, "PDU session not found: %s", message.pduSessionId);
+            ctx.logger.funcOut();
             return;
         }
 
@@ -93,9 +92,9 @@ class SmPduSessionEstablishment {
         pduSession.sessionAmbr = message.sessionAmbr;
         pduSession.authorizedQoSFlowDescriptions = message.authorizedQoSFlowDescriptions;
 
-        Logging.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
+        ctx.logger.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
 
-        Logging.funcOut();
+        ctx.logger.funcOut();
     }
 
     public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {

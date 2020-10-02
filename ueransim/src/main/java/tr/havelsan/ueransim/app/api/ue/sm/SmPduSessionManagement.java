@@ -30,7 +30,6 @@ import tr.havelsan.ueransim.app.structs.ProcedureTransaction;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.console.Logging;
 
 class SmPduSessionManagement {
 
@@ -46,14 +45,14 @@ class SmPduSessionManagement {
         }
 
         if (id == -1) {
-            Logging.error(Tag.PROC, "PDU session allocation failed");
+            ctx.logger.error(Tag.PROC, "PDU session allocation failed");
             return null;
         }
 
         var val = EPduSessionIdentity.fromValue(id);
         arr[id] = new PduSession(val);
 
-        Logging.debug(Tag.PROC, "PDU session allocated: %s", val);
+        ctx.logger.debug(Tag.PROC, "PDU session allocated: %s", val);
         return val;
     }
 
@@ -69,24 +68,24 @@ class SmPduSessionManagement {
         }
 
         if (id == -1) {
-            Logging.error(Tag.PROC, "PTI allocation failed");
+            ctx.logger.error(Tag.PROC, "PTI allocation failed");
             return null;
         }
 
         arr[id] = new ProcedureTransaction();
 
         var val = EProcedureTransactionIdentity.fromValue(id);
-        Logging.debug(Tag.PROC, "PTI allocated: %s", val);
+        ctx.logger.debug(Tag.PROC, "PTI allocated: %s", val);
         return val;
     }
 
     public static void releaseProcedureTransactionId(UeSimContext ctx, EProcedureTransactionIdentity pti) {
         ctx.smCtx.procedureTransactions[pti.intValue()] = ProcedureTransaction.RELEASED;
-        Logging.debug(Tag.PROC, "PTI released: %s", pti);
+        ctx.logger.debug(Tag.PROC, "PTI released: %s", pti);
     }
 
     public static void releasePduSession(UeSimContext ctx, EPduSessionIdentity psi) {
         ctx.smCtx.pduSessions[psi.intValue()] = PduSession.RELEASED;
-        Logging.debug(Tag.PROC, "PDU Session released: %s", psi);
+        ctx.logger.debug(Tag.PROC, "PDU Session released: %s", psi);
     }
 }

@@ -44,11 +44,9 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
-import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Console;
-import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.File;
@@ -97,12 +95,6 @@ public class Program {
 
     public static void main(String[] args) throws Exception {
         new Program().runUserPrompt();
-    }
-
-    public static void fail(Throwable t) {
-        t.printStackTrace();
-        Logging.error(Tag.SYSTEM, "%s", t);
-        System.exit(1);
     }
 
     private void initLogging() {

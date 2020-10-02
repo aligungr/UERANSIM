@@ -24,93 +24,44 @@
 
 package tr.havelsan.ueransim.utils.console;
 
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.exceptions.FatalTreatedErrorException;
 import tr.havelsan.ueransim.utils.Severity;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
-import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
-// todo: use log4j instead
 public class Logging {
 
-    private static final List<Consumer<LogEntry>> printHandlers = new ArrayList<>();
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    private static final AtomicInteger functionDepth = new AtomicInteger(0);
+    private static final Logger logger = new Logger();
 
     public static void debug(Tag tag, String message, Object... args) {
-        log(Severity.DEBUG, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
+        logger.debug(tag, message, args);
     }
 
     public static void info(Tag tag, String message, Object... args) {
-        log(Severity.INFO, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
+        logger.info(tag, message, args);
     }
 
     public static void success(Tag tag, String message, Object... args) {
-        log(Severity.SUCCESS, AnsiPalette.PAINT_LOG_SUCCESS, functionDepth.get(), tag, message, args);
+        logger.success(tag, message, args);
     }
 
     public static void warning(Tag tag, String message, Object... args) {
-        log(Severity.WARNING, AnsiPalette.PAINT_LOG_WARNING, functionDepth.get(), tag, message, args);
+        logger.warning(tag, message, args);
     }
 
     public static void error(Tag tag, String message, Object... args) {
-        log(Severity.ERROR, AnsiPalette.PAINT_LOG_ERROR, functionDepth.get(), tag, message, args);
+        logger.error(tag, message, args);
     }
 
     public static void funcIn(String name, Object... args) {
-        log(Severity.FUNC_IN, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.getAndIncrement(), null, name, args);
+        logger.funcIn(name, args);
     }
 
     public static void funcOut() {
-        log(Severity.FUNC_OUT, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.decrementAndGet(), null, "");
+        logger.funcOut();
     }
 
     public static void log(Severity severity, AnsiColorFormat ansiColorFormat, int depth, Tag tag, String message, Object... args) {
-        if (severity == null) severity = Severity.DEBUG;
-        if (message == null) message = "";
-        if (args == null) args = new Object[0];
-
-        String spacing = (" ").repeat(Math.max(0, depth * 2));
-        String tagging = tag == null ? "" : "[" + tag + "] ";
-
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof Throwable) {
-                var sw = new StringWriter();
-                ((Throwable) args[i]).printStackTrace(new PrintWriter(sw));
-                args[i] = sw.toString();
-            }
-        }
-
-        String str = String.format(Locale.ENGLISH, message, args);
-
-        for (var handler : printHandlers)
-            handler.accept(new LogEntry(severity, depth, tag, str));
-
-        String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
-        Console.println(ansiColorFormat, display);
-
-        if (severity == Severity.ERROR && Constants.TREAT_ERRORS_AS_FATAL) {
-            throw new FatalTreatedErrorException(str);
-        }
-    }
-
-    public static void addLogHandler(Consumer<LogEntry> handler) {
-        printHandlers.add(handler);
-    }
-
-    private static String getTime() {
-        Calendar cal = Calendar.getInstance();
-        return String.format("[%s] ", DATE_FORMAT.format(cal.getTime()));
+        logger.log(severity, ansiColorFormat, depth, tag, message, args);
     }
 }
