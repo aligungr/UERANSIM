@@ -24,9 +24,8 @@
 
 package tr.havelsan.ueransim.app.structs.simctx;
 
-import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.utils.console.Logger;
+import tr.havelsan.ueransim.app.itms.Itms;
 
 import java.util.UUID;
 
