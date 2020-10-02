@@ -25,15 +25,15 @@
 package tr.havelsan.ueransim.app.api.ue.nas;
 
 
-import tr.havelsan.ueransim.app.itms.Itms;
-import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.testing.TestCommand;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
@@ -77,8 +77,7 @@ public class NasTask extends ItmsTask {
             } else if (msg instanceof UeTestCommandWrapper) {
                 executeCommand(ctx, ((UeTestCommandWrapper) msg).cmd);
             } else if (msg instanceof ConnectionReleaseWrapper) {
-                ctx.nonCurrentNsCtx = null;
-                ctx.currentNsCtx = null;
+                // TODO
             }
         }
     }
