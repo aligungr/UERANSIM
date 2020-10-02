@@ -44,9 +44,11 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.File;
@@ -105,7 +107,7 @@ public class Program {
         final String loadTestFile = "logs/loadtest.log";
 
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All generic logs are written to: %s", appLogFile);
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log file.");
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log files: logs/*");
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
 
         Console.setStandardPrintEnabled(true);
@@ -217,7 +219,9 @@ public class Program {
     private void runTest(String testName, TestCmd[] testCmds) {
         for (var command : testCmds) {
             if (command instanceof TestCmd_Sleep) {
-                Utils.sleep(((TestCmd_Sleep) command).duration * 1000);
+                var cmd = (TestCmd_Sleep) command;
+                Logging.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
+                Utils.sleep(cmd.duration * 1000);
             } else if (command instanceof TestCmd_InitialRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCmd_PeriodicRegistration) {
