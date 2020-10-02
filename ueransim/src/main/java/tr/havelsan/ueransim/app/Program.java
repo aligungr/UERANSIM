@@ -220,8 +220,13 @@ public class Program {
         for (var command : testCmds) {
             if (command instanceof TestCmd_Sleep) {
                 var cmd = (TestCmd_Sleep) command;
-                Logging.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
-                Utils.sleep(cmd.duration * 1000);
+                if (cmd.duration > 1) {
+                    Utils.sleep(1000);
+                    Logging.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
+                    Utils.sleep((cmd.duration - 1) * 1000);
+                } else {
+                    Utils.sleep(cmd.duration * 1000);
+                }
             } else if (command instanceof TestCmd_InitialRegistration) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCmd_PeriodicRegistration) {
