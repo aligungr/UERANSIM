@@ -63,7 +63,7 @@ sudo apt install libsctp-dev lksctp-tools
 1. Select a configuration profile by modifying `config/profile.yaml`.
 2. (Optional)  You can further modify the profile configurations if you want. (`config/open5gs`, `config/free5gc`, etc.)
 3. Execute `./run.sh` to start the application.
-4. Use `tail -f logs/app.log` and `tail -f logs/loadtest.log` to monitor logs realtime.
+4. Use `tail -f` to monitor logs realtime located at `logs/*.log`.
 5. Use terminal to trigger test events such as `initial-registration`
 
 ## FAQ
