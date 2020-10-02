@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
 import tr.havelsan.ueransim.app.enums.ERmState;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.*;
@@ -36,7 +36,6 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationAccept;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationComplete;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
-
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MmRegistration {
@@ -55,7 +54,7 @@ public class MmRegistration {
         registrationRequest.registrationType = new IE5gsRegistrationType(
                 //registrationType.equals(ERegistrationType.EMERGENCY_REGISTRATION) ? EFollowOnRequest.FOR_PENDING :
                 //        EFollowOnRequest.NO_FOR_PENDING,
-                EFollowOnRequest.NO_FOR_PENDING,
+                EFollowOnRequest.FOR_PENDING,
                 registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
