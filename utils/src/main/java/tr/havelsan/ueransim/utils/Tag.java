@@ -38,4 +38,14 @@ public enum Tag {
     NAS_TIMER,
     NAS_SECURITY,
     NOT_IMPL_YET;
+
+    public boolean dispatch() {
+        switch (this) {
+            case SYSTEM:
+            case CONNECTION:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

@@ -91,7 +91,7 @@ public class Logger {
         }
 
         if (!loggerName.equals(Logging.GLOBAL_LOGGER)) {
-            if (severity.dispatch()) {
+            if (severity.dispatch() || (tag != null && tag.dispatch()) ){
                 Console.println(ansiColorFormat, String.format(Locale.ENGLISH, "%s[%s] [%s] %s%s", getTime(), loggerName, severity, tagging, str));
             }
         }
