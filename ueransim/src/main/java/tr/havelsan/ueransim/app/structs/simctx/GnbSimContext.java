@@ -29,8 +29,15 @@ import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Logger;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -47,5 +54,16 @@ public class GnbSimContext extends BaseSimContext {
         this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
         this.logger = new Logger();
+
+        logger.getConsole().setStandardPrintEnabled(false);
+        logger.getConsole().addPrintHandler(str -> {
+            final Path path = Paths.get("logs/gnb-" + config.gnbId + ".log");
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

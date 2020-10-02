@@ -23,6 +23,11 @@ public class Logger {
 
     private final List<Consumer<LogEntry>> printHandlers = new ArrayList<>();
     private final AtomicInteger functionDepth = new AtomicInteger(0);
+    private final BaseConsole console = new BaseConsole();
+
+    public BaseConsole getConsole() {
+        return console;
+    }
 
     public void debug(Tag tag, String message, Object... args) {
         log(Severity.DEBUG, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
@@ -74,7 +79,7 @@ public class Logger {
             handler.accept(new LogEntry(severity, depth, tag, str));
 
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
-        Console.println(ansiColorFormat, display);
+        console.println(ansiColorFormat, display);
 
         if (severity == Severity.ERROR && Constants.TREAT_ERRORS_AS_FATAL) {
             throw new FatalTreatedErrorException(str);

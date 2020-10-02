@@ -100,22 +100,10 @@ public class Program {
     private void initLogging() {
         new File("logs").mkdir();
 
-        final String logFile = "logs/app.log";
         final String loadTestFile = "logs/loadtest.log";
 
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All default logs are written to: %s", logFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log file.");
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
-
-        Console.setStandardPrintEnabled(true);
-        Console.addPrintHandler(str -> {
-            final Path path = Paths.get(logFile);
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
 
         loadTestConsole.setStandardPrintEnabled(false);
         loadTestConsole.addPrintHandler(str -> {

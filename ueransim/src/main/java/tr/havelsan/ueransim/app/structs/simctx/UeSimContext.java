@@ -31,6 +31,12 @@ import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.contexts.MmContext;
 import tr.havelsan.ueransim.app.structs.contexts.SmContext;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 public class UeSimContext extends BaseSimContext {
@@ -52,5 +58,16 @@ public class UeSimContext extends BaseSimContext {
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();
         this.ueData = new UeData();
+
+        logger.getConsole().setStandardPrintEnabled(false);
+        logger.getConsole().addPrintHandler(str -> {
+            final Path path = Paths.get("logs/ue-" + ueConfig.supi.toString() + ".log");
+            try {
+                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
+                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
