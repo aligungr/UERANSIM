@@ -28,6 +28,8 @@ import tr.havelsan.ueransim.utils.Severity;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 
+import java.util.function.Consumer;
+
 
 public class Logging {
 
@@ -65,5 +67,9 @@ public class Logging {
 
     public static void log(Severity severity, AnsiColorFormat ansiColorFormat, int depth, Tag tag, String message, Object... args) {
         logger.log(severity, ansiColorFormat, depth, tag, message, args);
+    }
+
+    public void addLogHandler(Consumer<LogEntry> handler) {
+        logger.addLogHandler(handler);
     }
 }
