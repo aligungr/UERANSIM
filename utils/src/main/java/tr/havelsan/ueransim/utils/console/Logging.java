@@ -69,7 +69,7 @@ public class Logging {
         logger.log(severity, ansiColorFormat, depth, tag, message, args);
     }
 
-    public void addLogHandler(Consumer<LogEntry> handler) {
+    public static void addLogHandler(Consumer<LogEntry> handler) {
         logger.addLogHandler(handler);
     }
 }
