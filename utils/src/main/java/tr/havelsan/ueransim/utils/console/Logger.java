@@ -30,6 +30,11 @@ public class Logger {
         this.loggerName = loggerName;
     }
 
+    private static String getTime() {
+        Calendar cal = Calendar.getInstance();
+        return String.format("[%s] ", DATE_FORMAT.format(cal.getTime()));
+    }
+
     public BaseConsole getConsole() {
         return console;
     }
@@ -91,8 +96,8 @@ public class Logger {
         }
 
         if (!loggerName.equals(Logging.GLOBAL_LOGGER)) {
-            if (severity.dispatch() || (tag != null && tag.dispatch()) ){
-                Console.println(ansiColorFormat, String.format(Locale.ENGLISH, "%s[%s] [%s] %s%s", getTime(), loggerName, severity, tagging, str));
+            if (severity.dispatch() || (tag != null && tag.dispatch())) {
+                Logging.log(severity, ansiColorFormat, 0, tag, "[%s] " + message, concat(loggerName, args));
             }
         }
     }
@@ -101,8 +106,11 @@ public class Logger {
         printHandlers.add(handler);
     }
 
-    private static String getTime() {
-        Calendar cal = Calendar.getInstance();
-        return String.format("[%s] ", DATE_FORMAT.format(cal.getTime()));
+    private static Object[] concat(Object o, Object[] arr) {
+        // NOTE: I hate Java.
+        var a = new Object[arr.length + 1];
+        a[0] = o;
+        System.arraycopy(arr, 0, a, 1, arr.length);
+        return a;
     }
 }
