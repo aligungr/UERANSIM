@@ -16,6 +16,8 @@ public class GtpDecoder {
     public static GtpMessage decode(OctetInputStream stream) {
         var res = new GtpMessage();
 
+        int fistIndex = stream.currentIndex();
+
         var flags = stream.readOctet();
 
         int version = flags.getBitRangeI(5, 7);
@@ -33,7 +35,7 @@ public class GtpDecoder {
         boolean nPduNumberPresent = flags.getBitB(0);
 
         res.msgType = stream.readOctet();
-        res.length = stream.readOctet2();
+        int gtpLen = stream.readOctet2I();
         res.teid = stream.readOctet4();
 
         if (sequenceNumberPresent || nPduNumberPresent || nextExtensionHeaderPresent) {
@@ -83,6 +85,10 @@ public class GtpDecoder {
                 }
             }
         }
+
+        int read = stream.currentIndex() - fistIndex;
+        int rem = gtpLen - (read - 8);
+        res.payload = stream.readOctetString(rem);
 
         return res;
     }

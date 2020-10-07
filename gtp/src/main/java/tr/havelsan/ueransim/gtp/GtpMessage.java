@@ -4,6 +4,7 @@ import tr.havelsan.ueransim.gtp.ext.GtpExtHeader;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ public class GtpMessage {
     public static final int MT_G_PDU = 255;
 
     public Octet msgType;
-    public Octet2 length;
     public Octet4 teid;
     public Octet2 seq;
     public Octet nPduNum;
     public List<GtpExtHeader> extHeaders;
+    public OctetString payload;
 }
