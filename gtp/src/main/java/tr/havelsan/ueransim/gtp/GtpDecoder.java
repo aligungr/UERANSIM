@@ -6,12 +6,21 @@ import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.gtp.ext.*;
 import tr.havelsan.ueransim.gtp.pdusup.PduSessionInformation;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
 
 // TODO: General note for GTP-U: check for IP fragmentation and fitting IP packet inside of UDP carried GTP packet
 //  (as well as hvgtptun side etc.)
 public class GtpDecoder {
+
+    public static GtpMessage decode(byte[] data) {
+        return decode(new OctetInputStream(data));
+    }
+
+    public static GtpMessage decode(OctetString data) {
+        return decode(new OctetInputStream(data));
+    }
 
     public static GtpMessage decode(OctetInputStream stream) {
         var res = new GtpMessage();
