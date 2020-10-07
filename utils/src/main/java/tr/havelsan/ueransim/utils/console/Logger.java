@@ -19,6 +19,8 @@ import java.util.function.Consumer;
 
 public class Logger {
 
+    public static final Logger GLOBAL = new Logger("global");
+
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     private final List<Consumer<LogEntry>> printHandlers = new ArrayList<>();
@@ -33,6 +35,14 @@ public class Logger {
     private static String getTime() {
         Calendar cal = Calendar.getInstance();
         return String.format("[%s] ", DATE_FORMAT.format(cal.getTime()));
+    }
+
+    private static Object[] concat(Object o, Object[] arr) {
+        // NOTE: I hate Java.
+        var a = new Object[arr.length + 1];
+        a[0] = o;
+        System.arraycopy(arr, 0, a, 1, arr.length);
+        return a;
     }
 
     public BaseConsole getConsole() {
@@ -95,22 +105,14 @@ public class Logger {
             throw new FatalTreatedErrorException(str);
         }
 
-        if (!loggerName.equals(Logging.GLOBAL_LOGGER)) {
+        if (this != GLOBAL) {
             if (severity.dispatch() || (tag != null && tag.dispatch())) {
-                Logging.log(severity, ansiColorFormat, 0, tag, "[%s] " + message, concat(loggerName, args));
+                GLOBAL.log(severity, ansiColorFormat, 0, tag, "[%s] " + message, concat(loggerName, args));
             }
         }
     }
 
     public void addLogHandler(Consumer<LogEntry> handler) {
         printHandlers.add(handler);
-    }
-
-    private static Object[] concat(Object o, Object[] arr) {
-        // NOTE: I hate Java.
-        var a = new Object[arr.length + 1];
-        a[0] = o;
-        System.arraycopy(arr, 0, a, 1, arr.length);
-        return a;
     }
 }

@@ -45,14 +45,14 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_RerouteNASRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_UplinkNASTransport;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit10;
-
+import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.UUID;
 
 public class NgapNasTransport {
 
     public static void receiveUplinkNasTransport(GnbSimContext ctx, UUID associatedUe, NasMessage nasMessage) {
-        ctx.logger.funcIn("Handling Uplink NAS Transport");
+        Log.funcIn("Handling Uplink NAS Transport");
 
         NGAP_BaseMessage ngap;
         if (ctx.ueContexts.containsKey(associatedUe)) {
@@ -79,11 +79,11 @@ public class NgapNasTransport {
 
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 
     public static void receiveDownlinkNasTransport(GnbSimContext ctx, NGAP_DownlinkNASTransport message) {
-        ctx.logger.funcIn("Handling Downlink NAS Transport");
+        Log.funcIn("Handling Downlink NAS Transport");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
@@ -92,11 +92,11 @@ public class NgapNasTransport {
             ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(associatedUe, NasEncoder.nasPduS(nasMessage)));
         }
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 
     public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
-        ctx.logger.funcIn("Handling Reroute NAS Request");
+        Log.funcIn("Handling Reroute NAS Request");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
@@ -114,16 +114,16 @@ public class NgapNasTransport {
         var newAmf = NgapUeManagement.selectNewAmfForReAllocation(ctx, associatedAmf, new Bit10(amfSetId.value.intValue()));
 
         if (newAmf != null) {
-            ctx.logger.info(Tag.PROC, "New AMF selected for re-allocation. AMF: %s", newAmf);
+            Log.info(Tag.PROC, "New AMF selected for re-allocation. AMF: %s", newAmf);
 
             var ueCtx = ctx.ueContexts.get(associatedUe);
             ueCtx.associatedAmf = newAmf;
 
             NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, newMessage);
         } else {
-            ctx.logger.error(Tag.PROC, "AMF selection for re-allocation failed. Could not find a suitable AMF.");
+            Log.error(Tag.PROC, "AMF selection for re-allocation failed. Could not find a suitable AMF.");
         }
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 }

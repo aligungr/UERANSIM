@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.sctp;
 import com.sun.nio.sctp.MessageInfo;
 import com.sun.nio.sctp.SctpChannel;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.console.Logger;
+import tr.havelsan.ueransim.utils.console.Log;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -43,26 +43,24 @@ public class SctpClient implements ISctpClient {
 
     private SctpChannel channel;
     private boolean receiving;
-    private final Logger logger;
 
-    public SctpClient(String host, int port, int protocolId, Logger logger, ISctpAssociationHandler sctpAssociationHandler) {
+    public SctpClient(String host, int port, int protocolId, ISctpAssociationHandler sctpAssociationHandler) {
         this.host = host;
         this.port = port;
         this.protocolId = protocolId;
         this.associationHandler = new SctpNotificationHandler(sctpAssociationHandler);
-        this.logger = logger;
     }
 
     @Override
     public void start() throws Exception {
         if (this.channel != null) throw new RuntimeException("start was already called");
 
-        logger.info(Tag.CONNECTION, "Trying to establish SCTP connection... (%s:%s)", host, port);
+        Log.info(Tag.CONNECTION, "Trying to establish SCTP connection... (%s:%s)", host, port);
 
         this.channel = SctpChannel.open(new InetSocketAddress(host, port), 0, 0);
         this.receiving = true;
 
-        logger.info(Tag.CONNECTION, "SCTP connection established");
+        Log.info(Tag.CONNECTION, "SCTP connection established");
     }
 
     @Override

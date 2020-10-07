@@ -26,10 +26,9 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
 import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
@@ -48,12 +47,13 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupResponse;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.console.Log;
 
 
 public class NgapPduSessionManagement {
 
     public static void receiveResourceSetupRequest(GnbSimContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
-        ctx.logger.funcIn("Handling PDU Session Resource Setup Request");
+        Log.funcIn("Handling PDU Session Resource Setup Request");
 
         var response = new NGAP_PDUSessionResourceSetupResponse();
         var successList = new NGAP_PDUSessionResourceSetupListSURes();
@@ -147,8 +147,8 @@ public class NgapPduSessionManagement {
 
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
 
-        ctx.logger.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
+        Log.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 }

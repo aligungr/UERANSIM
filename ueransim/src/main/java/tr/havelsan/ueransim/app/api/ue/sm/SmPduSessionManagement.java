@@ -24,12 +24,13 @@
 
 package tr.havelsan.ueransim.app.api.ue.sm;
 
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.structs.PduSession;
 import tr.havelsan.ueransim.app.structs.ProcedureTransaction;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
 import tr.havelsan.ueransim.nas.impl.enums.EProcedureTransactionIdentity;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
 
 class SmPduSessionManagement {
 
@@ -45,14 +46,14 @@ class SmPduSessionManagement {
         }
 
         if (id == -1) {
-            ctx.logger.error(Tag.PROC, "PDU session allocation failed");
+            Log.error(Tag.PROC, "PDU session allocation failed");
             return null;
         }
 
         var val = EPduSessionIdentity.fromValue(id);
         arr[id] = new PduSession(val);
 
-        ctx.logger.debug(Tag.PROC, "PDU session allocated: %s", val);
+        Log.debug(Tag.PROC, "PDU session allocated: %s", val);
         return val;
     }
 
@@ -68,24 +69,24 @@ class SmPduSessionManagement {
         }
 
         if (id == -1) {
-            ctx.logger.error(Tag.PROC, "PTI allocation failed");
+            Log.error(Tag.PROC, "PTI allocation failed");
             return null;
         }
 
         arr[id] = new ProcedureTransaction();
 
         var val = EProcedureTransactionIdentity.fromValue(id);
-        ctx.logger.debug(Tag.PROC, "PTI allocated: %s", val);
+        Log.debug(Tag.PROC, "PTI allocated: %s", val);
         return val;
     }
 
     public static void releaseProcedureTransactionId(UeSimContext ctx, EProcedureTransactionIdentity pti) {
         ctx.smCtx.procedureTransactions[pti.intValue()] = ProcedureTransaction.RELEASED;
-        ctx.logger.debug(Tag.PROC, "PTI released: %s", pti);
+        Log.debug(Tag.PROC, "PTI released: %s", pti);
     }
 
     public static void releasePduSession(UeSimContext ctx, EPduSessionIdentity psi) {
         ctx.smCtx.pduSessions[psi.intValue()] = PduSession.RELEASED;
-        ctx.logger.debug(Tag.PROC, "PDU Session released: %s", psi);
+        Log.debug(Tag.PROC, "PDU Session released: %s", psi);
     }
 }

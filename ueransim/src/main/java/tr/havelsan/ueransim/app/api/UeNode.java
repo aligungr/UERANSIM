@@ -24,33 +24,40 @@
 
 package tr.havelsan.ueransim.app.api;
 
+import tr.havelsan.ueransim.app.AppConfig;
 import tr.havelsan.ueransim.app.api.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.api.ue.mr.MrTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.api.ue.nas.NasTimersTask;
 import tr.havelsan.ueransim.app.itms.ItmsId;
+import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class UeNode {
 
     public static final boolean AUTO = false;
 
     public static void run(UeSimContext ctx) {
+        var logger = AppConfig.createLoggerFor("ue-" + ctx.ueConfig.supi.toString());
+
         var itms = ctx.itms;
 
-        var timersTask = new NasTimersTask(itms, ItmsId.UE_TASK_NAS_TIMERS, ctx);
-        var mrTask = new MrTask(itms, ItmsId.UE_TASK_MR, ctx);
-        var nasTask = new NasTask(itms, ItmsId.UE_TASK_NAS, ctx);
-        var appTask = new UeAppTask(itms, ItmsId.UE_TASK_APP, ctx);
+        var tasks = new ItmsTask[]{
+                new NasTimersTask(itms, ItmsId.UE_TASK_NAS_TIMERS, ctx),
+                new MrTask(itms, ItmsId.UE_TASK_MR, ctx),
+                new NasTask(itms, ItmsId.UE_TASK_NAS, ctx),
+                new UeAppTask(itms, ItmsId.UE_TASK_APP, ctx)
+        };
 
-        itms.createTask(timersTask);
-        itms.createTask(mrTask);
-        itms.createTask(nasTask);
-        itms.createTask(appTask);
-
-        itms.startTask(timersTask);
-        itms.startTask(mrTask);
-        itms.startTask(nasTask);
-        itms.startTask(appTask);
+        for (var task : tasks) {
+            Log.registerLogger(task.thread, logger);
+        }
+        for (var task : tasks) {
+            itms.createTask(task);
+        }
+        for (var task : tasks) {
+            itms.startTask(task);
+        }
     }
 }

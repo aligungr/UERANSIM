@@ -42,6 +42,7 @@ import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.UlNasTransport;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class SessionManagement {
 
@@ -68,7 +69,7 @@ public class SessionManagement {
         } else if (message instanceof PduSessionEstablishmentReject) {
             SmPduSessionEstablishment.receiveEstablishmentReject(ctx, (PduSessionEstablishmentReject) message);
         } else {
-            ctx.logger.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
+            Log.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
     }
 

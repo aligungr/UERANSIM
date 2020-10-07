@@ -28,12 +28,12 @@ import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.InitialSctpReadyWrapper;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.wrappers.NgapReceiveWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.NgapSendWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.SctpAssociationSetupWrapper;
-import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
@@ -41,6 +41,7 @@ import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.sctp.SctpClient;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +60,7 @@ public class SctpTask extends ItmsTask {
     @Override
     public void main() {
         if (ctx.amfContexts.isEmpty()) {
-            ctx.logger.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
+            Log.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
             return;
         }
 
@@ -82,13 +83,13 @@ public class SctpTask extends ItmsTask {
                 }
             };
 
-            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, ctx.logger, associationHandler);
+            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
 
-            new Thread(() -> {
+            var receiverThread = new Thread(() -> {
                 try {
                     amf.sctpClient.start();
                 } catch (Exception e) {
-                    ctx.logger.error(Tag.CONNECTION, "SCTP connection could not established: " + e.getMessage());
+                    Log.error(Tag.CONNECTION, "SCTP connection could not established: " + e.getMessage());
                     return;
                 }
                 try {
@@ -97,7 +98,11 @@ public class SctpTask extends ItmsTask {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            }).start();
+            });
+
+            Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));
+
+            receiverThread.start();
         }
 
         while (setupCount.get() != ctx.amfContexts.size()) {

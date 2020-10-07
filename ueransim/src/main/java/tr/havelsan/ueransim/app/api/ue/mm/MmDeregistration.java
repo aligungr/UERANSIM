@@ -24,20 +24,21 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.enums.EMmState;
 import tr.havelsan.ueransim.app.enums.EMmSubState;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationRequestUeTerminated;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmDeregistration {
 
     public static void sendDeregistration(UeSimContext ctx, IEDeRegistrationType.ESwitchOff switchOff) {
-        ctx.logger.funcIn("Starting: UE initiated de-registration procedure");
+        Log.funcIn("Starting: UE initiated de-registration procedure");
 
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED_INITIATED, EMmSubState.MM_DEREGISTERED_INITIATED__NA);
 
@@ -61,11 +62,11 @@ public class MmDeregistration {
             ctx.ueTimers.t3521.start();
         }
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 
     public static void receiveDeregistrationAccept(UeSimContext ctx, DeRegistrationAcceptUeOriginating message) {
-        ctx.logger.funcIn("Handling: UE-initiated de-registration procedure completion");
+        Log.funcIn("Handling: UE-initiated de-registration procedure completion");
 
         ctx.ueTimers.t3521.stop();
         ctx.ueTimers.t3519.stop();
@@ -73,13 +74,13 @@ public class MmDeregistration {
 
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
 
-        ctx.logger.success(Tag.PROCEDURE_RESULT, "De-registration is successful");
-        ctx.logger.funcOut();
+        Log.success(Tag.PROCEDURE_RESULT, "De-registration is successful");
+        Log.funcOut();
     }
 
     // todo
     public static void receiveDeregistrationRequest(UeSimContext ctx, DeRegistrationRequestUeTerminated message) {
-        ctx.logger.funcIn("Handling: Network-initiated de-registration procedure");
+        Log.funcIn("Handling: Network-initiated de-registration procedure");
 
         if (message.deRegistrationType.reRegistrationRequired.equals(IEDeRegistrationType.EReRegistrationRequired.REQUIRED)) {
             ctx.ueTimers.t3346.stop();
@@ -97,6 +98,6 @@ public class MmDeregistration {
 
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 }

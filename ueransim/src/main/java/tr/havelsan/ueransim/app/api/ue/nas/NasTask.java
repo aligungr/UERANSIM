@@ -37,6 +37,7 @@ import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.testing.TestCmd;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
 
 
 public class NasTask extends ItmsTask {
@@ -51,7 +52,7 @@ public class NasTask extends ItmsTask {
     private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
         if (!MobilityManagement.executeCommand(ctx, cmd)) {
             if (!SessionManagement.executeCommand(ctx, cmd)) {
-                ctx.logger.error(Tag.EVENT, "invalid command: %s", cmd);
+                Log.error(Tag.EVENT, "invalid command: %s", cmd);
             }
         }
     }
@@ -67,7 +68,7 @@ public class NasTask extends ItmsTask {
                 NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((DownlinkNasWrapper) msg).nasPdu));
             } else if (msg instanceof NasTimerExpireWrapper) {
                 var timer = ((NasTimerExpireWrapper) msg).timer;
-                ctx.logger.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+                Log.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
 
                 if (timer.isMmTimer) {
                     MobilityManagement.receiveTimerExpire(ctx, timer);

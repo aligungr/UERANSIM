@@ -24,21 +24,21 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
-import tr.havelsan.ueransim.app.structs.Guami;
-
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class NgapInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
-        ctx.logger.funcIn("Starting: NGSetupRequest");
-        ctx.logger.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
+        Log.funcIn("Starting: NGSetupRequest");
+        Log.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
 
         var msg = new NGAP_NGSetupRequest();
         msg.addProtocolIe(NgapUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn));
@@ -46,20 +46,20 @@ public class NgapInterfaceManagement {
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
         NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGAP_NGSetupResponse message) {
-        ctx.logger.funcIn("Handling: NGSetupResponse");
-        ctx.logger.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
+        Log.funcIn("Handling: NGSetupResponse");
+        Log.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGAP_NGSetupFailure message) {
-        ctx.logger.funcIn("Handling: NGSetupFailure");
-        ctx.logger.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
+        Log.funcIn("Handling: NGSetupFailure");
+        Log.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 }

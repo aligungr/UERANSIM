@@ -24,19 +24,20 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseRadioNetwork;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
-import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit10;
+import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.UUID;
 
@@ -77,8 +78,8 @@ public class NgapUeManagement {
     }
 
     public static Guami selectNewAmfForReAllocation(GnbSimContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
-        ctx.logger.funcIn("Handling: Select AMF from AMFSetId");
-        ctx.logger.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
+        Log.funcIn("Handling: Select AMF from AMFSetId");
+        Log.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
 
         Guami res = null;
 
@@ -100,7 +101,7 @@ public class NgapUeManagement {
             res = amfs.get(0).guami;
         }
 
-        ctx.logger.funcOut();
+        Log.funcOut();
         return res;
     }
 
