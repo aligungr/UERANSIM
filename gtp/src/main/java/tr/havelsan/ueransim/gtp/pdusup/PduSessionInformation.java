@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.gtp.pdusup;
 import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.bits.Bit6;
 
 // See 3GPP 38.415
 public abstract class PduSessionInformation {
@@ -33,7 +34,7 @@ public abstract class PduSessionInformation {
 
             octet = stream.readOctet();
 
-            res.qfi = octet.getBitRangeI(0, 5);
+            res.qfi = new Bit6(octet.getBitRangeI(0, 5));
             res.rqi = octet.getBitB(6);
             var ppp = octet.getBitB(7);
 
@@ -46,13 +47,14 @@ public abstract class PduSessionInformation {
                 var sendingTimeStamp0 = stream.readOctet4L();
                 var sendingTimeStamp1 = stream.readOctet4L();
 
-                res.sendingTs = TimeStamp.getNtpTime(sendingTimeStamp0 << 32 | sendingTimeStamp1);
+                res.dlSendingTs = TimeStamp.getNtpTime(sendingTimeStamp0 << 32 | sendingTimeStamp1);
             }
 
             if (snp) {
-                res.qfiSeq = stream.readOctet3();
+                res.dlQfiSeq = stream.readOctet3();
             }
 
+            // Consuming padding if any. See 5.5.3.5
             var read = stream.currentIndex() - startIndex;
             if ((read - 2) % 4 != 0) {
                 int padding = 4 - ((read - 2) % 4);
@@ -63,7 +65,45 @@ public abstract class PduSessionInformation {
         } else {
             var res = new UlPduSessionInformation();
 
-            // TODO
+            var snp = octet.getBitB(0);
+            var ulDelay = octet.getBitB(1);
+            var dlDelay = octet.getBitB(2);
+            var qmp = octet.getBitB(3);
+
+            res.qfi = new Bit6(stream.readOctet().getBitRangeI(0, 5));
+
+            if (qmp) {
+                var first = stream.readOctet4L();
+                var second = stream.readOctet4L();
+                res.dlSendingTsRepeated = TimeStamp.getNtpTime(first << 32 | second);
+
+                first = stream.readOctet4L();
+                second = stream.readOctet4L();
+                res.dlReceivedTs = TimeStamp.getNtpTime(first << 32 | second);
+
+                first = stream.readOctet4L();
+                second = stream.readOctet4L();
+                res.ulSendingTs = TimeStamp.getNtpTime(first << 32 | second);
+            }
+
+            if (dlDelay) {
+                res.dlDelayResult = stream.readOctet4();
+            }
+
+            if (ulDelay) {
+                res.ulDelayResult = stream.readOctet4();
+            }
+
+            if (snp) {
+                res.ulQfiSeq = stream.readOctet3();
+            }
+
+            // Consuming padding if any. See 5.5.3.5
+            var read = stream.currentIndex() - startIndex;
+            if ((read - 2) % 4 != 0) {
+                int padding = 4 - ((read - 2) % 4);
+                stream.readOctetString(padding);
+            }
 
             return res;
         }
