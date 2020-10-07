@@ -44,6 +44,10 @@ public class OctetInputStream {
         this(data, true);
     }
 
+    public OctetInputStream(OctetString data) {
+        this(data.toByteArray(), true);
+    }
+
     /************ Peek Bit ************/
 
     public int peekBitI(int offset) {

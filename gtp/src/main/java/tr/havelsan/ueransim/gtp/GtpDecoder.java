@@ -6,15 +6,26 @@ import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.gtp.ext.*;
 import tr.havelsan.ueransim.gtp.pdusup.PduSessionInformation;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
 
-// TODO: check for IP fragmentation and fitting IP packet inside of UDP carried GTP packet
+// TODO: General note for GTP-U: check for IP fragmentation and fitting IP packet inside of UDP carried GTP packet
 //  (as well as hvgtptun side etc.)
 public class GtpDecoder {
 
+    public static GtpMessage decode(byte[] data) {
+        return decode(new OctetInputStream(data));
+    }
+
+    public static GtpMessage decode(OctetString data) {
+        return decode(new OctetInputStream(data));
+    }
+
     public static GtpMessage decode(OctetInputStream stream) {
         var res = new GtpMessage();
+
+        int fistIndex = stream.currentIndex();
 
         var flags = stream.readOctet();
 
@@ -33,7 +44,7 @@ public class GtpDecoder {
         boolean nPduNumberPresent = flags.getBitB(0);
 
         res.msgType = stream.readOctet();
-        res.length = stream.readOctet2();
+        int gtpLen = stream.readOctet2I();
         res.teid = stream.readOctet4();
 
         if (sequenceNumberPresent || nPduNumberPresent || nextExtensionHeaderPresent) {
@@ -57,14 +68,8 @@ public class GtpDecoder {
                         case 0b01000000:
                             header = decodeUdpPortExtHeader(len, stream);
                             break;
-                        case 0b10000001:
-                            header = decodeRanContainerExtHeader(len, stream);
-                            break;
                         case 0b10000010:
                             header = decodeLongPdcpPduNumberExtHeader(len, stream);
-                            break;
-                        case 0b10000011:
-                            header = decodeXwRanContainerExtHeader(len, stream);
                             break;
                         case 0b10000100:
                             header = decodeNrRanContainerExtHeader(len, stream);
@@ -74,6 +79,9 @@ public class GtpDecoder {
                             break;
                         case 0b11000000:
                             header = decodePdcpPduNumberExtHeader(len, stream);
+                            break;
+                        case 0b10000001: // Not used in gNB
+                        case 0b10000011: // Not used in gNB
                             break;
                         default:
                             throw new ReservedOrInvalidValueException("GTP next extension header type", nextExtHeaderType);
@@ -87,6 +95,10 @@ public class GtpDecoder {
             }
         }
 
+        int read = stream.currentIndex() - fistIndex;
+        int rem = gtpLen - (read - 8);
+        res.payload = stream.readOctetString(rem);
+
         return res;
     }
 
@@ -97,11 +109,6 @@ public class GtpDecoder {
         var res = new UdpPortExtHeader();
         res.port = stream.readOctet2();
         return res;
-    }
-
-    private static RanContainerExtHeader decodeRanContainerExtHeader(int len, OctetInputStream stream) {
-        // Not used in gNB
-        return null;
     }
 
     private static LongPdcpPduNumberExtHeader decodeLongPdcpPduNumberExtHeader(int len, OctetInputStream stream) {
@@ -117,11 +124,6 @@ public class GtpDecoder {
         var res = new LongPdcpPduNumberExtHeader();
         res.pdcpPduNumber = num;
         return res;
-    }
-
-    private static XwRanContainerExtHeader decodeXwRanContainerExtHeader(int len, OctetInputStream stream) {
-        // Not used in gNB
-        return null;
     }
 
     private static NrRanContainerExtHeader decodeNrRanContainerExtHeader(int len, OctetInputStream stream) {
