@@ -4,6 +4,7 @@ import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.gtp.ext.*;
+import tr.havelsan.ueransim.gtp.pdusup.PduSessionInformation;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class GtpDecoder {
     }
 
     private static NrRanContainerExtHeader decodeNrRanContainerExtHeader(int len, OctetInputStream stream) {
-        // obtain actual length in octets.
+        // obtain actual length in octets. (but not used)
         len = 4 * len - 2;
 
         // TODO: See 38.425
@@ -132,11 +133,12 @@ public class GtpDecoder {
     }
 
     private static PduSessionContainerExtHeader decodePduSessionContainerExtHeader(int len, OctetInputStream stream) {
-        // obtain actual length in octets.
+        // obtain actual length in octets. (but not used)
         len = 4 * len - 2;
 
-        // TODO: See 38.415
-        throw new NotImplementedException("PduSessionContainerExtHeader not implemented yet");
+        var res = new PduSessionContainerExtHeader();
+        res.pduSessionInformation = PduSessionInformation.decode(stream);
+        return res;
     }
 
     private static PdcpPduNumberExtHeader decodePdcpPduNumberExtHeader(int len, OctetInputStream stream) {
