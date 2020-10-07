@@ -48,7 +48,7 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Console;
-import tr.havelsan.ueransim.utils.console.Logging;
+import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.File;
@@ -222,7 +222,7 @@ public class Program {
                 var cmd = (TestCmd_Sleep) command;
                 if (cmd.duration > 1) {
                     Utils.sleep(1000);
-                    Logging.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
+                    Log.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
                     Utils.sleep((cmd.duration - 1) * 1000);
                 } else {
                     Utils.sleep(cmd.duration * 1000);

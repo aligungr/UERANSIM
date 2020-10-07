@@ -29,11 +29,12 @@ import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEConfigurationUpdateIndication;
 import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateCommand;
 import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateComplete;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmConfiguration {
 
     public static void receiveConfigurationUpdate(UeSimContext ctx, ConfigurationUpdateCommand message) {
-        ctx.logger.funcIn("Handling: Configuration Update Command");
+        Log.funcIn("Handling: Configuration Update Command");
 
         ctx.ueTimers.t3346.stop();
 
@@ -56,6 +57,6 @@ public class MmConfiguration {
             }
         }
 
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 }

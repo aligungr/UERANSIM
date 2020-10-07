@@ -26,11 +26,11 @@ package tr.havelsan.ueransim.app;
 
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
+import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
@@ -63,7 +63,7 @@ public class AppConfig {
         Constants.TREAT_ERRORS_AS_FATAL = general.getBool("treat-errors-as-fatal");
     }
 
-    private static Logger createLoggerFor(String name) {
+    public static Logger createLoggerFor(String name) {
         var logger = new Logger(name);
 
         if (name.contains("."))
@@ -94,7 +94,6 @@ public class AppConfig {
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
         var ctx = new GnbSimContext(simCtx);
         ctx.config = config;
-        ctx.logger = createLoggerFor("gnb-" + config.gnbId);
 
         // Create AMF gNB contexts
         {
@@ -121,7 +120,6 @@ public class AppConfig {
     public UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
         var ctx = new UeSimContext(simCtx);
         ctx.ueConfig = config;
-        ctx.logger = createLoggerFor("ue-" + config.supi.toString());
         return ctx;
     }
 

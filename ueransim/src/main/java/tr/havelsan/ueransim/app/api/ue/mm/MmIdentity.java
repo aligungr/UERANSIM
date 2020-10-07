@@ -24,8 +24,9 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.core.Constants;
+import tr.havelsan.ueransim.app.structs.Supi;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
@@ -37,14 +38,13 @@ import tr.havelsan.ueransim.nas.impl.ies.IESuciMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityRequest;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
-import tr.havelsan.ueransim.app.structs.Supi;
-
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmIdentity {
 
     public static void receiveIdentityRequest(UeSimContext ctx, IdentityRequest message) {
-        ctx.logger.funcIn("Handling: Identity Request");
+        Log.funcIn("Handling: Identity Request");
 
         var response = new IdentityResponse();
 
@@ -55,29 +55,29 @@ public class MmIdentity {
                 response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueConfig.imei);
             } else {
                 response.mobileIdentity = new IENoIdentity();
-                ctx.logger.error(Tag.PROC, "Requested identity is not available: %s",
+                Log.error(Tag.PROC, "Requested identity is not available: %s",
                         message.identityType.value.name());
             }
         }
 
         MobilityManagement.sendMm(ctx, response);
-        ctx.logger.funcOut();
+        Log.funcOut();
     }
 
     public static IESuciMobileIdentity getOrGenerateSuci(UeSimContext ctx) {
-        ctx.logger.funcIn("Get or Generate SUCI");
+        Log.funcIn("Get or Generate SUCI");
         if (ctx.ueTimers.t3519.isRunning()) {
-            ctx.logger.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
-            ctx.logger.funcOut();
+            Log.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
+            Log.funcOut();
             return ctx.mmCtx.storedSuci;
         }
 
         ctx.mmCtx.storedSuci = generateSuci(ctx.ueConfig.supi);
-        ctx.logger.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
+        Log.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
 
         ctx.ueTimers.t3519.start();
 
-        ctx.logger.funcOut();
+        Log.funcOut();
         return ctx.mmCtx.storedSuci;
     }
 

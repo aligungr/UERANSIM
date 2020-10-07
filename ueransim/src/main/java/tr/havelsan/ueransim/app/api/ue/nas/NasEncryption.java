@@ -24,9 +24,10 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
+import tr.havelsan.ueransim.app.enums.EConnectionIdentifier;
+import tr.havelsan.ueransim.app.structs.NasCount;
 import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.crypto.*;
-import tr.havelsan.ueransim.app.enums.EConnectionIdentifier;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -37,11 +38,11 @@ import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
-import tr.havelsan.ueransim.app.structs.NasCount;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.Bit5;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -121,9 +122,7 @@ public class NasEncryption {
     //======================================================================================================
 
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
-        var logger = securityContext.ueCtx.logger;
-
-        logger.funcIn("NasEncryption.decrypt");
+        Log.funcIn("NasEncryption.decrypt");
 
         var estimatedCount = securityContext.estimatedDownlinkCount(protectedNasMessage.sequenceNumber);
 
@@ -135,12 +134,12 @@ public class NasEncryption {
 
         var mac = computeMac(intAlg, estimatedCount, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray(), securityContext);
 
-        logger.debug(Tag.VALUE, "computed mac: %s", mac);
-        logger.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
+        Log.debug(Tag.VALUE, "computed mac: %s", mac);
+        Log.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
 
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!intAlg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-                logger.funcOut();
+                Log.funcOut();
                 return null;
             }
         }
@@ -148,21 +147,19 @@ public class NasEncryption {
         securityContext.updateDownlinkCount(estimatedCount);
 
         var decryptedData = decryptData(encAlg, estimatedCount, cnId, encKey, protectedNasMessage.securityHeaderType,
-                protectedNasMessage.plainNasMessage.toByteArray(), securityContext);
+                protectedNasMessage.plainNasMessage.toByteArray());
         var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
-        logger.funcOut();
+        Log.funcOut();
         return decryptedMsg;
     }
 
     private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
-                                           OctetString key, ESecurityHeaderType sht, byte[] data, NasSecurityContext securityContext) {
-        var logger = securityContext.ueCtx.logger;
-
-        logger.funcIn("NasEncryption.decryptData");
+                                           OctetString key, ESecurityHeaderType sht, byte[] data) {
+        Log.funcIn("NasEncryption.decryptData");
 
         if (!sht.isCiphered()) {
-            logger.funcOut();
+            Log.funcOut();
             return new OctetString(data);
         }
 
@@ -186,11 +183,11 @@ public class NasEncryption {
         }
 
         if (res == null) {
-            logger.funcOut();
+            Log.funcOut();
             throw new RuntimeException("invalid ciphering alg");
         }
 
-        logger.funcOut();
+        Log.funcOut();
         return new OctetString(res);
     }
 
@@ -200,16 +197,14 @@ public class NasEncryption {
 
     public static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
                                     boolean isUplink, OctetString key, byte[] plainMessage, NasSecurityContext securityContext) {
-        var logger = securityContext.ueCtx.logger;
-
-        logger.funcIn("Computing Mac");
+        Log.funcIn("Computing Mac");
 
         var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));
 
-        logger.debug(Tag.VALUE, "alg: %s", alg);
+        Log.debug(Tag.VALUE, "alg: %s", alg);
 
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-            logger.funcOut();
+            Log.funcOut();
             return new Octet4(0);
         }
 
@@ -217,11 +212,11 @@ public class NasEncryption {
         Bit direction = new Bit(isUplink ? 0 : 1);
         BitString message = BitString.from(data);
 
-        logger.debug(Tag.VALUE, "count: %s", count.toOctet4());
-        logger.debug(Tag.VALUE, "bearer: %s", bearer);
-        logger.debug(Tag.VALUE, "direction: %s", direction);
-        logger.debug(Tag.VALUE, "message: %s", message.toHexString(false));
-        logger.debug(Tag.VALUE, "key: %s", key);
+        Log.debug(Tag.VALUE, "count: %s", count.toOctet4());
+        Log.debug(Tag.VALUE, "bearer: %s", bearer);
+        Log.debug(Tag.VALUE, "direction: %s", direction);
+        Log.debug(Tag.VALUE, "message: %s", message.toHexString(false));
+        Log.debug(Tag.VALUE, "key: %s", key);
 
         Octet4 res = null;
 
@@ -236,11 +231,11 @@ public class NasEncryption {
         }
 
         if (res == null) {
-            logger.funcOut();
+            Log.funcOut();
             throw new RuntimeException("invalid integrity alg");
         }
 
-        logger.funcOut();
+        Log.funcOut();
         return res;
     }
 
