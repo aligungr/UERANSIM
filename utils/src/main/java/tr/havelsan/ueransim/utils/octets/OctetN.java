@@ -157,6 +157,17 @@ public class OctetN {
     }
 
     /**
+     * Assigns the bit at given index and returns a new instance.
+     *
+     * @param index is the index of the bit in binary representation.
+     *              [0] is the least significant bit, while [n-1] is the most significant bit.
+     * @param bit   new bit value to be assigned
+     */
+    public OctetN setBit(int index, boolean bit) {
+        return setBit(index, bit ? 1 : 0);
+    }
+
+    /**
      * Returns the bits in range [start, end] as long.
      * If end index is smaller than start index, then start and end indexes are swapped.
      *

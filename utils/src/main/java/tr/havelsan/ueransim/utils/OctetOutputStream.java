@@ -110,6 +110,16 @@ public class OctetOutputStream {
         writeOctet4(new Octet4(octet4));
     }
 
+    public void writeOctet8(long octet8) {
+        if (isBigEndian) {
+            writeOctet4(octet8 >> 32L & 0xFFFFFFFFL);
+            writeOctet4(octet8 & 0xFFFFFFFFL);
+        } else {
+            writeOctet4(octet8 & 0xFFFFFFFFL);
+            writeOctet4(octet8 >> 32L & 0xFFFFFFFFL);
+        }
+    }
+
     public void writeOctet3(Octet3 octet3) {
         writeOctetN(octet3);
     }
@@ -146,6 +156,12 @@ public class OctetOutputStream {
     public void writeOctets(byte[] octets) {
         for (byte octet : octets) {
             writeOctet(octet & 0xFF);
+        }
+    }
+
+    public void writeOctetPadding(int length) {
+        for (int i = 0; i < length; i++) {
+            writeOctet(0);
         }
     }
 

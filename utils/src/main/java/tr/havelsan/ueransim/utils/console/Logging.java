@@ -30,7 +30,7 @@ import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 
 import java.util.function.Consumer;
 
-
+// TODO: logger by thread (reach simcontext from thread)
 public class Logging {
 
     public static final String GLOBAL_LOGGER = "global";
