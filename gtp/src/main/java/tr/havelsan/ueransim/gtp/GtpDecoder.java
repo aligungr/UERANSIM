@@ -57,14 +57,8 @@ public class GtpDecoder {
                         case 0b01000000:
                             header = decodeUdpPortExtHeader(len, stream);
                             break;
-                        case 0b10000001:
-                            header = decodeRanContainerExtHeader(len, stream);
-                            break;
                         case 0b10000010:
                             header = decodeLongPdcpPduNumberExtHeader(len, stream);
-                            break;
-                        case 0b10000011:
-                            header = decodeXwRanContainerExtHeader(len, stream);
                             break;
                         case 0b10000100:
                             header = decodeNrRanContainerExtHeader(len, stream);
@@ -74,6 +68,9 @@ public class GtpDecoder {
                             break;
                         case 0b11000000:
                             header = decodePdcpPduNumberExtHeader(len, stream);
+                            break;
+                        case 0b10000001: // Not used in gNB
+                        case 0b10000011: // Not used in gNB
                             break;
                         default:
                             throw new ReservedOrInvalidValueException("GTP next extension header type", nextExtHeaderType);
@@ -99,11 +96,6 @@ public class GtpDecoder {
         return res;
     }
 
-    private static RanContainerExtHeader decodeRanContainerExtHeader(int len, OctetInputStream stream) {
-        // Not used in gNB
-        return null;
-    }
-
     private static LongPdcpPduNumberExtHeader decodeLongPdcpPduNumberExtHeader(int len, OctetInputStream stream) {
         if (len != 2)
             throw new DecodingException("length must be 2 for LongPdcpPduNumberExtHeader");
@@ -117,11 +109,6 @@ public class GtpDecoder {
         var res = new LongPdcpPduNumberExtHeader();
         res.pdcpPduNumber = num;
         return res;
-    }
-
-    private static XwRanContainerExtHeader decodeXwRanContainerExtHeader(int len, OctetInputStream stream) {
-        // Not used in gNB
-        return null;
     }
 
     private static NrRanContainerExtHeader decodeNrRanContainerExtHeader(int len, OctetInputStream stream) {
