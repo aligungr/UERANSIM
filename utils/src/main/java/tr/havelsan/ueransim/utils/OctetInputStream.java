@@ -218,6 +218,10 @@ public class OctetInputStream {
         }
     }
 
+    public long readOctet4L() {
+        return readOctet4().longValue();
+    }
+
     /************ Others ************/
 
     public boolean hasNext() {
