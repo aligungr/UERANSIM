@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.gtp.pdusup;
 import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit6;
 
 // See 3GPP 38.415
@@ -30,7 +31,7 @@ public abstract class PduSessionInformation {
             var res = new DlPduSessionInformation();
 
             var snp = octet.getBitB(2);
-            var qmp = octet.getBitB(3);
+            res.qmp = octet.getBitB(3);
 
             octet = stream.readOctet();
 
@@ -43,7 +44,7 @@ public abstract class PduSessionInformation {
                 res.ppi = octet.getBitRangeI(5, 7);
             }
 
-            if (qmp) {
+            if (res.qmp) {
                 var sendingTimeStamp0 = stream.readOctet4L();
                 var sendingTimeStamp1 = stream.readOctet4L();
 
@@ -68,11 +69,11 @@ public abstract class PduSessionInformation {
             var snp = octet.getBitB(0);
             var ulDelay = octet.getBitB(1);
             var dlDelay = octet.getBitB(2);
-            var qmp = octet.getBitB(3);
+            res.qmp = octet.getBitB(3);
 
             res.qfi = new Bit6(stream.readOctet().getBitRangeI(0, 5));
 
-            if (qmp) {
+            if (res.qmp) {
                 var first = stream.readOctet4L();
                 var second = stream.readOctet4L();
                 res.dlSendingTsRepeated = TimeStamp.getNtpTime(first << 32 | second);
@@ -106,6 +107,17 @@ public abstract class PduSessionInformation {
             }
 
             return res;
+        }
+    }
+
+    public static void encode(PduSessionInformation pdu, OctetOutputStream stream) {
+        if (pdu.pduType != 0 && pdu.pduType != 1)
+            throw new DecodingException("invalid PDU Type for PduSessionInformation");
+
+        if (pdu.pduType == 0) {
+
+        } else {
+
         }
     }
 }
