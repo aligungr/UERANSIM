@@ -1,10 +1,10 @@
 package tr.havelsan.ueransim.gtp.pdusup;
 
-import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.core.exceptions.DecodingException;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit6;
+import tr.havelsan.ueransim.utils.octets.Octet;
 
 // See 3GPP 38.415
 public abstract class PduSessionInformation {
@@ -45,10 +45,7 @@ public abstract class PduSessionInformation {
             }
 
             if (res.qmp) {
-                var sendingTimeStamp0 = stream.readOctet4L();
-                var sendingTimeStamp1 = stream.readOctet4L();
-
-                res.dlSendingTs = TimeStamp.getNtpTime(sendingTimeStamp0 << 32 | sendingTimeStamp1);
+                res.dlSendingTs = stream.readOctet8L();
             }
 
             if (snp) {
@@ -74,17 +71,9 @@ public abstract class PduSessionInformation {
             res.qfi = new Bit6(stream.readOctet().getBitRangeI(0, 5));
 
             if (res.qmp) {
-                var first = stream.readOctet4L();
-                var second = stream.readOctet4L();
-                res.dlSendingTsRepeated = TimeStamp.getNtpTime(first << 32 | second);
-
-                first = stream.readOctet4L();
-                second = stream.readOctet4L();
-                res.dlReceivedTs = TimeStamp.getNtpTime(first << 32 | second);
-
-                first = stream.readOctet4L();
-                second = stream.readOctet4L();
-                res.ulSendingTs = TimeStamp.getNtpTime(first << 32 | second);
+                res.dlSendingTsRepeated = stream.readOctet8L();
+                res.dlReceivedTs = stream.readOctet8L();
+                res.ulSendingTs = stream.readOctet8L();
             }
 
             if (dlDelay) {
@@ -114,10 +103,78 @@ public abstract class PduSessionInformation {
         if (pdu.pduType != 0 && pdu.pduType != 1)
             throw new DecodingException("invalid PDU Type for PduSessionInformation");
 
+        int initialLength = stream.length();
+
         if (pdu.pduType == 0) {
+            var dl = (DlPduSessionInformation) pdu;
+
+            var snp = dl.dlQfiSeq != null;
+            stream.writeOctet(new Octet()
+                    .setBit(2, snp)
+                    .setBit(4, dl.qmp)
+                    .setBitRange(4, 7, pdu.pduType)
+                    .intValue());
+
+            stream.writeOctet(new Octet()
+                    .setBitRange(0, 5, dl.qfi.intValue())
+                    .setBit(6, dl.rqi)
+                    .setBit(7, dl.ppi != null)
+                    .intValue());
+
+            if (dl.ppi != null) {
+                stream.writeOctet(new Octet()
+                        .setBitRange(5, 7, dl.ppi)
+                        .intValue());
+            }
+
+            if (dl.qmp) {
+                stream.writeOctet8(dl.dlSendingTs == null ? 0 : dl.dlSendingTs);
+            }
+
+            if (snp) {
+                stream.writeOctet3(dl.dlQfiSeq);
+            }
 
         } else {
+            var ul = (UlPduSessionInformation) pdu;
 
+            var snp = ul.ulQfiSeq != null;
+            stream.writeOctet(new Octet()
+                    .setBit(0, snp)
+                    .setBit(1, ul.ulDelayResult != null)
+                    .setBit(2, ul.dlDelayResult != null)
+                    .setBit(3, ul.qmp)
+                    .setBitRange(4, 7, pdu.pduType)
+                    .intValue());
+
+            stream.writeOctet(new Octet()
+                    .setBitRange(0, 5, ul.qfi.intValue())
+                    .intValue());
+
+            if (ul.qmp) {
+                stream.writeOctet8(ul.dlSendingTsRepeated == null ? 0 : ul.dlSendingTsRepeated);
+                stream.writeOctet8(ul.dlReceivedTs == null ? 0 : ul.dlReceivedTs);
+                stream.writeOctet8(ul.ulSendingTs == null ? 0 : ul.ulSendingTs);
+            }
+
+            if (ul.dlDelayResult != null) {
+                stream.writeOctet4(ul.dlDelayResult);
+            }
+
+            if (ul.ulDelayResult != null) {
+                stream.writeOctet4(ul.ulDelayResult);
+            }
+
+            if (snp) {
+                stream.writeOctet3(ul.ulQfiSeq);
+            }
+        }
+
+        // Adjusting padding. See 5.5.3.5
+        int written = stream.length() - initialLength;
+        if ((written - 2) % 4 != 0) {
+            int padding = 4 - ((written - 2) % 4);
+            stream.writeOctetPadding(padding);
         }
     }
 }

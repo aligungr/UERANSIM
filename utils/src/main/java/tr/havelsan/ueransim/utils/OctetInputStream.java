@@ -222,6 +222,12 @@ public class OctetInputStream {
         return readOctet4().longValue();
     }
 
+    /************ Read Octet 8 ************/
+
+    public long readOctet8L() {
+        return readOctet4L() << 32L | readOctet4L();
+    }
+
     /************ Others ************/
 
     public boolean hasNext() {

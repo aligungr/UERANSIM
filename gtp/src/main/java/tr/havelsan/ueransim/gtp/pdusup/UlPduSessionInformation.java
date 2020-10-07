@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.gtp.pdusup;
 
-import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.utils.bits.Bit6;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
@@ -10,9 +9,9 @@ public class UlPduSessionInformation extends PduSessionInformation {
 
     public boolean qmp;                     // (Mandatory) QoS Monitoring Packet, See 5.5.3.8
     public Bit6 qfi;                        // (Mandatory) QOS Flow Identifier, See 5.5.3.3
-    public TimeStamp dlSendingTsRepeated;   // (Optional, may be null) DL Sending Time Stamp Repeated, See 5.5.3.10
-    public TimeStamp dlReceivedTs;          // (Optional, may be null) DL Received Time Stamp, See 5.5.3.11
-    public TimeStamp ulSendingTs;           // (Optional, may be null) UL Sending Time Stamp, See 5.5.3.12
+    public Long dlSendingTsRepeated;   // (Optional, may be null) DL Sending Time Stamp Repeated, See 5.5.3.10
+    public Long dlReceivedTs;          // (Optional, may be null) DL Received Time Stamp, See 5.5.3.11
+    public Long ulSendingTs;           // (Optional, may be null) UL Sending Time Stamp, See 5.5.3.12
     public Octet4 dlDelayResult;            // (Optional, may be null) DL Delay Result, See 5.5.3.14
     public Octet4 ulDelayResult;            // (Optional, may be null) UL Delay Result, See 5.5.3.16
     public Octet3 ulQfiSeq;                 // (Optional, may be null) UL QFI Sequence Number, See 5.5.3.19

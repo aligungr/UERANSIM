@@ -1,6 +1,5 @@
 package tr.havelsan.ueransim.gtp.pdusup;
 
-import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.utils.bits.Bit6;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 
@@ -11,7 +10,7 @@ public class DlPduSessionInformation extends PduSessionInformation {
     public Bit6 qfi;              // (Mandatory) QOS Flow Identifier, See 5.5.3.3
     public boolean rqi;           // (Mandatory) Reflective QOS Indicator, See 5.5.3.4
     public Integer ppi;           // (Optional, may be null) Paging Policy Indicator, See 5.5.3.7
-    public TimeStamp dlSendingTs; // (Optional, may be null) DL Sending Time Stamp, See 5.5.3.9
+    public Long dlSendingTs;      // (Optional, may be null) DL Sending Time Stamp, See 5.5.3.9
     public Octet3 dlQfiSeq;       // (Optional, may be null) DL QFI Sequence Number, See 5.5.3.18
 
     public DlPduSessionInformation() {
