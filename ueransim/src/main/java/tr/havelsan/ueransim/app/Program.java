@@ -49,6 +49,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.console.Logger;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.File;
@@ -103,24 +104,15 @@ public class Program {
     private void initLogging() {
         new File("logs").mkdir();
 
-        final String appLogFile = "logs/app.log";
+        AppConfig.loggingToFile(Logger.GLOBAL, "global", true);
+        Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
+
+        final String globalLogFile = "logs/global.log";
         final String loadTestFile = "logs/loadtest.log";
 
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All generic logs are written to: %s", appLogFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All global logs are written to: %s", globalLogFile);
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log files: logs/*");
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
-
-        Console.setStandardPrintEnabled(true);
-        Console.addPrintHandler(str -> {
-            final Path path = Paths.get(appLogFile);
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        Console.printDiv();
 
         loadTestConsole.setStandardPrintEnabled(false);
         loadTestConsole.addPrintHandler(str -> {

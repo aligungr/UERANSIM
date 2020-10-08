@@ -65,11 +65,15 @@ public class AppConfig {
 
     public static Logger createLoggerFor(String name) {
         var logger = new Logger(name);
+        loggingToFile(logger, name, false);
+        return logger;
+    }
 
+    public static void loggingToFile(Logger logger, String name, boolean standardPrint) {
         if (name.contains("."))
             throw new IllegalArgumentException("name contains '.'");
 
-        logger.getConsole().setStandardPrintEnabled(false);
+        logger.getConsole().setStandardPrintEnabled(standardPrint);
         logger.getConsole().addPrintHandler(str -> {
             final Path path = Paths.get("logs/" + name + ".log");
             try {
@@ -79,8 +83,6 @@ public class AppConfig {
                 throw new RuntimeException(e);
             }
         });
-
-        return logger;
     }
 
     public SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
