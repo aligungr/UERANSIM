@@ -44,7 +44,7 @@ public class Log {
         findLogger().log(severity, ansiColorFormat, depth, tag, message, args);
     }
 
-    public void addLogHandler(Consumer<LogEntry> handler) {
+    public static void addLogHandler(Consumer<LogEntry> handler) {
         findLogger().addLogHandler(handler);
     }
 
