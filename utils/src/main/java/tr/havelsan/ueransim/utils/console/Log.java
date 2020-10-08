@@ -5,6 +5,7 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 // WARNING: This class is caller sensitive
 public class Log {
@@ -41,6 +42,10 @@ public class Log {
 
     public static void log(Severity severity, AnsiColorFormat ansiColorFormat, int depth, Tag tag, String message, Object... args) {
         findLogger().log(severity, ansiColorFormat, depth, tag, message, args);
+    }
+
+    public static void addLogHandler(Consumer<LogEntry> handler) {
+        findLogger().addLogHandler(handler);
     }
 
     public static void registerLogger(Thread thread, Logger logger) {
