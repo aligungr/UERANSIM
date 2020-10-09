@@ -33,12 +33,16 @@ public class LogEntry {
     public final int depth;
     public final Tag tag;
     public final String message;
+    public final String timestamp;
+    public final String color;
 
-    public LogEntry(String loggerName, Severity severity, int depth, Tag tag, String message) {
+    public LogEntry(String loggerName, Severity severity, int depth, Tag tag, String message, String timestamp, String color) {
         this.loggerName = loggerName;
         this.severity = severity;
         this.depth = depth;
         this.tag = tag;
         this.message = message;
+        this.timestamp = timestamp;
+        this.color = color;
     }
 }
