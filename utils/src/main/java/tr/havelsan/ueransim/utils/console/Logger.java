@@ -4,6 +4,7 @@ import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.FatalTreatedErrorException;
 import tr.havelsan.ueransim.utils.Severity;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.jcolor.AnsiColor;
 import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
@@ -94,9 +95,10 @@ public class Logger {
         }
 
         String str = String.format(Locale.ENGLISH, message, args);
+        String timestamp = getTime();
 
         for (var handler : printHandlers)
-            handler.accept(new LogEntry(severity, depth, tag, str));
+            handler.accept(new LogEntry(loggerName, severity, depth, tag, str, timestamp, AnsiColor.generateCode(ansiColorFormat)));
 
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
         console.println(ansiColorFormat, display);

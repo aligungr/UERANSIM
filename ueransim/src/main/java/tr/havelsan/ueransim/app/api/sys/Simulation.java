@@ -28,6 +28,7 @@ import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 public class Simulation {
@@ -62,6 +63,27 @@ public class Simulation {
                 ueContext.connectedGnb = gnbContext.ctxId;
             }
         }
+    }
+
+
+    public static HashSet<UUID> allUes(SimulationContext ctx) {
+        var res = new HashSet<UUID>();
+        synchronized (ctx) {
+            for (var item : ctx.ueMap.values()) {
+                res.add(item.ctxId);
+            }
+        }
+        return res;
+    }
+
+    public static HashSet<UUID> allGnbs(SimulationContext ctx) {
+        var res = new HashSet<UUID>();
+        synchronized (ctx) {
+            for (var item : ctx.gnbMap.values()) {
+                res.add(item.ctxId);
+            }
+        }
+        return res;
     }
 
     public static void triggerOnSend(BaseSimContext ctx, Object msg) {

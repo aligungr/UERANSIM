@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.Supi;
@@ -49,6 +50,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.console.Logger;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.File;
@@ -73,6 +75,7 @@ public class Program {
     private final ImplicitTypedObject testCases;
     private final ImplicitTypedObject loadTesting;
     private ArrayList<UeSimContext> ueContexts;
+    private SimulationContext simCtx;
 
     public Program() {
         this.defaultMts = new MtsContext();
@@ -103,24 +106,15 @@ public class Program {
     private void initLogging() {
         new File("logs").mkdir();
 
-        final String appLogFile = "logs/app.log";
+        AppConfig.loggingToFile(Logger.GLOBAL, "global", true);
+        Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
+
+        final String globalLogFile = "logs/global.log";
         final String loadTestFile = "logs/loadtest.log";
 
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All generic logs are written to: %s", appLogFile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All global logs are written to: %s", globalLogFile);
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log files: logs/*");
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
-
-        Console.setStandardPrintEnabled(true);
-        Console.addPrintHandler(str -> {
-            final Path path = Paths.get(appLogFile);
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        Console.printDiv();
 
         loadTestConsole.setStandardPrintEnabled(false);
         loadTestConsole.addPrintHandler(str -> {
@@ -138,10 +132,10 @@ public class Program {
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        var simContext = app.createSimContext(new NodeMessagingListener());
+        simCtx = app.createSimContext(new NodeMessagingListener());
 
-        var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
-        Simulation.registerGnb(simContext, gnbContext);
+        var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
+        Simulation.registerGnb(simCtx, gnbContext);
         GnbNode.run(gnbContext);
 
         while (!((GnbAppTask)gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
@@ -157,9 +151,9 @@ public class Program {
             var config = new UeConfig(ref.snn, ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi),
                     ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
 
-            var ueContext = app.createUeSimContext(simContext, config);
+            var ueContext = app.createUeSimContext(simCtx, config);
 
-            Simulation.registerUe(simContext, ueContext);
+            Simulation.registerUe(simCtx, ueContext);
             UeNode.run(ueContext);
 
             Simulation.connectUeToGnb(ueContext, gnbContext);
@@ -203,7 +197,7 @@ public class Program {
         return testCases.getParameters().keySet().toArray(new String[0]);
     }
 
-    public void runTest(String testName) throws Exception {
+    public void runTest(String testName) {
         var testObjects = (Object[]) testCases.get(testName);
         if (testObjects == null) {
             throw new RuntimeException("test case not found: " + testName);
@@ -237,6 +231,10 @@ public class Program {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             }
         }
+    }
+
+    public SimulationContext getSimCtx() {
+        return simCtx;
     }
 
     private class NodeMessagingListener implements INodeMessagingListener {

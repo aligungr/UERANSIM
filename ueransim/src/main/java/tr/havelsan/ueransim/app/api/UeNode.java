@@ -39,7 +39,7 @@ public class UeNode {
     public static final boolean AUTO = false;
 
     public static void run(UeSimContext ctx) {
-        var logger = AppConfig.createLoggerFor("ue-" + ctx.ueConfig.supi.toString());
+        ctx.logger = AppConfig.createLoggerFor("ue-" + ctx.ueConfig.supi.toString());
 
         var itms = ctx.itms;
 
@@ -51,7 +51,7 @@ public class UeNode {
         };
 
         for (var task : tasks) {
-            Log.registerLogger(task.thread, logger);
+            Log.registerLogger(task.thread, ctx.logger);
         }
         for (var task : tasks) {
             itms.createTask(task);

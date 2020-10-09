@@ -31,10 +31,13 @@ import tr.havelsan.ueransim.app.structs.UeTimers;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.contexts.MmContext;
 import tr.havelsan.ueransim.app.structs.contexts.SmContext;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.UUID;
 
 public class UeSimContext extends BaseSimContext {
+    public Logger logger;
+
     public UeData ueData;
     public UeConfig ueConfig;
     public UeTimers ueTimers;
