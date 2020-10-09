@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.Supi;
@@ -74,6 +75,7 @@ public class Program {
     private final ImplicitTypedObject testCases;
     private final ImplicitTypedObject loadTesting;
     private ArrayList<UeSimContext> ueContexts;
+    private SimulationContext simCtx;
 
     public Program() {
         this.defaultMts = new MtsContext();
@@ -130,10 +132,10 @@ public class Program {
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        var simContext = app.createSimContext(new NodeMessagingListener());
+        simCtx = app.createSimContext(new NodeMessagingListener());
 
-        var gnbContext = app.createGnbSimContext(simContext, app.createGnbConfig());
-        Simulation.registerGnb(simContext, gnbContext);
+        var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
+        Simulation.registerGnb(simCtx, gnbContext);
         GnbNode.run(gnbContext);
 
         while (!((GnbAppTask)gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
@@ -149,9 +151,9 @@ public class Program {
             var config = new UeConfig(ref.snn, ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi),
                     ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
 
-            var ueContext = app.createUeSimContext(simContext, config);
+            var ueContext = app.createUeSimContext(simCtx, config);
 
-            Simulation.registerUe(simContext, ueContext);
+            Simulation.registerUe(simCtx, ueContext);
             UeNode.run(ueContext);
 
             Simulation.connectUeToGnb(ueContext, gnbContext);
@@ -195,7 +197,7 @@ public class Program {
         return testCases.getParameters().keySet().toArray(new String[0]);
     }
 
-    public void runTest(String testName) throws Exception {
+    public void runTest(String testName) {
         var testObjects = (Object[]) testCases.get(testName);
         if (testObjects == null) {
             throw new RuntimeException("test case not found: " + testName);
@@ -229,6 +231,10 @@ public class Program {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             }
         }
+    }
+
+    public SimulationContext getSimCtx() {
+        return simCtx;
     }
 
     private class NodeMessagingListener implements INodeMessagingListener {

@@ -96,7 +96,7 @@ public class Logger {
         String str = String.format(Locale.ENGLISH, message, args);
 
         for (var handler : printHandlers)
-            handler.accept(new LogEntry(severity, depth, tag, str));
+            handler.accept(new LogEntry(loggerName, severity, depth, tag, str));
 
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
         console.println(ansiColorFormat, display);

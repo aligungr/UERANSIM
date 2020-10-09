@@ -28,12 +28,14 @@ import tr.havelsan.ueransim.utils.Severity;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class LogEntry {
+    public final String loggerName;
     public final Severity severity;
     public final int depth;
     public final Tag tag;
     public final String message;
 
-    public LogEntry(Severity severity, int depth, Tag tag, String message) {
+    public LogEntry(String loggerName, Severity severity, int depth, Tag tag, String message) {
+        this.loggerName = loggerName;
         this.severity = severity;
         this.depth = depth;
         this.tag = tag;
