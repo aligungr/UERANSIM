@@ -24,11 +24,11 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.gnb.rrc.RrcPduSessionManagement;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
+import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -87,17 +87,17 @@ public class NgapPduSessionManagement {
                 } else if (value instanceof NGAP_QosFlowSetupRequestList) {
                     resource.qosFlows = ((NGAP_QosFlowSetupRequestList) value).list;
                 } else if (value instanceof NGAP_UPTransportLayerInformation) {
-                    resource.gtpTunnel = ((NGAP_UPTransportLayerInformation) value).gTPTunnel;
+                    resource.upLayer = ((NGAP_UPTransportLayerInformation) value);
                 }
             }
 
-            if (resource.type == null || resource.gtpTunnel == null || resource.qosFlows == null || resource.qosFlows.isEmpty())
+            if (resource.type == null || resource.upLayer == null || resource.qosFlows == null || resource.qosFlows.isEmpty())
                 throw new NgapErrorException(NGAP_CauseProtocol.TRANSFER_SYNTAX_ERROR);
 
             if (resource.type != NGAP_PDUSessionType.IPV4)
                 throw new NgapErrorException(NGAP_CauseMisc.UNSPECIFIED);
 
-            if (RrcPduSessionManagement.pduResourceSetup(ctx, associatedUe, resource)) {
+            if (pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
                     ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
                 }
@@ -113,12 +113,7 @@ public class NgapPduSessionManagement {
                     tr.dLQosFlowPerTNLInformation.associatedQosFlowList.list.add(associatedQosFlowItem);
                 }
 
-                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation = new NGAP_UPTransportLayerInformation();
-                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel = new NGAP_GTPTunnel();
-                // TODO: teid of gnb
-                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.gtpTunnel.gTP_TEID.value);
-                // TODO: gNB IP
-                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
+                tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation = resource.downLayer;
 
                 var res = new NGAP_PDUSessionResourceSetupItemSURes();
                 res.pDUSessionID = item.pDUSessionID;
@@ -154,5 +149,19 @@ public class NgapPduSessionManagement {
         else Log.info(Tag.PROCEDURE_RESULT, "PDU Session Establishment is partially successful.");
 
         Log.funcOut();
+    }
+
+    // todo
+    private static boolean pduResourceSetup(GnbSimContext ctx, GnbUeContext ueCtx, PduSessionResource resource) {
+        resource.downLayer = new NGAP_UPTransportLayerInformation();
+        resource.downLayer.gTPTunnel = new NGAP_GTPTunnel();
+
+        // TODO: gNB IP
+        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
+
+        // TODO: teid of gnb
+        resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);
+
+        return true; // success
     }
 }

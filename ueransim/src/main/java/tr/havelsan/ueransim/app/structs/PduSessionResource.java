@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.structs;
 
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UPTransportLayerInformation;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_DataForwardingNotPossible;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PDUSessionType;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_NetworkInstance;
-import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_GTPTunnel;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_PDUSessionAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_QosFlowSetupRequestItem;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_SecurityIndication;
@@ -42,6 +42,7 @@ public class PduSessionResource {
     public NGAP_PDUSessionType type;
     public NGAP_SecurityIndication securityIndication;
     public NGAP_NetworkInstance networkInstance;
-    public NGAP_GTPTunnel gtpTunnel;
+    public NGAP_UPTransportLayerInformation upLayer;
+    public NGAP_UPTransportLayerInformation downLayer;
     public List<NGAP_QosFlowSetupRequestItem> qosFlows;
 }
