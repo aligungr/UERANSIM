@@ -24,14 +24,14 @@
 
 package tr.havelsan.ueransim.app.api.gnb.rrc;
 
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
+import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 
 public class RrcPduSessionManagement {
 
     // todo
     public static boolean pduResourceSetup(GnbSimContext ctx, GnbUeContext ueCtx, PduSessionResource resource) {
-        return true;
+        return true; // success
     }
 }
