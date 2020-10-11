@@ -115,6 +115,7 @@ public class NgapPduSessionManagement {
 
                 tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation = new NGAP_UPTransportLayerInformation();
                 tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel = new NGAP_GTPTunnel();
+                // TODO: teid of gnb
                 tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.gtpTunnel.gTP_TEID.value);
                 // TODO: gNB IP
                 tr.dLQosFlowPerTNLInformation.uPTransportLayerInformation.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
