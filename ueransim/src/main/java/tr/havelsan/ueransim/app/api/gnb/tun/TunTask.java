@@ -47,7 +47,7 @@ public class TunTask extends ItmsTask {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                itms.sendMessage(ItmsId.GNB_TASK_MR, new UplinkDataWrapper(new OctetString(datagram.getData(), 0, datagram.getLength())));
+                itms.sendMessage(ItmsId.GNB_TASK_MR, new UplinkDataWrapper(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength())));
             }
         });
 
