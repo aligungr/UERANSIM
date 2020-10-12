@@ -96,7 +96,8 @@ public class SctpTask extends ItmsTask {
                     amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
                             -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    Log.error(Tag.CONNECTION, "SCTP connection error: " + e.getMessage());
+                    return;
                 }
             });
 
