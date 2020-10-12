@@ -1,1 +1,0 @@
-g++ src/hvlgtptun.cpp src/utils.cpp -Wall -fno-exceptions -o hvlgtptun && ./hvlgtptun

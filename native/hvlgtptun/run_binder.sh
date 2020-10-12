@@ -1,1 +1,0 @@
-gcc -nostartfiles -fpic -shared -Wall src/binder.c -o binder.so -ldl -D_GNU_SOURCE && LD_PRELOAD=./binder.so $@
