@@ -56,6 +56,18 @@ public final class OctetString implements Iterable<Octet> {
         this.length = data.length;
     }
 
+    public OctetString(byte[] buffer, int offset, int length) {
+        var sub = new byte[length];
+        System.arraycopy(buffer, offset, sub, 0, length);
+
+        var data = new Octet[sub.length];
+        for (int i = 0; i < sub.length; i++)
+            data[i] = new Octet(sub[i] & 0xFF);
+
+        this.data = data;
+        this.length = data.length;
+    }
+
     public OctetString(String hex) {
         this(Utils.hexStringToByteArray(hex));
     }
