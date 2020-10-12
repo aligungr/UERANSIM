@@ -174,7 +174,7 @@ public final class OctetString {
     }
 
     public OctetString substring(int startIndex, int length) {
-        var data = new Octet[length];
+        var data = new byte[length];
         System.arraycopy(this.data, startIndex, data, 0, data.length);
         return new OctetString(data);
     }
