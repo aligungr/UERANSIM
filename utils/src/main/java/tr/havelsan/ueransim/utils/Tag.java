@@ -34,6 +34,7 @@ public enum Tag {
     NGAP_INTERNAL,
     MESSAGING,
     CONNECTION,
+    TUN,
     EVENT,
     NAS_TIMER,
     NAS_SECURITY,

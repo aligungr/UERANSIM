@@ -34,7 +34,7 @@ public class TunTask extends ItmsTask {
             return;
         }
 
-        Log.info(Tag.CONNECTION, "Listening TUN Bridge.");
+        Log.info(Tag.TUN, "Listening TUN Bridge.");
 
         var receiverThread = new Thread(() -> {
             var buffer = new byte[65535];
