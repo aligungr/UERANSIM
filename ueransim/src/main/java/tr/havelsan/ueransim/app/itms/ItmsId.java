@@ -30,6 +30,7 @@ public class ItmsId {
     public static final int GNB_TASK_NGAP = 2;
     public static final int GNB_TASK_MR = 3;
     public static final int GNB_TASK_APP = 4;
+    public static final int GNB_TASK_TUN = 5;
 
     public static final int UE_TASK_MR = 1;
     public static final int UE_TASK_NAS = 2;
