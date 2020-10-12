@@ -45,7 +45,7 @@ public final class BitString {
     }
 
     public static BitString from(OctetString octetString, int bitLength) {
-        return from(octetString.getAsArray(), bitLength);
+        return from(octetString.getAsOctetArray(), bitLength);
     }
 
     public static BitString from(OctetString octetString) {
