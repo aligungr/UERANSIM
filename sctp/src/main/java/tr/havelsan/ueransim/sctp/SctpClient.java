@@ -36,17 +36,19 @@ import java.nio.ByteBuffer;
 public class SctpClient implements ISctpClient {
     private static final int RECEIVER_BUFFER_SIZE = 65536;
 
-    private final String host;
-    private final int port;
+    private final String localHost;
+    private final String remoteHost;
+    private final int remotePort;
     private final int protocolId;
     private final SctpNotificationHandler associationHandler;
 
     private SctpChannel channel;
     private boolean receiving;
 
-    public SctpClient(String host, int port, int protocolId, ISctpAssociationHandler sctpAssociationHandler) {
-        this.host = host;
-        this.port = port;
+    public SctpClient(String localHost, String remoteHost, int remotePort, int protocolId, ISctpAssociationHandler sctpAssociationHandler) {
+        this.localHost = localHost;
+        this.remoteHost = remoteHost;
+        this.remotePort = remotePort;
         this.protocolId = protocolId;
         this.associationHandler = new SctpNotificationHandler(sctpAssociationHandler);
     }
@@ -55,9 +57,11 @@ public class SctpClient implements ISctpClient {
     public void start() throws Exception {
         if (this.channel != null) throw new RuntimeException("start was already called");
 
-        Log.info(Tag.CONNECTION, "Trying to establish SCTP connection... (%s:%s)", host, port);
+        Log.info(Tag.CONNECTION, "Trying to establish SCTP connection... (%s:%s)", remoteHost, remotePort);
 
-        this.channel = SctpChannel.open(new InetSocketAddress(host, port), 0, 0);
+        this.channel = SctpChannel.open();
+        this.channel.bind(new InetSocketAddress(localHost, 0));
+        this.channel.connect(new InetSocketAddress(remoteHost, remotePort), 0, 0);
         this.receiving = true;
 
         Log.info(Tag.CONNECTION, "SCTP connection established");

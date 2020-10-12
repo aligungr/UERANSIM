@@ -83,7 +83,7 @@ public class SctpTask extends ItmsTask {
                 }
             };
 
-            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
+            amf.sctpClient = new SctpClient(ctx.config.host, amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
 
             var receiverThread = new Thread(() -> {
                 try {
