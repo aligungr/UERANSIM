@@ -26,5 +26,15 @@ public class GtpTask extends ItmsTask {
     }
 
     private void handleUplinkData(OctetString data) {
+        if ((data.get(0) >> 4 & 0xF) != 4) {
+            // ignore non IPv4 packets
+            return;
+        }
+
+        handleIpV4(data);
+    }
+
+    private void handleIpV4(OctetString data) {
+        // TODO
     }
 }
