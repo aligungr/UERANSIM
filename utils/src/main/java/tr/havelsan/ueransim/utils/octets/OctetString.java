@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import java.util.Arrays;
 import java.util.Iterator;
 
+// TODO: Store as byte[]
 public final class OctetString implements Iterable<Octet> {
     public final int length;
     private final Octet[] data;
