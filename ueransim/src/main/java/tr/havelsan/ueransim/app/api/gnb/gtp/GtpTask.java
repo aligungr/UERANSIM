@@ -50,11 +50,11 @@ public class GtpTask extends ItmsTask {
                 var data = ((UplinkDataWrapper) msg).ipData;
                 if ((data.get(0) >> 4 & 0xF) != 4) {
                     // ignore non IPv4 packets
-                    break;
+                    continue;
                 }
 
                 if (pduSession == null)
-                    break;
+                    continue;
 
                 var gtp = new GtpMessage();
                 gtp.payload = data;
