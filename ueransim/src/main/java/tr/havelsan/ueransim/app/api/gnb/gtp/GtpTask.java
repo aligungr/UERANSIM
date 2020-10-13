@@ -47,34 +47,37 @@ public class GtpTask extends ItmsTask {
         while (true) {
             var msg = itms.receiveMessage(this);
             if (msg instanceof UplinkDataWrapper) {
-                var data = ((UplinkDataWrapper) msg).ipData;
-                if ((data.get(0) >> 4 & 0xF) != 4) {
-                    // ignore non IPv4 packets
-                    continue;
-                }
-
-                if (pduSession == null)
-                    continue;
-
-                var gtp = new GtpMessage();
-                gtp.payload = data;
-                gtp.msgType = new Octet(GtpMessage.MT_G_PDU);
-                gtp.teid = pduSession.upLayer.gTPTunnel.gTP_TEID.value.get4(0);
-                gtp.extHeaders = new ArrayList<>();
-
-                var ul = new UlPduSessionInformation();
-                ul.qfi = new Bit6(1);
-
-                var cont = new PduSessionContainerExtHeader();
-                cont.pduSessionInformation = ul;
-                gtp.extHeaders.add(cont);
-
-                sendGtp(gtp, pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray());
-
+                handleUplinkData((UplinkDataWrapper) msg);
             } else if (msg instanceof PduSessionResourceCreateWrapper) {
                 this.pduSession = ((PduSessionResourceCreateWrapper) msg).pduSessionResource;
             }
         }
+    }
+
+    private void handleUplinkData(UplinkDataWrapper msg) {
+        var data = msg.ipData;
+        if ((data.get(0) >> 4 & 0xF) != 4) {
+            // ignore non IPv4 packets
+            return;
+        }
+
+        if (pduSession == null)
+            return;
+
+        var gtp = new GtpMessage();
+        gtp.payload = data;
+        gtp.msgType = new Octet(GtpMessage.MT_G_PDU);
+        gtp.teid = pduSession.upLayer.gTPTunnel.gTP_TEID.value.get4(0);
+        gtp.extHeaders = new ArrayList<>();
+
+        var ul = new UlPduSessionInformation();
+        ul.qfi = new Bit6(1);
+
+        var cont = new PduSessionContainerExtHeader();
+        cont.pduSessionInformation = ul;
+        gtp.extHeaders.add(cont);
+
+        sendGtp(gtp, pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray());
     }
 
     private void sendGtp(GtpMessage msg, byte[] address) {
