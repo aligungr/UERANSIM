@@ -1,12 +1,16 @@
 package tr.havelsan.ueransim.app.api.gnb.gtp;
 
 import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkDataWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.GtpDownlinkWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.PduSessionResourceCreateWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UplinkDataWrapper;
 import tr.havelsan.ueransim.app.structs.GtpUContext;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.gtp.GtpDecoder;
 import tr.havelsan.ueransim.gtp.GtpEncoder;
 import tr.havelsan.ueransim.gtp.GtpMessage;
 import tr.havelsan.ueransim.gtp.ext.PduSessionContainerExtHeader;
@@ -15,7 +19,9 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit6;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -44,12 +50,33 @@ public class GtpTask extends ItmsTask {
             return;
         }
 
+        var receiverThread = new Thread(() -> {
+            var buffer = new byte[65535];
+
+            var datagram = new DatagramPacket(buffer, buffer.length);
+
+            while (true) {
+                try {
+                    socket.receive(datagram);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                itms.sendMessage(ItmsId.GNB_TASK_GTP, new GtpDownlinkWrapper(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
+            }
+        });
+
+        Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));
+
+        receiverThread.start();
+
         while (true) {
             var msg = itms.receiveMessage(this);
             if (msg instanceof UplinkDataWrapper) {
                 handleUplinkData((UplinkDataWrapper) msg);
             } else if (msg instanceof PduSessionResourceCreateWrapper) {
                 this.pduSession = ((PduSessionResourceCreateWrapper) msg).pduSessionResource;
+            } else if (msg instanceof GtpDownlinkWrapper) {
+                handleDownlinkGtp((GtpDownlinkWrapper) msg);
             }
         }
     }
@@ -88,5 +115,16 @@ public class GtpTask extends ItmsTask {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleDownlinkGtp(GtpDownlinkWrapper msg) {
+        var gtp = GtpDecoder.decode(msg.data);
+        if (gtp.msgType.intValue() != GtpMessage.MT_G_PDU) {
+            Log.warning(Tag.NOT_IMPL_YET, "Unhandled GTP-U message type: " + gtp.msgType);
+            return;
+        }
+
+        var ipPacket = gtp.payload;
+        itms.sendMessage(ItmsId.GNB_TASK_TUN, new DownlinkDataWrapper(ipPacket));
     }
 }

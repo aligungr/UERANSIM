@@ -3,6 +3,7 @@ package tr.havelsan.ueransim.app.api.gnb.tun;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
+import tr.havelsan.ueransim.app.itms.wrappers.DownlinkDataWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UplinkDataWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.utils.Tag;
@@ -17,6 +18,10 @@ import java.net.InetAddress;
 public class TunTask extends ItmsTask {
 
     private final GnbSimContext ctx;
+    private DatagramSocket bridge;
+    private int bridgeEndpointAddr;
+    private int bridgeEndpointPort;
+    private InetAddress bridgeEndpointAddrBytes;
 
     public TunTask(Itms itms, int taskId, GnbSimContext ctx) {
         super(itms, taskId);
@@ -25,8 +30,6 @@ public class TunTask extends ItmsTask {
 
     @Override
     public void main() {
-        DatagramSocket bridge;
-
         try {
             bridge = new DatagramSocket(ctx.config.tunPort, InetAddress.getByName(ctx.config.host));
         } catch (Exception e) {
@@ -36,23 +39,67 @@ public class TunTask extends ItmsTask {
 
         Log.info(Tag.TUN, "Listening TUN Bridge.");
 
-        var receiverThread = new Thread(() -> {
-            var buffer = new byte[65535];
-
-            var datagram = new DatagramPacket(buffer, buffer.length);
-
-            while (true) {
-                try {
-                    bridge.receive(datagram);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                itms.sendMessage(ItmsId.GNB_TASK_MR, new UplinkDataWrapper(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength())));
-            }
-        });
-
+        var receiverThread = new Thread(this::receiverThread);
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));
-
         receiverThread.start();
+
+        while (true) {
+            var msg = itms.receiveMessage(this);
+            if (msg instanceof DownlinkDataWrapper) {
+                handleDownlinkData((DownlinkDataWrapper) msg);
+            }
+        }
+    }
+
+    private void receiverThread() {
+        var buffer = new byte[65535];
+
+        var datagram = new DatagramPacket(buffer, buffer.length);
+
+        while (true) {
+            try {
+                bridge.receive(datagram);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            var addr = datagram.getAddress().getAddress();
+            if (addr.length != 4) {
+                Log.error(Tag.TUN, "bad address");
+                return;
+            }
+
+            int port = datagram.getPort();
+            int address = (addr[0] << 24) | (addr[1] << 16) | (addr[2] << 8) | (addr[3]);
+
+            if (bridgeEndpointPort == 0) {
+                bridgeEndpointAddr = address;
+                bridgeEndpointPort = port;
+                bridgeEndpointAddrBytes = datagram.getAddress();
+            } else {
+                if (port != bridgeEndpointPort || address != bridgeEndpointAddr) {
+                    Log.error(Tag.TUN, "inconsistent addresses in TunTask");
+                    return;
+                }
+            }
+
+            itms.sendMessage(ItmsId.GNB_TASK_MR, new UplinkDataWrapper(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength())));
+        }
+    }
+
+    private void handleDownlinkData(DownlinkDataWrapper msg) {
+        if (bridgeEndpointAddrBytes == null) {
+            Log.error(Tag.TUN, "'bridgeEndpointAddrBytes == null' in TunTask");
+            return;
+        }
+
+        var data = msg.ipPacket.toByteArray();
+        var pck = new DatagramPacket(data, data.length, bridgeEndpointAddrBytes, bridgeEndpointPort);
+
+        try {
+            bridge.send(pck);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
