@@ -151,13 +151,11 @@ public class NgapPduSessionManagement {
         Log.funcOut();
     }
 
-    // todo
     private static boolean pduResourceSetup(GnbSimContext ctx, GnbUeContext ueCtx, PduSessionResource resource) {
         resource.downLayer = new NGAP_UPTransportLayerInformation();
         resource.downLayer.gTPTunnel = new NGAP_GTPTunnel();
 
-        // TODO: gNB IP
-        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
+        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.config.host));
 
         // TODO: teid of gnb
         resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);

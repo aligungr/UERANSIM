@@ -523,4 +523,15 @@ public final class Utils {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Returns the IPv4 address ib bytes of the given host
+     */
+    public static byte[] getAddress(String host) {
+        try {
+            return Inet4Address.getByName(host).getAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
