@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.structs.simctx;
 
 import tr.havelsan.ueransim.app.api.sys.SimulationContext;
+import tr.havelsan.ueransim.app.structs.GtpUContext;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
@@ -41,6 +42,8 @@ public class GnbSimContext extends BaseSimContext {
     public HashMap<Guami, GnbAmfContext> amfContexts;
     public HashMap<UUID, GnbUeContext> ueContexts;
     public long ueNgapIdCounter;
+
+    public GtpUContext gtpUCtx;
 
     public GnbSimContext(SimulationContext simCtx) {
         super(simCtx);

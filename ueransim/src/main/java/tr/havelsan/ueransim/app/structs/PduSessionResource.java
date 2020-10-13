@@ -33,8 +33,10 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_QosFlowSetupRequestItem;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_SecurityIndication;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PduSessionResource {
+    public UUID ueId;
     public int pduSessionId;
 
     public NGAP_PDUSessionAggregateMaximumBitRate aggregateMaximumBitRate;
