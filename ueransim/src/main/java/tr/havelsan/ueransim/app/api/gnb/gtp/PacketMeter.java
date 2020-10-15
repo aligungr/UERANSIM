@@ -2,7 +2,7 @@ package tr.havelsan.ueransim.app.api.gnb.gtp;
 
 import java.util.LinkedList;
 
-public class PacketMeter {
+class PacketMeter {
 
     private static final int TRACK_LIMIT = 1000;
 
