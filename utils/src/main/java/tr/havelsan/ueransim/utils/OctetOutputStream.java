@@ -136,7 +136,7 @@ public class OctetOutputStream {
     }
 
     public void writeOctetString(OctetString octetString) {
-        writeOctets(octetString.getAsArray());
+        writeOctets(octetString.getAsOctetArray());
     }
 
     public void writeOctets(Octet[] octets) {

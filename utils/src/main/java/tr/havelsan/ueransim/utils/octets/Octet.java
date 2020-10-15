@@ -36,8 +36,12 @@ public final class Octet extends OctetN {
         this(0);
     }
 
+    public Octet(byte value) {
+        this(value & 0xFF);
+    }
+
     public Octet(int value) {
-        this((long)value);
+        this((long) value);
     }
 
     public Octet(String hex) {

@@ -454,8 +454,12 @@ public class NgapXerEncoder {
                 throw new RuntimeException("multiple children in printable string value");
             }
 
-            var child = nodes.item(0);
-            return type.getConstructor(String.class).newInstance(child.getNodeValue());
+            if (nodes.getLength() > 0) {
+                var child = nodes.item(0);
+                return type.getConstructor(String.class).newInstance(child.getNodeValue());
+            }
+
+            return type.getConstructor(String.class).newInstance("");
         }
 
         if (NGAP_Enumerated.class.isAssignableFrom(type)) {

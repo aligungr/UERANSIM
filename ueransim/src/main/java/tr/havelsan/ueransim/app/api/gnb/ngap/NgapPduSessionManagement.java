@@ -27,6 +27,7 @@ package tr.havelsan.ueransim.app.api.gnb.ngap;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.PduSessionResourceCreateWrapper;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
@@ -70,6 +71,7 @@ public class NgapPduSessionManagement {
                             NgapDataUnitType.PDUSessionResourceSetupRequestTransfer);
 
             var resource = new PduSessionResource();
+            resource.ueId = associatedUe.ueCtxId;
             resource.pduSessionId = (int) item.pDUSessionID.value;
 
             for (var ie : transfer.protocolIEs.list) {
@@ -151,17 +153,16 @@ public class NgapPduSessionManagement {
         Log.funcOut();
     }
 
-    // todo
     private static boolean pduResourceSetup(GnbSimContext ctx, GnbUeContext ueCtx, PduSessionResource resource) {
         resource.downLayer = new NGAP_UPTransportLayerInformation();
         resource.downLayer.gTPTunnel = new NGAP_GTPTunnel();
 
-        // TODO: gNB IP
-        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getLocalAddress());
+        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.config.host));
 
         // TODO: teid of gnb
         resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);
 
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_GTP, new PduSessionResourceCreateWrapper(resource));
         return true; // success
     }
 }

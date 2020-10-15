@@ -96,7 +96,7 @@ public class EapEncoder {
             var value = entry.getValue();
             stream.writeOctet(key.intValue());
             stream.writeOctet((value.length + 2) / 4);
-            stream.writeOctets(value.getAsArray());
+            stream.writeOctets(value.getAsOctetArray());
 
             c++;
         }

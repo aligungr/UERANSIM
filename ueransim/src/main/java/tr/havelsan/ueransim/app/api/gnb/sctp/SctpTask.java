@@ -83,7 +83,7 @@ public class SctpTask extends ItmsTask {
                 }
             };
 
-            amf.sctpClient = new SctpClient(amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
+            amf.sctpClient = new SctpClient(ctx.config.host, amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
 
             var receiverThread = new Thread(() -> {
                 try {
@@ -96,7 +96,8 @@ public class SctpTask extends ItmsTask {
                     amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
                             -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    Log.error(Tag.CONNECTION, "SCTP connection error: " + e.getMessage());
+                    return;
                 }
             });
 

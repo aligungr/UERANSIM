@@ -47,7 +47,7 @@ class SctpNotificationHandler extends AbstractNotificationHandler<PrintStream> {
                     notification.association().maxOutboundStreams()));
             return HandlerResult.CONTINUE;
         }
-        throw new RuntimeException("SCTP association setup failure");
+        throw new RuntimeException("SCTP association failure: " + notification.event());
     }
 
     @Override

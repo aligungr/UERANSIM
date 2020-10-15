@@ -26,33 +26,43 @@ package tr.havelsan.ueransim.utils.octets;
 
 import tr.havelsan.ueransim.utils.Utils;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
-public final class OctetString implements Iterable<Octet> {
+public final class OctetString {
     public final int length;
-    private final Octet[] data;
+    private final byte[] data;
 
     public OctetString(Octet... octets) {
-        this.data = octets;
-        this.length = octets.length;
-    }
-
-    public OctetString(int[] octetInts) {
-        var data = new Octet[octetInts.length];
-        for (int i = 0; i < octetInts.length; i++)
-            data[i] = new Octet(octetInts[i]);
+        var data = new byte[octets.length];
+        for (int i = 0; i < octets.length; i++)
+            data[i] = (byte) (octets[i].intValue() & 0xFF);
 
         this.data = data;
         this.length = data.length;
     }
 
-    public OctetString(byte[] octetBytes) {
-        var data = new Octet[octetBytes.length];
-        for (int i = 0; i < octetBytes.length; i++)
-            data[i] = new Octet(octetBytes[i] & 0xFF);
+    public OctetString(int[] octetInts) {
+        var data = new byte[octetInts.length];
+        for (int i = 0; i < octetInts.length; i++)
+            data[i] = (byte) (octetInts[i] & 0xFF);
 
         this.data = data;
+        this.length = data.length;
+    }
+
+    // TODO: Or just wrap the byte array
+    public OctetString(byte[] octetBytes) {
+        var sub = new byte[octetBytes.length];
+        System.arraycopy(octetBytes, 0, sub, 0, octetBytes.length);
+
+        this.data = sub;
+        this.length = data.length;
+    }
+
+    // TODO: Or just wrap the byte array
+    public OctetString(byte[] buffer, int offset, int length) {
+        var sub = new byte[length];
+        System.arraycopy(buffer, offset, sub, 0, length);
+
+        this.data = sub;
         this.length = data.length;
     }
 
@@ -66,7 +76,7 @@ public final class OctetString implements Iterable<Octet> {
             totalLength += octetString.length;
         }
 
-        Octet[] arr = new Octet[totalLength];
+        byte[] arr = new byte[totalLength];
         int index = 0;
 
         for (var octetString : octetStrings) {
@@ -81,32 +91,38 @@ public final class OctetString implements Iterable<Octet> {
         if (s1.length != s2.length) {
             throw new IllegalStateException("s1.length != s2.length");
         }
-        Octet[] arr = s1.getAsArray();
+        Octet[] arr = s1.getAsOctetArray();
         for (int i = 0; i < s1.length; i++) {
-            arr[i] = new Octet(arr[i].intValue() ^ s2.get(i).intValue());
+            arr[i] = new Octet(arr[i].intValue() ^ s2.get1(i).intValue());
         }
         return new OctetString(arr);
     }
 
-    public Octet get(int index) {
+    public byte get(int index) {
         return data[index];
     }
 
+    public Octet get1(int index) {
+        return new Octet(data[index]);
+    }
+
     public Octet2 get2(int index) {
-        return new Octet2(get(index), get(index + 1));
+        return new Octet2(get1(index), get1(index + 1));
     }
 
     public Octet3 get3(int index) {
-        return new Octet3(get(index), get(index + 1), get(index + 2));
+        return new Octet3(get1(index), get1(index + 1), get1(index + 2));
     }
 
     public Octet4 get4(int index) {
-        return new Octet4(get(index), get(index + 1), get(index + 2), get(index + 3));
+        return new Octet4(get1(index), get1(index + 1), get1(index + 2), get1(index + 3));
     }
 
-    public Octet[] getAsArray() {
+    public Octet[] getAsOctetArray() {
         var res = new Octet[length];
-        System.arraycopy(data, 0, res, 0, length);
+        for (int i = 0; i < length; i++) {
+            res[i] = new Octet(data[i]);
+        }
         return res;
     }
 
@@ -121,16 +137,11 @@ public final class OctetString implements Iterable<Octet> {
 
     public String toHexString(boolean withSpace) {
         var sb = new StringBuilder();
-        forEach(octet -> {
-            sb.append(String.format("%02x", octet.intValue()));
+        for (byte octet : data) {
+            sb.append(String.format("%02x", octet));
             if (withSpace) sb.append(' ');
-        });
+        }
         return sb.toString().trim();
-    }
-
-    @Override
-    public Iterator<Octet> iterator() {
-        return Arrays.stream(data).iterator();
     }
 
     @Override
@@ -141,14 +152,14 @@ public final class OctetString implements Iterable<Octet> {
         if (os.length != this.length)
             return false;
         for (int i = 0; i < os.length; i++) {
-            if (os.data[i].intValue() != this.data[i].intValue())
+            if (os.data[i] != this.data[i])
                 return false;
         }
         return true;
     }
 
     public byte[] toByteArray() {
-        var octetArray = getAsArray();
+        var octetArray = getAsOctetArray();
         var byteArray = new byte[octetArray.length];
         for (int i = 0; i < byteArray.length; i++) {
             byteArray[i] = (byte) (octetArray[i].longValue() & 0xFF);
@@ -157,13 +168,13 @@ public final class OctetString implements Iterable<Octet> {
     }
 
     public OctetString substring(int startIndex) {
-        var data = new Octet[this.length - startIndex];
+        var data = new byte[this.length - startIndex];
         System.arraycopy(this.data, startIndex, data, 0, data.length);
         return new OctetString(data);
     }
 
     public OctetString substring(int startIndex, int length) {
-        var data = new Octet[length];
+        var data = new byte[length];
         System.arraycopy(this.data, startIndex, data, 0, data.length);
         return new OctetString(data);
     }

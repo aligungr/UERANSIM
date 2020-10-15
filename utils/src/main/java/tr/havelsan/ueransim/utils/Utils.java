@@ -460,7 +460,7 @@ public final class Utils {
 
         Octet[] res = new Octet[octetString.length + 1];
         for (int i = 0; i < octetString.length; i++) {
-            res[1 + i] = octetString.get(i);
+            res[1 + i] = octetString.get1(i);
         }
         res[0] = new Octet(length & 0xFF);
         return new OctetString(res);
@@ -483,7 +483,7 @@ public final class Utils {
 
         Octet[] res = new Octet[octetString.length + 2];
         for (int i = 0; i < octetString.length; i++) {
-            res[2 + i] = octetString.get(i);
+            res[2 + i] = octetString.get1(i);
         }
         res[0] = new Octet(length >> 8 & 0xFF);
         res[1] = new Octet(length & 0xFF);
@@ -504,7 +504,7 @@ public final class Utils {
 
         Octet[] res = new Octet[octetString.length + 4];
         for (int i = 0; i < octetString.length; i++) {
-            res[4 + i] = octetString.get(i);
+            res[4 + i] = octetString.get1(i);
         }
         res[0] = new Octet(length >> 24 & 0xFF);
         res[1] = new Octet(length >> 16 & 0xFF);
@@ -519,6 +519,17 @@ public final class Utils {
     public static byte[] getLocalAddress() {
         try {
             return Inet4Address.getLocalHost().getAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Returns the IPv4 address ib bytes of the given host
+     */
+    public static byte[] getAddress(String host) {
+        try {
+            return Inet4Address.getByName(host).getAddress();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

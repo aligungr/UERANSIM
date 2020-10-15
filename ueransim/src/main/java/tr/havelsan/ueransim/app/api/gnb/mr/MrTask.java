@@ -31,6 +31,7 @@ import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.UplinkDataWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UplinkNasWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.NasDecoder;
@@ -59,6 +60,8 @@ public class MrTask extends ItmsTask {
                 var w = (ConnectionReleaseWrapper) msg;
                 // TODO
                 Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new ConnectionReleaseWrapper(w.ue));
+            } else if (msg instanceof UplinkDataWrapper) {
+                itms.sendMessage(ItmsId.GNB_TASK_GTP, msg);
             }
         }
     }
