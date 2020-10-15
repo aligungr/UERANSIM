@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app.api.gnb.tun;
+package tr.havelsan.ueransim.app.api.gnb.gtp;
 
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
@@ -22,10 +22,12 @@ public class TunTask extends ItmsTask {
     private int bridgeEndpointAddr;
     private int bridgeEndpointPort;
     private InetAddress bridgeEndpointAddrBytes;
+    private PacketMeter packetMeter;
 
     public TunTask(Itms itms, int taskId, GnbSimContext ctx) {
         super(itms, taskId);
         this.ctx = ctx;
+        this.packetMeter = new PacketMeter();
     }
 
     @Override
@@ -98,6 +100,9 @@ public class TunTask extends ItmsTask {
 
         try {
             bridge.send(pck);
+
+            //packetMeter.notify(data.length);
+            //System.err.println(packetMeter.speedMbsPerSec());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
