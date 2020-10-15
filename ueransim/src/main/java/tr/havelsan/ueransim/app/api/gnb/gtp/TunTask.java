@@ -101,8 +101,8 @@ public class TunTask extends ItmsTask {
         try {
             bridge.send(pck);
 
-            packetMeter.notify(data.length);
-            System.err.println(packetMeter.speedMbsPerSec());
+            //packetMeter.notify(data.length);
+            //System.err.println(packetMeter.speedMbsPerSec());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
