@@ -3,7 +3,7 @@ package tr.havelsan.ueransim.app.api.gnb.gtp;
 import java.util.LinkedList;
 
 class Accumulator {
-    public static final int SIZE = 3;
+    public static final int SIZE = 4;
 
     private final LinkedList<Long> data;
     private long total;
@@ -30,10 +30,10 @@ class Accumulator {
 
 class PacketMeter {
 
+    private final Accumulator accumulator;
     private long thisSecond;
     private long thisTotal;
     private long lastPeek;
-    private Accumulator accumulator;
 
     public PacketMeter() {
         this.thisSecond = 0;
