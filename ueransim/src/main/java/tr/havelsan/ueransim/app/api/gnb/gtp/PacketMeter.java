@@ -2,42 +2,64 @@ package tr.havelsan.ueransim.app.api.gnb.gtp;
 
 import java.util.LinkedList;
 
+class Accumulator {
+    public static final int SIZE = 3;
+
+    private final LinkedList<Long> data;
+    private long total;
+
+    public Accumulator() {
+        this.data = new LinkedList<>();
+    }
+
+    public void notify(long v) {
+        if (data.size() >= SIZE) {
+            total -= data.removeFirst();
+            total += v;
+            data.addLast(v);
+        } else {
+            total += v;
+            data.addLast(v);
+        }
+    }
+
+    public long getTotal() {
+        return total;
+    }
+}
+
 class PacketMeter {
 
-    private static final int TRACK_LIMIT = 1000;
-
-    private final LinkedList<Long> timeQueue;
-    private final LinkedList<Integer> sizeQueue;
-
-    private long totalSize;
+    private long thisSecond;
+    private long thisTotal;
+    private long lastPeek;
+    private Accumulator accumulator;
 
     public PacketMeter() {
-        this.timeQueue = new LinkedList<>();
-        this.sizeQueue = new LinkedList<>();
-        this.totalSize = 0;
+        this.thisSecond = 0;
+        this.thisTotal = 0;
+        this.lastPeek = 0;
+        this.accumulator = new Accumulator();
+    }
+
+    private static long getCurrentSecond() {
+        return System.currentTimeMillis() / 1000L;
     }
 
     public synchronized void notify(int packetLength) {
-        if (timeQueue.size() > TRACK_LIMIT) throw new RuntimeException();
-        if (timeQueue.size() == TRACK_LIMIT) {
-            timeQueue.removeFirst();
-            totalSize -= sizeQueue.removeFirst();
+        var currentSecond = getCurrentSecond();
+
+        if (thisSecond == currentSecond) {
+            thisTotal += packetLength;
+        } else {
+            lastPeek = thisTotal + packetLength;
+            accumulator.notify(lastPeek);
+            thisSecond = currentSecond;
+            thisTotal = packetLength;
         }
-
-        timeQueue.addLast(System.currentTimeMillis());
-        sizeQueue.addLast(packetLength);
-        totalSize += packetLength;
-    }
-
-    public float speed() {
-        if (timeQueue.isEmpty()) return 0;
-
-        long delta = timeQueue.peekLast() - timeQueue.peekFirst();
-        if (delta == 0) return 0;
-        return (float) totalSize / delta;
     }
 
     public String speedMbsPerSec() {
-        return speed() * 8 * 1000f / 1024f / 1024f + "Mbits/sec";
+        return String.format("%.2f Mbits/sec", (accumulator.getTotal() / (float) Accumulator.SIZE) * 8f / 1024f / 1024f);
     }
 }
