@@ -9,14 +9,19 @@ import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Backend {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
     private static Program program;
+    private static final BlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
 
     public static void main(String[] args) {
         program = new Program();
@@ -34,6 +39,20 @@ public class Backend {
             var gnb = Simulation.findGnb(simCtx, gnbId);
             if (gnb != null) gnb.logger.addLogHandler(Backend::addLog);
         }
+
+        new Thread(() -> {
+            Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
+
+            while (true) {
+                String cmd;
+                try {
+                    cmd = commandQueue.take();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                program.runTest(cmd);
+            }
+        }).start();
 
         Javalin.create().start(7070).ws("/demo", ws -> {
             ws.onConnect(Backend::handleConnect);
@@ -53,7 +72,7 @@ public class Backend {
         String s = Json.fromJson(ctx.message(), String.class);
 
         if (s.length() > 0 && !s.equals("dummy"))
-            program.runTest(s);
+            commandQueue.add(s);
 
         logEntries.clear();
     }
