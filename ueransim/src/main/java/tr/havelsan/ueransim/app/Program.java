@@ -61,10 +61,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Program {
 
@@ -132,7 +129,7 @@ public class Program {
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        simCtx = app.createSimContext(new NodeMessagingListener());
+        simCtx = app.createSimContext(Arrays.asList(new LoadTestMessagingListener()));
 
         var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
@@ -239,7 +236,7 @@ public class Program {
         return simCtx;
     }
 
-    private class NodeMessagingListener implements INodeMessagingListener {
+    private class LoadTestMessagingListener implements INodeMessagingListener {
         private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
         private final Map<String, Long> registrationTimers = new HashMap<>();
         private final Map<String, Long> authenticationTimers = new HashMap<>();

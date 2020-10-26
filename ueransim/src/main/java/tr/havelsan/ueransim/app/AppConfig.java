@@ -44,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class AppConfig {
 
@@ -85,8 +86,8 @@ public class AppConfig {
         });
     }
 
-    public SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
-        return new SimulationContext(nodeMessagingListener);
+    public SimulationContext createSimContext(List<INodeMessagingListener> nodeMessagingListeners) {
+        return new SimulationContext(nodeMessagingListeners);
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {

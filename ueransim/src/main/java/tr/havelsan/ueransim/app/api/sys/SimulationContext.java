@@ -27,21 +27,23 @@ package tr.havelsan.ueransim.app.api.sys;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class SimulationContext {
     HashMap<UUID, GnbSimContext> gnbMap;
     HashMap<UUID, UeSimContext> ueMap;
-    INodeMessagingListener nodeMessagingListener;
+    final List<INodeMessagingListener> messagingListeners;
 
     public SimulationContext() {
         this(null);
     }
 
-    public SimulationContext(INodeMessagingListener nodeMessagingListener) {
+    public SimulationContext(List<INodeMessagingListener> messagingListeners) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
-        this.nodeMessagingListener = nodeMessagingListener;
+        this.messagingListeners = new ArrayList<>(messagingListeners);
     }
 }
