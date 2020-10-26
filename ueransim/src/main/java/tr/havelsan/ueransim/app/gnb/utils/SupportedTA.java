@@ -22,38 +22,28 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.common.simctx;
+package tr.havelsan.ueransim.app.gnb.utils;
 
-import tr.havelsan.ueransim.app.app.SimulationContext;
-import tr.havelsan.ueransim.app.common.UeData;
-import tr.havelsan.ueransim.app.common.UeTimers;
-import tr.havelsan.ueransim.app.common.configs.UeConfig;
-import tr.havelsan.ueransim.app.common.contexts.MmContext;
-import tr.havelsan.ueransim.app.common.contexts.SmContext;
-import tr.havelsan.ueransim.app.ue.nas.NasSecurityContext;
-import tr.havelsan.ueransim.utils.console.Logger;
+import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.utils.octets.Octet3;
 
-import java.util.UUID;
+public class SupportedTA {
+    public final Octet3 tac;
+    public final BroadcastPlmn[] broadcastPlmns;
 
-public class UeSimContext extends BaseSimContext {
-    public Logger logger;
+    public SupportedTA(Octet3 tac, BroadcastPlmn[] broadcastPlmns) {
+        this.tac = tac;
+        this.broadcastPlmns = broadcastPlmns;
+    }
 
-    public UeData ueData;
-    public UeConfig ueConfig;
-    public UeTimers ueTimers;
+    public static class BroadcastPlmn {
+        public final VPlmn plmn;
+        public final IESNssai[] taiSliceSupportNssais;
 
-    public UUID connectedGnb;
-
-    public MmContext mmCtx;
-    public SmContext smCtx;
-    public NasSecurityContext currentNsCtx;
-    public NasSecurityContext nonCurrentNsCtx;
-
-    public UeSimContext(SimulationContext simCtx) {
-        super(simCtx);
-        this.ueTimers = new UeTimers(this);
-        this.mmCtx = new MmContext();
-        this.smCtx = new SmContext();
-        this.ueData = new UeData();
+        public BroadcastPlmn(VPlmn plmn, IESNssai[] taiSliceSupportNssais) {
+            this.plmn = plmn;
+            this.taiSliceSupportNssais = taiSliceSupportNssais;
+        }
     }
 }

@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.common.configs;
 
-import tr.havelsan.ueransim.app.api.gnb.utils.SupportedTA;
+import tr.havelsan.ueransim.app.gnb.utils.SupportedTA;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.utils.bits.BitString;
 

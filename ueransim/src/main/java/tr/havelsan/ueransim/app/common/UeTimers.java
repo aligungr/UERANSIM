@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 
 public class UeTimers {
     public final UeSimContext ctx;
