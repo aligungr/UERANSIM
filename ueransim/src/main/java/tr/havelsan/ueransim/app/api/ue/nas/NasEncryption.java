@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
-import tr.havelsan.ueransim.app.enums.EConnectionIdentifier;
-import tr.havelsan.ueransim.app.structs.NasCount;
+import tr.havelsan.ueransim.app.common.NasCount;
+import tr.havelsan.ueransim.app.common.enums.EConnectionIdentifier;
 import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.crypto.*;
 import tr.havelsan.ueransim.nas.NasDecoder;

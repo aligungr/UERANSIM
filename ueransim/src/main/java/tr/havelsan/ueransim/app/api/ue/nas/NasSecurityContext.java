@@ -24,15 +24,15 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
-import tr.havelsan.ueransim.app.enums.EConnectionIdentifier;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.NasCount;
+import tr.havelsan.ueransim.app.common.SelectedAlgorithms;
+import tr.havelsan.ueransim.app.common.UeKeys;
+import tr.havelsan.ueransim.app.common.enums.EConnectionIdentifier;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
 import tr.havelsan.ueransim.nas.impl.ies.IENasKeySetIdentifier;
-import tr.havelsan.ueransim.app.structs.NasCount;
-import tr.havelsan.ueransim.app.structs.SelectedAlgorithms;
-import tr.havelsan.ueransim.app.structs.UeKeys;
 import tr.havelsan.ueransim.utils.bits.Bit3;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;

@@ -24,12 +24,12 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
+import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.IwNgapSend;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;

@@ -25,12 +25,12 @@
 package tr.havelsan.ueransim.app.api.ue.nas;
 
 
-import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkNas;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;

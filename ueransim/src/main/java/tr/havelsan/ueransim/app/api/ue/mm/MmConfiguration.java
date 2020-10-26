@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEConfigurationUpdateIndication;
 import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateCommand;

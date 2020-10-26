@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.nas;
 
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer2;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer3;
 import tr.havelsan.ueransim.utils.Tag;

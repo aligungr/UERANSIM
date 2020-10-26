@@ -1,6 +1,6 @@
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.PduSessionResource;
+import tr.havelsan.ueransim.app.common.PduSessionResource;
 
 public class IwPduSessionResourceCreate {
     public final PduSessionResource pduSessionResource;

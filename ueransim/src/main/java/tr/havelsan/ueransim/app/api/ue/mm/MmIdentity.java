@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.structs.Supi;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.Supi;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;

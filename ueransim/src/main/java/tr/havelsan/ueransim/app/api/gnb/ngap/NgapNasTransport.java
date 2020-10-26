@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
+import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.Ngap;

@@ -1,5 +1,8 @@
 package tr.havelsan.ueransim.app.api.gnb.gtp;
 
+import tr.havelsan.ueransim.app.common.PduSessionResource;
+import tr.havelsan.ueransim.app.common.contexts.GtpUContext;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
@@ -7,9 +10,6 @@ import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkData;
 import tr.havelsan.ueransim.app.itms.wrappers.IwGtpDownlink;
 import tr.havelsan.ueransim.app.itms.wrappers.IwPduSessionResourceCreate;
 import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkData;
-import tr.havelsan.ueransim.app.structs.PduSessionResource;
-import tr.havelsan.ueransim.app.structs.contexts.GtpUContext;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.gtp.GtpDecoder;
 import tr.havelsan.ueransim.gtp.GtpEncoder;
 import tr.havelsan.ueransim.gtp.GtpMessage;

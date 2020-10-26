@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.common.Guami;
 
 public class IwNgapSend {
     public final int streamNumber;

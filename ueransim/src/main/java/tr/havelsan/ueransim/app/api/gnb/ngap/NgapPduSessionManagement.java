@@ -24,13 +24,13 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
+import tr.havelsan.ueransim.app.common.PduSessionResource;
+import tr.havelsan.ueransim.app.common.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
 import tr.havelsan.ueransim.app.itms.wrappers.IwPduSessionResourceCreate;
-import tr.havelsan.ueransim.app.structs.PduSessionResource;
-import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;

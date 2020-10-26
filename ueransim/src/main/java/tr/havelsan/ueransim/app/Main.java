@@ -1,5 +1,6 @@
 package tr.havelsan.ueransim.app;
 
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;

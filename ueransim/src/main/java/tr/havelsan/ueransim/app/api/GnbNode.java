@@ -24,16 +24,16 @@
 
 package tr.havelsan.ueransim.app.api;
 
-import tr.havelsan.ueransim.app.AppConfig;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.api.gnb.gtp.GtpTask;
 import tr.havelsan.ueransim.app.api.gnb.gtp.TunTask;
 import tr.havelsan.ueransim.app.api.gnb.mr.MrTask;
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.app.api.gnb.sctp.SctpTask;
+import tr.havelsan.ueransim.app.app.AppConfig;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class GnbNode {

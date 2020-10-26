@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;

@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.ue.sm;
 
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate;
 import tr.havelsan.ueransim.nas.impl.ies.IEPduSessionType;

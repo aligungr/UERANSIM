@@ -24,6 +24,9 @@
 
 package tr.havelsan.ueransim.app.api.gnb.sctp;
 
+import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
@@ -31,9 +34,6 @@ import tr.havelsan.ueransim.app.itms.wrappers.IwInitialSctpReady;
 import tr.havelsan.ueransim.app.itms.wrappers.IwNgapReceive;
 import tr.havelsan.ueransim.app.itms.wrappers.IwNgapSend;
 import tr.havelsan.ueransim.app.itms.wrappers.IwSctpAssociationSetup;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;

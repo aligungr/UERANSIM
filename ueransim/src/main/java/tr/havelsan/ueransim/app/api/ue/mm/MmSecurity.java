@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.structs.SelectedAlgorithms;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.SelectedAlgorithms;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;

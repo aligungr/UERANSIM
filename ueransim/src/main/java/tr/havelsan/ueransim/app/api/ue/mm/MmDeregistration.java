@@ -24,9 +24,9 @@
 
 package tr.havelsan.ueransim.app.api.ue.mm;
 
-import tr.havelsan.ueransim.app.enums.EMmState;
-import tr.havelsan.ueransim.app.enums.EMmSubState;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.enums.EMmState;
+import tr.havelsan.ueransim.app.common.enums.EMmSubState;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;

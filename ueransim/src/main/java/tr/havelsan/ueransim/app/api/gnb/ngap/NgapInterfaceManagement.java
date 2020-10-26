@@ -25,8 +25,8 @@
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
