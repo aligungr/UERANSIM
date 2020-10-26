@@ -22,18 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.contexts;
 
 import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.sctp.ISctpClient;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class GnbAmfContext {
+    public final Guami guami;
+    public ISctpClient sctpClient;
+    public SctpAssociation association;
+    public int nextStream; // next available SCTP stream for uplink
+    public String host;
+    public int port;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public GnbAmfContext(Guami guami) {
+        this.guami = guami;
     }
 }

@@ -22,18 +22,27 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
+import tr.havelsan.ueransim.nas.impl.ies.IEQoSFlowDescriptions;
+import tr.havelsan.ueransim.nas.impl.ies.IEQoSRules;
+import tr.havelsan.ueransim.nas.impl.ies.IESessionAmbr;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class PduSession {
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public static final int MIN_ID = 1;
+    public static final int MAX_ID = 15;
+
+    public static final PduSession RELEASED = new PduSession(EPduSessionIdentity.NO_VAL);
+
+    public final EPduSessionIdentity id;
+    public boolean isEstablished;
+    public IEQoSRules authorizedQoSRules;
+    public IESessionAmbr sessionAmbr;
+    public IEQoSFlowDescriptions authorizedQoSFlowDescriptions;
+
+    public PduSession(EPduSessionIdentity id) {
+        this.id = id;
     }
 }

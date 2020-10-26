@@ -22,18 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.testcmd;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class TestCmd_PeriodicRegistration extends TestCmd {
+    public final EFollowOnRequest followOn;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public TestCmd_PeriodicRegistration(EFollowOnRequest followOn) {
+        this.followOn = followOn;
     }
 }

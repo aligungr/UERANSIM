@@ -22,18 +22,31 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class UeKeys {
+    public OctetString rand;
+    public OctetString res;
+    public OctetString resStar; // used in 5G-AKA
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public OctetString kAusf;
+    public OctetString kSeaf;
+    public OctetString kAmf;
+    public OctetString kNasInt;
+    public OctetString kNasEnc;
+
+    public UeKeys deepCopy() {
+        var keys = new UeKeys();
+        keys.rand = this.rand;
+        keys.res = this.res;
+        keys.resStar = this.resStar;
+        keys.kAusf = this.kAusf;
+        keys.kSeaf = this.kSeaf;
+        keys.kAmf = this.kAmf;
+        keys.kNasInt = this.kNasInt;
+        keys.kNasEnc = this.kNasEnc;
+        return keys;
     }
 }

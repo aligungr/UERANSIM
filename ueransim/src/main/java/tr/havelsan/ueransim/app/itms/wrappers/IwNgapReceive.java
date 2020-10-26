@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
 public class IwNgapReceive {

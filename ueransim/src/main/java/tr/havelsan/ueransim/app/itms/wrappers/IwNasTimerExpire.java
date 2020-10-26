@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
+import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 
 public class IwNasTimerExpire {
     public final NasTimer timer;

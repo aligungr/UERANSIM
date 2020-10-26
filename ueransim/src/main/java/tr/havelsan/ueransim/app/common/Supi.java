@@ -22,18 +22,33 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class Supi {
+    public final String type;
+    public final String value;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public Supi(String type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    public static Supi parse(String supi) {
+        if (supi == null) {
+            return null;
+        }
+        if (supi.startsWith("imsi-")) {
+            return new Supi("imsi", supi.substring("imsi-".length()));
+        } else {
+            // TODO: Other types not implemented yet
+            throw new NotImplementedException("this supi format not implemented yet");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return type + "-" + value;
     }
 }

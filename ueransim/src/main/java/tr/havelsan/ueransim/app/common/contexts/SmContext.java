@@ -22,18 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.contexts;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.PduSession;
+import tr.havelsan.ueransim.app.common.ProcedureTransaction;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class SmContext {
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public PduSession[] pduSessions;
+    public ProcedureTransaction[] procedureTransactions;
+
+    public SmContext() {
+        this.pduSessions = new PduSession[16];
+        this.procedureTransactions = new ProcedureTransaction[255];
     }
 }

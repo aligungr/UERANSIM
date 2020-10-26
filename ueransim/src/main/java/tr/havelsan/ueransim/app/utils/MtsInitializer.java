@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.app.utils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import tr.havelsan.ueransim.app.structs.testcmd.*;
+import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.mts.MtsException;

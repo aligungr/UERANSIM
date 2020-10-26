@@ -22,18 +22,28 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.gnb.utils;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.utils.octets.Octet3;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class SupportedTA {
+    public final Octet3 tac;
+    public final BroadcastPlmn[] broadcastPlmns;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public SupportedTA(Octet3 tac, BroadcastPlmn[] broadcastPlmns) {
+        this.tac = tac;
+        this.broadcastPlmns = broadcastPlmns;
+    }
+
+    public static class BroadcastPlmn {
+        public final VPlmn plmn;
+        public final IESNssai[] taiSliceSupportNssais;
+
+        public BroadcastPlmn(VPlmn plmn, IESNssai[] taiSliceSupportNssais) {
+            this.plmn = plmn;
+            this.taiSliceSupportNssais = taiSliceSupportNssais;
+        }
     }
 }

@@ -22,18 +22,28 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.exceptions;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.ngap0.core.NGAP_Enumerated;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+import java.util.UUID;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+public class NgapErrorException extends RuntimeException {
+
+    public final NGAP_Enumerated cause;
+    public final UUID associatedUe;
+
+    public NgapErrorException(NGAP_Enumerated cause, UUID associatedUe) {
+        this.cause = cause;
+        this.associatedUe = associatedUe;
+    }
+
+    public NgapErrorException(NGAP_Enumerated cause) {
+        this(cause, null);
+    }
+
+    public NgapErrorException() {
+        this(NGAP_CauseMisc.UNSPECIFIED, null);
     }
 }

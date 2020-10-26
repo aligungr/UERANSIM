@@ -22,18 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.configs;
 
 import tr.havelsan.ueransim.app.common.Guami;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class GnbAmfConfig {
+    public final Guami guami;
+    public final String host;
+    public final int port;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public GnbAmfConfig(Guami guami, String host, int port) {
+        this.guami = guami;
+        this.host = host;
+        this.port = port;
     }
 }

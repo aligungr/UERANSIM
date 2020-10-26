@@ -22,18 +22,12 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.app.common.Guami;
+public class ProcedureTransaction {
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+    public static final int MIN_ID = 1;
+    public static final int MAX_ID = 254;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
-    }
+    public static final ProcedureTransaction RELEASED = new ProcedureTransaction();
 }

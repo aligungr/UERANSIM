@@ -22,18 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.app;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public interface INodeMessagingListener {
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
-    }
+    /**
+     * Triggered when a simulation node has send a message.
+     * WARNING: Do not mutate any of the parameters.
+     */
+    void onSend(BaseSimContext ctx, Object message);
+
+    /**
+     * Triggered when a simulation node has received a message.
+     * WARNING: Do not mutate any of the parameters.
+     */
+    void onReceive(BaseSimContext ctx, Object message);
 }

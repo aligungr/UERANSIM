@@ -22,18 +22,24 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.app;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+public class SimulationContext {
+    HashMap<UUID, GnbSimContext> gnbMap;
+    HashMap<UUID, UeSimContext> ueMap;
+    final List<INodeMessagingListener> messagingListeners;
+
+    public SimulationContext(List<INodeMessagingListener> messagingListeners) {
+        this.gnbMap = new HashMap<>();
+        this.ueMap = new HashMap<>();
+        this.messagingListeners = new ArrayList<>(messagingListeners);
     }
 }

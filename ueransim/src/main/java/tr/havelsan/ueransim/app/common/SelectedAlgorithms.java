@@ -22,18 +22,17 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
+import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class SelectedAlgorithms {
+    public final ETypeOfIntegrityProtectionAlgorithm integrity;
+    public final ETypeOfCipheringAlgorithm ciphering;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public SelectedAlgorithms(ETypeOfIntegrityProtectionAlgorithm integrity, ETypeOfCipheringAlgorithm ciphering) {
+        this.integrity = integrity;
+        this.ciphering = ciphering;
     }
 }

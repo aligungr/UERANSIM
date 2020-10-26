@@ -22,18 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.simctx;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.app.SimulationContext;
+import tr.havelsan.ueransim.app.itms.Itms;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+import java.util.UUID;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+public class BaseSimContext {
+    public final SimulationContext simCtx;
+    public final UUID ctxId;
+    public final Itms itms;
+
+    public BaseSimContext(SimulationContext simCtx) {
+        this.simCtx = simCtx;
+        this.ctxId = UUID.randomUUID();
+        this.itms = new Itms();
     }
 }

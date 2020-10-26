@@ -22,18 +22,9 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.enums;
 
-import tr.havelsan.ueransim.app.common.Guami;
-
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
-
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
-    }
+public enum ECmState {
+    CM_IDLE,
+    CM_CONNECTED
 }

@@ -22,18 +22,34 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.configs;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.gnb.utils.SupportedTA;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.utils.bits.BitString;
 
-public class IwNgapSend {
-    public final int streamNumber;
-    public final byte[] data;
-    public final Guami associatedAmf;
+public class GnbConfig {
+    public final int gnbId;
+    public final int tac;
+    public final BitString nci;
+    public final VPlmn gnbPlmn;
+    public final GnbAmfConfig[] amfConfigs;
+    public final SupportedTA[] supportedTAs;
+    public final boolean ignoreStreamIds;
+    public final String host;
+    public final int gtpPort;
+    public final int tunPort;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
-        this.streamNumber = streamNumber;
-        this.data = data;
-        this.associatedAmf = associatedAmf;
+    public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds, String host, int gtpPort, int tunPort) {
+        this.gnbId = gnbId;
+        this.tac = tac;
+        this.nci = BitString.fromBits(nci);
+        this.gnbPlmn = gnbPlmn;
+        this.amfConfigs = amfConfigs;
+        this.supportedTAs = supportedTAs;
+        this.ignoreStreamIds = ignoreStreamIds;
+        this.host = host;
+        this.gtpPort = gtpPort;
+        this.tunPort = tunPort;
     }
 }
