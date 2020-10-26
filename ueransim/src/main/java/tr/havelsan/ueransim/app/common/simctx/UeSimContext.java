@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.common.simctx;
 
-import tr.havelsan.ueransim.app.app.SimulationContext;
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.UeData;
 import tr.havelsan.ueransim.app.common.UeTimers;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
@@ -49,8 +49,8 @@ public class UeSimContext extends BaseSimContext {
     public NasSecurityContext currentNsCtx;
     public NasSecurityContext nonCurrentNsCtx;
 
-    public UeSimContext(SimulationContext simCtx) {
-        super(simCtx);
+    public UeSimContext(UeRanSim sim) {
+        super(sim);
         this.ueTimers = new UeTimers(this);
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();

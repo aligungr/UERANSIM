@@ -55,11 +55,11 @@ public class MrTask extends ItmsTask {
             } else if (msg instanceof IwDownlinkNas) {
                 var w = (IwDownlinkNas) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwDownlinkNas(w.ue, w.nasPdu));
+                Simulation.findUe(ctx.sim, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwDownlinkNas(w.ue, w.nasPdu));
             } else if (msg instanceof IwConnectionRelease) {
                 var w = (IwConnectionRelease) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwConnectionRelease(w.ue));
+                Simulation.findUe(ctx.sim, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwConnectionRelease(w.ue));
             } else if (msg instanceof IwUplinkData) {
                 itms.sendMessage(ItmsId.GNB_TASK_GTP, msg);
             }

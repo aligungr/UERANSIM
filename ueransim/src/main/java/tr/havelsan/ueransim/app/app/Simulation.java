@@ -45,13 +45,15 @@ public class Simulation {
         }
     }
 
-    public static UeSimContext findUe(SimulationContext ctx, UUID id) {
+    public static UeSimContext findUe(UeRanSim sim, UUID id) {
+        var ctx = sim.getSimCtx();
         synchronized (ctx) {
             return ctx.ueMap.get(id);
         }
     }
 
-    public static GnbSimContext findGnb(SimulationContext ctx, UUID id) {
+    public static GnbSimContext findGnb(UeRanSim sim, UUID id) {
+        var ctx = sim.getSimCtx();
         synchronized (ctx) {
             return ctx.gnbMap.get(id);
         }
@@ -87,7 +89,7 @@ public class Simulation {
     }
 
     public static void triggerOnSend(BaseSimContext ctx, Object msg) {
-        var listeners = ctx.simCtx.messagingListeners;
+        var listeners = ctx.sim.getSimCtx().messagingListeners;
         if (listeners != null) {
             for (var listener : listeners) {
                 listener.onSend(ctx, msg);
@@ -96,7 +98,7 @@ public class Simulation {
     }
 
     public static void triggerOnReceive(BaseSimContext ctx, Object msg) {
-        var listeners = ctx.simCtx.messagingListeners;
+        var listeners = ctx.sim.getSimCtx().messagingListeners;
         if (listeners != null) {
             for (var listener : listeners) {
                 listener.onReceive(ctx, msg);

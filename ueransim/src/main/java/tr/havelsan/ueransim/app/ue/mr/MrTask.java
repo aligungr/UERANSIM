@@ -50,7 +50,7 @@ public class MrTask extends ItmsTask {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             } else if (msg instanceof IwUplinkNas) {
                 // TODO
-                Simulation.findGnb(ctx.simCtx, ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
+                Simulation.findGnb(ctx.sim, ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
             } else if (msg instanceof IwConnectionRelease) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             }

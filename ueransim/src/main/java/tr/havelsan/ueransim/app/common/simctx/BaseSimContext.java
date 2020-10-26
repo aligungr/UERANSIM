@@ -24,18 +24,18 @@
 
 package tr.havelsan.ueransim.app.common.simctx;
 
-import tr.havelsan.ueransim.app.app.SimulationContext;
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.itms.Itms;
 
 import java.util.UUID;
 
 public class BaseSimContext {
-    public final SimulationContext simCtx;
+    public final UeRanSim sim;
     public final UUID ctxId;
     public final Itms itms;
 
-    public BaseSimContext(SimulationContext simCtx) {
-        this.simCtx = simCtx;
+    public BaseSimContext(UeRanSim sim) {
+        this.sim = sim;
         this.ctxId = UUID.randomUUID();
         this.itms = new Itms();
     }

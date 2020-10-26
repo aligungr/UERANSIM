@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.common.simctx;
 
-import tr.havelsan.ueransim.app.app.SimulationContext;
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
@@ -45,8 +45,8 @@ public class GnbSimContext extends BaseSimContext {
 
     public GtpUContext gtpUCtx;
 
-    public GnbSimContext(SimulationContext simCtx) {
-        super(simCtx);
+    public GnbSimContext(UeRanSim sim) {
+        super(sim);
         this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
     }

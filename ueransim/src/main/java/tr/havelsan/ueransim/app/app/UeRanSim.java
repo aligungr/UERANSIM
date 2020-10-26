@@ -73,7 +73,7 @@ public class UeRanSim {
         MtsInitializer.initDefaultMts(defaultMts);
         MtsInitializer.initTestingMts(testingMts);
 
-        this.app = new AppConfig(defaultMts);
+        this.app = new AppConfig(defaultMts, this);
 
         this.loadTestConsole = new BaseConsole();
 
