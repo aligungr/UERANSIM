@@ -96,7 +96,7 @@ class SmPduSessionEstablishment {
         pduSession.authorizedQoSFlowDescriptions = message.authorizedQoSFlowDescriptions;
 
         Log.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
-
+        Log.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
         Log.funcOut();
     }
 
