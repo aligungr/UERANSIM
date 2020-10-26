@@ -125,13 +125,13 @@ public class UeRanSim {
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        simCtx = app.createSimContext(Arrays.asList(new LoadTestMessagingListener()));
+        simCtx = new SimulationContext(Arrays.asList(new LoadTestMessagingListener()));
 
         var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
         GnbNode.run(gnbContext);
 
-        while (!((GnbAppTask)gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
+        while (!((GnbAppTask) gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
             // just wait until the gNB says my initial SCTP connection is ready.
             Utils.sleep(100);
         }
