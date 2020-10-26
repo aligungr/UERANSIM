@@ -63,7 +63,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
-public class Program {
+public class UeRanSim {
 
     private final MtsContext defaultMts;
     private final MtsContext testingMts;
@@ -74,7 +74,7 @@ public class Program {
     private ArrayList<UeSimContext> ueContexts;
     private SimulationContext simCtx;
 
-    public Program() {
+    public UeRanSim() {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
 
@@ -97,7 +97,7 @@ public class Program {
     }
 
     public static void main(String[] args) throws Exception {
-        new Program().runUserPrompt();
+        new UeRanSim().runUserPrompt();
     }
 
     private void initLogging() {
