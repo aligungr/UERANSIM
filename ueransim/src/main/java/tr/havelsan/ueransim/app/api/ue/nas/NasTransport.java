@@ -25,7 +25,7 @@
 package tr.havelsan.ueransim.app.api.ue.nas;
 
 
-import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.itms.ItmsId;

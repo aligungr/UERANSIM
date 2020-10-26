@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.gnb.mr;
 
+import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;

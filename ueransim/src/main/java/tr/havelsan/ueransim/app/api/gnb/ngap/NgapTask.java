@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
-import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsTask;

@@ -24,8 +24,8 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
+import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.wrappers.NgapSendWrapper;
 import tr.havelsan.ueransim.app.structs.Guami;

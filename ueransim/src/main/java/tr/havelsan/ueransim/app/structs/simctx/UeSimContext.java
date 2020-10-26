@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.structs.simctx;
 
-import tr.havelsan.ueransim.app.api.sys.SimulationContext;
+import tr.havelsan.ueransim.app.SimulationContext;
 import tr.havelsan.ueransim.app.api.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.app.structs.UeData;
 import tr.havelsan.ueransim.app.structs.UeTimers;

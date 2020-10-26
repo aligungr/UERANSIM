@@ -22,21 +22,28 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.sys;
+package tr.havelsan.ueransim.app;
 
-import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 
-public interface INodeMessagingListener {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
-    /**
-     * Triggered when a simulation node has send a message.
-     * WARNING: Do not mutate any of the parameters.
-     */
-    void onSend(BaseSimContext ctx, Object message);
+public class SimulationContext {
+    HashMap<UUID, GnbSimContext> gnbMap;
+    HashMap<UUID, UeSimContext> ueMap;
+    final List<INodeMessagingListener> messagingListeners;
 
-    /**
-     * Triggered when a simulation node has recevied a message.
-     * WARNING: Do not mutate any of the parameters.
-     */
-    void onReceive(BaseSimContext ctx, Object message);
+    public SimulationContext() {
+        this(null);
+    }
+
+    public SimulationContext(List<INodeMessagingListener> messagingListeners) {
+        this.gnbMap = new HashMap<>();
+        this.ueMap = new HashMap<>();
+        this.messagingListeners = new ArrayList<>(messagingListeners);
+    }
 }

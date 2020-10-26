@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.sys;
+package tr.havelsan.ueransim.app;
 
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
