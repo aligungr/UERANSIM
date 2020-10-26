@@ -25,13 +25,13 @@
 package tr.havelsan.ueransim.app.ue.mr;
 
 import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.itms.Itms;
-import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
-import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
-import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkNas;
+import tr.havelsan.ueransim.itms.Itms;
+import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.ItmsTask;
 
 public class MrTask extends ItmsTask {
 
@@ -50,7 +50,7 @@ public class MrTask extends ItmsTask {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             } else if (msg instanceof IwUplinkNas) {
                 // TODO
-                Simulation.findGnb(ctx.simCtx, ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
+                Simulation.findGnb(ctx.sim, ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
             } else if (msg instanceof IwConnectionRelease) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             }

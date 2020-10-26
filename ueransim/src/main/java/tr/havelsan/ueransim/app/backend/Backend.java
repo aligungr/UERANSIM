@@ -26,12 +26,12 @@ public class Backend {
         Log.addLogHandler(Backend::addLog);
 
         for (var ueId : Simulation.allUes(simCtx)) {
-            var ue = Simulation.findUe(simCtx, ueId);
+            var ue = Simulation.findUe(ueRanSim, ueId);
             if (ue != null) ue.logger.addLogHandler(Backend::addLog);
         }
 
         for (var gnbId : Simulation.allGnbs(simCtx)) {
-            var gnb = Simulation.findGnb(simCtx, gnbId);
+            var gnb = Simulation.findGnb(ueRanSim, gnbId);
             if (gnb != null) gnb.logger.addLogHandler(Backend::addLog);
         }
 

@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.itms;
 
 import java.util.UUID;
 

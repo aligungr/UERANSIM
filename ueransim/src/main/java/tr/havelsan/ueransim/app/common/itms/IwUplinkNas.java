@@ -22,19 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.app.common.itms;
 
-public class ItmsId {
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-    public static final int GNB_TASK_SCTP = 1;
-    public static final int GNB_TASK_NGAP = 2;
-    public static final int GNB_TASK_MR = 3;
-    public static final int GNB_TASK_APP = 4;
-    public static final int GNB_TASK_TUN = 5;
-    public static final int GNB_TASK_GTP = 6;
+import java.util.UUID;
 
-    public static final int UE_TASK_MR = 1;
-    public static final int UE_TASK_NAS = 2;
-    public static final int UE_TASK_NAS_TIMERS = 3;
-    public static final int UE_TASK_APP = 4;
+public class IwUplinkNas {
+    public final UUID ue;
+    public final OctetString nasPdu;
+
+    public IwUplinkNas(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
+        this.nasPdu = nasPdu;
+    }
 }

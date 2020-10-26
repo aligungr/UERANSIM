@@ -22,18 +22,17 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.common.itms;
 
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-import java.util.UUID;
+public class IwSctpAssociationSetup {
+    public final Guami guami;
+    public final SctpAssociation association;
 
-public class IwUplinkNas {
-    public final UUID ue;
-    public final OctetString nasPdu;
-
-    public IwUplinkNas(UUID ue, OctetString nasPdu) {
-        this.ue = ue;
-        this.nasPdu = nasPdu;
+    public IwSctpAssociationSetup(Guami guami, SctpAssociation association) {
+        this.guami = guami;
+        this.association = association;
     }
 }

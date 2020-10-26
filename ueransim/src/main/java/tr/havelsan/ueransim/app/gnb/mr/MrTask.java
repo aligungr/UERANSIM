@@ -25,15 +25,15 @@
 package tr.havelsan.ueransim.app.gnb.mr;
 
 import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.gnb.ngap.NgapNasTransport;
-import tr.havelsan.ueransim.app.itms.Itms;
-import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
-import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
-import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkData;
-import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkNas;
+import tr.havelsan.ueransim.itms.Itms;
+import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.ItmsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 
 public class MrTask extends ItmsTask {
@@ -55,11 +55,11 @@ public class MrTask extends ItmsTask {
             } else if (msg instanceof IwDownlinkNas) {
                 var w = (IwDownlinkNas) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwDownlinkNas(w.ue, w.nasPdu));
+                Simulation.findUe(ctx.sim, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwDownlinkNas(w.ue, w.nasPdu));
             } else if (msg instanceof IwConnectionRelease) {
                 var w = (IwConnectionRelease) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwConnectionRelease(w.ue));
+                Simulation.findUe(ctx.sim, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwConnectionRelease(w.ue));
             } else if (msg instanceof IwUplinkData) {
                 itms.sendMessage(ItmsId.GNB_TASK_GTP, msg);
             }

@@ -26,12 +26,12 @@ package tr.havelsan.ueransim.app.ue;
 
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.ue.mr.MrTask;
 import tr.havelsan.ueransim.app.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.ue.nas.NasTimersTask;
+import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.ItmsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class UeNode {

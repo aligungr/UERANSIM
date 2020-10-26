@@ -47,9 +47,11 @@ public class AppConfig {
 
     public final MtsContext mts;
     private final String profile;
+    private final UeRanSim ueRanSim;
 
-    public AppConfig(MtsContext mts) {
+    public AppConfig(MtsContext mts, UeRanSim ueRanSim) {
         this.mts = mts;
+        this.ueRanSim = ueRanSim;
 
         var root = (ImplicitTypedObject) mts.decoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
@@ -88,7 +90,7 @@ public class AppConfig {
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
-        var ctx = new GnbSimContext(simCtx);
+        var ctx = new GnbSimContext(ueRanSim);
         ctx.config = config;
 
         // Create AMF gNB contexts
@@ -114,7 +116,7 @@ public class AppConfig {
     }
 
     public UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
-        var ctx = new UeSimContext(simCtx);
+        var ctx = new UeSimContext(ueRanSim);
         ctx.ueConfig = config;
         return ctx;
     }
