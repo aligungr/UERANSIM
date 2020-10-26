@@ -37,10 +37,6 @@ public class SimulationContext {
     HashMap<UUID, UeSimContext> ueMap;
     final List<INodeMessagingListener> messagingListeners;
 
-    public SimulationContext() {
-        this(null);
-    }
-
     public SimulationContext(List<INodeMessagingListener> messagingListeners) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
