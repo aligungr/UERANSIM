@@ -28,7 +28,6 @@ import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
 public class IwNgapReceive {
-
     public final Guami associatedAmf;
     public final int stream;
     public final NGAP_PDU ngapPdu;

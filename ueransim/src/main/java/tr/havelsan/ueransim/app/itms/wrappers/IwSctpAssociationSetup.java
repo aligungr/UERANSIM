@@ -28,7 +28,6 @@ import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.sctp.SctpAssociation;
 
 public class IwSctpAssociationSetup {
-
     public final Guami guami;
     public final SctpAssociation association;
 
