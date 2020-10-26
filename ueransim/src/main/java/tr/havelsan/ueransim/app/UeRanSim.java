@@ -58,7 +58,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UeRanSim {
 
@@ -91,10 +94,6 @@ public class UeRanSim {
         testCases = (ImplicitTypedObject) testing.get("test-cases");
 
         initialize();
-    }
-
-    public static void main(String[] args) {
-        new UeRanSim().runUserPrompt();
     }
 
     private void initLogging() {
@@ -153,38 +152,6 @@ public class UeRanSim {
             Simulation.connectUeToGnb(ueContext, gnbContext);
             ueContexts.add(ueContext);
         }
-    }
-
-    private void runUserPrompt() {
-        Utils.sleep(250);
-
-        Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
-
-        var testCases = Utils.streamToList(this.testCases.getParameters().entrySet().stream());
-
-        Console.println(AnsiPalette.PAINT_INPUT, "List of possible tests:");
-        for (int i = 0; i < testCases.size(); i++) {
-            Console.print(AnsiPalette.PAINT_INPUT, (i + 1) + ") ");
-            Console.println(null, testCases.get(i).getKey());
-        }
-
-        Console.println(AnsiPalette.PAINT_INPUT, "Selection: ");
-
-        var scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
-
-        int number = -1;
-        try {
-            number = Integer.parseInt(line);
-        } catch (Exception ignored) {
-        }
-
-        if (number < 1 || number > testCases.size()) {
-            System.err.println("Invalid selection: " + number);
-            return;
-        }
-
-        runTest(testCases.get(number - 1).getKey());
     }
 
     public String[] testCaseNames() {
