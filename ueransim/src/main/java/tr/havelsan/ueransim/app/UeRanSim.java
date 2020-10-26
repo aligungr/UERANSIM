@@ -93,7 +93,7 @@ public class UeRanSim {
         initialize();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new UeRanSim().runUserPrompt();
     }
 
