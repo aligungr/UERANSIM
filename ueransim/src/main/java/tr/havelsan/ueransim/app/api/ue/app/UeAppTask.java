@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.testing.*;
 
 public class UeAppTask extends ItmsTask {
 
@@ -44,7 +45,19 @@ public class UeAppTask extends ItmsTask {
         while (true) {
             var msg = ctx.itms.receiveMessage(this);
             if (msg instanceof UeTestCommandWrapper) {
-                ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                var cmd = ((UeTestCommandWrapper) msg).cmd;
+
+                if (cmd instanceof TestCmd_InitialRegistration) {
+                    ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                } else if (cmd instanceof TestCmd_PeriodicRegistration) {
+                    ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                } else if (cmd instanceof TestCmd_PduSessionEstablishment) {
+                    ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                } else if (cmd instanceof TestCmd_Deregistration) {
+                    ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                } else if (cmd instanceof TestCmd_Ping) {
+                    // TODO
+                }
             }
         }
     }

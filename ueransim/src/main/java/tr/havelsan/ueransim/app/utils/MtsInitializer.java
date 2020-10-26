@@ -95,5 +95,6 @@ public class MtsInitializer {
         mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCmd_PeriodicRegistration.class);
         mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCmd_Deregistration.class);
         mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCmd_PduSessionEstablishment.class);
+        mts.typeRegistry.registerTypeName("PING", TestCmd_Ping.class);
     }
 }

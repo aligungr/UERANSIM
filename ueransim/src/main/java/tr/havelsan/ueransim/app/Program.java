@@ -229,6 +229,8 @@ public class Program {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             } else if (command instanceof TestCmd_PduSessionEstablishment) {
                 ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+            } else if (command instanceof TestCmd_Ping) {
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
             }
         }
     }
