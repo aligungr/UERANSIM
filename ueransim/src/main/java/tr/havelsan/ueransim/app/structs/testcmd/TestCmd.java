@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.testing;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
-public class TestCmd_PduSessionEstablishment extends TestCmd {
+public abstract class TestCmd {
 }

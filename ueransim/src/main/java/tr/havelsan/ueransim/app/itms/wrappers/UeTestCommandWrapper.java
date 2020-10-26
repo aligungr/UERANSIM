@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.testing.TestCmd;
+import tr.havelsan.ueransim.app.structs.testcmd.TestCmd;
 
 public class UeTestCommandWrapper {
     public final TestCmd cmd;

@@ -29,7 +29,7 @@ import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.app.structs.testcmd.*;
 
 public class UeAppTask extends ItmsTask {
 

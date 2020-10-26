@@ -34,7 +34,7 @@ import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
 import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.testing.TestCmd;
+import tr.havelsan.ueransim.app.structs.testcmd.TestCmd;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;

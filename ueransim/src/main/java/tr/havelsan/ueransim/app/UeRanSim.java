@@ -34,7 +34,7 @@ import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.app.structs.testcmd.*;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
