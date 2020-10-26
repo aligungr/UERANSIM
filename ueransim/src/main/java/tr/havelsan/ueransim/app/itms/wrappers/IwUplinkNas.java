@@ -22,13 +22,18 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.testing;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-public class TestCmd_Deregistration extends TestCmd {
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-    public boolean isSwitchOff;
+import java.util.UUID;
 
-    public TestCmd_Deregistration(boolean isSwitchOff) {
-        this.isSwitchOff = isSwitchOff;
+public class IwUplinkNas {
+    public final UUID ue;
+    public final OctetString nasPdu;
+
+    public IwUplinkNas(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
+        this.nasPdu = nasPdu;
     }
 }

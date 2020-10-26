@@ -24,8 +24,6 @@
 
 package tr.havelsan.ueransim.app;
 
-import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
-import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
@@ -44,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class AppConfig {
 
@@ -85,8 +84,8 @@ public class AppConfig {
         });
     }
 
-    public SimulationContext createSimContext(INodeMessagingListener nodeMessagingListener) {
-        return new SimulationContext(nodeMessagingListener);
+    public SimulationContext createSimContext(List<INodeMessagingListener> nodeMessagingListeners) {
+        return new SimulationContext(nodeMessagingListeners);
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {

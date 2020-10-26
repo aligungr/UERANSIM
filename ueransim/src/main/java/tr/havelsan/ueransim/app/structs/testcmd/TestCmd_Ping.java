@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app.testing;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
 public class TestCmd_Ping extends TestCmd {
     public String address;

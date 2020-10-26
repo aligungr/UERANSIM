@@ -22,18 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
-import tr.havelsan.ueransim.utils.octets.OctetString;
-
-import java.util.UUID;
-
-public class DownlinkNasWrapper {
-    public final UUID ue;
-    public final OctetString nasPdu;
-
-    public DownlinkNasWrapper(UUID ue, OctetString nasPdu) {
-        this.ue = ue;
-        this.nasPdu = nasPdu;
-    }
+public abstract class TestCmd {
 }

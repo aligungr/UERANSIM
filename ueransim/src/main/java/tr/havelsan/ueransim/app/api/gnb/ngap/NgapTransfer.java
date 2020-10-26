@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
+import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.gnb.utils.NgapUtils;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.NgapSendWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwNgapSend;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
@@ -51,7 +51,7 @@ public class NgapTransfer {
         Log.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
         Log.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new NgapSendWrapper(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
 
         Simulation.triggerOnSend(ctx, message);
     }
@@ -91,7 +91,7 @@ public class NgapTransfer {
         Log.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
         Log.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new NgapSendWrapper(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
 
         Simulation.triggerOnSend(ctx, message);
     }

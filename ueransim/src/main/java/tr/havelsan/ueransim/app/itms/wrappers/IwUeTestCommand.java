@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.testing;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
+import tr.havelsan.ueransim.app.structs.testcmd.TestCmd;
 
-public class TestCmd_InitialRegistration extends TestCmd {
-    public final EFollowOnRequest followOn;
+public class IwUeTestCommand {
+    public final TestCmd cmd;
 
-    public TestCmd_InitialRegistration(EFollowOnRequest followOn) {
-        this.followOn = followOn;
+    public IwUeTestCommand(TestCmd cmd) {
+        this.cmd = cmd;
     }
 }

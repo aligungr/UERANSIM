@@ -27,17 +27,14 @@ package tr.havelsan.ueransim.app;
 import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
-import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.app.api.sys.SimulationContext;
 import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUeTestCommand;
 import tr.havelsan.ueransim.app.structs.Supi;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.app.structs.testcmd.*;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
@@ -61,12 +58,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
-public class Program {
+public class UeRanSim {
 
     private final MtsContext defaultMts;
     private final MtsContext testingMts;
@@ -77,7 +71,7 @@ public class Program {
     private ArrayList<UeSimContext> ueContexts;
     private SimulationContext simCtx;
 
-    public Program() {
+    public UeRanSim() {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
 
@@ -99,8 +93,8 @@ public class Program {
         initialize();
     }
 
-    public static void main(String[] args) throws Exception {
-        new Program().runUserPrompt();
+    public static void main(String[] args) {
+        new UeRanSim().runUserPrompt();
     }
 
     private void initLogging() {
@@ -132,7 +126,7 @@ public class Program {
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        simCtx = app.createSimContext(new NodeMessagingListener());
+        simCtx = app.createSimContext(Arrays.asList(new LoadTestMessagingListener()));
 
         var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
@@ -161,7 +155,7 @@ public class Program {
         }
     }
 
-    public void runUserPrompt() throws Exception {
+    private void runUserPrompt() {
         Utils.sleep(250);
 
         Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
@@ -222,15 +216,15 @@ public class Program {
                     Utils.sleep(cmd.duration * 1000);
                 }
             } else if (command instanceof TestCmd_InitialRegistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PeriodicRegistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Deregistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PduSessionEstablishment) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Ping) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             }
         }
     }
@@ -239,7 +233,7 @@ public class Program {
         return simCtx;
     }
 
-    private class NodeMessagingListener implements INodeMessagingListener {
+    private class LoadTestMessagingListener implements INodeMessagingListener {
         private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
         private final Map<String, Long> registrationTimers = new HashMap<>();
         private final Map<String, Long> authenticationTimers = new HashMap<>();

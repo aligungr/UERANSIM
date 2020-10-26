@@ -22,18 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app;
 
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.sctp.SctpAssociation;
+import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 
-public class SctpAssociationSetupWrapper {
+public interface INodeMessagingListener {
 
-    public final Guami guami;
-    public final SctpAssociation association;
+    /**
+     * Triggered when a simulation node has send a message.
+     * WARNING: Do not mutate any of the parameters.
+     */
+    void onSend(BaseSimContext ctx, Object message);
 
-    public SctpAssociationSetupWrapper(Guami guami, SctpAssociation association) {
-        this.guami = guami;
-        this.association = association;
-    }
+    /**
+     * Triggered when a simulation node has received a message.
+     * WARNING: Do not mutate any of the parameters.
+     */
+    void onReceive(BaseSimContext ctx, Object message);
 }

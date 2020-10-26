@@ -4,8 +4,8 @@ import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.Program;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.Simulation;
+import tr.havelsan.ueransim.app.UeRanSim;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
@@ -16,12 +16,12 @@ import java.util.List;
 public class Backend {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
-    private static Program program;
+    private static UeRanSim ueRanSim;
 
     public static void main(String[] args) {
-        program = new Program();
+        ueRanSim = new UeRanSim();
 
-        var simCtx = program.getSimCtx();
+        var simCtx = ueRanSim.getSimCtx();
 
         Log.addLogHandler(Backend::addLog);
 
@@ -53,13 +53,13 @@ public class Backend {
         String s = Json.fromJson(ctx.message(), String.class);
 
         if (s.length() > 0 && !s.equals("dummy"))
-            program.runTest(s);
+            ueRanSim.runTest(s);
 
         logEntries.clear();
     }
 
     public static synchronized void handleConnect(@NotNull WsConnectContext ctx) {
-        ctx.send(new Wrapper("possibleEvents", program.testCaseNames()));
+        ctx.send(new Wrapper("possibleEvents", ueRanSim.testCaseNames()));
     }
 
     public static class Wrapper {

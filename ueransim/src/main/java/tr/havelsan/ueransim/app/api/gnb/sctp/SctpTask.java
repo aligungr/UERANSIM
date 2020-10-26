@@ -27,10 +27,10 @@ package tr.havelsan.ueransim.app.api.gnb.sctp;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.InitialSctpReadyWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.NgapReceiveWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.NgapSendWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.SctpAssociationSetupWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwInitialSctpReady;
+import tr.havelsan.ueransim.app.itms.wrappers.IwNgapReceive;
+import tr.havelsan.ueransim.app.itms.wrappers.IwNgapSend;
+import tr.havelsan.ueransim.app.itms.wrappers.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
@@ -73,7 +73,7 @@ public class SctpTask extends ItmsTask {
                 @Override
                 public void onSetup(SctpAssociation sctpAssociation) {
                     amf.association = sctpAssociation;
-                    itms.sendMessage(ItmsId.GNB_TASK_NGAP, new SctpAssociationSetupWrapper(amf.guami, sctpAssociation));
+                    itms.sendMessage(ItmsId.GNB_TASK_NGAP, new IwSctpAssociationSetup(amf.guami, sctpAssociation));
                     setupCount.incrementAndGet();
                 }
 
@@ -111,12 +111,12 @@ public class SctpTask extends ItmsTask {
             Utils.sleep(1000);
         }
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_APP, new InitialSctpReadyWrapper());
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_APP, new IwInitialSctpReady());
 
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof NgapSendWrapper) {
-                var wrapper = (NgapSendWrapper) msg;
+            if (msg instanceof IwNgapSend) {
+                var wrapper = (IwNgapSend) msg;
                 amfs.get(wrapper.associatedAmf).sctpClient.send(wrapper.streamNumber, wrapper.data);
             }
         }
@@ -124,6 +124,6 @@ public class SctpTask extends ItmsTask {
 
     public void handleSCTPMessage(Guami associatedAmf, byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
-        itms.sendMessage(ItmsId.GNB_TASK_NGAP, new NgapReceiveWrapper(associatedAmf, streamNumber, pdu));
+        itms.sendMessage(ItmsId.GNB_TASK_NGAP, new IwNgapReceive(associatedAmf, streamNumber, pdu));
     }
 }

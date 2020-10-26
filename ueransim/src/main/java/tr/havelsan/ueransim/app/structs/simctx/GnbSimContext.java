@@ -24,12 +24,12 @@
 
 package tr.havelsan.ueransim.app.structs.simctx;
 
-import tr.havelsan.ueransim.app.api.sys.SimulationContext;
-import tr.havelsan.ueransim.app.structs.GtpUContext;
+import tr.havelsan.ueransim.app.SimulationContext;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.structs.configs.GnbConfig;
 import tr.havelsan.ueransim.app.structs.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.structs.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.structs.contexts.GtpUContext;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.HashMap;

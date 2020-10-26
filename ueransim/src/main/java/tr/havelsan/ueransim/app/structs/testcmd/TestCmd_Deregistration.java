@@ -22,14 +22,13 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
-import tr.havelsan.ueransim.app.testing.TestCmd;
+public class TestCmd_Deregistration extends TestCmd {
 
-public class UeTestCommandWrapper {
-    public final TestCmd cmd;
+    public boolean isSwitchOff;
 
-    public UeTestCommandWrapper(TestCmd cmd) {
-        this.cmd = cmd;
+    public TestCmd_Deregistration(boolean isSwitchOff) {
+        this.isSwitchOff = isSwitchOff;
     }
 }

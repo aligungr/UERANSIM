@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.sys;
+package tr.havelsan.ueransim.app;
 
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
@@ -87,12 +87,20 @@ public class Simulation {
     }
 
     public static void triggerOnSend(BaseSimContext ctx, Object msg) {
-        var listener = ctx.simCtx.nodeMessagingListener;
-        if (listener != null) listener.onSend(ctx, msg);
+        var listeners = ctx.simCtx.messagingListeners;
+        if (listeners != null) {
+            for (var listener : listeners) {
+                listener.onSend(ctx, msg);
+            }
+        }
     }
 
     public static void triggerOnReceive(BaseSimContext ctx, Object msg) {
-        var listener = ctx.simCtx.nodeMessagingListener;
-        if (listener != null) listener.onReceive(ctx, msg);
+        var listeners = ctx.simCtx.messagingListeners;
+        if (listeners != null) {
+            for (var listener : listeners) {
+                listener.onReceive(ctx, msg);
+            }
+        }
     }
 }

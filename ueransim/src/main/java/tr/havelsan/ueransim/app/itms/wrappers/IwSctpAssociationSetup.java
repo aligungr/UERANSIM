@@ -22,13 +22,17 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.testing;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-public class TestCmd_Sleep extends TestCmd {
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-    public final int duration;
+public class IwSctpAssociationSetup {
+    public final Guami guami;
+    public final SctpAssociation association;
 
-    public TestCmd_Sleep(int duration) {
-        this.duration = duration;
+    public IwSctpAssociationSetup(Guami guami, SctpAssociation association) {
+        this.guami = guami;
+        this.association = association;
     }
 }

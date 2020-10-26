@@ -22,20 +22,13 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+public class TestCmd_Sleep extends TestCmd {
 
-public class NgapReceiveWrapper {
+    public final int duration;
 
-    public final Guami associatedAmf;
-    public final int stream;
-    public final NGAP_PDU ngapPdu;
-
-    public NgapReceiveWrapper(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
-        this.associatedAmf = associatedAmf;
-        this.stream = stream;
-        this.ngapPdu = ngapPdu;
+    public TestCmd_Sleep(int duration) {
+        this.duration = duration;
     }
 }

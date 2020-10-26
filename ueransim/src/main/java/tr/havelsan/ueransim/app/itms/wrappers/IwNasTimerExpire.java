@@ -22,26 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.api.sys;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 
-import java.util.HashMap;
-import java.util.UUID;
+public class IwNasTimerExpire {
+    public final NasTimer timer;
 
-public class SimulationContext {
-    HashMap<UUID, GnbSimContext> gnbMap;
-    HashMap<UUID, UeSimContext> ueMap;
-    INodeMessagingListener nodeMessagingListener;
-
-    public SimulationContext() {
-        this(null);
-    }
-
-    public SimulationContext(INodeMessagingListener nodeMessagingListener) {
-        this.gnbMap = new HashMap<>();
-        this.ueMap = new HashMap<>();
-        this.nodeMessagingListener = nodeMessagingListener;
+    public IwNasTimerExpire(NasTimer timer) {
+        this.timer = timer;
     }
 }

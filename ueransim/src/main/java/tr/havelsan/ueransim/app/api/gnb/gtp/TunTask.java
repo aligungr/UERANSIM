@@ -3,8 +3,8 @@ package tr.havelsan.ueransim.app.api.gnb.gtp;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.DownlinkDataWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UplinkDataWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkData;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkData;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -47,8 +47,8 @@ public class TunTask extends ItmsTask {
 
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof DownlinkDataWrapper) {
-                handleDownlinkData((DownlinkDataWrapper) msg);
+            if (msg instanceof IwDownlinkData) {
+                handleDownlinkData((IwDownlinkData) msg);
             }
         }
     }
@@ -85,11 +85,11 @@ public class TunTask extends ItmsTask {
                 }
             }
 
-            itms.sendMessage(ItmsId.GNB_TASK_MR, new UplinkDataWrapper(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength())));
+            itms.sendMessage(ItmsId.GNB_TASK_MR, new IwUplinkData(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength())));
         }
     }
 
-    private void handleDownlinkData(DownlinkDataWrapper msg) {
+    private void handleDownlinkData(IwDownlinkData msg) {
         if (bridgeEndpointAddrBytes == null) {
             Log.error(Tag.TUN, "'bridgeEndpointAddrBytes == null' in TunTask");
             return;

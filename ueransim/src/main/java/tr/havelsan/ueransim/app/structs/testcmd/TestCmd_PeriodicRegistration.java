@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms.wrappers;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
+import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
-public class NasTimerExpireWrapper {
-    public final NasTimer timer;
+public class TestCmd_PeriodicRegistration extends TestCmd {
+    public final EFollowOnRequest followOn;
 
-    public NasTimerExpireWrapper(NasTimer timer) {
-        this.timer = timer;
+    public TestCmd_PeriodicRegistration(EFollowOnRequest followOn) {
+        this.followOn = followOn;
     }
 }

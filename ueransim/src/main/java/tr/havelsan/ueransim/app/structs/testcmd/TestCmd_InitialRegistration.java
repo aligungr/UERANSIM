@@ -22,40 +22,14 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.utils;
+package tr.havelsan.ueransim.app.structs.testcmd;
 
-import tr.havelsan.ueransim.nas.core.messages.NasMessage;
-import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
-public class IncomingMessage {
-    public final NGAP_PDU ngapPdu;
-    public final NGAP_BaseMessage ngapMessage;
-    public final NasMessage nasMessage;
+public class TestCmd_InitialRegistration extends TestCmd {
+    public final EFollowOnRequest followOn;
 
-    public IncomingMessage(NGAP_PDU ngapPdu, NGAP_BaseMessage ngapMessage, NasMessage nasMessage) {
-        this.ngapPdu = ngapPdu;
-        this.ngapMessage = ngapMessage;
-        this.nasMessage = nasMessage;
-    }
-
-    public <T extends NasMessage> T getNasMessage(Class<T> messageType) {
-        if (nasMessage == null) {
-            return null;
-        }
-        if (messageType.isAssignableFrom(nasMessage.getClass())) {
-            return (T) nasMessage;
-        }
-        return null;
-    }
-
-    public <T extends NGAP_BaseMessage> T getNgapMessage(Class<T> messageType) {
-        if (ngapMessage == null) {
-            return null;
-        }
-        if (messageType.isAssignableFrom(ngapMessage.getClass())) {
-            return (T) ngapMessage;
-        }
-        return null;
+    public TestCmd_InitialRegistration(EFollowOnRequest followOn) {
+        this.followOn = followOn;
     }
 }

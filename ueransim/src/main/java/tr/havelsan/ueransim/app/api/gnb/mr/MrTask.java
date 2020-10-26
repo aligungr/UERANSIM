@@ -24,15 +24,15 @@
 
 package tr.havelsan.ueransim.app.api.gnb.mr;
 
+import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.api.gnb.ngap.NgapNasTransport;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UplinkDataWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UplinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
+import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkData;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkNas;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.NasDecoder;
 
@@ -49,18 +49,18 @@ public class MrTask extends ItmsTask {
     public void main() {
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof UplinkNasWrapper) {
-                var w = (UplinkNasWrapper) msg;
+            if (msg instanceof IwUplinkNas) {
+                var w = (IwUplinkNas) msg;
                 NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
-            } else if (msg instanceof DownlinkNasWrapper) {
-                var w = (DownlinkNasWrapper) msg;
+            } else if (msg instanceof IwDownlinkNas) {
+                var w = (IwDownlinkNas) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new DownlinkNasWrapper(w.ue, w.nasPdu));
-            } else if (msg instanceof ConnectionReleaseWrapper) {
-                var w = (ConnectionReleaseWrapper) msg;
+                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwDownlinkNas(w.ue, w.nasPdu));
+            } else if (msg instanceof IwConnectionRelease) {
+                var w = (IwConnectionRelease) msg;
                 // TODO
-                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new ConnectionReleaseWrapper(w.ue));
-            } else if (msg instanceof UplinkDataWrapper) {
+                Simulation.findUe(ctx.simCtx, w.ue).itms.sendMessage(ItmsId.UE_TASK_MR, new IwConnectionRelease(w.ue));
+            } else if (msg instanceof IwUplinkData) {
                 itms.sendMessage(ItmsId.GNB_TASK_GTP, msg);
             }
         }

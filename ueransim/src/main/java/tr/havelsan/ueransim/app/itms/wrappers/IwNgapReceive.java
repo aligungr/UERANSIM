@@ -22,7 +22,19 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.testing;
+package tr.havelsan.ueransim.app.itms.wrappers;
 
-public abstract class TestCmd {
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+
+public class IwNgapReceive {
+    public final Guami associatedAmf;
+    public final int stream;
+    public final NGAP_PDU ngapPdu;
+
+    public IwNgapReceive(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
+        this.associatedAmf = associatedAmf;
+        this.stream = stream;
+        this.ngapPdu = ngapPdu;
+    }
 }

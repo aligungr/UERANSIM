@@ -2,10 +2,10 @@ package tr.havelsan.ueransim.app.itms.wrappers;
 
 import java.util.UUID;
 
-public class ConnectionReleaseWrapper {
+public class IwConnectionRelease {
     public final UUID ue;
 
-    public ConnectionReleaseWrapper(UUID ue) {
+    public IwConnectionRelease(UUID ue) {
         this.ue = ue;
     }
 }
