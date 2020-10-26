@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.itms;
+package tr.havelsan.ueransim.itms;
 
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -25,7 +25,7 @@
 package tr.havelsan.ueransim.app.common.simctx;
 
 import tr.havelsan.ueransim.app.app.SimulationContext;
-import tr.havelsan.ueransim.app.itms.Itms;
+import tr.havelsan.ueransim.itms.Itms;
 
 import java.util.UUID;
 

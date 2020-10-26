@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
+import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
-import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;

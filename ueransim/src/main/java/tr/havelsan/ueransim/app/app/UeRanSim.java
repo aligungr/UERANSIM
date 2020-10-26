@@ -26,16 +26,16 @@ package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
+import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
-import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.IwUeTestCommand;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.nas.impl.messages.*;

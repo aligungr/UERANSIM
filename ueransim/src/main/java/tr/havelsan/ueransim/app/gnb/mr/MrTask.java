@@ -25,15 +25,15 @@
 package tr.havelsan.ueransim.app.gnb.mr;
 
 import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.gnb.ngap.NgapNasTransport;
-import tr.havelsan.ueransim.app.itms.Itms;
-import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
-import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
-import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkData;
-import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkNas;
+import tr.havelsan.ueransim.itms.Itms;
+import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.ItmsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 
 public class MrTask extends ItmsTask {
