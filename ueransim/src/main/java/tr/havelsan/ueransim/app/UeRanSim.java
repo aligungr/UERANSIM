@@ -158,7 +158,7 @@ public class UeRanSim {
         }
     }
 
-    public void runUserPrompt() throws Exception {
+    private void runUserPrompt() {
         Utils.sleep(250);
 
         Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
