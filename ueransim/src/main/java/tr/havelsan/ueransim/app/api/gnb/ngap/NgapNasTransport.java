@@ -25,7 +25,7 @@
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
@@ -89,7 +89,7 @@ public class NgapNasTransport {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(associatedUe, NasEncoder.nasPduS(nasMessage)));
+            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
         }
 
         Log.funcOut();

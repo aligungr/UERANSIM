@@ -3,10 +3,10 @@ package tr.havelsan.ueransim.app.api.gnb.gtp;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.DownlinkDataWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.GtpDownlinkWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.PduSessionResourceCreateWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UplinkDataWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkData;
+import tr.havelsan.ueransim.app.itms.wrappers.IwGtpDownlink;
+import tr.havelsan.ueransim.app.itms.wrappers.IwPduSessionResourceCreate;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUplinkData;
 import tr.havelsan.ueransim.app.structs.PduSessionResource;
 import tr.havelsan.ueransim.app.structs.contexts.GtpUContext;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
@@ -61,7 +61,7 @@ public class GtpTask extends ItmsTask {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                itms.sendMessage(ItmsId.GNB_TASK_GTP, new GtpDownlinkWrapper(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
+                itms.sendMessage(ItmsId.GNB_TASK_GTP, new IwGtpDownlink(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
             }
         });
 
@@ -71,17 +71,17 @@ public class GtpTask extends ItmsTask {
 
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof UplinkDataWrapper) {
-                handleUplinkData((UplinkDataWrapper) msg);
-            } else if (msg instanceof PduSessionResourceCreateWrapper) {
-                this.pduSession = ((PduSessionResourceCreateWrapper) msg).pduSessionResource;
-            } else if (msg instanceof GtpDownlinkWrapper) {
-                handleDownlinkGtp((GtpDownlinkWrapper) msg);
+            if (msg instanceof IwUplinkData) {
+                handleUplinkData((IwUplinkData) msg);
+            } else if (msg instanceof IwPduSessionResourceCreate) {
+                this.pduSession = ((IwPduSessionResourceCreate) msg).pduSessionResource;
+            } else if (msg instanceof IwGtpDownlink) {
+                handleDownlinkGtp((IwGtpDownlink) msg);
             }
         }
     }
 
-    private void handleUplinkData(UplinkDataWrapper msg) {
+    private void handleUplinkData(IwUplinkData msg) {
         var data = msg.ipData;
         if ((data.get(0) >> 4 & 0xF) != 4) {
             // ignore non IPv4 packets
@@ -117,7 +117,7 @@ public class GtpTask extends ItmsTask {
         }
     }
 
-    private void handleDownlinkGtp(GtpDownlinkWrapper msg) {
+    private void handleDownlinkGtp(IwGtpDownlink msg) {
         var gtp = GtpDecoder.decode(msg.data);
         if (gtp.msgType.intValue() != GtpMessage.MT_G_PDU) {
             Log.warning(Tag.NOT_IMPL_YET, "Unhandled GTP-U message type: " + gtp.msgType);
@@ -125,6 +125,6 @@ public class GtpTask extends ItmsTask {
         }
 
         var ipPacket = gtp.payload;
-        itms.sendMessage(ItmsId.GNB_TASK_TUN, new DownlinkDataWrapper(ipPacket));
+        itms.sendMessage(ItmsId.GNB_TASK_TUN, new IwDownlinkData(ipPacket));
     }
 }

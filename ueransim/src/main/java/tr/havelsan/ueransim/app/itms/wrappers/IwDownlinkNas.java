@@ -24,18 +24,16 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class NgapReceiveWrapper {
+import java.util.UUID;
 
-    public final Guami associatedAmf;
-    public final int stream;
-    public final NGAP_PDU ngapPdu;
+public class IwDownlinkNas {
+    public final UUID ue;
+    public final OctetString nasPdu;
 
-    public NgapReceiveWrapper(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
-        this.associatedAmf = associatedAmf;
-        this.stream = stream;
-        this.ngapPdu = ngapPdu;
+    public IwDownlinkNas(UUID ue, OctetString nasPdu) {
+        this.ue = ue;
+        this.nasPdu = nasPdu;
     }
 }

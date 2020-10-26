@@ -24,16 +24,12 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.utils.octets.OctetString;
+import tr.havelsan.ueransim.app.structs.testcmd.TestCmd;
 
-import java.util.UUID;
+public class IwUeTestCommand {
+    public final TestCmd cmd;
 
-public class DownlinkNasWrapper {
-    public final UUID ue;
-    public final OctetString nasPdu;
-
-    public DownlinkNasWrapper(UUID ue, OctetString nasPdu) {
-        this.ue = ue;
-        this.nasPdu = nasPdu;
+    public IwUeTestCommand(TestCmd cmd) {
+        this.cmd = cmd;
     }
 }

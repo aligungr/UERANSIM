@@ -24,12 +24,16 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.testcmd.TestCmd;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-public class UeTestCommandWrapper {
-    public final TestCmd cmd;
+public class IwSctpAssociationSetup {
 
-    public UeTestCommandWrapper(TestCmd cmd) {
-        this.cmd = cmd;
+    public final Guami guami;
+    public final SctpAssociation association;
+
+    public IwSctpAssociationSetup(Guami guami, SctpAssociation association) {
+        this.guami = guami;
+        this.association = association;
     }
 }

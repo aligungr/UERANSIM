@@ -29,10 +29,10 @@ import tr.havelsan.ueransim.app.api.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.api.ue.sm.SessionManagement;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.NasTimerExpireWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
+import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
+import tr.havelsan.ueransim.app.itms.wrappers.IwNasTimerExpire;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUeTestCommand;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.structs.testcmd.TestCmd;
 import tr.havelsan.ueransim.nas.NasDecoder;
@@ -64,10 +64,10 @@ public class NasTask extends ItmsTask {
             MobilityManagement.cycle(ctx);
 
             var msg = ctx.itms.receiveMessageNonBlocking(this);
-            if (msg instanceof DownlinkNasWrapper) {
-                NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((DownlinkNasWrapper) msg).nasPdu));
-            } else if (msg instanceof NasTimerExpireWrapper) {
-                var timer = ((NasTimerExpireWrapper) msg).timer;
+            if (msg instanceof IwDownlinkNas) {
+                NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((IwDownlinkNas) msg).nasPdu));
+            } else if (msg instanceof IwNasTimerExpire) {
+                var timer = ((IwNasTimerExpire) msg).timer;
                 Log.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
 
                 if (timer.isMmTimer) {
@@ -75,9 +75,9 @@ public class NasTask extends ItmsTask {
                 } else {
                     SessionManagement.receiveTimerExpire(ctx, timer);
                 }
-            } else if (msg instanceof UeTestCommandWrapper) {
-                executeCommand(ctx, ((UeTestCommandWrapper) msg).cmd);
-            } else if (msg instanceof ConnectionReleaseWrapper) {
+            } else if (msg instanceof IwUeTestCommand) {
+                executeCommand(ctx, ((IwUeTestCommand) msg).cmd);
+            } else if (msg instanceof IwConnectionRelease) {
                 // TODO
             }
         }

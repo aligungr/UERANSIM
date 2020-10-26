@@ -27,7 +27,7 @@ package tr.havelsan.ueransim.app.api.ue.app;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsId;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUeTestCommand;
 import tr.havelsan.ueransim.app.structs.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.structs.testcmd.*;
 
@@ -44,8 +44,8 @@ public class UeAppTask extends ItmsTask {
     public void main() {
         while (true) {
             var msg = ctx.itms.receiveMessage(this);
-            if (msg instanceof UeTestCommandWrapper) {
-                var cmd = ((UeTestCommandWrapper) msg).cmd;
+            if (msg instanceof IwUeTestCommand) {
+                var cmd = ((IwUeTestCommand) msg).cmd;
 
                 if (cmd instanceof TestCmd_InitialRegistration) {
                     ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);

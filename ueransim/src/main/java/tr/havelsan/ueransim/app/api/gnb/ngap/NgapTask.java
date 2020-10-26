@@ -28,8 +28,8 @@ import tr.havelsan.ueransim.app.Simulation;
 import tr.havelsan.ueransim.app.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.itms.Itms;
 import tr.havelsan.ueransim.app.itms.ItmsTask;
-import tr.havelsan.ueransim.app.itms.wrappers.NgapReceiveWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.SctpAssociationSetupWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwNgapReceive;
+import tr.havelsan.ueransim.app.itms.wrappers.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.structs.Guami;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.Ngap;
@@ -59,11 +59,10 @@ public class NgapTask extends ItmsTask {
     public void main() {
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof NgapReceiveWrapper) {
-                receiveNgap(((NgapReceiveWrapper) msg).associatedAmf, ((NgapReceiveWrapper) msg).stream, ((NgapReceiveWrapper) msg).ngapPdu);
-            }
-            else if (msg instanceof SctpAssociationSetupWrapper) {
-                NgapInterfaceManagement.sendNgSetupRequest(ctx, ((SctpAssociationSetupWrapper) msg).guami);
+            if (msg instanceof IwNgapReceive) {
+                receiveNgap(((IwNgapReceive) msg).associatedAmf, ((IwNgapReceive) msg).stream, ((IwNgapReceive) msg).ngapPdu);
+            } else if (msg instanceof IwSctpAssociationSetup) {
+                NgapInterfaceManagement.sendNgSetupRequest(ctx, ((IwSctpAssociationSetup) msg).guami);
             }
         }
     }

@@ -24,16 +24,12 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.structs.Guami;
-import tr.havelsan.ueransim.sctp.SctpAssociation;
+import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
 
-public class SctpAssociationSetupWrapper {
+public class IwNasTimerExpire {
+    public final NasTimer timer;
 
-    public final Guami guami;
-    public final SctpAssociation association;
-
-    public SctpAssociationSetupWrapper(Guami guami, SctpAssociation association) {
-        this.guami = guami;
-        this.association = association;
+    public IwNasTimerExpire(NasTimer timer) {
+        this.timer = timer;
     }
 }

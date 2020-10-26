@@ -25,8 +25,8 @@
 package tr.havelsan.ueransim.app.api.gnb.ngap;
 
 import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.ConnectionReleaseWrapper;
-import tr.havelsan.ueransim.app.itms.wrappers.DownlinkNasWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwConnectionRelease;
+import tr.havelsan.ueransim.app.itms.wrappers.IwDownlinkNas;
 import tr.havelsan.ueransim.app.structs.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
@@ -72,7 +72,7 @@ public class NgapUeContextManagement {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new DownlinkNasWrapper(ueId, NasEncoder.nasPduS(nasMessage)));
+            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
         }
 
         Log.funcOut();
@@ -86,7 +86,7 @@ public class NgapUeContextManagement {
         // todo: NG-RAN node shall release all related signalling and user data transport resources
         // ...
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new ConnectionReleaseWrapper(ueId));
+        ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwConnectionRelease(ueId));
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();

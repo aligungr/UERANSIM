@@ -24,12 +24,18 @@
 
 package tr.havelsan.ueransim.app.itms.wrappers;
 
-import tr.havelsan.ueransim.app.api.ue.nas.NasTimer;
+import tr.havelsan.ueransim.app.structs.Guami;
+import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 
-public class NasTimerExpireWrapper {
-    public final NasTimer timer;
+public class IwNgapReceive {
 
-    public NasTimerExpireWrapper(NasTimer timer) {
-        this.timer = timer;
+    public final Guami associatedAmf;
+    public final int stream;
+    public final NGAP_PDU ngapPdu;
+
+    public IwNgapReceive(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
+        this.associatedAmf = associatedAmf;
+        this.stream = stream;
+        this.ngapPdu = ngapPdu;
     }
 }

@@ -28,7 +28,7 @@ import tr.havelsan.ueransim.app.api.GnbNode;
 import tr.havelsan.ueransim.app.api.UeNode;
 import tr.havelsan.ueransim.app.api.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.itms.ItmsId;
-import tr.havelsan.ueransim.app.itms.wrappers.UeTestCommandWrapper;
+import tr.havelsan.ueransim.app.itms.wrappers.IwUeTestCommand;
 import tr.havelsan.ueransim.app.structs.Supi;
 import tr.havelsan.ueransim.app.structs.configs.UeConfig;
 import tr.havelsan.ueransim.app.structs.simctx.BaseSimContext;
@@ -216,15 +216,15 @@ public class UeRanSim {
                     Utils.sleep(cmd.duration * 1000);
                 }
             } else if (command instanceof TestCmd_InitialRegistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PeriodicRegistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Deregistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PduSessionEstablishment) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Ping) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new UeTestCommandWrapper(command)));
+                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             }
         }
     }
