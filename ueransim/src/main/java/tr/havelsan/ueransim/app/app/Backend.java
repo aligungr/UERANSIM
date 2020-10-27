@@ -1,11 +1,9 @@
-package tr.havelsan.ueransim.app.backend;
+package tr.havelsan.ueransim.app.app;
 
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.app.Simulation;
-import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.sw.*;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.utils.console.Log;
