@@ -6,13 +6,12 @@ import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
 import tr.havelsan.ueransim.app.Program;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
-import tr.havelsan.ueransim.utils.Json;
+import tr.havelsan.ueransim.app.backend.wrappers.*;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -65,34 +64,23 @@ public class Backend {
     }
 
     public static synchronized void handleMessage(@NotNull WsMessageContext ctx) {
-        for (var s : logEntries) {
-            ctx.send(new Wrapper("log", s));
+        if (!logEntries.isEmpty()) {
+            ctx.send(WrapperJson.toJson(new LogWrapper(logEntries)));
         }
 
-        String s = Json.fromJson(ctx.message(), String.class);
+        Wrapper w = WrapperJson.fromJson(ctx.message(), Wrapper.class);
 
-        if (s.length() > 0 && !s.equals("dummy"))
-            commandQueue.add(s);
+        if (!(w instanceof HeartbeatWrapper)) {
+            if (w instanceof CommandWrapper) {
+                CommandWrapper ew = (CommandWrapper)w;
+                commandQueue.add(ew.commandName);
+            }
+        }
 
         logEntries.clear();
     }
 
     public static synchronized void handleConnect(@NotNull WsConnectContext ctx) {
-        ctx.send(new Wrapper("possibleEvents", program.testCaseNames()));
-    }
-
-    public static class Wrapper {
-        public final String type;
-        public final Object message;
-
-        public Wrapper(String type, Object message) {
-            this.type = type;
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return Json.toJson(this);
-        }
+        ctx.send(WrapperJson.toJson(new EventsWrapper(program.testCaseNames())));
     }
 }
