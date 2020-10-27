@@ -4,7 +4,8 @@ import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
@@ -48,7 +49,7 @@ public class Backend {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                program.runTest(cmd);
+                ueRanSim.runTest(cmd);
             }
         }).start();
 
