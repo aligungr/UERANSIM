@@ -8,7 +8,17 @@ import tr.havelsan.ueransim.utils.Severity;
 public class StepperMessagingListener implements INodeMessagingListener {
 
     private void onMessage(BaseSimContext ctx, Object message) {
-        SwStep swStep = new SwStep(AppConfig.generateNodeName(ctx), Severity.DEBUG, message.getClass().getSimpleName(), Json.toJson(message));
+        if (message == null) {
+            return;
+        }
+
+        var loggerName = AppConfig.generateNodeName(ctx);
+        var severity = Severity.DEBUG; // TODO
+        var messageName = message.getClass().getSimpleName();
+        var messageBody = Json.toJson(message);
+
+        var swStep = new SwStep(loggerName, severity, messageName, messageBody);
+        // TODO: use swStep
     }
 
     @Override

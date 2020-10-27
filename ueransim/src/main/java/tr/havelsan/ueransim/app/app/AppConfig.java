@@ -86,22 +86,16 @@ public class AppConfig {
         });
     }
 
-    public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        return createGnbSimContext(simCtx, mts.constructor.construct(GnbConfig.class, config, true));
+    public static String generateNodeName(BaseSimContext ctx) {
+        if (ctx instanceof UeSimContext)
+            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
+        if (ctx instanceof GnbSimContext)
+            return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
+        throw new RuntimeException();
     }
 
-    public static String generateNodeName(BaseSimContext ctx) {
-
-        if (ctx instanceof UeSimContext) {
-            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
-        }
-
-        if (ctx instanceof GnbSimContext) {
-            return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
-        }
-
-        throw new RuntimeException();
-
+    public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        return createGnbSimContext(simCtx, mts.constructor.construct(GnbConfig.class, config, true));
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
