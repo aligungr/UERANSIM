@@ -6,7 +6,8 @@ import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
 import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.backend.wrappers.*;
+import tr.havelsan.ueransim.app.common.sw.*;
+import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
 import tr.havelsan.ueransim.utils.console.Logger;
@@ -65,14 +66,14 @@ public class Backend {
 
     public static synchronized void handleMessage(@NotNull WsMessageContext ctx) {
         if (!logEntries.isEmpty()) {
-            ctx.send(WrapperJson.toJson(new LogWrapper(logEntries)));
+            ctx.send(SocketWrapperSerializer.toJson(new SwLog(logEntries)));
         }
 
-        Wrapper w = WrapperJson.fromJson(ctx.message(), Wrapper.class);
+        SocketWrapper w = SocketWrapperSerializer.fromJson(ctx.message(), SocketWrapper.class);
 
-        if (!(w instanceof HeartbeatWrapper)) {
-            if (w instanceof CommandWrapper) {
-                CommandWrapper ew = (CommandWrapper) w;
+        if (!(w instanceof SwHeartbeat)) {
+            if (w instanceof SwCommand) {
+                SwCommand ew = (SwCommand) w;
                 commandQueue.add(ew.commandName);
             }
         }
@@ -81,6 +82,6 @@ public class Backend {
     }
 
     public static synchronized void handleConnect(@NotNull WsConnectContext ctx) {
-        ctx.send(WrapperJson.toJson(new EventsWrapper(ueRanSim.testCaseNames())));
+        ctx.send(SocketWrapperSerializer.toJson(new SwTestCases(ueRanSim.testCaseNames())));
     }
 }

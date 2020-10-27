@@ -1,10 +1,10 @@
-package tr.havelsan.ueransim.app.backend.wrappers;
+package tr.havelsan.ueransim.app.common.sw;
 
-public class StepWrapper extends Wrapper {
+public class SwStep extends SocketWrapper {
     public final String messageName;
     public final boolean isSuccess;
 
-    public StepWrapper(String messageName, boolean isSuccess) {
+    public SwStep(String messageName, boolean isSuccess) {
         this.messageName = messageName;
         this.isSuccess = isSuccess;
     }
