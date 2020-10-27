@@ -43,6 +43,7 @@
         <module>ueransim</module>
         <module>crypto</module>
         <module>gtp</module>
+        <module>itms</module>
     </modules>
 
     <build>
@@ -87,7 +88,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>tr.havelsan.ueransim.app.Program</mainClass>
+                            <mainClass>tr.havelsan.ueransim.app.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -107,7 +108,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>tr.havelsan.ueransim.app.Program</mainClass>
+                                    <mainClass>tr.havelsan.ueransim.app.Main</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>

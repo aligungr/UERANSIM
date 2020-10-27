@@ -4,7 +4,6 @@ import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.Program;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -12,7 +11,6 @@ import tr.havelsan.ueransim.utils.console.LogEntry;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -20,23 +18,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Backend {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
-    private static Program program;
     private static final BlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
+    private static UeRanSim ueRanSim;
 
     public static void main(String[] args) {
-        program = new Program();
+        ueRanSim = new UeRanSim();
 
-        var simCtx = program.getSimCtx();
+        var simCtx = ueRanSim.getSimCtx();
 
         Log.addLogHandler(Backend::addLog);
 
         for (var ueId : Simulation.allUes(simCtx)) {
-            var ue = Simulation.findUe(simCtx, ueId);
+            var ue = Simulation.findUe(ueRanSim, ueId);
             if (ue != null) ue.logger.addLogHandler(Backend::addLog);
         }
 
         for (var gnbId : Simulation.allGnbs(simCtx)) {
-            var gnb = Simulation.findGnb(simCtx, gnbId);
+            var gnb = Simulation.findGnb(ueRanSim, gnbId);
             if (gnb != null) gnb.logger.addLogHandler(Backend::addLog);
         }
 
@@ -78,7 +76,7 @@ public class Backend {
     }
 
     public static synchronized void handleConnect(@NotNull WsConnectContext ctx) {
-        ctx.send(new Wrapper("possibleEvents", program.testCaseNames()));
+        ctx.send(new Wrapper("possibleEvents", ueRanSim.testCaseNames()));
     }
 
     public static class Wrapper {

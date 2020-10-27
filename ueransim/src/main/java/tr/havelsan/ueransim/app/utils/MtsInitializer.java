@@ -26,7 +26,7 @@ package tr.havelsan.ueransim.app.utils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import tr.havelsan.ueransim.app.testing.*;
+import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.mts.MtsException;
@@ -95,5 +95,6 @@ public class MtsInitializer {
         mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCmd_PeriodicRegistration.class);
         mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCmd_Deregistration.class);
         mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCmd_PduSessionEstablishment.class);
+        mts.typeRegistry.registerTypeName("PING", TestCmd_Ping.class);
     }
 }

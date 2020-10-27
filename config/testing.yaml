@@ -2,7 +2,7 @@ test-cases:
 
   initial-registration:
     - "@cmd": INITIAL_REGISTRATION
-      followOn: NO_FOR_PENDING    # Possible values: NO_FOR_PENDING, FOR_PENDING
+      followOn: FOR_PENDING    # Possible values: NO_FOR_PENDING, FOR_PENDING
 
   periodic-registration:
     - "@cmd": INITIAL_REGISTRATION
