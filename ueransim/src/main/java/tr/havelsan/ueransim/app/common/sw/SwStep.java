@@ -1,11 +1,18 @@
 package tr.havelsan.ueransim.app.common.sw;
 
-public class SwStep extends SocketWrapper {
-    public final String messageName;
-    public final boolean isSuccess;
+import tr.havelsan.ueransim.utils.Severity;
 
-    public SwStep(String messageName, boolean isSuccess) {
+public class SwStep extends SocketWrapper {
+
+    public final String loggerName;
+    public final Severity severity;
+    public final String messageName;
+    public final String messageBody;
+
+    public SwStep(String loggerName, Severity severity, String messageName, String messageBody) {
+        this.loggerName = loggerName;
+        this.severity = severity;
         this.messageName = messageName;
-        this.isSuccess = isSuccess;
+        this.messageBody = messageBody;
     }
 }

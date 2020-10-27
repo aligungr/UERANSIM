@@ -27,6 +27,7 @@ package tr.havelsan.ueransim.app.app;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.core.Constants;
@@ -87,6 +88,20 @@ public class AppConfig {
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
         return createGnbSimContext(simCtx, mts.constructor.construct(GnbConfig.class, config, true));
+    }
+
+    public static String generateNodeName(BaseSimContext ctx) {
+
+        if (ctx instanceof UeSimContext) {
+            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
+        }
+
+        if (ctx instanceof GnbSimContext) {
+            return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
+        }
+
+        throw new RuntimeException();
+
     }
 
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {

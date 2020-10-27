@@ -39,7 +39,7 @@ public class UeNode {
     public static final boolean AUTO = false;
 
     public static void run(UeSimContext ctx) {
-        ctx.logger = AppConfig.createLoggerFor("ue-" + ctx.ueConfig.supi.toString());
+        ctx.logger = AppConfig.createLoggerFor(AppConfig.generateNodeName(ctx));
 
         var itms = ctx.itms;
 

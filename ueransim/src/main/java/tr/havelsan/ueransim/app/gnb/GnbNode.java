@@ -39,7 +39,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class GnbNode {
 
     public static void run(GnbSimContext ctx) {
-        ctx.logger = AppConfig.createLoggerFor("gnb-" + ctx.config.gnbId);
+        ctx.logger = AppConfig.createLoggerFor(AppConfig.generateNodeName(ctx));
 
         var itms = ctx.itms;
 
