@@ -1,22 +1,25 @@
-package tr.havelsan.ueransim.app.backend;
+package tr.havelsan.ueransim.app.app;
 
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.app.Simulation;
-import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.utils.Json;
+import tr.havelsan.ueransim.app.common.sw.*;
+import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Backend {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
     private static UeRanSim ueRanSim;
+    private static final BlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
 
     public static void main(String[] args) {
         ueRanSim = new UeRanSim();
@@ -35,6 +38,20 @@ public class Backend {
             if (gnb != null) gnb.logger.addLogHandler(Backend::addLog);
         }
 
+        new Thread(() -> {
+            Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
+
+            while (true) {
+                String cmd;
+                try {
+                    cmd = commandQueue.take();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                ueRanSim.runTest(cmd);
+            }
+        }).start();
+
         Javalin.create().start(7070).ws("/demo", ws -> {
             ws.onConnect(Backend::handleConnect);
             ws.onMessage(Backend::handleMessage);
@@ -46,34 +63,23 @@ public class Backend {
     }
 
     public static synchronized void handleMessage(@NotNull WsMessageContext ctx) {
-        for (var s : logEntries) {
-            ctx.send(new Wrapper("log", s));
+        if (!logEntries.isEmpty()) {
+            ctx.send(SocketWrapperSerializer.toJson(new SwLog(logEntries)));
         }
 
-        String s = Json.fromJson(ctx.message(), String.class);
+        SocketWrapper w = SocketWrapperSerializer.fromJson(ctx.message(), SocketWrapper.class);
 
-        if (s.length() > 0 && !s.equals("dummy"))
-            ueRanSim.runTest(s);
+        if (!(w instanceof SwHeartbeat)) {
+            if (w instanceof SwCommand) {
+                SwCommand ew = (SwCommand) w;
+                commandQueue.add(ew.commandName);
+            }
+        }
 
         logEntries.clear();
     }
 
     public static synchronized void handleConnect(@NotNull WsConnectContext ctx) {
-        ctx.send(new Wrapper("possibleEvents", ueRanSim.testCaseNames()));
-    }
-
-    public static class Wrapper {
-        public final String type;
-        public final Object message;
-
-        public Wrapper(String type, Object message) {
-            this.type = type;
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return Json.toJson(this);
-        }
+        ctx.send(SocketWrapperSerializer.toJson(new SwTestCases(ueRanSim.testCaseNames())));
     }
 }
