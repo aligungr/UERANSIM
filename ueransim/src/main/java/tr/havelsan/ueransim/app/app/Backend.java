@@ -20,9 +20,13 @@ public class Backend {
     private static final List<LogEntry> logEntries = new ArrayList<>();
     private static UeRanSim ueRanSim;
     private static final BlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
+    private static final StepperMessagingListener stepperListener = new StepperMessagingListener();
 
     public static void main(String[] args) {
-        ueRanSim = new UeRanSim();
+        var messagingListeners = new ArrayList<INodeMessagingListener>();
+        messagingListeners.add(stepperListener);
+
+        ueRanSim = new UeRanSim(messagingListeners);
 
         var simCtx = ueRanSim.getSimCtx();
 
@@ -80,6 +84,7 @@ public class Backend {
     }
 
     public static synchronized void handleConnect(@NotNull WsConnectContext ctx) {
+        stepperListener.onConnect(ctx);
         ctx.send(SocketWrapperSerializer.toJson(new SwTestCases(ueRanSim.testCaseNames())));
     }
 }

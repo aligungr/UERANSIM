@@ -54,6 +54,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class UeRanSim {
 
@@ -63,12 +64,14 @@ public class UeRanSim {
     private final BaseConsole loadTestConsole;
     private final ImplicitTypedObject testCases;
     private final ImplicitTypedObject loadTesting;
+    private final List<INodeMessagingListener> messagingListeners;
     private ArrayList<UeSimContext> ueContexts;
     private SimulationContext simCtx;
 
-    public UeRanSim() {
+    public UeRanSim(List<INodeMessagingListener> messagingListeners) {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
+        this.messagingListeners = messagingListeners;
 
         MtsInitializer.initDefaultMts(defaultMts);
         MtsInitializer.initTestingMts(testingMts);
@@ -117,7 +120,7 @@ public class UeRanSim {
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        simCtx = new SimulationContext(Arrays.asList(new LoadTestMessagingListener(loadTestConsole)));
+        simCtx = new SimulationContext(Utils.merge(Arrays.asList(new LoadTestMessagingListener(loadTestConsole)), messagingListeners));
 
         var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);

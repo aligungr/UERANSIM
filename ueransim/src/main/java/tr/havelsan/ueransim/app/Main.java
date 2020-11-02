@@ -5,12 +5,13 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        var ueransim = new UeRanSim();
+        var ueransim = new UeRanSim(new ArrayList<>());
 
         Utils.sleep(250);
 
