@@ -43,7 +43,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -77,7 +76,7 @@ public class UeRanSim {
     private void initialize() {
         var numberOfUe = loadTesting.numberOfUes;
 
-        simCtx = new SimulationContext(Utils.merge(Arrays.asList(), messagingListeners));
+        simCtx = new SimulationContext(messagingListeners);
 
         var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
