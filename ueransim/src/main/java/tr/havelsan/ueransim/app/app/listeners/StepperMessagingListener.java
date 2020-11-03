@@ -1,6 +1,7 @@
-package tr.havelsan.ueransim.app.app;
+package tr.havelsan.ueransim.app.app.listeners;
 
 import io.javalin.websocket.WsConnectContext;
+import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.sw.SwStep;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;

@@ -24,6 +24,7 @@
 
 package tr.havelsan.ueransim.app.app;
 
+import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 

@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app.app;
+package tr.havelsan.ueransim.app.app.listeners;
 
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
@@ -12,7 +12,7 @@ import tr.havelsan.ueransim.utils.console.BaseConsole;
 import java.util.HashMap;
 import java.util.Map;
 
-class LoadTestMessagingListener implements INodeMessagingListener {
+public class LoadTestMessagingListener implements INodeMessagingListener {
     private final BaseConsole console;
 
     private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
