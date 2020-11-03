@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app;
+package tr.havelsan.ueransim.app.app.entry;
 
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.utils.Utils;
@@ -8,7 +8,7 @@ import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main {
+public class MainApp {
 
     public static void main(String[] args) {
         var ueransim = new UeRanSim(new ArrayList<>());

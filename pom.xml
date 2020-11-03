@@ -108,7 +108,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>tr.havelsan.ueransim.app.Main</mainClass>
+                                    <mainClass>tr.havelsan.ueransim.app.app.entry.MainApp</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>

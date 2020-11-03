@@ -1,9 +1,11 @@
-package tr.havelsan.ueransim.app.app;
+package tr.havelsan.ueransim.app.app.entry;
 
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
+import tr.havelsan.ueransim.app.app.Simulation;
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.app.listeners.StepperMessagingListener;
 import tr.havelsan.ueransim.app.common.sw.*;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Backend {
+public class WebApp {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
     private static UeRanSim ueRanSim;
@@ -32,16 +34,16 @@ public class Backend {
 
         var simCtx = ueRanSim.getSimCtx();
 
-        Log.addLogHandler(Backend::addLog);
+        Log.addLogHandler(WebApp::addLog);
 
         for (var ueId : Simulation.allUes(simCtx)) {
             var ue = Simulation.findUe(ueRanSim, ueId);
-            if (ue != null) ue.logger.addLogHandler(Backend::addLog);
+            if (ue != null) ue.logger.addLogHandler(WebApp::addLog);
         }
 
         for (var gnbId : Simulation.allGnbs(simCtx)) {
             var gnb = Simulation.findGnb(ueRanSim, gnbId);
-            if (gnb != null) gnb.logger.addLogHandler(Backend::addLog);
+            if (gnb != null) gnb.logger.addLogHandler(WebApp::addLog);
         }
 
         new Thread(() -> {
@@ -59,8 +61,8 @@ public class Backend {
         }).start();
 
         Javalin.create().start(7070).ws("/demo", ws -> {
-            ws.onConnect(Backend::handleConnect);
-            ws.onMessage(Backend::handleMessage);
+            ws.onConnect(WebApp::handleConnect);
+            ws.onMessage(WebApp::handleMessage);
         });
     }
 
