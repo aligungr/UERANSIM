@@ -25,7 +25,6 @@
 package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
-import tr.havelsan.ueransim.app.app.listeners.LoadTestMessagingListener;
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
@@ -40,20 +39,9 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
-import tr.havelsan.ueransim.utils.console.BaseConsole;
-import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Log;
-import tr.havelsan.ueransim.utils.console.Logger;
-import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,14 +51,13 @@ public class UeRanSim {
     private final MtsContext defaultMts;
     private final MtsContext testingMts;
     private final AppConfig app;
-    private final BaseConsole loadTestConsole;
     private final ImplicitTypedObject testCases;
     private final ImplicitTypedObject loadTesting;
     private final List<INodeMessagingListener> messagingListeners;
     private ArrayList<UeSimContext> ueContexts;
     private SimulationContext simCtx;
 
-    public UeRanSim(List<INodeMessagingListener> messagingListeners) {
+    UeRanSim(List<INodeMessagingListener> messagingListeners) {
         this.defaultMts = new MtsContext();
         this.testingMts = new MtsContext();
         this.messagingListeners = messagingListeners;
@@ -79,10 +66,6 @@ public class UeRanSim {
         MtsInitializer.initTestingMts(testingMts);
 
         this.app = new AppConfig(defaultMts, this);
-
-        this.loadTestConsole = new BaseConsole();
-
-        initLogging();
 
         testingMts.setTypeKeyword("@cmd");
         var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
@@ -93,36 +76,10 @@ public class UeRanSim {
         initialize();
     }
 
-    private void initLogging() {
-        new File("logs").mkdir();
-
-        AppConfig.loggingToFile(Logger.GLOBAL, "global", true);
-        Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
-
-        final String globalLogFile = "logs/global.log";
-        final String loadTestFile = "logs/loadtest.log";
-
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All global logs are written to: %s", globalLogFile);
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log files: logs/*");
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: %s", loadTestFile);
-
-        loadTestConsole.setStandardPrintEnabled(false);
-        loadTestConsole.addPrintHandler(str -> {
-            final Path path = Paths.get(loadTestFile);
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        loadTestConsole.printDiv();
-    }
-
     private void initialize() {
         var numberOfUe = loadTesting.getInt("number-of-UE");
 
-        simCtx = new SimulationContext(Utils.merge(Arrays.asList(new LoadTestMessagingListener(loadTestConsole)), messagingListeners));
+        simCtx = new SimulationContext(Utils.merge(Arrays.asList(), messagingListeners));
 
         var gnbContext = app.createGnbSimContext(simCtx, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);

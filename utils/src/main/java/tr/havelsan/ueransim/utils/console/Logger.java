@@ -117,4 +117,8 @@ public class Logger {
     public void addLogHandler(Consumer<LogEntry> handler) {
         printHandlers.add(handler);
     }
+
+    public String getLoggerName() {
+        return loggerName;
+    }
 }

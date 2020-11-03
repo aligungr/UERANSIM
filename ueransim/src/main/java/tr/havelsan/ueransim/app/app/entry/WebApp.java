@@ -4,9 +4,9 @@ import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
+import tr.havelsan.ueransim.app.app.AppBuilder;
 import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.app.listeners.StepperMessagingListener;
 import tr.havelsan.ueransim.app.common.sw.*;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
@@ -22,15 +22,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class WebApp {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
-    private static UeRanSim ueRanSim;
     private static final BlockingQueue<String> commandQueue = new LinkedBlockingQueue<>();
     private static final StepperMessagingListener stepperListener = new StepperMessagingListener();
+    private static UeRanSim ueRanSim;
 
     public static void main(String[] args) {
-        var messagingListeners = new ArrayList<INodeMessagingListener>();
-        messagingListeners.add(stepperListener);
-
-        ueRanSim = new UeRanSim(messagingListeners);
+        ueRanSim = new AppBuilder()
+                .addMessagingListener(stepperListener)
+                .build();
 
         var simCtx = ueRanSim.getSimCtx();
 
