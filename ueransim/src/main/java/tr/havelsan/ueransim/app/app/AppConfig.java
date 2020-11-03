@@ -94,7 +94,7 @@ public class AppConfig {
         throw new RuntimeException();
     }
 
-    public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
+    public GnbSimContext createGnbSimContext(GnbConfig config) {
         var ctx = new GnbSimContext(ueRanSim);
         ctx.config = config;
 
@@ -116,7 +116,7 @@ public class AppConfig {
         return ctx;
     }
 
-    public UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
+    public UeSimContext createUeSimContext(UeConfig config) {
         var ctx = new UeSimContext(ueRanSim);
         ctx.ueConfig = config;
         return ctx;
