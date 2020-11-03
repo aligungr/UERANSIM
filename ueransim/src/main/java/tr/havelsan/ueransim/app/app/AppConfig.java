@@ -94,10 +94,6 @@ public class AppConfig {
         throw new RuntimeException();
     }
 
-    public GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        return createGnbSimContext(simCtx, mts.constructor.construct(GnbConfig.class, config, true));
-    }
-
     public GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
         var ctx = new GnbSimContext(ueRanSim);
         ctx.config = config;
@@ -118,10 +114,6 @@ public class AppConfig {
         }
 
         return ctx;
-    }
-
-    public UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
-        return createUeSimContext(simCtx, config.asConstructed(mts, UeConfig.class));
     }
 
     public UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
