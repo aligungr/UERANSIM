@@ -26,7 +26,6 @@ package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
-import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -48,11 +47,9 @@ public class AppConfig {
 
     public final MtsContext mts;
     private final String profile;
-    private final UeRanSim ueRanSim;
 
-    public AppConfig(MtsContext mts, UeRanSim ueRanSim) {
+    public AppConfig(MtsContext mts) {
         this.mts = mts;
-        this.ueRanSim = ueRanSim;
 
         var root = (ImplicitTypedObject) mts.decoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
@@ -92,34 +89,6 @@ public class AppConfig {
         if (ctx instanceof GnbSimContext)
             return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
         throw new RuntimeException();
-    }
-
-    public GnbSimContext createGnbSimContext(GnbConfig config) {
-        var ctx = new GnbSimContext(ueRanSim);
-        ctx.config = config;
-
-        // Create AMF gNB contexts
-        {
-            for (var amfConfig : ctx.config.amfConfigs) {
-                if (amfConfig.guami == null) {
-                    throw new RuntimeException("amfConfig.guami == null");
-                }
-
-                var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
-                amfGnbCtx.host = amfConfig.host;
-                amfGnbCtx.port = amfConfig.port;
-
-                ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
-            }
-        }
-
-        return ctx;
-    }
-
-    public UeSimContext createUeSimContext(UeConfig config) {
-        var ctx = new UeSimContext(ueRanSim);
-        ctx.ueConfig = config;
-        return ctx;
     }
 
     public GnbConfig createGnbConfig() {

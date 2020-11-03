@@ -68,7 +68,7 @@ public class UeRanSim {
 
         MtsInitializer.initDefaultMts(defaultMts);
 
-        this.app = new AppConfig(defaultMts, this);
+        this.app = new AppConfig(defaultMts);
 
         initialize();
     }
@@ -78,7 +78,7 @@ public class UeRanSim {
 
         simCtx = new SimulationContext(messagingListeners);
 
-        var gnbContext = app.createGnbSimContext(app.createGnbConfig());
+        var gnbContext = GnbNode.createContext(this, app.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
         GnbNode.run(gnbContext);
 
@@ -95,7 +95,7 @@ public class UeRanSim {
             var config = new UeConfig(ref.snn, ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi),
                     ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
 
-            var ueContext = app.createUeSimContext(config);
+            var ueContext = UeNode.createContext(this, config);
 
             Simulation.registerUe(simCtx, ueContext);
             UeNode.run(ueContext);

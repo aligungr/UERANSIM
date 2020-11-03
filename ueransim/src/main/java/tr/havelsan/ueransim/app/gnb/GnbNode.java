@@ -25,6 +25,9 @@
 package tr.havelsan.ueransim.app.gnb;
 
 import tr.havelsan.ueransim.app.app.AppConfig;
+import tr.havelsan.ueransim.app.app.UeRanSim;
+import tr.havelsan.ueransim.app.common.configs.GnbConfig;
+import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.gnb.gtp.GtpTask;
@@ -37,6 +40,28 @@ import tr.havelsan.ueransim.itms.ItmsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class GnbNode {
+
+    public static GnbSimContext createContext(UeRanSim sim, GnbConfig config) {
+        var ctx = new GnbSimContext(sim);
+        ctx.config = config;
+
+        // Create AMF gNB contexts
+        {
+            for (var amfConfig : ctx.config.amfConfigs) {
+                if (amfConfig.guami == null) {
+                    throw new RuntimeException("amfConfig.guami == null");
+                }
+
+                var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
+                amfGnbCtx.host = amfConfig.host;
+                amfGnbCtx.port = amfConfig.port;
+
+                ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
+            }
+        }
+
+        return ctx;
+    }
 
     public static void run(GnbSimContext ctx) {
         ctx.logger = AppConfig.createLoggerFor(AppConfig.generateNodeName(ctx));

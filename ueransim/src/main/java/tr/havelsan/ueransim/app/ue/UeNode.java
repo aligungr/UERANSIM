@@ -25,6 +25,8 @@
 package tr.havelsan.ueransim.app.ue;
 
 import tr.havelsan.ueransim.app.app.AppConfig;
+import tr.havelsan.ueransim.app.app.UeRanSim;
+import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.ue.mr.MrTask;
@@ -37,6 +39,12 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class UeNode {
 
     public static final boolean AUTO = false;
+
+    public static UeSimContext createContext(UeRanSim sim, UeConfig config) {
+        var ctx = new UeSimContext(sim);
+        ctx.ueConfig = config;
+        return ctx;
+    }
 
     public static void run(UeSimContext ctx) {
         ctx.logger = AppConfig.createLoggerFor(AppConfig.generateNodeName(ctx));
