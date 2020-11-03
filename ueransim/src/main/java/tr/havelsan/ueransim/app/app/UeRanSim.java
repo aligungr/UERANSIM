@@ -26,6 +26,7 @@ package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.common.Supi;
+import tr.havelsan.ueransim.app.common.configs.LoadTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -35,7 +36,6 @@ import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
@@ -44,40 +44,38 @@ import tr.havelsan.ueransim.utils.console.Log;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class UeRanSim {
 
     private final MtsContext defaultMts;
-    private final MtsContext testingMts;
     private final AppConfig app;
-    private final ImplicitTypedObject testCases;
-    private final ImplicitTypedObject loadTesting;
     private final List<INodeMessagingListener> messagingListeners;
+    private final LinkedHashMap<String, List<TestCmd>> testCases;
+    private final LoadTestConfig loadTesting;
+
     private ArrayList<UeSimContext> ueContexts;
     private SimulationContext simCtx;
 
-    UeRanSim(List<INodeMessagingListener> messagingListeners) {
+    UeRanSim(List<INodeMessagingListener> messagingListeners,
+             LinkedHashMap<String, List<TestCmd>> testCases,
+             LoadTestConfig loadTesting) {
+
         this.defaultMts = new MtsContext();
-        this.testingMts = new MtsContext();
         this.messagingListeners = messagingListeners;
+        this.testCases = testCases;
+        this.loadTesting = loadTesting;
 
         MtsInitializer.initDefaultMts(defaultMts);
-        MtsInitializer.initTestingMts(testingMts);
 
         this.app = new AppConfig(defaultMts, this);
-
-        testingMts.setTypeKeyword("@cmd");
-        var testing = (ImplicitTypedObject) testingMts.decoder.decode("config/testing.yaml");
-
-        loadTesting = (ImplicitTypedObject) testing.get("load-testing");
-        testCases = (ImplicitTypedObject) testing.get("test-cases");
 
         initialize();
     }
 
     private void initialize() {
-        var numberOfUe = loadTesting.getInt("number-of-UE");
+        var numberOfUe = loadTesting.numberOfUes;
 
         simCtx = new SimulationContext(Utils.merge(Arrays.asList(), messagingListeners));
 
@@ -109,23 +107,15 @@ public class UeRanSim {
     }
 
     public String[] testCaseNames() {
-        return testCases.getParameters().keySet().toArray(new String[0]);
+        return testCases.keySet().toArray(new String[0]);
     }
 
     public void runTest(String testName) {
-        var testObjects = (Object[]) testCases.get(testName);
-        if (testObjects == null) {
+        var testCmds = testCases.get(testName);
+        if (testCmds == null) {
             throw new RuntimeException("test case not found: " + testName);
         }
 
-        var testCommands = new TestCmd[testObjects.length];
-        for (int i = 0; i < testCommands.length; i++) {
-            testCommands[i] = (TestCmd) testObjects[i];
-        }
-        runTest(testName, testCommands);
-    }
-
-    private void runTest(String testName, TestCmd[] testCmds) {
         for (var command : testCmds) {
             if (command instanceof TestCmd_Sleep) {
                 var cmd = (TestCmd_Sleep) command;
