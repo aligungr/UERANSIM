@@ -32,6 +32,7 @@ import tr.havelsan.ueransim.crypto.Mac;
 import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -60,6 +61,13 @@ public class MmKeyManagement {
 
         securityContext.keys.kNasEnc = kdfEnc.substring(16, 16);
         securityContext.keys.kNasInt = kdfInt.substring(16, 16);
+    }
+
+    /**
+     * Constructs SNN (Serving Network Name) according to given PLMN as specified in 3GPP TS 24.501
+     */
+    public static String constructServingNetworkName(VPlmn plmn) {
+        return String.format("5G:mnc%03d.mcc%03d.3gppnetwork.org", plmn.mnc.intValue(), plmn.mcc.intValue());
     }
 
     /**

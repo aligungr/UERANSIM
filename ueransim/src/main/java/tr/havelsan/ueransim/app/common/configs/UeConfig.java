@@ -25,38 +25,44 @@
 package tr.havelsan.ueransim.app.common.configs;
 
 import tr.havelsan.ueransim.app.common.Supi;
+import tr.havelsan.ueransim.app.ue.mm.MmKeyManagement;
 import tr.havelsan.ueransim.nas.impl.ies.IEDnn;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
+import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UeConfig {
-    public final String snn;
     public final OctetString key;
     public final OctetString op;
     public final OctetString amf;
     public final String imei;
     public final Supi supi;
+    public final VPlmn plmn;
 
     public final boolean smsOverNasSupported;
     public final IESNssai[] requestedNssai;
     public final IEDnn dnn;
 
-    public UeConfig(String snn, OctetString key, OctetString op, OctetString amf, String imei, Supi supi,
+    public final String snn; // Auto constructed
+
+    public UeConfig(OctetString key, OctetString op, OctetString amf, String imei, Supi supi, VPlmn plmn,
                     boolean smsOverNasSupported, IESNssai[] requestedNssai, IEDnn dnn) {
-        this.snn = snn;
         this.key = key;
         this.op = op;
         this.amf = amf;
         this.imei = imei;
         this.supi = supi;
+        this.plmn = plmn;
         this.smsOverNasSupported = smsOverNasSupported;
         this.requestedNssai = requestedNssai;
         this.dnn = dnn;
+
+        this.snn = MmKeyManagement.constructServingNetworkName(plmn);
     }
 
-    public UeConfig(String snn, String key, String op, String amf, String imei, String supi,
+    public UeConfig(String key, String op, String amf, String imei, String supi, VPlmn plmn,
                     boolean smsOverNasSupported, IESNssai[] requestedNssai, String dnn) {
-        this(snn, new OctetString(key), new OctetString(op), new OctetString(amf), imei,
-                Supi.parse(supi), smsOverNasSupported, requestedNssai, new IEDnn(dnn));
+        this(new OctetString(key), new OctetString(op), new OctetString(amf), imei,
+                Supi.parse(supi), plmn, smsOverNasSupported, requestedNssai, new IEDnn(dnn));
     }
 }

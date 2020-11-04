@@ -92,7 +92,7 @@ public class UeRanSim {
             var ref = app.createUeConfig();
             var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
             var supi = new Supi("imsi", imsiNumber).toString();
-            var config = new UeConfig(ref.snn, ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi),
+            var config = new UeConfig(ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi), ref.plmn,
                     ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
 
             var ueContext = UeNode.createContext(this, config);
