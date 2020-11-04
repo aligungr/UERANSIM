@@ -29,8 +29,6 @@ public final class Constants {
     public static final String NAS_IMPL_PREFIX = "tr.havelsan.ueransim.nas.impl";
     public static final String NGAP_PDU_CONTENTS = "tr.havelsan.ueransim.ngap.ngap_pdu_contents";
 
-    public static final int NGAP_PROTOCOL_ID = 60;
-
     public static boolean USE_LONG_MNC = true;
     public static boolean TREAT_ERRORS_AS_FATAL = false;
 }

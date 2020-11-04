@@ -31,7 +31,6 @@ import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
 import tr.havelsan.ueransim.app.common.itms.IwNgapSend;
 import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
@@ -47,6 +46,8 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SctpTask extends ItmsTask {
+
+    private static final int NGAP_PROTOCOL_ID = 60;
 
     private final GnbSimContext ctx;
     private final HashMap<Guami, GnbAmfContext> amfs;
@@ -83,7 +84,7 @@ public class SctpTask extends ItmsTask {
                 }
             };
 
-            amf.sctpClient = new SctpClient(ctx.config.host, amf.host, amf.port, Constants.NGAP_PROTOCOL_ID, associationHandler);
+            amf.sctpClient = new SctpClient(ctx.config.host, amf.host, amf.port, NGAP_PROTOCOL_ID, associationHandler);
 
             var receiverThread = new Thread(() -> {
                 try {
