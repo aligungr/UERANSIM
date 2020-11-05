@@ -33,10 +33,18 @@ public class AppBuilder {
         this.messagingListeners = new ArrayList<>();
     }
 
+    //======================================================================================================
+    //                                          MUTATORS
+    //======================================================================================================
+
     public AppBuilder addMessagingListener(INodeMessagingListener listener) {
         this.messagingListeners.add(listener);
         return this;
     }
+
+    //======================================================================================================
+    //                                          BUILDER
+    //======================================================================================================
 
     public UeRanSim build() {
         if (isBuilt)
