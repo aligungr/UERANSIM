@@ -28,7 +28,7 @@ import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.crypto.KDF;
-import tr.havelsan.ueransim.crypto.Mac;
+import tr.havelsan.ueransim.crypto.MAC;
 import tr.havelsan.ueransim.crypto.PRF;
 import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
@@ -105,7 +105,7 @@ public class MmKeyManagement {
 
         var input = new OctetString(EapEncoder.eapPdu(eap));
 
-        var sha = Mac.hmacSha256(kaut, input);
+        var sha = MAC.hmacSha256(kaut, input);
         return sha.substring(0, 16);
     }
 

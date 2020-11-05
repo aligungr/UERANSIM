@@ -55,7 +55,7 @@ public class PRF {
             } else {
                 s = OctetString.concat(T[i - 1], input, new OctetString(new Octet(i + 1)));
             }
-            T[i] = Mac.hmacSha256(key, s);
+            T[i] = MAC.hmacSha256(key, s);
         }
 
         return OctetString.concat(T);

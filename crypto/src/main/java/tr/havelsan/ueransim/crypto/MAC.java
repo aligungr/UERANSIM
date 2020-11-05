@@ -28,7 +28,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import javax.crypto.spec.SecretKeySpec;
 
-public class Mac {
+public class MAC {
 
     /**
      * Calculates the HMAC-SHA-256 with given parameters

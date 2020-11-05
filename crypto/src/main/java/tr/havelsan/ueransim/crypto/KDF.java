@@ -42,7 +42,7 @@ public class KDF {
             inputS.writeOctetString(parameter);
             inputS.writeOctet2(parameter.length);
         }
-        return Mac.hmacSha256(key, inputS.toOctetString());
+        return MAC.hmacSha256(key, inputS.toOctetString());
     }
 
     /**
@@ -56,7 +56,7 @@ public class KDF {
             inputS.writeOctetString(parameter);
             inputS.writeOctet2(parameter.length);
         }
-        return Mac.hmacSha256(key, inputS.toOctetString());
+        return MAC.hmacSha256(key, inputS.toOctetString());
     }
 
     /**
