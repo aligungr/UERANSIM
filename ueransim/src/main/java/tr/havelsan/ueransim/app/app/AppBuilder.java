@@ -4,6 +4,7 @@ import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.app.listeners.LoadTestMessagingListener;
 import tr.havelsan.ueransim.app.common.configs.LoadTestConfig;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
+import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
@@ -53,7 +54,7 @@ public class AppBuilder {
 
         new File("logs").mkdir();
 
-        AppConfig.loggingToFile(Logger.GLOBAL, Logger.GLOBAL.getLoggerName(), true);
+        ConfigUtils.loggingToFile(Logger.GLOBAL, Logger.GLOBAL.getLoggerName(), true);
         Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
 
         Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All global logs are written to: logs/%s.log", Logger.GLOBAL.getLoggerName());

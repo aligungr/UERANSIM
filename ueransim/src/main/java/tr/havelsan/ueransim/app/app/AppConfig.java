@@ -26,23 +26,12 @@ package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
-import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.console.Console;
-import tr.havelsan.ueransim.utils.console.Logger;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 public class AppConfig {
 
@@ -61,36 +50,6 @@ public class AppConfig {
         var general = (ImplicitTypedObject) mts.decoder.decode(this.profile + "general.yaml");
         Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
         Constants.TREAT_ERRORS_AS_FATAL = general.getBool("treat-errors-as-fatal");
-    }
-
-    public static Logger createLoggerFor(String name) {
-        var logger = new Logger(name);
-        loggingToFile(logger, name, false);
-        return logger;
-    }
-
-    public static void loggingToFile(Logger logger, String name, boolean standardPrint) {
-        if (name.contains(".") || name.contains("/"))
-            throw new IllegalArgumentException("name contains '.' or '/'");
-
-        logger.getConsole().setStandardPrintEnabled(standardPrint);
-        logger.getConsole().addPrintHandler(str -> {
-            final Path path = Paths.get("logs/" + name + ".log");
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    public static String generateNodeName(BaseSimContext ctx) {
-        if (ctx instanceof UeSimContext)
-            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
-        if (ctx instanceof GnbSimContext)
-            return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
-        throw new RuntimeException();
     }
 
     public GnbConfig createGnbConfig() {

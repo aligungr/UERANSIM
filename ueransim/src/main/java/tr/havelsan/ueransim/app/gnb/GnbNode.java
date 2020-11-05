@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app.gnb;
 
-import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
@@ -35,6 +34,7 @@ import tr.havelsan.ueransim.app.gnb.gtp.TunTask;
 import tr.havelsan.ueransim.app.gnb.mr.MrTask;
 import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.app.gnb.sctp.SctpTask;
+import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -64,7 +64,7 @@ public class GnbNode {
     }
 
     public static void run(GnbSimContext ctx) {
-        ctx.logger = AppConfig.createLoggerFor(AppConfig.generateNodeName(ctx));
+        ctx.logger = ConfigUtils.createLoggerFor(ConfigUtils.generateNodeName(ctx));
 
         var itms = ctx.itms;
 
