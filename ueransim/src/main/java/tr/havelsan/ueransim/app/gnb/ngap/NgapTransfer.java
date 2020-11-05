@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.itms.IwNgapSend;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
@@ -52,8 +51,7 @@ public class NgapTransfer {
         Log.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
-
-        Simulation.triggerOnSend(ctx, message);
+        ctx.sim.triggerOnSend(ctx, message);
     }
 
     public static void sendNgapUeAssociated(GnbSimContext ctx, UUID ueId, NGAP_BaseMessage message) {
@@ -92,7 +90,6 @@ public class NgapTransfer {
         Log.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
-
-        Simulation.triggerOnSend(ctx, message);
+        ctx.sim.triggerOnSend(ctx, message);
     }
 }

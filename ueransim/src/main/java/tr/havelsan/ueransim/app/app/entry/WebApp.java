@@ -5,7 +5,6 @@ import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
 import org.jetbrains.annotations.NotNull;
 import tr.havelsan.ueransim.app.app.AppBuilder;
-import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.app.listeners.StepperMessagingListener;
 import tr.havelsan.ueransim.app.common.sw.*;
@@ -31,17 +30,15 @@ public class WebApp {
                 .addMessagingListener(stepperListener)
                 .build();
 
-        var simCtx = ueRanSim.getSimCtx();
-
         Log.addLogHandler(WebApp::addLog);
 
-        for (var ueId : Simulation.allUes(simCtx)) {
-            var ue = Simulation.findUe(ueRanSim, ueId);
+        for (var ueId : ueRanSim.allUes()) {
+            var ue = ueRanSim.findUe(ueId);
             if (ue != null) ue.logger.addLogHandler(WebApp::addLog);
         }
 
-        for (var gnbId : Simulation.allGnbs(simCtx)) {
-            var gnb = Simulation.findGnb(ueRanSim, gnbId);
+        for (var gnbId : ueRanSim.allGnbs()) {
+            var gnb = ueRanSim.findGnb(gnbId);
             if (gnb != null) gnb.logger.addLogHandler(WebApp::addLog);
         }
 

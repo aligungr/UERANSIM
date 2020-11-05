@@ -25,7 +25,6 @@
 package tr.havelsan.ueransim.app.ue.nas;
 
 
-import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.mm.MobilityManagement;
@@ -38,7 +37,6 @@ import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
-
 
 public class NasTransport {
 
@@ -54,9 +52,7 @@ public class NasTransport {
         Log.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
 
         ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkNas(ctx.ctxId, securedNasPdu));
-
-        Simulation.triggerOnSend(ctx, message);
-
+        ctx.sim.triggerOnSend(ctx, message);
         Log.funcOut();
     }
 
@@ -71,7 +67,7 @@ public class NasTransport {
         Log.debug(Tag.MESSAGING, "Plain NAS as JSON %s", Json.toJson(message));
         Log.debug(Tag.MESSAGING, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
 
-        Simulation.triggerOnReceive(ctx, message);
+        ctx.sim.triggerOnReceive(ctx, message);
 
         if (message != null) {
             if (message instanceof PlainMmMessage) {
@@ -83,5 +79,4 @@ public class NasTransport {
 
         Log.funcOut();
     }
-
 }

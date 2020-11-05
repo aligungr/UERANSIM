@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
@@ -76,7 +75,7 @@ public class NgapTask extends ItmsTask {
             return;
         }
 
-        Simulation.triggerOnReceive(ctx, ngapMessage);
+        ctx.sim.triggerOnReceive(ctx, ngapMessage);
 
         try {
             if (!ctx.config.ignoreStreamIds) {

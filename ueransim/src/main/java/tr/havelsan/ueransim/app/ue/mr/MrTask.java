@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.app.ue.mr;
 
-import tr.havelsan.ueransim.app.app.Simulation;
 import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
@@ -49,8 +48,7 @@ public class MrTask extends ItmsTask {
             if (msg instanceof IwDownlinkNas) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             } else if (msg instanceof IwUplinkNas) {
-                // TODO
-                Simulation.findGnb(ctx.sim, ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
+                ctx.sim.findGnb(ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
             } else if (msg instanceof IwConnectionRelease) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
             }

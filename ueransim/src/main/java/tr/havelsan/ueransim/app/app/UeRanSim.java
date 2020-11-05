@@ -29,6 +29,9 @@ import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.LoadTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
+import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
@@ -39,15 +42,16 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
 import java.math.BigInteger;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class UeRanSim {
 
     private final AppConfig appConfig;
     private final LinkedHashMap<String, List<TestCmd>> testCases;
     private final LoadTestConfig loadTesting;
-    private final SimulationContext simCtx;
+    private final HashMap<UUID, GnbSimContext> gnbMap;
+    private final HashMap<UUID, UeSimContext> ueMap;
+    private final List<INodeMessagingListener> messagingListeners;
 
     UeRanSim(List<INodeMessagingListener> messagingListeners,
              LinkedHashMap<String, List<TestCmd>> testCases,
@@ -55,9 +59,10 @@ public class UeRanSim {
 
         this.testCases = testCases;
         this.loadTesting = loadTesting;
-
         this.appConfig = new AppConfig();
-        this.simCtx = new SimulationContext(messagingListeners);
+        this.gnbMap = new HashMap<>();
+        this.ueMap = new HashMap<>();
+        this.messagingListeners = new ArrayList<>(messagingListeners);
 
         initialize();
     }
@@ -66,7 +71,7 @@ public class UeRanSim {
         var numberOfUe = loadTesting.numberOfUes;
 
         var gnbContext = GnbNode.createContext(this, appConfig.createGnbConfig());
-        Simulation.registerGnb(simCtx, gnbContext);
+        gnbMap.put(gnbContext.ctxId, gnbContext);
         GnbNode.run(gnbContext);
 
         while (!((GnbAppTask) gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
@@ -83,10 +88,10 @@ public class UeRanSim {
 
             var ueContext = UeNode.createContext(this, config);
 
-            Simulation.registerUe(simCtx, ueContext);
+            ueMap.put(ueContext.ctxId, ueContext);
             UeNode.run(ueContext);
 
-            Simulation.connectUeToGnb(ueContext, gnbContext);
+            ueContext.connectedGnb = gnbContext.ctxId;
         }
     }
 
@@ -111,20 +116,60 @@ public class UeRanSim {
                     Utils.sleep(cmd.duration * 1000);
                 }
             } else if (command instanceof TestCmd_InitialRegistration) {
-                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PeriodicRegistration) {
-                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Deregistration) {
-                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PduSessionEstablishment) {
-                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Ping) {
-                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             }
         }
     }
 
-    public SimulationContext getSimCtx() {
-        return simCtx;
+    public UeSimContext findUe(UUID id) {
+        synchronized (this) {
+            return ueMap.get(id);
+        }
+    }
+
+    public GnbSimContext findGnb(UUID id) {
+        synchronized (this) {
+            return gnbMap.get(id);
+        }
+    }
+
+    public HashSet<UUID> allUes() {
+        var res = new HashSet<UUID>();
+        synchronized (this) {
+            for (var item : ueMap.values()) {
+                res.add(item.ctxId);
+            }
+        }
+        return res;
+    }
+
+    public HashSet<UUID> allGnbs() {
+        var res = new HashSet<UUID>();
+        synchronized (this) {
+            for (var item : gnbMap.values()) {
+                res.add(item.ctxId);
+            }
+        }
+        return res;
+    }
+
+    public void triggerOnSend(BaseSimContext ctx, Object msg) {
+        for (var listener : messagingListeners) {
+            listener.onSend(ctx, msg);
+        }
+    }
+
+    public void triggerOnReceive(BaseSimContext ctx, Object msg) {
+        for (var listener : messagingListeners) {
+            listener.onReceive(ctx, msg);
+        }
     }
 }
