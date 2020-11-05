@@ -22,12 +22,16 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core.exceptions;
+package tr.havelsan.ueransim.utils.exceptions;
 
-public class FatalTreatedErrorException extends RuntimeException {
+public class EncodingException extends RuntimeException {
     private final String message;
 
-    public FatalTreatedErrorException(String message) {
+    public EncodingException(Class<?> clazz) {
+        this("invalid value for " + clazz.getSimpleName());
+    }
+
+    public EncodingException(String message) {
         this.message = message;
     }
 

@@ -1,9 +1,9 @@
 package tr.havelsan.ueransim.utils.console;
 
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.exceptions.FatalTreatedErrorException;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Severity;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.exceptions.FatalTreatedErrorException;
 import tr.havelsan.ueransim.utils.jcolor.AnsiColor;
 import tr.havelsan.ueransim.utils.jcolor.AnsiColorFormat;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;

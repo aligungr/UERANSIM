@@ -24,12 +24,12 @@
 
 package tr.havelsan.ueransim.nas.core.messages;
 
-import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.impl.enums.EExtendedProtocolDiscriminator;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.nas.impl.enums.ESecurityHeaderType;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 
 public abstract class PlainMmMessage extends NasMessage {
     public ESecurityHeaderType securityHeaderType;

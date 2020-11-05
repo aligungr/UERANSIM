@@ -27,10 +27,10 @@ package tr.havelsan.ueransim.app.utils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import tr.havelsan.ueransim.app.common.testcmd.*;
-import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.mts.MtsException;
 import tr.havelsan.ueransim.nas.eap.*;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Utils;
 
 import java.io.IOException;

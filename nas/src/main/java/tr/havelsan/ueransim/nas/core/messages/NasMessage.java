@@ -24,8 +24,6 @@
 
 package tr.havelsan.ueransim.nas.core.messages;
 
-import tr.havelsan.ueransim.core.exceptions.EncodingException;
-import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.IMessageBuilder;
@@ -36,6 +34,8 @@ import tr.havelsan.ueransim.nas.impl.enums.EExtendedProtocolDiscriminator;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.bits.Bit4;
+import tr.havelsan.ueransim.utils.exceptions.EncodingException;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

@@ -26,9 +26,9 @@ package tr.havelsan.ueransim.nas;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
+import tr.havelsan.ueransim.utils.Constants;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

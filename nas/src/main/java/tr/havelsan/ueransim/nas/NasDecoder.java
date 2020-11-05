@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.nas;
 
-import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement1;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -36,6 +35,7 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit4;
+import tr.havelsan.ueransim.utils.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NasDecoder {

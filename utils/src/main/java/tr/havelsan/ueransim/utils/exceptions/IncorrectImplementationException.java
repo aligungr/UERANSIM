@@ -22,17 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core.exceptions;
+package tr.havelsan.ueransim.utils.exceptions;
 
-public class EncodingException extends RuntimeException {
+public class IncorrectImplementationException extends RuntimeException {
     private final String message;
 
-    public EncodingException(Class<?> clazz) {
-        this("invalid value for " + clazz.getSimpleName());
+    public IncorrectImplementationException(Class<?> type, String message) {
+        this.message = "Incorrect implementation for type: " + type + ". " + message;
     }
 
-    public EncodingException(String message) {
+    public IncorrectImplementationException(String message) {
         this.message = message;
+    }
+
+    public IncorrectImplementationException() {
+        this.message = "";
     }
 
     @Override

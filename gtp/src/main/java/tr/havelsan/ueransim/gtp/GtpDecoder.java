@@ -1,11 +1,11 @@
 package tr.havelsan.ueransim.gtp;
 
-import tr.havelsan.ueransim.core.exceptions.DecodingException;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
-import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.gtp.ext.*;
 import tr.havelsan.ueransim.gtp.pdusup.PduSessionInformation;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.exceptions.DecodingException;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.utils.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;

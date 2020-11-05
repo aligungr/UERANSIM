@@ -22,17 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core.exceptions;
+package tr.havelsan.ueransim.utils.exceptions;
 
-public class DecodingException extends RuntimeException {
+public class ReservedOrInvalidValueException extends RuntimeException {
     private final String message;
 
-    public DecodingException(Class<?> clazz) {
-        this("invalid value for " + clazz.getSimpleName());
+    public ReservedOrInvalidValueException(Class<?> clazz) {
+        this("invalid or reserved value found for <" + clazz.getSimpleName() + ">");
     }
 
-    public DecodingException(String message) {
+    public ReservedOrInvalidValueException(String message) {
         this.message = message;
+    }
+
+    public ReservedOrInvalidValueException(String field, Object value) {
+        this("invalid or reserved value found for <" + field + "> with value <" + value + ">");
     }
 
     @Override

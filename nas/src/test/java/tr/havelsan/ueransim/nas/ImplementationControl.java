@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.nas;
 
-import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.core.IMessageBuilder;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ProtocolEnum;
@@ -36,6 +35,7 @@ import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EMessageType;
 import tr.havelsan.ueransim.utils.bits.BitN;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 

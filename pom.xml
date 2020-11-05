@@ -35,7 +35,6 @@
     <modules>
         <module>sctp</module>
         <module>utils</module>
-        <module>core</module>
         <module>mts</module>
         <module>nas</module>
         <module>ngap</module>

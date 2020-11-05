@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core.exceptions;
+package tr.havelsan.ueransim.utils.exceptions;
 
 public class NotImplementedException extends RuntimeException {
     private String message;

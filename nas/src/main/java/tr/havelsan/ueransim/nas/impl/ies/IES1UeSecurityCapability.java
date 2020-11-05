@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement4;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 public class IES1UeSecurityCapability extends InformationElement4 {
     @Override

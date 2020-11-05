@@ -36,7 +36,6 @@ import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.ue.sm.SessionManagement;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
@@ -44,6 +43,7 @@ import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 
 public class MobilityManagement {

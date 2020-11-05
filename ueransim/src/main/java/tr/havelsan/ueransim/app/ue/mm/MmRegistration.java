@@ -28,7 +28,6 @@ import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.ies.*;
@@ -38,6 +37,7 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 public class MmRegistration {
 

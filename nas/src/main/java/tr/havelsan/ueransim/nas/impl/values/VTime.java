@@ -24,11 +24,11 @@
 
 package tr.havelsan.ueransim.nas.impl.values;
 
-import tr.havelsan.ueransim.core.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.exceptions.ReservedOrInvalidValueException;
 import tr.havelsan.ueransim.utils.octets.Octet;
 
 public class VTime extends NasValue {

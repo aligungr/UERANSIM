@@ -22,8 +22,17 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.utils.exceptions;
 
-public interface IFileProvider {
-    String readFile(String searchDir, String path);
+public class FatalTreatedErrorException extends RuntimeException {
+    private final String message;
+
+    public FatalTreatedErrorException(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
 }

@@ -22,25 +22,11 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core.exceptions;
+package tr.havelsan.ueransim.utils;
 
-public class ReservedOrInvalidValueException extends RuntimeException {
-    private final String message;
+public final class Constants {
+    public static final String NAS_IMPL_PREFIX = "tr.havelsan.ueransim.nas.impl";
 
-    public ReservedOrInvalidValueException(Class<?> clazz) {
-        this("invalid or reserved value found for <" + clazz.getSimpleName() + ">");
-    }
-
-    public ReservedOrInvalidValueException(String message) {
-        this.message = message;
-    }
-
-    public ReservedOrInvalidValueException(String field, Object value) {
-        this("invalid or reserved value found for <" + field + "> with value <" + value + ">");
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
+    public static boolean USE_LONG_MNC = true;
+    public static boolean TREAT_ERRORS_AS_FATAL = false;
 }

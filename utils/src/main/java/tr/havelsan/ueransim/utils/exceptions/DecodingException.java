@@ -22,11 +22,21 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.core;
+package tr.havelsan.ueransim.utils.exceptions;
 
-public final class Constants {
-    public static final String NAS_IMPL_PREFIX = "tr.havelsan.ueransim.nas.impl";
+public class DecodingException extends RuntimeException {
+    private final String message;
 
-    public static boolean USE_LONG_MNC = true;
-    public static boolean TREAT_ERRORS_AS_FATAL = false;
+    public DecodingException(Class<?> clazz) {
+        this("invalid value for " + clazz.getSimpleName());
+    }
+
+    public DecodingException(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
 }

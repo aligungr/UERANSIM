@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.nas;
 
-import tr.havelsan.ueransim.core.exceptions.DecodingException;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.exceptions.DecodingException;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.OctetString;

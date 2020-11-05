@@ -26,8 +26,6 @@ package tr.havelsan.ueransim.app.ue.mm;
 
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.nas.impl.enums.EIdentityType;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
@@ -38,8 +36,10 @@ import tr.havelsan.ueransim.nas.impl.ies.IESuciMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityRequest;
 import tr.havelsan.ueransim.nas.impl.messages.IdentityResponse;
 import tr.havelsan.ueransim.nas.impl.values.VHomeNetworkPki;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 public class MmIdentity {
 

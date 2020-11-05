@@ -24,13 +24,13 @@
 
 package tr.havelsan.ueransim.nas.impl.values;
 
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.exceptions.EncodingException;
 
 public class VPlmn extends NasValue {
     public EMccValue mcc;

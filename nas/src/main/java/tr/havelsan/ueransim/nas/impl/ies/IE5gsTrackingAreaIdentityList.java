@@ -24,8 +24,6 @@
 
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.core.exceptions.DecodingException;
-import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.core.NasValue;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement4;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
@@ -33,6 +31,8 @@ import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.exceptions.DecodingException;
+import tr.havelsan.ueransim.utils.exceptions.EncodingException;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 

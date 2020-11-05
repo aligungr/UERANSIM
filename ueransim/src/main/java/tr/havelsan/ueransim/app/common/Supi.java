@@ -24,7 +24,7 @@
 
 package tr.havelsan.ueransim.app.common;
 
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
+import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 public class Supi {
     public final String type;

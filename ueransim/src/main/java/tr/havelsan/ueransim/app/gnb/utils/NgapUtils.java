@@ -25,8 +25,6 @@
 package tr.havelsan.ueransim.app.gnb.utils;
 
 import org.apache.commons.net.ntp.TimeStamp;
-import tr.havelsan.ueransim.core.Constants;
-import tr.havelsan.ueransim.core.exceptions.EncodingException;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
@@ -41,8 +39,10 @@ import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_BroadcastPLMNList;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_SliceSupportList;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_SupportedTAList;
 import tr.havelsan.ueransim.ngap0.ies.sequences.*;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.exceptions.EncodingException;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 

@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.mts;
 
-import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.BiMap;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.*;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.*;
 
 import java.util.*;
