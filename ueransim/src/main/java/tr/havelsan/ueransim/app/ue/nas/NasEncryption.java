@@ -77,7 +77,7 @@ public class NasEncryption {
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
         var encryptedData = encryptData(encAlg, count, cnId, plainNasMessage, encKey);
-        var mac = computeMac(intAlg, count, cnId, true, intKey, encryptedData.toByteArray(), securityContext);
+        var mac = computeMac(intAlg, count, cnId, true, intKey, encryptedData.toByteArray());
 
         var secured = new SecuredMmMessage();
         secured.securityHeaderType = sht;
@@ -132,7 +132,7 @@ public class NasEncryption {
         var intAlg = securityContext.selectedAlgorithms.integrity;
         var encAlg = securityContext.selectedAlgorithms.ciphering;
 
-        var mac = computeMac(intAlg, estimatedCount, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray(), securityContext);
+        var mac = computeMac(intAlg, estimatedCount, cnId, false, intKey, protectedNasMessage.plainNasMessage.toByteArray());
 
         Log.debug(Tag.VALUE, "computed mac: %s", mac);
         Log.debug(Tag.VALUE, "mac received in message: %s", protectedNasMessage.messageAuthenticationCode);
@@ -196,7 +196,7 @@ public class NasEncryption {
     //======================================================================================================
 
     public static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
-                                    boolean isUplink, OctetString key, byte[] plainMessage, NasSecurityContext securityContext) {
+                                    boolean isUplink, OctetString key, byte[] plainMessage) {
         Log.funcIn("Computing Mac");
 
         var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));
