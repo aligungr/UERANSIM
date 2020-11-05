@@ -1,6 +1,7 @@
-# Possible profiles are
+# Default possible profiles are:
 #  - custom
 #  - open5gs
 #  - free5gc
 #  - havelsan
+# You can also create unlimited number of custom profiles by creating a folder for them.
 selected-profile: 'open5gs'
