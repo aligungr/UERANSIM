@@ -45,29 +45,25 @@ import java.util.List;
 public class UeRanSim {
 
     private final AppConfig appConfig;
-    private final List<INodeMessagingListener> messagingListeners;
     private final LinkedHashMap<String, List<TestCmd>> testCases;
     private final LoadTestConfig loadTesting;
-
-    private SimulationContext simCtx;
+    private final SimulationContext simCtx;
 
     UeRanSim(List<INodeMessagingListener> messagingListeners,
              LinkedHashMap<String, List<TestCmd>> testCases,
              LoadTestConfig loadTesting) {
 
-        this.messagingListeners = messagingListeners;
         this.testCases = testCases;
         this.loadTesting = loadTesting;
 
         this.appConfig = new AppConfig();
+        this.simCtx = new SimulationContext(messagingListeners);
 
         initialize();
     }
 
     private void initialize() {
         var numberOfUe = loadTesting.numberOfUes;
-
-        simCtx = new SimulationContext(messagingListeners);
 
         var gnbContext = GnbNode.createContext(this, appConfig.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
