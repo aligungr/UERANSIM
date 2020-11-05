@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.control;
+package tr.havelsan.ueransim.nas;
 
 enum Visibility {
     PUBLIC, PRIVATE, PROTECTED, INTERNAL

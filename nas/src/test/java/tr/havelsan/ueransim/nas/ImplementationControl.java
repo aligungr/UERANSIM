@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.control;
+package tr.havelsan.ueransim.nas;
 
 import tr.havelsan.ueransim.core.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.nas.core.IMessageBuilder;
@@ -42,7 +42,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 import java.util.HashSet;
 import java.util.Locale;
 
-import static tr.havelsan.ueransim.control.Control.methodExists;
+import static tr.havelsan.ueransim.nas.Control.methodExists;
 
 public class ImplementationControl {
 

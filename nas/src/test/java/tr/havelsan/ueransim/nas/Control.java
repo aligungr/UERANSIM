@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.control;
+package tr.havelsan.ueransim.nas;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
