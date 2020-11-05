@@ -29,7 +29,6 @@ import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.LoadTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
@@ -40,7 +39,6 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -51,7 +49,6 @@ public class UeRanSim {
     private final LinkedHashMap<String, List<TestCmd>> testCases;
     private final LoadTestConfig loadTesting;
 
-    private ArrayList<UeSimContext> ueContexts;
     private SimulationContext simCtx;
 
     UeRanSim(List<INodeMessagingListener> messagingListeners,
@@ -81,7 +78,6 @@ public class UeRanSim {
             Utils.sleep(100);
         }
 
-        ueContexts = new ArrayList<>();
         for (int i = 0; i < numberOfUe; i++) {
             var ref = appConfig.createUeConfig();
             var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
@@ -95,7 +91,6 @@ public class UeRanSim {
             UeNode.run(ueContext);
 
             Simulation.connectUeToGnb(ueContext, gnbContext);
-            ueContexts.add(ueContext);
         }
     }
 
@@ -120,15 +115,15 @@ public class UeRanSim {
                     Utils.sleep(cmd.duration * 1000);
                 }
             } else if (command instanceof TestCmd_InitialRegistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PeriodicRegistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Deregistration) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_PduSessionEstablishment) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             } else if (command instanceof TestCmd_Ping) {
-                ueContexts.forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
+                simCtx.ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
             }
         }
     }
