@@ -9,20 +9,20 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LoadTestMessagingListener implements INodeMessagingListener {
     private final BaseConsole console;
 
-    private final Map<Integer, Long> ngSetupTimers = new HashMap<>();
-    private final Map<String, Long> registrationTimers = new HashMap<>();
-    private final Map<String, Long> authenticationTimers = new HashMap<>();
-    private final Map<String, Long> securityModeControlTimers = new HashMap<>();
-    private final Map<String, Long> phase1Timers = new HashMap<>();
-    private final Map<String, Long> phase2Timers = new HashMap<>();
-    private final Map<String, Long> phase3Timers = new HashMap<>();
-    private final Map<String, Long> deregistrationTimers = new HashMap<>();
+    private final Map<Integer, Long> ngSetupTimers = new ConcurrentHashMap<>();
+    private final Map<String, Long> registrationTimers = new ConcurrentHashMap<>();
+    private final Map<String, Long> authenticationTimers = new ConcurrentHashMap<>();
+    private final Map<String, Long> securityModeControlTimers = new ConcurrentHashMap<>();
+    private final Map<String, Long> phase1Timers = new ConcurrentHashMap<>();
+    private final Map<String, Long> phase2Timers = new ConcurrentHashMap<>();
+    private final Map<String, Long> phase3Timers = new ConcurrentHashMap<>();
+    private final Map<String, Long> deregistrationTimers = new ConcurrentHashMap<>();
 
     public LoadTestMessagingListener(BaseConsole console) {
         this.console = console;
