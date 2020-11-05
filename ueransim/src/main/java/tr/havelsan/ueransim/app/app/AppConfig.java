@@ -68,8 +68,8 @@ public class AppConfig {
     }
 
     public static void loggingToFile(Logger logger, String name, boolean standardPrint) {
-        if (name.contains("."))
-            throw new IllegalArgumentException("name contains '.'");
+        if (name.contains(".") || name.contains("/"))
+            throw new IllegalArgumentException("name contains '.' or '/'");
 
         logger.getConsole().setStandardPrintEnabled(standardPrint);
         logger.getConsole().addPrintHandler(str -> {
