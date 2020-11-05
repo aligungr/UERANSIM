@@ -58,30 +58,24 @@ public class NgapTransfer {
         var ueCtx = ctx.ueContexts.get(ueId);
 
         // Adding AMF-UE-NGAP-ID (if any)
-        {
-            if (message.isProtocolIeUsable(NGAP_AMF_UE_NGAP_ID.class)) {
-                Long amfUeNgapId = ueCtx.amfUeNgapId;
-                if (amfUeNgapId != null) {
-                    message.addProtocolIe(new NGAP_AMF_UE_NGAP_ID(amfUeNgapId));
-                }
+        if (message.isProtocolIeUsable(NGAP_AMF_UE_NGAP_ID.class)) {
+            Long amfUeNgapId = ueCtx.amfUeNgapId;
+            if (amfUeNgapId != null) {
+                message.addProtocolIe(new NGAP_AMF_UE_NGAP_ID(amfUeNgapId));
             }
         }
 
         // Adding RAN-UE-NGAP-ID
-        {
-            if (message.isProtocolIeUsable(NGAP_RAN_UE_NGAP_ID.class)) {
-                message.addProtocolIe(new NGAP_RAN_UE_NGAP_ID(ueCtx.ranUeNgapId));
-            }
+        if (message.isProtocolIeUsable(NGAP_RAN_UE_NGAP_ID.class)) {
+            message.addProtocolIe(new NGAP_RAN_UE_NGAP_ID(ueCtx.ranUeNgapId));
         }
 
         // Adding user location information
-        {
-            if (message.isProtocolIeUsable(NGAP_UserLocationInformation.class)) {
-                var ie = new NGAP_UserLocationInformation();
-                ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(ctx.config.gnbPlmn,
-                        new VTrackingAreaIdentity(ctx.config.gnbPlmn, ctx.config.tac), ctx.config.nci);
-                message.addProtocolIe(ie);
-            }
+        if (message.isProtocolIeUsable(NGAP_UserLocationInformation.class)) {
+            var ie = new NGAP_UserLocationInformation();
+            ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(ctx.config.gnbPlmn,
+                    new VTrackingAreaIdentity(ctx.config.gnbPlmn, ctx.config.tac), ctx.config.nci);
+            message.addProtocolIe(ie);
         }
 
         var ngapPdu = message.buildPdu();
