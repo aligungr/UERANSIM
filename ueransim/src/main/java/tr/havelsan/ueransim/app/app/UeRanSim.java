@@ -34,9 +34,7 @@ import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
-import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -48,7 +46,7 @@ import java.util.List;
 
 public class UeRanSim {
 
-    private final AppConfig app;
+    private final AppConfig appConfig;
     private final List<INodeMessagingListener> messagingListeners;
     private final LinkedHashMap<String, List<TestCmd>> testCases;
     private final LoadTestConfig loadTesting;
@@ -64,9 +62,7 @@ public class UeRanSim {
         this.testCases = testCases;
         this.loadTesting = loadTesting;
 
-        var defaultMts = new MtsContext();
-        MtsInitializer.initDefaultMts(defaultMts);
-        this.app = new AppConfig(defaultMts);
+        this.appConfig = new AppConfig();
 
         initialize();
     }
@@ -76,7 +72,7 @@ public class UeRanSim {
 
         simCtx = new SimulationContext(messagingListeners);
 
-        var gnbContext = GnbNode.createContext(this, app.createGnbConfig());
+        var gnbContext = GnbNode.createContext(this, appConfig.createGnbConfig());
         Simulation.registerGnb(simCtx, gnbContext);
         GnbNode.run(gnbContext);
 
@@ -87,7 +83,7 @@ public class UeRanSim {
 
         ueContexts = new ArrayList<>();
         for (int i = 0; i < numberOfUe; i++) {
-            var ref = app.createUeConfig();
+            var ref = appConfig.createUeConfig();
             var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
             var supi = new Supi("imsi", imsiNumber).toString();
             var config = new UeConfig(ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi), ref.plmn,

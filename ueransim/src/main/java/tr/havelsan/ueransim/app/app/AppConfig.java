@@ -29,6 +29,7 @@ import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.Constants;
@@ -48,8 +49,9 @@ public class AppConfig {
     public final MtsContext mts;
     private final String profile;
 
-    public AppConfig(MtsContext mts) {
-        this.mts = mts;
+    public AppConfig() {
+        this.mts = new MtsContext();
+        MtsInitializer.initDefaultMts(this.mts);
 
         var root = (ImplicitTypedObject) mts.decoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
