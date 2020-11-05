@@ -48,7 +48,6 @@ import java.util.List;
 
 public class UeRanSim {
 
-    private final MtsContext defaultMts;
     private final AppConfig app;
     private final List<INodeMessagingListener> messagingListeners;
     private final LinkedHashMap<String, List<TestCmd>> testCases;
@@ -61,13 +60,12 @@ public class UeRanSim {
              LinkedHashMap<String, List<TestCmd>> testCases,
              LoadTestConfig loadTesting) {
 
-        this.defaultMts = new MtsContext();
         this.messagingListeners = messagingListeners;
         this.testCases = testCases;
         this.loadTesting = loadTesting;
 
+        var defaultMts = new MtsContext();
         MtsInitializer.initDefaultMts(defaultMts);
-
         this.app = new AppConfig(defaultMts);
 
         initialize();
