@@ -24,10 +24,10 @@
 
 package tr.havelsan.ueransim.nas.impl.ies;
 
-import tr.havelsan.ueransim.nas.EapDecoder;
-import tr.havelsan.ueransim.nas.EapEncoder;
 import tr.havelsan.ueransim.nas.core.ies.InformationElement6;
 import tr.havelsan.ueransim.nas.eap.Eap;
+import tr.havelsan.ueransim.nas.eap.EapDecoder;
+import tr.havelsan.ueransim.nas.eap.EapEncoder;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 

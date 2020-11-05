@@ -22,11 +22,8 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.nas;
+package tr.havelsan.ueransim.nas.eap;
 
-import tr.havelsan.ueransim.nas.eap.Eap;
-import tr.havelsan.ueransim.nas.eap.EapAkaPrime;
-import tr.havelsan.ueransim.nas.eap.EapAttributes;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.utils.octets.Octet2;
