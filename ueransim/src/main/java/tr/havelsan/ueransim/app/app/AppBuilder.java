@@ -23,11 +23,12 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AppBuilder {
 
+    private static final AtomicBoolean isBuilt = new AtomicBoolean(false);
     private final List<INodeMessagingListener> messagingListeners;
-    private boolean isBuilt;
 
     public AppBuilder() {
         this.messagingListeners = new ArrayList<>();
@@ -47,9 +48,9 @@ public class AppBuilder {
     //======================================================================================================
 
     public UeRanSim build() {
-        if (isBuilt)
+        if (isBuilt.get())
             throw new RuntimeException("already built");
-        isBuilt = true;
+        isBuilt.set(true);
 
         new File("logs").mkdir();
 
