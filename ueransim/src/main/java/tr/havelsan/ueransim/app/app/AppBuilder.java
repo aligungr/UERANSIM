@@ -48,9 +48,8 @@ public class AppBuilder {
     //======================================================================================================
 
     public UeRanSim build() {
-        if (isBuilt.get())
+        if (isBuilt.getAndSet(true))
             throw new RuntimeException("already built");
-        isBuilt.set(true);
 
         new File("logs").mkdir();
 
