@@ -31,7 +31,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class IEAbba extends InformationElement4 {
     // Currently only defined value is 0x0000 with length 2 (bytes)
-    // (3GPP TS 33.501, 15.2.0)
+    // (3GPP TS 33.501, 15.2.0)
     public OctetString contents;
 
     public IEAbba() {

@@ -71,6 +71,11 @@ public class MmSecurity {
             }
         }
 
+        // Assign ABBA (if any)
+        if (message.abba != null) {
+            ctx.nonCurrentNsCtx.keys.abba = message.abba.contents;
+        }
+
         // Assign selected algorithms to security context, and derive NAS keys
         ctx.nonCurrentNsCtx.selectedAlgorithms = new SelectedAlgorithms(
                 message.selectedNasSecurityAlgorithms.typeOfIntegrityProtectionAlgorithm,

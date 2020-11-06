@@ -49,7 +49,7 @@ public class MmKeyManagement {
     public static void deriveKeysSeafAmf(UeConfig ueConfig, NasSecurityContext nasSecurityContext) {
         var keys = nasSecurityContext.keys;
         keys.kSeaf = KDF.calculateKey(keys.kAusf, 0x6C, KDF.encodeString(ueConfig.snn));
-        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ueConfig.supi.value), new OctetString("0000"));
+        keys.kAmf = KDF.calculateKey(keys.kSeaf, 0x6D, KDF.encodeString(ueConfig.supi.value), keys.abba);
     }
 
     public static void deriveNasKeys(NasSecurityContext securityContext) {
