@@ -130,7 +130,10 @@ public class MmRegistration {
     public static void receiveRegistrationReject(UeSimContext ctx, RegistrationReject message) {
         Log.funcIn("Handling: Registration reject");
 
-        Log.error(Tag.PROCEDURE_RESULT, "Registration failed");
+        var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
+        var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
+
+        Log.error(Tag.PROCEDURE_RESULT, "Registration failed: %s", cause.name());
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
@@ -141,9 +144,10 @@ public class MmRegistration {
             }
         }
 
-        var cause = message.mmCause.value;
-
-        var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
+        Runnable unhandledRejectCase = () -> {
+            Log.error(Tag.NOT_IMPL_YET, "Registration rejected with unhandled MMCause: %s", cause.name());
+            throw new NotImplementedException(String.format("Registration rejected with unhandled MMCause: %s", cause.name()));
+        };
 
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {
             if (cause.equals(EMmCause.ILLEGAL_UE) || cause.equals(EMmCause.ILLEGAL_ME)) {
@@ -202,7 +206,7 @@ public class MmRegistration {
 
                 } else {
                     // todo abnormal case see 5.5.1.2.7.
-                    throw new NotImplementedException("");
+                    unhandledRejectCase.run();
                 }
             } else if (cause.equals(EMmCause.N1_MODE_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
@@ -213,25 +217,25 @@ public class MmRegistration {
                 MobilityManagement.switchState(ctx, EMmState.MM_NULL, EMmSubState.MM_NULL__NA);
             } else if (cause.equals(EMmCause.NON_3GPP_ACCESS_TO_CN_NOT_ALLOWED)) {
                 // todo
-                throw new NotImplementedException("");
+                unhandledRejectCase.run();
             } else if (cause.equals(EMmCause.SERVING_NETWORK_NOT_AUTHORIZED)) {
                 // todo
-                throw new NotImplementedException("");
+                unhandledRejectCase.run();
             } else {
                 // todo
-                throw new NotImplementedException("");
+                unhandledRejectCase.run();
             }
         } else if (regType.equals(ERegistrationType.EMERGENCY_REGISTRATION)) {
             if (cause.equals(EMmCause.PEI_NOT_ACCEPTED)) {
                 // todo
-                throw new NotImplementedException("");
+                unhandledRejectCase.run();
             } else {
                 // todo: abnormal case
-                throw new NotImplementedException("");
+                unhandledRejectCase.run();
             }
         } else {
             // todo
-            throw new NotImplementedException("");
+            unhandledRejectCase.run();
         }
 
         MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
