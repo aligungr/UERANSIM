@@ -49,5 +49,6 @@ public class GnbSimContext extends BaseSimContext {
         super(sim);
         this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
+        this.gtpUCtx = new GtpUContext();
     }
 }

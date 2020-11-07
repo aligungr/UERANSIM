@@ -42,7 +42,7 @@ public class GtpTask extends ItmsTask {
 
     @Override
     public void main() {
-        this.gtpCtx = ctx.gtpUCtx = new GtpUContext();
+        this.gtpCtx = ctx.gtpUCtx;
         try {
             this.socket = new DatagramSocket(ctx.config.gtpPort, InetAddress.getByName(ctx.config.host));
         } catch (Exception e) {
