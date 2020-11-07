@@ -32,6 +32,10 @@ public final class Bit6 extends BitN {
         super(value, 6);
     }
 
+    public Bit6(long value) {
+        this((int) (value & 0xFFFFFFFF));
+    }
+
     public Bit6(String hex) {
         this(new Octet(hex).intValue());
     }

@@ -2,10 +2,7 @@ package tr.havelsan.ueransim.app.gnb.gtp;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
 import tr.havelsan.ueransim.app.common.contexts.GtpUContext;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
-import tr.havelsan.ueransim.app.common.itms.IwGtpDownlink;
-import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
+import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.gtp.GtpDecoder;
 import tr.havelsan.ueransim.gtp.GtpEncoder;
@@ -27,12 +24,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-// TODO: this class is curently POC.
 public class GtpTask extends ItmsTask {
 
     private final GnbSimContext ctx;
     private GtpUContext gtpCtx;
-    private PduSessionResource pduSession;
     private DatagramSocket socket;
 
     public GtpTask(Itms itms, int taskId, GnbSimContext ctx) {
@@ -46,7 +41,7 @@ public class GtpTask extends ItmsTask {
         try {
             this.socket = new DatagramSocket(ctx.config.gtpPort, InetAddress.getByName(ctx.config.host));
         } catch (Exception e) {
-            Log.error(Tag.CONNECTION, "Failed to bind GTP/UDP socket %s:%s (%s)", ctx.config.gtpPort, ctx.config.host, e.toString());
+            Log.error(Tag.CONNECTION, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.config.gtpPort, ctx.config.host, e.toString());
             return;
         }
 
@@ -88,8 +83,15 @@ public class GtpTask extends ItmsTask {
             return;
         }
 
-        if (pduSession == null)
+        var pduSessionOpt = this.gtpCtx.pduSessions.stream()
+                .filter(r -> r.ueId.equals(msg.ueId) && r.pduSessionId == msg.pduSessionId)
+                .findFirst();
+        if (pduSessionOpt.isEmpty()) {
+            Log.error(Tag.GTP, "TEID not found on GTP-U Uplink");
             return;
+        }
+
+        var pduSession = pduSessionOpt.get();
 
         var gtp = new GtpMessage();
         gtp.payload = data;
@@ -98,7 +100,8 @@ public class GtpTask extends ItmsTask {
         gtp.extHeaders = new ArrayList<>();
 
         var ul = new UlPduSessionInformation();
-        ul.qfi = new Bit6(1);
+        // TODO: currently using first QSI
+        ul.qfi = new Bit6(pduSession.qosFlows.get(0).qosFlowIdentifier.value);
 
         var cont = new PduSessionContainerExtHeader();
         cont.pduSessionInformation = ul;
@@ -119,16 +122,27 @@ public class GtpTask extends ItmsTask {
 
     private void handleDownlinkGtp(IwGtpDownlink msg) {
         var gtp = GtpDecoder.decode(msg.data);
-        if (gtp.msgType.intValue() != GtpMessage.MT_G_PDU) {
-            Log.warning(Tag.NOT_IMPL_YET, "Unhandled GTP-U message type: " + gtp.msgType);
+
+        var pduSession = this.gtpCtx.pduSessions.stream()
+                .filter(r -> r.upLayer.gTPTunnel.gTP_TEID.value.equals(gtp.teid.toOctetString()))
+                .findFirst();
+        if (pduSession.isEmpty()) {
+            Log.error(Tag.GTP, "TEID not found on GTP-U Downlink");
             return;
         }
 
+        if (gtp.msgType.intValue() != GtpMessage.MT_G_PDU) {
+            Log.error(Tag.NOT_IMPL_YET, "Unhandled GTP-U message type: " + gtp.msgType);
+            return;
+        }
+
+        var ueId = pduSession.get().ueId;
         var ipPacket = gtp.payload;
-        itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkData(ipPacket));
+        itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkData(ueId, ipPacket));
     }
 
     private void handleTunnelCreate(PduSessionResource pduSession) {
-        this.pduSession = pduSession;
+        this.gtpCtx.pduSessions.add(pduSession);
+        itms.sendMessage(ItmsId.GNB_TASK_TUN, new IwTunnelCreateSampleInfo(pduSession.ueId, pduSession.pduSessionId));
     }
 }

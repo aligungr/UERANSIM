@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.app.gnb.gtp;
 
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
+import tr.havelsan.ueransim.app.common.itms.IwTunnelCreateSampleInfo;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.Itms;
@@ -15,6 +16,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+// TODO: This class is currently POC
 public class TunTask extends ItmsTask {
 
     private final GnbSimContext ctx;
@@ -23,6 +25,8 @@ public class TunTask extends ItmsTask {
     private int bridgeEndpointPort;
     private InetAddress bridgeEndpointAddrBytes;
     private PacketMeter packetMeter;
+
+    private IwTunnelCreateSampleInfo sampleInfo; // TODO
 
     public TunTask(Itms itms, int taskId, GnbSimContext ctx) {
         super(itms, taskId);
@@ -47,7 +51,9 @@ public class TunTask extends ItmsTask {
 
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof IwDownlinkData) {
+            if (msg instanceof IwTunnelCreateSampleInfo) {
+                sampleInfo = (IwTunnelCreateSampleInfo) msg;
+            } else if (msg instanceof IwDownlinkData) {
                 handleDownlinkData((IwDownlinkData) msg);
             }
         }
@@ -85,7 +91,15 @@ public class TunTask extends ItmsTask {
                 }
             }
 
-            itms.sendMessage(ItmsId.GNB_TASK_MR, new IwUplinkData(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength())));
+            if (sampleInfo == null) {
+                Log.warning(Tag.TUN, "tunnel sample data not received yet");
+                continue;
+            }
+
+            var ipData = new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength());
+            var uplinkData = new IwUplinkData(sampleInfo.ueId, sampleInfo.pduSessionId, ipData);
+
+            itms.sendMessage(ItmsId.GNB_TASK_MR, uplinkData);
         }
     }
 
