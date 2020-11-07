@@ -71,10 +71,10 @@ public class GtpTask extends ItmsTask {
 
         while (true) {
             var msg = itms.receiveMessage(this);
-            if (msg instanceof IwUplinkData) {
+            if (msg instanceof IwPduSessionResourceCreate) {
+                handleTunnelCreate(((IwPduSessionResourceCreate) msg).pduSessionResource);
+            } else if (msg instanceof IwUplinkData) {
                 handleUplinkData((IwUplinkData) msg);
-            } else if (msg instanceof IwPduSessionResourceCreate) {
-                this.pduSession = ((IwPduSessionResourceCreate) msg).pduSessionResource;
             } else if (msg instanceof IwGtpDownlink) {
                 handleDownlinkGtp((IwGtpDownlink) msg);
             }
@@ -126,5 +126,9 @@ public class GtpTask extends ItmsTask {
 
         var ipPacket = gtp.payload;
         itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkData(ipPacket));
+    }
+
+    private void handleTunnelCreate(PduSessionResource pduSession) {
+        this.pduSession = pduSession;
     }
 }
