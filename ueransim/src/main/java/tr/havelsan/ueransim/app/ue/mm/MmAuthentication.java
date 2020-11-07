@@ -213,6 +213,7 @@ public class MmAuthentication {
             ctx.nonCurrentNsCtx.keys.res = res;
             ctx.nonCurrentNsCtx.keys.resStar = null;
             ctx.nonCurrentNsCtx.keys.kAusf = kAusf;
+            ctx.nonCurrentNsCtx.keys.abba = message.abba.contents;
 
             MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
             Log.debug(Tag.VALUE, "kSeaf: %s", ctx.nonCurrentNsCtx.keys.kSeaf);
@@ -295,6 +296,7 @@ public class MmAuthentication {
             ctx.nonCurrentNsCtx.keys.res = res;
             ctx.nonCurrentNsCtx.keys.resStar = MmKeyManagement.calculateResStar(ckik, snn, rand, res);
             ctx.nonCurrentNsCtx.keys.kAusf = MmKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+            ctx.nonCurrentNsCtx.keys.abba = request.abba.contents;
 
             MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
 
@@ -373,6 +375,10 @@ public class MmAuthentication {
 
     public static void receiveAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
         Log.funcIn("Handling: Authentication Result");
+
+        if (message.abba != null) {
+            ctx.nonCurrentNsCtx.keys.abba = message.abba.contents;
+        }
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {

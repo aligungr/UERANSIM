@@ -41,6 +41,7 @@ public class EapEncoder {
 
         if (pdu.EAPType == null) {
             innerStream.writeOctet2(4);
+            stream.writeStream(innerStream);
         } else {
             innerStream.writeOctet2(0); // dummy length
             innerStream.writeOctet(pdu.EAPType.intValue());
