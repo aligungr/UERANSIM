@@ -125,6 +125,6 @@ public class GtpTask extends ItmsTask {
         }
 
         var ipPacket = gtp.payload;
-        itms.sendMessage(ItmsId.GNB_TASK_TUN, new IwDownlinkData(ipPacket));
+        itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkData(ipPacket));
     }
 }
