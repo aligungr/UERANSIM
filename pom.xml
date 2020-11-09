@@ -42,6 +42,7 @@
         <module>crypto</module>
         <module>gtp</module>
         <module>itms</module>
+        <module>icmp</module>
     </modules>
 
     <build>
