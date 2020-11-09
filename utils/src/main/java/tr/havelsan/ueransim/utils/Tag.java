@@ -46,6 +46,7 @@ public enum Tag {
         switch (this) {
             case SYSTEM:
             case CONNECTION:
+            case UE_APP:
                 return true;
             default:
                 return false;
