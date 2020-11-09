@@ -30,8 +30,10 @@ import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitN;
+import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.exceptions.DecodingException;
 import tr.havelsan.ueransim.utils.exceptions.EncodingException;
+import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -423,7 +425,9 @@ public final class Utils {
         try {
             InputStream in = Utils.class.getClassLoader().getResourceAsStream(name);
             if (in == null) {
-                throw new RuntimeException("resource not found: " + name);
+                Console.println(AnsiPalette.PAINT_LOG_ERROR, "Library resource not found: %s, please rebuild the project.", name);
+                System.exit(1);
+                throw new RuntimeException();
             }
 
             byte[] buffer = new byte[1024];
@@ -439,7 +443,7 @@ public final class Utils {
             in.close();
             System.load(temp.getAbsolutePath());
             loadedResLibs.add(name);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
