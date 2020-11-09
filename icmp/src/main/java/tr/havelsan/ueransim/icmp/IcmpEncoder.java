@@ -19,7 +19,7 @@ public class IcmpEncoder {
     }
 
     public static IcmpPacket decode(OctetInputStream data) {
-        switch (data.peekOctetI()) {
+        switch (data.readOctetI()) {
             case 0:
                 return IcmpEchoReply.decode(data);
             case 3:

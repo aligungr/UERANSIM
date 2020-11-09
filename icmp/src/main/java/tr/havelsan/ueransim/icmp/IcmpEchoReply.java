@@ -7,7 +7,6 @@ import tr.havelsan.ueransim.utils.octets.Octet2;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class IcmpEchoReply extends IcmpPacket {
-    public Octet type;
     public Octet code;
     public Octet2 checksum;
     public Octet2 identifier;
@@ -16,7 +15,6 @@ public class IcmpEchoReply extends IcmpPacket {
 
     static IcmpEchoReply decode(OctetInputStream stream) {
         var icmp = new IcmpEchoReply();
-        icmp.type = stream.readOctet();
         icmp.code = stream.readOctet();
         icmp.checksum = stream.readOctet2();
         icmp.identifier = stream.readOctet2();
@@ -27,7 +25,7 @@ public class IcmpEchoReply extends IcmpPacket {
 
     @Override
     void encode(OctetOutputStream stream) {
-        stream.writeOctet(type);
+        stream.writeOctet(0);
         stream.writeOctet(code);
         stream.writeOctet2(checksum);
         stream.writeOctet2(identifier);
