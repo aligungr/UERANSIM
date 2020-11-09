@@ -84,7 +84,7 @@ public class UeAppTask extends ItmsTask {
         info.sessionType = pduSession.pduAddress.sessionType;
         info.pduAddress = pduSession.pduAddress.pduAddressInformation.toByteArray();
 
-        Log.success(Tag.UE_APP, "%s connection setup with local IP: %s", info.sessionType, Utils.byteArrayToIpString(info.pduAddress));
+        Log.info(Tag.UE_APP, "%s connection setup with local IP: %s", info.sessionType, Utils.byteArrayToIpString(info.pduAddress));
 
         this.connectionInfo = info;
     }
