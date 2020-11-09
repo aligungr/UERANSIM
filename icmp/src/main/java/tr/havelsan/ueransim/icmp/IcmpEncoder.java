@@ -4,7 +4,11 @@ import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-public class Icmp {
+public class IcmpEncoder {
+
+    public static IcmpPacket decode(String hexData) {
+        return decode(new OctetString(hexData));
+    }
 
     public static IcmpPacket decode(byte[] data) {
         return decode(new OctetInputStream(data));
