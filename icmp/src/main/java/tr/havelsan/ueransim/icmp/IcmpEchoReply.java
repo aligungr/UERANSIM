@@ -31,7 +31,6 @@ public class IcmpEchoReply extends IcmpPacket {
         stream.writeOctet(code);
         stream.writeOctet2(checksum);
         stream.writeOctet2(identifier);
-        stream.writeOctet2(identifier);
         stream.writeOctet2(sequenceNumber);
         stream.writeOctetString(data);
     }
