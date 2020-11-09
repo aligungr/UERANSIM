@@ -81,6 +81,7 @@ public class UeAppTask extends ItmsTask {
         var info = new UeConnectionInfo();
 
         info = new UeConnectionInfo();
+        info.pduSessionId = pduSession.id.intValue();
         info.sessionType = pduSession.pduAddress.sessionType;
         info.pduAddress = pduSession.pduAddress.pduAddressInformation.toByteArray();
 
