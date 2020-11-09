@@ -25,9 +25,7 @@
 package tr.havelsan.ueransim.app.common;
 
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IEQoSFlowDescriptions;
-import tr.havelsan.ueransim.nas.impl.ies.IEQoSRules;
-import tr.havelsan.ueransim.nas.impl.ies.IESessionAmbr;
+import tr.havelsan.ueransim.nas.impl.ies.*;
 
 public class PduSession {
 
@@ -41,6 +39,8 @@ public class PduSession {
     public IEQoSRules authorizedQoSRules;
     public IESessionAmbr sessionAmbr;
     public IEQoSFlowDescriptions authorizedQoSFlowDescriptions;
+    public IEPduSessionType sessionType;
+    public IEPduAddress pduAddress;
 
     public PduSession(EPduSessionIdentity id) {
         this.id = id;

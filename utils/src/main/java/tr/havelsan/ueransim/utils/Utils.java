@@ -45,6 +45,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -539,5 +540,17 @@ public final class Utils {
         List<T> list = new ArrayList<>(list1);
         list.addAll(list2);
         return list;
+    }
+
+    public static String byteArrayToIpString(byte[] ipAddress) {
+        if (ipAddress.length == 4) {
+            return String.format("%d.%d.%d.%d", ipAddress[0] & 0xFF, ipAddress[1] & 0xFF, ipAddress[2] & 0xFF, ipAddress[3] & 0xFF);
+        } else if (ipAddress.length == 16) {
+            try {
+                return Inet6Address.getByAddress(ipAddress).getHostAddress();
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
+        } else throw new IllegalArgumentException("invalid ipAddress");
     }
 }

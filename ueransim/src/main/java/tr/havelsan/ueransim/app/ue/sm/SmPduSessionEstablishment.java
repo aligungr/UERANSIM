@@ -24,7 +24,9 @@
 
 package tr.havelsan.ueransim.app.ue.sm;
 
+import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate;
 import tr.havelsan.ueransim.nas.impl.ies.IEPduSessionType;
@@ -94,6 +96,10 @@ class SmPduSessionEstablishment {
         pduSession.authorizedQoSRules = message.authorizedQoSRules;
         pduSession.sessionAmbr = message.sessionAmbr;
         pduSession.authorizedQoSFlowDescriptions = message.authorizedQoSFlowDescriptions;
+        pduSession.sessionType = message.selectedPduSessionType;
+        pduSession.pduAddress = message.pduAddress;
+
+        ctx.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeConnectionSetup(pduSession));
 
         Log.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
         Log.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");

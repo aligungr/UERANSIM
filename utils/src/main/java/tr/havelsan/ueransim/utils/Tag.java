@@ -39,7 +39,8 @@ public enum Tag {
     NGAP_INTERNAL,
     PROCEDURE_RESULT,
     NAS_SECURITY,
-    NOT_IMPL_YET;
+    NOT_IMPL_YET,
+    UE_APP;
 
     public boolean dispatch() {
         switch (this) {

@@ -24,16 +24,23 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
+import tr.havelsan.ueransim.app.common.UeConnectionInfo;
+import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.console.Log;
 
 public class UeAppTask extends ItmsTask {
 
     private final UeSimContext ctx;
+    private UeConnectionInfo connectionInfo;
 
     public UeAppTask(Itms itms, int taskId, UeSimContext ctx) {
         super(itms, taskId);
@@ -56,9 +63,33 @@ public class UeAppTask extends ItmsTask {
                 } else if (cmd instanceof TestCmd_Deregistration) {
                     ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
                 } else if (cmd instanceof TestCmd_Ping) {
-                    // TODO
+                    ping((TestCmd_Ping) cmd);
                 }
+            } else if (msg instanceof IwUeConnectionSetup) {
+                connectionSetup((IwUeConnectionSetup) msg);
             }
         }
+    }
+
+    private void connectionSetup(IwUeConnectionSetup msg) {
+        var pduSession = msg.pduSession;
+        if (!pduSession.sessionType.pduSessionType.equals(EPduSessionType.IPV4)) {
+            Log.error(Tag.UE_APP, "Connection could not setup (unsupported PDU Session type: %s)", pduSession.sessionType.pduSessionType);
+            return;
+        }
+
+        var info = new UeConnectionInfo();
+
+        info = new UeConnectionInfo();
+        info.sessionType = pduSession.pduAddress.sessionType;
+        info.pduAddress = pduSession.pduAddress.pduAddressInformation.toByteArray();
+
+        Log.success(Tag.UE_APP, "%s connection setup with local IP: %s", info.sessionType, Utils.byteArrayToIpString(info.pduAddress));
+
+        this.connectionInfo = info;
+    }
+
+    private void ping(TestCmd_Ping ping) {
+        // TODO
     }
 }
