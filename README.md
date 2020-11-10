@@ -6,35 +6,9 @@ UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project c
 **Access Type:** 5G-SA (Standalone Access)  
 **Connection Type:** 3GPP Access  
 
-## Features 
-- UE | Registration
-  - Initial Registration
-  - Periodic Registration
-  - UE/Network Initiated de-registration
-- UE | Authentication
-  - EAP AKA'
-  - 5G AKA
-- NAS Encryption
-    - EA1, EA2, EA3
-    - IA1, IA2, IA3
-- UE | MM Common Procedures
-  - Security Mode Control
-  - Identification
-  - Generic UE Configuration Update
-- gNB | Interface Management
-  - NG Setup
-  - Error Indication
-- gNB | UE Context Management
-  - Initial Context Setup
-  - UE Context Release (AMF initiated)
-  - UE Context Modification
-- gNB | NAS Transport
-  - Initial UE Message
-  - Uplink/Downlink NAS Transport
-- Session Management
-  - PDU Session Establishment
-- ***todo...***
-      
+## Documentation  
+**Wiki Page:** [UERANSIM Wiki](https://github.com/aligungr/UERANSIM/wiki)  
+
 ##  Requirements
 1. Ubuntu 16.04 or later 
 2. OpenJDK 11 or later
