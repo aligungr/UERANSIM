@@ -1,7 +1,7 @@
 # UERANSIM
-Open source 5G UE and RAN (gNodeB) simulator. This tool can be used as UE/RAN emulator with additional capability of load testing.
+UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project can be used for testing 5G Core Network and studying 5G System.
 
-##  General Info  
+## General Info  
 **3GPP Release:** R15  
 **Access Type:** 5G-SA (Standalone Access)  
 **Connection Type:** 3GPP Access  
