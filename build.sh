@@ -46,9 +46,7 @@ make
 cp libapp-native.so ../../build/
 cd ../..
 ################################################################################
-#mvn clean compile
+mvn clean compile package
 ################################################################################
-#mvn package
-#mkdir -p build
-#cp ueransim/target/ueransim-1.0.8.jar build/
+cp ueransim/target/ueransim-1.0.8.jar build/
 ################################################################################

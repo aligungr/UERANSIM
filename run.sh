@@ -22,4 +22,6 @@
 # SOFTWARE.
 #
 
-java -jar ./build/ueransim-1.0.8.jar
+cd build
+java -cp ueransim-1.0.8.jar tr.havelsan.ueransim.app.app.entry.MainApp
+cd ..
