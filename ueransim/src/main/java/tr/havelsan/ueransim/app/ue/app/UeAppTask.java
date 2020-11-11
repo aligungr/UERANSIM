@@ -93,4 +93,6 @@ public class UeAppTask extends ItmsTask {
     private void ping(TestCmd_Ping ping) {
         // TODO
     }
+
+    public static native byte[] createPingPacket();
 }
