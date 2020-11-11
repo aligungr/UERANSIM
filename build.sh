@@ -49,4 +49,13 @@ cd ../..
 mvn clean compile package
 ################################################################################
 cp ueransim/target/ueransim-1.0.8.jar build/
+cp utils/target/utils-1.0.8.jar build/
+cp crypto/target/crypto-1.0.8.jar build/
+cp gtp/target/gtp-1.0.8.jar build/
+cp nas/target/nas-1.0.8.jar build/
+cp ngap/target/ngap-1.0.8.jar build/
+cp icmp/target/icmp-1.0.8.jar build/
+cp itms/target/itms-1.0.8.jar build/
+cp mts/target/mts-1.0.8.jar build/
+cp sctp/target/sctp-1.0.8.jar build/
 ################################################################################
