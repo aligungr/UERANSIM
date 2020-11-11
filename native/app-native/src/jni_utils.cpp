@@ -1,4 +1,4 @@
-#include "jni_utils.h"
+#include "jni_utils.hpp"
 
 uint8_t *JniConvert::jbytearray_to_uint8array(JNIEnv *pJniEnv, jbyteArray pJba, jsize alignment, jsize *pOutLength)
 {
