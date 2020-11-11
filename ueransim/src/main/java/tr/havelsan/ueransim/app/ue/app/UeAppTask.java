@@ -27,6 +27,7 @@ package tr.havelsan.ueransim.app.ue.app;
 import tr.havelsan.ueransim.app.common.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.itms.Itms;
@@ -40,11 +41,13 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class UeAppTask extends ItmsTask {
 
     private final UeSimContext ctx;
+    private final PingApp pingApp;
     private UeConnectionInfo connectionInfo;
 
     public UeAppTask(Itms itms, int taskId, UeSimContext ctx) {
         super(itms, taskId);
         this.ctx = ctx;
+        this.pingApp = new PingApp(ctx);
     }
 
     @Override
@@ -91,8 +94,16 @@ public class UeAppTask extends ItmsTask {
     }
 
     private void ping(TestCmd_Ping ping) {
-        // TODO
-    }
+        if (connectionInfo == null) {
+            Log.error(Tag.UE_APP, "Ping failure: UE has no connection.");
+            return;
+        }
 
-    public static native byte[] createPingPacket();
+        if (!connectionInfo.sessionType.equals(EPduSessionType.IPV4)) {
+            Log.error(Tag.UE_APP, "Cannot ping for current PDU Session Type.");
+            return;
+        }
+
+        ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, pingApp.sendPing(ping)));
+    }
 }
