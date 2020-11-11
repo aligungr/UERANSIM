@@ -12,12 +12,12 @@
 #define SET_BIT4_M(x)                     \
     {                                     \
         data[(x)] &= 0b00001111;          \
-        data[(x)] |= ((v) << 4 & 0b1111); \
+        data[(x)] |= (((v) << 4) & 0b11110000); \
     }
 #define SET_BIT4_L(x)              \
     {                              \
         data[(x)] &= 0b11110000;   \
-        data[(x)] |= ((v)&0b1111); \
+        data[(x)] |= ((v) & 0b00001111); \
     }
 
 #define OCTET1(x) (data[x])
