@@ -42,31 +42,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>exec-maven-plugin</artifactId>
-                <groupId>org.codehaus.mojo</groupId>
-                <executions>
-                    <execution>
-                        <id>crypto-native make command</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>/bin/bash</executable>
-                            <arguments><argument>${native.crpyto.dir}/build_and_copy.sh</argument></arguments>
-                            <workingDirectory>${native.crpyto.dir}</workingDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <properties>
-        <native.crpyto.dir>${project.basedir}/../native/crypto-native</native.crpyto.dir>
-    </properties>
 </project>

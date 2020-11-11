@@ -26,6 +26,21 @@ if [ -z "$JAVA_HOME" ]; then
 echo "ERROR: 'JAVA_HOME' is not defined" 1>&2;
 exit 1
 fi
-mvn clean compile package
+
+mvn clean compile
+
+cd native/ngap-native
+sh build_and_copy.sh
+cd ../..
+
+cd native/crypto-native
+sh build_and_copy.sh
+cd ../..
+
+cd native/app-native
+sh build_and_copy.sh
+cd ../..
+
+mvn package
 mkdir -p build
 cp ueransim/target/ueransim-1.0.8.jar build/
