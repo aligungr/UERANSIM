@@ -10,6 +10,8 @@ import java.util.Scanner;
 public class MainApp {
 
     public static void main(String[] args) {
+        BaseApp.main(args);
+
         var ueransim = new AppBuilder().build();
 
         Utils.sleep(250);

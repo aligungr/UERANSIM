@@ -59,8 +59,6 @@ import java.util.stream.Stream;
 
 public final class Utils {
 
-    private static final HashSet<String> loadedResLibs = new HashSet<>();
-
     public static <T> T[] decodeList(OctetInputStream stream, Function<OctetInputStream, T> decoder, int length, Class<T> componentType) {
         int readLen = 0;
         var res = new ArrayList<T>();
@@ -416,36 +414,6 @@ public final class Utils {
             }
         }
         return null;
-    }
-
-    public static synchronized void loadLibraryFromResource(String name) {
-        if (loadedResLibs.contains(name)) {
-            return;
-        }
-        try {
-            InputStream in = Utils.class.getClassLoader().getResourceAsStream(name);
-            if (in == null) {
-                Console.println(AnsiPalette.PAINT_LOG_ERROR, "Library resource not found: %s, please rebuild the project.", name);
-                System.exit(1);
-                throw new RuntimeException();
-            }
-
-            byte[] buffer = new byte[1024];
-            int read;
-            File temp = File.createTempFile(name, "");
-            temp.deleteOnExit();
-
-            FileOutputStream fos = new FileOutputStream(temp);
-            while ((read = in.read(buffer)) != -1) {
-                fos.write(buffer, 0, read);
-            }
-            fos.close();
-            in.close();
-            System.load(temp.getAbsolutePath());
-            loadedResLibs.add(name);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

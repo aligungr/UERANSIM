@@ -24,15 +24,10 @@
 
 package tr.havelsan.ueransim.crypto;
 
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class ZUC {
-
-    static {
-        Utils.loadLibraryFromResource("libcrypto-native.so");
-    }
 
     public static Octet4[] zuc(OctetString key, OctetString iv, int length) {
         int[] rn = zuc(key.toByteArray(), iv.toByteArray(), length);

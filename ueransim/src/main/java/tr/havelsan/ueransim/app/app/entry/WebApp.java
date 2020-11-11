@@ -26,6 +26,8 @@ public class WebApp {
     private static UeRanSim ueRanSim;
 
     public static void main(String[] args) {
+        BaseApp.main(args);
+
         ueRanSim = new AppBuilder()
                 .addMessagingListener(stepperListener)
                 .build();

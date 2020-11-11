@@ -24,15 +24,10 @@
 
 package tr.havelsan.ueransim.crypto;
 
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class Snow3G {
-
-    static {
-        Utils.loadLibraryFromResource("libcrypto-native.so");
-    }
 
     public static Octet4[] snow3g(OctetString key, OctetString iv, int length) {
         int[] rn = snow3g(key.toByteArray(), iv.toByteArray(), length);

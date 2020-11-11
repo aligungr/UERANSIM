@@ -24,8 +24,6 @@
 
 package tr.havelsan.ueransim.ngap0;
 
-import tr.havelsan.ueransim.utils.Utils;
-
 public class NgapJni {
 
     private static final int ATS_NONSTANDARD_PLAINTEXT = 1;
@@ -39,10 +37,6 @@ public class NgapJni {
     private static final int RESULT_OK = 0;
     private static final int RESULT_DECODING_FAILED = 1;
     private static final int RESULT_ENCODING_FAILED = 2;
-
-    static {
-        Utils.loadLibraryFromResource("libngap-native.so");
-    }
 
     private static native byte[] convertEncoding(byte[] data, int fromEncoding, int toEncoding, int[] result, int pduType);
 

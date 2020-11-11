@@ -24,7 +24,6 @@
 
 package tr.havelsan.ueransim.crypto;
 
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.Bit5;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -32,10 +31,6 @@ import tr.havelsan.ueransim.utils.octets.Octet4;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class EIA3_128 {
-
-    static {
-        Utils.loadLibraryFromResource("libcrypto-native.so");
-    }
 
     public static Octet4 computeMac(Octet4 count, Bit5 bearer, Bit direction, BitString message, OctetString key) {
         int mac = computeMac(count.longValue(), bearer.intValue(), direction.boolValue(),
