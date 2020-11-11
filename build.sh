@@ -34,3 +34,4 @@ cp itms/target/itms-1.0.8.jar build/
 cp mts/target/mts-1.0.8.jar build/
 cp sctp/target/sctp-1.0.8.jar build/
 ################################################################################
+rm -fr ueransim/build # delete maven-dependency-plugin caused unnecessary directory
