@@ -57,7 +57,10 @@ public class MrTask extends ItmsTask {
             } else if (msg instanceof IwUplinkData) {
                 itms.sendMessage(ItmsId.GNB_TASK_GTP, msg);
             } else if (msg instanceof IwDownlinkData) {
+                var w = (IwDownlinkData) msg;
+
                 itms.sendMessage(ItmsId.GNB_TASK_TUN, msg);
+                ctx.sim.findUe(w.ueId).itms.sendMessage(ItmsId.UE_TASK_MR, msg);
             }
         }
     }

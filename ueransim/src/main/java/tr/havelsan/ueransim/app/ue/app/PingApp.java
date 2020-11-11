@@ -64,4 +64,8 @@ class PingApp {
         var packet = createPingPacket(source, dest, id, seq);
         ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
     }
+
+    public void handlePacket(OctetString ipPacket) {
+        // TODO
+    }
 }

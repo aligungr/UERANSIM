@@ -25,6 +25,7 @@
 package tr.havelsan.ueransim.app.ue.app;
 
 import tr.havelsan.ueransim.app.common.UeConnectionInfo;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -70,6 +71,8 @@ public class UeAppTask extends ItmsTask {
                 }
             } else if (msg instanceof IwUeConnectionSetup) {
                 connectionSetup((IwUeConnectionSetup) msg);
+            } else if (msg instanceof IwDownlinkData) {
+                pingApp.handlePacket(((IwDownlinkData) msg).ipPacket);
             }
         }
     }
