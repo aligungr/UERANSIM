@@ -11,9 +11,11 @@ class PingApp {
         this.ctx = ctx;
     }
 
-    public OctetString sendPing(TestCmd_Ping ping) {
-        return new OctetString(createPingPacket());
-    }
+    public static native byte[] createPingPacket(int src, int dest, short id, short seq);
 
-    public static native byte[] createPingPacket();
+    public OctetString sendPing(TestCmd_Ping ping) {
+        var packet = createPingPacket(0, 0, (short)0, (short)0);
+
+        return new OctetString(packet);
+    }
 }
