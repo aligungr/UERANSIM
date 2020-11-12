@@ -70,6 +70,10 @@ sudo apt install g++
 
 In order to increase the number of UEs, you can change the `number-of-UE` value in `config/testing.yaml`. Multiple RAN feature is in progress now.
 
+## Contributing
+
+Implementing UE and RAN is not an easy task and also requires a lot of time. We are always open to public contributions and pull requests.
+
 ## Supporting UERANSIM
 
 UERANSIM is the first and only open source project that implements 5G UE and RAN. Commercial alternatives of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
