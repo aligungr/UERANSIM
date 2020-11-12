@@ -63,16 +63,18 @@ class PingApp {
             return;
         }
 
-        short id = ++idCounter;
-        short seq = ++seqCounter;
+        for (int i = 0; i < ping.count; i++) {
+            short id = ++idCounter;
+            short seq = ++seqCounter;
 
-        if (id == 0) id++;
-        if (seq == 0) seq++;
+            if (id == 0) id++;
+            if (seq == 0) seq++;
 
-        pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName, ping.timeoutSec));
+            pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName, ping.timeoutSec));
 
-        var packet = createPingPacket(source, dest, id, seq);
-        ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
+            var packet = createPingPacket(source, dest, id, seq);
+            ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
+        }
     }
 
     public void handlePacket(OctetString ipPacket) {

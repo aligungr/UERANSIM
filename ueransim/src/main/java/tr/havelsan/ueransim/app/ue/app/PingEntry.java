@@ -1,7 +1,7 @@
 package tr.havelsan.ueransim.app.ue.app;
 
 class PingEntry {
-    public final long timestamp;
+    public final long timestamp; // TODO: Use packet receive time instead since UeAppTask thread may add some overhead
     public final String name;
     public final String address;
     public final int timeoutSec;
