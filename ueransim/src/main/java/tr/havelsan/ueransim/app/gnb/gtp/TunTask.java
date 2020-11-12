@@ -105,7 +105,7 @@ public class TunTask extends ItmsTask {
 
     private void handleDownlinkData(IwDownlinkData msg) {
         if (bridgeEndpointAddrBytes == null) {
-            Log.error(Tag.TUN, "'bridgeEndpointAddrBytes == null' in TunTask");
+            Log.warning(Tag.TUN, "'bridgeEndpointAddrBytes == null' in TunTask");
             return;
         }
 
