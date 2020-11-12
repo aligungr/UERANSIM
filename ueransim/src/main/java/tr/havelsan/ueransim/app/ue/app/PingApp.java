@@ -28,7 +28,9 @@ class PingApp {
         this.pingEntries = new HashMap<>();
     }
 
-    public static native byte[] createPingPacket(int src, int dest, short id, short seq);
+    private static native byte[] createPingPacket(int src, int dest, short id, short seq);
+
+    private static native int handleEchoReplyPacket(byte[] ipData);
 
     public void sendPing(TestCmd_Ping ping) {
         if (!connectionInfo.isEstablished) {
@@ -59,6 +61,9 @@ class PingApp {
         short id = ++idCounter;
         short seq = ++seqCounter;
 
+        if (id == 0) id++;
+        if (seq == 0) seq++;
+
         pingEntries.put(id << 16 | seq, System.currentTimeMillis());
 
         var packet = createPingPacket(source, dest, id, seq);
@@ -66,6 +71,23 @@ class PingApp {
     }
 
     public void handlePacket(OctetString ipPacket) {
-        // TODO
+        if ((ipPacket.get(0) >> 4) != 4) return; // Drop if not IPv4
+        if (ipPacket.get(9) != 1) return; // Drop if not ICMP
+
+        int r = handleEchoReplyPacket(ipPacket.toByteArray());
+        if (r == 0) {
+            return;
+        }
+
+        var entry = pingEntries.get(r);
+        if (entry == null) {
+            return;
+        }
+
+        pingEntries.remove(r);
+
+        long delta = System.currentTimeMillis() - entry;
+
+        Log.success(Tag.UE_APP, "Ping success in %d ms", delta);
     }
 }
