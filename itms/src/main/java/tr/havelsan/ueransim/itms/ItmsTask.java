@@ -26,6 +26,7 @@ package tr.havelsan.ueransim.itms;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ItmsTask {
 
@@ -66,6 +67,15 @@ public abstract class ItmsTask {
     Object receiveMessage() {
         try {
             return msgQueue.take();
+        } catch (InterruptedException e) {
+            onException(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    Object receiveMessage(int timeout) {
+        try {
+            return msgQueue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             onException(e);
             throw new RuntimeException(e);

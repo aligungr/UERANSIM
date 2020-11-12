@@ -54,7 +54,9 @@ public class UeAppTask extends ItmsTask {
     @Override
     public void main() {
         while (true) {
-            var msg = ctx.itms.receiveMessage(this);
+            var msg = ctx.itms.receiveMessage(this, 1000);
+            pingApp.timeoutControl();
+
             if (msg instanceof IwUeTestCommand) {
                 var cmd = ((IwUeTestCommand) msg).cmd;
 

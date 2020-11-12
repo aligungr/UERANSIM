@@ -4,10 +4,18 @@ class PingEntry {
     public final long timestamp;
     public final String name;
     public final String address;
+    public final int timeoutSec;
 
-    public PingEntry(long timestamp, String name, String address) {
+    public PingEntry(long timestamp, String name, String address, int timeoutSec) {
         this.timestamp = timestamp;
         this.name = name;
         this.address = address;
+        this.timeoutSec = timeoutSec;
+    }
+
+    public String getAddressDisplay() {
+        if (name.equals(address))
+            return name;
+        return name + " (" + address + ")";
     }
 }

@@ -13,15 +13,17 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 class PingApp {
     private final UeSimContext ctx;
     private final UeConnectionInfo connectionInfo;
-    private final Map<Integer, PingEntry> pingEntries; // TODO: timeout
+    private final Map<Integer, PingEntry> pingEntries;
 
     private short idCounter;
     private short seqCounter;
+    private long lastTimeoutControl;
 
     public PingApp(UeSimContext ctx, UeConnectionInfo connectionInfo) {
         this.ctx = ctx;
@@ -67,7 +69,7 @@ class PingApp {
         if (id == 0) id++;
         if (seq == 0) seq++;
 
-        pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName));
+        pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName, ping.timeoutSec));
 
         var packet = createPingPacket(source, dest, id, seq);
         ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
@@ -91,11 +93,39 @@ class PingApp {
 
         long delta = System.currentTimeMillis() - entry.timestamp;
 
-        if (!entry.name.equals(entry.address)) {
-            Log.success(Tag.UE_APP, "Ping reply from %s (%s) in %d ms", entry.name, entry.address, delta);
+        Log.success(Tag.UE_APP, "Ping reply from %s in %d ms", entry.getAddressDisplay(), delta);
+    }
+
+    public void timeoutControl() {
+        long current = System.currentTimeMillis();
+        {
+            long delta = current - lastTimeoutControl;
+            if (delta <= 1000)
+                return;
         }
-        else {
-            Log.success(Tag.UE_APP, "Ping reply from %s in %d ms", entry.address, delta);
+
+        lastTimeoutControl = current;
+
+        var entriesToDelete = new HashSet<Integer>();
+
+        for (var item : pingEntries.entrySet()) {
+            var value = item.getValue();
+
+            if (value.timeoutSec <= 0)
+                continue;
+
+            var delta = current - value.timestamp;
+
+            if (delta > value.timeoutSec * 1000) {
+                entriesToDelete.add(item.getKey());
+            }
+        }
+
+        for (var key : entriesToDelete) {
+            var value = pingEntries.get(key);
+            pingEntries.remove(key);
+
+            Log.error(Tag.UE_APP, "Ping timeout for %s after %d sec no response", value.getAddressDisplay(), value.timeoutSec);
         }
     }
 }

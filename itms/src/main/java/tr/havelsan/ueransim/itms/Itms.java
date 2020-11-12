@@ -49,6 +49,10 @@ public class Itms {
         return task.receiveMessage();
     }
 
+    public Object receiveMessage(ItmsTask task, int timeout) {
+        return task.receiveMessage(timeout);
+    }
+
     public Object receiveMessageNonBlocking(ItmsTask task) {
         return task.receiveMessageNonBlocking();
     }
