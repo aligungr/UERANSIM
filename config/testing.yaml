@@ -33,5 +33,13 @@ test-cases:
 
     - "@cmd": PDU_SESSION_ESTABLISHMENT
 
+    - "@cmd": SLEEP
+      duration: 1
+
+    - "@cmd": PING
+      address: google.com
+      count: 1
+      timeoutSec: 3
+
 load-testing:
   number-of-UE: 1
