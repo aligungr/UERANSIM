@@ -7,6 +7,7 @@ import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 class PingApp {
     private final UeSimContext ctx;
     private final UeConnectionInfo connectionInfo;
-    private final Map<Integer, Long> pingEntries; // TODO: timeout
+    private final Map<Integer, PingEntry> pingEntries; // TODO: timeout
 
     private short idCounter;
     private short seqCounter;
@@ -48,11 +49,13 @@ class PingApp {
                 | (connectionInfo.pduAddress[3] & 0xFF);
 
         int dest;
+        String destAddrName;
 
         try {
             var destAddr = InetAddress.getByName(ping.address).getAddress();
             dest = ((destAddr[0] & 0xFF) << 24) | ((destAddr[1] & 0xFF) << 16)
                     | ((destAddr[2] & 0xFF) << 8) | (destAddr[3] & 0xFF);
+            destAddrName = Utils.byteArrayToIpString(destAddr);
         } catch (Exception e) {
             Log.error(Tag.UE_APP, "Ping failure: Name resolution failed for name '%s'.", ping.address);
             return;
@@ -64,7 +67,7 @@ class PingApp {
         if (id == 0) id++;
         if (seq == 0) seq++;
 
-        pingEntries.put(id << 16 | seq, System.currentTimeMillis());
+        pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName));
 
         var packet = createPingPacket(source, dest, id, seq);
         ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
@@ -86,8 +89,13 @@ class PingApp {
 
         pingEntries.remove(r);
 
-        long delta = System.currentTimeMillis() - entry;
+        long delta = System.currentTimeMillis() - entry.timestamp;
 
-        Log.success(Tag.UE_APP, "Ping success in %d ms", delta);
+        if (!entry.name.equals(entry.address)) {
+            Log.success(Tag.UE_APP, "Ping reply from %s (%s) in %d ms", entry.name, entry.address, delta);
+        }
+        else {
+            Log.success(Tag.UE_APP, "Ping reply from %s in %d ms", entry.address, delta);
+        }
     }
 }

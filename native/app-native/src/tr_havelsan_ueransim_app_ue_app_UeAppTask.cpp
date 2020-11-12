@@ -37,3 +37,19 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_tr_havelsan_ueransim_app_ue_app_Pin
   delete[] packet;
   return res;
 }
+
+extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_ue_app_PingApp_handleEchoReplyPacket(JNIEnv *pEnv, jclass cls, jbyteArray ipData)
+{
+  uint8_t* packet = JniConvert::jbytearray_to_uint8array(pEnv, ipData, 1, nullptr);
+
+  ip_header ip(packet);
+  if (ip.ver() != 4) return 0; // IPv4
+  if (ip.p() != 1) return 0; // ICMP
+
+  icmp_header icmp(packet + ip.hl() * 4);
+  if (icmp.type() != 0) return 0; // Echo reply
+
+  // TODO: Also checksum of IP and ICMP may be controlled.
+  // TODO: Data also may be controlled (ECHO_DATA)
+  return (icmp.id() << 16) | icmp.sequence();
+}
