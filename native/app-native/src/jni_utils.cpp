@@ -1,3 +1,6 @@
+// Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
+// This software and all associated files are licensed under GPL-3.0.
+
 #include "jni_utils.hpp"
 
 uint8_t *JniConvert::jbytearray_to_uint8array(JNIEnv *pJniEnv, jbyteArray pJba, jsize alignment, jsize *pOutLength)
