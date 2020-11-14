@@ -1,6 +1,7 @@
 package tr.havelsan.ueransim.nas.impl.others;
 
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
@@ -123,5 +124,27 @@ public class ProtocolConfigurationOptions {
 
     private static boolean isTwoOctetLengthContainerId(int id, boolean isUplink) {
         return !isUplink && (id == 0x0023 || id == 0x0024 || id == 0x0030);
+    }
+
+    public OctetString encode() {
+        var stream = new OctetOutputStream();
+
+        for (var item : configurationProtocols) {
+            stream.writeOctet2(item.id);
+            stream.writeOctet(item.content.length);
+            stream.writeOctetString(item.content);
+        }
+
+        for (var item : additionalParams) {
+            stream.writeOctet2(item.id);
+            if (isTwoOctetLengthContainerId(item.id, item.isUplink)) {
+                stream.writeOctet2(item.content.length);
+            } else {
+                stream.writeOctet(item.content.length);
+            }
+            stream.writeOctetString(item.content);
+        }
+
+        return stream.toOctetString();
     }
 }

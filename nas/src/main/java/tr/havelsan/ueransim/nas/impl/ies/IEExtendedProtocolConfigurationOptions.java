@@ -57,7 +57,7 @@ public class IEExtendedProtocolConfigurationOptions extends InformationElement6 
         stream.writeOctetString(options);
     }
 
-    public ProtocolConfigurationOptions getOptions(boolean isUplink) {
+    public ProtocolConfigurationOptions getAsOptions(boolean isUplink) {
         return ProtocolConfigurationOptions.decode(options, isUplink);
     }
 }
