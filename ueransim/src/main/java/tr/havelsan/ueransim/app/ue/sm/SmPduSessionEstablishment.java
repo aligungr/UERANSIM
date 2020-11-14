@@ -27,15 +27,22 @@ package tr.havelsan.ueransim.app.ue.sm;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.nas.impl.enums.EConfigurationProtocol;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
+import tr.havelsan.ueransim.nas.impl.ies.IEExtendedProtocolConfigurationOptions;
 import tr.havelsan.ueransim.nas.impl.ies.IEIntegrityProtectionMaximumDataRate;
 import tr.havelsan.ueransim.nas.impl.ies.IEPduSessionType;
 import tr.havelsan.ueransim.nas.impl.ies.IESscMode;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentAccept;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
+import tr.havelsan.ueransim.nas.impl.others.ProtocolConfigurationItem;
+import tr.havelsan.ueransim.nas.impl.others.ProtocolConfigurationOptions;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.octets.OctetString;
+
+import java.util.ArrayList;
 
 class SmPduSessionEstablishment {
 
@@ -57,19 +64,28 @@ class SmPduSessionEstablishment {
             return;
         }
 
-        var pduSessionEstablishmentRequest = new PduSessionEstablishmentRequest();
-        pduSessionEstablishmentRequest.pduSessionId = pduSessionId;
-        pduSessionEstablishmentRequest.pti = procedureTransactionId;
-        pduSessionEstablishmentRequest.integrityProtectionMaximumDataRate =
+        var request = new PduSessionEstablishmentRequest();
+        request.pduSessionId = pduSessionId;
+        request.pti = procedureTransactionId;
+        request.integrityProtectionMaximumDataRate =
                 new IEIntegrityProtectionMaximumDataRate(
                         IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink.FULL_DATA_RATE,
                         IEIntegrityProtectionMaximumDataRate.EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink.FULL_DATA_RATE);
-        pduSessionEstablishmentRequest.pduSessionType = new IEPduSessionType(EPduSessionType.IPV4);
-        pduSessionEstablishmentRequest.sscMode = new IESscMode(IESscMode.ESscMode.SSC_MODE_1);
+        request.pduSessionType = new IEPduSessionType(EPduSessionType.IPV4);
+        request.sscMode = new IESscMode(IESscMode.ESscMode.SSC_MODE_1);
+
+        var epco = new IEExtendedProtocolConfigurationOptions();
+        epco.configurationProtocol = EConfigurationProtocol.PPP;
+        epco.extension = true;
+        epco.options = new ProtocolConfigurationOptions(new ArrayList<>(), new ArrayList<>() {{
+            add(new ProtocolConfigurationItem(ProtocolConfigurationOptions.CONT_ID_UP__IP_ADDRESS_ALLOCATION_VIA_NAS_SIGNALLING, true, OctetString.EMPTY));
+            add(new ProtocolConfigurationItem(ProtocolConfigurationOptions.CONT_ID_DOWN__DNS_SERVER_IPV4_ADDRESS, true, OctetString.EMPTY));
+        }}).encode();
+        request.extendedProtocolConfigurationOptions = epco;
 
         ctx.ueTimers.t3580.start();
 
-        SessionManagement.sendSm(ctx, pduSessionId, pduSessionEstablishmentRequest);
+        SessionManagement.sendSm(ctx, pduSessionId, request);
 
         Log.funcOut();
     }
@@ -107,6 +123,6 @@ class SmPduSessionEstablishment {
     }
 
     public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {
-
+        // TODO
     }
 }
