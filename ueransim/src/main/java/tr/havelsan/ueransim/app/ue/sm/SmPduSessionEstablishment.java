@@ -123,6 +123,6 @@ class SmPduSessionEstablishment {
     }
 
     public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {
-
+        // TODO
     }
 }
