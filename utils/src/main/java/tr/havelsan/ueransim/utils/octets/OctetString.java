@@ -27,6 +27,8 @@ package tr.havelsan.ueransim.utils.octets;
 import tr.havelsan.ueransim.utils.Utils;
 
 public final class OctetString {
+    public static final OctetString EMPTY = new OctetString();
+
     public final int length;
     private final byte[] data;
 
