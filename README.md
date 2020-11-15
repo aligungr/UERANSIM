@@ -12,7 +12,7 @@ Implementing UE and RAN is not an easy task and also requires a lot of time. We 
 
 UERANSIM is the first and only open source project that implements 5G UE and RAN. Commercial alternatives of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
 - Starring our GitHub repository,
-- Donating on [Patreon](https://www.patreon.com/ueransim),
+- Donating on Patreon,
 - Creating pull requests, submitting bugs, suggesting new features or documentation updates.
 
 ## License
