@@ -11,4 +11,5 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	g++ -c $(INC_FLAGS) -Wall -O2 -std=c++14 -o $@ $<
 
 clean:
-	rm -f *.o *.so
+	rm tun-agent
+	rm -f ./obj/ue-binder/*.o ./obj/ue-binder/*.so
