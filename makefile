@@ -12,7 +12,7 @@ build: FORCE
 	(cd native/uesimtun && make -f tun-agent.mk && cp -f tun-agent ../../build)
 	(cd native/uesimtun && make -f ue-binder.mk && cp -f libue-binder.so ../../build)
 	(cd native/uesimtun && cp -f ue-binder.sh ../../build)
-	mvn clean compile package
+	mvn package
 	cp ueransim/target/ueransim-1.0.8.jar build/
 	cp utils/target/utils-1.0.8.jar build/
 	cp crypto/target/crypto-1.0.8.jar build/
