@@ -34,19 +34,21 @@ public class MainApp {
         Console.println(AnsiPalette.PAINT_INPUT, "Selection: ");
 
         var scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
+        while(scanner.hasNextLine()){
+            String line = scanner.nextLine();
 
-        int number = -1;
-        try {
-            number = Integer.parseInt(line);
-        } catch (Exception ignored) {
+            int number = -1;
+            try {
+                number = Integer.parseInt(line);
+            } catch (Exception ignored) {
+            }
+
+            if (number < 1 || number > testCases.length) {
+                System.err.println("Invalid selection: " + number);
+                return;
+            }
+
+            ueransim.runTest(testCases[number - 1]);
         }
-
-        if (number < 1 || number > testCases.length) {
-            System.err.println("Invalid selection: " + number);
-            return;
-        }
-
-        ueransim.runTest(testCases[number - 1]);
     }
 }
