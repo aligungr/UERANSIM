@@ -27,6 +27,7 @@ public enum Tag {
         switch (this) {
             case SYSTEM:
             case CONNECTION:
+                return true;
             default:
                 return false;
         }
