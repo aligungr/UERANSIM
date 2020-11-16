@@ -86,6 +86,9 @@ static int cread(int fd, void *buf, size_t nbytes)
 
 int main(int argc, char *argv[])
 {
+    // TODO: Force sudo
+    // TODO: Check for another instance
+
     int tun_fd = tun_alloc();
     int bridge_fd = bridge_alloc();
     int maxfd = std::max(tun_fd, bridge_fd);
