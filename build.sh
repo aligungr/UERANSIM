@@ -26,6 +26,14 @@ make
 cp libapp-native.so ../../build/
 cd ../..
 ################################################################################
+cd native/uesimtun
+make -f tun-agent.mk
+make -f ue-binder.mk
+cp tun-agent ../../build/
+cp libue-binder.so ../../build/
+cp ue-binder.sh ../../build/
+cd ../..
+################################################################################
 mvn clean compile package
 ################################################################################
 cp ueransim/target/ueransim-1.0.8.jar build/
