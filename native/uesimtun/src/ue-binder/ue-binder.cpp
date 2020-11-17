@@ -51,7 +51,7 @@ extern "C" void _init(void)
 
     inaddr_any_saddr = htonl(INADDR_ANY);
 
-    bind_addr_env = strdup("10.45.0.2"); // TODO
+    bind_addr_env = getenv("UE_BIND_ADDR");
 
     if (bind_addr_env)
     {

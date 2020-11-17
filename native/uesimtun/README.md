@@ -64,3 +64,24 @@ You can validate it with `sudo ip route list table uesimtable`
 
 ## 5. Run the TUN Agent
 
+```
+sudo ./tun-agent
+```
+
+## 6. Bind UE Network to Another Application
+
+```
+./ue-binder.sh {IP} curl google.com
+```
+
+In this way, `curl` command will use UE's internet connection. While using this command make sure that tun-agent and UERANSIM agent is already running.
+
+You can use almost any application such as Firefox. For example:
+
+```
+./ue-binder.sh 10.45.0.2 firefox
+```
+
+After running this command, all network traffic occured in Firefox, will use UE's internet connectivity.
+
+**NOTE**: Please kill all firefox processes before running the command above.
