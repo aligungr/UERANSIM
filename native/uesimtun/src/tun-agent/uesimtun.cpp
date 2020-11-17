@@ -21,12 +21,14 @@
 #include <stdarg.h>
 
 #include "utils.hpp"
-#include "configs.hpp"
 #include "packetmeter.hpp"
 
-static constexpr int BUFFER_SIZE = 65535;
+#define HVL_TUN_HOST "127.0.0.1"
+#define HVL_TUN_PORT 49971
+#define HVL_UERANSIM_HOST "127.0.0.1"
+#define HVL_UERANSIM_PORT 49972
 
-static bool debug;
+static constexpr int BUFFER_SIZE = 65535;
 
 static int tun_alloc()
 {
@@ -139,8 +141,10 @@ int main(int argc, char *argv[])
         {
             int nread = read(bridge_fd, buffer, sizeof(buffer));
 
-            // TODO: check if write is success.
-            write(tun_fd, buffer, nread);
+            if (write(tun_fd, buffer, nread) == -1) {
+                perror("write()");
+                exit(EXIT_FAILURE);
+            }
 
             out_count += nread;
             out_meter.notify(nread);

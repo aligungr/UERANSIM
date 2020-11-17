@@ -148,6 +148,5 @@ public class GtpTask extends ItmsTask {
 
     private void handleTunnelCreate(PduSessionResource pduSession) {
         this.gtpCtx.pduSessions.add(pduSession);
-        itms.sendMessage(ItmsId.GNB_TASK_TUN, new IwTunnelCreateSampleInfo(pduSession.ueId, pduSession.pduSessionId));
     }
 }
