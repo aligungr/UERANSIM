@@ -106,6 +106,8 @@ int main(int argc, char *argv[])
     PacketMeter in_meter, out_meter;
     int in_count = 0, out_count = 0;
 
+    std::cout << "UERANSIM TUN agent has been started..." << std::endl;
+
     while (true)
     {
         fd_set fds;
