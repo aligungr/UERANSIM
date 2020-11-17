@@ -2,6 +2,7 @@
 // This software and all associated files are licensed under GPL-3.0.
 
 #include <cstdio>
+#include <iostream>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -86,7 +87,12 @@ static int cread(int fd, void *buf, size_t nbytes)
 
 int main(int argc, char *argv[])
 {
-    // TODO: Force sudo
+    if (geteuid() != 0)
+    {
+        std::cerr << "Error: sudo privilage is required to invoke ioctl()" << std::endl;
+        return -1;
+    }
+
     // TODO: Check for another instance
 
     int tun_fd = tun_alloc();
