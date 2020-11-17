@@ -28,8 +28,6 @@ sudo ip link set uesimtun up
 ---
 ## 4. Configure Routing
 
-**NOTE:** This configuration is persistent unlike the others. (That is, you only need to execute once.)
-
 Now we need to create a routing table called `uesimtable` if not exist. Use `nano` or `echo` to create the table.
 
 Run:
