@@ -5,14 +5,17 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
+import tr.havelsan.ueransim.app.common.PduSession;
+
 import java.util.UUID;
 
-public class IwTunnelCreateSampleInfo {
-    public final UUID ueId;
-    public final int pduSessionId;
+public class IwPduSessionEstablishment {
 
-    public IwTunnelCreateSampleInfo(UUID ueId, int pduSessionId) {
+    public final UUID ueId;
+    public final PduSession pduSession;
+
+    public IwPduSessionEstablishment(UUID ueId, PduSession pduSession) {
         this.ueId = ueId;
-        this.pduSessionId = pduSessionId;
+        this.pduSession = pduSession;
     }
 }

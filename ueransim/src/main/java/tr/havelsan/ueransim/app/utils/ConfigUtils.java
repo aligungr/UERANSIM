@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.utils;
 
+import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -46,6 +47,8 @@ public class ConfigUtils {
             return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
         if (ctx instanceof GnbSimContext)
             return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
+        if (ctx instanceof AirSimContext)
+            return "air";
         throw new RuntimeException();
     }
 }

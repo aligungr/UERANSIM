@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.sm;
 
+import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -97,6 +98,7 @@ class SmPduSessionEstablishment {
         pduSession.pduAddress = message.pduAddress;
 
         ctx.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeConnectionSetup(pduSession));
+        ctx.sim.getAirCtx().itms.sendMessage(ItmsId.AIR_TASK_TB, new IwPduSessionEstablishment(ctx.ctxId, pduSession));
 
         Log.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
         Log.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
