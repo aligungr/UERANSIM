@@ -95,8 +95,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // TODO: Check for another instance
-
     int tun_fd = tun_alloc();
     int bridge_fd = bridge_alloc();
     int maxfd = std::max(tun_fd, bridge_fd);
