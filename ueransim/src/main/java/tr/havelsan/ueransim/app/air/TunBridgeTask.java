@@ -24,8 +24,6 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: remove tun port from gnb.yaml files
-// TODO: force ueransim single instance
 public class TunBridgeTask extends ItmsTask {
 
     private final AirSimContext ctx;
@@ -52,10 +50,11 @@ public class TunBridgeTask extends ItmsTask {
             bridge = new DatagramSocket(49972, localhost);
         } catch (SocketException e) {
             Log.error(Tag.CONNECTION, "TUN Bridge connection could not established: " + e.getMessage());
+            System.exit(1);
             return;
         }
 
-        Log.info(Tag.CONNECTION, "Listening TUN Bridge.");
+        Log.info(Tag.CONNECTION, "TUN Bridge has been started.");
 
         var receiverThread = new Thread(this::receiverThread);
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));
