@@ -11,10 +11,8 @@ import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 import tr.havelsan.ueransim.utils.bits.Bit;
 import tr.havelsan.ueransim.utils.bits.BitN;
-import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.exceptions.DecodingException;
 import tr.havelsan.ueransim.utils.exceptions.EncodingException;
-import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetN;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -31,7 +29,10 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -493,6 +494,15 @@ public final class Utils {
         List<T> list = new ArrayList<>(list1);
         list.addAll(list2);
         return list;
+    }
+
+    public static String int32ToIp4String(int addr) {
+        return byteArrayToIpString(new byte[]{
+                (byte) ((addr >> 24) & 0xFF),
+                (byte) ((addr >> 16) & 0xFF),
+                (byte) ((addr >> 8) & 0xFF),
+                (byte) ((addr) & 0xFF),
+        });
     }
 
     public static String byteArrayToIpString(byte[] ipAddress) {
