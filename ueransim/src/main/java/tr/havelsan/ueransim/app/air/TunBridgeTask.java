@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
+import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
@@ -107,7 +108,11 @@ public class TunBridgeTask extends ItmsTask {
             Log.warning(Tag.TUN, "Another PDU Session target with IP %s already exists. Overwriting.", Utils.byteArrayToIpString(addrBytes));
         }
 
-        ipRoute.put(addr, new TargetPduSession(ueId, psi));
+        var ue = ctx.sim.findUe(ueId);
+        if (ue != null) {
+            Log.info(Tag.TUN, "IPv4 PDU session established(%s, %s)", ConfigUtils.generateNodeName(ue), Utils.byteArrayToIpString(addrBytes));
+            ipRoute.put(addr, new TargetPduSession(ueId, psi));
+        }
     }
 
     private void handleUplinkData(OctetString ipData) {
