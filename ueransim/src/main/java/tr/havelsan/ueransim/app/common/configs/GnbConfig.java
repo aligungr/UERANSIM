@@ -19,9 +19,8 @@ public class GnbConfig {
     public final boolean ignoreStreamIds;
     public final String host;
     public final int gtpPort;
-    public final int tunPort;
 
-    public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds, String host, int gtpPort, int tunPort) {
+    public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds, String host, int gtpPort) {
         this.gnbId = gnbId;
         this.tac = tac;
         this.nci = BitString.fromBits(nci);
@@ -31,6 +30,5 @@ public class GnbConfig {
         this.ignoreStreamIds = ignoreStreamIds;
         this.host = host;
         this.gtpPort = gtpPort;
-        this.tunPort = tunPort;
     }
 }
