@@ -17,6 +17,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.lang.reflect.Type;
 
+// TODO: Gson is too slow, switch to another JSON library
 public final class Json {
     private static Gson gson;
 
