@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PeriodicRegistration;
 import tr.havelsan.ueransim.itms.ItmsId;
 
+// TODO: add sleep
 class PeriodicRegistrationTester extends UeTester {
 
     private UeTester otherTester;
