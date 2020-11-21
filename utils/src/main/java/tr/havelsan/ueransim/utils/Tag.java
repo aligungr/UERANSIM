@@ -14,7 +14,6 @@ public enum Tag {
     FLOW,
     MESSAGING,
     CONNECTION,
-    EVENT,
     NAS_TIMER,
     GTP,
     NGAP_INTERNAL,

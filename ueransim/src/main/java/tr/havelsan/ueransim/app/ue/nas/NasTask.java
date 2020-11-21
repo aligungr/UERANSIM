@@ -30,7 +30,7 @@ public class NasTask extends ItmsTask {
     private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
         if (!MobilityManagement.executeCommand(ctx, cmd)) {
             if (!SessionManagement.executeCommand(ctx, cmd)) {
-                Log.error(Tag.EVENT, "invalid command: %s", cmd);
+                Log.error(Tag.SYSTEM, "invalid command: %s", cmd);
             }
         }
     }
