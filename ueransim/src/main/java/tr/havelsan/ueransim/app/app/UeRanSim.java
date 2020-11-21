@@ -14,12 +14,20 @@ import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.trigger.TriggeringWrapper;
+import tr.havelsan.ueransim.app.common.trigger.TwOnConnected;
+import tr.havelsan.ueransim.app.common.trigger.TwOnReceive;
+import tr.havelsan.ueransim.app.common.trigger.TwOnSend;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class UeRanSim {
 
@@ -27,6 +35,8 @@ public class UeRanSim {
     private final HashMap<UUID, UeSimContext> ueMap;
     private final AirSimContext airCtx;
 
+    private final Thread triggeringThread;
+    private final BlockingQueue<TriggeringWrapper> triggerQueue;
     private final List<INodeMessagingListener> messagingListeners;
     private final List<INodeConnectionListener> connectionListeners;
 
@@ -34,10 +44,14 @@ public class UeRanSim {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
 
+        this.triggeringThread = new Thread(this::triggeringThreadMain);
+        this.triggerQueue = new LinkedBlockingQueue<>();
         this.messagingListeners = new ArrayList<>(messagingListeners);
         this.connectionListeners = new ArrayList<>(connectionListeners);
 
         this.airCtx = AirNode.createContext(this);
+
+        triggeringThread.start();
         AirNode.run(airCtx);
     }
 
@@ -115,21 +129,44 @@ public class UeRanSim {
     //                                          TRIGGERS
     //======================================================================================================
 
-    public void triggerOnSend(BaseSimContext ctx, Object msg) {
-        for (var listener : messagingListeners) {
-            listener.onSend(ctx, msg);
+    private void triggeringThreadMain() {
+        Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
+
+        while (true) {
+            TriggeringWrapper obj;
+            try {
+                obj = triggerQueue.take();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (obj instanceof TwOnConnected) {
+                for (var listener : connectionListeners) {
+                    listener.onConnected(obj.ctx, ((TwOnConnected) obj).type);
+                }
+            }
+            if (obj instanceof TwOnSend) {
+                for (var listener : messagingListeners) {
+                    listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
+                }
+            }
+            if (obj instanceof TwOnReceive) {
+                for (var listener : messagingListeners) {
+                    listener.onReceive(obj.ctx, ((TwOnReceive) obj).msg);
+                }
+            }
         }
+    }
+
+    public void triggerOnSend(BaseSimContext ctx, Object msg) {
+        triggerQueue.add(new TwOnSend(ctx, msg));
     }
 
     public void triggerOnReceive(BaseSimContext ctx, Object msg) {
-        for (var listener : messagingListeners) {
-            listener.onReceive(ctx, msg);
-        }
+        triggerQueue.add(new TwOnReceive(ctx, msg));
     }
 
     public void triggerOnConnected(BaseSimContext ctx, INodeConnectionListener.Type connectionType) {
-        for (var listener : connectionListeners) {
-            listener.onConnected(ctx, connectionType);
-        }
+        triggerQueue.add(new TwOnConnected(ctx, connectionType));
     }
 }
