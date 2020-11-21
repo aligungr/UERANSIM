@@ -65,7 +65,7 @@ public class FlowTestApp {
         Console.println(AnsiPalette.PAINT_INPUT, "Selection: ");
 
         var scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
+        if (scanner.hasNextLine()) {
             String line = scanner.nextLine();
 
             int number = -1;
@@ -76,11 +76,10 @@ public class FlowTestApp {
 
             if (number < 1 || number > testCases.length) {
                 System.err.println("Invalid selection: " + number);
-                continue;
+            } else {
+                Log.info(Tag.SYSTEM, "Starting predefined procedure test: \"%s\"", testCases[number - 1]);
+                procTester.startTestCase(testCases[number - 1]);
             }
-
-            Log.info(Tag.SYSTEM, "Starting predefined procedure test: \"%s\"", testCases[number - 1]);
-            procTester.startTestCase(testCases[number - 1]);
         }
     }
 }
