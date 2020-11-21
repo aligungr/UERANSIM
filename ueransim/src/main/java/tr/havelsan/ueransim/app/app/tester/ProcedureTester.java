@@ -140,16 +140,16 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
         UeTester ueTester;
         switch (testName) {
             case "initial-registration":
-                ueTester = new InitialRegistrationTester(ctx);
+                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
                 break;
             case "periodic-registration":
-                ueTester = new InitialRegistrationTester(ctx);
+                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
                 break;
             case "de-registration":
-                ueTester = new InitialRegistrationTester(ctx);
+                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
                 break;
             case "pdu-session-establishment":
-                ueTester = new InitialRegistrationTester(ctx);
+                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
                 break;
             default:
                 Log.error(Tag.SYSTEM, "Invalid predefined procedure test: \"%s\"", testName);

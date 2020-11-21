@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.app.tester;
 
+import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -14,8 +15,8 @@ import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
 class InitialRegistrationTester extends UeTester {
 
-    public InitialRegistrationTester(UeSimContext ctx) {
-        super(ctx);
+    public InitialRegistrationTester(UeSimContext ctx, ProcTestConfig config) {
+        super(ctx, config);
     }
 
     @Override
