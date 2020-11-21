@@ -40,7 +40,7 @@ public class Logger {
 
     private static String getTime() {
         Calendar cal = Calendar.getInstance();
-        return String.format("[%s] ", DATE_FORMAT.format(cal.getTime()));
+        return String.format("%s ", DATE_FORMAT.format(cal.getTime()));
     }
 
     private static Object[] concat(Object o, Object[] arr) {
