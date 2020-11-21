@@ -72,7 +72,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
                 if (this.waitingUes.isEmpty()) {
                     Utils.sleep(100);
                     initState = INIT_STATE__INIT_DONE;
-                    Log.success(Tag.SYSTEM, "All nodes are initialized");
+                    Log.success(Tag.SYSTEM, "All nodes are initialized.");
                 }
             }
         }
