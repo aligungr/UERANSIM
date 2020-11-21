@@ -106,7 +106,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     }
 
     public String[] testCases() {
-        return new String[]{"initial-registration", "peroidic-registration",
+        return new String[]{"initial-registration", "periodic-registration",
                 "de-registration", "pdu-session-establishment"};
     }
 
