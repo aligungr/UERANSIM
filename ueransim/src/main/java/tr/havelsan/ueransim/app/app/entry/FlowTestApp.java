@@ -51,6 +51,7 @@ public class FlowTestApp {
     }
 
     // TODO: WebApp may override this
+    // TODO: onTesterREinit tarzı bir şey yapılabilir, seçilen akış tamamen bittiyse her ue için mesela
     protected void onTesterInit() {
         Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
 
