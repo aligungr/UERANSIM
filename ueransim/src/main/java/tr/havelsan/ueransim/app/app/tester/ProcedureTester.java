@@ -3,8 +3,10 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app;
+package tr.havelsan.ueransim.app.app.tester;
 
+import tr.havelsan.ueransim.app.app.AppConfig;
+import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.common.Supi;
@@ -15,10 +17,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ProcedureTester implements INodeConnectionListener, INodeMessagingListener {
 
@@ -32,6 +31,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     private UeRanSim sim;
     private UUID gnbId;
     private List<UUID> ueIds;
+    private Map<UUID, UeTester> ueTesters;
 
     // Fields related to initialization
     private Runnable onInit;
@@ -50,6 +50,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
         this.ueIds = new ArrayList<>();
         this.numberOfUe = numberOfUe;
         this.onInit = onInit;
+        this.ueTesters = new HashMap<>();
 
         gnbId = sim.createGnb(appConfig.createGnbConfig());
         initState = INIT_STATE__WAITING_GNB;
@@ -82,6 +83,13 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
                 }
             }
         }
+
+        if (initState == INIT_STATE__INIT_DONE) {
+            var ueTester = ueTesters.get(ctx.ctxId);
+            if (ueTester != null) {
+                ueTester.onConnected(ctx, connectionType);
+            }
+        }
     }
 
     @Override
@@ -89,12 +97,21 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
         if (initState != INIT_STATE__INIT_DONE)
             return;
 
+        var ueTester = ueTesters.get(ctx.ctxId);
+        if (ueTester != null) {
+            ueTester.onSend(ctx, message);
+        }
     }
 
     @Override
     public void onReceive(BaseSimContext ctx, Object message) {
         if (initState != INIT_STATE__INIT_DONE)
             return;
+
+        var ueTester = ueTesters.get(ctx.ctxId);
+        if (ueTester != null) {
+            ueTester.onReceive(ctx, message);
+        }
     }
 
     private UeConfig createUeConfig(int index) {
@@ -111,8 +128,36 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     }
 
     public void startTestCase(String name) {
-        Log.info(Tag.SYSTEM, "Starting predefined procedure test: \"%s\"", name);
+        ueIds.forEach(id -> startTestCase(id, name));
+    }
 
-        // TODO
+    public void startTestCase(UUID ueId, String testName) {
+        var ctx = sim.findUe(ueId);
+        if (ctx == null) {
+            Log.error(Tag.SYSTEM, "UE not found for predefined procedure test.");
+            return;
+        }
+
+        UeTester ueTester;
+        switch (testName) {
+            case "initial-registration":
+                ueTester = new InitialRegistrationTester(ctx);
+                break;
+            case "periodic-registration":
+                ueTester = new InitialRegistrationTester(ctx);
+                break;
+            case "de-registration":
+                ueTester = new InitialRegistrationTester(ctx);
+                break;
+            case "pdu-session-establishment":
+                ueTester = new InitialRegistrationTester(ctx);
+                break;
+            default:
+                Log.error(Tag.SYSTEM, "Invalid predefined procedure test: \"%s\"", testName);
+                return;
+        }
+
+        ueTesters.put(ueId, ueTester);
+        ueTester.onStart();
     }
 }
