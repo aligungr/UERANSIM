@@ -46,7 +46,7 @@ public class FlowTestApp {
         testingMts.setKebabCaseDecoding(true);
         MtsInitializer.initTestingMts(testingMts);
 
-        var ito = (ImplicitTypedObject) testingMts.decoder.decode("config/procedure-testing.yaml");
+        var ito = (ImplicitTypedObject) testingMts.decoder.decode("config/proc-testing.yaml");
         return testingMts.constructor.construct(ProcTestConfig.class, ito, true);
     }
 
