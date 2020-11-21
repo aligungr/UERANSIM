@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.app.tester;
 
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
+import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -42,6 +43,13 @@ class InitialRegistrationTester extends UeTester {
 
     @Override
     public void onSwitched(BaseSimContext ctx, Enum<?> state) {
+        if (state == ERmState.RM_REGISTERED) {
+            onComplete();
+        }
+    }
+
+    @Override
+    public void onComplete() {
 
     }
 }

@@ -20,4 +20,6 @@ abstract class UeTester implements INodeListener {
     }
 
     public abstract void onStart();
+
+    public abstract void onComplete();
 }
