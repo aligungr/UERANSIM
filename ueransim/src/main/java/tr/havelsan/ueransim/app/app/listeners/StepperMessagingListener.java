@@ -27,9 +27,9 @@ public class StepperMessagingListener implements INodeListener {
                 var ngap = (NGAP_BaseMessage) msg;
                 switch (ngap.getPduType()) {
                     case 1:
-                        return Severity.SUCCESS;
+                        return Severity.SUCC;
                     case 2:
-                        return Severity.ERROR;
+                        return Severity.ERRO;
                     default:
                         return Severity.INFO;
                 }
@@ -48,7 +48,7 @@ public class StepperMessagingListener implements INodeListener {
                 || msg instanceof FiveGSmStatus || msg instanceof PduSessionEstablishmentReject ||
                 msg instanceof PduSessionModificationReject || msg instanceof PduSessionReleaseReject ||
                 msg instanceof RegistrationReject || msg instanceof SecurityModeReject) {
-            return Severity.ERROR;
+            return Severity.ERRO;
         }
 
         if (msg instanceof ConfigurationUpdateComplete || msg instanceof PduSessionAuthenticationComplete ||
@@ -56,7 +56,7 @@ public class StepperMessagingListener implements INodeListener {
                 || msg instanceof PduSessionReleaseComplete || msg instanceof RegistrationAccept ||
                 msg instanceof RegistrationComplete || msg instanceof SecurityModeComplete
                 || msg instanceof ServiceAccept) {
-            return Severity.SUCCESS;
+            return Severity.SUCC;
         }
 
         return Severity.INFO;
