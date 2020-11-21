@@ -169,7 +169,7 @@ public class MobilityManagement {
         if (msg instanceof IwPlmnSearchResponse) {
             ctx.connectedGnb = ((IwPlmnSearchResponse) msg).gnbId;
             ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.UE_MR_GNB);
-            Log.info(Tag.FLOW, "UE connected to gNB (%s).", ((IwPlmnSearchResponse) msg).gnbId);
+            Log.info(Tag.FLOW, "UE connected to gNB.");
 
             switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE);
         }
