@@ -96,7 +96,7 @@ public class StepperMessagingListener implements INodeListener {
     }
 
     @Override
-    public void onSwitched(BaseSimContext ctx) {
+    public void onSwitched(BaseSimContext ctx, Object state) {
 
     }
 

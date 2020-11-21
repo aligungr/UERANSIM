@@ -113,13 +113,13 @@ public class ProcedureTester implements INodeListener {
     }
 
     @Override
-    public void onSwitched(BaseSimContext ctx) {
+    public void onSwitched(BaseSimContext ctx, Object state) {
         if (initState != INIT_STATE__INIT_DONE)
             return;
 
         var ueTester = ueTesters.get(ctx.ctxId);
         if (ueTester != null) {
-            ueTester.onSwitched(ctx);
+            ueTester.onSwitched(ctx, state);
         }
     }
 

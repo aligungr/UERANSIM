@@ -36,5 +36,5 @@ public interface INodeListener {
     /**
      * Triggered when a simulation node has switched to another state.
      */
-    void onSwitched(BaseSimContext ctx);
+    void onSwitched(BaseSimContext ctx, Object state);
 }
