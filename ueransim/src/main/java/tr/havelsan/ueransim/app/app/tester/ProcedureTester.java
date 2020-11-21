@@ -156,7 +156,7 @@ public class ProcedureTester implements INodeListener {
                 ueTester = new InitialRegistrationTester(ctx, procTestConfig);
                 break;
             case "de-registration":
-                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
+                ueTester = new DeRegistrationTester(ctx, procTestConfig);
                 break;
             case "pdu-session-establishment":
                 ueTester = new InitialRegistrationTester(ctx, procTestConfig);

@@ -137,6 +137,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -144,6 +145,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -151,6 +153,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -158,6 +161,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -165,6 +169,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -172,10 +177,13 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.CONGESTION)) {
                 if (message.t3346value != null && message.t3346value.hasValue()) {
 
                     MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__ATTEMPTING_REGISTRATION);
+                    MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
+
                     ctx.ueTimers.t3346.stop();
 
                     if (message.securityHeaderType.isIntegrityProtected()) {
