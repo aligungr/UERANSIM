@@ -6,7 +6,6 @@
 package tr.havelsan.ueransim.app.app.tester;
 
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
-import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -53,7 +52,7 @@ class PduSessionEstablishmentTester extends UeTester {
 
         if (connType == ConnType.ANY_IPv4) {
             ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                    new IwUeTestCommand(new TestCmd_Ping("google.com", 1, 3)));
+                    new IwUeTestCommand(new TestCmd_Ping(config.pingAddress, config.pingCount, config.pingTimeoutSec)));
         }
     }
 
