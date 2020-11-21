@@ -7,6 +7,10 @@ package tr.havelsan.ueransim.app.app.listeners;
 
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
+/**
+ * Listener for various kind of events.
+ * All classes implementing INodeListener must be 'lightweight'.
+ */
 public interface INodeListener {
 
     enum ConnType {
