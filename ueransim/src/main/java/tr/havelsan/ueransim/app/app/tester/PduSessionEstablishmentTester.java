@@ -79,9 +79,5 @@ class PduSessionEstablishmentTester extends UeTester {
             otherTester.onSwitched(ctx, state);
             return;
         }
-
-        if (state == ERmState.RM_DEREGISTERED) {
-            onComplete();
-        }
     }
 }
