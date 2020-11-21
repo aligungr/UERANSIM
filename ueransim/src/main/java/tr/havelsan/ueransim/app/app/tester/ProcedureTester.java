@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.common.Supi;
+import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.utils.Tag;
@@ -32,23 +33,21 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     private UUID gnbId;
     private List<UUID> ueIds;
     private Map<UUID, UeTester> ueTesters;
+    private ProcTestConfig procTestConfig;
 
     // Fields related to initialization
     private Runnable onInit;
     private int initState;
     private HashSet<UUID> waitingUes;
 
-    // Fields related to testing params
-    private int numberOfUe;
-
     public ProcedureTester(AppConfig appConfig) {
         this.appConfig = appConfig;
     }
 
-    public void start(UeRanSim ueRanSim, int numberOfUe, Runnable onInit) {
+    public void start(UeRanSim ueRanSim, ProcTestConfig procTestConfig, Runnable onInit) {
         this.sim = ueRanSim;
         this.ueIds = new ArrayList<>();
-        this.numberOfUe = numberOfUe;
+        this.procTestConfig = procTestConfig;
         this.onInit = onInit;
         this.ueTesters = new HashMap<>();
 
@@ -61,7 +60,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
         if (initState == INIT_STATE__WAITING_GNB) {
             if (ctx.ctxId.equals(gnbId) && connectionType == Type.SCTP) {
                 // gNB is ready, now create the UEs.
-                for (int i = 0; i < numberOfUe; i++) {
+                for (int i = 0; i < procTestConfig.numberOfUe; i++) {
                     ueIds.add(sim.createUe(createUeConfig(i)));
                 }
 
@@ -78,7 +77,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
                 if (this.waitingUes.isEmpty()) {
                     Utils.sleep(100);
                     initState = INIT_STATE__INIT_DONE;
-                    Log.success(Tag.SYSTEM, "All UE and gNBs are initialized.", numberOfUe);
+                    Log.success(Tag.SYSTEM, "All UE and gNBs are initialized.");
                     onInit.run();
                 }
             }

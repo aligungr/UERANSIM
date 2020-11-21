@@ -39,7 +39,7 @@ public class FlowTestApp {
                 .addMessagingListener(procTester)
                 .build();
 
-        procTester.start(ueransim, procTestConfig.numberOfUe, this::onTesterInit);
+        procTester.start(ueransim, procTestConfig, this::onTesterInit);
     }
 
     private ProcTestConfig createProcTestConfig() {
