@@ -1,9 +1,21 @@
-# TODO: Add description
+# ================================================================================
+# In this file, you can adjust your procedure testing settings.
+# ...
+
+# ================================= REGISTRATION =================================
+
+# Follow-on request (FOR), see TS 24.501.
 # Possible values are: FOR_PENDING, NO_FOR_PENDING
 for-pending: FOR_PENDING
 
-# TODO: Add description
+# =============================== DE-REGISTRATION ================================
+
+# Switch-off indication, see TS 24.501.
+# true: UE performs de-registration due to a switch off
+# false: UE performs normal de-registration
 is-switch-off: false
 
-# TODO: Add description
+# ================================= LOAD TESTING ==================================
+
+# Here you can adjust the number of UEs to be run in procedure testing.
 number-of-ue: 1
