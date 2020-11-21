@@ -27,14 +27,14 @@ class SmPduSessionManagement {
         }
 
         if (id == -1) {
-            Log.error(Tag.PROC, "PDU session allocation failed");
+            Log.error(Tag.FLOW, "PDU session allocation failed");
             return null;
         }
 
         var val = EPduSessionIdentity.fromValue(id);
         arr[id] = new PduSession(val);
 
-        Log.debug(Tag.PROC, "PDU session allocated: %s", val);
+        Log.debug(Tag.FLOW, "PDU session allocated: %s", val);
         return val;
     }
 
@@ -50,24 +50,24 @@ class SmPduSessionManagement {
         }
 
         if (id == -1) {
-            Log.error(Tag.PROC, "PTI allocation failed");
+            Log.error(Tag.FLOW, "PTI allocation failed");
             return null;
         }
 
         arr[id] = new ProcedureTransaction();
 
         var val = EProcedureTransactionIdentity.fromValue(id);
-        Log.debug(Tag.PROC, "PTI allocated: %s", val);
+        Log.debug(Tag.FLOW, "PTI allocated: %s", val);
         return val;
     }
 
     public static void releaseProcedureTransactionId(UeSimContext ctx, EProcedureTransactionIdentity pti) {
         ctx.smCtx.procedureTransactions[pti.intValue()] = ProcedureTransaction.RELEASED;
-        Log.debug(Tag.PROC, "PTI released: %s", pti);
+        Log.debug(Tag.FLOW, "PTI released: %s", pti);
     }
 
     public static void releasePduSession(UeSimContext ctx, EPduSessionIdentity psi) {
         ctx.smCtx.pduSessions[psi.intValue()] = PduSession.RELEASED;
-        Log.debug(Tag.PROC, "PDU Session released: %s", psi);
+        Log.debug(Tag.FLOW, "PDU Session released: %s", psi);
     }
 }

@@ -22,7 +22,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class GnbNode {
 
     public static GnbSimContext createContext(UeRanSim sim, GnbConfig config) {
-        var ctx = new GnbSimContext(sim);
+        var ctx = new GnbSimContext(sim, "gnb-" + config.gnbId);
         ctx.config = config;
 
         // Create AMF gNB contexts
@@ -44,7 +44,7 @@ public class GnbNode {
     }
 
     public static void run(GnbSimContext ctx) {
-        ctx.logger = ConfigUtils.createLoggerFor(ConfigUtils.generateNodeName(ctx));
+        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
 
         var itms = ctx.itms;
 

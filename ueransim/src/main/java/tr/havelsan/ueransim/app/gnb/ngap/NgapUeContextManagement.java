@@ -122,7 +122,7 @@ public class NgapUeContextManagement {
         if (ieNewAmfUeNgapId != null) {
             long old = ue.amfUeNgapId;
             ue.amfUeNgapId = ieNewAmfUeNgapId.value;
-            Log.info(Tag.PROC, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
+            Log.info(Tag.FLOW, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
         }
 
         NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());

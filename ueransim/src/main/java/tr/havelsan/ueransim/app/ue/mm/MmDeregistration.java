@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.ue.mm;
 
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
+import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
@@ -54,8 +55,9 @@ public class MmDeregistration {
         ctx.mmCtx.storedSuci = null;
 
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
+        MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
 
-        Log.success(Tag.PROCEDURE_RESULT, "De-registration is successful");
+        Log.success(Tag.PROC, "De-registration is successful");
         Log.funcOut();
     }
 
@@ -78,6 +80,7 @@ public class MmDeregistration {
         MobilityManagement.sendMm(ctx, new DeRegistrationAcceptUeTerminated());
 
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
+        MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
 
         Log.funcOut();
     }

@@ -28,8 +28,8 @@ public class NgapTransfer {
     public static void sendNgapNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
         var ngapPdu = message.buildPdu();
 
-        Log.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
-        Log.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
+        Log.debug(Tag.MSG, "Sending NGAP: %s", message.getClass().getSimpleName());
+        Log.debug(Tag.MSG, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
         ctx.sim.triggerOnSend(ctx, message);
@@ -61,8 +61,8 @@ public class NgapTransfer {
 
         var ngapPdu = message.buildPdu();
 
-        Log.debug(Tag.MESSAGING, "Sending NGAP: %s", message.getClass().getSimpleName());
-        Log.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
+        Log.debug(Tag.MSG, "Sending NGAP: %s", message.getClass().getSimpleName());
+        Log.debug(Tag.MSG, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
         ctx.sim.triggerOnSend(ctx, message);

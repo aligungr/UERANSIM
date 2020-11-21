@@ -46,7 +46,7 @@ public class GtpTask extends ItmsTask {
         try {
             this.socket = new DatagramSocket(ctx.config.gtpPort, InetAddress.getByName(ctx.config.host));
         } catch (Exception e) {
-            Log.error(Tag.CONNECTION, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.config.gtpPort, ctx.config.host, e.toString());
+            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.config.gtpPort, ctx.config.host, e.toString());
             return;
         }
 
@@ -137,7 +137,7 @@ public class GtpTask extends ItmsTask {
         }
 
         if (gtp.msgType.intValue() != GtpMessage.MT_G_PDU) {
-            Log.error(Tag.NOT_IMPL_YET, "Unhandled GTP-U message type: " + gtp.msgType);
+            Log.error(Tag.NIMPL, "Unhandled GTP-U message type: " + gtp.msgType);
             return;
         }
 

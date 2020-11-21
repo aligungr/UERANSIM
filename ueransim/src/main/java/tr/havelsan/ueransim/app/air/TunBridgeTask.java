@@ -5,12 +5,12 @@
 
 package tr.havelsan.ueransim.app.air;
 
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.common.TargetPduSession;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
-import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
@@ -50,12 +50,13 @@ public class TunBridgeTask extends ItmsTask {
         try {
             bridge = new DatagramSocket(49972, localhost);
         } catch (SocketException e) {
-            Log.error(Tag.CONNECTION, "TUN Bridge connection could not established: " + e.getMessage());
+            Log.error(Tag.CONN, "TUN Bridge connection could not established: " + e.getMessage());
             System.exit(1);
             return;
         }
 
-        Log.info(Tag.CONNECTION, "TUN Bridge has been started.");
+        ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.TUN_BRIDGE);
+        Log.info(Tag.CONN, "TUN Bridge has been started.");
 
         var receiverThread = new Thread(this::receiverThread);
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));
@@ -110,7 +111,7 @@ public class TunBridgeTask extends ItmsTask {
 
         var ue = ctx.sim.findUe(ueId);
         if (ue != null) {
-            Log.info(Tag.TUN, "IPv4 PDU session established(%s, %s)", ConfigUtils.generateNodeName(ue), Utils.byteArrayToIpString(addrBytes));
+            Log.info(Tag.TUN, "IPv4 PDU session established (%s, %s)", ue.nodeName, Utils.byteArrayToIpString(addrBytes));
             ipRoute.put(addr, new TargetPduSession(ueId, psi));
         }
     }

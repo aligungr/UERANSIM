@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.utils.console.Logger;
 public class AirSimContext extends BaseSimContext {
     public Logger logger;
 
-    public AirSimContext(UeRanSim sim) {
-        super(sim);
+    public AirSimContext(UeRanSim sim, String nodeName) {
+        super(sim, nodeName);
     }
 }

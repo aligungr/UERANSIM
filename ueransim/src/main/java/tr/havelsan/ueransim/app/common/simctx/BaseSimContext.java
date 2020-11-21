@@ -14,10 +14,12 @@ public class BaseSimContext {
     public final UeRanSim sim;
     public final UUID ctxId;
     public final Itms itms;
+    public final String nodeName;
 
-    public BaseSimContext(UeRanSim sim) {
+    public BaseSimContext(UeRanSim sim, String nodeName) {
         this.sim = sim;
         this.ctxId = UUID.randomUUID();
         this.itms = new Itms();
+        this.nodeName = nodeName;
     }
 }

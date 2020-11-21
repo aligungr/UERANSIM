@@ -30,6 +30,8 @@ public class MmContext {
     public IE5gsTrackingAreaIdentity lastVisitedRegisteredTai;
     public IE5gsTrackingAreaIdentityList taiList;
 
+    public long lastPlmnSearchTrigger;
+
     public MmContext() {
         this.rmState = ERmState.RM_DEREGISTERED;
         this.cmState = ECmState.CM_IDLE;

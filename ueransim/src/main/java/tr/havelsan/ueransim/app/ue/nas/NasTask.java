@@ -6,10 +6,7 @@
 package tr.havelsan.ueransim.app.ue.nas;
 
 
-import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.app.common.itms.IwNasTimerExpire;
-import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
+import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.ue.mm.MobilityManagement;
@@ -33,7 +30,7 @@ public class NasTask extends ItmsTask {
     private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
         if (!MobilityManagement.executeCommand(ctx, cmd)) {
             if (!SessionManagement.executeCommand(ctx, cmd)) {
-                Log.error(Tag.EVENT, "invalid command: %s", cmd);
+                Log.error(Tag.SYS, "invalid command: %s", cmd);
             }
         }
     }
@@ -49,7 +46,7 @@ public class NasTask extends ItmsTask {
                 NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((IwDownlinkNas) msg).nasPdu));
             } else if (msg instanceof IwNasTimerExpire) {
                 var timer = ((IwNasTimerExpire) msg).timer;
-                Log.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+                Log.info(Tag.TIMER, "NAS Timer expired: %s", timer);
 
                 if (timer.isMmTimer) {
                     MobilityManagement.receiveTimerExpire(ctx, timer);
@@ -60,6 +57,8 @@ public class NasTask extends ItmsTask {
                 executeCommand(ctx, ((IwUeTestCommand) msg).cmd);
             } else if (msg instanceof IwConnectionRelease) {
                 // TODO
+            } else if (msg instanceof IwPlmnSearchResponse) {
+                MobilityManagement.receiveItmsMessage(ctx, msg);
             }
         }
     }

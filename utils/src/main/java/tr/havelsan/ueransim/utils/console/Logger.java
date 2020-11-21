@@ -40,7 +40,7 @@ public class Logger {
 
     private static String getTime() {
         Calendar cal = Calendar.getInstance();
-        return String.format("[%s] ", DATE_FORMAT.format(cal.getTime()));
+        return String.format("%s ", DATE_FORMAT.format(cal.getTime()));
     }
 
     private static Object[] concat(Object o, Object[] arr) {
@@ -51,12 +51,30 @@ public class Logger {
         return a;
     }
 
+    private static boolean shouldDispatch(Severity severity, Tag tag) {
+        if (severity != null) {
+            if (severity == Severity.DEBG)
+                return false;
+            if (severity == Severity.ERRO || severity == Severity.SUCC)
+                return true;
+            if (severity == Severity.FUNI || severity == Severity.FUNO)
+                return false;
+        }
+        if (tag != null) {
+            if (tag == Tag.MSG)
+                return false;
+            if (tag == Tag.NASSEC)
+                return false;
+        }
+        return true;
+    }
+
     public BaseConsole getConsole() {
         return console;
     }
 
     public void debug(Tag tag, String message, Object... args) {
-        log(Severity.DEBUG, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
+        log(Severity.DEBG, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
     }
 
     public void info(Tag tag, String message, Object... args) {
@@ -64,27 +82,27 @@ public class Logger {
     }
 
     public void success(Tag tag, String message, Object... args) {
-        log(Severity.SUCCESS, AnsiPalette.PAINT_LOG_SUCCESS, functionDepth.get(), tag, message, args);
+        log(Severity.SUCC, AnsiPalette.PAINT_LOG_SUCCESS, functionDepth.get(), tag, message, args);
     }
 
     public void warning(Tag tag, String message, Object... args) {
-        log(Severity.WARNING, AnsiPalette.PAINT_LOG_WARNING, functionDepth.get(), tag, message, args);
+        log(Severity.WARN, AnsiPalette.PAINT_LOG_WARNING, functionDepth.get(), tag, message, args);
     }
 
     public void error(Tag tag, String message, Object... args) {
-        log(Severity.ERROR, AnsiPalette.PAINT_LOG_ERROR, functionDepth.get(), tag, message, args);
+        log(Severity.ERRO, AnsiPalette.PAINT_LOG_ERROR, functionDepth.get(), tag, message, args);
     }
 
     public void funcIn(String name, Object... args) {
-        log(Severity.FUNC_IN, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.getAndIncrement(), null, name, args);
+        log(Severity.FUNI, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.getAndIncrement(), null, name, args);
     }
 
     public void funcOut() {
-        log(Severity.FUNC_OUT, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.decrementAndGet(), null, "");
+        log(Severity.FUNO, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.decrementAndGet(), null, "");
     }
 
     public void log(Severity severity, AnsiColorFormat ansiColorFormat, int depth, Tag tag, String message, Object... args) {
-        if (severity == null) severity = Severity.DEBUG;
+        if (severity == null) severity = Severity.DEBG;
         if (message == null) message = "";
         if (args == null) args = new Object[0];
 
@@ -108,12 +126,12 @@ public class Logger {
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
         console.println(ansiColorFormat, display);
 
-        if (severity == Severity.ERROR && Constants.TREAT_ERRORS_AS_FATAL) {
+        if (severity == Severity.ERRO && Constants.TREAT_ERRORS_AS_FATAL) {
             throw new FatalTreatedErrorException(str);
         }
 
         if (this != GLOBAL) {
-            if (severity.dispatch() || (tag != null && tag.dispatch())) {
+            if (shouldDispatch(severity, tag)) {
                 GLOBAL.log(severity, ansiColorFormat, 0, tag, "[%s] " + message, concat(loggerName, args));
             }
         }

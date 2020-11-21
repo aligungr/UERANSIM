@@ -50,7 +50,7 @@ public class SessionManagement {
         } else if (message instanceof PduSessionEstablishmentReject) {
             SmPduSessionEstablishment.receiveEstablishmentReject(ctx, (PduSessionEstablishmentReject) message);
         } else {
-            Log.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
+            Log.error(Tag.MSG, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
     }
 

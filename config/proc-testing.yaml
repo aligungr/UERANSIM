@@ -1,0 +1,37 @@
+# ============================== PROCEDURE TESTING ===============================
+# In this file, you can adjust your procedure testing settings. Many of the
+# parameters are maintained automatically, but you can set some of the
+# configurable parameters for your procedure tests.
+
+# ================================= REGISTRATION =================================
+
+# Follow-on request (FOR), see TS 24.501.
+# Possible values are: FOR_PENDING, NO_FOR_PENDING
+for-pending: FOR_PENDING
+
+# =============================== DE-REGISTRATION ================================
+
+# Switch-off indication, see TS 24.501.
+# true: UE performs de-registration due to a switch off
+# false: UE performs normal de-registration
+is-switch-off: false
+
+# ============================ PDU-SESSION-ESTABLISHMENT =========================
+
+# After successful establishment of a PDU session, UE automatically sends a
+# ICMP Echo (ping) request to the specified address. (NOTE: Address resolution is
+# performed locally.)
+ping-address: 'google.com'
+
+# The total number of consequential ping requests.
+# Typically an integer in range [1, 10] is used.
+ping-count: 1
+
+# If the UE does not receive an ICMP Echo (ping) reply in specified seconds,
+# then ping operation is considered unsuccessful.
+ping-timeout-sec: 3
+
+# ================================= LOAD TESTING =================================
+
+# Here you can adjust the number of UEs to be run in procedure testing.
+number-of-ue: 1

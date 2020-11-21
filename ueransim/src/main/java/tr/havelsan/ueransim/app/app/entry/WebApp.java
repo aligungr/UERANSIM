@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/*
 public class WebApp {
 
     private static final List<LogEntry> logEntries = new ArrayList<>();
@@ -94,4 +95,4 @@ public class WebApp {
         stepperListener.onConnect(ctx);
         ctx.send(SocketWrapperSerializer.toJson(new SwTestCases(ueRanSim.testCaseNames())));
     }
-}
+}*/

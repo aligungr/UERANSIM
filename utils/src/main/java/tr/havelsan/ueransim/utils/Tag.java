@@ -6,30 +6,19 @@
 package tr.havelsan.ueransim.utils;
 
 public enum Tag {
-    SYSTEM,
+    SYS,
     STATE,
     CONFIG,
     TUN,
     VALUE,
-    PROC,
-    MESSAGING,
-    CONNECTION,
-    EVENT,
-    NAS_TIMER,
+    FLOW,
+    MSG,
+    CONN,
+    TIMER,
     GTP,
-    NGAP_INTERNAL,
-    PROCEDURE_RESULT,
-    NAS_SECURITY,
-    NOT_IMPL_YET,
-    UE_APP;
-
-    public boolean dispatch() {
-        switch (this) {
-            case SYSTEM:
-            case CONNECTION:
-                return true;
-            default:
-                return false;
-        }
-    }
+    NGAPINT,
+    PROC,
+    NASSEC,
+    NIMPL,
+    UEAPP;
 }

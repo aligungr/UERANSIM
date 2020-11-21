@@ -19,7 +19,7 @@ public class NgapInterfaceManagement {
 
     public static void sendNgSetupRequest(GnbSimContext ctx, Guami associatedAmf) {
         Log.funcIn("Starting: NGSetupRequest");
-        Log.info(Tag.PROCEDURE_RESULT, "NGSetup procedure is starting");
+        Log.info(Tag.PROC, "NGSetup procedure is starting");
 
         var msg = new NGAP_NGSetupRequest();
         msg.addProtocolIe(NgapUtils.createGlobalGnbId(ctx.config.gnbId, ctx.config.gnbPlmn));
@@ -32,14 +32,14 @@ public class NgapInterfaceManagement {
 
     public static void receiveNgSetupResponse(GnbSimContext ctx, NGAP_NGSetupResponse message) {
         Log.funcIn("Handling: NGSetupResponse");
-        Log.success(Tag.PROCEDURE_RESULT, "NGSetup procedure is successful");
+        Log.success(Tag.PROC, "NGSetup procedure is successful");
 
         Log.funcOut();
     }
 
     public static void receiveNgSetupFailure(GnbSimContext ctx, NGAP_NGSetupFailure message) {
         Log.funcIn("Handling: NGSetupFailure");
-        Log.error(Tag.PROCEDURE_RESULT, "NGSetup procedure is failed");
+        Log.error(Tag.PROC, "NGSetup procedure is failed");
 
         Log.funcOut();
     }

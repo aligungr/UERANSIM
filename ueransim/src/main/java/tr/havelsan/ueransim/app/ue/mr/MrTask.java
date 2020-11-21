@@ -10,6 +10,10 @@ import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.utils.Tag;
+import tr.havelsan.ueransim.utils.console.Log;
+
+import java.util.UUID;
 
 public class MrTask extends ItmsTask {
 
@@ -26,15 +30,34 @@ public class MrTask extends ItmsTask {
             var msg = itms.receiveMessage(this);
             if (msg instanceof IwDownlinkNas) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
-            } else if (msg instanceof IwUplinkNas) {
-                ctx.sim.findGnb(ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
-            } else if (msg instanceof IwUplinkData) {
-                ctx.sim.findGnb(ctx.connectedGnb).itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
+            } else if (msg instanceof IwUplinkNas || msg instanceof IwUplinkData) {
+                var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
+                if (gnb == null) {
+                    Log.warning(Tag.FLOW, "Uplink NAS transport failure: UE not connected to a gNB.");
+                } else {
+                    gnb.itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
+                }
             } else if (msg instanceof IwDownlinkData) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_APP, msg);
             } else if (msg instanceof IwConnectionRelease) {
                 ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+            } else if (msg instanceof IwPlmnSearchRequest) {
+                performPlmnSearch();
             }
+        }
+    }
+
+    private void performPlmnSearch() {
+        UUID gnbId = null;
+        // TODO: More complex mechanism to select a gNB.
+        for (var gnb : ctx.sim.allGnbs()) {
+            gnbId = gnb;
+        }
+
+        if (gnbId != null) {
+            ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, new IwPlmnSearchResponse(gnbId));
+        } else {
+            Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueConfig.supi.toString());
         }
     }
 }

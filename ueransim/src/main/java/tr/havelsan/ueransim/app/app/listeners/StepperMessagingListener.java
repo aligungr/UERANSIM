@@ -8,7 +8,6 @@ package tr.havelsan.ueransim.app.app.listeners;
 import io.javalin.websocket.WsConnectContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.sw.SwStep;
-import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -17,7 +16,8 @@ import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Severity;
 
-public class StepperMessagingListener implements INodeMessagingListener {
+// TODO: need many refactor and review, also INodeListener must be lightweight. Check this also.
+public class StepperMessagingListener implements INodeListener {
 
     private WsConnectContext ws;
 
@@ -27,9 +27,9 @@ public class StepperMessagingListener implements INodeMessagingListener {
                 var ngap = (NGAP_BaseMessage) msg;
                 switch (ngap.getPduType()) {
                     case 1:
-                        return Severity.SUCCESS;
+                        return Severity.SUCC;
                     case 2:
-                        return Severity.ERROR;
+                        return Severity.ERRO;
                     default:
                         return Severity.INFO;
                 }
@@ -48,7 +48,7 @@ public class StepperMessagingListener implements INodeMessagingListener {
                 || msg instanceof FiveGSmStatus || msg instanceof PduSessionEstablishmentReject ||
                 msg instanceof PduSessionModificationReject || msg instanceof PduSessionReleaseReject ||
                 msg instanceof RegistrationReject || msg instanceof SecurityModeReject) {
-            return Severity.ERROR;
+            return Severity.ERRO;
         }
 
         if (msg instanceof ConfigurationUpdateComplete || msg instanceof PduSessionAuthenticationComplete ||
@@ -56,7 +56,7 @@ public class StepperMessagingListener implements INodeMessagingListener {
                 || msg instanceof PduSessionReleaseComplete || msg instanceof RegistrationAccept ||
                 msg instanceof RegistrationComplete || msg instanceof SecurityModeComplete
                 || msg instanceof ServiceAccept) {
-            return Severity.SUCCESS;
+            return Severity.SUCC;
         }
 
         return Severity.INFO;
@@ -67,7 +67,7 @@ public class StepperMessagingListener implements INodeMessagingListener {
             return;
         }
 
-        var loggerName = ConfigUtils.generateNodeName(ctx);
+        var loggerName = ctx.nodeName;
         var severity = messageSeverity(message);
         var messageName = message.getClass().getSimpleName();
         if (messageName.startsWith("NGAP_"))
@@ -82,6 +82,11 @@ public class StepperMessagingListener implements INodeMessagingListener {
     }
 
     @Override
+    public void onConnected(BaseSimContext ctx, ConnType connectionType) {
+
+    }
+
+    @Override
     public void onSend(BaseSimContext ctx, Object message) {
         onMessage(ctx, message);
     }
@@ -91,6 +96,12 @@ public class StepperMessagingListener implements INodeMessagingListener {
         onMessage(ctx, message);
     }
 
+    @Override
+    public void onSwitched(BaseSimContext ctx, Enum<?> state) {
+
+    }
+
+    // TODO: This does not fit to our arch.
     public void onConnect(WsConnectContext ctx) {
         this.ws = ctx;
     }

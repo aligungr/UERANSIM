@@ -38,14 +38,14 @@ public class SctpClient implements ISctpClient {
     public void start() throws Exception {
         if (this.channel != null) throw new RuntimeException("start was already called");
 
-        Log.info(Tag.CONNECTION, "Trying to establish SCTP connection... (%s:%s)", remoteHost, remotePort);
+        Log.info(Tag.CONN, "Trying to establish SCTP connection... (%s:%s)", remoteHost, remotePort);
 
         this.channel = SctpChannel.open();
         this.channel.bind(new InetSocketAddress(localHost, 0));
         this.channel.connect(new InetSocketAddress(remoteHost, remotePort), 0, 0);
         this.receiving = true;
 
-        Log.info(Tag.CONNECTION, "SCTP connection established");
+        Log.info(Tag.CONN, "SCTP connection established");
     }
 
     @Override
