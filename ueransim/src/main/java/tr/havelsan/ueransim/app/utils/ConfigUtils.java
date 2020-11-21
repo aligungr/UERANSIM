@@ -43,8 +43,10 @@ public class ConfigUtils {
     }
 
     public static String generateNodeName(BaseSimContext ctx) {
-        if (ctx instanceof UeSimContext)
-            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
+        if (ctx instanceof UeSimContext) {
+            // return "ue-" + ((UeSimContext) ctx).ueConfig.supi.toString();
+            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.value;
+        }
         if (ctx instanceof GnbSimContext)
             return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
         if (ctx instanceof AirSimContext)
