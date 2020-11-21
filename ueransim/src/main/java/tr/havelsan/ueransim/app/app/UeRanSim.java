@@ -137,11 +137,11 @@ public class UeRanSim {
             for (var listener : nodeListeners) {
                 if (obj instanceof TwOnConnected)
                     listener.onConnected(obj.ctx, ((TwOnConnected) obj).connType);
-                if (obj instanceof TwOnSend)
+                else if (obj instanceof TwOnSend)
                     listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
-                if (obj instanceof TwOnReceive)
+                else if (obj instanceof TwOnReceive)
                     listener.onReceive(obj.ctx, ((TwOnReceive) obj).msg);
-                if (obj instanceof TwOnSwitch)
+                else if (obj instanceof TwOnSwitch)
                     listener.onSwitched(obj.ctx, ((TwOnSwitch) obj).state);
             }
         }
@@ -159,7 +159,7 @@ public class UeRanSim {
         triggerQueue.add(new TwOnConnected(ctx, connType));
     }
 
-    public void triggerOnSwitch(BaseSimContext ctx, Object state) {
+    public void triggerOnSwitch(BaseSimContext ctx, Enum<?> state) {
         triggerQueue.add(new TwOnSwitch(ctx, state));
     }
 }

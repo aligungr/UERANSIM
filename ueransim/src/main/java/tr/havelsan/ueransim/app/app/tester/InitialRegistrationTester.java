@@ -41,7 +41,7 @@ class InitialRegistrationTester extends UeTester {
     }
 
     @Override
-    public void onSwitched(BaseSimContext ctx, Object state) {
+    public void onSwitched(BaseSimContext ctx, Enum<?> state) {
 
     }
 }

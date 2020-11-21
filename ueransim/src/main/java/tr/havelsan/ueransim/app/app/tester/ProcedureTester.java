@@ -113,7 +113,7 @@ public class ProcedureTester implements INodeListener {
     }
 
     @Override
-    public void onSwitched(BaseSimContext ctx, Object state) {
+    public void onSwitched(BaseSimContext ctx, Enum<?> state) {
         if (initState != INIT_STATE__INIT_DONE)
             return;
 

@@ -8,9 +8,9 @@ package tr.havelsan.ueransim.app.common.trigger;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
 public class TwOnSwitch extends TriggeringWrapper {
-    public final Object state;
+    public final Enum<?> state;
 
-    public TwOnSwitch(BaseSimContext ctx, Object state) {
+    public TwOnSwitch(BaseSimContext ctx, Enum<?> state) {
         super(ctx);
         this.state = state;
     }
