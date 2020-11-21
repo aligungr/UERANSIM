@@ -64,9 +64,6 @@ public class AppBuilder {
         ConfigUtils.loggingToFile(Logger.GLOBAL, Logger.GLOBAL.getLoggerName(), true);
         Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
 
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All logs of UEs and gNBs are written to their own log files: logs/*");
-        Console.println(AnsiPalette.PAINT_IMPORTANT_WARNING, "WARNING: All load testing logs are written to: logs/loadtest.log");
-
         var loadTestConsole = createLoadTestingConsole();
 
         this.messagingListeners.add(new LoadTestMessagingListener(loadTestConsole));
