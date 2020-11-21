@@ -26,7 +26,7 @@ class InitialRegistrationTester extends UeTester {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, Type connectionType) {
+    public void onConnected(BaseSimContext ctx, ConnType connType) {
 
     }
 
@@ -37,6 +37,11 @@ class InitialRegistrationTester extends UeTester {
 
     @Override
     public void onReceive(BaseSimContext ctx, Object message) {
+
+    }
+
+    @Override
+    public void onSwitched(BaseSimContext ctx) {
 
     }
 }

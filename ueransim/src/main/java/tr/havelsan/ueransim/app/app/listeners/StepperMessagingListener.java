@@ -81,7 +81,7 @@ public class StepperMessagingListener implements INodeListener {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, Type connectionType) {
+    public void onConnected(BaseSimContext ctx, ConnType connectionType) {
 
     }
 
@@ -95,6 +95,12 @@ public class StepperMessagingListener implements INodeListener {
         onMessage(ctx, message);
     }
 
+    @Override
+    public void onSwitched(BaseSimContext ctx) {
+
+    }
+
+    // TODO: This does not fit to our arch.
     public void onConnect(WsConnectContext ctx) {
         this.ws = ctx;
     }

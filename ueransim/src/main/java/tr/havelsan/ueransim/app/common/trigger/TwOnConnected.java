@@ -9,10 +9,10 @@ import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
 public class TwOnConnected extends TriggeringWrapper {
-    public final INodeListener.Type type;
+    public final INodeListener.ConnType connType;
 
-    public TwOnConnected(BaseSimContext ctx, INodeListener.Type type) {
+    public TwOnConnected(BaseSimContext ctx, INodeListener.ConnType connType) {
         super(ctx);
-        this.type = type;
+        this.connType = connType;
     }
 }

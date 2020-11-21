@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
 public interface INodeListener {
 
-    enum Type {
+    enum ConnType {
         SCTP,
         ANY_IPv4,
         UE_MR_GNB,
@@ -19,7 +19,7 @@ public interface INodeListener {
     /**
      * Triggered when a simulation node has established a connection.
      */
-    void onConnected(BaseSimContext ctx, Type connectionType);
+    void onConnected(BaseSimContext ctx, ConnType connType);
 
     /**
      * Triggered when a simulation node has send a message.
@@ -32,4 +32,9 @@ public interface INodeListener {
      * WARNING: Do not mutate any of the parameters.
      */
     void onReceive(BaseSimContext ctx, Object message);
+
+    /**
+     * Triggered when a simulation node has switched to another state.
+     */
+    void onSwitched(BaseSimContext ctx);
 }

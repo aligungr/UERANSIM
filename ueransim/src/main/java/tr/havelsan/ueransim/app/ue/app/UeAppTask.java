@@ -75,6 +75,6 @@ public class UeAppTask extends ItmsTask {
 
         Log.info(Tag.UE_APP, "%s connection setup with local IP: %s", connectionInfo.sessionType, Utils.byteArrayToIpString(connectionInfo.pduAddress));
 
-        ctx.sim.triggerOnConnected(ctx, INodeListener.Type.ANY_IPv4);
+        ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.ANY_IPv4);
     }
 }

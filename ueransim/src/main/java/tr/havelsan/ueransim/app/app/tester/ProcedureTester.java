@@ -55,9 +55,9 @@ public class ProcedureTester implements INodeListener {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, Type connectionType) {
+    public void onConnected(BaseSimContext ctx, ConnType connType) {
         if (initState == INIT_STATE__WAITING_GNB) {
-            if (ctx.ctxId.equals(gnbId) && connectionType == Type.SCTP) {
+            if (ctx.ctxId.equals(gnbId) && connType == ConnType.SCTP) {
                 // gNB is ready, now create the UEs.
                 for (int i = 0; i < procTestConfig.numberOfUe; i++) {
                     ueIds.add(sim.createUe(createUeConfig(i)));
@@ -70,7 +70,7 @@ public class ProcedureTester implements INodeListener {
         }
 
         if (initState == INIT_STATE__WAITING_UE) {
-            if (connectionType == Type.UE_MR_GNB) {
+            if (connType == ConnType.UE_MR_GNB) {
                 this.waitingUes.remove(ctx.ctxId);
 
                 if (this.waitingUes.isEmpty()) {
@@ -85,7 +85,7 @@ public class ProcedureTester implements INodeListener {
         if (initState == INIT_STATE__INIT_DONE) {
             var ueTester = ueTesters.get(ctx.ctxId);
             if (ueTester != null) {
-                ueTester.onConnected(ctx, connectionType);
+                ueTester.onConnected(ctx, connType);
             }
         }
     }
@@ -109,6 +109,17 @@ public class ProcedureTester implements INodeListener {
         var ueTester = ueTesters.get(ctx.ctxId);
         if (ueTester != null) {
             ueTester.onReceive(ctx, message);
+        }
+    }
+
+    @Override
+    public void onSwitched(BaseSimContext ctx) {
+        if (initState != INIT_STATE__INIT_DONE)
+            return;
+
+        var ueTester = ueTesters.get(ctx.ctxId);
+        if (ueTester != null) {
+            ueTester.onSwitched(ctx);
         }
     }
 

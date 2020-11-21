@@ -33,7 +33,7 @@ public class LoadTestMessagingListener implements INodeListener {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, Type connectionType) {
+    public void onConnected(BaseSimContext ctx, ConnType connType) {
 
     }
 
@@ -93,5 +93,10 @@ public class LoadTestMessagingListener implements INodeListener {
             long delta = System.currentTimeMillis() - deRegistrationTimers.get(ctx.nodeName);
             console.println(null, "\u2714 [De-Registration] [%s] [%d ms]", ctx.nodeName, delta);
         }
+    }
+
+    @Override
+    public void onSwitched(BaseSimContext ctx) {
+
     }
 }

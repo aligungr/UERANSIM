@@ -139,7 +139,7 @@ public class UeRanSim {
 
             for (var listener : nodeListeners) {
                 if (obj instanceof TwOnConnected)
-                    listener.onConnected(obj.ctx, ((TwOnConnected) obj).type);
+                    listener.onConnected(obj.ctx, ((TwOnConnected) obj).connType);
                 if (obj instanceof TwOnSend)
                     listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
                 if (obj instanceof TwOnReceive)
@@ -156,7 +156,7 @@ public class UeRanSim {
         triggerQueue.add(new TwOnReceive(ctx, msg));
     }
 
-    public void triggerOnConnected(BaseSimContext ctx, INodeListener.Type connectionType) {
-        triggerQueue.add(new TwOnConnected(ctx, connectionType));
+    public void triggerOnConnected(BaseSimContext ctx, INodeListener.ConnType connType) {
+        triggerQueue.add(new TwOnConnected(ctx, connType));
     }
 }

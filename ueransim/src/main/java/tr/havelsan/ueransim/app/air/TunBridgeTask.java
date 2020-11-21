@@ -55,7 +55,7 @@ public class TunBridgeTask extends ItmsTask {
             return;
         }
 
-        ctx.sim.triggerOnConnected(ctx, INodeListener.Type.TUN_BRIDGE);
+        ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.TUN_BRIDGE);
         Log.info(Tag.CONNECTION, "TUN Bridge has been started.");
 
         var receiverThread = new Thread(this::receiverThread);

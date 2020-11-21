@@ -94,7 +94,7 @@ public class SctpTask extends ItmsTask {
             Utils.sleep(100);
         }
 
-        ctx.sim.triggerOnConnected(ctx, INodeListener.Type.SCTP); // TODO: Maybe for 'each' amf sctp connection
+        ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.SCTP); // TODO: Maybe for 'each' amf sctp connection
         ctx.itms.sendMessage(ItmsId.GNB_TASK_APP, new IwInitialSctpReady());
 
         while (true) {
