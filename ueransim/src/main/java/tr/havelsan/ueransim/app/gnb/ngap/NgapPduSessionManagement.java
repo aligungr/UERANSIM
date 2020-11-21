@@ -127,9 +127,9 @@ public class NgapPduSessionManagement {
 
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe.ueCtxId, response);
 
-        if (failed == 0) Log.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
-        else if (succeeded == 0) Log.error(Tag.PROCEDURE_RESULT, "PDU Session Establishment is failed");
-        else Log.info(Tag.PROCEDURE_RESULT, "PDU Session Establishment is partially successful.");
+        if (failed == 0) Log.success(Tag.PROC, "PDU Session Establishment is successful");
+        else if (succeeded == 0) Log.error(Tag.PROC, "PDU Session Establishment is failed");
+        else Log.info(Tag.PROC, "PDU Session Establishment is partially successful.");
 
         Log.funcOut();
     }

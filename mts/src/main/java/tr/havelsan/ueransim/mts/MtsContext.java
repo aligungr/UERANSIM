@@ -13,6 +13,7 @@ public class MtsContext {
     public final MtsDecoder decoder;
 
     private String typeKeyword = "@type";
+    private boolean kebabCaseDecoding = false;
 
     public MtsContext() {
         this.typeRegistry = new TypeRegistry();
@@ -31,5 +32,13 @@ public class MtsContext {
         if (typeKeyword.equals("@ref"))
             throw new IllegalArgumentException("invalid keyword");
         this.typeKeyword = typeKeyword;
+    }
+
+    public boolean isKebabCaseDecoding() {
+        return kebabCaseDecoding;
+    }
+
+    public void setKebabCaseDecoding(boolean kebabCaseDecoding) {
+        this.kebabCaseDecoding = kebabCaseDecoding;
     }
 }

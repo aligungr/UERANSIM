@@ -30,8 +30,8 @@ public class UeSimContext extends BaseSimContext {
     public NasSecurityContext currentNsCtx;
     public NasSecurityContext nonCurrentNsCtx;
 
-    public UeSimContext(UeRanSim sim) {
-        super(sim);
+    public UeSimContext(UeRanSim sim, String nodeName) {
+        super(sim, nodeName);
         this.ueTimers = new UeTimers(this);
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();

@@ -42,11 +42,11 @@ class PingApp {
 
     public void sendPing(TestCmd_Ping ping) {
         if (!connectionInfo.isEstablished) {
-            Log.error(Tag.UE_APP, "Ping failure: UE has no connection.");
+            Log.error(Tag.UEAPP, "Ping failure: UE has no connection.");
             return;
         }
         if (!connectionInfo.sessionType.equals(EPduSessionType.IPV4)) {
-            Log.error(Tag.UE_APP, "Ping failure: PDU Session Type is not supported.");
+            Log.error(Tag.UEAPP, "Ping failure: PDU Session Type is not supported.");
             return;
         }
 
@@ -64,7 +64,7 @@ class PingApp {
                     | ((destAddr[2] & 0xFF) << 8) | (destAddr[3] & 0xFF);
             destAddrName = Utils.byteArrayToIpString(destAddr);
         } catch (Exception e) {
-            Log.error(Tag.UE_APP, "Ping failure: Name resolution failed for name '%s'.", ping.address);
+            Log.error(Tag.UEAPP, "Ping failure: Name resolution failed for name '%s'.", ping.address);
             return;
         }
 
@@ -100,7 +100,7 @@ class PingApp {
 
         long delta = System.currentTimeMillis() - entry.timestamp;
 
-        Log.success(Tag.UE_APP, "Ping reply from %s in %d ms", entry.getAddressDisplay(), delta);
+        Log.success(Tag.UEAPP, "Ping reply from %s in %d ms", entry.getAddressDisplay(), delta);
     }
 
     public void timeoutControl() {
@@ -132,7 +132,7 @@ class PingApp {
             var value = pingEntries.get(key);
             pingEntries.remove(key);
 
-            Log.error(Tag.UE_APP, "Ping timeout for %s after %d sec no response", value.getAddressDisplay(), value.timeoutSec);
+            Log.error(Tag.UEAPP, "Ping timeout for %s after %d sec no response", value.getAddressDisplay(), value.timeoutSec);
         }
     }
 }

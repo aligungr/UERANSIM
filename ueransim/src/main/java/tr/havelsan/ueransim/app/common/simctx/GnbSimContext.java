@@ -26,8 +26,8 @@ public class GnbSimContext extends BaseSimContext {
 
     public GtpUContext gtpUCtx;
 
-    public GnbSimContext(UeRanSim sim) {
-        super(sim);
+    public GnbSimContext(UeRanSim sim, String nodeName) {
+        super(sim, nodeName);
         this.amfContexts = new HashMap<>();
         this.ueContexts = new HashMap<>();
         this.gtpUCtx = new GtpUContext();

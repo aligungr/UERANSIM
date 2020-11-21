@@ -38,7 +38,7 @@ public class MmSecurity {
             var real = createSecurityCapabilityIe();
             if (!compareSecurityCapabilities(real, replayed)) {
                 MobilityManagement.sendMm(ctx, new SecurityModeReject(EMmCause.UE_SECURITY_CAP_MISMATCH));
-                Log.error(Tag.PROC, "UE Replayed Security Capability Mismatch.");
+                Log.error(Tag.FLOW, "UE Replayed Security Capability Mismatch.");
                 return;
             }
         }
@@ -48,7 +48,7 @@ public class MmSecurity {
             if (message.eapMessage.eap.code.equals(Eap.ECode.SUCCESS)) {
                 MmAuthentication.receiveEapSuccessMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
+                Log.warning(Tag.FLOW, "EAP message with code %s received in Security Mode Command. Ignoring EAP message.");
             }
         }
 

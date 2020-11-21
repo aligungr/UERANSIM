@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class ItmsTask {
 
     public final int taskId;
-    public final BlockingQueue<Object> msgQueue;
     public final Thread thread;
+    protected final BlockingQueue<Object> msgQueue;
     protected final Itms itms;
 
     private boolean isStarted;

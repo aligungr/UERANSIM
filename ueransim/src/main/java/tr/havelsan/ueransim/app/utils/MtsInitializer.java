@@ -68,6 +68,7 @@ public class MtsInitializer {
         });
     }
 
+    @Deprecated // TODO: remove completely
     public static void initTestingMts(MtsContext mts) {
         initDefaultMts(mts);
 

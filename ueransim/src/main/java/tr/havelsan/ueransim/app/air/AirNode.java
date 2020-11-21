@@ -15,11 +15,11 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class AirNode {
 
     public static AirSimContext createContext(UeRanSim sim) {
-        return new AirSimContext(sim);
+        return new AirSimContext(sim, "air");
     }
 
     public static void run(AirSimContext ctx) {
-        ctx.logger = ConfigUtils.createLoggerFor(ConfigUtils.generateNodeName(ctx));
+        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
 
         var itms = ctx.itms;
 

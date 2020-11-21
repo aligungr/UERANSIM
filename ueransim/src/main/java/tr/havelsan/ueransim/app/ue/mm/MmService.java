@@ -21,7 +21,7 @@ public class MmService {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in ServiceAccept, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in ServiceAccept, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
@@ -36,7 +36,7 @@ public class MmService {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in ServiceReject, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in ServiceReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }

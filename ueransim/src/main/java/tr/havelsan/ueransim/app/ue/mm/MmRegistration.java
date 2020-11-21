@@ -18,7 +18,6 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
-import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 public class MmRegistration {
 
@@ -104,7 +103,7 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
-        Log.success(Tag.PROCEDURE_RESULT, "Registration is successful");
+        Log.success(Tag.PROC, "Registration is successful");
         Log.funcOut();
     }
 
@@ -114,19 +113,19 @@ public class MmRegistration {
         var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
         var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
-        Log.error(Tag.PROCEDURE_RESULT, "Registration failed: %s", cause.name());
+        Log.error(Tag.PROC, "Registration failed: %s", cause.name());
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
 
         Runnable unhandledRejectCase = () -> {
-            Log.error(Tag.NOT_IMPL_YET, "Registration rejected with unhandled MMCause: %s", cause.name());
+            Log.error(Tag.NIMPL, "Registration rejected with unhandled MMCause: %s", cause.name());
         };
 
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {
@@ -137,6 +136,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.FIVEG_SERVICES_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -144,6 +144,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.PLMN_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -151,6 +152,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__PLMN_SEARCH);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.TA_NOT_ALLOWED)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -158,6 +160,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.ROAMING_NOT_ALLOWED_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -165,6 +168,7 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.NO_SUITIBLE_CELLS_IN_TA)) {
                 ctx.mmCtx.storedGuti = null;
                 ctx.mmCtx.lastVisitedRegisteredTai = null;
@@ -172,10 +176,13 @@ public class MmRegistration {
                 ctx.currentNsCtx = null;
                 ctx.nonCurrentNsCtx = null;
                 MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__LIMITED_SERVICE);
+                MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
             } else if (cause.equals(EMmCause.CONGESTION)) {
                 if (message.t3346value != null && message.t3346value.hasValue()) {
 
                     MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__ATTEMPTING_REGISTRATION);
+                    MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
+
                     ctx.ueTimers.t3346.stop();
 
                     if (message.securityHeaderType.isIntegrityProtected()) {

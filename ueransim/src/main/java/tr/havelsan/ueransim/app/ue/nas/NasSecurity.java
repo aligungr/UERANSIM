@@ -44,19 +44,19 @@ public class NasSecurity {
                 smc._macForNewSC = securedMmMessage.messageAuthenticationCode;
                 return smc;
             } else {
-                Log.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
+                Log.warning(Tag.NASSEC, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
                 return null;
             }
         }
 
         if (securedMmMessage.securityHeaderType.equals(ESecurityHeaderType.INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT)) {
-            Log.warning(Tag.NAS_SECURITY, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
+            Log.warning(Tag.NASSEC, "Message type or Security Header Type is semantically incorrect. Ignoring received NAS message.");
             return null;
         }
 
         var decrypted = NasEncryption.decrypt(securedMmMessage, nsc);
         if (decrypted == null) {
-            Log.error(Tag.NAS_SECURITY, "MAC mismatch in NAS encryption. Ignoring received NAS Message.");
+            Log.error(Tag.NASSEC, "MAC mismatch in NAS encryption. Ignoring received NAS Message.");
             return null;
         } else {
             return decrypted;

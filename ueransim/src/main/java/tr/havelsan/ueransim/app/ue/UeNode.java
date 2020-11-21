@@ -19,16 +19,17 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class UeNode {
 
+    // TODO: this should be inside of UeSimContext
     public static final boolean AUTO = false;
 
     public static UeSimContext createContext(UeRanSim sim, UeConfig config) {
-        var ctx = new UeSimContext(sim);
+        var ctx = new UeSimContext(sim, "ue-" + config.supi.value);
         ctx.ueConfig = config;
         return ctx;
     }
 
     public static void run(UeSimContext ctx) {
-        ctx.logger = ConfigUtils.createLoggerFor(ConfigUtils.generateNodeName(ctx));
+        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
 
         var itms = ctx.itms;
 

@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.common.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
@@ -63,7 +64,7 @@ public class UeAppTask extends ItmsTask {
     private void connectionSetup(IwUeConnectionSetup msg) {
         var pduSession = msg.pduSession;
         if (!pduSession.sessionType.pduSessionType.equals(EPduSessionType.IPV4)) {
-            Log.error(Tag.UE_APP, "Connection could not setup (unsupported PDU Session type: %s)", pduSession.sessionType.pduSessionType);
+            Log.error(Tag.UEAPP, "Connection could not setup (unsupported PDU Session type: %s)", pduSession.sessionType.pduSessionType);
             return;
         }
 
@@ -72,6 +73,8 @@ public class UeAppTask extends ItmsTask {
         connectionInfo.pduAddress = pduSession.pduAddress.pduAddressInformation.toByteArray();
         connectionInfo.isEstablished = true;
 
-        Log.info(Tag.UE_APP, "%s connection setup with local IP: %s", connectionInfo.sessionType, Utils.byteArrayToIpString(connectionInfo.pduAddress));
+        Log.info(Tag.UEAPP, "%s connection setup with local IP: %s", connectionInfo.sessionType, Utils.byteArrayToIpString(connectionInfo.pduAddress));
+
+        ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.ANY_IPv4);
     }
 }

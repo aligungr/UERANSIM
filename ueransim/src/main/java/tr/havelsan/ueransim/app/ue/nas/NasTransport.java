@@ -27,10 +27,10 @@ public class NasTransport {
         var securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
         var securedNasPdu = NasEncoder.nasPduS(securedNas);
 
-        Log.debug(Tag.MESSAGING, "Plain NAS as JSON: %s", Json.toJson(message));
-        Log.debug(Tag.MESSAGING, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
-        Log.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(securedNas));
-        Log.debug(Tag.MESSAGING, "Secured NAS PDU: %s", securedNasPdu);
+        Log.debug(Tag.MSG, "Plain NAS as JSON: %s", Json.toJson(message));
+        Log.debug(Tag.MSG, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
+        Log.debug(Tag.MSG, "Secured NAS as JSON %s", Json.toJson(securedNas));
+        Log.debug(Tag.MSG, "Secured NAS PDU: %s", securedNasPdu);
 
         ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkNas(ctx.ctxId, securedNasPdu));
         ctx.sim.triggerOnSend(ctx, message);
@@ -40,13 +40,13 @@ public class NasTransport {
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
         Log.funcIn("Receiving NAS message: %s", message.getClass().getSimpleName());
 
-        Log.debug(Tag.MESSAGING, "Secured NAS as JSON %s", Json.toJson(message));
-        Log.debug(Tag.MESSAGING, "Secured NAS PDU: %s", NasEncoder.nasPduS(message));
+        Log.debug(Tag.MSG, "Secured NAS as JSON %s", Json.toJson(message));
+        Log.debug(Tag.MSG, "Secured NAS PDU: %s", NasEncoder.nasPduS(message));
 
         message = NasSecurity.decryptNasMessage(ctx.currentNsCtx, message);
 
-        Log.debug(Tag.MESSAGING, "Plain NAS as JSON %s", Json.toJson(message));
-        Log.debug(Tag.MESSAGING, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
+        Log.debug(Tag.MSG, "Plain NAS as JSON %s", Json.toJson(message));
+        Log.debug(Tag.MSG, "Plain NAS PDU: %s", NasEncoder.nasPduS(message));
 
         ctx.sim.triggerOnReceive(ctx, message);
 

@@ -6,113 +6,47 @@
 package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.air.AirNode;
-import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
-import tr.havelsan.ueransim.app.common.Supi;
-import tr.havelsan.ueransim.app.common.configs.LoadTestConfig;
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
+import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
-import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.testcmd.*;
+import tr.havelsan.ueransim.app.common.trigger.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.console.Logger;
 
-import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class UeRanSim {
 
-    private final AppConfig appConfig;
-    private final LinkedHashMap<String, List<TestCmd>> testCases;
-    private final LoadTestConfig loadTesting;
     private final HashMap<UUID, GnbSimContext> gnbMap;
     private final HashMap<UUID, UeSimContext> ueMap;
     private final AirSimContext airCtx;
-    private final List<INodeMessagingListener> messagingListeners;
 
-    UeRanSim(List<INodeMessagingListener> messagingListeners,
-             LinkedHashMap<String, List<TestCmd>> testCases,
-             LoadTestConfig loadTesting) {
+    private final Thread triggeringThread;
+    private final BlockingQueue<TriggeringWrapper> triggerQueue;
+    private final List<INodeListener> nodeListeners;
 
-        this.testCases = testCases;
-        this.loadTesting = loadTesting;
-        this.appConfig = new AppConfig();
+    UeRanSim(List<INodeListener> nodeListeners) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
-        this.messagingListeners = new ArrayList<>(messagingListeners);
+
+        this.triggeringThread = new Thread(this::triggeringThreadMain);
+        this.triggerQueue = new LinkedBlockingQueue<>();
+        this.nodeListeners = new ArrayList<>(nodeListeners);
+
         this.airCtx = AirNode.createContext(this);
+
+        triggeringThread.start();
         AirNode.run(airCtx);
-
-        initialize();
-    }
-
-    private void initialize() {
-        var numberOfUe = loadTesting.numberOfUes;
-
-        var gnbContext = GnbNode.createContext(this, appConfig.createGnbConfig());
-        gnbMap.put(gnbContext.ctxId, gnbContext);
-        GnbNode.run(gnbContext);
-
-        while (!((GnbAppTask) gnbContext.itms.findTask(ItmsId.GNB_TASK_APP)).isInitialSctpReady()) {
-            // just wait until the gNB says my initial SCTP connection is ready.
-            Utils.sleep(100);
-        }
-
-        for (int i = 0; i < numberOfUe; i++) {
-            var ref = appConfig.createUeConfig();
-            var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(i)).toString(), 15, '0');
-            var supi = new Supi("imsi", imsiNumber).toString();
-            var config = new UeConfig(ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi), ref.plmn,
-                    ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
-
-            var ueContext = UeNode.createContext(this, config);
-
-            ueMap.put(ueContext.ctxId, ueContext);
-            UeNode.run(ueContext);
-
-            ueContext.connectedGnb = gnbContext.ctxId;
-        }
-    }
-
-    public String[] testCaseNames() {
-        return testCases.keySet().toArray(new String[0]);
-    }
-
-    public void runTest(String testName) {
-        var testCmds = testCases.get(testName);
-        if (testCmds == null) {
-            throw new RuntimeException("test case not found: " + testName);
-        }
-
-        for (var command : testCmds) {
-            if (command instanceof TestCmd_Sleep) {
-                var cmd = (TestCmd_Sleep) command;
-                if (cmd.duration > 1) {
-                    Utils.sleep(1000);
-                    Log.info(Tag.SYSTEM, "Waiting for user-defined sleep (%s s)", cmd.duration);
-                    Utils.sleep((cmd.duration - 1) * 1000);
-                } else {
-                    Utils.sleep(cmd.duration * 1000);
-                }
-            } else if (command instanceof TestCmd_InitialRegistration) {
-                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
-            } else if (command instanceof TestCmd_PeriodicRegistration) {
-                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
-            } else if (command instanceof TestCmd_Deregistration) {
-                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
-            } else if (command instanceof TestCmd_PduSessionEstablishment) {
-                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
-            } else if (command instanceof TestCmd_Ping) {
-                ueMap.values().forEach(ue -> ue.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(command)));
-            }
-        }
     }
 
     public UeSimContext findUe(UUID id) {
@@ -125,6 +59,18 @@ public class UeRanSim {
         synchronized (this) {
             return gnbMap.get(id);
         }
+    }
+
+    public GnbSimContext findGnbForUe(UUID gnbId) {
+        GnbSimContext ctx;
+        synchronized (this) {
+            ctx = gnbMap.get(gnbId);
+        }
+        if (ctx == null) return null;
+        if (!((GnbAppTask) (ctx.itms.findTask(ItmsId.GNB_TASK_APP))).isInitialSctpReady()) {
+            return null;
+        }
+        return ctx;
     }
 
     public HashSet<UUID> allUes() {
@@ -151,15 +97,69 @@ public class UeRanSim {
         return airCtx;
     }
 
-    public void triggerOnSend(BaseSimContext ctx, Object msg) {
-        for (var listener : messagingListeners) {
-            listener.onSend(ctx, msg);
+    public UUID createGnb(GnbConfig config) {
+        // TODO: Maybe check for unique node name
+
+        var ctx = GnbNode.createContext(this, config);
+        synchronized (this) {
+            gnbMap.put(ctx.ctxId, ctx);
+        }
+        GnbNode.run(ctx);
+        return ctx.ctxId;
+    }
+
+    public UUID createUe(UeConfig config) {
+        // TODO: Maybe check for unique node name
+
+        var ctx = UeNode.createContext(this, config);
+        synchronized (this) {
+            ueMap.put(ctx.ctxId, ctx);
+        }
+        UeNode.run(ctx);
+        return ctx.ctxId;
+    }
+
+    //======================================================================================================
+    //                                          TRIGGERS
+    //======================================================================================================
+
+    private void triggeringThreadMain() {
+        Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
+
+        while (true) {
+            TriggeringWrapper obj;
+            try {
+                obj = triggerQueue.take();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            for (var listener : nodeListeners) {
+                if (obj instanceof TwOnConnected)
+                    listener.onConnected(obj.ctx, ((TwOnConnected) obj).connType);
+                else if (obj instanceof TwOnSend)
+                    listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
+                else if (obj instanceof TwOnReceive)
+                    listener.onReceive(obj.ctx, ((TwOnReceive) obj).msg);
+                else if (obj instanceof TwOnSwitch)
+                    listener.onSwitched(obj.ctx, ((TwOnSwitch) obj).state);
+            }
         }
     }
 
+    public void triggerOnSend(BaseSimContext ctx, Object msg) {
+        triggerQueue.add(new TwOnSend(ctx, msg));
+    }
+
     public void triggerOnReceive(BaseSimContext ctx, Object msg) {
-        for (var listener : messagingListeners) {
-            listener.onReceive(ctx, msg);
-        }
+        triggerQueue.add(new TwOnReceive(ctx, msg));
+    }
+
+    public void triggerOnConnected(BaseSimContext ctx, INodeListener.ConnType connType) {
+        triggerQueue.add(new TwOnConnected(ctx, connType));
+    }
+
+    public void triggerOnSwitch(BaseSimContext ctx, Enum<?> state) {
+        triggerQueue.add(new TwOnSwitch(ctx, state));
     }
 }

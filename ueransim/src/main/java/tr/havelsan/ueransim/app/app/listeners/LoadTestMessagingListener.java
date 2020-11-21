@@ -7,7 +7,6 @@ package tr.havelsan.ueransim.app.app.listeners;
 
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
@@ -17,7 +16,7 @@ import tr.havelsan.ueransim.utils.console.BaseConsole;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LoadTestMessagingListener implements INodeMessagingListener {
+public class LoadTestMessagingListener implements INodeListener {
     private final BaseConsole console;
 
     private final Map<Integer, Long> ngSetupTimers = new ConcurrentHashMap<>();
@@ -27,10 +26,15 @@ public class LoadTestMessagingListener implements INodeMessagingListener {
     private final Map<String, Long> phase1Timers = new ConcurrentHashMap<>();
     private final Map<String, Long> phase2Timers = new ConcurrentHashMap<>();
     private final Map<String, Long> phase3Timers = new ConcurrentHashMap<>();
-    private final Map<String, Long> deregistrationTimers = new ConcurrentHashMap<>();
+    private final Map<String, Long> deRegistrationTimers = new ConcurrentHashMap<>();
 
     public LoadTestMessagingListener(BaseConsole console) {
         this.console = console;
+    }
+
+    @Override
+    public void onConnected(BaseSimContext ctx, ConnType connType) {
+
     }
 
     @Override
@@ -39,24 +43,20 @@ public class LoadTestMessagingListener implements INodeMessagingListener {
             int gnbId = ((GnbSimContext) ctx).config.gnbId;
             ngSetupTimers.put(gnbId, System.currentTimeMillis());
         } else if (message instanceof RegistrationRequest) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            registrationTimers.put(supi, System.currentTimeMillis());
-            phase1Timers.put(supi, System.currentTimeMillis());
+            registrationTimers.put(ctx.nodeName, System.currentTimeMillis());
+            phase1Timers.put(ctx.nodeName, System.currentTimeMillis());
         } else if (message instanceof AuthenticationResponse) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            phase2Timers.put(supi, System.currentTimeMillis());
+            phase2Timers.put(ctx.nodeName, System.currentTimeMillis());
 
-            long delta = System.currentTimeMillis() - authenticationTimers.get(supi);
-            console.println(null, "\u2714 [Authentication (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - authenticationTimers.get(ctx.nodeName);
+            console.println(null, "\u2714 [Authentication (UE/RAN)] [%s] [%d ms]", ctx.nodeName, delta);
         } else if (message instanceof SecurityModeComplete) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            phase3Timers.put(supi, System.currentTimeMillis());
+            phase3Timers.put(ctx.nodeName, System.currentTimeMillis());
 
-            long delta = System.currentTimeMillis() - securityModeControlTimers.get(supi);
-            console.println(null, "\u2714 [Security Mode Control (UE/RAN)] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - securityModeControlTimers.get(ctx.nodeName);
+            console.println(null, "\u2714 [Security Mode Control (UE/RAN)] [%s] [%d ms]", ctx.nodeName, delta);
         } else if (message instanceof DeRegistrationRequestUeOriginating) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            deregistrationTimers.put(supi, System.currentTimeMillis());
+            deRegistrationTimers.put(ctx.nodeName, System.currentTimeMillis());
         }
     }
 
@@ -71,32 +71,32 @@ public class LoadTestMessagingListener implements INodeMessagingListener {
             long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
             console.println(null, "\u2714 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
         } else if (message instanceof RegistrationReject) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            long delta = System.currentTimeMillis() - registrationTimers.get(supi);
-            console.println(null, "\u2718 [Registration] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - registrationTimers.get(ctx.nodeName);
+            console.println(null, "\u2718 [Registration] [%s] [%d ms]", ctx.nodeName, delta);
         } else if (message instanceof RegistrationAccept) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            long delta = System.currentTimeMillis() - registrationTimers.get(supi);
-            console.println(null, "\u2714 [Registration] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - registrationTimers.get(ctx.nodeName);
+            console.println(null, "\u2714 [Registration] [%s] [%d ms]", ctx.nodeName, delta);
 
-            long delta2 = System.currentTimeMillis() - phase3Timers.get(supi);
-            console.println(null, "\u2714 [Phase 3 (Network)] [SecurityModeControl-RegistrationAccept] [ue: %s] [%d ms]", supi, delta2);
+            long delta2 = System.currentTimeMillis() - phase3Timers.get(ctx.nodeName);
+            console.println(null, "\u2714 [Phase 3 (Network)] [SecurityModeControl-RegistrationAccept] [%s] [%d ms]", ctx.nodeName, delta2);
         } else if (message instanceof AuthenticationRequest) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            authenticationTimers.put(supi, System.currentTimeMillis());
+            authenticationTimers.put(ctx.nodeName, System.currentTimeMillis());
 
-            long delta = System.currentTimeMillis() - phase1Timers.get(supi);
-            console.println(null, "\u2714 [Phase 1 (Network)] [Registration-Authentication] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - phase1Timers.get(ctx.nodeName);
+            console.println(null, "\u2714 [Phase 1 (Network)] [Registration-Authentication] [%s] [%d ms]", ctx.nodeName, delta);
         } else if (message instanceof SecurityModeCommand) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            securityModeControlTimers.put(supi, System.currentTimeMillis());
+            securityModeControlTimers.put(ctx.nodeName, System.currentTimeMillis());
 
-            long delta = System.currentTimeMillis() - phase2Timers.get(supi);
-            console.println(null, "\u2714 [Phase 2 (Network)] [Authentication-SecurityModeControl] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - phase2Timers.get(ctx.nodeName);
+            console.println(null, "\u2714 [Phase 2 (Network)] [Authentication-SecurityModeControl] [%s] [%d ms]", ctx.nodeName, delta);
         } else if (message instanceof DeRegistrationAcceptUeOriginating) {
-            String supi = (((UeSimContext) ctx).ueConfig.supi).toString();
-            long delta = System.currentTimeMillis() - deregistrationTimers.get(supi);
-            console.println(null, "\u2714 [De-Registration] [ue: %s] [%d ms]", supi, delta);
+            long delta = System.currentTimeMillis() - deRegistrationTimers.get(ctx.nodeName);
+            console.println(null, "\u2714 [De-Registration] [%s] [%d ms]", ctx.nodeName, delta);
         }
+    }
+
+    @Override
+    public void onSwitched(BaseSimContext ctx, Enum<?> state) {
+
     }
 }
