@@ -51,6 +51,24 @@ public class Logger {
         return a;
     }
 
+    private static boolean shouldDispatch(Severity severity, Tag tag) {
+        if (severity != null) {
+            if (severity == Severity.DEBUG)
+                return false;
+            if (severity == Severity.ERROR || severity == Severity.SUCCESS)
+                return true;
+            if (severity == Severity.FUNC_IN || severity == Severity.FUNC_OUT)
+                return false;
+        }
+        if (tag != null) {
+            if (tag == Tag.MESSAGING)
+                return false;
+            if (tag == Tag.NAS_SECURITY)
+                return false;
+        }
+        return true;
+    }
+
     public BaseConsole getConsole() {
         return console;
     }
@@ -113,7 +131,7 @@ public class Logger {
         }
 
         if (this != GLOBAL) {
-            if (severity.dispatch() || (tag != null && tag.dispatch())) {
+            if (shouldDispatch(severity, tag)) {
                 GLOBAL.log(severity, ansiColorFormat, 0, tag, "[%s] " + message, concat(loggerName, args));
             }
         }

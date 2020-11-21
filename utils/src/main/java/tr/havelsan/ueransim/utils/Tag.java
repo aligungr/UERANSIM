@@ -22,14 +22,4 @@ public enum Tag {
     NAS_SECURITY,
     NOT_IMPL_YET,
     UE_APP;
-
-    public boolean dispatch() {
-        switch (this) {
-            case SYSTEM:
-            case CONNECTION:
-                return true;
-            default:
-                return false;
-        }
-    }
 }

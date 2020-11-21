@@ -13,14 +13,4 @@ public enum Severity {
     ERROR,
     FUNC_IN,
     FUNC_OUT;
-
-    public boolean dispatch() {
-        switch (this) {
-            case SUCCESS:
-            case ERROR:
-                return true;
-            default:
-                return false;
-        }
-    }
 }
