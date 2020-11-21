@@ -16,6 +16,7 @@ import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Severity;
 
+// TODO: need many refactor and review, also INodeListener must be lightweight. Check this also.
 public class StepperMessagingListener implements INodeListener {
 
     private WsConnectContext ws;
