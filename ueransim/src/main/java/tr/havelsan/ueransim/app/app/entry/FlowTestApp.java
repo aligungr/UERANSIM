@@ -12,13 +12,13 @@ import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.util.Scanner;
 
-public class AgentApp {
+public class FlowTestApp {
 
     private ProcedureTester procTester;
 
     public static void main(String[] args) {
         BaseApp.main(args);
-        new AgentApp().main();
+        new FlowTestApp().main();
     }
 
     private void main() {
