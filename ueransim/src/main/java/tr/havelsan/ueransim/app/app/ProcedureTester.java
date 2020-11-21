@@ -28,7 +28,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     private static final int INIT_STATE__INIT_DONE = 3;
 
     // General fields
-    private AppConfig appConfig;
+    private final AppConfig appConfig;
     private UeRanSim sim;
     private UUID gnbId;
     private List<UUID> ueIds;
@@ -41,8 +41,11 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     // Fields related to testing params
     private int numberOfUe;
 
+    public ProcedureTester(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
     public void start(UeRanSim ueRanSim, int numberOfUe, Runnable onInit) {
-        this.appConfig = new AppConfig();
         this.sim = ueRanSim;
         this.ueIds = new ArrayList<>();
         this.numberOfUe = numberOfUe;

@@ -6,7 +6,12 @@
 package tr.havelsan.ueransim.app.app.entry;
 
 import tr.havelsan.ueransim.app.app.AppBuilder;
+import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.ProcedureTester;
+import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
+import tr.havelsan.ueransim.app.utils.MtsInitializer;
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
@@ -15,6 +20,7 @@ import java.util.Scanner;
 public class FlowTestApp {
 
     private ProcedureTester procTester;
+    private ProcTestConfig procTestConfig;
 
     public static void main(String[] args) {
         BaseApp.main(args);
@@ -22,17 +28,29 @@ public class FlowTestApp {
     }
 
     private void main() {
-        procTester = new ProcedureTester();
+        var appConfig = new AppConfig();
+        procTester = new ProcedureTester(appConfig);
+        procTestConfig = createProcTestConfig();
 
         var ueransim = new AppBuilder()
                 .addConnectionListener(procTester)
                 .addMessagingListener(procTester)
                 .build();
 
-        procTester.start(ueransim, 3, this::onTesterInit);
+        procTester.start(ueransim, procTestConfig.numberOfUe, this::onTesterInit);
     }
 
-    private void onTesterInit() {
+    private ProcTestConfig createProcTestConfig() {
+        var testingMts = new MtsContext();
+        testingMts.setKebabCaseDecoding(true);
+        MtsInitializer.initTestingMts(testingMts);
+
+        var ito = (ImplicitTypedObject) testingMts.decoder.decode("config/procedure-testing.yaml");
+        return testingMts.constructor.construct(ProcTestConfig.class, ito, true);
+    }
+
+    // TODO: WebApp may override this
+    protected void onTesterInit() {
         Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
 
         var testCases = procTester.testCases();
