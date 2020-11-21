@@ -21,7 +21,7 @@ is-switch-off: false
 # After successful establishment of a PDU session, UE automatically sends a
 # ICMP Echo (ping) request to the specified address. (NOTE: Address resolution is
 # performed locally.)
-ping-address: 'youtubedsfdsfag ffdsa.com'
+ping-address: 'google.com'
 
 # The total number of consequential ping requests.
 # Typically an integer in range [1, 10] is used.
