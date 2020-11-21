@@ -7,12 +7,14 @@ package tr.havelsan.ueransim.app.app.entry;
 
 import tr.havelsan.ueransim.app.app.AppBuilder;
 import tr.havelsan.ueransim.app.app.AppConfig;
-import tr.havelsan.ueransim.app.app.ProcedureTester;
+import tr.havelsan.ueransim.app.app.tester.ProcedureTester;
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.util.Scanner;
@@ -78,6 +80,7 @@ public class FlowTestApp {
                 continue;
             }
 
+            Log.info(Tag.SYSTEM, "Starting predefined procedure test: \"%s\"", testCases[number - 1]);
             procTester.startTestCase(testCases[number - 1]);
         }
     }
