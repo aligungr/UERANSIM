@@ -17,14 +17,17 @@ public class AgentApp {
 
     public static void main(String[] args) {
         BaseApp.main(args);
+        new AgentApp().main();
+    }
 
+    private void main() {
         var appConfig = new AppConfig();
 
         var ueransim = new AppBuilder()
                 .build();
 
-        var ueId = ueransim.createUe(appConfig.createUeConfig());
         var gnbId = ueransim.createGnb(appConfig.createGnbConfig());
+        var ueId = ueransim.createUe(appConfig.createUeConfig());
 
         Utils.sleep(2000);
         ueransim.findUe(ueId).itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(new TestCmd_InitialRegistration(EFollowOnRequest.FOR_PENDING)));
