@@ -5,12 +5,12 @@
 
 package tr.havelsan.ueransim.app.air;
 
+import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
 import tr.havelsan.ueransim.app.common.TargetPduSession;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
-import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.ItmsTask;
@@ -55,6 +55,7 @@ public class TunBridgeTask extends ItmsTask {
             return;
         }
 
+        ctx.sim.triggerOnConnected(ctx, INodeConnectionListener.Type.TUN_BRIDGE);
         Log.info(Tag.CONNECTION, "TUN Bridge has been started.");
 
         var receiverThread = new Thread(this::receiverThread);

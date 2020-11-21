@@ -6,12 +6,7 @@
 package tr.havelsan.ueransim.app.app.entry;
 
 import tr.havelsan.ueransim.app.app.AppBuilder;
-import tr.havelsan.ueransim.app.app.AppConfig;
-import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_InitialRegistration;
-import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
-import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.app.app.ProcedureTester;
 
 public class AgentApp {
 
@@ -21,15 +16,13 @@ public class AgentApp {
     }
 
     private void main() {
-        var appConfig = new AppConfig();
+        var procTester = new ProcedureTester();
 
         var ueransim = new AppBuilder()
+                .addConnectionListener(procTester)
+                .addMessagingListener(procTester)
                 .build();
 
-        var gnbId = ueransim.createGnb(appConfig.createGnbConfig());
-        var ueId = ueransim.createUe(appConfig.createUeConfig());
-
-        Utils.sleep(2000);
-        ueransim.findUe(ueId).itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeTestCommand(new TestCmd_InitialRegistration(EFollowOnRequest.FOR_PENDING)));
+        procTester.start(ueransim, 3);
     }
 }

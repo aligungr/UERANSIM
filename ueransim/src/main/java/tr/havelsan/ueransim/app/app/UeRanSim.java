@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.air.AirNode;
+import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
@@ -25,12 +26,17 @@ public class UeRanSim {
     private final HashMap<UUID, GnbSimContext> gnbMap;
     private final HashMap<UUID, UeSimContext> ueMap;
     private final AirSimContext airCtx;
-    private final List<INodeMessagingListener> messagingListeners;
 
-    UeRanSim(List<INodeMessagingListener> messagingListeners) {
+    private final List<INodeMessagingListener> messagingListeners;
+    private final List<INodeConnectionListener> connectionListeners;
+
+    UeRanSim(List<INodeMessagingListener> messagingListeners, List<INodeConnectionListener> connectionListeners) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
+
         this.messagingListeners = new ArrayList<>(messagingListeners);
+        this.connectionListeners = new ArrayList<>(connectionListeners);
+
         this.airCtx = AirNode.createContext(this);
         AirNode.run(airCtx);
     }
@@ -83,6 +89,32 @@ public class UeRanSim {
         return airCtx;
     }
 
+    public UUID createGnb(GnbConfig config) {
+        // TODO: Maybe check for unique node name
+
+        var ctx = GnbNode.createContext(this, config);
+        synchronized (this) {
+            gnbMap.put(ctx.ctxId, ctx);
+        }
+        GnbNode.run(ctx);
+        return ctx.ctxId;
+    }
+
+    public UUID createUe(UeConfig config) {
+        // TODO: Maybe check for unique node name
+
+        var ctx = UeNode.createContext(this, config);
+        synchronized (this) {
+            ueMap.put(ctx.ctxId, ctx);
+        }
+        UeNode.run(ctx);
+        return ctx.ctxId;
+    }
+
+    //======================================================================================================
+    //                                          TRIGGERS
+    //======================================================================================================
+
     public void triggerOnSend(BaseSimContext ctx, Object msg) {
         for (var listener : messagingListeners) {
             listener.onSend(ctx, msg);
@@ -95,21 +127,9 @@ public class UeRanSim {
         }
     }
 
-    public UUID createGnb(GnbConfig config) {
-        var ctx = GnbNode.createContext(this, config);
-        synchronized (this) {
-            gnbMap.put(ctx.ctxId, ctx);
+    public void triggerOnConnected(BaseSimContext ctx, INodeConnectionListener.Type connectionType) {
+        for (var listener : connectionListeners) {
+            listener.onConnected(ctx, connectionType);
         }
-        GnbNode.run(ctx);
-        return ctx.ctxId;
-    }
-
-    public UUID createUe(UeConfig config) {
-        var ctx = UeNode.createContext(this, config);
-        synchronized (this) {
-            ueMap.put(ctx.ctxId, ctx);
-        }
-        UeNode.run(ctx);
-        return ctx.ctxId;
     }
 }

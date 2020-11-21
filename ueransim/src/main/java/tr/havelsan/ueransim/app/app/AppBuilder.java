@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.app;
 
+import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
 import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
 import tr.havelsan.ueransim.app.app.listeners.LoadTestMessagingListener;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
@@ -29,9 +30,11 @@ public class AppBuilder {
 
     private static final AtomicBoolean isBuilt = new AtomicBoolean(false);
     private final List<INodeMessagingListener> messagingListeners;
+    private final List<INodeConnectionListener> connectionListeners;
 
     public AppBuilder() {
         this.messagingListeners = new ArrayList<>();
+        this.connectionListeners = new ArrayList<>();
     }
 
     //======================================================================================================
@@ -40,6 +43,11 @@ public class AppBuilder {
 
     public AppBuilder addMessagingListener(INodeMessagingListener listener) {
         this.messagingListeners.add(listener);
+        return this;
+    }
+
+    public AppBuilder addConnectionListener(INodeConnectionListener listener) {
+        this.connectionListeners.add(listener);
         return this;
     }
 
@@ -63,7 +71,7 @@ public class AppBuilder {
 
         this.messagingListeners.add(new LoadTestMessagingListener(loadTestConsole));
 
-        return new UeRanSim(messagingListeners);
+        return new UeRanSim(messagingListeners, connectionListeners);
     }
 
     private BaseConsole createLoadTestingConsole() {

@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
+import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
 import tr.havelsan.ueransim.app.common.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
@@ -73,5 +74,7 @@ public class UeAppTask extends ItmsTask {
         connectionInfo.isEstablished = true;
 
         Log.info(Tag.UE_APP, "%s connection setup with local IP: %s", connectionInfo.sessionType, Utils.byteArrayToIpString(connectionInfo.pduAddress));
+
+        ctx.sim.triggerOnConnected(ctx, INodeConnectionListener.Type.ANY_IPv4);
     }
 }
