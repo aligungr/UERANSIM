@@ -5,10 +5,6 @@
 
 package tr.havelsan.ueransim.app.utils;
 
-import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
-import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.io.IOException;
@@ -40,16 +36,5 @@ public class ConfigUtils {
                 throw new RuntimeException(e);
             }
         });
-    }
-
-    public static String generateNodeName(BaseSimContext ctx) {
-        if (ctx instanceof UeSimContext) {
-            return "ue-" + ((UeSimContext) ctx).ueConfig.supi.value;
-        }
-        if (ctx instanceof GnbSimContext)
-            return "gnb-" + ((GnbSimContext) ctx).config.gnbId;
-        if (ctx instanceof AirSimContext)
-            return "air";
-        throw new RuntimeException();
     }
 }

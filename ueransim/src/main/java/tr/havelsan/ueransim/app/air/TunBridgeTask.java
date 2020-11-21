@@ -110,7 +110,7 @@ public class TunBridgeTask extends ItmsTask {
 
         var ue = ctx.sim.findUe(ueId);
         if (ue != null) {
-            Log.info(Tag.TUN, "IPv4 PDU session established(%s, %s)", ConfigUtils.generateNodeName(ue), Utils.byteArrayToIpString(addrBytes));
+            Log.info(Tag.TUN, "IPv4 PDU session established(%s, %s)", ue.nodeName, Utils.byteArrayToIpString(addrBytes));
             ipRoute.put(addr, new TargetPduSession(ueId, psi));
         }
     }

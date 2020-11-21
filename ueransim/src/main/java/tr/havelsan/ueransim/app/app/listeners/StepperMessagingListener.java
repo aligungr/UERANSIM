@@ -8,7 +8,6 @@ package tr.havelsan.ueransim.app.app.listeners;
 import io.javalin.websocket.WsConnectContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.sw.SwStep;
-import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -67,7 +66,7 @@ public class StepperMessagingListener implements INodeMessagingListener {
             return;
         }
 
-        var loggerName = ConfigUtils.generateNodeName(ctx);
+        var loggerName = ctx.nodeName;
         var severity = messageSeverity(message);
         var messageName = message.getClass().getSimpleName();
         if (messageName.startsWith("NGAP_"))
