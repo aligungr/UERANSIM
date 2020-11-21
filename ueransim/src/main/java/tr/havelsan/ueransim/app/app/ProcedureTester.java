@@ -72,7 +72,7 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
                 if (this.waitingUes.isEmpty()) {
                     Utils.sleep(100);
                     initState = INIT_STATE__INIT_DONE;
-                    Log.success(Tag.SYSTEM, "All nodes are initialized.");
+                    initDone();
                 }
             }
         }
@@ -97,5 +97,11 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
         var supi = new Supi("imsi", imsiNumber).toString();
         return new UeConfig(ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi), ref.plmn,
                 ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
+    }
+
+    private void initDone() {
+        Log.success(Tag.SYSTEM, "All nodes are initialized.");
+
+        
     }
 }
