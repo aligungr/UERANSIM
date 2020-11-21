@@ -8,6 +8,8 @@ package tr.havelsan.ueransim.app.ue.mm;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
+import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
+import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
@@ -17,6 +19,7 @@ import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
@@ -116,7 +119,16 @@ public class MobilityManagement {
         }
 
         if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__PLMN_SEARCH) {
-            switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE);
+            long current = System.currentTimeMillis();
+            if (ctx.mmCtx.lastPlmnSearchTrigger == 0) {
+                ctx.mmCtx.lastPlmnSearchTrigger = current;
+                return;
+            }
+            var elapsedMs = current - ctx.mmCtx.lastPlmnSearchTrigger;
+            if (elapsedMs > 1000) {
+                ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwPlmnSearchRequest());
+                ctx.mmCtx.lastPlmnSearchTrigger = current;
+            }
             return;
         }
 
@@ -145,6 +157,14 @@ public class MobilityManagement {
 
         if (UeNode.AUTO) {
             throw new NotImplementedException("unhandled UE MM state");
+        }
+    }
+
+    public static void receiveItmsMessage(UeSimContext ctx, Object msg) {
+        if (msg instanceof IwPlmnSearchResponse) {
+            ctx.connectedGnb = ((IwPlmnSearchResponse) msg).gnbId;
+            Log.info(Tag.PROC, "UE connected to gNB (%s).", ((IwPlmnSearchResponse) msg).gnbId);
+            switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE);
         }
     }
 }
