@@ -6,7 +6,7 @@ UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project c
 
 ## Contributing
 
-Implementing UE and RAN is not an easy task and also requires a lot of time. We are always open to public contributions and pull requests.
+Implementing UE and RAN is not an easy task and requires a lot of time. We are always open to public contributions and pull requests.
 
 ## Supporting UERANSIM
 
