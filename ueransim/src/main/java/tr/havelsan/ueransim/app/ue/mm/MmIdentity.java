@@ -36,7 +36,7 @@ public class MmIdentity {
                 response.mobileIdentity = new IEImeiMobileIdentity(ctx.ueConfig.imei);
             } else {
                 response.mobileIdentity = new IENoIdentity();
-                Log.error(Tag.PROC, "Requested identity is not available: %s",
+                Log.error(Tag.FLOW, "Requested identity is not available: %s",
                         message.identityType.value.name());
             }
         }
@@ -48,13 +48,13 @@ public class MmIdentity {
     public static IESuciMobileIdentity getOrGenerateSuci(UeSimContext ctx) {
         Log.funcIn("Get or Generate SUCI");
         if (ctx.ueTimers.t3519.isRunning()) {
-            Log.debug(Tag.PROC, "T3519 is running, returning stored SUCI.");
+            Log.debug(Tag.FLOW, "T3519 is running, returning stored SUCI.");
             Log.funcOut();
             return ctx.mmCtx.storedSuci;
         }
 
         ctx.mmCtx.storedSuci = generateSuci(ctx.ueConfig.supi);
-        Log.debug(Tag.PROC, "T3519 is not running, new SUCI generated.");
+        Log.debug(Tag.FLOW, "T3519 is not running, new SUCI generated.");
 
         ctx.ueTimers.t3519.start();
 

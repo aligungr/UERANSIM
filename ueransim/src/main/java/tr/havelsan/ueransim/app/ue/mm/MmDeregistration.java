@@ -57,7 +57,7 @@ public class MmDeregistration {
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NA);
         MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
 
-        Log.success(Tag.RES, "De-registration is successful");
+        Log.success(Tag.PROC, "De-registration is successful");
         Log.funcOut();
     }
 

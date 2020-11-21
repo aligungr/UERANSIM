@@ -167,7 +167,7 @@ public class MmAuthentication {
         {
             var expectedMac = MmKeyManagement.calculateMacForEapAkaPrime(kaut, receivedEap);
             if (!expectedMac.equals(receivedMac)) {
-                Log.error(Tag.PROC, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
+                Log.error(Tag.FLOW, "AT_MAC failure in EAP AKA'. expected: %s received: %s",
                         expectedMac, receivedMac);
 
                 if (!IGNORE_CONTROLS_FAILURES) {
@@ -309,20 +309,20 @@ public class MmAuthentication {
 
         // Check MAC
         if (!receivedMAC.equals(mac)) {
-            Log.error(Tag.PROC, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
+            Log.error(Tag.FLOW, "AUTN validation MAC mismatch. expected: %s received: %s", mac, receivedMAC);
             return EAutnValidationRes.MAC_FAILURE;
         }
 
         // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
         // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
         if (!BitString.from(receivedAMF).getB(0)) {
-            Log.error(Tag.PROC, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
+            Log.error(Tag.FLOW, "AUTN validation SEP-BIT failure. expected: 0, received: %s", mac, receivedAMF);
             return EAutnValidationRes.AMF_SEPARATION_BIT_FAILURE;
         }
 
         // Verify that the received sequence number SQN is in the correct range
         if (!checkSqn(receivedSQN)) {
-            Log.error(Tag.PROC, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
+            Log.error(Tag.FLOW, "AUTN validation SQN not acceptable: %s", mac, receivedSQN);
             return EAutnValidationRes.SYNCHRONISATION_FAILURE;
         }
 
@@ -367,7 +367,7 @@ public class MmAuthentication {
             } else if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in AuthenticationResult, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
@@ -382,7 +382,7 @@ public class MmAuthentication {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
                 MmAuthentication.receiveEapResponseMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in AuthenticationResponse, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
@@ -404,7 +404,7 @@ public class MmAuthentication {
 
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in AuthenticationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
@@ -424,7 +424,7 @@ public class MmAuthentication {
     public static void receiveEapFailureMessage(UeSimContext ctx, Eap eap) {
         Log.funcIn("Handling: EAP-Failure contained in received message");
 
-        Log.debug(Tag.PROC, "Deleting non-current NAS security context");
+        Log.debug(Tag.FLOW, "Deleting non-current NAS security context");
         ctx.nonCurrentNsCtx = null;
 
         Log.funcOut();
@@ -441,7 +441,7 @@ public class MmAuthentication {
         } else if (eap instanceof EapNotification) {
             Log.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
         } else {
-            Log.warning(Tag.PROC, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
+            Log.warning(Tag.FLOW, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
         }
 
         Log.funcOut();

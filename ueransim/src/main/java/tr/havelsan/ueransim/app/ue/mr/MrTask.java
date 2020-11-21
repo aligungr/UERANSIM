@@ -33,7 +33,7 @@ public class MrTask extends ItmsTask {
             } else if (msg instanceof IwUplinkNas || msg instanceof IwUplinkData) {
                 var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
                 if (gnb == null) {
-                    Log.warning(Tag.PROC, "Uplink NAS transport failure: UE not connected to a gNB.");
+                    Log.warning(Tag.FLOW, "Uplink NAS transport failure: UE not connected to a gNB.");
                 } else {
                     gnb.itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
                 }
@@ -57,7 +57,7 @@ public class MrTask extends ItmsTask {
         if (gnbId != null) {
             ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, new IwPlmnSearchResponse(gnbId));
         } else {
-            Log.warning(Tag.PROC, "No suitable gNB found for UE: %s", ctx.ueConfig.supi.toString());
+            Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueConfig.supi.toString());
         }
     }
 }

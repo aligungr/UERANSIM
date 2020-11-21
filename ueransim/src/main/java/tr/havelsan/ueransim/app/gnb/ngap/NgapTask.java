@@ -113,7 +113,7 @@ public class NgapTask extends ItmsTask {
             } else if (ngapMessage instanceof NGAP_PDUSessionResourceSetupRequest) {
                 NgapPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
             } else if (ngapMessage instanceof NGAP_ErrorIndication) {
-                Log.error(Tag.PROC, "Error indication received.");
+                Log.error(Tag.FLOW, "Error indication received.");
             } else {
                 Log.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
             }

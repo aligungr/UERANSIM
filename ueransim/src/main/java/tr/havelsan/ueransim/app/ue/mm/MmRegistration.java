@@ -103,7 +103,7 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
-        Log.success(Tag.RES, "Registration is successful");
+        Log.success(Tag.PROC, "Registration is successful");
         Log.funcOut();
     }
 
@@ -113,13 +113,13 @@ public class MmRegistration {
         var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
         var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
-        Log.error(Tag.RES, "Registration failed: %s", cause.name());
+        Log.error(Tag.PROC, "Registration failed: %s", cause.name());
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
             } else {
-                Log.warning(Tag.PROC, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
+                Log.warning(Tag.FLOW, "network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                         message.eapMessage.eap.code.name());
             }
         }
