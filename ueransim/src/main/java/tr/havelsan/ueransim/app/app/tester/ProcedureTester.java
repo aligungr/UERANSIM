@@ -153,13 +153,13 @@ public class ProcedureTester implements INodeListener {
                 ueTester = new InitialRegistrationTester(ctx, procTestConfig);
                 break;
             case "periodic-registration":
-                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
+                ueTester = new PeriodicRegistrationTester(ctx, procTestConfig);
                 break;
             case "de-registration":
                 ueTester = new DeRegistrationTester(ctx, procTestConfig);
                 break;
             case "pdu-session-establishment":
-                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
+                ueTester = new PduSessionEstablishmentTester(ctx, procTestConfig);
                 break;
             default:
                 Log.error(Tag.SYSTEM, "Invalid predefined procedure test: \"%s\"", testName);
