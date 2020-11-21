@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.mts;
 
+import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -174,7 +175,11 @@ public class MtsDecoder {
                 } else if (entry.getKey().startsWith("@")) {
                     throw new MtsException("unrecognized keyword: %s", entry.getKey());
                 } else {
-                    properties.put(entry.getKey(), decode(entry.getValue()));
+                    String key = entry.getKey();
+                    if (ctx.isKebabCaseDecoding()) {
+                        key = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, key);
+                    }
+                    properties.put(key, decode(entry.getValue()));
                 }
             }
 
