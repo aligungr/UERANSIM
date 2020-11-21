@@ -13,10 +13,7 @@ import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.trigger.TriggeringWrapper;
-import tr.havelsan.ueransim.app.common.trigger.TwOnConnected;
-import tr.havelsan.ueransim.app.common.trigger.TwOnReceive;
-import tr.havelsan.ueransim.app.common.trigger.TwOnSend;
+import tr.havelsan.ueransim.app.common.trigger.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
@@ -144,6 +141,8 @@ public class UeRanSim {
                     listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
                 if (obj instanceof TwOnReceive)
                     listener.onReceive(obj.ctx, ((TwOnReceive) obj).msg);
+                if (obj instanceof TwOnSwitch)
+                    listener.onSwitched(obj.ctx, ((TwOnSwitch) obj).state);
             }
         }
     }
@@ -158,5 +157,9 @@ public class UeRanSim {
 
     public void triggerOnConnected(BaseSimContext ctx, INodeListener.ConnType connType) {
         triggerQueue.add(new TwOnConnected(ctx, connType));
+    }
+
+    public void triggerOnSwitch(BaseSimContext ctx, Object state) {
+        triggerQueue.add(new TwOnSwitch(ctx, state));
     }
 }

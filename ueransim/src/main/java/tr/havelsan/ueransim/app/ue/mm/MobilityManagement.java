@@ -105,11 +105,15 @@ public class MobilityManagement {
         ctx.mmCtx.mmState = state;
         ctx.mmCtx.mmSubState = subState;
 
+        ctx.sim.triggerOnSwitch(ctx, state);
+        ctx.sim.triggerOnSwitch(ctx, subState);
+
         Log.info(Tag.STATE, "UE switches to state: %s/%s", state, subState);
     }
 
     public static void switchState(UeSimContext ctx, ERmState state) {
         ctx.mmCtx.rmState = state;
+        ctx.sim.triggerOnSwitch(ctx, state);
         Log.info(Tag.STATE, "UE switches to state: %s", state);
     }
 
