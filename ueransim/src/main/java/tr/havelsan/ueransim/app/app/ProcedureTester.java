@@ -34,17 +34,19 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
     private List<UUID> ueIds;
 
     // Fields related to initialization
+    private Runnable onInit;
     private int initState;
     private HashSet<UUID> waitingUes;
 
     // Fields related to testing params
     private int numberOfUe;
 
-    public void start(UeRanSim ueRanSim, int numberOfUe) {
+    public void start(UeRanSim ueRanSim, int numberOfUe, Runnable onInit) {
         this.appConfig = new AppConfig();
         this.sim = ueRanSim;
         this.ueIds = new ArrayList<>();
         this.numberOfUe = numberOfUe;
+        this.onInit = onInit;
 
         gnbId = sim.createGnb(appConfig.createGnbConfig());
         initState = INIT_STATE__WAITING_GNB;
@@ -72,7 +74,8 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
                 if (this.waitingUes.isEmpty()) {
                     Utils.sleep(100);
                     initState = INIT_STATE__INIT_DONE;
-                    initDone();
+                    Log.success(Tag.SYSTEM, "All UE and gNBs are initialized.", numberOfUe);
+                    onInit.run();
                 }
             }
         }
@@ -99,9 +102,14 @@ public class ProcedureTester implements INodeConnectionListener, INodeMessagingL
                 ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
     }
 
-    private void initDone() {
-        Log.success(Tag.SYSTEM, "All nodes are initialized.");
+    public String[] testCases() {
+        return new String[]{"initial-registration", "peroidic-registration",
+                "de-registration", "pdu-session-establishment"};
+    }
 
-        
+    public void startTestCase(String name) {
+        Log.info(Tag.SYSTEM, "Starting predefined procedure test: \"%s\"", name);
+
+        // TODO
     }
 }
