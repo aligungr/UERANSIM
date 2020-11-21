@@ -12,7 +12,6 @@ import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_InitialRegistration;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;
 
 class InitialRegistrationTester extends UeTester {
 
@@ -23,7 +22,7 @@ class InitialRegistrationTester extends UeTester {
     @Override
     public void onStart() {
         ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                new IwUeTestCommand(new TestCmd_InitialRegistration(EFollowOnRequest.FOR_PENDING)));
+                new IwUeTestCommand(new TestCmd_InitialRegistration(config.forPending)));
     }
 
     @Override

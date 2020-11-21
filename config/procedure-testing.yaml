@@ -1,1 +1,9 @@
+# TODO: Add description
+# Possible values are: FOR_PENDING, NO_FOR_PENDING
+for-pending: FOR_PENDING
+
+# TODO: Add description
+is-switch-off: false
+
+# TODO: Add description
 number-of-ue: 1

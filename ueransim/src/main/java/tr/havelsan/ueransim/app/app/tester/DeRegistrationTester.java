@@ -29,7 +29,7 @@ class DeRegistrationTester extends UeTester {
                 otherTester = null;
 
                 ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                        new IwUeTestCommand(new TestCmd_Deregistration(false)));
+                        new IwUeTestCommand(new TestCmd_Deregistration(config.isSwitchOff)));
             }
         };
         otherTester.onStart();
