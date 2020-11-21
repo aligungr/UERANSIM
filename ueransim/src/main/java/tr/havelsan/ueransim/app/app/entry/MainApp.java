@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.util.Scanner;
 
+/*
 public class MainApp {
 
     public static void main(String[] args) {
@@ -52,3 +53,4 @@ public class MainApp {
         }
     }
 }
+*/
