@@ -78,7 +78,7 @@ public class FlowTestApp {
             if (number < 1 || number > testCases.length) {
                 System.err.println("Invalid selection: " + number);
             } else {
-                Log.info(Tag.SYSTEM, "Starting predefined procedure test: \"%s\"", testCases[number - 1]);
+                Log.info(Tag.SYS, "Starting predefined procedure test: \"%s\"", testCases[number - 1]);
                 procTester.startTestCase(testCases[number - 1]);
             }
         }

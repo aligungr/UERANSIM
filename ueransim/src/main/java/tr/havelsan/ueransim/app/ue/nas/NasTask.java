@@ -30,7 +30,7 @@ public class NasTask extends ItmsTask {
     private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
         if (!MobilityManagement.executeCommand(ctx, cmd)) {
             if (!SessionManagement.executeCommand(ctx, cmd)) {
-                Log.error(Tag.SYSTEM, "invalid command: %s", cmd);
+                Log.error(Tag.SYS, "invalid command: %s", cmd);
             }
         }
     }
@@ -46,7 +46,7 @@ public class NasTask extends ItmsTask {
                 NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((IwDownlinkNas) msg).nasPdu));
             } else if (msg instanceof IwNasTimerExpire) {
                 var timer = ((IwNasTimerExpire) msg).timer;
-                Log.info(Tag.NAS_TIMER, "NAS Timer expired: %s", timer);
+                Log.info(Tag.TIMER, "NAS Timer expired: %s", timer);
 
                 if (timer.isMmTimer) {
                     MobilityManagement.receiveTimerExpire(ctx, timer);

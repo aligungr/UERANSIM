@@ -125,7 +125,7 @@ public class MmRegistration {
         }
 
         Runnable unhandledRejectCase = () -> {
-            Log.error(Tag.NOT_IMPL_YET, "Registration rejected with unhandled MMCause: %s", cause.name());
+            Log.error(Tag.NIMPL, "Registration rejected with unhandled MMCause: %s", cause.name());
         };
 
         if (regType.equals(ERegistrationType.INITIAL_REGISTRATION)) {

@@ -61,9 +61,9 @@ public class Logger {
                 return false;
         }
         if (tag != null) {
-            if (tag == Tag.MESSAGING)
+            if (tag == Tag.MSG)
                 return false;
-            if (tag == Tag.NAS_SECURITY)
+            if (tag == Tag.NASSEC)
                 return false;
         }
         return true;

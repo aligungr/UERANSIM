@@ -33,12 +33,12 @@ public class NasTimer {
         startMillis = System.currentTimeMillis();
         isRunning = true;
 
-        Log.debug(Tag.NAS_TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
+        Log.debug(Tag.TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
     public synchronized void start(IEGprsTimer2 v) {
         if (!v.hasValue()) {
-            Log.warning(Tag.NAS_TIMER, "NAS Timer %s start called but no value provided", timerCode);
+            Log.warning(Tag.TIMER, "NAS Timer %s start called but no value provided", timerCode);
             return;
         }
 
@@ -46,12 +46,12 @@ public class NasTimer {
         startMillis = System.currentTimeMillis();
         isRunning = true;
 
-        Log.debug(Tag.NAS_TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
+        Log.debug(Tag.TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
     public synchronized void start(IEGprsTimer3 v) {
         if (!v.hasValue()) {
-            Log.warning(Tag.NAS_TIMER, "NAS Timer %s start called but no value provided", timerCode);
+            Log.warning(Tag.TIMER, "NAS Timer %s start called but no value provided", timerCode);
             return;
         }
 
@@ -70,7 +70,7 @@ public class NasTimer {
         startMillis = System.currentTimeMillis();
         isRunning = true;
 
-        Log.debug(Tag.NAS_TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
+        Log.debug(Tag.TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
     public synchronized void stop() {
@@ -78,7 +78,7 @@ public class NasTimer {
             startMillis = System.currentTimeMillis();
             isRunning = false;
 
-            Log.debug(Tag.NAS_TIMER, "NAS Timer %s stopped", timerCode);
+            Log.debug(Tag.TIMER, "NAS Timer %s stopped", timerCode);
         }
     }
 
@@ -94,7 +94,7 @@ public class NasTimer {
 
             if (currentMs - _lastDebugPrintMs > 10 * 1000) {
                 _lastDebugPrintMs = currentMs;
-                Log.debug(Tag.NAS_TIMER, "NAS Timer %s int:%ss rem:%ss", timerCode, interval, remainingSec);
+                Log.debug(Tag.TIMER, "NAS Timer %s int:%ss rem:%ss", timerCode, interval, remainingSec);
             }
 
             if (remainingSec < 0) {

@@ -72,14 +72,14 @@ public class SctpTask extends ItmsTask {
                 try {
                     amf.sctpClient.start();
                 } catch (Exception e) {
-                    Log.error(Tag.CONNECTION, "SCTP connection could not established: " + e.getMessage());
+                    Log.error(Tag.CONN, "SCTP connection could not established: " + e.getMessage());
                     return;
                 }
                 try {
                     amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
                             -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
                 } catch (Exception e) {
-                    Log.error(Tag.CONNECTION, "SCTP connection error: " + e.getMessage());
+                    Log.error(Tag.CONN, "SCTP connection error: " + e.getMessage());
                     return;
                 }
             });

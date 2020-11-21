@@ -76,7 +76,7 @@ public class ProcedureTester implements INodeListener {
                 if (this.waitingUes.isEmpty()) {
                     Utils.sleep(100);
                     initState = INIT_STATE__INIT_DONE;
-                    Log.success(Tag.SYSTEM, "All UE and gNBs are initialized.");
+                    Log.success(Tag.SYS, "All UE and gNBs are initialized.");
                     onInit.run();
                 }
             }
@@ -143,7 +143,7 @@ public class ProcedureTester implements INodeListener {
     public void startTestCase(UUID ueId, String testName) {
         var ctx = sim.findUe(ueId);
         if (ctx == null) {
-            Log.error(Tag.SYSTEM, "UE not found for predefined procedure test.");
+            Log.error(Tag.SYS, "UE not found for predefined procedure test.");
             return;
         }
 
@@ -162,7 +162,7 @@ public class ProcedureTester implements INodeListener {
                 ueTester = new PduSessionEstablishmentTester(ctx, procTestConfig);
                 break;
             default:
-                Log.error(Tag.SYSTEM, "Invalid predefined procedure test: \"%s\"", testName);
+                Log.error(Tag.SYS, "Invalid predefined procedure test: \"%s\"", testName);
                 return;
         }
 

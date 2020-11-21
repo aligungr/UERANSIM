@@ -50,13 +50,13 @@ public class TunBridgeTask extends ItmsTask {
         try {
             bridge = new DatagramSocket(49972, localhost);
         } catch (SocketException e) {
-            Log.error(Tag.CONNECTION, "TUN Bridge connection could not established: " + e.getMessage());
+            Log.error(Tag.CONN, "TUN Bridge connection could not established: " + e.getMessage());
             System.exit(1);
             return;
         }
 
         ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.TUN_BRIDGE);
-        Log.info(Tag.CONNECTION, "TUN Bridge has been started.");
+        Log.info(Tag.CONN, "TUN Bridge has been started.");
 
         var receiverThread = new Thread(this::receiverThread);
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));

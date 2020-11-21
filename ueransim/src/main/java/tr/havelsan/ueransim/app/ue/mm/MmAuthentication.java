@@ -147,7 +147,7 @@ public class MmAuthentication {
                     //eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_SYNCHRONIZATION_FAILURE);
                     //eapResponse.attributes.putAuts(...);
 
-                    Log.warning(Tag.NOT_IMPL_YET, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
+                    Log.warning(Tag.NIMPL, "feature not implemented yet: SYNCHRONISATION_FAILURE in AUTN validation for EAP AKA'");
                 } else {
                     eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_CLIENT_ERROR);
                     eapResponse.attributes.putClientErrorCode(0);
@@ -288,7 +288,7 @@ public class MmAuthentication {
         } else if (autnCheck == EAutnValidationRes.MAC_FAILURE) {
             response = new AuthenticationFailure(EMmCause.MAC_FAILURE);
         } else if (autnCheck == EAutnValidationRes.SYNCHRONISATION_FAILURE) {
-            Log.error(Tag.NOT_IMPL_YET, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
+            Log.error(Tag.NIMPL, "SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
         } else {
             response = new AuthenticationFailure(EMmCause.UNSPECIFIED_PROTOCOL_ERROR);
         }
@@ -437,9 +437,9 @@ public class MmAuthentication {
             var akaPrime = (EapAkaPrime) eap;
 
         } else if (eap instanceof EapIdentity) {
-            Log.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
+            Log.error(Tag.NIMPL, "EapIdentity handling not implemented yet");
         } else if (eap instanceof EapNotification) {
-            Log.error(Tag.NOT_IMPL_YET, "EapIdentity handling not implemented yet");
+            Log.error(Tag.NIMPL, "EapIdentity handling not implemented yet");
         } else {
             Log.warning(Tag.FLOW, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
         }

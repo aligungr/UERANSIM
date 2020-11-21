@@ -6,19 +6,19 @@
 package tr.havelsan.ueransim.utils;
 
 public enum Tag {
-    SYSTEM,
+    SYS,
     STATE,
     CONFIG,
     TUN,
     VALUE,
     FLOW,
-    MESSAGING,
-    CONNECTION,
-    NAS_TIMER,
+    MSG,
+    CONN,
+    TIMER,
     GTP,
-    NGAP_INTERNAL,
+    NGAPINT,
     PROC,
-    NAS_SECURITY,
-    NOT_IMPL_YET,
-    UE_APP;
+    NASSEC,
+    NIMPL,
+    UEAPP;
 }
