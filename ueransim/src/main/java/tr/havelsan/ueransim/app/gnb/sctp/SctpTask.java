@@ -90,7 +90,7 @@ public class SctpTask extends ItmsTask {
 
         while (setupCount.get() != ctx.amfContexts.size()) {
             // just wait
-            Utils.sleep(1000);
+            Utils.sleep(100);
         }
 
         ctx.itms.sendMessage(ItmsId.GNB_TASK_APP, new IwInitialSctpReady());

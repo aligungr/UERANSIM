@@ -14,7 +14,9 @@ import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
+import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
+import tr.havelsan.ueransim.itms.ItmsId;
 
 import java.util.*;
 
@@ -43,6 +45,18 @@ public class UeRanSim {
         synchronized (this) {
             return gnbMap.get(id);
         }
+    }
+
+    public GnbSimContext findGnbForUe(UUID gnbId) {
+        GnbSimContext ctx;
+        synchronized (this) {
+            ctx = gnbMap.get(gnbId);
+        }
+        if (ctx == null) return null;
+        if (!((GnbAppTask) (ctx.itms.findTask(ItmsId.GNB_TASK_APP))).isInitialSctpReady()) {
+            return null;
+        }
+        return ctx;
     }
 
     public HashSet<UUID> allUes() {

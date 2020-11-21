@@ -23,8 +23,6 @@ public class AgentApp {
         var ueransim = new AppBuilder()
                 .build();
 
-        // TODO gnb conencted ama sctp kurulmadı ise
-
         var ueId = ueransim.createUe(appConfig.createUeConfig());
         var gnbId = ueransim.createGnb(appConfig.createGnbConfig());
 
