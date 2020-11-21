@@ -7,8 +7,7 @@ package tr.havelsan.ueransim.app.app.tester;
 
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
-import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
@@ -20,7 +19,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 import java.math.BigInteger;
 import java.util.*;
 
-public class ProcedureTester implements INodeConnectionListener, INodeMessagingListener {
+public class ProcedureTester implements INodeListener {
 
     // Initialization state variables
     private static final int INIT_STATE__WAITING_GNB = 1;

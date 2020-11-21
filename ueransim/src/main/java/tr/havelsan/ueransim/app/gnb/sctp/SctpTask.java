@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.gnb.sctp;
 
-import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.common.itms.IwInitialSctpReady;
@@ -94,7 +94,7 @@ public class SctpTask extends ItmsTask {
             Utils.sleep(100);
         }
 
-        ctx.sim.triggerOnConnected(ctx, INodeConnectionListener.Type.SCTP); // TODO: Maybe for 'each' amf sctp connection
+        ctx.sim.triggerOnConnected(ctx, INodeListener.Type.SCTP); // TODO: Maybe for 'each' amf sctp connection
         ctx.itms.sendMessage(ItmsId.GNB_TASK_APP, new IwInitialSctpReady());
 
         while (true) {

@@ -35,8 +35,7 @@ public class FlowTestApp {
         procTestConfig = createProcTestConfig();
 
         var ueransim = new AppBuilder()
-                .addConnectionListener(procTester)
-                .addMessagingListener(procTester)
+                .addNodeListener(procTester)
                 .build();
 
         procTester.start(ueransim, procTestConfig, this::onTesterInit);

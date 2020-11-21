@@ -6,8 +6,7 @@
 package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.air.AirNode;
-import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
-import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
@@ -37,17 +36,15 @@ public class UeRanSim {
 
     private final Thread triggeringThread;
     private final BlockingQueue<TriggeringWrapper> triggerQueue;
-    private final List<INodeMessagingListener> messagingListeners;
-    private final List<INodeConnectionListener> connectionListeners;
+    private final List<INodeListener> nodeListeners;
 
-    UeRanSim(List<INodeMessagingListener> messagingListeners, List<INodeConnectionListener> connectionListeners) {
+    UeRanSim(List<INodeListener> nodeListeners) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
 
         this.triggeringThread = new Thread(this::triggeringThreadMain);
         this.triggerQueue = new LinkedBlockingQueue<>();
-        this.messagingListeners = new ArrayList<>(messagingListeners);
-        this.connectionListeners = new ArrayList<>(connectionListeners);
+        this.nodeListeners = new ArrayList<>(nodeListeners);
 
         this.airCtx = AirNode.createContext(this);
 
@@ -140,20 +137,13 @@ public class UeRanSim {
                 throw new RuntimeException(e);
             }
 
-            if (obj instanceof TwOnConnected) {
-                for (var listener : connectionListeners) {
+            for (var listener : nodeListeners) {
+                if (obj instanceof TwOnConnected)
                     listener.onConnected(obj.ctx, ((TwOnConnected) obj).type);
-                }
-            }
-            if (obj instanceof TwOnSend) {
-                for (var listener : messagingListeners) {
+                if (obj instanceof TwOnSend)
                     listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
-                }
-            }
-            if (obj instanceof TwOnReceive) {
-                for (var listener : messagingListeners) {
+                if (obj instanceof TwOnReceive)
                     listener.onReceive(obj.ctx, ((TwOnReceive) obj).msg);
-                }
             }
         }
     }
@@ -166,7 +156,7 @@ public class UeRanSim {
         triggerQueue.add(new TwOnReceive(ctx, msg));
     }
 
-    public void triggerOnConnected(BaseSimContext ctx, INodeConnectionListener.Type connectionType) {
+    public void triggerOnConnected(BaseSimContext ctx, INodeListener.Type connectionType) {
         triggerQueue.add(new TwOnConnected(ctx, connectionType));
     }
 }

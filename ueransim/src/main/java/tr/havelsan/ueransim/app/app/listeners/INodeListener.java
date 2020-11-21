@@ -7,7 +7,19 @@ package tr.havelsan.ueransim.app.app.listeners;
 
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
-public interface INodeMessagingListener {
+public interface INodeListener {
+
+    enum Type {
+        SCTP,
+        ANY_IPv4,
+        UE_MR_GNB,
+        TUN_BRIDGE
+    }
+
+    /**
+     * Triggered when a simulation node has established a connection.
+     */
+    void onConnected(BaseSimContext ctx, Type connectionType);
 
     /**
      * Triggered when a simulation node has send a message.

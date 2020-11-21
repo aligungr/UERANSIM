@@ -16,7 +16,7 @@ import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Severity;
 
-public class StepperMessagingListener implements INodeMessagingListener {
+public class StepperMessagingListener implements INodeListener {
 
     private WsConnectContext ws;
 
@@ -78,6 +78,11 @@ public class StepperMessagingListener implements INodeMessagingListener {
 
         if (ws != null)
             ws.send(SocketWrapperSerializer.toJson(swStep));
+    }
+
+    @Override
+    public void onConnected(BaseSimContext ctx, Type connectionType) {
+
     }
 
     @Override

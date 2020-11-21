@@ -16,7 +16,7 @@ import tr.havelsan.ueransim.utils.console.BaseConsole;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LoadTestMessagingListener implements INodeMessagingListener {
+public class LoadTestMessagingListener implements INodeListener {
     private final BaseConsole console;
 
     private final Map<Integer, Long> ngSetupTimers = new ConcurrentHashMap<>();
@@ -30,6 +30,11 @@ public class LoadTestMessagingListener implements INodeMessagingListener {
 
     public LoadTestMessagingListener(BaseConsole console) {
         this.console = console;
+    }
+
+    @Override
+    public void onConnected(BaseSimContext ctx, Type connectionType) {
+
     }
 
     @Override

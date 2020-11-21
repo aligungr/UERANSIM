@@ -5,15 +5,12 @@
 
 package tr.havelsan.ueransim.app.app;
 
-import tr.havelsan.ueransim.app.app.listeners.INodeConnectionListener;
-import tr.havelsan.ueransim.app.app.listeners.INodeMessagingListener;
+import tr.havelsan.ueransim.app.app.listeners.INodeListener;
 import tr.havelsan.ueransim.app.app.listeners.LoadTestMessagingListener;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
-import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
-import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,25 +26,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AppBuilder {
 
     private static final AtomicBoolean isBuilt = new AtomicBoolean(false);
-    private final List<INodeMessagingListener> messagingListeners;
-    private final List<INodeConnectionListener> connectionListeners;
+    private final List<INodeListener> nodeListeners;
 
     public AppBuilder() {
-        this.messagingListeners = new ArrayList<>();
-        this.connectionListeners = new ArrayList<>();
+        this.nodeListeners = new ArrayList<>();
     }
 
     //======================================================================================================
     //                                          MUTATORS
     //======================================================================================================
 
-    public AppBuilder addMessagingListener(INodeMessagingListener listener) {
-        this.messagingListeners.add(listener);
-        return this;
-    }
-
-    public AppBuilder addConnectionListener(INodeConnectionListener listener) {
-        this.connectionListeners.add(listener);
+    public AppBuilder addNodeListener(INodeListener listener) {
+        this.nodeListeners.add(listener);
         return this;
     }
 
@@ -66,9 +56,9 @@ public class AppBuilder {
 
         var loadTestConsole = createLoadTestingConsole();
 
-        this.messagingListeners.add(new LoadTestMessagingListener(loadTestConsole));
+        this.nodeListeners.add(new LoadTestMessagingListener(loadTestConsole));
 
-        return new UeRanSim(messagingListeners, connectionListeners);
+        return new UeRanSim(nodeListeners);
     }
 
     private BaseConsole createLoadTestingConsole() {
