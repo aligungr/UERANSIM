@@ -101,7 +101,7 @@ class SmPduSessionEstablishment {
         ctx.sim.getAirCtx().itms.sendMessage(ItmsId.AIR_TASK_TB, new IwPduSessionEstablishment(ctx.ctxId, pduSession));
 
         Log.info(Tag.PROC, "PDU session established: %s", message.pduSessionId);
-        Log.success(Tag.PROCEDURE_RESULT, "PDU Session Establishment is successful");
+        Log.success(Tag.RES, "PDU Session Establishment is successful");
         Log.funcOut();
     }
 

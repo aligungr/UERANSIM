@@ -18,7 +18,7 @@ public enum Tag {
     NAS_TIMER,
     GTP,
     NGAP_INTERNAL,
-    PROCEDURE_RESULT,
+    RES,
     NAS_SECURITY,
     NOT_IMPL_YET,
     UE_APP;

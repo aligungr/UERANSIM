@@ -18,7 +18,6 @@ import tr.havelsan.ueransim.nas.impl.messages.RegistrationReject;
 import tr.havelsan.ueransim.nas.impl.messages.RegistrationRequest;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
-import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 
 public class MmRegistration {
 
@@ -104,7 +103,7 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
-        Log.success(Tag.PROCEDURE_RESULT, "Registration is successful");
+        Log.success(Tag.RES, "Registration is successful");
         Log.funcOut();
     }
 
@@ -114,7 +113,7 @@ public class MmRegistration {
         var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
         var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
-        Log.error(Tag.PROCEDURE_RESULT, "Registration failed: %s", cause.name());
+        Log.error(Tag.RES, "Registration failed: %s", cause.name());
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
