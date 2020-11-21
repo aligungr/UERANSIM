@@ -74,7 +74,7 @@ public class MmAuthentication {
         // Derive keys
         {
             if (USE_SQN_HACK) {
-                Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+                //Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
             }
             if (IGNORE_CONTROLS_FAILURES) {
                 Log.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
@@ -230,7 +230,7 @@ public class MmAuthentication {
         PlainMmMessage response = null;
 
         if (USE_SQN_HACK) {
-            Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
+            //Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
         }
         if (IGNORE_CONTROLS_FAILURES) {
             Log.warning(Tag.CONFIG, "IGNORE_CONTROLS_FAILURES: %s", IGNORE_CONTROLS_FAILURES);
