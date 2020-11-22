@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
 /**
  * Listener for various kind of events.
- * All classes implementing INodeListener must be 'lightweight'.
+ * All classes implementing INodeListener must be 'lightweight'. (TODO remove this obligation if switch to NtsTask structure)
  */
 public interface INodeListener {
 
