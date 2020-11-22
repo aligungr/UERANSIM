@@ -21,8 +21,7 @@ class InitialRegistrationTester extends UeTester {
 
     @Override
     public void onStart() {
-        ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                new IwUeTestCommand(new TestCmd_InitialRegistration(config.forPending)));
+        ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeTestCommand(new TestCmd_InitialRegistration(config.forPending)));
     }
 
     @Override

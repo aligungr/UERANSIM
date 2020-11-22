@@ -13,8 +13,13 @@ public abstract class NtsTask {
     private final BlockingDeque<Object> msgQueue;
     private final Thread thread;
     private final NtsScheduler scheduler;
+    private Thread schedulerThread;
 
     private boolean isStarted;
+
+    public NtsTask() {
+        this(true);
+    }
 
     public NtsTask(boolean allocateScheduler) {
         this.msgQueue = new LinkedBlockingDeque<>();
@@ -27,8 +32,10 @@ public abstract class NtsTask {
     public void start() {
         if (isStarted)
             throw new IllegalStateException("Task already started.");
-        if (scheduler != null)
-            scheduler.start();
+        if (scheduler != null) {
+            schedulerThread = new Thread(scheduler::start);
+            schedulerThread.start();
+        }
         isStarted = true;
         thread.start();
     }
@@ -36,6 +43,11 @@ public abstract class NtsTask {
     public void releaseResources() {
         if (scheduler != null)
             scheduler.quit();
+    }
+
+    // This method is usually not required, and it should be used with caution.
+    public final Thread getThread() {
+        return thread;
     }
 
     private Object takenMessage(Object obj) {

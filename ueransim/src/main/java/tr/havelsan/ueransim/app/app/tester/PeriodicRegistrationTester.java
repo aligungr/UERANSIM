@@ -27,9 +27,7 @@ class PeriodicRegistrationTester extends UeTester {
             @Override
             public void onComplete() {
                 otherTester = null;
-
-                ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                        new IwUeTestCommand(new TestCmd_PeriodicRegistration(config.forPending)));
+                ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeTestCommand(new TestCmd_PeriodicRegistration(config.forPending)));
             }
         };
         otherTester.onStart();

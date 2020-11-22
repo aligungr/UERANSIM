@@ -10,8 +10,7 @@ import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
 import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.Itms;
-import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
@@ -26,19 +25,18 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
 
-public class NgapTask extends ItmsTask {
+public class NgapTask extends NtsTask {
 
     private final GnbSimContext ctx;
 
-    public NgapTask(Itms itms, int taskId, GnbSimContext ctx) {
-        super(itms, taskId);
+    public NgapTask(GnbSimContext ctx) {
         this.ctx = ctx;
     }
 
     @Override
     public void main() {
         while (true) {
-            var msg = itms.receiveMessage(this);
+            var msg = take();
             if (msg instanceof IwNgapReceive) {
                 receiveNgap(((IwNgapReceive) msg).associatedAmf, ((IwNgapReceive) msg).stream, ((IwNgapReceive) msg).ngapPdu);
             } else if (msg instanceof IwSctpAssociationSetup) {

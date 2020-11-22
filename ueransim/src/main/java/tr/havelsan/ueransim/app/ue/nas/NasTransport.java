@@ -32,7 +32,7 @@ public class NasTransport {
         Log.debug(Tag.MSG, "Secured NAS as JSON %s", Json.toJson(securedNas));
         Log.debug(Tag.MSG, "Secured NAS PDU: %s", securedNasPdu);
 
-        ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkNas(ctx.ctxId, securedNasPdu));
+        ctx.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkNas(ctx.ctxId, securedNasPdu));
         ctx.sim.triggerOnSend(ctx, message);
         Log.funcOut();
     }

@@ -131,7 +131,7 @@ public class MobilityManagement {
             }
             var elapsedMs = current - ctx.mmCtx.lastPlmnSearchTrigger;
             if (elapsedMs > 1000) {
-                ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwPlmnSearchRequest());
+                ctx.nts.findTask(ItmsId.UE_TASK_MR).push(new IwPlmnSearchRequest());
                 ctx.mmCtx.lastPlmnSearchTrigger = current;
             }
             return;

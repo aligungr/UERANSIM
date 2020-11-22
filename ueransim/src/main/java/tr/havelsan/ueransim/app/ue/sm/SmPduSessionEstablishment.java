@@ -97,8 +97,8 @@ class SmPduSessionEstablishment {
         pduSession.sessionType = message.selectedPduSessionType;
         pduSession.pduAddress = message.pduAddress;
 
-        ctx.itms.sendMessage(ItmsId.UE_TASK_APP, new IwUeConnectionSetup(pduSession));
-        ctx.sim.getAirCtx().itms.sendMessage(ItmsId.AIR_TASK_TB, new IwPduSessionEstablishment(ctx.ctxId, pduSession));
+        ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeConnectionSetup(pduSession));
+        ctx.sim.getAirCtx().nts.findTask(ItmsId.AIR_TASK_TB).push(new IwPduSessionEstablishment(ctx.ctxId, pduSession));
 
         Log.info(Tag.FLOW, "PDU session established: %s", message.pduSessionId);
         Log.success(Tag.PROC, "PDU Session Establishment is successful");

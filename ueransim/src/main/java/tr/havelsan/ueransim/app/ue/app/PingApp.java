@@ -78,7 +78,8 @@ class PingApp {
             pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName, ping.timeoutSec));
 
             var packet = createPingPacket(source, dest, id, seq);
-            ctx.itms.sendMessage(ItmsId.UE_TASK_MR, new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
+
+            ctx.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
         }
     }
 

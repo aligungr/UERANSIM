@@ -43,12 +43,12 @@ public class NtsBase {
     }
 
     // Usually it's better to call this once and hold a reference to the task.
-    public <T extends NtsTask> NtsTask findTask(Class<T> type) {
+    public <T extends NtsTask> T findTask(Class<T> type) {
         synchronized (this) {
             var set = typeMap.get(type);
             if (set == null || set.size() > 1)
                 return null;
-            return set.get(0);
+            return (T) set.get(0);
         }
     }
 }

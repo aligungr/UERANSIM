@@ -7,22 +7,23 @@ package tr.havelsan.ueransim.app.ue.nas;
 
 import tr.havelsan.ueransim.app.common.itms.IwNasTimerExpire;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Utils;
 
-public class NasTimersTask extends ItmsTask {
+public class NasTimersTask extends NtsTask {
 
     private final UeSimContext ctx;
+    private NtsTask nasTask;
 
-    public NasTimersTask(Itms itms, int taskId, UeSimContext ctx) {
-        super(itms, taskId);
+    public NasTimersTask(UeSimContext ctx) {
         this.ctx = ctx;
     }
 
     @Override
     public void main() {
+        nasTask = ctx.nts.findTask(ItmsId.UE_TASK_NAS);
+
         while (true) {
             // TODO: Sleep olmasında sakınca yok ama sleep olmadığında timer tik atmıyor, bug var.
             Utils.sleep(1500);
@@ -54,6 +55,6 @@ public class NasTimersTask extends ItmsTask {
     }
 
     private void sendExpireMsg(NasTimer timer) {
-        ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, new IwNasTimerExpire(timer));
+        nasTask.push(new IwNasTimerExpire(timer));
     }
 }

@@ -7,40 +7,44 @@ package tr.havelsan.ueransim.app.ue.mr;
 
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.UUID;
 
-public class MrTask extends ItmsTask {
+public class MrTask extends NtsTask {
 
     private final UeSimContext ctx;
 
-    public MrTask(Itms itms, int taskId, UeSimContext ctx) {
-        super(itms, taskId);
+    private NtsTask nasTask;
+    private NtsTask appTask;
+
+    public MrTask(UeSimContext ctx) {
         this.ctx = ctx;
     }
 
     @Override
     public void main() {
+        nasTask = ctx.nts.findTask(ItmsId.UE_TASK_NAS);
+        appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP);
+
         while (true) {
-            var msg = itms.receiveMessage(this);
+            var msg = take();
             if (msg instanceof IwDownlinkNas) {
-                ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                nasTask.push(msg);
             } else if (msg instanceof IwUplinkNas || msg instanceof IwUplinkData) {
                 var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
                 if (gnb == null) {
                     Log.warning(Tag.FLOW, "Uplink NAS transport failure: UE not connected to a gNB.");
                 } else {
-                    gnb.itms.sendMessage(ItmsId.GNB_TASK_MR, msg);
+                    gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
                 }
             } else if (msg instanceof IwDownlinkData) {
-                ctx.itms.sendMessage(ItmsId.UE_TASK_APP, msg);
+                appTask.push(msg);
             } else if (msg instanceof IwConnectionRelease) {
-                ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, msg);
+                nasTask.push(msg);
             } else if (msg instanceof IwPlmnSearchRequest) {
                 performPlmnSearch();
             }
@@ -55,7 +59,7 @@ public class MrTask extends ItmsTask {
         }
 
         if (gnbId != null) {
-            ctx.itms.sendMessage(ItmsId.UE_TASK_NAS, new IwPlmnSearchResponse(gnbId));
+            nasTask.push(new IwPlmnSearchResponse(gnbId));
         } else {
             Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueConfig.supi.toString());
         }

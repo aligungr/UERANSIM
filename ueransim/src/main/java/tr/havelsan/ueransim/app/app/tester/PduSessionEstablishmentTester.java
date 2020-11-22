@@ -27,9 +27,7 @@ class PduSessionEstablishmentTester extends UeTester {
             @Override
             public void onComplete() {
                 otherTester = null;
-
-                ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                        new IwUeTestCommand(new TestCmd_PduSessionEstablishment()));
+                ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeTestCommand(new TestCmd_PduSessionEstablishment()));
             }
         };
         otherTester.onStart();
@@ -51,8 +49,7 @@ class PduSessionEstablishmentTester extends UeTester {
         }
 
         if (connType == ConnType.ANY_IPv4) {
-            ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                    new IwUeTestCommand(new TestCmd_Ping(config.pingAddress, config.pingCount, config.pingTimeoutSec)));
+            ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeTestCommand(new TestCmd_Ping(config.pingAddress, config.pingCount, config.pingTimeoutSec)));
         }
     }
 

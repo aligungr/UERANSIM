@@ -7,23 +7,21 @@ package tr.havelsan.ueransim.app.gnb.app;
 
 import tr.havelsan.ueransim.app.common.itms.IwInitialSctpReady;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.Itms;
-import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 
-public class GnbAppTask extends ItmsTask {
+public class GnbAppTask extends NtsTask {
 
     private final GnbSimContext ctx;
     private boolean initialSctpReady;
 
-    public GnbAppTask(Itms itms, int taskId, GnbSimContext ctx) {
-        super(itms, taskId);
+    public GnbAppTask(GnbSimContext ctx) {
         this.ctx = ctx;
     }
 
     @Override
     public void main() {
         while (true) {
-            var msg = ctx.itms.receiveMessage(this);
+            var msg = take();
             if (msg instanceof IwInitialSctpReady) {
                 initialSctpReady = true;
             }

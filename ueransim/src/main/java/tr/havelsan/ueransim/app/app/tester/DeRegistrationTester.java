@@ -27,9 +27,7 @@ class DeRegistrationTester extends UeTester {
             @Override
             public void onComplete() {
                 otherTester = null;
-
-                ctx.itms.sendMessage(ItmsId.UE_TASK_APP,
-                        new IwUeTestCommand(new TestCmd_Deregistration(config.isSwitchOff)));
+                ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeTestCommand(new TestCmd_Deregistration(config.isSwitchOff)));
             }
         };
         otherTester.onStart();

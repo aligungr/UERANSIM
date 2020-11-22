@@ -31,7 +31,7 @@ public class NgapTransfer {
         Log.debug(Tag.MSG, "Sending NGAP: %s", message.getClass().getSimpleName());
         Log.debug(Tag.MSG, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
+        ctx.nts.findTask(ItmsId.GNB_TASK_SCTP).push(new IwNgapSend(0, NgapEncoding.encodeAper(ngapPdu), associatedAmf));
         ctx.sim.triggerOnSend(ctx, message);
     }
 
@@ -64,7 +64,7 @@ public class NgapTransfer {
         Log.debug(Tag.MSG, "Sending NGAP: %s", message.getClass().getSimpleName());
         Log.debug(Tag.MSG, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_SCTP, new IwNgapSend(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
+        ctx.nts.findTask(ItmsId.GNB_TASK_SCTP).push(new IwNgapSend(ueCtx.uplinkStream, NgapEncoding.encodeAper(ngapPdu), ueCtx.associatedAmf));
         ctx.sim.triggerOnSend(ctx, message);
     }
 }

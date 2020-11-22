@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class AirNode {
@@ -21,20 +21,13 @@ public class AirNode {
     public static void run(AirSimContext ctx) {
         ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
 
-        var itms = ctx.itms;
-
-        var tasks = new ItmsTask[]{
-                new TunBridgeTask(itms, ItmsId.AIR_TASK_TB, ctx),
+        var tasks = new NtsTask[]{
+                new TunBridgeTask(ctx),
         };
 
-        for (var task : tasks) {
-            Log.registerLogger(task.thread, ctx.logger);
-        }
-        for (var task : tasks) {
-            itms.createTask(task);
-        }
-        for (var task : tasks) {
-            itms.startTask(task);
-        }
+        ctx.nts.registerTask(ItmsId.AIR_TASK_TB, tasks[0]);
+
+        for (var task : tasks) Log.registerLogger(task.getThread(), ctx.logger);
+        for (var task : tasks) task.start();
     }
 }

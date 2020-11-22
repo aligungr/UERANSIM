@@ -82,7 +82,7 @@ public class NgapPduSessionManagement {
 
             if (pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
-                    ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkNas(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
+                    ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
@@ -116,7 +116,7 @@ public class NgapPduSessionManagement {
 
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
-            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkNas(associatedUe.ueCtxId, nasPdu.value));
+            ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, nasPdu.value));
         }
 
         int succeeded = successList.list.size();
@@ -143,7 +143,7 @@ public class NgapPduSessionManagement {
         // TODO: teid of gnb
         resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_GTP, new IwPduSessionResourceCreate(resource));
+        ctx.nts.findTask(ItmsId.GNB_TASK_GTP).push(new IwPduSessionResourceCreate(resource));
         return true; // success
     }
 }

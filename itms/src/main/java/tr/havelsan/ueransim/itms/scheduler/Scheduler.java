@@ -36,7 +36,9 @@ public abstract class Scheduler {
             }
 
             if (item == null) {
-                mutex.wait();
+                synchronized (mutex) {
+                    mutex.wait();
+                }
             } else {
                 long delta = item.getKey().time - System.currentTimeMillis();
                 if (delta <= 0) {
@@ -45,7 +47,9 @@ public abstract class Scheduler {
                     }
                     onConsume(item.getValue());
                 } else {
-                    mutex.wait(delta);
+                    synchronized (mutex) {
+                        mutex.wait(delta);
+                    }
                 }
             }
         }
@@ -79,7 +83,9 @@ public abstract class Scheduler {
         synchronized (map) {
             map.put(key, obj);
         }
-        mutex.notify();
+        synchronized (mutex) {
+            mutex.notify();
+        }
     }
 
     public void quit() {

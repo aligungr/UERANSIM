@@ -17,7 +17,6 @@ import tr.havelsan.ueransim.app.common.trigger.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
-import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
 
@@ -67,7 +66,7 @@ public class UeRanSim {
             ctx = gnbMap.get(gnbId);
         }
         if (ctx == null) return null;
-        if (!((GnbAppTask) (ctx.itms.findTask(ItmsId.GNB_TASK_APP))).isInitialSctpReady()) {
+        if (!ctx.nts.findTask(GnbAppTask.class).isInitialSctpReady()) {
             return null;
         }
         return ctx;

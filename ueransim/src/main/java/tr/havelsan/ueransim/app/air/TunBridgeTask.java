@@ -11,9 +11,8 @@ import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
-import tr.havelsan.ueransim.itms.Itms;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.itms.ItmsTask;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
@@ -25,7 +24,7 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TunBridgeTask extends ItmsTask {
+public class TunBridgeTask extends NtsTask {
 
     private final AirSimContext ctx;
     private final Map<Integer, TargetPduSession> ipRoute;
@@ -33,8 +32,7 @@ public class TunBridgeTask extends ItmsTask {
     private InetAddress localhost;
     private DatagramSocket bridge;
 
-    public TunBridgeTask(Itms itms, int taskId, AirSimContext ctx) {
-        super(itms, taskId);
+    public TunBridgeTask(AirSimContext ctx) {
         this.ctx = ctx;
         this.ipRoute = new HashMap<>();
     }
@@ -59,11 +57,11 @@ public class TunBridgeTask extends ItmsTask {
         Log.info(Tag.CONN, "TUN Bridge has been started.");
 
         var receiverThread = new Thread(this::receiverThread);
-        Log.registerLogger(receiverThread, Log.getLoggerOrDefault(thread));
+        Log.registerLogger(receiverThread, Log.getLoggerOrDefault(getThread()));
         receiverThread.start();
 
         while (true) {
-            var msg = itms.receiveMessage(this);
+            var msg = take();
             if (msg instanceof IwPduSessionEstablishment) {
                 handleSessionEstablishment((IwPduSessionEstablishment) msg);
             } else if (msg instanceof IwDownlinkData) {
@@ -129,15 +127,13 @@ public class TunBridgeTask extends ItmsTask {
             return;
         }
 
-        var uplinkData = new IwUplinkData(target.ueId, target.psi, ipData);
-
         var ue = ctx.sim.findUe(target.ueId);
         if (ue == null) {
             Log.error(Tag.TUN, "UE with id '%s' not found.", target.ueId);
             return;
         }
 
-        ue.itms.sendMessage(ItmsId.UE_TASK_MR, uplinkData);
+        ue.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkData(target.ueId, target.psi, ipData));
     }
 
     private void handleDownlinkData(IwDownlinkData msg) {

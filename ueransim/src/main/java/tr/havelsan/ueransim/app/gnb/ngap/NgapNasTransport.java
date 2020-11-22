@@ -70,7 +70,7 @@ public class NgapNasTransport {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
+            ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
         }
 
         Log.funcOut();

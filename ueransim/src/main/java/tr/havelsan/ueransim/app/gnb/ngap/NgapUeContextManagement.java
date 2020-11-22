@@ -53,7 +53,7 @@ public class NgapUeContextManagement {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
+            ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
         }
 
         Log.funcOut();
@@ -67,7 +67,7 @@ public class NgapUeContextManagement {
         // todo: NG-RAN node shall release all related signalling and user data transport resources
         // ...
 
-        ctx.itms.sendMessage(ItmsId.GNB_TASK_MR, new IwConnectionRelease(ueId));
+        ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwConnectionRelease(ueId));
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
