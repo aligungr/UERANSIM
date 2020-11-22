@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
-
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
@@ -15,7 +14,6 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
-
 
 public class NasTask extends NtsTask {
 
