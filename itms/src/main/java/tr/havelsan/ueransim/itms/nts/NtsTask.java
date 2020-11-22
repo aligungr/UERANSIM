@@ -13,7 +13,6 @@ public abstract class NtsTask {
     private final BlockingDeque<Object> msgQueue;
     private final Thread thread;
     private final NtsScheduler scheduler;
-    private Thread schedulerThread;
 
     private boolean isStarted;
 
@@ -33,7 +32,7 @@ public abstract class NtsTask {
         if (isStarted)
             throw new IllegalStateException("Task already started.");
         if (scheduler != null) {
-            schedulerThread = new Thread(scheduler::start);
+            var schedulerThread = new Thread(scheduler::start);
             schedulerThread.start();
         }
         isStarted = true;
