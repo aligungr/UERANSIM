@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.gnb.gtp.GtpTask;
-import tr.havelsan.ueransim.app.gnb.mr.MrTask;
+import tr.havelsan.ueransim.app.gnb.mr.GnbMrTask;
 import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.app.gnb.sctp.SctpTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
@@ -49,7 +49,7 @@ public class GnbNode {
         var tasks = new NtsTask[]{
                 new SctpTask(ctx),
                 new NgapTask(ctx),
-                new MrTask(ctx),
+                new GnbMrTask(ctx),
                 new GnbAppTask(ctx),
                 new GtpTask(ctx),
         };

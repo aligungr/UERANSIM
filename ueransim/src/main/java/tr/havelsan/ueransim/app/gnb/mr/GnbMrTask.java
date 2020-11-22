@@ -12,12 +12,12 @@ import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 
-public class MrTask extends NtsTask {
+public class GnbMrTask extends NtsTask {
 
     private final GnbSimContext ctx;
     private NtsTask gtpTask;
 
-    public MrTask(GnbSimContext ctx) {
+    public GnbMrTask(GnbSimContext ctx) {
         this.ctx = ctx;
     }
 

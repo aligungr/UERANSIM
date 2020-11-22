@@ -14,14 +14,14 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.UUID;
 
-public class MrTask extends NtsTask {
+public class UeMrTask extends NtsTask {
 
     private final UeSimContext ctx;
 
     private NtsTask nasTask;
     private NtsTask appTask;
 
-    public MrTask(UeSimContext ctx) {
+    public UeMrTask(UeSimContext ctx) {
         this.ctx = ctx;
     }
 
