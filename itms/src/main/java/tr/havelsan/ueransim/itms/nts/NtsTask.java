@@ -18,7 +18,7 @@ public abstract class NtsTask {
     private boolean isStarted;
 
     public NtsTask() {
-        this(true);
+        this(false);
     }
 
     public NtsTask(boolean allocateScheduler) {
