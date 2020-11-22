@@ -5,18 +5,14 @@
 
 package tr.havelsan.ueransim.itms.nts;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class NtsBase {
 
     private final HashMap<Integer, NtsTask> idMap;
-    private final HashMap<Class<? extends NtsTask>, List<NtsTask>> typeMap;
 
     public NtsBase() {
         this.idMap = new HashMap<>();
-        this.typeMap = new HashMap<>();
     }
 
     public void registerTask(int id, NtsTask task) {
@@ -24,14 +20,7 @@ public class NtsBase {
             if (idMap.containsKey(id)) {
                 throw new IllegalArgumentException("id already exists");
             }
-
             idMap.put(id, task);
-            var set = typeMap.get(task.getClass());
-            if (set == null) {
-                set = new ArrayList<>();
-            }
-            set.add(task);
-            typeMap.put(task.getClass(), set);
         }
     }
 
@@ -42,13 +31,9 @@ public class NtsBase {
         }
     }
 
+    // This method is just a syntactic sugar for real 'findTask'
     // Usually it's better to call this once and hold a reference to the task.
-    public <T extends NtsTask> T findTask(Class<T> type) {
-        synchronized (this) {
-            var set = typeMap.get(type);
-            if (set == null || set.size() > 1)
-                return null;
-            return (T) set.get(0);
-        }
+    public <T extends NtsTask> T findTask(int id, Class<T> type) {
+        return (T) findTask(id);
     }
 }
