@@ -42,11 +42,11 @@ public abstract class Scheduler {
             } else {
                 long delta = item.getKey().time - System.currentTimeMillis();
                 if (delta <= 0) {
-                    synchronized (map) {
-                        map.remove(item.getKey());
-                    }
                     onConsume(item.getValue());
                 } else {
+                    synchronized (map) {
+                        map.put(item.getKey(), item.getValue());
+                    }
                     synchronized (mutex) {
                         mutex.wait(delta);
                     }
