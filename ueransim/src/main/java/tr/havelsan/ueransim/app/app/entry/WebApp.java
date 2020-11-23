@@ -18,6 +18,8 @@ import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Fun;
+import tr.havelsan.ueransim.utils.Severity;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
@@ -137,6 +139,7 @@ public class WebApp {
                     ws = ((ConnectionMarker) msg).ws;
                     push(new SwTestCases(ProcedureTester.testCases()));
                     push(new SwIntervalMetadata(LoadTestMonitor.IntervalMetadata.INSTANCE));
+                    push(new SwLogMetadata(Severity.values(), Tag.values()));
                 } else if (msg instanceof SocketWrapper) {
                     if (ws != null) {
                         ws.send(SocketWrapperSerializer.toJson(msg));
