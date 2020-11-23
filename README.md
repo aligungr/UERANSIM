@@ -22,3 +22,6 @@ UERANSIM is the first and only open source project that implements 5G UE and RAN
 
 UERANSIM source code and all related files including documentation and wiki pages are licensed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html), see [LICENSE](https://github.com/aligungr/UERANSIM/blob/master/LICENSE) for more details.
 
+<p align="center">
+  <a href="https://github.com/aligungr/UERANSIM"><img src="/.github/hvl.png" width="75" title="HAVELSAN"></a>
+</p>
