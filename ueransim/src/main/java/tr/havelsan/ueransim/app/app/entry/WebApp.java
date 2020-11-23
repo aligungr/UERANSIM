@@ -45,6 +45,7 @@ public class WebApp {
 
             receiverTask.senderTask = senderTask;
             senderTask.receiverTask = receiverTask;
+            logTask.senderTask = senderTask;
 
             senderTask.start();
             receiverTask.start();
@@ -163,7 +164,8 @@ public class WebApp {
                 LogEntry entry;
                 do {
                     entry = (LogEntry) poll();
-                    list.add(entry);
+                    if (entry != null)
+                        list.add(entry);
                 } while (entry != null);
 
                 if (!list.isEmpty()) {
