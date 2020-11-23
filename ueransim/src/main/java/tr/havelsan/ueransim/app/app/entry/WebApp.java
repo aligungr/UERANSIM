@@ -5,24 +5,6 @@
 
 package tr.havelsan.ueransim.app.app.entry;
 
-import io.javalin.Javalin;
-import io.javalin.websocket.WsConnectContext;
-import io.javalin.websocket.WsMessageContext;
-import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.app.AppBuilder;
-import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.app.listeners.StepperMessagingListener;
-import tr.havelsan.ueransim.app.common.sw.*;
-import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
-import tr.havelsan.ueransim.utils.console.Log;
-import tr.havelsan.ueransim.utils.console.LogEntry;
-import tr.havelsan.ueransim.utils.console.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 /*
 public class WebApp {
 

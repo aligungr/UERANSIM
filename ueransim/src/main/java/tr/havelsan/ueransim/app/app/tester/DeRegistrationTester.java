@@ -5,7 +5,9 @@
 
 package tr.havelsan.ueransim.app.app.tester;
 
+import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
@@ -17,13 +19,13 @@ class DeRegistrationTester extends UeTester {
 
     private UeTester otherTester;
 
-    public DeRegistrationTester(UeSimContext ctx, ProcTestConfig config) {
-        super(ctx, config);
+    public DeRegistrationTester(MonitorTask task, UeSimContext ctx, ProcTestConfig config) {
+        super(task, ctx, config);
     }
 
     @Override
     public void onStart() {
-        otherTester = new InitialRegistrationTester(ctx, config) {
+        otherTester = new InitialRegistrationTester(task, ctx, config) {
             @Override
             public void onComplete() {
                 otherTester = null;
@@ -42,7 +44,7 @@ class DeRegistrationTester extends UeTester {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, ConnType connType) {
+    public void onConnected(BaseSimContext ctx, EConnType connType) {
         if (otherTester != null) {
             otherTester.onConnected(ctx, connType);
             return;

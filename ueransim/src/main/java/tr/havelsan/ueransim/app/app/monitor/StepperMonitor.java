@@ -3,9 +3,10 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.listeners;
+package tr.havelsan.ueransim.app.app.monitor;
 
 import io.javalin.websocket.WsConnectContext;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.sw.SwStep;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
@@ -16,8 +17,8 @@ import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Severity;
 
-// TODO: need many refactor and review, also INodeListener must be lightweight. Check this also.
-public class StepperMessagingListener implements INodeListener {
+// TODO: need many refactor and review.
+public class StepperMonitor extends MonitorTask {
 
     private WsConnectContext ws;
 
@@ -82,7 +83,7 @@ public class StepperMessagingListener implements INodeListener {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, ConnType connectionType) {
+    public void onConnected(BaseSimContext ctx, EConnType connectionType) {
 
     }
 

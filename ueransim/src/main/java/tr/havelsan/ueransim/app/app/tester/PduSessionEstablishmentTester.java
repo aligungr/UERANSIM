@@ -5,7 +5,9 @@
 
 package tr.havelsan.ueransim.app.app.tester;
 
+import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -17,13 +19,13 @@ class PduSessionEstablishmentTester extends UeTester {
 
     private UeTester otherTester;
 
-    public PduSessionEstablishmentTester(UeSimContext ctx, ProcTestConfig config) {
-        super(ctx, config);
+    public PduSessionEstablishmentTester(MonitorTask task, UeSimContext ctx, ProcTestConfig config) {
+        super(task, ctx, config);
     }
 
     @Override
     public void onStart() {
-        otherTester = new InitialRegistrationTester(ctx, config) {
+        otherTester = new InitialRegistrationTester(task, ctx, config) {
             @Override
             public void onComplete() {
                 otherTester = null;
@@ -42,13 +44,13 @@ class PduSessionEstablishmentTester extends UeTester {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, ConnType connType) {
+    public void onConnected(BaseSimContext ctx, EConnType connType) {
         if (otherTester != null) {
             otherTester.onConnected(ctx, connType);
             return;
         }
 
-        if (connType == ConnType.ANY_IPv4) {
+        if (connType == EConnType.ANY_IPv4) {
             ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeTestCommand(new TestCmd_Ping(config.pingAddress, config.pingCount, config.pingTimeoutSec)));
         }
     }

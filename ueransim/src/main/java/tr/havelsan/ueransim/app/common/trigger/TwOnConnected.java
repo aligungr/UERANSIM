@@ -5,13 +5,13 @@
 
 package tr.havelsan.ueransim.app.common.trigger;
 
-import tr.havelsan.ueransim.app.app.listeners.INodeListener;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 
 public class TwOnConnected extends TriggeringWrapper {
-    public final INodeListener.ConnType connType;
+    public final EConnType connType;
 
-    public TwOnConnected(BaseSimContext ctx, INodeListener.ConnType connType) {
+    public TwOnConnected(BaseSimContext ctx, EConnType connType) {
         super(ctx);
         this.connType = connType;
     }

@@ -7,10 +7,11 @@ package tr.havelsan.ueransim.app.app.tester;
 
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.app.listeners.INodeListener;
+import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
@@ -19,7 +20,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 import java.math.BigInteger;
 import java.util.*;
 
-public class ProcedureTester implements INodeListener {
+public class ProcedureTester extends MonitorTask {
 
     // Initialization state variables
     private static final int INIT_STATE__WAITING_GNB = 1;
@@ -55,9 +56,9 @@ public class ProcedureTester implements INodeListener {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, ConnType connType) {
+    public void onConnected(BaseSimContext ctx, EConnType connType) {
         if (initState == INIT_STATE__WAITING_GNB) {
-            if (ctx.ctxId.equals(gnbId) && connType == ConnType.SCTP) {
+            if (ctx.ctxId.equals(gnbId) && connType == EConnType.SCTP) {
                 // gNB is ready, now create the UEs.
                 for (int i = 0; i < procTestConfig.numberOfUe; i++) {
                     ueIds.add(sim.createUe(createUeConfig(i)));
@@ -70,7 +71,7 @@ public class ProcedureTester implements INodeListener {
         }
 
         if (initState == INIT_STATE__WAITING_UE) {
-            if (connType == ConnType.UE_MR_GNB) {
+            if (connType == EConnType.UE_MR_GNB) {
                 this.waitingUes.remove(ctx.ctxId);
 
                 if (this.waitingUes.isEmpty()) {
@@ -150,16 +151,16 @@ public class ProcedureTester implements INodeListener {
         UeTester ueTester;
         switch (testName) {
             case "initial-registration":
-                ueTester = new InitialRegistrationTester(ctx, procTestConfig);
+                ueTester = new InitialRegistrationTester(this, ctx, procTestConfig);
                 break;
             case "periodic-registration":
-                ueTester = new PeriodicRegistrationTester(ctx, procTestConfig);
+                ueTester = new PeriodicRegistrationTester(this, ctx, procTestConfig);
                 break;
             case "de-registration":
-                ueTester = new DeRegistrationTester(ctx, procTestConfig);
+                ueTester = new DeRegistrationTester(this, ctx, procTestConfig);
                 break;
             case "pdu-session-establishment":
-                ueTester = new PduSessionEstablishmentTester(ctx, procTestConfig);
+                ueTester = new PduSessionEstablishmentTester(this, ctx, procTestConfig);
                 break;
             default:
                 Log.error(Tag.SYS, "Invalid predefined procedure test: \"%s\"", testName);

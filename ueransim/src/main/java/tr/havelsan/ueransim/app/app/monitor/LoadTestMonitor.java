@@ -3,8 +3,9 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.listeners;
+package tr.havelsan.ueransim.app.app.monitor;
 
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.impl.messages.*;
@@ -16,7 +17,7 @@ import tr.havelsan.ueransim.utils.console.BaseConsole;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LoadTestMessagingListener implements INodeListener {
+public class LoadTestMonitor extends MonitorTask {
     private final BaseConsole console;
 
     private final Map<Integer, Long> ngSetupTimers = new ConcurrentHashMap<>();
@@ -28,12 +29,12 @@ public class LoadTestMessagingListener implements INodeListener {
     private final Map<String, Long> phase3Timers = new ConcurrentHashMap<>();
     private final Map<String, Long> deRegistrationTimers = new ConcurrentHashMap<>();
 
-    public LoadTestMessagingListener(BaseConsole console) {
+    public LoadTestMonitor(BaseConsole console) {
         this.console = console;
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, ConnType connType) {
+    public void onConnected(BaseSimContext ctx, EConnType connType) {
 
     }
 

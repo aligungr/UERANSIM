@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.app.app;
 
-import tr.havelsan.ueransim.app.app.listeners.INodeListener;
-import tr.havelsan.ueransim.app.app.listeners.LoadTestMessagingListener;
+import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
+import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -26,18 +26,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AppBuilder {
 
     private static final AtomicBoolean isBuilt = new AtomicBoolean(false);
-    private final List<INodeListener> nodeListeners;
+    private final List<MonitorTask> monitorTasks;
 
     public AppBuilder() {
-        this.nodeListeners = new ArrayList<>();
+        this.monitorTasks = new ArrayList<>();
     }
 
     //======================================================================================================
     //                                          MUTATORS
     //======================================================================================================
 
-    public AppBuilder addNodeListener(INodeListener listener) {
-        this.nodeListeners.add(listener);
+    public AppBuilder addMonitor(MonitorTask monitor) {
+        this.monitorTasks.add(monitor);
         return this;
     }
 
@@ -56,9 +56,9 @@ public class AppBuilder {
 
         var loadTestConsole = createLoadTestingConsole();
 
-        this.nodeListeners.add(new LoadTestMessagingListener(loadTestConsole));
+        monitorTasks.add(new LoadTestMonitor(loadTestConsole));
 
-        return new UeRanSim(nodeListeners);
+        return new UeRanSim(monitorTasks);
     }
 
     private BaseConsole createLoadTestingConsole() {

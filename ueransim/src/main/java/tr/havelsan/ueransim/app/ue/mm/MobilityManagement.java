@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.mm;
 
-import tr.havelsan.ueransim.app.app.listeners.INodeListener;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
@@ -168,7 +168,7 @@ public class MobilityManagement {
     public static void receiveItmsMessage(UeSimContext ctx, Object msg) {
         if (msg instanceof IwPlmnSearchResponse) {
             ctx.connectedGnb = ((IwPlmnSearchResponse) msg).gnbId;
-            ctx.sim.triggerOnConnected(ctx, INodeListener.ConnType.UE_MR_GNB);
+            ctx.sim.triggerOnConnected(ctx, EConnType.UE_MR_GNB);
             Log.info(Tag.FLOW, "UE connected to gNB.");
 
             switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE);

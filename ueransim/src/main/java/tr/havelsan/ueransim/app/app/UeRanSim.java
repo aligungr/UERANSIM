@@ -6,9 +6,10 @@
 package tr.havelsan.ueransim.app.app;
 
 import tr.havelsan.ueransim.app.air.AirNode;
-import tr.havelsan.ueransim.app.app.listeners.INodeListener;
+import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
@@ -18,12 +19,8 @@ import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.itms.ItmsId;
-import tr.havelsan.ueransim.utils.console.Log;
-import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class UeRanSim {
 
@@ -31,21 +28,19 @@ public class UeRanSim {
     private final HashMap<UUID, UeSimContext> ueMap;
     private final AirSimContext airCtx;
 
-    private final Thread triggeringThread;
-    private final BlockingQueue<TriggeringWrapper> triggerQueue;
-    private final List<INodeListener> nodeListeners;
+    private final List<MonitorTask> monitors;
 
-    UeRanSim(List<INodeListener> nodeListeners) {
+    UeRanSim(List<MonitorTask> monitors) {
         this.gnbMap = new HashMap<>();
         this.ueMap = new HashMap<>();
 
-        this.triggeringThread = new Thread(this::triggeringThreadMain);
-        this.triggerQueue = new LinkedBlockingQueue<>();
-        this.nodeListeners = new ArrayList<>(nodeListeners);
+        this.monitors = new ArrayList<>(monitors);
+        for (var monitor : monitors) {
+            monitor.start();
+        }
 
         this.airCtx = AirNode.createContext(this);
 
-        triggeringThread.start();
         AirNode.run(airCtx);
     }
 
@@ -123,43 +118,23 @@ public class UeRanSim {
     //                                          TRIGGERS
     //======================================================================================================
 
-    private void triggeringThreadMain() {
-        Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
-
-        while (true) {
-            TriggeringWrapper obj;
-            try {
-                obj = triggerQueue.take();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            for (var listener : nodeListeners) {
-                if (obj instanceof TwOnConnected)
-                    listener.onConnected(obj.ctx, ((TwOnConnected) obj).connType);
-                else if (obj instanceof TwOnSend)
-                    listener.onSend(obj.ctx, ((TwOnSend) obj).msg);
-                else if (obj instanceof TwOnReceive)
-                    listener.onReceive(obj.ctx, ((TwOnReceive) obj).msg);
-                else if (obj instanceof TwOnSwitch)
-                    listener.onSwitched(obj.ctx, ((TwOnSwitch) obj).state);
-            }
-        }
+    private void dispatchTrigger(TriggeringWrapper tw) {
+        for (var monitor : monitors) monitor.push(tw);
     }
 
     public void triggerOnSend(BaseSimContext ctx, Object msg) {
-        triggerQueue.add(new TwOnSend(ctx, msg));
+        dispatchTrigger(new TwOnSend(ctx, msg));
     }
 
     public void triggerOnReceive(BaseSimContext ctx, Object msg) {
-        triggerQueue.add(new TwOnReceive(ctx, msg));
+        dispatchTrigger(new TwOnReceive(ctx, msg));
     }
 
-    public void triggerOnConnected(BaseSimContext ctx, INodeListener.ConnType connType) {
-        triggerQueue.add(new TwOnConnected(ctx, connType));
+    public void triggerOnConnected(BaseSimContext ctx, EConnType connType) {
+        dispatchTrigger(new TwOnConnected(ctx, connType));
     }
 
     public void triggerOnSwitch(BaseSimContext ctx, Enum<?> state) {
-        triggerQueue.add(new TwOnSwitch(ctx, state));
+        dispatchTrigger(new TwOnSwitch(ctx, state));
     }
 }

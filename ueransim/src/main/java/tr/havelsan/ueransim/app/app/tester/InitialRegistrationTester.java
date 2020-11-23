@@ -5,7 +5,9 @@
 
 package tr.havelsan.ueransim.app.app.tester;
 
+import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
+import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
@@ -15,8 +17,8 @@ import tr.havelsan.ueransim.itms.ItmsId;
 
 class InitialRegistrationTester extends UeTester {
 
-    public InitialRegistrationTester(UeSimContext ctx, ProcTestConfig config) {
-        super(ctx, config);
+    public InitialRegistrationTester(MonitorTask task, UeSimContext ctx, ProcTestConfig config) {
+        super(task, ctx, config);
     }
 
     @Override
@@ -25,8 +27,7 @@ class InitialRegistrationTester extends UeTester {
     }
 
     @Override
-    public void onConnected(BaseSimContext ctx, ConnType connType) {
-
+    public void onConnected(BaseSimContext ctx, EConnType connType) {
     }
 
     @Override
