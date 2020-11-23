@@ -10,12 +10,10 @@ import io.javalin.websocket.WsContext;
 import tr.havelsan.ueransim.app.app.AppBuilder;
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
+import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
 import tr.havelsan.ueransim.app.app.monitor.StepperMonitor;
 import tr.havelsan.ueransim.app.app.tester.ProcedureTester;
-import tr.havelsan.ueransim.app.common.sw.SocketWrapper;
-import tr.havelsan.ueransim.app.common.sw.SwCommand;
-import tr.havelsan.ueransim.app.common.sw.SwLog;
-import tr.havelsan.ueransim.app.common.sw.SwTestCases;
+import tr.havelsan.ueransim.app.common.sw.*;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
@@ -75,11 +73,14 @@ public class WebApp {
 
         Fun buildApp = () -> {
             var stepperMonitor = new StepperMonitor(senderTask::push);
+            var loadTestNotifierMonitor = new LoadTestNotifierMonitor(senderTask);
             var appConfig = new AppConfig();
+
             procTester = new ProcedureTester(appConfig);
             ueransim = new AppBuilder()
                     .addMonitor(stepperMonitor)
                     .addMonitor(procTester)
+                    .addMonitor(loadTestNotifierMonitor)
                     .build();
         };
 
@@ -172,6 +173,19 @@ public class WebApp {
                     senderTask.push(new SwLog(list));
                 }
             }
+        }
+    }
+
+    private static class LoadTestNotifierMonitor extends LoadTestMonitor {
+        public final SenderTask senderTask;
+
+        public LoadTestNotifierMonitor(SenderTask senderTask) {
+            this.senderTask = senderTask;
+        }
+
+        @Override
+        protected void onIntervalResult(String id, String display, boolean isSuccess, String nodeName, long deltaMs) {
+            senderTask.push(new SwIntervalResult(id, isSuccess, nodeName, deltaMs));
         }
     }
 }

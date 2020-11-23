@@ -11,31 +11,36 @@ import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
-import tr.havelsan.ueransim.utils.console.BaseConsole;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LoadTestMonitor extends MonitorTask {
-    private final BaseConsole console;
-
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, Long>> counters;
 
-    public LoadTestMonitor(BaseConsole console) {
-        this.console = console;
+    public LoadTestMonitor() {
         this.counters = new ConcurrentHashMap<>();
     }
 
     private static String getIntervalDisplay(String id) {
         switch (id) {
-            case "ng-setup": return "NGSetup";
-            case "registration": return "Registration";
-            case "phase1": return "Phase 1 (Registration-Authentication)";
-            case "phase2": return "Phase 2 (Authentication-SecurityModeControl)";
-            case "phase3": return "Phase 3 (SecurityModeControl-RegistrationAccept)";
-            case "security-mode-control": return "Security Mode Control";
-            case "de-registration": return "De-Registration";
-            case "authentication": return "Authentication";
-            default: return id;
+            case "ng-setup":
+                return "NGSetup";
+            case "registration":
+                return "Registration";
+            case "phase1":
+                return "Phase 1 (Registration-Authentication)";
+            case "phase2":
+                return "Phase 2 (Authentication-SecurityModeControl)";
+            case "phase3":
+                return "Phase 3 (SecurityModeControl-RegistrationAccept)";
+            case "security-mode-control":
+                return "Security Mode Control";
+            case "de-registration":
+                return "De-Registration";
+            case "authentication":
+                return "Authentication";
+            default:
+                return id;
         }
     }
 
@@ -100,11 +105,12 @@ public class LoadTestMonitor extends MonitorTask {
         if (time == null) {
             return;
         }
+
         var delta = System.currentTimeMillis() - time;
+        onIntervalResult(id, getIntervalDisplay(id), isSuccess, ctx.nodeName, delta);
+    }
 
-        String icon = isSuccess ? "\u2714" : "\u2718";
-        String intervalDisplay = getIntervalDisplay(id);
+    protected void onIntervalResult(String id, String display, boolean isSuccess, String nodeName, long deltaMs) {
 
-        console.println(null, "%s %s [%s] [%d ms]", icon, intervalDisplay, ctx.nodeName, delta);
     }
 }

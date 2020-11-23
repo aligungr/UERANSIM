@@ -56,7 +56,12 @@ public class AppBuilder {
 
         var loadTestConsole = createLoadTestingConsole();
 
-        monitorTasks.add(new LoadTestMonitor(loadTestConsole));
+        monitorTasks.add(new LoadTestMonitor() {
+            protected void onIntervalResult(String id, String display, boolean isSuccess, String nodeName, long deltaMs) {
+                String icon = isSuccess ? "\u2714" : "\u2718";
+                loadTestConsole.println(null, "%s %s [%s] [%d ms]", icon, display, nodeName, deltaMs);
+            }
+        });
 
         return new UeRanSim(monitorTasks);
     }
