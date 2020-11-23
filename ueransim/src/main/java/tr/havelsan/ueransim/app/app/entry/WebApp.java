@@ -136,6 +136,7 @@ public class WebApp {
                 if (msg instanceof ConnectionMarker) {
                     ws = ((ConnectionMarker) msg).ws;
                     push(new SwTestCases(ProcedureTester.testCases()));
+                    push(new SwIntervalMetadata(LoadTestMonitor.IntervalMetadata.INSTANCE));
                 } else if (msg instanceof SocketWrapper) {
                     if (ws != null) {
                         ws.send(SocketWrapperSerializer.toJson(msg));

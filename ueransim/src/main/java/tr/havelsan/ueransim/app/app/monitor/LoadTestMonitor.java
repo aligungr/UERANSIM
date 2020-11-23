@@ -84,15 +84,15 @@ public class LoadTestMonitor extends MonitorTask {
         }
 
         var delta = System.currentTimeMillis() - time;
-        onIntervalResult(id, IntervalBase.getIntervalDisplay(id), isSuccess, ctx.nodeName, delta);
+        onIntervalResult(id, IntervalMetadata.getIntervalDisplay(id), isSuccess, ctx.nodeName, delta);
     }
 
     protected void onIntervalResult(String id, String display, boolean isSuccess, String nodeName, long deltaMs) {
 
     }
 
-    public static class IntervalBase {
-        public static IntervalBase INSTANCE = new IntervalBase();
+    public static class IntervalMetadata {
+        public static IntervalMetadata INSTANCE = new IntervalMetadata();
 
         public final IntervalInfo ngSetup;
         public final IntervalInfo registration;
@@ -103,7 +103,7 @@ public class LoadTestMonitor extends MonitorTask {
         public final IntervalInfo authentication;
         public final IntervalInfo deregistration;
 
-        private IntervalBase() {
+        private IntervalMetadata() {
             this.ngSetup = new IntervalInfo("ngSetup", null, getIntervalDisplay("ngSetup"));
             this.registration = new IntervalInfo("registration", null, getIntervalDisplay("registration"));
             this.phase1 = new IntervalInfo("phase1", "registration", getIntervalDisplay("phase1"));
