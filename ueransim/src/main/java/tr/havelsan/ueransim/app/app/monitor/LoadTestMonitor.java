@@ -35,8 +35,8 @@ public class LoadTestMonitor extends MonitorTask {
             case "security-mode-control": return "Security Mode Control";
             case "de-registration": return "De-Registration";
             case "authentication": return "Authentication";
+            default: return id;
         }
-        return id;
     }
 
     @Override
