@@ -2,8 +2,9 @@
   <img src="/.github/logo.png" width="75" title="UERANSIM">
 </p>
 UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project can be used for testing 5G Core Network and studying 5G System.
-  
-UERANSIM is an <img src="/.github/logo.png" width="20" title="HAVELSAN"> project.
+<br /><br />
+
+UERANSIM is an <img src="/.github/hvl.png" width="20" title="HAVELSAN"> project.
 
 ## Documentation
 You can find the documentation on [UERANSIM Wiki](https://github.com/aligungr/UERANSIM/wiki).
