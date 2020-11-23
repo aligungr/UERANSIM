@@ -5,11 +5,9 @@
 
 package tr.havelsan.ueransim.app.app.monitor;
 
-import io.javalin.websocket.WsConnectContext;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.sw.SwStep;
-import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
@@ -17,10 +15,15 @@ import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Severity;
 
-// TODO: need many refactor and review.
+import java.util.function.Consumer;
+
 public class StepperMonitor extends MonitorTask {
 
-    private WsConnectContext ws;
+    private final Consumer<SwStep> stepConsumer;
+
+    public StepperMonitor(Consumer<SwStep> stepConsumer) {
+        this.stepConsumer = stepConsumer;
+    }
 
     private static Severity messageSeverity(Object msg) {
         if (msg instanceof NGAP_Value) {
@@ -76,10 +79,7 @@ public class StepperMonitor extends MonitorTask {
 
         var messageBody = Json.toJson(message);
 
-        var swStep = new SwStep(loggerName, severity, messageName, messageBody);
-
-        if (ws != null)
-            ws.send(SocketWrapperSerializer.toJson(swStep));
+        stepConsumer.accept(new SwStep(loggerName, severity, messageName, messageBody));
     }
 
     @Override
@@ -100,10 +100,5 @@ public class StepperMonitor extends MonitorTask {
     @Override
     public void onSwitched(BaseSimContext ctx, Enum<?> state) {
 
-    }
-
-    // TODO: This does not fit to our arch.
-    public void onConnect(WsConnectContext ctx) {
-        this.ws = ctx;
     }
 }

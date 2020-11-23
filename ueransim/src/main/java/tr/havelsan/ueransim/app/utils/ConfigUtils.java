@@ -5,6 +5,9 @@
 
 package tr.havelsan.ueransim.app.utils;
 
+import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
+import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.io.IOException;
@@ -36,5 +39,14 @@ public class ConfigUtils {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static ProcTestConfig createProcTestConfig() {
+        var testingMts = new MtsContext();
+        testingMts.setKebabCaseDecoding(true);
+        MtsInitializer.initDefaultMts(testingMts);
+
+        var ito = (ImplicitTypedObject) testingMts.decoder.decode("config/proc-testing.yaml");
+        return testingMts.constructor.construct(ProcTestConfig.class, ito, true);
     }
 }

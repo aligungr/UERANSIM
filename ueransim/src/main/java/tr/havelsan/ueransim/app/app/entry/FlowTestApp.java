@@ -8,10 +8,7 @@ package tr.havelsan.ueransim.app.app.entry;
 import tr.havelsan.ueransim.app.app.AppBuilder;
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.tester.ProcedureTester;
-import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
-import tr.havelsan.ueransim.app.utils.MtsInitializer;
-import tr.havelsan.ueransim.mts.ImplicitTypedObject;
-import tr.havelsan.ueransim.mts.MtsContext;
+import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -21,18 +18,13 @@ import java.util.Scanner;
 
 public class FlowTestApp {
 
-    private ProcedureTester procTester;
-    private ProcTestConfig procTestConfig;
+    private final ProcedureTester procTester;
 
-    public static void main(String[] args) {
-        BaseApp.main(args);
-        new FlowTestApp().main();
-    }
-
-    private void main() {
+    public FlowTestApp() {
         var appConfig = new AppConfig();
+        var procTestConfig = ConfigUtils.createProcTestConfig();
+
         procTester = new ProcedureTester(appConfig);
-        procTestConfig = createProcTestConfig();
 
         var ueransim = new AppBuilder()
                 .addMonitor(procTester)
@@ -41,16 +33,11 @@ public class FlowTestApp {
         procTester.init(ueransim, procTestConfig, this::onTesterInit);
     }
 
-    private ProcTestConfig createProcTestConfig() {
-        var testingMts = new MtsContext();
-        testingMts.setKebabCaseDecoding(true);
-        MtsInitializer.initDefaultMts(testingMts);
-
-        var ito = (ImplicitTypedObject) testingMts.decoder.decode("config/proc-testing.yaml");
-        return testingMts.constructor.construct(ProcTestConfig.class, ito, true);
+    public static void main(String[] args) {
+        BaseApp.main(args);
+        new FlowTestApp();
     }
 
-    // TODO: WebApp may override this
     // TODO: onTesterREinit tarzı bir şey yapılabilir, seçilen akış tamamen bittiyse her ue için mesela
     protected void onTesterInit() {
         Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");

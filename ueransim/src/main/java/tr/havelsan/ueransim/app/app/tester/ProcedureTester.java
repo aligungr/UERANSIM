@@ -44,8 +44,13 @@ public class ProcedureTester extends MonitorTask {
         this.appConfig = appConfig;
     }
 
-    public void init(UeRanSim ueRanSim, ProcTestConfig procTestConfig, Runnable onInit) {
-        this.sim = ueRanSim;
+    public static String[] testCases() {
+        return new String[]{"initial-registration", "periodic-registration",
+                "de-registration", "pdu-session-establishment"};
+    }
+
+    public void init(UeRanSim ueransim, ProcTestConfig procTestConfig, Runnable onInit) {
+        this.sim = ueransim;
         this.ueIds = new ArrayList<>();
         this.procTestConfig = procTestConfig;
         this.onInit = onInit;
@@ -132,42 +137,44 @@ public class ProcedureTester extends MonitorTask {
                 ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
     }
 
-    public String[] testCases() {
-        return new String[]{"initial-registration", "periodic-registration",
-                "de-registration", "pdu-session-establishment"};
-    }
-
     public void startTestCase(String name) {
-        ueIds.forEach(id -> startTestCase(id, name));
+        // Using push because this method may be called outside of this task's thread.
+        push(() -> ueIds.forEach(id -> startTestCase(id, name)));
     }
 
     public void startTestCase(UUID ueId, String testName) {
-        var ctx = sim.findUe(ueId);
-        if (ctx == null) {
-            Log.error(Tag.SYS, "UE not found for predefined procedure test.");
-            return;
-        }
-
-        UeTester ueTester;
-        switch (testName) {
-            case "initial-registration":
-                ueTester = new InitialRegistrationTester(this, ctx, procTestConfig);
-                break;
-            case "periodic-registration":
-                ueTester = new PeriodicRegistrationTester(this, ctx, procTestConfig);
-                break;
-            case "de-registration":
-                ueTester = new DeRegistrationTester(this, ctx, procTestConfig);
-                break;
-            case "pdu-session-establishment":
-                ueTester = new PduSessionEstablishmentTester(this, ctx, procTestConfig);
-                break;
-            default:
-                Log.error(Tag.SYS, "Invalid predefined procedure test: \"%s\"", testName);
+        // Using push because this method may be called outside of this task's thread.
+        push(() -> {
+            if (initState != INIT_STATE__INIT_DONE)
                 return;
-        }
 
-        ueTesters.put(ueId, ueTester);
-        ueTester.onStart();
+            var ctx = sim.findUe(ueId);
+            if (ctx == null) {
+                Log.error(Tag.SYS, "UE not found for predefined procedure test.");
+                return;
+            }
+
+            UeTester ueTester;
+            switch (testName) {
+                case "initial-registration":
+                    ueTester = new InitialRegistrationTester(this, ctx, procTestConfig);
+                    break;
+                case "periodic-registration":
+                    ueTester = new PeriodicRegistrationTester(this, ctx, procTestConfig);
+                    break;
+                case "de-registration":
+                    ueTester = new DeRegistrationTester(this, ctx, procTestConfig);
+                    break;
+                case "pdu-session-establishment":
+                    ueTester = new PduSessionEstablishmentTester(this, ctx, procTestConfig);
+                    break;
+                default:
+                    Log.error(Tag.SYS, "Invalid predefined procedure test: \"%s\"", testName);
+                    return;
+            }
+
+            ueTesters.put(ueId, ueTester);
+            ueTester.onStart();
+        });
     }
 }

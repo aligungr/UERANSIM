@@ -19,7 +19,7 @@ public abstract class MonitorTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    public final void main() {
         Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);
 
         while (true) {
