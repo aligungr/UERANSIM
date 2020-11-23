@@ -7,30 +7,36 @@ package tr.havelsan.ueransim.app.app.monitor;
 
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.nas.impl.messages.*;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LoadTestMonitor extends MonitorTask {
     private final BaseConsole console;
 
-    private final Map<Integer, Long> ngSetupTimers = new ConcurrentHashMap<>();
-    private final Map<String, Long> registrationTimers = new ConcurrentHashMap<>();
-    private final Map<String, Long> authenticationTimers = new ConcurrentHashMap<>();
-    private final Map<String, Long> securityModeControlTimers = new ConcurrentHashMap<>();
-    private final Map<String, Long> phase1Timers = new ConcurrentHashMap<>();
-    private final Map<String, Long> phase2Timers = new ConcurrentHashMap<>();
-    private final Map<String, Long> phase3Timers = new ConcurrentHashMap<>();
-    private final Map<String, Long> deRegistrationTimers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, Long>> counters;
 
     public LoadTestMonitor(BaseConsole console) {
         this.console = console;
+        this.counters = new ConcurrentHashMap<>();
+    }
+
+    private static String getIntervalDisplay(String id) {
+        switch (id) {
+            case "ng-setup": return "NGSetup";
+            case "registration": return "Registration";
+            case "phase1": return "Phase 1 (Registration-Authentication)";
+            case "phase2": return "Phase 2 (Authentication-SecurityModeControl)";
+            case "phase3": return "Phase 3 (SecurityModeControl-RegistrationAccept)";
+            case "security-mode-control": return "Security Mode Control";
+            case "de-registration": return "De-Registration";
+            case "authentication": return "Authentication";
+        }
+        return id;
     }
 
     @Override
@@ -39,65 +45,66 @@ public class LoadTestMonitor extends MonitorTask {
     }
 
     @Override
+    public void onSwitched(BaseSimContext ctx, Enum<?> state) {
+
+    }
+
+    @Override
     public void onSend(BaseSimContext ctx, Object message) {
         if (message instanceof NGAP_NGSetupRequest) {
-            int gnbId = ((GnbSimContext) ctx).config.gnbId;
-            ngSetupTimers.put(gnbId, System.currentTimeMillis());
+            intervalStarted(ctx, "ng-setup");
         } else if (message instanceof RegistrationRequest) {
-            registrationTimers.put(ctx.nodeName, System.currentTimeMillis());
-            phase1Timers.put(ctx.nodeName, System.currentTimeMillis());
+            intervalStarted(ctx, "registration");
+            intervalStarted(ctx, "phase1");
         } else if (message instanceof AuthenticationResponse) {
-            phase2Timers.put(ctx.nodeName, System.currentTimeMillis());
-
-            long delta = System.currentTimeMillis() - authenticationTimers.get(ctx.nodeName);
-            console.println(null, "\u2714 [Authentication (UE/RAN)] [%s] [%d ms]", ctx.nodeName, delta);
+            intervalStarted(ctx, "phase2");
         } else if (message instanceof SecurityModeComplete) {
-            phase3Timers.put(ctx.nodeName, System.currentTimeMillis());
-
-            long delta = System.currentTimeMillis() - securityModeControlTimers.get(ctx.nodeName);
-            console.println(null, "\u2714 [Security Mode Control (UE/RAN)] [%s] [%d ms]", ctx.nodeName, delta);
+            intervalStarted(ctx, "phase3");
+            intervalEnded(ctx, "security-mode-control", true);
         } else if (message instanceof DeRegistrationRequestUeOriginating) {
-            deRegistrationTimers.put(ctx.nodeName, System.currentTimeMillis());
+            intervalStarted(ctx, "de-registration");
         }
     }
 
     @Override
     public void onReceive(BaseSimContext ctx, Object message) {
-        if (message instanceof NGAP_NGSetupFailure) {
-            int gnbId = ((GnbSimContext) ctx).config.gnbId;
-            long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
-            console.println(null, "\u2718 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
-        } else if (message instanceof NGAP_NGSetupResponse) {
-            int gnbId = ((GnbSimContext) ctx).config.gnbId;
-            long delta = System.currentTimeMillis() - ngSetupTimers.get(gnbId);
-            console.println(null, "\u2714 [NGSetup] [gnbId: %d] [%d ms]", gnbId, delta);
+        if (message instanceof NGAP_NGSetupResponse) {
+            intervalEnded(ctx, "ng-setup", true);
+        } else if (message instanceof NGAP_NGSetupFailure) {
+            intervalEnded(ctx, "ng-setup", false);
         } else if (message instanceof RegistrationReject) {
-            long delta = System.currentTimeMillis() - registrationTimers.get(ctx.nodeName);
-            console.println(null, "\u2718 [Registration] [%s] [%d ms]", ctx.nodeName, delta);
+            intervalEnded(ctx, "registration", false);
         } else if (message instanceof RegistrationAccept) {
-            long delta = System.currentTimeMillis() - registrationTimers.get(ctx.nodeName);
-            console.println(null, "\u2714 [Registration] [%s] [%d ms]", ctx.nodeName, delta);
-
-            long delta2 = System.currentTimeMillis() - phase3Timers.get(ctx.nodeName);
-            console.println(null, "\u2714 [Phase 3 (Network)] [SecurityModeControl-RegistrationAccept] [%s] [%d ms]", ctx.nodeName, delta2);
+            intervalEnded(ctx, "phase3", true);
+            intervalEnded(ctx, "registration", true);
         } else if (message instanceof AuthenticationRequest) {
-            authenticationTimers.put(ctx.nodeName, System.currentTimeMillis());
-
-            long delta = System.currentTimeMillis() - phase1Timers.get(ctx.nodeName);
-            console.println(null, "\u2714 [Phase 1 (Network)] [Registration-Authentication] [%s] [%d ms]", ctx.nodeName, delta);
+            intervalStarted(ctx, "authentication");
+            intervalEnded(ctx, "phase1", true);
         } else if (message instanceof SecurityModeCommand) {
-            securityModeControlTimers.put(ctx.nodeName, System.currentTimeMillis());
-
-            long delta = System.currentTimeMillis() - phase2Timers.get(ctx.nodeName);
-            console.println(null, "\u2714 [Phase 2 (Network)] [Authentication-SecurityModeControl] [%s] [%d ms]", ctx.nodeName, delta);
+            intervalStarted(ctx, "security-mode-control");
+            intervalEnded(ctx, "phase2", true);
+            intervalEnded(ctx, "authentication", true);
         } else if (message instanceof DeRegistrationAcceptUeOriginating) {
-            long delta = System.currentTimeMillis() - deRegistrationTimers.get(ctx.nodeName);
-            console.println(null, "\u2714 [De-Registration] [%s] [%d ms]", ctx.nodeName, delta);
+            intervalEnded(ctx, "de-registration", true);
         }
     }
 
-    @Override
-    public void onSwitched(BaseSimContext ctx, Enum<?> state) {
+    private void intervalStarted(BaseSimContext ctx, String id) {
+        var map = counters.computeIfAbsent(ctx.nodeName, k -> new ConcurrentHashMap<>());
+        map.put(id, System.currentTimeMillis());
+    }
 
+    private void intervalEnded(BaseSimContext ctx, String id, boolean isSuccess) {
+        var map = counters.computeIfAbsent(ctx.nodeName, k -> new ConcurrentHashMap<>());
+        var time = map.get(id);
+        if (time == null) {
+            return;
+        }
+        var delta = System.currentTimeMillis() - time;
+
+        String icon = isSuccess ? "\u2714" : "\u2718";
+        String intervalDisplay = getIntervalDisplay(id);
+
+        console.println(null, "%s %s [%s] [%d ms]", icon, intervalDisplay, ctx.nodeName, delta);
     }
 }
