@@ -166,12 +166,12 @@ public class WebApp {
 
                 var list = new ArrayList<LogEntry>();
 
-                LogEntry entry;
-                do {
-                    entry = (LogEntry) poll();
+                while (true) {
+                    var entry = (LogEntry) poll();
                     if (entry != null)
                         list.add(entry);
-                } while (entry != null);
+                    else break;
+                }
 
                 if (!list.isEmpty()) {
                     senderTask.push(new SwLog(list));
