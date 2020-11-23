@@ -44,6 +44,22 @@ public class LoadTestMonitor extends MonitorTask {
         }
     }
 
+    private static String getIntervalParent(String id) {
+        switch (id) {
+            case "phase1":
+            case "phase2":
+            case "phase3":
+            case "security-mode-control":
+            case "authentication":
+                return "registration";
+            case "de-registration":
+            case "ng-setup":
+            case "registration":
+            default:
+                return null;
+        }
+    }
+
     @Override
     public void onConnected(BaseSimContext ctx, EConnType connType) {
 
