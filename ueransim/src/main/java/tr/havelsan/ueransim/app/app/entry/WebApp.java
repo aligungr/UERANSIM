@@ -69,7 +69,7 @@ public class WebApp {
         };
 
         Fun initJavalin = () -> Javalin.create().start(1071).ws("/web-interface", ws -> {
-            ws.onConnect(wsc -> senderTask.push(new ConnectionMarker(wsc)));
+            ws.onConnect(wsc -> senderTask.push(new OnConnected(wsc)));
             ws.onMessage(wsc -> receiverTask.push(SocketWrapperSerializer.fromJson(wsc.message(), SocketWrapper.class)));
         });
 
@@ -104,10 +104,10 @@ public class WebApp {
         new WebApp();
     }
 
-    private static class ConnectionMarker {
+    private static class OnConnected {
         private final WsContext ws;
 
-        public ConnectionMarker(WsContext ws) {
+        public OnConnected(WsContext ws) {
             this.ws = ws;
         }
     }
@@ -135,8 +135,8 @@ public class WebApp {
         public void main() {
             while (true) {
                 var msg = take();
-                if (msg instanceof ConnectionMarker) {
-                    ws = ((ConnectionMarker) msg).ws;
+                if (msg instanceof OnConnected) {
+                    ws = ((OnConnected) msg).ws;
                     push(new SwTestCases(ProcedureTester.testCases()));
                     push(new SwIntervalMetadata(LoadTestMonitor.IntervalMetadata.INSTANCE));
                     push(new SwLogMetadata(Severity.values(), Tag.values()));
