@@ -74,16 +74,17 @@ public class WebApp {
 
         Fun buildApp = () -> {
             var stepperMonitor = new StepperMonitor(senderTask::push);
+            var appConfig = new AppConfig();
+            procTester = new ProcedureTester(appConfig);
             ueransim = new AppBuilder()
                     .addMonitor(stepperMonitor)
+                    .addMonitor(procTester)
                     .build();
         };
 
         Fun initApp = () -> {
-            var appConfig = new AppConfig();
             var procTestConfig = ConfigUtils.createProcTestConfig();
 
-            procTester = new ProcedureTester(appConfig);
             receiverTask.procTester = procTester;
             procTester.init(ueransim, procTestConfig, initLogger::run);
         };
