@@ -21,45 +21,6 @@ public class LoadTestMonitor extends MonitorTask {
         this.counters = new ConcurrentHashMap<>();
     }
 
-    private static String getIntervalDisplay(String id) {
-        switch (id) {
-            case "ng-setup":
-                return "NGSetup";
-            case "registration":
-                return "Registration";
-            case "phase1":
-                return "Phase 1 (Registration-Authentication)";
-            case "phase2":
-                return "Phase 2 (Authentication-SecurityModeControl)";
-            case "phase3":
-                return "Phase 3 (SecurityModeControl-RegistrationAccept)";
-            case "security-mode-control":
-                return "Security Mode Control";
-            case "de-registration":
-                return "De-Registration";
-            case "authentication":
-                return "Authentication";
-            default:
-                return id;
-        }
-    }
-
-    private static String getIntervalParent(String id) {
-        switch (id) {
-            case "phase1":
-            case "phase2":
-            case "phase3":
-            case "security-mode-control":
-            case "authentication":
-                return "registration";
-            case "de-registration":
-            case "ng-setup":
-            case "registration":
-            default:
-                return null;
-        }
-    }
-
     @Override
     public void onConnected(BaseSimContext ctx, EConnType connType) {
 
@@ -73,7 +34,7 @@ public class LoadTestMonitor extends MonitorTask {
     @Override
     public void onSend(BaseSimContext ctx, Object message) {
         if (message instanceof NGAP_NGSetupRequest) {
-            intervalStarted(ctx, "ng-setup");
+            intervalStarted(ctx, "ngSetup");
         } else if (message instanceof RegistrationRequest) {
             intervalStarted(ctx, "registration");
             intervalStarted(ctx, "phase1");
@@ -81,18 +42,18 @@ public class LoadTestMonitor extends MonitorTask {
             intervalStarted(ctx, "phase2");
         } else if (message instanceof SecurityModeComplete) {
             intervalStarted(ctx, "phase3");
-            intervalEnded(ctx, "security-mode-control", true);
+            intervalEnded(ctx, "securityModeControl", true);
         } else if (message instanceof DeRegistrationRequestUeOriginating) {
-            intervalStarted(ctx, "de-registration");
+            intervalStarted(ctx, "deregistration");
         }
     }
 
     @Override
     public void onReceive(BaseSimContext ctx, Object message) {
         if (message instanceof NGAP_NGSetupResponse) {
-            intervalEnded(ctx, "ng-setup", true);
+            intervalEnded(ctx, "ngSetup", true);
         } else if (message instanceof NGAP_NGSetupFailure) {
-            intervalEnded(ctx, "ng-setup", false);
+            intervalEnded(ctx, "ngSetup", false);
         } else if (message instanceof RegistrationReject) {
             intervalEnded(ctx, "registration", false);
         } else if (message instanceof RegistrationAccept) {
@@ -102,11 +63,11 @@ public class LoadTestMonitor extends MonitorTask {
             intervalStarted(ctx, "authentication");
             intervalEnded(ctx, "phase1", true);
         } else if (message instanceof SecurityModeCommand) {
-            intervalStarted(ctx, "security-mode-control");
+            intervalStarted(ctx, "securityModeControl");
             intervalEnded(ctx, "phase2", true);
             intervalEnded(ctx, "authentication", true);
         } else if (message instanceof DeRegistrationAcceptUeOriginating) {
-            intervalEnded(ctx, "de-registration", true);
+            intervalEnded(ctx, "deregistration", true);
         }
     }
 
@@ -123,10 +84,69 @@ public class LoadTestMonitor extends MonitorTask {
         }
 
         var delta = System.currentTimeMillis() - time;
-        onIntervalResult(id, getIntervalDisplay(id), isSuccess, ctx.nodeName, delta);
+        onIntervalResult(id, IntervalBase.getIntervalDisplay(id), isSuccess, ctx.nodeName, delta);
     }
 
     protected void onIntervalResult(String id, String display, boolean isSuccess, String nodeName, long deltaMs) {
 
+    }
+
+    public static class IntervalBase {
+        public static IntervalBase INSTANCE = new IntervalBase();
+
+        public final IntervalInfo ngSetup;
+        public final IntervalInfo registration;
+        public final IntervalInfo phase1;
+        public final IntervalInfo phase2;
+        public final IntervalInfo phase3;
+        public final IntervalInfo securityModeControl;
+        public final IntervalInfo authentication;
+        public final IntervalInfo deregistration;
+
+        private IntervalBase() {
+            this.ngSetup = new IntervalInfo("ngSetup", null, getIntervalDisplay("ngSetup"));
+            this.registration = new IntervalInfo("registration", null, getIntervalDisplay("registration"));
+            this.phase1 = new IntervalInfo("phase1", "registration", getIntervalDisplay("phase1"));
+            this.phase2 = new IntervalInfo("phase2", "registration", getIntervalDisplay("phase2"));
+            this.phase3 = new IntervalInfo("phase3", "registration", getIntervalDisplay("phase3"));
+            this.securityModeControl = new IntervalInfo("securityModeControl", "registration", getIntervalDisplay("securityModeControl"));
+            this.authentication = new IntervalInfo("authentication", "registration", getIntervalDisplay("authentication"));
+            this.deregistration = new IntervalInfo("deregistration", null, getIntervalDisplay("deregistration"));
+        }
+
+        public static String getIntervalDisplay(String id) {
+            switch (id) {
+                case "ngSetup":
+                    return "NG Setup";
+                case "registration":
+                    return "Registration";
+                case "phase1":
+                    return "Phase 1 (Registration-Authentication)";
+                case "phase2":
+                    return "Phase 2 (Authentication-SecurityModeControl)";
+                case "phase3":
+                    return "Phase 3 (SecurityModeControl-RegistrationAccept)";
+                case "securityModeControl":
+                    return "Security Mode Control";
+                case "deregistration":
+                    return "De-Registration";
+                case "authentication":
+                    return "Authentication";
+                default:
+                    return id;
+            }
+        }
+    }
+
+    public static class IntervalInfo {
+        public final String id;
+        public final String parent;
+        public final String display;
+
+        public IntervalInfo(String id, String parent, String display) {
+            this.id = id;
+            this.parent = parent;
+            this.display = display;
+        }
     }
 }
