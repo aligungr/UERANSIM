@@ -38,7 +38,7 @@ public class FlowTestApp {
                 .addMonitor(procTester)
                 .build();
 
-        procTester.start(ueransim, procTestConfig, this::onTesterInit);
+        procTester.init(ueransim, procTestConfig, this::onTesterInit);
     }
 
     private ProcTestConfig createProcTestConfig() {

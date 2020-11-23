@@ -44,7 +44,7 @@ public class ProcedureTester extends MonitorTask {
         this.appConfig = appConfig;
     }
 
-    public void start(UeRanSim ueRanSim, ProcTestConfig procTestConfig, Runnable onInit) {
+    public void init(UeRanSim ueRanSim, ProcTestConfig procTestConfig, Runnable onInit) {
         this.sim = ueRanSim;
         this.ueIds = new ArrayList<>();
         this.procTestConfig = procTestConfig;
