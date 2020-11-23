@@ -67,16 +67,4 @@ public class MtsInitializer {
             }
         });
     }
-
-    @Deprecated // TODO: remove completely
-    public static void initTestingMts(MtsContext mts) {
-        initDefaultMts(mts);
-
-        mts.typeRegistry.registerTypeName("SLEEP", TestCmd_Sleep.class);
-        mts.typeRegistry.registerTypeName("INITIAL_REGISTRATION", TestCmd_InitialRegistration.class);
-        mts.typeRegistry.registerTypeName("PERIODIC_REGISTRATION", TestCmd_PeriodicRegistration.class);
-        mts.typeRegistry.registerTypeName("DEREGISTRATION", TestCmd_Deregistration.class);
-        mts.typeRegistry.registerTypeName("PDU_SESSION_ESTABLISHMENT", TestCmd_PduSessionEstablishment.class);
-        mts.typeRegistry.registerTypeName("PING", TestCmd_Ping.class);
-    }
 }
