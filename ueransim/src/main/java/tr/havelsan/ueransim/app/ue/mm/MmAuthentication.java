@@ -391,6 +391,8 @@ public class MmAuthentication {
     }
 
     public static void receiveAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
+        Log.error(Tag.PROC, "Authentication Reject received.");
+
         Log.funcIn("Handling: Authentication Reject");
 
         if (message.eapMessage != null) {
