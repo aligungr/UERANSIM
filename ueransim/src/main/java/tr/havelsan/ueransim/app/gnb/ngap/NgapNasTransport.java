@@ -15,18 +15,19 @@ import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.core.NGAP_Enumerated;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_AMFSetID;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RRCEstablishmentCause;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NGAP_Message;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_DownlinkNASTransport;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_InitialUEMessage;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_RerouteNASRequest;
-import tr.havelsan.ueransim.ngap0.msg.NGAP_UplinkNASTransport;
+import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit10;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.UUID;
 
@@ -74,6 +75,20 @@ public class NgapNasTransport {
         }
 
         Log.funcOut();
+    }
+
+    public static void sendNasNonDeliveryIndication(NgapGnbContext ctx, UUID associatedUe, OctetString nasPdu, NGAP_Enumerated cause) {
+        if (cause == null)
+            cause = NGAP_CauseMisc.UNSPECIFIED;
+
+        var causeChoice = new NGAP_Cause();
+        causeChoice.setPresentValue(cause);
+
+        var ngap = new NGAP_NASNonDeliveryIndication();
+        ngap.addProtocolIe(new NGAP_NAS_PDU(nasPdu));
+        ngap.addProtocolIe(causeChoice);
+
+        NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
     }
 
     public static void receiveRerouteNasRequest(NgapGnbContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
