@@ -25,8 +25,6 @@ import tr.havelsan.ueransim.utils.exceptions.NotImplementedException;
 public class MmIdentity {
 
     public static void receiveIdentityRequest(UeSimContext ctx, IdentityRequest message) {
-        Log.funcIn("Handling: Identity Request");
-
         var response = new IdentityResponse();
 
         if (message.identityType.value.equals(EIdentityType.SUCI)) {
@@ -42,14 +40,11 @@ public class MmIdentity {
         }
 
         MobilityManagement.sendMm(ctx, response);
-        Log.funcOut();
     }
 
     public static IESuciMobileIdentity getOrGenerateSuci(UeSimContext ctx) {
-        Log.funcIn("Get or Generate SUCI");
         if (ctx.ueTimers.t3519.isRunning()) {
             Log.debug(Tag.FLOW, "T3519 is running, returning stored SUCI.");
-            Log.funcOut();
             return ctx.mmCtx.storedSuci;
         }
 
@@ -58,7 +53,6 @@ public class MmIdentity {
 
         ctx.ueTimers.t3519.start();
 
-        Log.funcOut();
         return ctx.mmCtx.storedSuci;
     }
 

@@ -29,12 +29,9 @@ import java.util.ArrayList;
 class SmPduSessionEstablishment {
 
     public static void sendEstablishmentRequest(UeSimContext ctx) {
-        Log.funcIn("Sending PDU Session Establishment Request");
-
         var pduSessionId = SmPduSessionManagement.allocatePduSessionId(ctx);
         if (pduSessionId == null) {
             Log.error(Tag.FLOW, "PDU Session Establishment Request could not send");
-            Log.funcOut();
             return;
         }
 
@@ -42,7 +39,6 @@ class SmPduSessionEstablishment {
         if (procedureTransactionId == null) {
             Log.error(Tag.FLOW, "PDU Session Establishment Request could not send");
             SmPduSessionManagement.releasePduSession(ctx, pduSessionId);
-            Log.funcOut();
             return;
         }
 
@@ -68,13 +64,9 @@ class SmPduSessionEstablishment {
         ctx.ueTimers.t3580.start();
 
         SessionManagement.sendSm(ctx, pduSessionId, request);
-
-        Log.funcOut();
     }
 
     public static void receiveEstablishmentAccept(UeSimContext ctx, PduSessionEstablishmentAccept message) {
-        Log.funcIn("Handling: PDU Session Establishment Accept");
-
         if (message.smCause != null) {
             Log.warning(Tag.FLOW, "SM cause received in PduSessionEstablishmentAccept: %s", message.smCause.value);
         }
@@ -86,7 +78,6 @@ class SmPduSessionEstablishment {
         var pduSession = ctx.smCtx.pduSessions[message.pduSessionId.intValue()];
         if (pduSession == null) {
             Log.error(Tag.FLOW, "PDU session not found: %s", message.pduSessionId);
-            Log.funcOut();
             return;
         }
 
@@ -102,7 +93,6 @@ class SmPduSessionEstablishment {
 
         Log.info(Tag.FLOW, "PDU session established: %s", message.pduSessionId);
         Log.success(Tag.PROC, "PDU Session Establishment is successful");
-        Log.funcOut();
     }
 
     public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {

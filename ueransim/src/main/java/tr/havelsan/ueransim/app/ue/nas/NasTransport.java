@@ -22,8 +22,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class NasTransport {
 
     public static void sendNas(UeSimContext ctx, NasMessage message) {
-        Log.funcIn("Sending NAS message: %s", message.getClass().getSimpleName());
-
         var securedNas = NasSecurity.encryptNasMessage(ctx.currentNsCtx, message);
         var securedNasPdu = NasEncoder.nasPduS(securedNas);
 
@@ -34,12 +32,9 @@ public class NasTransport {
 
         ctx.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkNas(ctx.ctxId, securedNasPdu));
         ctx.sim.triggerOnSend(ctx, message);
-        Log.funcOut();
     }
 
     public static void receiveNas(UeSimContext ctx, NasMessage message) {
-        Log.funcIn("Receiving NAS message: %s", message.getClass().getSimpleName());
-
         Log.debug(Tag.MSG, "Secured NAS as JSON %s", Json.toJson(message));
         Log.debug(Tag.MSG, "Secured NAS PDU: %s", NasEncoder.nasPduS(message));
 
@@ -57,7 +52,5 @@ public class NasTransport {
                 SessionManagement.receiveSm(ctx, (PlainSmMessage) message);
             }
         }
-
-        Log.funcOut();
     }
 }

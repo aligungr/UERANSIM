@@ -28,8 +28,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class NgapUeContextManagement {
 
     public static void receiveInitialContextSetup(NgapGnbContext ctx, NGAP_InitialContextSetupRequest message) {
-        Log.funcIn("Handling: Initial Context Setup Request");
-
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
         var ue = ctx.ueContexts.get(ueId);
 
@@ -55,13 +53,9 @@ public class NgapUeContextManagement {
         if (nasMessage != null) {
             ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
         }
-
-        Log.funcOut();
     }
 
     public static void receiveContextReleaseCommand(NgapGnbContext ctx, NGAP_UEContextReleaseCommand message) {
-        Log.funcIn("Handling: UE Context Release Command (AMF initiated)");
-
         var ueId = NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
 
         // todo: NG-RAN node shall release all related signalling and user data transport resources
@@ -74,13 +68,9 @@ public class NgapUeContextManagement {
         NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
 
         ctx.ueContexts.remove(ueId);
-
-        Log.funcOut();
     }
 
     public static void receiveContextModificationRequest(NgapGnbContext ctx, NGAP_UEContextModificationRequest message) {
-        Log.funcIn("Handling: UE Context Modification Request");
-
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
         var ue = ctx.ueContexts.get(ueId);
 
@@ -98,7 +88,6 @@ public class NgapUeContextManagement {
                 response.addProtocolIe(NGAP_CauseMisc.UNSPECIFIED);
 
                 NgapTransfer.sendNgapUeAssociated(ctx, ueId, response);
-                Log.funcOut();
                 return;
             }
         }
@@ -126,7 +115,6 @@ public class NgapUeContextManagement {
         }
 
         NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
-        Log.funcOut();
     }
 
     private static boolean isUeSecurityCapabilitiesValid(NgapGnbContext ctx, NGAP_UESecurityCapabilities capabilities) {

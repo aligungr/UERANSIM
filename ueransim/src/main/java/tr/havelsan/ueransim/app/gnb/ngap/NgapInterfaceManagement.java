@@ -31,13 +31,9 @@ public class NgapInterfaceManagement {
         //  and erases all related signalling connections in the two nodes like an NG Reset procedure would do.
         //  More on 38.413 8.7.1.1
 
-        Log.funcIn("Starting: NGSetupRequest");
-        Log.info(Tag.PROC, "NGSetup procedure is starting");
-
         var amf = ctx.amfContexts.get(associatedAmf);
         if (amf == null) {
             Log.error(Tag.PROC, "Cannot send NG Setup Request: AMF context not found.");
-            Log.funcOut();
             return;
         }
 
@@ -50,16 +46,12 @@ public class NgapInterfaceManagement {
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
         NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
-        Log.funcOut();
     }
 
     public static void receiveNgSetupResponse(NgapGnbContext ctx, Guami associatedAmf, NGAP_NGSetupResponse message) {
-        Log.funcIn("Handling: NGSetupResponse");
-
         var amf = ctx.amfContexts.get(associatedAmf);
         if (amf == null) {
             Log.error(Tag.PROC, "NGSetup procedure is failed: AMF context not found.");
-            Log.funcOut();
             return;
         }
 
@@ -70,12 +62,9 @@ public class NgapInterfaceManagement {
         amf.state = EAmfState.CONNECTED;
 
         Log.success(Tag.PROC, "NGSetup procedure is successful");
-        Log.funcOut();
     }
 
     public static void receiveNgSetupFailure(NgapGnbContext ctx, Guami associatedAmf, NGAP_NGSetupFailure message) {
-        Log.funcIn("Handling: NGSetupFailure");
-
         var amf = ctx.amfContexts.get(associatedAmf);
         if (amf != null) {
             amf.state = EAmfState.WAITING_NG_SETUP;
@@ -87,7 +76,6 @@ public class NgapInterfaceManagement {
         } else {
             Log.error(Tag.PROC, "NGSetup procedure is failed: " + ((NGAP_Enumerated) cause.getPresentValue()).sValue);
         }
-        Log.funcOut();
     }
 
     public static void receiveErrorIndication(NgapGnbContext ctx, NGAP_ErrorIndication message) {

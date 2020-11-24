@@ -25,8 +25,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class MmSecurity {
 
     public static void receiveSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
-        Log.funcIn("Handling: Security Mode Command");
-
         // todo: check the integriti with new security context
         {
             var mac = message._macForNewSC;
@@ -85,8 +83,6 @@ public class MmSecurity {
 
         // Send response
         MobilityManagement.sendMm(ctx, response);
-
-        Log.funcOut();
     }
 
     public static IEUeSecurityCapability createSecurityCapabilityIe() {

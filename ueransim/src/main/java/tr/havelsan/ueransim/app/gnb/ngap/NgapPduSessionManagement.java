@@ -37,8 +37,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class NgapPduSessionManagement {
 
     public static void receiveResourceSetupRequest(NgapGnbContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
-        Log.funcIn("Handling PDU Session Resource Setup Request");
-
         var response = new NGAP_PDUSessionResourceSetupResponse();
         var successList = new NGAP_PDUSessionResourceSetupListSURes();
         var failedList = new NGAP_PDUSessionResourceFailedToSetupListSURes();
@@ -130,8 +128,6 @@ public class NgapPduSessionManagement {
         if (failed == 0) Log.success(Tag.PROC, "PDU Session Establishment is successful");
         else if (succeeded == 0) Log.error(Tag.PROC, "PDU Session Establishment is failed");
         else Log.info(Tag.PROC, "PDU Session Establishment is partially successful.");
-
-        Log.funcOut();
     }
 
     private static boolean pduResourceSetup(NgapGnbContext ctx, NgapUeContext ueCtx, PduSessionResource resource) {

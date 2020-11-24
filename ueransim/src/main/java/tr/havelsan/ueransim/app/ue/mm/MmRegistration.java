@@ -22,8 +22,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class MmRegistration {
 
     public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType, EFollowOnRequest followOn) {
-        Log.funcIn("Starting: Registration procedure (%s)", registrationType);
-
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED_INITIATED, EMmSubState.MM_REGISTERED_INITIATED__NA);
 
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
@@ -74,13 +72,9 @@ public class MmRegistration {
         ctx.ueTimers.t3511.stop();
 
         MobilityManagement.sendMm(ctx, registrationRequest);
-
-        Log.funcOut();
     }
 
     public static void receiveRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
-        Log.funcIn("Handling: Registration Accept");
-
         boolean sendCompleteMes = false;
 
         ctx.mmCtx.taiList = message.taiList;
@@ -104,12 +98,9 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
         Log.success(Tag.PROC, "Registration is successful");
-        Log.funcOut();
     }
 
     public static void receiveRegistrationReject(UeSimContext ctx, RegistrationReject message) {
-        Log.funcIn("Handling: Registration reject");
-
         var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
         var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
@@ -226,7 +217,5 @@ public class MmRegistration {
         }
 
         MobilityManagement.switchState(ctx, ERmState.RM_DEREGISTERED);
-
-        Log.funcOut();
     }
 }

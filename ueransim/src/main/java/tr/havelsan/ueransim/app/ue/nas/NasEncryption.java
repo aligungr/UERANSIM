@@ -103,8 +103,6 @@ public class NasEncryption {
     //======================================================================================================
 
     public static NasMessage decrypt(SecuredMmMessage protectedNasMessage, NasSecurityContext securityContext) {
-        Log.funcIn("NasEncryption.decrypt");
-
         var estimatedCount = securityContext.estimatedDownlinkCount(protectedNasMessage.sequenceNumber);
 
         var cnId = securityContext.connectionIdentifier;
@@ -120,7 +118,6 @@ public class NasEncryption {
 
         if (!mac.equals(protectedNasMessage.messageAuthenticationCode)) {
             if (!intAlg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-                Log.funcOut();
                 return null;
             }
         }
@@ -131,16 +128,12 @@ public class NasEncryption {
                 protectedNasMessage.plainNasMessage.toByteArray());
         var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
-        Log.funcOut();
         return decryptedMsg;
     }
 
     private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
                                            OctetString key, ESecurityHeaderType sht, byte[] data) {
-        Log.funcIn("NasEncryption.decryptData");
-
         if (!sht.isCiphered()) {
-            Log.funcOut();
             return new OctetString(data);
         }
 
@@ -164,11 +157,8 @@ public class NasEncryption {
         }
 
         if (res == null) {
-            Log.funcOut();
             throw new RuntimeException("invalid ciphering alg");
         }
-
-        Log.funcOut();
         return new OctetString(res);
     }
 
@@ -178,14 +168,11 @@ public class NasEncryption {
 
     public static Octet4 computeMac(ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
                                     boolean isUplink, OctetString key, byte[] plainMessage) {
-        Log.funcIn("Computing Mac");
-
         var data = OctetString.concat(new OctetString(count.sqn), new OctetString(plainMessage));
 
         Log.debug(Tag.VALUE, "alg: %s", alg);
 
         if (alg.equals(ETypeOfIntegrityProtectionAlgorithm.IA0)) {
-            Log.funcOut();
             return new Octet4(0);
         }
 
@@ -212,11 +199,9 @@ public class NasEncryption {
         }
 
         if (res == null) {
-            Log.funcOut();
             throw new RuntimeException("invalid integrity alg");
         }
 
-        Log.funcOut();
         return res;
     }
 

@@ -59,7 +59,6 @@ public class NgapUeManagement {
     }
 
     public static Guami selectNewAmfForReAllocation(NgapGnbContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
-        Log.funcIn("Handling: Select AMF from AMFSetId");
         Log.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
 
         Guami res = null;
@@ -82,7 +81,6 @@ public class NgapUeManagement {
             res = amfs.get(0).guami;
         }
 
-        Log.funcOut();
         return res;
     }
 

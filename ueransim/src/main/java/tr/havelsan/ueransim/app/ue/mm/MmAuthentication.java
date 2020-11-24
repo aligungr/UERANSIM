@@ -42,8 +42,6 @@ public class MmAuthentication {
     }
 
     private static void receiveAuthenticationRequestEap(UeSimContext ctx, AuthenticationRequest message) {
-        Log.funcIn("Handling: EAP AKA' Authentication Request");
-
         OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
         EapAkaPrime receivedEap;
         int receivedKdf;
@@ -220,13 +218,9 @@ public class MmAuthentication {
 
             MobilityManagement.sendMm(ctx, response);
         }
-
-        Log.funcOut();
     }
 
     private static void receiveAuthenticationRequest5gAka(UeSimContext ctx, AuthenticationRequest request) {
-        Log.funcIn("Handling: 5G AKA Authentication Request");
-
         PlainMmMessage response = null;
 
         if (USE_SQN_HACK) {
@@ -296,8 +290,6 @@ public class MmAuthentication {
         if (response != null) {
             MobilityManagement.sendMm(ctx, response);
         }
-
-        Log.funcOut();
     }
 
     private static EAutnValidationRes validateAutn(UeSimContext ctx, OctetString ak, OctetString mac, OctetString autn) {
@@ -355,8 +347,6 @@ public class MmAuthentication {
     }
 
     public static void receiveAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
-        Log.funcIn("Handling: Authentication Result");
-
         if (message.abba != null) {
             ctx.nonCurrentNsCtx.keys.abba = message.abba.contents;
         }
@@ -371,13 +361,9 @@ public class MmAuthentication {
                         message.eapMessage.eap.code.name());
             }
         }
-
-        Log.funcOut();
     }
 
     public static void receiveAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
-        Log.funcIn("Handling: Authentication Result");
-
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
                 MmAuthentication.receiveEapResponseMessage(ctx, message.eapMessage.eap);
@@ -386,14 +372,10 @@ public class MmAuthentication {
                         message.eapMessage.eap.code.name());
             }
         }
-
-        Log.funcOut();
     }
 
     public static void receiveAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
         Log.error(Tag.PROC, "Authentication Reject received.");
-
-        Log.funcIn("Handling: Authentication Reject");
 
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
@@ -410,31 +392,19 @@ public class MmAuthentication {
                         message.eapMessage.eap.code.name());
             }
         }
-
-        Log.funcOut();
     }
 
     public static void receiveEapSuccessMessage(UeSimContext ctx, Eap eap) {
-        Log.funcIn("Handling: EAP-Success contained in received message");
-
         // do nothing
-
-        Log.funcOut();
     }
 
 
     public static void receiveEapFailureMessage(UeSimContext ctx, Eap eap) {
-        Log.funcIn("Handling: EAP-Failure contained in received message");
-
         Log.debug(Tag.FLOW, "Deleting non-current NAS security context");
         ctx.nonCurrentNsCtx = null;
-
-        Log.funcOut();
     }
 
     public static void receiveEapResponseMessage(UeSimContext ctx, Eap eap) {
-        Log.funcIn("Handling: EAP contained in received message");
-
         if (eap instanceof EapAkaPrime) {
             var akaPrime = (EapAkaPrime) eap;
 
@@ -445,7 +415,5 @@ public class MmAuthentication {
         } else {
             Log.warning(Tag.FLOW, "Network sent EAP with type: %s. Message ignoring.", eap.EAPType.name());
         }
-
-        Log.funcOut();
     }
 }

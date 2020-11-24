@@ -37,16 +37,8 @@ public class Log {
         findLogger().error(tag, message, args);
     }
 
-    public static void funcIn(String name, Object... args) {
-        findLogger().funcIn(name, args);
-    }
-
-    public static void funcOut() {
-        findLogger().funcOut();
-    }
-
-    public static void log(Severity severity, AnsiColorFormat ansiColorFormat, int depth, Tag tag, String message, Object... args) {
-        findLogger().log(severity, ansiColorFormat, depth, tag, message, args);
+    public static void log(Severity severity, AnsiColorFormat ansiColorFormat, Tag tag, String message, Object... args) {
+        findLogger().log(severity, ansiColorFormat, tag, message, args);
     }
 
     public static void addLogHandler(Consumer<LogEntry> handler) {

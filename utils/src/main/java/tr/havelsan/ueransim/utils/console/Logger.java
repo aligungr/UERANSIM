@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class Logger {
@@ -30,7 +29,6 @@ public class Logger {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     private final List<Consumer<LogEntry>> printHandlers = new ArrayList<>();
-    private final AtomicInteger functionDepth = new AtomicInteger(0);
     private final BaseConsole console = new BaseConsole();
     private final String loggerName;
 
@@ -57,8 +55,6 @@ public class Logger {
                 return false;
             if (severity == Severity.ERRO || severity == Severity.SUCC)
                 return true;
-            if (severity == Severity.FUNI || severity == Severity.FUNO)
-                return false;
         }
         if (tag != null) {
             if (tag == Tag.MSG)
@@ -74,39 +70,31 @@ public class Logger {
     }
 
     public void debug(Tag tag, String message, Object... args) {
-        log(Severity.DEBG, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
+        log(Severity.DEBG, AnsiPalette.PAINT_LOG_NORMAL, tag, message, args);
     }
 
     public void info(Tag tag, String message, Object... args) {
-        log(Severity.INFO, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.get(), tag, message, args);
+        log(Severity.INFO, AnsiPalette.PAINT_LOG_NORMAL, tag, message, args);
     }
 
     public void success(Tag tag, String message, Object... args) {
-        log(Severity.SUCC, AnsiPalette.PAINT_LOG_SUCCESS, functionDepth.get(), tag, message, args);
+        log(Severity.SUCC, AnsiPalette.PAINT_LOG_SUCCESS, tag, message, args);
     }
 
     public void warning(Tag tag, String message, Object... args) {
-        log(Severity.WARN, AnsiPalette.PAINT_LOG_WARNING, functionDepth.get(), tag, message, args);
+        log(Severity.WARN, AnsiPalette.PAINT_LOG_WARNING, tag, message, args);
     }
 
     public void error(Tag tag, String message, Object... args) {
-        log(Severity.ERRO, AnsiPalette.PAINT_LOG_ERROR, functionDepth.get(), tag, message, args);
+        log(Severity.ERRO, AnsiPalette.PAINT_LOG_ERROR, tag, message, args);
     }
 
-    public void funcIn(String name, Object... args) {
-        log(Severity.FUNI, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.getAndIncrement(), null, name, args);
-    }
-
-    public void funcOut() {
-        log(Severity.FUNO, AnsiPalette.PAINT_LOG_NORMAL, functionDepth.decrementAndGet(), null, "");
-    }
-
-    public void log(Severity severity, AnsiColorFormat ansiColorFormat, int depth, Tag tag, String message, Object... args) {
+    public void log(Severity severity, AnsiColorFormat ansiColorFormat, Tag tag, String message, Object... args) {
         if (severity == null) severity = Severity.DEBG;
         if (message == null) message = "";
         if (args == null) args = new Object[0];
 
-        String spacing = (" ").repeat(Math.max(0, depth * 2));
+        String spacing = "";
         String tagging = tag == null ? "" : "[" + tag + "] ";
 
         for (int i = 0; i < args.length; i++) {
@@ -121,7 +109,7 @@ public class Logger {
         String timestamp = getTime();
 
         for (var handler : printHandlers)
-            handler.accept(new LogEntry(loggerName, severity, depth, tag, str, timestamp, AnsiColor.generateCode(ansiColorFormat)));
+            handler.accept(new LogEntry(loggerName, severity, tag, str, timestamp, AnsiColor.generateCode(ansiColorFormat)));
 
         String display = String.format(Locale.ENGLISH, "%s%s[%s] %s%s", getTime(), spacing, severity, tagging, str);
         console.println(ansiColorFormat, display);
@@ -132,7 +120,7 @@ public class Logger {
 
         if (this != GLOBAL) {
             if (shouldDispatch(severity, tag)) {
-                GLOBAL.log(severity, ansiColorFormat, 0, tag, "[%s] " + message, concat(loggerName, args));
+                GLOBAL.log(severity, ansiColorFormat, tag, "[%s] " + message, concat(loggerName, args));
             }
         }
     }

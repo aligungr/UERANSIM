@@ -11,6 +11,4 @@ public enum Severity {
     INFO,
     WARN,
     ERRO,
-    FUNI,
-    FUNO;
 }

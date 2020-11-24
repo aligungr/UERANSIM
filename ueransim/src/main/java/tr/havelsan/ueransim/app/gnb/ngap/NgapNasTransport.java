@@ -34,8 +34,6 @@ import java.util.UUID;
 public class NgapNasTransport {
 
     public static void receiveUplinkNasTransport(NgapGnbContext ctx, UUID associatedUe, NasMessage nasMessage) {
-        Log.funcIn("Handling Uplink NAS Transport");
-
         NGAP_BaseMessage ngap;
         if (ctx.ueContexts.containsKey(associatedUe)) {
             ngap = new NGAP_UplinkNASTransport();
@@ -60,21 +58,15 @@ public class NgapNasTransport {
         }
 
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
-
-        Log.funcOut();
     }
 
     public static void receiveDownlinkNasTransport(NgapGnbContext ctx, NGAP_DownlinkNASTransport message) {
-        Log.funcIn("Handling Downlink NAS Transport");
-
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
             ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
         }
-
-        Log.funcOut();
     }
 
     public static void sendNasNonDeliveryIndication(NgapGnbContext ctx, UUID associatedUe, OctetString nasPdu, NGAP_Enumerated cause) {
@@ -92,8 +84,6 @@ public class NgapNasTransport {
     }
 
     public static void receiveRerouteNasRequest(NgapGnbContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
-        Log.funcIn("Handling Reroute NAS Request");
-
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var ngapMessage = message.getProtocolIe(NGAP_NGAP_Message.class);
@@ -119,7 +109,5 @@ public class NgapNasTransport {
         } else {
             Log.error(Tag.FLOW, "AMF selection for re-allocation failed. Could not find a suitable AMF.");
         }
-
-        Log.funcOut();
     }
 }
