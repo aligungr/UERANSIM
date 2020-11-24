@@ -6,11 +6,14 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
 import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
@@ -24,13 +27,14 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
-
 public class NgapTask extends NtsTask {
 
-    private final GnbSimContext ctx;
+    private final GnbSimContext gnbCtx;
+    private final NgapGnbContext ctx;
 
-    public NgapTask(GnbSimContext ctx) {
-        this.ctx = ctx;
+    public NgapTask(GnbSimContext gnbCtx) {
+        this.gnbCtx = gnbCtx;
+        this.ctx = gnbCtx.ngapCtx;
     }
 
     @Override
@@ -39,6 +43,9 @@ public class NgapTask extends NtsTask {
             var msg = take();
             if (msg instanceof IwNgapReceive) {
                 receiveNgap(((IwNgapReceive) msg).associatedAmf, ((IwNgapReceive) msg).stream, ((IwNgapReceive) msg).ngapPdu);
+            } else if (msg instanceof IwUplinkNas) {
+                var w = (IwUplinkNas) msg;
+                NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
             } else if (msg instanceof IwSctpAssociationSetup) {
                 NgapInterfaceManagement.sendNgSetupRequest(ctx, ((IwSctpAssociationSetup) msg).guami);
             }
@@ -54,10 +61,10 @@ public class NgapTask extends NtsTask {
             return;
         }
 
-        ctx.sim.triggerOnReceive(ctx, ngapMessage);
+        ctx.gnbCtx.sim.triggerOnReceive(gnbCtx, ngapMessage);
 
         try {
-            if (!ctx.config.ignoreStreamIds) {
+            if (!ctx.gnbCtx.config.ignoreStreamIds) {
                 NGAP_Value ie = ngapMessage.getProtocolIe(NGAP_UE_NGAP_IDs.class);
                 if (ie != null) {
                     if (stream == 0) {

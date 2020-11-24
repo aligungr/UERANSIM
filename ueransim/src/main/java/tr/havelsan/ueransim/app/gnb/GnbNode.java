@@ -7,7 +7,7 @@ package tr.havelsan.ueransim.app.gnb;
 
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
-import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
+import tr.havelsan.ueransim.app.common.contexts.NgapAmfContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.gnb.gtp.GtpTask;
@@ -22,8 +22,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class GnbNode {
 
     public static GnbSimContext createContext(UeRanSim sim, GnbConfig config) {
-        var ctx = new GnbSimContext(sim, "gnb-" + config.gnbId);
-        ctx.config = config;
+        var ctx = new GnbSimContext(sim, "gnb-" + config.gnbId, config);
 
         // Create AMF gNB contexts
         {
@@ -32,11 +31,11 @@ public class GnbNode {
                     throw new RuntimeException("amfConfig.guami == null");
                 }
 
-                var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
+                var amfGnbCtx = new NgapAmfContext(amfConfig.guami);
                 amfGnbCtx.host = amfConfig.host;
                 amfGnbCtx.port = amfConfig.port;
 
-                ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
+                ctx.ngapCtx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
             }
         }
 

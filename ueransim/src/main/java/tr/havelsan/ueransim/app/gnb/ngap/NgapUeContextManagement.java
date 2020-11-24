@@ -5,9 +5,9 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
+import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
@@ -27,7 +27,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class NgapUeContextManagement {
 
-    public static void receiveInitialContextSetup(GnbSimContext ctx, NGAP_InitialContextSetupRequest message) {
+    public static void receiveInitialContextSetup(NgapGnbContext ctx, NGAP_InitialContextSetupRequest message) {
         Log.funcIn("Handling: Initial Context Setup Request");
 
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -53,13 +53,13 @@ public class NgapUeContextManagement {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
+            ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
         }
 
         Log.funcOut();
     }
 
-    public static void receiveContextReleaseCommand(GnbSimContext ctx, NGAP_UEContextReleaseCommand message) {
+    public static void receiveContextReleaseCommand(NgapGnbContext ctx, NGAP_UEContextReleaseCommand message) {
         Log.funcIn("Handling: UE Context Release Command (AMF initiated)");
 
         var ueId = NgapUeManagement.findAssociatedUeForUeNgapIds(ctx, message);
@@ -67,7 +67,7 @@ public class NgapUeContextManagement {
         // todo: NG-RAN node shall release all related signalling and user data transport resources
         // ...
 
-        ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwConnectionRelease(ueId));
+        ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwConnectionRelease(ueId));
 
         // send release complete message
         var response = new NGAP_UEContextReleaseComplete();
@@ -78,7 +78,7 @@ public class NgapUeContextManagement {
         Log.funcOut();
     }
 
-    public static void receiveContextModificationRequest(GnbSimContext ctx, NGAP_UEContextModificationRequest message) {
+    public static void receiveContextModificationRequest(NgapGnbContext ctx, NGAP_UEContextModificationRequest message) {
         Log.funcIn("Handling: UE Context Modification Request");
 
         var ueId = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
@@ -129,7 +129,7 @@ public class NgapUeContextManagement {
         Log.funcOut();
     }
 
-    private static boolean isUeSecurityCapabilitiesValid(GnbSimContext ctx, NGAP_UESecurityCapabilities capabilities) {
+    private static boolean isUeSecurityCapabilitiesValid(NgapGnbContext ctx, NGAP_UESecurityCapabilities capabilities) {
         // todo: check if UE security capabilities are valid
         return true;
     }

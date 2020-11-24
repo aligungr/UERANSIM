@@ -6,9 +6,9 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.Guami;
-import tr.havelsan.ueransim.app.common.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
+import tr.havelsan.ueransim.app.common.contexts.NgapUeContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
@@ -24,8 +24,8 @@ import java.util.UUID;
 
 public class NgapUeManagement {
 
-    public static void createUeContext(GnbSimContext ctx, UUID ueId) {
-        var gnbUeCtx = new GnbUeContext(ueId);
+    public static void createUeContext(NgapGnbContext ctx, UUID ueId) {
+        var gnbUeCtx = new NgapUeContext(ueId);
         gnbUeCtx.ranUeNgapId = ++ctx.ueNgapIdCounter;
         gnbUeCtx.amfUeNgapId = null;
 
@@ -33,7 +33,7 @@ public class NgapUeManagement {
         selectAmfForUe(ctx, gnbUeCtx);
     }
 
-    private static UUID findUeByRanId(GnbSimContext ctx, long ranUeNgapId) {
+    private static UUID findUeByRanId(NgapGnbContext ctx, long ranUeNgapId) {
         // todo: make O(1)
         for (var entry : ctx.ueContexts.entrySet()) {
             if (entry.getValue().ranUeNgapId == ranUeNgapId) {
@@ -43,7 +43,7 @@ public class NgapUeManagement {
         return null;
     }
 
-    private static UUID findUeByAmfId(GnbSimContext ctx, long amfUeNgapId) {
+    private static UUID findUeByAmfId(NgapGnbContext ctx, long amfUeNgapId) {
         // todo: make O(1)
         for (var entry : ctx.ueContexts.entrySet()) {
             if (entry.getValue().amfUeNgapId == amfUeNgapId) {
@@ -53,12 +53,12 @@ public class NgapUeManagement {
         return null;
     }
 
-    private static void selectAmfForUe(GnbSimContext ctx, GnbUeContext ueCtx) {
+    private static void selectAmfForUe(NgapGnbContext ctx, NgapUeContext ueCtx) {
         // todo: always first configured AMF is selected for now
-        ueCtx.associatedAmf = ctx.config.amfConfigs[0].guami;
+        ueCtx.associatedAmf = ctx.gnbCtx.config.amfConfigs[0].guami;
     }
 
-    public static Guami selectNewAmfForReAllocation(GnbSimContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
+    public static Guami selectNewAmfForReAllocation(NgapGnbContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
         Log.funcIn("Handling: Select AMF from AMFSetId");
         Log.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
 
@@ -86,7 +86,7 @@ public class NgapUeManagement {
         return res;
     }
 
-    private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_AMF_UE_NGAP_ID amfUeNgapId, NGAP_RAN_UE_NGAP_ID ranUeNgapId) {
+    private static UUID findAssociatedUeId(NgapGnbContext ctx, NGAP_AMF_UE_NGAP_ID amfUeNgapId, NGAP_RAN_UE_NGAP_ID ranUeNgapId) {
         if (amfUeNgapId == null || ranUeNgapId == null) {
             throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
         }
@@ -109,7 +109,7 @@ public class NgapUeManagement {
         return associatedUe;
     }
 
-    private static UUID findAssociatedUeId(GnbSimContext ctx, NGAP_UE_NGAP_IDs ueNgapIDs) {
+    private static UUID findAssociatedUeId(NgapGnbContext ctx, NGAP_UE_NGAP_IDs ueNgapIDs) {
         if (ueNgapIDs == null) {
             throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
         }
@@ -124,13 +124,13 @@ public class NgapUeManagement {
         throw new NgapErrorException(NGAP_CauseProtocol.ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE);
     }
 
-    public static UUID findAssociatedUeIdDefault(GnbSimContext ctx, NGAP_BaseMessage ngapMessage) {
+    public static UUID findAssociatedUeIdDefault(NgapGnbContext ctx, NGAP_BaseMessage ngapMessage) {
         var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
         var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
         return findAssociatedUeId(ctx, ieAmfUeNgapId, ieRanUeNgapId);
     }
 
-    public static UUID findAssociatedUeForUeNgapIds(GnbSimContext ctx, NGAP_BaseMessage message) {
+    public static UUID findAssociatedUeForUeNgapIds(NgapGnbContext ctx, NGAP_BaseMessage message) {
         var ie = message.getProtocolIe(NGAP_UE_NGAP_IDs.class);
         return findAssociatedUeId(ctx, ie);
     }

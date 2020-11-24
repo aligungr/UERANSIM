@@ -6,11 +6,11 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
-import tr.havelsan.ueransim.app.common.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
+import tr.havelsan.ueransim.app.common.contexts.NgapUeContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -36,7 +36,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class NgapPduSessionManagement {
 
-    public static void receiveResourceSetupRequest(GnbSimContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
+    public static void receiveResourceSetupRequest(NgapGnbContext ctx, NGAP_PDUSessionResourceSetupRequest message) {
         Log.funcIn("Handling PDU Session Resource Setup Request");
 
         var response = new NGAP_PDUSessionResourceSetupResponse();
@@ -82,7 +82,7 @@ public class NgapPduSessionManagement {
 
             if (pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
-                    ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
+                    ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
@@ -116,7 +116,7 @@ public class NgapPduSessionManagement {
 
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
-            ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, nasPdu.value));
+            ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, nasPdu.value));
         }
 
         int succeeded = successList.list.size();
@@ -134,16 +134,16 @@ public class NgapPduSessionManagement {
         Log.funcOut();
     }
 
-    private static boolean pduResourceSetup(GnbSimContext ctx, GnbUeContext ueCtx, PduSessionResource resource) {
+    private static boolean pduResourceSetup(NgapGnbContext ctx, NgapUeContext ueCtx, PduSessionResource resource) {
         resource.downLayer = new NGAP_UPTransportLayerInformation();
         resource.downLayer.gTPTunnel = new NGAP_GTPTunnel();
 
-        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.config.host));
+        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.gnbCtx.config.host));
 
         // TODO: teid of gnb
         resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);
 
-        ctx.nts.findTask(ItmsId.GNB_TASK_GTP).push(new IwPduSessionResourceCreate(resource));
+        ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP).push(new IwPduSessionResourceCreate(resource));
         return true; // success
     }
 }

@@ -9,15 +9,16 @@ import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.sctp.ISctpClient;
 import tr.havelsan.ueransim.sctp.SctpAssociation;
 
-public class GnbAmfContext {
+public class NgapAmfContext {
     public final Guami guami;
     public ISctpClient sctpClient;
     public SctpAssociation association;
     public int nextStream; // next available SCTP stream for uplink
     public String host;
     public int port;
+    public String amfName;
 
-    public GnbAmfContext(Guami guami) {
+    public NgapAmfContext(Guami guami) {
         this.guami = guami;
     }
 }

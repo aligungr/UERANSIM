@@ -6,30 +6,21 @@
 package tr.havelsan.ueransim.app.common.simctx;
 
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
-import tr.havelsan.ueransim.app.common.contexts.GnbAmfContext;
-import tr.havelsan.ueransim.app.common.contexts.GnbUeContext;
+import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.contexts.GtpUContext;
 import tr.havelsan.ueransim.utils.console.Logger;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 public class GnbSimContext extends BaseSimContext {
+    public final GnbConfig config;
     public Logger logger;
-    public GnbConfig config;
-
-    public HashMap<Guami, GnbAmfContext> amfContexts;
-    public HashMap<UUID, GnbUeContext> ueContexts;
-    public long ueNgapIdCounter;
-
+    public NgapGnbContext ngapCtx;
     public GtpUContext gtpUCtx;
 
-    public GnbSimContext(UeRanSim sim, String nodeName) {
+    public GnbSimContext(UeRanSim sim, String nodeName, GnbConfig config) {
         super(sim, nodeName);
-        this.amfContexts = new HashMap<>();
-        this.ueContexts = new HashMap<>();
+        this.config = config;
+        this.ngapCtx = new NgapGnbContext(this);
         this.gtpUCtx = new GtpUContext();
     }
 }

@@ -17,7 +17,7 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UESecurityCapabilities;
 
 import java.util.UUID;
 
-public class GnbUeContext {
+public class NgapUeContext {
     public final UUID ueCtxId;
 
     public Long amfUeNgapId;
@@ -35,7 +35,7 @@ public class GnbUeContext {
     public NGAP_SecurityKey securityKey;
     public NGAP_PagingPriority pagingPriority;
 
-    public GnbUeContext(UUID ueCtxId) {
+    public NgapUeContext(UUID ueCtxId) {
         this.ueCtxId = ueCtxId;
     }
 }

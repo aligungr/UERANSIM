@@ -6,8 +6,8 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.Guami;
+import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class NgapNasTransport {
 
-    public static void receiveUplinkNasTransport(GnbSimContext ctx, UUID associatedUe, NasMessage nasMessage) {
+    public static void receiveUplinkNasTransport(NgapGnbContext ctx, UUID associatedUe, NasMessage nasMessage) {
         Log.funcIn("Handling Uplink NAS Transport");
 
         NGAP_BaseMessage ngap;
@@ -63,20 +63,20 @@ public class NgapNasTransport {
         Log.funcOut();
     }
 
-    public static void receiveDownlinkNasTransport(GnbSimContext ctx, NGAP_DownlinkNASTransport message) {
+    public static void receiveDownlinkNasTransport(NgapGnbContext ctx, NGAP_DownlinkNASTransport message) {
         Log.funcIn("Handling Downlink NAS Transport");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
+            ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
         }
 
         Log.funcOut();
     }
 
-    public static void receiveRerouteNasRequest(GnbSimContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
+    public static void receiveRerouteNasRequest(NgapGnbContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
         Log.funcIn("Handling Reroute NAS Request");
 
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
