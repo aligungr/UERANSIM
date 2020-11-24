@@ -13,6 +13,7 @@ import tr.havelsan.ueransim.app.common.configs.ProcTestConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -62,19 +63,6 @@ public class ProcedureTester extends MonitorTask {
 
     @Override
     public void onConnected(BaseSimContext ctx, EConnType connType) {
-        if (initState == INIT_STATE__WAITING_GNB) {
-            if (ctx.ctxId.equals(gnbId) && connType == EConnType.SCTP) {
-                // gNB is ready, now create the UEs.
-                for (int i = 0; i < procTestConfig.numberOfUe; i++) {
-                    ueIds.add(sim.createUe(createUeConfig(i)));
-                }
-
-                this.waitingUes = new HashSet<>(ueIds);
-
-                initState = INIT_STATE__WAITING_UE;
-            }
-        }
-
         if (initState == INIT_STATE__WAITING_UE) {
             if (connType == EConnType.UE_MR_GNB) {
                 this.waitingUes.remove(ctx.ctxId);
@@ -109,12 +97,24 @@ public class ProcedureTester extends MonitorTask {
 
     @Override
     public void onReceive(BaseSimContext ctx, Object message) {
-        if (initState != INIT_STATE__INIT_DONE)
-            return;
+        if (initState == INIT_STATE__WAITING_GNB) {
+            if (ctx.ctxId.equals(gnbId) && message instanceof NGAP_NGSetupResponse) {
+                // gNB is ready, now create the UEs.
+                for (int i = 0; i < procTestConfig.numberOfUe; i++) {
+                    ueIds.add(sim.createUe(createUeConfig(i)));
+                }
 
-        var ueTester = ueTesters.get(ctx.ctxId);
-        if (ueTester != null) {
-            ueTester.onReceive(ctx, message);
+                this.waitingUes = new HashSet<>(ueIds);
+
+                initState = INIT_STATE__WAITING_UE;
+            }
+        }
+
+        if (initState == INIT_STATE__INIT_DONE) {
+            var ueTester = ueTesters.get(ctx.ctxId);
+            if (ueTester != null) {
+                ueTester.onReceive(ctx, message);
+            }
         }
     }
 
