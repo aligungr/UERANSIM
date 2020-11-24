@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
+import tr.havelsan.ueransim.ngap0.ies.printable_strings.NGAP_RANNodeName;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
@@ -24,6 +25,7 @@ public class NgapInterfaceManagement {
         var msg = new NGAP_NGSetupRequest();
         msg.addProtocolIe(NgapUtils.createGlobalGnbId(ctx.gnbCtx.config.gnbId, ctx.gnbCtx.config.gnbPlmn));
         msg.addProtocolIe(NgapUtils.createSupportedTAList(ctx.gnbCtx.config.supportedTAs));
+        msg.addProtocolIe(new NGAP_RANNodeName("UERANSIM/gnb" + ctx.gnbCtx.config.gnbId));
         msg.addProtocolIe(NGAP_PagingDRX.V64);
 
         NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
