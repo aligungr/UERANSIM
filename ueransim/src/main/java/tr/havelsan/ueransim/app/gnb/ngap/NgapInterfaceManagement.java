@@ -17,6 +17,7 @@ import tr.havelsan.ueransim.ngap0.ies.printable_strings.NGAP_AMFName;
 import tr.havelsan.ueransim.ngap0.ies.printable_strings.NGAP_RANNodeName;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_PLMNSupportList;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_ServedGUAMIList;
+import tr.havelsan.ueransim.ngap0.msg.NGAP_ErrorIndication;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupFailure;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupRequest;
 import tr.havelsan.ueransim.ngap0.msg.NGAP_NGSetupResponse;
@@ -82,10 +83,19 @@ public class NgapInterfaceManagement {
 
         var cause = message.getProtocolIe(NGAP_Cause.class);
         if (cause == null) {
-            Log.error(Tag.PROC, "NGSetup procedure is failed");
+            Log.error(Tag.PROC, "NGSetup procedure is failed.");
         } else {
             Log.error(Tag.PROC, "NGSetup procedure is failed: " + ((NGAP_Enumerated) cause.getPresentValue()).sValue);
         }
         Log.funcOut();
+    }
+
+    public static void receiveErrorIndication(NgapGnbContext ctx, NGAP_ErrorIndication message) {
+        var cause = message.getProtocolIe(NGAP_Cause.class);
+        if (cause == null) {
+            Log.error(Tag.PROC, "Error indication received.");
+        } else {
+            Log.error(Tag.PROC, "Error indication received: " + ((NGAP_Enumerated) cause.getPresentValue()).sValue);
+        }
     }
 }

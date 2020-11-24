@@ -118,7 +118,7 @@ public class NgapTask extends NtsTask {
             } else if (ngapMessage instanceof NGAP_PDUSessionResourceSetupRequest) {
                 NgapPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
             } else if (ngapMessage instanceof NGAP_ErrorIndication) {
-                Log.error(Tag.FLOW, "Error indication received.");
+                NgapInterfaceManagement.receiveErrorIndication(ctx, (NGAP_ErrorIndication) ngapMessage);
             } else {
                 Log.error(Tag.MSG, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
             }
