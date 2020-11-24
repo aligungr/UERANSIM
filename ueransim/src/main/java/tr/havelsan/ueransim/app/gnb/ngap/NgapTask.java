@@ -104,7 +104,7 @@ public class NgapTask extends NtsTask {
             if (ngapMessage instanceof NGAP_NGSetupResponse) {
                 NgapInterfaceManagement.receiveNgSetupResponse(ctx, associatedAmf, (NGAP_NGSetupResponse) ngapMessage);
             } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
-                NgapInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
+                NgapInterfaceManagement.receiveNgSetupFailure(ctx, associatedAmf, (NGAP_NGSetupFailure) ngapMessage);
             } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
                 NgapNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
             } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {

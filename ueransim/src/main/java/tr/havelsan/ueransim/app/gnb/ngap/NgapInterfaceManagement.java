@@ -9,6 +9,8 @@ import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.enums.EAmfState;
 import tr.havelsan.ueransim.app.gnb.utils.NgapUtils;
+import tr.havelsan.ueransim.ngap0.core.NGAP_Enumerated;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RelativeAMFCapacity;
 import tr.havelsan.ueransim.ngap0.ies.printable_strings.NGAP_AMFName;
@@ -70,10 +72,20 @@ public class NgapInterfaceManagement {
         Log.funcOut();
     }
 
-    public static void receiveNgSetupFailure(NgapGnbContext ctx, NGAP_NGSetupFailure message) {
+    public static void receiveNgSetupFailure(NgapGnbContext ctx, Guami associatedAmf, NGAP_NGSetupFailure message) {
         Log.funcIn("Handling: NGSetupFailure");
-        Log.error(Tag.PROC, "NGSetup procedure is failed");
 
+        var amf = ctx.amfContexts.get(associatedAmf);
+        if (amf != null) {
+            amf.state = EAmfState.WAITING_NG_SETUP;
+        }
+
+        var cause = message.getProtocolIe(NGAP_Cause.class);
+        if (cause == null) {
+            Log.error(Tag.PROC, "NGSetup procedure is failed");
+        } else {
+            Log.error(Tag.PROC, "NGSetup procedure is failed: " + ((NGAP_Enumerated) cause.getPresentValue()).sValue);
+        }
         Log.funcOut();
     }
 }
