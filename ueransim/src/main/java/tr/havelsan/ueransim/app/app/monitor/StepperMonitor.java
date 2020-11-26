@@ -58,8 +58,7 @@ public class StepperMonitor extends MonitorTask {
         if (msg instanceof ConfigurationUpdateComplete || msg instanceof PduSessionAuthenticationComplete ||
                 msg instanceof PduSessionEstablishmentAccept || msg instanceof PduSessionModificationComplete
                 || msg instanceof PduSessionReleaseComplete || msg instanceof RegistrationAccept ||
-                msg instanceof RegistrationComplete || msg instanceof SecurityModeComplete
-                || msg instanceof ServiceAccept) {
+                msg instanceof RegistrationComplete || msg instanceof ServiceAccept) {
             return Severity.SUCC;
         }
 
