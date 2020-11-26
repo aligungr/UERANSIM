@@ -26,7 +26,7 @@ public class GnbConfig {
                      boolean ignoreStreamIds, String host, int gtpPort, Nssai[] nssais) {
         this.gnbId = gnbId;
         this.tac = tac;
-        this.nci = BitString.fromHex(nci);
+        this.nci = BitString.fromBits(BitString.fromHex(nci).toBinaryString().substring(0, 36)); // TODO: refactor
         this.plmn = plmn;
         this.amfConfigs = amfConfigs;
         this.ignoreStreamIds = ignoreStreamIds;

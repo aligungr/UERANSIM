@@ -127,10 +127,10 @@ public class NgapUtils {
                 var item = new NGAP_SliceSupportItem();
                 item.s_NSSAI = new NGAP_S_NSSAI();
                 if (nssai.sst != 0) {
-                    item.s_NSSAI.sST = new NGAP_SST(new Octet3(nssai.sst).toByteArray());
+                    item.s_NSSAI.sST = new NGAP_SST(new Octet(nssai.sst).toByteArray());
                 }
                 if (nssai.sd != 0) {
-                    item.s_NSSAI.sD = new NGAP_SD(new Octet(nssai.sd).toByteArray());
+                    item.s_NSSAI.sD = new NGAP_SD(new Octet3(nssai.sd).toByteArray());
                 }
                 res.list.add(item);
             }
