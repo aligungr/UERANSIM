@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.common.configs;
 
 import tr.havelsan.ueransim.app.gnb.utils.SupportedTA;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.utils.bits.BitString;
 
 public class GnbConfig {
@@ -19,6 +20,7 @@ public class GnbConfig {
     public final boolean ignoreStreamIds;
     public final String host;
     public final int gtpPort;
+    public final NGAP_PagingDRX pagingDrx;
 
     public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds, String host, int gtpPort) {
         this.gnbId = gnbId;
@@ -30,5 +32,7 @@ public class GnbConfig {
         this.ignoreStreamIds = ignoreStreamIds;
         this.host = host;
         this.gtpPort = gtpPort;
+
+        this.pagingDrx = NGAP_PagingDRX.V64; // TODO: Make this configurable
     }
 }

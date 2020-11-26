@@ -11,7 +11,6 @@ import tr.havelsan.ueransim.app.common.enums.EAmfState;
 import tr.havelsan.ueransim.app.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.ngap0.core.NGAP_Enumerated;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
-import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RelativeAMFCapacity;
 import tr.havelsan.ueransim.ngap0.ies.printable_strings.NGAP_AMFName;
 import tr.havelsan.ueransim.ngap0.ies.printable_strings.NGAP_RANNodeName;
@@ -43,7 +42,7 @@ public class NgapInterfaceManagement {
         msg.addProtocolIe(NgapUtils.createGlobalGnbId(ctx.gnbCtx.config.gnbId, ctx.gnbCtx.config.gnbPlmn));
         msg.addProtocolIe(NgapUtils.createSupportedTAList(ctx.gnbCtx.config.supportedTAs));
         msg.addProtocolIe(new NGAP_RANNodeName("UERANSIM/gnb" + ctx.gnbCtx.config.gnbId));
-        msg.addProtocolIe(NGAP_PagingDRX.V64);
+        msg.addProtocolIe(ctx.gnbCtx.config.pagingDrx);
 
         NgapTransfer.sendNgapNonUe(ctx, associatedAmf, msg);
     }
