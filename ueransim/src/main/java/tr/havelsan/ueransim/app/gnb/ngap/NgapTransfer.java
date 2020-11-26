@@ -54,8 +54,8 @@ public class NgapTransfer {
         // Adding user location information
         if (message.isProtocolIeUsable(NGAP_UserLocationInformation.class)) {
             var ie = new NGAP_UserLocationInformation();
-            ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(ctx.gnbCtx.config.gnbPlmn,
-                    new VTrackingAreaIdentity(ctx.gnbCtx.config.gnbPlmn, ctx.gnbCtx.config.tac), ctx.gnbCtx.config.nci);
+            ie.userLocationInformationNR = NgapUtils.createUserLocationInformationNr(ctx.gnbCtx.config.plmn,
+                    new VTrackingAreaIdentity(ctx.gnbCtx.config.plmn, ctx.gnbCtx.config.tac), ctx.gnbCtx.config.nci);
             message.addProtocolIe(ie);
         }
 

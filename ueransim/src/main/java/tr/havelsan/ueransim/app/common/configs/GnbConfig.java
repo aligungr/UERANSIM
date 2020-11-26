@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.common.configs;
 
-import tr.havelsan.ueransim.app.gnb.utils.SupportedTA;
+import tr.havelsan.ueransim.app.gnb.utils.Nssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingDRX;
 import tr.havelsan.ueransim.utils.bits.BitString;
@@ -14,25 +14,24 @@ public class GnbConfig {
     public final int gnbId;
     public final int tac;
     public final BitString nci;
-    public final VPlmn gnbPlmn;
+    public final VPlmn plmn;
     public final GnbAmfConfig[] amfConfigs;
-    public final SupportedTA[] supportedTAs;
     public final boolean ignoreStreamIds;
     public final String host;
     public final int gtpPort;
-    public final NGAP_PagingDRX pagingDrx;
+    public final Nssai[] nssais;
+    public final NGAP_PagingDRX pagingDrx = NGAP_PagingDRX.V64; // TODO config
 
-    public GnbConfig(int gnbId, int tac, String nci, VPlmn gnbPlmn, GnbAmfConfig[] amfConfigs, SupportedTA[] supportedTAs, boolean ignoreStreamIds, String host, int gtpPort) {
+    public GnbConfig(int gnbId, int tac, String nci, VPlmn plmn, GnbAmfConfig[] amfConfigs,
+                     boolean ignoreStreamIds, String host, int gtpPort, Nssai[] nssais) {
         this.gnbId = gnbId;
         this.tac = tac;
-        this.nci = BitString.fromBits(nci);
-        this.gnbPlmn = gnbPlmn;
+        this.nci = BitString.fromHex(nci);
+        this.plmn = plmn;
         this.amfConfigs = amfConfigs;
-        this.supportedTAs = supportedTAs;
         this.ignoreStreamIds = ignoreStreamIds;
         this.host = host;
         this.gtpPort = gtpPort;
-
-        this.pagingDrx = NGAP_PagingDRX.V64; // TODO: Make this configurable
+        this.nssais = nssais;
     }
 }
