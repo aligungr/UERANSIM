@@ -20,6 +20,7 @@ import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_AMFSetID;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseMisc;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RRCEstablishmentCause;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_UEContextRequest;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
 import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NGAP_Message;
 import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
@@ -42,6 +43,7 @@ public class NgapNasTransport {
 
             ngap = new NGAP_InitialUEMessage();
             ngap.addProtocolIe(NGAP_RRCEstablishmentCause.MO_DATA);
+            ngap.addProtocolIe(NGAP_UEContextRequest.REQUESTED);
 
             var ueCtx = ctx.ueContexts.get(associatedUe);
             var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
