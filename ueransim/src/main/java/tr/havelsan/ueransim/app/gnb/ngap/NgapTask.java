@@ -46,7 +46,12 @@ public class NgapTask extends NtsTask {
                 receiveNgap(((IwNgapReceive) msg).associatedAmf, ((IwNgapReceive) msg).stream, ((IwNgapReceive) msg).ngapPdu);
             } else if (msg instanceof IwUplinkNas) {
                 var w = (IwUplinkNas) msg;
-                NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
+
+                if (!ctx.ueContexts.containsKey(w.ue)) {
+                    NgapNasTransport.receiveInitialNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
+                } else {
+                    NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
+                }
             } else if (msg instanceof IwSctpAssociationSetup) {
                 NgapInterfaceManagement.sendNgSetupRequest(ctx, ((IwSctpAssociationSetup) msg).amfId);
             }

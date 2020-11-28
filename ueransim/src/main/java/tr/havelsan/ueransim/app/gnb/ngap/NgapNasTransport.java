@@ -13,7 +13,6 @@ import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.Ngap;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
-import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.core.NGAP_Enumerated;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_AMFSetID;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
@@ -33,26 +32,31 @@ import java.util.UUID;
 
 public class NgapNasTransport {
 
-    public static void receiveUplinkNasTransport(NgapGnbContext ctx, UUID associatedUe, NasMessage nasMessage) {
-        NGAP_BaseMessage ngap;
-        if (ctx.ueContexts.containsKey(associatedUe)) {
-            ngap = new NGAP_UplinkNASTransport();
-        } else {
-            NgapUeManagement.createUeContext(ctx, associatedUe);
+    public static void receiveInitialNasTransport(NgapGnbContext ctx, UUID associatedUe, NasMessage nasMessage) {
+        NgapUeManagement.createUeContext(ctx, associatedUe);
 
-            ngap = new NGAP_InitialUEMessage();
-            ngap.addProtocolIe(NGAP_RRCEstablishmentCause.MO_DATA);
-            ngap.addProtocolIe(NGAP_UEContextRequest.REQUESTED);
+        var ngap = new NGAP_InitialUEMessage();
+        ngap.addProtocolIe(NGAP_RRCEstablishmentCause.MO_DATA);
+        ngap.addProtocolIe(NGAP_UEContextRequest.REQUESTED);
 
-            var ueCtx = ctx.ueContexts.get(associatedUe);
-            var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
+        var ueCtx = ctx.ueContexts.get(associatedUe);
+        var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
 
-            amfCtx.nextStream = (amfCtx.nextStream + 1) % amfCtx.association.outbound;
-            if ((amfCtx.nextStream == 0) && (amfCtx.association.outbound > 1)) {
-                amfCtx.nextStream += 1;
-            }
-            ueCtx.uplinkStream = amfCtx.nextStream;
+        amfCtx.nextStream = (amfCtx.nextStream + 1) % amfCtx.association.outbound;
+        if ((amfCtx.nextStream == 0) && (amfCtx.association.outbound > 1)) {
+            amfCtx.nextStream += 1;
         }
+        ueCtx.uplinkStream = amfCtx.nextStream;
+
+        if (nasMessage != null) {
+            ngap.addProtocolIe(new NGAP_NAS_PDU(NasEncoder.nasPdu(nasMessage)));
+        }
+
+        NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
+    }
+
+    public static void receiveUplinkNasTransport(NgapGnbContext ctx, UUID associatedUe, NasMessage nasMessage) {
+        var ngap = new NGAP_UplinkNASTransport();
 
         if (nasMessage != null) {
             ngap.addProtocolIe(new NGAP_NAS_PDU(NasEncoder.nasPdu(nasMessage)));
