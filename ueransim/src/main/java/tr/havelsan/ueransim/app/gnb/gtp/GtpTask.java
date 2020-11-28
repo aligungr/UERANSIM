@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.gnb.gtp;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
-import tr.havelsan.ueransim.app.common.contexts.GtpUContext;
+import tr.havelsan.ueransim.app.common.contexts.GtpContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwGtpDownlink;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
@@ -33,24 +33,23 @@ import java.util.ArrayList;
 
 public class GtpTask extends NtsTask {
 
-    private final GnbSimContext ctx;
-    private GtpUContext gtpCtx;
+    private final GtpContext ctx;
+
     private DatagramSocket socket;
     private NtsTask mrTask;
 
     public GtpTask(GnbSimContext ctx) {
-        this.ctx = ctx;
+        this.ctx = new GtpContext(ctx);
     }
 
     @Override
     public void main() {
-        this.gtpCtx = ctx.gtpUCtx;
-        this.mrTask = ctx.nts.findTask(ItmsId.GNB_TASK_MR);
+        this.mrTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR);
 
         try {
-            this.socket = new DatagramSocket(ctx.config.gtpPort, InetAddress.getByName(ctx.config.host));
+            this.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
         } catch (Exception e) {
-            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.config.gtpPort, ctx.config.host, e.toString());
+            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.gtpPort, ctx.gnbCtx.config.host, e.toString());
             return;
         }
 
@@ -92,7 +91,7 @@ public class GtpTask extends NtsTask {
             return;
         }
 
-        var pduSessionOpt = this.gtpCtx.pduSessions.stream()
+        var pduSessionOpt = ctx.pduSessions.stream()
                 .filter(r -> r.ueId.equals(msg.ueId) && r.pduSessionId == msg.pduSessionId)
                 .findFirst();
         if (pduSessionOpt.isEmpty()) {
@@ -132,7 +131,7 @@ public class GtpTask extends NtsTask {
     private void handleDownlinkGtp(IwGtpDownlink msg) {
         var gtp = GtpDecoder.decode(msg.data);
 
-        var pduSession = this.gtpCtx.pduSessions.stream()
+        var pduSession = ctx.pduSessions.stream()
                 .filter(r -> r.upLayer.gTPTunnel.gTP_TEID.value.equals(gtp.teid.toOctetString()))
                 .findFirst();
         if (pduSession.isEmpty()) {
@@ -152,6 +151,6 @@ public class GtpTask extends NtsTask {
     }
 
     private void handleTunnelCreate(PduSessionResource pduSession) {
-        this.gtpCtx.pduSessions.add(pduSession);
+        ctx.pduSessions.add(pduSession);
     }
 }
