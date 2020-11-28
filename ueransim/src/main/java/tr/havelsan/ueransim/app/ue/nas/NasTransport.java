@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
-
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
