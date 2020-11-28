@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.itms.IwNgapSend;
 import tr.havelsan.ueransim.app.gnb.utils.NgapUtils;
@@ -25,7 +24,7 @@ import java.util.UUID;
 
 public class NgapTransfer {
 
-    public static void sendNgapNonUe(NgapGnbContext ctx, Guami associatedAmf, NGAP_BaseMessage message) {
+    public static void sendNgapNonUe(NgapGnbContext ctx, UUID associatedAmf, NGAP_BaseMessage message) {
         var ngapPdu = message.buildPdu();
 
         Log.debug(Tag.MSG, "Sending NGAP: %s", message.getClass().getSimpleName());

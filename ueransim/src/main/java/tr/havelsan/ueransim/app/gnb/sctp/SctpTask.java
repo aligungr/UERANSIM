@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.sctp;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapAmfContext;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.itms.IwInitialSctpReady;
@@ -24,6 +23,7 @@ import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SctpTask extends NtsTask {
@@ -31,7 +31,7 @@ public class SctpTask extends NtsTask {
     private static final int NGAP_PROTOCOL_ID = 60;
 
     private final GnbSimContext ctx;
-    private final HashMap<Guami, NgapAmfContext> amfs;
+    private final HashMap<UUID, NgapAmfContext> amfs;
 
     private NtsTask ngapTask;
     private NtsTask appTask;
@@ -54,13 +54,13 @@ public class SctpTask extends NtsTask {
         var setupCount = new AtomicInteger(0);
 
         for (var amf : ctx.ngapCtx.amfContexts.values()) {
-            amfs.put(amf.guami, amf);
+            amfs.put(amf.ctxId, amf);
 
             var associationHandler = new ISctpAssociationHandler() {
                 @Override
                 public void onSetup(SctpAssociation sctpAssociation) {
                     amf.association = sctpAssociation;
-                    ngapTask.push(new IwSctpAssociationSetup(amf.guami, sctpAssociation));
+                    ngapTask.push(new IwSctpAssociationSetup(amf.ctxId, sctpAssociation));
                     setupCount.incrementAndGet();
                 }
 
@@ -81,7 +81,7 @@ public class SctpTask extends NtsTask {
                 }
                 try {
                     amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
-                            -> handleSCTPMessage(amf.guami, receivedBytes, streamNumber));
+                            -> handleSCTPMessage(amf.ctxId, receivedBytes, streamNumber));
                 } catch (Exception e) {
                     Log.error(Tag.CONN, "SCTP connection error: " + e.getMessage());
                     return;
@@ -110,7 +110,7 @@ public class SctpTask extends NtsTask {
         }
     }
 
-    public void handleSCTPMessage(Guami associatedAmf, byte[] receivedBytes, int streamNumber) {
+    public void handleSCTPMessage(UUID associatedAmf, byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
         ngapTask.push(new IwNgapReceive(associatedAmf, streamNumber, pdu));
     }

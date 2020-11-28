@@ -5,15 +5,11 @@
 
 package tr.havelsan.ueransim.app.common.configs;
 
-import tr.havelsan.ueransim.app.common.Guami;
-
 public class GnbAmfConfig {
-    public final Guami guami;
     public final String host;
     public final int port;
 
-    public GnbAmfConfig(Guami guami, String host, int port) {
-        this.guami = guami;
+    public GnbAmfConfig(String host, int port) {
         this.host = host;
         this.port = port;
     }

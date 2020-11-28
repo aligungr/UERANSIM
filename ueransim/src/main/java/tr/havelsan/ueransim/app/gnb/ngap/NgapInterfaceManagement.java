@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.enums.EAmfState;
 import tr.havelsan.ueransim.app.gnb.utils.NgapUtils;
@@ -25,9 +24,11 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 
+import java.util.UUID;
+
 public class NgapInterfaceManagement {
 
-    public static void sendNgSetupRequest(NgapGnbContext ctx, Guami associatedAmf) {
+    public static void sendNgSetupRequest(NgapGnbContext ctx, UUID associatedAmf) {
         // TODO: this procedure also re-initialises the NGAP UE-related contexts (if any)
         //  and erases all related signalling connections in the two nodes like an NG Reset procedure would do.
         //  More on 38.413 8.7.1.1
@@ -57,7 +58,7 @@ public class NgapInterfaceManagement {
         return new SupportedTA[]{supportedTA};
     }
 
-    public static void receiveNgSetupResponse(NgapGnbContext ctx, Guami associatedAmf, NGAP_NGSetupResponse message) {
+    public static void receiveNgSetupResponse(NgapGnbContext ctx, UUID associatedAmf, NGAP_NGSetupResponse message) {
         var amf = ctx.amfContexts.get(associatedAmf);
         if (amf == null) {
             Log.error(Tag.PROC, "NGSetup procedure is failed: AMF context not found.");
@@ -73,7 +74,7 @@ public class NgapInterfaceManagement {
         Log.success(Tag.PROC, "NGSetup procedure is successful");
     }
 
-    public static void receiveNgSetupFailure(NgapGnbContext ctx, Guami associatedAmf, NGAP_NGSetupFailure message) {
+    public static void receiveNgSetupFailure(NgapGnbContext ctx, UUID associatedAmf, NGAP_NGSetupFailure message) {
         var amf = ctx.amfContexts.get(associatedAmf);
         if (amf != null) {
             amf.state = EAmfState.WAITING_NG_SETUP;

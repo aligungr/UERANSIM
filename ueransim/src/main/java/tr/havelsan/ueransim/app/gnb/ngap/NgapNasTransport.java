@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -85,7 +84,7 @@ public class NgapNasTransport {
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
     }
 
-    public static void receiveRerouteNasRequest(NgapGnbContext ctx, Guami associatedAmf, NGAP_RerouteNASRequest message) {
+    public static void receiveRerouteNasRequest(NgapGnbContext ctx, UUID associatedAmf, NGAP_RerouteNASRequest message) {
         var associatedUe = NgapUeManagement.findAssociatedUeIdDefault(ctx, message);
 
         var ngapMessage = message.getProtocolIe(NGAP_NGAP_Message.class);

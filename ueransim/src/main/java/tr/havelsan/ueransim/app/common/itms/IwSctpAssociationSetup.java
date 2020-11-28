@@ -5,15 +5,16 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.sctp.SctpAssociation;
 
+import java.util.UUID;
+
 public class IwSctpAssociationSetup {
-    public final Guami guami;
+    public final UUID amfId;
     public final SctpAssociation association;
 
-    public IwSctpAssociationSetup(Guami guami, SctpAssociation association) {
-        this.guami = guami;
+    public IwSctpAssociationSetup(UUID amfId, SctpAssociation association) {
+        this.amfId = amfId;
         this.association = association;
     }
 }
