@@ -10,16 +10,7 @@ plmn:
   mnc: 1
 
 amfConfigs:
-  - guami:
-      mcc: 286
-      mnc: 1
-      amfRegionId:
-        hex: '2a'
-      amfSetId:
-        hex: '5580'
-      amfPointer:
-        hex: 'a8'
-    host: 127.0.0.1
+  - host: 127.0.0.1
     port: 38412
 
 nssais:
