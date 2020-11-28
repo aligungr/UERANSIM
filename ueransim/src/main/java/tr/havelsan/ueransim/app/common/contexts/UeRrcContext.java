@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 public class UeRrcContext {
     public final UeSimContext ueCtx;
     public NtsTask mrTask;
+    public NtsTask nasTask;
 
     public ERrcState state;
 

@@ -19,6 +19,7 @@ public class UeMrTask extends NtsTask {
     private final UeSimContext ctx;
 
     private NtsTask nasTask;
+    private NtsTask rrcTask;
     private NtsTask appTask;
 
     public UeMrTask(UeSimContext ctx) {
@@ -28,13 +29,12 @@ public class UeMrTask extends NtsTask {
     @Override
     public void main() {
         nasTask = ctx.nts.findTask(ItmsId.UE_TASK_NAS);
+        rrcTask = ctx.nts.findTask(ItmsId.UE_TASK_RRC);
         appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP);
 
         while (true) {
             var msg = take();
-            if (msg instanceof IwDownlinkNas) {
-                nasTask.push(msg);
-            } else if (msg instanceof IwUplinkNas || msg instanceof IwUplinkData) {
+            if (msg instanceof IwUplinkData) {
                 var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
                 if (gnb == null) {
                     Log.warning(Tag.FLOW, "Uplink NAS transport failure: UE not connected to a gNB.");
@@ -47,6 +47,10 @@ public class UeMrTask extends NtsTask {
                 nasTask.push(msg);
             } else if (msg instanceof IwPlmnSearchRequest) {
                 performPlmnSearch();
+            } else if (msg instanceof IwUplinkRrc) {
+                // TODO
+            } else if (msg instanceof IwDownlinkRrc) {
+                rrcTask.push(msg);
             }
         }
     }

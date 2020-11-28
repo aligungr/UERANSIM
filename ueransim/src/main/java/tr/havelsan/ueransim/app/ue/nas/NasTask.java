@@ -10,6 +10,7 @@ import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
@@ -33,6 +34,8 @@ public class NasTask extends NtsTask {
 
     @Override
     public void main() {
+        ctx.rrcTask = ctx.nts.findTask(ItmsId.UE_TASK_RRC);
+
         // TODO: Make this task sleepable/wakeable like other tasks.
         while (true) {
             MobilityManagement.cycle(ctx);

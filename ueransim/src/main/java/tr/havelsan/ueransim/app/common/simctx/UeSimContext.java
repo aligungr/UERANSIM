@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.contexts.MmContext;
 import tr.havelsan.ueransim.app.common.contexts.SmContext;
 import tr.havelsan.ueransim.app.ue.nas.NasSecurityContext;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.util.UUID;
@@ -22,6 +23,8 @@ public class UeSimContext extends BaseSimContext {
     public UeData ueData;
     public UeConfig ueConfig;
     public UeTimers ueTimers;
+
+    public NtsTask rrcTask;
 
     public UUID connectedGnb;
 

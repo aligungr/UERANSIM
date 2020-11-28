@@ -9,7 +9,6 @@ import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
-import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
@@ -29,7 +28,7 @@ public class NasTransport {
         Log.debug(Tag.MSG, "Secured NAS as JSON %s", Json.toJson(securedNas));
         Log.debug(Tag.MSG, "Secured NAS PDU: %s", securedNasPdu);
 
-        ctx.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkNas(ctx.ctxId, securedNasPdu));
+        ctx.rrcTask.push(new IwUplinkNas(ctx.ctxId, securedNasPdu));
         ctx.sim.triggerOnSend(ctx, message);
     }
 
