@@ -37,7 +37,7 @@ public class UeMrTask extends NtsTask {
             if (msg instanceof IwUplinkData) {
                 var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
                 if (gnb == null) {
-                    Log.warning(Tag.FLOW, "Uplink NAS transport failure: UE not connected to a gNB.");
+                    Log.warning(Tag.FLOW, "Uplink Data transport failure: UE not connected to a gNB.");
                 } else {
                     gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
                 }
