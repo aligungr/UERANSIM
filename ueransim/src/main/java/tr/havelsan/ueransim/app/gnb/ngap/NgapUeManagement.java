@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.contexts.NgapUeContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
@@ -15,11 +14,9 @@ import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseRadioNetwork;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
-import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.bits.Bit10;
-import tr.havelsan.ueransim.utils.console.Log;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class NgapUeManagement {
@@ -55,33 +52,12 @@ public class NgapUeManagement {
 
     private static void selectAmfForUe(NgapGnbContext ctx, NgapUeContext ueCtx) {
         // todo: always first configured AMF is selected for now
-        ueCtx.associatedAmf = ctx.gnbCtx.config.amfConfigs[0].guami;
+        ueCtx.associatedAmf = new ArrayList<>(ctx.amfContexts.values()).get(0).ctxId;
     }
 
-    public static Guami selectNewAmfForReAllocation(NgapGnbContext ctx, Guami initiatedAmf, Bit10 amfSetId) {
-        Log.debug(Tag.VALUE, "AMFSetId: %s", amfSetId);
-
-        Guami res = null;
-
-        // Filter the AMFs with MCC-MNC-RegionId-SetId
-        var amfs = Utils.streamToList(ctx.amfContexts.values().stream().filter(gnbAmfContext ->
-                gnbAmfContext.guami.mcc.equals(initiatedAmf.mcc)
-                        && gnbAmfContext.guami.mnc.equals(initiatedAmf.mnc)
-                        && gnbAmfContext.guami.amfRegionId.equals(initiatedAmf.amfRegionId)
-                        && gnbAmfContext.guami.amfSetId.equals(amfSetId)));
-
-        // If set id is the same, select a different AMF from initiated AMF
-        if (amfSetId.equals(initiatedAmf.amfSetId)) {
-            amfs = Utils.streamToList(amfs.stream().filter(gnbAmfContext ->
-                    !gnbAmfContext.guami.amfPointer.equals(initiatedAmf.amfPointer)));
-        }
-
-        // Take the first AMF satisfying above conditions
-        if (!amfs.isEmpty()) {
-            res = amfs.get(0).guami;
-        }
-
-        return res;
+    public static UUID selectNewAmfForReAllocation(NgapGnbContext ctx, UUID initiatedAmfId, Bit10 amfSetId) {
+        // todo:
+        return initiatedAmfId;
     }
 
     private static UUID findAssociatedUeId(NgapGnbContext ctx, NGAP_AMF_UE_NGAP_ID amfUeNgapId, NGAP_RAN_UE_NGAP_ID ranUeNgapId) {
