@@ -48,7 +48,7 @@ public class SctpTask extends NtsTask {
         appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP);
 
         // TODO: refactor this
-        var ngapCtx = ((NgapTask)ngapTask).getNgapContext();
+        var ngapCtx = ((NgapTask) ngapTask).getNgapContext();
 
         if (ngapCtx.amfContexts.isEmpty()) {
             Log.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
@@ -114,7 +114,7 @@ public class SctpTask extends NtsTask {
         }
     }
 
-    public void handleSCTPMessage(UUID associatedAmf, byte[] receivedBytes, int streamNumber) {
+    private void handleSCTPMessage(UUID associatedAmf, byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
         ngapTask.push(new IwNgapReceive(associatedAmf, streamNumber, pdu));
     }
