@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.common.contexts;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_PagingPriority;
@@ -22,7 +21,7 @@ public class NgapUeContext {
 
     public Long amfUeNgapId;
     public long ranUeNgapId;
-    public Guami associatedAmf;
+    public UUID associatedAmf;
     public int uplinkStream;
     public int downlinkStream;
 

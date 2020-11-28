@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
-import tr.havelsan.ueransim.app.common.Guami;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
@@ -27,6 +26,8 @@ import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
+import java.util.UUID;
+
 public class NgapTask extends NtsTask {
 
     private final GnbSimContext gnbCtx;
@@ -47,12 +48,12 @@ public class NgapTask extends NtsTask {
                 var w = (IwUplinkNas) msg;
                 NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
             } else if (msg instanceof IwSctpAssociationSetup) {
-                NgapInterfaceManagement.sendNgSetupRequest(ctx, ((IwSctpAssociationSetup) msg).guami);
+                NgapInterfaceManagement.sendNgSetupRequest(ctx, ((IwSctpAssociationSetup) msg).amfId);
             }
         }
     }
 
-    private void receiveNgap(Guami associatedAmf, int stream, NGAP_PDU ngapPdu) {
+    private void receiveNgap(UUID associatedAmf, int stream, NGAP_PDU ngapPdu) {
         Log.debug(Tag.MSG, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
         Log.debug(Tag.MSG, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 

@@ -8,7 +8,6 @@ package tr.havelsan.ueransim.app.gnb.utils;
 import org.apache.commons.net.ntp.TimeStamp;
 import tr.havelsan.ueransim.nas.impl.enums.EMccValue;
 import tr.havelsan.ueransim.nas.impl.enums.EMncValue;
-import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BitString;
@@ -24,6 +23,7 @@ import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.exceptions.EncodingException;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 import tr.havelsan.ueransim.utils.octets.Octet4;
 
@@ -119,18 +119,18 @@ public class NgapUtils {
         return ret;
     }
 
-    private static NGAP_SliceSupportList createSliceSupportList(IESNssai[] taiSliceSupportNssais) {
+    private static NGAP_SliceSupportList createSliceSupportList(Nssai[] taiSliceSupportNssais) {
         var res = new NGAP_SliceSupportList();
 
         if (taiSliceSupportNssais != null) {
             for (var nssai : taiSliceSupportNssais) {
                 var item = new NGAP_SliceSupportItem();
                 item.s_NSSAI = new NGAP_S_NSSAI();
-                if (nssai.sd != null) {
-                    item.s_NSSAI.sD = new NGAP_SD(nssai.sd.value.toByteArray());
+                if (nssai.sst != 0) {
+                    item.s_NSSAI.sST = new NGAP_SST(new Octet(nssai.sst).toByteArray());
                 }
-                if (nssai.sst != null) {
-                    item.s_NSSAI.sST = new NGAP_SST(nssai.sst.value.toByteArray());
+                if (nssai.sd != 0) {
+                    item.s_NSSAI.sD = new NGAP_SD(new Octet3(nssai.sd).toByteArray());
                 }
                 res.list.add(item);
             }

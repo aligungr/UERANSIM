@@ -5,7 +5,6 @@
 
 package tr.havelsan.ueransim.app.gnb.utils;
 
-import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
 import tr.havelsan.ueransim.utils.octets.Octet3;
 
@@ -20,9 +19,9 @@ public class SupportedTA {
 
     public static class BroadcastPlmn {
         public final VPlmn plmn;
-        public final IESNssai[] taiSliceSupportNssais;
+        public final Nssai[] taiSliceSupportNssais;
 
-        public BroadcastPlmn(VPlmn plmn, IESNssai[] taiSliceSupportNssais) {
+        public BroadcastPlmn(VPlmn plmn, Nssai[] taiSliceSupportNssais) {
             this.plmn = plmn;
             this.taiSliceSupportNssais = taiSliceSupportNssais;
         }

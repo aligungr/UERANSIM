@@ -5,14 +5,14 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
-import tr.havelsan.ueransim.app.common.Guami;
+import java.util.UUID;
 
 public class IwNgapSend {
     public final int streamNumber;
     public final byte[] data;
-    public final Guami associatedAmf;
+    public final UUID associatedAmf;
 
-    public IwNgapSend(int streamNumber, byte[] data, Guami associatedAmf) {
+    public IwNgapSend(int streamNumber, byte[] data, UUID associatedAmf) {
         this.streamNumber = streamNumber;
         this.data = data;
         this.associatedAmf = associatedAmf;

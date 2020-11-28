@@ -122,7 +122,16 @@ public final class Traits {
     }
 
     public static Object parseNumber(Class<?> type, String string) {
-        var value = new BigDecimal(string);
+        BigDecimal value;
+
+        if (string.startsWith("0x") || string.startsWith("0X")) {
+            value = new BigDecimal(new BigInteger(string.substring(2), 16));
+        } else if (string.startsWith("0b") || string.startsWith("0B")) {
+            value = new BigDecimal(new BigInteger(string.substring(2), 2));
+        } else {
+            value = new BigDecimal(string);
+        }
+
         if (isByte(type)) return value.byteValue();
         if (isShort(type)) return value.shortValue();
         if (isInteger(type)) return value.intValue();
@@ -137,8 +146,27 @@ public final class Traits {
     public static boolean isNumberIfString(Object object) {
         if (!(object instanceof String))
             return true;
+
+        var str = (String) object;
+        if (str.startsWith("0x") || str.startsWith("0X")) {
+            try {
+                new BigInteger(str.substring(2), 16);
+            } catch (Exception ignored) {
+                return false;
+            }
+            return true;
+        }
+        if (str.startsWith("0b") || str.startsWith("0B")) {
+            try {
+                new BigInteger(str.substring(2), 2);
+            } catch (Exception ignored) {
+                return false;
+            }
+            return true;
+        }
+
         try {
-            new BigDecimal((String) object);
+            new BigDecimal(str);
         } catch (Exception ignored) {
             return false;
         }

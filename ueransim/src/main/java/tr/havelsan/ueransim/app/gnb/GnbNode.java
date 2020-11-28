@@ -27,15 +27,11 @@ public class GnbNode {
         // Create AMF gNB contexts
         {
             for (var amfConfig : ctx.config.amfConfigs) {
-                if (amfConfig.guami == null) {
-                    throw new RuntimeException("amfConfig.guami == null");
-                }
+                var amfCtx = new NgapAmfContext();
+                amfCtx.host = amfConfig.host;
+                amfCtx.port = amfConfig.port;
 
-                var amfGnbCtx = new NgapAmfContext(amfConfig.guami);
-                amfGnbCtx.host = amfConfig.host;
-                amfGnbCtx.port = amfConfig.port;
-
-                ctx.ngapCtx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
+                ctx.ngapCtx.amfContexts.put(amfCtx.ctxId, amfCtx);
             }
         }
 
