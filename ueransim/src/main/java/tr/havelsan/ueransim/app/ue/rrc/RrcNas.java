@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RrcNas {
 
-    public static void receiveNas(UeRrcContext ctx, OctetString nasPdu) {
+    public static void sendNas(UeRrcContext ctx, OctetString nasPdu) {
         var rrc = new RrcULInformationTransfer();
         rrc.criticalExtensions = new RRC_ULInformationTransfer_CriticalExtensions();
         rrc.criticalExtensions.ulInformationTransfer = new RRC_ULInformationTransfer_IEs();
