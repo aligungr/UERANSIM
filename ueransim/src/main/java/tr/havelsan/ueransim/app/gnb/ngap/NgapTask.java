@@ -32,11 +32,9 @@ import java.util.UUID;
 
 public class NgapTask extends NtsTask {
 
-    private final GnbSimContext gnbCtx;
     private final NgapGnbContext ctx;
 
     public NgapTask(GnbSimContext gnbCtx) {
-        this.gnbCtx = gnbCtx;
         this.ctx = new NgapGnbContext(gnbCtx);
 
         // TODO: move to main,
@@ -83,7 +81,7 @@ public class NgapTask extends NtsTask {
             return;
         }
 
-        ctx.gnbCtx.sim.triggerOnReceive(gnbCtx, ngapMessage);
+        ctx.gnbCtx.sim.triggerOnReceive(ctx.gnbCtx, ngapMessage);
 
         try {
             if (!ctx.gnbCtx.config.ignoreStreamIds) {
