@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.ue.sm;
+package tr.havelsan.ueransim.app.ue.nas.sm;
 
 import tr.havelsan.ueransim.app.common.PduSession;
 import tr.havelsan.ueransim.app.common.ProcedureTransaction;

@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.ue.mm;
+package tr.havelsan.ueransim.app.ue.nas.mm;
 
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;

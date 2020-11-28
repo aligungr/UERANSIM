@@ -3,13 +3,13 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.ue.sm;
+package tr.havelsan.ueransim.app.ue.nas.sm;
 
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
-import tr.havelsan.ueransim.app.ue.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
+import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;

@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.ue.mm;
+package tr.havelsan.ueransim.app.ue.nas.mm;
 
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
@@ -19,7 +19,7 @@ import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PeriodicRegistration;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
-import tr.havelsan.ueransim.app.ue.sm.SessionManagement;
+import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.EFollowOnRequest;

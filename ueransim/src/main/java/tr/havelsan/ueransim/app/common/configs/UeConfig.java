@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.common.configs;
 
 import tr.havelsan.ueransim.app.common.Supi;
-import tr.havelsan.ueransim.app.ue.mm.MmKeyManagement;
+import tr.havelsan.ueransim.app.ue.nas.mm.MmKeyManagement;
 import tr.havelsan.ueransim.nas.impl.ies.IEDnn;
 import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
 import tr.havelsan.ueransim.nas.impl.values.VPlmn;
