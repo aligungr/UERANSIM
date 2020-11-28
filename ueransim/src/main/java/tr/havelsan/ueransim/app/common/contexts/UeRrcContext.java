@@ -7,15 +7,16 @@ package tr.havelsan.ueransim.app.common.contexts;
 
 import tr.havelsan.ueransim.app.common.enums.ERrcState;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class UeRrcContext {
     public final UeSimContext ueCtx;
+    public NtsTask mrTask;
 
     public ERrcState state;
 
     public UeRrcContext(UeSimContext ueCtx) {
         this.ueCtx = ueCtx;
-
         this.state = ERrcState.RRC_IDLE;
     }
 }

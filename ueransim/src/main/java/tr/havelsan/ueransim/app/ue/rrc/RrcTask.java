@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.ue.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class RrcTask extends NtsTask {
@@ -19,6 +20,6 @@ public class RrcTask extends NtsTask {
 
     @Override
     public void main() {
-
+        ctx.mrTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_MR);
     }
 }
