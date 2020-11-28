@@ -5,7 +5,10 @@
 
 package tr.havelsan.ueransim.app.gnb.mr;
 
-import tr.havelsan.ueransim.app.common.itms.*;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
+import tr.havelsan.ueransim.app.common.itms.IwUplinkRrc;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
@@ -29,9 +32,6 @@ public class GnbMrTask extends NtsTask {
                 rrcTask.push(msg);
             } else if (msg instanceof IwDownlinkRrc) {
                 ctx.sim.findUe(((IwDownlinkRrc) msg).ueId).nts.findTask(ItmsId.UE_TASK_MR).push(msg);
-            } else if (msg instanceof IwConnectionRelease) {
-                var w = (IwConnectionRelease) msg;
-                ctx.sim.findUe(w.ue).nts.findTask(ItmsId.UE_TASK_MR).push(new IwConnectionRelease(w.ue));
             } else if (msg instanceof IwUplinkData) {
                 gtpTask.push(msg);
             } else if (msg instanceof IwDownlinkData) {

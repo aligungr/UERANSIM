@@ -5,7 +5,10 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
-import tr.havelsan.ueransim.app.common.itms.*;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.itms.IwNasTimerExpire;
+import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
+import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
@@ -54,8 +57,6 @@ public class NasTask extends NtsTask {
                 }
             } else if (msg instanceof IwUeTestCommand) {
                 executeCommand(ctx, ((IwUeTestCommand) msg).cmd);
-            } else if (msg instanceof IwConnectionRelease) {
-                // TODO
             } else if (msg instanceof IwPlmnSearchResponse) {
                 MobilityManagement.receiveItmsMessage(ctx, msg);
             }

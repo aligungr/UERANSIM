@@ -43,8 +43,6 @@ public class UeMrTask extends NtsTask {
                 }
             } else if (msg instanceof IwDownlinkData) {
                 appTask.push(msg);
-            } else if (msg instanceof IwConnectionRelease) {
-                nasTask.push(msg);
             } else if (msg instanceof IwPlmnSearchRequest) {
                 performPlmnSearch();
             } else if (msg instanceof IwUplinkRrc) {
