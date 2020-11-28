@@ -24,6 +24,7 @@
         <module>gtp</module>
         <module>itms</module>
         <module>icmp</module>
+        <module>rrc</module>
     </modules>
 
     <build>

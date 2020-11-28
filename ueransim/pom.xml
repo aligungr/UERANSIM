@@ -58,6 +58,12 @@
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>tr.havelsan.ueransim</groupId>
+            <artifactId>rrc</artifactId>
+            <version>1.0.8</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

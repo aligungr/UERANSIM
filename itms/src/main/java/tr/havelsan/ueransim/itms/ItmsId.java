@@ -15,8 +15,9 @@ public class ItmsId {
 
     public static final int UE_TASK_MR = 6;
     public static final int UE_TASK_NAS = 7;
-    public static final int UE_TASK_NAS_TIMERS = 8;
-    public static final int UE_TASK_APP = 9;
+    public static final int UE_TASK_RRC = 8;
+    public static final int UE_TASK_NAS_TIMERS = 9;
+    public static final int UE_TASK_APP = 10;
 
-    public static final int AIR_TASK_TB = 10;
+    public static final int AIR_TASK_TB = 11;
 }
