@@ -38,7 +38,6 @@ public class NgapTask extends NtsTask {
         this.ctx = new NgapGnbContext(gnbCtx);
 
         // TODO: move to main,
-        // Create AMF contexts
         {
             for (var amfConfig : ctx.gnbCtx.config.amfConfigs) {
                 var amfCtx = new NgapAmfContext();
