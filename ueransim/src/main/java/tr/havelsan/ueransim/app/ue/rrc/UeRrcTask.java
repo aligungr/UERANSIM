@@ -12,11 +12,11 @@ import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 
-public class RrcTask extends NtsTask {
+public class UeRrcTask extends NtsTask {
 
     private final UeRrcContext ctx;
 
-    public RrcTask(UeSimContext ueCtx) {
+    public UeRrcTask(UeSimContext ueCtx) {
         this.ctx = new UeRrcContext(ueCtx);
     }
 

@@ -12,7 +12,7 @@ import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.ue.mr.UeMrTask;
 import tr.havelsan.ueransim.app.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.ue.nas.NasTimersTask;
-import tr.havelsan.ueransim.app.ue.rrc.RrcTask;
+import tr.havelsan.ueransim.app.ue.rrc.UeRrcTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
@@ -36,7 +36,7 @@ public class UeNode {
                 new NasTimersTask(ctx),
                 new UeMrTask(ctx),
                 new NasTask(ctx),
-                new RrcTask(ctx),
+                new UeRrcTask(ctx),
                 new UeAppTask(ctx)
         };
 
