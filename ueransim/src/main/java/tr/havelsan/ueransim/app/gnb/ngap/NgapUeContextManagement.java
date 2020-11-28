@@ -7,7 +7,6 @@ package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.itms.IwConnectionRelease;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
@@ -51,7 +50,7 @@ public class NgapUeContextManagement {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(ueId, NasEncoder.nasPduS(nasMessage)));
+            NgapNasTransport.sendNasPdu(ctx, ueId, NasEncoder.nasPduS(nasMessage));
         }
     }
 

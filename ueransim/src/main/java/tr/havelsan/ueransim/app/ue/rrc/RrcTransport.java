@@ -22,6 +22,6 @@ public class RrcTransport {
     }
 
     public static void sendRrcMessage(UeRrcContext ctx, RrcMessage message) {
-        ctx.mrTask.push(new IwUplinkRrc(message));
+        ctx.mrTask.push(new IwUplinkRrc(ctx.ueCtx.ctxId, message));
     }
 }

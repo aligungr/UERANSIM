@@ -7,7 +7,6 @@ package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.Ngap;
@@ -55,6 +54,10 @@ public class NgapNasTransport {
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
     }
 
+    public static void sendNasPdu(NgapGnbContext ctx, UUID associatedUe, OctetString nasPdu) {
+        ctx.rrcTask.push(new IwDownlinkNas(associatedUe, nasPdu));
+    }
+
     public static void receiveUplinkNasTransport(NgapGnbContext ctx, UUID associatedUe, NasMessage nasMessage) {
         var ngap = new NGAP_UplinkNASTransport();
 
@@ -70,7 +73,7 @@ public class NgapNasTransport {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe, NasEncoder.nasPduS(nasMessage)));
+            sendNasPdu(ctx, associatedUe, NasEncoder.nasPduS(nasMessage));
         }
     }
 

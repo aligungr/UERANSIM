@@ -7,10 +7,14 @@ package tr.havelsan.ueransim.app.common.itms;
 
 import tr.havelsan.ueransim.rrc.core.RrcMessage;
 
+import java.util.UUID;
+
 public class IwUplinkRrc {
+    public final UUID ueId;
     public final RrcMessage rrcMessage;
 
-    public IwUplinkRrc(RrcMessage rrcMessage) {
+    public IwUplinkRrc(UUID ueId, RrcMessage rrcMessage) {
+        this.ueId = ueId;
         this.rrcMessage = rrcMessage;
     }
 }

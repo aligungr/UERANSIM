@@ -9,7 +9,6 @@ import tr.havelsan.ueransim.app.common.PduSessionResource;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.contexts.NgapUeContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
@@ -80,7 +79,7 @@ public class NgapPduSessionManagement {
 
             if (pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
-                    ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value));
+                    NgapNasTransport.sendNasPdu(ctx, associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value);
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
@@ -114,7 +113,7 @@ public class NgapPduSessionManagement {
 
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
-            ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR).push(new IwDownlinkNas(associatedUe.ueCtxId, nasPdu.value));
+            NgapNasTransport.sendNasPdu(ctx, associatedUe.ueCtxId, nasPdu.value);
         }
 
         int succeeded = successList.list.size();

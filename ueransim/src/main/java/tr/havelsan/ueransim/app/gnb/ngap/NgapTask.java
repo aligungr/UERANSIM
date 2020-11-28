@@ -5,12 +5,14 @@
 
 package tr.havelsan.ueransim.app.gnb.ngap;
 
+import tr.havelsan.ueransim.app.common.contexts.NgapAmfContext;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
 import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap0.Ngap;
@@ -35,11 +37,25 @@ public class NgapTask extends NtsTask {
 
     public NgapTask(GnbSimContext gnbCtx) {
         this.gnbCtx = gnbCtx;
-        this.ctx = gnbCtx.ngapCtx;
+        this.ctx = new NgapGnbContext(gnbCtx);
+
+        // TODO: move to main,
+        // Create AMF contexts
+        {
+            for (var amfConfig : ctx.gnbCtx.config.amfConfigs) {
+                var amfCtx = new NgapAmfContext();
+                amfCtx.host = amfConfig.host;
+                amfCtx.port = amfConfig.port;
+
+                ctx.amfContexts.put(amfCtx.ctxId, amfCtx);
+            }
+        }
     }
 
     @Override
     public void main() {
+        ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
+
         while (true) {
             var msg = take();
             if (msg instanceof IwNgapReceive) {
@@ -140,5 +156,9 @@ public class NgapTask extends NtsTask {
                 NgapTransfer.sendNgapNonUe(ctx, associatedAmf, errorIndication);
             }
         }
+    }
+
+    public NgapGnbContext getNgapContext() {
+        return ctx;
     }
 }

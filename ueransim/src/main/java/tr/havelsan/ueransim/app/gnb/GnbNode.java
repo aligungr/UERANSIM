@@ -7,12 +7,12 @@ package tr.havelsan.ueransim.app.gnb;
 
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
-import tr.havelsan.ueransim.app.common.contexts.NgapAmfContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.gnb.gtp.GtpTask;
 import tr.havelsan.ueransim.app.gnb.mr.GnbMrTask;
 import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
+import tr.havelsan.ueransim.app.gnb.rrc.GnbRrcTask;
 import tr.havelsan.ueransim.app.gnb.sctp.SctpTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -23,17 +23,6 @@ public class GnbNode {
 
     public static GnbSimContext createContext(UeRanSim sim, GnbConfig config) {
         var ctx = new GnbSimContext(sim, "gnb-" + config.gnbId, config);
-
-        // Create AMF gNB contexts
-        {
-            for (var amfConfig : ctx.config.amfConfigs) {
-                var amfCtx = new NgapAmfContext();
-                amfCtx.host = amfConfig.host;
-                amfCtx.port = amfConfig.port;
-
-                ctx.ngapCtx.amfContexts.put(amfCtx.ctxId, amfCtx);
-            }
-        }
 
         return ctx;
     }
@@ -47,6 +36,7 @@ public class GnbNode {
                 new GnbMrTask(ctx),
                 new GnbAppTask(ctx),
                 new GtpTask(ctx),
+                new GnbRrcTask(ctx),
         };
 
         ctx.nts.registerTask(ItmsId.GNB_TASK_SCTP, tasks[0]);
@@ -54,6 +44,7 @@ public class GnbNode {
         ctx.nts.registerTask(ItmsId.GNB_TASK_MR, tasks[2]);
         ctx.nts.registerTask(ItmsId.GNB_TASK_APP, tasks[3]);
         ctx.nts.registerTask(ItmsId.GNB_TASK_GTP, tasks[4]);
+        ctx.nts.registerTask(ItmsId.GNB_TASK_RRC, tasks[5]);
 
         for (var task : tasks) Log.registerLogger(task.getThread(), ctx.logger);
         for (var task : tasks) task.start();

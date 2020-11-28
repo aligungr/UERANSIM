@@ -6,12 +6,15 @@
 package tr.havelsan.ueransim.app.common.contexts;
 
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class NgapGnbContext {
     public final GnbSimContext gnbCtx;
+
+    public NtsTask rrcTask;
 
     public HashMap<UUID, NgapAmfContext> amfContexts;
     public HashMap<UUID, NgapUeContext> ueContexts;

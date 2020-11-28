@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
 import tr.havelsan.ueransim.app.common.itms.IwNgapSend;
 import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -46,14 +47,17 @@ public class SctpTask extends NtsTask {
         ngapTask = ctx.nts.findTask(ItmsId.GNB_TASK_NGAP);
         appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP);
 
-        if (ctx.ngapCtx.amfContexts.isEmpty()) {
+        // TODO: refactor this
+        var ngapCtx = ((NgapTask)ngapTask).getNgapContext();
+
+        if (ngapCtx.amfContexts.isEmpty()) {
             Log.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
             return;
         }
 
         var setupCount = new AtomicInteger(0);
 
-        for (var amf : ctx.ngapCtx.amfContexts.values()) {
+        for (var amf : ngapCtx.amfContexts.values()) {
             amfs.put(amf.ctxId, amf);
 
             var associationHandler = new ISctpAssociationHandler() {
@@ -93,7 +97,7 @@ public class SctpTask extends NtsTask {
             receiverThread.start();
         }
 
-        while (setupCount.get() != ctx.ngapCtx.amfContexts.size()) {
+        while (setupCount.get() != ngapCtx.amfContexts.size()) {
             // just wait
             Utils.sleep(100);
         }

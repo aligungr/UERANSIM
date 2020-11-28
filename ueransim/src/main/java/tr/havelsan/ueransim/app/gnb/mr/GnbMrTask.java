@@ -13,8 +13,6 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 public class GnbMrTask extends NtsTask {
 
     private final GnbSimContext ctx;
-    private NtsTask gtpTask;
-    private NtsTask ngapTask;
 
     public GnbMrTask(GnbSimContext ctx) {
         this.ctx = ctx;
@@ -22,16 +20,15 @@ public class GnbMrTask extends NtsTask {
 
     @Override
     public void main() {
-        gtpTask = ctx.nts.findTask(ItmsId.GNB_TASK_GTP);
-        ngapTask = ctx.nts.findTask(ItmsId.GNB_TASK_NGAP);
+        var gtpTask = ctx.nts.findTask(ItmsId.GNB_TASK_GTP);
+        var rrcTask = ctx.nts.findTask(ItmsId.GNB_TASK_RRC);
 
         while (true) {
             var msg = take();
-            if (msg instanceof IwUplinkNas) {
-                ngapTask.push(msg);
-            } else if (msg instanceof IwDownlinkNas) {
-                var w = (IwDownlinkNas) msg;
-                ctx.sim.findUe(w.ue).nts.findTask(ItmsId.UE_TASK_MR).push(new IwDownlinkNas(w.ue, w.nasPdu));
+            if (msg instanceof IwUplinkRrc) {
+                rrcTask.push(msg);
+            } else if (msg instanceof IwDownlinkRrc) {
+                ctx.sim.findUe(((IwDownlinkRrc) msg).ueId).nts.findTask(ItmsId.UE_TASK_MR).push(msg);
             } else if (msg instanceof IwConnectionRelease) {
                 var w = (IwConnectionRelease) msg;
                 ctx.sim.findUe(w.ue).nts.findTask(ItmsId.UE_TASK_MR).push(new IwConnectionRelease(w.ue));

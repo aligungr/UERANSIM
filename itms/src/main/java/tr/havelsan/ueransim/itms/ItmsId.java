@@ -12,12 +12,13 @@ public class ItmsId {
     public static final int GNB_TASK_MR = 3;
     public static final int GNB_TASK_APP = 4;
     public static final int GNB_TASK_GTP = 5;
+    public static final int GNB_TASK_RRC = 6;
 
-    public static final int UE_TASK_MR = 6;
-    public static final int UE_TASK_NAS = 7;
-    public static final int UE_TASK_RRC = 8;
-    public static final int UE_TASK_NAS_TIMERS = 9;
-    public static final int UE_TASK_APP = 10;
+    public static final int UE_TASK_MR = 7;
+    public static final int UE_TASK_NAS = 8;
+    public static final int UE_TASK_RRC = 9;
+    public static final int UE_TASK_NAS_TIMERS = 10;
+    public static final int UE_TASK_APP = 11;
 
-    public static final int AIR_TASK_TB = 11;
+    public static final int AIR_TASK_TB = 12;
 }
