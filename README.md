@@ -6,7 +6,7 @@ UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project c
 ## Documentation
 You can find the documentation on [UERANSIM Wiki](https://github.com/aligungr/UERANSIM/wiki).
 
-And, since the project is rapidly developing, please make sure that you have always the latest UERANSIM.  
+And, since the project is rapidly developing, please make sure that you have always the [latest](https://github.com/aligungr/UERANSIM/releases) UERANSIM.  
 
 ## Contributing
 
@@ -14,7 +14,7 @@ Implementing UE and RAN is not an easy task and requires a lot of time. We are a
 
 ## Supporting UERANSIM
 
-UERANSIM is the first and only open source project that implements 5G UE and RAN. Commercial alternatives of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
+UERANSIM is the first and only open source project that implements 5G-SA UE and RAN. Commercial alternatives of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
 - Starring our GitHub repository,
 - Creating pull requests, submitting bugs, suggesting new features or documentation updates.
 
