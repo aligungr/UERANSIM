@@ -25,8 +25,14 @@ class BaseApp {
         System.load(path + "libngap-native.so");
         System.load(path + "libapp-native.so");
 
-        String version = Utils.readAllText(path + "version").trim();
+        String localVersion = Utils.readAllText(path + "version");
+        String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version");
 
-        Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", version);
+        if (remoteVersion == null || localVersion.trim().equals(remoteVersion.trim())) {
+            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
+        } else {
+            Console.println(AnsiPalette.PAINT_LOG_WARNING, "UERANSIM v%s / WARNING: version v%s is available.", localVersion.trim(), remoteVersion.trim());
+            Utils.sleep(1500);
+        }
     }
 }
