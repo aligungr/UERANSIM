@@ -166,7 +166,7 @@ public class MobilityManagement {
     public static void receiveItmsMessage(NasContext ctx, Object msg) {
         if (msg instanceof IwPlmnSearchResponse) {
             ctx.ueCtx.sim.triggerOnConnected(ctx.ueCtx, EConnType.UE_MR_GNB);
-            Log.info(Tag.FLOW, "UE connected to gNB.");
+            Log.info(Tag.CONN, "UE connected to gNB.");
 
             switchState(ctx, EMmState.MM_DEREGISTERED, EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE);
         }
