@@ -106,6 +106,7 @@ public class NasTimer {
     public String toString() {
         return "NasTimer{" +
                 "timerCode=" + timerCode +
+                ", interval=" + interval +
                 '}';
     }
 }
