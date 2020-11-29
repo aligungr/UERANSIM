@@ -25,12 +25,11 @@ public class UeNode {
     public static UeSimContext createContext(UeRanSim sim, UeConfig config) {
         var ctx = new UeSimContext(sim, "ue-" + config.supi.value);
         ctx.ueConfig = config;
+        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
         return ctx;
     }
 
     public static void run(UeSimContext ctx) {
-        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
-
         var tasks = new NtsTask[]{
                 new UeMrTask(ctx),
                 new NasTask(ctx),
