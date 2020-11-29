@@ -115,13 +115,10 @@ public class GtpTask extends NtsTask {
         cont.pduSessionInformation = ul;
         gtp.extHeaders.add(cont);
 
-        sendGtp(gtp, pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray());
-    }
-
-    private void sendGtp(GtpMessage msg, byte[] address) {
         try {
-            var data = GtpEncoder.encode(msg);
-            var pck = new DatagramPacket(data, data.length, InetAddress.getByAddress(address), 2152);
+            var gtpData = GtpEncoder.encode(gtp);
+            var address = pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray();
+            var pck = new DatagramPacket(gtpData, gtpData.length, InetAddress.getByAddress(address), 2152);
             socket.send(pck);
         } catch (Exception e) {
             throw new RuntimeException(e);
