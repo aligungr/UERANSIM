@@ -18,17 +18,14 @@ public class GnbMrTask extends NtsTask {
 
     private final GnbMrContext ctx;
 
-    private NtsTask gtpTask;
-    private NtsTask rrcTask;
-
     public GnbMrTask(GnbSimContext ctx) {
         this.ctx = new GnbMrContext(ctx);
     }
 
     @Override
     public void main() {
-        gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
-        rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
+        ctx.gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
+        ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
 
         while (true) {
             var msg = take();
@@ -45,7 +42,7 @@ public class GnbMrTask extends NtsTask {
     }
 
     private void receiveUplinkRrc(IwUplinkRrc msg) {
-        rrcTask.push(msg);
+        ctx.rrcTask.push(msg);
     }
 
     private void receiveDownlinkRrc(IwDownlinkRrc msg) {
@@ -53,7 +50,7 @@ public class GnbMrTask extends NtsTask {
     }
 
     private void receiveUplinkData(IwUplinkData msg) {
-        gtpTask.push(msg);
+        ctx.gtpTask.push(msg);
     }
 
     private void receiveDownlinkData(IwDownlinkData msg) {

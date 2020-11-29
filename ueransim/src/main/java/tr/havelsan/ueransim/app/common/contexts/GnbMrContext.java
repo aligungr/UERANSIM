@@ -6,9 +6,13 @@
 package tr.havelsan.ueransim.app.common.contexts;
 
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class GnbMrContext {
     public final GnbSimContext gnbCtx;
+
+    public NtsTask gtpTask;
+    public NtsTask rrcTask;
 
     public GnbMrContext(GnbSimContext gnbCtx) {
         this.gnbCtx = gnbCtx;
