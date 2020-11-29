@@ -23,13 +23,11 @@ public class GnbNode {
 
     public static GnbSimContext createContext(UeRanSim sim, GnbConfig config) {
         var ctx = new GnbSimContext(sim, "gnb-" + config.gnbId, config);
-
+        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
         return ctx;
     }
 
     public static void run(GnbSimContext ctx) {
-        ctx.logger = ConfigUtils.createLoggerFor(ctx.nodeName);
-
         var tasks = new NtsTask[]{
                 new SctpTask(ctx),
                 new NgapTask(ctx),
