@@ -129,7 +129,7 @@ public class MobilityManagement {
                 return;
             }
             var elapsedMs = current - ctx.mmCtx.lastPlmnSearchTrigger;
-            if (elapsedMs > 1000) {
+            if (elapsedMs > 50) {
                 ctx.rrcTask.push(new IwPlmnSearchRequest());
                 ctx.mmCtx.lastPlmnSearchTrigger = current;
             }
