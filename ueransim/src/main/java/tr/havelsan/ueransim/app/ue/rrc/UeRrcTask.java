@@ -31,7 +31,7 @@ public class UeRrcTask extends NtsTask {
             if (msg instanceof IwDownlinkRrc) {
                 RrcTransport.receiveRrcMessage(ctx, ((IwDownlinkRrc) msg).rrcMessage);
             } else if (msg instanceof IwUplinkNas) {
-                RrcNas.sendNas(ctx, ((IwUplinkNas) msg).nasPdu);
+                RrcTransport.deliverUplinkNas(ctx, ((IwUplinkNas) msg).nasPdu);
             } else if (msg instanceof IwPlmnSearchResponse) {
                 ctx.nasTask.push(msg);
             }
