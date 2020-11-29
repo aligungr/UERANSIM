@@ -51,7 +51,9 @@ public class NgapTask extends NtsTask {
 
     @Override
     public void main() {
+        ctx.sctpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_SCTP);
         ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
+        ctx.gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
 
         while (true) {
             var msg = take();

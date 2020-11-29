@@ -15,6 +15,8 @@ public class NgapGnbContext {
     public final GnbSimContext gnbCtx;
 
     public NtsTask rrcTask;
+    public NtsTask gtpTask;
+    public NtsTask sctpTask;
 
     public HashMap<UUID, NgapAmfContext> amfContexts;
     public HashMap<UUID, NgapUeContext> ueContexts;

@@ -10,7 +10,6 @@ import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.contexts.NgapUeContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
-import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
@@ -138,7 +137,7 @@ public class NgapPduSessionManagement {
         // TODO: teid of gnb
         resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);
 
-        ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP).push(new IwPduSessionResourceCreate(resource));
+        ctx.gtpTask.push(new IwPduSessionResourceCreate(resource));
         return true; // success
     }
 }
