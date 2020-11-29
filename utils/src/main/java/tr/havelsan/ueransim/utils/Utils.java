@@ -27,6 +27,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -525,5 +526,30 @@ public final class Utils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String downloadString(String url, int timeout) {
+        try {
+            URL u = new URL(url);
+            var connection = u.openConnection();
+            if (timeout > 0) {
+                connection.setConnectTimeout(timeout);
+                connection.setReadTimeout(timeout);
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+
+            String s;
+            while ((s = reader.readLine()) != null)
+                sb.append(s).append("\n"); // NOTE: This way does not preserve line break character.
+            return sb.toString();
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    public static String downloadString(String url) {
+        return downloadString(url, -1);
     }
 }
