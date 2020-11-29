@@ -3,13 +3,13 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.ue.nas;
+package tr.havelsan.ueransim.app.ue.nas.sec;
 
 import tr.havelsan.ueransim.app.common.NasCount;
 import tr.havelsan.ueransim.app.common.SelectedAlgorithms;
 import tr.havelsan.ueransim.app.common.UeKeys;
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.enums.EConnectionIdentifier;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfCipheringAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfIntegrityProtectionAlgorithm;
 import tr.havelsan.ueransim.nas.impl.enums.ETypeOfSecurityContext;
@@ -19,7 +19,7 @@ import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.Octet2;
 
 public class NasSecurityContext {
-    public final UeSimContext ueCtx;
+    public final NasContext nasCtx;
     public IENasKeySetIdentifier ngKsi;
 
     public NasCount downlinkCount;
@@ -30,8 +30,8 @@ public class NasSecurityContext {
     public UeKeys keys;
     public SelectedAlgorithms selectedAlgorithms;
 
-    public NasSecurityContext(UeSimContext ueCtx, ETypeOfSecurityContext tsc, Bit3 ngKsi) {
-        this.ueCtx = ueCtx;
+    public NasSecurityContext(NasContext nasCtx, ETypeOfSecurityContext tsc, Bit3 ngKsi) {
+        this.nasCtx = nasCtx;
         this.ngKsi = new IENasKeySetIdentifier(tsc, ngKsi);
         this.downlinkCount = new NasCount();
         this.uplinkCount = new NasCount();
@@ -65,7 +65,7 @@ public class NasSecurityContext {
     }
 
     public NasSecurityContext deepCopy() {
-        var ctx = new NasSecurityContext(this.ueCtx, this.ngKsi.tsc, this.ngKsi.nasKeySetIdentifier);
+        var ctx = new NasSecurityContext(this.nasCtx, this.ngKsi.tsc, this.ngKsi.nasKeySetIdentifier);
         ctx.downlinkCount = this.downlinkCount.deepCopy();
         ctx.uplinkCount = this.uplinkCount.deepCopy();
         ctx.connectionIdentifier = this.connectionIdentifier;

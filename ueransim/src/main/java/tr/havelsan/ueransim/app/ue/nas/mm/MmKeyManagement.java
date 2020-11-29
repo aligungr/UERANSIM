@@ -7,7 +7,7 @@ package tr.havelsan.ueransim.app.ue.nas.mm;
 
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
-import tr.havelsan.ueransim.app.ue.nas.NasSecurityContext;
+import tr.havelsan.ueransim.app.ue.nas.sec.NasSecurityContext;
 import tr.havelsan.ueransim.crypto.KDF;
 import tr.havelsan.ueransim.crypto.MAC;
 import tr.havelsan.ueransim.crypto.PRF;

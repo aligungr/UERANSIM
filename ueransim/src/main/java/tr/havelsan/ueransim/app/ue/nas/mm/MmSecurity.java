@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.ue.nas.mm;
 
 import tr.havelsan.ueransim.app.common.SelectedAlgorithms;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;
@@ -24,7 +24,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmSecurity {
 
-    public static void receiveSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
+    public static void receiveSecurityModeCommand(NasContext ctx, SecurityModeCommand message) {
         // todo: check the integriti with new security context
         {
             var mac = message._macForNewSC;
@@ -76,7 +76,7 @@ public class MmSecurity {
         // Append IMEISV if requested
         if (message.imeiSvRequest != null && message.imeiSvRequest.imeiSvRequest.equals(IEImeiSvRequest.EImeiSvRequest.REQUESTED)) {
             // todo: imei vs imeiSv may be dist.
-            response.imeiSv = new IEImeiSvMobileIdentity(ctx.ueConfig.imei);
+            response.imeiSv = new IEImeiSvMobileIdentity(ctx.ueCtx.ueConfig.imei);
         }
 
         response.nasMessageContainer = new IENasMessageContainer(NasEncoder.nasPdu(ctx.mmCtx.registrationRequest));
@@ -85,6 +85,7 @@ public class MmSecurity {
         MobilityManagement.sendMm(ctx, response);
     }
 
+    // TODO: read from configs
     public static IEUeSecurityCapability createSecurityCapabilityIe() {
         var ie = new IEUeSecurityCapability();
         ie.supported_5G_EA0 = Bit.ONE;

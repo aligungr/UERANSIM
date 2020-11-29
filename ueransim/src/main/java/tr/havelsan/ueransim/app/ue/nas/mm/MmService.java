@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.nas.mm;
 
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceAccept;
 import tr.havelsan.ueransim.nas.impl.messages.ServiceReject;
@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmService {
 
-    public static void receiveServiceAccept(UeSimContext ctx, ServiceAccept message) {
+    public static void receiveServiceAccept(NasContext ctx, ServiceAccept message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);
@@ -25,7 +25,7 @@ public class MmService {
         }
     }
 
-    public static void receiveServiceReject(UeSimContext ctx, ServiceReject message) {
+    public static void receiveServiceReject(NasContext ctx, ServiceReject message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.FAILURE)) {
                 MmAuthentication.receiveEapFailureMessage(ctx, message.eapMessage.eap);

@@ -5,14 +5,12 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer2;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer3;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class NasTimer {
-    public final UeSimContext ctx;
     public final int timerCode;
     public final boolean isMmTimer;
 
@@ -22,21 +20,20 @@ public class NasTimer {
 
     private long _lastDebugPrintMs;
 
-    public NasTimer(UeSimContext ctx, int timerCode, boolean isMmTimer, int defaultInterval) {
-        this.ctx = ctx;
+    public NasTimer(int timerCode, boolean isMmTimer, int defaultInterval) {
         this.timerCode = timerCode;
         this.isMmTimer = isMmTimer;
         this.interval = defaultInterval;
     }
 
-    public synchronized void start() {
+    public void start() {
         startMillis = System.currentTimeMillis();
         isRunning = true;
 
         Log.debug(Tag.TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
-    public synchronized void start(IEGprsTimer2 v) {
+    public void start(IEGprsTimer2 v) {
         if (!v.hasValue()) {
             Log.warning(Tag.TIMER, "NAS Timer %s start called but no value provided", timerCode);
             return;
@@ -49,7 +46,7 @@ public class NasTimer {
         Log.debug(Tag.TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
-    public synchronized void start(IEGprsTimer3 v) {
+    public void start(IEGprsTimer3 v) {
         if (!v.hasValue()) {
             Log.warning(Tag.TIMER, "NAS Timer %s start called but no value provided", timerCode);
             return;
@@ -73,7 +70,7 @@ public class NasTimer {
         Log.debug(Tag.TIMER, "NAS Timer %s started with interval: %ss", timerCode, interval);
     }
 
-    public synchronized void stop() {
+    public void stop() {
         if (isRunning) {
             startMillis = System.currentTimeMillis();
             isRunning = false;
@@ -82,11 +79,11 @@ public class NasTimer {
         }
     }
 
-    public synchronized boolean isRunning() {
+    public boolean isRunning() {
         return isRunning;
     }
 
-    public synchronized boolean performTick() {
+    public boolean performTick() {
         if (isRunning) {
             long currentMs = System.currentTimeMillis();
             long deltaSec = (currentMs - startMillis) / 1000;
@@ -106,9 +103,10 @@ public class NasTimer {
     }
 
     @Override
-    public synchronized String toString() {
+    public String toString() {
         return "NasTimer{" +
                 "timerCode=" + timerCode +
+                ", interval=" + interval +
                 '}';
     }
 }

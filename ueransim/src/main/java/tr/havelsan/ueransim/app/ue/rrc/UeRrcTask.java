@@ -7,6 +7,8 @@ package tr.havelsan.ueransim.app.ue.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
+import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
+import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -28,10 +30,30 @@ public class UeRrcTask extends NtsTask {
         while (true) {
             var msg = take();
             if (msg instanceof IwDownlinkRrc) {
-                RrcTransport.receiveRrcMessage(ctx, ((IwDownlinkRrc) msg).rrcMessage);
+                receiveDownlinkRrc((IwDownlinkRrc) msg);
             } else if (msg instanceof IwUplinkNas) {
-                RrcNas.sendNas(ctx, ((IwUplinkNas) msg).nasPdu);
+                receiveUplinkNas((IwUplinkNas) msg);
+            } else if (msg instanceof IwPlmnSearchRequest) {
+                receivePlmnSearchRequest((IwPlmnSearchRequest) msg);
+            } else if (msg instanceof IwPlmnSearchResponse) {
+                receivePlmnSearchResponse((IwPlmnSearchResponse) msg);
             }
         }
+    }
+
+    private void receiveDownlinkRrc(IwDownlinkRrc msg) {
+        RrcTransport.receiveRrcMessage(ctx, msg.rrcMessage);
+    }
+
+    private void receiveUplinkNas(IwUplinkNas msg) {
+        RrcTransport.deliverUplinkNas(ctx, msg.nasPdu);
+    }
+
+    private void receivePlmnSearchRequest(IwPlmnSearchRequest msg) {
+        ctx.mrTask.push(msg);
+    }
+
+    private void receivePlmnSearchResponse(IwPlmnSearchResponse msg) {
+        ctx.mrTask.push(msg);
     }
 }

@@ -5,12 +5,9 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.app.common.itms.IwNasTimerExpire;
-import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
-import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
+import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -19,47 +16,107 @@ import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 
+import java.util.function.Consumer;
+
 public class NasTask extends NtsTask {
 
-    private final UeSimContext ctx;
+    private static final int CYCLE_TIMER = 1;
+    private static final int CYCLE_MM = 2;
+
+    private static final int PERIOD_TIMER = 1000;
+    private static final int PERIOD_MM = 100;
+
+    private final NasContext ctx;
 
     public NasTask(UeSimContext ctx) {
-        this.ctx = ctx;
-    }
-
-    private static void executeCommand(UeSimContext ctx, TestCmd cmd) {
-        if (!MobilityManagement.executeCommand(ctx, cmd)) {
-            if (!SessionManagement.executeCommand(ctx, cmd)) {
-                Log.error(Tag.SYS, "invalid command: %s", cmd);
-            }
-        }
+        super(true);
+        this.ctx = new NasContext(ctx);
     }
 
     @Override
     public void main() {
-        ctx.rrcTask = ctx.nts.findTask(ItmsId.UE_TASK_RRC);
+        ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
 
-        // TODO: Make this task sleepable/wakeable like other tasks.
+        pushDelayed(new IwPerformCycle(CYCLE_MM), PERIOD_MM);
+        pushDelayed(new IwPerformCycle(CYCLE_TIMER), PERIOD_TIMER);
+
         while (true) {
-            MobilityManagement.cycle(ctx);
-
-            var msg = poll();
+            var msg = take();
             if (msg instanceof IwDownlinkNas) {
-                NasTransport.receiveNas(ctx, NasDecoder.nasPdu(((IwDownlinkNas) msg).nasPdu));
+                receiveDownlinkNas((IwDownlinkNas) msg);
             } else if (msg instanceof IwNasTimerExpire) {
-                var timer = ((IwNasTimerExpire) msg).timer;
-                Log.info(Tag.TIMER, "NAS Timer expired: %s", timer);
-
-                if (timer.isMmTimer) {
-                    MobilityManagement.receiveTimerExpire(ctx, timer);
-                } else {
-                    SessionManagement.receiveTimerExpire(ctx, timer);
-                }
+                receiveTimerExpire((IwNasTimerExpire) msg);
             } else if (msg instanceof IwUeTestCommand) {
-                executeCommand(ctx, ((IwUeTestCommand) msg).cmd);
+                receiveTestCommand((IwUeTestCommand) msg);
             } else if (msg instanceof IwPlmnSearchResponse) {
-                MobilityManagement.receiveItmsMessage(ctx, msg);
+                receivePlmnSearchResponse((IwPlmnSearchResponse) msg);
+            } else if (msg instanceof IwPerformCycle) {
+                receivePerformCycle((IwPerformCycle) msg);
             }
         }
+    }
+
+    private void receiveDownlinkNas(IwDownlinkNas msg) {
+        NasTransport.receiveNas(ctx, NasDecoder.nasPdu(msg.nasPdu));
+    }
+
+    private void receiveTimerExpire(IwNasTimerExpire msg) {
+        Log.info(Tag.TIMER, "NAS Timer expired: %s", msg.timer);
+
+        if (msg.timer.isMmTimer) {
+            MobilityManagement.receiveTimerExpire(ctx, msg.timer);
+        } else {
+            SessionManagement.receiveTimerExpire(ctx, msg.timer);
+        }
+    }
+
+    private void receiveTestCommand(IwUeTestCommand msg) {
+        if (!MobilityManagement.executeCommand(ctx, msg.cmd)) {
+            if (!SessionManagement.executeCommand(ctx, msg.cmd)) {
+                Log.error(Tag.SYS, "invalid command: %s", msg.cmd);
+            }
+        }
+    }
+
+    private void receivePlmnSearchResponse(IwPlmnSearchResponse msg) {
+        MobilityManagement.receiveItmsMessage(ctx, msg);
+    }
+
+    private void receivePerformCycle(IwPerformCycle msg) {
+        if (msg.type == CYCLE_MM) {
+            MobilityManagement.cycle(ctx);
+            pushDelayed(msg, PERIOD_MM);
+        } else if (msg.type == CYCLE_TIMER) {
+            performTick();
+            pushDelayed(msg, PERIOD_TIMER);
+        }
+    }
+
+    private void performTick() {
+        Consumer<NasTimer> sendExpireMsg = timer -> push(new IwNasTimerExpire(timer));
+
+        var timers = ctx.ueTimers;
+
+        if (timers.t3346.performTick()) sendExpireMsg.accept(timers.t3346);
+        if (timers.t3396.performTick()) sendExpireMsg.accept(timers.t3396);
+        if (timers.t3444.performTick()) sendExpireMsg.accept(timers.t3444);
+        if (timers.t3445.performTick()) sendExpireMsg.accept(timers.t3445);
+        if (timers.t3502.performTick()) sendExpireMsg.accept(timers.t3502);
+        if (timers.t3510.performTick()) sendExpireMsg.accept(timers.t3510);
+        if (timers.t3511.performTick()) sendExpireMsg.accept(timers.t3511);
+        if (timers.t3512.performTick()) sendExpireMsg.accept(timers.t3512);
+        if (timers.t3516.performTick()) sendExpireMsg.accept(timers.t3516);
+        if (timers.t3517.performTick()) sendExpireMsg.accept(timers.t3517);
+        if (timers.t3519.performTick()) sendExpireMsg.accept(timers.t3519);
+        if (timers.t3520.performTick()) sendExpireMsg.accept(timers.t3520);
+        if (timers.t3521.performTick()) sendExpireMsg.accept(timers.t3521);
+        if (timers.t3525.performTick()) sendExpireMsg.accept(timers.t3525);
+        if (timers.t3540.performTick()) sendExpireMsg.accept(timers.t3540);
+        if (timers.t3580.performTick()) sendExpireMsg.accept(timers.t3580);
+        if (timers.t3581.performTick()) sendExpireMsg.accept(timers.t3581);
+        if (timers.t3582.performTick()) sendExpireMsg.accept(timers.t3582);
+        if (timers.t3583.performTick()) sendExpireMsg.accept(timers.t3583);
+        if (timers.t3584.performTick()) sendExpireMsg.accept(timers.t3584);
+        if (timers.t3585.performTick()) sendExpireMsg.accept(timers.t3585);
     }
 }

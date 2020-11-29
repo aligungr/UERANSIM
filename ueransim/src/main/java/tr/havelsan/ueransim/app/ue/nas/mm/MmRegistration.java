@@ -5,10 +5,10 @@
 
 package tr.havelsan.ueransim.app.ue.nas.mm;
 
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.eap.Eap;
 import tr.havelsan.ueransim.nas.impl.enums.*;
 import tr.havelsan.ueransim.nas.impl.ies.*;
@@ -21,7 +21,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmRegistration {
 
-    public static void sendRegistration(UeSimContext ctx, ERegistrationType registrationType, EFollowOnRequest followOn) {
+    public static void sendRegistration(NasContext ctx, ERegistrationType registrationType, EFollowOnRequest followOn) {
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED_INITIATED, EMmSubState.MM_REGISTERED_INITIATED__NA);
 
         var ngKsi = new IENasKeySetIdentifier(ETypeOfSecurityContext.NATIVE_SECURITY_CONTEXT, IENasKeySetIdentifier.NOT_AVAILABLE_OR_RESERVED);
@@ -32,10 +32,10 @@ public class MmRegistration {
         var registrationRequest = new RegistrationRequest();
         registrationRequest.registrationType = new IE5gsRegistrationType(followOn, registrationType);
         registrationRequest.nasKeySetIdentifier = ngKsi;
-        registrationRequest.requestedNSSAI = new IENssai(ctx.ueConfig.requestedNssai);
+        registrationRequest.requestedNSSAI = new IENssai(ctx.ueCtx.ueConfig.requestedNssai);
         registrationRequest.ueSecurityCapability = MmSecurity.createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
-                ctx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
+                ctx.ueCtx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
         if (!registrationType.equals(ERegistrationType.PERIODIC_REGISTRATION_UPDATING)) {
@@ -57,7 +57,7 @@ public class MmRegistration {
                 }
 
             } else {
-                registrationRequest.mobileIdentity = new IEImeiMobileIdentity(ctx.ueConfig.imei);
+                registrationRequest.mobileIdentity = new IEImeiMobileIdentity(ctx.ueCtx.ueConfig.imei);
             }
         }
 
@@ -74,7 +74,7 @@ public class MmRegistration {
         MobilityManagement.sendMm(ctx, registrationRequest);
     }
 
-    public static void receiveRegistrationAccept(UeSimContext ctx, RegistrationAccept message) {
+    public static void receiveRegistrationAccept(NasContext ctx, RegistrationAccept message) {
         boolean sendCompleteMes = false;
 
         ctx.mmCtx.taiList = message.taiList;
@@ -100,7 +100,7 @@ public class MmRegistration {
         Log.success(Tag.PROC, "Registration is successful");
     }
 
-    public static void receiveRegistrationReject(UeSimContext ctx, RegistrationReject message) {
+    public static void receiveRegistrationReject(NasContext ctx, RegistrationReject message) {
         var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
         var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
