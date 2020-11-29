@@ -28,9 +28,9 @@ public class UeConfig {
 
     public final String snn; // Auto constructed
 
-    public UeConfig(boolean emulationMode, OctetString key, OctetString op, OctetString amf, String imei, Supi supi, VPlmn plmn,
+    public UeConfig(OctetString key, OctetString op, OctetString amf, String imei, Supi supi, VPlmn plmn,
                     boolean smsOverNasSupported, IESNssai[] requestedNssai, IEDnn dnn) {
-        this.emulationMode = emulationMode;
+        this.emulationMode = false; // TODO: make configurable later
         this.key = key;
         this.op = op;
         this.amf = amf;
@@ -44,9 +44,9 @@ public class UeConfig {
         this.snn = MmKeyManagement.constructServingNetworkName(plmn);
     }
 
-    public UeConfig(boolean emulationMode, String key, String op, String amf, String imei, String supi, VPlmn plmn,
+    public UeConfig(String key, String op, String amf, String imei, String supi, VPlmn plmn,
                     boolean smsOverNasSupported, IESNssai[] requestedNssai, String dnn) {
-        this(emulationMode, new OctetString(key), new OctetString(op), new OctetString(amf), imei,
+        this(new OctetString(key), new OctetString(op), new OctetString(amf), imei,
                 Supi.parse(supi), plmn, smsOverNasSupported, requestedNssai, new IEDnn(dnn));
     }
 }

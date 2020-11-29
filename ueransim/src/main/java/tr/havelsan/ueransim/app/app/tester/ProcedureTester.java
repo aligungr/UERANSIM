@@ -133,7 +133,7 @@ public class ProcedureTester extends MonitorTask {
         var ref = appConfig.createUeConfig();
         var imsiNumber = Utils.padLeft(new BigInteger(ref.supi.value).add(BigInteger.valueOf(index)).toString(), 15, '0');
         var supi = new Supi("imsi", imsiNumber).toString();
-        return new UeConfig(ref.emulationMode, ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi), ref.plmn,
+        return new UeConfig(ref.key, ref.op, ref.amf, ref.imei, Supi.parse(supi), ref.plmn,
                 ref.smsOverNasSupported, ref.requestedNssai, ref.dnn);
     }
 
