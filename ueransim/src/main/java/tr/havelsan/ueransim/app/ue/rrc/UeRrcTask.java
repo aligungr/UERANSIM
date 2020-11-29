@@ -30,14 +30,30 @@ public class UeRrcTask extends NtsTask {
         while (true) {
             var msg = take();
             if (msg instanceof IwDownlinkRrc) {
-                RrcTransport.receiveRrcMessage(ctx, ((IwDownlinkRrc) msg).rrcMessage);
+                receiveDownlinkRrc((IwDownlinkRrc) msg);
             } else if (msg instanceof IwUplinkNas) {
-                RrcTransport.deliverUplinkNas(ctx, ((IwUplinkNas) msg).nasPdu);
-            } else if (msg instanceof IwPlmnSearchResponse) {
-                ctx.nasTask.push(msg);
+                receiveUplinkNas((IwUplinkNas) msg);
             } else if (msg instanceof IwPlmnSearchRequest) {
-                ctx.mrTask.push(msg);
+                receivePlmnSearchRequest((IwPlmnSearchRequest) msg);
+            } else if (msg instanceof IwPlmnSearchResponse) {
+                receivePlmnSearchResponse((IwPlmnSearchResponse) msg);
             }
         }
+    }
+
+    private void receiveDownlinkRrc(IwDownlinkRrc msg) {
+        RrcTransport.receiveRrcMessage(ctx, msg.rrcMessage);
+    }
+
+    private void receiveUplinkNas(IwUplinkNas msg) {
+        RrcTransport.deliverUplinkNas(ctx, msg.nasPdu);
+    }
+
+    private void receivePlmnSearchRequest(IwPlmnSearchRequest msg) {
+        ctx.mrTask.push(msg);
+    }
+
+    private void receivePlmnSearchResponse(IwPlmnSearchResponse msg) {
+        ctx.mrTask.push(msg);
     }
 }
