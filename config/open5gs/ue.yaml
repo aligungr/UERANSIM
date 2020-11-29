@@ -15,3 +15,5 @@ requestedNssai:
       value: 1
     sd:
       hex: '010203'
+
+emulationMode: false
