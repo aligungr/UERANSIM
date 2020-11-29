@@ -26,7 +26,7 @@ class BaseApp {
         System.load(path + "libapp-native.so");
 
         String localVersion = Utils.readAllText(path + "version");
-        String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 1000);
+        String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 750);
 
         if (remoteVersion == null || localVersion.trim().equals(remoteVersion.trim())) {
             Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
