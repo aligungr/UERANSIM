@@ -11,11 +11,9 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class GnbAppTask extends NtsTask {
 
-    private final GnbSimContext ctx;
     private boolean initialSctpReady;
 
     public GnbAppTask(GnbSimContext ctx) {
-        this.ctx = ctx;
     }
 
     @Override
