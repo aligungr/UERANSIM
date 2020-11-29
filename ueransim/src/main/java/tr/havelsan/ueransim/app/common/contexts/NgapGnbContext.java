@@ -17,10 +17,13 @@ public class NgapGnbContext {
     public NtsTask rrcTask;
     public NtsTask gtpTask;
     public NtsTask sctpTask;
+    public NtsTask appTask;
 
     public HashMap<UUID, NgapAmfContext> amfContexts;
     public HashMap<UUID, NgapUeContext> ueContexts;
     public long ueNgapIdCounter;
+
+    public int waitingSctpClients;
 
     public int downTeidCounter;
 

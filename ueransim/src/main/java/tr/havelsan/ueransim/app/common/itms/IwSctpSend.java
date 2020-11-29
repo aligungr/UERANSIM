@@ -7,14 +7,14 @@ package tr.havelsan.ueransim.app.common.itms;
 
 import java.util.UUID;
 
-public class IwNgapSend {
+public class IwSctpSend {
     public final int streamNumber;
     public final byte[] data;
-    public final UUID associatedAmf;
+    public final UUID clientId;
 
-    public IwNgapSend(int streamNumber, byte[] data, UUID associatedAmf) {
+    public IwSctpSend(int streamNumber, byte[] data, UUID clientId) {
         this.streamNumber = streamNumber;
         this.data = data;
-        this.associatedAmf = associatedAmf;
+        this.clientId = clientId;
     }
 }

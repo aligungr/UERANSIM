@@ -5,14 +5,12 @@
 
 package tr.havelsan.ueransim.app.gnb.sctp;
 
-import tr.havelsan.ueransim.app.common.contexts.NgapAmfContext;
-import tr.havelsan.ueransim.app.common.enums.EConnType;
-import tr.havelsan.ueransim.app.common.itms.IwInitialSctpReady;
+import tr.havelsan.ueransim.app.common.contexts.SctpContext;
 import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
-import tr.havelsan.ueransim.app.common.itms.IwNgapSend;
 import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
+import tr.havelsan.ueransim.app.common.itms.IwSctpConnectionRequest;
+import tr.havelsan.ueransim.app.common.itms.IwSctpSend;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
@@ -20,97 +18,80 @@ import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
 import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.sctp.SctpClient;
 import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 
-import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SctpTask extends NtsTask {
 
-    private static final int NGAP_PROTOCOL_ID = 60;
+    public static final int NGAP_PROTOCOL_ID = 60;
 
-    private final GnbSimContext ctx;
-    private final HashMap<UUID, NgapAmfContext> amfs;
-
-    private NtsTask ngapTask;
-    private NtsTask appTask;
+    private final SctpContext ctx;
 
     public SctpTask(GnbSimContext ctx) {
-        this.ctx = ctx;
-        this.amfs = new HashMap<>();
+        this.ctx = new SctpContext(ctx);
     }
 
     @Override
     public void main() {
-        ngapTask = ctx.nts.findTask(ItmsId.GNB_TASK_NGAP);
-        appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP);
-
-        // TODO: refactor this
-        var ngapCtx = ((NgapTask) ngapTask).getNgapContext();
-
-        var setupCount = new AtomicInteger(0);
-
-        for (var amf : ngapCtx.amfContexts.values()) {
-            amfs.put(amf.ctxId, amf);
-
-            var associationHandler = new ISctpAssociationHandler() {
-                @Override
-                public void onSetup(SctpAssociation sctpAssociation) {
-                    amf.association = sctpAssociation;
-                    ngapTask.push(new IwSctpAssociationSetup(amf.ctxId, sctpAssociation));
-                    setupCount.incrementAndGet();
-                }
-
-                @Override
-                public void onShutdown() {
-
-                }
-            };
-
-            amf.sctpClient = new SctpClient(ctx.config.host, amf.host, amf.port, NGAP_PROTOCOL_ID, associationHandler);
-
-            var receiverThread = new Thread(() -> {
-                try {
-                    amf.sctpClient.start();
-                } catch (Exception e) {
-                    Log.error(Tag.CONN, "SCTP connection could not established: " + e.getMessage());
-                    return;
-                }
-                try {
-                    amf.sctpClient.receiverLoop((receivedBytes, streamNumber)
-                            -> handleSCTPMessage(amf.ctxId, receivedBytes, streamNumber));
-                } catch (Exception e) {
-                    Log.error(Tag.CONN, "SCTP connection error: " + e.getMessage());
-                    return;
-                }
-            });
-
-            Log.registerLogger(receiverThread, Log.getLoggerOrDefault(getThread()));
-
-            receiverThread.start();
-        }
-
-        while (setupCount.get() != ngapCtx.amfContexts.size()) {
-            // just wait
-            Utils.sleep(100);
-        }
-
-        ctx.sim.triggerOnConnected(ctx, EConnType.SCTP); // TODO: Maybe for 'each' amf sctp connection
-        appTask.push(new IwInitialSctpReady());
+        ctx.ngapTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_NGAP);
 
         while (true) {
             var msg = take();
-            if (msg instanceof IwNgapSend) {
-                var wrapper = (IwNgapSend) msg;
-                amfs.get(wrapper.associatedAmf).sctpClient.send(wrapper.streamNumber, wrapper.data);
+            if (msg instanceof IwSctpConnectionRequest) {
+                receiveSctpConnectionRequest((IwSctpConnectionRequest) msg);
+            } else if (msg instanceof IwSctpSend) {
+                receiveSctpSendRequest((IwSctpSend) msg);
             }
         }
     }
 
-    private void handleSCTPMessage(UUID associatedAmf, byte[] receivedBytes, int streamNumber) {
+    private void receiveSctpConnectionRequest(IwSctpConnectionRequest msg) {
+
+        var associationHandler = new ISctpAssociationHandler() {
+
+            public void onSetup(SctpAssociation sctpAssociation) {
+                push(() -> ctx.ngapTask.push(new IwSctpAssociationSetup(msg.clientId, sctpAssociation)));
+            }
+
+            public void onShutdown() {
+
+            }
+        };
+
+        var client = new SctpClient(ctx.gnbCtx.config.host, msg.address, msg.port, NGAP_PROTOCOL_ID, associationHandler);
+        ctx.clients.put(msg.clientId, client);
+
+        var receiverThread = new Thread(() -> {
+            try {
+                client.start();
+            } catch (Exception e) {
+                Log.error(Tag.CONN, "SCTP connection could not established: " + e.getMessage());
+                return;
+            }
+            try {
+                client.receiverLoop((receivedBytes, streamNumber)
+                        -> handleSCTPMessage(msg.clientId, receivedBytes, streamNumber));
+            } catch (Exception e) {
+                Log.error(Tag.CONN, "SCTP connection error: " + e.getMessage());
+            }
+        });
+
+        Log.registerLogger(receiverThread, Log.getLoggerOrDefault(getThread()));
+        receiverThread.start();
+    }
+
+    private void receiveSctpSendRequest(IwSctpSend msg) {
+        var client = ctx.clients.get(msg.clientId);
+        if (client == null) {
+            Log.error(Tag.CONN, "SCTP client not found: " + msg.clientId);
+            return;
+        }
+        client.send(msg.streamNumber, msg.data);
+    }
+
+    private void handleSCTPMessage(UUID clientId, byte[] receivedBytes, int streamNumber) {
         var pdu = NgapEncoding.decodeAper(receivedBytes);
-        ngapTask.push(new IwNgapReceive(associatedAmf, streamNumber, pdu));
+        ctx.ngapTask.push(new IwNgapReceive(clientId, streamNumber, pdu));
     }
 }

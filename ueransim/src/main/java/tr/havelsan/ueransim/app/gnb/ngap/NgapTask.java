@@ -8,9 +8,7 @@ package tr.havelsan.ueransim.app.gnb.ngap;
 import tr.havelsan.ueransim.app.common.contexts.NgapAmfContext;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
-import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
+import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
@@ -33,17 +31,6 @@ public class NgapTask extends NtsTask {
 
     public NgapTask(GnbSimContext gnbCtx) {
         this.ctx = new NgapGnbContext(gnbCtx);
-
-        // TODO: move to main,
-        {
-            for (var amfConfig : ctx.gnbCtx.config.amfConfigs) {
-                var amfCtx = new NgapAmfContext();
-                amfCtx.host = amfConfig.host;
-                amfCtx.port = amfConfig.port;
-
-                ctx.amfContexts.put(amfCtx.ctxId, amfCtx);
-            }
-        }
     }
 
     @Override
@@ -51,10 +38,24 @@ public class NgapTask extends NtsTask {
         ctx.sctpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_SCTP);
         ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
         ctx.gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
+        ctx.appTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_APP);
+
+        for (var amfConfig : ctx.gnbCtx.config.amfConfigs) {
+            var amfCtx = new NgapAmfContext();
+            amfCtx.host = amfConfig.host;
+            amfCtx.port = amfConfig.port;
+
+            ctx.amfContexts.put(amfCtx.ctxId, amfCtx);
+        }
 
         if (ctx.amfContexts.isEmpty()) {
             Log.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.gnbCtx.ctxId);
             return;
+        }
+
+        for (var amfCtx : ctx.amfContexts.values()) {
+            ctx.sctpTask.push(new IwSctpConnectionRequest(amfCtx.ctxId, amfCtx.host, amfCtx.port));
+            ctx.waitingSctpClients++;
         }
 
         while (true) {
@@ -166,11 +167,13 @@ public class NgapTask extends NtsTask {
     }
 
     private void receiveAssociationSetup(IwSctpAssociationSetup msg) {
-        NgapInterfaceManagement.sendNgSetupRequest(ctx, msg.amfId);
-    }
+        ctx.amfContexts.get(msg.amfId).association = msg.association;
 
-    // TODO: remove this
-    public NgapGnbContext getNgapContext() {
-        return ctx;
+        ctx.waitingSctpClients--;
+        if (ctx.waitingSctpClients == 0) {
+            ctx.appTask.push(new IwInitialSctpReady());
+        }
+
+        NgapInterfaceManagement.sendNgSetupRequest(ctx, msg.amfId);
     }
 }
