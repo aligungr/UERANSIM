@@ -54,6 +54,6 @@ public class UeRrcTask extends NtsTask {
     }
 
     private void receivePlmnSearchResponse(IwPlmnSearchResponse msg) {
-        ctx.mrTask.push(msg);
+        ctx.nasTask.push(msg);
     }
 }
