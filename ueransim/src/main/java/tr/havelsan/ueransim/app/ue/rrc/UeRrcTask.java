@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.ue.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
+import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -31,6 +32,8 @@ public class UeRrcTask extends NtsTask {
                 RrcTransport.receiveRrcMessage(ctx, ((IwDownlinkRrc) msg).rrcMessage);
             } else if (msg instanceof IwUplinkNas) {
                 RrcNas.sendNas(ctx, ((IwUplinkNas) msg).nasPdu);
+            } else if (msg instanceof IwPlmnSearchResponse) {
+                ctx.nasTask.push(msg);
             }
         }
     }

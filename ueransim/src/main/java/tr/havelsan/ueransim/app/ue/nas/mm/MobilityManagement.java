@@ -167,7 +167,6 @@ public class MobilityManagement {
 
     public static void receiveItmsMessage(UeSimContext ctx, Object msg) {
         if (msg instanceof IwPlmnSearchResponse) {
-            ctx.connectedGnb = ((IwPlmnSearchResponse) msg).gnbId;
             ctx.sim.triggerOnConnected(ctx, EConnType.UE_MR_GNB);
             Log.info(Tag.FLOW, "UE connected to gNB.");
 

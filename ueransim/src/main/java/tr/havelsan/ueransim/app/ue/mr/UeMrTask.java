@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.mr;
 
+import tr.havelsan.ueransim.app.common.contexts.UeMrContext;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -12,63 +13,62 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 
-import java.util.UUID;
-
 public class UeMrTask extends NtsTask {
 
-    private final UeSimContext ctx;
-
-    private NtsTask nasTask;
-    private NtsTask rrcTask;
-    private NtsTask appTask;
+    private final UeMrContext ctx;
 
     public UeMrTask(UeSimContext ctx) {
-        this.ctx = ctx;
+        this.ctx = new UeMrContext(ctx);
     }
 
     @Override
     public void main() {
-        nasTask = ctx.nts.findTask(ItmsId.UE_TASK_NAS);
-        rrcTask = ctx.nts.findTask(ItmsId.UE_TASK_RRC);
-        appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP);
+        ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
+        ctx.appTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_APP);
 
         while (true) {
             var msg = take();
             if (msg instanceof IwUplinkData) {
-                var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
-                if (gnb == null) {
-                    Log.warning(Tag.FLOW, "Uplink Data transport failure: UE not connected to a gNB.");
-                } else {
-                    gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
-                }
+                receiveUplinkData((IwUplinkData) msg);
             } else if (msg instanceof IwDownlinkData) {
-                appTask.push(msg);
+                receiveDownlinkData((IwDownlinkData) msg);
             } else if (msg instanceof IwPlmnSearchRequest) {
-                performPlmnSearch();
+                receivePerformPlmnSearch((IwPlmnSearchRequest) msg);
             } else if (msg instanceof IwUplinkRrc) {
-                var gnb = ctx.sim.findGnbForUe(ctx.connectedGnb);
-                if (gnb == null) {
-                    Log.warning(Tag.FLOW, "Uplink RRC transport failure: UE not connected to a gNB.");
-                } else {
-                    gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
-                }
+                receiveUplinkRrc((IwUplinkRrc) msg);
             } else if (msg instanceof IwDownlinkRrc) {
-                rrcTask.push(msg);
+                receiveDownlinkRrc((IwDownlinkRrc) msg);
             }
         }
     }
 
-    private void performPlmnSearch() {
-        UUID gnbId = null;
-        // TODO: More complex mechanism to select a gNB.
-        for (var gnb : ctx.sim.allGnbs()) {
-            gnbId = gnb;
-        }
-
-        if (gnbId != null) {
-            nasTask.push(new IwPlmnSearchResponse(gnbId));
+    private void receiveUplinkData(IwUplinkData msg) {
+        var gnb = ctx.ueCtx.sim.findGnbForUe(ctx.connectedGnb);
+        if (gnb == null) {
+            Log.warning(Tag.FLOW, "Uplink Data transport failure: UE not connected to a gNB.");
         } else {
-            Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueConfig.supi.toString());
+            gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
         }
+    }
+
+    private void receiveDownlinkData(IwDownlinkData msg) {
+        ctx.appTask.push(msg);
+    }
+
+    private void receivePerformPlmnSearch(IwPlmnSearchRequest msg) {
+        MrPlmnSearch.performPlmnSearch(ctx);
+    }
+
+    private void receiveUplinkRrc(IwUplinkRrc msg) {
+        var gnb = ctx.ueCtx.sim.findGnbForUe(ctx.connectedGnb);
+        if (gnb == null) {
+            Log.warning(Tag.FLOW, "Uplink RRC transport failure: UE not connected to a gNB.");
+        } else {
+            gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
+        }
+    }
+
+    private void receiveDownlinkRrc(IwDownlinkRrc msg) {
+        ctx.rrcTask.push(msg);
     }
 }
