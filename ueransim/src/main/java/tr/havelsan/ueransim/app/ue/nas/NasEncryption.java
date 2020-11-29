@@ -126,9 +126,8 @@ public class NasEncryption {
 
         var decryptedData = decryptData(encAlg, estimatedCount, cnId, encKey, protectedNasMessage.securityHeaderType,
                 protectedNasMessage.plainNasMessage.toByteArray());
-        var decryptedMsg = NasDecoder.nasPdu(decryptedData);
 
-        return decryptedMsg;
+        return NasDecoder.nasPdu(decryptedData);
     }
 
     private static OctetString decryptData(ETypeOfCipheringAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
