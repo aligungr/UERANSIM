@@ -14,7 +14,7 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class GnbRrcTask extends NtsTask {
 
-    private GnbRrcContext ctx;
+    private final GnbRrcContext ctx;
 
     public GnbRrcTask(GnbSimContext ctx) {
         this.ctx = new GnbRrcContext(ctx);
