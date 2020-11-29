@@ -23,12 +23,9 @@ import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UE_NGAP_IDs;
 import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_CauseProtocol;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.msg.*;
-import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
-
-import java.util.UUID;
 
 public class NgapTask extends NtsTask {
 
@@ -58,22 +55,20 @@ public class NgapTask extends NtsTask {
         while (true) {
             var msg = take();
             if (msg instanceof IwNgapReceive) {
-                receiveNgap(((IwNgapReceive) msg).associatedAmf, ((IwNgapReceive) msg).stream, ((IwNgapReceive) msg).ngapPdu);
+                receiveNgap((IwNgapReceive) msg);
             } else if (msg instanceof IwUplinkNas) {
-                var w = (IwUplinkNas) msg;
-
-                if (!ctx.ueContexts.containsKey(w.ue)) {
-                    NgapNasTransport.receiveInitialNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
-                } else {
-                    NgapNasTransport.receiveUplinkNasTransport(ctx, w.ue, NasDecoder.nasPdu(w.nasPdu));
-                }
+                receiveUplinkNas((IwUplinkNas) msg);
             } else if (msg instanceof IwSctpAssociationSetup) {
-                NgapInterfaceManagement.sendNgSetupRequest(ctx, ((IwSctpAssociationSetup) msg).amfId);
+                receiveAssociationSetup((IwSctpAssociationSetup) msg);
             }
         }
     }
 
-    private void receiveNgap(UUID associatedAmf, int stream, NGAP_PDU ngapPdu) {
+    private void receiveNgap(IwNgapReceive msg) {
+        var associatedAmf = msg.associatedAmf;
+        var stream = msg.stream;
+        var ngapPdu = msg.ngapPdu;
+
         Log.debug(Tag.MSG, "Received NGAP: %s", ngapPdu.getClass().getSimpleName());
         Log.debug(Tag.MSG, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
@@ -155,6 +150,18 @@ public class NgapTask extends NtsTask {
                 NgapTransfer.sendNgapNonUe(ctx, associatedAmf, errorIndication);
             }
         }
+    }
+
+    private void receiveUplinkNas(IwUplinkNas msg) {
+        if (!ctx.ueContexts.containsKey(msg.ue)) {
+            NgapNasTransport.receiveInitialNasTransport(ctx, msg.ue, NasDecoder.nasPdu(msg.nasPdu));
+        } else {
+            NgapNasTransport.receiveUplinkNasTransport(ctx, msg.ue, NasDecoder.nasPdu(msg.nasPdu));
+        }
+    }
+
+    private void receiveAssociationSetup(IwSctpAssociationSetup msg) {
+        NgapInterfaceManagement.sendNgSetupRequest(ctx, msg.amfId);
     }
 
     public NgapGnbContext getNgapContext() {
