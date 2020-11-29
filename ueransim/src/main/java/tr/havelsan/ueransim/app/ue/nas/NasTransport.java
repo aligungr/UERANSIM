@@ -8,6 +8,7 @@ package tr.havelsan.ueransim.app.ue.nas;
 import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
+import tr.havelsan.ueransim.app.ue.nas.sec.NasSecurity;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;

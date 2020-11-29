@@ -11,7 +11,7 @@ import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.enums.EAutnValidationRes;
-import tr.havelsan.ueransim.app.ue.nas.NasSecurityContext;
+import tr.havelsan.ueransim.app.ue.nas.sec.NasSecurityContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.*;
 import tr.havelsan.ueransim.nas.impl.enums.EMmCause;

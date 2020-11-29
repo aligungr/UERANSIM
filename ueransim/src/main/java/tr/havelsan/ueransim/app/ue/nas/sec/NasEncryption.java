@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.ue.nas;
+package tr.havelsan.ueransim.app.ue.nas.sec;
 
 import tr.havelsan.ueransim.app.common.NasCount;
 import tr.havelsan.ueransim.app.common.enums.EConnectionIdentifier;
