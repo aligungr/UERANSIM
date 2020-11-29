@@ -85,6 +85,7 @@ public class MmSecurity {
         MobilityManagement.sendMm(ctx, response);
     }
 
+    // TODO: read from configs
     public static IEUeSecurityCapability createSecurityCapabilityIe() {
         var ie = new IEUeSecurityCapability();
         ie.supported_5G_EA0 = Bit.ONE;
