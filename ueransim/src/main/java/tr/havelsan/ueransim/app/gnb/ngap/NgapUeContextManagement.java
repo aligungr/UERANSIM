@@ -48,7 +48,7 @@ public class NgapUeContextManagement {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            NgapNasTransport.sendNasPdu(ctx, ueId, NasEncoder.nasPduS(nasMessage));
+            NgapNasTransport.deliverDlNas(ctx, ueId, NasEncoder.nasPduS(nasMessage));
         }
     }
 

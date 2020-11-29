@@ -79,7 +79,7 @@ public class NgapPduSessionManagement {
 
             if (pduResourceSetup(ctx, associatedUe, resource)) {
                 if (item.pDUSessionNAS_PDU != null) {
-                    NgapNasTransport.sendNasPdu(ctx, associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value);
+                    NgapNasTransport.deliverDlNas(ctx, associatedUe.ueCtxId, item.pDUSessionNAS_PDU.value);
                 }
 
                 var tr = new NGAP_PDUSessionResourceSetupResponseTransfer();
@@ -113,7 +113,7 @@ public class NgapPduSessionManagement {
 
         var nasPdu = message.getProtocolIe(NGAP_NAS_PDU.class);
         if (nasPdu != null) {
-            NgapNasTransport.sendNasPdu(ctx, associatedUe.ueCtxId, nasPdu.value);
+            NgapNasTransport.deliverDlNas(ctx, associatedUe.ueCtxId, nasPdu.value);
         }
 
         int succeeded = successList.list.size();

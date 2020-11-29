@@ -54,7 +54,7 @@ public class NgapNasTransport {
         NgapTransfer.sendNgapUeAssociated(ctx, associatedUe, ngap);
     }
 
-    public static void sendNasPdu(NgapGnbContext ctx, UUID associatedUe, OctetString nasPdu) {
+    public static void deliverDlNas(NgapGnbContext ctx, UUID associatedUe, OctetString nasPdu) {
         ctx.rrcTask.push(new IwDownlinkNas(associatedUe, nasPdu));
     }
 
@@ -73,7 +73,7 @@ public class NgapNasTransport {
 
         var nasMessage = message.getNasMessage();
         if (nasMessage != null) {
-            sendNasPdu(ctx, associatedUe, NasEncoder.nasPduS(nasMessage));
+            deliverDlNas(ctx, associatedUe, NasEncoder.nasPduS(nasMessage));
         }
     }
 
