@@ -13,6 +13,7 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class NasContext {
     public final UeSimContext ueCtx;
+    public final boolean emulationMode;
 
     public NtsTask rrcTask;
 
@@ -27,6 +28,7 @@ public class NasContext {
 
     public NasContext(UeSimContext ueCtx) {
         this.ueCtx = ueCtx;
+        this.emulationMode = ueCtx.ueConfig.emulationMode;
         this.ueTimers = new UeTimers();
         this.mmCtx = new MmContext();
         this.smCtx = new SmContext();

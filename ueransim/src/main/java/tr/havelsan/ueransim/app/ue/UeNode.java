@@ -19,9 +19,6 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class UeNode {
 
-    // TODO: this should be inside of UeSimContext
-    public static final boolean AUTO = false;
-
     public static UeSimContext createContext(UeRanSim sim, UeConfig config) {
         var ctx = new UeSimContext(sim, "ue-" + config.supi.value);
         ctx.ueConfig = config;

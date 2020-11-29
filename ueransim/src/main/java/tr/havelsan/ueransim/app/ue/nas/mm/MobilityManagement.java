@@ -16,7 +16,6 @@ import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_InitialRegistration;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PeriodicRegistration;
-import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
@@ -72,13 +71,13 @@ public class MobilityManagement {
 
     public static void receiveTimerExpire(NasContext ctx, NasTimer timer) {
         if (timer.timerCode == 3512) {
-            if (UeNode.AUTO && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
+            if (ctx.emulationMode && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING, EFollowOnRequest.NO_FOR_PENDING);
             }
         }
 
         if (timer.timerCode == 3346) {
-            if (UeNode.AUTO && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
+            if (ctx.emulationMode && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.NO_FOR_PENDING);
             }
         }
@@ -137,7 +136,7 @@ public class MobilityManagement {
         }
 
         if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
-            if (UeNode.AUTO && !ctx.ueTimers.t3346.isRunning()) {
+            if (ctx.emulationMode && !ctx.ueTimers.t3346.isRunning()) {
                 MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.NO_FOR_PENDING);
             }
             return;
@@ -159,7 +158,7 @@ public class MobilityManagement {
             return;
         }
 
-        if (UeNode.AUTO) {
+        if (ctx.emulationMode) {
             throw new NotImplementedException("unhandled UE MM state");
         }
     }
