@@ -5,9 +5,9 @@
 
 package tr.havelsan.ueransim.app.ue.nas.sm;
 
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.impl.enums.EConfigurationProtocol;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 class SmPduSessionEstablishment {
 
-    public static void sendEstablishmentRequest(UeSimContext ctx) {
+    public static void sendEstablishmentRequest(NasContext ctx) {
         var pduSessionId = SmPduSessionManagement.allocatePduSessionId(ctx);
         if (pduSessionId == null) {
             Log.error(Tag.FLOW, "PDU Session Establishment Request could not send");
@@ -66,7 +66,7 @@ class SmPduSessionEstablishment {
         SessionManagement.sendSm(ctx, pduSessionId, request);
     }
 
-    public static void receiveEstablishmentAccept(UeSimContext ctx, PduSessionEstablishmentAccept message) {
+    public static void receiveEstablishmentAccept(NasContext ctx, PduSessionEstablishmentAccept message) {
         if (message.smCause != null) {
             Log.warning(Tag.FLOW, "SM cause received in PduSessionEstablishmentAccept: %s", message.smCause.value);
         }
@@ -88,14 +88,14 @@ class SmPduSessionEstablishment {
         pduSession.sessionType = message.selectedPduSessionType;
         pduSession.pduAddress = message.pduAddress;
 
-        ctx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeConnectionSetup(pduSession));
-        ctx.sim.getAirCtx().nts.findTask(ItmsId.AIR_TASK_TB).push(new IwPduSessionEstablishment(ctx.ctxId, pduSession));
+        ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_APP).push(new IwUeConnectionSetup(pduSession));
+        ctx.ueCtx.sim.getAirCtx().nts.findTask(ItmsId.AIR_TASK_TB).push(new IwPduSessionEstablishment(ctx.ueCtx.ctxId, pduSession));
 
         Log.info(Tag.FLOW, "PDU session established: %s", message.pduSessionId);
         Log.success(Tag.PROC, "PDU Session Establishment is successful");
     }
 
-    public static void receiveEstablishmentReject(UeSimContext ctx, PduSessionEstablishmentReject message) {
+    public static void receiveEstablishmentReject(NasContext ctx, PduSessionEstablishmentReject message) {
         // TODO
     }
 }

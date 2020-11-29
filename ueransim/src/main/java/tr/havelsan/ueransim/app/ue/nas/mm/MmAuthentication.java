@@ -9,8 +9,8 @@ import threegpp.milenage.MilenageResult;
 import threegpp.milenage.biginteger.BigIntegerBufferFactory;
 import threegpp.milenage.cipher.Ciphers;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.enums.EAutnValidationRes;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.nas.NasSecurityContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.eap.*;
@@ -33,7 +33,7 @@ public class MmAuthentication {
     private static final boolean IGNORE_CONTROLS_FAILURES = false;
     private static final boolean USE_SQN_HACK = true; // todo
 
-    public static void receiveAuthenticationRequest(UeSimContext ctx, AuthenticationRequest message) {
+    public static void receiveAuthenticationRequest(NasContext ctx, AuthenticationRequest message) {
         if (message.eapMessage != null) {
             receiveAuthenticationRequestEap(ctx, message);
         } else {
@@ -41,7 +41,7 @@ public class MmAuthentication {
         }
     }
 
-    private static void receiveAuthenticationRequestEap(UeSimContext ctx, AuthenticationRequest message) {
+    private static void receiveAuthenticationRequestEap(NasContext ctx, AuthenticationRequest message) {
         OctetString receivedRand, receivedMac, receivedAutn, milenageAk, milenageMac, res, mk, kaut;
         EapAkaPrime receivedEap;
         int receivedKdf;
@@ -80,10 +80,10 @@ public class MmAuthentication {
 
             if (USE_SQN_HACK) {
                 ctx.ueData.sqn = OctetString.xor(receivedAutn.substring(0, 6),
-                        calculateMilenage(ctx.ueConfig, new OctetString("000000000000"), receivedRand).get(MilenageResult.AK));
+                        calculateMilenage(ctx.ueCtx.ueConfig, new OctetString("000000000000"), receivedRand).get(MilenageResult.AK));
             }
 
-            var milenage = calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, receivedRand);
+            var milenage = calculateMilenage(ctx.ueCtx.ueConfig, ctx.ueData.sqn, receivedRand);
             res = milenage.get(MilenageResult.RES);
             var ck = milenage.get(MilenageResult.CK);
             var ik = milenage.get(MilenageResult.IK);
@@ -91,18 +91,18 @@ public class MmAuthentication {
             milenageMac = milenage.get(MilenageResult.MAC_A);
 
             var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
-            var ckPrimeIkPrime = MmKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueConfig.snn, sqnXorAk);
+            var ckPrimeIkPrime = MmKeyManagement.calculateCkPrimeIkPrime(ck, ik, ctx.ueCtx.ueConfig.snn, sqnXorAk);
             var ckPrime = ckPrimeIkPrime[0];
             var ikPrime = ckPrimeIkPrime[1];
 
-            mk = MmKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueConfig.supi);
+            mk = MmKeyManagement.calculateMk(ckPrime, ikPrime, ctx.ueCtx.ueConfig.supi);
             kaut = mk.substring(16, 32);
 
             Log.debug(Tag.VALUE, "ueData.sqn: %s", ctx.ueData.sqn);
-            Log.debug(Tag.VALUE, "ueData.op: %s", ctx.ueConfig.op);
-            Log.debug(Tag.VALUE, "ueData.K: %s", ctx.ueConfig.key);
-            Log.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueConfig.supi);
-            Log.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueConfig.snn);
+            Log.debug(Tag.VALUE, "ueData.op: %s", ctx.ueCtx.ueConfig.op);
+            Log.debug(Tag.VALUE, "ueData.K: %s", ctx.ueCtx.ueConfig.key);
+            Log.debug(Tag.VALUE, "ueData.supi: %s", ctx.ueCtx.ueConfig.supi);
+            Log.debug(Tag.VALUE, "ueData.snn: %s", ctx.ueCtx.ueConfig.snn);
             Log.debug(Tag.VALUE, "calculated res: %s", res);
             Log.debug(Tag.VALUE, "calculated ck: %s", ck);
             Log.debug(Tag.VALUE, "calculated ik: %s", ik);
@@ -194,7 +194,7 @@ public class MmAuthentication {
             ctx.nonCurrentNsCtx.keys.kAusf = kAusf;
             ctx.nonCurrentNsCtx.keys.abba = message.abba.contents;
 
-            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
+            MmKeyManagement.deriveKeysSeafAmf(ctx.ueCtx.ueConfig, ctx.nonCurrentNsCtx);
             Log.debug(Tag.VALUE, "kSeaf: %s", ctx.nonCurrentNsCtx.keys.kSeaf);
             Log.debug(Tag.VALUE, "kAmf: %s", ctx.nonCurrentNsCtx.keys.kAmf);
         }
@@ -220,7 +220,7 @@ public class MmAuthentication {
         }
     }
 
-    private static void receiveAuthenticationRequest5gAka(UeSimContext ctx, AuthenticationRequest request) {
+    private static void receiveAuthenticationRequest5gAka(NasContext ctx, AuthenticationRequest request) {
         PlainMmMessage response = null;
 
         if (USE_SQN_HACK) {
@@ -238,10 +238,10 @@ public class MmAuthentication {
 
         if (USE_SQN_HACK) {
             ctx.ueData.sqn = OctetString.xor(autn.substring(0, 6),
-                    calculateMilenage(ctx.ueConfig, new OctetString("000000000000"), rand).get(MilenageResult.AK));
+                    calculateMilenage(ctx.ueCtx.ueConfig, new OctetString("000000000000"), rand).get(MilenageResult.AK));
         }
 
-        var milenage = calculateMilenage(ctx.ueConfig, ctx.ueData.sqn, rand);
+        var milenage = calculateMilenage(ctx.ueCtx.ueConfig, ctx.ueData.sqn, rand);
         var res = milenage.get(MilenageResult.RES);
         var ck = milenage.get(MilenageResult.CK);
         var ik = milenage.get(MilenageResult.IK);
@@ -249,7 +249,7 @@ public class MmAuthentication {
         var milenageAk = milenage.get(MilenageResult.AK);
         var milenageMac = milenage.get(MilenageResult.MAC_A);
         var sqnXorAk = OctetString.xor(ctx.ueData.sqn, milenageAk);
-        var snn = ctx.ueConfig.snn;
+        var snn = ctx.ueCtx.ueConfig.snn;
 
         Log.debug(Tag.VALUE, "calculated res: %s", res);
         Log.debug(Tag.VALUE, "calculated ck: %s", ck);
@@ -273,7 +273,7 @@ public class MmAuthentication {
             ctx.nonCurrentNsCtx.keys.kAusf = MmKeyManagement.calculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
             ctx.nonCurrentNsCtx.keys.abba = request.abba.contents;
 
-            MmKeyManagement.deriveKeysSeafAmf(ctx.ueConfig, ctx.nonCurrentNsCtx);
+            MmKeyManagement.deriveKeysSeafAmf(ctx.ueCtx.ueConfig, ctx.nonCurrentNsCtx);
 
             // Prepare response
             response = new AuthenticationResponse(
@@ -292,7 +292,7 @@ public class MmAuthentication {
         }
     }
 
-    private static EAutnValidationRes validateAutn(UeSimContext ctx, OctetString ak, OctetString mac, OctetString autn) {
+    private static EAutnValidationRes validateAutn(NasContext ctx, OctetString ak, OctetString mac, OctetString autn) {
         // Decode AUTN
         var receivedSQNxorAK = autn.substring(0, 6);
         var receivedSQN = OctetString.xor(receivedSQNxorAK, ak);
@@ -346,7 +346,7 @@ public class MmAuthentication {
         return true;
     }
 
-    public static void receiveAuthenticationResult(UeSimContext ctx, AuthenticationResult message) {
+    public static void receiveAuthenticationResult(NasContext ctx, AuthenticationResult message) {
         if (message.abba != null) {
             ctx.nonCurrentNsCtx.keys.abba = message.abba.contents;
         }
@@ -363,7 +363,7 @@ public class MmAuthentication {
         }
     }
 
-    public static void receiveAuthenticationResponse(UeSimContext ctx, AuthenticationResponse message) {
+    public static void receiveAuthenticationResponse(NasContext ctx, AuthenticationResponse message) {
         if (message.eapMessage != null) {
             if (message.eapMessage.eap.code.equals(Eap.ECode.RESPONSE)) {
                 MmAuthentication.receiveEapResponseMessage(ctx, message.eapMessage.eap);
@@ -374,7 +374,7 @@ public class MmAuthentication {
         }
     }
 
-    public static void receiveAuthenticationReject(UeSimContext ctx, AuthenticationReject message) {
+    public static void receiveAuthenticationReject(NasContext ctx, AuthenticationReject message) {
         Log.error(Tag.PROC, "Authentication Reject received.");
 
         if (message.eapMessage != null) {
@@ -394,17 +394,17 @@ public class MmAuthentication {
         }
     }
 
-    public static void receiveEapSuccessMessage(UeSimContext ctx, Eap eap) {
+    public static void receiveEapSuccessMessage(NasContext ctx, Eap eap) {
         // do nothing
     }
 
 
-    public static void receiveEapFailureMessage(UeSimContext ctx, Eap eap) {
+    public static void receiveEapFailureMessage(NasContext ctx, Eap eap) {
         Log.debug(Tag.FLOW, "Deleting non-current NAS security context");
         ctx.nonCurrentNsCtx = null;
     }
 
-    public static void receiveEapResponseMessage(UeSimContext ctx, Eap eap) {
+    public static void receiveEapResponseMessage(NasContext ctx, Eap eap) {
         if (eap instanceof EapAkaPrime) {
             var akaPrime = (EapAkaPrime) eap;
 

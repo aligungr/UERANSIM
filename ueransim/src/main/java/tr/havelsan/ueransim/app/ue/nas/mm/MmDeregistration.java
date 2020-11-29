@@ -5,10 +5,10 @@
 
 package tr.havelsan.ueransim.app.ue.nas.mm;
 
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeOriginating;
 import tr.havelsan.ueransim.nas.impl.messages.DeRegistrationAcceptUeTerminated;
@@ -19,7 +19,7 @@ import tr.havelsan.ueransim.utils.console.Log;
 
 public class MmDeregistration {
 
-    public static void sendDeregistration(UeSimContext ctx, IEDeRegistrationType.ESwitchOff switchOff) {
+    public static void sendDeregistration(NasContext ctx, IEDeRegistrationType.ESwitchOff switchOff) {
         MobilityManagement.switchState(ctx, EMmState.MM_DEREGISTERED_INITIATED, EMmSubState.MM_DEREGISTERED_INITIATED__NA);
 
         var request = new DeRegistrationRequestUeOriginating();
@@ -43,7 +43,7 @@ public class MmDeregistration {
         }
     }
 
-    public static void receiveDeregistrationAccept(UeSimContext ctx, DeRegistrationAcceptUeOriginating message) {
+    public static void receiveDeregistrationAccept(NasContext ctx, DeRegistrationAcceptUeOriginating message) {
         ctx.ueTimers.t3521.stop();
         ctx.ueTimers.t3519.stop();
         ctx.mmCtx.storedSuci = null;
@@ -55,7 +55,7 @@ public class MmDeregistration {
     }
 
     // todo
-    public static void receiveDeregistrationRequest(UeSimContext ctx, DeRegistrationRequestUeTerminated message) {
+    public static void receiveDeregistrationRequest(NasContext ctx, DeRegistrationRequestUeTerminated message) {
         if (message.deRegistrationType.reRegistrationRequired.equals(IEDeRegistrationType.EReRegistrationRequired.REQUIRED)) {
             ctx.ueTimers.t3346.stop();
             ctx.ueTimers.t3396.stop();

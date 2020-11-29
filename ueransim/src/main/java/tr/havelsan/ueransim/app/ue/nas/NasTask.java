@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
@@ -25,16 +26,16 @@ public class NasTask extends NtsTask {
     private static final int PERIOD_TIMER = 1000;
     private static final int PERIOD_MM = 100;
 
-    private final UeSimContext ctx;
+    private final NasContext ctx;
 
     public NasTask(UeSimContext ctx) {
         super(true);
-        this.ctx = ctx;
+        this.ctx = new NasContext(ctx);
     }
 
     @Override
     public void main() {
-        ctx.rrcTask = ctx.nts.findTask(ItmsId.UE_TASK_RRC);
+        ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
 
         pushDelayed(new IwPerformCycle(CYCLE_MM), PERIOD_MM);
         pushDelayed(new IwPerformCycle(CYCLE_TIMER), PERIOD_TIMER);

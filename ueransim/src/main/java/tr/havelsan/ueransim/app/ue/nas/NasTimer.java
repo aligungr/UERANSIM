@@ -5,14 +5,12 @@
 
 package tr.havelsan.ueransim.app.ue.nas;
 
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer2;
 import tr.havelsan.ueransim.nas.impl.ies.IEGprsTimer3;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class NasTimer {
-    public final UeSimContext ctx;
     public final int timerCode;
     public final boolean isMmTimer;
 
@@ -22,8 +20,7 @@ public class NasTimer {
 
     private long _lastDebugPrintMs;
 
-    public NasTimer(UeSimContext ctx, int timerCode, boolean isMmTimer, int defaultInterval) {
-        this.ctx = ctx;
+    public NasTimer(int timerCode, boolean isMmTimer, int defaultInterval) {
         this.timerCode = timerCode;
         this.isMmTimer = isMmTimer;
         this.interval = defaultInterval;

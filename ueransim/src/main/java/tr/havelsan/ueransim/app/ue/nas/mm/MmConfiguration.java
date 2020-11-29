@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.nas.mm;
 
-import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
 import tr.havelsan.ueransim.nas.impl.ies.IEConfigurationUpdateIndication;
 import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateCommand;
@@ -13,7 +13,7 @@ import tr.havelsan.ueransim.nas.impl.messages.ConfigurationUpdateComplete;
 
 public class MmConfiguration {
 
-    public static void receiveConfigurationUpdate(UeSimContext ctx, ConfigurationUpdateCommand message) {
+    public static void receiveConfigurationUpdate(NasContext ctx, ConfigurationUpdateCommand message) {
         ctx.ueTimers.t3346.stop();
 
         if (message.guti instanceof IE5gGutiMobileIdentity) {
