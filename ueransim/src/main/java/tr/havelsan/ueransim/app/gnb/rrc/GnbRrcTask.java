@@ -30,9 +30,8 @@ public class GnbRrcTask extends NtsTask {
             if (msg instanceof IwUplinkRrc) {
                 RrcTransport.receiveRrcMessage(ctx, ((IwUplinkRrc) msg).ueId, ((IwUplinkRrc) msg).rrcMessage);
             } else if (msg instanceof IwDownlinkNas) {
-                RrcNasTransport.sendNasPdu(ctx, ((IwDownlinkNas) msg).ue, ((IwDownlinkNas) msg).nasPdu);
+                RrcNasTransport.deliverDlNas(ctx, ((IwDownlinkNas) msg).ue, ((IwDownlinkNas) msg).nasPdu);
             }
         }
     }
-
 }

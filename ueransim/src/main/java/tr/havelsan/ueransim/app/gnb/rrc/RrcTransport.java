@@ -7,7 +7,6 @@ package tr.havelsan.ueransim.app.gnb.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.rrc.core.RrcMessage;
 import tr.havelsan.ueransim.rrc.messages.RrcULInformationTransfer;
 
@@ -19,7 +18,7 @@ public class RrcTransport {
         if (message instanceof RrcULInformationTransfer) {
             var nasPdu = ((RrcULInformationTransfer) message).criticalExtensions.ulInformationTransfer
                     .dedicatedNAS_Message.value;
-            ctx.ngapTask.push(new IwUplinkNas(ue, nasPdu));
+            RrcNasTransport.deliverUlNas(ctx, ue, nasPdu);
         }
     }
 

@@ -16,12 +16,16 @@ import java.util.UUID;
 
 public class RrcNasTransport {
 
-    public static void sendNasPdu(GnbRrcContext ctx, UUID ue, OctetString nasPdu) {
+    public static void deliverDlNas(GnbRrcContext ctx, UUID ue, OctetString nasPdu) {
         var rrc = new RrcDLInformationTransfer();
         rrc.criticalExtensions = new RRC_DLInformationTransfer_CriticalExtensions();
         rrc.criticalExtensions.dlInformationTransfer = new RRC_DLInformationTransfer_IEs();
         rrc.criticalExtensions.dlInformationTransfer.dedicatedNAS_Message = new RRC_DedicatedNAS_Message(nasPdu);
 
         RrcTransport.sendRrcMessage(ctx, ue, rrc);
+    }
+
+    public static void deliverUlNas(GnbRrcContext ctx, UUID ue, OctetString nasPdu) {
+
     }
 }
