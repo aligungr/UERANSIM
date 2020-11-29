@@ -35,41 +35,23 @@ public class GtpTask extends NtsTask {
 
     private final GtpContext ctx;
 
-    private DatagramSocket socket;
-    private NtsTask mrTask;
-
     public GtpTask(GnbSimContext ctx) {
         this.ctx = new GtpContext(ctx);
     }
 
     @Override
     public void main() {
-        this.mrTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR);
+        ctx.mrTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR);
 
         try {
-            this.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
+            ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
         } catch (Exception e) {
             Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.gtpPort, ctx.gnbCtx.config.host, e.toString());
             return;
         }
 
-        var receiverThread = new Thread(() -> {
-            var buffer = new byte[65535];
-
-            var datagram = new DatagramPacket(buffer, buffer.length);
-
-            while (true) {
-                try {
-                    socket.receive(datagram);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                push(new IwGtpDownlink(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
-            }
-        });
-
+        var receiverThread = new Thread(this::udpReceiverThread);
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(getThread()));
-
         receiverThread.start();
 
         while (true) {
@@ -84,6 +66,21 @@ public class GtpTask extends NtsTask {
         }
     }
 
+    private void udpReceiverThread() {
+        var buffer = new byte[65535];
+
+        var datagram = new DatagramPacket(buffer, buffer.length);
+
+        while (true) {
+            try {
+                ctx.socket.receive(datagram);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            push(new IwGtpDownlink(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
+        }
+    }
+
     private void handleUplinkData(IwUplinkData msg) {
         var data = msg.ipData;
         if ((data.get(0) >> 4 & 0xF) != 4) {
@@ -91,15 +88,11 @@ public class GtpTask extends NtsTask {
             return;
         }
 
-        var pduSessionOpt = ctx.pduSessions.stream()
-                .filter(r -> r.ueId.equals(msg.ueId) && r.pduSessionId == msg.pduSessionId)
-                .findFirst();
-        if (pduSessionOpt.isEmpty()) {
+        var pduSession = ctx.pduSessions.findBySessionId(msg.ueId, msg.pduSessionId);
+        if (pduSession == null) {
             Log.error(Tag.GTP, "TEID not found on GTP-U Uplink");
             return;
         }
-
-        var pduSession = pduSessionOpt.get();
 
         var gtp = new GtpMessage();
         gtp.payload = data;
@@ -119,7 +112,7 @@ public class GtpTask extends NtsTask {
             var gtpData = GtpEncoder.encode(gtp);
             var address = pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray();
             var pck = new DatagramPacket(gtpData, gtpData.length, InetAddress.getByAddress(address), 2152);
-            socket.send(pck);
+            ctx.socket.send(pck);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -128,10 +121,8 @@ public class GtpTask extends NtsTask {
     private void handleDownlinkGtp(IwGtpDownlink msg) {
         var gtp = GtpDecoder.decode(msg.data);
 
-        var pduSession = ctx.pduSessions.stream()
-                .filter(r -> r.upLayer.gTPTunnel.gTP_TEID.value.equals(gtp.teid.toOctetString()))
-                .findFirst();
-        if (pduSession.isEmpty()) {
+        var pduSession = ctx.pduSessions.findByUpTeid(gtp.teid.longValue());
+        if (pduSession == null) {
             Log.error(Tag.GTP, "TEID not found on GTP-U Downlink");
             return;
         }
@@ -141,13 +132,13 @@ public class GtpTask extends NtsTask {
             return;
         }
 
-        var ueId = pduSession.get().ueId;
+        var ueId = pduSession.ueId;
         var ipPacket = gtp.payload;
 
-        mrTask.push(new IwDownlinkData(ueId, ipPacket));
+        ctx.mrTask.push(new IwDownlinkData(ueId, ipPacket));
     }
 
     private void handleTunnelCreate(PduSessionResource pduSession) {
-        ctx.pduSessions.add(pduSession);
+        ctx.pduSessions.insert(pduSession);
     }
 }
