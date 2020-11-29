@@ -22,6 +22,8 @@ public class NgapGnbContext {
     public HashMap<UUID, NgapUeContext> ueContexts;
     public long ueNgapIdCounter;
 
+    public int downTeidCounter;
+
     public NgapGnbContext(GnbSimContext gnbCtx) {
         this.gnbCtx = gnbCtx;
         this.amfContexts = new HashMap<>();

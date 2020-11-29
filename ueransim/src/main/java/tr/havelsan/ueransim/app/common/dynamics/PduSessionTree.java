@@ -13,23 +13,23 @@ import java.util.UUID;
 
 public class PduSessionTree {
 
-    private final Map<Long, PduSessionResource> mapByUpTeid;
+    private final Map<Long, PduSessionResource> mapByDownTeid;
     private final Map<UUID, Map<Integer, PduSessionResource>> mapByUeId;
 
     public PduSessionTree() {
-        this.mapByUpTeid = new HashMap<>();
+        this.mapByDownTeid = new HashMap<>();
         this.mapByUeId = new HashMap<>();
     }
 
     public void insert(PduSessionResource session) {
-        mapByUpTeid.put(session.upLayer.gTPTunnel.gTP_TEID.value.get4(0).longValue(), session);
+        mapByDownTeid.put(session.downLayer.gTPTunnel.gTP_TEID.value.get4(0).longValue(), session);
 
         var mapBySessionId = mapByUeId.computeIfAbsent(session.ueId, k -> new HashMap<>());
         mapBySessionId.put(session.pduSessionId, session);
     }
 
-    public PduSessionResource findByUpTeid(long upTeid) {
-        return mapByUpTeid.get(upTeid);
+    public PduSessionResource findByDownTeid(long upTeid) {
+        return mapByDownTeid.get(upTeid);
     }
 
     public PduSessionResource findBySessionId(UUID ue, int psi) {
@@ -41,7 +41,7 @@ public class PduSessionTree {
     }
 
     public void delete(PduSessionResource session) {
-        mapByUpTeid.remove(session.upLayer.gTPTunnel.gTP_TEID.value.get4(0).longValue());
+        mapByDownTeid.remove(session.upLayer.gTPTunnel.gTP_TEID.value.get4(0).longValue());
 
         var mapBySessionId = mapByUeId.get(session.ueId);
         if (mapBySessionId != null) {

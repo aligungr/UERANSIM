@@ -121,7 +121,7 @@ public class GtpTask extends NtsTask {
     private void handleDownlinkGtp(IwGtpDownlink msg) {
         var gtp = GtpDecoder.decode(msg.data);
 
-        var pduSession = ctx.pduSessions.findByUpTeid(gtp.teid.longValue());
+        var pduSession = ctx.pduSessions.findByDownTeid(gtp.teid.longValue());
         if (pduSession == null) {
             Log.error(Tag.GTP, "TEID not found on GTP-U Downlink");
             return;

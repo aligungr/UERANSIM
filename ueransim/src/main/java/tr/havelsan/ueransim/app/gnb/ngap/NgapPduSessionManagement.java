@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.ngap0.msg.NGAP_PDUSessionResourceSetupResponse;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.octets.Octet4;
 
 
 public class NgapPduSessionManagement {
@@ -134,8 +135,9 @@ public class NgapPduSessionManagement {
 
         resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.gnbCtx.config.host));
 
-        // TODO: teid of gnb
-        resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(resource.upLayer.gTPTunnel.gTP_TEID.value);
+        ctx.downTeidCounter++;
+        var downTeid = new Octet4(ctx.downTeidCounter & 0xFFFFFFFFL).toOctetString();
+        resource.downLayer.gTPTunnel.gTP_TEID = new NGAP_GTP_TEID(downTeid);
 
         ctx.gtpTask.push(new IwPduSessionResourceCreate(resource));
         return true; // success
