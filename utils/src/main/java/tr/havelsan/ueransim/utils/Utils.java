@@ -29,6 +29,8 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +52,7 @@ public final class Utils {
             readLen += stream.currentIndex() - streamIndex;
         }
         if (readLen > length)
-            throw new DecodingException("Value length exceeds total length!");
+            throw new DecodingException("Value l exceeds total length!");
 
         var arr = Array.newInstance(componentType, res.size());
         for (int i = 0; i < res.size(); i++) {
@@ -515,5 +517,13 @@ public final class Utils {
                 throw new RuntimeException(e);
             }
         } else throw new IllegalArgumentException("invalid ipAddress");
+    }
+
+    public static String readAllText(String path) {
+        try {
+            return Files.readString(Paths.get(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

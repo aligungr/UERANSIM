@@ -12,7 +12,7 @@
     <groupId>tr.havelsan.ueransim</groupId>
     <artifactId>root</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.8</version>
+    <version>release</version>
     <modules>
         <module>sctp</module>
         <module>utils</module>
