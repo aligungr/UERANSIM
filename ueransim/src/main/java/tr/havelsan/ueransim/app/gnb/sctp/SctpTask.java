@@ -50,11 +50,6 @@ public class SctpTask extends NtsTask {
         // TODO: refactor this
         var ngapCtx = ((NgapTask) ngapTask).getNgapContext();
 
-        if (ngapCtx.amfContexts.isEmpty()) {
-            Log.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.ctxId);
-            return;
-        }
-
         var setupCount = new AtomicInteger(0);
 
         for (var amf : ngapCtx.amfContexts.values()) {

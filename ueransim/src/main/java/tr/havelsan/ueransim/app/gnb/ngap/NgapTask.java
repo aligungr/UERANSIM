@@ -52,6 +52,11 @@ public class NgapTask extends NtsTask {
         ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
         ctx.gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
 
+        if (ctx.amfContexts.isEmpty()) {
+            Log.error(Tag.CONFIG, "AMF contexts in GNB{%s} is empty", ctx.gnbCtx.ctxId);
+            return;
+        }
+
         while (true) {
             var msg = take();
             if (msg instanceof IwNgapReceive) {
@@ -164,6 +169,7 @@ public class NgapTask extends NtsTask {
         NgapInterfaceManagement.sendNgSetupRequest(ctx, msg.amfId);
     }
 
+    // TODO: remove this
     public NgapGnbContext getNgapContext() {
         return ctx;
     }
