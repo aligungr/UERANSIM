@@ -46,7 +46,7 @@ public class GtpTask extends NtsTask {
         try {
             ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
         } catch (Exception e) {
-            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.gtpPort, ctx.gnbCtx.config.host, e.toString());
+            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.host, ctx.gnbCtx.config.gtpPort, e.toString());
             return;
         }
 
