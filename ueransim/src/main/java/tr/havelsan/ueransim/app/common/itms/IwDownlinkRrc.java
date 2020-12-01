@@ -5,15 +5,15 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
-import tr.havelsan.ueransim.rrc.core.RrcMessage;
+import tr.havelsan.ueransim.rrc.asn.core.RRC_Value;
 
 import java.util.UUID;
 
 public class IwDownlinkRrc {
     public final UUID ueId;
-    public final RrcMessage rrcMessage;
+    public final RRC_Value rrcMessage;
 
-    public IwDownlinkRrc(UUID ueId, RrcMessage rrcMessage) {
+    public IwDownlinkRrc(UUID ueId, RRC_Value rrcMessage) {
         this.ueId = ueId;
         this.rrcMessage = rrcMessage;
     }
