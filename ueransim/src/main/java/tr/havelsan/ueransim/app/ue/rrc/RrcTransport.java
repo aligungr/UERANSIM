@@ -8,25 +8,29 @@ package tr.havelsan.ueransim.app.ue.rrc;
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkRrc;
+import tr.havelsan.ueransim.rrc.RrcMessage;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_ULInformationTransfer__criticalExtensions;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Value;
+import tr.havelsan.ueransim.rrc.asn.choices.RRC_UL_DCCH_MessageType;
+import tr.havelsan.ueransim.rrc.asn.choices.RRC_UL_DCCH_MessageType__c1;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DLInformationTransfer;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_ULInformationTransfer;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_ULInformationTransfer_IEs;
+import tr.havelsan.ueransim.rrc.asn.sequences.RRC_UL_DCCH_Message;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RrcTransport {
 
-    public static void receiveRrcMessage(UeRrcContext ctx, RRC_Value message) {
-        if (message instanceof RRC_DLInformationTransfer) {
-            var nasPdu = ((RRC_DLInformationTransfer) message).criticalExtensions
-                    .dlInformationTransfer.dedicatedNAS_Message.value;
-            ctx.nasTask.push(new IwDownlinkNas(ctx.ueCtx.ctxId, nasPdu));
+    public static void receiveRrcMessage(UeRrcContext ctx, RrcMessage message) {
+        if (message.dl_dcch != null) {
+            if (message.dl_dcch.message.c1.dlInformationTransfer != null) {
+                var nasPdu = message.dl_dcch.message.c1.dlInformationTransfer.criticalExtensions
+                        .dlInformationTransfer.dedicatedNAS_Message.value;
+                ctx.nasTask.push(new IwDownlinkNas(ctx.ueCtx.ctxId, nasPdu));
+            }
         }
     }
 
-    public static void sendRrcMessage(UeRrcContext ctx, RRC_Value message) {
+    public static void sendRrcMessage(UeRrcContext ctx, RrcMessage message) {
         ctx.mrTask.push(new IwUplinkRrc(ctx.ueCtx.ctxId, message));
     }
 
@@ -36,6 +40,11 @@ public class RrcTransport {
         rrc.criticalExtensions.ulInformationTransfer = new RRC_ULInformationTransfer_IEs();
         rrc.criticalExtensions.ulInformationTransfer.dedicatedNAS_Message = new RRC_DedicatedNAS_Message(nasPdu);
 
-        RrcTransport.sendRrcMessage(ctx, rrc);
+        var msg = new RRC_UL_DCCH_Message();
+        msg.message = new RRC_UL_DCCH_MessageType();
+        msg.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+        msg.message.c1.ulInformationTransfer = rrc;
+
+        RrcTransport.sendRrcMessage(ctx, new RrcMessage(msg));
     }
 }
