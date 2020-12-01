@@ -219,6 +219,80 @@ public class RrcMessage {
         this.scgFailureInformationEUTRA = scgFailureInformationEUTRA;
     }
 
+    public static RrcMessage fromPduSequence(RRC_Sequence pdu) {
+        if (pdu instanceof RRC_BCCH_BCH_Message) {
+            var msg = ((RRC_BCCH_BCH_Message) pdu).message;
+
+            if (msg.mib != null) return new RrcMessage(msg.mib);
+
+        } else if (pdu instanceof RRC_BCCH_DL_SCH_Message) {
+            var msg = ((RRC_BCCH_DL_SCH_Message) pdu).message;
+
+            if (msg.c1.systemInformation != null) return new RrcMessage(msg.c1.systemInformation);
+            if (msg.c1.systemInformationBlockType1 != null) return new RrcMessage(msg.c1.systemInformationBlockType1);
+
+        } else if (pdu instanceof RRC_DL_CCCH_Message) {
+            var msg = ((RRC_DL_CCCH_Message) pdu).message;
+
+            if (msg.c1.rrcReject != null) return new RrcMessage(msg.c1.rrcReject);
+            if (msg.c1.rrcSetup != null) return new RrcMessage(msg.c1.rrcSetup);
+
+        } else if (pdu instanceof RRC_DL_DCCH_Message) {
+            var msg = ((RRC_DL_DCCH_Message) pdu).message;
+
+            if (msg.c1.rrcReconfiguration != null) return new RrcMessage(msg.c1.rrcReconfiguration);
+            if (msg.c1.rrcResume != null) return new RrcMessage(msg.c1.rrcResume);
+            if (msg.c1.rrcRelease != null) return new RrcMessage(msg.c1.rrcRelease);
+            if (msg.c1.rrcReestablishment != null) return new RrcMessage(msg.c1.rrcReestablishment);
+            if (msg.c1.securityModeCommand != null) return new RrcMessage(msg.c1.securityModeCommand);
+            if (msg.c1.dlInformationTransfer != null) return new RrcMessage(msg.c1.dlInformationTransfer);
+            if (msg.c1.ueCapabilityEnquiry != null) return new RrcMessage(msg.c1.ueCapabilityEnquiry);
+            if (msg.c1.counterCheck != null) return new RrcMessage(msg.c1.counterCheck);
+            if (msg.c1.mobilityFromNRCommand != null) return new RrcMessage(msg.c1.mobilityFromNRCommand);
+
+        } else if (pdu instanceof RRC_PCCH_Message) {
+            var msg = ((RRC_PCCH_Message) pdu).message;
+
+            if (msg.c1.paging != null) return new RrcMessage(msg.c1.paging);
+
+        } else if (pdu instanceof RRC_UL_CCCH_Message) {
+            var msg = ((RRC_UL_CCCH_Message) pdu).message;
+
+            if (msg.c1.rrcSetupRequest != null) return new RrcMessage(msg.c1.rrcSetupRequest);
+            if (msg.c1.rrcReestablishmentRequest != null) return new RrcMessage(msg.c1.rrcReestablishmentRequest);
+            if (msg.c1.rrcResumeRequest != null) return new RrcMessage(msg.c1.rrcResumeRequest);
+            if (msg.c1.rrcSystemInfoRequest != null) return new RrcMessage(msg.c1.rrcSystemInfoRequest);
+
+        } else if (pdu instanceof RRC_UL_CCCH1_Message) {
+            var msg = ((RRC_UL_CCCH1_Message) pdu).message;
+
+            if (msg.c1.rrcResumeRequest1 != null) return new RrcMessage(msg.c1.rrcResumeRequest1);
+
+        } else if (pdu instanceof RRC_UL_DCCH_Message) {
+            var msg = ((RRC_UL_DCCH_Message) pdu).message;
+
+            if (msg.c1.measurementReport != null) return new RrcMessage(msg.c1.measurementReport);
+            if (msg.c1.rrcReconfigurationComplete != null) return new RrcMessage(msg.c1.rrcReconfigurationComplete);
+            if (msg.c1.rrcSetupComplete != null) return new RrcMessage(msg.c1.rrcSetupComplete);
+            if (msg.c1.rrcReestablishmentComplete != null) return new RrcMessage(msg.c1.rrcReestablishmentComplete);
+            if (msg.c1.rrcResumeComplete != null) return new RrcMessage(msg.c1.rrcResumeComplete);
+            if (msg.c1.securityModeComplete != null) return new RrcMessage(msg.c1.securityModeComplete);
+            if (msg.c1.securityModeFailure != null) return new RrcMessage(msg.c1.securityModeFailure);
+            if (msg.c1.ulInformationTransfer != null) return new RrcMessage(msg.c1.ulInformationTransfer);
+            if (msg.c1.locationMeasurementIndication != null)
+                return new RrcMessage(msg.c1.locationMeasurementIndication);
+            if (msg.c1.ueCapabilityInformation != null) return new RrcMessage(msg.c1.ueCapabilityInformation);
+            if (msg.c1.counterCheckResponse != null) return new RrcMessage(msg.c1.counterCheckResponse);
+            if (msg.c1.ueAssistanceInformation != null) return new RrcMessage(msg.c1.ueAssistanceInformation);
+            if (msg.c1.failureInformation != null) return new RrcMessage(msg.c1.failureInformation);
+            if (msg.c1.ulInformationTransferMRDC != null) return new RrcMessage(msg.c1.ulInformationTransferMRDC);
+            if (msg.c1.scgFailureInformation != null) return new RrcMessage(msg.c1.scgFailureInformation);
+            if (msg.c1.scgFailureInformationEUTRA != null) return new RrcMessage(msg.c1.scgFailureInformationEUTRA);
+        }
+
+        throw new RuntimeException("invalid RRC PDU Sequence");
+    }
+
     public RRC_Sequence getPduSequence() {
         if (mib != null) {
             var pdu = new RRC_BCCH_BCH_Message();
