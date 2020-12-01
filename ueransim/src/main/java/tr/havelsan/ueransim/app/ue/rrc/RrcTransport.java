@@ -21,12 +21,10 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 public class RrcTransport {
 
     public static void receiveRrcMessage(UeRrcContext ctx, RrcMessage message) {
-        if (message.dl_dcch != null) {
-            if (message.dl_dcch.message.c1.dlInformationTransfer != null) {
-                var nasPdu = message.dl_dcch.message.c1.dlInformationTransfer.criticalExtensions
-                        .dlInformationTransfer.dedicatedNAS_Message.value;
-                ctx.nasTask.push(new IwDownlinkNas(ctx.ueCtx.ctxId, nasPdu));
-            }
+        if (message.dlInformationTransfer != null) {
+            var nasPdu = message.dlInformationTransfer.criticalExtensions
+                    .dlInformationTransfer.dedicatedNAS_Message.value;
+            ctx.nasTask.push(new IwDownlinkNas(ctx.ueCtx.ctxId, nasPdu));
         }
     }
 
@@ -45,6 +43,6 @@ public class RrcTransport {
         msg.message.c1 = new RRC_UL_DCCH_MessageType__c1();
         msg.message.c1.ulInformationTransfer = rrc;
 
-        RrcTransport.sendRrcMessage(ctx, new RrcMessage(msg));
+        RrcTransport.sendRrcMessage(ctx, new RrcMessage(rrc));
     }
 }

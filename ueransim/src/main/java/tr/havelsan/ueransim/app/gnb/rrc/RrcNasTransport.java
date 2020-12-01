@@ -9,12 +9,9 @@ import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.rrc.RrcMessage;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_DLInformationTransfer__criticalExtensions;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_DL_DCCH_MessageType;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_DL_DCCH_MessageType__c1;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DLInformationTransfer;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DLInformationTransfer_IEs;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DL_DCCH_Message;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.UUID;
@@ -27,12 +24,7 @@ public class RrcNasTransport {
         rrc.criticalExtensions.dlInformationTransfer = new RRC_DLInformationTransfer_IEs();
         rrc.criticalExtensions.dlInformationTransfer.dedicatedNAS_Message = new RRC_DedicatedNAS_Message(nasPdu);
 
-        var msg = new RRC_DL_DCCH_Message();
-        msg.message = new RRC_DL_DCCH_MessageType();
-        msg.message.c1 = new RRC_DL_DCCH_MessageType__c1();
-        msg.message.c1.dlInformationTransfer = rrc;
-
-        RrcTransport.sendRrcMessage(ctx, ue, new RrcMessage(msg));
+        RrcTransport.sendRrcMessage(ctx, ue, new RrcMessage(rrc));
     }
 
     public static void deliverUlNas(GnbRrcContext ctx, UUID ue, OctetString nasPdu) {

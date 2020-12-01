@@ -8,13 +8,10 @@ package tr.havelsan.ueransim.app.ue.rrc;
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
 import tr.havelsan.ueransim.rrc.RrcMessage;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_InitialUE_Identity;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_UL_CCCH_MessageType;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_UL_CCCH_MessageType__c1;
 import tr.havelsan.ueransim.rrc.asn.core.RRC_BitString;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_EstablishmentCause;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RRCSetupRequest;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RRCSetupRequest_IEs;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_UL_CCCH_Message;
 import tr.havelsan.ueransim.utils.bits.BitString;
 
 public class RrcConnectionManagement {
@@ -27,11 +24,6 @@ public class RrcConnectionManagement {
         rrc.rrcSetupRequest.ue_Identity.randomValue = new RRC_BitString(new BitString());
         rrc.rrcSetupRequest.ue_Identity.randomValue.value.clear(38); // 39-bit full zero bit-string
 
-        var msg = new RRC_UL_CCCH_Message();
-        msg.message = new RRC_UL_CCCH_MessageType();
-        msg.message.c1 = new RRC_UL_CCCH_MessageType__c1();
-        msg.message.c1.rrcSetupRequest = rrc;
-
-        RrcTransport.sendRrcMessage(ctx, new RrcMessage(msg));
+        RrcTransport.sendRrcMessage(ctx, new RrcMessage(rrc));
     }
 }

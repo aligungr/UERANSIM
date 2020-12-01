@@ -14,13 +14,10 @@ import java.util.UUID;
 public class RrcTransport {
 
     public static void receiveRrcMessage(GnbRrcContext ctx, UUID ue, RrcMessage message) {
-        if (message.ul_dcch != null) {
-            var msg = message.ul_dcch.message.c1;
-            if (msg.ulInformationTransfer != null) {
-                var nasPdu = msg.ulInformationTransfer.criticalExtensions.ulInformationTransfer
-                        .dedicatedNAS_Message.value;
-                RrcNasTransport.deliverUlNas(ctx, ue, nasPdu);
-            }
+        if (message.ulInformationTransfer != null) {
+            var nasPdu = message.ulInformationTransfer.criticalExtensions.ulInformationTransfer
+                    .dedicatedNAS_Message.value;
+            RrcNasTransport.deliverUlNas(ctx, ue, nasPdu);
         }
     }
 
