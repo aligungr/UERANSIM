@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
-import tr.havelsan.ueransim.rrc.core.RrcMessage;
+import tr.havelsan.ueransim.rrc.RrcMessage;
 
 import java.util.UUID;
 

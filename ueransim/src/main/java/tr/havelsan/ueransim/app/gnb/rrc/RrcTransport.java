@@ -7,16 +7,15 @@ package tr.havelsan.ueransim.app.gnb.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
-import tr.havelsan.ueransim.rrc.core.RrcMessage;
-import tr.havelsan.ueransim.rrc.messages.RrcULInformationTransfer;
+import tr.havelsan.ueransim.rrc.RrcMessage;
 
 import java.util.UUID;
 
 public class RrcTransport {
 
     public static void receiveRrcMessage(GnbRrcContext ctx, UUID ue, RrcMessage message) {
-        if (message instanceof RrcULInformationTransfer) {
-            var nasPdu = ((RrcULInformationTransfer) message).criticalExtensions.ulInformationTransfer
+        if (message.ulInformationTransfer != null) {
+            var nasPdu = message.ulInformationTransfer.criticalExtensions.ulInformationTransfer
                     .dedicatedNAS_Message.value;
             RrcNasTransport.deliverUlNas(ctx, ue, nasPdu);
         }
