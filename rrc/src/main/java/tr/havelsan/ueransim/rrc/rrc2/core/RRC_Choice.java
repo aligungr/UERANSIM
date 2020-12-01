@@ -5,7 +5,11 @@
 
 package tr.havelsan.ueransim.rrc.rrc2.core;
 
-public class RRC_Choice extends RRC_Value {
+public abstract class RRC_Choice extends RRC_Value {
+
+    public abstract String[] getMemberNames();
+
+    public abstract String[] getMemberIdentifiers();
 
     @Override
     public String getAsnName() {
