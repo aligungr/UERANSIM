@@ -28,14 +28,4 @@ public class RRC_PTRS_UplinkConfig__transformPrecoderDisabled extends RRC_Sequen
         return new String[]{ "frequencyDensity","timeDensity","maxNrofPorts","resourceElementOffset","ptrs_Power" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

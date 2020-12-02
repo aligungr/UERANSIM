@@ -22,14 +22,4 @@ public class RRC_PDSCH_Config__prb_BundlingType__staticBundling extends RRC_Sequ
         return new String[]{ "bundleSize" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

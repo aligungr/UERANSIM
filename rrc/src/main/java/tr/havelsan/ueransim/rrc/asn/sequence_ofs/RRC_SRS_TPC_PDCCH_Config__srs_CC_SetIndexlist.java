@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SRS_CC_SetIndex;
 public class RRC_SRS_TPC_PDCCH_Config__srs_CC_SetIndexlist extends RRC_SequenceOf<RRC_SRS_CC_SetIndex> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SRS_CC_SetIndex> getItemType() {
         return RRC_SRS_CC_SetIndex.class;
     }

@@ -26,14 +26,4 @@ public class RRC_CodebookParameters__type2 extends RRC_Sequence {
         return new String[]{ "supportedCSI_RS_ResourceList","parameterLx","amplitudeScalingType","amplitudeSubsetRestriction" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

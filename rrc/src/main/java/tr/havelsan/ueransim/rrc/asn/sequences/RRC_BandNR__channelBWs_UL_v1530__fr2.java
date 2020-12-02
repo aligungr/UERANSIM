@@ -23,14 +23,4 @@ public class RRC_BandNR__channelBWs_UL_v1530__fr2 extends RRC_Sequence {
         return new String[]{ "scs_60kHz","scs_120kHz" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

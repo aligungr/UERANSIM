@@ -32,14 +32,4 @@ public class RRC_MIMO_ParametersPerBand__ext1 extends RRC_Sequence {
         return new String[]{ "dummy6","beamManagementSSB_CSI_RS","beamSwitchTiming","codebookParameters","csi_RS_IM_ReceptionForFeedback","csi_RS_ProcFrameworkForSRS","csi_ReportFramework","csi_RS_ForTracking","srs_AssocCSI_RS","spatialRelations" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -24,14 +24,4 @@ public class RRC_ConfigRestrictInfoSCG__powerCoordination_FR1 extends RRC_Sequen
         return new String[]{ "p_maxNR_FR1","p_maxEUTRA","p_maxUE_FR1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

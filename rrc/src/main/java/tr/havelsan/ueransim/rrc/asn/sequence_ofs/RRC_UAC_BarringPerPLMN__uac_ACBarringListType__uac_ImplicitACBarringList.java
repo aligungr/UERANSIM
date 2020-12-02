@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_UAC_BarringInfoSetIndex;
 public class RRC_UAC_BarringPerPLMN__uac_ACBarringListType__uac_ImplicitACBarringList extends RRC_SequenceOf<RRC_UAC_BarringInfoSetIndex> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_UAC_BarringInfoSetIndex> getItemType() {
         return RRC_UAC_BarringInfoSetIndex.class;
     }

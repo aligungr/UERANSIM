@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_CSI_IM_ResourceSet;
 public class RRC_CSI_MeasConfig__csi_IM_ResourceSetToAddModList extends RRC_SequenceOf<RRC_CSI_IM_ResourceSet> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_CSI_IM_ResourceSet> getItemType() {
         return RRC_CSI_IM_ResourceSet.class;
     }

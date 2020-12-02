@@ -29,14 +29,4 @@ public class RRC_PDCCH_ConfigCommon__ext1__firstPDCCH_MonitoringOccasionOfPO ext
         return new String[]{ "sCS15KHZoneT","sCS30KHZoneT_SCS15KHZhalfT","sCS60KHZoneT_SCS30KHZhalfT_SCS15KHZquarterT","sCS120KHZoneT_SCS60KHZhalfT_SCS30KHZquarterT_SCS15KHZoneEighthT","sCS120KHZhalfT_SCS60KHZquarterT_SCS30KHZoneEighthT_SCS15KHZoneSixteenthT","sCS120KHZquarterT_SCS60KHZoneEighthT_SCS30KHZoneSixteenthT","sCS120KHZoneEighthT_SCS60KHZoneSixteenthT","sCS120KHZoneSixteenthT" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

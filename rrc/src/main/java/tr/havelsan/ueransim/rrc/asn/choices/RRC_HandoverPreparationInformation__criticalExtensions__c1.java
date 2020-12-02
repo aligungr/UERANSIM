@@ -26,14 +26,4 @@ public class RRC_HandoverPreparationInformation__criticalExtensions__c1 extends 
         return new String[]{ "handoverPreparationInformation","spare3","spare2","spare1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

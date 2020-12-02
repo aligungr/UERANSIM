@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_TCI_StateId;
 public class RRC_CSI_AssociatedReportConfigInfo__resourcesForChannel__nzp_CSI_RS__qcl_info extends RRC_SequenceOf<RRC_TCI_StateId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_TCI_StateId> getItemType() {
         return RRC_TCI_StateId.class;
     }

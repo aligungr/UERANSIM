@@ -23,14 +23,4 @@ public class RRC_DMRS_UplinkConfig__transformPrecodingDisabled extends RRC_Seque
         return new String[]{ "scramblingID0","scramblingID1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

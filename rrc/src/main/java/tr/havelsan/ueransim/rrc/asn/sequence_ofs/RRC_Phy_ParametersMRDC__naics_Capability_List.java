@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_NAICS_Capability_Entry;
 public class RRC_Phy_ParametersMRDC__naics_Capability_List extends RRC_SequenceOf<RRC_NAICS_Capability_Entry> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_NAICS_Capability_Entry> getItemType() {
         return RRC_NAICS_Capability_Entry.class;
     }

@@ -22,14 +22,4 @@ public class RRC_FeatureSetDownlink_v1540__pdsch_ProcessingType2_Limited extends
         return new String[]{ "differentTB_PerSlot_SCS_30kHz" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

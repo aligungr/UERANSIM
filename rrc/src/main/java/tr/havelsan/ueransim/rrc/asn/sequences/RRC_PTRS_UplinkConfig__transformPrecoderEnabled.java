@@ -24,14 +24,4 @@ public class RRC_PTRS_UplinkConfig__transformPrecoderEnabled extends RRC_Sequenc
         return new String[]{ "sampleDensity","timeDensityTransformPrecoding" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

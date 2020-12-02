@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_CSI_RS_CellMobility;
 public class RRC_CSI_RS_ResourceConfigMobility__csi_RS_CellList_Mobility extends RRC_SequenceOf<RRC_CSI_RS_CellMobility> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_CSI_RS_CellMobility> getItemType() {
         return RRC_CSI_RS_CellMobility.class;
     }

@@ -24,14 +24,4 @@ public class RRC_BCCH_DL_SCH_MessageType__c1 extends RRC_Choice {
         return new String[]{ "systemInformation","systemInformationBlockType1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -18,12 +18,12 @@ public class RRC_SN_FieldLengthUM extends RRC_Enumerated {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "SN-FieldLengthUM";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "SN-FieldLengthUM";
     }
 
 }

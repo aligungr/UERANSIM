@@ -26,14 +26,4 @@ public class RRC_SIB9__timeInfo extends RRC_Sequence {
         return new String[]{ "timeInfoUTC","dayLightSavingTime","leapSeconds","localTimeOffset" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

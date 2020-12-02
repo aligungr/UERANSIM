@@ -30,14 +30,4 @@ public class RRC_SIB2__cellReselectionServingFreqInfo extends RRC_Sequence {
         return new String[]{ "s_NonIntraSearchP","s_NonIntraSearchQ","threshServingLowP","threshServingLowQ","cellReselectionPriority","cellReselectionSubPriority" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

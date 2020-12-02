@@ -24,14 +24,4 @@ public class RRC_Phy_ParametersXDD_Diff__ext1 extends RRC_Sequence {
         return new String[]{ "dl_SchedulingOffset_PDSCH_TypeA","dl_SchedulingOffset_PDSCH_TypeB","ul_SchedulingOffset" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

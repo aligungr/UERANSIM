@@ -30,14 +30,4 @@ public class RRC_PortIndexFor8Ranks__portIndex8 extends RRC_Sequence {
         return new String[]{ "rank1_8","rank2_8","rank3_8","rank4_8","rank5_8","rank6_8","rank7_8","rank8_8" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

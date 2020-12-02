@@ -22,14 +22,4 @@ public class RRC_RLC_Config__um_Bi_Directional extends RRC_Sequence {
         return new String[]{ "ul_UM_RLC","dl_UM_RLC" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

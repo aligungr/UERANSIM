@@ -26,14 +26,4 @@ public class RRC_PUCCH_Resource__format extends RRC_Choice {
         return new String[]{ "format0","format1","format2","format3","format4" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

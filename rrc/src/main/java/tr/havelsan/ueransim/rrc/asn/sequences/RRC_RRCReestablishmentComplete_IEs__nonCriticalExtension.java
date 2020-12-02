@@ -19,14 +19,4 @@ public class RRC_RRCReestablishmentComplete_IEs__nonCriticalExtension extends RR
         return new String[]{  };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -28,14 +28,4 @@ public class RRC_SIB1__cellSelectionInfo extends RRC_Sequence {
         return new String[]{ "q_RxLevMin","q_RxLevMinOffset","q_RxLevMinSUL","q_QualMin","q_QualMinOffset" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

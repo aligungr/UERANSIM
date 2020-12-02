@@ -34,14 +34,4 @@ public class RRC_CodebookConfig__codebookType__type2__subType__typeII__n1_n2_cod
         return new String[]{ "two_one","two_two","four_one","three_two","six_one","four_two","eight_one","four_three","six_two","twelve_one","four_four","eight_two","sixteen_one" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

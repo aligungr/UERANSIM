@@ -24,14 +24,4 @@ public class RRC_SRS_Resource__transmissionComb extends RRC_Choice {
         return new String[]{ "n2","n4" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

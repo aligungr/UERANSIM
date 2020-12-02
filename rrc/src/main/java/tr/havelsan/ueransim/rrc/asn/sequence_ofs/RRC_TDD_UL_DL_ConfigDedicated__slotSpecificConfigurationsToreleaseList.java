@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_TDD_UL_DL_SlotIndex;
 public class RRC_TDD_UL_DL_ConfigDedicated__slotSpecificConfigurationsToreleaseList extends RRC_SequenceOf<RRC_TDD_UL_DL_SlotIndex> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_TDD_UL_DL_SlotIndex> getItemType() {
         return RRC_TDD_UL_DL_SlotIndex.class;
     }

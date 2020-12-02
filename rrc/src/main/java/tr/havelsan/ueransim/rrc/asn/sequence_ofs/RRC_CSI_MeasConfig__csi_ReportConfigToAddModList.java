@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_CSI_ReportConfig;
 public class RRC_CSI_MeasConfig__csi_ReportConfigToAddModList extends RRC_SequenceOf<RRC_CSI_ReportConfig> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_CSI_ReportConfig> getItemType() {
         return RRC_CSI_ReportConfig.class;
     }

@@ -24,14 +24,4 @@ public class RRC_CrossCarrierSchedulingConfig__schedulingCellInfo extends RRC_Ch
         return new String[]{ "own","other" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

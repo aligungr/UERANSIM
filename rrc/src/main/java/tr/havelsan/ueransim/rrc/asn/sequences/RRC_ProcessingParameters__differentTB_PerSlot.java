@@ -25,14 +25,4 @@ public class RRC_ProcessingParameters__differentTB_PerSlot extends RRC_Sequence 
         return new String[]{ "upto1","upto2","upto4","upto7" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

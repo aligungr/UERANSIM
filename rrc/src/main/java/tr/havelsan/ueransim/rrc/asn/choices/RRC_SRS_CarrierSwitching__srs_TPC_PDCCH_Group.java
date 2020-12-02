@@ -24,14 +24,4 @@ public class RRC_SRS_CarrierSwitching__srs_TPC_PDCCH_Group extends RRC_Choice {
         return new String[]{ "typeA","typeB" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

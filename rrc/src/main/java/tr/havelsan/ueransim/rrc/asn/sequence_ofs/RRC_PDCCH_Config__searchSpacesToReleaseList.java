@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_SearchSpaceId;
 public class RRC_PDCCH_Config__searchSpacesToReleaseList extends RRC_SequenceOf<RRC_SearchSpaceId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SearchSpaceId> getItemType() {
         return RRC_SearchSpaceId.class;
     }

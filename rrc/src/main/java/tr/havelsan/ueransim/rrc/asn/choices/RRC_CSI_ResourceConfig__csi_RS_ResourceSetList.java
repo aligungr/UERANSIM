@@ -24,14 +24,4 @@ public class RRC_CSI_ResourceConfig__csi_RS_ResourceSetList extends RRC_Choice {
         return new String[]{ "nzp_CSI_RS_SSB","csi_IM_ResourceSetList" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

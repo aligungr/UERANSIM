@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SchedulingRequestToAddMod;
 public class RRC_SchedulingRequestConfig__schedulingRequestToAddModList extends RRC_SequenceOf<RRC_SchedulingRequestToAddMod> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SchedulingRequestToAddMod> getItemType() {
         return RRC_SchedulingRequestToAddMod.class;
     }

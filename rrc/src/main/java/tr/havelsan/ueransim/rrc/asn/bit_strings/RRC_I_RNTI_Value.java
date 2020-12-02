@@ -50,12 +50,12 @@ public class RRC_I_RNTI_Value extends RRC_BitString {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "I-RNTI-Value";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "I-RNTI-Value";
     }
 
 }

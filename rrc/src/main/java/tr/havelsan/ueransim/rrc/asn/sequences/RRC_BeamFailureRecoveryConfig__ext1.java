@@ -22,14 +22,4 @@ public class RRC_BeamFailureRecoveryConfig__ext1 extends RRC_Sequence {
         return new String[]{ "msg1_SubcarrierSpacing_v1530" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

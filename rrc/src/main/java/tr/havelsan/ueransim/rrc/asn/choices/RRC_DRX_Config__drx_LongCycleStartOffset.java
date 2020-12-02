@@ -41,14 +41,4 @@ public class RRC_DRX_Config__drx_LongCycleStartOffset extends RRC_Choice {
         return new String[]{ "ms10","ms20","ms32","ms40","ms60","ms64","ms70","ms80","ms128","ms160","ms256","ms320","ms512","ms640","ms1024","ms1280","ms2048","ms2560","ms5120","ms10240" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

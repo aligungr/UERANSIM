@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_TCI_State;
 public class RRC_PDSCH_Config__tci_StatesToAddModList extends RRC_SequenceOf<RRC_TCI_State> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_TCI_State> getItemType() {
         return RRC_TCI_State.class;
     }

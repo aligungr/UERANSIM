@@ -37,14 +37,4 @@ public class RRC_SearchSpace__monitoringSlotPeriodicityAndOffset extends RRC_Cho
         return new String[]{ "sl1","sl2","sl4","sl5","sl8","sl10","sl16","sl20","sl40","sl80","sl160","sl320","sl640","sl1280","sl2560" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

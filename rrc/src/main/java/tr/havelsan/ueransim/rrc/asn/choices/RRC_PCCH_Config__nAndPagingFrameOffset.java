@@ -27,14 +27,4 @@ public class RRC_PCCH_Config__nAndPagingFrameOffset extends RRC_Choice {
         return new String[]{ "oneT","halfT","quarterT","oneEighthT","oneSixteenthT" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

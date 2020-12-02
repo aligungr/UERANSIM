@@ -50,12 +50,12 @@ public class RRC_AMF_Identifier extends RRC_BitString {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "AMF-Identifier";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "AMF-Identifier";
     }
 
 }

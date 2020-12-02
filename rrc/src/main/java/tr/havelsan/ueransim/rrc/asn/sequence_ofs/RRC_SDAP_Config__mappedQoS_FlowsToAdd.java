@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_QFI;
 public class RRC_SDAP_Config__mappedQoS_FlowsToAdd extends RRC_SequenceOf<RRC_QFI> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_QFI> getItemType() {
         return RRC_QFI.class;
     }

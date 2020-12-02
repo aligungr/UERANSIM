@@ -22,14 +22,4 @@ public class RRC_SIB2__cellReselectionInfoCommon__speedStateReselectionPars exte
         return new String[]{ "mobilityStateParameters","q_HystSF" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

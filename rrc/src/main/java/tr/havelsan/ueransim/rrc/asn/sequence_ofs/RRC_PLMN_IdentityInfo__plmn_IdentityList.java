@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_PLMN_Identity;
 public class RRC_PLMN_IdentityInfo__plmn_IdentityList extends RRC_SequenceOf<RRC_PLMN_Identity> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_PLMN_Identity> getItemType() {
         return RRC_PLMN_Identity.class;
     }

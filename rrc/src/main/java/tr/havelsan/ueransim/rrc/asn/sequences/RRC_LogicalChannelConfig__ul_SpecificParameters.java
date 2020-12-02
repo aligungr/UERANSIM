@@ -37,14 +37,4 @@ public class RRC_LogicalChannelConfig__ul_SpecificParameters extends RRC_Sequenc
         return new String[]{ "priority","prioritisedBitRate","bucketSizeDuration","allowedServingCells","allowedSCS_List","maxPUSCH_Duration","configuredGrantType1Allowed","logicalChannelGroup","schedulingRequestID","logicalChannelSR_Mask","logicalChannelSR_DelayTimerApplied","bitRateQueryProhibitTimer" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

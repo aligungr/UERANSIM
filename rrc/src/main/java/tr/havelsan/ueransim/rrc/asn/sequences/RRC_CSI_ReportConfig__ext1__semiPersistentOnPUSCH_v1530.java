@@ -22,14 +22,4 @@ public class RRC_CSI_ReportConfig__ext1__semiPersistentOnPUSCH_v1530 extends RRC
         return new String[]{ "reportSlotConfig_v1530" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

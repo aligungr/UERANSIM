@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SRS_SwitchingTimeEUTRA;
 public class RRC_BandParameters_v1540__srs_CarrierSwitch__eutra__srs_SwitchingTimesListEUTRA extends RRC_SequenceOf<RRC_SRS_SwitchingTimeEUTRA> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SRS_SwitchingTimeEUTRA> getItemType() {
         return RRC_SRS_SwitchingTimeEUTRA.class;
     }

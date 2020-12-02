@@ -30,14 +30,4 @@ public class RRC_EventTriggerConfig__eventId__eventA5 extends RRC_Sequence {
         return new String[]{ "a5_Threshold1","a5_Threshold2","reportOnLeave","hysteresis","timeToTrigger","useWhiteCellList" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

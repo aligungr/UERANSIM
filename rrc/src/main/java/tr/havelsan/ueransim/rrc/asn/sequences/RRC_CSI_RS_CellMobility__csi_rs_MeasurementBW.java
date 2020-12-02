@@ -23,14 +23,4 @@ public class RRC_CSI_RS_CellMobility__csi_rs_MeasurementBW extends RRC_Sequence 
         return new String[]{ "nrofPRBs","startPRB" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

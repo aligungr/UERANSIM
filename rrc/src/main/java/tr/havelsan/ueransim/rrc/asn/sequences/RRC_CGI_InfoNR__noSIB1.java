@@ -23,14 +23,4 @@ public class RRC_CGI_InfoNR__noSIB1 extends RRC_Sequence {
         return new String[]{ "ssb_SubcarrierOffset","pdcch_ConfigSIB1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

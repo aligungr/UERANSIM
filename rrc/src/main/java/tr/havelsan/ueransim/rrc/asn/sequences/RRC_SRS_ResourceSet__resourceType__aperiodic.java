@@ -26,14 +26,4 @@ public class RRC_SRS_ResourceSet__resourceType__aperiodic extends RRC_Sequence {
         return new String[]{ "aperiodicSRS_ResourceTrigger","csi_RS","slotOffset","ext1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

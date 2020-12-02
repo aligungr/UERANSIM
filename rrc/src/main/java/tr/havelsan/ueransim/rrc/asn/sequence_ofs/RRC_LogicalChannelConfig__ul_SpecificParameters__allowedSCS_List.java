@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.enums.RRC_SubcarrierSpacing;
 public class RRC_LogicalChannelConfig__ul_SpecificParameters__allowedSCS_List extends RRC_SequenceOf<RRC_SubcarrierSpacing> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SubcarrierSpacing> getItemType() {
         return RRC_SubcarrierSpacing.class;
     }

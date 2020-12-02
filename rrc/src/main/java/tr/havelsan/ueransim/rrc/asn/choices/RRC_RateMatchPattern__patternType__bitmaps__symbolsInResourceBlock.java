@@ -23,14 +23,4 @@ public class RRC_RateMatchPattern__patternType__bitmaps__symbolsInResourceBlock 
         return new String[]{ "oneSlot","twoSlots" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

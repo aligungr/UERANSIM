@@ -20,6 +20,14 @@ public abstract class RRC_SequenceOf<T extends RRC_Value> extends RRC_Value {
         this.list = list;
     }
 
+    public String getAsnName() {
+        return "SEQUENCE OF";
+    }
+
+    public String getXmlTagName() {
+        return "SEQUENCE_OF";
+    }
+
     public abstract Class<T> getItemType();
 }
 

@@ -19,12 +19,12 @@ public class RRC_MIMO_LayersUL extends RRC_Enumerated {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "MIMO-LayersUL";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "MIMO-LayersUL";
     }
 
 }

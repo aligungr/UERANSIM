@@ -26,14 +26,4 @@ public class RRC_ULInformationTransferMRDC__criticalExtensions__c1 extends RRC_C
         return new String[]{ "ulInformationTransferMRDC","spare3","spare2","spare1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

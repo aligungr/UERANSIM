@@ -24,14 +24,4 @@ public class RRC_MeasResultNR__measResult__rsIndexResults extends RRC_Sequence {
         return new String[]{ "resultsSSB_Indexes","resultsCSI_RS_Indexes" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

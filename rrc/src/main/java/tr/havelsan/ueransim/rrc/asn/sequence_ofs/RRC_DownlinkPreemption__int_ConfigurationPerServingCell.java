@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_INT_ConfigurationPerServingCel
 public class RRC_DownlinkPreemption__int_ConfigurationPerServingCell extends RRC_SequenceOf<RRC_INT_ConfigurationPerServingCell> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_INT_ConfigurationPerServingCell> getItemType() {
         return RRC_INT_ConfigurationPerServingCell.class;
     }

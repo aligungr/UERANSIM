@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_NR_FreqInfo;
 public class RRC_MeasConfigMN__measuredFrequenciesMN extends RRC_SequenceOf<RRC_NR_FreqInfo> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_NR_FreqInfo> getItemType() {
         return RRC_NR_FreqInfo.class;
     }

@@ -23,14 +23,4 @@ public class RRC_FeatureSetUplinkPerCC_v1540__mimo_NonCB_PUSCH extends RRC_Seque
         return new String[]{ "maxNumberSRS_ResourcePerSet","maxNumberSimultaneousSRS_ResourceTx" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

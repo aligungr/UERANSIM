@@ -19,14 +19,4 @@ public class RRC_UE_CapabilityRequestFilterNR_v1540__nonCriticalExtension extend
         return new String[]{  };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

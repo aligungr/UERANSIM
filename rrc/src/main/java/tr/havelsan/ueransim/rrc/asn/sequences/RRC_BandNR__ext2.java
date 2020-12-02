@@ -23,14 +23,4 @@ public class RRC_BandNR__ext2 extends RRC_Sequence {
         return new String[]{ "pucch_SpatialRelInfoMAC_CE","powerBoosting_pi2BPSK" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

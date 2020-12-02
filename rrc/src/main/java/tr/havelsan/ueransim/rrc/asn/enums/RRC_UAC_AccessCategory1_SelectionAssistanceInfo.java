@@ -19,12 +19,12 @@ public class RRC_UAC_AccessCategory1_SelectionAssistanceInfo extends RRC_Enumera
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "UAC-AccessCategory1-SelectionAssistanceInfo";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "UAC-AccessCategory1-SelectionAssistanceInfo";
     }
 
 }

@@ -25,14 +25,4 @@ public class RRC_FeatureSetDownlink_v1540__pdcch_MonitoringAnyOccasionsWithSpanG
         return new String[]{ "scs_15kHz","scs_30kHz","scs_60kHz","scs_120kHz" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

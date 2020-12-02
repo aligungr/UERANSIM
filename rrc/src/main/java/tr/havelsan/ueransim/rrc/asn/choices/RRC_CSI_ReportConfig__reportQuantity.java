@@ -30,14 +30,4 @@ public class RRC_CSI_ReportConfig__reportQuantity extends RRC_Choice {
         return new String[]{ "none","cri_RI_PMI_CQI","cri_RI_i1","cri_RI_i1_CQI","cri_RI_CQI","cri_RSRP","ssb_Index_RSRP","cri_RI_LI_PMI_CQI" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

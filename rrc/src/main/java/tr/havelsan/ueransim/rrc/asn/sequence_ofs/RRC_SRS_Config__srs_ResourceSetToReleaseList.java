@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_SRS_ResourceSetId;
 public class RRC_SRS_Config__srs_ResourceSetToReleaseList extends RRC_SequenceOf<RRC_SRS_ResourceSetId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SRS_ResourceSetId> getItemType() {
         return RRC_SRS_ResourceSetId.class;
     }

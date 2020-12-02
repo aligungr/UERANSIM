@@ -24,14 +24,4 @@ public class RRC_BandNR__channelBWs_DL_v1530 extends RRC_Choice {
         return new String[]{ "fr1","fr2" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

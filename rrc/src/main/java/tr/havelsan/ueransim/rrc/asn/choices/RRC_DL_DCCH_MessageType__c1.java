@@ -38,14 +38,4 @@ public class RRC_DL_DCCH_MessageType__c1 extends RRC_Choice {
         return new String[]{ "rrcReconfiguration","rrcResume","rrcRelease","rrcReestablishment","securityModeCommand","dlInformationTransfer","ueCapabilityEnquiry","counterCheck","mobilityFromNRCommand","spare7","spare6","spare5","spare4","spare3","spare2","spare1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

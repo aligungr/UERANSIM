@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RLC_BearerConfig;
 public class RRC_CellGroupConfig__rlc_BearerToAddModList extends RRC_SequenceOf<RRC_RLC_BearerConfig> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_RLC_BearerConfig> getItemType() {
         return RRC_RLC_BearerConfig.class;
     }

@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_BandParameters_v1540;
 public class RRC_BandCombination_v1540__bandList_v1540 extends RRC_SequenceOf<RRC_BandParameters_v1540> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_BandParameters_v1540> getItemType() {
         return RRC_BandParameters_v1540.class;
     }

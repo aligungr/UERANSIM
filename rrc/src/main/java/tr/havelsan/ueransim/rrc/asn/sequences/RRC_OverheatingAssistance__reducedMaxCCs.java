@@ -23,14 +23,4 @@ public class RRC_OverheatingAssistance__reducedMaxCCs extends RRC_Sequence {
         return new String[]{ "reducedCCsDL","reducedCCsUL" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

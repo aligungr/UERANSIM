@@ -25,14 +25,4 @@ public class RRC_SearchSpace__searchSpaceType__common extends RRC_Sequence {
         return new String[]{ "dci_Format0_0_AndFormat1_0","dci_Format2_0","dci_Format2_1","dci_Format2_2","dci_Format2_3" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

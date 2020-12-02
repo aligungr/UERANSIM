@@ -27,14 +27,4 @@ public class RRC_SSB_MTC__periodicityAndOffset extends RRC_Choice {
         return new String[]{ "sf5","sf10","sf20","sf40","sf80","sf160" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

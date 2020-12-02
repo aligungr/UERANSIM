@@ -24,14 +24,4 @@ public class RRC_UAC_BarringPerPLMN__uac_ACBarringListType extends RRC_Choice {
         return new String[]{ "uac_ImplicitACBarringList","uac_ExplicitACBarringList" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

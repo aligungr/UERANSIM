@@ -24,14 +24,4 @@ public class RRC_SearchSpace__searchSpaceType extends RRC_Choice {
         return new String[]{ "common","ue_Specific" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

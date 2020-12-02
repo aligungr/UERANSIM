@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_FreqBandIndicatorEUTRA;
 public class RRC_EUTRA_Parameters__supportedBandListEUTRA extends RRC_SequenceOf<RRC_FreqBandIndicatorEUTRA> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_FreqBandIndicatorEUTRA> getItemType() {
         return RRC_FreqBandIndicatorEUTRA.class;
     }

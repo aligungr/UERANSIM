@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SCellConfig;
 public class RRC_CellGroupConfig__sCellToAddModList extends RRC_SequenceOf<RRC_SCellConfig> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SCellConfig> getItemType() {
         return RRC_SCellConfig.class;
     }

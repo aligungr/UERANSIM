@@ -25,14 +25,4 @@ public class RRC_BandParameters__nr extends RRC_Sequence {
         return new String[]{ "bandNR","ca_BandwidthClassDL_NR","ca_BandwidthClassUL_NR" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

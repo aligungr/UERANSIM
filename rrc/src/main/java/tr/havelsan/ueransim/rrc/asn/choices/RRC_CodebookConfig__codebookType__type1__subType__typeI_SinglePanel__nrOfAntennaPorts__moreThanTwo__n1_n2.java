@@ -34,14 +34,4 @@ public class RRC_CodebookConfig__codebookType__type1__subType__typeI_SinglePanel
         return new String[]{ "two_one_TypeI_SinglePanel_Restriction","two_two_TypeI_SinglePanel_Restriction","four_one_TypeI_SinglePanel_Restriction","three_two_TypeI_SinglePanel_Restriction","six_one_TypeI_SinglePanel_Restriction","four_two_TypeI_SinglePanel_Restriction","eight_one_TypeI_SinglePanel_Restriction","four_three_TypeI_SinglePanel_Restriction","six_two_TypeI_SinglePanel_Restriction","twelve_one_TypeI_SinglePanel_Restriction","four_four_TypeI_SinglePanel_Restriction","eight_two_TypeI_SinglePanel_Restriction","sixteen_one_TypeI_SinglePanel_Restriction" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

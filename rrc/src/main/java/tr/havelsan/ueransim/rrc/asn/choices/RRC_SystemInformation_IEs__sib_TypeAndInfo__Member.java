@@ -29,14 +29,4 @@ public class RRC_SystemInformation_IEs__sib_TypeAndInfo__Member extends RRC_Choi
         return new String[]{ "sib2","sib3","sib4","sib5","sib6","sib7","sib8","sib9" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

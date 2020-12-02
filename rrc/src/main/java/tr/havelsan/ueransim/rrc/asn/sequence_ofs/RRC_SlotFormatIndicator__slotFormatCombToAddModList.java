@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SlotFormatCombinationsPerCell;
 public class RRC_SlotFormatIndicator__slotFormatCombToAddModList extends RRC_SequenceOf<RRC_SlotFormatCombinationsPerCell> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SlotFormatCombinationsPerCell> getItemType() {
         return RRC_SlotFormatCombinationsPerCell.class;
     }

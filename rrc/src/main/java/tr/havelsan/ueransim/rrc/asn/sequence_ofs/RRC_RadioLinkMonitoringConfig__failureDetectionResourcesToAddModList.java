@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RadioLinkMonitoringRS;
 public class RRC_RadioLinkMonitoringConfig__failureDetectionResourcesToAddModList extends RRC_SequenceOf<RRC_RadioLinkMonitoringRS> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_RadioLinkMonitoringRS> getItemType() {
         return RRC_RadioLinkMonitoringRS.class;
     }

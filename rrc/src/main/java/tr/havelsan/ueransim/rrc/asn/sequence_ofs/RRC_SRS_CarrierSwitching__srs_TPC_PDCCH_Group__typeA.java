@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SRS_TPC_PDCCH_Config;
 public class RRC_SRS_CarrierSwitching__srs_TPC_PDCCH_Group__typeA extends RRC_SequenceOf<RRC_SRS_TPC_PDCCH_Config> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SRS_TPC_PDCCH_Config> getItemType() {
         return RRC_SRS_TPC_PDCCH_Config.class;
     }

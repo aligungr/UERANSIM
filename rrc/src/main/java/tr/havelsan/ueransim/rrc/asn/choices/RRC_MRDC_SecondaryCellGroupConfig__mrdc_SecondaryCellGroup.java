@@ -23,14 +23,4 @@ public class RRC_MRDC_SecondaryCellGroupConfig__mrdc_SecondaryCellGroup extends 
         return new String[]{ "nr_SCG","eutra_SCG" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

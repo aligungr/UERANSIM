@@ -23,14 +23,4 @@ public class RRC_RRCReconfigurationComplete_v1560_IEs__scg_Response extends RRC_
         return new String[]{ "nr_SCG_Response","eutra_SCG_Response" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

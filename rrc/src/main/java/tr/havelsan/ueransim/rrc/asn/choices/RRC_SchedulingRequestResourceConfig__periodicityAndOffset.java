@@ -37,14 +37,4 @@ public class RRC_SchedulingRequestResourceConfig__periodicityAndOffset extends R
         return new String[]{ "sym2","sym6or7","sl1","sl2","sl4","sl5","sl8","sl10","sl16","sl20","sl40","sl80","sl160","sl320","sl640" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

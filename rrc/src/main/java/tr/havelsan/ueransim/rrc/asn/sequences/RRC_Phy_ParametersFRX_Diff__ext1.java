@@ -36,14 +36,4 @@ public class RRC_Phy_ParametersFRX_Diff__ext1 extends RRC_Sequence {
         return new String[]{ "csi_RS_IM_ReceptionForFeedback","csi_RS_ProcFrameworkForSRS","csi_ReportFramework","mux_SR_HARQ_ACK_CSI_PUCCH_OncePerSlot","mux_SR_HARQ_ACK_PUCCH","mux_MultipleGroupCtrlCH_Overlap","dl_SchedulingOffset_PDSCH_TypeA","dl_SchedulingOffset_PDSCH_TypeB","ul_SchedulingOffset","dl_64QAM_MCS_TableAlt","ul_64QAM_MCS_TableAlt","cqi_TableAlt","oneFL_DMRS_TwoAdditionalDMRS_UL","twoFL_DMRS_TwoAdditionalDMRS_UL","oneFL_DMRS_ThreeAdditionalDMRS_UL" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

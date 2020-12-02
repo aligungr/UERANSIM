@@ -21,14 +21,4 @@ public class RRC_SIB2__intraFreqCellReselectionInfo__ext1 extends RRC_Sequence {
         return new String[]{ "t_ReselectionNR_SF" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

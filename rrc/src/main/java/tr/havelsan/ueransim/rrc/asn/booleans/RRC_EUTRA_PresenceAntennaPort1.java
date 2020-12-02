@@ -15,12 +15,12 @@ public class RRC_EUTRA_PresenceAntennaPort1 extends RRC_Boolean {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "EUTRA-PresenceAntennaPort1";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "EUTRA-PresenceAntennaPort1";
     }
 
 }

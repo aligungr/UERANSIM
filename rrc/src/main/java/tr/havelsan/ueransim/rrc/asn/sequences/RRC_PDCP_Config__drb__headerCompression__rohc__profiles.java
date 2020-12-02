@@ -30,14 +30,4 @@ public class RRC_PDCP_Config__drb__headerCompression__rohc__profiles extends RRC
         return new String[]{ "profile0x0001","profile0x0002","profile0x0003","profile0x0004","profile0x0006","profile0x0101","profile0x0102","profile0x0103","profile0x0104" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

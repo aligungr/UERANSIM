@@ -27,14 +27,4 @@ public class RRC_DL_CCCH_MessageType__c1 extends RRC_Choice {
         return new String[]{ "rrcReject","rrcSetup","spare2","spare1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

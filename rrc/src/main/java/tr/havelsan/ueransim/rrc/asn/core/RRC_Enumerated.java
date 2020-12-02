@@ -12,4 +12,14 @@ public abstract class RRC_Enumerated extends RRC_Value {
     protected RRC_Enumerated(String sValue) {
         this.sValue = sValue;
     }
+
+    @Override
+    public String getAsnName() {
+        return "ENUMERATED";
+    }
+
+    @Override
+    public String getXmlTagName() {
+        return "ENUMERATED";
+    }
 }

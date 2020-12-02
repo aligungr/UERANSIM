@@ -23,14 +23,4 @@ public class RRC_ServingCellConfigCommonSIB__ssb_PositionsInBurst extends RRC_Se
         return new String[]{ "inOneGroup","groupPresence" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

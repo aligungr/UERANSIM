@@ -26,14 +26,4 @@ public class RRC_CSI_RS_Resource_Mobility__slotConfig extends RRC_Choice {
         return new String[]{ "ms4","ms5","ms10","ms20","ms40" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

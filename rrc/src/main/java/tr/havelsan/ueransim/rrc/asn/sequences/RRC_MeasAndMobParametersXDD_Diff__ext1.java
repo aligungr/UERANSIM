@@ -24,14 +24,4 @@ public class RRC_MeasAndMobParametersXDD_Diff__ext1 extends RRC_Sequence {
         return new String[]{ "handoverInterF","handoverLTE_EPC","handoverLTE_5GC" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -24,14 +24,4 @@ public class RRC_CSI_RS_Resource_Mobility__associatedSSB extends RRC_Sequence {
         return new String[]{ "ssb_Index","isQuasiColocated" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

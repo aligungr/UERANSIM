@@ -24,14 +24,4 @@ public class RRC_RLC_BearerConfig__servedRadioBearer extends RRC_Choice {
         return new String[]{ "srb_Identity","drb_Identity" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

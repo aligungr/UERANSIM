@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_BetaOffsets;
 public class RRC_CG_UCI_OnPUSCH__dynamic extends RRC_SequenceOf<RRC_BetaOffsets> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_BetaOffsets> getItemType() {
         return RRC_BetaOffsets.class;
     }

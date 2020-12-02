@@ -25,14 +25,4 @@ public class RRC_MeasAndMobParametersCommon__ext2 extends RRC_Sequence {
         return new String[]{ "independentGapConfig","periodicEUTRA_MeasAndReport","handoverFR1_FR2","maxNumberCSI_RS_RRM_RS_SINR" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_SCellIndex;
 public class RRC_CellGroupConfig__sCellToReleaseList extends RRC_SequenceOf<RRC_SCellIndex> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SCellIndex> getItemType() {
         return RRC_SCellIndex.class;
     }

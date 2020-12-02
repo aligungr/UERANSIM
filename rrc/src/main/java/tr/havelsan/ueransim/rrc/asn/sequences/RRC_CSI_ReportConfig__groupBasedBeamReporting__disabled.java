@@ -22,14 +22,4 @@ public class RRC_CSI_ReportConfig__groupBasedBeamReporting__disabled extends RRC
         return new String[]{ "nrofReportedRS" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

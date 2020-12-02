@@ -38,14 +38,4 @@ public class RRC_SIB2__intraFreqCellReselectionInfo extends RRC_Sequence {
         return new String[]{ "q_RxLevMin","q_RxLevMinSUL","q_QualMin","s_IntraSearchP","s_IntraSearchQ","t_ReselectionNR","frequencyBandList","frequencyBandListSUL","p_Max","smtc","ss_RSSI_Measurement","ssb_ToMeasure","deriveSSB_IndexFromCell","ext1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

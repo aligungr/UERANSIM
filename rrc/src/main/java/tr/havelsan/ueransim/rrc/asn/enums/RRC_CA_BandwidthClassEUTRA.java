@@ -22,12 +22,12 @@ public class RRC_CA_BandwidthClassEUTRA extends RRC_Enumerated {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "CA-BandwidthClassEUTRA";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "CA-BandwidthClassEUTRA";
     }
 
 }

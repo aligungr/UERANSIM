@@ -20,12 +20,12 @@ public class RRC_RAT_Type extends RRC_Enumerated {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "RAT-Type";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "RAT-Type";
     }
 
 }

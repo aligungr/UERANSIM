@@ -24,14 +24,4 @@ public class RRC_CSI_AssociatedReportConfigInfo__resourcesForChannel extends RRC
         return new String[]{ "nzp_CSI_RS","csi_SSB_ResourceSet" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_PortIndex2;
 public class RRC_PortIndexFor8Ranks__portIndex2__rank2_2 extends RRC_SequenceOf<RRC_PortIndex2> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_PortIndex2> getItemType() {
         return RRC_PortIndex2.class;
     }

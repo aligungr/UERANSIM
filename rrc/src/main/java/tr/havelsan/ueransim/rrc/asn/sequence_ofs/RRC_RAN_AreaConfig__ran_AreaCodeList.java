@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_RAN_AreaCode;
 public class RRC_RAN_AreaConfig__ran_AreaCodeList extends RRC_SequenceOf<RRC_RAN_AreaCode> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_RAN_AreaCode> getItemType() {
         return RRC_RAN_AreaCode.class;
     }

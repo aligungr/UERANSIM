@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.core.RRC_SequenceOf;
 public class RRC_RRCSetupComplete_IEs__s_NSSAI_List extends RRC_SequenceOf<RRC_S_NSSAI> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_S_NSSAI> getItemType() {
         return RRC_S_NSSAI.class;
     }

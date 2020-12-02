@@ -25,14 +25,4 @@ public class RRC_CG_ConfigInfo_v1560_IEs__measResultReportCGI_EUTRA extends RRC_
         return new String[]{ "eutraFrequency","cellForWhichToReportCGI_EUTRA","cgi_InfoEUTRA" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

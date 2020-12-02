@@ -27,14 +27,4 @@ public class RRC_EventTriggerConfig__eventId extends RRC_Choice {
         return new String[]{ "eventA1","eventA2","eventA3","eventA4","eventA5","eventA6" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

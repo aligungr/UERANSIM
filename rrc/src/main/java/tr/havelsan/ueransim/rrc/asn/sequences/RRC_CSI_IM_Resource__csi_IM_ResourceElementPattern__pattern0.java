@@ -23,14 +23,4 @@ public class RRC_CSI_IM_Resource__csi_IM_ResourceElementPattern__pattern0 extend
         return new String[]{ "subcarrierLocation_p0","symbolLocation_p0" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

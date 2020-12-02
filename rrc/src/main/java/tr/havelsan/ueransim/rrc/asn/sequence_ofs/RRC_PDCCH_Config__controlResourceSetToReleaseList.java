@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_ControlResourceSetId;
 public class RRC_PDCCH_Config__controlResourceSetToReleaseList extends RRC_SequenceOf<RRC_ControlResourceSetId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_ControlResourceSetId> getItemType() {
         return RRC_ControlResourceSetId.class;
     }

@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_FeatureSetEntryIndex;
 public class RRC_BandCombinationInfo__allowedFeatureSetsList extends RRC_SequenceOf<RRC_FeatureSetEntryIndex> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_FeatureSetEntryIndex> getItemType() {
         return RRC_FeatureSetEntryIndex.class;
     }

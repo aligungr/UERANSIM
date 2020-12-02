@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_PhysCellId;
 public class RRC_SSB_MTC2__pci_List extends RRC_SequenceOf<RRC_PhysCellId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_PhysCellId> getItemType() {
         return RRC_PhysCellId.class;
     }

@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.core.RRC_SequenceOf;
 public class RRC_CSI_ReportConfig__reportConfigType__semiPersistentOnPUSCH__reportSlotOffsetList extends RRC_SequenceOf<RRC_Integer> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_Integer> getItemType() {
         return RRC_Integer.class;
     }

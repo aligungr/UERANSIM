@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_PUCCH_SpatialRelationInfoId;
 public class RRC_PUCCH_Config__spatialRelationInfoToReleaseList extends RRC_SequenceOf<RRC_PUCCH_SpatialRelationInfoId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_PUCCH_SpatialRelationInfoId> getItemType() {
         return RRC_PUCCH_SpatialRelationInfoId.class;
     }

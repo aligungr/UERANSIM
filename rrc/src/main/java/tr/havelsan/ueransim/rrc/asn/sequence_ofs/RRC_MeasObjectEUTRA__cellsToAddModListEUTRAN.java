@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_EUTRA_Cell;
 public class RRC_MeasObjectEUTRA__cellsToAddModListEUTRAN extends RRC_SequenceOf<RRC_EUTRA_Cell> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_EUTRA_Cell> getItemType() {
         return RRC_EUTRA_Cell.class;
     }

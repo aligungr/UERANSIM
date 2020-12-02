@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DummyC;
 public class RRC_FeatureSetDownlink__dummy5 extends RRC_SequenceOf<RRC_DummyC> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_DummyC> getItemType() {
         return RRC_DummyC.class;
     }

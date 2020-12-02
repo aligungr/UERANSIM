@@ -23,14 +23,4 @@ public class RRC_DRX_Config__drx_onDurationTimer extends RRC_Choice {
         return new String[]{ "subMilliSeconds","milliSeconds" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

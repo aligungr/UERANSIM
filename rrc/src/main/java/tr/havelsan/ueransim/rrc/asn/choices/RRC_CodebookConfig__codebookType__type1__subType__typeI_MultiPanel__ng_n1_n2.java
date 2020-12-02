@@ -29,14 +29,4 @@ public class RRC_CodebookConfig__codebookType__type1__subType__typeI_MultiPanel_
         return new String[]{ "two_two_one_TypeI_MultiPanel_Restriction","two_four_one_TypeI_MultiPanel_Restriction","four_two_one_TypeI_MultiPanel_Restriction","two_two_two_TypeI_MultiPanel_Restriction","two_eight_one_TypeI_MultiPanel_Restriction","four_four_one_TypeI_MultiPanel_Restriction","two_four_two_TypeI_MultiPanel_Restriction","four_two_two_TypeI_MultiPanel_Restriction" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

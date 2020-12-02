@@ -26,14 +26,4 @@ public class RRC_PDCP_Config__drb__headerCompression extends RRC_Choice {
         return new String[]{ "notUsed","rohc","uplinkOnlyROHC" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

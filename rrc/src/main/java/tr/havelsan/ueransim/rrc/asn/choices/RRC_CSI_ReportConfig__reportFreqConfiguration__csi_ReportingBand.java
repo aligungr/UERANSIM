@@ -38,14 +38,4 @@ public class RRC_CSI_ReportConfig__reportFreqConfiguration__csi_ReportingBand ex
         return new String[]{ "subbands3","subbands4","subbands5","subbands6","subbands7","subbands8","subbands9","subbands10","subbands11","subbands12","subbands13","subbands14","subbands15","subbands16","subbands17","subbands18","subbands19_v1530" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

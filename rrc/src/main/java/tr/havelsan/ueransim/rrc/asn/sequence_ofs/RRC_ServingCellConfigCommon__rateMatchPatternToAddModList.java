@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RateMatchPattern;
 public class RRC_ServingCellConfigCommon__rateMatchPatternToAddModList extends RRC_SequenceOf<RRC_RateMatchPattern> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_RateMatchPattern> getItemType() {
         return RRC_RateMatchPattern.class;
     }

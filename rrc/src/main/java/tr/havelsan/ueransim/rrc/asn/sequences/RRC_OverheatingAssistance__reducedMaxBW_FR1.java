@@ -23,14 +23,4 @@ public class RRC_OverheatingAssistance__reducedMaxBW_FR1 extends RRC_Sequence {
         return new String[]{ "reducedBW_FR1_DL","reducedBW_FR1_UL" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

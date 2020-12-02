@@ -24,14 +24,4 @@ public class RRC_SIB1__uac_BarringInfo__uac_AccessCategory1_SelectionAssistanceI
         return new String[]{ "plmnCommon","individualPLMNList" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

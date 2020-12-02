@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.integers.RRC_CSI_SSB_ResourceSetId;
 public class RRC_CSI_ResourceConfig__csi_RS_ResourceSetList__nzp_CSI_RS_SSB__csi_SSB_ResourceSetList extends RRC_SequenceOf<RRC_CSI_SSB_ResourceSetId> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_CSI_SSB_ResourceSetId> getItemType() {
         return RRC_CSI_SSB_ResourceSetId.class;
     }

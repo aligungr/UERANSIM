@@ -25,14 +25,4 @@ public class RRC_CG_ConfigInfo_v1540_IEs__measResultReportCGI extends RRC_Sequen
         return new String[]{ "ssbFrequency","cellForWhichToReportCGI","cgi_Info" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

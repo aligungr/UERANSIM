@@ -24,14 +24,4 @@ public class RRC_CSI_IM_Resource__csi_IM_ResourceElementPattern extends RRC_Choi
         return new String[]{ "pattern0","pattern1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

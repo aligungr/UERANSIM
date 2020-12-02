@@ -21,14 +21,4 @@ public class RRC_CG_Config_v1540_IEs__reportCGI_RequestNR extends RRC_Sequence {
         return new String[]{ "requestedCellInfo" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_P0_PUCCH;
 public class RRC_PUCCH_PowerControl__p0_Set extends RRC_SequenceOf<RRC_P0_PUCCH> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_P0_PUCCH> getItemType() {
         return RRC_P0_PUCCH.class;
     }

@@ -23,14 +23,4 @@ public class RRC_SRS_Resource__transmissionComb__n2 extends RRC_Sequence {
         return new String[]{ "combOffset_n2","cyclicShift_n2" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

@@ -25,14 +25,4 @@ public class RRC_MeasAndMobParametersCommon__ext1 extends RRC_Sequence {
         return new String[]{ "eventB_MeasAndReport","handoverFDD_TDD","eutra_CGI_Reporting","nr_CGI_Reporting" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

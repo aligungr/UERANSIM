@@ -23,14 +23,4 @@ public class RRC_Phy_ParametersFR2__ext1 extends RRC_Sequence {
         return new String[]{ "pCell_FR2","pdsch_RE_MappingFR2_PerSlot" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

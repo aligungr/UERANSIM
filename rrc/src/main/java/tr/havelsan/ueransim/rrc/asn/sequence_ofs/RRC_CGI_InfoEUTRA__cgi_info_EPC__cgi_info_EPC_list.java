@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_CellAccessRelatedInfo_EUTRA_EP
 public class RRC_CGI_InfoEUTRA__cgi_info_EPC__cgi_info_EPC_list extends RRC_SequenceOf<RRC_CellAccessRelatedInfo_EUTRA_EPC> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_CellAccessRelatedInfo_EUTRA_EPC> getItemType() {
         return RRC_CellAccessRelatedInfo_EUTRA_EPC.class;
     }

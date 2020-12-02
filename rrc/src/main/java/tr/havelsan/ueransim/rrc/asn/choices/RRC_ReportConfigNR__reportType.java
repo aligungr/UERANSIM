@@ -28,14 +28,4 @@ public class RRC_ReportConfigNR__reportType extends RRC_Choice {
         return new String[]{ "periodical","eventTriggered","reportCGI","ext1" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

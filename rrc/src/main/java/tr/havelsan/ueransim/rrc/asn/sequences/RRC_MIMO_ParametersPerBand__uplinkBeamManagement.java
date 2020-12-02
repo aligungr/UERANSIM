@@ -23,14 +23,4 @@ public class RRC_MIMO_ParametersPerBand__uplinkBeamManagement extends RRC_Sequen
         return new String[]{ "maxNumberSRS_ResourcePerSet_BM","maxNumberSRS_ResourceSet" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

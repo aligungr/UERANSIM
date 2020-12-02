@@ -11,16 +11,6 @@ import tr.havelsan.ueransim.rrc.asn.sequences.RRC_SupportedCSI_RS_Resource;
 public class RRC_MIMO_ParametersPerBand__ext1__srs_AssocCSI_RS extends RRC_SequenceOf<RRC_SupportedCSI_RS_Resource> {
 
     @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
-    @Override
     public Class<RRC_SupportedCSI_RS_Resource> getItemType() {
         return RRC_SupportedCSI_RS_Resource.class;
     }

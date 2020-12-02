@@ -24,14 +24,4 @@ public class RRC_ControlResourceSet__cce_REG_MappingType__interleaved extends RR
         return new String[]{ "reg_BundleSize","interleaverSize","shiftIndex" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

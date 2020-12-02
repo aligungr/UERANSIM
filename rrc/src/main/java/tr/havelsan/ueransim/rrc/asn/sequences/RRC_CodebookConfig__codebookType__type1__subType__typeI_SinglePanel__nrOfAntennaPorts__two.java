@@ -22,14 +22,4 @@ public class RRC_CodebookConfig__codebookType__type1__subType__typeI_SinglePanel
         return new String[]{ "twoTX_CodebookSubsetRestriction" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

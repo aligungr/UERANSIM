@@ -50,12 +50,12 @@ public class RRC_NG_5G_S_TMSI extends RRC_BitString {
 
     @Override
     public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
+        return "NG-5G-S-TMSI";
     }
 
     @Override
     public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
+        return "NG-5G-S-TMSI";
     }
 
 }

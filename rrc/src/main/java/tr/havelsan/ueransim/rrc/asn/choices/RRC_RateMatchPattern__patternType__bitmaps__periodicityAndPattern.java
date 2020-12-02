@@ -28,14 +28,4 @@ public class RRC_RateMatchPattern__patternType__bitmaps__periodicityAndPattern e
         return new String[]{ "n2","n4","n5","n8","n10","n20","n40" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }

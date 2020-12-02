@@ -26,14 +26,4 @@ public class RRC_FeatureSets__ext1 extends RRC_Sequence {
         return new String[]{ "featureSetsDownlink_v1540","featureSetsUplink_v1540","featureSetsUplinkPerCC_v1540" };
     }
 
-    @Override
-    public String getAsnName() {
-        throw new IllegalStateException("ASN.1 name is treated null for anonymous types.");
-    }
-
-    @Override
-    public String getXmlTagName() {
-        throw new IllegalStateException("XML tag name is treated null for anonymous types.");
-    }
-
 }
