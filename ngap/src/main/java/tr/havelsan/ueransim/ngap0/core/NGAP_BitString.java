@@ -45,8 +45,8 @@ public class NGAP_BitString extends NGAP_Value {
         this(BitString.fromHex(hex, bitLength));
     }
 
-    public NGAP_BitString(String hex) {
-        this(BitString.fromBits(hex));
+    public NGAP_BitString(String bits) {
+        this(BitString.fromBits(bits));
     }
 
     @Override
