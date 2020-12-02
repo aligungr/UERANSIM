@@ -49,6 +49,12 @@ public class RRC_BitString extends RRC_Value {
         this(BitString.fromBits(hex));
     }
 
+    public static RRC_BitString spare(int size) {
+        var bs = new BitString();
+        if (size > 0) bs.clear(size - 1);
+        return new RRC_BitString(bs);
+    }
+
     @Override
     public String getAsnName() {
         return "BIT STRING";
