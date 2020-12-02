@@ -284,7 +284,7 @@ public class RrcXerEncoder {
 
     private static <T extends RRC_Value> RRC_Value decodeRoot(Node node, Class<T> type) throws Exception {
         String tagName = node instanceof Element ? ((Element) node).getTagName() : "";
-        var neededType = findTypeFromTagName(tagName);
+        var neededType = type;
 
         return decode(node.getChildNodes(), neededType, tagName);
     }
