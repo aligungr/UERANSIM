@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.rrc.asn.core.*;
 
 public class NewRrcXerEncoder {
 
-    public static String encode(Object value) {
+    public static String encode(RRC_Value value) {
         var sb = new StringBuilder();
         try {
             String rootTag = findItemTag(value.getClass());
