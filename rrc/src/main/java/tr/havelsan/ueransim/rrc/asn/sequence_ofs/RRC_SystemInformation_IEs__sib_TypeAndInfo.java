@@ -5,13 +5,14 @@
 
 package tr.havelsan.ueransim.rrc.asn.sequence_ofs;
 
+import tr.havelsan.ueransim.rrc.asn.choices.RRC_SystemInformation_IEs__sib_TypeAndInfo__Member;
 import tr.havelsan.ueransim.rrc.asn.core.RRC_SequenceOf;
 
-public class RRC_SystemInformation_IEs__sib_TypeAndInfo extends RRC_SequenceOf<RRC_SystemInformation_IEs__sib_TypeAndInfo> {
+public class RRC_SystemInformation_IEs__sib_TypeAndInfo extends RRC_SequenceOf<RRC_SystemInformation_IEs__sib_TypeAndInfo__Member> {
 
     @Override
-    public Class<RRC_SystemInformation_IEs__sib_TypeAndInfo> getItemType() {
-        return RRC_SystemInformation_IEs__sib_TypeAndInfo.class;
+    public Class<RRC_SystemInformation_IEs__sib_TypeAndInfo__Member> getItemType() {
+        return RRC_SystemInformation_IEs__sib_TypeAndInfo__Member.class;
     }
 
 }
