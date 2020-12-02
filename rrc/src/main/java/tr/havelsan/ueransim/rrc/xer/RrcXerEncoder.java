@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.rrc;
+package tr.havelsan.ueransim.rrc.xer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

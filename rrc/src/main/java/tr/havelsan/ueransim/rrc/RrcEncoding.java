@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.rrc;
 
 import tr.havelsan.ueransim.rrc.asn.core.RRC_Value;
+import tr.havelsan.ueransim.rrc.xer.RrcXerEncoder;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RrcEncoding {
