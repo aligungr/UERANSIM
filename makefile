@@ -21,7 +21,7 @@ build: FORCE
 	cp nas/target/nas-release.jar build/
 	cp ngap/target/ngap-release.jar build/
 	cp rrc/target/rrc-release.jar build/
-    cp icmp/target/icmp-release.jar build/
+	cp icmp/target/icmp-release.jar build/
 	cp itms/target/itms-release.jar build/
 	cp mts/target/mts-release.jar build/
 	cp sctp/target/sctp-release.jar build/
