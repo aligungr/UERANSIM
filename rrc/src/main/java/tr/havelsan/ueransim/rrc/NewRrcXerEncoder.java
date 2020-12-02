@@ -16,7 +16,7 @@ public class NewRrcXerEncoder {
 
             sb.append(String.format("<%s>", rootTag));
             encode(sb, value);
-            sb.append(String.format("<%s/>", rootTag));
+            sb.append(String.format("</%s>", rootTag));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
