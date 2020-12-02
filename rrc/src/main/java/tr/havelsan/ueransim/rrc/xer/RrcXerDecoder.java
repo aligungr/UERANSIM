@@ -53,8 +53,6 @@ public class RrcXerDecoder {
         var childCount = children.getLength();
 
         if (RRC_BitString.class.isAssignableFrom(type)) {
-            // TODO: emin değilim
-
             if (childCount != 1) throw new RuntimeException("invalid XER source (single child expected for BitString)");
             var first = children.item(0);
             return type.getConstructor(String.class).newInstance(first.getNodeValue());
@@ -96,8 +94,6 @@ public class RrcXerDecoder {
             return type.getConstructor().newInstance();
         }
         if (RRC_OctetString.class.isAssignableFrom(type)) {
-            // TODO: emin değilim
-
             if (childCount != 1)
                 throw new RuntimeException("invalid XER source (single child expected for OctetString)");
             var first = children.item(0);

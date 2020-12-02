@@ -25,7 +25,6 @@ public class RrcXerEncoder {
 
     private static void encode(StringBuilder sb, Object value) throws Exception {
         if (value instanceof RRC_BitString) {
-            // TODO: emin değilim
             sb.append(((RRC_BitString) value).value.toBinaryString(false));
         } else if (value instanceof RRC_Boolean) {
             sb.append(((RRC_Boolean) value).value ? "<true/>" : "<false/>");
@@ -37,7 +36,6 @@ public class RrcXerEncoder {
         } else if (value instanceof RRC_Null) {
             // do nothing
         } else if (value instanceof RRC_OctetString) {
-            // TODO: emin değilim
             sb.append(((RRC_OctetString) value).value.toHexString(false));
         } else if (value instanceof RRC_Choice) {
             var choice = (RRC_Choice) value;
