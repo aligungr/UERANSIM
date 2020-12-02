@@ -93,7 +93,7 @@ public class RrcXerDecoder {
         if (RRC_Null.class.isAssignableFrom(type)) {
             if (childCount != 0)
                 throw new RuntimeException("invalid XER source (no child expected for Null)");
-            // do nothing
+            return type.getConstructor().newInstance();
         }
         if (RRC_OctetString.class.isAssignableFrom(type)) {
             // TODO: emin değilim
