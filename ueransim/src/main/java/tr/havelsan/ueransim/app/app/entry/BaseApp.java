@@ -23,6 +23,7 @@ class BaseApp {
 
         System.load(path + "libcrypto-native.so");
         System.load(path + "libngap-native.so");
+        System.load(path + "librrc-native.so");
         System.load(path + "libapp-native.so");
 
         String localVersion = Utils.readAllText(path + "version");
