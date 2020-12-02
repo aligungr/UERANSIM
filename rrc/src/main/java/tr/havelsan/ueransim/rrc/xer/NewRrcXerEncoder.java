@@ -101,7 +101,7 @@ public class NewRrcXerEncoder {
         }
     }
 
-    private static String findItemTag(Class<?> type) throws Exception {
+    static String findItemTag(Class<?> type) throws Exception {
         if (RRC_BitString.class.isAssignableFrom(type)) {
             return ((RRC_BitString) type.getConstructor(String.class).newInstance("")).getXmlTagName();
         }
