@@ -84,6 +84,9 @@ public class NewRrcXerEncoder {
                 }
             }
         } else if (value instanceof RRC_SequenceOf) {
+            // TODO:
+            //  XMLDelimitedItemList vs XMLValueList
+
             var sequenceOf = ((RRC_SequenceOf<?>) value);
             var itemType = sequenceOf.getItemType();
             var itemTag = findItemTag(itemType);
