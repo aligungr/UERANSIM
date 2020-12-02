@@ -32,4 +32,22 @@ public class RrcJni {
         }
         return converted;
     }
+
+    public static String uperToXer(byte[] data, RrcDataUnitType pduType) {
+        var converted = convert(data, ATS_UNALIGNED_CANONICAL_PER, ATS_CANONICAL_XER, pduType);
+        return new String(converted);
+    }
+
+    public static String uperToPlainText(byte[] data, RrcDataUnitType pduType) {
+        var converted = convert(data, ATS_UNALIGNED_CANONICAL_PER, ATS_NONSTANDARD_PLAINTEXT, pduType);
+        return new String(converted);
+    }
+
+    public static byte[] xerToUper(String xer, RrcDataUnitType pduType) {
+        return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_UNALIGNED_CANONICAL_PER, pduType);
+    }
+
+    public static byte[] xerToPlainText(String xer, RrcDataUnitType pduType) {
+        return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_NONSTANDARD_PLAINTEXT, pduType);
+    }
 }

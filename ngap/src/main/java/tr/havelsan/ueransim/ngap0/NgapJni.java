@@ -46,4 +46,8 @@ public class NgapJni {
     public static byte[] xerToAper(String xer, NgapDataUnitType pduType) {
         return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_ALIGNED_CANONICAL_PER, pduType);
     }
+
+    public static byte[] xerToPlainText(String xer, NgapDataUnitType pduType) {
+        return convert(xer.getBytes(), ATS_CANONICAL_XER, ATS_NONSTANDARD_PLAINTEXT, pduType);
+    }
 }
