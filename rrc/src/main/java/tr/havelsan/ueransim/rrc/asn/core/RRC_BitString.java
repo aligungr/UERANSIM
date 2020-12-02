@@ -45,8 +45,8 @@ public class RRC_BitString extends RRC_Value {
         this(BitString.fromHex(hex, bitLength));
     }
 
-    public RRC_BitString(String hex) {
-        this(BitString.fromBits(hex));
+    public RRC_BitString(String bits) {
+        this(BitString.fromBits(bits));
     }
 
     public static RRC_BitString spare(int size) {
