@@ -6,13 +6,14 @@
 package tr.havelsan.ueransim.rrc;
 
 import tr.havelsan.ueransim.rrc.asn.core.RRC_Value;
+import tr.havelsan.ueransim.rrc.xer.RrcXerDecoder;
 import tr.havelsan.ueransim.rrc.xer.RrcXerEncoder;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RrcEncoding {
 
     public static RRC_Value decodeUper(byte[] pdu, RrcDataUnitType type) {
-        return RrcXerEncoder.decode(RrcJni.uperToXer(pdu, type), RRC_Value.class);
+        return RrcXerDecoder.decode(RrcJni.uperToXer(pdu, type), type.getPodType());
     }
 
     public static RRC_Value decodeUper(OctetString pdu, RrcDataUnitType type) {
