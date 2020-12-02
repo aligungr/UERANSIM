@@ -7,6 +7,7 @@ build: FORCE
 	@printf "${CYAN}UERANSIM is building. Please wait. This may take a while.${NC}\n"
 	mkdir -p build
 	(cd native/ngap-native && make && cp -f libngap-native.so ../../build)
+	(cd native/rrc-native && make && cp -f librrc-native.so ../../build)
 	(cd native/crypto-native && make && cp -f libcrypto-native.so ../../build)
 	(cd native/app-native && make && cp -f libapp-native.so ../../build)
 	(cd native/uesimtun && make -f tun-agent.mk && cp -f tun-agent ../../build)
@@ -19,11 +20,11 @@ build: FORCE
 	cp gtp/target/gtp-release.jar build/
 	cp nas/target/nas-release.jar build/
 	cp ngap/target/ngap-release.jar build/
-	cp icmp/target/icmp-release.jar build/
+	cp rrc/target/rrc-release.jar build/
+    cp icmp/target/icmp-release.jar build/
 	cp itms/target/itms-release.jar build/
 	cp mts/target/mts-release.jar build/
 	cp sctp/target/sctp-release.jar build/
-	cp rrc/target/rrc-release.jar build/
 	cp misc/version build/
 	@printf "${GREEN}UERANSIM successfully built.${NC}\n"
 
@@ -31,6 +32,7 @@ clean: FORCE
 	mkdir -p build
 	rm -fr build/*
 	(cd native/ngap-native && make clean)
+	(cd native/rrc-native && make clean)
 	(cd native/crypto-native && make clean)
 	(cd native/app-native && make clean)
 	(cd native/uesimtun && make -f tun-agent.mk clean)
