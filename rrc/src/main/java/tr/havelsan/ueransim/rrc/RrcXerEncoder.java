@@ -252,7 +252,7 @@ public class RrcXerEncoder {
                 return type.getDeclaredConstructor(long.class).newInstance(0).getXmlTagName();
             }
             if (RRC_Boolean.class.isAssignableFrom(type)) {
-                return type.getDeclaredConstructor(long.class).newInstance(0).getXmlTagName();
+                return type.getDeclaredConstructor(boolean.class).newInstance(false).getXmlTagName();
             }
             if (RRC_Enumerated.class.isAssignableFrom(type)) {
                 var ctor = type.getDeclaredConstructor(String.class);
