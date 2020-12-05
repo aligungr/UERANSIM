@@ -25,6 +25,7 @@ build: FORCE
 	cp itms/target/itms-release.jar build/
 	cp mts/target/mts-release.jar build/
 	cp sctp/target/sctp-release.jar build/
+	cp sctp/target/asn-release.jar build/
 	cp misc/version build/
 	@printf "${GREEN}UERANSIM successfully built.${NC}\n"
 
