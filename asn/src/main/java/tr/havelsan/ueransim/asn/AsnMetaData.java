@@ -15,27 +15,27 @@ import java.util.Map;
 
 public class AsnMetaData {
 
-    private final Class[] idOrderedTypes;
-    private final Map<Class, Integer> typeToId;
-    private final AsnMeta_TypeDesc[] typeDescs;
+    final Class[] idToType;
+    final Map<Class, Integer> typeToId;
+    final AsnMeta_TypeDesc[] typeDescs;
 
     public AsnMetaData(String classJson, String dataJson) {
         try {
             String[] classes = Json.fromJson(classJson, String[].class);
             AsnMeta_TypeDesc[] data = Json.fromJson(dataJson, AsnMeta_TypeDesc[].class);
 
-            idOrderedTypes = new Class[classes.length];
+            idToType = new Class[classes.length];
             typeToId = new HashMap<>();
             typeDescs = new AsnMeta_TypeDesc[data.length + 1];
 
             for (int i = 0; i < classes.length; i++) {
                 if (classes[i] != null && classes[i].length() > 0) {
-                    idOrderedTypes[i] = Class.forName(classes[i]);
-                    typeToId.put(idOrderedTypes[i], i);
+                    idToType[i] = Class.forName(classes[i]);
+                    typeToId.put(idToType[i], i);
                 }
             }
 
-            for (var x : idOrderedTypes) {
+            for (var x : idToType) {
                 if (!typeToId.containsKey(x)) {
                     System.err.println(x);
                 }
@@ -51,7 +51,7 @@ public class AsnMetaData {
     }
 
     public Class idToClass(int id) {
-        return idOrderedTypes[id];
+        return idToType[id];
     }
 
     public int classToId(Class c) {
@@ -101,7 +101,7 @@ public class AsnMetaData {
     }
 
     public Class elementType(Class listType) {
-        return idOrderedTypes[typeDescs[classToId(listType)].members.get(0).type_id];
+        return idToType[typeDescs[classToId(listType)].members.get(0).type_id];
     }
 
     public String xmlTagName(Class type) {

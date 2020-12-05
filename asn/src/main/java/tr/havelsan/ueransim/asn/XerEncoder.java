@@ -29,6 +29,8 @@ public class XerEncoder {
     }
 
     private void encode(StringBuilder sb, Object value) throws Exception {
+        var desc = metaData.typeDescs[metaData.typeToId.get(value.getClass())];
+
         if (value instanceof AsnBitString) {
             sb.append(((AsnBitString) value).value.toBinaryString(false));
         } else if (value instanceof AsnBoolean) {
@@ -36,8 +38,13 @@ public class XerEncoder {
         } else if (value instanceof AsnEnumerated) {
             sb.append(String.format("<%s/>", metaData.enumString(value.getClass(), ((AsnEnumerated) value).intValue)));
         } else if (value instanceof AsnInteger) {
-            // TODO: Signed/unsigned
-            sb.append(((AsnInteger) value).value);
+            long longVal = ((AsnInteger) value).value;
+
+            if (desc.int_specs != null && desc.int_specs.is_unsigned) {
+                sb.append(Long.toUnsignedString(longVal));
+            } else {
+                sb.append(longVal);
+            }
         } else if (value instanceof AsnNull) {
             // do nothing
         } else if (value instanceof AsnOctetString) {
