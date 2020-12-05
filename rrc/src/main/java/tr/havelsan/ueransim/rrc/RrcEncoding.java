@@ -13,7 +13,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RrcEncoding {
 
-    private static final RRC_AsnMetaData metaData = null;
+    private static final RRC_AsnMetaData metaData = new RRC_AsnMetaData();
     private static final XerEncoder xerEncoder = new XerEncoder(metaData);
     private static final XerDecoder xerDecoder = new XerDecoder(metaData);
 
