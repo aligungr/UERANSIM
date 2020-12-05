@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import tr.havelsan.ueransim.asn.core.*;
+import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,7 +62,7 @@ public class XerDecoder {
         if (AsnBitString.class.isAssignableFrom(type)) {
             if (childCount != 1) throw new RuntimeException("invalid XER source (single child expected for BitString)");
             var first = children.item(0);
-            return type.getConstructor(String.class).newInstance(first.getNodeValue());
+            return type.getConstructor(BitString.class).newInstance(BitString.fromBits(first.getNodeValue()));
         }
         if (AsnBoolean.class.isAssignableFrom(type)) {
             if (childCount != 1) throw new RuntimeException("invalid XER source (single child expected for Boolean)");
@@ -102,7 +104,7 @@ public class XerDecoder {
             if (childCount != 1)
                 throw new RuntimeException("invalid XER source (single child expected for OctetString)");
             var first = children.item(0);
-            return type.getConstructor(String.class).newInstance(first.getNodeValue());
+            return type.getConstructor(OctetString.class).newInstance(new OctetString(first.getNodeValue()));
         }
         if (AsnChoice.class.isAssignableFrom(type)) {
             if (childCount != 1)
