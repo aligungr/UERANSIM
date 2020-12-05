@@ -35,12 +35,6 @@ public class AsnMetaData {
                 }
             }
 
-            for (var x : idToType) {
-                if (!typeToId.containsKey(x)) {
-                    System.err.println(x);
-                }
-            }
-
             for (var typeDesc : data) {
                 typeDescs[typeDesc.type_info_id] = typeDesc;
             }
@@ -65,7 +59,7 @@ public class AsnMetaData {
         }
 
         for (var pair : desc.int_specs.enums) {
-            if (Long.parseLong(pair.get(1).toString()) == value)
+            if ((long) Double.parseDouble(pair.get(1).toString()) == value)
                 return pair.get(0).toString();
         }
 
