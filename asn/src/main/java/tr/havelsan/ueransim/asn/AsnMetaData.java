@@ -16,6 +16,7 @@ public class AsnMetaData {
 
     private final Class[] idOrderedTypes;
     private final Map<Class, Integer> typeToId;
+    private final AsnMeta_TypeDesc[] typeDescs;
 
     public AsnMetaData(String classJson, String dataJson) {
         try {
@@ -24,6 +25,7 @@ public class AsnMetaData {
 
             idOrderedTypes = new Class[classes.length];
             typeToId = new HashMap<>();
+            typeDescs = new AsnMeta_TypeDesc[data.length + 1];
 
             for (int i = 0; i < classes.length; i++) {
                 if (classes[i] != null && classes[i].length() > 0) {
@@ -38,10 +40,21 @@ public class AsnMetaData {
                 }
             }
 
-            idOrderedTypes.toString();
+            for (var typeDesc : data) {
+                typeDescs[typeDesc.type_info_id] = typeDesc;
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Class idToClass(int id) {
+        return idOrderedTypes[id];
+    }
+
+    public int classToId(Class c) {
+        return typeToId.getOrDefault(c, 0);
     }
 
     public String enumString(Class type, long value) {
