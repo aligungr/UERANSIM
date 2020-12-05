@@ -1,39 +1,75 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_BeamManagementSSB_CSI_RS extends RRC_Sequence {
+public class RRC_BeamManagementSSB_CSI_RS extends AsnSequence {
+    public RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 maxNumberSSB_CSI_RS_ResourceOneTx; // mandatory
+    public RRC_maxNumberCSI_RS_Resource maxNumberCSI_RS_Resource; // mandatory
+    public RRC_maxNumberCSI_RS_ResourceTwoTx maxNumberCSI_RS_ResourceTwoTx; // mandatory
+    public RRC_supportedCSI_RS_Density_1 supportedCSI_RS_Density; // optional
+    public RRC_maxNumberAperiodicCSI_RS_Resource maxNumberAperiodicCSI_RS_Resource; // mandatory
 
-    public RRC_Integer maxNumberSSB_CSI_RS_ResourceOneTx;
-    public RRC_Integer maxNumberCSI_RS_Resource;
-    public RRC_Integer maxNumberCSI_RS_ResourceTwoTx;
-    public RRC_Integer supportedCSI_RS_Density;
-    public RRC_Integer maxNumberAperiodicCSI_RS_Resource;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "maxNumberSSB-CSI-RS-ResourceOneTx","maxNumberCSI-RS-Resource","maxNumberCSI-RS-ResourceTwoTx","supportedCSI-RS-Density","maxNumberAperiodicCSI-RS-Resource" };
+    public static class RRC_supportedCSI_RS_Density_1 extends AsnEnumerated {
+        public static final RRC_supportedCSI_RS_Density_1 ONE = new RRC_supportedCSI_RS_Density_1(0);
+        public static final RRC_supportedCSI_RS_Density_1 THREE = new RRC_supportedCSI_RS_Density_1(1);
+        public static final RRC_supportedCSI_RS_Density_1 ONEANDTHREE = new RRC_supportedCSI_RS_Density_1(2);
+    
+        private RRC_supportedCSI_RS_Density_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "maxNumberSSB_CSI_RS_ResourceOneTx","maxNumberCSI_RS_Resource","maxNumberCSI_RS_ResourceTwoTx","supportedCSI_RS_Density","maxNumberAperiodicCSI_RS_Resource" };
+    public static class RRC_maxNumberCSI_RS_ResourceTwoTx extends AsnEnumerated {
+        public static final RRC_maxNumberCSI_RS_ResourceTwoTx N0 = new RRC_maxNumberCSI_RS_ResourceTwoTx(0);
+        public static final RRC_maxNumberCSI_RS_ResourceTwoTx N4 = new RRC_maxNumberCSI_RS_ResourceTwoTx(1);
+        public static final RRC_maxNumberCSI_RS_ResourceTwoTx N8 = new RRC_maxNumberCSI_RS_ResourceTwoTx(2);
+        public static final RRC_maxNumberCSI_RS_ResourceTwoTx N16 = new RRC_maxNumberCSI_RS_ResourceTwoTx(3);
+        public static final RRC_maxNumberCSI_RS_ResourceTwoTx N32 = new RRC_maxNumberCSI_RS_ResourceTwoTx(4);
+        public static final RRC_maxNumberCSI_RS_ResourceTwoTx N64 = new RRC_maxNumberCSI_RS_ResourceTwoTx(5);
+    
+        private RRC_maxNumberCSI_RS_ResourceTwoTx(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "BeamManagementSSB-CSI-RS";
+    public static class RRC_maxNumberCSI_RS_Resource extends AsnEnumerated {
+        public static final RRC_maxNumberCSI_RS_Resource N0 = new RRC_maxNumberCSI_RS_Resource(0);
+        public static final RRC_maxNumberCSI_RS_Resource N4 = new RRC_maxNumberCSI_RS_Resource(1);
+        public static final RRC_maxNumberCSI_RS_Resource N8 = new RRC_maxNumberCSI_RS_Resource(2);
+        public static final RRC_maxNumberCSI_RS_Resource N16 = new RRC_maxNumberCSI_RS_Resource(3);
+        public static final RRC_maxNumberCSI_RS_Resource N32 = new RRC_maxNumberCSI_RS_Resource(4);
+        public static final RRC_maxNumberCSI_RS_Resource N64 = new RRC_maxNumberCSI_RS_Resource(5);
+    
+        private RRC_maxNumberCSI_RS_Resource(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "BeamManagementSSB-CSI-RS";
+    public static class RRC_maxNumberAperiodicCSI_RS_Resource extends AsnEnumerated {
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N0 = new RRC_maxNumberAperiodicCSI_RS_Resource(0);
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N1 = new RRC_maxNumberAperiodicCSI_RS_Resource(1);
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N4 = new RRC_maxNumberAperiodicCSI_RS_Resource(2);
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N8 = new RRC_maxNumberAperiodicCSI_RS_Resource(3);
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N16 = new RRC_maxNumberAperiodicCSI_RS_Resource(4);
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N32 = new RRC_maxNumberAperiodicCSI_RS_Resource(5);
+        public static final RRC_maxNumberAperiodicCSI_RS_Resource N64 = new RRC_maxNumberAperiodicCSI_RS_Resource(6);
+    
+        private RRC_maxNumberAperiodicCSI_RS_Resource(long value) {
+            super(value);
+        }
     }
 
+    public static class RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 extends AsnEnumerated {
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 N0 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2(0);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 N8 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2(1);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 N16 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2(2);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 N32 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2(3);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2 N64 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2(4);
+    
+        private RRC_maxNumberSSB_CSI_RS_ResourceOneTx_2(long value) {
+            super(value);
+        }
+    }
 }
+

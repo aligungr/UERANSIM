@@ -1,47 +1,78 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SRS_ResourceSet__pathlossReferenceRS;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SRS_ResourceSet__resourceType;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.*;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_Alpha;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_NZP_CSI_RS_ResourceId;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SRS_ResourceId;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_SRS_ResourceSetId;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SRS_ResourceSet__srs_ResourceIdList;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SSB_Index;
 
-public class RRC_SRS_ResourceSet extends RRC_Sequence {
+public class RRC_SRS_ResourceSet extends AsnSequence {
+    public RRC_SRS_ResourceSetId srs_ResourceSetId; // mandatory
+    public RRC_srs_ResourceIdList srs_ResourceIdList; // optional, SIZE(1..16)
+    public RRC_resourceType_3 resourceType; // mandatory
+    public RRC_usage usage; // mandatory
+    public RRC_Alpha alpha; // optional
+    public AsnInteger p0; // optional, VALUE(-202..24)
+    public RRC_pathlossReferenceRS pathlossReferenceRS; // optional
+    public RRC_srs_PowerControlAdjustmentStates srs_PowerControlAdjustmentStates; // optional
 
-    public RRC_SRS_ResourceSetId srs_ResourceSetId;
-    public RRC_SRS_ResourceSet__srs_ResourceIdList srs_ResourceIdList;
-    public RRC_SRS_ResourceSet__resourceType resourceType;
-    public RRC_Integer usage;
-    public RRC_Alpha alpha;
-    public RRC_Integer p0;
-    public RRC_SRS_ResourceSet__pathlossReferenceRS pathlossReferenceRS;
-    public RRC_Integer srs_PowerControlAdjustmentStates;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "srs-ResourceSetId","srs-ResourceIdList","resourceType","usage","alpha","p0","pathlossReferenceRS","srs-PowerControlAdjustmentStates" };
+    // SIZE(1..16)
+    public static class RRC_srs_ResourceIdList extends AsnSequenceOf<RRC_SRS_ResourceId> {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "srs_ResourceSetId","srs_ResourceIdList","resourceType","usage","alpha","p0","pathlossReferenceRS","srs_PowerControlAdjustmentStates" };
+    public static class RRC_resourceType_3 extends AsnChoice {
+        public RRC_aperiodic_1 aperiodic;
+        public RRC_semi_persistent_1 semi_persistent;
+        public RRC_periodic_2 periodic;
+    
+        public static class RRC_semi_persistent_1 extends AsnSequence {
+            public RRC_NZP_CSI_RS_ResourceId associatedCSI_RS; // optional
+        }
+    
+        public static class RRC_periodic_2 extends AsnSequence {
+            public RRC_NZP_CSI_RS_ResourceId associatedCSI_RS; // optional
+        }
+    
+        public static class RRC_aperiodic_1 extends AsnSequence {
+            public AsnInteger aperiodicSRS_ResourceTrigger; // mandatory, VALUE(1..3)
+            public RRC_NZP_CSI_RS_ResourceId csi_RS; // optional
+            public AsnInteger slotOffset; // optional, VALUE(1..32)
+            public RRC_ext1_51 ext1; // optional
+        
+            public static class RRC_ext1_51 extends AsnSequence {
+                public RRC_aperiodicSRS_ResourceTriggerList_v1530 aperiodicSRS_ResourceTriggerList_v1530; // optional, SIZE(1..2)
+            
+                // SIZE(1..2)
+                public static class RRC_aperiodicSRS_ResourceTriggerList_v1530 extends AsnSequenceOf<AsnInteger> {
+                }
+            }
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "SRS-ResourceSet";
+    public static class RRC_usage extends AsnEnumerated {
+        public static final RRC_usage BEAMMANAGEMENT = new RRC_usage(0);
+        public static final RRC_usage CODEBOOK = new RRC_usage(1);
+        public static final RRC_usage NONCODEBOOK = new RRC_usage(2);
+        public static final RRC_usage ANTENNASWITCHING = new RRC_usage(3);
+    
+        private RRC_usage(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "SRS-ResourceSet";
+    public static class RRC_pathlossReferenceRS extends AsnChoice {
+        public RRC_SSB_Index ssb_Index;
+        public RRC_NZP_CSI_RS_ResourceId csi_RS_Index;
     }
 
+    public static class RRC_srs_PowerControlAdjustmentStates extends AsnEnumerated {
+        public static final RRC_srs_PowerControlAdjustmentStates SAMEASFCI2 = new RRC_srs_PowerControlAdjustmentStates(0);
+        public static final RRC_srs_PowerControlAdjustmentStates SEPARATECLOSEDLOOP = new RRC_srs_PowerControlAdjustmentStates(1);
+    
+        private RRC_srs_PowerControlAdjustmentStates(long value) {
+            super(value);
+        }
+    }
 }
+

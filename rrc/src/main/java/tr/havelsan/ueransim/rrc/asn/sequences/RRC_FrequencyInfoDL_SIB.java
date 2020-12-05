@@ -1,39 +1,17 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_FrequencyInfoDL_SIB__scs_SpecificCarrierList;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_MultiFrequencyBandListNR_SIB;
 
-public class RRC_FrequencyInfoDL_SIB extends RRC_Sequence {
+public class RRC_FrequencyInfoDL_SIB extends AsnSequence {
+    public RRC_MultiFrequencyBandListNR_SIB frequencyBandList; // mandatory
+    public AsnInteger offsetToPointA; // mandatory, VALUE(0..2199)
+    public RRC_scs_SpecificCarrierList_2 scs_SpecificCarrierList; // mandatory, SIZE(1..5)
 
-    public RRC_MultiFrequencyBandListNR_SIB frequencyBandList;
-    public RRC_Integer offsetToPointA;
-    public RRC_FrequencyInfoDL_SIB__scs_SpecificCarrierList scs_SpecificCarrierList;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "frequencyBandList","offsetToPointA","scs-SpecificCarrierList" };
+    // SIZE(1..5)
+    public static class RRC_scs_SpecificCarrierList_2 extends AsnSequenceOf<RRC_SCS_SpecificCarrier> {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "frequencyBandList","offsetToPointA","scs_SpecificCarrierList" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "FrequencyInfoDL-SIB";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "FrequencyInfoDL-SIB";
-    }
-
 }
+

@@ -1,54 +1,93 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_CSI_AperiodicTriggerStateList;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_CSI_SemiPersistentOnPUSCH_TriggerStateList;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.*;
+import tr.havelsan.ueransim.asn.core.*;
+import tr.havelsan.ueransim.rrc.asn.integers.*;
+import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CSI_AperiodicTriggerStateList;
+import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CSI_SemiPersistentOnPUSCH_TriggerStateList;
 
-public class RRC_CSI_MeasConfig extends RRC_Sequence {
+public class RRC_CSI_MeasConfig extends AsnSequence {
+    public RRC_nzp_CSI_RS_ResourceToAddModList nzp_CSI_RS_ResourceToAddModList; // optional, SIZE(1..192)
+    public RRC_nzp_CSI_RS_ResourceToReleaseList nzp_CSI_RS_ResourceToReleaseList; // optional, SIZE(1..192)
+    public RRC_nzp_CSI_RS_ResourceSetToAddModList nzp_CSI_RS_ResourceSetToAddModList; // optional, SIZE(1..64)
+    public RRC_nzp_CSI_RS_ResourceSetToReleaseList nzp_CSI_RS_ResourceSetToReleaseList; // optional, SIZE(1..64)
+    public RRC_csi_IM_ResourceToAddModList csi_IM_ResourceToAddModList; // optional, SIZE(1..32)
+    public RRC_csi_IM_ResourceToReleaseList csi_IM_ResourceToReleaseList; // optional, SIZE(1..32)
+    public RRC_csi_IM_ResourceSetToAddModList csi_IM_ResourceSetToAddModList; // optional, SIZE(1..64)
+    public RRC_csi_IM_ResourceSetToReleaseList csi_IM_ResourceSetToReleaseList; // optional, SIZE(1..64)
+    public RRC_csi_SSB_ResourceSetToAddModList csi_SSB_ResourceSetToAddModList; // optional, SIZE(1..64)
+    public RRC_csi_SSB_ResourceSetToReleaseList csi_SSB_ResourceSetToReleaseList; // optional, SIZE(1..64)
+    public RRC_csi_ResourceConfigToAddModList csi_ResourceConfigToAddModList; // optional, SIZE(1..112)
+    public RRC_csi_ResourceConfigToReleaseList csi_ResourceConfigToReleaseList; // optional, SIZE(1..112)
+    public RRC_csi_ReportConfigToAddModList csi_ReportConfigToAddModList; // optional, SIZE(1..48)
+    public RRC_csi_ReportConfigToReleaseList csi_ReportConfigToReleaseList; // optional, SIZE(1..48)
+    public AsnInteger reportTriggerSize; // optional, VALUE(0..6)
+    public RRC_SetupRelease_CSI_AperiodicTriggerStateList aperiodicTriggerStateList; // optional
+    public RRC_SetupRelease_CSI_SemiPersistentOnPUSCH_TriggerStateList semiPersistentOnPUSCH_TriggerStateList; // optional
 
-    public RRC_CSI_MeasConfig__nzp_CSI_RS_ResourceToAddModList nzp_CSI_RS_ResourceToAddModList;
-    public RRC_CSI_MeasConfig__nzp_CSI_RS_ResourceToReleaseList nzp_CSI_RS_ResourceToReleaseList;
-    public RRC_CSI_MeasConfig__nzp_CSI_RS_ResourceSetToAddModList nzp_CSI_RS_ResourceSetToAddModList;
-    public RRC_CSI_MeasConfig__nzp_CSI_RS_ResourceSetToReleaseList nzp_CSI_RS_ResourceSetToReleaseList;
-    public RRC_CSI_MeasConfig__csi_IM_ResourceToAddModList csi_IM_ResourceToAddModList;
-    public RRC_CSI_MeasConfig__csi_IM_ResourceToReleaseList csi_IM_ResourceToReleaseList;
-    public RRC_CSI_MeasConfig__csi_IM_ResourceSetToAddModList csi_IM_ResourceSetToAddModList;
-    public RRC_CSI_MeasConfig__csi_IM_ResourceSetToReleaseList csi_IM_ResourceSetToReleaseList;
-    public RRC_CSI_MeasConfig__csi_SSB_ResourceSetToAddModList csi_SSB_ResourceSetToAddModList;
-    public RRC_CSI_MeasConfig__csi_SSB_ResourceSetToReleaseList csi_SSB_ResourceSetToReleaseList;
-    public RRC_CSI_MeasConfig__csi_ResourceConfigToAddModList csi_ResourceConfigToAddModList;
-    public RRC_CSI_MeasConfig__csi_ResourceConfigToReleaseList csi_ResourceConfigToReleaseList;
-    public RRC_CSI_MeasConfig__csi_ReportConfigToAddModList csi_ReportConfigToAddModList;
-    public RRC_CSI_MeasConfig__csi_ReportConfigToReleaseList csi_ReportConfigToReleaseList;
-    public RRC_Integer reportTriggerSize;
-    public RRC_SetupRelease_CSI_AperiodicTriggerStateList aperiodicTriggerStateList;
-    public RRC_SetupRelease_CSI_SemiPersistentOnPUSCH_TriggerStateList semiPersistentOnPUSCH_TriggerStateList;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "nzp-CSI-RS-ResourceToAddModList","nzp-CSI-RS-ResourceToReleaseList","nzp-CSI-RS-ResourceSetToAddModList","nzp-CSI-RS-ResourceSetToReleaseList","csi-IM-ResourceToAddModList","csi-IM-ResourceToReleaseList","csi-IM-ResourceSetToAddModList","csi-IM-ResourceSetToReleaseList","csi-SSB-ResourceSetToAddModList","csi-SSB-ResourceSetToReleaseList","csi-ResourceConfigToAddModList","csi-ResourceConfigToReleaseList","csi-ReportConfigToAddModList","csi-ReportConfigToReleaseList","reportTriggerSize","aperiodicTriggerStateList","semiPersistentOnPUSCH-TriggerStateList" };
+    public static class RRC_SetupRelease_CSI_SemiPersistentOnPUSCH_TriggerStateList extends AsnChoice {
+        public AsnNull release;
+        public RRC_CSI_SemiPersistentOnPUSCH_TriggerStateList setup;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "nzp_CSI_RS_ResourceToAddModList","nzp_CSI_RS_ResourceToReleaseList","nzp_CSI_RS_ResourceSetToAddModList","nzp_CSI_RS_ResourceSetToReleaseList","csi_IM_ResourceToAddModList","csi_IM_ResourceToReleaseList","csi_IM_ResourceSetToAddModList","csi_IM_ResourceSetToReleaseList","csi_SSB_ResourceSetToAddModList","csi_SSB_ResourceSetToReleaseList","csi_ResourceConfigToAddModList","csi_ResourceConfigToReleaseList","csi_ReportConfigToAddModList","csi_ReportConfigToReleaseList","reportTriggerSize","aperiodicTriggerStateList","semiPersistentOnPUSCH_TriggerStateList" };
+    public static class RRC_SetupRelease_CSI_AperiodicTriggerStateList extends AsnChoice {
+        public AsnNull release;
+        public RRC_CSI_AperiodicTriggerStateList setup;
     }
 
-    @Override
-    public String getAsnName() {
-        return "CSI-MeasConfig";
+    // SIZE(1..64)
+    public static class RRC_csi_SSB_ResourceSetToAddModList extends AsnSequenceOf<RRC_CSI_SSB_ResourceSet> {
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "CSI-MeasConfig";
+    // SIZE(1..112)
+    public static class RRC_csi_ResourceConfigToAddModList extends AsnSequenceOf<RRC_CSI_ResourceConfig> {
     }
 
+    // SIZE(1..32)
+    public static class RRC_csi_IM_ResourceToReleaseList extends AsnSequenceOf<RRC_CSI_IM_ResourceId> {
+    }
+
+    // SIZE(1..48)
+    public static class RRC_csi_ReportConfigToAddModList extends AsnSequenceOf<RRC_CSI_ReportConfig> {
+    }
+
+    // SIZE(1..192)
+    public static class RRC_nzp_CSI_RS_ResourceToAddModList extends AsnSequenceOf<RRC_NZP_CSI_RS_Resource> {
+    }
+
+    // SIZE(1..64)
+    public static class RRC_nzp_CSI_RS_ResourceSetToAddModList extends AsnSequenceOf<RRC_NZP_CSI_RS_ResourceSet> {
+    }
+
+    // SIZE(1..112)
+    public static class RRC_csi_ResourceConfigToReleaseList extends AsnSequenceOf<RRC_CSI_ResourceConfigId> {
+    }
+
+    // SIZE(1..64)
+    public static class RRC_csi_SSB_ResourceSetToReleaseList extends AsnSequenceOf<RRC_CSI_SSB_ResourceSetId> {
+    }
+
+    // SIZE(1..32)
+    public static class RRC_csi_IM_ResourceToAddModList extends AsnSequenceOf<RRC_CSI_IM_Resource> {
+    }
+
+    // SIZE(1..192)
+    public static class RRC_nzp_CSI_RS_ResourceToReleaseList extends AsnSequenceOf<RRC_NZP_CSI_RS_ResourceId> {
+    }
+
+    // SIZE(1..64)
+    public static class RRC_nzp_CSI_RS_ResourceSetToReleaseList extends AsnSequenceOf<RRC_NZP_CSI_RS_ResourceSetId> {
+    }
+
+    // SIZE(1..64)
+    public static class RRC_csi_IM_ResourceSetToAddModList extends AsnSequenceOf<RRC_CSI_IM_ResourceSet> {
+    }
+
+    // SIZE(1..64)
+    public static class RRC_csi_IM_ResourceSetToReleaseList extends AsnSequenceOf<RRC_CSI_IM_ResourceSetId> {
+    }
+
+    // SIZE(1..48)
+    public static class RRC_csi_ReportConfigToReleaseList extends AsnSequenceOf<RRC_CSI_ReportConfigId> {
+    }
 }
+

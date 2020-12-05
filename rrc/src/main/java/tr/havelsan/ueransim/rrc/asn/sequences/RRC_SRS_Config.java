@@ -1,43 +1,40 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SRS_Config__srs_ResourceSetToAddModList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SRS_Config__srs_ResourceSetToReleaseList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SRS_Config__srs_ResourceToAddModList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SRS_Config__srs_ResourceToReleaseList;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SRS_ResourceId;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SRS_ResourceSetId;
 
-public class RRC_SRS_Config extends RRC_Sequence {
+public class RRC_SRS_Config extends AsnSequence {
+    public RRC_srs_ResourceSetToReleaseList srs_ResourceSetToReleaseList; // optional, SIZE(1..16)
+    public RRC_srs_ResourceSetToAddModList srs_ResourceSetToAddModList; // optional, SIZE(1..16)
+    public RRC_srs_ResourceToReleaseList srs_ResourceToReleaseList; // optional, SIZE(1..64)
+    public RRC_srs_ResourceToAddModList srs_ResourceToAddModList; // optional, SIZE(1..64)
+    public RRC_tpc_Accumulation_1 tpc_Accumulation; // optional
 
-    public RRC_SRS_Config__srs_ResourceSetToReleaseList srs_ResourceSetToReleaseList;
-    public RRC_SRS_Config__srs_ResourceSetToAddModList srs_ResourceSetToAddModList;
-    public RRC_SRS_Config__srs_ResourceToReleaseList srs_ResourceToReleaseList;
-    public RRC_SRS_Config__srs_ResourceToAddModList srs_ResourceToAddModList;
-    public RRC_Integer tpc_Accumulation;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "srs-ResourceSetToReleaseList","srs-ResourceSetToAddModList","srs-ResourceToReleaseList","srs-ResourceToAddModList","tpc-Accumulation" };
+    // SIZE(1..16)
+    public static class RRC_srs_ResourceSetToReleaseList extends AsnSequenceOf<RRC_SRS_ResourceSetId> {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "srs_ResourceSetToReleaseList","srs_ResourceSetToAddModList","srs_ResourceToReleaseList","srs_ResourceToAddModList","tpc_Accumulation" };
+    public static class RRC_tpc_Accumulation_1 extends AsnEnumerated {
+        public static final RRC_tpc_Accumulation_1 DISABLED = new RRC_tpc_Accumulation_1(0);
+    
+        private RRC_tpc_Accumulation_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "SRS-Config";
+    // SIZE(1..16)
+    public static class RRC_srs_ResourceSetToAddModList extends AsnSequenceOf<RRC_SRS_ResourceSet> {
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "SRS-Config";
+    // SIZE(1..64)
+    public static class RRC_srs_ResourceToReleaseList extends AsnSequenceOf<RRC_SRS_ResourceId> {
     }
 
+    // SIZE(1..64)
+    public static class RRC_srs_ResourceToAddModList extends AsnSequenceOf<RRC_SRS_Resource> {
+    }
 }
+

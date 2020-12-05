@@ -1,39 +1,51 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_FeatureSetUplink_v1540 extends RRC_Sequence {
+public class RRC_FeatureSetUplink_v1540 extends AsnSequence {
+    public RRC_zeroSlotOffsetAperiodicSRS zeroSlotOffsetAperiodicSRS; // optional
+    public RRC_pa_PhaseDiscontinuityImpacts pa_PhaseDiscontinuityImpacts; // optional
+    public RRC_pusch_SeparationWithGap pusch_SeparationWithGap; // optional
+    public RRC_pusch_ProcessingType2 pusch_ProcessingType2; // optional
+    public RRC_ul_MCS_TableAlt_DynamicIndication ul_MCS_TableAlt_DynamicIndication; // optional
 
-    public RRC_Integer zeroSlotOffsetAperiodicSRS;
-    public RRC_Integer pa_PhaseDiscontinuityImpacts;
-    public RRC_Integer pusch_SeparationWithGap;
-    public RRC_FeatureSetUplink_v1540__pusch_ProcessingType2 pusch_ProcessingType2;
-    public RRC_Integer ul_MCS_TableAlt_DynamicIndication;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "zeroSlotOffsetAperiodicSRS","pa-PhaseDiscontinuityImpacts","pusch-SeparationWithGap","pusch-ProcessingType2","ul-MCS-TableAlt-DynamicIndication" };
+    public static class RRC_ul_MCS_TableAlt_DynamicIndication extends AsnEnumerated {
+        public static final RRC_ul_MCS_TableAlt_DynamicIndication SUPPORTED = new RRC_ul_MCS_TableAlt_DynamicIndication(0);
+    
+        private RRC_ul_MCS_TableAlt_DynamicIndication(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "zeroSlotOffsetAperiodicSRS","pa_PhaseDiscontinuityImpacts","pusch_SeparationWithGap","pusch_ProcessingType2","ul_MCS_TableAlt_DynamicIndication" };
+    public static class RRC_pusch_ProcessingType2 extends AsnSequence {
+        public RRC_ProcessingParameters scs_15kHz; // optional
+        public RRC_ProcessingParameters scs_30kHz; // optional
+        public RRC_ProcessingParameters scs_60kHz; // optional
     }
 
-    @Override
-    public String getAsnName() {
-        return "FeatureSetUplink-v1540";
+    public static class RRC_pusch_SeparationWithGap extends AsnEnumerated {
+        public static final RRC_pusch_SeparationWithGap SUPPORTED = new RRC_pusch_SeparationWithGap(0);
+    
+        private RRC_pusch_SeparationWithGap(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "FeatureSetUplink-v1540";
+    public static class RRC_zeroSlotOffsetAperiodicSRS extends AsnEnumerated {
+        public static final RRC_zeroSlotOffsetAperiodicSRS SUPPORTED = new RRC_zeroSlotOffsetAperiodicSRS(0);
+    
+        private RRC_zeroSlotOffsetAperiodicSRS(long value) {
+            super(value);
+        }
     }
 
+    public static class RRC_pa_PhaseDiscontinuityImpacts extends AsnEnumerated {
+        public static final RRC_pa_PhaseDiscontinuityImpacts SUPPORTED = new RRC_pa_PhaseDiscontinuityImpacts(0);
+    
+        private RRC_pa_PhaseDiscontinuityImpacts(long value) {
+            super(value);
+        }
+    }
 }
+

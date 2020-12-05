@@ -1,40 +1,28 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_MobilityFromNRCommand_IEs extends RRC_Sequence {
+public class RRC_MobilityFromNRCommand_IEs extends AsnSequence {
+    public RRC_targetRAT_Type targetRAT_Type; // mandatory
+    public AsnOctetString targetRAT_MessageContainer; // mandatory
+    public AsnOctetString nas_SecurityParamFromNR; // optional
+    public AsnOctetString lateNonCriticalExtension; // optional
+    public RRC_nonCriticalExtension_26 nonCriticalExtension; // optional
 
-    public RRC_Integer targetRAT_Type;
-    public RRC_OctetString targetRAT_MessageContainer;
-    public RRC_OctetString nas_SecurityParamFromNR;
-    public RRC_OctetString lateNonCriticalExtension;
-    public RRC_MobilityFromNRCommand_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "targetRAT-Type","targetRAT-MessageContainer","nas-SecurityParamFromNR","lateNonCriticalExtension","nonCriticalExtension" };
+    public static class RRC_targetRAT_Type extends AsnEnumerated {
+        public static final RRC_targetRAT_Type EUTRA = new RRC_targetRAT_Type(0);
+        public static final RRC_targetRAT_Type SPARE3 = new RRC_targetRAT_Type(1);
+        public static final RRC_targetRAT_Type SPARE2 = new RRC_targetRAT_Type(2);
+        public static final RRC_targetRAT_Type SPARE1 = new RRC_targetRAT_Type(3);
+    
+        private RRC_targetRAT_Type(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "targetRAT_Type","targetRAT_MessageContainer","nas_SecurityParamFromNR","lateNonCriticalExtension","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_26 extends AsnSequence {
     }
-
-    @Override
-    public String getAsnName() {
-        return "MobilityFromNRCommand-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "MobilityFromNRCommand-IEs";
-    }
-
 }
+

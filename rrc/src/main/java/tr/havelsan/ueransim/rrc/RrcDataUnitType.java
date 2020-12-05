@@ -5,10 +5,10 @@
 
 package tr.havelsan.ueransim.rrc;
 
+import tr.havelsan.ueransim.asn.core.AsnValue;
 import tr.havelsan.ueransim.rrc.asn.bit_strings.*;
 import tr.havelsan.ueransim.rrc.asn.booleans.RRC_EUTRA_PresenceAntennaPort1;
 import tr.havelsan.ueransim.rrc.asn.choices.*;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Value;
 import tr.havelsan.ueransim.rrc.asn.enums.*;
 import tr.havelsan.ueransim.rrc.asn.integers.*;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;
@@ -782,7 +782,7 @@ public enum RrcDataUnitType {
         this.value = value;
     }
 
-    public Class<? extends RRC_Value> getPodType() {
+    public Class<? extends AsnValue> getPodType() {
         switch (this) {
             case AccessStratumRelease:
                 return RRC_AccessStratumRelease.class;

@@ -1,36 +1,21 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_UE_CapabilityRequestFilterNR_v1540 extends RRC_Sequence {
+public class RRC_UE_CapabilityRequestFilterNR_v1540 extends AsnSequence {
+    public RRC_srs_SwitchingTimeRequest srs_SwitchingTimeRequest; // optional
+    public RRC_nonCriticalExtension_4 nonCriticalExtension; // optional
 
-    public RRC_Integer srs_SwitchingTimeRequest;
-    public RRC_UE_CapabilityRequestFilterNR_v1540__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "srs-SwitchingTimeRequest","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_4 extends AsnSequence {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "srs_SwitchingTimeRequest","nonCriticalExtension" };
+    public static class RRC_srs_SwitchingTimeRequest extends AsnEnumerated {
+        public static final RRC_srs_SwitchingTimeRequest TRUE = new RRC_srs_SwitchingTimeRequest(0);
+    
+        private RRC_srs_SwitchingTimeRequest(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "UE-CapabilityRequestFilterNR-v1540";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "UE-CapabilityRequestFilterNR-v1540";
-    }
-
 }
+

@@ -1,36 +1,15 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PLMN_RAN_AreaCell__ran_AreaCells;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.bit_strings.RRC_CellIdentity;
 
-public class RRC_PLMN_RAN_AreaCell extends RRC_Sequence {
+public class RRC_PLMN_RAN_AreaCell extends AsnSequence {
+    public RRC_PLMN_Identity plmn_Identity; // optional
+    public RRC_ran_AreaCells ran_AreaCells; // mandatory, SIZE(1..32)
 
-    public RRC_PLMN_Identity plmn_Identity;
-    public RRC_PLMN_RAN_AreaCell__ran_AreaCells ran_AreaCells;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "plmn-Identity","ran-AreaCells" };
+    // SIZE(1..32)
+    public static class RRC_ran_AreaCells extends AsnSequenceOf<RRC_CellIdentity> {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "plmn_Identity","ran_AreaCells" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "PLMN-RAN-AreaCell";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "PLMN-RAN-AreaCell";
-    }
-
 }
+

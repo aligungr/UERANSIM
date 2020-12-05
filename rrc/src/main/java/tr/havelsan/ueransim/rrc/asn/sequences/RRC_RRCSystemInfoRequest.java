@@ -1,35 +1,17 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_RRCSystemInfoRequest__criticalExtensions;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_RRCSystemInfoRequest extends RRC_Sequence {
+public class RRC_RRCSystemInfoRequest extends AsnSequence {
+    public RRC_criticalExtensions_6 criticalExtensions; // mandatory
 
-    public RRC_RRCSystemInfoRequest__criticalExtensions criticalExtensions;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "criticalExtensions" };
+    public static class RRC_criticalExtensions_6 extends AsnChoice {
+        public RRC_RRCSystemInfoRequest_r15_IEs rrcSystemInfoRequest_r15;
+        public RRC_criticalExtensionsFuture_11 criticalExtensionsFuture;
+    
+        public static class RRC_criticalExtensionsFuture_11 extends AsnSequence {
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "criticalExtensions" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "RRCSystemInfoRequest";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "RRCSystemInfoRequest";
-    }
-
 }
+

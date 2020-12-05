@@ -1,38 +1,26 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.rrc.asn.choices.RRC_RAN_NotificationAreaInfo;
 
-public class RRC_AS_Context extends RRC_Sequence {
+public class RRC_AS_Context extends AsnSequence {
+    public RRC_ReestablishmentInfo reestablishmentInfo; // optional
+    public RRC_ConfigRestrictInfoSCG configRestrictInfo; // optional
+    public RRC_ext1_45 ext1; // optional
+    public RRC_ext2_8 ext2; // optional
+    public RRC_ext3_3 ext3; // optional
 
-    public RRC_ReestablishmentInfo reestablishmentInfo;
-    public RRC_ConfigRestrictInfoSCG configRestrictInfo;
-    public RRC_AS_Context__ext1 ext1;
-    public RRC_AS_Context__ext2 ext2;
-    public RRC_AS_Context__ext3 ext3;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "reestablishmentInfo","configRestrictInfo","ext1","ext2","ext3" };
+    public static class RRC_ext3_3 extends AsnSequence {
+        public RRC_BandCombinationInfoSN selectedBandCombinationSN; // optional
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "reestablishmentInfo","configRestrictInfo","ext1","ext2","ext3" };
+    public static class RRC_ext2_8 extends AsnSequence {
+        public AsnOctetString ueAssistanceInformation; // optional, SIZE(0..MAX)
     }
 
-    @Override
-    public String getAsnName() {
-        return "AS-Context";
+    public static class RRC_ext1_45 extends AsnSequence {
+        public RRC_RAN_NotificationAreaInfo ran_NotificationAreaInfo; // optional
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "AS-Context";
-    }
-
 }
+

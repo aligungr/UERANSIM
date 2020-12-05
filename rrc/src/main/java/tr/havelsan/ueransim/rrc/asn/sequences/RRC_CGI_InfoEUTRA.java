@@ -1,42 +1,37 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_FreqBandIndicatorEUTRA;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CGI_InfoEUTRA__cgi_info_5GC;
 import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_MultiBandInfoListEUTRA;
 
-public class RRC_CGI_InfoEUTRA extends RRC_Sequence {
+public class RRC_CGI_InfoEUTRA extends AsnSequence {
+    public RRC_cgi_info_EPC cgi_info_EPC; // optional
+    public RRC_cgi_info_5GC cgi_info_5GC; // optional, SIZE(1..12)
+    public RRC_FreqBandIndicatorEUTRA freqBandIndicator; // mandatory
+    public RRC_MultiBandInfoListEUTRA multiBandInfoList; // optional
+    public RRC_freqBandIndicatorPriority freqBandIndicatorPriority; // optional
 
-    public RRC_CGI_InfoEUTRA__cgi_info_EPC cgi_info_EPC;
-    public RRC_CGI_InfoEUTRA__cgi_info_5GC cgi_info_5GC;
-    public RRC_FreqBandIndicatorEUTRA freqBandIndicator;
-    public RRC_MultiBandInfoListEUTRA multiBandInfoList;
-    public RRC_Integer freqBandIndicatorPriority;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "cgi-info-EPC","cgi-info-5GC","freqBandIndicator","multiBandInfoList","freqBandIndicatorPriority" };
+    public static class RRC_freqBandIndicatorPriority extends AsnEnumerated {
+        public static final RRC_freqBandIndicatorPriority TRUE = new RRC_freqBandIndicatorPriority(0);
+    
+        private RRC_freqBandIndicatorPriority(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "cgi_info_EPC","cgi_info_5GC","freqBandIndicator","multiBandInfoList","freqBandIndicatorPriority" };
+    // SIZE(1..12)
+    public static class RRC_cgi_info_5GC extends AsnSequenceOf<RRC_CellAccessRelatedInfo_EUTRA_5GC> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "CGI-InfoEUTRA";
+    public static class RRC_cgi_info_EPC extends AsnSequence {
+        public RRC_CellAccessRelatedInfo_EUTRA_EPC cgi_info_EPC_legacy; // mandatory
+        public RRC_cgi_info_EPC_list cgi_info_EPC_list; // optional, SIZE(1..12)
+    
+        // SIZE(1..12)
+        public static class RRC_cgi_info_EPC_list extends AsnSequenceOf<RRC_CellAccessRelatedInfo_EUTRA_EPC> {
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "CGI-InfoEUTRA";
-    }
-
 }
+

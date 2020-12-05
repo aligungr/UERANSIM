@@ -1,36 +1,34 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.choices;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Choice;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DL_DCCH_MessageType__messageClassExtension;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnNull;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.rrc.asn.sequences.*;
 
-public class RRC_DL_DCCH_MessageType extends RRC_Choice {
+public class RRC_DL_DCCH_MessageType extends AsnChoice {
+    public RRC_c1_8 c1;
+    public RRC_messageClassExtension_4 messageClassExtension;
 
-    public RRC_DL_DCCH_MessageType__c1 c1;
-    public RRC_DL_DCCH_MessageType__messageClassExtension messageClassExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "c1","messageClassExtension" };
+    public static class RRC_messageClassExtension_4 extends AsnSequence {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "c1","messageClassExtension" };
+    public static class RRC_c1_8 extends AsnChoice {
+        public RRC_RRCReconfiguration rrcReconfiguration;
+        public RRC_RRCResume rrcResume;
+        public RRC_RRCRelease rrcRelease;
+        public RRC_RRCReestablishment rrcReestablishment;
+        public RRC_SecurityModeCommand securityModeCommand;
+        public RRC_DLInformationTransfer dlInformationTransfer;
+        public RRC_UECapabilityEnquiry ueCapabilityEnquiry;
+        public RRC_CounterCheck counterCheck;
+        public RRC_MobilityFromNRCommand mobilityFromNRCommand;
+        public AsnNull spare7;
+        public AsnNull spare6;
+        public AsnNull spare5;
+        public AsnNull spare4;
+        public AsnNull spare3;
+        public AsnNull spare2;
+        public AsnNull spare1;
     }
-
-    @Override
-    public String getAsnName() {
-        return "DL-DCCH-MessageType";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "DL-DCCH-MessageType";
-    }
-
 }
+

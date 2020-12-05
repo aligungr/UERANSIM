@@ -1,37 +1,16 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_EUTRA_Parameters__supportedBandListEUTRA;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_FreqBandIndicatorEUTRA;
 
-public class RRC_EUTRA_Parameters extends RRC_Sequence {
+public class RRC_EUTRA_Parameters extends AsnSequence {
+    public RRC_supportedBandListEUTRA supportedBandListEUTRA; // mandatory, SIZE(1..256)
+    public RRC_EUTRA_ParametersCommon eutra_ParametersCommon; // optional
+    public RRC_EUTRA_ParametersXDD_Diff eutra_ParametersXDD_Diff; // optional
 
-    public RRC_EUTRA_Parameters__supportedBandListEUTRA supportedBandListEUTRA;
-    public RRC_EUTRA_ParametersCommon eutra_ParametersCommon;
-    public RRC_EUTRA_ParametersXDD_Diff eutra_ParametersXDD_Diff;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "supportedBandListEUTRA","eutra-ParametersCommon","eutra-ParametersXDD-Diff" };
+    // SIZE(1..256)
+    public static class RRC_supportedBandListEUTRA extends AsnSequenceOf<RRC_FreqBandIndicatorEUTRA> {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "supportedBandListEUTRA","eutra_ParametersCommon","eutra_ParametersXDD_Diff" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "EUTRA-Parameters";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "EUTRA-Parameters";
-    }
-
 }
+

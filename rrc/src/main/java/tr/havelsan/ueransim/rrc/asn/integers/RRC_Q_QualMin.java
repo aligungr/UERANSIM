@@ -1,46 +1,14 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.integers;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.utils.octets.Octet2;
-import tr.havelsan.ueransim.utils.octets.Octet3;
-import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
 
-public class RRC_Q_QualMin extends RRC_Integer {
-
+// VALUE(-43..-12)
+public class RRC_Q_QualMin extends AsnInteger {
+    public RRC_Q_QualMin() {
+    }
+    
     public RRC_Q_QualMin(long value) {
         super(value);
     }
-
-    public RRC_Q_QualMin(Octet value) {
-        super(value);
-    }
-
-    public RRC_Q_QualMin(Octet2 value) {
-        super(value);
-    }
-
-    public RRC_Q_QualMin(Octet3 value) {
-        super(value);
-    }
-
-    public RRC_Q_QualMin(Octet4 value) {
-        super(value);
-    }
-
-    @Override
-    public String getAsnName() {
-        return "Q-QualMin";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "Q-QualMin";
-    }
-
 }
+

@@ -1,41 +1,23 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_RRCResume_IEs extends RRC_Sequence {
+public class RRC_RRCResume_IEs extends AsnSequence {
+    public RRC_RadioBearerConfig radioBearerConfig; // optional
+    public AsnOctetString masterCellGroup; // optional, SIZE(0..MAX)
+    public RRC_MeasConfig measConfig; // optional
+    public RRC_fullConfig_2 fullConfig; // optional
+    public AsnOctetString lateNonCriticalExtension; // optional
+    public RRC_RRCResume_v1560_IEs nonCriticalExtension; // optional
 
-    public RRC_RadioBearerConfig radioBearerConfig;
-    public RRC_OctetString masterCellGroup;
-    public RRC_MeasConfig measConfig;
-    public RRC_Integer fullConfig;
-    public RRC_OctetString lateNonCriticalExtension;
-    public RRC_RRCResume_v1560_IEs nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "radioBearerConfig","masterCellGroup","measConfig","fullConfig","lateNonCriticalExtension","nonCriticalExtension" };
+    public static class RRC_fullConfig_2 extends AsnEnumerated {
+        public static final RRC_fullConfig_2 TRUE = new RRC_fullConfig_2(0);
+    
+        private RRC_fullConfig_2(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "radioBearerConfig","masterCellGroup","measConfig","fullConfig","lateNonCriticalExtension","nonCriticalExtension" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "RRCResume-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "RRCResume-IEs";
-    }
-
 }
+

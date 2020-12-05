@@ -1,40 +1,28 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_RNTI_Value;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_DownlinkPreemption__int_ConfigurationPerServingCell;
 
-public class RRC_DownlinkPreemption extends RRC_Sequence {
+public class RRC_DownlinkPreemption extends AsnSequence {
+    public RRC_RNTI_Value int_RNTI; // mandatory
+    public RRC_timeFrequencySet timeFrequencySet; // mandatory
+    public AsnInteger dci_PayloadSize; // mandatory, VALUE(0..126)
+    public RRC_int_ConfigurationPerServingCell int_ConfigurationPerServingCell; // mandatory, SIZE(1..32)
 
-    public RRC_RNTI_Value int_RNTI;
-    public RRC_Integer timeFrequencySet;
-    public RRC_Integer dci_PayloadSize;
-    public RRC_DownlinkPreemption__int_ConfigurationPerServingCell int_ConfigurationPerServingCell;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "int-RNTI","timeFrequencySet","dci-PayloadSize","int-ConfigurationPerServingCell" };
+    public static class RRC_timeFrequencySet extends AsnEnumerated {
+        public static final RRC_timeFrequencySet SET0 = new RRC_timeFrequencySet(0);
+        public static final RRC_timeFrequencySet SET1 = new RRC_timeFrequencySet(1);
+    
+        private RRC_timeFrequencySet(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "int_RNTI","timeFrequencySet","dci_PayloadSize","int_ConfigurationPerServingCell" };
+    // SIZE(1..32)
+    public static class RRC_int_ConfigurationPerServingCell extends AsnSequenceOf<RRC_INT_ConfigurationPerServingCell> {
     }
-
-    @Override
-    public String getAsnName() {
-        return "DownlinkPreemption";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "DownlinkPreemption";
-    }
-
 }
+

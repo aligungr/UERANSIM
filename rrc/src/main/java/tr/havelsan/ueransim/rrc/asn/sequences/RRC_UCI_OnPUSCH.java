@@ -1,37 +1,32 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_UCI_OnPUSCH__betaOffsets;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 
-public class RRC_UCI_OnPUSCH extends RRC_Sequence {
+public class RRC_UCI_OnPUSCH extends AsnSequence {
+    public RRC_betaOffsets betaOffsets; // optional
+    public RRC_scaling scaling; // mandatory
 
-    public RRC_UCI_OnPUSCH__betaOffsets betaOffsets;
-    public RRC_Integer scaling;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "betaOffsets","scaling" };
+    public static class RRC_betaOffsets extends AsnChoice {
+        public RRC_dynamic_1 dynamic; // SIZE(4)
+        public RRC_BetaOffsets semiStatic;
+    
+        // SIZE(4)
+        public static class RRC_dynamic_1 extends AsnSequenceOf<RRC_BetaOffsets> {
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "betaOffsets","scaling" };
+    public static class RRC_scaling extends AsnEnumerated {
+        public static final RRC_scaling F0P5 = new RRC_scaling(0);
+        public static final RRC_scaling F0P65 = new RRC_scaling(1);
+        public static final RRC_scaling F0P8 = new RRC_scaling(2);
+        public static final RRC_scaling F1 = new RRC_scaling(3);
+    
+        private RRC_scaling(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "UCI-OnPUSCH";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "UCI-OnPUSCH";
-    }
-
 }
+

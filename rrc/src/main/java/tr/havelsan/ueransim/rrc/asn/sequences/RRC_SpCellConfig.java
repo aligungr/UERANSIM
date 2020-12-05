@@ -1,41 +1,29 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_RLF_TimersAndConstants;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnNull;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_ServCellIndex;
 
-public class RRC_SpCellConfig extends RRC_Sequence {
+public class RRC_SpCellConfig extends AsnSequence {
+    public RRC_ServCellIndex servCellIndex; // optional
+    public RRC_ReconfigurationWithSync reconfigurationWithSync; // optional
+    public RRC_SetupRelease_RLF_TimersAndConstants rlf_TimersAndConstants; // optional
+    public RRC_rlmInSyncOutOfSyncThreshold rlmInSyncOutOfSyncThreshold; // optional
+    public RRC_ServingCellConfig spCellConfigDedicated; // optional
 
-    public RRC_ServCellIndex servCellIndex;
-    public RRC_ReconfigurationWithSync reconfigurationWithSync;
-    public RRC_SetupRelease_RLF_TimersAndConstants rlf_TimersAndConstants;
-    public RRC_Integer rlmInSyncOutOfSyncThreshold;
-    public RRC_ServingCellConfig spCellConfigDedicated;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "servCellIndex","reconfigurationWithSync","rlf-TimersAndConstants","rlmInSyncOutOfSyncThreshold","spCellConfigDedicated" };
+    public static class RRC_SetupRelease_RLF_TimersAndConstants extends AsnChoice {
+        public AsnNull release;
+        public RRC_RLF_TimersAndConstants setup;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "servCellIndex","reconfigurationWithSync","rlf_TimersAndConstants","rlmInSyncOutOfSyncThreshold","spCellConfigDedicated" };
+    public static class RRC_rlmInSyncOutOfSyncThreshold extends AsnEnumerated {
+        public static final RRC_rlmInSyncOutOfSyncThreshold N1 = new RRC_rlmInSyncOutOfSyncThreshold(0);
+    
+        private RRC_rlmInSyncOutOfSyncThreshold(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "SpCellConfig";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SpCellConfig";
-    }
-
 }
+

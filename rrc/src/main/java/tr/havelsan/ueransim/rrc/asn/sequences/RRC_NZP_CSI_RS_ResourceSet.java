@@ -1,41 +1,38 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_NZP_CSI_RS_ResourceId;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_NZP_CSI_RS_ResourceSetId;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_NZP_CSI_RS_ResourceSet__nzp_CSI_RS_Resources;
 
-public class RRC_NZP_CSI_RS_ResourceSet extends RRC_Sequence {
+public class RRC_NZP_CSI_RS_ResourceSet extends AsnSequence {
+    public RRC_NZP_CSI_RS_ResourceSetId nzp_CSI_ResourceSetId; // mandatory
+    public RRC_nzp_CSI_RS_Resources nzp_CSI_RS_Resources; // mandatory, SIZE(1..64)
+    public RRC_repetition repetition; // optional
+    public AsnInteger aperiodicTriggeringOffset; // optional, VALUE(0..6)
+    public RRC_trs_Info trs_Info; // optional
 
-    public RRC_NZP_CSI_RS_ResourceSetId nzp_CSI_ResourceSetId;
-    public RRC_NZP_CSI_RS_ResourceSet__nzp_CSI_RS_Resources nzp_CSI_RS_Resources;
-    public RRC_Integer repetition;
-    public RRC_Integer aperiodicTriggeringOffset;
-    public RRC_Integer trs_Info;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "nzp-CSI-ResourceSetId","nzp-CSI-RS-Resources","repetition","aperiodicTriggeringOffset","trs-Info" };
+    public static class RRC_trs_Info extends AsnEnumerated {
+        public static final RRC_trs_Info TRUE = new RRC_trs_Info(0);
+    
+        private RRC_trs_Info(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "nzp_CSI_ResourceSetId","nzp_CSI_RS_Resources","repetition","aperiodicTriggeringOffset","trs_Info" };
+    // SIZE(1..64)
+    public static class RRC_nzp_CSI_RS_Resources extends AsnSequenceOf<RRC_NZP_CSI_RS_ResourceId> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "NZP-CSI-RS-ResourceSet";
+    public static class RRC_repetition extends AsnEnumerated {
+        public static final RRC_repetition ON = new RRC_repetition(0);
+        public static final RRC_repetition OFF = new RRC_repetition(1);
+    
+        private RRC_repetition(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "NZP-CSI-RS-ResourceSet";
-    }
-
 }
+

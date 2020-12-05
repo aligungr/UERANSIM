@@ -1,37 +1,14 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_UE_NR_Capability_v1560 extends RRC_Sequence {
+public class RRC_UE_NR_Capability_v1560 extends AsnSequence {
+    public RRC_NRDC_Parameters nrdc_Parameters; // optional
+    public AsnOctetString receivedFilters; // optional, SIZE(0..MAX)
+    public RRC_nonCriticalExtension_21 nonCriticalExtension; // optional
 
-    public RRC_NRDC_Parameters nrdc_Parameters;
-    public RRC_OctetString receivedFilters;
-    public RRC_UE_NR_Capability_v1560__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "nrdc-Parameters","receivedFilters","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_21 extends AsnSequence {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "nrdc_Parameters","receivedFilters","nonCriticalExtension" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "UE-NR-Capability-v1560";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "UE-NR-Capability-v1560";
-    }
-
 }
+

@@ -1,38 +1,20 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SystemInformation_IEs__sib_TypeAndInfo;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 
-public class RRC_SystemInformation_IEs extends RRC_Sequence {
+public class RRC_SystemInformation_IEs extends AsnSequence {
+    public RRC_sib_TypeAndInfo sib_TypeAndInfo; // mandatory, SIZE(1..32)
+    public AsnOctetString lateNonCriticalExtension; // optional
+    public RRC_nonCriticalExtension_36 nonCriticalExtension; // optional
 
-    public RRC_SystemInformation_IEs__sib_TypeAndInfo sib_TypeAndInfo;
-    public RRC_OctetString lateNonCriticalExtension;
-    public RRC_SystemInformation_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "sib-TypeAndInfo","lateNonCriticalExtension","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_36 extends AsnSequence {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "sib_TypeAndInfo","lateNonCriticalExtension","nonCriticalExtension" };
+    // SIZE(1..32)
+    public static class RRC_sib_TypeAndInfo extends AsnSequenceOf<AsnChoice> {
     }
-
-    @Override
-    public String getAsnName() {
-        return "SystemInformation-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SystemInformation-IEs";
-    }
-
 }
+

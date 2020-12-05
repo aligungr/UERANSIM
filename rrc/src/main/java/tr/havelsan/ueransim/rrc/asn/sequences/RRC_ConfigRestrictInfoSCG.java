@@ -1,41 +1,40 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_BandEntryIndex;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_P_Max;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_ServCellIndex;
 import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_BandCombinationInfoList;
 
-public class RRC_ConfigRestrictInfoSCG extends RRC_Sequence {
+public class RRC_ConfigRestrictInfoSCG extends AsnSequence {
+    public RRC_BandCombinationInfoList allowedBC_ListMRDC; // optional
+    public RRC_powerCoordination_FR1 powerCoordination_FR1; // optional
+    public RRC_servCellIndexRangeSCG servCellIndexRangeSCG; // optional
+    public AsnInteger maxMeasFreqsSCG; // optional, VALUE(1..32)
+    public AsnInteger maxMeasIdentitiesSCG_NR; // optional, VALUE(1..62)
+    public RRC_ext1_43 ext1; // optional
 
-    public RRC_BandCombinationInfoList allowedBC_ListMRDC;
-    public RRC_ConfigRestrictInfoSCG__powerCoordination_FR1 powerCoordination_FR1;
-    public RRC_ConfigRestrictInfoSCG__servCellIndexRangeSCG servCellIndexRangeSCG;
-    public RRC_Integer maxMeasFreqsSCG;
-    public RRC_Integer maxMeasIdentitiesSCG_NR;
-    public RRC_ConfigRestrictInfoSCG__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "allowedBC-ListMRDC","powerCoordination-FR1","servCellIndexRangeSCG","maxMeasFreqsSCG","maxMeasIdentitiesSCG-NR","ext1" };
+    public static class RRC_servCellIndexRangeSCG extends AsnSequence {
+        public RRC_ServCellIndex lowBound; // mandatory
+        public RRC_ServCellIndex upBound; // mandatory
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "allowedBC_ListMRDC","powerCoordination_FR1","servCellIndexRangeSCG","maxMeasFreqsSCG","maxMeasIdentitiesSCG_NR","ext1" };
+    public static class RRC_powerCoordination_FR1 extends AsnSequence {
+        public RRC_P_Max p_maxNR_FR1; // optional
+        public RRC_P_Max p_maxEUTRA; // optional
+        public RRC_P_Max p_maxUE_FR1; // optional
     }
 
-    @Override
-    public String getAsnName() {
-        return "ConfigRestrictInfoSCG";
+    public static class RRC_ext1_43 extends AsnSequence {
+        public RRC_selectedBandEntriesMN selectedBandEntriesMN; // optional, SIZE(1..32)
+        public AsnInteger pdcch_BlindDetectionSCG; // optional, VALUE(1..15)
+        public AsnInteger maxNumberROHC_ContextSessionsSN; // optional, VALUE(0..16384)
+    
+        // SIZE(1..32)
+        public static class RRC_selectedBandEntriesMN extends AsnSequenceOf<RRC_BandEntryIndex> {
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "ConfigRestrictInfoSCG";
-    }
-
 }
+

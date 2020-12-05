@@ -1,40 +1,31 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_GapConfig;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_MeasConfigMN__measuredFrequenciesMN;
 
-public class RRC_MeasConfigMN extends RRC_Sequence {
+public class RRC_MeasConfigMN extends AsnSequence {
+    public RRC_measuredFrequenciesMN measuredFrequenciesMN; // optional, SIZE(1..32)
+    public RRC_SetupRelease_GapConfig measGapConfig; // optional
+    public RRC_gapPurpose gapPurpose; // optional
+    public RRC_ext1_38 ext1; // optional
 
-    public RRC_MeasConfigMN__measuredFrequenciesMN measuredFrequenciesMN;
-    public RRC_SetupRelease_GapConfig measGapConfig;
-    public RRC_Integer gapPurpose;
-    public RRC_MeasConfigMN__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "measuredFrequenciesMN","measGapConfig","gapPurpose","ext1" };
+    public static class RRC_gapPurpose extends AsnEnumerated {
+        public static final RRC_gapPurpose PERUE = new RRC_gapPurpose(0);
+        public static final RRC_gapPurpose PERFR1 = new RRC_gapPurpose(1);
+    
+        private RRC_gapPurpose(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "measuredFrequenciesMN","measGapConfig","gapPurpose","ext1" };
+    // SIZE(1..32)
+    public static class RRC_measuredFrequenciesMN extends AsnSequenceOf<RRC_NR_FreqInfo> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "MeasConfigMN";
+    public static class RRC_ext1_38 extends AsnSequence {
+        public RRC_SetupRelease_GapConfig measGapConfigFR2; // optional
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "MeasConfigMN";
-    }
-
 }
+

@@ -1,39 +1,39 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.*;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnNull;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_BWP_UplinkDedicated extends RRC_Sequence {
+public class RRC_BWP_UplinkDedicated extends AsnSequence {
+    public RRC_SetupRelease_PUCCH_Config pucch_Config; // optional
+    public RRC_SetupRelease_PUSCH_Config pusch_Config; // optional
+    public RRC_SetupRelease_ConfiguredGrantConfig configuredGrantConfig; // optional
+    public RRC_SetupRelease_SRS_Config srs_Config; // optional
+    public RRC_SetupRelease_BeamFailureRecoveryConfig beamFailureRecoveryConfig; // optional
 
-    public RRC_SetupRelease_PUCCH_Config pucch_Config;
-    public RRC_SetupRelease_PUSCH_Config pusch_Config;
-    public RRC_SetupRelease_ConfiguredGrantConfig configuredGrantConfig;
-    public RRC_SetupRelease_SRS_Config srs_Config;
-    public RRC_SetupRelease_BeamFailureRecoveryConfig beamFailureRecoveryConfig;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "pucch-Config","pusch-Config","configuredGrantConfig","srs-Config","beamFailureRecoveryConfig" };
+    public static class RRC_SetupRelease_ConfiguredGrantConfig extends AsnChoice {
+        public AsnNull release;
+        public RRC_ConfiguredGrantConfig setup;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "pucch_Config","pusch_Config","configuredGrantConfig","srs_Config","beamFailureRecoveryConfig" };
+    public static class RRC_SetupRelease_PUCCH_Config extends AsnChoice {
+        public AsnNull release;
+        public RRC_PUCCH_Config setup;
     }
 
-    @Override
-    public String getAsnName() {
-        return "BWP-UplinkDedicated";
+    public static class RRC_SetupRelease_PUSCH_Config extends AsnChoice {
+        public AsnNull release;
+        public RRC_PUSCH_Config setup;
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "BWP-UplinkDedicated";
+    public static class RRC_SetupRelease_SRS_Config extends AsnChoice {
+        public AsnNull release;
+        public RRC_SRS_Config setup;
     }
 
+    public static class RRC_SetupRelease_BeamFailureRecoveryConfig extends AsnChoice {
+        public AsnNull release;
+        public RRC_BeamFailureRecoveryConfig setup;
+    }
 }
+

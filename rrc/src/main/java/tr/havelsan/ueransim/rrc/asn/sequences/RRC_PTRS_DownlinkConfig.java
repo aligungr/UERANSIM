@@ -1,40 +1,32 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PTRS_DownlinkConfig__frequencyDensity;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PTRS_DownlinkConfig__timeDensity;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 
-public class RRC_PTRS_DownlinkConfig extends RRC_Sequence {
+public class RRC_PTRS_DownlinkConfig extends AsnSequence {
+    public RRC_frequencyDensity_1 frequencyDensity; // optional, SIZE(2)
+    public RRC_timeDensity_1 timeDensity; // optional, SIZE(3)
+    public AsnInteger epre_Ratio; // optional, VALUE(0..3)
+    public RRC_resourceElementOffset_1 resourceElementOffset; // optional
 
-    public RRC_PTRS_DownlinkConfig__frequencyDensity frequencyDensity;
-    public RRC_PTRS_DownlinkConfig__timeDensity timeDensity;
-    public RRC_Integer epre_Ratio;
-    public RRC_Integer resourceElementOffset;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "frequencyDensity","timeDensity","epre-Ratio","resourceElementOffset" };
+    // SIZE(2)
+    public static class RRC_frequencyDensity_1 extends AsnSequenceOf<AsnInteger> {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "frequencyDensity","timeDensity","epre_Ratio","resourceElementOffset" };
+    // SIZE(3)
+    public static class RRC_timeDensity_1 extends AsnSequenceOf<AsnInteger> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "PTRS-DownlinkConfig";
+    public static class RRC_resourceElementOffset_1 extends AsnEnumerated {
+        public static final RRC_resourceElementOffset_1 OFFSET01 = new RRC_resourceElementOffset_1(0);
+        public static final RRC_resourceElementOffset_1 OFFSET10 = new RRC_resourceElementOffset_1(1);
+        public static final RRC_resourceElementOffset_1 OFFSET11 = new RRC_resourceElementOffset_1(2);
+    
+        private RRC_resourceElementOffset_1(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "PTRS-DownlinkConfig";
-    }
-
 }
+

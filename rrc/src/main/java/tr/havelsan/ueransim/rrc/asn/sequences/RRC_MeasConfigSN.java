@@ -1,35 +1,13 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_MeasConfigSN__measuredFrequenciesSN;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 
-public class RRC_MeasConfigSN extends RRC_Sequence {
+public class RRC_MeasConfigSN extends AsnSequence {
+    public RRC_measuredFrequenciesSN measuredFrequenciesSN; // optional, SIZE(1..32)
 
-    public RRC_MeasConfigSN__measuredFrequenciesSN measuredFrequenciesSN;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "measuredFrequenciesSN" };
+    // SIZE(1..32)
+    public static class RRC_measuredFrequenciesSN extends AsnSequenceOf<RRC_NR_FreqInfo> {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "measuredFrequenciesSN" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "MeasConfigSN";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "MeasConfigSN";
-    }
-
 }
+

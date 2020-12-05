@@ -8,7 +8,6 @@ package tr.havelsan.ueransim.app.gnb.rrc;
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.rrc.RrcMessage;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_DLInformationTransfer__criticalExtensions;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DLInformationTransfer;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DLInformationTransfer_IEs;
@@ -20,7 +19,7 @@ public class RrcNasTransport {
 
     public static void deliverDlNas(GnbRrcContext ctx, UUID ue, OctetString nasPdu) {
         var rrc = new RRC_DLInformationTransfer();
-        rrc.criticalExtensions = new RRC_DLInformationTransfer__criticalExtensions();
+        rrc.criticalExtensions = new RRC_DLInformationTransfer.RRC_criticalExtensions_10();
         rrc.criticalExtensions.dlInformationTransfer = new RRC_DLInformationTransfer_IEs();
         rrc.criticalExtensions.dlInformationTransfer.dedicatedNAS_Message = new RRC_DedicatedNAS_Message(nasPdu);
 

@@ -1,41 +1,34 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.choices;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Choice;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RLC_Config__am;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RLC_Config__um_Bi_Directional;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RLC_Config__um_Uni_Directional_DL;
-import tr.havelsan.ueransim.rrc.asn.sequences.RRC_RLC_Config__um_Uni_Directional_UL;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DL_AM_RLC;
+import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DL_UM_RLC;
+import tr.havelsan.ueransim.rrc.asn.sequences.RRC_UL_AM_RLC;
+import tr.havelsan.ueransim.rrc.asn.sequences.RRC_UL_UM_RLC;
 
-public class RRC_RLC_Config extends RRC_Choice {
+public class RRC_RLC_Config extends AsnChoice {
+    public RRC_am am;
+    public RRC_um_Bi_Directional um_Bi_Directional;
+    public RRC_um_Uni_Directional_UL um_Uni_Directional_UL;
+    public RRC_um_Uni_Directional_DL um_Uni_Directional_DL;
 
-    public RRC_RLC_Config__am am;
-    public RRC_RLC_Config__um_Bi_Directional um_Bi_Directional;
-    public RRC_RLC_Config__um_Uni_Directional_UL um_Uni_Directional_UL;
-    public RRC_RLC_Config__um_Uni_Directional_DL um_Uni_Directional_DL;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "am","um-Bi-Directional","um-Uni-Directional-UL","um-Uni-Directional-DL" };
+    public static class RRC_um_Bi_Directional extends AsnSequence {
+        public RRC_UL_UM_RLC ul_UM_RLC; // mandatory
+        public RRC_DL_UM_RLC dl_UM_RLC; // mandatory
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "am","um_Bi_Directional","um_Uni_Directional_UL","um_Uni_Directional_DL" };
+    public static class RRC_um_Uni_Directional_UL extends AsnSequence {
+        public RRC_UL_UM_RLC ul_UM_RLC; // mandatory
     }
 
-    @Override
-    public String getAsnName() {
-        return "RLC-Config";
+    public static class RRC_am extends AsnSequence {
+        public RRC_UL_AM_RLC ul_AM_RLC; // mandatory
+        public RRC_DL_AM_RLC dl_AM_RLC; // mandatory
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "RLC-Config";
+    public static class RRC_um_Uni_Directional_DL extends AsnSequence {
+        public RRC_DL_UM_RLC dl_UM_RLC; // mandatory
     }
-
 }
+

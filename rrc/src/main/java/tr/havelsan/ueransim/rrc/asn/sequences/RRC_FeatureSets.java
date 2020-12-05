@@ -1,42 +1,47 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_FeatureSets__featureSetsDownlink;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_FeatureSets__featureSetsDownlinkPerCC;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_FeatureSets__featureSetsUplink;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_FeatureSets__featureSetsUplinkPerCC;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 
-public class RRC_FeatureSets extends RRC_Sequence {
+public class RRC_FeatureSets extends AsnSequence {
+    public RRC_featureSetsDownlink featureSetsDownlink; // optional, SIZE(1..1024)
+    public RRC_featureSetsDownlinkPerCC featureSetsDownlinkPerCC; // optional, SIZE(1..1024)
+    public RRC_featureSetsUplink featureSetsUplink; // optional, SIZE(1..1024)
+    public RRC_featureSetsUplinkPerCC featureSetsUplinkPerCC; // optional, SIZE(1..1024)
+    public RRC_ext1_13 ext1; // optional
 
-    public RRC_FeatureSets__featureSetsDownlink featureSetsDownlink;
-    public RRC_FeatureSets__featureSetsDownlinkPerCC featureSetsDownlinkPerCC;
-    public RRC_FeatureSets__featureSetsUplink featureSetsUplink;
-    public RRC_FeatureSets__featureSetsUplinkPerCC featureSetsUplinkPerCC;
-    public RRC_FeatureSets__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "featureSetsDownlink","featureSetsDownlinkPerCC","featureSetsUplink","featureSetsUplinkPerCC","ext1" };
+    public static class RRC_ext1_13 extends AsnSequence {
+        public RRC_featureSetsDownlink_v1540 featureSetsDownlink_v1540; // optional, SIZE(1..1024)
+        public RRC_featureSetsUplink_v1540 featureSetsUplink_v1540; // optional, SIZE(1..1024)
+        public RRC_featureSetsUplinkPerCC_v1540 featureSetsUplinkPerCC_v1540; // optional, SIZE(1..1024)
+    
+        // SIZE(1..1024)
+        public static class RRC_featureSetsUplinkPerCC_v1540 extends AsnSequenceOf<RRC_FeatureSetUplinkPerCC_v1540> {
+        }
+    
+        // SIZE(1..1024)
+        public static class RRC_featureSetsUplink_v1540 extends AsnSequenceOf<RRC_FeatureSetUplink_v1540> {
+        }
+    
+        // SIZE(1..1024)
+        public static class RRC_featureSetsDownlink_v1540 extends AsnSequenceOf<RRC_FeatureSetDownlink_v1540> {
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "featureSetsDownlink","featureSetsDownlinkPerCC","featureSetsUplink","featureSetsUplinkPerCC","ext1" };
+    // SIZE(1..1024)
+    public static class RRC_featureSetsUplinkPerCC extends AsnSequenceOf<RRC_FeatureSetUplinkPerCC> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "FeatureSets";
+    // SIZE(1..1024)
+    public static class RRC_featureSetsDownlink extends AsnSequenceOf<RRC_FeatureSetDownlink> {
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "FeatureSets";
+    // SIZE(1..1024)
+    public static class RRC_featureSetsDownlinkPerCC extends AsnSequenceOf<RRC_FeatureSetDownlinkPerCC> {
     }
 
+    // SIZE(1..1024)
+    public static class RRC_featureSetsUplink extends AsnSequenceOf<RRC_FeatureSetUplink> {
+    }
 }
+

@@ -1,41 +1,39 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_ReconfigurationWithSync__rach_ConfigDedicated;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_RNTI_Value;
 
-public class RRC_ReconfigurationWithSync extends RRC_Sequence {
+public class RRC_ReconfigurationWithSync extends AsnSequence {
+    public RRC_ServingCellConfigCommon spCellConfigCommon; // optional
+    public RRC_RNTI_Value newUE_Identity; // mandatory
+    public RRC_t304 t304; // mandatory
+    public RRC_rach_ConfigDedicated rach_ConfigDedicated; // optional
+    public RRC_ext1_54 ext1; // optional
 
-    public RRC_ServingCellConfigCommon spCellConfigCommon;
-    public RRC_RNTI_Value newUE_Identity;
-    public RRC_Integer t304;
-    public RRC_ReconfigurationWithSync__rach_ConfigDedicated rach_ConfigDedicated;
-    public RRC_ReconfigurationWithSync__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "spCellConfigCommon","newUE-Identity","t304","rach-ConfigDedicated","ext1" };
+    public static class RRC_rach_ConfigDedicated extends AsnChoice {
+        public RRC_RACH_ConfigDedicated uplink;
+        public RRC_RACH_ConfigDedicated supplementaryUplink;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "spCellConfigCommon","newUE_Identity","t304","rach_ConfigDedicated","ext1" };
+    public static class RRC_t304 extends AsnEnumerated {
+        public static final RRC_t304 MS50 = new RRC_t304(0);
+        public static final RRC_t304 MS100 = new RRC_t304(1);
+        public static final RRC_t304 MS150 = new RRC_t304(2);
+        public static final RRC_t304 MS200 = new RRC_t304(3);
+        public static final RRC_t304 MS500 = new RRC_t304(4);
+        public static final RRC_t304 MS1000 = new RRC_t304(5);
+        public static final RRC_t304 MS2000 = new RRC_t304(6);
+        public static final RRC_t304 MS10000 = new RRC_t304(7);
+    
+        private RRC_t304(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "ReconfigurationWithSync";
+    public static class RRC_ext1_54 extends AsnSequence {
+        public RRC_SSB_MTC smtc; // optional
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "ReconfigurationWithSync";
-    }
-
 }
+

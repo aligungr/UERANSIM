@@ -1,38 +1,42 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_SchedulingRequestId;
 
-public class RRC_SchedulingRequestToAddMod extends RRC_Sequence {
+public class RRC_SchedulingRequestToAddMod extends AsnSequence {
+    public RRC_SchedulingRequestId schedulingRequestId; // mandatory
+    public RRC_sr_ProhibitTimer sr_ProhibitTimer; // optional
+    public RRC_sr_TransMax sr_TransMax; // mandatory
 
-    public RRC_SchedulingRequestId schedulingRequestId;
-    public RRC_Integer sr_ProhibitTimer;
-    public RRC_Integer sr_TransMax;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "schedulingRequestId","sr-ProhibitTimer","sr-TransMax" };
+    public static class RRC_sr_ProhibitTimer extends AsnEnumerated {
+        public static final RRC_sr_ProhibitTimer MS1 = new RRC_sr_ProhibitTimer(0);
+        public static final RRC_sr_ProhibitTimer MS2 = new RRC_sr_ProhibitTimer(1);
+        public static final RRC_sr_ProhibitTimer MS4 = new RRC_sr_ProhibitTimer(2);
+        public static final RRC_sr_ProhibitTimer MS8 = new RRC_sr_ProhibitTimer(3);
+        public static final RRC_sr_ProhibitTimer MS16 = new RRC_sr_ProhibitTimer(4);
+        public static final RRC_sr_ProhibitTimer MS32 = new RRC_sr_ProhibitTimer(5);
+        public static final RRC_sr_ProhibitTimer MS64 = new RRC_sr_ProhibitTimer(6);
+        public static final RRC_sr_ProhibitTimer MS128 = new RRC_sr_ProhibitTimer(7);
+    
+        private RRC_sr_ProhibitTimer(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "schedulingRequestId","sr_ProhibitTimer","sr_TransMax" };
+    public static class RRC_sr_TransMax extends AsnEnumerated {
+        public static final RRC_sr_TransMax N4 = new RRC_sr_TransMax(0);
+        public static final RRC_sr_TransMax N8 = new RRC_sr_TransMax(1);
+        public static final RRC_sr_TransMax N16 = new RRC_sr_TransMax(2);
+        public static final RRC_sr_TransMax N32 = new RRC_sr_TransMax(3);
+        public static final RRC_sr_TransMax N64 = new RRC_sr_TransMax(4);
+        public static final RRC_sr_TransMax SPARE3 = new RRC_sr_TransMax(5);
+        public static final RRC_sr_TransMax SPARE2 = new RRC_sr_TransMax(6);
+        public static final RRC_sr_TransMax SPARE1 = new RRC_sr_TransMax(7);
+    
+        private RRC_sr_TransMax(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "SchedulingRequestToAddMod";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SchedulingRequestToAddMod";
-    }
-
 }
+

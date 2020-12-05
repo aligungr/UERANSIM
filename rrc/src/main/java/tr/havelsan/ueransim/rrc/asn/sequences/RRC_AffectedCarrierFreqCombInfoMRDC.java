@@ -1,37 +1,33 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_AffectedCarrierFreqCombEUTRA;
+import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_AffectedCarrierFreqCombNR;
 
-public class RRC_AffectedCarrierFreqCombInfoMRDC extends RRC_Sequence {
+public class RRC_AffectedCarrierFreqCombInfoMRDC extends AsnSequence {
+    public RRC_VictimSystemType victimSystemType; // mandatory
+    public RRC_interferenceDirectionMRDC interferenceDirectionMRDC; // mandatory
+    public RRC_affectedCarrierFreqCombMRDC affectedCarrierFreqCombMRDC; // optional
 
-    public RRC_VictimSystemType victimSystemType;
-    public RRC_Integer interferenceDirectionMRDC;
-    public RRC_AffectedCarrierFreqCombInfoMRDC__affectedCarrierFreqCombMRDC affectedCarrierFreqCombMRDC;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "victimSystemType","interferenceDirectionMRDC","affectedCarrierFreqCombMRDC" };
+    public static class RRC_affectedCarrierFreqCombMRDC extends AsnSequence {
+        public RRC_AffectedCarrierFreqCombEUTRA affectedCarrierFreqCombEUTRA; // optional
+        public RRC_AffectedCarrierFreqCombNR affectedCarrierFreqCombNR; // mandatory
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "victimSystemType","interferenceDirectionMRDC","affectedCarrierFreqCombMRDC" };
+    public static class RRC_interferenceDirectionMRDC extends AsnEnumerated {
+        public static final RRC_interferenceDirectionMRDC EUTRA_NR = new RRC_interferenceDirectionMRDC(0);
+        public static final RRC_interferenceDirectionMRDC NR = new RRC_interferenceDirectionMRDC(1);
+        public static final RRC_interferenceDirectionMRDC OTHER = new RRC_interferenceDirectionMRDC(2);
+        public static final RRC_interferenceDirectionMRDC UTRA_NR_OTHER = new RRC_interferenceDirectionMRDC(3);
+        public static final RRC_interferenceDirectionMRDC NR_OTHER = new RRC_interferenceDirectionMRDC(4);
+        public static final RRC_interferenceDirectionMRDC SPARE3 = new RRC_interferenceDirectionMRDC(5);
+        public static final RRC_interferenceDirectionMRDC SPARE2 = new RRC_interferenceDirectionMRDC(6);
+        public static final RRC_interferenceDirectionMRDC SPARE1 = new RRC_interferenceDirectionMRDC(7);
+    
+        private RRC_interferenceDirectionMRDC(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "AffectedCarrierFreqCombInfoMRDC";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "AffectedCarrierFreqCombInfoMRDC";
-    }
-
 }
+

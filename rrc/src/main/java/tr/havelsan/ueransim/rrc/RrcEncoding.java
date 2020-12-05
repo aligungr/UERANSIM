@@ -5,22 +5,27 @@
 
 package tr.havelsan.ueransim.rrc;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Value;
-import tr.havelsan.ueransim.rrc.xer.RrcXerDecoder;
-import tr.havelsan.ueransim.rrc.xer.RrcXerEncoder;
+import tr.havelsan.ueransim.asn.XerDecoder;
+import tr.havelsan.ueransim.asn.XerEncoder;
+import tr.havelsan.ueransim.asn.core.AsnValue;
+import tr.havelsan.ueransim.rrc.asn.RRC_AsnMetaData;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class RrcEncoding {
 
-    public static RRC_Value decodeUper(byte[] pdu, RrcDataUnitType type) {
-        return RrcXerDecoder.decode(RrcJni.uperToXer(pdu, type), type.getPodType());
+    private static final RRC_AsnMetaData metaData = null;
+    private static final XerEncoder xerEncoder = new XerEncoder(metaData);
+    private static final XerDecoder xerDecoder = new XerDecoder(metaData);
+
+    public static AsnValue decodeUper(byte[] pdu, RrcDataUnitType type) {
+        return xerDecoder.decode(RrcJni.uperToXer(pdu, type), type.getPodType());
     }
 
-    public static RRC_Value decodeUper(OctetString pdu, RrcDataUnitType type) {
+    public static AsnValue decodeUper(OctetString pdu, RrcDataUnitType type) {
         return decodeUper(pdu.toByteArray(), type);
     }
 
-    public static byte[] encodeUper(RRC_Value value, RrcDataUnitType type) {
-        return RrcJni.xerToUper(RrcXerEncoder.encode(value), type);
+    public static byte[] encodeUper(AsnValue value, RrcDataUnitType type) {
+        return RrcJni.xerToUper(xerEncoder.encode(value), type);
     }
 }

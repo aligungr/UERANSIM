@@ -1,40 +1,37 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_DummyE extends RRC_Sequence {
+public class RRC_DummyE extends AsnSequence {
+    public RRC_maxNumberTxPortsPerResource_3 maxNumberTxPortsPerResource; // mandatory
+    public AsnInteger maxNumberResources; // mandatory, VALUE(1..64)
+    public AsnInteger totalNumberTxPorts; // mandatory, VALUE(2..256)
+    public AsnInteger parameterLx; // mandatory, VALUE(2..4)
+    public RRC_amplitudeScalingType_1 amplitudeScalingType; // mandatory
+    public AsnInteger maxNumberCSI_RS_PerResourceSet; // mandatory, VALUE(1..8)
 
-    public RRC_Integer maxNumberTxPortsPerResource;
-    public RRC_Integer maxNumberResources;
-    public RRC_Integer totalNumberTxPorts;
-    public RRC_Integer parameterLx;
-    public RRC_Integer amplitudeScalingType;
-    public RRC_Integer maxNumberCSI_RS_PerResourceSet;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "maxNumberTxPortsPerResource","maxNumberResources","totalNumberTxPorts","parameterLx","amplitudeScalingType","maxNumberCSI-RS-PerResourceSet" };
+    public static class RRC_amplitudeScalingType_1 extends AsnEnumerated {
+        public static final RRC_amplitudeScalingType_1 WIDEBAND = new RRC_amplitudeScalingType_1(0);
+        public static final RRC_amplitudeScalingType_1 WIDEBANDANDSUBBAND = new RRC_amplitudeScalingType_1(1);
+    
+        private RRC_amplitudeScalingType_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "maxNumberTxPortsPerResource","maxNumberResources","totalNumberTxPorts","parameterLx","amplitudeScalingType","maxNumberCSI_RS_PerResourceSet" };
+    public static class RRC_maxNumberTxPortsPerResource_3 extends AsnEnumerated {
+        public static final RRC_maxNumberTxPortsPerResource_3 P4 = new RRC_maxNumberTxPortsPerResource_3(0);
+        public static final RRC_maxNumberTxPortsPerResource_3 P8 = new RRC_maxNumberTxPortsPerResource_3(1);
+        public static final RRC_maxNumberTxPortsPerResource_3 P12 = new RRC_maxNumberTxPortsPerResource_3(2);
+        public static final RRC_maxNumberTxPortsPerResource_3 P16 = new RRC_maxNumberTxPortsPerResource_3(3);
+        public static final RRC_maxNumberTxPortsPerResource_3 P24 = new RRC_maxNumberTxPortsPerResource_3(4);
+        public static final RRC_maxNumberTxPortsPerResource_3 P32 = new RRC_maxNumberTxPortsPerResource_3(5);
+    
+        private RRC_maxNumberTxPortsPerResource_3(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "DummyE";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "DummyE";
-    }
-
 }
+

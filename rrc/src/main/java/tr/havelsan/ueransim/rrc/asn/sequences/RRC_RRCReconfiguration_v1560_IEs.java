@@ -1,40 +1,23 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_MRDC_SecondaryCellGroupConfig;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnNull;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_SK_Counter;
 
-public class RRC_RRCReconfiguration_v1560_IEs extends RRC_Sequence {
+public class RRC_RRCReconfiguration_v1560_IEs extends AsnSequence {
+    public RRC_SetupRelease_MRDC_SecondaryCellGroupConfig mrdc_SecondaryCellGroupConfig; // optional
+    public AsnOctetString radioBearerConfig2; // optional, SIZE(0..MAX)
+    public RRC_SK_Counter sk_Counter; // optional
+    public RRC_nonCriticalExtension_37 nonCriticalExtension; // optional
 
-    public RRC_SetupRelease_MRDC_SecondaryCellGroupConfig mrdc_SecondaryCellGroupConfig;
-    public RRC_OctetString radioBearerConfig2;
-    public RRC_SK_Counter sk_Counter;
-    public RRC_RRCReconfiguration_v1560_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "mrdc-SecondaryCellGroupConfig","radioBearerConfig2","sk-Counter","nonCriticalExtension" };
+    public static class RRC_SetupRelease_MRDC_SecondaryCellGroupConfig extends AsnChoice {
+        public AsnNull release;
+        public RRC_MRDC_SecondaryCellGroupConfig setup;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "mrdc_SecondaryCellGroupConfig","radioBearerConfig2","sk_Counter","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_37 extends AsnSequence {
     }
-
-    @Override
-    public String getAsnName() {
-        return "RRCReconfiguration-v1560-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "RRCReconfiguration-v1560-IEs";
-    }
-
 }
+

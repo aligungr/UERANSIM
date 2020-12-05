@@ -1,40 +1,36 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_BandCombinationList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_FreqBandList;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.rrc.asn.sequence_ofs.*;
 
-public class RRC_RF_ParametersMRDC extends RRC_Sequence {
+public class RRC_RF_ParametersMRDC extends AsnSequence {
+    public RRC_BandCombinationList supportedBandCombinationList; // optional
+    public RRC_FreqBandList appliedFreqBandListFilter; // optional
+    public RRC_ext1_2 ext1; // optional
+    public RRC_ext2_1 ext2; // optional
+    public RRC_ext3_1 ext3; // optional
 
-    public RRC_BandCombinationList supportedBandCombinationList;
-    public RRC_FreqBandList appliedFreqBandListFilter;
-    public RRC_RF_ParametersMRDC__ext1 ext1;
-    public RRC_RF_ParametersMRDC__ext2 ext2;
-    public RRC_RF_ParametersMRDC__ext3 ext3;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "supportedBandCombinationList","appliedFreqBandListFilter","ext1","ext2","ext3" };
+    public static class RRC_ext3_1 extends AsnSequence {
+        public RRC_BandCombinationList_v1560 supportedBandCombinationList_v1560; // optional
+        public RRC_BandCombinationList supportedBandCombinationListNEDC_Only; // optional
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "supportedBandCombinationList","appliedFreqBandListFilter","ext1","ext2","ext3" };
+    public static class RRC_ext2_1 extends AsnSequence {
+        public RRC_BandCombinationList_v1550 supportedBandCombinationList_v1550; // optional
     }
 
-    @Override
-    public String getAsnName() {
-        return "RF-ParametersMRDC";
+    public static class RRC_ext1_2 extends AsnSequence {
+        public RRC_srs_SwitchingTimeRequested_2 srs_SwitchingTimeRequested; // optional
+        public RRC_BandCombinationList_v1540 supportedBandCombinationList_v1540; // optional
+    
+        public static class RRC_srs_SwitchingTimeRequested_2 extends AsnEnumerated {
+            public static final RRC_srs_SwitchingTimeRequested_2 TRUE = new RRC_srs_SwitchingTimeRequested_2(0);
+        
+            private RRC_srs_SwitchingTimeRequested_2(long value) {
+                super(value);
+            }
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "RF-ParametersMRDC";
-    }
-
 }
+

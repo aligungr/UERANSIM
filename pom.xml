@@ -25,6 +25,7 @@
         <module>itms</module>
         <module>icmp</module>
         <module>rrc</module>
+        <module>asn</module>
     </modules>
 
     <build>

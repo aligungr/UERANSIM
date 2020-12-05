@@ -1,46 +1,14 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.integers;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.utils.octets.Octet;
-import tr.havelsan.ueransim.utils.octets.Octet2;
-import tr.havelsan.ueransim.utils.octets.Octet3;
-import tr.havelsan.ueransim.utils.octets.Octet4;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
 
-public class RRC_SlotFormatCombinationId extends RRC_Integer {
-
+// VALUE(0..511)
+public class RRC_SlotFormatCombinationId extends AsnInteger {
+    public RRC_SlotFormatCombinationId() {
+    }
+    
     public RRC_SlotFormatCombinationId(long value) {
         super(value);
     }
-
-    public RRC_SlotFormatCombinationId(Octet value) {
-        super(value);
-    }
-
-    public RRC_SlotFormatCombinationId(Octet2 value) {
-        super(value);
-    }
-
-    public RRC_SlotFormatCombinationId(Octet3 value) {
-        super(value);
-    }
-
-    public RRC_SlotFormatCombinationId(Octet4 value) {
-        super(value);
-    }
-
-    @Override
-    public String getAsnName() {
-        return "SlotFormatCombinationId";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SlotFormatCombinationId";
-    }
-
 }
+

@@ -1,41 +1,46 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_PDSCH_CodeBlockGroupTransmission;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.*;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_ServCellIndex;
 
-public class RRC_PDSCH_ServingCellConfig extends RRC_Sequence {
+public class RRC_PDSCH_ServingCellConfig extends AsnSequence {
+    public RRC_SetupRelease_PDSCH_CodeBlockGroupTransmission codeBlockGroupTransmission; // optional
+    public RRC_xOverhead_2 xOverhead; // optional
+    public RRC_nrofHARQ_ProcessesForPDSCH nrofHARQ_ProcessesForPDSCH; // optional
+    public RRC_ServCellIndex pucch_Cell; // optional
+    public RRC_ext1_32 ext1; // optional
 
-    public RRC_SetupRelease_PDSCH_CodeBlockGroupTransmission codeBlockGroupTransmission;
-    public RRC_Integer xOverhead;
-    public RRC_Integer nrofHARQ_ProcessesForPDSCH;
-    public RRC_ServCellIndex pucch_Cell;
-    public RRC_PDSCH_ServingCellConfig__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "codeBlockGroupTransmission","xOverhead","nrofHARQ-ProcessesForPDSCH","pucch-Cell","ext1" };
+    public static class RRC_ext1_32 extends AsnSequence {
+        public AsnInteger maxMIMO_Layers; // optional, VALUE(1..8)
+        public AsnBoolean processingType2Enabled; // optional
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "codeBlockGroupTransmission","xOverhead","nrofHARQ_ProcessesForPDSCH","pucch_Cell","ext1" };
+    public static class RRC_nrofHARQ_ProcessesForPDSCH extends AsnEnumerated {
+        public static final RRC_nrofHARQ_ProcessesForPDSCH N2 = new RRC_nrofHARQ_ProcessesForPDSCH(0);
+        public static final RRC_nrofHARQ_ProcessesForPDSCH N4 = new RRC_nrofHARQ_ProcessesForPDSCH(1);
+        public static final RRC_nrofHARQ_ProcessesForPDSCH N6 = new RRC_nrofHARQ_ProcessesForPDSCH(2);
+        public static final RRC_nrofHARQ_ProcessesForPDSCH N10 = new RRC_nrofHARQ_ProcessesForPDSCH(3);
+        public static final RRC_nrofHARQ_ProcessesForPDSCH N12 = new RRC_nrofHARQ_ProcessesForPDSCH(4);
+        public static final RRC_nrofHARQ_ProcessesForPDSCH N16 = new RRC_nrofHARQ_ProcessesForPDSCH(5);
+    
+        private RRC_nrofHARQ_ProcessesForPDSCH(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "PDSCH-ServingCellConfig";
+    public static class RRC_SetupRelease_PDSCH_CodeBlockGroupTransmission extends AsnChoice {
+        public AsnNull release;
+        public RRC_PDSCH_CodeBlockGroupTransmission setup;
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "PDSCH-ServingCellConfig";
+    public static class RRC_xOverhead_2 extends AsnEnumerated {
+        public static final RRC_xOverhead_2 XOH6 = new RRC_xOverhead_2(0);
+        public static final RRC_xOverhead_2 XOH12 = new RRC_xOverhead_2(1);
+        public static final RRC_xOverhead_2 XOH18 = new RRC_xOverhead_2(2);
+    
+        private RRC_xOverhead_2(long value) {
+            super(value);
+        }
     }
-
 }
+

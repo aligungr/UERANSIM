@@ -1,44 +1,32 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_SupportedBandwidth;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_MIMO_LayersUL;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_ModulationOrder;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_SubcarrierSpacing;
 
-public class RRC_FeatureSetUplinkPerCC extends RRC_Sequence {
+public class RRC_FeatureSetUplinkPerCC extends AsnSequence {
+    public RRC_SubcarrierSpacing supportedSubcarrierSpacingUL; // mandatory
+    public RRC_SupportedBandwidth supportedBandwidthUL; // mandatory
+    public RRC_channelBW_90mhz_1 channelBW_90mhz; // optional
+    public RRC_mimo_CB_PUSCH mimo_CB_PUSCH; // optional
+    public RRC_MIMO_LayersUL maxNumberMIMO_LayersNonCB_PUSCH; // optional
+    public RRC_ModulationOrder supportedModulationOrderUL; // optional
 
-    public RRC_SubcarrierSpacing supportedSubcarrierSpacingUL;
-    public RRC_SupportedBandwidth supportedBandwidthUL;
-    public RRC_Integer channelBW_90mhz;
-    public RRC_FeatureSetUplinkPerCC__mimo_CB_PUSCH mimo_CB_PUSCH;
-    public RRC_MIMO_LayersUL maxNumberMIMO_LayersNonCB_PUSCH;
-    public RRC_ModulationOrder supportedModulationOrderUL;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "supportedSubcarrierSpacingUL","supportedBandwidthUL","channelBW-90mhz","mimo-CB-PUSCH","maxNumberMIMO-LayersNonCB-PUSCH","supportedModulationOrderUL" };
+    public static class RRC_channelBW_90mhz_1 extends AsnEnumerated {
+        public static final RRC_channelBW_90mhz_1 SUPPORTED = new RRC_channelBW_90mhz_1(0);
+    
+        private RRC_channelBW_90mhz_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "supportedSubcarrierSpacingUL","supportedBandwidthUL","channelBW_90mhz","mimo_CB_PUSCH","maxNumberMIMO_LayersNonCB_PUSCH","supportedModulationOrderUL" };
+    public static class RRC_mimo_CB_PUSCH extends AsnSequence {
+        public RRC_MIMO_LayersUL maxNumberMIMO_LayersCB_PUSCH; // optional
+        public AsnInteger maxNumberSRS_ResourcePerSet; // mandatory, VALUE(1..2)
     }
-
-    @Override
-    public String getAsnName() {
-        return "FeatureSetUplinkPerCC";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "FeatureSetUplinkPerCC";
-    }
-
 }
+

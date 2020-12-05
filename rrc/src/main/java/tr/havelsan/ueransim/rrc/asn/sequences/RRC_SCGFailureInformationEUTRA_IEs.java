@@ -1,35 +1,12 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_SCGFailureInformationEUTRA_IEs extends RRC_Sequence {
+public class RRC_SCGFailureInformationEUTRA_IEs extends AsnSequence {
+    public RRC_FailureReportSCG_EUTRA failureReportSCG_EUTRA; // optional
+    public RRC_nonCriticalExtension_31 nonCriticalExtension; // optional
 
-    public RRC_FailureReportSCG_EUTRA failureReportSCG_EUTRA;
-    public RRC_SCGFailureInformationEUTRA_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "failureReportSCG-EUTRA","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_31 extends AsnSequence {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "failureReportSCG_EUTRA","nonCriticalExtension" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "SCGFailureInformationEUTRA-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SCGFailureInformationEUTRA-IEs";
-    }
-
 }
+

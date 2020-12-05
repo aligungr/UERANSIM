@@ -1,42 +1,32 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_PUCCH_Resource__format;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_PRB_Id;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_PUCCH_ResourceId;
 
-public class RRC_PUCCH_Resource extends RRC_Sequence {
+public class RRC_PUCCH_Resource extends AsnSequence {
+    public RRC_PUCCH_ResourceId pucch_ResourceId; // mandatory
+    public RRC_PRB_Id startingPRB; // mandatory
+    public RRC_intraSlotFrequencyHopping intraSlotFrequencyHopping; // optional
+    public RRC_PRB_Id secondHopPRB; // optional
+    public RRC_format format; // mandatory
 
-    public RRC_PUCCH_ResourceId pucch_ResourceId;
-    public RRC_PRB_Id startingPRB;
-    public RRC_Integer intraSlotFrequencyHopping;
-    public RRC_PRB_Id secondHopPRB;
-    public RRC_PUCCH_Resource__format format;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "pucch-ResourceId","startingPRB","intraSlotFrequencyHopping","secondHopPRB","format" };
+    public static class RRC_format extends AsnChoice {
+        public RRC_PUCCH_format0 format0;
+        public RRC_PUCCH_format1 format1;
+        public RRC_PUCCH_format2 format2;
+        public RRC_PUCCH_format3 format3;
+        public RRC_PUCCH_format4 format4;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "pucch_ResourceId","startingPRB","intraSlotFrequencyHopping","secondHopPRB","format" };
+    public static class RRC_intraSlotFrequencyHopping extends AsnEnumerated {
+        public static final RRC_intraSlotFrequencyHopping ENABLED = new RRC_intraSlotFrequencyHopping(0);
+    
+        private RRC_intraSlotFrequencyHopping(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "PUCCH-Resource";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "PUCCH-Resource";
-    }
-
 }
+

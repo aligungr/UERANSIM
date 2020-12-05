@@ -1,37 +1,15 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_SRS_TPC_CommandConfig extends RRC_Sequence {
+public class RRC_SRS_TPC_CommandConfig extends AsnSequence {
+    public AsnInteger startingBitOfFormat2_3; // optional, VALUE(1..31)
+    public AsnInteger fieldTypeFormat2_3; // optional, VALUE(0..1)
+    public RRC_ext1_46 ext1; // optional
 
-    public RRC_Integer startingBitOfFormat2_3;
-    public RRC_Integer fieldTypeFormat2_3;
-    public RRC_SRS_TPC_CommandConfig__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "startingBitOfFormat2-3","fieldTypeFormat2-3","ext1" };
+    public static class RRC_ext1_46 extends AsnSequence {
+        public AsnInteger startingBitOfFormat2_3SUL_v1530; // optional, VALUE(1..31)
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "startingBitOfFormat2_3","fieldTypeFormat2_3","ext1" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "SRS-TPC-CommandConfig";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SRS-TPC-CommandConfig";
-    }
-
 }
+

@@ -1,37 +1,11 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_PUCCH_format3 extends RRC_Sequence {
-
-    public RRC_Integer nrofPRBs;
-    public RRC_Integer nrofSymbols;
-    public RRC_Integer startingSymbolIndex;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "nrofPRBs","nrofSymbols","startingSymbolIndex" };
-    }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "nrofPRBs","nrofSymbols","startingSymbolIndex" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "PUCCH-format3";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "PUCCH-format3";
-    }
-
+public class RRC_PUCCH_format3 extends AsnSequence {
+    public AsnInteger nrofPRBs; // mandatory, VALUE(1..16)
+    public AsnInteger nrofSymbols; // mandatory, VALUE(4..14)
+    public AsnInteger startingSymbolIndex; // mandatory, VALUE(0..10)
 }
+

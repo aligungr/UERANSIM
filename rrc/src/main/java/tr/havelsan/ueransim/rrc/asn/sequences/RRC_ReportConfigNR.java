@@ -1,35 +1,20 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_ReportConfigNR__reportType;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_ReportConfigNR extends RRC_Sequence {
+public class RRC_ReportConfigNR extends AsnSequence {
+    public RRC_reportType_2 reportType; // mandatory
 
-    public RRC_ReportConfigNR__reportType reportType;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "reportType" };
+    public static class RRC_reportType_2 extends AsnChoice {
+        public RRC_PeriodicalReportConfig periodical;
+        public RRC_EventTriggerConfig eventTriggered;
+        public RRC_ReportCGI reportCGI;
+        public RRC_ext1_18 ext1;
+    
+        public static class RRC_ext1_18 extends AsnSequence {
+            public RRC_ReportSFTD_NR reportSFTD; // mandatory
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "reportType" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "ReportConfigNR";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "ReportConfigNR";
-    }
-
 }
+

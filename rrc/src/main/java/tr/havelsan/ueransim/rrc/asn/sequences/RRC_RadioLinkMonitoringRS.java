@@ -1,39 +1,30 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_RadioLinkMonitoringRS__detectionResource;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_NZP_CSI_RS_ResourceId;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_RadioLinkMonitoringRS_Id;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SSB_Index;
 
-public class RRC_RadioLinkMonitoringRS extends RRC_Sequence {
+public class RRC_RadioLinkMonitoringRS extends AsnSequence {
+    public RRC_RadioLinkMonitoringRS_Id radioLinkMonitoringRS_Id; // mandatory
+    public RRC_purpose purpose; // mandatory
+    public RRC_detectionResource detectionResource; // mandatory
 
-    public RRC_RadioLinkMonitoringRS_Id radioLinkMonitoringRS_Id;
-    public RRC_Integer purpose;
-    public RRC_RadioLinkMonitoringRS__detectionResource detectionResource;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "radioLinkMonitoringRS-Id","purpose","detectionResource" };
+    public static class RRC_purpose extends AsnEnumerated {
+        public static final RRC_purpose BEAMFAILURE = new RRC_purpose(0);
+        public static final RRC_purpose RLF = new RRC_purpose(1);
+        public static final RRC_purpose BOTH = new RRC_purpose(2);
+    
+        private RRC_purpose(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "radioLinkMonitoringRS_Id","purpose","detectionResource" };
+    public static class RRC_detectionResource extends AsnChoice {
+        public RRC_SSB_Index ssb_Index;
+        public RRC_NZP_CSI_RS_ResourceId csi_RS_Index;
     }
-
-    @Override
-    public String getAsnName() {
-        return "RadioLinkMonitoringRS";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "RadioLinkMonitoringRS";
-    }
-
 }
+

@@ -1,47 +1,49 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_CellGroupId;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CellGroupConfig__rlc_BearerToAddModList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CellGroupConfig__rlc_BearerToReleaseList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CellGroupConfig__sCellToAddModList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_CellGroupConfig__sCellToReleaseList;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_LogicalChannelIdentity;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SCellIndex;
 
-public class RRC_CellGroupConfig extends RRC_Sequence {
+public class RRC_CellGroupConfig extends AsnSequence {
+    public RRC_CellGroupId cellGroupId; // mandatory
+    public RRC_rlc_BearerToAddModList rlc_BearerToAddModList; // optional, SIZE(1..32)
+    public RRC_rlc_BearerToReleaseList rlc_BearerToReleaseList; // optional, SIZE(1..32)
+    public RRC_MAC_CellGroupConfig mac_CellGroupConfig; // optional
+    public RRC_PhysicalCellGroupConfig physicalCellGroupConfig; // optional
+    public RRC_SpCellConfig spCellConfig; // optional
+    public RRC_sCellToAddModList sCellToAddModList; // optional, SIZE(1..31)
+    public RRC_sCellToReleaseList sCellToReleaseList; // optional, SIZE(1..31)
+    public RRC_ext1_24 ext1; // optional
 
-    public RRC_CellGroupId cellGroupId;
-    public RRC_CellGroupConfig__rlc_BearerToAddModList rlc_BearerToAddModList;
-    public RRC_CellGroupConfig__rlc_BearerToReleaseList rlc_BearerToReleaseList;
-    public RRC_MAC_CellGroupConfig mac_CellGroupConfig;
-    public RRC_PhysicalCellGroupConfig physicalCellGroupConfig;
-    public RRC_SpCellConfig spCellConfig;
-    public RRC_CellGroupConfig__sCellToAddModList sCellToAddModList;
-    public RRC_CellGroupConfig__sCellToReleaseList sCellToReleaseList;
-    public RRC_CellGroupConfig__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "cellGroupId","rlc-BearerToAddModList","rlc-BearerToReleaseList","mac-CellGroupConfig","physicalCellGroupConfig","spCellConfig","sCellToAddModList","sCellToReleaseList","ext1" };
+    public static class RRC_ext1_24 extends AsnSequence {
+        public RRC_reportUplinkTxDirectCurrent_v1530 reportUplinkTxDirectCurrent_v1530; // optional
+    
+        public static class RRC_reportUplinkTxDirectCurrent_v1530 extends AsnEnumerated {
+            public static final RRC_reportUplinkTxDirectCurrent_v1530 TRUE = new RRC_reportUplinkTxDirectCurrent_v1530(0);
+        
+            private RRC_reportUplinkTxDirectCurrent_v1530(long value) {
+                super(value);
+            }
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "cellGroupId","rlc_BearerToAddModList","rlc_BearerToReleaseList","mac_CellGroupConfig","physicalCellGroupConfig","spCellConfig","sCellToAddModList","sCellToReleaseList","ext1" };
+    // SIZE(1..31)
+    public static class RRC_sCellToAddModList extends AsnSequenceOf<RRC_SCellConfig> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "CellGroupConfig";
+    // SIZE(1..32)
+    public static class RRC_rlc_BearerToAddModList extends AsnSequenceOf<RRC_RLC_BearerConfig> {
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "CellGroupConfig";
+    // SIZE(1..31)
+    public static class RRC_sCellToReleaseList extends AsnSequenceOf<RRC_SCellIndex> {
     }
 
+    // SIZE(1..32)
+    public static class RRC_rlc_BearerToReleaseList extends AsnSequenceOf<RRC_LogicalChannelIdentity> {
+    }
 }
+

@@ -1,41 +1,39 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_UE_NR_Capability_v1530 extends RRC_Sequence {
+public class RRC_UE_NR_Capability_v1530 extends AsnSequence {
+    public RRC_UE_NR_CapabilityAddXDD_Mode_v1530 fdd_Add_UE_NR_Capabilities_v1530; // optional
+    public RRC_UE_NR_CapabilityAddXDD_Mode_v1530 tdd_Add_UE_NR_Capabilities_v1530; // optional
+    public RRC_dummy_1 dummy; // optional
+    public RRC_InterRAT_Parameters interRAT_Parameters; // optional
+    public RRC_inactiveState inactiveState; // optional
+    public RRC_delayBudgetReporting delayBudgetReporting; // optional
+    public RRC_UE_NR_Capability_v1540 nonCriticalExtension; // optional
 
-    public RRC_UE_NR_CapabilityAddXDD_Mode_v1530 fdd_Add_UE_NR_Capabilities_v1530;
-    public RRC_UE_NR_CapabilityAddXDD_Mode_v1530 tdd_Add_UE_NR_Capabilities_v1530;
-    public RRC_Integer dummy;
-    public RRC_InterRAT_Parameters interRAT_Parameters;
-    public RRC_Integer inactiveState;
-    public RRC_Integer delayBudgetReporting;
-    public RRC_UE_NR_Capability_v1540 nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "fdd-Add-UE-NR-Capabilities-v1530","tdd-Add-UE-NR-Capabilities-v1530","dummy","interRAT-Parameters","inactiveState","delayBudgetReporting","nonCriticalExtension" };
+    public static class RRC_inactiveState extends AsnEnumerated {
+        public static final RRC_inactiveState SUPPORTED = new RRC_inactiveState(0);
+    
+        private RRC_inactiveState(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "fdd_Add_UE_NR_Capabilities_v1530","tdd_Add_UE_NR_Capabilities_v1530","dummy","interRAT_Parameters","inactiveState","delayBudgetReporting","nonCriticalExtension" };
+    public static class RRC_dummy_1 extends AsnEnumerated {
+        public static final RRC_dummy_1 SUPPORTED = new RRC_dummy_1(0);
+    
+        private RRC_dummy_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "UE-NR-Capability-v1530";
+    public static class RRC_delayBudgetReporting extends AsnEnumerated {
+        public static final RRC_delayBudgetReporting SUPPORTED = new RRC_delayBudgetReporting(0);
+    
+        private RRC_delayBudgetReporting(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "UE-NR-Capability-v1530";
-    }
-
 }
+

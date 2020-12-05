@@ -1,38 +1,23 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_PUCCH_ConfigCommon extends RRC_Sequence {
+public class RRC_PUCCH_ConfigCommon extends AsnSequence {
+    public AsnInteger pucch_ResourceCommon; // optional, VALUE(0..15)
+    public RRC_pucch_GroupHopping pucch_GroupHopping; // mandatory
+    public AsnInteger hoppingId; // optional, VALUE(0..1023)
+    public AsnInteger p0_nominal; // optional, VALUE(-202..24)
 
-    public RRC_Integer pucch_ResourceCommon;
-    public RRC_Integer pucch_GroupHopping;
-    public RRC_Integer hoppingId;
-    public RRC_Integer p0_nominal;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "pucch-ResourceCommon","pucch-GroupHopping","hoppingId","p0-nominal" };
+    public static class RRC_pucch_GroupHopping extends AsnEnumerated {
+        public static final RRC_pucch_GroupHopping NEITHER = new RRC_pucch_GroupHopping(0);
+        public static final RRC_pucch_GroupHopping ENABLE = new RRC_pucch_GroupHopping(1);
+        public static final RRC_pucch_GroupHopping DISABLE = new RRC_pucch_GroupHopping(2);
+    
+        private RRC_pucch_GroupHopping(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "pucch_ResourceCommon","pucch_GroupHopping","hoppingId","p0_nominal" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "PUCCH-ConfigCommon";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "PUCCH-ConfigCommon";
-    }
-
 }
+

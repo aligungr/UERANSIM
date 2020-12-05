@@ -1,36 +1,18 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_UERadioPagingInformation_IEs__supportedBandListNRForPaging;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_FreqBandIndicatorNR;
 
-public class RRC_UERadioPagingInformation_IEs extends RRC_Sequence {
+public class RRC_UERadioPagingInformation_IEs extends AsnSequence {
+    public RRC_supportedBandListNRForPaging supportedBandListNRForPaging; // optional, SIZE(1..1024)
+    public RRC_nonCriticalExtension_2 nonCriticalExtension; // optional
 
-    public RRC_UERadioPagingInformation_IEs__supportedBandListNRForPaging supportedBandListNRForPaging;
-    public RRC_UERadioPagingInformation_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "supportedBandListNRForPaging","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_2 extends AsnSequence {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "supportedBandListNRForPaging","nonCriticalExtension" };
+    // SIZE(1..1024)
+    public static class RRC_supportedBandListNRForPaging extends AsnSequenceOf<RRC_FreqBandIndicatorNR> {
     }
-
-    @Override
-    public String getAsnName() {
-        return "UERadioPagingInformation-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "UERadioPagingInformation-IEs";
-    }
-
 }
+

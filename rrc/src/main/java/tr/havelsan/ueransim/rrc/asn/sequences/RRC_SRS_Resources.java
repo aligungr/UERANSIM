@@ -1,41 +1,62 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_SRS_Resources extends RRC_Sequence {
+public class RRC_SRS_Resources extends AsnSequence {
+    public RRC_maxNumberAperiodicSRS_PerBWP maxNumberAperiodicSRS_PerBWP; // mandatory
+    public AsnInteger maxNumberAperiodicSRS_PerBWP_PerSlot; // mandatory, VALUE(1..6)
+    public RRC_maxNumberPeriodicSRS_PerBWP maxNumberPeriodicSRS_PerBWP; // mandatory
+    public AsnInteger maxNumberPeriodicSRS_PerBWP_PerSlot; // mandatory, VALUE(1..6)
+    public RRC_maxNumberSemiPersistentSRS_PerBWP maxNumberSemiPersistentSRS_PerBWP; // mandatory
+    public AsnInteger maxNumberSemiPersistentSRS_PerBWP_PerSlot; // mandatory, VALUE(1..6)
+    public RRC_maxNumberSRS_Ports_PerResource maxNumberSRS_Ports_PerResource; // mandatory
 
-    public RRC_Integer maxNumberAperiodicSRS_PerBWP;
-    public RRC_Integer maxNumberAperiodicSRS_PerBWP_PerSlot;
-    public RRC_Integer maxNumberPeriodicSRS_PerBWP;
-    public RRC_Integer maxNumberPeriodicSRS_PerBWP_PerSlot;
-    public RRC_Integer maxNumberSemiPersistentSRS_PerBWP;
-    public RRC_Integer maxNumberSemiPersistentSRS_PerBWP_PerSlot;
-    public RRC_Integer maxNumberSRS_Ports_PerResource;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "maxNumberAperiodicSRS-PerBWP","maxNumberAperiodicSRS-PerBWP-PerSlot","maxNumberPeriodicSRS-PerBWP","maxNumberPeriodicSRS-PerBWP-PerSlot","maxNumberSemiPersistentSRS-PerBWP","maxNumberSemiPersistentSRS-PerBWP-PerSlot","maxNumberSRS-Ports-PerResource" };
+    public static class RRC_maxNumberSRS_Ports_PerResource extends AsnEnumerated {
+        public static final RRC_maxNumberSRS_Ports_PerResource N1 = new RRC_maxNumberSRS_Ports_PerResource(0);
+        public static final RRC_maxNumberSRS_Ports_PerResource N2 = new RRC_maxNumberSRS_Ports_PerResource(1);
+        public static final RRC_maxNumberSRS_Ports_PerResource N4 = new RRC_maxNumberSRS_Ports_PerResource(2);
+    
+        private RRC_maxNumberSRS_Ports_PerResource(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "maxNumberAperiodicSRS_PerBWP","maxNumberAperiodicSRS_PerBWP_PerSlot","maxNumberPeriodicSRS_PerBWP","maxNumberPeriodicSRS_PerBWP_PerSlot","maxNumberSemiPersistentSRS_PerBWP","maxNumberSemiPersistentSRS_PerBWP_PerSlot","maxNumberSRS_Ports_PerResource" };
+    public static class RRC_maxNumberSemiPersistentSRS_PerBWP extends AsnEnumerated {
+        public static final RRC_maxNumberSemiPersistentSRS_PerBWP N1 = new RRC_maxNumberSemiPersistentSRS_PerBWP(0);
+        public static final RRC_maxNumberSemiPersistentSRS_PerBWP N2 = new RRC_maxNumberSemiPersistentSRS_PerBWP(1);
+        public static final RRC_maxNumberSemiPersistentSRS_PerBWP N4 = new RRC_maxNumberSemiPersistentSRS_PerBWP(2);
+        public static final RRC_maxNumberSemiPersistentSRS_PerBWP N8 = new RRC_maxNumberSemiPersistentSRS_PerBWP(3);
+        public static final RRC_maxNumberSemiPersistentSRS_PerBWP N16 = new RRC_maxNumberSemiPersistentSRS_PerBWP(4);
+    
+        private RRC_maxNumberSemiPersistentSRS_PerBWP(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "SRS-Resources";
+    public static class RRC_maxNumberAperiodicSRS_PerBWP extends AsnEnumerated {
+        public static final RRC_maxNumberAperiodicSRS_PerBWP N1 = new RRC_maxNumberAperiodicSRS_PerBWP(0);
+        public static final RRC_maxNumberAperiodicSRS_PerBWP N2 = new RRC_maxNumberAperiodicSRS_PerBWP(1);
+        public static final RRC_maxNumberAperiodicSRS_PerBWP N4 = new RRC_maxNumberAperiodicSRS_PerBWP(2);
+        public static final RRC_maxNumberAperiodicSRS_PerBWP N8 = new RRC_maxNumberAperiodicSRS_PerBWP(3);
+        public static final RRC_maxNumberAperiodicSRS_PerBWP N16 = new RRC_maxNumberAperiodicSRS_PerBWP(4);
+    
+        private RRC_maxNumberAperiodicSRS_PerBWP(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "SRS-Resources";
+    public static class RRC_maxNumberPeriodicSRS_PerBWP extends AsnEnumerated {
+        public static final RRC_maxNumberPeriodicSRS_PerBWP N1 = new RRC_maxNumberPeriodicSRS_PerBWP(0);
+        public static final RRC_maxNumberPeriodicSRS_PerBWP N2 = new RRC_maxNumberPeriodicSRS_PerBWP(1);
+        public static final RRC_maxNumberPeriodicSRS_PerBWP N4 = new RRC_maxNumberPeriodicSRS_PerBWP(2);
+        public static final RRC_maxNumberPeriodicSRS_PerBWP N8 = new RRC_maxNumberPeriodicSRS_PerBWP(3);
+        public static final RRC_maxNumberPeriodicSRS_PerBWP N16 = new RRC_maxNumberPeriodicSRS_PerBWP(4);
+    
+        private RRC_maxNumberPeriodicSRS_PerBWP(long value) {
+            super(value);
+        }
     }
-
 }
+

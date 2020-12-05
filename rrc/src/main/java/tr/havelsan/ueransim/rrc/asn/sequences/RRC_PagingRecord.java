@@ -1,37 +1,19 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_PagingUE_Identity;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
 
-public class RRC_PagingRecord extends RRC_Sequence {
+public class RRC_PagingRecord extends AsnSequence {
+    public RRC_PagingUE_Identity ue_Identity; // mandatory
+    public RRC_accessType accessType; // optional
 
-    public RRC_PagingUE_Identity ue_Identity;
-    public RRC_Integer accessType;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "ue-Identity","accessType" };
+    public static class RRC_accessType extends AsnEnumerated {
+        public static final RRC_accessType NON3GPP = new RRC_accessType(0);
+    
+        private RRC_accessType(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "ue_Identity","accessType" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "PagingRecord";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "PagingRecord";
-    }
-
 }
+

@@ -1,41 +1,57 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_PUCCH_MaxCodeRate;
 
-public class RRC_PUCCH_FormatConfig extends RRC_Sequence {
+public class RRC_PUCCH_FormatConfig extends AsnSequence {
+    public RRC_interslotFrequencyHopping interslotFrequencyHopping; // optional
+    public RRC_additionalDMRS additionalDMRS; // optional
+    public RRC_PUCCH_MaxCodeRate maxCodeRate; // optional
+    public RRC_nrofSlots nrofSlots; // optional
+    public RRC_pi2BPSK pi2BPSK; // optional
+    public RRC_simultaneousHARQ_ACK_CSI simultaneousHARQ_ACK_CSI; // optional
 
-    public RRC_Integer interslotFrequencyHopping;
-    public RRC_Integer additionalDMRS;
-    public RRC_PUCCH_MaxCodeRate maxCodeRate;
-    public RRC_Integer nrofSlots;
-    public RRC_Integer pi2BPSK;
-    public RRC_Integer simultaneousHARQ_ACK_CSI;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "interslotFrequencyHopping","additionalDMRS","maxCodeRate","nrofSlots","pi2BPSK","simultaneousHARQ-ACK-CSI" };
+    public static class RRC_nrofSlots extends AsnEnumerated {
+        public static final RRC_nrofSlots N2 = new RRC_nrofSlots(0);
+        public static final RRC_nrofSlots N4 = new RRC_nrofSlots(1);
+        public static final RRC_nrofSlots N8 = new RRC_nrofSlots(2);
+    
+        private RRC_nrofSlots(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "interslotFrequencyHopping","additionalDMRS","maxCodeRate","nrofSlots","pi2BPSK","simultaneousHARQ_ACK_CSI" };
+    public static class RRC_pi2BPSK extends AsnEnumerated {
+        public static final RRC_pi2BPSK ENABLED = new RRC_pi2BPSK(0);
+    
+        private RRC_pi2BPSK(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "PUCCH-FormatConfig";
+    public static class RRC_simultaneousHARQ_ACK_CSI extends AsnEnumerated {
+        public static final RRC_simultaneousHARQ_ACK_CSI TRUE = new RRC_simultaneousHARQ_ACK_CSI(0);
+    
+        private RRC_simultaneousHARQ_ACK_CSI(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "PUCCH-FormatConfig";
+    public static class RRC_interslotFrequencyHopping extends AsnEnumerated {
+        public static final RRC_interslotFrequencyHopping ENABLED = new RRC_interslotFrequencyHopping(0);
+    
+        private RRC_interslotFrequencyHopping(long value) {
+            super(value);
+        }
     }
 
+    public static class RRC_additionalDMRS extends AsnEnumerated {
+        public static final RRC_additionalDMRS TRUE = new RRC_additionalDMRS(0);
+    
+        private RRC_additionalDMRS(long value) {
+            super(value);
+        }
+    }
 }
+

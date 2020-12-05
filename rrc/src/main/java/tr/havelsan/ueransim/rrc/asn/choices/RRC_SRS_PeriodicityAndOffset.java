@@ -1,52 +1,26 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.choices;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Choice;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Null;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnNull;
 
-public class RRC_SRS_PeriodicityAndOffset extends RRC_Choice {
-
-    public RRC_Null sl1;
-    public RRC_Integer sl2;
-    public RRC_Integer sl4;
-    public RRC_Integer sl5;
-    public RRC_Integer sl8;
-    public RRC_Integer sl10;
-    public RRC_Integer sl16;
-    public RRC_Integer sl20;
-    public RRC_Integer sl32;
-    public RRC_Integer sl40;
-    public RRC_Integer sl64;
-    public RRC_Integer sl80;
-    public RRC_Integer sl160;
-    public RRC_Integer sl320;
-    public RRC_Integer sl640;
-    public RRC_Integer sl1280;
-    public RRC_Integer sl2560;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "sl1","sl2","sl4","sl5","sl8","sl10","sl16","sl20","sl32","sl40","sl64","sl80","sl160","sl320","sl640","sl1280","sl2560" };
-    }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "sl1","sl2","sl4","sl5","sl8","sl10","sl16","sl20","sl32","sl40","sl64","sl80","sl160","sl320","sl640","sl1280","sl2560" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "SRS-PeriodicityAndOffset";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SRS-PeriodicityAndOffset";
-    }
-
+public class RRC_SRS_PeriodicityAndOffset extends AsnChoice {
+    public AsnNull sl1;
+    public AsnInteger sl2; // VALUE(0..1)
+    public AsnInteger sl4; // VALUE(0..3)
+    public AsnInteger sl5; // VALUE(0..4)
+    public AsnInteger sl8; // VALUE(0..7)
+    public AsnInteger sl10; // VALUE(0..9)
+    public AsnInteger sl16; // VALUE(0..15)
+    public AsnInteger sl20; // VALUE(0..19)
+    public AsnInteger sl32; // VALUE(0..31)
+    public AsnInteger sl40; // VALUE(0..39)
+    public AsnInteger sl64; // VALUE(0..63)
+    public AsnInteger sl80; // VALUE(0..79)
+    public AsnInteger sl160; // VALUE(0..159)
+    public AsnInteger sl320; // VALUE(0..319)
+    public AsnInteger sl640; // VALUE(0..639)
+    public AsnInteger sl1280; // VALUE(0..1279)
+    public AsnInteger sl2560; // VALUE(0..2559)
 }
+

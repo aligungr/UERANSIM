@@ -1,40 +1,62 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_MAC_ParametersXDD_Diff extends RRC_Sequence {
+public class RRC_MAC_ParametersXDD_Diff extends AsnSequence {
+    public RRC_skipUplinkTxDynamic skipUplinkTxDynamic; // optional
+    public RRC_logicalChannelSR_DelayTimer_2 logicalChannelSR_DelayTimer; // optional
+    public RRC_longDRX_Cycle longDRX_Cycle; // optional
+    public RRC_shortDRX_Cycle shortDRX_Cycle; // optional
+    public RRC_multipleSR_Configurations multipleSR_Configurations; // optional
+    public RRC_multipleConfiguredGrants multipleConfiguredGrants; // optional
 
-    public RRC_Integer skipUplinkTxDynamic;
-    public RRC_Integer logicalChannelSR_DelayTimer;
-    public RRC_Integer longDRX_Cycle;
-    public RRC_Integer shortDRX_Cycle;
-    public RRC_Integer multipleSR_Configurations;
-    public RRC_Integer multipleConfiguredGrants;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "skipUplinkTxDynamic","logicalChannelSR-DelayTimer","longDRX-Cycle","shortDRX-Cycle","multipleSR-Configurations","multipleConfiguredGrants" };
+    public static class RRC_multipleConfiguredGrants extends AsnEnumerated {
+        public static final RRC_multipleConfiguredGrants SUPPORTED = new RRC_multipleConfiguredGrants(0);
+    
+        private RRC_multipleConfiguredGrants(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "skipUplinkTxDynamic","logicalChannelSR_DelayTimer","longDRX_Cycle","shortDRX_Cycle","multipleSR_Configurations","multipleConfiguredGrants" };
+    public static class RRC_shortDRX_Cycle extends AsnEnumerated {
+        public static final RRC_shortDRX_Cycle SUPPORTED = new RRC_shortDRX_Cycle(0);
+    
+        private RRC_shortDRX_Cycle(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "MAC-ParametersXDD-Diff";
+    public static class RRC_skipUplinkTxDynamic extends AsnEnumerated {
+        public static final RRC_skipUplinkTxDynamic SUPPORTED = new RRC_skipUplinkTxDynamic(0);
+    
+        private RRC_skipUplinkTxDynamic(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "MAC-ParametersXDD-Diff";
+    public static class RRC_multipleSR_Configurations extends AsnEnumerated {
+        public static final RRC_multipleSR_Configurations SUPPORTED = new RRC_multipleSR_Configurations(0);
+    
+        private RRC_multipleSR_Configurations(long value) {
+            super(value);
+        }
     }
 
+    public static class RRC_logicalChannelSR_DelayTimer_2 extends AsnEnumerated {
+        public static final RRC_logicalChannelSR_DelayTimer_2 SUPPORTED = new RRC_logicalChannelSR_DelayTimer_2(0);
+    
+        private RRC_logicalChannelSR_DelayTimer_2(long value) {
+            super(value);
+        }
+    }
+
+    public static class RRC_longDRX_Cycle extends AsnEnumerated {
+        public static final RRC_longDRX_Cycle SUPPORTED = new RRC_longDRX_Cycle(0);
+    
+        private RRC_longDRX_Cycle(long value) {
+            super(value);
+        }
+    }
 }
+

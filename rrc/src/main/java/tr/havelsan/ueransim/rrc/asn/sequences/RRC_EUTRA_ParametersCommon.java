@@ -1,40 +1,50 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_BitString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnBitString;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_EUTRA_ParametersCommon extends RRC_Sequence {
+public class RRC_EUTRA_ParametersCommon extends AsnSequence {
+    public RRC_mfbi_EUTRA mfbi_EUTRA; // optional
+    public AsnBitString modifiedMPR_BehaviorEUTRA; // optional, SIZE(32)
+    public RRC_multiNS_Pmax_EUTRA multiNS_Pmax_EUTRA; // optional
+    public RRC_rs_SINR_MeasEUTRA rs_SINR_MeasEUTRA; // optional
+    public RRC_ext1_14 ext1; // optional
 
-    public RRC_Integer mfbi_EUTRA;
-    public RRC_BitString modifiedMPR_BehaviorEUTRA;
-    public RRC_Integer multiNS_Pmax_EUTRA;
-    public RRC_Integer rs_SINR_MeasEUTRA;
-    public RRC_EUTRA_ParametersCommon__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "mfbi-EUTRA","modifiedMPR-BehaviorEUTRA","multiNS-Pmax-EUTRA","rs-SINR-MeasEUTRA","ext1" };
+    public static class RRC_ext1_14 extends AsnSequence {
+        public RRC_ne_DC ne_DC; // optional
+    
+        public static class RRC_ne_DC extends AsnEnumerated {
+            public static final RRC_ne_DC SUPPORTED = new RRC_ne_DC(0);
+        
+            private RRC_ne_DC(long value) {
+                super(value);
+            }
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "mfbi_EUTRA","modifiedMPR_BehaviorEUTRA","multiNS_Pmax_EUTRA","rs_SINR_MeasEUTRA","ext1" };
+    public static class RRC_multiNS_Pmax_EUTRA extends AsnEnumerated {
+        public static final RRC_multiNS_Pmax_EUTRA SUPPORTED = new RRC_multiNS_Pmax_EUTRA(0);
+    
+        private RRC_multiNS_Pmax_EUTRA(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "EUTRA-ParametersCommon";
+    public static class RRC_rs_SINR_MeasEUTRA extends AsnEnumerated {
+        public static final RRC_rs_SINR_MeasEUTRA SUPPORTED = new RRC_rs_SINR_MeasEUTRA(0);
+    
+        private RRC_rs_SINR_MeasEUTRA(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "EUTRA-ParametersCommon";
+    public static class RRC_mfbi_EUTRA extends AsnEnumerated {
+        public static final RRC_mfbi_EUTRA SUPPORTED = new RRC_mfbi_EUTRA(0);
+    
+        private RRC_mfbi_EUTRA(long value) {
+            super(value);
+        }
     }
-
 }
+

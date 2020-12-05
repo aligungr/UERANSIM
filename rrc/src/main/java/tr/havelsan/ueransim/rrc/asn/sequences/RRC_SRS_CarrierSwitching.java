@@ -1,40 +1,34 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SRS_CarrierSwitching__srs_TPC_PDCCH_Group;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_SRS_CarrierSwitching__monitoringCells;
+import tr.havelsan.ueransim.asn.core.*;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_ServCellIndex;
 
-public class RRC_SRS_CarrierSwitching extends RRC_Sequence {
+public class RRC_SRS_CarrierSwitching extends AsnSequence {
+    public AsnInteger srs_SwitchFromServCellIndex; // optional, VALUE(0..31)
+    public RRC_srs_SwitchFromCarrier srs_SwitchFromCarrier; // mandatory
+    public RRC_srs_TPC_PDCCH_Group srs_TPC_PDCCH_Group; // optional
+    public RRC_monitoringCells monitoringCells; // optional, SIZE(1..32)
 
-    public RRC_Integer srs_SwitchFromServCellIndex;
-    public RRC_Integer srs_SwitchFromCarrier;
-    public RRC_SRS_CarrierSwitching__srs_TPC_PDCCH_Group srs_TPC_PDCCH_Group;
-    public RRC_SRS_CarrierSwitching__monitoringCells monitoringCells;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "srs-SwitchFromServCellIndex","srs-SwitchFromCarrier","srs-TPC-PDCCH-Group","monitoringCells" };
+    // SIZE(1..32)
+    public static class RRC_monitoringCells extends AsnSequenceOf<RRC_ServCellIndex> {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "srs_SwitchFromServCellIndex","srs_SwitchFromCarrier","srs_TPC_PDCCH_Group","monitoringCells" };
+    public static class RRC_srs_SwitchFromCarrier extends AsnEnumerated {
+        public static final RRC_srs_SwitchFromCarrier SUL = new RRC_srs_SwitchFromCarrier(0);
+        public static final RRC_srs_SwitchFromCarrier NUL = new RRC_srs_SwitchFromCarrier(1);
+    
+        private RRC_srs_SwitchFromCarrier(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "SRS-CarrierSwitching";
+    public static class RRC_srs_TPC_PDCCH_Group extends AsnChoice {
+        public RRC_typeA typeA; // SIZE(1..32)
+        public RRC_SRS_TPC_PDCCH_Config typeB;
+    
+        // SIZE(1..32)
+        public static class RRC_typeA extends AsnSequenceOf<RRC_SRS_TPC_PDCCH_Config> {
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "SRS-CarrierSwitching";
-    }
-
 }
+

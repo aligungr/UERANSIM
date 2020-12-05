@@ -1,38 +1,12 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.enums.RRC_CA_BandwidthClassEUTRA;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_FreqBandIndicatorEUTRA;
 
-public class RRC_FreqBandInformationEUTRA extends RRC_Sequence {
-
-    public RRC_FreqBandIndicatorEUTRA bandEUTRA;
-    public RRC_CA_BandwidthClassEUTRA ca_BandwidthClassDL_EUTRA;
-    public RRC_CA_BandwidthClassEUTRA ca_BandwidthClassUL_EUTRA;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "bandEUTRA","ca-BandwidthClassDL-EUTRA","ca-BandwidthClassUL-EUTRA" };
-    }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "bandEUTRA","ca_BandwidthClassDL_EUTRA","ca_BandwidthClassUL_EUTRA" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "FreqBandInformationEUTRA";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "FreqBandInformationEUTRA";
-    }
-
+public class RRC_FreqBandInformationEUTRA extends AsnSequence {
+    public RRC_FreqBandIndicatorEUTRA bandEUTRA; // mandatory
+    public RRC_CA_BandwidthClassEUTRA ca_BandwidthClassDL_EUTRA; // optional
+    public RRC_CA_BandwidthClassEUTRA ca_BandwidthClassUL_EUTRA; // optional
 }
+

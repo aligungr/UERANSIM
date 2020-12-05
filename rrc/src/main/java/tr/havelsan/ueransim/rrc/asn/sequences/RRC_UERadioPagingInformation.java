@@ -1,35 +1,29 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_UERadioPagingInformation__criticalExtensions;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnNull;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_UERadioPagingInformation extends RRC_Sequence {
+public class RRC_UERadioPagingInformation extends AsnSequence {
+    public RRC_criticalExtensions_30 criticalExtensions; // mandatory
 
-    public RRC_UERadioPagingInformation__criticalExtensions criticalExtensions;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "criticalExtensions" };
+    public static class RRC_criticalExtensions_30 extends AsnChoice {
+        public RRC_c1_3 c1;
+        public RRC_criticalExtensionsFuture_2 criticalExtensionsFuture;
+    
+        public static class RRC_criticalExtensionsFuture_2 extends AsnSequence {
+        }
+    
+        public static class RRC_c1_3 extends AsnChoice {
+            public RRC_UERadioPagingInformation_IEs ueRadioPagingInformation;
+            public AsnNull spare7;
+            public AsnNull spare6;
+            public AsnNull spare5;
+            public AsnNull spare4;
+            public AsnNull spare3;
+            public AsnNull spare2;
+            public AsnNull spare1;
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "criticalExtensions" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "UERadioPagingInformation";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "UERadioPagingInformation";
-    }
-
 }
+

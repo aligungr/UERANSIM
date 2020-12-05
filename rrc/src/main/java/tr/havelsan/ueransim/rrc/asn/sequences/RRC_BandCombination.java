@@ -1,44 +1,31 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_BitString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnBitString;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.choices.RRC_BandParameters;
 import tr.havelsan.ueransim.rrc.asn.integers.RRC_FeatureSetCombinationId;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_BandCombination__bandList;
 
-public class RRC_BandCombination extends RRC_Sequence {
+public class RRC_BandCombination extends AsnSequence {
+    public RRC_bandList bandList; // mandatory, SIZE(1..32)
+    public RRC_FeatureSetCombinationId featureSetCombination; // mandatory
+    public RRC_CA_ParametersEUTRA ca_ParametersEUTRA; // optional
+    public RRC_CA_ParametersNR ca_ParametersNR; // optional
+    public RRC_MRDC_Parameters mrdc_Parameters; // optional
+    public AsnBitString supportedBandwidthCombinationSet; // optional, SIZE(1..32)
+    public RRC_powerClass_v1530 powerClass_v1530; // optional
 
-    public RRC_BandCombination__bandList bandList;
-    public RRC_FeatureSetCombinationId featureSetCombination;
-    public RRC_CA_ParametersEUTRA ca_ParametersEUTRA;
-    public RRC_CA_ParametersNR ca_ParametersNR;
-    public RRC_MRDC_Parameters mrdc_Parameters;
-    public RRC_BitString supportedBandwidthCombinationSet;
-    public RRC_Integer powerClass_v1530;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "bandList","featureSetCombination","ca-ParametersEUTRA","ca-ParametersNR","mrdc-Parameters","supportedBandwidthCombinationSet","powerClass-v1530" };
+    public static class RRC_powerClass_v1530 extends AsnEnumerated {
+        public static final RRC_powerClass_v1530 PC2 = new RRC_powerClass_v1530(0);
+    
+        private RRC_powerClass_v1530(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "bandList","featureSetCombination","ca_ParametersEUTRA","ca_ParametersNR","mrdc_Parameters","supportedBandwidthCombinationSet","powerClass_v1530" };
+    // SIZE(1..32)
+    public static class RRC_bandList extends AsnSequenceOf<RRC_BandParameters> {
     }
-
-    @Override
-    public String getAsnName() {
-        return "BandCombination";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "BandCombination";
-    }
-
 }
+

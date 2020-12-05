@@ -1,35 +1,32 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_OverheatingAssistanceConfig extends RRC_Sequence {
+public class RRC_OverheatingAssistanceConfig extends AsnSequence {
+    public RRC_overheatingIndicationProhibitTimer overheatingIndicationProhibitTimer; // mandatory
 
-    public RRC_Integer overheatingIndicationProhibitTimer;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "overheatingIndicationProhibitTimer" };
+    public static class RRC_overheatingIndicationProhibitTimer extends AsnEnumerated {
+        public static final RRC_overheatingIndicationProhibitTimer S0 = new RRC_overheatingIndicationProhibitTimer(0);
+        public static final RRC_overheatingIndicationProhibitTimer S0DOT5 = new RRC_overheatingIndicationProhibitTimer(1);
+        public static final RRC_overheatingIndicationProhibitTimer S1 = new RRC_overheatingIndicationProhibitTimer(2);
+        public static final RRC_overheatingIndicationProhibitTimer S2 = new RRC_overheatingIndicationProhibitTimer(3);
+        public static final RRC_overheatingIndicationProhibitTimer S5 = new RRC_overheatingIndicationProhibitTimer(4);
+        public static final RRC_overheatingIndicationProhibitTimer S10 = new RRC_overheatingIndicationProhibitTimer(5);
+        public static final RRC_overheatingIndicationProhibitTimer S20 = new RRC_overheatingIndicationProhibitTimer(6);
+        public static final RRC_overheatingIndicationProhibitTimer S30 = new RRC_overheatingIndicationProhibitTimer(7);
+        public static final RRC_overheatingIndicationProhibitTimer S60 = new RRC_overheatingIndicationProhibitTimer(8);
+        public static final RRC_overheatingIndicationProhibitTimer S90 = new RRC_overheatingIndicationProhibitTimer(9);
+        public static final RRC_overheatingIndicationProhibitTimer S120 = new RRC_overheatingIndicationProhibitTimer(10);
+        public static final RRC_overheatingIndicationProhibitTimer S300 = new RRC_overheatingIndicationProhibitTimer(11);
+        public static final RRC_overheatingIndicationProhibitTimer S600 = new RRC_overheatingIndicationProhibitTimer(12);
+        public static final RRC_overheatingIndicationProhibitTimer SPARE3 = new RRC_overheatingIndicationProhibitTimer(13);
+        public static final RRC_overheatingIndicationProhibitTimer SPARE2 = new RRC_overheatingIndicationProhibitTimer(14);
+        public static final RRC_overheatingIndicationProhibitTimer SPARE1 = new RRC_overheatingIndicationProhibitTimer(15);
+    
+        private RRC_overheatingIndicationProhibitTimer(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "overheatingIndicationProhibitTimer" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "OverheatingAssistanceConfig";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "OverheatingAssistanceConfig";
-    }
-
 }
+

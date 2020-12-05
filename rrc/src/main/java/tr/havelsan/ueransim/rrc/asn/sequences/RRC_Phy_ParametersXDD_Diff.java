@@ -1,39 +1,75 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_Phy_ParametersXDD_Diff extends RRC_Sequence {
+public class RRC_Phy_ParametersXDD_Diff extends AsnSequence {
+    public RRC_dynamicSFI_2 dynamicSFI; // optional
+    public RRC_twoPUCCH_F0_2_ConsecSymbols_2 twoPUCCH_F0_2_ConsecSymbols; // optional
+    public RRC_twoDifferentTPC_Loop_PUSCH_2 twoDifferentTPC_Loop_PUSCH; // optional
+    public RRC_twoDifferentTPC_Loop_PUCCH_1 twoDifferentTPC_Loop_PUCCH; // optional
+    public RRC_ext1_15 ext1; // optional
 
-    public RRC_Integer dynamicSFI;
-    public RRC_Integer twoPUCCH_F0_2_ConsecSymbols;
-    public RRC_Integer twoDifferentTPC_Loop_PUSCH;
-    public RRC_Integer twoDifferentTPC_Loop_PUCCH;
-    public RRC_Phy_ParametersXDD_Diff__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "dynamicSFI","twoPUCCH-F0-2-ConsecSymbols","twoDifferentTPC-Loop-PUSCH","twoDifferentTPC-Loop-PUCCH","ext1" };
+    public static class RRC_twoDifferentTPC_Loop_PUCCH_1 extends AsnEnumerated {
+        public static final RRC_twoDifferentTPC_Loop_PUCCH_1 SUPPORTED = new RRC_twoDifferentTPC_Loop_PUCCH_1(0);
+    
+        private RRC_twoDifferentTPC_Loop_PUCCH_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "dynamicSFI","twoPUCCH_F0_2_ConsecSymbols","twoDifferentTPC_Loop_PUSCH","twoDifferentTPC_Loop_PUCCH","ext1" };
+    public static class RRC_ext1_15 extends AsnSequence {
+        public RRC_dl_SchedulingOffset_PDSCH_TypeA_2 dl_SchedulingOffset_PDSCH_TypeA; // optional
+        public RRC_dl_SchedulingOffset_PDSCH_TypeB_1 dl_SchedulingOffset_PDSCH_TypeB; // optional
+        public RRC_ul_SchedulingOffset_1 ul_SchedulingOffset; // optional
+    
+        public static class RRC_ul_SchedulingOffset_1 extends AsnEnumerated {
+            public static final RRC_ul_SchedulingOffset_1 SUPPORTED = new RRC_ul_SchedulingOffset_1(0);
+        
+            private RRC_ul_SchedulingOffset_1(long value) {
+                super(value);
+            }
+        }
+    
+        public static class RRC_dl_SchedulingOffset_PDSCH_TypeB_1 extends AsnEnumerated {
+            public static final RRC_dl_SchedulingOffset_PDSCH_TypeB_1 SUPPORTED = new RRC_dl_SchedulingOffset_PDSCH_TypeB_1(0);
+        
+            private RRC_dl_SchedulingOffset_PDSCH_TypeB_1(long value) {
+                super(value);
+            }
+        }
+    
+        public static class RRC_dl_SchedulingOffset_PDSCH_TypeA_2 extends AsnEnumerated {
+            public static final RRC_dl_SchedulingOffset_PDSCH_TypeA_2 SUPPORTED = new RRC_dl_SchedulingOffset_PDSCH_TypeA_2(0);
+        
+            private RRC_dl_SchedulingOffset_PDSCH_TypeA_2(long value) {
+                super(value);
+            }
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "Phy-ParametersXDD-Diff";
+    public static class RRC_twoPUCCH_F0_2_ConsecSymbols_2 extends AsnEnumerated {
+        public static final RRC_twoPUCCH_F0_2_ConsecSymbols_2 SUPPORTED = new RRC_twoPUCCH_F0_2_ConsecSymbols_2(0);
+    
+        private RRC_twoPUCCH_F0_2_ConsecSymbols_2(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "Phy-ParametersXDD-Diff";
+    public static class RRC_dynamicSFI_2 extends AsnEnumerated {
+        public static final RRC_dynamicSFI_2 SUPPORTED = new RRC_dynamicSFI_2(0);
+    
+        private RRC_dynamicSFI_2(long value) {
+            super(value);
+        }
     }
 
+    public static class RRC_twoDifferentTPC_Loop_PUSCH_2 extends AsnEnumerated {
+        public static final RRC_twoDifferentTPC_Loop_PUSCH_2 SUPPORTED = new RRC_twoDifferentTPC_Loop_PUSCH_2(0);
+    
+        private RRC_twoDifferentTPC_Loop_PUSCH_2(long value) {
+            super(value);
+        }
+    }
 }
+

@@ -1,36 +1,32 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_RA_Prioritization extends RRC_Sequence {
+public class RRC_RA_Prioritization extends AsnSequence {
+    public RRC_powerRampingStepHighPriority powerRampingStepHighPriority; // mandatory
+    public RRC_scalingFactorBI scalingFactorBI; // optional
 
-    public RRC_Integer powerRampingStepHighPriority;
-    public RRC_Integer scalingFactorBI;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "powerRampingStepHighPriority","scalingFactorBI" };
+    public static class RRC_powerRampingStepHighPriority extends AsnEnumerated {
+        public static final RRC_powerRampingStepHighPriority DB0 = new RRC_powerRampingStepHighPriority(0);
+        public static final RRC_powerRampingStepHighPriority DB2 = new RRC_powerRampingStepHighPriority(1);
+        public static final RRC_powerRampingStepHighPriority DB4 = new RRC_powerRampingStepHighPriority(2);
+        public static final RRC_powerRampingStepHighPriority DB6 = new RRC_powerRampingStepHighPriority(3);
+    
+        private RRC_powerRampingStepHighPriority(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "powerRampingStepHighPriority","scalingFactorBI" };
+    public static class RRC_scalingFactorBI extends AsnEnumerated {
+        public static final RRC_scalingFactorBI ZERO = new RRC_scalingFactorBI(0);
+        public static final RRC_scalingFactorBI DOT25 = new RRC_scalingFactorBI(1);
+        public static final RRC_scalingFactorBI DOT5 = new RRC_scalingFactorBI(2);
+        public static final RRC_scalingFactorBI DOT75 = new RRC_scalingFactorBI(3);
+    
+        private RRC_scalingFactorBI(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getAsnName() {
-        return "RA-Prioritization";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "RA-Prioritization";
-    }
-
 }
+

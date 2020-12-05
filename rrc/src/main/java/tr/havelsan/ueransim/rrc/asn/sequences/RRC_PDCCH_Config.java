@@ -1,49 +1,56 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_DownlinkPreemption;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_PUCCH_TPC_CommandConfig;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_PUSCH_TPC_CommandConfig;
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_SetupRelease_SRS_TPC_CommandConfig;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PDCCH_Config__controlResourceSetToAddModList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PDCCH_Config__controlResourceSetToReleaseList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PDCCH_Config__searchSpacesToAddModList;
-import tr.havelsan.ueransim.rrc.asn.sequence_ofs.RRC_PDCCH_Config__searchSpacesToReleaseList;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnNull;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
+import tr.havelsan.ueransim.asn.core.AsnSequenceOf;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_ControlResourceSetId;
+import tr.havelsan.ueransim.rrc.asn.integers.RRC_SearchSpaceId;
 
-public class RRC_PDCCH_Config extends RRC_Sequence {
+public class RRC_PDCCH_Config extends AsnSequence {
+    public RRC_controlResourceSetToAddModList controlResourceSetToAddModList; // optional, SIZE(1..3)
+    public RRC_controlResourceSetToReleaseList controlResourceSetToReleaseList; // optional, SIZE(1..3)
+    public RRC_searchSpacesToAddModList searchSpacesToAddModList; // optional, SIZE(1..10)
+    public RRC_searchSpacesToReleaseList searchSpacesToReleaseList; // optional, SIZE(1..10)
+    public RRC_SetupRelease_DownlinkPreemption downlinkPreemption; // optional
+    public RRC_SetupRelease_PUSCH_TPC_CommandConfig tpc_PUSCH; // optional
+    public RRC_SetupRelease_PUCCH_TPC_CommandConfig tpc_PUCCH; // optional
+    public RRC_SetupRelease_SRS_TPC_CommandConfig tpc_SRS; // optional
 
-    public RRC_PDCCH_Config__controlResourceSetToAddModList controlResourceSetToAddModList;
-    public RRC_PDCCH_Config__controlResourceSetToReleaseList controlResourceSetToReleaseList;
-    public RRC_PDCCH_Config__searchSpacesToAddModList searchSpacesToAddModList;
-    public RRC_PDCCH_Config__searchSpacesToReleaseList searchSpacesToReleaseList;
-    public RRC_SetupRelease_DownlinkPreemption downlinkPreemption;
-    public RRC_SetupRelease_PUSCH_TPC_CommandConfig tpc_PUSCH;
-    public RRC_SetupRelease_PUCCH_TPC_CommandConfig tpc_PUCCH;
-    public RRC_SetupRelease_SRS_TPC_CommandConfig tpc_SRS;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "controlResourceSetToAddModList","controlResourceSetToReleaseList","searchSpacesToAddModList","searchSpacesToReleaseList","downlinkPreemption","tpc-PUSCH","tpc-PUCCH","tpc-SRS" };
+    // SIZE(1..10)
+    public static class RRC_searchSpacesToAddModList extends AsnSequenceOf<RRC_SearchSpace> {
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "controlResourceSetToAddModList","controlResourceSetToReleaseList","searchSpacesToAddModList","searchSpacesToReleaseList","downlinkPreemption","tpc_PUSCH","tpc_PUCCH","tpc_SRS" };
+    // SIZE(1..3)
+    public static class RRC_controlResourceSetToReleaseList extends AsnSequenceOf<RRC_ControlResourceSetId> {
     }
 
-    @Override
-    public String getAsnName() {
-        return "PDCCH-Config";
+    public static class RRC_SetupRelease_PUSCH_TPC_CommandConfig extends AsnChoice {
+        public AsnNull release;
+        public RRC_PUSCH_TPC_CommandConfig setup;
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "PDCCH-Config";
+    // SIZE(1..3)
+    public static class RRC_controlResourceSetToAddModList extends AsnSequenceOf<RRC_ControlResourceSet> {
     }
 
+    public static class RRC_SetupRelease_SRS_TPC_CommandConfig extends AsnChoice {
+        public AsnNull release;
+        public RRC_SRS_TPC_CommandConfig setup;
+    }
+
+    public static class RRC_SetupRelease_DownlinkPreemption extends AsnChoice {
+        public AsnNull release;
+        public RRC_DownlinkPreemption setup;
+    }
+
+    public static class RRC_SetupRelease_PUCCH_TPC_CommandConfig extends AsnChoice {
+        public AsnNull release;
+        public RRC_PUCCH_TPC_CommandConfig setup;
+    }
+
+    // SIZE(1..10)
+    public static class RRC_searchSpacesToReleaseList extends AsnSequenceOf<RRC_SearchSpaceId> {
+    }
 }
+

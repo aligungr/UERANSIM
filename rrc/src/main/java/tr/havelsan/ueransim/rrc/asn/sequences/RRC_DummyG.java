@@ -1,37 +1,45 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_DummyG extends RRC_Sequence {
+public class RRC_DummyG extends AsnSequence {
+    public RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1 maxNumberSSB_CSI_RS_ResourceOneTx; // mandatory
+    public RRC_maxNumberSSB_CSI_RS_ResourceTwoTx maxNumberSSB_CSI_RS_ResourceTwoTx; // mandatory
+    public RRC_supportedCSI_RS_Density_2 supportedCSI_RS_Density; // mandatory
 
-    public RRC_Integer maxNumberSSB_CSI_RS_ResourceOneTx;
-    public RRC_Integer maxNumberSSB_CSI_RS_ResourceTwoTx;
-    public RRC_Integer supportedCSI_RS_Density;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "maxNumberSSB-CSI-RS-ResourceOneTx","maxNumberSSB-CSI-RS-ResourceTwoTx","supportedCSI-RS-Density" };
+    public static class RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1 extends AsnEnumerated {
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1 N8 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1(0);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1 N16 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1(1);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1 N32 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1(2);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1 N64 = new RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1(3);
+    
+        private RRC_maxNumberSSB_CSI_RS_ResourceOneTx_1(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "maxNumberSSB_CSI_RS_ResourceOneTx","maxNumberSSB_CSI_RS_ResourceTwoTx","supportedCSI_RS_Density" };
+    public static class RRC_maxNumberSSB_CSI_RS_ResourceTwoTx extends AsnEnumerated {
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceTwoTx N0 = new RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(0);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceTwoTx N4 = new RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(1);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceTwoTx N8 = new RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(2);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceTwoTx N16 = new RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(3);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceTwoTx N32 = new RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(4);
+        public static final RRC_maxNumberSSB_CSI_RS_ResourceTwoTx N64 = new RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(5);
+    
+        private RRC_maxNumberSSB_CSI_RS_ResourceTwoTx(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "DummyG";
+    public static class RRC_supportedCSI_RS_Density_2 extends AsnEnumerated {
+        public static final RRC_supportedCSI_RS_Density_2 ONE = new RRC_supportedCSI_RS_Density_2(0);
+        public static final RRC_supportedCSI_RS_Density_2 THREE = new RRC_supportedCSI_RS_Density_2(1);
+        public static final RRC_supportedCSI_RS_Density_2 ONEANDTHREE = new RRC_supportedCSI_RS_Density_2(2);
+    
+        private RRC_supportedCSI_RS_Density_2(long value) {
+            super(value);
+        }
     }
-
-    @Override
-    public String getXmlTagName() {
-        return "DummyG";
-    }
-
 }
+

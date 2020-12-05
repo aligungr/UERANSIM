@@ -1,38 +1,57 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Integer;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_MAC_ParametersCommon extends RRC_Sequence {
+public class RRC_MAC_ParametersCommon extends AsnSequence {
+    public RRC_lcp_Restriction lcp_Restriction; // optional
+    public RRC_dummy_2 dummy; // optional
+    public RRC_lch_ToSCellRestriction lch_ToSCellRestriction; // optional
+    public RRC_ext1_10 ext1; // optional
 
-    public RRC_Integer lcp_Restriction;
-    public RRC_Integer dummy;
-    public RRC_Integer lch_ToSCellRestriction;
-    public RRC_MAC_ParametersCommon__ext1 ext1;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "lcp-Restriction","dummy","lch-ToSCellRestriction","ext1" };
+    public static class RRC_ext1_10 extends AsnSequence {
+        public RRC_recommendedBitRate recommendedBitRate; // optional
+        public RRC_recommendedBitRateQuery recommendedBitRateQuery; // optional
+    
+        public static class RRC_recommendedBitRate extends AsnEnumerated {
+            public static final RRC_recommendedBitRate SUPPORTED = new RRC_recommendedBitRate(0);
+        
+            private RRC_recommendedBitRate(long value) {
+                super(value);
+            }
+        }
+    
+        public static class RRC_recommendedBitRateQuery extends AsnEnumerated {
+            public static final RRC_recommendedBitRateQuery SUPPORTED = new RRC_recommendedBitRateQuery(0);
+        
+            private RRC_recommendedBitRateQuery(long value) {
+                super(value);
+            }
+        }
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "lcp_Restriction","dummy","lch_ToSCellRestriction","ext1" };
+    public static class RRC_lch_ToSCellRestriction extends AsnEnumerated {
+        public static final RRC_lch_ToSCellRestriction SUPPORTED = new RRC_lch_ToSCellRestriction(0);
+    
+        private RRC_lch_ToSCellRestriction(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getAsnName() {
-        return "MAC-ParametersCommon";
+    public static class RRC_lcp_Restriction extends AsnEnumerated {
+        public static final RRC_lcp_Restriction SUPPORTED = new RRC_lcp_Restriction(0);
+    
+        private RRC_lcp_Restriction(long value) {
+            super(value);
+        }
     }
 
-    @Override
-    public String getXmlTagName() {
-        return "MAC-ParametersCommon";
+    public static class RRC_dummy_2 extends AsnEnumerated {
+        public static final RRC_dummy_2 SUPPORTED = new RRC_dummy_2(0);
+    
+        private RRC_dummy_2(long value) {
+            super(value);
+        }
     }
-
 }
+

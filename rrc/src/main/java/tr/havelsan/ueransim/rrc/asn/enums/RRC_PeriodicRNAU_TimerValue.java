@@ -1,35 +1,19 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.enums;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Enumerated;
+import tr.havelsan.ueransim.asn.core.AsnEnumerated;
 
-public class RRC_PeriodicRNAU_TimerValue extends RRC_Enumerated {
+public class RRC_PeriodicRNAU_TimerValue extends AsnEnumerated {
+    public static final RRC_PeriodicRNAU_TimerValue MIN5 = new RRC_PeriodicRNAU_TimerValue(0);
+    public static final RRC_PeriodicRNAU_TimerValue MIN10 = new RRC_PeriodicRNAU_TimerValue(1);
+    public static final RRC_PeriodicRNAU_TimerValue MIN20 = new RRC_PeriodicRNAU_TimerValue(2);
+    public static final RRC_PeriodicRNAU_TimerValue MIN30 = new RRC_PeriodicRNAU_TimerValue(3);
+    public static final RRC_PeriodicRNAU_TimerValue MIN60 = new RRC_PeriodicRNAU_TimerValue(4);
+    public static final RRC_PeriodicRNAU_TimerValue MIN120 = new RRC_PeriodicRNAU_TimerValue(5);
+    public static final RRC_PeriodicRNAU_TimerValue MIN360 = new RRC_PeriodicRNAU_TimerValue(6);
+    public static final RRC_PeriodicRNAU_TimerValue MIN720 = new RRC_PeriodicRNAU_TimerValue(7);
 
-    public static final RRC_PeriodicRNAU_TimerValue MIN5 = new RRC_PeriodicRNAU_TimerValue("min5");
-    public static final RRC_PeriodicRNAU_TimerValue MIN10 = new RRC_PeriodicRNAU_TimerValue("min10");
-    public static final RRC_PeriodicRNAU_TimerValue MIN20 = new RRC_PeriodicRNAU_TimerValue("min20");
-    public static final RRC_PeriodicRNAU_TimerValue MIN30 = new RRC_PeriodicRNAU_TimerValue("min30");
-    public static final RRC_PeriodicRNAU_TimerValue MIN60 = new RRC_PeriodicRNAU_TimerValue("min60");
-    public static final RRC_PeriodicRNAU_TimerValue MIN120 = new RRC_PeriodicRNAU_TimerValue("min120");
-    public static final RRC_PeriodicRNAU_TimerValue MIN360 = new RRC_PeriodicRNAU_TimerValue("min360");
-    public static final RRC_PeriodicRNAU_TimerValue MIN720 = new RRC_PeriodicRNAU_TimerValue("min720");
-
-    protected RRC_PeriodicRNAU_TimerValue(String sValue) {
-        super(sValue);
+    private RRC_PeriodicRNAU_TimerValue(long value) {
+        super(value);
     }
-
-    @Override
-    public String getAsnName() {
-        return "PeriodicRNAU-TimerValue";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "PeriodicRNAU-TimerValue";
-    }
-
 }
+

@@ -1,36 +1,19 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnBitString;
+import tr.havelsan.ueransim.asn.core.AsnInteger;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_SIB9 extends RRC_Sequence {
+public class RRC_SIB9 extends AsnSequence {
+    public RRC_timeInfo timeInfo; // optional
+    public AsnOctetString lateNonCriticalExtension; // optional
 
-    public RRC_SIB9__timeInfo timeInfo;
-    public RRC_OctetString lateNonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "timeInfo","lateNonCriticalExtension" };
+    public static class RRC_timeInfo extends AsnSequence {
+        public AsnInteger timeInfoUTC; // mandatory, VALUE(0..549755813887)
+        public AsnBitString dayLightSavingTime; // optional, SIZE(2)
+        public AsnInteger leapSeconds; // optional, VALUE(-127..128)
+        public AsnInteger localTimeOffset; // optional, VALUE(-63..64)
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "timeInfo","lateNonCriticalExtension" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "SIB9";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "SIB9";
-    }
-
 }
+

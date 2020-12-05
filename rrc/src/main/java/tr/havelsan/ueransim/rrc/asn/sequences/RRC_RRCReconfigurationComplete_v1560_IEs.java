@@ -1,36 +1,19 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.choices.RRC_RRCReconfigurationComplete_v1560_IEs__scg_Response;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnChoice;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 
-public class RRC_RRCReconfigurationComplete_v1560_IEs extends RRC_Sequence {
+public class RRC_RRCReconfigurationComplete_v1560_IEs extends AsnSequence {
+    public RRC_scg_Response scg_Response; // optional
+    public RRC_nonCriticalExtension_34 nonCriticalExtension; // optional
 
-    public RRC_RRCReconfigurationComplete_v1560_IEs__scg_Response scg_Response;
-    public RRC_RRCReconfigurationComplete_v1560_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "scg-Response","nonCriticalExtension" };
+    public static class RRC_scg_Response extends AsnChoice {
+        public AsnOctetString nr_SCG_Response;
+        public AsnOctetString eutra_SCG_Response;
     }
 
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "scg_Response","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_34 extends AsnSequence {
     }
-
-    @Override
-    public String getAsnName() {
-        return "RRCReconfigurationComplete-v1560-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "RRCReconfigurationComplete-v1560-IEs";
-    }
-
 }
+

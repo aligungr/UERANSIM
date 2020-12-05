@@ -1,38 +1,15 @@
-/*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
- */
-
 package tr.havelsan.ueransim.rrc.asn.sequences;
 
-import tr.havelsan.ueransim.rrc.asn.core.RRC_OctetString;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
+import tr.havelsan.ueransim.asn.core.AsnOctetString;
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;
 
-public class RRC_ULInformationTransfer_IEs extends RRC_Sequence {
+public class RRC_ULInformationTransfer_IEs extends AsnSequence {
+    public RRC_DedicatedNAS_Message dedicatedNAS_Message; // optional
+    public AsnOctetString lateNonCriticalExtension; // optional
+    public RRC_nonCriticalExtension_15 nonCriticalExtension; // optional
 
-    public RRC_DedicatedNAS_Message dedicatedNAS_Message;
-    public RRC_OctetString lateNonCriticalExtension;
-    public RRC_ULInformationTransfer_IEs__nonCriticalExtension nonCriticalExtension;
-
-    @Override
-    public String[] getMemberNames() {
-        return new String[]{ "dedicatedNAS-Message","lateNonCriticalExtension","nonCriticalExtension" };
+    public static class RRC_nonCriticalExtension_15 extends AsnSequence {
     }
-
-    @Override
-    public String[] getMemberIdentifiers() {
-        return new String[]{ "dedicatedNAS_Message","lateNonCriticalExtension","nonCriticalExtension" };
-    }
-
-    @Override
-    public String getAsnName() {
-        return "ULInformationTransfer-IEs";
-    }
-
-    @Override
-    public String getXmlTagName() {
-        return "ULInformationTransfer-IEs";
-    }
-
 }
+

@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.rrc;
 
+import tr.havelsan.ueransim.asn.core.AsnSequence;
 import tr.havelsan.ueransim.rrc.asn.choices.*;
-import tr.havelsan.ueransim.rrc.asn.core.RRC_Sequence;
 import tr.havelsan.ueransim.rrc.asn.sequences.*;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 
@@ -219,7 +219,7 @@ public class RrcMessage {
         this.scgFailureInformationEUTRA = scgFailureInformationEUTRA;
     }
 
-    public static RrcMessage fromPduSequence(RRC_Sequence pdu) {
+    public static RrcMessage fromPduSequence(AsnSequence pdu) {
         if (pdu instanceof RRC_BCCH_BCH_Message) {
             var msg = ((RRC_BCCH_BCH_Message) pdu).message;
 
@@ -293,7 +293,7 @@ public class RrcMessage {
         throw new RuntimeException("invalid RRC PDU Sequence");
     }
 
-    public RRC_Sequence getPduSequence() {
+    public AsnSequence getPduSequence() {
         if (mib != null) {
             var pdu = new RRC_BCCH_BCH_Message();
             pdu.message = new RRC_BCCH_BCH_MessageType();
@@ -303,243 +303,243 @@ public class RrcMessage {
         if (systemInformation != null) {
             var pdu = new RRC_BCCH_DL_SCH_Message();
             pdu.message = new RRC_BCCH_DL_SCH_MessageType();
-            pdu.message.c1 = new RRC_BCCH_DL_SCH_MessageType__c1();
+            pdu.message.c1 = new RRC_BCCH_DL_SCH_MessageType.RRC_c1_12();
             pdu.message.c1.systemInformation = systemInformation;
             return pdu;
         }
         if (systemInformationBlockType1 != null) {
             var pdu = new RRC_BCCH_DL_SCH_Message();
             pdu.message = new RRC_BCCH_DL_SCH_MessageType();
-            pdu.message.c1 = new RRC_BCCH_DL_SCH_MessageType__c1();
+            pdu.message.c1 = new RRC_BCCH_DL_SCH_MessageType.RRC_c1_12();
             pdu.message.c1.systemInformationBlockType1 = systemInformationBlockType1;
             return pdu;
         }
         if (rrcReject != null) {
             var pdu = new RRC_DL_CCCH_Message();
             pdu.message = new RRC_DL_CCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_CCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_CCCH_MessageType.RRC_c1_9();
             pdu.message.c1.rrcReject = rrcReject;
         }
         if (rrcSetup != null) {
             var pdu = new RRC_DL_CCCH_Message();
             pdu.message = new RRC_DL_CCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_CCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_CCCH_MessageType.RRC_c1_9();
             pdu.message.c1.rrcSetup = rrcSetup;
         }
         if (rrcReconfiguration != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.rrcReconfiguration = rrcReconfiguration;
             return pdu;
         }
         if (rrcResume != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.rrcResume = rrcResume;
             return pdu;
         }
         if (rrcRelease != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.rrcRelease = rrcRelease;
             return pdu;
         }
         if (rrcReestablishment != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.rrcReestablishment = rrcReestablishment;
             return pdu;
         }
         if (securityModeCommand != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.securityModeCommand = securityModeCommand;
             return pdu;
         }
         if (dlInformationTransfer != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.dlInformationTransfer = dlInformationTransfer;
             return pdu;
         }
         if (ueCapabilityEnquiry != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.ueCapabilityEnquiry = ueCapabilityEnquiry;
             return pdu;
         }
         if (counterCheck != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.counterCheck = counterCheck;
             return pdu;
         }
         if (mobilityFromNRCommand != null) {
             var pdu = new RRC_DL_DCCH_Message();
             pdu.message = new RRC_DL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_DL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_DL_DCCH_MessageType.RRC_c1_8();
             pdu.message.c1.mobilityFromNRCommand = mobilityFromNRCommand;
             return pdu;
         }
         if (paging != null) {
             var pdu = new RRC_PCCH_Message();
             pdu.message = new RRC_PCCH_MessageType();
-            pdu.message.c1 = new RRC_PCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_PCCH_MessageType.RRC_c1_5();
             pdu.message.c1.paging = paging;
             return pdu;
         }
         if (rrcSetupRequest != null) {
             var pdu = new RRC_UL_CCCH_Message();
             pdu.message = new RRC_UL_CCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_CCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_CCCH_MessageType.RRC_c1_1();
             pdu.message.c1.rrcSetupRequest = rrcSetupRequest;
             return pdu;
         }
         if (rrcResumeRequest != null) {
             var pdu = new RRC_UL_CCCH_Message();
             pdu.message = new RRC_UL_CCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_CCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_CCCH_MessageType.RRC_c1_1();
             pdu.message.c1.rrcResumeRequest = rrcResumeRequest;
             return pdu;
         }
         if (rrcReestablishmentRequest != null) {
             var pdu = new RRC_UL_CCCH_Message();
             pdu.message = new RRC_UL_CCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_CCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_CCCH_MessageType.RRC_c1_1();
             pdu.message.c1.rrcReestablishmentRequest = rrcReestablishmentRequest;
             return pdu;
         }
         if (rrcSystemInfoRequest != null) {
             var pdu = new RRC_UL_CCCH_Message();
             pdu.message = new RRC_UL_CCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_CCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_CCCH_MessageType.RRC_c1_1();
             pdu.message.c1.rrcSystemInfoRequest = rrcSystemInfoRequest;
             return pdu;
         }
         if (rrcResumeRequest1 != null) {
             var pdu = new RRC_UL_CCCH1_Message();
             pdu.message = new RRC_UL_CCCH1_MessageType();
-            pdu.message.c1 = new RRC_UL_CCCH1_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_CCCH1_MessageType.RRC_c1_2();
             pdu.message.c1.rrcResumeRequest1 = rrcResumeRequest1;
             return pdu;
         }
         if (measurementReport != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.measurementReport = measurementReport;
             return pdu;
         }
         if (rrcReconfigurationComplete != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.rrcReconfigurationComplete = rrcReconfigurationComplete;
             return pdu;
         }
         if (rrcSetupComplete != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.rrcSetupComplete = rrcSetupComplete;
             return pdu;
         }
         if (rrcReestablishmentComplete != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.rrcReestablishmentComplete = rrcReestablishmentComplete;
             return pdu;
         }
         if (rrcResumeComplete != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.rrcResumeComplete = rrcResumeComplete;
             return pdu;
         }
         if (securityModeComplete != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.securityModeComplete = securityModeComplete;
             return pdu;
         }
         if (securityModeFailure != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.securityModeFailure = securityModeFailure;
             return pdu;
         }
         if (ulInformationTransfer != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.ulInformationTransfer = ulInformationTransfer;
             return pdu;
         }
         if (locationMeasurementIndication != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.locationMeasurementIndication = locationMeasurementIndication;
             return pdu;
         }
         if (ueCapabilityInformation != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.ueCapabilityInformation = ueCapabilityInformation;
             return pdu;
         }
         if (counterCheckResponse != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.counterCheckResponse = counterCheckResponse;
             return pdu;
         }
         if (ueAssistanceInformation != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.ueAssistanceInformation = ueAssistanceInformation;
             return pdu;
         }
         if (failureInformation != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.failureInformation = failureInformation;
             return pdu;
         }
         if (ulInformationTransferMRDC != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.ulInformationTransferMRDC = ulInformationTransferMRDC;
             return pdu;
         }
         if (scgFailureInformation != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.scgFailureInformation = scgFailureInformation;
             return pdu;
         }
         if (scgFailureInformationEUTRA != null) {
             var pdu = new RRC_UL_DCCH_Message();
             pdu.message = new RRC_UL_DCCH_MessageType();
-            pdu.message.c1 = new RRC_UL_DCCH_MessageType__c1();
+            pdu.message.c1 = new RRC_UL_DCCH_MessageType.RRC_c1_4();
             pdu.message.c1.scgFailureInformationEUTRA = scgFailureInformationEUTRA;
             return pdu;
         }
