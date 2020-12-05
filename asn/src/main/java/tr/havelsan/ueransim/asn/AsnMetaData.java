@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.asn;
 
 import tr.havelsan.ueransim.asn.core.AsnEnumerated;
+import tr.havelsan.ueransim.asn.interop.AsnMeta_Constants;
 import tr.havelsan.ueransim.asn.interop.AsnMeta_TypeDesc;
 import tr.havelsan.ueransim.utils.Json;
 
@@ -58,7 +59,17 @@ public class AsnMetaData {
     }
 
     public String enumString(Class type, long value) {
-        return null;
+        var desc = typeDescs[classToId(type)];
+        if (desc.asn_type != AsnMeta_Constants.ASN_TYPE_native_enumerated) {
+            throw new RuntimeException("type is not an enumerated");
+        }
+
+        for (var pair : desc.int_specs.enums) {
+            if (Long.parseLong(pair.get(1).toString()) == value)
+                return pair.get(0).toString();
+        }
+
+        throw new RuntimeException("enumerated value not found for type " + type + " and value " + value);
     }
 
     public String enumString(AsnEnumerated enumerated) {
@@ -66,18 +77,34 @@ public class AsnMetaData {
     }
 
     public String[] memberIdentifiers(Class type) {
-        return null;
+        var desc = typeDescs[classToId(type)];
+        var members = desc.members;
+
+        var res = new String[members.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = members.get(i).asn_identifier.replace("-", "_").replace(" ", "_");
+        }
+
+        return res;
     }
 
     public String[] memberAsnNames(Class type) {
-        return null;
+        var desc = typeDescs[classToId(type)];
+        var members = desc.members;
+
+        var res = new String[members.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = members.get(i).asn_identifier;
+        }
+
+        return res;
     }
 
     public Class elementType(Class listType) {
-        return null;
+        return idOrderedTypes[typeDescs[classToId(listType)].members.get(0).type_id];
     }
 
-    public String xmlTagName(Class itemType) {
-        return null;
+    public String xmlTagName(Class type) {
+        return typeDescs[classToId(type)].xml_name;
     }
 }
