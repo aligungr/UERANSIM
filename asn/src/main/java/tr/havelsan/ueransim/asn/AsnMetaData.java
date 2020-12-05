@@ -7,9 +7,10 @@ package tr.havelsan.ueransim.asn;
 
 import tr.havelsan.ueransim.asn.core.AsnEnumerated;
 
-public abstract class AsnMetaData {
+public class AsnMetaData {
 
-    public abstract Class[] getJavaTypesById();
+    public AsnMetaData(String classJson, String dataJson) {
+    }
 
     public String enumString(Class type, long value) {
         return null;

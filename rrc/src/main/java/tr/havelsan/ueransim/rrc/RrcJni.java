@@ -8,11 +8,7 @@ package tr.havelsan.ueransim.rrc;
 public class RrcJni {
 
     private static final int ATS_NONSTANDARD_PLAINTEXT = 1;
-    private static final int ATS_UNALIGNED_BASIC_PER = 8;
     private static final int ATS_UNALIGNED_CANONICAL_PER = 9;
-    private static final int ATS_ALIGNED_BASIC_PER = 10;
-    private static final int ATS_ALIGNED_CANONICAL_PER = 11;
-    private static final int ATS_BASIC_XER = 12;
     private static final int ATS_CANONICAL_XER = 13;
 
     private static final int RESULT_OK = 0;
