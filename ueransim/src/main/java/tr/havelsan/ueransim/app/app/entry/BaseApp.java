@@ -27,13 +27,14 @@ class BaseApp {
         System.load(path + "libapp-native.so");
 
         String localVersion = Utils.readAllText(path + "version");
-        String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 750);
+        Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
 
-        if (remoteVersion == null || localVersion.trim().equals(remoteVersion.trim())) {
-            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
-        } else {
-            Console.println(AnsiPalette.PAINT_LOG_WARNING, "UERANSIM v%s / WARNING: version v%s is available.", localVersion.trim(), remoteVersion.trim());
-            Utils.sleep(1500);
-        }
+        ////// /*String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 750);
+        ////// if (remoteVersion == null || localVersion.trim().equals(remoteVersion.trim())) {
+        //////     Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
+        ////// } else {
+        //////     Console.println(AnsiPalette.PAINT_LOG_WARNING, "UERANSIM v%s / WARNING: version v%s is available.", localVersion.trim(), remoteVersion.trim());
+        //////     Utils.sleep(1500);
+        ////// }*/
     }
 }
