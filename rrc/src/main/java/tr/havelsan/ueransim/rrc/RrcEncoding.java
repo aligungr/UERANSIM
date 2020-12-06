@@ -47,4 +47,8 @@ public class RrcEncoding {
     public static byte[] encodeUper(AsnValue value, RrcDataUnitType type) {
         return RrcJni.xerToUper(xerEncoder.encode(value), type);
     }
+
+    public static OctetString encodeUperS(AsnValue value, RrcDataUnitType type) {
+        return new OctetString(encodeUper(value, type));
+    }
 }
