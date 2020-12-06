@@ -35,4 +35,12 @@ public class RrcHandler {
 
         RrcTransport.sendRrcMessage(ctx, ue.ctxId, new RrcMessage(setup));
     }
+
+    public static void receiveUlInformationTransfer(GnbRrcContext ctx, GnbRrcUeContext ue, RRC_ULInformationTransfer msg) {
+        var nasPdu = msg.criticalExtensions.ulInformationTransfer
+                .dedicatedNAS_Message.value;
+        if (nasPdu != null) {
+            RrcNasTransport.deliverUlNas(ctx, ue.ctxId, nasPdu);
+        }
+    }
 }

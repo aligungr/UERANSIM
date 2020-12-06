@@ -23,9 +23,7 @@ public class RrcTransport {
         }
 
         if (message.ulInformationTransfer != null) {
-            var nasPdu = message.ulInformationTransfer.criticalExtensions.ulInformationTransfer
-                    .dedicatedNAS_Message.value;
-            RrcNasTransport.deliverUlNas(ctx, ue, nasPdu);
+            RrcHandler.receiveUlInformationTransfer(ctx, ueCtx, message.ulInformationTransfer);
         } else if (message.rrcSetupRequest != null) {
             RrcHandler.receiveSetupRequest(ctx, ueCtx, message.rrcSetupRequest);
         }
