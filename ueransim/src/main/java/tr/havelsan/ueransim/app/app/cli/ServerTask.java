@@ -22,6 +22,7 @@ class ServerTask extends NtsTask {
     private static final int RECEIVER_BUFFER_SIZE = 8 * 1024;
     private static final int CYCLE_TYPE_HEARTBEAT = 1;
     private static final int HEARTBEAT_PERIOD = 8000;
+    private static final int PORT = 49973;
 
     private final CliTask cliTask;
     private final SocketList sockets;
@@ -35,7 +36,7 @@ class ServerTask extends NtsTask {
     private static void acceptorThread(NtsTask task) {
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(49973);
+            serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
             Log.error(Tag.CLI, "TCP CLI server failure: " + e.getMessage());
             return;
