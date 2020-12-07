@@ -20,5 +20,6 @@ public enum Tag {
     PROC,
     NASSEC,
     NIMPL,
-    UEAPP;
+    UEAPP,
+    CLI
 }
