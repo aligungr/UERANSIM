@@ -35,8 +35,17 @@ public abstract class MonitorTask extends NtsTask {
                     onReceive(w.ctx, ((TwOnReceive) w).msg);
                 else if (w instanceof TwOnSwitch)
                     onSwitched(w.ctx, ((TwOnSwitch) w).state);
+            } else {
+                processNtsMessage(obj);
             }
         }
+    }
+
+    /**
+     * Sub classes must override this to process custom NTS messages.
+     */
+    protected void processNtsMessage(Object msg) {
+        // do nothing by default.
     }
 
     /**
