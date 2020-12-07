@@ -5,12 +5,18 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class IwCliSocketAccept {
     public final Socket socket;
+    public final InputStream inputStream;
+    public final OutputStream outputStream;
 
-    public IwCliSocketAccept(Socket socket) {
+    public IwCliSocketAccept(Socket socket, InputStream inputStream, OutputStream outputStream) {
         this.socket = socket;
+        this.inputStream = inputStream;
+        this.outputStream = outputStream;
     }
 }

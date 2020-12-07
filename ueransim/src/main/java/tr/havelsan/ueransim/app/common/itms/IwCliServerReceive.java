@@ -5,14 +5,14 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
-import java.util.UUID;
+import java.net.Socket;
 
-public class IwCliClientMessage {
-    public final UUID client;
+public class IwCliServerReceive {
+    public final Socket socket;
     public final byte[] data;
 
-    public IwCliClientMessage(UUID client, byte[] data) {
-        this.client = client;
+    public IwCliServerReceive(Socket socket, byte[] data) {
+        this.socket = socket;
         this.data = data;
     }
 }

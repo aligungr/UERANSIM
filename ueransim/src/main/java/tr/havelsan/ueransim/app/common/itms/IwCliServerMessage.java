@@ -7,11 +7,13 @@ package tr.havelsan.ueransim.app.common.itms;
 
 import java.util.UUID;
 
-public class IwCliClientMessage {
+public class IwCliServerMessage {
+    public static final UUID BROADCAST = UUID.randomUUID();
+
     public final UUID client;
     public final byte[] data;
 
-    public IwCliClientMessage(UUID client, byte[] data) {
+    public IwCliServerMessage(UUID client, byte[] data) {
         this.client = client;
         this.data = data;
     }
