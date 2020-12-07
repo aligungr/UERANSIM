@@ -25,7 +25,9 @@ public class MrPlmnSearch {
             ctx.connectedGnb = gnbId;
             ctx.rrcTask.push(new IwPlmnSearchResponse(gnbId));
         } else {
-            Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueCtx.ueConfig.supi.toString());
+            if (ctx.noPlmnWarning.check(1000)) {
+                Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueCtx.ueConfig.supi.toString());
+            }
         }
     }
 }

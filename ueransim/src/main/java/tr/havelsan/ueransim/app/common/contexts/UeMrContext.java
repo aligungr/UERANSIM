@@ -7,18 +7,19 @@ package tr.havelsan.ueransim.app.common.contexts;
 
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.utils.Timing;
 
 import java.util.UUID;
 
 public class UeMrContext {
     public final UeSimContext ueCtx;
-
+    public final Timing noPlmnWarning;
     public NtsTask rrcTask;
     public NtsTask appTask;
-
     public UUID connectedGnb;
 
     public UeMrContext(UeSimContext ueCtx) {
         this.ueCtx = ueCtx;
+        this.noPlmnWarning = new Timing();
     }
 }
