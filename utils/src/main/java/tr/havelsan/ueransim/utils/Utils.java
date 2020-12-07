@@ -552,4 +552,13 @@ public final class Utils {
     public static String downloadString(String url) {
         return downloadString(url, -1);
     }
+
+    // NOTE: I hate Java.
+    public static void runUnchecked(ThrowingRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception ignored) {
+
+        }
+    }
 }
