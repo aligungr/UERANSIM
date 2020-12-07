@@ -6,10 +6,9 @@
 package tr.havelsan.ueransim.app.gnb.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
+import tr.havelsan.ueransim.app.common.contexts.GnbRrcUeContext;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
 import tr.havelsan.ueransim.rrc.RrcMessage;
-import tr.havelsan.ueransim.utils.Tag;
-import tr.havelsan.ueransim.utils.console.Log;
 
 import java.util.UUID;
 
@@ -18,8 +17,12 @@ public class RrcTransport {
     public static void receiveRrcMessage(GnbRrcContext ctx, UUID ue, RrcMessage message) {
         var ueCtx = ctx.ueMap.get(ue);
         if (ueCtx == null) {
-            Log.error(Tag.FLOW, "UE context could not found in receiveRrcMessage");
-            return;
+            // TODO:
+            ueCtx = new GnbRrcUeContext(ue);
+            ctx.ueMap.put(ue, ueCtx);
+
+            // Log.error(Tag.FLOW, "UE context could not found in receiveRrcMessage");
+            // return;
         }
 
         if (message.ulInformationTransfer != null) {
