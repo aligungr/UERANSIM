@@ -108,7 +108,8 @@ class ServerTask extends NtsTask {
                     break;
                 }
 
-                for (int i = 0; i < length; i++) {
+                buffer[offset++] = (byte) read;
+                for (int i = 0; i < length - 1; i++) {
                     int r;
                     try {
                         r = input.read();
