@@ -10,4 +10,9 @@ public final class Constants {
 
     public static boolean USE_LONG_MNC = true;
     public static boolean TREAT_ERRORS_AS_FATAL = false;
+
+    public static String VERSION;
+    public static int MAJOR;
+    public static int MINOR;
+    public static int PATCH;
 }
