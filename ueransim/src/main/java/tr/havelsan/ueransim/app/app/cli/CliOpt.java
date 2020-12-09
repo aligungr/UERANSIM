@@ -15,17 +15,11 @@ public class CliOpt {
     public static CmdMessage msg;
 
     @CommandLine.Command(/*name = "??",*/ subcommands = {UeCommand.class, GnbCommand.class,})
-    public static class RootCommand implements Runnable {
-        public void run() {
-            System.err.println("slm__");
-        }
+    public static class RootCommand {
     }
 
     @CommandLine.Command(name = "ue", subcommands = {UeCreateCommand.class, UeDeleteCommand.class,})
-    public static class UeCommand implements Runnable {
-        public void run() {
-            System.err.println("slm");
-        }
+    public static class UeCommand {
     }
 
     @CommandLine.Command(name = "create")
@@ -42,10 +36,7 @@ public class CliOpt {
     }
 
     @CommandLine.Command(name = "gnb", subcommands = {GnbCreateCommand.class,})
-    public static class GnbCommand implements Runnable {
-        public void run() {
-
-        }
+    public static class GnbCommand {
     }
 
     @CommandLine.Command(name = "create")
