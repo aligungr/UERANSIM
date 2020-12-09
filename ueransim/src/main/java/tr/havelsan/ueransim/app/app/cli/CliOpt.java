@@ -31,24 +31,25 @@ public class CliOpt {
 
     @CommandLine.Command(
             name = "ue-create",
-            description = "Create and initialize a new UE"
+            description = "Create and initialize a new UE",
+            sortOptions = false
     )
     public static class UeCreateCommand implements Runnable {
         @CommandLine.Option(
-                names = { "-c", "--config" },
+                names = {"-c", "--config"},
                 description = "Use the specified config file for the new UE. If no files are provided, default " +
                         "UE configuration of selected profile is used."
         )
         private File configFile;
 
         @CommandLine.Option(
-                names = { "-i", "--imsi" },
+                names = {"-i", "--imsi"},
                 description = "Use specified SUPI/IMSI number instead of default one."
         )
         private String imsi;
 
         @CommandLine.Option(
-                names = { "-f", "--force-exact" },
+                names = {"-f", "--force-exact"},
                 description = "Do not create a UE if specified configurations are not valid. (For example another " +
                         "UE with same IMSI already exists). Otherwise given configurations are slightly modified " +
                         "to create a unique UE."
