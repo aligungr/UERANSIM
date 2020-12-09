@@ -10,39 +10,67 @@ import tr.havelsan.ueransim.app.common.cli.CmdGnbCreate;
 import tr.havelsan.ueransim.app.common.cli.CmdMessage;
 import tr.havelsan.ueransim.app.common.cli.CmdUeCreate;
 
+import java.io.File;
+
 public class CliOpt {
 
     public static CmdMessage msg;
 
-    @CommandLine.Command(/*name = "??",*/ subcommands = {UeCommand.class, GnbCommand.class,})
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(/*name = "??",*/
+            subcommands = {
+                    GnbCreateCommand.class,
+                    UeCreateCommand.class,
+            }
+    )
     public static class RootCommand {
     }
 
-    @CommandLine.Command(name = "ue", subcommands = {UeCreateCommand.class, UeDeleteCommand.class,})
-    public static class UeCommand {
-    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @CommandLine.Command(name = "create")
+    @CommandLine.Command(
+            name = "ue-create",
+            description = "Create and initialize a new UE"
+    )
     public static class UeCreateCommand implements Runnable {
+        @CommandLine.Option(
+                names = { "-c", "--config" },
+                description = "Use the specified config file for the new UE. If no files are provided, default " +
+                        "UE configuration of selected profile is used."
+        )
+        private File configFile;
+
+        @CommandLine.Option(
+                names = { "-i", "--imsi" },
+                description = "Use specified SUPI/IMSI number instead of default one."
+        )
+        private String imsi;
+
+        @CommandLine.Option(
+                names = { "-f", "--force-exact" },
+                description = "Do not create a UE if specified configurations are not valid. (For example another " +
+                        "UE with same IMSI already exists). Otherwise given configurations are slightly modified " +
+                        "to create a unique UE."
+        )
+        private boolean exact;
+
         public void run() {
             msg = new CmdUeCreate();
         }
     }
 
-    @CommandLine.Command(name = "delete")
-    public static class UeDeleteCommand implements Runnable {
-        public void run() {
-        }
-    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @CommandLine.Command(name = "gnb", subcommands = {GnbCreateCommand.class,})
-    public static class GnbCommand {
-    }
-
-    @CommandLine.Command(name = "create")
+    @CommandLine.Command(
+            name = "gnb-create",
+            description = "Create and initialize a new GNB"
+    )
     public static class GnbCreateCommand implements Runnable {
         public void run() {
             msg = new CmdGnbCreate();
         }
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
