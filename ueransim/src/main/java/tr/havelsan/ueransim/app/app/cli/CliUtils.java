@@ -121,6 +121,11 @@ public class CliUtils {
             var clsName = new String(stream.readOctetString(length).toByteArray(), StandardCharsets.UTF_8);
             var cls = Class.forName(clsName);
 
+            if (!CmdMessage.class.isAssignableFrom(cls)) {
+                onError.accept("ERROR: Bad CLI message class.");
+                return null;
+            }
+
             length = stream.readOctet2I();
             var json = new String(stream.readOctetString(length).toByteArray(), StandardCharsets.UTF_8);
 
