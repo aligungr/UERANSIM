@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.app.cli;
 
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
@@ -18,11 +19,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 class ServerTask extends NtsTask {
-
-    private static final int RECEIVER_BUFFER_SIZE = 8 * 1024;
-    private static final int CYCLE_TYPE_HEARTBEAT = 1;
-    private static final int HEARTBEAT_PERIOD = 8000;
-    private static final int PORT = 49973;
 
     private final CliTask cliTask;
     private final SocketList sockets;
@@ -36,7 +32,7 @@ class ServerTask extends NtsTask {
     private static void acceptorThread(NtsTask task) {
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(Constants.CLI__PORT);
         } catch (IOException e) {
             Log.error(Tag.CLI, "TCP CLI server failure: " + e.getMessage());
             return;
@@ -80,10 +76,11 @@ class ServerTask extends NtsTask {
         final int STATE_SECOND_LENGTH = 1;
         final int STATE_DATA = 2;
 
-        var buffer = new byte[RECEIVER_BUFFER_SIZE];
+        var buffer = new byte[Constants.CLI__RECEIVER_BUFFER_SIZE];
         int offset = 0, length = 0;
         int state = STATE_FIRST_LENGTH;
 
+        outer:
         while (true) {
             if (!socket.isConnected() || socket.isClosed() || socket.isInputShutdown() || socket.isOutputShutdown())
                 break;
@@ -105,7 +102,7 @@ class ServerTask extends NtsTask {
                 length |= read;
                 state = STATE_DATA;
             } else {
-                if (length > RECEIVER_BUFFER_SIZE) {
+                if (length > Constants.CLI__RECEIVER_BUFFER_SIZE) {
                     break;
                 }
 
@@ -115,10 +112,10 @@ class ServerTask extends NtsTask {
                     try {
                         r = input.read();
                     } catch (IOException e) {
-                        break;
+                        break outer;
                     }
                     if (r < 0)
-                        break;
+                        break outer;
                     buffer[offset++] = (byte) r;
                 }
 
@@ -143,7 +140,7 @@ class ServerTask extends NtsTask {
         Log.registerLogger(acceptorThread, Log.getLoggerOrDefault(getThread()));
         acceptorThread.start();
 
-        pushDelayed(new IwPerformCycle(CYCLE_TYPE_HEARTBEAT), HEARTBEAT_PERIOD);
+        pushDelayed(new IwPerformCycle(Constants.CLI__CYCLE_TYPE_HEARTBEAT), Constants.CLI__HEARTBEAT_PERIOD);
 
         while (true) {
             var msg = take();
@@ -172,9 +169,9 @@ class ServerTask extends NtsTask {
                 sockets.writeToClient(client, data);
             } else if (msg instanceof IwPerformCycle) {
                 var type = ((IwPerformCycle) msg).type;
-                if (type == CYCLE_TYPE_HEARTBEAT) {
+                if (type == Constants.CLI__CYCLE_TYPE_HEARTBEAT) {
                     sockets.sweep();
-                    pushDelayed(new IwPerformCycle(CYCLE_TYPE_HEARTBEAT), HEARTBEAT_PERIOD);
+                    pushDelayed(new IwPerformCycle(Constants.CLI__CYCLE_TYPE_HEARTBEAT), Constants.CLI__HEARTBEAT_PERIOD);
                 }
             }
         }

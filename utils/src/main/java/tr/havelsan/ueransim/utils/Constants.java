@@ -15,4 +15,9 @@ public final class Constants {
     public static int MAJOR;
     public static int MINOR;
     public static int PATCH;
+
+    public static final int CLI__RECEIVER_BUFFER_SIZE = 8 * 1024;
+    public static final int CLI__CYCLE_TYPE_HEARTBEAT = 1;
+    public static final int CLI__HEARTBEAT_PERIOD = 8000;
+    public static final int CLI__PORT = 49973;
 }
