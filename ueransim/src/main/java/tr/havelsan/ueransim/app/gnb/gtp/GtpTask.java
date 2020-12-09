@@ -134,7 +134,7 @@ public class GtpTask extends NtsTask {
         public void handleDownlinkPacket(PduSessionResource pduSession, OctetString ipPacket) {
             var downlinkBucket = downlinkBucketForUeId
                     .computeIfAbsent(pduSession, k ->
-                            new TokenBucket(computeDownlinkAMBR(k))
+                            new TokenBucket(computeDownlinkAMBRInByte(k))
                     );
             if (downlinkBucket.tryConsume(ipPacket.length)) {
                 ctx.mrTask.push(new IwDownlinkData(pduSession.ueId, ipPacket));
@@ -144,7 +144,7 @@ public class GtpTask extends NtsTask {
         public void handleUplinkPacket(PduSessionResource pduSession, OctetString ipPacket) throws RuntimeException {
             var uplinkBucket = uplinkBucketForUeId
                     .computeIfAbsent(pduSession, k ->
-                            new TokenBucket(computeUplinkAMBR(k))
+                            new TokenBucket(computeUplinkAMBRInByte(k))
                     );
             var gtpData = getGtpData(ipPacket, pduSession);
             var address = pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray();
@@ -158,7 +158,7 @@ public class GtpTask extends NtsTask {
             }
         }
 
-        private long computeUplinkAMBR(PduSessionResource currentPduSession) {
+        private long computeUplinkAMBRInByte(PduSessionResource currentPduSession) {
             //UE_AMBR_UL = min(sum(UE_APNs_AMBR_UL), UE_AMBR_UL)
             return Long.min(currentPduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateDL.value,
                     ctx.pduSessions.findByUEId(currentPduSession.ueId)
@@ -166,10 +166,10 @@ public class GtpTask extends NtsTask {
                             .map(pduSession -> pduSession
                                     .sessionAggregateMaximumBitRate
                                     .pDUSessionAggregateMaximumBitRateDL.value)
-                            .reduce(0L, Long::sum));
+                            .reduce(0L, Long::sum)) / 8;
         }
 
-        private long computeDownlinkAMBR(PduSessionResource currentPduSession) {
+        private long computeDownlinkAMBRInByte(PduSessionResource currentPduSession) {
             //UE_AMBR_DL = min(sum(UE_APNs_AMBR_DL), UE_AMBR_DL)
             return Long.min(currentPduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateUL.value,
                     ctx.pduSessions.findByUEId(currentPduSession.ueId)
@@ -177,7 +177,7 @@ public class GtpTask extends NtsTask {
                             .map(pduSession -> pduSession
                                     .sessionAggregateMaximumBitRate
                                     .pDUSessionAggregateMaximumBitRateUL.value)
-                            .reduce(0L, Long::sum));
+                            .reduce(0L, Long::sum)) / 8;
         }
 
         private byte[] getGtpData(OctetString ipPacket, PduSessionResource pduSession) {
