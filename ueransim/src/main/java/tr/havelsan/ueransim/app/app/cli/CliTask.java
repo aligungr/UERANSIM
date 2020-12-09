@@ -5,9 +5,9 @@
 
 package tr.havelsan.ueransim.app.app.cli;
 
-import tr.havelsan.ueransim.app.common.cli.CmdEcho;
-import tr.havelsan.ueransim.app.common.cli.CmdErrorIndication;
-import tr.havelsan.ueransim.app.common.cli.CmdMessage;
+import tr.havelsan.ueransim.app.app.AppConfig;
+import tr.havelsan.ueransim.app.app.UeRanSim;
+import tr.havelsan.ueransim.app.common.cli.*;
 import tr.havelsan.ueransim.app.common.itms.IwCliClientMessage;
 import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
@@ -16,11 +16,18 @@ import java.util.UUID;
 
 public class CliTask extends NtsTask {
 
-    private ServerTask serverTask;
+    private final AppConfig appConfig;
+    private final UeRanSim ueransim;
+    private final ServerTask serverTask;
+
+    public CliTask(AppConfig appConfig, UeRanSim ueransim) {
+        this.appConfig = appConfig;
+        this.ueransim = ueransim;
+        this.serverTask = new ServerTask(this);
+    }
 
     @Override
     public void main() {
-        serverTask = new ServerTask(this);
         serverTask.start();
 
         while (true) {
@@ -43,6 +50,12 @@ public class CliTask extends NtsTask {
     private void receiveCmd(UUID client, CmdMessage message) {
         if (message instanceof CmdEcho) {
             sendCmd(client, message);
+        } else if (message instanceof CmdUeCreate) {
+            ueransim.createUe(appConfig.createUeConfig());
+            sendCmd(client, new CmdTerminate(0));
+        } else if (message instanceof CmdGnbCreate) {
+            ueransim.createGnb(appConfig.createGnbConfig());
+            sendCmd(client, new CmdTerminate(0));
         }
     }
 }

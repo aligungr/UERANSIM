@@ -27,13 +27,13 @@ public class AgentApp {
     private void main() {
         appConfig = new AppConfig();
 
-        cliTask = new CliTask();
-        cliTask.start();
-
         dispatchMonitor = new DispatchMonitor(); // started by ueransim instance
 
         ueransim = new AppBuilder()
                 .addMonitor(dispatchMonitor)
                 .build();
+
+        cliTask = new CliTask(appConfig, ueransim);
+        cliTask.start();
     }
 }
