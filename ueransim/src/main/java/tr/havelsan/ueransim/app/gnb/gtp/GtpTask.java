@@ -12,6 +12,8 @@ import tr.havelsan.ueransim.app.common.itms.IwGtpDownlink;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.RateLimiter;
+import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.TokenBucket;
 import tr.havelsan.ueransim.gtp.GtpDecoder;
 import tr.havelsan.ueransim.gtp.GtpEncoder;
 import tr.havelsan.ueransim.gtp.GtpMessage;
@@ -30,26 +32,29 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GtpTask extends NtsTask {
 
     private final GtpContext ctx;
+    private final RateLimiter rateLimiter;
 
     public GtpTask(GnbSimContext ctx) {
         this.ctx = new GtpContext(ctx);
+        this.rateLimiter = new RateLimiterImpl();
     }
 
     @Override
     public void main() {
         ctx.mrTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR);
-
         try {
             ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
+
         } catch (Exception e) {
             Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.host, ctx.gnbCtx.config.gtpPort, e.toString());
             return;
         }
-
         var receiverThread = new Thread(this::udpReceiverThread);
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(getThread()));
         receiverThread.start();
@@ -87,35 +92,13 @@ public class GtpTask extends NtsTask {
             // ignore non IPv4 packets
             return;
         }
-
         var pduSession = ctx.pduSessions.findBySessionId(msg.ueId, msg.pduSessionId);
         if (pduSession == null) {
             Log.error(Tag.GTP, "TEID not found on GTP-U Uplink");
             return;
         }
 
-        var gtp = new GtpMessage();
-        gtp.payload = data;
-        gtp.msgType = new Octet(GtpMessage.MT_G_PDU);
-        gtp.teid = pduSession.upLayer.gTPTunnel.gTP_TEID.value.get4(0);
-        gtp.extHeaders = new ArrayList<>();
-
-        var ul = new UlPduSessionInformation();
-        // TODO: currently using first QSI
-        ul.qfi = new Bit6(pduSession.qosFlows.get(0).qosFlowIdentifier.value);
-
-        var cont = new PduSessionContainerExtHeader();
-        cont.pduSessionInformation = ul;
-        gtp.extHeaders.add(cont);
-
-        try {
-            var gtpData = GtpEncoder.encode(gtp);
-            var address = pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray();
-            var pck = new DatagramPacket(gtpData, gtpData.length, InetAddress.getByAddress(address), 2152);
-            ctx.socket.send(pck);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        rateLimiter.handleUplinkPacket(pduSession, data);
     }
 
     private void handleDownlinkGtp(IwGtpDownlink msg) {
@@ -132,13 +115,84 @@ public class GtpTask extends NtsTask {
             return;
         }
 
-        var ueId = pduSession.ueId;
-        var ipPacket = gtp.payload;
-
-        ctx.mrTask.push(new IwDownlinkData(ueId, ipPacket));
+        rateLimiter.handleDownlinkPacket(pduSession, gtp.payload);
     }
 
     private void handleTunnelCreate(PduSessionResource pduSession) {
         ctx.pduSessions.insert(pduSession);
+    }
+
+    private class RateLimiterImpl implements RateLimiter {
+        private final Map<PduSessionResource, TokenBucket> downlinkBucketForUeId;
+        private final Map<PduSessionResource, TokenBucket> uplinkBucketForUeId;
+
+        public RateLimiterImpl() {
+            downlinkBucketForUeId = new HashMap<>();
+            uplinkBucketForUeId = new HashMap<>();
+        }
+
+        public void handleDownlinkPacket(PduSessionResource pduSession, OctetString ipPacket) {
+            var downlinkBucket = downlinkBucketForUeId
+                    .computeIfAbsent(pduSession, k ->
+                            new TokenBucket(computeDownlinkAMBR(k))
+                    );
+            if (downlinkBucket.tryConsume(ipPacket.length)) {
+                ctx.mrTask.push(new IwDownlinkData(pduSession.ueId, ipPacket));
+            }
+        }
+
+        public void handleUplinkPacket(PduSessionResource pduSession, OctetString ipPacket) throws RuntimeException {
+            var uplinkBucket = uplinkBucketForUeId
+                    .computeIfAbsent(pduSession, k ->
+                            new TokenBucket(computeUplinkAMBR(k))
+                    );
+            var gtpData = getGtpData(ipPacket, pduSession);
+            var address = pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray();
+            try {
+                var pck = new DatagramPacket(gtpData, gtpData.length, InetAddress.getByAddress(address), 2152);
+                if (uplinkBucket.tryConsume(ipPacket.length)) {
+                    ctx.socket.send(pck);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private long computeUplinkAMBR(PduSessionResource currentPduSession) {
+            //UE_AMBR_UL = min(sum(UE_APNs_AMBR_UL), UE_AMBR_UL)
+            return Long.min(currentPduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateDL.value,
+                    ctx.pduSessions.findByUEId(currentPduSession.ueId)
+                            .stream()
+                            .map(pduSession -> pduSession
+                                    .sessionAggregateMaximumBitRate
+                                    .pDUSessionAggregateMaximumBitRateDL.value)
+                            .reduce(0L, Long::sum));
+        }
+
+        private long computeDownlinkAMBR(PduSessionResource currentPduSession) {
+            //UE_AMBR_DL = min(sum(UE_APNs_AMBR_DL), UE_AMBR_DL)
+            return Long.min(currentPduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateUL.value,
+                    ctx.pduSessions.findByUEId(currentPduSession.ueId)
+                            .stream()
+                            .map(pduSession -> pduSession
+                                    .sessionAggregateMaximumBitRate
+                                    .pDUSessionAggregateMaximumBitRateUL.value)
+                            .reduce(0L, Long::sum));
+        }
+
+        private byte[] getGtpData(OctetString ipPacket, PduSessionResource pduSession) {
+            var gtp = new GtpMessage();
+            gtp.payload = ipPacket;
+            gtp.msgType = new Octet(GtpMessage.MT_G_PDU);
+            gtp.teid = pduSession.upLayer.gTPTunnel.gTP_TEID.value.get4(0);
+            gtp.extHeaders = new ArrayList<>();
+            var ul = new UlPduSessionInformation();
+            // TODO: currently using first QSI
+            ul.qfi = new Bit6(pduSession.qosFlows.get(0).qosFlowIdentifier.value);
+            var cont = new PduSessionContainerExtHeader();
+            cont.pduSessionInformation = ul;
+            gtp.extHeaders.add(cont);
+            return GtpEncoder.encode(gtp);
+        }
     }
 }
