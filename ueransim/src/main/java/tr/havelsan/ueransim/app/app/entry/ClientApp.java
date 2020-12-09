@@ -82,6 +82,8 @@ public class ClientApp {
 
         if (CliOpt.msg != null) {
             send(CliOpt.msg);
+        } else {
+            exit(1);
         }
     }
 
