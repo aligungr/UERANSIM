@@ -8,8 +8,8 @@ package tr.havelsan.ueransim.app.app.entry;
 import tr.havelsan.ueransim.app.app.AppBuilder;
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.app.app.cli.CliTask;
 import tr.havelsan.ueransim.app.app.cli.DispatchMonitor;
+import tr.havelsan.ueransim.app.app.cli.server.CliTask;
 
 public class AgentApp {
 
