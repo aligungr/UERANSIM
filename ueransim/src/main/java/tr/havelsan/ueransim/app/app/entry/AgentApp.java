@@ -20,7 +20,7 @@ public class AgentApp {
     private DispatchMonitor dispatchMonitor;
 
     public static void main(String[] args) {
-        BaseApp.main(args);
+        BaseApp.main(args, true);
         new AgentApp().main();
     }
 

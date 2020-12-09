@@ -14,7 +14,7 @@ class BaseApp {
 
     private static boolean initialized = false;
 
-    static void main(String[] args) {
+    static void main(String[] args, boolean performVersionCheck) {
         if (initialized)
             return;
 
@@ -29,15 +29,17 @@ class BaseApp {
 
         readLocalVersion(path + "version");
 
-        Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", Constants.VERSION);
+        if (performVersionCheck) {
+            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", Constants.VERSION);
 
-        ////// /*String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 750);
-        ////// if (remoteVersion == null || localVersion.trim().equals(remoteVersion.trim())) {
-        //////     Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
-        ////// } else {
-        //////     Console.println(AnsiPalette.PAINT_LOG_WARNING, "UERANSIM v%s / WARNING: version v%s is available.", localVersion.trim(), remoteVersion.trim());
-        //////     Utils.sleep(1500);
-        ////// }*/
+            ////// /*String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 750);
+            ////// if (remoteVersion == null || localVersion.trim().equals(remoteVersion.trim())) {
+            //////     Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", localVersion.trim());
+            ////// } else {
+            //////     Console.println(AnsiPalette.PAINT_LOG_WARNING, "UERANSIM v%s / WARNING: version v%s is available.", localVersion.trim(), remoteVersion.trim());
+            //////     Utils.sleep(1500);
+            ////// }*/
+        }
     }
 
     private static void readLocalVersion(String path) {

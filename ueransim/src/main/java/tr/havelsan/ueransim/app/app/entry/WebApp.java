@@ -100,7 +100,7 @@ public class WebApp {
     }
 
     public static void main(String[] args) {
-        BaseApp.main(args);
+        BaseApp.main(args, true);
         new WebApp();
     }
 

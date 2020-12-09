@@ -8,7 +8,7 @@ package tr.havelsan.ueransim.app.app.entry;
 public class MainApp {
 
     public static void main(String[] args) {
-        BaseApp.main(args);
+        BaseApp.main(args, true);
         FlowTestApp.main(args);
     }
 }

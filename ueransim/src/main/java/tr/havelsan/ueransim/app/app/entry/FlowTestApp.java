@@ -34,7 +34,7 @@ public class FlowTestApp {
     }
 
     public static void main(String[] args) {
-        BaseApp.main(args);
+        BaseApp.main(args, true);
         new FlowTestApp();
     }
 
@@ -42,7 +42,7 @@ public class FlowTestApp {
     protected void onTesterInit() {
         Console.println(AnsiPalette.PAINT_DIVIDER, "-----------------------------------------------------------------------------");
 
-        var testCases = procTester.testCases();
+        var testCases = ProcedureTester.testCases();
 
         Console.println(AnsiPalette.PAINT_INPUT, "List of pre-defined procedure tests:");
         for (int i = 0; i < testCases.length; i++) {
