@@ -9,52 +9,95 @@ import tr.havelsan.ueransim.app.app.cli.CliUtils;
 import tr.havelsan.ueransim.app.common.cli.CmdMessage;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
+import tr.havelsan.ueransim.utils.Utils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class CliClient {
+abstract class CliClient {
 
     private static final Object SOCKET_CLOSE = new Object();
+
+    private Socket socket;
+    private InputStream inputStream;
+    private OutputStream outputStream;
 
     private MainTask mainTask;
     private SenderTask senderTask;
     private ListenerTask listenerTask;
-    private CliTerminal cliTerminal;
 
-    private InputStream inputStream;
-    private OutputStream outputStream;
+    private boolean exiting;
 
-    public CliClient() throws Exception {
-        Socket socket;
+    public CliClient() {
         try {
             socket = new Socket("127.0.0.1", Constants.CLI__PORT);
         } catch (ConnectException e) {
             fatalError("ERROR: UERANSIM agent is not running.");
             return;
+        } catch (Exception e) {
+            fatalError("ERROR: CLI socket could not initialized.");
         }
 
-        inputStream = socket.getInputStream();
-        outputStream = socket.getOutputStream();
+        try {
+            inputStream = socket.getInputStream();
+        } catch (Exception e) {
+            Utils.runUnchecked(() -> socket.close());
+
+            fatalError("ERROR: Input socket could not open.");
+            return;
+        }
+
+        try {
+            outputStream = socket.getOutputStream();
+        } catch (Exception e) {
+            Utils.runUnchecked(() -> socket.close());
+            Utils.runUnchecked(() -> inputStream.close());
+
+            fatalError("ERROR: Input socket could not open.");
+            return;
+        }
 
         mainTask = new MainTask();
         senderTask = new SenderTask();
         listenerTask = new ListenerTask();
 
-        cliTerminal = new CliTerminal(mainTask::push);
-
         mainTask.start();
         senderTask.start();
         listenerTask.start();
-
-        cliTerminal.main();
     }
 
-    private static void fatalError(String message) {
+    public final void start() {
+        main();
+    }
+
+    protected abstract void main();
+
+    protected abstract void onReceive(CmdMessage cmd);
+
+    protected final void send(CmdMessage cmd) {
+        mainTask.push(cmd);
+    }
+
+    protected void fatalError(String message) {
+        if (exiting) {
+            System.exit(0);
+            return;
+        }
+
         System.err.println(message);
         System.exit(1);
+    }
+
+    protected void exit() {
+        exiting = true;
+
+        Utils.runUnchecked(() -> inputStream.close());
+        Utils.runUnchecked(() -> outputStream.close());
+        Utils.runUnchecked(() -> socket.close());
+
+        System.exit(0);
     }
 
     private class MainTask extends NtsTask {
@@ -64,10 +107,12 @@ public class CliClient {
             while (true) {
                 var msg = take();
                 if (msg instanceof byte[]) {
-                    var cmd = CliUtils.decodeCmdPdu((byte[]) msg, CliClient::fatalError);
-                    cliTerminal.onReceive(cmd);
+                    var cmd = CliUtils.decodeCmdPdu((byte[]) msg, CliClient.this::fatalError);
+                    onReceive(cmd);
                 } else if (msg == SOCKET_CLOSE) {
-                    cliTerminal.onSocketClose();
+                    if (!exiting) {
+                        fatalError("ERROR: CLI socket closed by agent.");
+                    }
                 } else if (msg instanceof CmdMessage) {
                     senderTask.push(CliUtils.encodeCmdPdu((CmdMessage) msg));
                 }

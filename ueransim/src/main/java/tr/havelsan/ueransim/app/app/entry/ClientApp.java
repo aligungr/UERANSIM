@@ -5,12 +5,12 @@
 
 package tr.havelsan.ueransim.app.app.entry;
 
-import tr.havelsan.ueransim.app.app.cli.client.CliClient;
+import tr.havelsan.ueransim.app.app.cli.client.CommandLineClient;
 
 public class ClientApp {
 
-    public static void main(String[] args) throws Exception {
-        BaseApp.main(args);
-        new CliClient();
+    public static void main(String[] args) {
+        BaseApp.main(args, false);
+        new CommandLineClient().start();
     }
 }
