@@ -3,9 +3,8 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.cli.server;
+package tr.havelsan.ueransim.app.app.cli;
 
-import tr.havelsan.ueransim.app.app.cli.CliUtils;
 import tr.havelsan.ueransim.app.common.cli.CmdEcho;
 import tr.havelsan.ueransim.app.common.cli.CmdErrorIndication;
 import tr.havelsan.ueransim.app.common.cli.CmdMessage;
@@ -44,8 +43,6 @@ public class CliTask extends NtsTask {
     private void receiveCmd(UUID client, CmdMessage message) {
         if (message instanceof CmdEcho) {
             sendCmd(client, message);
-        } else {
-
         }
     }
 }

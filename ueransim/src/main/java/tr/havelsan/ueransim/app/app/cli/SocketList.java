@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.cli.server;
+package tr.havelsan.ueransim.app.app.cli;
 
 import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
 import tr.havelsan.ueransim.utils.BiMap;

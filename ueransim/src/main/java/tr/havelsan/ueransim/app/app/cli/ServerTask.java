@@ -3,9 +3,8 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.cli.server;
+package tr.havelsan.ueransim.app.app.cli;
 
-import tr.havelsan.ueransim.app.app.cli.CliUtils;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
