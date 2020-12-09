@@ -3,8 +3,9 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.cli;
+package tr.havelsan.ueransim.app.app.cli.server;
 
+import tr.havelsan.ueransim.app.app.cli.CliUtils;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
@@ -72,64 +73,10 @@ class ServerTask extends NtsTask {
     }
 
     private static void clientThread(NtsTask task, Socket socket, InputStream input) {
-        final int STATE_FIRST_LENGTH = 0;
-        final int STATE_SECOND_LENGTH = 1;
-        final int STATE_DATA = 2;
-
-        var buffer = new byte[Constants.CLI__RECEIVER_BUFFER_SIZE];
-        int offset = 0, length = 0;
-        int state = STATE_FIRST_LENGTH;
-
-        outer:
-        while (true) {
-            if (!socket.isConnected() || socket.isClosed() || socket.isInputShutdown() || socket.isOutputShutdown())
-                break;
-
-            int read;
-            try {
-                read = input.read();
-            } catch (IOException e) {
-                break;
-            }
-            if (read < 0)
-                break;
-
-            if (state == STATE_FIRST_LENGTH) {
-                length = read;
-                state = STATE_SECOND_LENGTH;
-            } else if (state == STATE_SECOND_LENGTH) {
-                length <<= 8;
-                length |= read;
-                state = STATE_DATA;
-            } else {
-                if (length > Constants.CLI__RECEIVER_BUFFER_SIZE) {
-                    break;
-                }
-
-                buffer[offset++] = (byte) read;
-                for (int i = 0; i < length - 1; i++) {
-                    int r;
-                    try {
-                        r = input.read();
-                    } catch (IOException e) {
-                        break outer;
-                    }
-                    if (r < 0)
-                        break outer;
-                    buffer[offset++] = (byte) r;
-                }
-
-                offset = 0;
-                state = STATE_FIRST_LENGTH;
-
-                var data = new byte[length];
-                System.arraycopy(buffer, 0, data, 0, length);
-
-                task.push(new IwCliServerReceive(socket, data));
-            }
-        }
-
-        task.push(new IwCliSocketClose(socket));
+        CliUtils.listenerLoop(input,
+                bytes -> task.push(new IwCliServerReceive(socket, bytes)),
+                () -> task.push(new IwCliSocketClose(socket))
+        );
     }
 
     @Override

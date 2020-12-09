@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.app.cli;
+package tr.havelsan.ueransim.app.app.cli.server;
 
 import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
 import tr.havelsan.ueransim.utils.BiMap;
@@ -106,9 +106,8 @@ class SocketList {
             }
 
             try {
-                output.write(data.length >> 8 & 0xFF);
-                output.write(data.length & 0xFF);
                 output.write(data);
+                output.flush();
             } catch (IOException e) {
                 close(socket);
                 continue;
