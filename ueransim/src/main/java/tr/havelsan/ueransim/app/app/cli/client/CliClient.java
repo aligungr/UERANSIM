@@ -12,22 +12,29 @@ import tr.havelsan.ueransim.utils.Constants;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 
 public class CliClient {
 
     private static final Object SOCKET_CLOSE = new Object();
 
-    private final MainTask mainTask;
-    private final SenderTask senderTask;
-    private final ListenerTask listenerTask;
-    private final CliTerminal cliTerminal;
+    private MainTask mainTask;
+    private SenderTask senderTask;
+    private ListenerTask listenerTask;
+    private CliTerminal cliTerminal;
 
-    private final InputStream inputStream;
-    private final OutputStream outputStream;
+    private InputStream inputStream;
+    private OutputStream outputStream;
 
     public CliClient() throws Exception {
-        var socket = new Socket("127.0.0.1", Constants.CLI__PORT);
+        Socket socket;
+        try {
+            socket = new Socket("127.0.0.1", Constants.CLI__PORT);
+        } catch (ConnectException e) {
+            fatalError("ERROR: UERANSIM agent is not running.");
+            return;
+        }
 
         inputStream = socket.getInputStream();
         outputStream = socket.getOutputStream();
