@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class ClientApp {
 
@@ -78,19 +77,11 @@ public class ClientApp {
     }
 
     protected void start(String[] args) {
-        var scanner = new Scanner(System.in);
+        CliOpt.msg = null;
+        new CommandLine(new CliOpt.RootCommand()).execute(args);
 
-        System.out.print(">>> ");
-        while (true) {
-
-            var parr = CliUtils.translateCommandline(scanner.nextLine());
-
-            CliOpt.msg = null;
-            new CommandLine(new CliOpt.RootCommand()).execute(parr);
-
-            if (CliOpt.msg != null) {
-                send(CliOpt.msg);
-            }
+        if (CliOpt.msg != null) {
+            send(CliOpt.msg);
         }
     }
 
