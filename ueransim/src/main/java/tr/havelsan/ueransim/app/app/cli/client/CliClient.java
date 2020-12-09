@@ -68,11 +68,11 @@ abstract class CliClient {
         listenerTask.start();
     }
 
-    public final void start() {
-        main();
+    public final void start(String[] args) {
+        main(args);
     }
 
-    protected abstract void main();
+    protected abstract void main(String[] args);
 
     protected abstract void onReceive(CmdMessage cmd);
 
