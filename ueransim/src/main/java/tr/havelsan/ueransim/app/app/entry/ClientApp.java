@@ -11,6 +11,6 @@ public class ClientApp {
 
     public static void main(String[] args) {
         BaseApp.main(args, false);
-        new CommandLineClient().start();
+        new CommandLineClient().start(args);
     }
 }
