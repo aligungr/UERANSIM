@@ -6,7 +6,9 @@
 package tr.havelsan.ueransim.app.app.cli.client;
 
 import tr.havelsan.ueransim.app.app.cli.CliUtils;
+import tr.havelsan.ueransim.app.common.cli.CmdHeartBeat;
 import tr.havelsan.ueransim.app.common.cli.CmdMessage;
+import tr.havelsan.ueransim.app.common.itms.IwPerformCycle;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Utils;
@@ -102,8 +104,16 @@ abstract class CliClient {
 
     private class MainTask extends NtsTask {
 
+        public MainTask() {
+            super(true);
+        }
+
         @Override
         public void main() {
+            final int heartbeat = Constants.CLI__HEARTBEAT_PERIOD / 2;
+
+            pushDelayed(new IwPerformCycle(Constants.CLI__CYCLE_TYPE_HEARTBEAT), heartbeat);
+
             while (true) {
                 var msg = take();
                 if (msg instanceof byte[]) {
@@ -115,6 +125,11 @@ abstract class CliClient {
                     }
                 } else if (msg instanceof CmdMessage) {
                     senderTask.push(CliUtils.encodeCmdPdu((CmdMessage) msg));
+                } else if (msg instanceof IwPerformCycle) {
+                    if (((IwPerformCycle) msg).type == Constants.CLI__CYCLE_TYPE_HEARTBEAT) {
+                        send(new CmdHeartBeat());
+                        pushDelayed(msg, heartbeat);
+                    }
                 }
             }
         }
