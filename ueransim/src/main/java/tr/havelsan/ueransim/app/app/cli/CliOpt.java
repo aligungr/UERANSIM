@@ -49,13 +49,13 @@ public class CliOpt {
         private String imsi;
 
         @CommandLine.Option(
-                names = {"-K", "--key"},
+                names = {"-k", "--key"},
                 description = "Use specified KEY instead of default one."
         )
         private String key;
 
         @CommandLine.Option(
-                names = {"-P", "--op"},
+                names = {"-p", "--op"},
                 description = "Use specified OP instead of default one."
         )
         private String op;
