@@ -13,6 +13,8 @@ import tr.havelsan.ueransim.app.common.itms.IwPerformCycle;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.console.Console;
+import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.io.InputStream;
@@ -114,7 +116,7 @@ public class ClientApp {
             return;
         }
 
-        System.err.println(message);
+        Console.println(AnsiPalette.PAINT_LOG_ERROR, message);
         System.exit(1);
     }
 
