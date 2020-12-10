@@ -20,4 +20,11 @@ public interface RateLimiter {
      * @param ipPacket the single IP packet.
      */
     void handleUplinkPacket(PduSessionResource pduSession, OctetString ipPacket);
+
+    /**
+     * It creates or update the bucket with a capacity equals to min(sum(UE_APN_AMBR),UE_AMBR).
+     * It has to be called after a new PDU Session is established.
+     * @param newPduSession the new PDU session
+     */
+    void insertOrUpdateBucket(PduSessionResource newPduSession);
 }
