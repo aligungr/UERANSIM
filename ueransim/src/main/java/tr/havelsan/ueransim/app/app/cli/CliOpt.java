@@ -65,7 +65,7 @@ public class CliOpt {
                 imsi = imsi.substring("imsi-".length());
 
             var msg = new CmdUeCreate();
-            msg.configFile = configFile.getAbsolutePath();
+            msg.configFile = configFile != null ? configFile.getAbsolutePath() : null;
             msg.imsi = imsi;
             msg.key = key;
             msg.op = op;
