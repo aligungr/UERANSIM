@@ -19,6 +19,7 @@ import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.utils.exceptions.SimException;
 
 import java.util.*;
 
@@ -103,11 +104,16 @@ public class UeRanSim {
         return ctx.ctxId;
     }
 
-    public UUID createUe(UeConfig config) {
-        // TODO: Maybe check for unique node name
-
-        var ctx = UeNode.createContext(this, config);
+    public UUID createUe(UeConfig config) throws SimException {
+        UeSimContext ctx;
         synchronized (this) {
+            for (var ue : ueMap.values()) {
+                if (ue.ueConfig.supi.equals(config.supi)) {
+                    throw new SimException("Another UE with the same IMSI already exists. Please use another IMSI.");
+                }
+            }
+
+            ctx = UeNode.createContext(this, config);
             ueMap.put(ctx.ctxId, ctx);
         }
         UeNode.run(ctx);

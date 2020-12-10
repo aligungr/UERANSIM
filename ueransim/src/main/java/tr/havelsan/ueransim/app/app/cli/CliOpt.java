@@ -49,15 +49,28 @@ public class CliOpt {
         private String imsi;
 
         @CommandLine.Option(
-                names = {"-f", "--force-exact"},
-                description = "Do not create a UE if specified configurations are not valid. (For example another " +
-                        "UE with same IMSI already exists). Otherwise given configurations are slightly modified " +
-                        "to create a unique UE."
+                names = {"-K", "--key"},
+                description = "Use specified KEY instead of default one."
         )
-        private boolean exact;
+        private String key;
+
+        @CommandLine.Option(
+                names = {"-P", "--op"},
+                description = "Use specified OP instead of default one."
+        )
+        private String op;
 
         public void run() {
-            msg = new CmdUeCreate();
+            if (imsi != null && imsi.startsWith("imsi-"))
+                imsi = imsi.substring("imsi-".length());
+
+            var msg = new CmdUeCreate();
+            msg.configFile = configFile.getAbsolutePath();
+            msg.imsi = imsi;
+            msg.key = key;
+            msg.op = op;
+
+            CliOpt.msg = msg;
         }
     }
 

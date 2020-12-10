@@ -13,6 +13,7 @@ import tr.havelsan.ueransim.app.common.itms.IwPerformCycle;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Utils;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -78,7 +79,9 @@ public class ClientApp {
 
     protected void start(String[] args) {
         CliOpt.msg = null;
-        new CommandLine(new CliOpt.RootCommand()).execute(args);
+        new CommandLine(new CliOpt.RootCommand())
+                .registerConverter(OctetString.class, OctetString::new)
+                .execute(args);
 
         if (CliOpt.msg != null) {
             send(CliOpt.msg);
@@ -95,6 +98,8 @@ public class ClientApp {
         } else if (cmd instanceof CmdPrint) {
             System.out.println(((CmdPrint) cmd).message);
         } else if (cmd instanceof CmdTerminate) {
+            if (((CmdTerminate) cmd).finalOutput != null)
+                System.out.println(((CmdTerminate) cmd).finalOutput);
             exit(((CmdTerminate) cmd).code);
         }
     }

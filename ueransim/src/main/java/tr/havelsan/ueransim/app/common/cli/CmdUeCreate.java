@@ -6,4 +6,8 @@
 package tr.havelsan.ueransim.app.common.cli;
 
 public class CmdUeCreate extends CmdMessage {
+    public String configFile;
+    public String imsi;
+    public String key;
+    public String op;
 }

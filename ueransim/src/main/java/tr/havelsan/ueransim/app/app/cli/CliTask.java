@@ -7,10 +7,16 @@ package tr.havelsan.ueransim.app.app.cli;
 
 import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
+import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.cli.*;
+import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.itms.IwCliClientMessage;
 import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
+import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.mts.ImplicitTypedObject;
+import tr.havelsan.ueransim.mts.MtsContext;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.UUID;
 
@@ -48,14 +54,46 @@ public class CliTask extends NtsTask {
     }
 
     private void receiveCmd(UUID client, CmdMessage message) {
-        if (message instanceof CmdEcho) {
-            sendCmd(client, message);
-        } else if (message instanceof CmdUeCreate) {
-            ueransim.createUe(appConfig.createUeConfig());
-            sendCmd(client, new CmdTerminate(0));
-        } else if (message instanceof CmdGnbCreate) {
-            ueransim.createGnb(appConfig.createGnbConfig());
-            sendCmd(client, new CmdTerminate(0));
+        try {
+            if (message instanceof CmdEcho) {
+                sendCmd(client, message);
+            } else if (message instanceof CmdUeCreate) {
+                receiveUeCreate(client, (CmdUeCreate) message);
+            } else if (message instanceof CmdGnbCreate) {
+                ueransim.createGnb(appConfig.createGnbConfig());
+                sendCmd(client, new CmdTerminate(0, "gNB created."));
+            }
+        } catch (Exception e) {
+            sendCmd(client, new CmdErrorIndication(e.getMessage()));
         }
+    }
+
+    private void receiveUeCreate(UUID client, CmdUeCreate cmd) {
+        UeConfig refConfig;
+
+        if (cmd.configFile != null) {
+            var mts = new MtsContext();
+            MtsInitializer.initDefaultMts(mts);
+
+            refConfig = mts.constructor.construct(UeConfig.class,
+                    ((ImplicitTypedObject) mts.decoder.decode(cmd.configFile)), true);
+        } else {
+            refConfig = appConfig.createUeConfig();
+        }
+
+        var config = new UeConfig(
+                cmd.key != null ? new OctetString(cmd.key) : refConfig.key,
+                cmd.op != null ? new OctetString(cmd.op) : refConfig.op,
+                refConfig.amf,
+                refConfig.imei,
+                cmd.imsi != null ? new Supi("imsi", cmd.imsi) : refConfig.supi,
+                refConfig.plmn,
+                refConfig.smsOverNasSupported,
+                refConfig.requestedNssai,
+                refConfig.dnn
+        );
+
+        ueransim.createUe(config);
+        sendCmd(client, new CmdTerminate(0, "UE created %s.", config.supi));
     }
 }

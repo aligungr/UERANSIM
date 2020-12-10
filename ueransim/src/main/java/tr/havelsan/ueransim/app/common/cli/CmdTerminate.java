@@ -7,8 +7,10 @@ package tr.havelsan.ueransim.app.common.cli;
 
 public class CmdTerminate extends CmdMessage {
     public final int code;
+    public final String finalOutput;
 
-    public CmdTerminate(int code) {
+    public CmdTerminate(int code, String finalOutput, Object... args) {
         this.code = code;
+        this.finalOutput = String.format(finalOutput, args);
     }
 }
