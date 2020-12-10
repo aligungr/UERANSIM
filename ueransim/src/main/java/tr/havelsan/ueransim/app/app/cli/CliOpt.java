@@ -9,6 +9,7 @@ import picocli.CommandLine;
 import tr.havelsan.ueransim.app.common.cli.CmdGnbCreate;
 import tr.havelsan.ueransim.app.common.cli.CmdMessage;
 import tr.havelsan.ueransim.app.common.cli.CmdUeCreate;
+import tr.havelsan.ueransim.app.common.cli.CmdUeList;
 
 import java.io.File;
 
@@ -71,6 +72,20 @@ public class CliOpt {
             msg.op = op;
 
             CliOpt.msg = msg;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "ue-list",
+            description = "List all the UEs associated with this UERANSIM agent",
+            sortOptions = false
+    )
+    public static class UeListCommand implements Runnable {
+
+        public void run() {
+            msg = new CmdUeList();
         }
     }
 

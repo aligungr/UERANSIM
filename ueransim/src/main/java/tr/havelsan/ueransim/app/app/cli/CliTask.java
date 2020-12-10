@@ -62,6 +62,8 @@ public class CliTask extends NtsTask {
             } else if (message instanceof CmdGnbCreate) {
                 ueransim.createGnb(appConfig.createGnbConfig());
                 sendCmd(client, new CmdTerminate(0, "gNB created."));
+            } else if (message instanceof CmdUeList) {
+                receiveUeList(client, (CmdUeList) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -95,5 +97,9 @@ public class CliTask extends NtsTask {
 
         ueransim.createUe(config);
         sendCmd(client, new CmdTerminate(0, "UE created %s.", config.supi));
+    }
+
+    private void receiveUeList(UUID client, CmdUeList cmd) {
+        // TODO
     }
 }
