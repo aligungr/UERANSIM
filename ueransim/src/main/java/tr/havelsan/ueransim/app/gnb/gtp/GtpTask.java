@@ -33,8 +33,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class GtpTask extends NtsTask {
 
@@ -158,28 +156,11 @@ public class GtpTask extends NtsTask {
 
         @Override
         public void insertOrUpdateBucket(PduSessionResource newPduSession) {
-            /*uplinkBucketForUeId.compute(newPduSession.ueId, (ueId, bucket) ->
-                    getComputeFunction(this::computeUplinkAMBRInByte, newPduSession).apply(ueId, bucket));
-            downlinkBucketForUeId.compute(newPduSession.ueId, (ueId, bucket) ->
-                    getComputeFunction(this::computeDownlinkAMBRInByte, newPduSession).apply(ueId, bucket));*/
             uplinkBucketForUeId.put(newPduSession.ueId,
                     TokenBucketBuilder.createTokenBucket(computeUplinkAMBRInByte(newPduSession)));
             downlinkBucketForUeId.put(newPduSession.ueId,
                     TokenBucketBuilder.createTokenBucket(computeDownlinkAMBRInByte(newPduSession)));
         }
-
-        /*private BiFunction<UUID, TokenBucket, TokenBucket> getComputeFunction(
-                Function<PduSessionResource, Optional<Long>> getCapacity, PduSessionResource newPduSession) {
-            return (ueId, bucket) -> {
-                Optional<Long> capacity = getCapacity.apply(newPduSession);
-                if (bucket == null) {
-                    TokenBucketBuilder.createTokenBucket(capacity);
-                } else {
-                    bucket.updateCapacity(capacity);
-                }
-                return bucket;
-            };
-        }*/
 
         private Optional<Long> computeUplinkAMBRInByte(PduSessionResource currentPduSession) {
             Optional<Long> capacity = Optional.empty();
@@ -195,7 +176,6 @@ public class GtpTask extends NtsTask {
             } catch (NullPointerException e) {
                 //Silently ignored.
             }
-
             return capacity;
         }
 
@@ -213,7 +193,6 @@ public class GtpTask extends NtsTask {
             } catch (NullPointerException e) {
                 //Silently ignored.
             }
-
             return capacity;
         }
 

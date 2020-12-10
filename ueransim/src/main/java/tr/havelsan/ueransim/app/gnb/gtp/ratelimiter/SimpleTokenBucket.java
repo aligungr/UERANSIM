@@ -1,5 +1,11 @@
 package tr.havelsan.ueransim.app.gnb.gtp.ratelimiter;
 
+/**
+ * It represents a simple TokenBucket. In order to save resources is a passive entity: it computes refill tokens number
+ * based on the time elapsed between the call to the tryConsume method and the next. In this implementation a token
+ * corresponds to a Byte.
+ * https://github.com/vladimir-bukhtoyarov/bucket4j/blob/master/doc-pages/token-bucket-brief-overview.md
+ */
 class SimpleTokenBucket implements TokenBucket {
 
     private final static long REFILL_PERIOD = 1000L;
@@ -29,11 +35,6 @@ class SimpleTokenBucket implements TokenBucket {
             availableTokens -= numberTokens;
             return true;
         }
-    }
-
-    @Override
-    public void updateCapacity(long newByteCapacity) {
-        this.capacity = newByteCapacity;
     }
 
     /*
