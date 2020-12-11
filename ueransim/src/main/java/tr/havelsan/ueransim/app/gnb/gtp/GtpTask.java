@@ -12,9 +12,8 @@ import tr.havelsan.ueransim.app.common.itms.IwGtpDownlink;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.RateLimiter;
+import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.IRateLimiter;
 import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.TokenBucket;
-import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.TokenBucketBuilder;
 import tr.havelsan.ueransim.gtp.GtpDecoder;
 import tr.havelsan.ueransim.gtp.GtpEncoder;
 import tr.havelsan.ueransim.gtp.GtpMessage;
@@ -32,12 +31,16 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
 
 public class GtpTask extends NtsTask {
 
     private final GtpContext ctx;
-    private final RateLimiter rateLimiter;
+    private final IRateLimiter rateLimiter;
 
     public GtpTask(GnbSimContext ctx) {
         this.ctx = new GtpContext(ctx);
@@ -87,6 +90,7 @@ public class GtpTask extends NtsTask {
 
     private void handleUplinkData(IwUplinkData msg) {
         var data = msg.ipData;
+
         if ((data.get(0) >> 4 & 0xF) != 4) {
             // ignore non IPv4 packets
             return;
@@ -122,7 +126,7 @@ public class GtpTask extends NtsTask {
         rateLimiter.insertOrUpdateBucket(pduSession);
     }
 
-    private class RateLimiterImpl implements RateLimiter {
+    private final class RateLimiterImpl implements IRateLimiter {
         private final Map<UUID, TokenBucket> downlinkBucketForUeId;
         private final Map<UUID, TokenBucket> uplinkBucketForUeId;
 
@@ -131,17 +135,18 @@ public class GtpTask extends NtsTask {
             uplinkBucketForUeId = new HashMap<>();
         }
 
-        @Override
-        public void handleDownlinkPacket(PduSessionResource pduSession, OctetString ipPacket) {
+        public void handleDownlinkPacket(final PduSessionResource pduSession, final OctetString ipPacket) {
             var downlinkBucket = downlinkBucketForUeId.get(pduSession.ueId);
+
             if (downlinkBucket.tryConsume(ipPacket.length)) {
                 ctx.mrTask.push(new IwDownlinkData(pduSession.ueId, ipPacket));
             }
         }
 
-        @Override
-        public void handleUplinkPacket(PduSessionResource pduSession, OctetString ipPacket) throws RuntimeException {
+        public void handleUplinkPacket(final PduSessionResource pduSession,
+                                       final OctetString ipPacket) throws RuntimeException {
             var uplinkBucket = uplinkBucketForUeId.get(pduSession.ueId);
+
             var gtpData = getGtpData(ipPacket, pduSession);
             var address = pduSession.upLayer.gTPTunnel.transportLayerAddress.value.toByteArray();
             try {
@@ -155,48 +160,67 @@ public class GtpTask extends NtsTask {
         }
 
         @Override
-        public void insertOrUpdateBucket(PduSessionResource newPduSession) {
-            uplinkBucketForUeId.put(newPduSession.ueId,
-                    TokenBucketBuilder.createTokenBucket(computeUplinkAMBRInByte(newPduSession)));
-            downlinkBucketForUeId.put(newPduSession.ueId,
-                    TokenBucketBuilder.createTokenBucket(computeDownlinkAMBRInByte(newPduSession)));
-        }
+        public void insertOrUpdateBucket(final PduSessionResource pduSession) {
+            var ueId = pduSession.ueId;
 
-        private Optional<Long> computeUplinkAMBRInByte(PduSessionResource currentPduSession) {
-            Optional<Long> capacity = Optional.empty();
-            try {
-                //UE_AMBR_UL = min(sum(UE_APNs_AMBR_UL), UE_AMBR_UL)
-                capacity = Optional.of(Long.min(currentPduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateDL.value,
-                        ctx.pduSessions.findByUEId(currentPduSession.ueId)
-                                .stream()
-                                .map(pduSession -> pduSession
-                                        .sessionAggregateMaximumBitRate
-                                        .pDUSessionAggregateMaximumBitRateDL.value)
-                                .reduce(0L, Long::sum)) / 8);
-            } catch (NullPointerException e) {
-                //Silently ignored.
+            var downlinkCapacity = computeDownlinkAmbrInBit(pduSession);
+            var currentDownlinkBucket = downlinkBucketForUeId
+                    .putIfAbsent(ueId, new TokenBucket(downlinkCapacity));
+            if(currentDownlinkBucket != null) {
+                currentDownlinkBucket.updateCapacity(downlinkCapacity);
             }
-            return capacity;
-        }
 
-        private Optional<Long> computeDownlinkAMBRInByte(PduSessionResource currentPduSession) {
-            Optional<Long> capacity = Optional.empty();
-            try {
-                //UE_AMBR_DL = min(sum(UE_APNs_AMBR_DL), UE_AMBR_DL)
-                capacity = Optional.of(Long.min(currentPduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateUL.value,
-                        ctx.pduSessions.findByUEId(currentPduSession.ueId)
-                                .stream()
-                                .map(pduSession -> pduSession
-                                        .sessionAggregateMaximumBitRate
-                                        .pDUSessionAggregateMaximumBitRateUL.value)
-                                .reduce(0L, Long::sum)) / 8);
-            } catch (NullPointerException e) {
-                //Silently ignored.
+            var uplinkCapacity = computeUplinkAmbrInBit(pduSession);
+            var currentUplinkBucket = uplinkBucketForUeId.putIfAbsent(ueId, new TokenBucket(uplinkCapacity));
+            if (currentUplinkBucket != null) {
+                currentUplinkBucket.updateCapacity(uplinkCapacity);
             }
-            return capacity;
         }
 
-        private byte[] getGtpData(OctetString ipPacket, PduSessionResource pduSession) {
+        private long computeUplinkAmbrInBit(final PduSessionResource currentPduSession) {
+            // UE_AMBR_UL = min(sum(UE_APNs_AMBR_UL), UE_AMBR_UL)
+
+            return computeAmbrInBit(currentPduSession,
+                    pduSession -> pduSession.sessionAggregateMaximumBitRate.pDUSessionAggregateMaximumBitRateUL.value,
+                    pduSession -> pduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateUL.value);
+        }
+
+        private long computeDownlinkAmbrInBit(final PduSessionResource currentPduSession) {
+            // UE_AMBR_DL = min(sum(UE_APNs_AMBR_DL), UE_AMBR_DL)
+
+            return computeAmbrInBit(currentPduSession,
+                    pduSession -> pduSession.sessionAggregateMaximumBitRate.pDUSessionAggregateMaximumBitRateDL.value,
+                    pduSession -> pduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateDL.value);
+        }
+
+        private long computeAmbrInBit(final PduSessionResource currentPduSession,
+                                      final Function<PduSessionResource, Long> getApnAmbr,
+                                      final Function<PduSessionResource, Long> getUeAmbr) {
+            var allSessionAmbr = 0L;
+            var atLeastOneSessionAmbr = false;
+            for (var pduSession:
+                    ctx.pduSessions.findByUEId(currentPduSession.ueId)) {
+                try {
+                    allSessionAmbr += getApnAmbr.apply(pduSession);
+                    atLeastOneSessionAmbr = true;
+                } catch (NullPointerException e) {
+                    // Silently ignored.
+                }
+
+            }
+            try {
+                var ueAmbr = getUeAmbr.apply(currentPduSession);
+                return Long.min(ueAmbr, allSessionAmbr) / 8;
+            } catch (NullPointerException e) {
+                if(atLeastOneSessionAmbr) {
+                    return allSessionAmbr / 8;
+                } else{
+                    return -1;
+                }
+            }
+        }
+
+        private byte[] getGtpData(final OctetString ipPacket, final PduSessionResource pduSession) {
             var gtp = new GtpMessage();
             gtp.payload = ipPacket;
             gtp.msgType = new Octet(GtpMessage.MT_G_PDU);

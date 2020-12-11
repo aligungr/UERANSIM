@@ -6,7 +6,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 /**
  * Interface for RateLimiter.
  */
-public interface RateLimiter {
+public interface IRateLimiter {
     /**
      * Handles downlink IP packets.
      * @param pduSession the PDU session of which packets must be managed
@@ -22,9 +22,8 @@ public interface RateLimiter {
     void handleUplinkPacket(PduSessionResource pduSession, OctetString ipPacket);
 
     /**
-     * It creates or update the bucket with a capacity equals to min(sum(UE_APN_AMBR),UE_AMBR).
-     * It has to be called after a new PDU Session is established.
-     * @param newPduSession the new PDU session
+     * Insert or update bucket based on the new PDU session established.
+     * @param pduSession the new PDU session.
      */
-    void insertOrUpdateBucket(PduSessionResource newPduSession);
+    void insertOrUpdateBucket(PduSessionResource pduSession);
 }
