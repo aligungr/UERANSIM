@@ -38,7 +38,7 @@ clean: FORCE
 	(cd native/app-native && make clean)
 	(cd native/uesimtun && make -f tun-agent.mk clean)
 	(cd native/uesimtun && make -f ue-binder.mk clean)
-	mvn clean
+	mvn -q clean
 	@printf "Clean operation is done.${NC}\n"
 
 FORCE:
