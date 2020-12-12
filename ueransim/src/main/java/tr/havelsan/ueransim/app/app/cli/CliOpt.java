@@ -23,6 +23,7 @@ public class CliOpt {
             subcommands = {
                     GnbCreateCommand.class,
                     UeCreateCommand.class,
+                    UeListCommand.class,
             }
     )
     public static class RootCommand {

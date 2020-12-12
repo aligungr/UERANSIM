@@ -18,6 +18,7 @@ import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class CliTask extends NtsTask {
@@ -96,10 +97,36 @@ public class CliTask extends NtsTask {
         );
 
         ueransim.createUe(config);
-        sendCmd(client, new CmdTerminate(0, "UE created %s.", config.supi));
+        sendCmd(client, new CmdTerminate(0, "UE created: %s.", config.supi));
     }
 
     private void receiveUeList(UUID client, CmdUeList cmd) {
-        // TODO
+        var ueNameList = new ArrayList<String>();
+
+        for (var ueId : ueransim.allUes()) {
+            var ctx = ueransim.findUe(ueId);
+            if (ctx == null)
+                continue;
+            ueNameList.add(ctx.nodeName);
+        }
+
+        var sb = new StringBuilder();
+        sb.append("List of UE devices:\n");
+
+        for (var name : ueNameList) {
+            sb.append("    ");
+            sb.append("- ");
+            sb.append(name);
+            sb.append("\n");
+        }
+
+        if (ueNameList.isEmpty()) {
+            sb.append("    - No UEs are available.\n");
+        }
+
+        sb.append("\nTotal number of UE: ");
+        sb.append(ueNameList.size());
+
+        sendCmd(client, new CmdTerminate(0, sb.toString().trim()));
     }
 }
