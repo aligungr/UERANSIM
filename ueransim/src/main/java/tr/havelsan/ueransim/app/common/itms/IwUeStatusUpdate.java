@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
+import tr.havelsan.ueransim.app.common.PduSession;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
@@ -13,6 +14,7 @@ public class IwUeStatusUpdate {
     public static final int CONNECTED_GNB = 1;
     public static final int MM_STATE = 2;
     public static final int RM_STATE = 3;
+    public static final int SESSION_ESTABLISHMENT = 4;
 
     public final int what;
 
@@ -25,6 +27,9 @@ public class IwUeStatusUpdate {
 
     // RM_STATE
     public ERmState rmState;
+
+    // SESSION_ESTABLISHMENT
+    public PduSession pduSession;
 
     public IwUeStatusUpdate(int what) {
         this.what = what;

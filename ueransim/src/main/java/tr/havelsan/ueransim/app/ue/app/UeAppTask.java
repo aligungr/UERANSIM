@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.ue.app;
 
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
+import tr.havelsan.ueransim.app.common.info.UePduSessionInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -17,6 +18,8 @@ import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
+
+import java.util.LinkedHashMap;
 
 public class UeAppTask extends NtsTask {
 
@@ -105,6 +108,19 @@ public class UeAppTask extends NtsTask {
             case IwUeStatusUpdate.MM_STATE:
                 statusInfo.mmState = msg.mmSubState.toString();
                 break;
+            case IwUeStatusUpdate.SESSION_ESTABLISHMENT:
+                var pduSessionInfo = new UePduSessionInfo();
+                pduSessionInfo.id = msg.pduSession.id.intValue();
+                pduSessionInfo.type = msg.pduSession.sessionType.pduSessionType.name();
+
+                var address = msg.pduSession.pduAddress.pduAddressInformation.toHexString();
+                if (msg.pduSession.pduAddress.sessionType == EPduSessionType.IPV4 || msg.pduSession.pduAddress.sessionType == EPduSessionType.IPV6) {
+                    address = Utils.byteArrayToIpString(msg.pduSession.pduAddress.pduAddressInformation.toByteArray());
+                }
+                pduSessionInfo.address = address;
+
+                statusInfo.pduSessions.put(msg.pduSession.id.intValue(), pduSessionInfo);
+                break;
         }
     }
 
@@ -114,6 +130,10 @@ public class UeAppTask extends NtsTask {
         inf.connectedGnb = statusInfo.connectedGnb;
         inf.mmState = statusInfo.mmState;
         inf.rmState = statusInfo.rmState;
+        inf.pduSessions = new LinkedHashMap<>();
+        for (var entry : statusInfo.pduSessions.entrySet()) {
+            inf.pduSessions.put(entry.getKey(), entry.getValue());
+        }
         return inf;
     }
 }

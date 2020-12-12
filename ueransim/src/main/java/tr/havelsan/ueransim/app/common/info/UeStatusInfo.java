@@ -5,9 +5,16 @@
 
 package tr.havelsan.ueransim.app.common.info;
 
+import java.util.LinkedHashMap;
+
 public class UeStatusInfo {
     public boolean isConnected;
     public String connectedGnb;
     public String mmState;
     public String rmState;
+    public LinkedHashMap<Integer, UePduSessionInfo> pduSessions;
+
+    public UeStatusInfo() {
+        this.pduSessions = new LinkedHashMap<>();
+    }
 }
