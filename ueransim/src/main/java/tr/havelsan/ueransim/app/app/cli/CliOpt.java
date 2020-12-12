@@ -112,8 +112,25 @@ public class CliOpt {
             description = "Create and initialize a new GNB"
     )
     public static class GnbCreateCommand implements Runnable {
+        @CommandLine.Option(
+                names = {"-c", "--config"},
+                description = "Use the specified config file for the new gNB. If no files are provided, default " +
+                        "gNB configuration of selected profile is used."
+        )
+        private File configFile;
+
+        @CommandLine.Option(
+                names = {"-i", "--id"},
+                description = "Use specified ID instead of default one."
+        )
+        private int id;
+
         public void run() {
-            msg = new CmdGnbCreate();
+            var msg = new CmdGnbCreate();
+            msg.configFile = configFile != null ? configFile.getAbsolutePath() : null;
+            msg.id = id;
+
+            CliOpt.msg = msg;
         }
     }
 

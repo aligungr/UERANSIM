@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.cli.*;
+import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.IwCliClientMessage;
@@ -68,8 +69,7 @@ public class CliTask extends NtsTask {
             } else if (message instanceof CmdUeCreate) {
                 receiveUeCreate(client, (CmdUeCreate) message);
             } else if (message instanceof CmdGnbCreate) {
-                ueransim.createGnb(appConfig.createGnbConfig());
-                sendCmd(client, new CmdTerminate(0, "gNB created."));
+                receiveGnbCreate(client, (CmdGnbCreate) message);
             } else if (message instanceof CmdUeList) {
                 receiveUeList(client, (CmdUeList) message);
             } else if (message instanceof CmdUeStatus) {
@@ -78,6 +78,23 @@ public class CliTask extends NtsTask {
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
         }
+    }
+
+    private void receiveGnbCreate(UUID client, CmdGnbCreate cmd) {
+        GnbConfig refConfig;
+
+        if (cmd.configFile != null) {
+            var mts = new MtsContext();
+            MtsInitializer.initDefaultMts(mts);
+
+            refConfig = mts.constructor.construct(GnbConfig.class,
+                    ((ImplicitTypedObject) mts.decoder.decode(cmd.configFile)), true);
+        } else {
+            refConfig = appConfig.createGnbConfig();
+        }
+
+        ueransim.createGnb(refConfig);
+        sendCmd(client, new CmdTerminate(0, "gNB created."));
     }
 
     private void receiveUeCreate(UUID client, CmdUeCreate cmd) {

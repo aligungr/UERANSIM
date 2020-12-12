@@ -6,4 +6,6 @@
 package tr.havelsan.ueransim.app.common.cli;
 
 public class CmdGnbCreate extends CmdMessage {
+    public String configFile;
+    public int id;
 }

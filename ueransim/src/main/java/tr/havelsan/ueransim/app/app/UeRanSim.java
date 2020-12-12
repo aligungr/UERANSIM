@@ -109,6 +109,10 @@ public class UeRanSim {
     public UUID createGnb(GnbConfig config) {
         var ctx = GnbNode.createContext(this, config);
         synchronized (this) {
+            if (gnbMap.size() > 0) {
+                throw new SimException("There is an already gNB. Multiple gNB feature is not supported yet.");
+            }
+
             if (ctxByNodeName.containsKey(ctx.nodeName)) {
                 throw new SimException("Another gNB with the same ID already exists. Please use another ID.");
             }
