@@ -26,7 +26,8 @@ public class CliOpt {
                     UeStatusCommand.class,
                     SessionCreateCommand.class,
                     UePingCommand.class,
-            }
+            },
+            mixinStandardHelpOptions = true
     )
     public static class RootCommand {
     }
@@ -36,7 +37,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "ue-create",
             description = "Create and initialize a new UE",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class UeCreateCommand implements Runnable {
         @CommandLine.Option(
@@ -83,7 +85,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "ue-list",
             description = "List all the UEs associated with this UERANSIM agent",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class UeListCommand implements Runnable {
         public void run() {
@@ -96,7 +99,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "ue-status",
             description = "Dump some information about specified UE's general status",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class UeStatusCommand implements Runnable {
         @CommandLine.Parameters(
@@ -113,7 +117,9 @@ public class CliOpt {
 
     @CommandLine.Command(
             name = "gnb-create",
-            description = "Create and initialize a new GNB"
+            description = "Create and initialize a new GNB",
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class GnbCreateCommand implements Runnable {
         @CommandLine.Option(
@@ -143,7 +149,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "gnb-list",
             description = "List all the gNBs associated with this UERANSIM agent",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class GnbListCommand implements Runnable {
         public void run() {
@@ -156,7 +163,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "gnb-status",
             description = "Dump some information about specified gNB's general status",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class GnbStatusCommand implements Runnable {
         @CommandLine.Parameters(
@@ -174,7 +182,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "session-create",
             description = "Trigger a PDU session establishment for a specified UE",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class SessionCreateCommand implements Runnable {
         @CommandLine.Parameters(
@@ -192,7 +201,8 @@ public class CliOpt {
     @CommandLine.Command(
             name = "ue-ping",
             description = "Trigger a ping request on behalf of the specified UE",
-            sortOptions = false
+            sortOptions = false,
+            mixinStandardHelpOptions = true
     )
     public static class UePingCommand implements Runnable {
         @CommandLine.Parameters(
