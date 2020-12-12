@@ -16,13 +16,19 @@ public class MrPlmnSearch {
 
     public static void performPlmnSearch(UeMrContext ctx) {
         UUID gnbId = null;
-        // TODO: More complex mechanism to select a gNB.
+        String gnbName = null;
+
         for (var gnb : ctx.ueCtx.sim.allGnbs()) {
-            gnbId = gnb;
+            var gnbCtx = ctx.ueCtx.sim.findGnbForUe(gnb);
+            if (gnbCtx != null) {
+                gnbId = gnbCtx.ctxId;
+                gnbName = gnbCtx.nodeName;
+            }
         }
 
         if (gnbId != null) {
             ctx.connectedGnb = gnbId;
+            ctx.connectedGnbName = gnbName;
             ctx.rrcTask.push(new IwPlmnSearchResponse(gnbId));
         } else {
             if (ctx.noPlmnWarning.check(60000)) {
