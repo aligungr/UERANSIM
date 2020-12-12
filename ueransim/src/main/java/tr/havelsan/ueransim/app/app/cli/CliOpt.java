@@ -24,6 +24,7 @@ public class CliOpt {
                     UeListCommand.class,
                     GnbStatusCommand.class,
                     UeStatusCommand.class,
+                    SessionCreateCommand.class,
             }
     )
     public static class RootCommand {
@@ -164,6 +165,24 @@ public class CliOpt {
 
         public void run() {
             msg = new CmdGnbStatus(id);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "session-create",
+            description = "Trigger a PDU session establishment for a specified UE",
+            sortOptions = false
+    )
+    public static class SessionCreateCommand implements Runnable {
+        @CommandLine.Parameters(
+                description = "IMSI of the UE that will trigger PDU session establishment."
+        )
+        private String ueImsi;
+
+        public void run() {
+            msg = new CmdSessionCreate(ueImsi);
         }
     }
 

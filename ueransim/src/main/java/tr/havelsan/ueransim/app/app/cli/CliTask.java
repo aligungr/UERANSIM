@@ -13,10 +13,8 @@ import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.info.GnbStatusInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
-import tr.havelsan.ueransim.app.common.itms.IwCliClientMessage;
-import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
-import tr.havelsan.ueransim.app.common.itms.IwGnbStatusInfoRequest;
-import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
+import tr.havelsan.ueransim.app.common.itms.*;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
@@ -81,6 +79,8 @@ public class CliTask extends NtsTask {
                 receiveGnbList(client, (CmdGnbList) message);
             } else if (message instanceof CmdGnbStatus) {
                 receiveGnbStatus(client, (CmdGnbStatus) message);
+            } else if (message instanceof CmdSessionCreate) {
+                receiveSessionCreate(client, (CmdSessionCreate) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -247,5 +247,27 @@ public class CliTask extends NtsTask {
 
         var appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP, GnbAppTask.class);
         appTask.push(new IwGnbStatusInfoRequest(this, consumerFunc));
+    }
+
+    private void receiveSessionCreate(UUID client, CmdSessionCreate message) {
+        var nodeName = "ue-" + message.ueImsi;
+
+        var ctxId = ueransim.findContextIdByNodeName(nodeName);
+        if (ctxId == null) {
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.ueImsi));
+            return;
+        }
+
+        var ctx = ueransim.findUe(ctxId);
+        if (ctx == null) {
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.ueImsi));
+            return;
+        }
+
+        // TODO: Test olayı kaldırılacak
+        var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
+        appTask.push(new IwUeTestCommand(new TestCmd_PduSessionEstablishment()));
+
+        sendCmd(client, new CmdTerminate(0, "PDU session establishment has been triggered."));
     }
 }
