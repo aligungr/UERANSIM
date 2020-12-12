@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.common;
+package tr.havelsan.ueransim.app.common.info;
 
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 

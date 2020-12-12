@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
-import tr.havelsan.ueransim.app.common.UeConnectionInfo;
+import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;

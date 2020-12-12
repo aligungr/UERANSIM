@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
-import tr.havelsan.ueransim.app.common.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
+import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -21,11 +21,10 @@ import tr.havelsan.ueransim.utils.console.Log;
 public class UeAppTask extends NtsTask {
 
     private final UeSimContext ctx;
+    private final UeStatusInfo statusInfo;
 
     private final PingApp pingApp;
     private final UeConnectionInfo connectionInfo;
-
-    private final UeStatusInfo statusInfo;
 
     private NtsTask nasTask;
 
