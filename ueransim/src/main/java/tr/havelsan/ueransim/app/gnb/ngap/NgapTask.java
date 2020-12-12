@@ -171,7 +171,9 @@ public class NgapTask extends NtsTask {
 
         ctx.waitingSctpClients--;
         if (ctx.waitingSctpClients == 0) {
-            ctx.appTask.push(new IwInitialSctpReady());
+            var statusUpdate = new IwGnbStatusUpdate(IwGnbStatusUpdate.INITIAL_SCTP_ESTABLISHED);
+            statusUpdate.isInitialSctpEstablished = true;
+            ctx.appTask.push(statusUpdate);
         }
 
         NgapInterfaceManagement.sendNgSetupRequest(ctx, msg.amfId);

@@ -11,10 +11,13 @@ import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.cli.*;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
+import tr.havelsan.ueransim.app.common.info.GnbStatusInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.IwCliClientMessage;
 import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
+import tr.havelsan.ueransim.app.common.itms.IwGnbStatusInfoRequest;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
+import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -110,7 +113,7 @@ public class CliTask extends NtsTask {
         );
 
         ueransim.createGnb(config);
-        sendCmd(client, new CmdTerminate(0, "gNB created."));
+        sendCmd(client, new CmdTerminate(0, "gNB created with id: %s.", config.gnbId));
     }
 
     private void receiveUeCreate(UUID client, CmdUeCreate cmd) {
@@ -239,6 +242,10 @@ public class CliTask extends NtsTask {
             return;
         }
 
-        // TODO
+        Consumer<GnbStatusInfo> consumerFunc = gnbStatusInfo
+                -> sendCmd(client, new CmdTerminate(0, Utils.convertJsonToYaml(Json.toJson(gnbStatusInfo))));
+
+        var appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP, GnbAppTask.class);
+        appTask.push(new IwGnbStatusInfoRequest(this, consumerFunc));
     }
 }

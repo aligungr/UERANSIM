@@ -3,7 +3,8 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.common.itms;
+package tr.havelsan.ueransim.app.common.info;
 
-public class IwInitialSctpReady {
+public class GnbStatusInfo {
+    public boolean isInitialSctpEstablished;
 }
