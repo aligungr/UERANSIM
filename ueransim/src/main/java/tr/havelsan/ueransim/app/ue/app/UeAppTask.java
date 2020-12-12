@@ -5,11 +5,15 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
+import tr.havelsan.ueransim.app.common.PduSession;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.info.UePduSessionInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
-import tr.havelsan.ueransim.app.common.itms.*;
+import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
+import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
+import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
+import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
 import tr.havelsan.ueransim.itms.ItmsId;
@@ -60,8 +64,6 @@ public class UeAppTask extends NtsTask {
                 } else if (cmd instanceof TestCmd_Ping) {
                     pingApp.sendPing((TestCmd_Ping) cmd);
                 }
-            } else if (msg instanceof IwUeConnectionSetup) {
-                connectionSetup((IwUeConnectionSetup) msg);
             } else if (msg instanceof IwDownlinkData) {
                 pingApp.handlePacket(((IwDownlinkData) msg).ipPacket);
             } else if (msg instanceof IwUeStatusInfoRequest) {
@@ -74,8 +76,7 @@ public class UeAppTask extends NtsTask {
         }
     }
 
-    private void connectionSetup(IwUeConnectionSetup msg) {
-        var pduSession = msg.pduSession;
+    private void connectionSetup(PduSession pduSession) {
         if (!pduSession.sessionType.pduSessionType.equals(EPduSessionType.IPV4)) {
             Log.error(Tag.UEAPP, "Connection could not setup (unsupported PDU Session type: %s)", pduSession.sessionType.pduSessionType);
             return;
@@ -109,6 +110,8 @@ public class UeAppTask extends NtsTask {
                 statusInfo.mmState = msg.mmSubState.toString();
                 break;
             case IwUeStatusUpdate.SESSION_ESTABLISHMENT:
+                connectionSetup(msg.pduSession);
+
                 var pduSessionInfo = new UePduSessionInfo();
                 pduSessionInfo.id = msg.pduSession.id.intValue();
                 pduSessionInfo.type = msg.pduSession.sessionType.pduSessionType.name();
