@@ -21,6 +21,7 @@ import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.utils.Json;
+import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
@@ -153,9 +154,8 @@ public class CliTask extends NtsTask {
             return;
         }
 
-        // TODO: use yaml isntead of json
         Consumer<UeStatusInfo> consumerFunc = ueStatusInfo
-                -> sendCmd(client, new CmdTerminate(0, Json.toJson(ueStatusInfo)));
+                -> sendCmd(client, new CmdTerminate(0, Utils.convertJsonToYaml(Json.toJson(ueStatusInfo))));
 
         var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
         appTask.push(new IwUeStatusInfoRequest(this, consumerFunc));
