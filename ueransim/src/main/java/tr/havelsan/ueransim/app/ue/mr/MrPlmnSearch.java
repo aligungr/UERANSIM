@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.ue.mr;
 
 import tr.havelsan.ueransim.app.common.contexts.UeMrContext;
 import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
+import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 
@@ -31,6 +32,10 @@ public class MrPlmnSearch {
             ctx.connectedGnb = gnbId;
             ctx.connectedGnbName = gnbName;
             ctx.rrcTask.push(new IwPlmnSearchResponse(gnbId));
+
+            var statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.CONNECTED_GNB);
+            statusUpdate.gnbName = gnbName;
+            ctx.appTask.push(statusUpdate);
         } else {
             if (ctx.noPlmnWarning.check(60000)) {
                 Log.warning(Tag.FLOW, "No suitable gNB found for UE: %s", ctx.ueCtx.ueConfig.supi.toString());

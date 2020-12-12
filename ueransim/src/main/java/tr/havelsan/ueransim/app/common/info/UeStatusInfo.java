@@ -6,5 +6,8 @@
 package tr.havelsan.ueransim.app.common.info;
 
 public class UeStatusInfo {
-    public final int dummy = 1;
+    public boolean isConnected;
+    public String connectedGnb;
+    public String mmState;
+    public String rmState;
 }

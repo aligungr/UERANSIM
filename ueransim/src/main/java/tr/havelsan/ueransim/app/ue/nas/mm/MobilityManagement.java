@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
 import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
+import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_InitialRegistration;
@@ -106,12 +107,23 @@ public class MobilityManagement {
         ctx.ueCtx.sim.triggerOnSwitch(ctx.ueCtx, state);
         ctx.ueCtx.sim.triggerOnSwitch(ctx.ueCtx, subState);
 
+        var statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.MM_STATE);
+        statusUpdate.mmState = state;
+        statusUpdate.mmSubState = subState;
+        ctx.appTask.push(statusUpdate);
+
         Log.info(Tag.STATE, "UE switches to state: %s/%s", state, subState);
     }
 
     public static void switchState(NasContext ctx, ERmState state) {
         ctx.mmCtx.rmState = state;
+
         ctx.ueCtx.sim.triggerOnSwitch(ctx.ueCtx, state);
+
+        var statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.RM_STATE);
+        statusUpdate.rmState = state;
+        ctx.appTask.push(statusUpdate);
+
         Log.info(Tag.STATE, "UE switches to state: %s", state);
     }
 

@@ -15,6 +15,7 @@ public class NasContext {
     public final UeSimContext ueCtx;
     public final boolean emulationMode;
 
+    public NtsTask appTask;
     public NtsTask rrcTask;
 
     public UeTimers ueTimers;

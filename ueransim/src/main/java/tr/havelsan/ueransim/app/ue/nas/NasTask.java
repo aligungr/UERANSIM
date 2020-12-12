@@ -35,10 +35,20 @@ public class NasTask extends NtsTask {
 
     @Override
     public void main() {
+        ctx.appTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_APP);
         ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
 
         pushDelayed(new IwPerformCycle(CYCLE_MM), PERIOD_MM);
         pushDelayed(new IwPerformCycle(CYCLE_TIMER), PERIOD_TIMER);
+
+        var statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.MM_STATE);
+        statusUpdate.mmState = ctx.mmCtx.mmState;
+        statusUpdate.mmSubState = ctx.mmCtx.mmSubState;
+        ctx.appTask.push(statusUpdate);
+
+        statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.RM_STATE);
+        statusUpdate.rmState = ctx.mmCtx.rmState;
+        ctx.appTask.push(statusUpdate);
 
         while (true) {
             var msg = take();
