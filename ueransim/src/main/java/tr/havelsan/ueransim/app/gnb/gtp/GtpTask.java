@@ -21,6 +21,8 @@ import tr.havelsan.ueransim.gtp.ext.PduSessionContainerExtHeader;
 import tr.havelsan.ueransim.gtp.pdusup.UlPduSessionInformation;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_PDUSessionAggregateMaximumBitRate;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit6;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -178,40 +180,39 @@ public class GtpTask extends NtsTask {
         }
 
         private long computeUplinkAmbrInBit(final PduSessionResource currentPduSession) {
-            // UE_AMBR_UL = min(sum(UE_APNs_AMBR_UL), UE_AMBR_UL)
+            // UE_AMBR_UL = min(sum(Sessions_AMBR_UL), UE_AMBR_UL)
 
             return computeAmbrInBit(currentPduSession,
-                    pduSession -> pduSession.sessionAggregateMaximumBitRate.pDUSessionAggregateMaximumBitRateUL.value,
-                    pduSession -> pduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateUL.value);
+                    sessionAmbr -> sessionAmbr.pDUSessionAggregateMaximumBitRateUL.value,
+                    ueAmbr -> ueAmbr.uEAggregateMaximumBitRateUL.value);
         }
 
         private long computeDownlinkAmbrInBit(final PduSessionResource currentPduSession) {
-            // UE_AMBR_DL = min(sum(UE_APNs_AMBR_DL), UE_AMBR_DL)
+            // UE_AMBR_DL = min(sum(Sessions_AMBR_DL), UE_AMBR_DL)
 
             return computeAmbrInBit(currentPduSession,
-                    pduSession -> pduSession.sessionAggregateMaximumBitRate.pDUSessionAggregateMaximumBitRateDL.value,
-                    pduSession -> pduSession.ueAggregateMaximumBitRate.uEAggregateMaximumBitRateDL.value);
+                    sessionAmbr -> sessionAmbr.pDUSessionAggregateMaximumBitRateDL.value,
+                    ueAmbr -> ueAmbr.uEAggregateMaximumBitRateDL.value);
         }
 
         private long computeAmbrInBit(final PduSessionResource currentPduSession,
-                                      final Function<PduSessionResource, Long> getApnAmbr,
-                                      final Function<PduSessionResource, Long> getUeAmbr) {
+                                      final Function<NGAP_PDUSessionAggregateMaximumBitRate, Long> getSessionLinkAmbr,
+                                      final Function<NGAP_UEAggregateMaximumBitRate, Long> getUeLinkAmbr) {
             var allSessionAmbr = 0L;
             var atLeastOneSessionAmbr = false;
             for (var pduSession:
                     ctx.pduSessions.findByUEId(currentPduSession.ueId)) {
-                try {
-                    allSessionAmbr += getApnAmbr.apply(pduSession);
-                    atLeastOneSessionAmbr = true;
-                } catch (NullPointerException e) {
-                    // Silently ignored.
+                var sessionAmbr = pduSession.sessionAggregateMaximumBitRate;
+                if(sessionAmbr == null) {
+                    continue;
                 }
-
+                allSessionAmbr += getSessionLinkAmbr.apply(sessionAmbr);
+                atLeastOneSessionAmbr = true;
             }
-            try {
-                var ueAmbr = getUeAmbr.apply(currentPduSession);
-                return Long.min(ueAmbr, allSessionAmbr) / 8;
-            } catch (NullPointerException e) {
+            var ueAmbr = currentPduSession.ueAggregateMaximumBitRate;
+            if(ueAmbr == null){
+                return Long.min(getUeLinkAmbr.apply(ueAmbr), allSessionAmbr) / 8;
+            } else {
                 if(atLeastOneSessionAmbr) {
                     return allSessionAmbr / 8;
                 } else{
