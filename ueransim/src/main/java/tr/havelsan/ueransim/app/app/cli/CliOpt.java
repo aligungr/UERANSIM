@@ -216,7 +216,7 @@ public class CliOpt {
         private int count;
 
         @CommandLine.Option(
-                names = {"-i", "--id"},
+                names = {"-t", "--timeout"},
                 description = "Use specified timeout value instead of default one (in seconds).",
                 defaultValue = "3",
                 showDefaultValue = CommandLine.Help.Visibility.ALWAYS
