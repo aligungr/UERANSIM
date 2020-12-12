@@ -74,6 +74,8 @@ public class CliTask extends NtsTask {
                 receiveUeList(client, (CmdUeList) message);
             } else if (message instanceof CmdUeStatus) {
                 receiveUeStatus(client, (CmdUeStatus) message);
+            } else if (message instanceof CmdGnbList) {
+                receiveGnbList(client, (CmdGnbList) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -152,6 +154,36 @@ public class CliTask extends NtsTask {
 
         sb.append("\nTotal number of UE: ");
         sb.append(ueNameList.size());
+
+        sendCmd(client, new CmdTerminate(0, sb.toString().trim()));
+    }
+
+    private void receiveGnbList(UUID client, CmdGnbList message) {
+        var gnbNameList = new ArrayList<String>();
+
+        for (var ueId : ueransim.allGnbs()) {
+            var ctx = ueransim.findGnb(ueId);
+            if (ctx == null)
+                continue;
+            gnbNameList.add(ctx.nodeName);
+        }
+
+        var sb = new StringBuilder();
+        sb.append("List of gNBs:\n");
+
+        for (var name : gnbNameList) {
+            sb.append("    ");
+            sb.append("- ");
+            sb.append(name);
+            sb.append("\n");
+        }
+
+        if (gnbNameList.isEmpty()) {
+            sb.append("    - No gNBs are available.\n");
+        }
+
+        sb.append("\nTotal number of gNBs: ");
+        sb.append(gnbNameList.size());
 
         sendCmd(client, new CmdTerminate(0, sb.toString().trim()));
     }

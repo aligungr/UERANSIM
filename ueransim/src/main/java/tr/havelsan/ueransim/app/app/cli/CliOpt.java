@@ -20,6 +20,7 @@ public class CliOpt {
             subcommands = {
                     GnbCreateCommand.class,
                     UeCreateCommand.class,
+                    GnbListCommand.class,
                     UeListCommand.class,
                     UeStatusCommand.class,
             }
@@ -135,4 +136,18 @@ public class CliOpt {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "gnb-list",
+            description = "List all the gNBs associated with this UERANSIM agent",
+            sortOptions = false
+    )
+    public static class GnbListCommand implements Runnable {
+        public void run() {
+            msg = new CmdGnbList();
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
