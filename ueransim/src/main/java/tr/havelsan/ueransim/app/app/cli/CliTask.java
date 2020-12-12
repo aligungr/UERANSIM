@@ -97,7 +97,19 @@ public class CliTask extends NtsTask {
             refConfig = appConfig.createGnbConfig();
         }
 
-        ueransim.createGnb(refConfig);
+        var config = new GnbConfig(
+                cmd.id != 0 ? cmd.id : refConfig.gnbId,
+                refConfig.tac,
+                refConfig.nci.toBinaryString(),
+                refConfig.plmn,
+                refConfig.amfConfigs,
+                refConfig.ignoreStreamIds,
+                refConfig.host,
+                refConfig.gtpPort,
+                refConfig.nssais
+        );
+
+        ueransim.createGnb(config);
         sendCmd(client, new CmdTerminate(0, "gNB created."));
     }
 
