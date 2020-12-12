@@ -6,10 +6,7 @@
 package tr.havelsan.ueransim.app.app.cli;
 
 import picocli.CommandLine;
-import tr.havelsan.ueransim.app.common.cli.CmdGnbCreate;
-import tr.havelsan.ueransim.app.common.cli.CmdMessage;
-import tr.havelsan.ueransim.app.common.cli.CmdUeCreate;
-import tr.havelsan.ueransim.app.common.cli.CmdUeList;
+import tr.havelsan.ueransim.app.common.cli.*;
 
 import java.io.File;
 
@@ -24,6 +21,7 @@ public class CliOpt {
                     GnbCreateCommand.class,
                     UeCreateCommand.class,
                     UeListCommand.class,
+                    UeStatusCommand.class,
             }
     )
     public static class RootCommand {
@@ -84,6 +82,24 @@ public class CliOpt {
             sortOptions = false
     )
     public static class UeListCommand implements Runnable {
+        @CommandLine.Parameters(
+                description = "IMSI number of the UE whose status will be displayed."
+        )
+        private String imsi;
+
+        public void run() {
+            msg = new CmdUeStatus(imsi);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "ue-status",
+            description = "Dump some information about specified UE's general status",
+            sortOptions = false
+    )
+    public static class UeStatusCommand implements Runnable {
 
         public void run() {
             msg = new CmdUeList();

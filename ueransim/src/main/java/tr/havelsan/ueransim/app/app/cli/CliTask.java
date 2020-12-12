@@ -65,6 +65,8 @@ public class CliTask extends NtsTask {
                 sendCmd(client, new CmdTerminate(0, "gNB created."));
             } else if (message instanceof CmdUeList) {
                 receiveUeList(client, (CmdUeList) message);
+            } else if (message instanceof CmdUeStatus) {
+                receiveUeStatus(client, (CmdUeStatus) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -128,5 +130,10 @@ public class CliTask extends NtsTask {
         sb.append(ueNameList.size());
 
         sendCmd(client, new CmdTerminate(0, sb.toString().trim()));
+    }
+
+    private void receiveUeStatus(UUID client, CmdUeStatus message) {
+        // TODO
+        sendCmd(client, new CmdErrorIndication("This feature is not implemented yet"));
     }
 }
