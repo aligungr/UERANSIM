@@ -25,7 +25,7 @@ public class UeAppTask extends NtsTask {
     private final PingApp pingApp;
     private final UeConnectionInfo connectionInfo;
 
-    private UeStatusInfo statusInfo;
+    private final UeStatusInfo statusInfo;
 
     private NtsTask nasTask;
 
