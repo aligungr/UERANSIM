@@ -22,6 +22,7 @@ public class CliOpt {
                     UeCreateCommand.class,
                     GnbListCommand.class,
                     UeListCommand.class,
+                    GnbStatusCommand.class,
                     UeStatusCommand.class,
             }
     )
@@ -145,6 +146,24 @@ public class CliOpt {
     public static class GnbListCommand implements Runnable {
         public void run() {
             msg = new CmdGnbList();
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "gnb-status",
+            description = "Dump some information about specified gNB's general status",
+            sortOptions = false
+    )
+    public static class GnbStatusCommand implements Runnable {
+        @CommandLine.Parameters(
+                description = "ID of the gNB whose status will be displayed."
+        )
+        private int id;
+
+        public void run() {
+            msg = new CmdGnbStatus(id);
         }
     }
 

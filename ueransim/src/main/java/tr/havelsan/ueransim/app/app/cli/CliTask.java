@@ -76,6 +76,8 @@ public class CliTask extends NtsTask {
                 receiveUeStatus(client, (CmdUeStatus) message);
             } else if (message instanceof CmdGnbList) {
                 receiveGnbList(client, (CmdGnbList) message);
+            } else if (message instanceof CmdGnbStatus) {
+                receiveGnbStatus(client, (CmdGnbStatus) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -208,5 +210,23 @@ public class CliTask extends NtsTask {
 
         var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
         appTask.push(new IwUeStatusInfoRequest(this, consumerFunc));
+    }
+
+    private void receiveGnbStatus(UUID client, CmdGnbStatus message) {
+        var nodeName = "gnb-" + message.id;
+
+        var ctxId = ueransim.findContextIdByNodeName(nodeName);
+        if (ctxId == null) {
+            sendCmd(client, new CmdErrorIndication("No gNB found with the ID %s", message.id));
+            return;
+        }
+
+        var ctx = ueransim.findGnb(ctxId);
+        if (ctx == null) {
+            sendCmd(client, new CmdErrorIndication("No gNB found with the ID %s", message.id));
+            return;
+        }
+
+        // TODO
     }
 }
