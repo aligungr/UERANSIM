@@ -7,8 +7,10 @@ package tr.havelsan.ueransim.app.ue.app;
 
 import tr.havelsan.ueransim.app.common.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
+import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwUeConnectionSetup;
+import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.*;
@@ -59,6 +61,10 @@ public class UeAppTask extends NtsTask {
                 connectionSetup((IwUeConnectionSetup) msg);
             } else if (msg instanceof IwDownlinkData) {
                 pingApp.handlePacket(((IwDownlinkData) msg).ipPacket);
+            } else if (msg instanceof IwUeStatusInfoRequest) {
+                var requester = ((IwUeStatusInfoRequest) msg).requester;
+                var consumer = ((IwUeStatusInfoRequest) msg).consumerFunc;
+                requester.push(() -> consumer.accept(createStatusInfo()));
             }
         }
     }
@@ -78,5 +84,11 @@ public class UeAppTask extends NtsTask {
         Log.info(Tag.UEAPP, "%s connection setup with local IP: %s", connectionInfo.sessionType, Utils.byteArrayToIpString(connectionInfo.pduAddress));
 
         ctx.sim.triggerOnConnected(ctx, EConnType.ANY_IPv4);
+    }
+
+    private UeStatusInfo createStatusInfo() {
+        var inf = new UeStatusInfo();
+
+        return inf;
     }
 }

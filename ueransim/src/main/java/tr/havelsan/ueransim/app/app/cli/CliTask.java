@@ -10,16 +10,22 @@ import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.Supi;
 import tr.havelsan.ueransim.app.common.cli.*;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
+import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.IwCliClientMessage;
 import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
+import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
+import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
+import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
+import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class CliTask extends NtsTask {
 
@@ -147,7 +153,11 @@ public class CliTask extends NtsTask {
             return;
         }
 
-        // TODO
-        sendCmd(client, new CmdErrorIndication("TODO"));
+        // TODO: use yaml isntead of json
+        Consumer<UeStatusInfo> consumerFunc = ueStatusInfo
+                -> sendCmd(client, new CmdTerminate(0, Json.toJson(ueStatusInfo)));
+
+        var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
+        appTask.push(new IwUeStatusInfoRequest(this, consumerFunc));
     }
 }
