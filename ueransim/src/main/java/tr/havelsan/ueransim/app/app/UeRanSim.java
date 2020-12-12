@@ -57,6 +57,7 @@ public class UeRanSim {
         }
     }
 
+    @Deprecated
     public GnbSimContext findGnbForUe(UUID gnbId) {
         GnbSimContext ctx;
         synchronized (this) {
