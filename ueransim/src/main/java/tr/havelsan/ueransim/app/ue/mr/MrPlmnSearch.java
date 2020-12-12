@@ -23,6 +23,7 @@ public class MrPlmnSearch {
             if (gnbCtx != null) {
                 gnbId = gnbCtx.ctxId;
                 gnbName = gnbCtx.nodeName;
+                break;
             }
         }
 
