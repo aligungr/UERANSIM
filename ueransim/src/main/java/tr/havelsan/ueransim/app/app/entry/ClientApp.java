@@ -130,6 +130,13 @@ public class ClientApp {
         System.exit(code);
     }
 
+    public static class VersionProvider implements CommandLine.IVersionProvider {
+
+        public String[] getVersion() {
+            return new String[]{Constants.VERSION};
+        }
+    }
+
     private class MainTask extends NtsTask {
 
         public MainTask() {

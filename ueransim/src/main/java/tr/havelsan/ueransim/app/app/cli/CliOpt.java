@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.app.cli;
 
 import picocli.CommandLine;
+import tr.havelsan.ueransim.app.app.entry.ClientApp;
 import tr.havelsan.ueransim.app.common.cli.*;
 
 import java.io.File;
@@ -27,7 +28,8 @@ public class CliOpt {
                     SessionCreateCommand.class,
                     UePingCommand.class,
             },
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class RootCommand {
     }
@@ -38,7 +40,8 @@ public class CliOpt {
             name = "ue-create",
             description = "Create and initialize a new UE",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class UeCreateCommand implements Runnable {
         @CommandLine.Option(
@@ -86,7 +89,8 @@ public class CliOpt {
             name = "ue-list",
             description = "List all the UEs associated with this UERANSIM agent",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class UeListCommand implements Runnable {
         public void run() {
@@ -100,7 +104,8 @@ public class CliOpt {
             name = "ue-status",
             description = "Dump some information about specified UE's general status",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class UeStatusCommand implements Runnable {
         @CommandLine.Parameters(
@@ -119,7 +124,8 @@ public class CliOpt {
             name = "gnb-create",
             description = "Create and initialize a new GNB",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class GnbCreateCommand implements Runnable {
         @CommandLine.Option(
@@ -150,7 +156,8 @@ public class CliOpt {
             name = "gnb-list",
             description = "List all the gNBs associated with this UERANSIM agent",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class GnbListCommand implements Runnable {
         public void run() {
@@ -164,7 +171,8 @@ public class CliOpt {
             name = "gnb-status",
             description = "Dump some information about specified gNB's general status",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class GnbStatusCommand implements Runnable {
         @CommandLine.Parameters(
@@ -183,7 +191,8 @@ public class CliOpt {
             name = "session-create",
             description = "Trigger a PDU session establishment for a specified UE",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class SessionCreateCommand implements Runnable {
         @CommandLine.Parameters(
@@ -202,7 +211,8 @@ public class CliOpt {
             name = "ue-ping",
             description = "Trigger a ping request on behalf of the specified UE",
             sortOptions = false,
-            mixinStandardHelpOptions = true
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
     )
     public static class UePingCommand implements Runnable {
         @CommandLine.Parameters(
