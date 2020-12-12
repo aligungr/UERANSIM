@@ -25,6 +25,7 @@ public class CliOpt {
                     GnbStatusCommand.class,
                     UeStatusCommand.class,
                     SessionCreateCommand.class,
+                    UePingCommand.class,
             }
     )
     public static class RootCommand {
@@ -183,6 +184,53 @@ public class CliOpt {
 
         public void run() {
             msg = new CmdSessionCreate(ueImsi);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "ue-ping",
+            description = "Trigger a ping request on behalf of the specified UE",
+            sortOptions = false
+    )
+    public static class UePingCommand implements Runnable {
+        @CommandLine.Parameters(
+                description = "IMSI number of the UE that will trigger ping request.",
+                index = "0"
+        )
+        private String ueImsi;
+
+        @CommandLine.Parameters(
+                description = "Destination address of the ping request. (NOTE: address resolution is performed locally.)",
+                index = "1"
+        )
+        private String address;
+
+        @CommandLine.Option(
+                names = {"-c", "--count"},
+                description = "Send specified number of consequential ping requests. Typically an integer in range [1, 10] is used.",
+                defaultValue = "1",
+                showDefaultValue = CommandLine.Help.Visibility.ALWAYS
+        )
+        private int count;
+
+        @CommandLine.Option(
+                names = {"-i", "--id"},
+                description = "Use specified timeout value instead of default one (in seconds).",
+                defaultValue = "3",
+                showDefaultValue = CommandLine.Help.Visibility.ALWAYS
+        )
+        private int timeoutSec;
+
+        public void run() {
+            var msg = new CmdUePing();
+            msg.ueImsi = ueImsi;
+            msg.address = address;
+            msg.count = count;
+            msg.timeoutSec = timeoutSec;
+
+            CliOpt.msg = msg;
         }
     }
 
