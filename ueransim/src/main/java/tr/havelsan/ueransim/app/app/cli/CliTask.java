@@ -14,7 +14,10 @@ import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.info.GnbStatusInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.*;
+import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
@@ -81,6 +84,8 @@ public class CliTask extends NtsTask {
                 receiveGnbStatus(client, (CmdGnbStatus) message);
             } else if (message instanceof CmdSessionCreate) {
                 receiveSessionCreate(client, (CmdSessionCreate) message);
+            } else if (message instanceof CmdUePing) {
+                receiveUePing(client, (CmdUePing) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -205,17 +210,50 @@ public class CliTask extends NtsTask {
         sendCmd(client, new CmdTerminate(0, sb.toString().trim()));
     }
 
-    private void receiveUeStatus(UUID client, CmdUeStatus message) {
-        var nodeName = "ue-" + message.imsi;
+    private boolean tryToFindUe(String imsi, UeSimContext[] outCtx, UeAppTask[] outAppTask) {
+        var nodeName = "ue-" + imsi;
 
         var ctxId = ueransim.findContextIdByNodeName(nodeName);
         if (ctxId == null) {
-            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.imsi));
-            return;
+            return false;
         }
 
         var ctx = ueransim.findUe(ctxId);
         if (ctx == null) {
+            return false;
+        }
+
+        var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
+
+        outCtx[0] = ctx;
+        outAppTask[0] = appTask;
+        return true;
+    }
+
+    private boolean tryToFindGnb(int gnbId, GnbSimContext[] outCtx, GnbAppTask[] outAppTask) {
+        var nodeName = "gnb-" + gnbId;
+
+        var ctxId = ueransim.findContextIdByNodeName(nodeName);
+        if (ctxId == null) {
+            return false;
+        }
+
+        var ctx = ueransim.findGnb(ctxId);
+        if (ctx == null) {
+            return false;
+        }
+
+        var appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP, GnbAppTask.class);
+        outCtx[0] = ctx;
+        outAppTask[0] = appTask;
+        return true;
+    }
+
+    private void receiveUeStatus(UUID client, CmdUeStatus message) {
+        var ctx = new UeSimContext[1];
+        var appTask = new UeAppTask[1];
+
+        if (!tryToFindUe(message.imsi, ctx, appTask)) {
             sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.imsi));
             return;
         }
@@ -223,21 +261,14 @@ public class CliTask extends NtsTask {
         Consumer<UeStatusInfo> consumerFunc = ueStatusInfo
                 -> sendCmd(client, new CmdTerminate(0, Utils.convertJsonToYaml(Json.toJson(ueStatusInfo))));
 
-        var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
-        appTask.push(new IwUeStatusInfoRequest(this, consumerFunc));
+        appTask[0].push(new IwUeStatusInfoRequest(this, consumerFunc));
     }
 
     private void receiveGnbStatus(UUID client, CmdGnbStatus message) {
-        var nodeName = "gnb-" + message.id;
+        var ctx = new GnbSimContext[1];
+        var appTask = new GnbAppTask[1];
 
-        var ctxId = ueransim.findContextIdByNodeName(nodeName);
-        if (ctxId == null) {
-            sendCmd(client, new CmdErrorIndication("No gNB found with the ID %s", message.id));
-            return;
-        }
-
-        var ctx = ueransim.findGnb(ctxId);
-        if (ctx == null) {
+        if (!tryToFindGnb(message.id, ctx, appTask)) {
             sendCmd(client, new CmdErrorIndication("No gNB found with the ID %s", message.id));
             return;
         }
@@ -245,29 +276,36 @@ public class CliTask extends NtsTask {
         Consumer<GnbStatusInfo> consumerFunc = gnbStatusInfo
                 -> sendCmd(client, new CmdTerminate(0, Utils.convertJsonToYaml(Json.toJson(gnbStatusInfo))));
 
-        var appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP, GnbAppTask.class);
-        appTask.push(new IwGnbStatusInfoRequest(this, consumerFunc));
+        appTask[0].push(new IwGnbStatusInfoRequest(this, consumerFunc));
     }
 
     private void receiveSessionCreate(UUID client, CmdSessionCreate message) {
-        var nodeName = "ue-" + message.ueImsi;
+        var ctx = new UeSimContext[1];
+        var appTask = new UeAppTask[1];
 
-        var ctxId = ueransim.findContextIdByNodeName(nodeName);
-        if (ctxId == null) {
-            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.ueImsi));
-            return;
-        }
-
-        var ctx = ueransim.findUe(ctxId);
-        if (ctx == null) {
+        if (!tryToFindUe(message.ueImsi, ctx, appTask)) {
             sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.ueImsi));
             return;
         }
 
         // TODO: Test olayı kaldırılacak
-        var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
-        appTask.push(new IwUeTestCommand(new TestCmd_PduSessionEstablishment()));
+        appTask[0].push(new IwUeTestCommand(new TestCmd_PduSessionEstablishment()));
 
         sendCmd(client, new CmdTerminate(0, "PDU session establishment has been triggered."));
+    }
+
+    private void receiveUePing(UUID client, CmdUePing message) {
+        var ctx = new UeSimContext[1];
+        var appTask = new UeAppTask[1];
+
+        if (!tryToFindUe(message.ueImsi, ctx, appTask)) {
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.address));
+            return;
+        }
+
+        // TODO: Test olayı kaldırılacak
+        appTask[0].push(new IwUeTestCommand(new TestCmd_Ping(message.address, message.count, message.timeoutSec)));
+
+        sendCmd(client, new CmdTerminate(0, "Ping request has been triggered."));
     }
 }
