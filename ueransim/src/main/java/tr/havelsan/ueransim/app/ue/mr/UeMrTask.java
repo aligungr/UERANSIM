@@ -45,7 +45,7 @@ public class UeMrTask extends NtsTask {
     private void receiveUplinkData(IwUplinkData msg) {
         var gnb = ctx.ueCtx.sim.findGnbForUe(ctx.connectedGnb);
         if (gnb == null) {
-            Log.warning(Tag.FLOW, "Uplink Data transport failure: UE not connected to a gNB.");
+            Log.error(Tag.FLOW, "Uplink Data transport failure: UE not connected to a gNB.");
         } else {
             gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
         }
@@ -62,7 +62,7 @@ public class UeMrTask extends NtsTask {
     private void receiveUplinkRrc(IwUplinkRrc msg) {
         var gnb = ctx.ueCtx.sim.findGnbForUe(ctx.connectedGnb);
         if (gnb == null) {
-            Log.warning(Tag.FLOW, "Uplink RRC transport failure: UE not connected to a gNB.");
+            Log.error(Tag.FLOW, "Uplink RRC transport failure: UE not connected to a gNB.");
         } else {
             gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
         }
