@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.common.dynamics;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +39,10 @@ public class PduSessionTree {
             return mapBySessionId.get(psi);
         }
         return null;
+    }
+
+    public Collection<PduSessionResource> findByUEId(UUID ue){
+        return mapByUeId.get(ue).values();
     }
 
     public void delete(PduSessionResource session) {

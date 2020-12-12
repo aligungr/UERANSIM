@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_NetworkInstance;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_PDUSessionAggregateMaximumBitRate;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_QosFlowSetupRequestItem;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_SecurityIndication;
+import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_UEAggregateMaximumBitRate;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,8 @@ public class PduSessionResource {
     public UUID ueId;
     public int pduSessionId;
 
-    public NGAP_PDUSessionAggregateMaximumBitRate aggregateMaximumBitRate;
+    public NGAP_PDUSessionAggregateMaximumBitRate sessionAggregateMaximumBitRate;
+    public NGAP_UEAggregateMaximumBitRate ueAggregateMaximumBitRate;
     public NGAP_DataForwardingNotPossible dataForwardingNotPossible;
     public NGAP_PDUSessionType type;
     public NGAP_SecurityIndication securityIndication;
