@@ -16,7 +16,7 @@ public class CliOpt {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @CommandLine.Command(/*name = "??",*/
+    @CommandLine.Command(name = "nr-cli",
             subcommands = {
                     GnbCreateCommand.class,
                     UeCreateCommand.class,
