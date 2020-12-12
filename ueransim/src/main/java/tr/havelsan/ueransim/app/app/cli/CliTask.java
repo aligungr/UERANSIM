@@ -133,7 +133,21 @@ public class CliTask extends NtsTask {
     }
 
     private void receiveUeStatus(UUID client, CmdUeStatus message) {
+        var nodeName = "ue-" + message.imsi;
+
+        var ctxId = ueransim.findContextIdByNodeName(nodeName);
+        if (ctxId == null) {
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.imsi));
+            return;
+        }
+
+        var ctx = ueransim.findUe(ctxId);
+        if (ctx == null) {
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.imsi));
+            return;
+        }
+
         // TODO
-        sendCmd(client, new CmdErrorIndication("This feature is not implemented yet"));
+        sendCmd(client, new CmdErrorIndication("TODO"));
     }
 }

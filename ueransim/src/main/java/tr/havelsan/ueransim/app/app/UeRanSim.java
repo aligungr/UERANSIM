@@ -29,6 +29,8 @@ public class UeRanSim {
     private final HashMap<UUID, UeSimContext> ueMap;
     private final AirSimContext airCtx;
 
+    private final HashMap<String, BaseSimContext> ctxByNodeName;
+
     private final List<MonitorTask> monitors;
 
     UeRanSim(List<MonitorTask> monitors) {
@@ -41,6 +43,9 @@ public class UeRanSim {
         }
 
         this.airCtx = AirNode.createContext(this);
+
+        this.ctxByNodeName = new HashMap<>();
+        this.ctxByNodeName.put(airCtx.nodeName, airCtx);
 
         AirNode.run(airCtx);
     }
@@ -70,6 +75,13 @@ public class UeRanSim {
         return ctx;
     }
 
+    public UUID findContextIdByNodeName(String nodeName) {
+        synchronized (this) {
+            var ctx = ctxByNodeName.get(nodeName);
+            return ctx != null ? ctx.ctxId : null;
+        }
+    }
+
     public HashSet<UUID> allUes() {
         var res = new HashSet<UUID>();
         synchronized (this) {
@@ -95,27 +107,28 @@ public class UeRanSim {
     }
 
     public UUID createGnb(GnbConfig config) {
-        // TODO: Maybe check for unique node name
-
         var ctx = GnbNode.createContext(this, config);
         synchronized (this) {
+            if (ctxByNodeName.containsKey(ctx.nodeName)) {
+                throw new SimException("Another gNB with the same ID already exists. Please use another ID.");
+            }
+
             gnbMap.put(ctx.ctxId, ctx);
+            ctxByNodeName.put(ctx.nodeName, ctx);
         }
         GnbNode.run(ctx);
         return ctx.ctxId;
     }
 
     public UUID createUe(UeConfig config) throws SimException {
-        UeSimContext ctx;
+        UeSimContext ctx = UeNode.createContext(this, config);
         synchronized (this) {
-            for (var ue : ueMap.values()) {
-                if (ue.ueConfig.supi.equals(config.supi)) {
-                    throw new SimException("Another UE with the same IMSI already exists. Please use another IMSI.");
-                }
+            if (ctxByNodeName.containsKey(ctx.nodeName)) {
+                throw new SimException("Another UE with the same IMSI already exists. Please use another IMSI.");
             }
 
-            ctx = UeNode.createContext(this, config);
             ueMap.put(ctx.ctxId, ctx);
+            ctxByNodeName.put(ctx.nodeName, ctx);
         }
         UeNode.run(ctx);
         return ctx.ctxId;

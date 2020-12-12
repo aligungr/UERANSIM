@@ -11,4 +11,8 @@ public class CmdErrorIndication extends CmdMessage {
     public CmdErrorIndication(String message) {
         this.message = message;
     }
+
+    public CmdErrorIndication(String format, Object... params) {
+        this.message = String.format(format, params);
+    }
 }

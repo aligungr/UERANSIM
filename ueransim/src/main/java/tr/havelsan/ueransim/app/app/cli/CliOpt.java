@@ -82,13 +82,8 @@ public class CliOpt {
             sortOptions = false
     )
     public static class UeListCommand implements Runnable {
-        @CommandLine.Parameters(
-                description = "IMSI number of the UE whose status will be displayed."
-        )
-        private String imsi;
-
         public void run() {
-            msg = new CmdUeStatus(imsi);
+            msg = new CmdUeList();
         }
     }
 
@@ -100,9 +95,13 @@ public class CliOpt {
             sortOptions = false
     )
     public static class UeStatusCommand implements Runnable {
+        @CommandLine.Parameters(
+                description = "IMSI number of the UE whose status will be displayed."
+        )
+        private String imsi;
 
         public void run() {
-            msg = new CmdUeList();
+            msg = new CmdUeStatus(imsi);
         }
     }
 
