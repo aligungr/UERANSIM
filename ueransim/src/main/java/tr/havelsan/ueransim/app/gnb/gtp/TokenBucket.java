@@ -40,8 +40,8 @@ class TokenBucket {
      * @param numberTokens the number of tokens to consume.
      * @return true if ther is enought tokens, false otherwise.
      */
-    public boolean tryConsume(int numberTokens) {
-        if (byteCapacity != -1) {
+    public boolean tryConsume(long numberTokens) {
+        if (byteCapacity > 0) {
             refill();
             if (availableTokens < numberTokens) {
                 return false;

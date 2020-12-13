@@ -48,10 +48,7 @@ public class NgapPduSessionManagement {
                     NgapEncoding.decodeAper(item.pDUSessionResourceSetupRequestTransfer.value,
                             NgapDataUnitType.PDUSessionResourceSetupRequestTransfer);
 
-            var resource = new PduSessionResource();
-            resource.ueId = associatedUe.ueCtxId;
-            resource.pduSessionId = (int) item.pDUSessionID.value;
-            resource.ueAggregateMaximumBitRate = associatedUe.aggregateMaximumBitRate;
+            var resource = new PduSessionResource(associatedUe.ueCtxId, (int) item.pDUSessionID.value);
 
             for (var ie : transfer.protocolIEs.list) {
                 var value = ie.value.getPresentValue();

@@ -6,7 +6,8 @@
 package tr.havelsan.ueransim.app.gnb.gtp;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
-import tr.havelsan.ueransim.utils.octets.OctetString;
+
+import java.util.UUID;
 
 /**
  * Interface for RateLimiter.
@@ -14,25 +15,50 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 interface IRateLimiter {
 
     /**
-     * Handles downlink IP packets.
+     * Handles downlink packets.
      *
      * @param pduSession the PDU session of which packets must be managed
-     * @param ipPacket   the single IP packet.
+     * @param packetSize size of the relevant packet in bytes
      */
-    void handleDownlinkPacket(PduSessionResource pduSession, OctetString ipPacket);
+    boolean allowDownlinkPacket(PduSessionResource pduSession, long packetSize);
 
     /**
-     * Handles uplink IP packets.
+     * Handles uplink packets.
      *
      * @param pduSession the PDU session of which packets must be managed
-     * @param ipPacket   the single IP packet.
+     * @param packetSize size of the relevant packet in bytes
      */
-    void handleUplinkPacket(PduSessionResource pduSession, OctetString ipPacket);
+    boolean allowUplinkPacket(PduSessionResource pduSession, long packetSize);
 
     /**
-     * Insert or update bucket based on the new PDU session established.
+     * Insert or update uplink limits based on the UE.
+     *
+     * @param ueId  the new PDU session.
+     * @param limit uplink limit in bytes for the relevant UE. (-1 for infinite)
+     */
+    void updateUeUplinkLimit(UUID ueId, long limit);
+
+    /**
+     * Insert or update downlink limits based on the UE.
+     *
+     * @param ueId  the new PDU session.
+     * @param limit downlink limit in bytes for the relevant UE. (-1 for infinite)
+     */
+    void updateUeDownlinkLimit(UUID ueId, long limit);
+
+    /**
+     * Insert or update uplink limits based on the PDU Session.
      *
      * @param pduSession the new PDU session.
+     * @param limit      uplink limit in bytes for the relevant UE. (-1 for infinite)
      */
-    void insertOrUpdateBucket(PduSessionResource pduSession);
+    void updateSessionUplinkLimit(PduSessionResource pduSession, long limit);
+
+    /**
+     * Insert or update downlink limits based on the PDU Session.
+     *
+     * @param pduSession the new PDU session.
+     * @param limit      downlink limit in bytes for the relevant UE. (-1 for infinite)
+     */
+    void updateSessionDownlinkLimit(PduSessionResource pduSession, long limit);
 }
