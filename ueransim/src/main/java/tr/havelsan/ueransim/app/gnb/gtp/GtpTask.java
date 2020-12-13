@@ -47,6 +47,21 @@ public class GtpTask extends NtsTask {
         this.rateLimiter = new RateLimiterImpl();
     }
 
+    private static void udpReceiverThread(DatagramSocket socket, NtsTask gtpTask) {
+        var buffer = new byte[65535];
+
+        var datagram = new DatagramPacket(buffer, buffer.length);
+
+        while (true) {
+            try {
+                socket.receive(datagram);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            gtpTask.push(new IwGtpDownlink(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
+        }
+    }
+
     @Override
     public void main() {
         ctx.mrTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR);
@@ -57,7 +72,7 @@ public class GtpTask extends NtsTask {
             Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.host, ctx.gnbCtx.config.gtpPort, e.toString());
             return;
         }
-        var receiverThread = new Thread(this::udpReceiverThread);
+        var receiverThread = new Thread(() -> udpReceiverThread(ctx.socket, this));
         Log.registerLogger(receiverThread, Log.getLoggerOrDefault(getThread()));
         receiverThread.start();
 
@@ -73,19 +88,9 @@ public class GtpTask extends NtsTask {
         }
     }
 
-    private void udpReceiverThread() {
-        var buffer = new byte[65535];
-
-        var datagram = new DatagramPacket(buffer, buffer.length);
-
-        while (true) {
-            try {
-                ctx.socket.receive(datagram);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            push(new IwGtpDownlink(new OctetString(datagram.getData(), datagram.getOffset(), datagram.getLength()), datagram.getAddress(), datagram.getPort()));
-        }
+    private void handleTunnelCreate(PduSessionResource pduSession) {
+        ctx.pduSessions.insert(pduSession);
+        rateLimiter.insertOrUpdateBucket(pduSession);
     }
 
     private void handleUplinkData(IwUplinkData msg) {
@@ -119,11 +124,6 @@ public class GtpTask extends NtsTask {
         }
 
         rateLimiter.handleDownlinkPacket(pduSession, gtp.payload);
-    }
-
-    private void handleTunnelCreate(PduSessionResource pduSession) {
-        ctx.pduSessions.insert(pduSession);
-        rateLimiter.insertOrUpdateBucket(pduSession);
     }
 
     private final class RateLimiterImpl implements IRateLimiter {
