@@ -51,11 +51,12 @@ public class NgapPduSessionManagement {
             var resource = new PduSessionResource();
             resource.ueId = associatedUe.ueCtxId;
             resource.pduSessionId = (int) item.pDUSessionID.value;
+            resource.ueAggregateMaximumBitRate = associatedUe.aggregateMaximumBitRate;
 
             for (var ie : transfer.protocolIEs.list) {
                 var value = ie.value.getPresentValue();
                 if (value instanceof NGAP_PDUSessionAggregateMaximumBitRate) {
-                    resource.aggregateMaximumBitRate = (NGAP_PDUSessionAggregateMaximumBitRate) value;
+                    resource.sessionAggregateMaximumBitRate = (NGAP_PDUSessionAggregateMaximumBitRate) value;
                 } else if (value instanceof NGAP_DataForwardingNotPossible) {
                     resource.dataForwardingNotPossible = (NGAP_DataForwardingNotPossible) value;
                 } else if (value instanceof NGAP_PDUSessionType) {
