@@ -12,8 +12,6 @@ import tr.havelsan.ueransim.app.common.itms.IwGtpDownlink;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.IRateLimiter;
-import tr.havelsan.ueransim.app.gnb.gtp.ratelimiter.TokenBucket;
 import tr.havelsan.ueransim.gtp.GtpDecoder;
 import tr.havelsan.ueransim.gtp.GtpEncoder;
 import tr.havelsan.ueransim.gtp.GtpMessage;

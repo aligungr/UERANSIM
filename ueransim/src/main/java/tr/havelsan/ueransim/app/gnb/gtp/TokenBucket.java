@@ -1,4 +1,9 @@
-package tr.havelsan.ueransim.app.gnb.gtp.ratelimiter;
+/*
+ * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
+ * This software and all associated files are licensed under GPL-3.0.
+ */
+
+package tr.havelsan.ueransim.app.gnb.gtp;
 
 /**
  * It represents a simple TokenBucket. In order to save resources is a passive entity: it computes refill tokens number
@@ -6,7 +11,7 @@ package tr.havelsan.ueransim.app.gnb.gtp.ratelimiter;
  * corresponds to a Byte.
  * https://github.com/vladimir-bukhtoyarov/bucket4j/blob/master/doc-pages/token-bucket-brief-overview.md
  */
-public class TokenBucket {
+class TokenBucket {
 
     private final static long REFILL_PERIOD = 1000L;
     private long byteCapacity;
@@ -28,7 +33,6 @@ public class TokenBucket {
             this.lastRefillTimestamp = System.currentTimeMillis();
         }
     }
-
 
     /**
      * It tries to consume a specific number of tokens.
@@ -74,5 +78,4 @@ public class TokenBucket {
             this.lastRefillTimestamp = currentTimeMillis;
         }
     }
-
 }

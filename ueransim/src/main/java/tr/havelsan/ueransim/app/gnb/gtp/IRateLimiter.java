@@ -1,4 +1,9 @@
-package tr.havelsan.ueransim.app.gnb.gtp.ratelimiter;
+/*
+ * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
+ * This software and all associated files are licensed under GPL-3.0.
+ */
+
+package tr.havelsan.ueransim.app.gnb.gtp;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -6,7 +11,8 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 /**
  * Interface for RateLimiter.
  */
-public interface IRateLimiter {
+interface IRateLimiter {
+
     /**
      * Handles downlink IP packets.
      *
