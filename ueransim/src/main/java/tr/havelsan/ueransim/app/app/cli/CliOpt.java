@@ -27,6 +27,7 @@ public class CliOpt {
                     UeStatusCommand.class,
                     SessionCreateCommand.class,
                     UePingCommand.class,
+                    UeDeRegistrationCommand.class,
             },
             mixinStandardHelpOptions = true,
             versionProvider = ClientApp.VersionProvider.class
@@ -209,7 +210,7 @@ public class CliOpt {
 
     @CommandLine.Command(
             name = "ue-ping",
-            description = "Trigger a ping request on behalf of the specified UE",
+            description = "Trigger a ping request for the specified UE",
             sortOptions = false,
             mixinStandardHelpOptions = true,
             versionProvider = ClientApp.VersionProvider.class
@@ -249,6 +250,37 @@ public class CliOpt {
             msg.address = address;
             msg.count = count;
             msg.timeoutSec = timeoutSec;
+
+            CliOpt.msg = msg;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "ue-deregister",
+            description = "Trigger a de-registration for the specified UE",
+            sortOptions = false,
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
+    )
+    public static class UeDeRegistrationCommand implements Runnable {
+        @CommandLine.Parameters(
+                description = "IMSI number of the UE that will trigger de-registration.",
+                index = "0"
+        )
+        private String ueImsi;
+
+        @CommandLine.Option(
+                names = {"-s"},
+                description = "Use switch-off indication in de-registration request."
+        )
+        private boolean isSwitchOff;
+
+        public void run() {
+            var msg = new CmdUeDeRegistration();
+            msg.ueImsi = ueImsi;
+            msg.isSwitchOff = isSwitchOff;
 
             CliOpt.msg = msg;
         }
