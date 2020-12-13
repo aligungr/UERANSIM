@@ -41,7 +41,7 @@ public class PduSessionTree {
         return null;
     }
 
-    public Collection<PduSessionResource> findByUEId(UUID ue){
+    public Collection<PduSessionResource> findByUeId(UUID ue) {
         return mapByUeId.get(ue).values();
     }
 

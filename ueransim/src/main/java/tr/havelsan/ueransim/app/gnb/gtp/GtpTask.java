@@ -168,7 +168,7 @@ public class GtpTask extends NtsTask {
             var downlinkCapacity = computeDownlinkAmbrInBit(pduSession);
             var currentDownlinkBucket = downlinkBucketForUeId
                     .putIfAbsent(ueId, new TokenBucket(downlinkCapacity));
-            if(currentDownlinkBucket != null) {
+            if (currentDownlinkBucket != null) {
                 currentDownlinkBucket.updateCapacity(downlinkCapacity);
             }
 
@@ -200,22 +200,22 @@ public class GtpTask extends NtsTask {
                                       final Function<NGAP_UEAggregateMaximumBitRate, Long> getUeLinkAmbr) {
             var allSessionAmbr = 0L;
             var atLeastOneSessionAmbr = false;
-            for (var pduSession:
-                    ctx.pduSessions.findByUEId(currentPduSession.ueId)) {
+            for (var pduSession :
+                    ctx.pduSessions.findByUeId(currentPduSession.ueId)) {
                 var sessionAmbr = pduSession.sessionAggregateMaximumBitRate;
-                if(sessionAmbr == null) {
+                if (sessionAmbr == null) {
                     continue;
                 }
                 allSessionAmbr += getSessionLinkAmbr.apply(sessionAmbr);
                 atLeastOneSessionAmbr = true;
             }
             var ueAmbr = currentPduSession.ueAggregateMaximumBitRate;
-            if(ueAmbr == null){
+            if (ueAmbr == null) {
                 return Long.min(getUeLinkAmbr.apply(ueAmbr), allSessionAmbr) / 8;
             } else {
-                if(atLeastOneSessionAmbr) {
+                if (atLeastOneSessionAmbr) {
                     return allSessionAmbr / 8;
-                } else{
+                } else {
                     return -1;
                 }
             }

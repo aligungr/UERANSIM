@@ -22,7 +22,7 @@ public class TokenBucket {
      */
     public TokenBucket(long byteCapacity) {
         this.byteCapacity = byteCapacity;
-        if(byteCapacity != -1) {
+        if (byteCapacity != -1) {
             this.refillTokensPerOneMillis = (double) byteCapacity / (double) REFILL_PERIOD;
             this.availableTokens = byteCapacity;
             this.lastRefillTimestamp = System.currentTimeMillis();
@@ -52,11 +52,12 @@ public class TokenBucket {
 
     /**
      * Update the capacity of the bucket.
+     *
      * @param newByteCapacity The new capacity in Byte (i.e the new AMBR treshold).
      */
     public void updateCapacity(long newByteCapacity) {
         this.byteCapacity = newByteCapacity;
-        if(newByteCapacity != -1){
+        if (newByteCapacity != -1) {
             this.refillTokensPerOneMillis = (double) byteCapacity / (double) REFILL_PERIOD;
         }
     }
