@@ -11,9 +11,9 @@ import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.info.UePduSessionInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
+import tr.havelsan.ueransim.app.common.itms.IwUeExternalCommand;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
-import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
@@ -52,8 +52,8 @@ public class UeAppTask extends NtsTask {
             var msg = poll(1000);
             pingApp.timeoutControl();
 
-            if (msg instanceof IwUeTestCommand) {
-                var cmd = ((IwUeTestCommand) msg).cmd;
+            if (msg instanceof IwUeExternalCommand) {
+                var cmd = ((IwUeExternalCommand) msg).cmd;
 
                 if (cmd instanceof TestCmd_PduSessionEstablishment) {
                     nasTask.push(msg);

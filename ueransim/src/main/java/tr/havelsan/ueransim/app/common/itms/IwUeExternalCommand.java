@@ -7,10 +7,10 @@ package tr.havelsan.ueransim.app.common.itms;
 
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 
-public class IwUeTestCommand {
+public class IwUeExternalCommand {
     public final TestCmd cmd;
 
-    public IwUeTestCommand(TestCmd cmd) {
+    public IwUeExternalCommand(TestCmd cmd) {
         this.cmd = cmd;
     }
 }

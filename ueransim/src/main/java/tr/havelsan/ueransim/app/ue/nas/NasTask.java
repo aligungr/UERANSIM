@@ -56,8 +56,8 @@ public class NasTask extends NtsTask {
                 receiveDownlinkNas((IwDownlinkNas) msg);
             } else if (msg instanceof IwNasTimerExpire) {
                 receiveTimerExpire((IwNasTimerExpire) msg);
-            } else if (msg instanceof IwUeTestCommand) {
-                receiveTestCommand((IwUeTestCommand) msg);
+            } else if (msg instanceof IwUeExternalCommand) {
+                receiveTestCommand((IwUeExternalCommand) msg);
             } else if (msg instanceof IwPlmnSearchResponse) {
                 receivePlmnSearchResponse((IwPlmnSearchResponse) msg);
             } else if (msg instanceof IwPerformCycle) {
@@ -80,7 +80,7 @@ public class NasTask extends NtsTask {
         }
     }
 
-    private void receiveTestCommand(IwUeTestCommand msg) {
+    private void receiveTestCommand(IwUeExternalCommand msg) {
         if (!MobilityManagement.executeCommand(ctx, msg.cmd)) {
             if (!SessionManagement.executeCommand(ctx, msg.cmd)) {
                 Log.error(Tag.SYS, "invalid command: %s", msg.cmd);

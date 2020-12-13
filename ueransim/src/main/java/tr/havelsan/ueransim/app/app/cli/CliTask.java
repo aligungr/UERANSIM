@@ -289,7 +289,7 @@ public class CliTask extends NtsTask {
         }
 
         // TODO: Test olayı kaldırılacak
-        appTask[0].push(new IwUeTestCommand(new TestCmd_PduSessionEstablishment()));
+        appTask[0].push(new IwUeExternalCommand(new TestCmd_PduSessionEstablishment()));
 
         sendCmd(client, new CmdTerminate(0, "PDU session establishment has been triggered."));
     }
@@ -304,7 +304,7 @@ public class CliTask extends NtsTask {
         }
 
         // TODO: Test olayı kaldırılacak
-        appTask[0].push(new IwUeTestCommand(new TestCmd_Ping(message.address, message.count, message.timeoutSec)));
+        appTask[0].push(new IwUeExternalCommand(new TestCmd_Ping(message.address, message.count, message.timeoutSec)));
 
         sendCmd(client, new CmdTerminate(0, "Ping request has been triggered."));
     }
