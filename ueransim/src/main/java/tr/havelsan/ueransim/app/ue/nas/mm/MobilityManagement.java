@@ -84,8 +84,12 @@ public class MobilityManagement {
 
     public static boolean executeCommand(NasContext ctx, TestCmd cmd) {
         if (cmd instanceof TestCmd_Deregistration) {
-            MmDeregistration.sendDeregistration(ctx, ((TestCmd_Deregistration) cmd).isSwitchOff
-                    ? IEDeRegistrationType.ESwitchOff.SWITCH_OFF : IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
+            if (ctx.mmCtx.rmState != ERmState.RM_REGISTERED) {
+                Log.error(Tag.CLI, "UE cannot start de-registration since it is not in registered state yet.");
+            } else {
+                MmDeregistration.sendDeregistration(ctx, ((TestCmd_Deregistration) cmd).isSwitchOff
+                        ? IEDeRegistrationType.ESwitchOff.SWITCH_OFF : IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
+            }
             return true;
         }
 
