@@ -47,6 +47,18 @@ public class BiMap<K, V> {
         return keys.keySet();
     }
 
+    public void removeByKey(K key) {
+        var value = keys.get(key);
+        keys.remove(key);
+        values.remove(value);
+    }
+
+    public void removeByValue(V value) {
+        var key = values.get(value);
+        values.remove(value);
+        keys.remove(key);
+    }
+
     public Set<V> valueSet() {
         return values.keySet();
     }

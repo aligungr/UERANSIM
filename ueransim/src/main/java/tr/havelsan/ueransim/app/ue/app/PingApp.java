@@ -5,10 +5,10 @@
 
 package tr.havelsan.ueransim.app.ue.app;
 
-import tr.havelsan.ueransim.app.common.UeConnectionInfo;
+import tr.havelsan.ueransim.app.common.cli.CmdUePing;
+import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
@@ -40,7 +40,7 @@ class PingApp {
 
     private static native int handleEchoReplyPacket(byte[] ipData);
 
-    public void sendPing(TestCmd_Ping ping) {
+    public void sendPing(CmdUePing ping) {
         if (!connectionInfo.isEstablished) {
             Log.error(Tag.UEAPP, "Ping failure: UE has no connection.");
             return;

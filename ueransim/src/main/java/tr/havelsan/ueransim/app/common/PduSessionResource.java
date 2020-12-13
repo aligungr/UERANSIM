@@ -14,13 +14,14 @@ import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_QosFlowSetupRequestItem;
 import tr.havelsan.ueransim.ngap0.ies.sequences.NGAP_SecurityIndication;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PduSessionResource {
-    public UUID ueId;
-    public int pduSessionId;
+    public final UUID ueId;
+    public final int pduSessionId;
 
-    public NGAP_PDUSessionAggregateMaximumBitRate aggregateMaximumBitRate;
+    public NGAP_PDUSessionAggregateMaximumBitRate sessionAggregateMaximumBitRate;
     public NGAP_DataForwardingNotPossible dataForwardingNotPossible;
     public NGAP_PDUSessionType type;
     public NGAP_SecurityIndication securityIndication;
@@ -28,4 +29,23 @@ public class PduSessionResource {
     public NGAP_UPTransportLayerInformation upLayer;
     public NGAP_UPTransportLayerInformation downLayer;
     public List<NGAP_QosFlowSetupRequestItem> qosFlows;
+
+    public PduSessionResource(UUID ueId, int pduSessionId) {
+        this.ueId = ueId;
+        this.pduSessionId = pduSessionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PduSessionResource that = (PduSessionResource) o;
+        return pduSessionId == that.pduSessionId &&
+                Objects.equals(ueId, that.ueId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ueId, pduSessionId);
+    }
 }

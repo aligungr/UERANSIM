@@ -5,9 +5,9 @@
 
 package tr.havelsan.ueransim.app.ue.nas.sm;
 
+import tr.havelsan.ueransim.app.common.cli.CmdMessage;
+import tr.havelsan.ueransim.app.common.cli.CmdSessionCreate;
 import tr.havelsan.ueransim.app.common.contexts.NasContext;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.nas.NasDecoder;
@@ -58,8 +58,8 @@ public class SessionManagement {
         // todo
     }
 
-    public static boolean executeCommand(NasContext ctx, TestCmd cmd) {
-        if (cmd instanceof TestCmd_PduSessionEstablishment) {
+    public static boolean executeCommand(NasContext ctx, CmdMessage cmd) {
+        if (cmd instanceof CmdSessionCreate) {
             SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
             return true;
         }

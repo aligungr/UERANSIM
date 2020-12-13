@@ -12,14 +12,13 @@ import tr.havelsan.ueransim.app.app.AppConfig;
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
 import tr.havelsan.ueransim.app.app.monitor.StepperMonitor;
-import tr.havelsan.ueransim.app.app.tester.ProcedureTester;
-import tr.havelsan.ueransim.app.common.sw.*;
-import tr.havelsan.ueransim.app.utils.ConfigUtils;
+import tr.havelsan.ueransim.app.common.sw.SocketWrapper;
+import tr.havelsan.ueransim.app.common.sw.SwCommand;
+import tr.havelsan.ueransim.app.common.sw.SwIntervalResult;
+import tr.havelsan.ueransim.app.common.sw.SwLog;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Fun;
-import tr.havelsan.ueransim.utils.Severity;
-import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.LogEntry;
@@ -34,10 +33,11 @@ public class WebApp {
     private SenderTask senderTask;
     private LogTask logTask;
 
-    private ProcedureTester procTester;
     private UeRanSim ueransim;
 
     public WebApp() {
+        System.exit(1); // TODO
+
         Fun initTasks = () -> {
             receiverTask = new ReceiverTask();
             senderTask = new SenderTask();
@@ -78,29 +78,19 @@ public class WebApp {
             var loadTestNotifierMonitor = new LoadTestNotifierMonitor(senderTask);
             var appConfig = new AppConfig();
 
-            procTester = new ProcedureTester(appConfig);
             ueransim = new AppBuilder()
                     .addMonitor(stepperMonitor)
-                    .addMonitor(procTester)
                     .addMonitor(loadTestNotifierMonitor)
                     .build();
-        };
-
-        Fun initApp = () -> {
-            var procTestConfig = ConfigUtils.createProcTestConfig();
-
-            receiverTask.procTester = procTester;
-            procTester.init(ueransim, procTestConfig, initLogger::run);
         };
 
         initTasks.run();
         buildApp.run();
         initJavalin.run();
-        initApp.run();
     }
 
     public static void main(String[] args) {
-        BaseApp.main(args);
+        BaseApp.main(args, true);
         new WebApp();
     }
 
@@ -114,14 +104,13 @@ public class WebApp {
 
     private static class ReceiverTask extends NtsTask {
         public SenderTask senderTask;
-        public ProcedureTester procTester;
 
         @Override
         public void main() {
             while (true) {
                 var msg = take();
                 if (msg instanceof SwCommand) {
-                    procTester.startTestCase(((SwCommand) msg).commandName);
+                    // TODO
                 }
             }
         }
@@ -137,9 +126,10 @@ public class WebApp {
                 var msg = take();
                 if (msg instanceof OnConnected) {
                     ws = ((OnConnected) msg).ws;
-                    push(new SwTestCases(ProcedureTester.testCases()));
-                    push(new SwIntervalMetadata(LoadTestMonitor.IntervalMetadata.INSTANCE));
-                    push(new SwLogMetadata(Severity.values(), Tag.values()));
+                    // TODO
+                    //push(new SwTestCases(ProcedureTester.testCases()));
+                    //push(new SwIntervalMetadata(LoadTestMonitor.IntervalMetadata.INSTANCE));
+                    //push(new SwLogMetadata(Severity.values(), Tag.values()));
                 } else if (msg instanceof SocketWrapper) {
                     if (ws != null) {
                         ws.send(SocketWrapperSerializer.toJson(msg));

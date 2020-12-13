@@ -5,28 +5,52 @@
 
 package tr.havelsan.ueransim.app.gnb.app;
 
-import tr.havelsan.ueransim.app.common.itms.IwInitialSctpReady;
+import tr.havelsan.ueransim.app.common.info.GnbStatusInfo;
+import tr.havelsan.ueransim.app.common.itms.IwGnbStatusInfoRequest;
+import tr.havelsan.ueransim.app.common.itms.IwGnbStatusUpdate;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class GnbAppTask extends NtsTask {
 
-    private boolean initialSctpReady;
+    private final GnbSimContext ctx;
+    private final GnbStatusInfo statusInfo;
 
     public GnbAppTask(GnbSimContext ctx) {
+        this.ctx = ctx;
+        this.statusInfo = new GnbStatusInfo();
     }
 
     @Override
     public void main() {
         while (true) {
             var msg = take();
-            if (msg instanceof IwInitialSctpReady) {
-                initialSctpReady = true;
+            if (msg instanceof IwGnbStatusUpdate) {
+                receiveStatusUpdate((IwGnbStatusUpdate) msg);
+            } else if (msg instanceof IwGnbStatusInfoRequest) {
+                var requester = ((IwGnbStatusInfoRequest) msg).requester;
+                var consumer = ((IwGnbStatusInfoRequest) msg).consumerFunc;
+                requester.push(() -> consumer.accept(createStatusInfo()));
             }
         }
     }
 
+    private void receiveStatusUpdate(IwGnbStatusUpdate message) {
+        switch (message.what) {
+            case IwGnbStatusUpdate.INITIAL_SCTP_ESTABLISHED:
+                statusInfo.isInitialSctpEstablished = message.isInitialSctpEstablished;
+                break;
+        }
+    }
+
+    private GnbStatusInfo createStatusInfo() {
+        var inf = new GnbStatusInfo();
+        inf.isInitialSctpEstablished = statusInfo.isInitialSctpEstablished;
+        return inf;
+    }
+
+    @Deprecated // TODO
     public boolean isInitialSctpReady() {
-        return initialSctpReady;
+        return statusInfo.isInitialSctpEstablished;
     }
 }

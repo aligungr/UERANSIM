@@ -19,6 +19,7 @@ import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
 import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.utils.exceptions.SimException;
 
 import java.util.*;
 
@@ -27,6 +28,8 @@ public class UeRanSim {
     private final HashMap<UUID, GnbSimContext> gnbMap;
     private final HashMap<UUID, UeSimContext> ueMap;
     private final AirSimContext airCtx;
+
+    private final HashMap<String, BaseSimContext> ctxByNodeName;
 
     private final List<MonitorTask> monitors;
 
@@ -40,6 +43,9 @@ public class UeRanSim {
         }
 
         this.airCtx = AirNode.createContext(this);
+
+        this.ctxByNodeName = new HashMap<>();
+        this.ctxByNodeName.put(airCtx.nodeName, airCtx);
 
         AirNode.run(airCtx);
     }
@@ -56,6 +62,7 @@ public class UeRanSim {
         }
     }
 
+    @Deprecated
     public GnbSimContext findGnbForUe(UUID gnbId) {
         GnbSimContext ctx;
         synchronized (this) {
@@ -66,6 +73,13 @@ public class UeRanSim {
             return null;
         }
         return ctx;
+    }
+
+    public UUID findContextIdByNodeName(String nodeName) {
+        synchronized (this) {
+            var ctx = ctxByNodeName.get(nodeName);
+            return ctx != null ? ctx.ctxId : null;
+        }
     }
 
     public HashSet<UUID> allUes() {
@@ -93,22 +107,32 @@ public class UeRanSim {
     }
 
     public UUID createGnb(GnbConfig config) {
-        // TODO: Maybe check for unique node name
-
         var ctx = GnbNode.createContext(this, config);
         synchronized (this) {
+            if (gnbMap.size() > 0) {
+                throw new SimException("There is an already gNB. Multiple gNB feature is not supported yet.");
+            }
+
+            if (ctxByNodeName.containsKey(ctx.nodeName)) {
+                throw new SimException("Another gNB with the same ID already exists. Please use another ID.");
+            }
+
             gnbMap.put(ctx.ctxId, ctx);
+            ctxByNodeName.put(ctx.nodeName, ctx);
         }
         GnbNode.run(ctx);
         return ctx.ctxId;
     }
 
-    public UUID createUe(UeConfig config) {
-        // TODO: Maybe check for unique node name
-
-        var ctx = UeNode.createContext(this, config);
+    public UUID createUe(UeConfig config) throws SimException {
+        UeSimContext ctx = UeNode.createContext(this, config);
         synchronized (this) {
+            if (ctxByNodeName.containsKey(ctx.nodeName)) {
+                throw new SimException("Another UE with the same IMSI already exists. Please use another IMSI.");
+            }
+
             ueMap.put(ctx.ctxId, ctx);
+            ctxByNodeName.put(ctx.nodeName, ctx);
         }
         UeNode.run(ctx);
         return ctx.ctxId;

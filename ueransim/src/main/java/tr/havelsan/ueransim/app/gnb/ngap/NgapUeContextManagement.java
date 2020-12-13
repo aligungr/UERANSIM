@@ -6,6 +6,8 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
+import tr.havelsan.ueransim.app.common.itms.IwUeContextCreate;
+import tr.havelsan.ueransim.app.common.itms.IwUeContextUpdate;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
 import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_SecurityKey;
@@ -50,6 +52,8 @@ public class NgapUeContextManagement {
         if (nasMessage != null) {
             NgapNasTransport.deliverDlNas(ctx, ueId, NasEncoder.nasPduS(nasMessage));
         }
+
+        ctx.gtpTask.push(new IwUeContextCreate(ueId, ue.aggregateMaximumBitRate));
     }
 
     public static void receiveContextReleaseCommand(NgapGnbContext ctx, NGAP_UEContextReleaseCommand message) {
@@ -108,6 +112,10 @@ public class NgapUeContextManagement {
             ue.amfUeNgapId = ieNewAmfUeNgapId.value;
             Log.info(Tag.FLOW, "AMF_UE_NGAP_ID changed from %d to %d.", old, ue.amfUeNgapId);
         }
+
+        // Using ieAggMaxBitRate instead of ue.ieAggMaxBitRate, because it is update but not create.
+        //  so we consider received message since the ie can be null.
+        ctx.gtpTask.push(new IwUeContextUpdate(ueId, ieAggMaxBitRate));
 
         NgapTransfer.sendNgapUeAssociated(ctx, ueId, new NGAP_UEContextModificationResponse());
     }

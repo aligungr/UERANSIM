@@ -17,6 +17,7 @@ public class UeMrContext {
     public NtsTask rrcTask;
     public NtsTask appTask;
     public UUID connectedGnb;
+    public String connectedGnbName;
 
     public UeMrContext(UeSimContext ueCtx) {
         this.ueCtx = ueCtx;

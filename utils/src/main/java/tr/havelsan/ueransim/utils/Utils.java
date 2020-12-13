@@ -5,6 +5,8 @@
 
 package tr.havelsan.ueransim.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.json.XML;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -390,6 +392,18 @@ public final class Utils {
         Yaml y = new Yaml();
         Map<String, Object> map = (Map<String, Object>) y.load(yaml);
         return Json.toJson(map);
+    }
+
+    /**
+     * Converts json string to yaml string
+     */
+    public static String convertJsonToYaml(String json) {
+        try {
+            var jsonNodeTree = new ObjectMapper().readTree(json);
+            return new YAMLMapper().writeValueAsString(jsonNodeTree);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String getCommandLineOption(String[] args, String flag) {

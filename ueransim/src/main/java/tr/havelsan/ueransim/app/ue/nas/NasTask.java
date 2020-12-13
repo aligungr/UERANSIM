@@ -35,10 +35,20 @@ public class NasTask extends NtsTask {
 
     @Override
     public void main() {
+        ctx.appTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_APP);
         ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
 
         pushDelayed(new IwPerformCycle(CYCLE_MM), PERIOD_MM);
         pushDelayed(new IwPerformCycle(CYCLE_TIMER), PERIOD_TIMER);
+
+        var statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.MM_STATE);
+        statusUpdate.mmState = ctx.mmCtx.mmState;
+        statusUpdate.mmSubState = ctx.mmCtx.mmSubState;
+        ctx.appTask.push(statusUpdate);
+
+        statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.RM_STATE);
+        statusUpdate.rmState = ctx.mmCtx.rmState;
+        ctx.appTask.push(statusUpdate);
 
         while (true) {
             var msg = take();
@@ -46,8 +56,8 @@ public class NasTask extends NtsTask {
                 receiveDownlinkNas((IwDownlinkNas) msg);
             } else if (msg instanceof IwNasTimerExpire) {
                 receiveTimerExpire((IwNasTimerExpire) msg);
-            } else if (msg instanceof IwUeTestCommand) {
-                receiveTestCommand((IwUeTestCommand) msg);
+            } else if (msg instanceof IwUeExternalCommand) {
+                receiveTestCommand((IwUeExternalCommand) msg);
             } else if (msg instanceof IwPlmnSearchResponse) {
                 receivePlmnSearchResponse((IwPlmnSearchResponse) msg);
             } else if (msg instanceof IwPerformCycle) {
@@ -70,7 +80,7 @@ public class NasTask extends NtsTask {
         }
     }
 
-    private void receiveTestCommand(IwUeTestCommand msg) {
+    private void receiveTestCommand(IwUeExternalCommand msg) {
         if (!MobilityManagement.executeCommand(ctx, msg.cmd)) {
             if (!SessionManagement.executeCommand(ctx, msg.cmd)) {
                 Log.error(Tag.SYS, "invalid command: %s", msg.cmd);
