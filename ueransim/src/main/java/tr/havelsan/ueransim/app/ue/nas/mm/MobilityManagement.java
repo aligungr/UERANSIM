@@ -5,6 +5,8 @@
 
 package tr.havelsan.ueransim.app.ue.nas.mm;
 
+import tr.havelsan.ueransim.app.common.cli.CmdMessage;
+import tr.havelsan.ueransim.app.common.cli.CmdUeDeRegistration;
 import tr.havelsan.ueransim.app.common.contexts.NasContext;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
@@ -13,8 +15,6 @@ import tr.havelsan.ueransim.app.common.enums.ERmState;
 import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
 import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
@@ -82,12 +82,12 @@ public class MobilityManagement {
         }
     }
 
-    public static boolean executeCommand(NasContext ctx, TestCmd cmd) {
-        if (cmd instanceof TestCmd_Deregistration) {
+    public static boolean executeCommand(NasContext ctx, CmdMessage cmd) {
+        if (cmd instanceof CmdUeDeRegistration) {
             if (ctx.mmCtx.rmState != ERmState.RM_REGISTERED) {
                 Log.error(Tag.CLI, "UE cannot start de-registration since it is not in registered state yet.");
             } else {
-                MmDeregistration.sendDeregistration(ctx, ((TestCmd_Deregistration) cmd).isSwitchOff
+                MmDeregistration.sendDeregistration(ctx, ((CmdUeDeRegistration) cmd).isSwitchOff
                         ? IEDeRegistrationType.ESwitchOff.SWITCH_OFF : IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
             }
             return true;

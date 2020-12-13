@@ -16,9 +16,6 @@ import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
@@ -291,9 +288,7 @@ public class CliTask extends NtsTask {
             return;
         }
 
-        // TODO: Test olayı kaldırılacak
-        appTask[0].push(new IwUeExternalCommand(new TestCmd_PduSessionEstablishment()));
-
+        appTask[0].push(new IwUeExternalCommand(message));
         sendCmd(client, new CmdTerminate(0, "PDU session establishment has been triggered."));
     }
 
@@ -306,9 +301,7 @@ public class CliTask extends NtsTask {
             return;
         }
 
-        // TODO: Test olayı kaldırılacak
-        appTask[0].push(new IwUeExternalCommand(new TestCmd_Ping(message.address, message.count, message.timeoutSec)));
-
+        appTask[0].push(new IwUeExternalCommand(message));
         sendCmd(client, new CmdTerminate(0, "Ping request has been triggered."));
     }
 
@@ -321,8 +314,7 @@ public class CliTask extends NtsTask {
             return;
         }
 
-        appTask[0].push(new IwUeExternalCommand(new TestCmd_Deregistration(message.isSwitchOff)));
-
+        appTask[0].push(new IwUeExternalCommand(message));
         sendCmd(client, new CmdTerminate(0, "De-registration has been triggered."));
     }
 }

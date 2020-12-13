@@ -5,12 +5,12 @@
 
 package tr.havelsan.ueransim.app.common.itms;
 
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
+import tr.havelsan.ueransim.app.common.cli.CmdMessage;
 
 public class IwUeExternalCommand {
-    public final TestCmd cmd;
+    public final CmdMessage cmd;
 
-    public IwUeExternalCommand(TestCmd cmd) {
+    public IwUeExternalCommand(CmdMessage cmd) {
         this.cmd = cmd;
     }
 }

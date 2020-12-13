@@ -6,6 +6,9 @@
 package tr.havelsan.ueransim.app.ue.app;
 
 import tr.havelsan.ueransim.app.common.PduSession;
+import tr.havelsan.ueransim.app.common.cli.CmdSessionCreate;
+import tr.havelsan.ueransim.app.common.cli.CmdUeDeRegistration;
+import tr.havelsan.ueransim.app.common.cli.CmdUePing;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.info.UePduSessionInfo;
@@ -15,9 +18,6 @@ import tr.havelsan.ueransim.app.common.itms.IwUeExternalCommand;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -55,12 +55,12 @@ public class UeAppTask extends NtsTask {
             if (msg instanceof IwUeExternalCommand) {
                 var cmd = ((IwUeExternalCommand) msg).cmd;
 
-                if (cmd instanceof TestCmd_PduSessionEstablishment) {
+                if (cmd instanceof CmdSessionCreate) {
                     nasTask.push(msg);
-                } else if (cmd instanceof TestCmd_Deregistration) {
+                } else if (cmd instanceof CmdUeDeRegistration) {
                     nasTask.push(msg);
-                } else if (cmd instanceof TestCmd_Ping) {
-                    pingApp.sendPing((TestCmd_Ping) cmd);
+                } else if (cmd instanceof CmdUePing) {
+                    pingApp.sendPing((CmdUePing) cmd);
                 }
             } else if (msg instanceof IwDownlinkData) {
                 pingApp.handlePacket(((IwDownlinkData) msg).ipPacket);
