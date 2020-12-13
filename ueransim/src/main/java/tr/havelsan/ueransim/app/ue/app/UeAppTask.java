@@ -15,7 +15,10 @@ import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
 import tr.havelsan.ueransim.app.common.itms.IwUeTestCommand;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.common.testcmd.*;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_InitialRegistration;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.itms.ItmsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -54,8 +57,6 @@ public class UeAppTask extends NtsTask {
                 var cmd = ((IwUeTestCommand) msg).cmd;
 
                 if (cmd instanceof TestCmd_InitialRegistration) {
-                    nasTask.push(msg);
-                } else if (cmd instanceof TestCmd_PeriodicRegistration) {
                     nasTask.push(msg);
                 } else if (cmd instanceof TestCmd_PduSessionEstablishment) {
                     nasTask.push(msg);

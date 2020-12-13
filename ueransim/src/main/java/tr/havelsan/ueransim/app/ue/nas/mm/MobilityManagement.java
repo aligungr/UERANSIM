@@ -16,7 +16,6 @@ import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_InitialRegistration;
-import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PeriodicRegistration;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
@@ -87,9 +86,6 @@ public class MobilityManagement {
     public static boolean executeCommand(NasContext ctx, TestCmd cmd) {
         if (cmd instanceof TestCmd_InitialRegistration) {
             MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, ((TestCmd_InitialRegistration) cmd).followOn);
-            return true;
-        } else if (cmd instanceof TestCmd_PeriodicRegistration) {
-            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING, ((TestCmd_PeriodicRegistration) cmd).followOn);
             return true;
         } else if (cmd instanceof TestCmd_Deregistration) {
             MmDeregistration.sendDeregistration(ctx, ((TestCmd_Deregistration) cmd).isSwitchOff
