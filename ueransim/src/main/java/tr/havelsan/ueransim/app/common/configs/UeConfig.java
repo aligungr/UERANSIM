@@ -30,7 +30,7 @@ public class UeConfig {
 
     public UeConfig(OctetString key, OctetString op, OctetString amf, String imei, Supi supi, VPlmn plmn,
                     boolean smsOverNasSupported, IESNssai[] requestedNssai, IEDnn dnn) {
-        this.emulationMode = false; // TODO: make configurable later
+        this.emulationMode = true; // TODO: make configurable later
         this.key = key;
         this.op = op;
         this.amf = amf;
