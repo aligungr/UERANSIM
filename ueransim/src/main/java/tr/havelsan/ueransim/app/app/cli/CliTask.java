@@ -16,6 +16,7 @@ import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Deregistration;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_PduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.testcmd.TestCmd_Ping;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
@@ -86,6 +87,8 @@ public class CliTask extends NtsTask {
                 receiveSessionCreate(client, (CmdSessionCreate) message);
             } else if (message instanceof CmdUePing) {
                 receiveUePing(client, (CmdUePing) message);
+            } else if (message instanceof CmdUeDeRegistration) {
+                receiveUeDeregister(client, (CmdUeDeRegistration) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -299,7 +302,7 @@ public class CliTask extends NtsTask {
         var appTask = new UeAppTask[1];
 
         if (!tryToFindUe(message.ueImsi, ctx, appTask)) {
-            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.address));
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.ueImsi));
             return;
         }
 
@@ -307,5 +310,19 @@ public class CliTask extends NtsTask {
         appTask[0].push(new IwUeExternalCommand(new TestCmd_Ping(message.address, message.count, message.timeoutSec)));
 
         sendCmd(client, new CmdTerminate(0, "Ping request has been triggered."));
+    }
+
+    private void receiveUeDeregister(UUID client, CmdUeDeRegistration message) {
+        var ctx = new UeSimContext[1];
+        var appTask = new UeAppTask[1];
+
+        if (!tryToFindUe(message.ueImsi, ctx, appTask)) {
+            sendCmd(client, new CmdErrorIndication("No UE found with the IMSI %s", message.ueImsi));
+            return;
+        }
+
+        appTask[0].push(new IwUeExternalCommand(new TestCmd_Deregistration(message.isSwitchOff)));
+
+        sendCmd(client, new CmdTerminate(0, "De-registration has been triggered."));
     }
 }
