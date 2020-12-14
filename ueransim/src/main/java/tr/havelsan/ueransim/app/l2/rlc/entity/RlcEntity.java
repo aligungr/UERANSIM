@@ -5,5 +5,13 @@
 
 package tr.havelsan.ueransim.app.l2.rlc.entity;
 
+import tr.havelsan.ueransim.utils.octets.OctetString;
+
 public abstract class RlcEntity {
+
+    public abstract OctetString createPdu(OctetString sdu);
+
+    public abstract void receivePdu(OctetString data);
+
+    public abstract void receiveSdu(OctetString data);
 }
