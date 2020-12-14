@@ -11,6 +11,8 @@ import tr.havelsan.ueransim.app.l2.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.List;
+
 public class UmEntity extends RlcEntity {
 
     private int snLength = 6;
@@ -18,8 +20,18 @@ public class UmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
 
+    // RX management
+    private int rxMaxSize;
+    private int rxCurrentSize;
+    private List<UmdPdu> rxBuffer; // TODO: auto sorting as first SN then SO
+
+    // RX state variables
     private int rxNextReassembly; // Earliest SN that is still considered for reassembly
     private int rxNextHighest; //
+
+    //======================================================================================================
+    //                                          INTERNAL METHODS
+    //======================================================================================================
 
     private int modulusRx(int num) {
         int r = num - (rxNextHighest - windowSize);
@@ -31,6 +43,10 @@ public class UmEntity extends RlcEntity {
         return modulusRx(a) - modulusRx(b);
     }
 
+    //======================================================================================================
+    //                                             BASE METHODS
+    //======================================================================================================
+
     @Override
     public OctetString createPdu(OctetString sdu) {
         return null;
@@ -40,20 +56,29 @@ public class UmEntity extends RlcEntity {
     public void receivePdu(OctetString data) {
         var pdu = UmdPdu.decode(new OctetInputStream(data), snLength == 6);
 
+        // If it is a full sdu, deliver directly.
         if (pdu.si == RlcConstants.SI_FULL) {
             RlcTransfer.deliverSdu(this, pdu.data);
             return;
         }
 
+        // If data length == 0, then discard.
         if (pdu.data.length == 0) {
             return;
         }
 
+        // If (RX_Next_Highest – UM_Window_Size) <= SN < RX_Next_Reassembly, then discard.
         if (snCompareRx(pdu.sn, rxNextReassembly) < 0) {
             return;
         }
 
-        // TODO place the received UMD PDU in the reception buffer
+        // If no room, then discard.
+        if (rxCurrentSize + pdu.data.length > rxMaxSize) {
+            return;
+        }
+
+        rxCurrentSize += pdu.data.length;
+        rxBuffer.add(pdu);
     }
 
     @Override
