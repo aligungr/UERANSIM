@@ -131,11 +131,35 @@ public class UmEntity extends RlcEntity {
             // if x = RX_Next_Reassembly, update RX_Next_Reassembly to the SN of the first
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
             if (x == rxNextReassembly) {
-                int i = rxNextReassembly;
-                while (isDelivered(i)) {
-                    i = (i + 1) % snModulus;
+                int n = rxNextReassembly;
+                while (isDelivered(n)) {
+                    n = (n + 1) % snModulus;
                 }
-                rxNextReassembly = i;
+                rxNextReassembly = n;
+            }
+        } else if (snCompareRx(x, rxNextHighest) >= 0) {
+            // Update RX_Next_Highest to x + 1;
+            rxNextHighest = (x + 1) % snModulus;
+
+            // Discard any UMD PDUs with SN that falls outside of the reassembly window
+            var it = rxBuffer.listIterator();
+            while (it.hasNext()) {
+                var value = it.next();
+
+                if (snCompareRx(value.sn, rxNextHighest) >= 0) {
+                    rxCurrentSize -= value.data.length;
+                    it.remove();
+                }
+            }
+
+            // If RX_Next_Reassembly falls outside of the reassembly window
+            if (snCompareRx(rxNextReassembly, rxNextHighest) >= 0) {
+                // Set RX_Next_Reassembly to the SN of the first SN >= (RX_Next_Highest – UM_Window_Size)
+                //  that has not been reassembled and delivered to upper layer.
+                int n = (rxNextHighest - windowSize + snModulus) % snModulus;
+                while (isDelivered(n))
+                    n = (n + 1) % snModulus;
+                rxNextReassembly = n;
             }
         }
     }
