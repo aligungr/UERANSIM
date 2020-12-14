@@ -81,7 +81,7 @@ public class UmEntity extends RlcEntity {
             return false;
 
         // Check if it is already reassembled and delivered. Returning false if it is
-        //  already processes.
+        //  already processes. Because no need to reprocess it.
         if (rxBuffer.get(index)._isDelivered)
             return false;
 
