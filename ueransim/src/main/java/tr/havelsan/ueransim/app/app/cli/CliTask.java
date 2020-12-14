@@ -19,7 +19,7 @@ import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
@@ -223,7 +223,7 @@ public class CliTask extends NtsTask {
             return false;
         }
 
-        var appTask = ctx.nts.findTask(ItmsId.UE_TASK_APP, UeAppTask.class);
+        var appTask = ctx.nts.findTask(NtsId.UE_TASK_APP, UeAppTask.class);
 
         outCtx[0] = ctx;
         outAppTask[0] = appTask;
@@ -243,7 +243,7 @@ public class CliTask extends NtsTask {
             return false;
         }
 
-        var appTask = ctx.nts.findTask(ItmsId.GNB_TASK_APP, GnbAppTask.class);
+        var appTask = ctx.nts.findTask(NtsId.GNB_TASK_APP, GnbAppTask.class);
         outCtx[0] = ctx;
         outAppTask[0] = appTask;
         return true;

@@ -18,7 +18,7 @@ import tr.havelsan.ueransim.app.common.itms.IwUeExternalCommand;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusInfoRequest;
 import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
@@ -46,7 +46,7 @@ public class UeAppTask extends NtsTask {
 
     @Override
     public void main() {
-        nasTask = ctx.nts.findTask(ItmsId.UE_TASK_NAS);
+        nasTask = ctx.nts.findTask(NtsId.UE_TASK_NAS);
 
         while (true) {
             var msg = poll(1000);

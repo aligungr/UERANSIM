@@ -15,7 +15,7 @@ import tr.havelsan.ueransim.gtp.GtpEncoder;
 import tr.havelsan.ueransim.gtp.GtpMessage;
 import tr.havelsan.ueransim.gtp.ext.PduSessionContainerExtHeader;
 import tr.havelsan.ueransim.gtp.pdusup.UlPduSessionInformation;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit6;
@@ -57,7 +57,7 @@ public class GtpTask extends NtsTask {
 
     @Override
     public void main() {
-        ctx.mrTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_MR);
+        ctx.mrTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_MR);
         try {
             ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
 

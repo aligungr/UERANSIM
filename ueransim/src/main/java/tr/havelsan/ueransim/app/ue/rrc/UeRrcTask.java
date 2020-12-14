@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
 import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class UeRrcTask extends NtsTask {
@@ -24,8 +24,8 @@ public class UeRrcTask extends NtsTask {
 
     @Override
     public void main() {
-        ctx.mrTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_MR);
-        ctx.nasTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_NAS);
+        ctx.mrTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_MR);
+        ctx.nasTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_NAS);
 
         while (true) {
             var msg = take();

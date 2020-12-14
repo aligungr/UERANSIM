@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
@@ -133,7 +133,7 @@ public class TunBridgeTask extends NtsTask {
             return;
         }
 
-        ue.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkData(target.ueId, target.psi, ipData));
+        ue.nts.findTask(NtsId.UE_TASK_MR).push(new IwUplinkData(target.ueId, target.psi, ipData));
     }
 
     private void handleDownlinkData(IwDownlinkData msg) {

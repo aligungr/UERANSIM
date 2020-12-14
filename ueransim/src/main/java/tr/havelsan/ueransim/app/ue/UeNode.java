@@ -13,7 +13,7 @@ import tr.havelsan.ueransim.app.ue.mr.UeMrTask;
 import tr.havelsan.ueransim.app.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.ue.rrc.UeRrcTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
@@ -34,10 +34,10 @@ public class UeNode {
                 new UeAppTask(ctx)
         };
 
-        ctx.nts.registerTask(ItmsId.UE_TASK_MR, tasks[0]);
-        ctx.nts.registerTask(ItmsId.UE_TASK_NAS, tasks[1]);
-        ctx.nts.registerTask(ItmsId.UE_TASK_RRC, tasks[2]);
-        ctx.nts.registerTask(ItmsId.UE_TASK_APP, tasks[3]);
+        ctx.nts.registerTask(NtsId.UE_TASK_MR, tasks[0]);
+        ctx.nts.registerTask(NtsId.UE_TASK_NAS, tasks[1]);
+        ctx.nts.registerTask(NtsId.UE_TASK_RRC, tasks[2]);
+        ctx.nts.registerTask(NtsId.UE_TASK_APP, tasks[3]);
 
         for (var task : tasks) Log.registerLogger(task.getThread(), ctx.logger);
         for (var task : tasks) task.start();

@@ -8,7 +8,7 @@ package tr.havelsan.ueransim.app.air;
 import tr.havelsan.ueransim.app.app.UeRanSim;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
@@ -25,7 +25,7 @@ public class AirNode {
                 new TunBridgeTask(ctx),
         };
 
-        ctx.nts.registerTask(ItmsId.AIR_TASK_TB, tasks[0]);
+        ctx.nts.registerTask(NtsId.AIR_TASK_TB, tasks[0]);
 
         for (var task : tasks) Log.registerLogger(task.getThread(), ctx.logger);
         for (var task : tasks) task.start();

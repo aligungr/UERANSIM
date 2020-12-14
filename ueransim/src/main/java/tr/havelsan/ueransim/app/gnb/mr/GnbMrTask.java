@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkRrc;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 public class GnbMrTask extends NtsTask {
@@ -24,8 +24,8 @@ public class GnbMrTask extends NtsTask {
 
     @Override
     public void main() {
-        ctx.gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
-        ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
+        ctx.gtpTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_GTP);
+        ctx.rrcTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_RRC);
 
         while (true) {
             var msg = take();
@@ -46,7 +46,7 @@ public class GnbMrTask extends NtsTask {
     }
 
     private void receiveDownlinkRrc(IwDownlinkRrc msg) {
-        ctx.gnbCtx.sim.findUe(msg.ueId).nts.findTask(ItmsId.UE_TASK_MR).push(msg);
+        ctx.gnbCtx.sim.findUe(msg.ueId).nts.findTask(NtsId.UE_TASK_MR).push(msg);
     }
 
     private void receiveUplinkData(IwUplinkData msg) {
@@ -54,7 +54,7 @@ public class GnbMrTask extends NtsTask {
     }
 
     private void receiveDownlinkData(IwDownlinkData msg) {
-        ctx.gnbCtx.sim.getAirCtx().nts.findTask(ItmsId.AIR_TASK_TB).push(msg);
-        ctx.gnbCtx.sim.findUe(msg.ueId).nts.findTask(ItmsId.UE_TASK_MR).push(msg);
+        ctx.gnbCtx.sim.getAirCtx().nts.findTask(NtsId.AIR_TASK_TB).push(msg);
+        ctx.gnbCtx.sim.findUe(msg.ueId).nts.findTask(NtsId.UE_TASK_MR).push(msg);
     }
 }
