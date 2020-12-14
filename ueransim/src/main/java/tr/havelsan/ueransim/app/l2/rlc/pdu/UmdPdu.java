@@ -15,6 +15,11 @@ public class UmdPdu {
     public int sn;
     public OctetString data;
 
+    // Indicates whether this SDU is delivered.
+    //  If the SDU has fragmentation, ALL UmdPdu which has the same underlying SDU must be
+    //  marked as _isDelivered=true at the reassembling and delivering operation.
+    public boolean _isDelivered;
+
     public static UmdPdu decode(OctetInputStream stream, boolean isShortSn) {
         var octet = stream.readOctet();
 
