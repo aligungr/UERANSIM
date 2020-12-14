@@ -283,7 +283,7 @@ public class UmEntity extends RlcEntity {
         var pdu = UmdPdu.decode(new OctetInputStream(data), snLength == 6);
         pdu._isDelivered = false;
 
-        // If it is a full sdu, deliver directly.
+        // If it is a full SDU, deliver directly.
         if (pdu.si == RlcConstants.SI_FULL) {
             RlcTransfer.deliverSdu(this, pdu.data);
             return;
