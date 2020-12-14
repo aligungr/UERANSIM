@@ -274,6 +274,7 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public OctetString createPdu(OctetString sdu) {
+        // TODO
         return null;
     }
 
@@ -318,7 +319,7 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public void receiveSdu(OctetString data) {
-
+        // TODO
     }
 
     @Override
