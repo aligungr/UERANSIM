@@ -15,10 +15,11 @@ import java.util.List;
 
 public class UmEntity extends RlcEntity {
 
-    private int snLength = 6;
-
+    // Configurations
+    private int snLength;
     private int snModulus;
     private int windowSize;
+    private int tReassemblyPeriod;
 
     // RX management
     private int rxMaxSize;
@@ -26,13 +27,13 @@ public class UmEntity extends RlcEntity {
     private List<UmdPdu> rxBuffer;
 
     // RX state variables
-    private int rxNextReassembly; // Earliest SN that is still considered for reassembly
-    private int rxNextHighest;    // SN of the UMD PDU with the highest SN among received UMD PDUs
-    private int rxTimerTrigger;   // The SN which triggered t-Reassembly
+    private int rxNextReassembly;  // Earliest SN that is still considered for reassembly
+    private int rxNextHighest;     // SN of the UMD PDU with the highest SN among received UMD PDUs
+    private int rxTimerTrigger;    // The SN which triggered t-Reassembly
 
     // Timers
-    private long tCurrent;        // Not a timer, but holds the current time in ms.
-    private long tReassembly;     // Reassembling timer
+    private long tCurrent;         // Not a timer, but holds the current time in ms.
+    private long tReassemblyStart; // Reassembling timer
 
     //======================================================================================================
     //                                                  UTILS
@@ -214,7 +215,7 @@ public class UmEntity extends RlcEntity {
         }
 
         // If t-Reassembly is running
-        if (tReassembly != 0) {
+        if (tReassemblyStart != 0) {
             boolean condition = false;
 
             // if RX_Timer_Trigger <= RX_Next_Reassembly; or
@@ -235,12 +236,12 @@ public class UmEntity extends RlcEntity {
 
             // ... stop and reset t-Reassembly.
             if (condition) {
-                tReassembly = 0;
+                tReassemblyStart = 0;
             }
         }
 
         // If t-Reassembly is not running (includes the case when t-Reassembly is stopped due to actions above)
-        if (tReassembly == 0) {
+        if (tReassemblyStart == 0) {
             boolean condition = false;
 
             // if RX_Next_Highest > RX_Next_Reassembly + 1; or
@@ -256,11 +257,15 @@ public class UmEntity extends RlcEntity {
 
             if (condition) {
                 // start t-Reassembly;
-                tReassembly = tCurrent;
+                tReassemblyStart = tCurrent;
                 // set RX_Timer_Trigger to RX_Next_Highest.
                 rxTimerTrigger = rxNextHighest;
             }
         }
+    }
+
+    private void actionReassemblyTimerExpired() {
+        // TODO
     }
 
     //======================================================================================================
@@ -314,5 +319,15 @@ public class UmEntity extends RlcEntity {
     @Override
     public void receiveSdu(OctetString data) {
 
+    }
+
+    @Override
+    public void timerCycle(long currentTime) {
+        tCurrent = currentTime;
+
+        // If t-Reassembly is running and expired
+        if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
+            actionReassemblyTimerExpired();
+        }
     }
 }
