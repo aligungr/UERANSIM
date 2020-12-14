@@ -56,7 +56,7 @@ public class GtpTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         ctx.mrTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_MR);
         try {
             ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));

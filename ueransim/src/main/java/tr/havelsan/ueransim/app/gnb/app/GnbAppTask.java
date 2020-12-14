@@ -22,7 +22,7 @@ public class GnbAppTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         while (true) {
             var msg = take();
             if (msg instanceof IwGnbStatusUpdate) {

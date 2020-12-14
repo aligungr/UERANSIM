@@ -23,7 +23,7 @@ public class UeRrcTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         ctx.mrTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_MR);
         ctx.nasTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_NAS);
 

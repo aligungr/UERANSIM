@@ -34,7 +34,7 @@ public class NasTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         ctx.appTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_APP);
         ctx.rrcTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_RRC);
 

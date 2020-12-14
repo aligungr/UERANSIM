@@ -45,7 +45,7 @@ public class UeAppTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         nasTask = ctx.nts.findTask(NtsId.UE_TASK_NAS);
 
         while (true) {

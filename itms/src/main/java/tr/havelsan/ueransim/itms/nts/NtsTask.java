@@ -26,7 +26,7 @@ public abstract class NtsTask {
         this.scheduler = allocateScheduler ? new NtsScheduler(this) : null;
     }
 
-    public abstract void main();
+    protected abstract void main();
 
     public void start() {
         if (isStarted)

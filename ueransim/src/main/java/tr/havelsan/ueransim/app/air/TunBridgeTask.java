@@ -38,7 +38,7 @@ public class TunBridgeTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         try {
             this.localhost = InetAddress.getByName("127.0.0.1");
         } catch (UnknownHostException e) {

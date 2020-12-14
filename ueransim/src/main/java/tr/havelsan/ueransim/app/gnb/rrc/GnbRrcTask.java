@@ -21,7 +21,7 @@ public class GnbRrcTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         ctx.ngapTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_NGAP);
         ctx.mrTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_MR);
 

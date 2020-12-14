@@ -44,7 +44,7 @@ public class CliTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         serverTask.start();
 
         while (true) {
