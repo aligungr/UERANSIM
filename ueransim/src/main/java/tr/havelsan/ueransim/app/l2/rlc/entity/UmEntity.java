@@ -27,7 +27,12 @@ public class UmEntity extends RlcEntity {
 
     // RX state variables
     private int rxNextReassembly; // Earliest SN that is still considered for reassembly
-    private int rxNextHighest; //
+    private int rxNextHighest;    // SN of the UMD PDU with the highest SN among received UMD PDUs
+    private int rxTimerTrigger;   // The SN which triggered t-Reassembly
+
+    // Timers
+    private long tCurrent;        // Not a timer, but holds the current time in ms.
+    private long tReassembly;     // Reassembling timer
 
     //======================================================================================================
     //                                                  UTILS
@@ -80,8 +85,9 @@ public class UmEntity extends RlcEntity {
         if (index == -1)
             return false;
 
-        // Check if it is already reassembled and delivered. Returning false if it is
-        //  already processes. Because no need to reprocess it.
+        // WARNING: Check if it is already reassembled and delivered. Returning false if it is
+        //  already processes. Because no need to reprocess it. We can consider this method as
+        //  "ready to reassembly and deliver" instead of "is all segments received?"
         if (rxBuffer.get(index)._isDelivered)
             return false;
 
@@ -98,6 +104,50 @@ public class UmEntity extends RlcEntity {
             var endOffset = pdu.so + pdu.data.length - 1;
             if (endOffset > maxOffset)
                 maxOffset = endOffset;
+        }
+
+        return false;
+    }
+
+    private boolean hasMissingSegment(int sn) {
+        int index = -1;
+
+        for (int i = 0; i < rxBuffer.size(); i++) {
+            var pdu = rxBuffer.get(i);
+            if (pdu.sn == sn) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            // No such a PDU, therefore we don't have a missing segment.
+            return false;
+        }
+
+        if (rxBuffer.get(index)._isDelivered) {
+            // The related SN is already processed, therefore we don't have a missing segment.
+            return false;
+        }
+
+        int endOffset = -1;
+        while (true) {
+            if (index >= rxBuffer.size())
+                break;
+
+            var pdu = rxBuffer.get(index);
+            if (pdu.sn != sn) {
+                break;
+            }
+
+            if (pdu.so > endOffset + 1)
+                return true;
+
+            int newOffset = pdu.so + pdu.data.length - 1;
+            if (newOffset > endOffset)
+                endOffset = newOffset;
+
+            index++;
         }
 
         return false;
@@ -160,6 +210,55 @@ public class UmEntity extends RlcEntity {
                 while (isDelivered(n))
                     n = (n + 1) % snModulus;
                 rxNextReassembly = n;
+            }
+        }
+
+        // If t-Reassembly is running
+        if (tReassembly != 0) {
+            boolean condition = false;
+
+            // if RX_Timer_Trigger <= RX_Next_Reassembly; or
+            if (snCompareRx(rxTimerTrigger, rxNextReassembly) <= 0) {
+                condition = true;
+            }
+            // if RX_Timer_Trigger falls outside of the reassembly window and
+            //  RX_Timer_Trigger is not equal to RX_Next_Highest; or
+            else if (snCompareRx(rxTimerTrigger, rxNextHighest) > 0) {
+                condition = true;
+            }
+            // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is no missing byte segment
+            //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of
+            //  all received segments of this RLC SDU:
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !hasMissingSegment(rxNextReassembly)) {
+                condition = true;
+            }
+
+            // ... stop and reset t-Reassembly.
+            if (condition) {
+                tReassembly = 0;
+            }
+        }
+
+        // If t-Reassembly is not running (includes the case when t-Reassembly is stopped due to actions above)
+        if (tReassembly == 0) {
+            boolean condition = false;
+
+            // if RX_Next_Highest > RX_Next_Reassembly + 1; or
+            if (snCompareRx(rxNextHighest, (rxNextReassembly + 1) % snModulus) > 0) {
+                condition = true;
+            }
+            // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at least one missing byte segment
+            //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of all received
+            //  segments of this RLC SDU:
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && hasMissingSegment(rxNextReassembly)) {
+                condition = true;
+            }
+
+            if (condition) {
+                // start t-Reassembly;
+                tReassembly = tCurrent;
+                // set RX_Timer_Trigger to RX_Next_Highest.
+                rxTimerTrigger = rxNextHighest;
             }
         }
     }
