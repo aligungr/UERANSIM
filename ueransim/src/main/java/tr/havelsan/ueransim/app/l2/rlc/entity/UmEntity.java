@@ -80,6 +80,11 @@ public class UmEntity extends RlcEntity {
         if (index == -1)
             return false;
 
+        // Check if it is already reassembled and delivered. Returning false if it is
+        //  already processes.
+        if (rxBuffer.get(index)._isDelivered)
+            return false;
+
         int maxOffset = -1;
 
         for (int i = index; i < rxBuffer.size(); i++) {
@@ -119,7 +124,6 @@ public class UmEntity extends RlcEntity {
 
         // If all byte segments with SN = x are received
         if (isAllSegmentsReceived(x)) {
-
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
             deliverReception(pdu);
@@ -133,7 +137,6 @@ public class UmEntity extends RlcEntity {
                 }
                 rxNextReassembly = i;
             }
-
         }
     }
 
@@ -157,6 +160,11 @@ public class UmEntity extends RlcEntity {
             return;
         }
 
+        // If SO is invalid, then discard.
+        if (pdu.si != RlcConstants.SI_FIRST && pdu.so == 0) {
+            return;
+        }
+
         // If data length == 0, then discard.
         if (pdu.data.length == 0) {
             return;
@@ -174,7 +182,7 @@ public class UmEntity extends RlcEntity {
 
         // Place the received UMD PDU in the reception buffer
         rxCurrentSize += pdu.data.length;
-        insertReception(pdu);
+        insertReception(pdu); // TODO: may be incorrect, see a.i.
 
         // Actions when an UMD PDU is placed in the reception buffer (5.2.2.2.3)
         actionReception(pdu);
