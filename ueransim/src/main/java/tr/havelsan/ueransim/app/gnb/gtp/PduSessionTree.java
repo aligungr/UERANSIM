@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.common.dynamics;
+package tr.havelsan.ueransim.app.gnb.gtp;
 
 import tr.havelsan.ueransim.app.common.PduSessionResource;
 

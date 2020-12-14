@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.app.common.contexts;
 
-import tr.havelsan.ueransim.app.common.dynamics.PduSessionTree;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
+import tr.havelsan.ueransim.app.gnb.gtp.PduSessionTree;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 
 import java.net.DatagramSocket;
