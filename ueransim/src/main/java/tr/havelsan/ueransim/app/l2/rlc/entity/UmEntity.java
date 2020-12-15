@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.app.l2.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.l2.rlc.RlcTransfer;
 import tr.havelsan.ueransim.app.l2.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.List;
@@ -94,7 +95,7 @@ public class UmEntity extends RlcEntity {
         // WARNING: Check if it is already reassembled and delivered. Returning false if it is
         //  already processes. Because no need to reprocess it. We can consider this method as
         //  "ready to reassemble and deliver" instead of "is all segments received?"
-        if (rxBuffer.get(index)._isDelivered)
+        if (rxBuffer.get(index)._isProcessed)
             return false;
 
         int maxOffset = -1;
@@ -123,7 +124,7 @@ public class UmEntity extends RlcEntity {
             return false;
         }
 
-        if (rxBuffer.get(index)._isDelivered) {
+        if (rxBuffer.get(index)._isProcessed) {
             // The related SN is already processed, therefore we don't have a missing segment.
             return false;
         }
@@ -153,14 +154,33 @@ public class UmEntity extends RlcEntity {
 
     private boolean isDelivered(int sn) {
         for (var pdu : rxBuffer) {
-            if (pdu.sn == sn && pdu._isDelivered)
+            if (pdu.sn == sn && pdu._isProcessed)
                 return true;
         }
         return false;
     }
 
-    private void reassembleAndDeliver(UmdPdu pdu) {
-        // TODO
+    private void reassembleAndDeliver(int sn) {
+        int startIndex = firstIndexOfSn(sn);
+
+        if (startIndex == -1)
+            return;
+
+        int endIndex = startIndex;
+        while (endIndex + 1 < rxBuffer.size() && rxBuffer.get(endIndex + 1).sn == sn) {
+            endIndex++;
+        }
+
+        var output = new OctetOutputStream();
+
+        for (int i = startIndex; i <= endIndex; i++) {
+            var pdu = rxBuffer.get(i);
+            output.writeOctetString(pdu.data);
+            pdu._isProcessed = true;
+            rxCurrentSize -= pdu.data.length;
+        }
+
+        RlcTransfer.deliverSdu(this, output.toOctetString());
     }
 
     //======================================================================================================
@@ -174,7 +194,7 @@ public class UmEntity extends RlcEntity {
         if (isAllSegmentsReceived(x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
-            reassembleAndDeliver(pdu);
+            reassembleAndDeliver(pdu.sn);
 
             // if x = RX_Next_Reassembly, update RX_Next_Reassembly to the SN of the first
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
@@ -304,7 +324,7 @@ public class UmEntity extends RlcEntity {
     @Override
     public void receivePdu(OctetString data) {
         var pdu = UmdPdu.decode(new OctetInputStream(data), snLength == 6);
-        pdu._isDelivered = false;
+        pdu._isProcessed = false;
 
         // If it is a full SDU, deliver directly.
         if (pdu.si == RlcConstants.SI_FULL) {
