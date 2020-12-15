@@ -486,6 +486,26 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public void discardSdu(int sduId) {
+        RlcSduSegment p = null;
 
+        for (var segment : txBuffer) {
+            if (segment.sdu.sduId == sduId) {
+                p = segment;
+                break;
+            }
+        }
+
+        // SDU not found, do nothing.
+        if (p == null)
+            return;
+
+        // The SDU is already segmented, do nothing.
+        if (p.si != RlcConstants.SI_FULL)
+            return;
+
+        // Remove the segment
+        if (!txBuffer.remove(p)) {
+            throw new RuntimeException();
+        }
     }
 }
