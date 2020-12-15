@@ -52,13 +52,13 @@ public enum ESegmentInfo {
         return this == LAST || this == MIDDLE;
     }
 
-    public ESegmentInfo withLast() {
+    public ESegmentInfo asNotLast() {
         if (this == LAST) return MIDDLE;
         if (this == FULL) return FIRST;
         return this;
     }
 
-    public ESegmentInfo withFirst() {
+    public ESegmentInfo asNotFirst() {
         if (this == FIRST) return MIDDLE;
         if (this == FULL) return LAST;
         return this;

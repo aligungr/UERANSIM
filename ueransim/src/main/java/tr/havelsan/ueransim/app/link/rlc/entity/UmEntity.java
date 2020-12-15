@@ -255,8 +255,8 @@ public class UmEntity extends RlcEntity {
     }
 
     private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
-        var newSi = sdu.si.withLast();
-        var nextSi = sdu.si.withFirst();
+        var newSi = sdu.si.asNotLast();
+        var nextSi = sdu.si.asNotFirst();
 
         int headerSizeAfterSeg = umdPduHeaderSize(newSi);
         if (headerSizeAfterSeg + 1 > maxSize)
