@@ -159,7 +159,7 @@ public class UmEntity extends RlcEntity {
         return false;
     }
 
-    private void reassembleAndDeliverReception(UmdPdu pdu) {
+    private void reassembleAndDeliver(UmdPdu pdu) {
         // TODO
     }
 
@@ -174,7 +174,7 @@ public class UmEntity extends RlcEntity {
         if (isAllSegmentsReceived(x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
-            reassembleAndDeliverReception(pdu);
+            reassembleAndDeliver(pdu);
 
             // if x = RX_Next_Reassembly, update RX_Next_Reassembly to the SN of the first
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
