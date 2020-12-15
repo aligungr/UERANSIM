@@ -12,8 +12,10 @@ import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSdu;
 import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSduSegment;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,17 +26,17 @@ public class UmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
     private int tReassemblyPeriod;
+    private int txMaxSize;
+    private int rxMaxSize;
 
     // TX management
     private int txCurrentSize;
-    private int txMaxSize;
     private LinkedList<RlcSduSegment> txBuffer;
 
     // TX state variables
     private int txNext;            // SN to be assigned for the next newly generated UMD PDU with segment
 
     // RX management
-    private int rxMaxSize;
     private int rxCurrentSize;
     private List<UmdPdu> rxBuffer; // TODO? when to remove
 
@@ -48,7 +50,35 @@ public class UmEntity extends RlcEntity {
     private long tReassemblyStart; // Reassembling timer
 
     //======================================================================================================
-    //                                                  UTILS
+    //                                           INITIALIZATION
+    //======================================================================================================
+
+    private UmEntity() {
+    }
+
+    public static UmEntity newInstance(int snLength, int tReassemblyPeriod, int txMaxSize, int rxMaxSize) {
+        if (snLength != 6 && snLength != 12) {
+            throw new IncorrectImplementationException();
+        }
+
+        var um = new UmEntity();
+        um.clearEntity();
+
+        um.snLength = snLength;
+        um.snModulus = 1 << snLength;
+        um.windowSize = um.snModulus / 2;
+        um.tReassemblyPeriod = tReassemblyPeriod;
+
+        um.txMaxSize = txMaxSize;
+        um.rxMaxSize = rxMaxSize;
+        um.txBuffer = new LinkedList<>();
+        um.rxBuffer = new ArrayList<>();
+
+        return um;
+    }
+
+    //======================================================================================================
+    //                                               UTILS
     //======================================================================================================
 
     private int modulusRx(int num) {
