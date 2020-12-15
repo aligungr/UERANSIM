@@ -8,6 +8,9 @@ package tr.havelsan.ueransim.app.l2.rlc.entity;
 import tr.havelsan.ueransim.app.l2.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.l2.rlc.RlcTransfer;
 import tr.havelsan.ueransim.app.l2.rlc.pdu.UmdPdu;
+import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSdu;
+import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSduSegment;
+import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcTxBuffer;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -21,6 +24,9 @@ public class UmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
     private int tReassemblyPeriod;
+
+    // TX management
+    private RlcTxBuffer txBuffer;
 
     // RX management
     private int rxMaxSize;
@@ -355,8 +361,24 @@ public class UmEntity extends RlcEntity {
     }
 
     @Override
-    public void receiveSdu(OctetString data) {
-        // TODO
+    public void receiveSdu(OctetString data, int sduId) {
+        if (data.length == 0)
+            return;
+
+        if (!txBuffer.hasRoom(data.length))
+            return;
+
+        var sdu = new RlcSdu(sduId, data);
+        sdu.sn = -1;
+        sdu.retransmissionCount = -1;
+
+        var segment = new RlcSduSegment(sdu);
+        segment.size = data.length;
+        segment.so = 0;
+        segment.si = RlcConstants.SI_FULL;
+        segment.nextSegment = null;
+
+        txBuffer.appendSegment(segment);
     }
 
     @Override

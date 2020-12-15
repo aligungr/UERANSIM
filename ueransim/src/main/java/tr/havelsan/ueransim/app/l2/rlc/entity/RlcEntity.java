@@ -11,7 +11,7 @@ public abstract class RlcEntity {
 
     public abstract void receivePdu(OctetString data);
 
-    public abstract void receiveSdu(OctetString data);
+    public abstract void receiveSdu(OctetString data, int sduId);
 
     public abstract OctetString createPdu(int maxSize);
 

@@ -19,7 +19,7 @@ public class AmEntity extends RlcEntity {
     }
 
     @Override
-    public void receiveSdu(OctetString data) {
+    public void receiveSdu(OctetString data, int sduId) {
 
     }
 
