@@ -33,4 +33,9 @@ public class TmEntity extends RlcEntity {
     public void discardSdu(int sduId) {
 
     }
+
+    @Override
+    public void reestablishment() {
+
+    }
 }
