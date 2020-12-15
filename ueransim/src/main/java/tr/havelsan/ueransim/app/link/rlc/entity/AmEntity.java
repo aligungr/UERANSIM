@@ -35,6 +35,9 @@ public class AmEntity extends RlcEntity {
     private int txCurrentSize;
     private LinkedList<RlcSduSegment> txBuffer;
 
+    // Retransmission buffer
+    private LinkedList<RlcSduSegment> retBuffer;
+
     // RX state variables
     private int rxNext;
     private int rxNextHighest;
@@ -254,6 +257,12 @@ public class AmEntity extends RlcEntity {
         return false;
     }
 
+    private boolean pendingStatusToSend() {
+        return statusTriggered &&
+                (tStatusProhibitStart == 0 || tCurrent - tStatusProhibitStart > tStatusProhibitPeriod);
+    }
+
+
     //======================================================================================================
     //                                          PDU RECEIVE RELATED
     //======================================================================================================
@@ -433,11 +442,44 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                          GENERATE PDU RELATED
+    //                                      CONSTRUCT PDU RELATED
     //======================================================================================================
 
     @Override
     public OctetString createPdu(int maxSize) {
+        // The transmitting side of an AM RLC entity shall prioritize transmission of RLC control PDUs over
+        //  AMD PDUs. The transmitting side of an AM RLC entity shall prioritize transmission of AMD PDUs containing
+        //  previously transmitted RLC SDUs or RLC SDU segments over transmission of AMD PDUs containing not
+        //  previously transmitted RLC SDUs or RLC SDU segments.
+
+        // At the first transmission opportunity indicated by lower layer,
+        //  construct a STATUS PDU and submit it to lower layer
+        if (pendingStatusToSend()) {
+            var res = createStatusPdu(maxSize);
+            if (res != null)
+                return res;
+        }
+
+        if (!retBuffer.isEmpty()) {
+            var res = createRetPdu(maxSize);
+            if (res != null)
+                return res;
+        }
+
+        return createTxPdu(maxSize);
+    }
+
+    private OctetString createStatusPdu(int maxSize) {
+        // TODO
+        return null;
+    }
+
+    private OctetString createRetPdu(int maxSize) {
+        // TODO
+        return null;
+    }
+
+    private OctetString createTxPdu(int maxSize) {
         // TODO
         return null;
     }
