@@ -6,7 +6,6 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
-import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -161,7 +160,7 @@ public class AmEntity extends RlcEntity {
 
             if (pdu.so > maxOffset + 1)
                 return false;
-            if (pdu.si == RlcConstants.SI_LAST || pdu.si == RlcConstants.SI_FULL)
+            if (pdu.si.hasLast())
                 return true;
 
             var endOffset = pdu.so + pdu.data.length - 1;
@@ -212,11 +211,9 @@ public class AmEntity extends RlcEntity {
     }
 
     private void receiveAmdPdu(AmdPdu pdu) {
-        if (pdu.si == RlcConstants.SI_MIDDLE || pdu.si == RlcConstants.SI_LAST) {
-            if (pdu.so == 0) {
-                // Bad SO value, discard PDU.
-                return;
-            }
+        if (pdu.si.requiresSo() && pdu.so == 0) {
+            // Bad SO value, discard PDU.
+            return;
         }
 
         if (pdu.data.length == 0) {

@@ -5,14 +5,14 @@
 
 package tr.havelsan.ueransim.app.link.rlc.pdu;
 
-import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
+import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class AmdPdu {
     public boolean dc;
     public boolean p;
-    public int si;
+    public ESegmentInfo si;
     public int sn;
     public int so;
     public OctetString data;
@@ -28,7 +28,7 @@ public class AmdPdu {
         var octet = stream.readOctet();
         pdu.dc = octet.getBitB(7);
         pdu.p = octet.getBitB(6);
-        pdu.si = octet.getBitRangeI(4, 5);
+        pdu.si = ESegmentInfo.fromSi(octet.getBitRangeI(4, 5));
         pdu.sn = isShortSn ? octet.getBitRangeI(0, 3) : octet.getBitRangeI(0, 1);
 
         pdu.sn <<= 8;
@@ -38,7 +38,7 @@ public class AmdPdu {
             pdu.sn |= stream.readOctetI();
         }
 
-        if (pdu.si != RlcConstants.SI_FIRST) {
+        if (pdu.si.requiresSo()) {
             pdu.so = stream.readOctet2I();
         }
 

@@ -5,14 +5,14 @@
 
 package tr.havelsan.ueransim.app.link.rlc.pdu;
 
-import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
+import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UmdPdu {
-    public int si;
+    public ESegmentInfo si;
     public int so;
     public int sn;
     public OctetString data;
@@ -26,9 +26,9 @@ public class UmdPdu {
         var octet = stream.readOctet();
 
         var umd = new UmdPdu();
-        umd.si = octet.getBitRangeI(6, 7);
+        umd.si = ESegmentInfo.fromSi(octet.getBitRangeI(6, 7));
 
-        if (umd.si != RlcConstants.SI_FULL) {
+        if (umd.si != ESegmentInfo.FULL) {
             if (isShortSn) {
                 umd.sn = octet.getBitRangeI(0, 5);
             } else {
@@ -37,7 +37,7 @@ public class UmdPdu {
                 umd.sn |= octet.getBitRangeI(0, 7);
             }
 
-            if (umd.si != RlcConstants.SI_FIRST) {
+            if (umd.si.requiresSo()) {
                 umd.so = stream.readOctet2I();
             }
         }
@@ -48,11 +48,11 @@ public class UmdPdu {
 
     public static void encode(OctetOutputStream stream, UmdPdu pdu, boolean isShortSn) {
         var octet0 = new Octet()
-                .setBitRange(6, 7, pdu.si);
+                .setBitRange(6, 7, pdu.si.intValue());
 
         int remainingSn = -1;
 
-        if (pdu.si != RlcConstants.SI_FULL) {
+        if (pdu.si != ESegmentInfo.FULL) {
             if (isShortSn) {
                 octet0 = octet0.setBitRange(0, 5, pdu.sn);
             } else {
@@ -66,7 +66,7 @@ public class UmdPdu {
         if (remainingSn != -1)
             stream.writeOctet(remainingSn);
 
-        if (pdu.si == RlcConstants.SI_MIDDLE || pdu.si == RlcConstants.SI_LAST)
+        if (pdu.si.requiresSo())
             stream.writeOctet2(pdu.so);
 
         stream.writeOctetString(pdu.data);

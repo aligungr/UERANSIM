@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
-import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
+import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
 import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
@@ -165,7 +165,7 @@ public class UmEntity extends RlcEntity {
 
             if (pdu.so > maxOffset + 1)
                 return false;
-            if (pdu.si == RlcConstants.SI_LAST || pdu.si == RlcConstants.SI_FULL)
+            if (pdu.si.hasLast())
                 return true;
 
             var endOffset = pdu.so + pdu.data.length - 1;
@@ -243,11 +243,11 @@ public class UmEntity extends RlcEntity {
         consumer.deliverSdu(this, output.toOctetString());
     }
 
-    private int umdPduHeaderSize(int si) {
+    private int umdPduHeaderSize(ESegmentInfo si) {
         switch (si) {
-            case RlcConstants.SI_FULL:
+            case FULL:
                 return 1;
-            case RlcConstants.SI_FIRST:
+            case FIRST:
                 return snLength == 6 ? 1 : 2;
             default:
                 return snLength == 6 ? 3 : 4;
@@ -255,17 +255,8 @@ public class UmEntity extends RlcEntity {
     }
 
     private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
-        int newSi = sdu.si;
-        if (newSi == RlcConstants.SI_LAST)
-            newSi = RlcConstants.SI_MIDDLE;
-        else if (newSi == RlcConstants.SI_FULL)
-            newSi = RlcConstants.SI_FIRST;
-
-        int nextSi = sdu.si;
-        if (nextSi == RlcConstants.SI_FIRST)
-            nextSi = RlcConstants.SI_MIDDLE;
-        else if (nextSi == RlcConstants.SI_FULL)
-            nextSi = RlcConstants.SI_LAST;
+        var newSi = sdu.si.withLast();
+        var nextSi = sdu.si.withFirst();
 
         int headerSizeAfterSeg = umdPduHeaderSize(newSi);
         if (headerSizeAfterSeg + 1 > maxSize)
@@ -423,13 +414,13 @@ public class UmEntity extends RlcEntity {
         pdu._isProcessed = false;
 
         // If it is a full SDU, deliver directly.
-        if (pdu.si == RlcConstants.SI_FULL) {
+        if (pdu.si == ESegmentInfo.FULL) {
             consumer.deliverSdu(this, pdu.data);
             return;
         }
 
         // If SO is invalid, then discard.
-        if (pdu.si != RlcConstants.SI_FIRST && pdu.so == 0) {
+        if (pdu.si.requiresSo() && pdu.so == 0) {
             return;
         }
 
@@ -471,7 +462,7 @@ public class UmEntity extends RlcEntity {
         var segment = new RlcSduSegment(sdu);
         segment.size = data.length;
         segment.so = 0;
-        segment.si = RlcConstants.SI_FULL;
+        segment.si = ESegmentInfo.FULL;
 
         txCurrentSize += segment.size;
         txBuffer.addLast(segment);
@@ -502,7 +493,7 @@ public class UmEntity extends RlcEntity {
             txBuffer.addFirst(next);
         }
 
-        if (segment.si == RlcConstants.SI_LAST) {
+        if (segment.si == ESegmentInfo.LAST) {
             txNext = (txNext + 1) % snModulus;
         }
 
@@ -550,7 +541,7 @@ public class UmEntity extends RlcEntity {
             return;
 
         // The SDU is already segmented, do nothing.
-        if (p.si != RlcConstants.SI_FULL)
+        if (p.si != ESegmentInfo.FULL)
             return;
 
         // Remove the segment
