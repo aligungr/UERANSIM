@@ -8,6 +8,7 @@ package tr.havelsan.ueransim.app.link.rlc.entity;
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedList;
@@ -26,6 +27,8 @@ public class AmEntity extends RlcEntity {
     // RX state variables
     private int rxNext;
     private int rxNextHighest;
+    private int rxHighestStatus;
+    private int rxNextStatusTrigger;
 
     // RX buffer
     private int rxCurrentSize;
@@ -65,8 +68,7 @@ public class AmEntity extends RlcEntity {
 
     private int modulusTx(int a) {
         int r = a - txNextAck;
-        if (r < 0) r += snModulus;
-        return r;
+        return r < 0 ? r + snModulus : r;
     }
 
     private int snCompareRx(int a, int b) {
@@ -171,6 +173,73 @@ public class AmEntity extends RlcEntity {
         return false;
     }
 
+    private void reassembleAndDeliver(int sn) {
+        int startIndex = firstIndexOfSn(sn);
+
+        if (startIndex == -1)
+            return;
+
+        int endIndex = startIndex;
+        while (endIndex + 1 < rxBuffer.size() && rxBuffer.get(endIndex + 1).sn == sn) {
+            endIndex++;
+        }
+
+        var output = new OctetOutputStream();
+
+        for (int i = startIndex; i <= endIndex; i++) {
+            var pdu = rxBuffer.get(i);
+            output.writeOctetString(pdu.data);
+            pdu._isProcessed = true;
+            rxCurrentSize -= pdu.data.length;
+        }
+
+        consumer.deliverSdu(this, output.toOctetString());
+    }
+
+    private boolean hasMissingSegment(int sn) {
+        int index = firstIndexOfSn(sn);
+
+        if (index == -1) {
+            // No such a PDU, therefore we don't have a missing segment.
+            return false;
+        }
+
+        if (rxBuffer.get(index)._isProcessed) {
+            // The related SN is already processed, therefore we don't have a missing segment.
+            return false;
+        }
+
+        int endOffset = -1;
+        while (true) {
+            if (index >= rxBuffer.size())
+                break;
+
+            var pdu = rxBuffer.get(index);
+            if (pdu.sn != sn) {
+                break;
+            }
+
+            if (pdu.so > endOffset + 1)
+                return true;
+
+            int newOffset = pdu.so + pdu.data.length - 1;
+            if (newOffset > endOffset)
+                endOffset = newOffset;
+
+            index++;
+        }
+
+        return false;
+    }
+
+    private boolean isDelivered(int sn) {
+        for (var pdu : rxBuffer) {
+            if (pdu.sn == sn && pdu._isProcessed)
+                return true;
+        }
+        return false;
+    }
+
     //======================================================================================================
     //                                              ACTIONS
     //======================================================================================================
@@ -183,9 +252,63 @@ public class AmEntity extends RlcEntity {
             rxNextHighest = (x + 1) % snModulus;
 
         if (isAllSegmentsReceived(x)) {
-            // TODO
-        } else {
-            // TODO
+            // Reassemble the RLC SDU from AMD PDU(s) with SN = x,
+            //  remove RLC headers when doing so and deliver the reassembled RLC SDU to upper layer;
+            reassembleAndDeliver(pdu.sn);
+
+            // If x = RX_Highest_Status, update RX_Highest_Status to the SN of the first RLC SDU with
+            //  SN > current RX_Highest_Status for which not all bytes have been received.
+            if (x == rxHighestStatus) {
+                int n = rxHighestStatus;
+                while (isDelivered(n)) {
+                    n = (n + 1) % snModulus;
+                }
+                rxHighestStatus = n;
+            }
+
+            // If x = RX_Next: update RX_Next to the SN of the first RLC SDU with SN > current RX_Next
+            //  for which not all bytes have been received.
+            if (x == rxNext) {
+
+                // WARNING: Not completely sure
+                while (!rxBuffer.isEmpty() && rxBuffer.peekFirst()._isProcessed && rxBuffer.peekFirst().sn == rxNext) {
+                    do {
+                        rxBuffer.removeFirst();
+                    } while (!rxBuffer.isEmpty() && rxBuffer.peekFirst().sn == rxNext);
+                    rxNext = (rxNext + 1) % snModulus;
+                }
+            }
+        }
+
+        // if t-Reassembly is running
+        if (tReassemblyStart > 0) {
+            if (rxNextStatusTrigger == rxNext // if RX_Next_Status_Trigger = RX_Next; or
+                    ||
+                    // if RX_Next_Status_Trigger = RX_Next + 1 and there is no missing byte segment of the SDU
+                    //  associated with SN = RX_Next before the last byte of all received segments of this SDU; or
+                    (rxNextStatusTrigger == (rxNext + 1) % snModulus && !hasMissingSegment(rxNext)) ||
+                    // if RX_Next_Status_Trigger falls outside of the receiving window and RX_Next_Status_Trigger
+                    //  is not equal to RX_Next + AM_Window_Size:
+                    (!isInReceiveWindow(rxNextStatusTrigger) && rxNextStatusTrigger != (rxNext + windowSize) % snModulus)) {
+
+                // Stop and reset t-Reassembly.
+                tReassemblyStart = 0;
+            }
+        }
+
+        // if t-Reassembly is not running (includes the case t-Reassembly is stopped due to actions above)
+        if (tReassemblyStart == 0) {
+            // if RX_Next_Highest> RX_Next +1; or
+            if (snCompareRx(rxNextHighest, (rxNext + 1) % snModulus) > 0
+                    // if RX_Next_Highest = RX_Next + 1 and there is at least one missing byte segment of the SDU
+                    //  associated with SN = RX_Next before the last byte of all received segments of this SDU:
+                    || (rxNextHighest == (rxNext + 1) % snModulus && hasMissingSegment(rxNext))) {
+
+                // Start t-Reassembly
+                tReassemblyStart = tCurrent;
+                // Set RX_Next_Status_Trigger to RX_Next_Highest
+                rxNextStatusTrigger = rxNextHighest;
+            }
         }
     }
 
