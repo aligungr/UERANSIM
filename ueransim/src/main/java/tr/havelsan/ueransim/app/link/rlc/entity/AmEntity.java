@@ -60,7 +60,7 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                               UTILS
+    //                                                UTILS
     //======================================================================================================
 
     private int modulusRx(int a) {
@@ -86,7 +86,7 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                           INTERNAL METHODS
+    //                                          INTERNAL METHODS
     //======================================================================================================
 
     private boolean isAlreadyReceived(int sn, int so, int size) {
@@ -243,8 +243,60 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                              ACTIONS
+    //                                          PDU RECEIVE RELATED
     //======================================================================================================
+
+    @Override
+    public void receivePdu(OctetString data) {
+        if (data.length == 0)
+            return;
+
+        // Data PDU
+        if (data.get1(0).getBitB(7)) {
+            var amdPdu = AmdPdu.decode(new OctetInputStream(data), snLength == 12);
+            receiveAmdPdu(amdPdu);
+        }
+        // Control PDU
+        else {
+            throw new RuntimeException("not implemented yet"); // TODO
+        }
+
+    }
+
+    private void receiveAmdPdu(AmdPdu pdu) {
+        if (pdu.si.requiresSo() && pdu.so == 0) {
+            // Bad SO value, discard PDU.
+            return;
+        }
+
+        if (pdu.data.length == 0) {
+            // No data, discard PDU.
+            return;
+        }
+
+        if (rxCurrentSize + pdu.data.length > rxMaxSize) {
+            // No room in RX buffer, discard PDU.
+            return;
+        }
+
+        // Discard if x falls outside of the receiving window
+        if (!isInReceiveWindow(pdu.sn)) {
+            return;
+        }
+
+        // if byte segment numbers y to z of the RLC SDU with SN = x have been received before:
+        //  discard the received AMD PDU
+        if (isAlreadyReceived(pdu.sn, pdu.so, pdu.data.length)) {
+            return;
+        }
+
+        // Place the received AMD PDU in the reception buffer
+        rxCurrentSize += pdu.data.length;
+        insertReception(pdu);
+
+        // Actions when an AMD PDU is placed in the reception buffer
+        actionReception(pdu);
+    }
 
     private void actionReception(AmdPdu pdu) {
         int x = pdu.sn;
@@ -314,6 +366,29 @@ public class AmEntity extends RlcEntity {
         }
     }
 
+    //======================================================================================================
+    //                                     TIMER RELATED METHODS
+    //======================================================================================================
+
+    @Override
+    public void timerCycle(long currentTime) {
+        tCurrent = currentTime;
+
+        // If PollRetransmit is running and expired
+        if (tPollRetransmitStart != 0 && tCurrent > tPollRetransmitStart + tPollRetransmitPeriod) {
+            // Stop timer and Handle expire actions
+            tPollRetransmitStart = 0;
+            actionPollRetransmitTimerExpired();
+        }
+
+        // If t-Reassembly is running and expired
+        if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
+            // Stop timer and Handle expire actions
+            tReassemblyStart = 0;
+            actionReassemblyTimerExpired();
+        }
+    }
+
     private void actionReassemblyTimerExpired() {
         // When t-Reassembly expires, the receiving side of an AM RLC entity shall:
 
@@ -350,63 +425,7 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                          PDU RECEIVE RELATED
-    //======================================================================================================
-
-    @Override
-    public void receivePdu(OctetString data) {
-        if (data.length == 0)
-            return;
-
-        // Data PDU
-        if (data.get1(0).getBitB(7)) {
-            var amdPdu = AmdPdu.decode(new OctetInputStream(data), snLength == 12);
-            receiveAmdPdu(amdPdu);
-        }
-        // Control PDU
-        else {
-            throw new RuntimeException("not implemented yet"); // TODO
-        }
-
-    }
-
-    private void receiveAmdPdu(AmdPdu pdu) {
-        if (pdu.si.requiresSo() && pdu.so == 0) {
-            // Bad SO value, discard PDU.
-            return;
-        }
-
-        if (pdu.data.length == 0) {
-            // No data, discard PDU.
-            return;
-        }
-
-        if (rxCurrentSize + pdu.data.length > rxMaxSize) {
-            // No room in RX buffer, discard PDU.
-            return;
-        }
-
-        // Discard if x falls outside of the receiving window
-        if (!isInReceiveWindow(pdu.sn)) {
-            return;
-        }
-
-        // if byte segment numbers y to z of the RLC SDU with SN = x have been received before:
-        //  discard the received AMD PDU
-        if (isAlreadyReceived(pdu.sn, pdu.so, pdu.data.length)) {
-            return;
-        }
-
-        // Place the received AMD PDU in the reception buffer
-        rxCurrentSize += pdu.data.length;
-        insertReception(pdu);
-
-        // Actions when an AMD PDU is placed in the reception buffer
-        actionReception(pdu);
-    }
-
-    //======================================================================================================
-    //                                            BASE METHODS
+    //                                            OTHER METHODS
     //======================================================================================================
 
     @Override
@@ -417,25 +436,6 @@ public class AmEntity extends RlcEntity {
     @Override
     public OctetString createPdu(int maxSize) {
         return null;
-    }
-
-    @Override
-    public void timerCycle(long currentTime) {
-        tCurrent = currentTime;
-
-        // If PollRetransmit is running and expired
-        if (tPollRetransmitStart != 0 && tCurrent > tPollRetransmitStart + tPollRetransmitPeriod) {
-            // Stop timer and Handle expire actions
-            tPollRetransmitStart = 0;
-            actionPollRetransmitTimerExpired();
-        }
-
-        // If t-Reassembly is running and expired
-        if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
-            // Stop timer and Handle expire actions
-            tReassemblyStart = 0;
-            actionReassemblyTimerExpired();
-        }
     }
 
     @Override
