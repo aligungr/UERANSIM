@@ -28,4 +28,8 @@ public class RlcTxBuffer {
         currentSize += segment.size;
         segments.add(segment);
     }
+
+    public boolean hasSdu() {
+        return segments.size() > 0;
+    }
 }

@@ -189,6 +189,17 @@ public class UmEntity extends RlcEntity {
         RlcTransfer.deliverSdu(this, output.toOctetString());
     }
 
+    private int umdPduHeaderSize(int si) {
+        switch (si) {
+            case RlcConstants.SI_FULL:
+                return 1;
+            case RlcConstants.SI_FIRST:
+                return snLength == 6 ? 1 : 2;
+            default:
+                return snLength == 6 ? 3 : 4;
+        }
+    }
+
     //======================================================================================================
     //                                             ACTIONS
     //======================================================================================================
@@ -383,6 +394,10 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public OctetString createPdu(int maxSize) {
+        if (!txBuffer.hasSdu())
+            return OctetString.EMPTY;
+
+
         return null; // todo
     }
 
