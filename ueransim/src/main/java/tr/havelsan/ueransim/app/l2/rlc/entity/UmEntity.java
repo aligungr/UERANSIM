@@ -53,6 +53,20 @@ public class UmEntity extends RlcEntity {
     //                                              INTERNAL METHODS
     //======================================================================================================
 
+    private int firstIndexOfSn(int sn) {
+        int index = -1;
+
+        for (int i = 0; i < rxBuffer.size(); i++) {
+            var pdu = rxBuffer.get(i);
+            if (pdu.sn == sn) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
     private void insertReception(UmdPdu pdu) {
         int index = -1;
 
@@ -73,22 +87,13 @@ public class UmEntity extends RlcEntity {
     }
 
     private boolean isAllSegmentsReceived(int sn) {
-        int index = -1;
-
-        for (int i = 0; i < rxBuffer.size(); i++) {
-            var pdu = rxBuffer.get(i);
-            if (pdu.sn == sn) {
-                index = i;
-                break;
-            }
-        }
-
+        int index = firstIndexOfSn(sn);
         if (index == -1)
             return false;
 
         // WARNING: Check if it is already reassembled and delivered. Returning false if it is
         //  already processes. Because no need to reprocess it. We can consider this method as
-        //  "ready to reassembly and deliver" instead of "is all segments received?"
+        //  "ready to reassemble and deliver" instead of "is all segments received?"
         if (rxBuffer.get(index)._isDelivered)
             return false;
 
@@ -111,15 +116,7 @@ public class UmEntity extends RlcEntity {
     }
 
     private boolean hasMissingSegment(int sn) {
-        int index = -1;
-
-        for (int i = 0; i < rxBuffer.size(); i++) {
-            var pdu = rxBuffer.get(i);
-            if (pdu.sn == sn) {
-                index = i;
-                break;
-            }
-        }
+        int index = firstIndexOfSn(sn);
 
         if (index == -1) {
             // No such a PDU, therefore we don't have a missing segment.
@@ -162,7 +159,7 @@ public class UmEntity extends RlcEntity {
         return false;
     }
 
-    private void deliverReception(UmdPdu pdu) {
+    private void reassembleAndDeliverReception(UmdPdu pdu) {
         // TODO
     }
 
@@ -177,7 +174,7 @@ public class UmEntity extends RlcEntity {
         if (isAllSegmentsReceived(x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
-            deliverReception(pdu);
+            reassembleAndDeliverReception(pdu);
 
             // if x = RX_Next_Reassembly, update RX_Next_Reassembly to the SN of the first
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
@@ -265,7 +262,8 @@ public class UmEntity extends RlcEntity {
     }
 
     private void actionReassemblyTimerExpired() {
-        // TODO
+        // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
+
     }
 
     //======================================================================================================
@@ -328,6 +326,9 @@ public class UmEntity extends RlcEntity {
 
         // If t-Reassembly is running and expired
         if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
+            // Stop timer
+            tReassemblyStart = 0;
+            // Handle expire actions
             actionReassemblyTimerExpired();
         }
     }
