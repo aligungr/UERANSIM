@@ -10,7 +10,6 @@ public class RlcSduSegment {
     public int size;
     public int so;
     public int si;
-    public RlcSduSegment nextSegment;
 
     public RlcSduSegment(RlcSdu sdu) {
         this.sdu = sdu;

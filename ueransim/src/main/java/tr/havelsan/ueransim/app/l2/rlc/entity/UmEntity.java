@@ -10,11 +10,11 @@ import tr.havelsan.ueransim.app.l2.rlc.RlcTransfer;
 import tr.havelsan.ueransim.app.l2.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSdu;
 import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSduSegment;
-import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcTxBuffer;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class UmEntity extends RlcEntity {
@@ -26,7 +26,12 @@ public class UmEntity extends RlcEntity {
     private int tReassemblyPeriod;
 
     // TX management
-    private RlcTxBuffer txBuffer;
+    private int txCurrentSize;
+    private int txMaxSize;
+    private LinkedList<RlcSduSegment> txBuffer;
+
+    // TX state variables
+    private int txNext;            // SN to be assigned for the next newly generated UMD PDU with segment
 
     // RX management
     private int rxMaxSize;
@@ -328,6 +333,36 @@ public class UmEntity extends RlcEntity {
         }
     }
 
+    private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
+        int newSi = sdu.si;
+        if (newSi == RlcConstants.SI_LAST)
+            newSi = RlcConstants.SI_MIDDLE;
+        else if (newSi == RlcConstants.SI_FULL)
+            newSi = RlcConstants.SI_FIRST;
+
+        int nextSi = sdu.si;
+        if (nextSi == RlcConstants.SI_FIRST)
+            nextSi = RlcConstants.SI_MIDDLE;
+        else if (nextSi == RlcConstants.SI_FULL)
+            nextSi = RlcConstants.SI_LAST;
+
+        int headerSizeAfterSeg = umdPduHeaderSize(newSi);
+        if (headerSizeAfterSeg + 1 > maxSize)
+            return null;
+
+        int overflowed = headerSizeAfterSeg + sdu.size - maxSize;
+
+        sdu.si = newSi;
+        sdu.size -= overflowed;
+
+        var next = new RlcSduSegment(sdu.sdu);
+        next.si = nextSi;
+        next.size = overflowed;
+        next.so = sdu.so + sdu.size;
+
+        return next;
+    }
+
     //======================================================================================================
     //                                             BASE METHODS
     //======================================================================================================
@@ -376,7 +411,7 @@ public class UmEntity extends RlcEntity {
         if (data.length == 0)
             return;
 
-        if (!txBuffer.hasRoom(data.length))
+        if (txCurrentSize + data.length > txMaxSize)
             return;
 
         var sdu = new RlcSdu(sduId, data);
@@ -387,18 +422,53 @@ public class UmEntity extends RlcEntity {
         segment.size = data.length;
         segment.so = 0;
         segment.si = RlcConstants.SI_FULL;
-        segment.nextSegment = null;
 
-        txBuffer.appendSegment(segment);
+        txCurrentSize += segment.size;
+        txBuffer.addLast(segment);
     }
 
     @Override
     public OctetString createPdu(int maxSize) {
-        if (!txBuffer.hasSdu())
-            return OctetString.EMPTY;
+        var segment = txBuffer.peekFirst();
+        if (segment == null) {
+            return null;
+        }
 
+        int headerSize = umdPduHeaderSize(segment.si);
 
-        return null; // todo
+        // Fragmentation is irrelevant since no byte fits the size.
+        if (headerSize + 1 > maxSize) {
+            return null;
+        }
+
+        segment.sdu.sn = txNext;
+        txBuffer.removeFirst();
+
+        // Check if segmentation is needed
+        if (headerSize + segment.size > maxSize) {
+            var next = performSegmentation(segment, maxSize);
+            if (next == null)
+                return null;
+            txBuffer.addFirst(next);
+        }
+
+        if (segment.si == RlcConstants.SI_LAST) {
+            txNext = (txNext) % snModulus;
+        }
+
+        var data = segment.sdu.data.substring(segment.so, segment.size);
+
+        txCurrentSize -= data.length;
+
+        var pdu = new UmdPdu();
+        pdu.si = segment.si;
+        pdu.so = segment.so;
+        pdu.sn = segment.sdu.sn;
+        pdu.data = data;
+
+        var stream = new OctetOutputStream();
+        UmdPdu.encode(stream, pdu);
+        return stream.toOctetString();
     }
 
     @Override
