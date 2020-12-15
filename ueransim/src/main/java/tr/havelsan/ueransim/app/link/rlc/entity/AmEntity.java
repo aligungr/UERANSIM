@@ -26,6 +26,7 @@ public class AmEntity extends RlcEntity {
     private int txMaxSize;
     private int tReassemblyPeriod;
     private int tPollRetransmitPeriod;
+    private int tStatusProhibitPeriod;
 
     // TX state variables
     private int txNextAck;
