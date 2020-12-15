@@ -263,7 +263,32 @@ public class UmEntity extends RlcEntity {
 
     private void actionReassemblyTimerExpired() {
         // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
+        rxNextReassembly = rxTimerTrigger;
+        while (isDelivered(rxNextReassembly))
+            rxNextReassembly = (rxNextReassembly + 1) % snModulus;
 
+        // Discard all segments with SN < updated RX_Next_Reassembly
+        var it = rxBuffer.listIterator();
+        while (it.hasNext()) {
+            var value = it.next();
+
+            if (snCompareRx(value.sn, rxNextReassembly) < 0) {
+                rxCurrentSize -= value.data.length;
+                it.remove();
+            }
+        }
+
+        // if RX_Next_Highest > RX_Next_Reassembly + 1;
+        if ((snCompareRx(rxNextHighest, (rxNextReassembly + 1) % snModulus) > 0) ||
+                // or if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at
+                //  least one missing byte segment of the RLC SDU associated with SN = RX_Next_Reassembly
+                //  before the last byte of all received segments of this RLC SDU
+                (rxNextHighest == rxNextReassembly + 1 && hasMissingSegment(rxNextReassembly))) {
+            // start t-Reassembly
+            tReassemblyStart = tCurrent;
+            // set RX_Timer_Trigger to RX_Next_Highest
+            rxTimerTrigger = rxNextHighest;
+        }
     }
 
     //======================================================================================================
