@@ -29,6 +29,7 @@ public class AmEntity extends RlcEntity {
     private int tStatusProhibitPeriod;
 
     // TX state variables
+    private int txNext;
     private int txNextAck;
 
     // TX buffer
@@ -260,6 +261,11 @@ public class AmEntity extends RlcEntity {
     private boolean pendingStatusToSend() {
         return statusTriggered &&
                 (tStatusProhibitStart == 0 || tCurrent - tStatusProhibitStart > tStatusProhibitPeriod);
+    }
+
+    private boolean windowStalling() {
+        return !(snCompareTx(txNextAck, txNext) <= 0
+                && snCompareTx(txNext, (txNextAck + windowSize) % snModulus) < 0);
     }
 
     //======================================================================================================
