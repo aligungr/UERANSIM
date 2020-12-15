@@ -20,6 +20,8 @@ public class AmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
     private int rxMaxSize;
+    private int tReassemblyPeriod;
+    private int tPollRetransmitPeriod;
 
     /* TX state variables */
     private int txNextAck;
@@ -312,6 +314,14 @@ public class AmEntity extends RlcEntity {
         }
     }
 
+    private void actionReassemblyTimerExpired() {
+        // TODO
+    }
+
+    private void actionPollRetransmitTimerExpired() {
+        // TODO
+    }
+
     //======================================================================================================
     //                                          PDU RECEIVE RELATED
     //======================================================================================================
@@ -384,7 +394,21 @@ public class AmEntity extends RlcEntity {
 
     @Override
     public void timerCycle(long currentTime) {
+        tCurrent = currentTime;
 
+        // If PollRetransmit is running and expired
+        if (tPollRetransmitStart != 0 && tCurrent > tPollRetransmitStart + tPollRetransmitPeriod) {
+            // Stop timer and Handle expire actions
+            tPollRetransmitStart = 0;
+            actionPollRetransmitTimerExpired();
+        }
+
+        // If t-Reassembly is running and expired
+        if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
+            // Stop timer and Handle expire actions
+            tReassemblyStart = 0;
+            actionReassemblyTimerExpired();
+        }
     }
 
     @Override
