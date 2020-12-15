@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.app.l2.rlc.entity;
 
+import tr.havelsan.ueransim.app.l2.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.l2.rlc.RlcConstants;
-import tr.havelsan.ueransim.app.l2.rlc.RlcTransfer;
 import tr.havelsan.ueransim.app.l2.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSdu;
 import tr.havelsan.ueransim.app.l2.rlc.sdu.RlcSduSegment;
@@ -53,15 +53,16 @@ public class UmEntity extends RlcEntity {
     //                                           INITIALIZATION
     //======================================================================================================
 
-    private UmEntity() {
+    private UmEntity(IRlcConsumer consumer) {
+        super(consumer);
     }
 
-    public static UmEntity newInstance(int snLength, int tReassemblyPeriod, int txMaxSize, int rxMaxSize) {
+    public static UmEntity newInstance(IRlcConsumer consumer, int snLength, int tReassemblyPeriod, int txMaxSize, int rxMaxSize) {
         if (snLength != 6 && snLength != 12) {
             throw new IncorrectImplementationException();
         }
 
-        var um = new UmEntity();
+        var um = new UmEntity(consumer);
         um.clearEntity();
 
         um.snLength = snLength;
@@ -221,7 +222,7 @@ public class UmEntity extends RlcEntity {
             rxCurrentSize -= pdu.data.length;
         }
 
-        RlcTransfer.deliverSdu(this, output.toOctetString());
+        consumer.deliverSdu(this, output.toOctetString());
     }
 
     private int umdPduHeaderSize(int si) {
@@ -422,7 +423,7 @@ public class UmEntity extends RlcEntity {
 
         // If it is a full SDU, deliver directly.
         if (pdu.si == RlcConstants.SI_FULL) {
-            RlcTransfer.deliverSdu(this, pdu.data);
+            consumer.deliverSdu(this, pdu.data);
             return;
         }
 

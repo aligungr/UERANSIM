@@ -5,9 +5,16 @@
 
 package tr.havelsan.ueransim.app.l2.rlc.entity;
 
+import tr.havelsan.ueransim.app.l2.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public abstract class RlcEntity {
+
+    protected final IRlcConsumer consumer;
+
+    public RlcEntity(IRlcConsumer consumer) {
+        this.consumer = consumer;
+    }
 
     public abstract void receivePdu(OctetString data);
 

@@ -5,13 +5,14 @@
 
 package tr.havelsan.ueransim.app.l2.rlc.entity;
 
+import tr.havelsan.ueransim.app.l2.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class AmEntity extends RlcEntity {
 
-    public int txNextAck;
-    public int txNext;
-    public int pollSn;
+    public AmEntity(IRlcConsumer consumer) {
+        super(consumer);
+    }
 
     @Override
     public void receivePdu(OctetString data) {
