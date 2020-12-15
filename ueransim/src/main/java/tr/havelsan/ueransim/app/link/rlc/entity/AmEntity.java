@@ -262,7 +262,6 @@ public class AmEntity extends RlcEntity {
                 (tStatusProhibitStart == 0 || tCurrent - tStatusProhibitStart > tStatusProhibitPeriod);
     }
 
-
     //======================================================================================================
     //                                          PDU RECEIVE RELATED
     //======================================================================================================
