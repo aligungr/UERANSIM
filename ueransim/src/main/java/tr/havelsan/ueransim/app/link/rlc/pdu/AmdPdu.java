@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.l2.rlc.pdu;
+package tr.havelsan.ueransim.app.link.rlc.pdu;
 
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
