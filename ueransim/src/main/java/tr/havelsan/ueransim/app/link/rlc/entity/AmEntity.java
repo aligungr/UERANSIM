@@ -10,6 +10,12 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class AmEntity extends RlcEntity {
 
+    // Timers
+    private long tCurrent;              // Not a timer, but holds the current time in ms.
+    private long tPollRetransmitStart;  // Used by the transmitting side of an AM RLC entity in order to retransmit a poll
+    private long tReassemblyStart;      // Reassembling timer
+    private long tStatusProhibitStart;  // Used by the entity in order to prohibit transmission of a STATUS PDU
+
     //======================================================================================================
     //                                           INITIALIZATION
     //======================================================================================================
