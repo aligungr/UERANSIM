@@ -45,6 +45,9 @@ public class AmEntity extends RlcEntity {
     private int rxCurrentSize;
     private LinkedList<AmdPdu> rxBuffer;
 
+    // Custom state variables
+    private boolean statusTriggered;
+
     // Timers
     private long tCurrent;              // Not a timer, but holds the current time in ms.
     private long tPollRetransmitStart;  // Used by the transmitting side of an AM RLC entity in order to retransmit a poll
@@ -273,29 +276,41 @@ public class AmEntity extends RlcEntity {
     }
 
     private void receiveAmdPdu(AmdPdu pdu) {
+        // 5.3.4 ... if the AMD PDU is to be discarded as specified in clause 5.2.3.2.2; or ....
+        Runnable triggerControl = () -> {
+            if (pdu.p) {
+                statusTriggered = true;
+            }
+        };
+
         if (pdu.si.requiresSo() && pdu.so == 0) {
             // Bad SO value, discard PDU.
+            triggerControl.run();
             return;
         }
 
         if (pdu.data.length == 0) {
             // No data, discard PDU.
+            triggerControl.run();
             return;
         }
 
         if (rxCurrentSize + pdu.data.length > rxMaxSize) {
             // No room in RX buffer, discard PDU.
+            triggerControl.run();
             return;
         }
 
         // Discard if x falls outside of the receiving window
         if (!isInReceiveWindow(pdu.sn)) {
+            triggerControl.run();
             return;
         }
 
         // if byte segment numbers y to z of the RLC SDU with SN = x have been received before:
         //  discard the received AMD PDU
         if (isAlreadyReceived(pdu.sn, pdu.so, pdu.data.length)) {
+            triggerControl.run();
             return;
         }
 
@@ -305,6 +320,23 @@ public class AmEntity extends RlcEntity {
 
         // Actions when an AMD PDU is placed in the reception buffer
         actionReception(pdu);
+
+        // Continue 5.3.4
+        if (pdu.p) {
+            int v = (rxNext + windowSize) % snModulus;
+
+            // if x < RX_Highest_Status or x >= RX_Next + AM_Window_Size:
+            if (snCompareRx(pdu.sn, rxHighestStatus) < 0 || snCompareRx(pdu.sn, v) >= 0) {
+                // trigger a STATUS report
+                statusTriggered = true;
+            } else {
+                // delay triggering the STATUS report until x < RX_Highest_Status or x >= RX_Next + AM_Window_Size.
+                // TODO: instructions are not clear.
+                //  I think we need another state variable and keep looking RX_Highest_Status and RX_Next etc.
+                //  but for now trigger immediately.
+                statusTriggered = true;
+            }
+        }
     }
 
     private void actionReception(AmdPdu pdu) {
@@ -333,7 +365,7 @@ public class AmEntity extends RlcEntity {
             //  for which not all bytes have been received.
             if (x == rxNext) {
 
-                // WARNING: Not completely sure
+                // TODO, WARNING: Not completely sure
                 while (!rxBuffer.isEmpty() && rxBuffer.peekFirst()._isProcessed && rxBuffer.peekFirst().sn == rxNext) {
                     do {
                         rxBuffer.removeFirst();
@@ -496,7 +528,7 @@ public class AmEntity extends RlcEntity {
             throw new RuntimeException();
         }
 
-        // WARNING: not really sure here because this is not included in the a.i
+        // TODO, WARNING: not really sure here because this is not included in the a.i
         txCurrentSize -= p.size;
     }
 

@@ -549,7 +549,7 @@ public class UmEntity extends RlcEntity {
             throw new RuntimeException();
         }
 
-        // WARNING: not really sure here because this is not included in the a.i
+        // TODO, WARNING: not really sure here because this is not included in the a.i
         txCurrentSize -= p.size;
     }
 
