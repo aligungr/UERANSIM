@@ -6,7 +6,10 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
+import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
+import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
+import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -20,11 +23,16 @@ public class AmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
     private int rxMaxSize;
+    private int txMaxSize;
     private int tReassemblyPeriod;
     private int tPollRetransmitPeriod;
 
     /* TX state variables */
     private int txNextAck;
+
+    // TX buffer
+    private int txCurrentSize;
+    private LinkedList<RlcSduSegment> txBuffer;
 
     // RX state variables
     private int rxNext;
@@ -425,12 +433,28 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                          SDU RELATED METHODS
+    //                                          SDU RECEIVE RELATED
     //======================================================================================================
 
     @Override
     public void receiveSdu(OctetString data, int sduId) {
-        // TODO
+        if (data.length == 0)
+            return;
+
+        if (txCurrentSize + data.length > txMaxSize)
+            return;
+
+        var sdu = new RlcSdu(sduId, data);
+        sdu.sn = -1;
+        sdu.retransmissionCount = -1;
+
+        var segment = new RlcSduSegment(sdu);
+        segment.size = data.length;
+        segment.so = 0;
+        segment.si = ESegmentInfo.FULL;
+
+        txCurrentSize += segment.size;
+        txBuffer.addLast(segment);
     }
 
     //======================================================================================================
