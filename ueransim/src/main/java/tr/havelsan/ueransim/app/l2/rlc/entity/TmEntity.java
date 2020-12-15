@@ -5,14 +5,12 @@
 
 package tr.havelsan.ueransim.app.l2.rlc.entity;
 
-import tr.havelsan.ueransim.app.l2.rlc.RlcTransfer;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class TmEntity extends RlcEntity {
 
     @Override
     public void receivePdu(OctetString data) {
-        RlcTransfer.deliverSdu(this, data);
     }
 
     @Override

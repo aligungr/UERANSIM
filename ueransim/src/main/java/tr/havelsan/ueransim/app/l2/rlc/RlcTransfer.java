@@ -14,7 +14,4 @@ public class RlcTransfer {
         // Deliver SDU to upper layer (PDCP)
     }
 
-    public static void sendPdu(RlcEntity entity, OctetString data) {
-        // Send PDU to lower layer (MAC)
-    }
 }
