@@ -24,8 +24,21 @@ public class TmEntity extends RlcEntity {
     //                                           INITIALIZATION
     //======================================================================================================
 
-    public TmEntity(IRlcConsumer consumer) {
+    private TmEntity(IRlcConsumer consumer) {
         super(consumer);
+    }
+
+    public static TmEntity newInstance(IRlcConsumer consumer, int txMaxSize) {
+        var tm = new TmEntity(consumer);
+        tm.clearEntity();
+        tm.txMaxSize = txMaxSize;
+        tm.txBuffer = new LinkedList<>();
+        return tm;
+    }
+
+    private void clearEntity() {
+        txCurrentSize = 0;
+        txBuffer.clear();
     }
 
     //======================================================================================================
@@ -47,21 +60,21 @@ public class TmEntity extends RlcEntity {
 
     @Override
     public void timerCycle(long currentTime) {
-
+        // do nothing
     }
 
     @Override
     public void discardSdu(int sduId) {
-
+        // do nothing
     }
 
     @Override
     public void reestablishment() {
-
+        clearEntity();
     }
 
     @Override
     public void deleteEntity() {
-
+        clearEntity();
     }
 }
