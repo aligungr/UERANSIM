@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
+import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
 import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -47,15 +48,37 @@ public class TmEntity extends RlcEntity {
 
     @Override
     public void receivePdu(OctetString data) {
+        consumer.deliverSdu(this, data);
     }
 
     @Override
     public void receiveSdu(OctetString data, int sduId) {
+        if (txCurrentSize + data.length > txMaxSize)
+            return;
+
+        var sdu = new RlcSdu(sduId, data);
+
+        var segment = new RlcSduSegment(sdu);
+        segment.size = data.length;
+
+        txCurrentSize += segment.size;
+        txBuffer.addLast(segment);
     }
 
     @Override
     public OctetString createPdu(int maxSize) {
-        return null;
+        var segment = txBuffer.peekFirst();
+        if (segment == null) {
+            return null;
+        }
+
+        if (segment.size > maxSize)
+            return null;
+
+        txBuffer.removeFirst();
+        txCurrentSize -= segment.size;
+
+        return segment.sdu.data;
     }
 
     @Override
