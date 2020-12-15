@@ -27,7 +27,7 @@ public class AmEntity extends RlcEntity {
     private int tReassemblyPeriod;
     private int tPollRetransmitPeriod;
 
-    /* TX state variables */
+    // TX state variables
     private int txNextAck;
 
     // TX buffer
