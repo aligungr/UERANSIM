@@ -451,8 +451,9 @@ public class AmEntity extends RlcEntity {
         //  previously transmitted RLC SDUs or RLC SDU segments over transmission of AMD PDUs containing not
         //  previously transmitted RLC SDUs or RLC SDU segments.
 
-        // At the first transmission opportunity indicated by lower layer,
-        //  construct a STATUS PDU and submit it to lower layer
+        // When STATUS reporting has been triggered, the receiving side of an AM RLC entity shall:
+        //  ... At the first transmission opportunity indicated by lower layer, construct a STATUS PDU and submit
+        //  it to lower layer ...
         if (pendingStatusToSend()) {
             var res = createStatusPdu(maxSize);
             if (res != null)
