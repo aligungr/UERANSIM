@@ -76,7 +76,7 @@ public class UmEntity extends RlcEntity {
                 if (p.so > pdu.so) {
                     break;
                 }
-            } else if (p.sn > pdu.sn) {
+            } else if (snCompareRx(p.sn, pdu.sn) > 0) {
                 break;
             }
 
@@ -334,7 +334,7 @@ public class UmEntity extends RlcEntity {
 
         // Place the received UMD PDU in the reception buffer
         rxCurrentSize += pdu.data.length;
-        insertReception(pdu); // TODO: may be incorrect, see a.i.
+        insertReception(pdu);
 
         // Actions when an UMD PDU is placed in the reception buffer (5.2.2.2.3)
         actionReception(pdu);
