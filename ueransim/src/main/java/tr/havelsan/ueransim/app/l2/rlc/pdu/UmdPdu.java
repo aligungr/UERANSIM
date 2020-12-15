@@ -46,7 +46,29 @@ public class UmdPdu {
         return umd;
     }
 
-    public static void encode(OctetOutputStream stream, UmdPdu pdu) {
-        var octet = new Octet();
+    public static void encode(OctetOutputStream stream, UmdPdu pdu, boolean isShortSn) {
+        var octet0 = new Octet()
+                .setBitRange(6, 7, pdu.si);
+
+        int remainingSn = -1;
+
+        if (pdu.si != RlcConstants.SI_FULL) {
+            if (isShortSn) {
+                octet0 = octet0.setBitRange(0, 5, pdu.sn);
+            } else {
+                octet0 = octet0.setBitRange(0, 3, pdu.sn >> 8);
+                remainingSn = pdu.sn & 0b11111111;
+            }
+        }
+
+        stream.writeOctet(octet0);
+
+        if (remainingSn != -1)
+            stream.writeOctet(remainingSn);
+
+        if (pdu.si == RlcConstants.SI_MIDDLE || pdu.si == RlcConstants.SI_LAST)
+            stream.writeOctet2(pdu.so);
+
+        stream.writeOctetString(pdu.data);
     }
 }

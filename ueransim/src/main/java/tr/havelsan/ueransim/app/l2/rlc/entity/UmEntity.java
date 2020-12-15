@@ -467,7 +467,7 @@ public class UmEntity extends RlcEntity {
         pdu.data = data;
 
         var stream = new OctetOutputStream();
-        UmdPdu.encode(stream, pdu);
+        UmdPdu.encode(stream, pdu, snLength == 6);
         return stream.toOctetString();
     }
 
