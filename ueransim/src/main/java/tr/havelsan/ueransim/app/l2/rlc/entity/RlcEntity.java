@@ -9,11 +9,11 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public abstract class RlcEntity {
 
-    public abstract OctetString createPdu(OctetString sdu);
-
     public abstract void receivePdu(OctetString data);
 
     public abstract void receiveSdu(OctetString data);
+
+    public abstract OctetString createPdu(int maxSize);
 
     public abstract void timerCycle(long currentTime);
 }

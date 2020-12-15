@@ -14,11 +14,6 @@ public class AmEntity extends RlcEntity {
     public int pollSn;
 
     @Override
-    public OctetString createPdu(OctetString sdu) {
-        return null;
-    }
-
-    @Override
     public void receivePdu(OctetString data) {
 
     }
@@ -26,6 +21,11 @@ public class AmEntity extends RlcEntity {
     @Override
     public void receiveSdu(OctetString data) {
 
+    }
+
+    @Override
+    public OctetString createPdu(int maxSize) {
+        return null;
     }
 
     @Override
