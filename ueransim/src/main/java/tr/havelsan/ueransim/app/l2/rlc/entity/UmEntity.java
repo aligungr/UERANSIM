@@ -29,16 +29,16 @@ public class UmEntity extends RlcEntity {
     private int txMaxSize;
     private int rxMaxSize;
 
-    // TX management
+    // TX buffer
     private int txCurrentSize;
     private LinkedList<RlcSduSegment> txBuffer;
 
     // TX state variables
     private int txNext;            // SN to be assigned for the next newly generated UMD PDU with segment
 
-    // RX management
+    // RX buffer
     private int rxCurrentSize;
-    private List<UmdPdu> rxBuffer; // TODO? when to remove
+    private List<UmdPdu> rxBuffer;
 
     // RX state variables
     private int rxNextReassembly;  // Earliest SN that is still considered for reassembly
@@ -278,8 +278,9 @@ public class UmEntity extends RlcEntity {
                 // Set RX_Next_Reassembly to the SN of the first SN >= (RX_Next_Highest – UM_Window_Size)
                 //  that has not been reassembled and delivered to upper layer.
                 int n = (rxNextHighest - windowSize + snModulus) % snModulus;
-                while (isDelivered(n))
+                while (isDelivered(n)) {
                     n = (n + 1) % snModulus;
+                }
                 rxNextReassembly = n;
             }
         }
