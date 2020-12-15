@@ -425,31 +425,36 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                            OTHER METHODS
+    //                                          SDU RELATED METHODS
     //======================================================================================================
 
     @Override
     public void receiveSdu(OctetString data, int sduId) {
-
+        // TODO
     }
+
+    //======================================================================================================
+    //                                            OTHER METHODS
+    //======================================================================================================
 
     @Override
     public OctetString createPdu(int maxSize) {
+        // TODO
         return null;
     }
 
     @Override
     public void discardSdu(int sduId) {
-
+        // TODO
     }
 
     @Override
     public void reestablishment() {
-
+        // TODO
     }
 
     @Override
     public void deleteEntity() {
-
+        // TODO
     }
 }
