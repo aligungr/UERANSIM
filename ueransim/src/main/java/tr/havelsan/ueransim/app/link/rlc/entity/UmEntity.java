@@ -236,6 +236,54 @@ public class UmEntity extends RlcEntity {
         }
     }
 
+    private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
+        int newSi = sdu.si;
+        if (newSi == RlcConstants.SI_LAST)
+            newSi = RlcConstants.SI_MIDDLE;
+        else if (newSi == RlcConstants.SI_FULL)
+            newSi = RlcConstants.SI_FIRST;
+
+        int nextSi = sdu.si;
+        if (nextSi == RlcConstants.SI_FIRST)
+            nextSi = RlcConstants.SI_MIDDLE;
+        else if (nextSi == RlcConstants.SI_FULL)
+            nextSi = RlcConstants.SI_LAST;
+
+        int headerSizeAfterSeg = umdPduHeaderSize(newSi);
+        if (headerSizeAfterSeg + 1 > maxSize)
+            return null;
+
+        int overflowed = headerSizeAfterSeg + sdu.size - maxSize;
+
+        sdu.si = newSi;
+        sdu.size -= overflowed;
+
+        var next = new RlcSduSegment(sdu.sdu);
+        next.si = nextSi;
+        next.size = overflowed;
+        next.so = sdu.so + sdu.size;
+
+        return next;
+    }
+
+    private void clearEntity() {
+        // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
+        txCurrentSize = 0;
+        txBuffer.clear();
+        rxCurrentSize = 0;
+        rxBuffer.clear();
+
+        // reset all state variables to their initial values.
+        txNext = 0;
+        rxNextReassembly = 0;
+        rxNextHighest = 0;
+        rxTimerTrigger = 0;
+
+        // stop and reset all timers;
+        tCurrent = 0;
+        tReassemblyStart = 0;
+    }
+
     //======================================================================================================
     //                                             ACTIONS
     //======================================================================================================
@@ -363,54 +411,6 @@ public class UmEntity extends RlcEntity {
             // set RX_Timer_Trigger to RX_Next_Highest
             rxTimerTrigger = rxNextHighest;
         }
-    }
-
-    private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
-        int newSi = sdu.si;
-        if (newSi == RlcConstants.SI_LAST)
-            newSi = RlcConstants.SI_MIDDLE;
-        else if (newSi == RlcConstants.SI_FULL)
-            newSi = RlcConstants.SI_FIRST;
-
-        int nextSi = sdu.si;
-        if (nextSi == RlcConstants.SI_FIRST)
-            nextSi = RlcConstants.SI_MIDDLE;
-        else if (nextSi == RlcConstants.SI_FULL)
-            nextSi = RlcConstants.SI_LAST;
-
-        int headerSizeAfterSeg = umdPduHeaderSize(newSi);
-        if (headerSizeAfterSeg + 1 > maxSize)
-            return null;
-
-        int overflowed = headerSizeAfterSeg + sdu.size - maxSize;
-
-        sdu.si = newSi;
-        sdu.size -= overflowed;
-
-        var next = new RlcSduSegment(sdu.sdu);
-        next.si = nextSi;
-        next.size = overflowed;
-        next.so = sdu.so + sdu.size;
-
-        return next;
-    }
-
-    private void clearEntity() {
-        // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
-        txCurrentSize = 0;
-        txBuffer.clear();
-        rxCurrentSize = 0;
-        rxBuffer.clear();
-
-        // reset all state variables to their initial values.
-        txNext = 0;
-        rxNextReassembly = 0;
-        rxNextHighest = 0;
-        rxTimerTrigger = 0;
-
-        // stop and reset all timers;
-        tCurrent = 0;
-        tReassemblyStart = 0;
     }
 
     //======================================================================================================

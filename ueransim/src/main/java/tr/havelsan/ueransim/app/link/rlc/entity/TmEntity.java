@@ -6,13 +6,31 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
+import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.LinkedList;
+
 public class TmEntity extends RlcEntity {
+
+    // Configurations
+    private int txMaxSize;
+
+    // TX buffer
+    private int txCurrentSize;
+    private LinkedList<RlcSduSegment> txBuffer;
+
+    //======================================================================================================
+    //                                           INITIALIZATION
+    //======================================================================================================
 
     public TmEntity(IRlcConsumer consumer) {
         super(consumer);
     }
+
+    //======================================================================================================
+    //                                             BASE METHODS
+    //======================================================================================================
 
     @Override
     public void receivePdu(OctetString data) {
