@@ -408,6 +408,41 @@ public class AmEntity extends RlcEntity {
     }
 
     //======================================================================================================
+    //                                          SDU RECEIVE RELATED
+    //======================================================================================================
+
+    @Override
+    public void receiveSdu(OctetString data, int sduId) {
+        if (data.length == 0)
+            return;
+
+        if (txCurrentSize + data.length > txMaxSize)
+            return;
+
+        var sdu = new RlcSdu(sduId, data);
+        sdu.sn = -1;
+        sdu.retransmissionCount = -1;
+
+        var segment = new RlcSduSegment(sdu);
+        segment.size = data.length;
+        segment.so = 0;
+        segment.si = ESegmentInfo.FULL;
+
+        txCurrentSize += segment.size;
+        txBuffer.addLast(segment);
+    }
+
+    //======================================================================================================
+    //                                          GENERATE PDU RELATED
+    //======================================================================================================
+
+    @Override
+    public OctetString createPdu(int maxSize) {
+        // TODO
+        return null;
+    }
+
+    //======================================================================================================
     //                                     TIMER RELATED METHODS
     //======================================================================================================
 
@@ -463,41 +498,6 @@ public class AmEntity extends RlcEntity {
 
     private void actionPollRetransmitTimerExpired() {
         // TODO
-    }
-
-    //======================================================================================================
-    //                                          SDU RECEIVE RELATED
-    //======================================================================================================
-
-    @Override
-    public void receiveSdu(OctetString data, int sduId) {
-        if (data.length == 0)
-            return;
-
-        if (txCurrentSize + data.length > txMaxSize)
-            return;
-
-        var sdu = new RlcSdu(sduId, data);
-        sdu.sn = -1;
-        sdu.retransmissionCount = -1;
-
-        var segment = new RlcSduSegment(sdu);
-        segment.size = data.length;
-        segment.so = 0;
-        segment.si = ESegmentInfo.FULL;
-
-        txCurrentSize += segment.size;
-        txBuffer.addLast(segment);
-    }
-
-    //======================================================================================================
-    //                                          GENERATE PDU RELATED
-    //======================================================================================================
-
-    @Override
-    public OctetString createPdu(int maxSize) {
-        // TODO
-        return null;
     }
 
     //======================================================================================================
