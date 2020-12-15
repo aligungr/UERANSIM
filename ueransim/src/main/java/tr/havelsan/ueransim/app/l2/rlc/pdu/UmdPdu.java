@@ -8,6 +8,7 @@ package tr.havelsan.ueransim.app.l2.rlc.pdu;
 import tr.havelsan.ueransim.app.l2.rlc.RlcConstants;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class UmdPdu {
@@ -46,6 +47,6 @@ public class UmdPdu {
     }
 
     public static void encode(OctetOutputStream stream, UmdPdu pdu) {
-
+        var octet = new Octet();
     }
 }

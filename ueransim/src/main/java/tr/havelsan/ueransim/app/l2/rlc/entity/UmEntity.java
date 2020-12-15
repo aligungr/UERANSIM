@@ -453,7 +453,7 @@ public class UmEntity extends RlcEntity {
         }
 
         if (segment.si == RlcConstants.SI_LAST) {
-            txNext = (txNext) % snModulus;
+            txNext = (txNext + 1) % snModulus;
         }
 
         var data = segment.sdu.data.substring(segment.so, segment.size);
