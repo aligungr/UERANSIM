@@ -25,7 +25,7 @@ public class UmEntity extends RlcEntity {
     // RX management
     private int rxMaxSize;
     private int rxCurrentSize;
-    private List<UmdPdu> rxBuffer;
+    private List<UmdPdu> rxBuffer; // TODO? when to remove
 
     // RX state variables
     private int rxNextReassembly;  // Earliest SN that is still considered for reassembly
