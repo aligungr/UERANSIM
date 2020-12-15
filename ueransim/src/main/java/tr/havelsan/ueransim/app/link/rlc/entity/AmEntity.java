@@ -315,7 +315,34 @@ public class AmEntity extends RlcEntity {
     }
 
     private void actionReassemblyTimerExpired() {
-        // TODO
+        // When t-Reassembly expires, the receiving side of an AM RLC entity shall:
+
+        // update RX_Highest_Status to the SN of the first RLC SDU with
+        //  SN >= RX_Next_Status_Trigger for which not all bytes have been received;
+        int sn = rxNextStatusTrigger;
+        while (isDelivered(sn))
+            sn = (sn + 1) % snModulus;
+        rxHighestStatus = sn;
+
+        boolean condition = false;
+
+        // if RX_Next_Highest> RX_Highest_Status +1
+        if (snCompareRx(rxNextHighest, (rxHighestStatus + 1) % snModulus) > 0) {
+            condition = true;
+        }
+        // or if RX_Next_Highest = RX_Highest_Status + 1 and there is at least one missing byte
+        //  segment of the SDU associated with SN = RX_Highest_Status before the last byte
+        //  of all received segments of this SDU:
+        else if (rxNextHighest == (rxHighestStatus + 1) % snModulus && hasMissingSegment(rxHighestStatus)) {
+            condition = true;
+        }
+
+        if (condition) {
+            // start t-Reassembly;
+            tReassemblyStart = tCurrent;
+            // set RX_Next_Status_Trigger to RX_Next_Highest.
+            rxNextStatusTrigger = rxNextHighest;
+        }
     }
 
     private void actionPollRetransmitTimerExpired() {
