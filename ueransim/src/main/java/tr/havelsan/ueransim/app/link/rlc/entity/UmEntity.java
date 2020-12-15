@@ -165,7 +165,7 @@ public class UmEntity extends RlcEntity {
 
             if (pdu.so > maxOffset + 1)
                 return false;
-            if (pdu.si == RlcConstants.SI_LAST)
+            if (pdu.si == RlcConstants.SI_LAST || pdu.si == RlcConstants.SI_FULL)
                 return true;
 
             var endOffset = pdu.so + pdu.data.length - 1;

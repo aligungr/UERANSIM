@@ -26,6 +26,7 @@ public class AmEntity extends RlcEntity {
 
     // RX state variables
     private int rxNext;
+    private int rxNextHighest;
 
     // RX buffer
     private int rxCurrentSize;
@@ -128,12 +129,65 @@ public class AmEntity extends RlcEntity {
         rxBuffer.add(index + 1, pdu);
     }
 
+    private int firstIndexOfSn(int sn) {
+        int index = -1;
+
+        for (int i = 0; i < rxBuffer.size(); i++) {
+            var pdu = rxBuffer.get(i);
+            if (pdu.sn == sn) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    private boolean isAllSegmentsReceived(int sn) {
+        int index = firstIndexOfSn(sn);
+        if (index == -1)
+            return false;
+
+        // WARNING: Check if it is already reassembled and delivered. Returning false if it is
+        //  already processes. Because no need to reprocess it. We can consider this method as
+        //  "ready to reassemble and deliver" instead of "is all segments received?"
+        if (rxBuffer.get(index)._isProcessed)
+            return false;
+
+        int maxOffset = -1;
+
+        for (int i = index; i < rxBuffer.size(); i++) {
+            var pdu = rxBuffer.get(i);
+
+            if (pdu.so > maxOffset + 1)
+                return false;
+            if (pdu.si == RlcConstants.SI_LAST || pdu.si == RlcConstants.SI_FULL)
+                return true;
+
+            var endOffset = pdu.so + pdu.data.length - 1;
+            if (endOffset > maxOffset)
+                maxOffset = endOffset;
+        }
+
+        return false;
+    }
+
     //======================================================================================================
     //                                              ACTIONS
     //======================================================================================================
 
     private void actionReception(AmdPdu pdu) {
-        // TODO
+        int x = pdu.sn;
+
+        // if x >= RX_Next_Highest update RX_Next_Highest to x+ 1.
+        if (snCompareRx(x, rxNextHighest) >= 0)
+            rxNextHighest = (x + 1) % snModulus;
+
+        if (isAllSegmentsReceived(x)) {
+            // TODO
+        } else {
+            // TODO
+        }
     }
 
     //======================================================================================================

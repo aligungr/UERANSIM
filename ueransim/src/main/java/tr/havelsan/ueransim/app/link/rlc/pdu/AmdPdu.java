@@ -17,6 +17,11 @@ public class AmdPdu {
     public int so;
     public OctetString data;
 
+    // Indicates whether this SDU is delivered.
+    //  If the SDU has fragmentation, ALL AmdPdu which has the same underlying SDU must be
+    //  marked as _isDelivered=true at the reassembling and delivering operation.
+    public boolean _isProcessed;
+
     public static AmdPdu decode(OctetInputStream stream, boolean isShortSn) {
         var pdu = new AmdPdu();
 
