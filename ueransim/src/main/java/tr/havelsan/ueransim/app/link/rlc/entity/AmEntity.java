@@ -366,11 +366,6 @@ public class AmEntity extends RlcEntity {
 
         // Actions when an AMD PDU is placed in the reception buffer
         actionReception(pdu);
-
-        // TODO
-        if (pdu.p) {
-
-        }
     }
 
     //======================================================================================================
