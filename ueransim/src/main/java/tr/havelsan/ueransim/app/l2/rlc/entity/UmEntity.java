@@ -556,6 +556,9 @@ public class UmEntity extends RlcEntity {
         if (!txBuffer.remove(p)) {
             throw new RuntimeException();
         }
+
+        // WARNING: not really sure see because of the a.i
+        txCurrentSize -= p.size;
     }
 
     @Override
