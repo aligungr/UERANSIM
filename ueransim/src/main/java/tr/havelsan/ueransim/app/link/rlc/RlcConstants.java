@@ -12,4 +12,6 @@ public class RlcConstants {
     public static final int SI_LAST = 0b10;
     public static final int SI_MIDDLE = 0b11;
 
+    public static final boolean DC_CONTROL = false;
+    public static final boolean DC_DATA = true;
 }
