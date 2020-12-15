@@ -32,4 +32,9 @@ public class AmEntity extends RlcEntity {
     public void timerCycle(long currentTime) {
 
     }
+
+    @Override
+    public void discardSdu(int sduId) {
+
+    }
 }

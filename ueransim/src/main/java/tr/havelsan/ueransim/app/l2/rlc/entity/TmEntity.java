@@ -28,4 +28,9 @@ public class TmEntity extends RlcEntity {
     public void timerCycle(long currentTime) {
 
     }
+
+    @Override
+    public void discardSdu(int sduId) {
+
+    }
 }

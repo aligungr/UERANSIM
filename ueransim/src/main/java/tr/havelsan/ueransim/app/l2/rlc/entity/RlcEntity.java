@@ -16,4 +16,6 @@ public abstract class RlcEntity {
     public abstract OctetString createPdu(int maxSize);
 
     public abstract void timerCycle(long currentTime);
+
+    public abstract void discardSdu(int sduId);
 }

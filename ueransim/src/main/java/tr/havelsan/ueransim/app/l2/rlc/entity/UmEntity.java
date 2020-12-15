@@ -483,4 +483,9 @@ public class UmEntity extends RlcEntity {
             actionReassemblyTimerExpired();
         }
     }
+
+    @Override
+    public void discardSdu(int sduId) {
+
+    }
 }
