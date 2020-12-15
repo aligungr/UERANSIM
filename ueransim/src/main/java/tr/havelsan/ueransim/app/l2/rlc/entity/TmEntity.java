@@ -38,4 +38,9 @@ public class TmEntity extends RlcEntity {
     public void reestablishment() {
 
     }
+
+    @Override
+    public void deleteEntity() {
+
+    }
 }

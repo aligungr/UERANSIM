@@ -42,4 +42,9 @@ public class AmEntity extends RlcEntity {
     public void reestablishment() {
 
     }
+
+    @Override
+    public void deleteEntity() {
+
+    }
 }

@@ -20,4 +20,6 @@ public abstract class RlcEntity {
     public abstract void discardSdu(int sduId);
 
     public abstract void reestablishment();
+
+    public abstract void deleteEntity();
 }

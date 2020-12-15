@@ -363,6 +363,24 @@ public class UmEntity extends RlcEntity {
         return next;
     }
 
+    private void clearEntity() {
+        // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
+        txCurrentSize = 0;
+        txBuffer.clear();
+        rxCurrentSize = 0;
+        rxBuffer.clear();
+
+        // reset all state variables to their initial values.
+        txNext = 0;
+        rxNextReassembly = 0;
+        rxNextHighest = 0;
+        rxTimerTrigger = 0;
+
+        // stop and reset all timers;
+        tCurrent = 0;
+        tReassemblyStart = 0;
+    }
+
     //======================================================================================================
     //                                             BASE METHODS
     //======================================================================================================
@@ -511,20 +529,11 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public void reestablishment() {
-        // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
-        txCurrentSize = 0;
-        txBuffer.clear();
-        rxCurrentSize = 0;
-        rxBuffer.clear();
+        clearEntity();
+    }
 
-        // reset all state variables to their initial values.
-        txNext = 0;
-        rxNextReassembly = 0;
-        rxNextHighest = 0;
-        rxTimerTrigger = 0;
-
-        // stop and reset all timers;
-        tCurrent = 0;
-        tReassemblyStart = 0;
+    @Override
+    public void deleteEntity() {
+        clearEntity();
     }
 }
