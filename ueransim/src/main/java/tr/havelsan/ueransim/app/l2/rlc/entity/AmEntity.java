@@ -27,4 +27,9 @@ public class AmEntity extends RlcEntity {
     public void receiveSdu(OctetString data) {
 
     }
+
+    @Override
+    public void timerCycle(long currentTime) {
+
+    }
 }

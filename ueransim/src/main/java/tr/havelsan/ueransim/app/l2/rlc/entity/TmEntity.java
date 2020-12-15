@@ -24,4 +24,9 @@ public class TmEntity extends RlcEntity {
     public void receiveSdu(OctetString data) {
         RlcTransfer.sendPdu(this, createPdu(data));
     }
+
+    @Override
+    public void timerCycle(long currentTime) {
+
+    }
 }
