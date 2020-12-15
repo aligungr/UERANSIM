@@ -469,7 +469,30 @@ public class AmEntity extends RlcEntity {
 
     @Override
     public void discardSdu(int sduId) {
-        // TODO
+        RlcSduSegment p = null;
+
+        for (var segment : txBuffer) {
+            if (segment.sdu.sduId == sduId) {
+                p = segment;
+                break;
+            }
+        }
+
+        // SDU not found, do nothing.
+        if (p == null)
+            return;
+
+        // The SDU is already segmented, do nothing.
+        if (p.si != ESegmentInfo.FULL)
+            return;
+
+        // Remove the segment
+        if (!txBuffer.remove(p)) {
+            throw new RuntimeException();
+        }
+
+        // WARNING: not really sure here because this is not included in the a.i
+        txCurrentSize -= p.size;
     }
 
     @Override
