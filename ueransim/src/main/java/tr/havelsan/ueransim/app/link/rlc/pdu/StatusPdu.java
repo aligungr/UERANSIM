@@ -1,6 +1,9 @@
 package tr.havelsan.ueransim.app.link.rlc.pdu;
 
-import tr.havelsan.ueransim.app.link.utils.BitInputStream;
+import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
+import tr.havelsan.ueransim.utils.BitInputStream;
+import tr.havelsan.ueransim.utils.BitOutputStream;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +13,10 @@ public class StatusPdu {
     public List<NackBlock> nackBlocks;
 
     public static StatusPdu decode(BitInputStream stream, boolean isShortSn) {
-        // consume first 4 bits which are D/C and CPT
-        stream.readRange(4);
+        if (stream.read() != RlcConstants.DC_CONTROL)
+            throw new IncorrectImplementationException();
+        if (stream.readRange(3) != 0) // 0b000: STATUS PDU
+            throw new IncorrectImplementationException();
 
         var pdu = new StatusPdu();
         pdu.ackSn = stream.readRange(isShortSn ? 12 : 18);
@@ -54,5 +59,62 @@ public class StatusPdu {
         }
 
         return pdu;
+    }
+
+    public static void encode(BitOutputStream stream, StatusPdu pdu, boolean isShortSn) {
+        stream.write(RlcConstants.DC_CONTROL);
+        stream.writeBits(0, 3); // STATUS PDU
+        stream.writeBits(pdu.ackSn, isShortSn ? 12 : 18);
+
+        if (pdu.nackBlocks == null || pdu.nackBlocks.isEmpty()) {
+            stream.write(false);
+
+            // insert reserved bits
+            stream.writeBits(0, isShortSn ? 7 : 1);
+
+            return;
+        }
+
+        stream.write(true);
+
+        // insert reserved bits
+        stream.writeBits(0, isShortSn ? 7 : 1);
+
+        for (int i = 0; i < pdu.nackBlocks.size(); i++) {
+            var block = pdu.nackBlocks.get(i);
+
+            stream.writeBits(block.nackSn, isShortSn ? 12 : 18);
+            stream.write(i != pdu.nackBlocks.size() - 1); // E1
+
+            boolean e2, e3;
+
+            if (block.soEnd == -1 || block.soStart == -1) {
+                if (block.soEnd != -1 || block.soStart != -1) {
+                    // All -1 or no one -1
+                    throw new IncorrectImplementationException();
+                }
+
+                e2 = false;
+                stream.write(false);
+            } else {
+                e2 = true;
+                stream.write(true);
+            }
+
+            e3 = block.nackRange != -1;
+            stream.write(e3);
+
+            // insert reserved bits
+            stream.writeBits(0, isShortSn ? 1 : 3);
+
+            if (e2) {
+                stream.writeBits(block.soStart, 16);
+                stream.writeBits(block.soEnd, 16);
+            }
+
+            if (e3) {
+                stream.writeBits(block.nackRange, 16);
+            }
+        }
     }
 }
