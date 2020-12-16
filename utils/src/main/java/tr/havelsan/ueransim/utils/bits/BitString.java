@@ -275,6 +275,7 @@ public final class BitString {
     }
 
     public int intValue() {
+        // TODO: Ya 31 ile kontrol edilsin veya unsigned olarak parse edilsin
         if (bitLength() > 32) {
             throw new IllegalStateException("BitString has more than 31 bits");
         }
@@ -282,6 +283,7 @@ public final class BitString {
     }
 
     public long longValue() {
+        // TODO: Ya 63 ile kontrol edilsin veya unsigned olarak parse edilsin
         if (bitLength() > 64) {
             throw new IllegalStateException("BitString has more than 63 bits");
         }
