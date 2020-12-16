@@ -105,7 +105,7 @@ public final class BitString {
         return res;
     }
 
-    private BitString substring(int startIndex, int bitLength) {
+    public BitString substring(int startIndex, int bitLength) {
         var res = new BitString();
         for (int i = 0; i < bitLength; i++) {
             res.set(i, this.getB(startIndex + i));
@@ -113,7 +113,7 @@ public final class BitString {
         return res;
     }
 
-    private BitString substring(int startIndex) {
+    public BitString substring(int startIndex) {
         return substring(startIndex, this.bitLength() - startIndex);
     }
 
