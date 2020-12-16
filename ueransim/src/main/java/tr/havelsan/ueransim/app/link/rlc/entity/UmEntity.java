@@ -485,7 +485,7 @@ public class UmEntity extends RlcEntity {
         segment.sdu.sn = txNext;
         txBuffer.removeFirst();
 
-        // Check if segmentation is needed
+        // Perform segmentation if it is needed
         if (headerSize + segment.size > maxSize) {
             var next = performSegmentation(segment, maxSize);
             if (next == null)
