@@ -512,7 +512,31 @@ public class AmEntity extends RlcEntity {
     }
 
     private void ackReceived(int ackSn) {
-        // TODO
+        boolean[] alreadyDec = new boolean[32768];
+
+        var it = waitBuffer.listIterator();
+        while (it.hasNext()) {
+            var segment = it.next();
+            if (snCompareTx(segment.sdu.sn, ackSn) < 0) {
+                it.remove();
+                ackBuffer.addLast(segment);
+            }
+        }
+
+        it = retBuffer.listIterator();
+        while (it.hasNext()) {
+            var segment = it.next();
+            if (snCompareTx(segment.sdu.sn, ackSn) < 0) {
+
+                if (!alreadyDec[segment.sdu.sn]) {
+                    segment.sdu.retransmissionCount--;
+                    alreadyDec[segment.sdu.sn] = true;
+                }
+
+                it.remove();
+                ackBuffer.addLast(segment);
+            }
+        }
     }
 
     private void nackReceived(int nackSn, int soStart, int soEnd, HashSet<Integer> alreadyRetIncremented) {
