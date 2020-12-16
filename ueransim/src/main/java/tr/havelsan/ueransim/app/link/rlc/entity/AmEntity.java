@@ -9,8 +9,10 @@ import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
+import tr.havelsan.ueransim.app.link.rlc.pdu.StatusPdu;
 import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
 import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
+import tr.havelsan.ueransim.utils.BitInputStream;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -317,7 +319,13 @@ public class AmEntity extends RlcEntity {
         }
         // Control PDU
         else {
-            throw new RuntimeException("not implemented yet"); // TODO
+            if (data.get1(0).getBitRangeI(4, 6) != 0) {
+                // Discard the control PDU if it is not a STATUS PDU
+                return;
+            }
+
+            var statusPdu = StatusPdu.decode(new BitInputStream(data), snLength == 12);
+            receiveStatusPdu(statusPdu);
         }
     }
 
@@ -383,6 +391,10 @@ public class AmEntity extends RlcEntity {
                 statusTriggered = true;
             }
         }
+    }
+
+    private void receiveStatusPdu(StatusPdu pdu) {
+        // TODO
     }
 
     private void actionReception(AmdPdu pdu) {
