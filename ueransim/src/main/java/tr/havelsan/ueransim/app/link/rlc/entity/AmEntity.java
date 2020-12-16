@@ -636,6 +636,7 @@ public class AmEntity extends RlcEntity {
             byteWithoutPoll = 0;
 
             // set POLL_SN to the highest SN of the AMD PDU among the AMD PDUs submitted to lower layer
+            //  TODO: check this later
             pollSn = (txNext - 1 + snModulus) % snModulus;
 
             // (re)start  t-PollRetransmit
