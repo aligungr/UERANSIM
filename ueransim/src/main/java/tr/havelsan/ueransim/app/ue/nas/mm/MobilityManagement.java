@@ -145,7 +145,7 @@ public class MobilityManagement {
 
         if (ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
             if (ctx.emulationMode && !ctx.ueTimers.t3346.isRunning()) {
-                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.NO_FOR_PENDING);
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.FOR_PENDING);
             }
             return;
         }
