@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app.link.utils;
+package tr.havelsan.ueransim.utils;
 
 import tr.havelsan.ueransim.utils.bits.BitString;
 import tr.havelsan.ueransim.utils.octets.OctetString;
