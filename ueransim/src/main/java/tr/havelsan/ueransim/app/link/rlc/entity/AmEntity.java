@@ -310,6 +310,32 @@ public class AmEntity extends RlcEntity {
         return start1 < start2 ? (end1 == -1 || end1 >= start2) : (end2 == -1 || start1 <= end2);
     }
 
+    private boolean areAllSiblingSegmentsAreInAck(RlcSduSegment segment) {
+        // TODO: recheck this method
+        int sn = segment.sdu.sn;
+
+        for (var s : txBuffer) {
+            if (snCompareTx(s.sdu.sn, sn) > 0)
+                break;
+            if (s.sdu.sn == sn)
+                return false;
+        }
+        for (var s : retBuffer) {
+            if (snCompareTx(s.sdu.sn, sn) > 0)
+                break;
+            if (s.sdu.sn == sn)
+                return false;
+        }
+        for (var s : waitBuffer) {
+            if (snCompareTx(s.sdu.sn, sn) > 0)
+                break;
+            if (s.sdu.sn == sn)
+                return false;
+        }
+
+        return true;
+    }
+
     //======================================================================================================
     //                                          PDU RECEIVE RELATED
     //======================================================================================================
@@ -581,7 +607,32 @@ public class AmEntity extends RlcEntity {
     }
 
     private void checkForSuccessIndication() {
-        // TODO
+        var it = ackBuffer.listIterator();
+
+        // TODO: Currently sequential succ indication, but not immediate.
+        while (it.hasNext()) {
+            var segment = it.next();
+            if (segment.sdu.sn != txNextAck)
+                break;
+
+            if (!areAllSiblingSegmentsAreInAck(segment))
+                break;
+
+            txCurrentSize -= segment.sdu.data.length;
+
+            consumer.sduSuccessfulDelivery(this, segment.sdu.sduId);
+
+            it.remove();
+
+            while (it.hasNext()) {
+                var s = it.next();
+                if (s.sdu.sn == segment.sdu.sn) {
+                    it.remove();
+                }
+            }
+
+            txNextAck = (txNextAck + 1) % snModulus;
+        }
     }
 
     //======================================================================================================

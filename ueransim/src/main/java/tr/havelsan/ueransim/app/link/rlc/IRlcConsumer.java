@@ -13,4 +13,6 @@ public interface IRlcConsumer {
     void deliverSdu(RlcEntity entity, OctetString sdu);
 
     void maxRetransmissionReached(RlcEntity entity);
+
+    void sduSuccessfulDelivery(RlcEntity entity, int sduId);
 }
