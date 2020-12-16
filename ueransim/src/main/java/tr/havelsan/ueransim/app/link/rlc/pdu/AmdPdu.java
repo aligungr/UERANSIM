@@ -7,6 +7,8 @@ package tr.havelsan.ueransim.app.link.rlc.pdu;
 
 import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.utils.OctetInputStream;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class AmdPdu {
@@ -44,5 +46,28 @@ public class AmdPdu {
 
         pdu.data = stream.readOctetString();
         return pdu;
+    }
+
+    public static void encode(OctetOutputStream stream, AmdPdu pdu, boolean isShortSn) {
+        var octet = new Octet()
+                .setBit(7, pdu.dc)
+                .setBit(6, pdu.p)
+                .setBitRange(4, 5, pdu.si.intValue());
+        if (isShortSn) {
+            octet = octet.setBitRange(0, 3, pdu.sn >> 8);
+        } else {
+            octet = octet.setBitRange(0, 2, pdu.sn >> 16);
+        }
+
+        stream.writeOctet(octet.intValue());
+
+        if (!isShortSn) stream.writeOctet((pdu.sn >> 8) & 0xFF);
+        stream.writeOctet(pdu.sn & 0xFF);
+
+        if (pdu.si.requiresSo()) {
+            stream.writeOctet2(pdu.so);
+        }
+
+        stream.writeOctetString(pdu.data);
     }
 }

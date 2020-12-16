@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
+import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
@@ -27,17 +28,23 @@ public class AmEntity extends RlcEntity {
     private int tReassemblyPeriod;
     private int tPollRetransmitPeriod;
     private int tStatusProhibitPeriod;
+    private int pollPdu;
+    private int pollByte;
 
     // TX state variables
     private int txNext;
     private int txNextAck;
+    private int pollSn;
+    private int pduWithoutPoll;
+    private int byteWithoutPoll;
 
     // TX buffer
     private int txCurrentSize;
     private LinkedList<RlcSduSegment> txBuffer;
 
-    // Retransmission buffer
+    // Other buffers
     private LinkedList<RlcSduSegment> retBuffer;
+    private LinkedList<RlcSduSegment> waitBuffer;
 
     // RX state variables
     private int rxNext;
@@ -51,6 +58,7 @@ public class AmEntity extends RlcEntity {
 
     // Custom state variables
     private boolean statusTriggered;
+    private boolean forcePoll;
 
     // Timers
     private long tCurrent;              // Not a timer, but holds the current time in ms.
@@ -266,6 +274,31 @@ public class AmEntity extends RlcEntity {
     private boolean windowStalling() {
         return !(snCompareTx(txNextAck, txNext) <= 0
                 && snCompareTx(txNext, (txNextAck + windowSize) % snModulus) < 0);
+    }
+
+    private int amdPduHeaderSize(ESegmentInfo si) {
+        int res = 2;
+        if (snLength == 18) res++;
+        if (!si.hasFirst()) res += 2;
+        return res;
+    }
+
+    private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
+        int headerSize = amdPduHeaderSize(sdu.si);
+        if (headerSize + 1 > maxSize)
+            return null;
+
+        int overflowed = headerSize + sdu.size - maxSize;
+
+        sdu.si = sdu.si.asNotLast();
+        sdu.size -= overflowed;
+
+        var next = new RlcSduSegment(sdu.sdu);
+        next.si = sdu.si.asNotFirst();
+        next.size = overflowed;
+        next.so = sdu.so + sdu.size;
+
+        return next;
     }
 
     //======================================================================================================
@@ -486,8 +519,92 @@ public class AmEntity extends RlcEntity {
     }
 
     private OctetString createTxPdu(int maxSize) {
-        // TODO
-        return null;
+        if (windowStalling())
+            return null;
+
+        var segment = txBuffer.peekFirst();
+        if (segment == null) {
+            return null;
+        }
+
+        int headerSize = amdPduHeaderSize(segment.si);
+
+        // Fragmentation is irrelevant since no byte fits the size.
+        if (headerSize + 1 > maxSize) {
+            return null;
+        }
+
+        segment.sdu.sn = txNext;
+        txBuffer.removeFirst();
+
+        // Perform segmentation if it is needed
+        if (headerSize + segment.size > maxSize) {
+            var next = performSegmentation(segment, maxSize);
+            txBuffer.addFirst(next);
+        }
+
+        if (segment.si.hasLast()) {
+            txNext = (txNext + 1) % snModulus;
+        }
+
+        waitBuffer.addLast(segment);
+
+        // 5.3.3.2	Transmission of a AMD PDU
+        //  Upon notification of a transmission opportunity by lower layer, for each AMD PDU submitted for
+        //   transmission such that the AMD PDU contains either a not previously transmitted RLC SDU or an
+        //   RLC SDU segment containing not previously transmitted byte segment, the transmitting side of
+        //   an AM RLC entity shall:
+
+        // increment PDU_WITHOUT_POLL by one
+        pduWithoutPoll++;
+
+        // increment BYTE_WITHOUT_POLL by every new byte of Data field element
+        //  that it maps to the Data field of the AMD PDU;
+        byteWithoutPoll += segment.size;
+
+        boolean includePoll = false;
+
+        // if PDU_WITHOUT_POLL >= pollPDU; or if BYTE_WITHOUT_POLL >= pollByte: include a poll in the AMD PDU
+        if ((pollPdu != -1 && pduWithoutPoll >= pollPdu) || (pollByte != -1 && byteWithoutPoll >= pollByte))
+            includePoll = true;
+        else if (pollCheckForTransmission()) {
+            includePoll = true;
+        }
+
+        if (forcePoll) {
+            includePoll = true;
+            forcePoll = false;
+        }
+
+        return generateAmdForSdu(segment, includePoll);
+    }
+
+    private boolean pollCheckForTransmission() {
+        // if both the transmission buffer and the retransmission buffer becomes empty (excluding transmitted
+        //  RLC SDUs or RLC SDU segments awaiting acknowledgements) after the transmission of the AMD PDU;
+        //  or
+        //  if no new RLC SDU can be transmitted after the transmission of the AMD PDU (e.g. due to window stalling);
+        //  then include a poll in the AMD PDU.
+
+        return (txBuffer.isEmpty() && retBuffer.isEmpty()) || windowStalling();
+    }
+
+    private OctetString generateAmdForSdu(RlcSduSegment segment, boolean includePoll) {
+        var pdu = new AmdPdu();
+        pdu.dc = RlcConstants.DC_DATA;
+        pdu.p = includePoll;
+        pdu.si = segment.si;
+        pdu.sn = segment.sdu.sn;
+        pdu.so = segment.so;
+        pdu.data = segment.sdu.data.substring(segment.so, segment.size);
+
+        if (includePoll) {
+            // TODO
+        }
+
+        var stream = new OctetOutputStream();
+        AmdPdu.encode(stream, pdu, snLength == 12);
+        return stream.toOctetString();
     }
 
     //======================================================================================================
