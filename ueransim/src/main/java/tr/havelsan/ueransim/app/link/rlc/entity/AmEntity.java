@@ -319,7 +319,6 @@ public class AmEntity extends RlcEntity {
         else {
             throw new RuntimeException("not implemented yet"); // TODO
         }
-
     }
 
     private void receiveAmdPdu(AmdPdu pdu) {
