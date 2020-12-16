@@ -514,8 +514,36 @@ public class AmEntity extends RlcEntity {
     }
 
     private OctetString createRetPdu(int maxSize) {
-        // TODO
-        return null;
+        var segment = retBuffer.peekFirst();
+        if (segment == null) {
+            return null;
+        }
+
+        int headerSize = amdPduHeaderSize(segment.si);
+
+        // Fragmentation is irrelevant since no byte fits the size.
+        if (headerSize + 1 > maxSize) {
+            return null;
+        }
+
+        retBuffer.removeFirst();
+
+        // Perform segmentation if it is needed
+        if (headerSize + segment.size > maxSize) {
+            var next = performSegmentation(segment, maxSize);
+            retBuffer.addFirst(next);
+        }
+
+        waitBuffer.addLast(segment);
+
+        boolean includePoll = pollCheckForTransmission();
+
+        if (forcePoll) {
+            includePoll = true;
+            forcePoll = false;
+        }
+
+        return generateAmdForSdu(segment, includePoll);
     }
 
     private OctetString createTxPdu(int maxSize) {
@@ -609,7 +637,7 @@ public class AmEntity extends RlcEntity {
             byteWithoutPoll = 0;
 
             // set POLL_SN to the highest SN of the AMD PDU among the AMD PDUs submitted to lower layer
-            pollSn = (txNext - 1 + snModulus)   % snModulus;
+            pollSn = (txNext - 1 + snModulus) % snModulus;
 
             // (re)start  t-PollRetransmit
             tPollRetransmitStart = tCurrent;
