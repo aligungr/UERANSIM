@@ -10,7 +10,7 @@ import java.util.List;
 
 public class StatusPdu {
     public int ackSn;
-    public List<NackBlock> nackBlocks;
+    public List<NackBlock> nackBlocks = new ArrayList<>();
 
     public static StatusPdu decode(BitInputStream stream, boolean isShortSn) {
         if (stream.read() != RlcConstants.DC_CONTROL)
