@@ -11,4 +11,6 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 public interface IRlcConsumer {
 
     void deliverSdu(RlcEntity entity, OctetString sdu);
+
+    void maxRetransmissionReached(RlcEntity entity);
 }

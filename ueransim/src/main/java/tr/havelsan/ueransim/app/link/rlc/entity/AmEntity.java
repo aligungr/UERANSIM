@@ -17,6 +17,7 @@ import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class AmEntity extends RlcEntity {
@@ -32,6 +33,7 @@ public class AmEntity extends RlcEntity {
     private int tStatusProhibitPeriod;
     private int pollPdu;
     private int pollByte;
+    private int maxRetThreshold;
 
     // TX state variables
     private int txNext;
@@ -47,6 +49,7 @@ public class AmEntity extends RlcEntity {
     // Other buffers
     private LinkedList<RlcSduSegment> retBuffer;
     private LinkedList<RlcSduSegment> waitBuffer;
+    private LinkedList<RlcSduSegment> ackBuffer;
 
     // RX state variables
     private int rxNext;
@@ -303,6 +306,10 @@ public class AmEntity extends RlcEntity {
         return next;
     }
 
+    private boolean soOverlaps(int start1, int end1, int start2, int end2) {
+        return start1 < start2 ? (end1 == -1 || end1 >= start2) : (end2 == -1 || start1 <= end2);
+    }
+
     //======================================================================================================
     //                                          PDU RECEIVE RELATED
     //======================================================================================================
@@ -394,7 +401,46 @@ public class AmEntity extends RlcEntity {
     }
 
     private void receiveStatusPdu(StatusPdu pdu) {
-        // TODO
+        // If the STATUS report comprises a positive or negative acknowledgement for the RLC SDU
+        //  with sequence number equal to POLL_SN:
+        //  -    if    t-PollRetransmit is running:
+        //  -    stop and reset t-PollRetransmit.
+        if (snCompareTx(pollSn, pdu.ackSn) < 0) {
+            tPollRetransmitStart = 0;
+        }
+
+        ackReceived(pdu.ackSn);
+
+        var alreadyRetIncremented = new HashSet<Integer>();
+
+        for (var nackBlock : pdu.nackBlocks) {
+
+            int nackSn = nackBlock.nackSn;
+            int soStart = nackBlock.soStart;
+            int soEnd = nackBlock.soEnd;
+
+            if (soStart == -1 && soEnd == -1) {
+                soStart = 0;
+                soEnd = -1;
+            } else {
+                if (soEnd == 0xffff)
+                    soEnd = -1;
+            }
+
+            int range = nackBlock.nackRange == -1 ? 1 : nackBlock.nackRange;
+
+            for (int i = 0; i < range; i++) {
+                nackReceived((nackSn + i) % snModulus, i == 0 ? soStart : 0,
+                        i == range - 1 ? soEnd : -1, alreadyRetIncremented);
+            }
+
+            // Similar as above
+            if (snCompareTx(nackSn, pollSn) <= 0 && snCompareTx(pollSn, (nackSn + range) % snModulus) < 0) {
+                tPollRetransmitStart = 0;
+            }
+        }
+
+        checkForSuccessIndication();
     }
 
     private void actionReception(AmdPdu pdu) {
@@ -463,6 +509,55 @@ public class AmEntity extends RlcEntity {
                 rxNextStatusTrigger = rxNextHighest;
             }
         }
+    }
+
+    private void ackReceived(int ackSn) {
+        // TODO
+    }
+
+    private void nackReceived(int nackSn, int soStart, int soEnd, HashSet<Integer> alreadyRetIncremented) {
+        if (snCompareTx(txNextAck, nackSn) > 0 || snCompareTx(nackSn, txNext) >= 0)
+            return;
+
+        var it = waitBuffer.listIterator();
+        while (it.hasNext()) {
+            var segment = it.next();
+
+            if (segment.sdu.sn == nackSn) {
+                if (soOverlaps(soStart, soEnd, segment.so, segment.so + segment.size - 1)) {
+                    it.remove();
+                    considerRetransmission(segment, !alreadyRetIncremented.contains(nackSn));
+                    alreadyRetIncremented.add(nackSn);
+                }
+            }
+        }
+
+        it = ackBuffer.listIterator();
+        while (it.hasNext()) {
+            var segment = it.next();
+
+            if (segment.sdu.sn == nackSn) {
+                if (soOverlaps(soStart, soEnd, segment.so, segment.so + segment.size - 1)) {
+                    it.remove();
+                    considerRetransmission(segment, !alreadyRetIncremented.contains(nackSn));
+                    alreadyRetIncremented.add(nackSn);
+                }
+            }
+        }
+    }
+
+    private void considerRetransmission(RlcSduSegment segment, boolean updateRetX) {
+        if (updateRetX) {
+            segment.sdu.retransmissionCount++;
+            if (segment.sdu.retransmissionCount >= maxRetThreshold) {
+                consumer.maxRetransmissionReached(this);
+            }
+        }
+        retBuffer.addLast(segment);
+    }
+
+    private void checkForSuccessIndication() {
+        // TODO
     }
 
     //======================================================================================================
