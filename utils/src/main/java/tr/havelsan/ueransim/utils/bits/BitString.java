@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// TODO: Optimize this
 public final class BitString {
     private final List<Boolean> bits;
 
