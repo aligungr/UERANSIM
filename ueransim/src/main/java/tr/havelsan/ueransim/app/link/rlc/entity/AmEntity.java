@@ -592,14 +592,27 @@ public class AmEntity extends RlcEntity {
     private OctetString generateAmdForSdu(RlcSduSegment segment, boolean includePoll) {
         var pdu = new AmdPdu();
         pdu.dc = RlcConstants.DC_DATA;
-        pdu.p = includePoll;
+        pdu.p = false;
         pdu.si = segment.si;
         pdu.sn = segment.sdu.sn;
         pdu.so = segment.so;
         pdu.data = segment.sdu.data.substring(segment.so, segment.size);
 
         if (includePoll) {
-            // TODO
+            // To include a poll in an AMD PDU, the transmitting side of an AM RLC entity shall
+            // set the P field of the AMD PDU to "1";
+            pdu.p = true;
+
+            // set PDU_WITHOUT_POLL to 0;
+            pduWithoutPoll = 0;
+            // set BYTE_WITHOUT_POLL to 0.
+            byteWithoutPoll = 0;
+
+            // set POLL_SN to the highest SN of the AMD PDU among the AMD PDUs submitted to lower layer
+            pollSn = (txNext - 1 + snModulus)   % snModulus;
+
+            // (re)start  t-PollRetransmit
+            tPollRetransmitStart = tCurrent;
         }
 
         var stream = new OctetOutputStream();
