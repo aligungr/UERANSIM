@@ -415,7 +415,9 @@ public class UmEntity extends RlcEntity {
 
         // If it is a full SDU, deliver directly.
         if (pdu.si == ESegmentInfo.FULL) {
-            consumer.deliverSdu(this, pdu.data);
+            if (pdu.data.length > 0) {
+                consumer.deliverSdu(this, pdu.data);
+            }
             return;
         }
 
