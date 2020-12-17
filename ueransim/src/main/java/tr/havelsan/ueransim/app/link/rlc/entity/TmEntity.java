@@ -8,6 +8,7 @@ package tr.havelsan.ueransim.app.link.rlc.entity;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcTimer;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedList;
@@ -20,6 +21,9 @@ public class TmEntity extends RlcEntity {
     // TX buffer
     private int txCurrentSize;
     private LinkedList<RlcSduSegment> txBuffer;
+
+    // Timers
+    private long tCurrent;         // Not a timer, but holds the current time in ms.
 
     //======================================================================================================
     //                                           INITIALIZATION
@@ -83,6 +87,7 @@ public class TmEntity extends RlcEntity {
 
     @Override
     public void timerCycle(long currentTime) {
+        tCurrent = currentTime;
         // do nothing
     }
 
