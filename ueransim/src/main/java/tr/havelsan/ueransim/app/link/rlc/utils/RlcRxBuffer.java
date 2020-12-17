@@ -1,5 +1,7 @@
 package tr.havelsan.ueransim.app.link.rlc.utils;
 
+import tr.havelsan.ueransim.app.link.rlc.interfaces.ISnCompare;
+import tr.havelsan.ueransim.app.link.rlc.interfaces.ISnPredicate;
 import tr.havelsan.ueransim.app.link.rlc.pdu.RxPdu;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -134,6 +136,8 @@ public class RlcRxBuffer<T extends RxPdu> {
             cursor = it.next();
             if (cursor.sn == sn) {
                 stream.writeOctetString(cursor.data);
+
+                // WARNING: Don't remove from list, but just set processed and decrement the current size.
                 cursor._isProcessed = true;
                 currentSize -= cursor.data.length;
             } else {
@@ -153,5 +157,19 @@ public class RlcRxBuffer<T extends RxPdu> {
                 return true;
         }
         return false;
+    }
+
+    public void discardSegmentIf(ISnPredicate predicate) {
+        var it = list.listIterator();
+        while (it.hasNext()) {
+            var next = it.next();
+
+            if (predicate.decide(next.sn)) {
+                it.remove();
+                if (!next._isProcessed) {
+                    currentSize -= next.data.length;
+                }
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@
  * This software and all associated files are licensed under GPL-3.0.
  */
 
-package tr.havelsan.ueransim.app.link.rlc;
+package tr.havelsan.ueransim.app.link.rlc.interfaces;
 
 import tr.havelsan.ueransim.app.link.rlc.entity.RlcEntity;
 import tr.havelsan.ueransim.utils.octets.OctetString;

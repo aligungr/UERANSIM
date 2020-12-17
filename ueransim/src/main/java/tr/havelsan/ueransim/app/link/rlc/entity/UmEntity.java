@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
-import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.encoding.UmdEncoder;
+import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
@@ -15,7 +15,6 @@ import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class UmEntity extends RlcEntity {
 
@@ -34,8 +33,6 @@ public class UmEntity extends RlcEntity {
 
     // RX buffer
     private RlcRxBuffer<UmdPdu> newRxBuffer;
-    private int rxCurrentSize;
-    private List<UmdPdu> rxBuffer;
 
     // RX state variables
     private int rxNextReassembly;  // Earliest SN that is still considered for reassembly
@@ -172,15 +169,7 @@ public class UmEntity extends RlcEntity {
             rxNextHighest = (x + 1) % snModulus;
 
             // Discard any UMD PDUs with SN that falls outside of the reassembly window
-            var it = rxBuffer.listIterator();
-            while (it.hasNext()) {
-                var value = it.next();
-
-                if (snCompareRx(value.sn, rxNextHighest) >= 0) {
-                    rxCurrentSize -= value.data.length;
-                    it.remove();
-                }
-            }
+            newRxBuffer.discardSegmentIf(sn -> snCompareRx(sn, rxNextHighest) >= 0);
 
             // If RX_Next_Reassembly falls outside of the reassembly window
             if (snCompareRx(rxNextReassembly, rxNextHighest) >= 0) {
@@ -251,15 +240,7 @@ public class UmEntity extends RlcEntity {
             rxNextReassembly = (rxNextReassembly + 1) % snModulus;
 
         // Discard all segments with SN < updated RX_Next_Reassembly
-        var it = rxBuffer.listIterator();
-        while (it.hasNext()) {
-            var value = it.next();
-
-            if (snCompareRx(value.sn, rxNextReassembly) < 0) {
-                rxCurrentSize -= value.data.length;
-                it.remove();
-            }
-        }
+        newRxBuffer.discardSegmentIf(sn -> snCompareRx(sn, rxNextReassembly) < 0);
 
         // if RX_Next_Highest > RX_Next_Reassembly + 1;
         if ((snCompareRx(rxNextHighest, (rxNextReassembly + 1) % snModulus) > 0) ||

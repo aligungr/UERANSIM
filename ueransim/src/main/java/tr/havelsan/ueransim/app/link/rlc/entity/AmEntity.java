@@ -5,8 +5,7 @@
 
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
-import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
-import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
+import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.encoding.AmdEncoder;
 import tr.havelsan.ueransim.app.link.rlc.encoding.StatusEncoder;
 import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;

@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
-import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
+import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public abstract class RlcEntity {

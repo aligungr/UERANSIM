@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.app.link.rlc.utils;
+package tr.havelsan.ueransim.app.link.rlc.interfaces;
 
 public interface ISnCompare {
 
