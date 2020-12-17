@@ -33,4 +33,9 @@ public class UmdPdu implements IRxPdu {
     public int getSize() {
         return data.length;
     }
+
+    @Override
+    public boolean isProcessed() {
+        return _isProcessed;
+    }
 }
