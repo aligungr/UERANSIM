@@ -10,10 +10,7 @@ import tr.havelsan.ueransim.app.link.rlc.encoding.StatusEncoder;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.pdu.StatusPdu;
-import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
-import tr.havelsan.ueransim.app.link.rlc.utils.RlcRxBuffer;
-import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
-import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
+import tr.havelsan.ueransim.app.link.rlc.utils.*;
 import tr.havelsan.ueransim.utils.BitInputStream;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
@@ -30,9 +27,6 @@ public class AmEntity extends RlcEntity {
     private int windowSize;
     private int rxMaxSize;
     private int txMaxSize;
-    private int tReassemblyPeriod;
-    private int tPollRetransmitPeriod;
-    private int tStatusProhibitPeriod;
     private int pollPdu;
     private int pollByte;
     private int maxRetThreshold;
@@ -67,10 +61,10 @@ public class AmEntity extends RlcEntity {
     private boolean forcePoll;
 
     // Timers
-    private long tCurrent;              // Not a timer, but holds the current time in ms.
-    private long tPollRetransmitStart;  // Used by the transmitting side of an AM RLC entity in order to retransmit a poll
-    private long tReassemblyStart;      // Reassembling timer
-    private long tStatusProhibitStart;  // Used by the entity in order to prohibit transmission of a STATUS PDU
+    private long tCurrent;
+    private RlcTimer pollRetransmitTimer;
+    private RlcTimer reassemblyTimer;
+    private RlcTimer statusProhibitTimer;
 
     //======================================================================================================
     //                                           INITIALIZATION
@@ -118,11 +112,6 @@ public class AmEntity extends RlcEntity {
     //======================================================================================================
     //                                          INTERNAL METHODS
     //======================================================================================================
-
-    private boolean pendingStatusToSend() {
-        return statusTriggered &&
-                (tStatusProhibitStart == 0 || tCurrent - tStatusProhibitStart > tStatusProhibitPeriod);
-    }
 
     private boolean windowStalling() {
         return !(snCompareTx(txNextAck, txNext) <= 0
@@ -279,7 +268,7 @@ public class AmEntity extends RlcEntity {
         //  -    if    t-PollRetransmit is running:
         //  -    stop and reset t-PollRetransmit.
         if (snCompareTx(pollSn, pdu.ackSn) < 0) {
-            tPollRetransmitStart = 0;
+            pollRetransmitTimer.stop();
         }
 
         ackReceived(pdu.ackSn);
@@ -309,7 +298,7 @@ public class AmEntity extends RlcEntity {
 
             // Similar as above
             if (snCompareTx(nackSn, pollSn) <= 0 && snCompareTx(pollSn, (nackSn + range) % snModulus) < 0) {
-                tPollRetransmitStart = 0;
+                pollRetransmitTimer.stop();
             }
         }
 
@@ -349,7 +338,7 @@ public class AmEntity extends RlcEntity {
         }
 
         // if t-Reassembly is running
-        if (tReassemblyStart > 0) {
+        if (reassemblyTimer.isRunning()) {
             if (rxNextStatusTrigger == rxNext // if RX_Next_Status_Trigger = RX_Next; or
                     ||
                     // if RX_Next_Status_Trigger = RX_Next + 1 and there is no missing byte segment of the SDU
@@ -360,12 +349,12 @@ public class AmEntity extends RlcEntity {
                     (!isInReceiveWindow(rxNextStatusTrigger) && rxNextStatusTrigger != (rxNext + windowSize) % snModulus)) {
 
                 // Stop and reset t-Reassembly.
-                tReassemblyStart = 0;
+                reassemblyTimer.stop();
             }
         }
 
         // if t-Reassembly is not running (includes the case t-Reassembly is stopped due to actions above)
-        if (tReassemblyStart == 0) {
+        if (!reassemblyTimer.isRunning()) {
             // if RX_Next_Highest> RX_Next +1; or
             if (snCompareRx(rxNextHighest, (rxNext + 1) % snModulus) > 0
                     // if RX_Next_Highest = RX_Next + 1 and there is at least one missing byte segment of the SDU
@@ -373,7 +362,7 @@ public class AmEntity extends RlcEntity {
                     || (rxNextHighest == (rxNext + 1) % snModulus && rxBuffer.hasMissingBytes(rxNext))) {
 
                 // Start t-Reassembly
-                tReassemblyStart = tCurrent;
+                reassemblyTimer.start(tCurrent);
                 // Set RX_Next_Status_Trigger to RX_Next_Highest
                 rxNextStatusTrigger = rxNextHighest;
             }
@@ -517,7 +506,7 @@ public class AmEntity extends RlcEntity {
         // When STATUS reporting has been triggered, the receiving side of an AM RLC entity shall:
         //  ... At the first transmission opportunity indicated by lower layer, construct a STATUS PDU and submit
         //  it to lower layer ...
-        if (pendingStatusToSend()) {
+        if (statusTriggered && statusProhibitTimer.stoppedOrExpired(tCurrent)) {
             var res = createStatusPdu(maxSize);
             if (res != null)
                 return res;
@@ -664,7 +653,7 @@ public class AmEntity extends RlcEntity {
             pollSn = (txNext - 1 + snModulus) % snModulus;
 
             // (re)start  t-PollRetransmit
-            tPollRetransmitStart = tCurrent;
+            pollRetransmitTimer.start(tCurrent);
         }
 
         var stream = new OctetOutputStream();
@@ -680,17 +669,10 @@ public class AmEntity extends RlcEntity {
     public void timerCycle(long currentTime) {
         tCurrent = currentTime;
 
-        // If PollRetransmit is running and expired
-        if (tPollRetransmitStart != 0 && tCurrent > tPollRetransmitStart + tPollRetransmitPeriod) {
-            // Stop timer and Handle expire actions
-            tPollRetransmitStart = 0;
+        if (pollRetransmitTimer.cycle(currentTime)) {
             actionPollRetransmitTimerExpired();
         }
-
-        // If t-Reassembly is running and expired
-        if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
-            // Stop timer and Handle expire actions
-            tReassemblyStart = 0;
+        if (reassemblyTimer.cycle(currentTime)) {
             actionReassemblyTimerExpired();
         }
     }
@@ -720,7 +702,7 @@ public class AmEntity extends RlcEntity {
 
         if (condition) {
             // start t-Reassembly;
-            tReassemblyStart = tCurrent;
+            reassemblyTimer.start(tCurrent);
             // set RX_Next_Status_Trigger to RX_Next_Highest.
             rxNextStatusTrigger = rxNextHighest;
         }

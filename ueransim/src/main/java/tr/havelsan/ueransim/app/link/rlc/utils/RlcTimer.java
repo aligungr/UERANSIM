@@ -33,4 +33,8 @@ public class RlcTimer {
     public boolean isRunning() {
         return startedAt != 0;
     }
+
+    public boolean stoppedOrExpired(long currentTime) {
+        return !isRunning() || currentTime - startedAt > period;
+    }
 }
