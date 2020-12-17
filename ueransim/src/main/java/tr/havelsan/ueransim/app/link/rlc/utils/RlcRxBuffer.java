@@ -172,4 +172,38 @@ public class RlcRxBuffer<T extends RxPdu> {
             }
         }
     }
+
+    public boolean isAlreadyReceived(int sn, int so, int size) {
+        if (list.isEmpty())
+            return false;
+
+        var it = list.listIterator();
+        var pdu = it.next();
+
+        int n;
+        while (pdu != null && size > 0) {
+            if (pdu.sn == sn) {
+                if (pdu.so <= so && so < pdu.so + pdu.data.length) {
+                    n = pdu.data.length - (so - pdu.so);
+                    size -= n;
+                    so += n;
+                } else if (pdu.so <= so + size - 1 && so + size - 1 < pdu.so + pdu.data.length) {
+                    n = size - (pdu.so - so);
+                    size -= n;
+                }
+            }
+            pdu = it.hasNext() ? it.next() : null;
+        }
+        return size <= 0;
+    }
+
+    public int amReassembledAndXEqualsRxNext(int rxNext, int snModulus) {
+        while (!list.isEmpty() && list.peekFirst()._isProcessed && list.peekFirst().sn == rxNext) {
+            do {
+                list.removeFirst();
+            } while (!list.isEmpty() && list.peekFirst().sn == rxNext);
+            rxNext = (rxNext + 1) % snModulus;
+        }
+        return rxNext;
+    }
 }
