@@ -8,16 +8,12 @@ package tr.havelsan.ueransim.app.link.rlc.entity;
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.encoding.UmdEncoder;
 import tr.havelsan.ueransim.app.link.rlc.pdu.UmdPdu;
-import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
-import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
-import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
-import tr.havelsan.ueransim.app.link.rlc.utils.RlcTimer;
+import tr.havelsan.ueransim.app.link.rlc.utils.*;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,6 +34,7 @@ public class UmEntity extends RlcEntity {
     private int txNext;            // SN to be assigned for the next newly generated UMD PDU with segment
 
     // RX buffer
+    private RlcRxBuffer<UmdPdu> newRxBuffer;
     private int rxCurrentSize;
     private List<UmdPdu> rxBuffer;
 
@@ -73,9 +70,8 @@ public class UmEntity extends RlcEntity {
         um.reassemblyTimer = new RlcTimer(tReassemblyPeriod);
 
         um.txMaxSize = txMaxSize;
-        um.rxMaxSize = rxMaxSize;
         um.txBuffer = new LinkedList<>();
-        um.rxBuffer = new ArrayList<>();
+        um.newRxBuffer = new RlcRxBuffer<>(um::snCompareRx, rxMaxSize);
 
         return um;
     }
@@ -84,8 +80,7 @@ public class UmEntity extends RlcEntity {
         // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
         txCurrentSize = 0;
         txBuffer.clear();
-        rxCurrentSize = 0;
-        rxBuffer.clear();
+        newRxBuffer.clear();
 
         // reset all state variables to their initial values.
         txNext = 0;
@@ -130,25 +125,6 @@ public class UmEntity extends RlcEntity {
         return index;
     }
 
-    private void insertReception(UmdPdu pdu) {
-        int index = -1;
-
-        for (int i = 0; i < rxBuffer.size(); i++) {
-            var p = rxBuffer.get(i);
-            if (p.sn == pdu.sn) {
-                if (p.so > pdu.so) {
-                    break;
-                }
-            } else if (snCompareRx(p.sn, pdu.sn) > 0) {
-                break;
-            }
-
-            index = i;
-        }
-
-        rxBuffer.add(index + 1, pdu);
-    }
-
     private boolean isAllSegmentsReceived(int sn) {
         int index = firstIndexOfSn(sn);
         if (index == -1)
@@ -173,42 +149,6 @@ public class UmEntity extends RlcEntity {
             var endOffset = pdu.so + pdu.data.length - 1;
             if (endOffset > maxOffset)
                 maxOffset = endOffset;
-        }
-
-        return false;
-    }
-
-    private boolean hasMissingSegment(int sn) {
-        int index = firstIndexOfSn(sn);
-
-        if (index == -1) {
-            // No such a PDU, therefore we don't have a missing segment.
-            return false;
-        }
-
-        if (rxBuffer.get(index)._isProcessed) {
-            // The related SN is already processed, therefore we don't have a missing segment.
-            return false;
-        }
-
-        int endOffset = -1;
-        while (true) {
-            if (index >= rxBuffer.size())
-                break;
-
-            var pdu = rxBuffer.get(index);
-            if (pdu.sn != sn) {
-                break;
-            }
-
-            if (pdu.so > endOffset + 1)
-                return true;
-
-            int newOffset = pdu.so + pdu.data.length - 1;
-            if (newOffset > endOffset)
-                endOffset = newOffset;
-
-            index++;
         }
 
         return false;
@@ -342,7 +282,7 @@ public class UmEntity extends RlcEntity {
             // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is no missing byte segment
             //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of
             //  all received segments of this RLC SDU:
-            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !hasMissingSegment(rxNextReassembly)) {
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !newRxBuffer.hasMissingBytes(rxNextReassembly)) {
                 condition = true;
             }
 
@@ -363,7 +303,7 @@ public class UmEntity extends RlcEntity {
             // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at least one missing byte segment
             //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of all received
             //  segments of this RLC SDU:
-            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && hasMissingSegment(rxNextReassembly)) {
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && newRxBuffer.hasMissingBytes(rxNextReassembly)) {
                 condition = true;
             }
 
@@ -398,7 +338,7 @@ public class UmEntity extends RlcEntity {
                 // or if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at
                 //  least one missing byte segment of the RLC SDU associated with SN = RX_Next_Reassembly
                 //  before the last byte of all received segments of this RLC SDU
-                (rxNextHighest == rxNextReassembly + 1 && hasMissingSegment(rxNextReassembly))) {
+                (rxNextHighest == rxNextReassembly + 1 && newRxBuffer.hasMissingBytes(rxNextReassembly))) {
             // start t-Reassembly
             reassemblyTimer.start(tCurrent);
             // set RX_Timer_Trigger to RX_Next_Highest
@@ -444,8 +384,7 @@ public class UmEntity extends RlcEntity {
         }
 
         // Place the received UMD PDU in the reception buffer
-        rxCurrentSize += pdu.data.length;
-        insertReception(pdu);
+        newRxBuffer.add(pdu);
 
         // Actions when an UMD PDU is placed in the reception buffer (5.2.2.2.3)
         actionReception(pdu);
