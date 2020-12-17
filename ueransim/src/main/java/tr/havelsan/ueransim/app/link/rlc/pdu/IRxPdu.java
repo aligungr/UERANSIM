@@ -1,5 +1,7 @@
 package tr.havelsan.ueransim.app.link.rlc.pdu;
 
+import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
+
 public interface IRxPdu {
     int getSn();
 
@@ -8,4 +10,6 @@ public interface IRxPdu {
     int getSize();
 
     boolean isProcessed();
+
+    ESegmentInfo getSi();
 }

@@ -125,35 +125,6 @@ public class UmEntity extends RlcEntity {
         return index;
     }
 
-    private boolean isAllSegmentsReceived(int sn) {
-        int index = firstIndexOfSn(sn);
-        if (index == -1)
-            return false;
-
-        // WARNING: Check if it is already reassembled and delivered. Returning false if it is
-        //  already processes. Because no need to reprocess it. We can consider this method as
-        //  "ready to reassemble and deliver" instead of "is all segments received?"
-        if (rxBuffer.get(index)._isProcessed)
-            return false;
-
-        int maxOffset = -1;
-
-        for (int i = index; i < rxBuffer.size(); i++) {
-            var pdu = rxBuffer.get(i);
-
-            if (pdu.so > maxOffset + 1)
-                return false;
-            if (pdu.si.hasLast())
-                return true;
-
-            var endOffset = pdu.so + pdu.data.length - 1;
-            if (endOffset > maxOffset)
-                maxOffset = endOffset;
-        }
-
-        return false;
-    }
-
     private boolean isDelivered(int sn) {
         for (var pdu : rxBuffer) {
             if (pdu.sn == sn && pdu._isProcessed)
@@ -225,7 +196,7 @@ public class UmEntity extends RlcEntity {
         int x = pdu.sn;
 
         // If all byte segments with SN = x are received
-        if (isAllSegmentsReceived(x)) {
+        if (newRxBuffer.isAllSegmentsReceived(x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
             reassembleAndDeliver(pdu.sn);

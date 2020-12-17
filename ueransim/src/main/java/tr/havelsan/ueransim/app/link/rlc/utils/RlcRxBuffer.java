@@ -45,17 +45,12 @@ public class RlcRxBuffer<T extends IRxPdu> {
         var it = list.listIterator();
 
         T cursor;
-        while (true) {
+        do {
             // No such a PDU, therefore we don't have a missing segment.
             if (!it.hasNext())
                 return false;
-
-            var next = it.next();
-            if (next.getSn() == sn) {
-                cursor = next;
-                break;
-            }
-        }
+            cursor = it.next();
+        } while (cursor.getSn() != sn);
 
         if (cursor.isProcessed()) {
             // The related SN is already processed, therefore we don't have a missing segment.
@@ -68,6 +63,44 @@ public class RlcRxBuffer<T extends IRxPdu> {
                 break;
 
             if (cursor.getSo() > lastByte + 1)
+                return true;
+            int newLastByte = cursor.getSo() + cursor.getSize() - 1;
+            if (newLastByte > lastByte)
+                lastByte = newLastByte;
+
+            if (it.hasNext())
+                cursor = it.next();
+            else
+                break;
+        }
+
+        return false;
+    }
+
+    public boolean isAllSegmentsReceived(int sn) {
+        var it = list.listIterator();
+
+        T cursor;
+        do {
+            if (!it.hasNext())
+                return false;
+            cursor = it.next();
+        } while (cursor.getSn() != sn);
+
+        // WARNING: Check if it is already reassembled and delivered. Returning false if it is
+        //  already processes. Because no need to reprocess it. We can consider this method as
+        //  "ready to reassemble and deliver" instead of "is all segments received?"
+        if (cursor.isProcessed())
+            return false;
+
+        int lastByte = -1;
+        while (true) {
+            if (cursor.getSn() != sn)
+                break;
+
+            if (cursor.getSo() > lastByte + 1)
+                return false;
+            if (cursor.getSi().hasLast())
                 return true;
             int newLastByte = cursor.getSo() + cursor.getSize() - 1;
             if (newLastByte > lastByte)

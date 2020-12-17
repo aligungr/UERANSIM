@@ -38,4 +38,9 @@ public class UmdPdu implements IRxPdu {
     public boolean isProcessed() {
         return _isProcessed;
     }
+
+    @Override
+    public ESegmentInfo getSi() {
+        return si;
+    }
 }
