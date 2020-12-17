@@ -170,6 +170,14 @@ public class AmEntity extends RlcEntity {
         return true;
     }
 
+    private void insertToList(LinkedList<RlcSduSegment> list, RlcSduSegment segment) {
+        RlcUtils.insertSortedLinkedList(list, segment, (a, b) -> {
+            if (a.sdu.sn == b.sdu.sn)
+                return Integer.compare(a.so, b.so);
+            return snCompareTx(a.sdu.sn, b.sdu.sn);
+        });
+    }
+
     //======================================================================================================
     //                                          PDU RECEIVE RELATED
     //======================================================================================================
@@ -374,7 +382,7 @@ public class AmEntity extends RlcEntity {
             var segment = it.next();
             if (snCompareTx(segment.sdu.sn, ackSn) < 0) {
                 it.remove();
-                ackBuffer.addLast(segment);
+                insertToList(ackBuffer, segment);
             }
         }
 
@@ -389,7 +397,7 @@ public class AmEntity extends RlcEntity {
                 }
 
                 it.remove();
-                ackBuffer.addLast(segment);
+                insertToList(ackBuffer, segment);
             }
         }
     }
@@ -432,7 +440,7 @@ public class AmEntity extends RlcEntity {
                 consumer.maxRetransmissionReached(this);
             }
         }
-        retBuffer.addLast(segment);
+        insertToList(retBuffer, segment);
     }
 
     private void checkForSuccessIndication() {
@@ -486,7 +494,7 @@ public class AmEntity extends RlcEntity {
         segment.si = ESegmentInfo.FULL;
 
         txCurrentSize += segment.size;
-        txBuffer.addLast(segment);
+        insertToList(txBuffer, segment);
     }
 
     //======================================================================================================
@@ -519,6 +527,9 @@ public class AmEntity extends RlcEntity {
     }
 
     private OctetString createStatusPdu(int maxSize) {
+        if (maxSize < 3)
+            return null;
+
         // TODO
         return null;
     }
@@ -544,7 +555,7 @@ public class AmEntity extends RlcEntity {
             retBuffer.addFirst(next);
         }
 
-        waitBuffer.addLast(segment);
+        insertToList(waitBuffer, segment);
 
         boolean includePoll = pollCheckForTransmission();
 
@@ -585,7 +596,7 @@ public class AmEntity extends RlcEntity {
             txNext = (txNext + 1) % snModulus;
         }
 
-        waitBuffer.addLast(segment);
+        insertToList(waitBuffer, segment);
 
         // 5.3.3.2	Transmission of a AMD PDU
         //  Upon notification of a transmission opportunity by lower layer, for each AMD PDU submitted for
