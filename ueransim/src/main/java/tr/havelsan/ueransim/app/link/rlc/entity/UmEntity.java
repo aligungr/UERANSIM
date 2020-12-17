@@ -264,21 +264,19 @@ public class UmEntity extends RlcEntity {
         var pdu = UmdEncoder.decode(new OctetInputStream(data), snLength == 6);
         pdu._isProcessed = false;
 
+        // If data length == 0, then discard.
+        if (pdu.data.length == 0) {
+            return;
+        }
+
         // If it is a full SDU, deliver directly.
         if (pdu.si == ESegmentInfo.FULL) {
-            if (pdu.data.length > 0) {
-                consumer.deliverSdu(this, pdu.data);
-            }
+            consumer.deliverSdu(this, pdu.data);
             return;
         }
 
         // If SO is invalid, then discard.
         if (pdu.si.requiresSo() && pdu.so == 0) {
-            return;
-        }
-
-        // If data length == 0, then discard.
-        if (pdu.data.length == 0) {
             return;
         }
 
