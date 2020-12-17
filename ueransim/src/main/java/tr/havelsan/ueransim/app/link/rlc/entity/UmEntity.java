@@ -6,8 +6,9 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
-import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
+import tr.havelsan.ueransim.app.link.rlc.encoding.UmdEncoder;
 import tr.havelsan.ueransim.app.link.rlc.pdu.UmdPdu;
+import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
 import tr.havelsan.ueransim.utils.OctetInputStream;
@@ -410,7 +411,7 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public void receivePdu(OctetString data) {
-        var pdu = UmdPdu.decode(new OctetInputStream(data), snLength == 6);
+        var pdu = UmdEncoder.decode(new OctetInputStream(data), snLength == 6);
         pdu._isProcessed = false;
 
         // If it is a full SDU, deliver directly.
@@ -510,7 +511,7 @@ public class UmEntity extends RlcEntity {
         pdu.data = data;
 
         var stream = new OctetOutputStream();
-        UmdPdu.encode(stream, pdu, snLength == 6);
+        UmdEncoder.encode(stream, pdu, snLength == 6);
         return stream.toOctetString();
     }
 

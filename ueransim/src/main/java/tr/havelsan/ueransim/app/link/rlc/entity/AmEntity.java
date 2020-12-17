@@ -7,6 +7,8 @@ package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
+import tr.havelsan.ueransim.app.link.rlc.encoding.AmdEncoder;
+import tr.havelsan.ueransim.app.link.rlc.encoding.StatusEncoder;
 import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.pdu.StatusPdu;
@@ -347,7 +349,7 @@ public class AmEntity extends RlcEntity {
 
         // Data PDU
         if (data.get1(0).getBitB(7)) {
-            var amdPdu = AmdPdu.decode(new OctetInputStream(data), snLength == 12);
+            var amdPdu = AmdEncoder.decode(new OctetInputStream(data), snLength == 12);
             receiveAmdPdu(amdPdu);
         }
         // Control PDU
@@ -357,7 +359,7 @@ public class AmEntity extends RlcEntity {
                 return;
             }
 
-            var statusPdu = StatusPdu.decode(new BitInputStream(data), snLength == 12);
+            var statusPdu = StatusEncoder.decode(new BitInputStream(data), snLength == 12);
             receiveStatusPdu(statusPdu);
         }
     }
@@ -826,7 +828,7 @@ public class AmEntity extends RlcEntity {
         }
 
         var stream = new OctetOutputStream();
-        AmdPdu.encode(stream, pdu, snLength == 12);
+        AmdEncoder.encode(stream, pdu, snLength == 12);
         return stream.toOctetString();
     }
 
