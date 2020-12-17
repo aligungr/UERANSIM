@@ -7,11 +7,11 @@ package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
-import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
+import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.pdu.StatusPdu;
-import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
-import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
 import tr.havelsan.ueransim.utils.BitInputStream;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;

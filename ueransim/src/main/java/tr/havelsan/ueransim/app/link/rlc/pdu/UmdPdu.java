@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.link.rlc.pdu;
 
-import tr.havelsan.ueransim.app.link.rlc.enums.ESegmentInfo;
+import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.Octet;

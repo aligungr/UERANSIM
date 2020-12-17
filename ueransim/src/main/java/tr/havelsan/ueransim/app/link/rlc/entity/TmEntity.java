@@ -6,8 +6,8 @@
 package tr.havelsan.ueransim.app.link.rlc.entity;
 
 import tr.havelsan.ueransim.app.link.rlc.IRlcConsumer;
-import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSdu;
-import tr.havelsan.ueransim.app.link.rlc.sdu.RlcSduSegment;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedList;
