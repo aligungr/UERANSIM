@@ -20,6 +20,7 @@ public class UmdEncoder {
             } else {
                 umd.sn = octet.getBitRangeI(0, 3);
                 umd.sn <<= 8;
+                octet = stream.readOctet();
                 umd.sn |= octet.getBitRangeI(0, 7);
             }
 
