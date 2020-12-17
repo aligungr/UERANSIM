@@ -111,20 +111,6 @@ public class UmEntity extends RlcEntity {
     //                                          INTERNAL METHODS
     //======================================================================================================
 
-    private int firstIndexOfSn(int sn) {
-        int index = -1;
-
-        for (int i = 0; i < rxBuffer.size(); i++) {
-            var pdu = rxBuffer.get(i);
-            if (pdu.sn == sn) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
     private boolean isDelivered(int sn) {
         for (var pdu : rxBuffer) {
             if (pdu.sn == sn && pdu._isProcessed)
