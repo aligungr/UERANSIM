@@ -21,6 +21,4 @@ public class UmdPdu {
     //  If the SDU has fragmentation, ALL UmdPdu which has the same underlying SDU must be
     //  marked as _isDelivered=true at the reassembling and delivering operation.
     public boolean _isProcessed;
-
-
 }
