@@ -133,29 +133,6 @@ public class UmEntity extends RlcEntity {
         return false;
     }
 
-    private void reassembleAndDeliver(int sn) {
-        int startIndex = firstIndexOfSn(sn);
-
-        if (startIndex == -1)
-            return;
-
-        int endIndex = startIndex;
-        while (endIndex + 1 < rxBuffer.size() && rxBuffer.get(endIndex + 1).sn == sn) {
-            endIndex++;
-        }
-
-        var output = new OctetOutputStream();
-
-        for (int i = startIndex; i <= endIndex; i++) {
-            var pdu = rxBuffer.get(i);
-            output.writeOctetString(pdu.data);
-            pdu._isProcessed = true;
-            rxCurrentSize -= pdu.data.length;
-        }
-
-        consumer.deliverSdu(this, output.toOctetString());
-    }
-
     private int umdPduHeaderSize(ESegmentInfo si) {
         switch (si) {
             case FULL:
@@ -199,7 +176,10 @@ public class UmEntity extends RlcEntity {
         if (newRxBuffer.isAllSegmentsReceived(x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
-            reassembleAndDeliver(pdu.sn);
+            var reassembled = newRxBuffer.reassemble(pdu.sn);
+            if (reassembled != null) {
+                consumer.deliverSdu(this, reassembled);
+            }
 
             // if x = RX_Next_Reassembly, update RX_Next_Reassembly to the SN of the first
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
