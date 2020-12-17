@@ -802,7 +802,6 @@ public class AmEntity extends RlcEntity {
 
     private OctetString generateAmdForSdu(RlcSduSegment segment, boolean includePoll) {
         var pdu = new AmdPdu();
-        pdu.dc = RlcConstants.DC_DATA;
         pdu.p = false;
         pdu.si = segment.si;
         pdu.sn = segment.sdu.sn;
