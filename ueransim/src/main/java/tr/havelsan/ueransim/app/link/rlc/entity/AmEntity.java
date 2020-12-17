@@ -25,7 +25,6 @@ public class AmEntity extends RlcEntity {
     private int snLength;
     private int snModulus;
     private int windowSize;
-    private int rxMaxSize;
     private int txMaxSize;
     private int pollPdu;
     private int pollByte;
