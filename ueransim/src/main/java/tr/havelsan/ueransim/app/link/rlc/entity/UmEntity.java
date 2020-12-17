@@ -111,14 +111,6 @@ public class UmEntity extends RlcEntity {
     //                                          INTERNAL METHODS
     //======================================================================================================
 
-    private boolean isDelivered(int sn) {
-        for (var pdu : rxBuffer) {
-            if (pdu.sn == sn && pdu._isProcessed)
-                return true;
-        }
-        return false;
-    }
-
     private int umdPduHeaderSize(ESegmentInfo si) {
         switch (si) {
             case FULL:
@@ -171,7 +163,7 @@ public class UmEntity extends RlcEntity {
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
             if (x == rxNextReassembly) {
                 int n = rxNextReassembly;
-                while (isDelivered(n)) {
+                while (newRxBuffer.isDelivered(n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxNextReassembly = n;
@@ -196,7 +188,7 @@ public class UmEntity extends RlcEntity {
                 // Set RX_Next_Reassembly to the SN of the first SN >= (RX_Next_Highest – UM_Window_Size)
                 //  that has not been reassembled and delivered to upper layer.
                 int n = (rxNextHighest - windowSize + snModulus) % snModulus;
-                while (isDelivered(n)) {
+                while (newRxBuffer.isDelivered(n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxNextReassembly = n;
@@ -256,7 +248,7 @@ public class UmEntity extends RlcEntity {
     private void actionReassemblyTimerExpired() {
         // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
         rxNextReassembly = rxTimerTrigger;
-        while (isDelivered(rxNextReassembly))
+        while (newRxBuffer.isDelivered(rxNextReassembly))
             rxNextReassembly = (rxNextReassembly + 1) % snModulus;
 
         // Discard all segments with SN < updated RX_Next_Reassembly

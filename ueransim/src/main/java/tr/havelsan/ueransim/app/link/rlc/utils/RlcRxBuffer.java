@@ -146,4 +146,12 @@ public class RlcRxBuffer<T extends RxPdu> {
 
         return stream.toOctetString();
     }
+
+    public boolean isDelivered(int sn) {
+        for (var pdu : list) {
+            if (pdu.sn == sn && pdu._isProcessed)
+                return true;
+        }
+        return false;
+    }
 }
