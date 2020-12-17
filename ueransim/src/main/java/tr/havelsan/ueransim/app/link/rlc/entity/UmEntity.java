@@ -32,7 +32,7 @@ public class UmEntity extends RlcEntity {
     private int txNext;            // SN to be assigned for the next newly generated UMD PDU with segment
 
     // RX buffer
-    private RlcRxBuffer<UmdPdu> newRxBuffer;
+    private RlcRxBuffer<UmdPdu> rxBuffer;
 
     // RX state variables
     private int rxNextReassembly;  // Earliest SN that is still considered for reassembly
@@ -67,7 +67,7 @@ public class UmEntity extends RlcEntity {
 
         um.txMaxSize = txMaxSize;
         um.txBuffer = new LinkedList<>();
-        um.newRxBuffer = new RlcRxBuffer<>(um::snCompareRx, rxMaxSize);
+        um.rxBuffer = new RlcRxBuffer<>(um::snCompareRx, rxMaxSize);
 
         return um;
     }
@@ -76,7 +76,7 @@ public class UmEntity extends RlcEntity {
         // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
         txCurrentSize = 0;
         txBuffer.clear();
-        newRxBuffer.clear();
+        rxBuffer.clear();
 
         // reset all state variables to their initial values.
         txNext = 0;
@@ -147,10 +147,10 @@ public class UmEntity extends RlcEntity {
         int x = pdu.sn;
 
         // If all byte segments with SN = x are received
-        if (newRxBuffer.isAllSegmentsReceived(x)) {
+        if (rxBuffer.isAllSegmentsReceived(x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
-            var reassembled = newRxBuffer.reassemble(pdu.sn);
+            var reassembled = rxBuffer.reassemble(pdu.sn);
             if (reassembled != null) {
                 consumer.deliverSdu(this, reassembled);
             }
@@ -159,7 +159,7 @@ public class UmEntity extends RlcEntity {
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
             if (x == rxNextReassembly) {
                 int n = rxNextReassembly;
-                while (newRxBuffer.isDelivered(n)) {
+                while (rxBuffer.isDelivered(n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxNextReassembly = n;
@@ -169,14 +169,14 @@ public class UmEntity extends RlcEntity {
             rxNextHighest = (x + 1) % snModulus;
 
             // Discard any UMD PDUs with SN that falls outside of the reassembly window
-            newRxBuffer.discardSegmentIf(sn -> snCompareRx(sn, rxNextHighest) >= 0);
+            rxBuffer.discardSegmentIf(sn -> snCompareRx(sn, rxNextHighest) >= 0);
 
             // If RX_Next_Reassembly falls outside of the reassembly window
             if (snCompareRx(rxNextReassembly, rxNextHighest) >= 0) {
                 // Set RX_Next_Reassembly to the SN of the first SN >= (RX_Next_Highest – UM_Window_Size)
                 //  that has not been reassembled and delivered to upper layer.
                 int n = (rxNextHighest - windowSize + snModulus) % snModulus;
-                while (newRxBuffer.isDelivered(n)) {
+                while (rxBuffer.isDelivered(n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxNextReassembly = n;
@@ -199,7 +199,7 @@ public class UmEntity extends RlcEntity {
             // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is no missing byte segment
             //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of
             //  all received segments of this RLC SDU:
-            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !newRxBuffer.hasMissingBytes(rxNextReassembly)) {
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !rxBuffer.hasMissingBytes(rxNextReassembly)) {
                 condition = true;
             }
 
@@ -220,7 +220,7 @@ public class UmEntity extends RlcEntity {
             // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at least one missing byte segment
             //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of all received
             //  segments of this RLC SDU:
-            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && newRxBuffer.hasMissingBytes(rxNextReassembly)) {
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && rxBuffer.hasMissingBytes(rxNextReassembly)) {
                 condition = true;
             }
 
@@ -236,18 +236,18 @@ public class UmEntity extends RlcEntity {
     private void actionReassemblyTimerExpired() {
         // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
         rxNextReassembly = rxTimerTrigger;
-        while (newRxBuffer.isDelivered(rxNextReassembly))
+        while (rxBuffer.isDelivered(rxNextReassembly))
             rxNextReassembly = (rxNextReassembly + 1) % snModulus;
 
         // Discard all segments with SN < updated RX_Next_Reassembly
-        newRxBuffer.discardSegmentIf(sn -> snCompareRx(sn, rxNextReassembly) < 0);
+        rxBuffer.discardSegmentIf(sn -> snCompareRx(sn, rxNextReassembly) < 0);
 
         // if RX_Next_Highest > RX_Next_Reassembly + 1;
         if ((snCompareRx(rxNextHighest, (rxNextReassembly + 1) % snModulus) > 0) ||
                 // or if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at
                 //  least one missing byte segment of the RLC SDU associated with SN = RX_Next_Reassembly
                 //  before the last byte of all received segments of this RLC SDU
-                (rxNextHighest == rxNextReassembly + 1 && newRxBuffer.hasMissingBytes(rxNextReassembly))) {
+                (rxNextHighest == rxNextReassembly + 1 && rxBuffer.hasMissingBytes(rxNextReassembly))) {
             // start t-Reassembly
             reassemblyTimer.start(tCurrent);
             // set RX_Timer_Trigger to RX_Next_Highest
@@ -288,11 +288,11 @@ public class UmEntity extends RlcEntity {
         }
 
         // If no room, then discard.
-        if (!newRxBuffer.hasRoomFor(pdu))
+        if (!rxBuffer.hasRoomFor(pdu))
             return;
 
         // Place the received UMD PDU in the reception buffer
-        newRxBuffer.add(pdu);
+        rxBuffer.add(pdu);
 
         // Actions when an UMD PDU is placed in the reception buffer (5.2.2.2.3)
         actionReception(pdu);
