@@ -24,7 +24,6 @@ public class UmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
     private int txMaxSize;
-    private int rxMaxSize;
 
     // TX buffer
     private int txCurrentSize;
@@ -308,9 +307,8 @@ public class UmEntity extends RlcEntity {
         }
 
         // If no room, then discard.
-        if (rxCurrentSize + pdu.data.length > rxMaxSize) {
+        if (!newRxBuffer.hasRoomFor(pdu))
             return;
-        }
 
         // Place the received UMD PDU in the reception buffer
         newRxBuffer.add(pdu);
