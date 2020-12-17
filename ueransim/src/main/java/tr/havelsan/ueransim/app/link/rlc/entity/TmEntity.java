@@ -31,9 +31,9 @@ public class TmEntity extends RlcEntity {
 
     public static TmEntity newInstance(IRlcConsumer consumer, int txMaxSize) {
         var tm = new TmEntity(consumer);
-        tm.clearEntity();
         tm.txMaxSize = txMaxSize;
         tm.txBuffer = new LinkedList<>();
+        tm.clearEntity();
         return tm;
     }
 

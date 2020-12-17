@@ -57,7 +57,6 @@ public class UmEntity extends RlcEntity {
         }
 
         var um = new UmEntity(consumer);
-        um.clearEntity();
 
         um.snLength = snLength;
         um.snModulus = 1 << snLength;
@@ -69,6 +68,7 @@ public class UmEntity extends RlcEntity {
         um.txBuffer = new LinkedList<>();
         um.rxBuffer = new RlcRxBuffer<>(um::snCompareRx, rxMaxSize);
 
+        um.clearEntity();
         return um;
     }
 
