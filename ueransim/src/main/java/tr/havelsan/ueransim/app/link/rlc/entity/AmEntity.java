@@ -42,7 +42,8 @@ public class AmEntity extends RlcEntity {
     private int txCurrentSize;
     private LinkedList<RlcSduSegment> txBuffer;
 
-    // Other buffers
+    // Buffers
+    private RlcRxBuffer<AmdPdu> rxBuffer;
     private LinkedList<RlcSduSegment> retBuffer;
     private LinkedList<RlcSduSegment> waitBuffer;
     private LinkedList<RlcSduSegment> ackBuffer;
@@ -52,9 +53,6 @@ public class AmEntity extends RlcEntity {
     private int rxNextHighest;
     private int rxHighestStatus;
     private int rxNextStatusTrigger;
-
-    // RX buffer
-    private RlcRxBuffer<AmdPdu> rxBuffer;
 
     // Custom state variables
     private boolean statusTriggered;
