@@ -11,6 +11,7 @@ import tr.havelsan.ueransim.app.link.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
 import tr.havelsan.ueransim.app.link.rlc.utils.RlcSdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.RlcSduSegment;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcTimer;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
@@ -26,7 +27,6 @@ public class UmEntity extends RlcEntity {
     private int snLength;
     private int snModulus;
     private int windowSize;
-    private int tReassemblyPeriod;
     private int txMaxSize;
     private int rxMaxSize;
 
@@ -48,7 +48,7 @@ public class UmEntity extends RlcEntity {
 
     // Timers
     private long tCurrent;         // Not a timer, but holds the current time in ms.
-    private long tReassemblyStart; // Reassembling timer
+    private RlcTimer reassemblyTimer;
 
     //======================================================================================================
     //                                           INITIALIZATION
@@ -69,7 +69,8 @@ public class UmEntity extends RlcEntity {
         um.snLength = snLength;
         um.snModulus = 1 << snLength;
         um.windowSize = um.snModulus / 2;
-        um.tReassemblyPeriod = tReassemblyPeriod;
+
+        um.reassemblyTimer = new RlcTimer(tReassemblyPeriod);
 
         um.txMaxSize = txMaxSize;
         um.rxMaxSize = rxMaxSize;
@@ -94,7 +95,7 @@ public class UmEntity extends RlcEntity {
 
         // stop and reset all timers;
         tCurrent = 0;
-        tReassemblyStart = 0;
+        reassemblyTimer.stop();
     }
 
     //======================================================================================================
@@ -326,7 +327,7 @@ public class UmEntity extends RlcEntity {
         }
 
         // If t-Reassembly is running
-        if (tReassemblyStart != 0) {
+        if (reassemblyTimer.isRunning()) {
             boolean condition = false;
 
             // if RX_Timer_Trigger <= RX_Next_Reassembly; or
@@ -347,12 +348,12 @@ public class UmEntity extends RlcEntity {
 
             // ... stop and reset t-Reassembly.
             if (condition) {
-                tReassemblyStart = 0;
+                reassemblyTimer.stop();
             }
         }
 
         // If t-Reassembly is not running (includes the case when t-Reassembly is stopped due to actions above)
-        if (tReassemblyStart == 0) {
+        if (!reassemblyTimer.isRunning()) {
             boolean condition = false;
 
             // if RX_Next_Highest > RX_Next_Reassembly + 1; or
@@ -368,7 +369,7 @@ public class UmEntity extends RlcEntity {
 
             if (condition) {
                 // start t-Reassembly;
-                tReassemblyStart = tCurrent;
+                reassemblyTimer.start(tCurrent);
                 // set RX_Timer_Trigger to RX_Next_Highest.
                 rxTimerTrigger = rxNextHighest;
             }
@@ -399,7 +400,7 @@ public class UmEntity extends RlcEntity {
                 //  before the last byte of all received segments of this RLC SDU
                 (rxNextHighest == rxNextReassembly + 1 && hasMissingSegment(rxNextReassembly))) {
             // start t-Reassembly
-            tReassemblyStart = tCurrent;
+            reassemblyTimer.start(tCurrent);
             // set RX_Timer_Trigger to RX_Next_Highest
             rxTimerTrigger = rxNextHighest;
         }
@@ -519,11 +520,7 @@ public class UmEntity extends RlcEntity {
     public void timerCycle(long currentTime) {
         tCurrent = currentTime;
 
-        // If t-Reassembly is running and expired
-        if (tReassemblyStart != 0 && tCurrent > tReassemblyStart + tReassemblyPeriod) {
-            // Stop timer
-            tReassemblyStart = 0;
-            // Handle expire actions
+        if (reassemblyTimer.cycle(currentTime)) {
             actionReassemblyTimerExpired();
         }
     }
