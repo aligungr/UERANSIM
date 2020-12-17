@@ -1,9 +1,11 @@
 package tr.havelsan.ueransim.app.link.rlc.encoding;
 
+import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.Octet;
 
 public class AmdEncoder {
@@ -12,7 +14,11 @@ public class AmdEncoder {
         var pdu = new AmdPdu();
 
         var octet = stream.readOctet();
-        pdu.dc = octet.getBitB(7);
+        var dc = octet.getBitB(7);
+        if (dc != RlcConstants.DC_DATA) {
+            throw new IncorrectImplementationException();
+        }
+
         pdu.p = octet.getBitB(6);
         pdu.si = ESegmentInfo.fromSi(octet.getBitRangeI(4, 5));
         pdu.sn = isShortSn ? octet.getBitRangeI(0, 3) : octet.getBitRangeI(0, 1);
@@ -34,7 +40,7 @@ public class AmdEncoder {
 
     public static void encode(OctetOutputStream stream, AmdPdu pdu, boolean isShortSn) {
         var octet = new Octet()
-                .setBit(7, pdu.dc)
+                .setBit(7, RlcConstants.DC_DATA)
                 .setBit(6, pdu.p)
                 .setBitRange(4, 5, pdu.si.intValue());
         if (isShortSn) {

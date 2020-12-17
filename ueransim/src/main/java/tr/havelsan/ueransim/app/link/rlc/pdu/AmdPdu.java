@@ -12,7 +12,6 @@ import tr.havelsan.ueransim.utils.octets.Octet;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class AmdPdu {
-    public boolean dc;
     public boolean p;
     public ESegmentInfo si;
     public int sn;
