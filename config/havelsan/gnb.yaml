@@ -3,6 +3,7 @@ tac: 117
 nci: '0000000100'
 
 host: 127.0.0.1
+gtpHost: 127.0.0.1
 gtpPort: 2152
 
 plmn:
