@@ -12,7 +12,7 @@
 ## Current Status
 Our UE and gNodeB are functional and ready to use. You can connect them to your 5G core network right now and start using it. 
 
-Fundamental control plane features are done, but some of them are in progress.
+In terms of 3GPP coverage, fundamental control plane features are done. However, some of them are in progress.
 
 At the same time, NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
 
