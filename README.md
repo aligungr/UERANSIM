@@ -12,12 +12,14 @@
 ## Current Status
 Our UE and gNodeB are functional and ready to use. You can connect them to your 5G core network right now and start using it. 
 
+Fundamental control plane features are done, but some of them are in progress.
+
 At the same time, NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
 
 <p align="center">
 <img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
-<img src="https://img.shields.io/badge/Control%20Plane-functional-success" alt="OS Linux"/>  
-<img src="https://img.shields.io/badge/User%20Plane-functional-success" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/Control%20Plane-functional-green" alt="OS Linux"/>  
+<img src="https://img.shields.io/badge/User%20Plane-complete-success" alt="OS Linux"/>
 </p>
 
 ## Documentation
