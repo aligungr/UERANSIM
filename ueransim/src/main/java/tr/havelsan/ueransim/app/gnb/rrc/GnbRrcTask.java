@@ -6,11 +6,11 @@
 package tr.havelsan.ueransim.app.gnb.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkRrc;
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkRrc;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.NtsId;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.NtsId;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 
 public class GnbRrcTask extends NtsTask {
 

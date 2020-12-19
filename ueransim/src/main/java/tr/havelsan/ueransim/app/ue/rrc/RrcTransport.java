@@ -6,8 +6,8 @@
 package tr.havelsan.ueransim.app.ue.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkRrc;
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkRrc;
 import tr.havelsan.ueransim.rrc.RrcMessage;
 import tr.havelsan.ueransim.rrc.asn.choices.RRC_UL_DCCH_MessageType;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;

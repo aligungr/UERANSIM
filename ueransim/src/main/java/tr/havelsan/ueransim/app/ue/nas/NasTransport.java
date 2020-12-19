@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.ue.nas;
 
 import tr.havelsan.ueransim.app.common.contexts.NasContext;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkNas;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.ue.nas.sec.NasSecurity;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;

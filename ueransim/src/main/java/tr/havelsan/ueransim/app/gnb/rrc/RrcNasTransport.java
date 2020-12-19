@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.gnb.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkNas;
 import tr.havelsan.ueransim.rrc.RrcMessage;
 import tr.havelsan.ueransim.rrc.asn.octet_strings.RRC_DedicatedNAS_Message;
 import tr.havelsan.ueransim.rrc.asn.sequences.RRC_DLInformationTransfer;

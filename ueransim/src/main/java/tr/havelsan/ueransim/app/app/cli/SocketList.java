@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.app.app.cli;
 
-import tr.havelsan.ueransim.app.common.itms.IwCliServerMessage;
+import tr.havelsan.ueransim.app.common.nts.IwCliServerMessage;
 import tr.havelsan.ueransim.utils.BiMap;
 import tr.havelsan.ueransim.utils.Utils;
 

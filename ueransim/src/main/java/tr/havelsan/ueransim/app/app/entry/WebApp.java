@@ -17,7 +17,7 @@ import tr.havelsan.ueransim.app.common.sw.SwCommand;
 import tr.havelsan.ueransim.app.common.sw.SwIntervalResult;
 import tr.havelsan.ueransim.app.common.sw.SwLog;
 import tr.havelsan.ueransim.app.utils.SocketWrapperSerializer;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Fun;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;

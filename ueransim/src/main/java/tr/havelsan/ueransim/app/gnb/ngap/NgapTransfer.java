@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
-import tr.havelsan.ueransim.app.common.itms.IwSctpSend;
+import tr.havelsan.ueransim.app.common.nts.IwSctpSend;
 import tr.havelsan.ueransim.app.gnb.utils.NgapUtils;
 import tr.havelsan.ueransim.nas.impl.values.VTrackingAreaIdentity;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;

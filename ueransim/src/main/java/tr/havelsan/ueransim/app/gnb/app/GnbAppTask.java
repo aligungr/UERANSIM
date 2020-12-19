@@ -6,10 +6,10 @@
 package tr.havelsan.ueransim.app.gnb.app;
 
 import tr.havelsan.ueransim.app.common.info.GnbStatusInfo;
-import tr.havelsan.ueransim.app.common.itms.IwGnbStatusInfoRequest;
-import tr.havelsan.ueransim.app.common.itms.IwGnbStatusUpdate;
+import tr.havelsan.ueransim.app.common.nts.IwGnbStatusInfoRequest;
+import tr.havelsan.ueransim.app.common.nts.IwGnbStatusUpdate;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 
 public class GnbAppTask extends NtsTask {
 

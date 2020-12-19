@@ -7,10 +7,10 @@ package tr.havelsan.ueransim.app.ue.app;
 
 import tr.havelsan.ueransim.app.common.cli.CmdUePing;
 import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
+import tr.havelsan.ueransim.nts.NtsId;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;

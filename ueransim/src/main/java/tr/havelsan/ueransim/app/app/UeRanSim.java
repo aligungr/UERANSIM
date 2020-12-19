@@ -18,7 +18,7 @@ import tr.havelsan.ueransim.app.common.trigger.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
-import tr.havelsan.ueransim.itms.NtsId;
+import tr.havelsan.ueransim.nts.NtsId;
 import tr.havelsan.ueransim.utils.exceptions.SimException;
 
 import java.util.*;

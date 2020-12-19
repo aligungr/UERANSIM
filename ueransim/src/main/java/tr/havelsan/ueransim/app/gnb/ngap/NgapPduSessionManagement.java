@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.common.PduSessionResource;
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.contexts.NgapUeContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
-import tr.havelsan.ueransim.app.common.itms.IwPduSessionResourceCreate;
+import tr.havelsan.ueransim.app.common.nts.IwPduSessionResourceCreate;
 import tr.havelsan.ueransim.ngap0.NgapDataUnitType;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;

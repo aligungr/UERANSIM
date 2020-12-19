@@ -5,8 +5,8 @@
 
 package tr.havelsan.ueransim.app.app.cli;
 
-import tr.havelsan.ueransim.app.common.itms.*;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.app.common.nts.*;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;

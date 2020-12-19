@@ -7,13 +7,13 @@ package tr.havelsan.ueransim.app.air;
 
 import tr.havelsan.ueransim.app.common.TargetPduSession;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkData;
-import tr.havelsan.ueransim.app.common.itms.IwPduSessionEstablishment;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkData;
+import tr.havelsan.ueransim.app.common.nts.IwPduSessionEstablishment;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
-import tr.havelsan.ueransim.itms.NtsId;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
+import tr.havelsan.ueransim.nts.NtsId;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;

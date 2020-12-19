@@ -6,13 +6,13 @@
 package tr.havelsan.ueransim.app.ue.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.UeRrcContext;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
-import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
-import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
-import tr.havelsan.ueransim.app.common.itms.IwUplinkNas;
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkRrc;
+import tr.havelsan.ueransim.app.common.nts.IwPlmnSearchRequest;
+import tr.havelsan.ueransim.app.common.nts.IwPlmnSearchResponse;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkNas;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.NtsId;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.NtsId;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 
 public class UeRrcTask extends NtsTask {
 

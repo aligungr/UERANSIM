@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.gnb.ngap;
 
 import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkNas;
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkNas;
 import tr.havelsan.ueransim.nas.NasEncoder;
 import tr.havelsan.ueransim.nas.core.messages.NasMessage;
 import tr.havelsan.ueransim.ngap0.Ngap;

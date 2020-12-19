@@ -12,9 +12,9 @@ import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.enums.EMmState;
 import tr.havelsan.ueransim.app.common.enums.EMmSubState;
 import tr.havelsan.ueransim.app.common.enums.ERmState;
-import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchRequest;
-import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
-import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
+import tr.havelsan.ueransim.app.common.nts.IwPlmnSearchRequest;
+import tr.havelsan.ueransim.app.common.nts.IwPlmnSearchResponse;
+import tr.havelsan.ueransim.app.common.nts.IwUeStatusUpdate;
 import tr.havelsan.ueransim.app.ue.nas.NasTimer;
 import tr.havelsan.ueransim.app.ue.nas.NasTransport;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
@@ -171,7 +171,7 @@ public class MobilityManagement {
         }
     }
 
-    public static void receiveItmsMessage(NasContext ctx, Object msg) {
+    public static void receiveNtsMessage(NasContext ctx, Object msg) {
         if (msg instanceof IwPlmnSearchResponse) {
             ctx.ueCtx.sim.triggerOnConnected(ctx.ueCtx, EConnType.UE_MR_GNB);
             Log.info(Tag.CONN, "UE connected to gNB.");

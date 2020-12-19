@@ -6,8 +6,8 @@
 package tr.havelsan.ueransim.app.ue.mr;
 
 import tr.havelsan.ueransim.app.common.contexts.UeMrContext;
-import tr.havelsan.ueransim.app.common.itms.IwPlmnSearchResponse;
-import tr.havelsan.ueransim.app.common.itms.IwUeStatusUpdate;
+import tr.havelsan.ueransim.app.common.nts.IwPlmnSearchResponse;
+import tr.havelsan.ueransim.app.common.nts.IwUeStatusUpdate;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 

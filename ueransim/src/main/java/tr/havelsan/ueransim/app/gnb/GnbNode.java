@@ -15,8 +15,8 @@ import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.app.gnb.rrc.GnbRrcTask;
 import tr.havelsan.ueransim.app.gnb.sctp.SctpTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.itms.NtsId;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.NtsId;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class GnbNode {

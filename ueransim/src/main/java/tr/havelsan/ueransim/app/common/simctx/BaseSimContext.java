@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.common.simctx;
 
 import tr.havelsan.ueransim.app.app.UeRanSim;
-import tr.havelsan.ueransim.itms.nts.NtsBase;
+import tr.havelsan.ueransim.nts.nts.NtsBase;
 
 import java.util.UUID;
 

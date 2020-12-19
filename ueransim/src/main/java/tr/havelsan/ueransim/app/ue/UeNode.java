@@ -13,8 +13,8 @@ import tr.havelsan.ueransim.app.ue.mr.UeMrTask;
 import tr.havelsan.ueransim.app.ue.nas.NasTask;
 import tr.havelsan.ueransim.app.ue.rrc.UeRrcTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.itms.NtsId;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.NtsId;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
 public class UeNode {

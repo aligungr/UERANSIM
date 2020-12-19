@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.common.UeData;
 import tr.havelsan.ueransim.app.common.UeTimers;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.nas.sec.NasSecurityContext;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 
 public class NasContext {
     public final UeSimContext ueCtx;

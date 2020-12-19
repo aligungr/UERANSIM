@@ -6,7 +6,7 @@
 package tr.havelsan.ueransim.app.common.contexts;
 
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Timing;
 
 import java.util.UUID;

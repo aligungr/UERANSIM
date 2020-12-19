@@ -7,7 +7,7 @@ package tr.havelsan.ueransim.app.gnb.rrc;
 
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcContext;
 import tr.havelsan.ueransim.app.common.contexts.GnbRrcUeContext;
-import tr.havelsan.ueransim.app.common.itms.IwDownlinkRrc;
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkRrc;
 import tr.havelsan.ueransim.rrc.RrcMessage;
 
 import java.util.UUID;

@@ -6,14 +6,14 @@
 package tr.havelsan.ueransim.app.gnb.sctp;
 
 import tr.havelsan.ueransim.app.common.contexts.SctpContext;
-import tr.havelsan.ueransim.app.common.itms.IwNgapReceive;
-import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
-import tr.havelsan.ueransim.app.common.itms.IwSctpConnectionRequest;
-import tr.havelsan.ueransim.app.common.itms.IwSctpSend;
+import tr.havelsan.ueransim.app.common.nts.IwNgapReceive;
+import tr.havelsan.ueransim.app.common.nts.IwSctpAssociationSetup;
+import tr.havelsan.ueransim.app.common.nts.IwSctpConnectionRequest;
+import tr.havelsan.ueransim.app.common.nts.IwSctpSend;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.NtsId;
-import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.nts.NtsId;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
 import tr.havelsan.ueransim.sctp.SctpAssociation;
 import tr.havelsan.ueransim.sctp.SctpClient;
