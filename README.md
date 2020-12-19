@@ -14,7 +14,7 @@ Our UE and gNodeB are functional and ready to use. You can connect them to your 
 
 In terms of 3GPP coverage, fundamental control plane features are done. However, some of them are in progress.
 
-At the same time, NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
+At the same time, 5G-NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
 
 <p align="center">
 <img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
