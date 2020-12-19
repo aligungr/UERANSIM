@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// TODO: Optimize this
 public final class BitString {
     private final List<Boolean> bits;
 
@@ -104,7 +105,7 @@ public final class BitString {
         return res;
     }
 
-    private BitString substring(int startIndex, int bitLength) {
+    public BitString substring(int startIndex, int bitLength) {
         var res = new BitString();
         for (int i = 0; i < bitLength; i++) {
             res.set(i, this.getB(startIndex + i));
@@ -112,7 +113,7 @@ public final class BitString {
         return res;
     }
 
-    private BitString substring(int startIndex) {
+    public BitString substring(int startIndex) {
         return substring(startIndex, this.bitLength() - startIndex);
     }
 
@@ -274,6 +275,7 @@ public final class BitString {
     }
 
     public int intValue() {
+        // TODO: Ya 31 ile kontrol edilsin veya unsigned olarak parse edilsin
         if (bitLength() > 32) {
             throw new IllegalStateException("BitString has more than 31 bits");
         }
@@ -281,6 +283,7 @@ public final class BitString {
     }
 
     public long longValue() {
+        // TODO: Ya 63 ile kontrol edilsin veya unsigned olarak parse edilsin
         if (bitLength() > 64) {
             throw new IllegalStateException("BitString has more than 63 bits");
         }

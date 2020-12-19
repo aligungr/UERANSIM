@@ -15,7 +15,7 @@ import tr.havelsan.ueransim.app.gnb.ngap.NgapTask;
 import tr.havelsan.ueransim.app.gnb.rrc.GnbRrcTask;
 import tr.havelsan.ueransim.app.gnb.sctp.SctpTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 
@@ -37,12 +37,12 @@ public class GnbNode {
                 new GnbRrcTask(ctx),
         };
 
-        ctx.nts.registerTask(ItmsId.GNB_TASK_SCTP, tasks[0]);
-        ctx.nts.registerTask(ItmsId.GNB_TASK_NGAP, tasks[1]);
-        ctx.nts.registerTask(ItmsId.GNB_TASK_MR, tasks[2]);
-        ctx.nts.registerTask(ItmsId.GNB_TASK_APP, tasks[3]);
-        ctx.nts.registerTask(ItmsId.GNB_TASK_GTP, tasks[4]);
-        ctx.nts.registerTask(ItmsId.GNB_TASK_RRC, tasks[5]);
+        ctx.nts.registerTask(NtsId.GNB_TASK_SCTP, tasks[0]);
+        ctx.nts.registerTask(NtsId.GNB_TASK_NGAP, tasks[1]);
+        ctx.nts.registerTask(NtsId.GNB_TASK_MR, tasks[2]);
+        ctx.nts.registerTask(NtsId.GNB_TASK_APP, tasks[3]);
+        ctx.nts.registerTask(NtsId.GNB_TASK_GTP, tasks[4]);
+        ctx.nts.registerTask(NtsId.GNB_TASK_RRC, tasks[5]);
 
         for (var task : tasks) Log.registerLogger(task.getThread(), ctx.logger);
         for (var task : tasks) task.start();

@@ -1,17 +1,29 @@
-key: '465b5ce8b199b49faa5f0a2ee238a001'
-op: 'cdc202d5123e20f62b6d676ac72cb318'
-amf: '8000'
-imei: '356938035643809'
+# IMSI number of the UE. IMSI = [MCC|MNC|MSISDN] (In total 15 or 16 digits)
 supi: 'imsi-001001000000001'
+
+# MCC and MNC values of the UE.
 plmn:
   mcc: 1
   mnc: 1
 
-smsOverNasSupported: true
+# Permanent subscription key.
+key: '465b5ce8b199b49faa5f0a2ee238a001'
+
+# Operator code (OP) of the UE. Please note that 'OP' is different from 'OPC'.
+op: 'cdc202d5123e20f62b6d676ac72cb318'
+
+# Authentication Management Field (AMF) value
+amf: '8000'
+
+# IMEI number of the device. This value is generally not used.
+imei: '356938035643809'
+
+# Domain Network Name (DNN)
 dnn: 'internet'
 
+# List of NSSAIs for the UE
 requestedNssai:
   - sst:
-      value: 1
-#    sd:
-#      hex: 09afaf
+      hex: '01'
+    sd:
+      hex: 09afaf

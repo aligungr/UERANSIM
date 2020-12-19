@@ -9,7 +9,7 @@ import tr.havelsan.ueransim.app.common.cli.CmdUePing;
 import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.itms.IwUplinkData;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
@@ -79,7 +79,7 @@ class PingApp {
 
             var packet = createPingPacket(source, dest, id, seq);
 
-            ctx.nts.findTask(ItmsId.UE_TASK_MR).push(new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
+            ctx.nts.findTask(NtsId.UE_TASK_MR).push(new IwUplinkData(ctx.ctxId, connectionInfo.pduSessionId, new OctetString(packet)));
         }
     }
 

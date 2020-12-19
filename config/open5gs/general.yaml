@@ -1,2 +1,5 @@
+# Indicates the usage of 3-digit MNC instead of 2-digit.
 use-long-mnc: false
+
+# Force UERANSIM to crash in case of any error. (Usually not required)
 treat-errors-as-fatal: false

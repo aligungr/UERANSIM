@@ -106,7 +106,7 @@ public class WebApp {
         public SenderTask senderTask;
 
         @Override
-        public void main() {
+        protected void main() {
             while (true) {
                 var msg = take();
                 if (msg instanceof SwCommand) {
@@ -121,7 +121,7 @@ public class WebApp {
         private WsContext ws;
 
         @Override
-        public void main() {
+        protected void main() {
             while (true) {
                 var msg = take();
                 if (msg instanceof OnConnected) {
@@ -146,7 +146,7 @@ public class WebApp {
         public SenderTask senderTask;
 
         @Override
-        public void main() {
+        protected void main() {
             // In this task, we use buffering instead of sending the logs one by one.
             while (true) {
                 Utils.sleep(150);

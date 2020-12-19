@@ -35,7 +35,7 @@ public class MmRegistration {
         registrationRequest.requestedNSSAI = new IENssai(ctx.ueCtx.ueConfig.requestedNssai);
         registrationRequest.ueSecurityCapability = MmSecurity.createSecurityCapabilityIe();
         registrationRequest.updateType = new IE5gsUpdateType(
-                ctx.ueCtx.ueConfig.smsOverNasSupported ? IE5gsUpdateType.ESmsRequested.SUPPORTED : IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
+                IE5gsUpdateType.ESmsRequested.NOT_SUPPORTED,
                 IE5gsUpdateType.ENgRanRadioCapabilityUpdate.NOT_NEEDED);
 
         if (!registrationType.equals(ERegistrationType.PERIODIC_REGISTRATION_UPDATING)) {

@@ -10,7 +10,7 @@ import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.ue.nas.mm.MobilityManagement;
 import tr.havelsan.ueransim.app.ue.nas.sm.SessionManagement;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.utils.Tag;
@@ -34,9 +34,9 @@ public class NasTask extends NtsTask {
     }
 
     @Override
-    public void main() {
-        ctx.appTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_APP);
-        ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
+    protected void main() {
+        ctx.appTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_APP);
+        ctx.rrcTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_RRC);
 
         pushDelayed(new IwPerformCycle(CYCLE_MM), PERIOD_MM);
         pushDelayed(new IwPerformCycle(CYCLE_TIMER), PERIOD_TIMER);

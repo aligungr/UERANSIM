@@ -8,7 +8,7 @@ package tr.havelsan.ueransim.app.ue.mr;
 import tr.havelsan.ueransim.app.common.contexts.UeMrContext;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -22,9 +22,9 @@ public class UeMrTask extends NtsTask {
     }
 
     @Override
-    public void main() {
-        ctx.rrcTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_RRC);
-        ctx.appTask = ctx.ueCtx.nts.findTask(ItmsId.UE_TASK_APP);
+    protected void main() {
+        ctx.rrcTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_RRC);
+        ctx.appTask = ctx.ueCtx.nts.findTask(NtsId.UE_TASK_APP);
 
         while (true) {
             var msg = take();
@@ -47,7 +47,7 @@ public class UeMrTask extends NtsTask {
         if (gnb == null) {
             Log.error(Tag.FLOW, "Uplink Data transport failure: UE not connected to a gNB.");
         } else {
-            gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
+            gnb.nts.findTask(NtsId.GNB_TASK_MR).push(msg);
         }
     }
 
@@ -64,7 +64,7 @@ public class UeMrTask extends NtsTask {
         if (gnb == null) {
             Log.error(Tag.FLOW, "Uplink RRC transport failure: UE not connected to a gNB.");
         } else {
-            gnb.nts.findTask(ItmsId.GNB_TASK_MR).push(msg);
+            gnb.nts.findTask(NtsId.GNB_TASK_MR).push(msg);
         }
     }
 

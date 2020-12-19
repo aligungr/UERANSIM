@@ -79,7 +79,7 @@ class ServerTask extends NtsTask {
     }
 
     @Override
-    public void main() {
+    protected void main() {
         Log.registerLogger(getThread(), Logger.GLOBAL);
 
         var acceptorThread = new Thread(() -> acceptorThread(this));

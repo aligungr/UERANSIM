@@ -144,7 +144,7 @@ public class ClientApp {
         }
 
         @Override
-        public void main() {
+        protected void main() {
             final int heartbeat = Constants.CLI__HEARTBEAT_PERIOD / 2;
 
             pushDelayed(new IwPerformCycle(Constants.CLI__CYCLE_TYPE_HEARTBEAT), heartbeat);
@@ -173,7 +173,7 @@ public class ClientApp {
     private class SenderTask extends NtsTask {
 
         @Override
-        public void main() {
+        protected void main() {
             while (true) {
                 var msg = take();
                 if (msg instanceof byte[]) {
@@ -192,7 +192,7 @@ public class ClientApp {
     private class ListenerTask extends NtsTask {
 
         @Override
-        public void main() {
+        protected void main() {
             CliUtils.listenerLoop(inputStream, mainTask::push, () -> mainTask.push(SOCKET_CLOSE));
         }
     }

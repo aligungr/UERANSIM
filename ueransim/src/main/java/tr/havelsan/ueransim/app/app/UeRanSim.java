@@ -18,7 +18,7 @@ import tr.havelsan.ueransim.app.common.trigger.*;
 import tr.havelsan.ueransim.app.gnb.GnbNode;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.UeNode;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.utils.exceptions.SimException;
 
 import java.util.*;
@@ -69,7 +69,7 @@ public class UeRanSim {
             ctx = gnbMap.get(gnbId);
         }
         if (ctx == null) return null;
-        if (!ctx.nts.findTask(ItmsId.GNB_TASK_APP, GnbAppTask.class).isInitialSctpReady()) {
+        if (!ctx.nts.findTask(NtsId.GNB_TASK_APP, GnbAppTask.class).isInitialSctpReady()) {
             return null;
         }
         return ctx;

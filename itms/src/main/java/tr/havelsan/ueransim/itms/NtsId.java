@@ -5,7 +5,7 @@
 
 package tr.havelsan.ueransim.itms;
 
-public class ItmsId {
+public class NtsId {
 
     public static final int GNB_TASK_SCTP = 1;
     public static final int GNB_TASK_NGAP = 2;

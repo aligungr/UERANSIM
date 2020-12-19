@@ -11,7 +11,7 @@ import tr.havelsan.ueransim.app.common.itms.IwSctpAssociationSetup;
 import tr.havelsan.ueransim.app.common.itms.IwSctpConnectionRequest;
 import tr.havelsan.ueransim.app.common.itms.IwSctpSend;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
 import tr.havelsan.ueransim.sctp.ISctpAssociationHandler;
@@ -33,8 +33,8 @@ public class SctpTask extends NtsTask {
     }
 
     @Override
-    public void main() {
-        ctx.ngapTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_NGAP);
+    protected void main() {
+        ctx.ngapTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_NGAP);
 
         while (true) {
             var msg = take();
@@ -59,7 +59,7 @@ public class SctpTask extends NtsTask {
             }
         };
 
-        var client = new SctpClient(ctx.gnbCtx.config.host, msg.address, msg.port, NGAP_PROTOCOL_ID, associationHandler);
+        var client = new SctpClient(ctx.gnbCtx.config.ngapIp, msg.address, msg.port, NGAP_PROTOCOL_ID, associationHandler);
         ctx.clients.put(msg.clientId, client);
 
         var receiverThread = new Thread(() -> {

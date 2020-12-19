@@ -10,7 +10,7 @@ import tr.havelsan.ueransim.app.common.contexts.NgapGnbContext;
 import tr.havelsan.ueransim.app.common.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.app.common.itms.*;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
-import tr.havelsan.ueransim.itms.ItmsId;
+import tr.havelsan.ueransim.itms.NtsId;
 import tr.havelsan.ueransim.itms.nts.NtsTask;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap0.Ngap;
@@ -34,16 +34,16 @@ public class NgapTask extends NtsTask {
     }
 
     @Override
-    public void main() {
-        ctx.sctpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_SCTP);
-        ctx.rrcTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_RRC);
-        ctx.gtpTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_GTP);
-        ctx.appTask = ctx.gnbCtx.nts.findTask(ItmsId.GNB_TASK_APP);
+    protected void main() {
+        ctx.sctpTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_SCTP);
+        ctx.rrcTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_RRC);
+        ctx.gtpTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_GTP);
+        ctx.appTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_APP);
 
         for (var amfConfig : ctx.gnbCtx.config.amfConfigs) {
             var amfCtx = new NgapAmfContext();
-            amfCtx.host = amfConfig.host;
-            amfCtx.port = amfConfig.port;
+            amfCtx.host = amfConfig.ngapIp;
+            amfCtx.port = amfConfig.ngapPort;
 
             ctx.amfContexts.put(amfCtx.ctxId, amfCtx);
         }
