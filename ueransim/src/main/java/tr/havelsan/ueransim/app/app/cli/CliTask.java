@@ -142,7 +142,6 @@ public class CliTask extends NtsTask {
                 refConfig.imei,
                 cmd.imsi != null ? new Supi("imsi", cmd.imsi) : refConfig.supi,
                 refConfig.plmn,
-                refConfig.smsOverNasSupported,
                 refConfig.requestedNssai,
                 refConfig.dnn
         );

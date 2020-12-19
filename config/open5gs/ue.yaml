@@ -18,9 +18,6 @@ amf: '8000'
 # IMEI number of the device. This value is generally not used.
 imei: '356938035643803'
 
-# Indicates whether or not SMS over NAS is supported.
-smsOverNasSupported: true
-
 # Domain Network Name (DNN)
 dnn: 'internet'
 

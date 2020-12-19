@@ -22,14 +22,13 @@ public class UeConfig {
     public final Supi supi;
     public final VPlmn plmn;
 
-    public final boolean smsOverNasSupported;
     public final IESNssai[] requestedNssai;
     public final IEDnn dnn;
 
     public final String snn; // Auto constructed
 
     public UeConfig(OctetString key, OctetString op, OctetString amf, String imei, Supi supi, VPlmn plmn,
-                    boolean smsOverNasSupported, IESNssai[] requestedNssai, IEDnn dnn) {
+                    IESNssai[] requestedNssai, IEDnn dnn) {
         this.emulationMode = true; // TODO: make configurable later
         this.key = key;
         this.op = op;
@@ -37,7 +36,6 @@ public class UeConfig {
         this.imei = imei;
         this.supi = supi;
         this.plmn = plmn;
-        this.smsOverNasSupported = smsOverNasSupported;
         this.requestedNssai = requestedNssai;
         this.dnn = dnn;
 
@@ -45,8 +43,8 @@ public class UeConfig {
     }
 
     public UeConfig(String key, String op, String amf, String imei, String supi, VPlmn plmn,
-                    boolean smsOverNasSupported, IESNssai[] requestedNssai, String dnn) {
+                    IESNssai[] requestedNssai, String dnn) {
         this(new OctetString(key), new OctetString(op), new OctetString(amf), imei,
-                Supi.parse(supi), plmn, smsOverNasSupported, requestedNssai, new IEDnn(dnn));
+                Supi.parse(supi), plmn, requestedNssai, new IEDnn(dnn));
     }
 }
