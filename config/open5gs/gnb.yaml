@@ -19,8 +19,8 @@ gtpPort: 2152
 
 # List of AMF address information
 amfConfigs:
-  - host: 127.0.0.5
-    port: 38412
+  - ngapIp: 127.0.0.5
+    ngapPort: 38412
 
 # List of NSSAIs supported by this gNB
 nssais:

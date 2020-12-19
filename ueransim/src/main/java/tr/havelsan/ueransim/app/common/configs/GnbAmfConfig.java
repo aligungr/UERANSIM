@@ -6,11 +6,11 @@
 package tr.havelsan.ueransim.app.common.configs;
 
 public class GnbAmfConfig {
-    public final String host;
-    public final int port;
+    public final String ngapIp;
+    public final int ngapPort;
 
-    public GnbAmfConfig(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public GnbAmfConfig(String ngapIp, int ngapPort) {
+        this.ngapIp = ngapIp;
+        this.ngapPort = ngapPort;
     }
 }

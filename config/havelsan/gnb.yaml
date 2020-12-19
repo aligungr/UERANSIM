@@ -19,8 +19,8 @@ gtpPort: 2152
 
 # List of AMF address information
 amfConfigs:
-  - host: 10.154.14.19
-    port: 38421
+  - ngapIp: 10.154.14.19
+    ngapPort: 38412
 
 # List of NSSAIs supported by this gNB
 nssais:

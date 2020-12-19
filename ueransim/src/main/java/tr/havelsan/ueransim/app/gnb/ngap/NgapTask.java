@@ -42,8 +42,8 @@ public class NgapTask extends NtsTask {
 
         for (var amfConfig : ctx.gnbCtx.config.amfConfigs) {
             var amfCtx = new NgapAmfContext();
-            amfCtx.host = amfConfig.host;
-            amfCtx.port = amfConfig.port;
+            amfCtx.host = amfConfig.ngapIp;
+            amfCtx.port = amfConfig.ngapPort;
 
             ctx.amfContexts.put(amfCtx.ctxId, amfCtx);
         }
