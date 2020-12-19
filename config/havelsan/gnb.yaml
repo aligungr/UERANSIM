@@ -1,20 +1,30 @@
-gnbId: 1
-tac: 117
-nci: '0000000100'
-
-host: 127.0.0.1
-gtpHost: 127.0.0.1
-gtpPort: 2152
-
+# MCC and MNC values of the gNB
 plmn:
   mcc: 1
   mnc: 1
 
+# ID of the gNB inside of its PLMN
+gnbId: 1
+
+# Tracking Area Code (TAC)
+tac: 117
+
+# NR Cell Identity (NCI)
+nci: '0000000100'
+
+# gNB's local address information
+host: 127.0.0.1
+gtpHost: 127.0.0.1
+gtpPort: 2152
+
+# List of AMF address information
 amfConfigs:
   - host: 10.154.14.19
     port: 38421
 
+# List of NSSAIs supported by this gNB
 nssais:
   - sst: '0x01'
 
+# Indicates whether or not SCTP stream number errors should be ignored.
 ignoreStreamIds: true
