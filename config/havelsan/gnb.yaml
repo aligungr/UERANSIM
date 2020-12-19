@@ -13,8 +13,8 @@ tac: 117
 nci: '0000000100'
 
 # gNB's local address information
-host: 127.0.0.1
-gtpHost: 127.0.0.1
+ngapIp: 127.0.0.1
+gtpIp: 127.0.0.1
 gtpPort: 2152
 
 # List of AMF address information
