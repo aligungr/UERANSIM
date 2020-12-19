@@ -12,8 +12,10 @@ tac: 117
 # NR Cell Identity (NCI)
 nci: '0000000100'
 
-# gNB's local address information
+# gNB's local IP address for N2 interface.
 ngapIp: 127.0.0.1
+
+# gNB's local IP address for N3 interface.
 gtpIp: 127.0.0.1
 gtpPort: 2152
 
