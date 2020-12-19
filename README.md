@@ -2,12 +2,22 @@
   <a href="https://github.com/aligungr/UERANSIM"><img src="/.github/logo.png" width="75" title="UERANSIM"></a>
 </p>
 <p align="center">
-
-<img src="https://img.shields.io/badge/UERANSIM-v2.1.1-blue" alt="OS Linux"/>
-<img src="https://img.shields.io/badge/3GPP-R15-orange" alt="OS Linux"/>
-<img src="https://img.shields.io/badge/License-GPL--3.0-green" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/UERANSIM-v2.1.1-blue" />
+<img src="https://img.shields.io/badge/3GPP-R15-orange" />
+<img src="https://img.shields.io/badge/License-GPL--3.0-green"/>
 </p>
 UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project can be used for testing 5G Core Network and studying 5G System.
+
+## Current Status
+Our UE and gNB are functional and ready to use. You can connect them to your 5G core network right now and start using it. 
+
+At the same time, NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
+
+<p align="center">
+<img src="https://img.shields.io/badge/Control%20Plane-functional-success" alt="OS Linux"/>  
+<img src="https://img.shields.io/badge/User%20Plane-functional-success" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
+</p>
 
 ## Documentation
 You can find the documentation on [UERANSIM Wiki](https://github.com/aligungr/UERANSIM/wiki).
