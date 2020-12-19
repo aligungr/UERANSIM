@@ -29,7 +29,7 @@ And, since the project is rapidly developing, please make sure that you have alw
 
 Implementing UE and RAN is not an easy task and requires a lot of time. We are always open to public contributions and pull requests.
 
-## Supporting UERANSIM
+## Supporting
 
 UERANSIM is the first and currently only open source project that implements 5G-SA UE and RAN. Commercial alternatives of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
 - Starring our GitHub repository,
