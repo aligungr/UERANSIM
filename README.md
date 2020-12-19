@@ -6,17 +6,20 @@
 <img src="https://img.shields.io/badge/3GPP-R15-orange" />
 <img src="https://img.shields.io/badge/License-GPL--3.0-green"/>
 </p>
-UERANSIM is the open-source state-of-the-art 5G UE and RAN (gNodeB) implementation. The project can be used for testing 5G Core Network and studying 5G System.
+
+**UERANSIM** <small>(pronounced "ju-i ræn sɪm")</small>, is the open-source state-of-the-art 5G UE and RAN (gNodeB) implementation. The project can be used for testing 5G Core Network and studying 5G System.
 
 ## Current Status
 Our UE and gNodeB are functional and ready to use. You can connect them to your 5G core network right now and start using it. 
 
-At the same time, NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
+In terms of 3GPP coverage, fundamental control plane features are done. However, some of them are in progress.
+
+At the same time, 5G-NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
 
 <p align="center">
 <img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
-<img src="https://img.shields.io/badge/Control%20Plane-functional-success" alt="OS Linux"/>  
-<img src="https://img.shields.io/badge/User%20Plane-functional-success" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/Control%20Plane-functional-green" alt="OS Linux"/>  
+<img src="https://img.shields.io/badge/User%20Plane-complete-success" alt="OS Linux"/>
 </p>
 
 ## Documentation
@@ -28,7 +31,7 @@ And, since the project is rapidly developing, please make sure that you have alw
 
 Implementing UE and RAN is not an easy task and requires a lot of time. We are always open to public contributions and pull requests.
 
-## Supporting UERANSIM
+## Supporting
 
 UERANSIM is the first and currently only open source project that implements 5G-SA UE and RAN. Commercial alternatives of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
 - Starring our GitHub repository,
