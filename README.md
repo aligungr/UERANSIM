@@ -13,16 +13,8 @@ Our UE and gNB are functional and ready to use. You can connect them to your 5G 
 
 At the same time, NR radio interface is under development but not complete yet. Currently we utilize the radio interface over a simulated environment.   
 
-UERANSIM 5G-SA UE  
 <p align="center">
-<img src="https://img.shields.io/badge/Control%20Plane-functional-success" alt="OS Linux"/>
-<img src="https://img.shields.io/badge/User%20Plane-functional-success" alt="OS Linux"/>
-<img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
-</p>
-
-UERANSIM 5G-SA gNB
-<p align="center">
-<img src="https://img.shields.io/badge/Control%20Plane-functional-success" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/Control%20Plane-functional-success" alt="OS Linux"/>  
 <img src="https://img.shields.io/badge/User%20Plane-functional-success" alt="OS Linux"/>
 <img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
 </p>
