@@ -114,7 +114,6 @@ public class CliTask extends NtsTask {
                 refConfig.ignoreStreamIds,
                 refConfig.ngapIp,
                 refConfig.gtpIp,
-                refConfig.gtpPort,
                 refConfig.nssais
         );
 
