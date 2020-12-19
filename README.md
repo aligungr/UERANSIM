@@ -1,6 +1,12 @@
 <p align="center">
   <a href="https://github.com/aligungr/UERANSIM"><img src="/.github/logo.png" width="75" title="UERANSIM"></a>
 </p>
+<p align="center">
+
+<img src="https://img.shields.io/badge/UERANSIM-v2.1.1-blue" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/3GPP-R15-orange" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/License-GPL--3.0-green" alt="OS Linux"/>
+</p>
 UERANSIM is the state-of-the-art 5G UE and RAN (gNodeB) simulator. The project can be used for testing 5G Core Network and studying 5G System.
 
 ## Documentation
