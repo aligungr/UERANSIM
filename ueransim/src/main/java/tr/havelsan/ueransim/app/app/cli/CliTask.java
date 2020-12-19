@@ -112,8 +112,8 @@ public class CliTask extends NtsTask {
                 refConfig.plmn,
                 refConfig.amfConfigs,
                 refConfig.ignoreStreamIds,
-                refConfig.host,
-                refConfig.gtpPort,
+                refConfig.ngapIp,
+                refConfig.gtpIp,
                 refConfig.nssais
         );
 
@@ -141,7 +141,6 @@ public class CliTask extends NtsTask {
                 refConfig.imei,
                 cmd.imsi != null ? new Supi("imsi", cmd.imsi) : refConfig.supi,
                 refConfig.plmn,
-                refConfig.smsOverNasSupported,
                 refConfig.requestedNssai,
                 refConfig.dnn
         );

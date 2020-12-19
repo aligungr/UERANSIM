@@ -59,7 +59,7 @@ public class SctpTask extends NtsTask {
             }
         };
 
-        var client = new SctpClient(ctx.gnbCtx.config.host, msg.address, msg.port, NGAP_PROTOCOL_ID, associationHandler);
+        var client = new SctpClient(ctx.gnbCtx.config.ngapIp, msg.address, msg.port, NGAP_PROTOCOL_ID, associationHandler);
         ctx.clients.put(msg.clientId, client);
 
         var receiverThread = new Thread(() -> {

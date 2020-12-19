@@ -17,21 +17,21 @@ public class GnbConfig {
     public final VPlmn plmn;
     public final GnbAmfConfig[] amfConfigs;
     public final boolean ignoreStreamIds;
-    public final String host;
-    public final int gtpPort;
+    public final String ngapIp;
+    public final String gtpIp;
     public final Nssai[] nssais;
     public final NGAP_PagingDRX pagingDrx = NGAP_PagingDRX.V64; // TODO config
 
     public GnbConfig(int gnbId, int tac, String nci, VPlmn plmn, GnbAmfConfig[] amfConfigs,
-                     boolean ignoreStreamIds, String host, int gtpPort, Nssai[] nssais) {
+                     boolean ignoreStreamIds, String ngapIp, String gtpIp, Nssai[] nssais) {
         this.gnbId = gnbId;
         this.tac = tac;
         this.nci = BitString.fromBits(BitString.fromHex(nci).toBinaryString().substring(0, 36)); // TODO: refactor
         this.plmn = plmn;
         this.amfConfigs = amfConfigs;
         this.ignoreStreamIds = ignoreStreamIds;
-        this.host = host;
-        this.gtpPort = gtpPort;
+        this.ngapIp = ngapIp;
+        this.gtpIp = gtpIp;
         this.nssais = nssais;
     }
 }
