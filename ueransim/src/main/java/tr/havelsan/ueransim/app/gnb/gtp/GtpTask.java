@@ -59,10 +59,10 @@ public class GtpTask extends NtsTask {
     protected void main() {
         ctx.mrTask = ctx.gnbCtx.nts.findTask(NtsId.GNB_TASK_MR);
         try {
-            ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.host));
+            ctx.socket = new DatagramSocket(ctx.gnbCtx.config.gtpPort, InetAddress.getByName(ctx.gnbCtx.config.gtpHost));
 
         } catch (Exception e) {
-            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.host, ctx.gnbCtx.config.gtpPort, e.toString());
+            Log.error(Tag.CONN, "Failed to bind UDP/GTP socket %s:%s (%s)", ctx.gnbCtx.config.gtpHost, ctx.gnbCtx.config.gtpPort, e.toString());
             return;
         }
         var receiverThread = new Thread(() -> udpReceiverThread(ctx.socket, this));

@@ -113,6 +113,7 @@ public class CliTask extends NtsTask {
                 refConfig.amfConfigs,
                 refConfig.ignoreStreamIds,
                 refConfig.host,
+		refConfig.gtpHost,
                 refConfig.gtpPort,
                 refConfig.nssais
         );

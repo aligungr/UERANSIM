@@ -131,7 +131,7 @@ public class NgapPduSessionManagement {
         resource.downLayer = new NGAP_UPTransportLayerInformation();
         resource.downLayer.gTPTunnel = new NGAP_GTPTunnel();
 
-        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.gnbCtx.config.host));
+        resource.downLayer.gTPTunnel.transportLayerAddress = new NGAP_TransportLayerAddress(Utils.getAddress(ctx.gnbCtx.config.gtpHost));
 
         ctx.downTeidCounter++;
         var downTeid = new Octet4(ctx.downTeidCounter & 0xFFFFFFFFL).toOctetString();

@@ -18,12 +18,13 @@ public class GnbConfig {
     public final GnbAmfConfig[] amfConfigs;
     public final boolean ignoreStreamIds;
     public final String host;
+    public final String gtpHost;
     public final int gtpPort;
     public final Nssai[] nssais;
     public final NGAP_PagingDRX pagingDrx = NGAP_PagingDRX.V64; // TODO config
 
     public GnbConfig(int gnbId, int tac, String nci, VPlmn plmn, GnbAmfConfig[] amfConfigs,
-                     boolean ignoreStreamIds, String host, int gtpPort, Nssai[] nssais) {
+                     boolean ignoreStreamIds, String host, String gtpHost, int gtpPort, Nssai[] nssais) {
         this.gnbId = gnbId;
         this.tac = tac;
         this.nci = BitString.fromBits(BitString.fromHex(nci).toBinaryString().substring(0, 36)); // TODO: refactor
@@ -31,6 +32,7 @@ public class GnbConfig {
         this.amfConfigs = amfConfigs;
         this.ignoreStreamIds = ignoreStreamIds;
         this.host = host;
+        this.gtpHost = gtpHost;
         this.gtpPort = gtpPort;
         this.nssais = nssais;
     }
