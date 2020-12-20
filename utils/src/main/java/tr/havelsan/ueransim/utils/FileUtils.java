@@ -47,7 +47,6 @@ public class FileUtils {
 
     public static File createDir(String path) {
         var file = new File(path);
-        // if isCreated is false, it means already exists
         boolean isCreated = file.mkdir();
 
         try {
