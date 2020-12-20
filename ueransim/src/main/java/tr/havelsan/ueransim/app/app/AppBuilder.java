@@ -8,7 +8,7 @@ package tr.havelsan.ueransim.app.app;
 import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
 import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.app.utils.FileServer;
+import tr.havelsan.ueransim.utils.FileUtils;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
@@ -64,7 +64,7 @@ public class AppBuilder {
     private BaseConsole createLoadTestingConsole() {
         var loadTestConsole = new BaseConsole();
         loadTestConsole.setStandardPrintEnabled(false);
-        loadTestConsole.addPrintHandler(str -> FileServer.appendFile("logs/loadtest.log", str));
+        loadTestConsole.addPrintHandler(str -> FileUtils.appendToFile("logs/loadtest.log", str));
         loadTestConsole.printDiv();
         return loadTestConsole;
     }

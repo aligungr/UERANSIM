@@ -5,6 +5,7 @@
 
 package tr.havelsan.ueransim.app.utils;
 
+import tr.havelsan.ueransim.utils.FileUtils;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 public class ConfigUtils {
@@ -20,6 +21,6 @@ public class ConfigUtils {
             throw new IllegalArgumentException("name contains '.' or '/'");
 
         logger.getConsole().setStandardPrintEnabled(standardPrint);
-        logger.getConsole().addPrintHandler(str -> FileServer.appendFile("logs/" + name + ".log", str));
+        logger.getConsole().addPrintHandler(str -> FileUtils.appendToFile("logs/" + name + ".log", str));
     }
 }

@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.app.entry;
 
 import tr.havelsan.ueransim.utils.Constants;
+import tr.havelsan.ueransim.utils.FileUtils;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
@@ -28,6 +29,7 @@ class BaseApp {
         System.load(path + "libapp-native.so");
 
         readLocalVersion(path + "version");
+        FileUtils.initialize(path + "version");
 
         if (performVersionCheck) {
             Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", Constants.VERSION);
