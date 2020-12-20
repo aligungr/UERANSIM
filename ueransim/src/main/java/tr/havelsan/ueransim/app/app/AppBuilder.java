@@ -13,7 +13,6 @@ import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,7 +43,7 @@ public class AppBuilder {
         if (isBuilt.getAndSet(true))
             throw new RuntimeException("already built");
 
-        new File("logs").mkdir();
+        FileUtils.createDir("logs");
 
         ConfigUtils.loggingToFile(Logger.GLOBAL, Logger.GLOBAL.getLoggerName(), true);
         Log.registerLogger(Thread.currentThread(), Logger.GLOBAL);

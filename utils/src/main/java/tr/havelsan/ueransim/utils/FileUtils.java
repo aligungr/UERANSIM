@@ -45,6 +45,20 @@ public class FileUtils {
         return file;
     }
 
+    public static File createDir(String path) {
+        var file = new File(path);
+        // if isCreated is false, it means already exists
+        boolean isCreated = file.mkdir();
+
+        try {
+            copyPermissions(new File(referenceFile), file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return file;
+    }
+
     public static void appendToFile(String path, byte[] data) {
         var p = Paths.get(path);
 
