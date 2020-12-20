@@ -8,17 +8,12 @@ package tr.havelsan.ueransim.app.app;
 import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
 import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
+import tr.havelsan.ueransim.app.utils.FileServer;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,15 +64,7 @@ public class AppBuilder {
     private BaseConsole createLoadTestingConsole() {
         var loadTestConsole = new BaseConsole();
         loadTestConsole.setStandardPrintEnabled(false);
-        loadTestConsole.addPrintHandler(str -> {
-            final Path path = Paths.get("logs/loadtest.log");
-            try {
-                Files.write(path, str.getBytes(StandardCharsets.UTF_8),
-                        Files.exists(path) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        loadTestConsole.addPrintHandler(str -> FileServer.appendFile("logs/loadtest.log", str));
         loadTestConsole.printDiv();
         return loadTestConsole;
     }
