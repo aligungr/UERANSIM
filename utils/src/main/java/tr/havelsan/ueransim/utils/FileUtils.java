@@ -49,7 +49,7 @@ public class FileUtils {
         boolean isCreated = file.mkdir();
 
         try {
-            copyPermissions(new File(referenceFile), file);
+            copyPermissions(new File(referenceFile).getParentFile(), file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
