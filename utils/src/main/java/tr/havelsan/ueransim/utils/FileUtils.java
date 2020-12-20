@@ -30,7 +30,6 @@ public class FileUtils {
     public static File createFile(String path) {
         var file = new File(path);
         try {
-            // if isCreated is false, it means already exists
             boolean isCreated = file.createNewFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
