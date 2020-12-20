@@ -5,9 +5,23 @@
 # This software and all associated files are licensed under GPL-3.0.
 #
 
+do_not_allow_root=true
+
+if [[ " $@ " =~ " --allow-root " ]]; then
+   do_not_allow_root=false
+fi
+
+if [ "$EUID" == 0 ]; then
+  if [ "$do_not_allow_root" = true ]; then
+    echo "ERROR: Building as 'root' is not recommended."
+    echo "  Please drop 'sudo', or pass '--allow-root' if you still want to build as root."
+    exit 1
+  fi
+fi
+
 if [ -z "$JAVA_HOME" ]; then
-echo "ERROR: 'JAVA_HOME' is not defined" 1>&2;
-exit 1
+  echo "ERROR: 'JAVA_HOME' is not defined" 1>&2;
+  exit 1
 fi
 
 make clean && make
