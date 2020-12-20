@@ -19,7 +19,7 @@ At the same time, 5G-NR radio interface is under development but not complete ye
 <p align="center">
 <img src="https://img.shields.io/badge/5G%20Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
 <img src="https://img.shields.io/badge/Control%20Plane-functional-green" alt="OS Linux"/>  
-<img src="https://img.shields.io/badge/User%20Plane-complete-success" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/User%20Plane-functional-green" alt="OS Linux"/>
 </p>
 
 ## Documentation
