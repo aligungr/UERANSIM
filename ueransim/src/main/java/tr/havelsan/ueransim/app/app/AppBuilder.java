@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
 import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
 import tr.havelsan.ueransim.utils.FileUtils;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.console.Logger;
@@ -56,6 +57,8 @@ public class AppBuilder {
                 loadTestConsole.println(null, "%s %s [%s] [%d ms]", icon, display, nodeName, deltaMs);
             }
         });
+
+        Log.info(Tag.SYS, "UERANSIM agent has been started.");
 
         return new UeRanSim(monitorTasks);
     }
