@@ -317,7 +317,7 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
     if (strcmp(tun_name, ifname))
         throw std::runtime_error("TUN interface name could not be allocated.");
 
-    *allocated_name = tun_name;
+    *allocated_name = strdup(tun_name);
     return fd;
 }
 
