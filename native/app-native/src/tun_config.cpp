@@ -52,7 +52,8 @@ static int exec_output(const char *cmd, std::string &output)
     catch (...)
     {
         pclose(pipe);
-        throw;
+        output = "";
+        return -1;
     }
     output = result;
     return WEXITSTATUS(pclose(pipe));
@@ -290,7 +291,7 @@ static void remove_existing_ip_routes(const std::string &interface_name)
         char if_name[IF_NAMESIZE + 8] = {0};
 
         if (sscanf(line.c_str(), "default dev %s scope link", if_name) != 1)
-            throw std::runtime_error("ip route list command could not parsed");
+            fatal_error("ip route list command could not parsed");
 
         if (!strcmp(if_name, interface_name.c_str()))
         {
@@ -316,7 +317,7 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
 {
     const char *ifname = next_interface_name(if_prefix);
     if (!ifname)
-        throw std::runtime_error("TUN interface name could not be allocated.");
+        fatal_error("TUN interface name could not be allocated.");
 
     char tun_name[IFNAMSIZ];
     strcpy(tun_name, ifname);
@@ -345,7 +346,7 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
 
     strcpy(tun_name, ifr.ifr_name);
     if (strcmp(tun_name, ifname))
-        throw std::runtime_error("TUN interface name could not be allocated.");
+        fatal_error("TUN interface name could not be allocated.");
 
     *allocated_name = strdup(tun_name);
     return fd;
