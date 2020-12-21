@@ -39,8 +39,10 @@ static int exec_output(const char *cmd, std::string &output)
     char buffer[128];
     std::string result = "";
     FILE *pipe = popen(cmd, "r");
-    if (!pipe)
-        throw std::runtime_error("popen() failed!");
+    if (!pipe) {
+        output = "popen() failed!";
+        return -1;
+    }
     try
     {
         while (fgets(buffer, sizeof buffer, pipe) != NULL)
@@ -53,6 +55,25 @@ static int exec_output(const char *cmd, std::string &output)
     }
     output = result;
     return WEXITSTATUS(pclose(pipe));
+}
+
+[[noreturn]] static void fatal_error(const std::string &msg)
+{
+    std::cerr << "Fatal Error: " << msg << std::endl;
+    exit(1);
+}
+
+static std::string exec_strict(const std::string& cmd)
+{
+    std::string output;
+    if (exec_output(cmd.c_str(), output))
+    {
+        std::cerr << "Command execution failed." << std::endl;
+        std::cerr << " The command was: " << cmd << std::endl;
+        std::cerr << " The output is: '" << output << "'" << std::endl;
+        fatal_error("Command execution failure");
+    }
+    return output;
 }
 
 static const char *next_interface_name(const std::string &prefix)
@@ -133,7 +154,7 @@ static void configure_rt_tables()
     std::ifstream ifs;
     ifs.open("/etc/iproute2/rt_tables");
     if (!ifs.is_open() || !ifs.good())
-        throw std::runtime_error("Could not open '/etc/iproute2/rt_tables'");
+        fatal_error("Could not open '/etc/iproute2/rt_tables'");
 
     std::string line;
 
@@ -172,7 +193,7 @@ static void configure_rt_tables()
 
         ofs.open("/etc/iproute2/rt_tables", std::ios_base::app);
         if (!ofs.is_open() || !ofs.good())
-            throw std::runtime_error("Could not open '/etc/iproute2/rt_tables'");
+            fatal_error("Could not open '/etc/iproute2/rt_tables'");
 
         ofs << "\n"
             << availableId << "\t" << ROUTING_TABLE_NAME << std::endl;
@@ -183,10 +204,7 @@ static void configure_rt_tables()
 static void remove_existing_ip_rules(const std::string &ip_addr)
 {
     std::string list_command = "ip rule list from " + ip_addr;
-
-    std::string output;
-    if (exec_output(list_command.c_str(), output))
-        throw std::runtime_error("ip rule list command failed.");
+    std::string output = exec_strict(list_command);
 
     std::stringstream ss;
     ss << output;
@@ -205,9 +223,7 @@ static void remove_existing_ip_rules(const std::string &ip_addr)
         char table_name[512] = {0};
 
         if (sscanf(line.c_str(), "%d: from %s lookup %s", &num, from_ip, table_name) != 3)
-        {
-            throw std::runtime_error("ip rule list lookup command could not parsed");
-        }
+            fatal_error("ip rule list lookup command could not parsed");
 
         if (!strcmp(from_ip, ip_addr.c_str()) && !strcmp(table_name, ROUTING_TABLE_NAME))
         {
@@ -218,27 +234,21 @@ static void remove_existing_ip_rules(const std::string &ip_addr)
     }
 
     for (auto &line : will_remove)
-    {
-        if (system((std::string("ip rule del ") + line).c_str()))
-            throw std::runtime_error("ip rule del command failed.");
-    }
+        exec_strict("ip rule del " + line);
 }
 
 static void add_new_ip_rules(const std::string &ip_addr)
 {
     std::stringstream cmd;
     cmd << "ip rule add from " << ip_addr << " table " << ROUTING_TABLE_NAME;
-    if (system(cmd.str().c_str()))
-        throw std::runtime_error("ip rule add command failed.");
+    exec_strict(cmd.str());
 }
 
 static void remove_existing_ip_routes(const std::string &interface_name)
 {
     std::string list_command = "ip route list table " ROUTING_TABLE_NAME;
 
-    std::string output;
-    if (exec_output(list_command.c_str(), output))
-        throw std::runtime_error("ip route list command failed.");
+    std::string output = exec_strict(list_command);
 
     std::stringstream ss;
     ss << output;
@@ -266,10 +276,7 @@ static void remove_existing_ip_routes(const std::string &interface_name)
     }
 
     for (auto &line : will_remove)
-    {
-        if (system(line.c_str()))
-            throw std::runtime_error("ip rule del command failed.");
-    }
+        exec_strict(line);
 }
 
 static void add_ip_routes(const std::string &if_name)
@@ -277,9 +284,7 @@ static void add_ip_routes(const std::string &if_name)
     std::stringstream cmd;
     cmd << "ip route add default dev " << if_name << " table " << ROUTING_TABLE_NAME;
 
-    std::string output;
-    if (exec_output(cmd.str().c_str(), output))
-        throw std::runtime_error("ip route add command failed.");
+    std::string output = exec_strict(cmd.str());
 }
 
 int tun_alloc(const char *if_prefix, char **allocated_name)
