@@ -39,7 +39,8 @@ static int exec_output(const char *cmd, std::string &output)
     char buffer[128];
     std::string result = "";
     FILE *pipe = popen(cmd, "r");
-    if (!pipe) {
+    if (!pipe)
+    {
         output = "popen() failed!";
         return -1;
     }
@@ -63,7 +64,7 @@ static int exec_output(const char *cmd, std::string &output)
     exit(1);
 }
 
-static std::string exec_strict(const std::string& cmd)
+static std::string exec_strict(const std::string &cmd)
 {
     std::string output;
     if (exec_output(cmd.c_str(), output))
@@ -244,8 +245,32 @@ static void add_new_ip_rules(const std::string &ip_addr)
     exec_strict(cmd.str());
 }
 
+static bool is_fib_table_exists(const std::string &table_name)
+{
+    std::string output = exec_strict("ip route show table all");
+
+    std::stringstream ss;
+    ss << output;
+
+    std::string token;
+    while (ss >> token)
+    {
+        if (token == "table")
+        {
+            ss >> token;
+            if (token == table_name)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 static void remove_existing_ip_routes(const std::string &interface_name)
 {
+    if (!is_fib_table_exists(ROUTING_TABLE_NAME))
+        return;
+
     std::string list_command = "ip route list table " ROUTING_TABLE_NAME;
 
     std::string output = exec_strict(list_command);
