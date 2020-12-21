@@ -62,7 +62,7 @@ public class AppBuilder {
         Log.info(Tag.SYS, "UERANSIM agent has been started.");
 
         if (!NativeUtils.isRoot()) {
-            Log.warning(Tag.SYS, "Data plane will not work. 'sudo' is required to setup TUN interfaces.");
+            Log.warning(Tag.SYS, "Automatic TUN configuration will not work. 'sudo' is required to setup TUN interfaces.");
         }
 
         return new UeRanSim(monitorTasks);
