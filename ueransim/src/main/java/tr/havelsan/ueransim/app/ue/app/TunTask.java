@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
+ * This software and all associated files are licensed under GPL-3.0.
+ */
+
+package tr.havelsan.ueransim.app.ue.app;
+
+import tr.havelsan.ueransim.app.common.nts.IwDownlinkData;
+import tr.havelsan.ueransim.app.common.nts.IwUplinkData;
+import tr.havelsan.ueransim.nts.nts.NtsTask;
+import tr.havelsan.ueransim.utils.console.Log;
+import tr.havelsan.ueransim.utils.octets.OctetString;
+
+import java.nio.ByteBuffer;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+class TunTask extends NtsTask {
+
+    private final UeAppTask appTask;
+    private final UUID ueId;
+    private final int psi;
+    private final int fd;
+
+    public TunTask(UeAppTask appTask, UUID ueId, int psi, int fd) {
+        this.appTask = appTask;
+        this.ueId = ueId;
+        this.psi = psi;
+        this.fd = fd;
+    }
+
+    private static void tunReaderThread(int fd, Consumer<OctetString> consumer) {
+        var buffer = ByteBuffer.allocateDirect(65535); // TODO set to mtu 1500?
+
+        while (true) {
+            int read = TunFunctions.read(fd, buffer);
+            if (read < 0) throw new RuntimeException(); // todo handle this
+
+            // TODO: optimize this
+            var bytes = new byte[read];
+            for (int i = 0; i < read; i++) {
+                bytes[i] = buffer.get(i);
+            }
+
+            consumer.accept(new OctetString(bytes));
+        }
+    }
+
+    @Override
+    protected void main() {
+        var tunReaderThread = new Thread(()
+                -> tunReaderThread(fd, data -> appTask.push(new IwUplinkData(ueId, psi, data))));
+        Log.registerLogger(tunReaderThread, Log.getLoggerOrDefault(getThread()));
+        tunReaderThread.start();
+
+        var buffer = ByteBuffer.allocateDirect(65535); // TODO set to mtu 1500?
+
+        while (true) {
+            var msg = take();
+            if (msg instanceof IwDownlinkData) {
+
+                // TODO: optimize this
+                var data = ((IwDownlinkData) msg).ipPacket;
+                for (int i = 0; i < data.length; i++) {
+                    buffer.put(i, data.get(i));
+                }
+
+                // TODO: check for also nonnegative but smaller than data.length
+                if (TunFunctions.write(fd, buffer, data.length) < 0) {
+                    // todo handle this
+                    throw new RuntimeException();
+                }
+            }
+        }
+    }
+}

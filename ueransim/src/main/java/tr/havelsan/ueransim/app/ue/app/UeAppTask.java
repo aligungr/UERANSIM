@@ -13,11 +13,9 @@ import tr.havelsan.ueransim.app.common.enums.EConnType;
 import tr.havelsan.ueransim.app.common.info.UeConnectionInfo;
 import tr.havelsan.ueransim.app.common.info.UePduSessionInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
-import tr.havelsan.ueransim.app.common.nts.IwDownlinkData;
-import tr.havelsan.ueransim.app.common.nts.IwUeExternalCommand;
-import tr.havelsan.ueransim.app.common.nts.IwUeStatusInfoRequest;
-import tr.havelsan.ueransim.app.common.nts.IwUeStatusUpdate;
+import tr.havelsan.ueransim.app.common.nts.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
+import tr.havelsan.ueransim.app.utils.NativeUtils;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.nts.NtsId;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
@@ -35,18 +33,20 @@ public class UeAppTask extends NtsTask {
     private final PingApp pingApp;
     private final UeConnectionInfo connectionInfo;
 
-    private NtsTask nasTask;
+    private final TunTask[] tunTasks;
 
     public UeAppTask(UeSimContext ctx) {
         this.ctx = ctx;
         this.connectionInfo = new UeConnectionInfo();
         this.pingApp = new PingApp(ctx, connectionInfo);
         this.statusInfo = new UeStatusInfo();
+        this.tunTasks = new TunTask[16];
     }
 
     @Override
     protected void main() {
-        nasTask = ctx.nts.findTask(NtsId.UE_TASK_NAS);
+        var nasTask = ctx.nts.findTask(NtsId.UE_TASK_NAS);
+        var mrTask = ctx.nts.findTask(NtsId.UE_TASK_MR);
 
         while (true) {
             var msg = poll(1000);
@@ -62,7 +62,15 @@ public class UeAppTask extends NtsTask {
                 } else if (cmd instanceof CmdUePing) {
                     pingApp.sendPing((CmdUePing) cmd);
                 }
+            } else if (msg instanceof IwUplinkData) {
+                mrTask.push(msg);
             } else if (msg instanceof IwDownlinkData) {
+                var iw = (IwDownlinkData) msg;
+                var tunTask = tunTasks[iw.pduSessionId];
+                if (tunTask != null) {
+                    tunTask.push(msg);
+                }
+
                 pingApp.handlePacket(((IwDownlinkData) msg).ipPacket);
             } else if (msg instanceof IwUeStatusInfoRequest) {
                 var requester = ((IwUeStatusInfoRequest) msg).requester;
@@ -121,6 +129,8 @@ public class UeAppTask extends NtsTask {
                 pduSessionInfo.address = address;
 
                 statusInfo.pduSessions.put(msg.pduSession.id.intValue(), pduSessionInfo);
+
+                setupTunInterface(msg.pduSession);
                 break;
         }
     }
@@ -136,5 +146,37 @@ public class UeAppTask extends NtsTask {
             inf.pduSessions.put(entry.getKey(), entry.getValue());
         }
         return inf;
+    }
+
+    private void setupTunInterface(PduSession pduSession) {
+        if (!pduSession.sessionType.pduSessionType.equals(EPduSessionType.IPV4)
+                || !pduSession.pduAddress.sessionType.equals(EPduSessionType.IPV4)) {
+            Log.error(Tag.UEAPP, "Connection could not setup (unsupported PDU Session type: %s)", pduSession.sessionType.pduSessionType);
+            return;
+        }
+
+        if (!NativeUtils.isRoot()) {
+            Log.error(Tag.UEAPP, "TUN interface could not be setup. Permission denied.");
+            return;
+        }
+
+        var psi = pduSession.id.intValue();
+
+        if (tunTasks[psi] != null) {
+            Log.error(Tag.UEAPP, "TUN task for specified PSI is non-null.");
+            return;
+        }
+
+        var ipAddress = Utils.byteArrayToIpString(pduSession.pduAddress.pduAddressInformation.toByteArray());
+
+        String[] allocatedName = new String[1];
+        int fd = TunFunctions.tunAllocate("uesimtun", allocatedName);
+
+        TunFunctions.tunConfigure(allocatedName[0], ipAddress);
+
+        var task = new TunTask(this, ctx.ctxId, psi, fd);
+        tunTasks[psi] = task;
+        Log.registerLogger(task.getThread(), Log.getLoggerOrDefault(getThread()));
+        task.start();
     }
 }

@@ -11,10 +11,12 @@ import java.util.UUID;
 
 public class IwDownlinkData {
     public final UUID ueId;
+    public final int pduSessionId;
     public final OctetString ipPacket;
 
-    public IwDownlinkData(UUID ueId, OctetString ipPacket) {
+    public IwDownlinkData(UUID ueId, int pduSessionId, OctetString ipPacket) {
         this.ueId = ueId;
+        this.pduSessionId = pduSessionId;
         this.ipPacket = ipPacket;
     }
 }
