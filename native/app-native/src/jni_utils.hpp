@@ -18,4 +18,6 @@ namespace JniConvert
     jintArray int32array_to_jintarray(JNIEnv *pJniEnv, int32_t *pArray, jsize nLength);
 
     jbyteArray uint8array_to_jbytearray(JNIEnv *pJniEnv, uint8_t *pArray, jsize nLength);
+
+    char *jstring2string(JNIEnv *pJniEnv, jstring pString);
 }
