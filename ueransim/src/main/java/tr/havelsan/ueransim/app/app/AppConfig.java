@@ -17,7 +17,7 @@ import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 public class AppConfig {
 
     public final MtsContext mts;
-    private final String profile;
+    public final String profile;
 
     public AppConfig() {
         this.mts = new MtsContext();
@@ -26,7 +26,7 @@ public class AppConfig {
         var root = (ImplicitTypedObject) mts.decoder.decode("config/profile.yaml");
         var profile = root.getString("selected-profile");
         this.profile = "config/" + profile + "/";
-        Console.println(AnsiPalette.PAINT_IMPORTANT_INFO, "INFO: Selected profile: \"%s\"", profile);
+        Console.println(AnsiPalette.PAINT_IMPORTANT_INFO, "Selected profile: \"%s\"", profile);
 
         var general = (ImplicitTypedObject) mts.decoder.decode(this.profile + "general.yaml");
         Constants.USE_LONG_MNC = general.getBool("use-long-mnc");
