@@ -33,6 +33,29 @@
 #define ROUTING_TABLE_PREFIX "rt_"
 #define MAX_INTERFACE_COUNT 1024
 
+class tun_config_error : public std::exception
+{
+    std::string msg;
+
+public:
+    tun_config_error(const std::string &message) : msg(message) {}
+
+    tun_config_error(const std::initializer_list<std::string> &lines)
+    {
+        std::stringstream ss;
+        for (auto &line : lines)
+        {
+            ss << line << std::endl;
+        }
+        msg = ss.str();
+    }
+
+    const char *what() const throw()
+    {
+        return msg.c_str();
+    }
+};
+
 static int exec_output(const char *cmd, std::string &output)
 {
     char buffer[128];
@@ -58,21 +81,15 @@ static int exec_output(const char *cmd, std::string &output)
     return WEXITSTATUS(pclose(pipe));
 }
 
-[[noreturn]] static void fatal_error(const std::string &msg)
-{
-    std::cerr << "Fatal Error: " << msg << std::endl;
-    exit(1);
-}
-
 static std::string exec_strict(const std::string &cmd)
 {
     std::string output;
     if (exec_output(cmd.c_str(), output))
     {
-        std::cerr << "Command execution failed." << std::endl;
-        std::cerr << " The command was: " << cmd << std::endl;
-        std::cerr << " The output is: '" << output << "'" << std::endl;
-        fatal_error("Command execution failure");
+        throw tun_config_error({"Command execution failed.",
+                                " The command was: " + cmd,
+                                " The output is: '" + output,
+                                "Command execution failure"});
     }
     return output;
 }
@@ -129,23 +146,14 @@ static void tun_set_ip_and_up(const char *if_name, const char *ip_addr)
     memcpy((((char *)&ifr + offsetof(struct ifreq, ifr_addr))), p, sizeof(struct sockaddr));
 
     if (ioctl(sockfd, SIOCSIFADDR, &ifr) < 0)
-    {
-        perror("ioctl(SIOCSIFADDR)");
-        exit(1);
-    }
+        throw tun_config_error("ioctl(SIOCSIFADDR)");
     if (ioctl(sockfd, SIOCGIFFLAGS, &ifr) < 0)
-    {
-        perror("ioctl(SIOCGIFFLAGS)");
-        exit(1);
-    }
+        throw tun_config_error("ioctl(SIOCGIFFLAGS)");
 
     ifr.ifr_flags |= IFF_UP | IFF_RUNNING;
 
     if (ioctl(sockfd, SIOCSIFFLAGS, &ifr) < 0)
-    {
-        perror("ioctl(SIOCSIFFLAGS)");
-        exit(1);
-    }
+        throw tun_config_error("ioctl(SIOCSIFFLAGS)");
 
     close(sockfd);
 }
@@ -155,7 +163,7 @@ static void configure_rt_tables(const std::string &table_name)
     std::ifstream ifs;
     ifs.open("/etc/iproute2/rt_tables");
     if (!ifs.is_open() || !ifs.good())
-        fatal_error("Could not open '/etc/iproute2/rt_tables'");
+        throw tun_config_error("Could not open '/etc/iproute2/rt_tables'");
 
     std::string line;
 
@@ -194,7 +202,7 @@ static void configure_rt_tables(const std::string &table_name)
 
         ofs.open("/etc/iproute2/rt_tables", std::ios_base::app);
         if (!ofs.is_open() || !ofs.good())
-            fatal_error("Could not open '/etc/iproute2/rt_tables'");
+            throw tun_config_error("Could not open '/etc/iproute2/rt_tables'");
 
         ofs << "\n"
             << availableId << "\t" << table_name << std::endl;
@@ -224,7 +232,7 @@ static void remove_existing_ip_rules(const std::string &ip_addr)
         char table_name[512] = {0};
 
         if (sscanf(line.c_str(), "%d: from %s lookup %s", &num, from_ip, table_name) != 3)
-            fatal_error("ip rule list lookup command could not parsed");
+            throw tun_config_error("ip rule list lookup command could not parsed");
 
         if (!strcmp(from_ip, ip_addr.c_str()))
         {
@@ -290,7 +298,7 @@ static void remove_existing_ip_routes(const std::string &interface_name, const s
         char if_name[IF_NAMESIZE + 8] = {0};
 
         if (sscanf(line.c_str(), "default dev %s scope link", if_name) != 1)
-            fatal_error("ip route list command could not parsed");
+            throw tun_config_error("ip route list command could not parsed");
 
         if (!strcmp(if_name, interface_name.c_str()))
         {
@@ -316,7 +324,7 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
 {
     const char *ifname = next_interface_name(if_prefix);
     if (!ifname)
-        fatal_error("TUN interface name could not be allocated.");
+        throw tun_config_error("TUN interface name could not be allocated.");
 
     char tun_name[IFNAMSIZ];
     strcpy(tun_name, ifname);
@@ -325,10 +333,7 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
     int fd, err;
 
     if ((fd = open("/dev/net/tun", O_RDWR)) < 0)
-    {
-        perror("Opening /dev/net/tun");
-        return fd;
-    }
+        throw tun_config_error("Opening /dev/net/tun");
 
     memset(&ifr, 0, sizeof(ifr));
 
@@ -338,14 +343,13 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
 
     if ((err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0)
     {
-        perror("ioctl(TUNSETIFF)");
         close(fd);
-        return err;
+        throw tun_config_error("ioctl(TUNSETIFF)");
     }
 
     strcpy(tun_name, ifr.ifr_name);
     if (strcmp(tun_name, ifname))
-        fatal_error("TUN interface name could not be allocated.");
+        throw tun_config_error("TUN interface name could not be allocated.");
 
     *allocated_name = strdup(tun_name);
     return fd;

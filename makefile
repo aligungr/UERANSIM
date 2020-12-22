@@ -10,7 +10,6 @@ build: FORCE
 	(cd native/rrc-native && make && cp -f librrc-native.so ../../build)
 	(cd native/crypto-native && make && cp -f libcrypto-native.so ../../build)
 	(cd native/app-native && make && cp -f libapp-native.so ../../build)
-	(cd native/uesimtun && make -f tun-agent.mk && cp -f tun-agent ../../build)
 	(cd native/uesimtun && make -f ue-binder.mk && cp -f libue-binder.so ../../build)
 	(cd native/uesimtun && cp -f ue-binder.sh ../../build)
 	mvn package
@@ -36,7 +35,6 @@ clean: FORCE
 	(cd native/rrc-native && make clean)
 	(cd native/crypto-native && make clean)
 	(cd native/app-native && make clean)
-	(cd native/uesimtun && make -f tun-agent.mk clean)
 	(cd native/uesimtun && make -f ue-binder.mk clean)
 	mvn -q clean
 	@printf "Clean operation is done.${NC}\n"
