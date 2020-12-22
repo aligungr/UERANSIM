@@ -151,7 +151,7 @@ static void tun_set_ip_and_up(const char *if_name, const char *ip_addr)
     close(sockfd);
 }
 
-static void configure_rt_tables()
+static void configure_rt_tables(const std::string& table_name)
 {
     std::ifstream ifs;
     ifs.open("/etc/iproute2/rt_tables");
@@ -179,7 +179,7 @@ static void configure_rt_tables()
 
         nums.insert(num);
 
-        if (line == std::string(ROUTING_TABLE_NAME))
+        if (line == table_name)
             found = true;
     }
 
@@ -356,10 +356,10 @@ void configure_tun_interface(const char *tun_name, const char *ip_addr)
 {
     tun_set_ip_and_up(tun_name, ip_addr);
     configure_rt_tables();
-    remove_existing_ip_rules(ip_addr);
-    add_new_ip_rules(ip_addr);
-    remove_existing_ip_routes(tun_name);
-    add_ip_routes(tun_name);
+    //remove_existing_ip_rules(ip_addr);
+    //add_new_ip_rules(ip_addr);
+    //remove_existing_ip_routes(tun_name);
+    //add_ip_routes(tun_name);
 }
 
 // TODO: remove following comments
