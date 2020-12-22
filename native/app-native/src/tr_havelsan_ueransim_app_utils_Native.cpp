@@ -9,7 +9,7 @@
 
 extern "C" JNIEXPORT jboolean JNICALL Java_tr_havelsan_ueransim_app_utils_Native_isRoot(JNIEnv *pEnv, jclass cls)
 {
-  return geteuid() == 0;
+    return geteuid() == 0;
 }
 
 extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tunAllocate(JNIEnv *pEnv, jclass cls, jstring namePrefix, jobjectArray allocatedName, jobjectArray error)
@@ -20,9 +20,12 @@ extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tun
     jobject err = nullptr;
     int fd = 0;
 
-    try {
+    try
+    {
         fd = tun_alloc(if_prefix, &allocated_name);
-    } catch (const tun_config_error& e) {
+    }
+    catch (const tun_config_error &e)
+    {
         err = pEnv->NewStringUTF(e.what());
     }
 
@@ -42,9 +45,12 @@ extern "C" JNIEXPORT void JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tun
 
     jobject err = nullptr;
 
-    try {
+    try
+    {
         configure_tun_interface(tun_name, ip_addr, configureRouting);
-    } catch (const tun_config_error& e) {
+    }
+    catch (const tun_config_error &e)
+    {
         err = pEnv->NewStringUTF(e.what());
     }
 
@@ -69,5 +75,14 @@ extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_wri
 
 extern "C" JNIEXPORT jstring JNICALL Java_tr_havelsan_ueransim_app_utils_Native_clearRoutingConfigs(JNIEnv *pEnv, jclass cls)
 {
-    return pEnv->NewStringUTF("Not implemented yet");
+    try
+    {
+        clear_routing_configs();
+    }
+    catch (const tun_config_error &e)
+    {
+        return pEnv->NewStringUTF(e.what());
+    }
+
+    return nullptr;
 }

@@ -323,7 +323,7 @@ public class CliTask extends NtsTask {
     private void receiveClearRoute(UUID client, CmdRouteDeconfig message) {
         String error = Native.clearRoutingConfigs();
         if (error != null) {
-            sendCmd(client, new CmdErrorIndication("Operation failed: " + error));
+            sendCmd(client, new CmdErrorIndication(error));
         } else {
             sendCmd(client, new CmdTerminate(0, "Routing configurations have been cleared."));
         }

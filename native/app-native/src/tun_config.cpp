@@ -355,3 +355,11 @@ void configure_tun_interface(const char *tun_name, const char *ip_addr, bool con
         add_ip_routes(tun_name, table_name);
     }
 }
+
+void clear_routing_configs()
+{
+    // acquire the configuration lock
+    const std::lock_guard<std::mutex> lock(config_mutex);
+
+    throw tun_config_error("not implemented yet");
+}
