@@ -19,6 +19,7 @@ import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
 import tr.havelsan.ueransim.app.gnb.app.GnbAppTask;
 import tr.havelsan.ueransim.app.ue.app.UeAppTask;
 import tr.havelsan.ueransim.app.utils.MtsInitializer;
+import tr.havelsan.ueransim.app.utils.Native;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsContext;
 import tr.havelsan.ueransim.nts.NtsId;
@@ -86,6 +87,8 @@ public class CliTask extends NtsTask {
                 receiveUePing(client, (CmdUePing) message);
             } else if (message instanceof CmdUeDeRegistration) {
                 receiveUeDeregister(client, (CmdUeDeRegistration) message);
+            } else if (message instanceof CmdRouteDeconfig) {
+                receiveClearRoute(client, (CmdRouteDeconfig) message);
             }
         } catch (Exception e) {
             sendCmd(client, new CmdErrorIndication(e.getMessage()));
@@ -315,5 +318,14 @@ public class CliTask extends NtsTask {
 
         appTask[0].push(new IwUeExternalCommand(message));
         sendCmd(client, new CmdTerminate(0, "De-registration has been triggered."));
+    }
+
+    private void receiveClearRoute(UUID client, CmdRouteDeconfig message) {
+        String error = Native.clearRoutingConfigs();
+        if (error != null) {
+            sendCmd(client, new CmdErrorIndication("Operation failed: " + error));
+        } else {
+            sendCmd(client, new CmdTerminate(0, "Routing configurations have been cleared."));
+        }
     }
 }

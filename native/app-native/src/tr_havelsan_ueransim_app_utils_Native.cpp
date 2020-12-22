@@ -66,3 +66,8 @@ extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_wri
     jbyte *buf = reinterpret_cast<jbyte *>(pEnv->GetDirectBufferAddress(buffer));
     return ::write(static_cast<int>(fd), buf, static_cast<size_t>(size));
 }
+
+extern "C" JNIEXPORT jstring JNICALL Java_tr_havelsan_ueransim_app_utils_Native_clearRoutingConfigs(JNIEnv *pEnv, jclass cls)
+{
+    return pEnv->NewStringUTF("Not implemented yet");
+}

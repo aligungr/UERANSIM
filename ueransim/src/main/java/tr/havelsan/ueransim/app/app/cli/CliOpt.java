@@ -28,6 +28,7 @@ public class CliOpt {
                     SessionCreateCommand.class,
                     UePingCommand.class,
                     UeDeRegistrationCommand.class,
+                    RouteDeconfigCommand.class,
             },
             mixinStandardHelpOptions = true,
             versionProvider = ClientApp.VersionProvider.class
@@ -283,6 +284,21 @@ public class CliOpt {
             msg.isSwitchOff = isSwitchOff;
 
             CliOpt.msg = msg;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @CommandLine.Command(
+            name = "route-deconfig",
+            description = "Rollback all routing configurations that are applied by UERANSIM",
+            sortOptions = false,
+            mixinStandardHelpOptions = true,
+            versionProvider = ClientApp.VersionProvider.class
+    )
+    public static class RouteDeconfigCommand implements Runnable {
+        public void run() {
+            CliOpt.msg = new CmdRouteDeconfig();
         }
     }
 
