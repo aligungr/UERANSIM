@@ -15,8 +15,6 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.ArrayList;
 
-// TODO: General note for GTP-U: check for IP fragmentation and fitting IP packet inside of UDP carried GTP packet
-//  (as well as hvgtptun side etc.)
 public class GtpDecoder {
 
     public static GtpMessage decode(byte[] data) {
