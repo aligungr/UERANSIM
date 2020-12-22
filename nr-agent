@@ -5,4 +5,4 @@
 # This software and all associated files are licensed under GPL-3.0.
 #
 
-java -cp "build/ueransim-release.jar:build/*:build/lib/*" tr.havelsan.ueransim.app.app.entry.AgentApp
+java -cp "build/ueransim-release.jar:build/*:build/lib/*" tr.havelsan.ueransim.app.app.entry.AgentApp $@
