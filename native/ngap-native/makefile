@@ -9,7 +9,7 @@ libngap-generated.a: $(wildcard src/asn_generated/*.c) $(wildcard src/asn_genera
 	mv src/asn_generated/libngap-generated.a ./
 
 libngap-basis.a: $(wildcard src/*.cpp) $(wildcard src/*.h)
-	cd src/ && g++ -c $(BASE_FLAGS) -I"$(JAVA_HOME)"/include -I"$(JAVA_HOME)"/include/linux -I./asn_generated *.cpp
+	cd src/ && g++ -c $(BASE_FLAGS) -std=c++14 -I"$(JAVA_HOME)"/include -I"$(JAVA_HOME)"/include/linux -I./asn_generated *.cpp
 	cd src/ && ar rcs libngap-basis.a *.o
 	mv src/libngap-basis.a ./
 

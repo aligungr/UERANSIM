@@ -9,7 +9,7 @@ librrc-generated.a: $(wildcard src/asn_generated/*.c) $(wildcard src/asn_generat
 	mv src/asn_generated/librrc-generated.a ./
 
 librrc-basis.a: $(wildcard src/*.cpp) $(wildcard src/*.h)
-	cd src/ && g++ -c $(BASE_FLAGS) -I"$(JAVA_HOME)"/include -I"$(JAVA_HOME)"/include/linux -I./asn_generated *.cpp
+	cd src/ && g++ -c $(BASE_FLAGS) -std=c++14 -I"$(JAVA_HOME)"/include -I"$(JAVA_HOME)"/include/linux -I./asn_generated *.cpp
 	cd src/ && ar rcs librrc-basis.a *.o
 	mv src/librrc-basis.a ./
 
