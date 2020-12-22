@@ -33,29 +33,6 @@
 #define ROUTING_TABLE_PREFIX "rt_"
 #define MAX_INTERFACE_COUNT 1024
 
-class tun_config_error : public std::exception
-{
-    std::string msg;
-
-public:
-    tun_config_error(const std::string &message) : msg(message) {}
-
-    tun_config_error(const std::initializer_list<std::string> &lines)
-    {
-        std::stringstream ss;
-        for (auto &line : lines)
-        {
-            ss << line << std::endl;
-        }
-        msg = ss.str();
-    }
-
-    const char *what() const throw()
-    {
-        return msg.c_str();
-    }
-};
-
 static int exec_output(const char *cmd, std::string &output)
 {
     char buffer[128];
