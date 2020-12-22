@@ -30,7 +30,6 @@
 #include <vector>
 
 #define IF_PREFIX "uesimtun"
-#define ROUTING_TABLE_NAME "uesimtable" // todo remove this
 #define ROUTING_TABLE_PREFIX "rt_"
 #define MAX_INTERFACE_COUNT 1024
 
@@ -239,7 +238,7 @@ static void remove_existing_ip_rules(const std::string &ip_addr)
         exec_strict("ip rule del " + line);
 }
 
-static void add_new_ip_rules(const std::string &ip_addr, const std::string& table_name)
+static void add_new_ip_rules(const std::string &ip_addr, const std::string &table_name)
 {
     std::stringstream cmd;
     cmd << "ip rule add from " << ip_addr << " table " << table_name;
@@ -267,12 +266,12 @@ static bool is_fib_table_exists(const std::string &table_name)
     return false;
 }
 
-static void remove_existing_ip_routes(const std::string &interface_name)
+static void remove_existing_ip_routes(const std::string &interface_name, const std::string &table_name)
 {
-    if (!is_fib_table_exists(ROUTING_TABLE_NAME))
+    if (!is_fib_table_exists(table_name))
         return;
 
-    std::string list_command = "ip route list table " ROUTING_TABLE_NAME;
+    std::string list_command = "ip route list table " + table_name;
 
     std::string output = exec_strict(list_command);
 
@@ -296,7 +295,7 @@ static void remove_existing_ip_routes(const std::string &interface_name)
         if (!strcmp(if_name, interface_name.c_str()))
         {
             std::stringstream rule;
-            rule << "ip route del default dev " << interface_name << " table " << ROUTING_TABLE_NAME;
+            rule << "ip route del default dev " << interface_name << " table " << table_name;
             will_remove.push_back(rule.str());
         }
     }
@@ -305,10 +304,10 @@ static void remove_existing_ip_routes(const std::string &interface_name)
         exec_strict(line);
 }
 
-static void add_ip_routes(const std::string &if_name)
+static void add_ip_routes(const std::string &if_name, const std::string &table_name)
 {
     std::stringstream cmd;
-    cmd << "ip route add default dev " << if_name << " table " << ROUTING_TABLE_NAME;
+    cmd << "ip route add default dev " << if_name << " table " << table_name;
 
     std::string output = exec_strict(cmd.str());
 }
@@ -362,26 +361,7 @@ void configure_tun_interface(const char *tun_name, const char *ip_addr, bool con
         configure_rt_tables(table_name);
         remove_existing_ip_rules(ip_addr);
         add_new_ip_rules(ip_addr, table_name);
-        //remove_existing_ip_routes(tun_name);
-        //add_ip_routes(tun_name);
+        remove_existing_ip_routes(tun_name, table_name);
+        add_ip_routes(tun_name, table_name);
     }
 }
-
-// TODO: remove following comments
-/*static void example_usage()
-{
-    if (geteuid() != 0)
-    {
-        std::cerr << "Error: sudo privilage is required to invoke ioctl()" << std::endl;
-        return;
-    }
-
-    char *tun_name;
-    int tun_fd = tun_alloc(IF_PREFIX, &tun_name);
-
-    configure_tun_interface(tun_name, "10.45.0.2");
-
-    while (1)
-        {;}
-}
-*/
