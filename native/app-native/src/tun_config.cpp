@@ -28,10 +28,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+#include <mutex>
 
 #define IF_PREFIX "uesimtun"
 #define ROUTING_TABLE_PREFIX "rt_"
 #define MAX_INTERFACE_COUNT 1024
+
+static std::mutex config_mutex;
 
 static int exec_output(const char *cmd, std::string &output)
 {
@@ -299,6 +302,9 @@ static void add_ip_routes(const std::string &if_name, const std::string &table_n
 
 int tun_alloc(const char *if_prefix, char **allocated_name)
 {
+    // acquire the configuration lock
+    const std::lock_guard<std::mutex> lock(config_mutex);
+
     const char *ifname = next_interface_name(if_prefix);
     if (!ifname)
         throw tun_config_error("TUN interface name could not be allocated.");
@@ -334,6 +340,9 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
 
 void configure_tun_interface(const char *tun_name, const char *ip_addr, bool configure_route)
 {
+    // acquire the configuration lock
+    const std::lock_guard<std::mutex> lock(config_mutex);
+
     tun_set_ip_and_up(tun_name, ip_addr);
     if (configure_route)
     {
