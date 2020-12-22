@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.ue.app;
 
 import tr.havelsan.ueransim.app.common.nts.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.nts.IwUplinkData;
+import tr.havelsan.ueransim.app.utils.Native;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -33,7 +34,7 @@ class TunTask extends NtsTask {
         var buffer = ByteBuffer.allocateDirect(65535); // TODO set to mtu 1500?
 
         while (true) {
-            int read = TunFunctions.read(fd, buffer);
+            int read = Native.read(fd, buffer);
             if (read < 0) throw new RuntimeException(); // todo handle this
 
             // TODO: optimize this
@@ -66,7 +67,7 @@ class TunTask extends NtsTask {
                 }
 
                 // TODO: check for also nonnegative but smaller than data.length
-                if (TunFunctions.write(fd, buffer, data.length) < 0) {
+                if (Native.write(fd, buffer, data.length) < 0) {
                     // todo handle this
                     throw new RuntimeException();
                 }

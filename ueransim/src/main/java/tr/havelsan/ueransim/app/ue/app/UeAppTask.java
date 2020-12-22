@@ -15,10 +15,11 @@ import tr.havelsan.ueransim.app.common.info.UePduSessionInfo;
 import tr.havelsan.ueransim.app.common.info.UeStatusInfo;
 import tr.havelsan.ueransim.app.common.nts.*;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
-import tr.havelsan.ueransim.app.utils.NativeUtils;
+import tr.havelsan.ueransim.app.utils.Native;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
 import tr.havelsan.ueransim.nts.NtsId;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
+import tr.havelsan.ueransim.utils.Constants;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Log;
@@ -155,7 +156,7 @@ public class UeAppTask extends NtsTask {
             return;
         }
 
-        if (!NativeUtils.isRoot()) {
+        if (!Native.isRoot()) {
             Log.error(Tag.UEAPP, "TUN interface could not be setup. Permission denied.");
             return;
         }
@@ -170,9 +171,9 @@ public class UeAppTask extends NtsTask {
         var ipAddress = Utils.byteArrayToIpString(pduSession.pduAddress.pduAddressInformation.toByteArray());
 
         String[] allocatedName = new String[1];
-        int fd = TunFunctions.tunAllocate("uesimtun", allocatedName);
+        int fd = Native.tunAllocate("uesimtun", allocatedName);
 
-        TunFunctions.tunConfigure(allocatedName[0], ipAddress);
+        Native.tunConfigure(allocatedName[0], ipAddress, !Constants.NO_ROUTE_CONFIG);
 
         var task = new TunTask(this, ctx.ctxId, psi, fd);
         tunTasks[psi] = task;

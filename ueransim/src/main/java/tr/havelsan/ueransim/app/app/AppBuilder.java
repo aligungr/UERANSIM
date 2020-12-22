@@ -8,7 +8,7 @@ package tr.havelsan.ueransim.app.app;
 import tr.havelsan.ueransim.app.app.monitor.LoadTestMonitor;
 import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.utils.ConfigUtils;
-import tr.havelsan.ueransim.app.utils.NativeUtils;
+import tr.havelsan.ueransim.app.utils.Native;
 import tr.havelsan.ueransim.utils.FileUtils;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.BaseConsole;
@@ -61,7 +61,7 @@ public class AppBuilder {
 
         Log.info(Tag.SYS, "UERANSIM agent has been started.");
 
-        if (!NativeUtils.isRoot()) {
+        if (!Native.isRoot()) {
             Log.warning(Tag.SYS, "Automatic TUN configuration will not work. 'sudo' is required to setup TUN interfaces.");
         }
 
