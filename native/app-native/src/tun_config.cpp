@@ -2,6 +2,7 @@
 // This software and all associated files are licensed under GPL-3.0.
 
 #include "tun_config.hpp"
+#include "utils.hpp"
 
 #include <arpa/inet.h>
 #include <array>
@@ -353,42 +354,5 @@ void configure_tun_interface(const char *tun_name, const char *ip_addr, bool con
         add_new_ip_rules(ip_addr, table_name);
         remove_existing_ip_routes(tun_name, table_name);
         add_ip_routes(tun_name, table_name);
-    }
-}
-
-void clear_routing_configs()
-{
-    // acquire the configuration lock
-    const std::lock_guard<std::mutex> lock(config_mutex);
-
-    // Clear rt_tables
-    {
-        std::ifstream ifs;
-        ifs.open("/etc/iproute2/rt_tables");
-        if (!ifs.is_open() || !ifs.good())
-            throw tun_config_error("Could not open '/etc/iproute2/rt_tables'");
-
-        std::vector<std::string> lines;
-
-        std::string line;
-        while (std::getline(ifs, line))
-        {
-            int n1, n2;
-            if (sscanf(line.c_str(), "%d " ROUTING_TABLE_PREFIX IF_PREFIX "%d", &n1, &n2) != 2)
-                lines.push_back(line);
-        }
-
-        ifs.close();
-
-        std::ofstream ofs;
-
-        ofs.open("/etc/iproute2/rt_tables", std::ios_base::out);
-        if (!ofs.is_open() || !ofs.good())
-            throw tun_config_error("Could not open '/etc/iproute2/rt_tables'");
-
-        for (auto &line : lines)
-            ofs << line << std::endl;
-
-        ofs.close();
     }
 }

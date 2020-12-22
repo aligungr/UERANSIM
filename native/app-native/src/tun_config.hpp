@@ -29,5 +29,3 @@ public:
 int tun_alloc(const char *if_prefix, char **allocated_name);
 
 void configure_tun_interface(const char *tun_name, const char *ip_addr, bool configure_route);
-
-void clear_routing_configs();

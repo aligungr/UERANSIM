@@ -18,6 +18,4 @@ public class Native {
     public static native int read(int fd, ByteBuffer buffer);
 
     public static native int write(int fd, ByteBuffer buffer, int size);
-
-    public static native String clearRoutingConfigs();
 }
