@@ -54,7 +54,6 @@ public class GnbMrTask extends NtsTask {
     }
 
     private void receiveDownlinkData(IwDownlinkData msg) {
-        ctx.gnbCtx.sim.getAirCtx().nts.findTask(NtsId.AIR_TASK_TB).push(msg);
         ctx.gnbCtx.sim.findUe(msg.ueId).nts.findTask(NtsId.UE_TASK_MR).push(msg);
     }
 }

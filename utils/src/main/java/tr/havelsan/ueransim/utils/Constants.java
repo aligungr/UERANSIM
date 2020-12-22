@@ -20,4 +20,6 @@ public final class Constants {
     public static final int CLI__CYCLE_TYPE_HEARTBEAT = 1;
     public static final int CLI__HEARTBEAT_PERIOD = 8000;
     public static final int CLI__PORT = 49973;
+
+    public static boolean NO_ROUTE_CONFIG = false;
 }

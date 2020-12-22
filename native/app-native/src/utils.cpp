@@ -123,7 +123,23 @@ std::string utils::bytes_to_hex(const uint8_t *data, size_t size)
     return ss.str();
 }
 
-std::string utils::bytes_to_hex(const std::vector<uint8_t>& data)
+std::string utils::bytes_to_hex(const std::vector<uint8_t> &data)
 {
     return bytes_to_hex(data.data(), data.size());
+}
+
+std::vector<std::string> utils::lines(const std::string &str)
+{
+    std::vector<std::string> strings;
+
+    std::string::size_type pos = 0;
+    std::string::size_type prev = 0;
+    while ((pos = str.find("\n", prev)) != std::string::npos)
+    {
+        strings.push_back(str.substr(prev, pos - prev));
+        prev = pos + 1;
+    }
+
+    strings.push_back(str.substr(prev));
+    return strings;
 }

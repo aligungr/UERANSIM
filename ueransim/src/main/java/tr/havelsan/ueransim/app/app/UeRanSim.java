@@ -5,12 +5,10 @@
 
 package tr.havelsan.ueransim.app.app;
 
-import tr.havelsan.ueransim.app.air.AirNode;
 import tr.havelsan.ueransim.app.app.monitor.MonitorTask;
 import tr.havelsan.ueransim.app.common.configs.GnbConfig;
 import tr.havelsan.ueransim.app.common.configs.UeConfig;
 import tr.havelsan.ueransim.app.common.enums.EConnType;
-import tr.havelsan.ueransim.app.common.simctx.AirSimContext;
 import tr.havelsan.ueransim.app.common.simctx.BaseSimContext;
 import tr.havelsan.ueransim.app.common.simctx.GnbSimContext;
 import tr.havelsan.ueransim.app.common.simctx.UeSimContext;
@@ -27,7 +25,6 @@ public class UeRanSim {
 
     private final HashMap<UUID, GnbSimContext> gnbMap;
     private final HashMap<UUID, UeSimContext> ueMap;
-    private final AirSimContext airCtx;
 
     private final HashMap<String, BaseSimContext> ctxByNodeName;
 
@@ -42,12 +39,7 @@ public class UeRanSim {
             monitor.start();
         }
 
-        this.airCtx = AirNode.createContext(this);
-
         this.ctxByNodeName = new HashMap<>();
-        this.ctxByNodeName.put(airCtx.nodeName, airCtx);
-
-        AirNode.run(airCtx);
     }
 
     public UeSimContext findUe(UUID id) {
@@ -102,17 +94,9 @@ public class UeRanSim {
         return res;
     }
 
-    public AirSimContext getAirCtx() {
-        return airCtx;
-    }
-
     public UUID createGnb(GnbConfig config) {
         var ctx = GnbNode.createContext(this, config);
         synchronized (this) {
-            if (gnbMap.size() > 0) {
-                throw new SimException("There is an already gNB. Multiple gNB feature is not supported yet.");
-            }
-
             if (ctxByNodeName.containsKey(ctx.nodeName)) {
                 throw new SimException("Another gNB with the same ID already exists. Please use another ID.");
             }

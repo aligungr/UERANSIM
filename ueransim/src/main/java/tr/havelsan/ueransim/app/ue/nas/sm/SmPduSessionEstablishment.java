@@ -6,7 +6,6 @@
 package tr.havelsan.ueransim.app.ue.nas.sm;
 
 import tr.havelsan.ueransim.app.common.contexts.NasContext;
-import tr.havelsan.ueransim.app.common.nts.IwPduSessionEstablishment;
 import tr.havelsan.ueransim.app.common.nts.IwUeStatusUpdate;
 import tr.havelsan.ueransim.nas.impl.enums.EConfigurationProtocol;
 import tr.havelsan.ueransim.nas.impl.enums.EPduSessionType;
@@ -19,7 +18,6 @@ import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentReject;
 import tr.havelsan.ueransim.nas.impl.messages.PduSessionEstablishmentRequest;
 import tr.havelsan.ueransim.nas.impl.others.ProtocolConfigurationItem;
 import tr.havelsan.ueransim.nas.impl.others.ProtocolConfigurationOptions;
-import tr.havelsan.ueransim.nts.NtsId;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -91,8 +89,6 @@ class SmPduSessionEstablishment {
         var statusUpdate = new IwUeStatusUpdate(IwUeStatusUpdate.SESSION_ESTABLISHMENT);
         statusUpdate.pduSession = pduSession;
         ctx.appTask.push(statusUpdate);
-
-        ctx.ueCtx.sim.getAirCtx().nts.findTask(NtsId.AIR_TASK_TB).push(new IwPduSessionEstablishment(ctx.ueCtx.ctxId, pduSession));
 
         Log.info(Tag.FLOW, "PDU session established: %s", message.pduSessionId);
         Log.success(Tag.PROC, "PDU Session Establishment is successful");

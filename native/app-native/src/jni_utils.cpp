@@ -3,6 +3,9 @@
 
 #include "jni_utils.hpp"
 
+#include <cstring>
+#include <iostream>
+
 uint8_t *JniConvert::jbytearray_to_uint8array(JNIEnv *pJniEnv, jbyteArray pJba, jsize alignment, jsize *pOutLength)
 {
     jboolean isCopy;
@@ -85,4 +88,15 @@ jbyteArray JniConvert::uint8array_to_jbytearray(JNIEnv *pJniEnv, uint8_t *pArray
     jbyteArray ret = pJniEnv->NewByteArray(nLength);
     pJniEnv->SetByteArrayRegion(ret, 0, nLength, reinterpret_cast<jbyte *>(pArray));
     return ret;
+}
+
+char *JniConvert::jstring2string(JNIEnv *pJniEnv, jstring pString)
+{
+    if (!pString)
+        return nullptr;
+
+    const char *chars = pJniEnv->GetStringUTFChars(pString, 0);
+    char* str = strdup(chars);
+    pJniEnv->ReleaseStringUTFChars(pString, chars);
+    return str;
 }

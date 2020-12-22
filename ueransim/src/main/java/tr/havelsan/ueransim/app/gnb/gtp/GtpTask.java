@@ -176,7 +176,7 @@ public class GtpTask extends NtsTask {
         }
 
         if (rateLimiter.allowDownlinkPacket(pduSession, gtp.payload.length)) {
-            ctx.mrTask.push(new IwDownlinkData(pduSession.ueId, gtp.payload));
+            ctx.mrTask.push(new IwDownlinkData(pduSession.ueId, pduSession.pduSessionId, gtp.payload));
         }
     }
 

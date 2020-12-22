@@ -5,19 +5,22 @@
 
 package tr.havelsan.ueransim.app.app.entry;
 
+import picocli.CommandLine;
 import tr.havelsan.ueransim.utils.Constants;
+import tr.havelsan.ueransim.utils.FileUtils;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 class BaseApp {
 
     private static boolean initialized = false;
 
-    static void main(String[] args, boolean performVersionCheck) {
+    static void main(String[] args, boolean isAgent) {
         if (initialized)
             return;
-
         initialized = true;
 
         String path = System.getProperty("user.dir") + "/build/";
@@ -28,8 +31,13 @@ class BaseApp {
         System.load(path + "libapp-native.so");
 
         readLocalVersion(path + "version");
+        FileUtils.initialize(path + "version");
 
-        if (performVersionCheck) {
+        if (isAgent) {
+            readParams(args);
+        }
+
+        if (isAgent) {
             Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "UERANSIM v%s", Constants.VERSION);
 
             ////// /*String remoteVersion = Utils.downloadString("https://raw.githubusercontent.com/aligungr/UERANSIM/master/misc/version", 750);
@@ -40,6 +48,18 @@ class BaseApp {
             //////     Utils.sleep(1500);
             ////// }*/
         }
+    }
+
+    private static void readParams(String[] args) {
+        var commandRef = new AtomicReference<AgentParams>();
+        new CommandLine(new AgentParams(commandRef::set)).execute(args);
+        var command = commandRef.get();
+        if (command == null) {
+            System.exit(1);
+            return;
+        }
+
+        Constants.NO_ROUTE_CONFIG = command.noRouteConfig;
     }
 
     private static void readLocalVersion(String path) {
