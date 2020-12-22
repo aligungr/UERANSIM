@@ -9,6 +9,7 @@ import tr.havelsan.ueransim.app.common.nts.IwDownlinkData;
 import tr.havelsan.ueransim.app.common.nts.IwUplinkData;
 import tr.havelsan.ueransim.app.utils.Native;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
+import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.console.Log;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -35,7 +36,10 @@ class TunTask extends NtsTask {
 
         while (true) {
             int read = Native.read(fd, buffer);
-            if (read < 0) throw new RuntimeException(); // todo handle this
+            if (read < 0) {
+                Log.error(Tag.TUN, "TUN device could not read.");
+                return; // abort thread
+            }
 
             // TODO: optimize this
             var bytes = new byte[read];
@@ -66,10 +70,15 @@ class TunTask extends NtsTask {
                     buffer.put(i, data.get(i));
                 }
 
-                // TODO: check for also nonnegative but smaller than data.length
-                if (Native.write(fd, buffer, data.length) < 0) {
-                    // todo handle this
-                    throw new RuntimeException();
+                int res = Native.write(fd, buffer, data.length);
+
+                if (res < 0) {
+                    Log.error(Tag.TUN, "TUN device could not write.");
+                    return; // abort thread
+                }
+
+                if (res != data.length) {
+                    Log.warning(Tag.TUN, "TUN device partially written.");
                 }
             }
         }
