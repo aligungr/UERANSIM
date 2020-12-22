@@ -12,14 +12,22 @@ extern "C" JNIEXPORT jboolean JNICALL Java_tr_havelsan_ueransim_app_utils_Native
   return geteuid() == 0;
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tunAllocate(JNIEnv *pEnv, jclass cls, jstring namePrefix, jobjectArray allocatedName)
+extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tunAllocate(JNIEnv *pEnv, jclass cls, jstring namePrefix, jobjectArray allocatedName, jobjectArray error)
 {
     char *if_prefix = JniConvert::jstring2string(pEnv, namePrefix);
     char *allocated_name = nullptr;
 
-    int fd = tun_alloc(if_prefix, &allocated_name);
+    jobject err = nullptr;
+    int fd = 0;
+
+    try {
+        fd = tun_alloc(if_prefix, &allocated_name);
+    } catch (const tun_config_error& e) {
+        err = pEnv->NewStringUTF(e.what());
+    }
 
     pEnv->SetObjectArrayElement(allocatedName, 0, pEnv->NewStringUTF(allocated_name));
+    pEnv->SetObjectArrayElement(error, 0, err);
 
     free(if_prefix);
     free(allocated_name);
@@ -27,12 +35,20 @@ extern "C" JNIEXPORT jint JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tun
     return fd;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tunConfigure(JNIEnv *pEnv, jclass cls, jstring tunName, jstring ipAddress, jboolean configureRouting)
+extern "C" JNIEXPORT void JNICALL Java_tr_havelsan_ueransim_app_utils_Native_tunConfigure(JNIEnv *pEnv, jclass cls, jstring tunName, jstring ipAddress, jboolean configureRouting, jobjectArray error)
 {
     char *tun_name = JniConvert::jstring2string(pEnv, tunName);
     char *ip_addr = JniConvert::jstring2string(pEnv, ipAddress);
 
-    configure_tun_interface(tun_name, ip_addr, configureRouting);
+    jobject err = nullptr;
+
+    try {
+        configure_tun_interface(tun_name, ip_addr, configureRouting);
+    } catch (const tun_config_error& e) {
+        err = pEnv->NewStringUTF(e.what());
+    }
+
+    pEnv->SetObjectArrayElement(error, 0, err);
 
     free(tun_name);
     free(ip_addr);

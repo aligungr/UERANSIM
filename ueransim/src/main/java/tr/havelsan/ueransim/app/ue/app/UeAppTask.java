@@ -170,10 +170,20 @@ public class UeAppTask extends NtsTask {
 
         var ipAddress = Utils.byteArrayToIpString(pduSession.pduAddress.pduAddressInformation.toByteArray());
 
-        String[] allocatedName = new String[1];
-        int fd = Native.tunAllocate("uesimtun", allocatedName);
+        var error = new String[1];
+        var allocatedName = new String[1];
 
-        Native.tunConfigure(allocatedName[0], ipAddress, !Constants.NO_ROUTE_CONFIG);
+        int fd = Native.tunAllocate("uesimtun", allocatedName, error);
+        if (error[0] != null) {
+            Log.error(Tag.UEAPP, "TUN allocate failure: %s", error[0]);
+            return;
+        }
+
+        Native.tunConfigure(allocatedName[0], ipAddress, !Constants.NO_ROUTE_CONFIG, error);
+        if (error[0] != null) {
+            Log.error(Tag.UEAPP, "TUN configure failure: %s", error[0]);
+            return;
+        }
 
         var task = new TunTask(this, ctx.ctxId, psi, fd);
         tunTasks[psi] = task;

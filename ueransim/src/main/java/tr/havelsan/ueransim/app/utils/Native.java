@@ -11,9 +11,9 @@ public class Native {
 
     public static native boolean isRoot();
 
-    public static native int tunAllocate(String namePrefix, String[] allocatedName);
+    public static native int tunAllocate(String namePrefix, String[] allocatedName, String[] error);
 
-    public static native void tunConfigure(String tunName, String ipAddress, boolean configureRouting);
+    public static native void tunConfigure(String tunName, String ipAddress, boolean configureRouting, String[] error);
 
     public static native int read(int fd, ByteBuffer buffer);
 

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <sstream>
+
 class tun_config_error : public std::exception
 {
     std::string msg;
@@ -14,9 +16,7 @@ public:
     {
         std::stringstream ss;
         for (auto &line : lines)
-        {
             ss << line << std::endl;
-        }
         msg = ss.str();
     }
 
