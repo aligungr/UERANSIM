@@ -9,7 +9,7 @@ import picocli.CommandLine;
 
 import java.util.function.Consumer;
 
-@CommandLine.Command(name = "nr-cli",
+@CommandLine.Command(name = "nr-agent",
         mixinStandardHelpOptions = true,
         versionProvider = ClientApp.VersionProvider.class
 )
