@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
 # This software and all associated files are licensed under GPL-3.0.
@@ -12,4 +14,4 @@ fi
 addr=$1
 shift
 
-LD_PRELOAD=./libue-binder.so UE_BIND_ADDR=$addr $@
+LD_PRELOAD=./build/libue-binder.so UE_BIND_ADDR=$addr $@

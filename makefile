@@ -11,7 +11,6 @@ build: FORCE
 	(cd native/crypto-native && make && cp -f libcrypto-native.so ../../build)
 	(cd native/app-native && make && cp -f libapp-native.so ../../build)
 	(cd native/uesimtun && make -f ue-binder.mk && cp -f libue-binder.so ../../build)
-	(cd native/uesimtun && cp -f ue-binder.sh ../../build)
 	mvn package
 	cp ueransim/target/ueransim-release.jar build/
 	cp utils/target/utils-release.jar build/
