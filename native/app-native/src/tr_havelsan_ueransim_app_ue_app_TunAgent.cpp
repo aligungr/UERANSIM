@@ -28,7 +28,8 @@ extern "C" JNIEXPORT void JNICALL Java_tr_havelsan_ueransim_app_ue_app_TunFuncti
     char *tun_name = JniConvert::jstring2string(pEnv, tunName);
     char *ip_addr = JniConvert::jstring2string(pEnv, ipAddress);
 
-    configure_tun_interface(tun_name, ip_addr);
+    // TODO: configure_route: true
+    configure_tun_interface(tun_name, ip_addr, true);
 
     free(tun_name);
     free(ip_addr);

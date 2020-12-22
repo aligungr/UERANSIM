@@ -30,9 +30,9 @@
 #include <vector>
 
 #define IF_PREFIX "uesimtun"
-#define ROUTING_TABLE_NAME "uesimtable"
+#define ROUTING_TABLE_NAME "uesimtable" // todo remove this
+#define ROUTING_TABLE_PREFIX "rt_"
 #define MAX_INTERFACE_COUNT 1024
-#define ROUTING_TABLE_ID 1453
 
 static int exec_output(const char *cmd, std::string &output)
 {
@@ -151,7 +151,7 @@ static void tun_set_ip_and_up(const char *if_name, const char *ip_addr)
     close(sockfd);
 }
 
-static void configure_rt_tables(const std::string& table_name)
+static void configure_rt_tables(const std::string &table_name)
 {
     std::ifstream ifs;
     ifs.open("/etc/iproute2/rt_tables");
@@ -187,7 +187,7 @@ static void configure_rt_tables(const std::string& table_name)
 
     if (!found)
     {
-        int availableId = ROUTING_TABLE_ID;
+        int availableId = 1000;
         while (nums.count(availableId))
             availableId++;
 
@@ -198,7 +198,7 @@ static void configure_rt_tables(const std::string& table_name)
             fatal_error("Could not open '/etc/iproute2/rt_tables'");
 
         ofs << "\n"
-            << availableId << "\t" << ROUTING_TABLE_NAME << std::endl;
+            << availableId << "\t" << table_name << std::endl;
         ofs.close();
     }
 }
@@ -227,7 +227,7 @@ static void remove_existing_ip_rules(const std::string &ip_addr)
         if (sscanf(line.c_str(), "%d: from %s lookup %s", &num, from_ip, table_name) != 3)
             fatal_error("ip rule list lookup command could not parsed");
 
-        if (!strcmp(from_ip, ip_addr.c_str()) && !strcmp(table_name, ROUTING_TABLE_NAME))
+        if (!strcmp(from_ip, ip_addr.c_str()))
         {
             std::stringstream rule;
             rule << "from " << from_ip << " lookup " << table_name;
@@ -239,10 +239,10 @@ static void remove_existing_ip_rules(const std::string &ip_addr)
         exec_strict("ip rule del " + line);
 }
 
-static void add_new_ip_rules(const std::string &ip_addr)
+static void add_new_ip_rules(const std::string &ip_addr, const std::string& table_name)
 {
     std::stringstream cmd;
-    cmd << "ip rule add from " << ip_addr << " table " << ROUTING_TABLE_NAME;
+    cmd << "ip rule add from " << ip_addr << " table " << table_name;
     exec_strict(cmd.str());
 }
 
@@ -352,14 +352,19 @@ int tun_alloc(const char *if_prefix, char **allocated_name)
     return fd;
 }
 
-void configure_tun_interface(const char *tun_name, const char *ip_addr)
+void configure_tun_interface(const char *tun_name, const char *ip_addr, bool configure_route)
 {
     tun_set_ip_and_up(tun_name, ip_addr);
-    configure_rt_tables();
-    //remove_existing_ip_rules(ip_addr);
-    //add_new_ip_rules(ip_addr);
-    //remove_existing_ip_routes(tun_name);
-    //add_ip_routes(tun_name);
+    if (configure_route)
+    {
+        std::string table_name = ROUTING_TABLE_PREFIX + std::string(tun_name);
+
+        configure_rt_tables(table_name);
+        remove_existing_ip_rules(ip_addr);
+        add_new_ip_rules(ip_addr, table_name);
+        //remove_existing_ip_routes(tun_name);
+        //add_ip_routes(tun_name);
+    }
 }
 
 // TODO: remove following comments
