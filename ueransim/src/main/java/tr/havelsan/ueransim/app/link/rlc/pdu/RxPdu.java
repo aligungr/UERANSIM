@@ -18,4 +18,8 @@ public abstract class RxPdu {
     //  If the SDU has fragmentation, ALL Pdu which has the same underlying SDU must be
     //  marked as _isDelivered=true at the reassembling and delivering operation.
     public boolean _isProcessed;
+
+    public final int size() {
+        return data != null ? data.length : 0;
+    }
 }

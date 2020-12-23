@@ -5,25 +5,29 @@
 
 package tr.havelsan.ueransim.app.link.rlc.utils;
 
+import tr.havelsan.ueransim.utils.LinkedList;
+
 import java.util.Comparator;
-import java.util.LinkedList;
 
 public class RlcUtils {
 
     public static <T> void insertSortedLinkedList(LinkedList<T> list, T item, Comparator<T> comparator) {
-        var iterator = list.listIterator();
-        while (true) {
-            if (!iterator.hasNext()) {
-                iterator.add(item);
-                break;
-            }
+        if (list.isEmpty()) {
+            list.addFirst(item);
+            return;
+        }
 
-            var cursor = iterator.next();
-            if (comparator.compare(cursor, item) > 0) {
-                iterator.previous();
-                iterator.add(item);
+        var cursor = list.getFirst();
+        while (cursor != null) {
+            if (comparator.compare(cursor.value, item) > 0)
                 break;
-            }
+            cursor = cursor.getNext();
+        }
+
+        if (cursor != null) {
+            list.addAfter(cursor, item);
+        } else {
+            list.addLast(item);
         }
     }
 }

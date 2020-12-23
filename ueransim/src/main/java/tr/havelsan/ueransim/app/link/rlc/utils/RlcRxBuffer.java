@@ -8,17 +8,15 @@ package tr.havelsan.ueransim.app.link.rlc.utils;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.ISnCompare;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.ISnPredicate;
 import tr.havelsan.ueransim.app.link.rlc.pdu.RxPdu;
+import tr.havelsan.ueransim.utils.LinkedList;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
-
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 public class RlcRxBuffer<T extends RxPdu> {
 
     private final ISnCompare snCompare;
-    private final LinkedList<T> list;
     private final int maxSize;
+    private final LinkedList<T> list;
     private int currentSize;
 
     public RlcRxBuffer(ISnCompare snCompare, int maxSize) {
@@ -38,6 +36,10 @@ public class RlcRxBuffer<T extends RxPdu> {
         currentSize += rxPdu.data.length;
     }
 
+    public LinkedList<T> getList() {
+        return list;
+    }
+
     public boolean hasRoomFor(int size) {
         return currentSize + size <= maxSize;
     }
@@ -51,169 +53,103 @@ public class RlcRxBuffer<T extends RxPdu> {
         currentSize = 0;
     }
 
-    public boolean hasMissingBytes(int sn) {
-        var it = list.listIterator();
+    public LinkedList<T>.Item firstItemWithSn(int sn) {
+        var cursor = list.getFirst();
+        if (cursor == null)
+            return null;
+        while (cursor != null && cursor.value.sn != sn)
+            cursor = cursor.getNext();
+        return cursor;
+    }
 
-        T cursor;
-        do {
-            // No such a PDU, therefore we don't have a missing segment.
-            if (!it.hasNext())
-                return false;
-            cursor = it.next();
-        } while (cursor.sn != sn);
+    public boolean hasMissingSegment(int sn) {
+        var cursor = firstItemWithSn(sn);
 
-        if (cursor._isProcessed) {
-            // The related SN is already processed, therefore we don't have a missing segment.
+        if (cursor == null || cursor.value._isProcessed)
             return false;
-        }
 
         int lastByte = -1;
-        while (true) {
-            if (cursor.sn != sn)
-                break;
 
-            if (cursor.so > lastByte + 1)
+        while (cursor != null && cursor.value.sn == sn) {
+            if (cursor.value.so > lastByte + 1)
                 return true;
-            int newLastByte = cursor.so + cursor.data.length - 1;
+            var newLastByte = cursor.value.so + cursor.value.size() - 1;
             if (newLastByte > lastByte)
                 lastByte = newLastByte;
-
-            if (it.hasNext())
-                cursor = it.next();
-            else
-                break;
+            cursor = cursor.getNext();
         }
 
         return false;
     }
 
     public boolean isAllSegmentsReceived(int sn) {
-        var it = list.listIterator();
+        var cursor = firstItemWithSn(sn);
 
-        T cursor;
-        do {
-            if (!it.hasNext())
-                return false;
-            cursor = it.next();
-        } while (cursor.sn != sn);
-
-        // WARNING: Check if it is already reassembled and delivered. Returning false if it is
-        //  already processes. Because no need to reprocess it. We can consider this method as
-        //  "ready to reassemble and deliver" instead of "is all segments received?"
-        if (cursor._isProcessed)
+        if (cursor != null && cursor.value._isProcessed)
             return false;
 
-        int lastByte = -1;
-        while (true) {
-            if (cursor.sn != sn)
-                break;
-
-            if (cursor.so > lastByte + 1)
+        int last = -1;
+        while (cursor != null && cursor.value.sn == sn) {
+            if (cursor.value.so > last + 1)
                 return false;
-            if (cursor.si.hasLast())
+            if (cursor.value.si.hasLast())
                 return true;
-            int newLastByte = cursor.so + cursor.data.length - 1;
-            if (newLastByte > lastByte)
-                lastByte = newLastByte;
-
-            if (it.hasNext())
-                cursor = it.next();
-            else
-                break;
+            int newLast = cursor.value.so + cursor.value.size() - 1;
+            if (newLast > last)
+                last = newLast;
+            cursor = cursor.getNext();
         }
 
         return false;
     }
 
     public OctetString reassemble(int sn) {
-        var it = list.listIterator();
-
-        T cursor;
-        do {
-            if (!it.hasNext())
-                return null;
-            cursor = it.next();
-        } while (cursor.sn != sn);
+        var cursor = firstItemWithSn(sn);
 
         var stream = new OctetOutputStream();
-        stream.writeOctetString(cursor.data);
-
-        while (it.hasNext()) {
-            cursor = it.next();
-            if (cursor.sn == sn) {
-                stream.writeOctetString(cursor.data);
-
-                // WARNING: Don't remove from list, but just set processed and decrement the current size.
-                cursor._isProcessed = true;
-                currentSize -= cursor.data.length;
-            } else {
-                break;
-            }
+        while (cursor != null && cursor.value.sn == sn) {
+            stream.writeOctetString(cursor.value.data);
+            currentSize -= cursor.value.size();
+            cursor.value._isProcessed = true;
+            cursor = cursor.getNext();
         }
 
-        if (stream.length() == 0)
-            return null;
-
-        return stream.toOctetString();
+        return stream.length() == 0 ? null : stream.toOctetString();
     }
 
     public boolean isDelivered(int sn) {
-        for (var pdu : list) {
-            if (pdu.sn == sn && pdu._isProcessed)
-                return true;
-        }
-        return false;
+        var cursor = firstItemWithSn(sn);
+        return cursor != null && cursor.value._isProcessed;
     }
 
     public void discardSegmentIf(ISnPredicate predicate) {
-        var it = list.listIterator();
-        while (it.hasNext()) {
-            var next = it.next();
-
-            if (predicate.decide(next.sn)) {
-                it.remove();
-                if (!next._isProcessed) {
-                    currentSize -= next.data.length;
-                }
+        var cursor = list.getFirst();
+        while (cursor != null) {
+            if (predicate.decide(cursor.value.sn)) {
+                if (!cursor.value._isProcessed)
+                    currentSize -= cursor.value.size();
+                cursor = list.removeAndNext(cursor);
+            } else {
+                cursor = cursor.getNext();
             }
         }
     }
 
     public boolean isAlreadyReceived(int sn, int so, int size) {
-        if (list.isEmpty())
-            return false;
-
-        var it = list.listIterator();
-        var pdu = it.next();
-
-        int n;
-        while (pdu != null && size > 0) {
-            if (pdu.sn == sn) {
-                if (pdu.so <= so && so < pdu.so + pdu.data.length) {
-                    n = pdu.data.length - (so - pdu.so);
-                    size -= n;
-                    so += n;
-                } else if (pdu.so <= so + size - 1 && so + size - 1 < pdu.so + pdu.data.length) {
-                    n = size - (pdu.so - so);
-                    size -= n;
+        var cursor = list.getFirst();
+        while (cursor != null && size > 0) {
+            if (cursor.value.sn == sn) {
+                if (cursor.value.so <= so && so < cursor.value.so + cursor.value.size()) {
+                    int done = cursor.value.size() - (so - cursor.value.so);
+                    size -= done;
+                    so += done;
+                } else if (cursor.value.so <= so + size - 1 && so + size - 1 < cursor.value.so + cursor.value.size()) {
+                    int done = size - (cursor.value.so - so);
+                    size -= done;
                 }
             }
-            pdu = it.hasNext() ? it.next() : null;
+            cursor = cursor.getNext();
         }
         return size <= 0;
-    }
-
-    public int amReassembledAndXEqualsRxNext(int rxNext, int snModulus) {
-        while (!list.isEmpty() && list.peekFirst()._isProcessed && list.peekFirst().sn == rxNext) {
-            do {
-                list.removeFirst();
-            } while (!list.isEmpty() && list.peekFirst().sn == rxNext);
-            rxNext = (rxNext + 1) % snModulus;
-        }
-        return rxNext;
-    }
-
-    public ListIterator<T> iterator() {
-        return list.listIterator();
     }
 }
