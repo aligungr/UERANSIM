@@ -18,6 +18,7 @@ import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class AmEntity extends RlcEntity {
 
@@ -530,8 +531,106 @@ public class AmEntity extends RlcEntity {
         if (maxSize < 3)
             return null;
 
+        // todo maxSize
+
+        while (true) {
+            var it = rxBuffer.iterator();
+            var missingBlock = findMissingBlock(it);
+            if (missingBlock == null)
+                break;
+
+        }
+
         // TODO
         return null;
+    }
+
+    private MissingBlock findMissingBlock(ListIterator<AmdPdu> it) {
+        if (!it.hasNext())
+            return null;
+
+        // Seek until find a PDU st. SN >= RX_NEXT
+        while (it.hasNext()) {
+            var pdu = it.next();
+            if (snCompareRx(pdu.sn, rxNext) >= 0) {
+                it.previous();
+                break;
+            }
+        }
+
+        // If no PDU is found return null
+        if (!it.hasNext())
+            return null;
+
+        // Seek until a not processed PDU is found.
+        while (it.hasNext()) {
+            var pdu = it.next();
+            if (!pdu._isProcessed) {
+
+                if (snCompareRx(pdu.sn, rxHighestStatus) >= 0) {
+                    // The next found PDU is out of reporting window, terminate operation.
+                    return null;
+                }
+
+                it.previous();
+                break;
+            }
+        }
+
+        // If no PDU is found return null
+        if (!it.hasNext())
+            return null;
+
+        var next = it.next();
+
+        var miss = new MissingBlock(); // TODO ackSn
+        miss.siStart = next.si;
+        miss.siEnd = next.si;
+        miss.snStart = next.sn;
+        miss.snEnd = miss.snStart;
+        miss.soStart = next.so;
+        miss.soEnd = miss.soStart + next.data.length - 1;
+
+        while (true) {
+            if (!it.hasNext())
+                return miss;
+
+            if (miss.siEnd.hasLast())
+                return miss;
+
+            next = it.next();
+
+            if (snCompareRx(next.sn, rxNext) < 0 || snCompareRx(next.sn, rxHighestStatus) >= 0) {
+                it.previous();
+                return miss;
+            }
+
+            boolean isContinuous;
+
+            if (snCompareRx(next.sn, miss.snEnd) == 0) {
+                isContinuous = next.so == miss.soEnd + 1;
+            } else if (snCompareRx(next.sn, miss.snEnd + 1) == 0) {
+                isContinuous = next.so == 0;
+            } else {
+                isContinuous = false;
+            }
+
+            if (isContinuous) {
+                miss.snEnd = next.sn;
+                miss.siEnd = next.si;
+                if (next.si.requiresSo())
+                    miss.soEnd = next.so + next.data.length - 1;
+                else {
+                    miss.soEnd = next.data.length - 1;
+                }
+
+                if (next.si.hasLast())
+                    return miss;
+            } else {
+                it.previous();
+                return miss;
+            }
+        }
     }
 
     private OctetString createRetPdu(int maxSize) {

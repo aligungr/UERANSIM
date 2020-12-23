@@ -12,6 +12,7 @@ import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class RlcRxBuffer<T extends RxPdu> {
 
@@ -210,5 +211,9 @@ public class RlcRxBuffer<T extends RxPdu> {
             rxNext = (rxNext + 1) % snModulus;
         }
         return rxNext;
+    }
+
+    public ListIterator<T> iterator() {
+        return list.listIterator();
     }
 }
