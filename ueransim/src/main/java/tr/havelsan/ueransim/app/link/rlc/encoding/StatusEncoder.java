@@ -117,7 +117,7 @@ public class StatusEncoder {
             }
 
             if (e3) {
-                stream.writeBits(block.nackRange, 16);
+                stream.writeBits(block.nackRange, 8);
             }
         }
     }
