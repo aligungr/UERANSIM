@@ -57,17 +57,13 @@ public class UmEntity extends RlcEntity {
         }
 
         var um = new UmEntity(consumer);
-
         um.snLength = snLength;
         um.snModulus = 1 << snLength;
         um.windowSize = um.snModulus / 2;
-
         um.reassemblyTimer = new RlcTimer(tReassemblyPeriod);
-
         um.txMaxSize = txMaxSize;
         um.txBuffer = new LinkedList<>();
         um.rxBuffer = new RlcRxBuffer<>(um::snCompareRx, rxMaxSize);
-
         um.clearEntity();
         return um;
     }

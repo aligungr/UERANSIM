@@ -69,13 +69,60 @@ public class AmEntity extends RlcEntity {
         super(consumer);
     }
 
-    public static AmEntity newInstance(IRlcConsumer consumer) {
-        // TODO
-        return null;
+    public static AmEntity newInstance(IRlcConsumer consumer, int snLength, int txMaxSize, int rxMaxSize,
+                                       int pollPdu, int pollByte, int maxRetThreshold, int pollRetransmitPeriod,
+                                       int reassemblyPeriod, int statusProhibitPeriod) {
+        if (snLength != 12 && snLength != 18) {
+            throw new IncorrectImplementationException();
+        }
+
+        var am = new AmEntity(consumer);
+        am.snLength = snLength;
+        am.txMaxSize = txMaxSize;
+        am.rxBuffer = new RlcRxBuffer<>(am::snCompareRx, rxMaxSize);
+        am.pollPdu = pollPdu;
+        am.pollByte = pollByte;
+        am.maxRetThreshold = maxRetThreshold;
+        am.snModulus = 1 << snLength;
+        am.windowSize = am.snModulus / 2;
+        am.pollRetransmitTimer = new RlcTimer(pollRetransmitPeriod);
+        am.reassemblyTimer = new RlcTimer(reassemblyPeriod);
+        am.statusProhibitTimer = new RlcTimer(statusProhibitPeriod);
+        am.txBuffer = new LinkedList<>();
+        am.retBuffer = new LinkedList<>();
+        am.waitBuffer = new LinkedList<>();
+        am.ackBuffer = new LinkedList<>();
+        am.clearEntity();
+        return am;
     }
 
     private void clearEntity() {
-        // TODO
+        txNext = 0;
+        txNextAck = 0;
+        pollSn = 0;
+        pduWithoutPoll = 0;
+        byteWithoutPoll = 0;
+
+        txCurrentSize = 0;
+        txBuffer.clear();
+
+        rxBuffer.clear();
+        retBuffer.clear();
+        waitBuffer.clear();
+        ackBuffer.clear();
+
+        rxNext = 0;
+        rxNextHighest = 0;
+        rxHighestStatus = 0;
+        rxNextStatusTrigger = 0;
+
+        statusTriggered = false;
+        forcePoll = false;
+
+        tCurrent = 0;
+        pollRetransmitTimer.stop();
+        reassemblyTimer.stop();
+        statusProhibitTimer.stop();
     }
 
     //======================================================================================================
@@ -955,11 +1002,11 @@ public class AmEntity extends RlcEntity {
 
     @Override
     public void reestablishment() {
-        // TODO
+        clearEntity();
     }
 
     @Override
     public void deleteEntity() {
-        // TODO
+        clearEntity();
     }
 }
