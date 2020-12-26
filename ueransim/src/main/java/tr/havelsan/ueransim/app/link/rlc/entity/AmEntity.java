@@ -172,13 +172,15 @@ public class AmEntity extends RlcEntity {
         if (headerSize + 1 > maxSize)
             return null;
 
+        var si = sdu.si;
+
         int overflowed = headerSize + sdu.size - maxSize;
 
-        sdu.si = sdu.si.asNotLast();
+        sdu.si = si.asNotLast();
         sdu.size -= overflowed;
 
         var next = new RlcSduSegment(sdu.sdu);
-        next.si = sdu.si.asNotFirst();
+        next.si = si.asNotFirst();
         next.size = overflowed;
         next.so = sdu.so + sdu.size;
 
