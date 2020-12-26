@@ -536,6 +536,7 @@ public class AmEntity extends RlcEntity {
         int startSn = rxNext;
         int startSo = 0;
 
+        // Find NACK blocks
         while (true) {
             var missing = findMissingBlock(startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF);
             if (missing == null)
@@ -567,8 +568,23 @@ public class AmEntity extends RlcEntity {
             startSo = missing.nextSo;
         }
 
-        pdu.ackSn = 0; // TODO
+        // Then find the ACK_SN
+        int ackSn = rxNext;
+        var cursor = rxBuffer.getList().getFirst();
+        while (cursor != null) {
+            if (snCompareRx(cursor.value.sn, rxHighestStatus) >= 0)
+                break;
+            if (snCompareRx(cursor.value.sn, rxNext) >= 0) {
+                if (cursor.value._isProcessed) {
+                    ackSn = (cursor.value.sn + 1) % snModulus;
+                }
+            }
+            cursor = cursor.getNext();
+        }
 
+        pdu.ackSn = ackSn;
+
+        // Finally encode the status PDU
         var stream = new BitOutputStream();
         StatusEncoder.encode(stream, pdu, snLength == 12);
         return stream.toOctetString();
