@@ -26,7 +26,7 @@ public class RlcRxBuffer<T extends RxPdu> {
     }
 
     public void add(T rxPdu) {
-        RlcUtils.insertSortedLinkedList(list, rxPdu, (a, b) -> {
+        RlcFunc.insertSortedLinkedList(list, rxPdu, (a, b) -> {
             if (a.sn == b.sn)
                 return Integer.compare(a.so, b.so);
             return snCompare.compare(a.sn, b.sn);

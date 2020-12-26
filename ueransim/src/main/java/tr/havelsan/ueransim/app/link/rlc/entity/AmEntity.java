@@ -160,15 +160,8 @@ public class AmEntity extends RlcEntity {
                 && snCompareTx(txNext, (txNextAck + windowSize) % snModulus) < 0);
     }
 
-    private int amdPduHeaderSize(ESegmentInfo si) {
-        int res = 2;
-        if (snLength == 18) res++;
-        if (!si.hasFirst()) res += 2;
-        return res;
-    }
-
     private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
-        int headerSize = amdPduHeaderSize(sdu.si);
+        int headerSize = RlcFunc.amdPduHeaderSize(snLength, sdu.si);
         if (headerSize + 1 > maxSize)
             return null;
 
@@ -218,7 +211,7 @@ public class AmEntity extends RlcEntity {
     }
 
     private void insertToList(LinkedList<RlcSduSegment> list, RlcSduSegment segment) {
-        RlcUtils.insertSortedLinkedList(list, segment, (a, b) -> {
+        RlcFunc.insertSortedLinkedList(list, segment, (a, b) -> {
             if (a.sdu.sn == b.sdu.sn)
                 return Integer.compare(a.so, b.so);
             return snCompareTx(a.sdu.sn, b.sdu.sn);
@@ -587,6 +580,9 @@ public class AmEntity extends RlcEntity {
 
         // Find NACK blocks
         while (true) {
+            if (snCompareRx(startSn, rxHighestStatus) >= 0)
+                break;
+
             var missing = findMissingBlock(startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF);
             if (missing == null)
                 break;
@@ -684,16 +680,16 @@ public class AmEntity extends RlcEntity {
         //        end line olur
         // Son
 
-        if (snCompareRx(startSn, endSn) > 0 || (snCompareRx(startSn, endSn) == 0 && startSo >= endSo))
+        if (RlcFunc.snCompareRaw(startSn, endSn) > 0 || (RlcFunc.snCompareRaw(startSn, endSn) == 0 && startSo >= endSo))
             return null;
 
-        var segment = rxBuffer.firstItemIntersecting(startSn, startSn);
+        var segment = rxBuffer.firstItemIntersecting(startSn, startSo);
         if (segment != null) {
             var endPointSn = segment.value.sn;
             var endPointSo = segment.value.si.requiresSo() ? segment.value.so + segment.value.size() : segment.value.size();
 
             // An assertion just in case (checking for infinite recursion)
-            if (snCompareRx(startSn, endPointSn) == 0 && endPointSo == startSo) {
+            if (RlcFunc.snCompareRaw(startSn, endPointSn) == 0 && endPointSo == startSo) {
                 throw new IncorrectImplementationException(); // bug found
             }
 
@@ -710,7 +706,7 @@ public class AmEntity extends RlcEntity {
             var val = cursor.value;
             var so = val.si.requiresSo() ? val.so : 0;
 
-            if (snCompareRx(val.sn, startSn) < 0 || (snCompareRx(val.sn, startSn) == 0 && so < startSo)) {
+            if (RlcFunc.snCompareRaw(val.sn, startSn) < 0 || (RlcFunc.snCompareRaw(val.sn, startSn) == 0 && so < startSo)) {
                 cursor = cursor.getNext();
             } else {
                 break;
@@ -731,7 +727,7 @@ public class AmEntity extends RlcEntity {
         var startPointSn = cursor.value.sn;
         var startPointSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
 
-        if (snCompareRx(startPointSn, endSn) > 0 || (snCompareRx(startPointSn, endSn) == 0 && startPointSo > endSo)) {
+        if (RlcFunc.snCompareRaw(startPointSn, endSn) > 0 || (RlcFunc.snCompareRaw(startPointSn, endSn) == 0 && startPointSo > endSo)) {
             res.snEnd = endSn;
             res.soEnd = endSo;
 
@@ -769,7 +765,7 @@ public class AmEntity extends RlcEntity {
             return null;
         }
 
-        int headerSize = amdPduHeaderSize(segment.si);
+        int headerSize = RlcFunc.amdPduHeaderSize(snLength, segment.si);
 
         // Fragmentation is irrelevant since no byte fits the size.
         if (headerSize + 1 > maxSize) {
@@ -805,7 +801,7 @@ public class AmEntity extends RlcEntity {
             return null;
         }
 
-        int headerSize = amdPduHeaderSize(segment.si);
+        int headerSize = RlcFunc.amdPduHeaderSize(snLength, segment.si);
 
         // Fragmentation is irrelevant since no byte fits the size.
         if (headerSize + 1 > maxSize) {

@@ -100,42 +100,6 @@ public class UmEntity extends RlcEntity {
     }
 
     //======================================================================================================
-    //                                          INTERNAL METHODS
-    //======================================================================================================
-
-    private int umdPduHeaderSize(ESegmentInfo si) {
-        switch (si) {
-            case FULL:
-                return 1;
-            case FIRST:
-                return snLength == 6 ? 1 : 2;
-            default:
-                return snLength == 6 ? 3 : 4;
-        }
-    }
-
-    private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
-        var newSi = sdu.si.asNotLast();
-        var nextSi = sdu.si.asNotFirst();
-
-        int headerSizeAfterSeg = umdPduHeaderSize(newSi);
-        if (headerSizeAfterSeg + 1 > maxSize)
-            return null;
-
-        int overflowed = headerSizeAfterSeg + sdu.size - maxSize;
-
-        sdu.si = newSi;
-        sdu.size -= overflowed;
-
-        var next = new RlcSduSegment(sdu.sdu);
-        next.si = nextSi;
-        next.size = overflowed;
-        next.so = sdu.so + sdu.size;
-
-        return next;
-    }
-
-    //======================================================================================================
     //                                             ACTIONS
     //======================================================================================================
 
@@ -320,7 +284,7 @@ public class UmEntity extends RlcEntity {
             return null;
         }
 
-        int headerSize = umdPduHeaderSize(segment.si);
+        int headerSize = RlcFunc.umdPduHeaderSize(snLength, segment.si);
 
         // Fragmentation is irrelevant since no byte fits the size.
         if (headerSize + 1 > maxSize) {
@@ -332,7 +296,7 @@ public class UmEntity extends RlcEntity {
 
         // Perform segmentation if it is needed
         if (headerSize + segment.size > maxSize) {
-            var next = performSegmentation(segment, maxSize);
+            var next = RlcFunc.umPerformSegmentation(segment, maxSize, snLength);
             if (next == null)
                 return null;
             txBuffer.addFirst(next);
