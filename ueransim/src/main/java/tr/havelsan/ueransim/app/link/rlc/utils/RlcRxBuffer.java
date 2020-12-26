@@ -36,6 +36,7 @@ public class RlcRxBuffer<T extends RxPdu> {
         currentSize += rxPdu.data.length;
     }
 
+    // TODO: Bug getList alıp remove işlemlerinde vs. currentSize problem.
     public LinkedList<T> getList() {
         return list;
     }
