@@ -566,8 +566,7 @@ public class AmEntity extends RlcEntity {
                     pdu.nackBlocks.remove(pdu.nackBlocks.size() - 1);
                     break;
                 }
-            }
-            else {
+            } else {
                 if (missing.soStart == 0 && missing.soEnd == 0xFFFF) {
                     block.soStart = -1;
                     block.soEnd = -1;
@@ -606,6 +605,10 @@ public class AmEntity extends RlcEntity {
         }
 
         pdu.ackSn = ackSn;
+
+        // Reset trigger flag and start prohibit timer.
+        statusTriggered = false;
+        statusProhibitTimer.start(tCurrent);
 
         // Finally encode the status PDU
         var stream = new BitOutputStream();
