@@ -544,7 +544,31 @@ public class AmEntity extends RlcEntity {
 
             var block = new NackBlock();
             block.nackSn = missing.snStart;
-            block.nackRange = missing.snStart == missing.snEnd ? -1 : missing.snEnd - missing.snStart + 1;
+            block.nackRange = missing.snStart == missing.snEnd ? -1 : (missing.snEnd - missing.snStart + snModulus) % snModulus + 1;
+
+            // Since the NACK range is 8-bit. We must limit to 255, and cut if needed.
+            if (block.nackRange > 255) {
+                if (missing.soStart == 0 && missing.soEnd == 0xFFFF) {
+                    block.soStart = -1;
+                    block.soEnd = -1;
+                } else {
+                    block.soStart = missing.soStart;
+                    block.soEnd = 0xFFFF;
+                }
+
+                block.nackRange = 255;
+                startSn = (missing.snStart + 256) % snModulus;
+                startSo = 0;
+
+                pdu.nackBlocks.add(block);
+
+                if (pdu.calculatedSize(snLength == 12) > maxSize) {
+                    pdu.nackBlocks.remove(pdu.nackBlocks.size() - 1);
+                    break;
+                }
+
+                continue;
+            }
 
             if (missing.soStart == 0 && missing.soEnd == 0xFFFF) {
                 block.soStart = -1;
