@@ -11,10 +11,8 @@ import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.pdu.StatusPdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.*;
-import tr.havelsan.ueransim.utils.BitInputStream;
-import tr.havelsan.ueransim.utils.LinkedList;
-import tr.havelsan.ueransim.utils.OctetInputStream;
-import tr.havelsan.ueransim.utils.OctetOutputStream;
+import tr.havelsan.ueransim.utils.*;
+import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.HashSet;
@@ -533,107 +531,146 @@ public class AmEntity extends RlcEntity {
         if (maxSize < 3)
             return null;
 
-        // todo maxSize
+        var pdu = new StatusPdu();
 
-        /*while (true) {
-            var it = rxBuffer.iterator();
-            var missingBlock = findMissingBlock(it);
-            if (missingBlock == null)
-                break;
-
-        }*/
-
-        // TODO
-        return null;
-    }
-
-    /*private MissingBlock findMissingBlock(ListIterator<AmdPdu> it) {
-        if (!it.hasNext())
-            return null;
-
-        // Seek until find a PDU st. SN >= RX_NEXT
-        while (it.hasNext()) {
-            var pdu = it.next();
-            if (snCompareRx(pdu.sn, rxNext) >= 0) {
-                it.previous();
-                break;
-            }
-        }
-
-        // If no PDU is found return null
-        if (!it.hasNext())
-            return null;
-
-        // Seek until a not processed PDU is found.
-        while (it.hasNext()) {
-            var pdu = it.next();
-            if (!pdu._isProcessed) {
-
-                if (snCompareRx(pdu.sn, rxHighestStatus) >= 0) {
-                    // The next found PDU is out of reporting window, terminate operation.
-                    return null;
-                }
-
-                it.previous();
-                break;
-            }
-        }
-
-        // If no PDU is found return null
-        if (!it.hasNext())
-            return null;
-
-        var next = it.next();
-
-        var miss = new MissingBlock(); // TODO ackSn
-        miss.siStart = next.si;
-        miss.siEnd = next.si;
-        miss.snStart = next.sn;
-        miss.snEnd = miss.snStart;
-        miss.soStart = next.so;
-        miss.soEnd = miss.soStart + next.data.length - 1;
+        int startSn = rxNext;
+        int startSo = 0;
 
         while (true) {
-            if (!it.hasNext())
-                return miss;
+            var missing = findMissingBlock(startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF);
+            if (missing == null)
+                break;
 
-            if (miss.siEnd.hasLast())
-                return miss;
+            var block = new NackBlock();
+            block.nackSn = missing.snStart;
+            block.nackRange = missing.snStart == missing.snEnd ? -1 : missing.snEnd - missing.snStart + 1;
 
-            next = it.next();
-
-            if (snCompareRx(next.sn, rxNext) < 0 || snCompareRx(next.sn, rxHighestStatus) >= 0) {
-                it.previous();
-                return miss;
+            if (missing.soStart == 0 && missing.soEnd == 0xFFFF) {
+                block.soStart = -1;
+                block.soEnd = -1;
+            } else {
+                block.soStart = missing.soStart;
+                block.soEnd = missing.soEnd;
             }
 
-            boolean isContinuous;
+            pdu.nackBlocks.add(block);
 
-            if (snCompareRx(next.sn, miss.snEnd) == 0) {
-                isContinuous = next.so == miss.soEnd + 1;
-            } else if (snCompareRx(next.sn, miss.snEnd + 1) == 0) {
-                isContinuous = next.so == 0;
-            } else {
-                isContinuous = false;
+            if (pdu.calculatedSize(snLength == 12) > maxSize) {
+                pdu.nackBlocks.remove(pdu.nackBlocks.size() - 1);
+                break;
             }
 
-            if (isContinuous) {
-                miss.snEnd = next.sn;
-                miss.siEnd = next.si;
-                if (next.si.requiresSo())
-                    miss.soEnd = next.so + next.data.length - 1;
-                else {
-                    miss.soEnd = next.data.length - 1;
-                }
+            if (missing.nextSo == -1 || missing.nextSn == -1)
+                break;
 
-                if (next.si.hasLast())
-                    return miss;
+            startSn = missing.nextSn;
+            startSo = missing.nextSo;
+        }
+
+        pdu.ackSn = 0; // TODO
+
+        var stream = new BitOutputStream();
+        StatusEncoder.encode(stream, pdu, snLength == 12);
+        return stream.toOctetString();
+    }
+
+    private MissingBlock findMissingBlock(int startSn, int startSo, int endSn, int endSo) {
+        // Start line >= end line ise missin part yok demektir.
+        // Aksi halde bakmaya devam edilir:
+        // Start line ile kesişen bir segment var mı yok mu?
+        // Eğer varsa,
+        //    kesişen segment eğer endlinedan önce (<= değil <) bitiyorsa ve bitmiyorsa durum değişir.
+        //    Bitiyorsa:
+        //        yeni start line söz konusu segmentin bitiş noktası olacak şekilde recursion çağrılır.
+        //    Bitmiyorsa:
+        //        missin part yok demektir.
+        // Eğer yoksa
+        //     missing partın başlangıcı start line olur
+        //     end noktasından önce ve start linedan sonra bir segment veya segment parçası başlangıcı var mı diye bakılır.
+        //     Varsa:
+        //        missin partın end noktası start-end line arasındaki starta en yakın ilk segment parçasının in başlangıcı olır
+        //     Yoksa:
+        //        end line olur
+        // Son
+
+        if (snCompareRx(startSn, endSn) > 0 || (snCompareRx(startSn, endSn) == 0 && startSo >= endSo))
+            return null;
+
+        var segment = rxBuffer.firstItemIntersecting(startSn, startSn);
+        if (segment != null) {
+            var endPointSn = segment.value.sn;
+            var endPointSo = segment.value.si.requiresSo() ? segment.value.so + segment.value.size() : segment.value.size();
+
+            // An assertion just in case (checking for infinite recursion)
+            if (snCompareRx(startSn, endPointSn) == 0 && endPointSo == startSo) {
+                throw new IncorrectImplementationException(); // bug found
+            }
+
+            return findMissingBlock(endPointSn, endPointSo, endSn, endSo);
+        }
+
+        var res = new MissingBlock();
+        res.snStart = startSn;
+        res.soStart = startSo;
+
+        var cursor = rxBuffer.getList().getFirst();
+
+        while (cursor != null) {
+            var val = cursor.value;
+            var so = val.si.requiresSo() ? val.so : 0;
+
+            if (snCompareRx(val.sn, startSn) < 0 || (snCompareRx(val.sn, startSn) == 0 && so < startSo)) {
+                cursor = cursor.getNext();
             } else {
-                it.previous();
-                return miss;
+                break;
             }
         }
-    }*/
+
+        if (cursor == null) {
+            res.snEnd = endSn;
+            res.soEnd = endSo;
+
+            // There is no next
+            res.nextSn = -1;
+            res.nextSo = -1;
+
+            return res;
+        }
+
+        var startPointSn = cursor.value.sn;
+        var startPointSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
+
+        if (snCompareRx(startPointSn, endSn) > 0 || (snCompareRx(startPointSn, endSn) == 0 && startPointSo > endSo)) {
+            res.snEnd = endSn;
+            res.soEnd = endSo;
+
+            // There is no next
+            res.nextSn = -1;
+            res.nextSo = -1;
+
+            return res;
+        }
+
+        if (startPointSo != 0) {
+            res.snEnd = startPointSn;
+            res.soEnd = startPointSo - 1;
+
+            if (cursor.value.si.hasLast()) {
+                res.nextSn = (startPointSn + 1) % snModulus;
+                res.nextSo = 0;
+            } else {
+                res.nextSn = startPointSn;
+                res.nextSo = (cursor.value.si.requiresSo() ? cursor.value.so : 0) + cursor.value.size();
+            }
+        } else {
+            res.snEnd = (startPointSn - 1 + snModulus) % snModulus;
+            res.soEnd = 0xFFFF;
+
+            res.nextSn = startPointSn;
+            res.nextSo = 0;
+        }
+        return res;
+    }
 
     private OctetString createRetPdu(int maxSize) {
         var segment = retBuffer.getFirstElement();

@@ -152,4 +152,18 @@ public class RlcRxBuffer<T extends RxPdu> {
         }
         return size <= 0;
     }
+
+    public LinkedList<T>.Item firstItemIntersecting(int sn, int so) {
+        var cursor = firstItemWithSn(sn);
+        while (cursor != null && cursor.value.sn == sn) {
+            var startSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
+            var endSo = startSo + cursor.value.size();
+
+            if (so >= startSo && so < endSo) {
+                return cursor;
+            }
+            cursor = cursor.getNext();
+        }
+        return null;
+    }
 }

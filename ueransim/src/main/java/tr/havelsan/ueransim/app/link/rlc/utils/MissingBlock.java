@@ -13,8 +13,8 @@ public class MissingBlock {
     public int snEnd;
     public int soEnd;
 
-    public ESegmentInfo siStart;
-    public ESegmentInfo siEnd;
+    public int nextSn;
+    public int nextSo;
 
     public int ackSn;
 }
