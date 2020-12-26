@@ -566,30 +566,29 @@ public class AmEntity extends RlcEntity {
                     pdu.nackBlocks.remove(pdu.nackBlocks.size() - 1);
                     break;
                 }
-
-                continue;
             }
+            else {
+                if (missing.soStart == 0 && missing.soEnd == 0xFFFF) {
+                    block.soStart = -1;
+                    block.soEnd = -1;
+                } else {
+                    block.soStart = missing.soStart;
+                    block.soEnd = missing.soEnd;
+                }
 
-            if (missing.soStart == 0 && missing.soEnd == 0xFFFF) {
-                block.soStart = -1;
-                block.soEnd = -1;
-            } else {
-                block.soStart = missing.soStart;
-                block.soEnd = missing.soEnd;
+                pdu.nackBlocks.add(block);
+
+                if (pdu.calculatedSize(snLength == 12) > maxSize) {
+                    pdu.nackBlocks.remove(pdu.nackBlocks.size() - 1);
+                    break;
+                }
+
+                if (missing.nextSo == -1 || missing.nextSn == -1)
+                    break;
+
+                startSn = missing.nextSn;
+                startSo = missing.nextSo;
             }
-
-            pdu.nackBlocks.add(block);
-
-            if (pdu.calculatedSize(snLength == 12) > maxSize) {
-                pdu.nackBlocks.remove(pdu.nackBlocks.size() - 1);
-                break;
-            }
-
-            if (missing.nextSo == -1 || missing.nextSn == -1)
-                break;
-
-            startSn = missing.nextSn;
-            startSo = missing.nextSo;
         }
 
         // Then find the ACK_SN
