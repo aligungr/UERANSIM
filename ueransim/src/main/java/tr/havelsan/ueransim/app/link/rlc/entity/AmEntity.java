@@ -737,7 +737,7 @@ public class AmEntity extends RlcEntity {
 
         insertToList(waitBuffer, segment);
 
-        boolean includePoll = pollCheckForTransmission();
+        boolean includePoll = pollControlForTransmissionOrRetransmission();
 
         if (forcePoll) {
             includePoll = true;
@@ -796,7 +796,7 @@ public class AmEntity extends RlcEntity {
         // if PDU_WITHOUT_POLL >= pollPDU; or if BYTE_WITHOUT_POLL >= pollByte: include a poll in the AMD PDU
         if ((pollPdu != -1 && pduWithoutPoll >= pollPdu) || (pollByte != -1 && byteWithoutPoll >= pollByte))
             includePoll = true;
-        else if (pollCheckForTransmission()) {
+        else if (pollControlForTransmissionOrRetransmission()) {
             includePoll = true;
         }
 
@@ -808,7 +808,7 @@ public class AmEntity extends RlcEntity {
         return generateAmdForSdu(segment, includePoll);
     }
 
-    private boolean pollCheckForTransmission() {
+    private boolean pollControlForTransmissionOrRetransmission() {
         // if both the transmission buffer and the retransmission buffer becomes empty (excluding transmitted
         //  RLC SDUs or RLC SDU segments awaiting acknowledgements) after the transmission of the AMD PDU;
         //  or
@@ -897,7 +897,34 @@ public class AmEntity extends RlcEntity {
     }
 
     private void actionPollRetransmitTimerExpired() {
-        // TODO
+        if (pollControlForTransmissionOrRetransmission()) {
+            var first = waitBuffer.getFirst();
+            if (first != null) {
+                var sn = first.value.sdu.sn;
+
+                int initialRetCount = -1;
+
+                var cursor = waitBuffer.getFirst();
+                while (cursor != null) {
+
+                    if (initialRetCount == -1) {
+                        initialRetCount = cursor.value.sdu.retransmissionCount;
+                    }
+
+                    if (snCompareTx(cursor.value.sdu.sn, sn) > 0) {
+                        break;
+                    }
+
+                    if (snCompareTx(cursor.value.sdu.sn, sn) == 0) {
+                        considerRetransmission(cursor.value, cursor.value.sdu.retransmissionCount == initialRetCount);
+                    }
+
+                    cursor = cursor.getNext();
+                }
+            }
+        }
+
+        forcePoll = true;
     }
 
     //======================================================================================================
