@@ -7,14 +7,16 @@ package tr.havelsan.ueransim.app.link.rlc.utils;
 
 public class MissingBlock {
 
+    // Start SN and SO of the missing block
     public int snStart;
     public int soStart;
 
+    // End SN and SO of the missing block
     public int snEnd;
     public int soEnd;
 
-    public int nextSn;
-    public int nextSo;
-
-    public int ackSn;
+    // After finding this missing block, these SN and SO values indicate the resuming point of finding the
+    // next missing block. If no resume to do, these values are set to -1.
+    public int snNext;
+    public int soNext;
 }

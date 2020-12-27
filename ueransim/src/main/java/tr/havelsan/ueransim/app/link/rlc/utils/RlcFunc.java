@@ -6,6 +6,7 @@
 package tr.havelsan.ueransim.app.link.rlc.utils;
 
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IComparator;
+import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.utils.LinkedList;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -202,5 +203,109 @@ public class RlcFunc {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Finds the next missing block and returns that block. If no such a block is found, then null is returned.
+     */
+    public static MissingBlock findMissingBlock(RlcRxBuffer<AmdPdu> rxBuffer, int startSn, int startSo, int endSn, int endSo, int snModulus) {
+        // Start line >= end line ise missin part yok demektir.
+        // Aksi halde bakmaya devam edilir:
+        // Start line ile kesişen bir segment var mı yok mu?
+        // Eğer varsa,
+        //    kesişen segment eğer endlinedan önce (<= değil <) bitiyorsa ve bitmiyorsa durum değişir.
+        //    Bitiyorsa:
+        //        yeni start line söz konusu segmentin bitiş noktası olacak şekilde recursion çağrılır.
+        //    Bitmiyorsa:
+        //        missin part yok demektir.
+        // Eğer yoksa
+        //     missing partın başlangıcı start line olur
+        //     end noktasından önce ve start linedan sonra bir segment veya segment parçası başlangıcı var mı diye bakılır.
+        //     Varsa:
+        //        missin partın end noktası start-end line arasındaki starta en yakın ilk segment parçasının in başlangıcı olır
+        //     Yoksa:
+        //        end line olur
+        // Son
+        //
+        // NOT: Kayıp blokları bulurken döngüsel arama istemediğimiz için snCompareRx yerine snCompareRaw kullanılıyor.
+        //
+
+        if (RlcFunc.snCompareRaw(startSn, endSn) > 0 || (RlcFunc.snCompareRaw(startSn, endSn) == 0 && startSo >= endSo))
+            return null;
+
+        var segment = rxBuffer.firstItemIntersecting(startSn, startSo);
+        if (segment != null) {
+            var endPointSn = segment.value.sn;
+            var endPointSo = segment.value.si.requiresSo() ? segment.value.so + segment.value.size() : segment.value.size();
+
+            // An assertion just in case (checking for infinite recursion)
+            if (RlcFunc.snCompareRaw(startSn, endPointSn) == 0 && endPointSo == startSo) {
+                throw new IncorrectImplementationException(); // bug found
+            }
+
+            return findMissingBlock(rxBuffer, endPointSn, endPointSo, endSn, endSo, snModulus);
+        }
+
+        var res = new MissingBlock();
+        res.snStart = startSn;
+        res.soStart = startSo;
+
+        var cursor = rxBuffer.getList().getFirst();
+
+        while (cursor != null) {
+            var val = cursor.value;
+            var so = val.si.requiresSo() ? val.so : 0;
+
+            if (RlcFunc.snCompareRaw(val.sn, startSn) < 0 || (RlcFunc.snCompareRaw(val.sn, startSn) == 0 && so < startSo)) {
+                cursor = cursor.getNext();
+            } else {
+                break;
+            }
+        }
+
+        if (cursor == null) {
+            res.snEnd = endSn;
+            res.soEnd = endSo;
+
+            // There is no next
+            res.snNext = -1;
+            res.soNext = -1;
+
+            return res;
+        }
+
+        var startPointSn = cursor.value.sn;
+        var startPointSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
+
+        if (RlcFunc.snCompareRaw(startPointSn, endSn) > 0 || (RlcFunc.snCompareRaw(startPointSn, endSn) == 0 && startPointSo > endSo)) {
+            res.snEnd = endSn;
+            res.soEnd = endSo;
+
+            // There is no next
+            res.snNext = -1;
+            res.soNext = -1;
+
+            return res;
+        }
+
+        if (startPointSo != 0) {
+            res.snEnd = startPointSn;
+            res.soEnd = startPointSo - 1;
+
+            if (cursor.value.si.hasLast()) {
+                res.snNext = (startPointSn + 1) % snModulus;
+                res.soNext = 0;
+            } else {
+                res.snNext = startPointSn;
+                res.soNext = (cursor.value.si.requiresSo() ? cursor.value.so : 0) + cursor.value.size();
+            }
+        } else {
+            res.snEnd = (startPointSn - 1 + snModulus) % snModulus;
+            res.soEnd = 0xFFFF;
+
+            res.snNext = startPointSn;
+            res.soNext = 0;
+        }
+        return res;
     }
 }

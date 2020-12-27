@@ -528,7 +528,7 @@ public class AmEntity extends RlcEntity {
             if (snCompareRx(startSn, rxHighestStatus) >= 0)
                 break;
 
-            var missing = findMissingBlock(startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF);
+            var missing = RlcFunc.findMissingBlock(rxBuffer, startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF, snModulus);
             if (missing == null)
                 break;
 
@@ -572,11 +572,11 @@ public class AmEntity extends RlcEntity {
                     break;
                 }
 
-                if (missing.nextSo == -1 || missing.nextSn == -1)
+                if (missing.soNext == -1 && missing.snNext == -1)
                     break;
 
-                startSn = missing.nextSn;
-                startSo = missing.nextSo;
+                startSn = missing.snNext;
+                startSo = missing.soNext;
             }
         }
 
@@ -604,104 +604,6 @@ public class AmEntity extends RlcEntity {
         var stream = new BitOutputStream();
         StatusEncoder.encode(stream, pdu, snLength == 12);
         return stream.toOctetString();
-    }
-
-    private MissingBlock findMissingBlock(int startSn, int startSo, int endSn, int endSo) {
-        // Start line >= end line ise missin part yok demektir.
-        // Aksi halde bakmaya devam edilir:
-        // Start line ile kesişen bir segment var mı yok mu?
-        // Eğer varsa,
-        //    kesişen segment eğer endlinedan önce (<= değil <) bitiyorsa ve bitmiyorsa durum değişir.
-        //    Bitiyorsa:
-        //        yeni start line söz konusu segmentin bitiş noktası olacak şekilde recursion çağrılır.
-        //    Bitmiyorsa:
-        //        missin part yok demektir.
-        // Eğer yoksa
-        //     missing partın başlangıcı start line olur
-        //     end noktasından önce ve start linedan sonra bir segment veya segment parçası başlangıcı var mı diye bakılır.
-        //     Varsa:
-        //        missin partın end noktası start-end line arasındaki starta en yakın ilk segment parçasının in başlangıcı olır
-        //     Yoksa:
-        //        end line olur
-        // Son
-
-        if (RlcFunc.snCompareRaw(startSn, endSn) > 0 || (RlcFunc.snCompareRaw(startSn, endSn) == 0 && startSo >= endSo))
-            return null;
-
-        var segment = rxBuffer.firstItemIntersecting(startSn, startSo);
-        if (segment != null) {
-            var endPointSn = segment.value.sn;
-            var endPointSo = segment.value.si.requiresSo() ? segment.value.so + segment.value.size() : segment.value.size();
-
-            // An assertion just in case (checking for infinite recursion)
-            if (RlcFunc.snCompareRaw(startSn, endPointSn) == 0 && endPointSo == startSo) {
-                throw new IncorrectImplementationException(); // bug found
-            }
-
-            return findMissingBlock(endPointSn, endPointSo, endSn, endSo);
-        }
-
-        var res = new MissingBlock();
-        res.snStart = startSn;
-        res.soStart = startSo;
-
-        var cursor = rxBuffer.getList().getFirst();
-
-        while (cursor != null) {
-            var val = cursor.value;
-            var so = val.si.requiresSo() ? val.so : 0;
-
-            if (RlcFunc.snCompareRaw(val.sn, startSn) < 0 || (RlcFunc.snCompareRaw(val.sn, startSn) == 0 && so < startSo)) {
-                cursor = cursor.getNext();
-            } else {
-                break;
-            }
-        }
-
-        if (cursor == null) {
-            res.snEnd = endSn;
-            res.soEnd = endSo;
-
-            // There is no next
-            res.nextSn = -1;
-            res.nextSo = -1;
-
-            return res;
-        }
-
-        var startPointSn = cursor.value.sn;
-        var startPointSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
-
-        if (RlcFunc.snCompareRaw(startPointSn, endSn) > 0 || (RlcFunc.snCompareRaw(startPointSn, endSn) == 0 && startPointSo > endSo)) {
-            res.snEnd = endSn;
-            res.soEnd = endSo;
-
-            // There is no next
-            res.nextSn = -1;
-            res.nextSo = -1;
-
-            return res;
-        }
-
-        if (startPointSo != 0) {
-            res.snEnd = startPointSn;
-            res.soEnd = startPointSo - 1;
-
-            if (cursor.value.si.hasLast()) {
-                res.nextSn = (startPointSn + 1) % snModulus;
-                res.nextSo = 0;
-            } else {
-                res.nextSn = startPointSn;
-                res.nextSo = (cursor.value.si.requiresSo() ? cursor.value.so : 0) + cursor.value.size();
-            }
-        } else {
-            res.snEnd = (startPointSn - 1 + snModulus) % snModulus;
-            res.soEnd = 0xFFFF;
-
-            res.nextSn = startPointSn;
-            res.nextSo = 0;
-        }
-        return res;
     }
 
     private OctetString createRetPdu(int maxSize) {
