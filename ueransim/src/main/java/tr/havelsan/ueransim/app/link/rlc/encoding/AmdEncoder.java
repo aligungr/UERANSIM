@@ -5,9 +5,9 @@
 
 package tr.havelsan.ueransim.app.link.rlc.encoding;
 
-import tr.havelsan.ueransim.app.link.rlc.RlcConstants;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.ESegmentInfo;
+import tr.havelsan.ueransim.app.link.rlc.utils.RlcConstants;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
