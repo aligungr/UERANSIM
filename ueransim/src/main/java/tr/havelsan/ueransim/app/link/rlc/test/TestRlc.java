@@ -54,7 +54,7 @@ public class TestRlc {
         gnbLower.rlcTask = gnbRlc;
         ueRlc.lower = ueLower;
         ueRlc.upper = ueUpper;
-        gnbRlc.lower = ueLower;
+        gnbRlc.lower = gnbLower;
         gnbRlc.upper = gnbUpper;
         ueUpper.rlcTask = ueRlc;
         gnbUpper.rlcTask = gnbRlc;
