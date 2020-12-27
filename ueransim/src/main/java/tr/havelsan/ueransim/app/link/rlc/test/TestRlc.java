@@ -11,7 +11,6 @@ import tr.havelsan.ueransim.app.link.rlc.entity.TmEntity;
 import tr.havelsan.ueransim.app.link.rlc.entity.UmEntity;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
-import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
@@ -65,6 +64,8 @@ public class TestRlc {
         private int packetId;
         private int receivedCounter;
 
+        private OctetString packet = new OctetString(new byte[TRANSMISSION_SIZE]);
+
         public RlcTask() {
             if (ENTITY == AmEntity.class)
                 entity = AmEntity.newInstance(this, SN_LENGTH, TX_MAX_SIZE, RX_MAX_SIZE, -1,
@@ -116,10 +117,7 @@ public class TestRlc {
         @Override
         public void deliverSdu(RlcEntity entity, OctetString sdu) {
             receivedCounter++;
-
-            var s = new OctetInputStream(sdu);
-            int pi = s.readOctet4().intValue();
-            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s B", tag, pi, receivedCounter * TRANSMISSION_SIZE);
+            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU RECEIVED, TOTAL COUNT %s B", tag, receivedCounter * TRANSMISSION_SIZE);
         }
 
         @Override
