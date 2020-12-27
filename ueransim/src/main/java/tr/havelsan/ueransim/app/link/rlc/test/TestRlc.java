@@ -11,9 +11,6 @@ import tr.havelsan.ueransim.app.link.rlc.entity.TmEntity;
 import tr.havelsan.ueransim.app.link.rlc.entity.UmEntity;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
-import tr.havelsan.ueransim.utils.OctetOutputStream;
-import tr.havelsan.ueransim.utils.console.Console;
-import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
 import java.util.Random;
@@ -61,10 +58,11 @@ public class TestRlc {
         public String tag;
         public RlcTask pair;
 
+        private OctetString packet = new OctetString(new byte[TRANSMISSION_SIZE]);
         private int packetId;
         private int receivedCounter;
 
-        private OctetString packet = new OctetString(new byte[TRANSMISSION_SIZE]);
+        private boolean continueTesting = true;
 
         public RlcTask() {
             if (ENTITY == AmEntity.class)
@@ -93,7 +91,8 @@ public class TestRlc {
                     pair.push(new IwRadioUplink(pdu));
                 }
 
-                upperTransmission();
+                if (continueTesting)
+                    upperTransmission();
             }
         }
 
@@ -101,33 +100,29 @@ public class TestRlc {
             packetId++;
 
             if (packetId >= MAX_PACKET_SEND_COUNT) {
-                Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "ENOUGH TESTING TODAY");
-                System.exit(0);
+                System.out.printf("ENOUGH TESTING TODAY%n");
+                tag = tag + "XX"; // it means transmission is done
+                continueTesting = false;
                 return;
             }
 
-            var packet = new OctetOutputStream();
-            for (int i = 0; i < TRANSMISSION_SIZE / 4; i++) {
-                packet.writeOctet4(packetId);
-            }
-
-            entity.receiveSdu(packet.toOctetString(), packetId);
+            entity.receiveSdu(packet, packetId);
         }
 
         @Override
         public void deliverSdu(RlcEntity entity, OctetString sdu) {
             receivedCounter++;
-            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU RECEIVED, TOTAL COUNT %s B", tag, receivedCounter * TRANSMISSION_SIZE);
+            System.out.printf("[%s] PDU RECEIVED, TOTAL COUNT %s B%n", tag, receivedCounter * TRANSMISSION_SIZE);
         }
 
         @Override
         public void maxRetransmissionReached(RlcEntity entity) {
-            Console.println(AnsiPalette.PAINT_LOG_ERROR, "[%s] RADIO LINK FAILURE", tag);
+            System.out.printf("[%s] RADIO LINK FAILURE%n", tag);
         }
 
         @Override
         public void sduSuccessfulDelivery(RlcEntity entity, int sduId) {
-            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] SDU %s DELIVERED", tag, sduId);
+            System.out.printf("[%s] SDU %s DELIVERED%n", tag, sduId);
         }
     }
 }
