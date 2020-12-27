@@ -54,26 +54,6 @@ public class RlcRxBuffer<T extends RxPdu> {
         currentSize = 0;
     }
 
-    public boolean hasMissingSegment(int sn) {
-        var cursor = RlcFunc.firstItemWithSn(list, sn);
-
-        if (cursor == null || cursor.value._isProcessed)
-            return false;
-
-        int lastByte = -1;
-
-        while (cursor != null && cursor.value.sn == sn) {
-            if (cursor.value.so > lastByte + 1)
-                return true;
-            var newLastByte = cursor.value.so + cursor.value.size() - 1;
-            if (newLastByte > lastByte)
-                lastByte = newLastByte;
-            cursor = cursor.getNext();
-        }
-
-        return false;
-    }
-
     public boolean isAllSegmentsReceived(int sn) {
         var cursor = RlcFunc.firstItemWithSn(list, sn);
 

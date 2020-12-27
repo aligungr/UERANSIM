@@ -158,7 +158,7 @@ public class UmEntity extends RlcEntity {
             // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is no missing byte segment
             //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of
             //  all received segments of this RLC SDU:
-            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !rxBuffer.hasMissingSegment(rxNextReassembly)) {
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && !RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNextReassembly)) {
                 condition = true;
             }
 
@@ -179,7 +179,7 @@ public class UmEntity extends RlcEntity {
             // if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at least one missing byte segment
             //  of the RLC SDU associated with SN = RX_Next_Reassembly before the last byte of all received
             //  segments of this RLC SDU:
-            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && rxBuffer.hasMissingSegment(rxNextReassembly)) {
+            else if (rxNextHighest == (rxNextReassembly + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNextReassembly)) {
                 condition = true;
             }
 
@@ -206,7 +206,7 @@ public class UmEntity extends RlcEntity {
                 // or if RX_Next_Highest = RX_Next_Reassembly + 1 and there is at
                 //  least one missing byte segment of the RLC SDU associated with SN = RX_Next_Reassembly
                 //  before the last byte of all received segments of this RLC SDU
-                (rxNextHighest == rxNextReassembly + 1 && rxBuffer.hasMissingSegment(rxNextReassembly))) {
+                (rxNextHighest == rxNextReassembly + 1 && RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNextReassembly))) {
             // start t-Reassembly
             reassemblyTimer.start(tCurrent);
             // set RX_Timer_Trigger to RX_Next_Highest

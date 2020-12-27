@@ -365,7 +365,7 @@ public class AmEntity extends RlcEntity {
                     ||
                     // if RX_Next_Status_Trigger = RX_Next + 1 and there is no missing byte segment of the SDU
                     //  associated with SN = RX_Next before the last byte of all received segments of this SDU; or
-                    (rxNextStatusTrigger == (rxNext + 1) % snModulus && !rxBuffer.hasMissingSegment(rxNext)) ||
+                    (rxNextStatusTrigger == (rxNext + 1) % snModulus && !RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNext)) ||
                     // if RX_Next_Status_Trigger falls outside of the receiving window and RX_Next_Status_Trigger
                     //  is not equal to RX_Next + AM_Window_Size:
                     (!isInReceiveWindow(rxNextStatusTrigger) && rxNextStatusTrigger != (rxNext + windowSize) % snModulus)) {
@@ -381,7 +381,7 @@ public class AmEntity extends RlcEntity {
             if (snCompareRx(rxNextHighest, (rxNext + 1) % snModulus) > 0
                     // if RX_Next_Highest = RX_Next + 1 and there is at least one missing byte segment of the SDU
                     //  associated with SN = RX_Next before the last byte of all received segments of this SDU:
-                    || (rxNextHighest == (rxNext + 1) % snModulus && rxBuffer.hasMissingSegment(rxNext))) {
+                    || (rxNextHighest == (rxNext + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNext))) {
 
                 // Start t-Reassembly
                 reassemblyTimer.start(tCurrent);
@@ -764,7 +764,7 @@ public class AmEntity extends RlcEntity {
         // or if RX_Next_Highest = RX_Highest_Status + 1 and there is at least one missing byte
         //  segment of the SDU associated with SN = RX_Highest_Status before the last byte
         //  of all received segments of this SDU:
-        else if (rxNextHighest == (rxHighestStatus + 1) % snModulus && rxBuffer.hasMissingSegment(rxHighestStatus)) {
+        else if (rxNextHighest == (rxHighestStatus + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer.getList(), rxHighestStatus)) {
             condition = true;
         }
 
