@@ -309,9 +309,8 @@ public class UmEntity extends RlcEntity {
     public void timerCycle(long currentTime) {
         tCurrent = currentTime;
 
-        if (reassemblyTimer.cycle(currentTime)) {
+        if (reassemblyTimer.cycle(currentTime))
             actionReassemblyTimerExpired();
-        }
     }
 
     @Override
