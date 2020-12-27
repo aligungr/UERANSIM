@@ -22,22 +22,22 @@ public class TestRlc {
 
     // RLC
     private static final int SN_LENGTH = 12;
-    private static final int TX_MAX_SIZE = 1024 * 8;
-    private static final int RX_MAX_SIZE = 1024 * 8;
+    private static final int TX_MAX_SIZE = 1024 * 32;
+    private static final int RX_MAX_SIZE = 1024 * 32;
     private static final int MAX_RET = 8;
     private static final int POLL_RETRANSMIT_PERIOD = 400;
     private static final int REASSEMBLY_PERIOD = 400;
     private static final int STATUS_PROHIBIT_PERIOD = 400;
 
     // UPPER LAYER
-    private static final int TRANSMISSION_PERIOD = 10; // ms'de bir random packet
-    private static final int TRANSMISSION_SIZE = 200;
+    private static final int TRANSMISSION_PERIOD = 1; // ms'de bir random packet
+    private static final int TRANSMISSION_SIZE = 2000;
 
     // LOWER LAYER
-    private static final int OPPORTUNITY_PERIOD_MIN = 5;
-    private static final int OPPORTUNITY_PERIOD_MAX = 15;
-    private static final int OPPORTUNITY_SIZE_MIN = 50;
-    private static final int OPPORTUNITY_SIZE_MAX = 100;
+    private static final int OPPORTUNITY_PERIOD_MIN = 1;
+    private static final int OPPORTUNITY_PERIOD_MAX = 3;
+    private static final int OPPORTUNITY_SIZE_MIN = 1000;
+    private static final int OPPORTUNITY_SIZE_MAX = 3000;
 
     // GENERAL
     private static final int MAX_PACKET_SEND_COUNT = 60000;
@@ -114,14 +114,14 @@ public class TestRlc {
     }
 
     private static class RlcTask extends NtsTask implements IRlcConsumer {
-        public AmEntity amEntity;
+        public RlcEntity entity;
         public LowerTask lower;
         public UpperTask upper;
         public String tag;
 
         public RlcTask() {
             super(true);
-            amEntity = AmEntity.newInstance(this, SN_LENGTH, TX_MAX_SIZE, RX_MAX_SIZE, -1,
+            entity = AmEntity.newInstance(this, SN_LENGTH, TX_MAX_SIZE, RX_MAX_SIZE, -1,
                     -1, MAX_RET, POLL_RETRANSMIT_PERIOD, REASSEMBLY_PERIOD, STATUS_PROHIBIT_PERIOD);
         }
 
@@ -133,17 +133,17 @@ public class TestRlc {
                 var msg = poll();
                 if (msg != null) {
                     if (msg instanceof IwReceiveSdu) {
-                        amEntity.receiveSdu(((IwReceiveSdu) msg).data, ((IwReceiveSdu) msg).sduId);
+                        entity.receiveSdu(((IwReceiveSdu) msg).data, ((IwReceiveSdu) msg).sduId);
                     } else if (msg instanceof IwOpportunity) {
-                        var pdu = amEntity.createPdu(((IwOpportunity) msg).size);
+                        var pdu = entity.createPdu(((IwOpportunity) msg).size);
                         if (pdu != null)
                             lower.push(new IwRadioDownlink(pdu));
                     } else if (msg instanceof IwRadioUplink) {
-                        amEntity.receivePdu(((IwRadioUplink) msg).data);
+                        entity.receivePdu(((IwRadioUplink) msg).data);
                     }
                 }
 
-                amEntity.timerCycle(System.currentTimeMillis());
+                entity.timerCycle(System.currentTimeMillis());
             }
         }
 
@@ -168,6 +168,8 @@ public class TestRlc {
         public int packetId;
         public String tag;
 
+        private int receivedCounter = 0;
+
         public UpperTask() {
             super(true);
         }
@@ -182,9 +184,11 @@ public class TestRlc {
                 } else if (msg instanceof IwSentIndication) {
                     Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] SDU %s DELIVERED", tag, ((IwSentIndication) msg).sduId);
                 } else if (msg instanceof IwRadioUplink) {
+                    receivedCounter++;
+
                     var s = new OctetInputStream(((IwRadioUplink) msg).data);
                     int pi = s.readOctet4().intValue();
-                    Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED", tag, pi);
+                    Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s", tag, pi, receivedCounter);
                 }
             }
         }
