@@ -32,13 +32,13 @@ public class TestRlc {
 
     // UPPER LAYER
     private static final int TRANSMISSION_PERIOD = 1; // ms'de bir random packet
-    private static final int TRANSMISSION_SIZE = 2000;
+    private static final int TRANSMISSION_SIZE = 20000;
 
     // LOWER LAYER
     private static final int OPPORTUNITY_PERIOD_MIN = 1;
     private static final int OPPORTUNITY_PERIOD_MAX = 3;
-    private static final int OPPORTUNITY_SIZE_MIN = 1000;
-    private static final int OPPORTUNITY_SIZE_MAX = 3000;
+    private static final int OPPORTUNITY_SIZE_MIN = 10000;
+    private static final int OPPORTUNITY_SIZE_MAX = 30000;
 
     // GENERAL
     private static final int MAX_PACKET_SEND_COUNT = 60000;
@@ -193,7 +193,7 @@ public class TestRlc {
 
                     var s = new OctetInputStream(((IwRadioUplink) msg).data);
                     int pi = s.readOctet4().intValue();
-                    Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s", tag, pi, receivedCounter);
+                    Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s B", tag, pi, receivedCounter * TRANSMISSION_SIZE);
                 }
             }
         }
