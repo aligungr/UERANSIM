@@ -35,8 +35,6 @@ public class TestRlc {
     private static final int TRANSMISSION_SIZE = 20000;
 
     // LOWER LAYER
-    private static final int OPPORTUNITY_PERIOD_MIN = 1;
-    private static final int OPPORTUNITY_PERIOD_MAX = 3;
     private static final int OPPORTUNITY_SIZE_MIN = 10000;
     private static final int OPPORTUNITY_SIZE_MAX = 30000;
 
@@ -45,84 +43,36 @@ public class TestRlc {
     private static final Class<?> ENTITY = TmEntity.class;
 
     public static void main(String[] args) {
-        var ueLower = new LowerTask();
-        var gnbLower = new LowerTask();
         var ueRlc = new RlcTask();
         var gnbRlc = new RlcTask();
         var ueUpper = new UpperTask();
         var gnbUpper = new UpperTask();
 
-        ueLower.rlcTask = ueRlc;
-        gnbLower.rlcTask = gnbRlc;
-        ueRlc.lower = ueLower;
         ueRlc.upper = ueUpper;
-        gnbRlc.lower = gnbLower;
         gnbRlc.upper = gnbUpper;
         ueUpper.rlcTask = ueRlc;
         gnbUpper.rlcTask = gnbRlc;
-        ueLower.pair = gnbLower;
-        gnbLower.pair = ueLower;
+        ueRlc.pair = gnbRlc;
+        gnbRlc.pair = ueRlc;
 
-        ueLower.tag = "UE";
         ueRlc.tag = "UE";
         ueUpper.tag = "UE";
-        gnbLower.tag = "GNB";
         gnbRlc.tag = "GNB";
         gnbUpper.tag = "GNB";
 
-        ueLower.start();
-        gnbLower.start();
         ueRlc.start();
         gnbRlc.start();
         ueUpper.start();
         gnbUpper.start();
     }
 
-    private static class LowerTask extends NtsTask {
-        public RlcTask rlcTask;
-        public LowerTask pair;
-        public String tag;
-
-        public LowerTask() {
-            super(true);
-        }
-
-        @Override
-        protected void main() {
-            pushDelayed(this::opportunityLoop, nextOpportunityDelay());
-            while (true) {
-                var msg = take();
-
-                if (msg instanceof IwRadioDownlink) {
-                    pair.push(new IwRadioUplink(((IwRadioDownlink) msg).data));
-                } else if (msg instanceof IwRadioUplink) {
-                    rlcTask.push(msg);
-                }
-            }
-        }
-
-        private int nextOpportunityDelay() {
-            return new Random().nextInt(OPPORTUNITY_PERIOD_MAX - OPPORTUNITY_PERIOD_MIN) + OPPORTUNITY_PERIOD_MIN;
-        }
-
-        private int nextOpportunitySize() {
-            return new Random().nextInt(OPPORTUNITY_SIZE_MAX - OPPORTUNITY_SIZE_MIN) + OPPORTUNITY_SIZE_MIN;
-        }
-
-        private void opportunityLoop() {
-            pushDelayed(this::opportunityLoop, nextOpportunityDelay());
-            rlcTask.push(new IwOpportunity(nextOpportunitySize()));
-        }
-    }
-
     private static class RlcTask extends NtsTask implements IRlcConsumer {
         public RlcEntity entity;
-        public LowerTask lower;
         public UpperTask upper;
         public String tag;
+        public RlcTask pair;
 
         public RlcTask() {
-            super(false);
             if (ENTITY == AmEntity.class)
                 entity = AmEntity.newInstance(this, SN_LENGTH, TX_MAX_SIZE, RX_MAX_SIZE, -1,
                         -1, MAX_RET, POLL_RETRANSMIT_PERIOD, REASSEMBLY_PERIOD, STATUS_PROHIBIT_PERIOD);
@@ -139,16 +89,17 @@ public class TestRlc {
                 if (msg != null) {
                     if (msg instanceof IwReceiveSdu) {
                         entity.receiveSdu(((IwReceiveSdu) msg).data, ((IwReceiveSdu) msg).sduId);
-                    } else if (msg instanceof IwOpportunity) {
-                        var pdu = entity.createPdu(((IwOpportunity) msg).size);
-                        if (pdu != null)
-                            lower.push(new IwRadioDownlink(pdu));
                     } else if (msg instanceof IwRadioUplink) {
                         entity.receivePdu(((IwRadioUplink) msg).data);
                     }
                 }
 
                 entity.timerCycle(System.currentTimeMillis());
+
+                var pdu = entity.createPdu(new Random().nextInt(OPPORTUNITY_SIZE_MAX - OPPORTUNITY_SIZE_MIN) + OPPORTUNITY_SIZE_MIN);
+                if (pdu != null) {
+                    pair.push(new IwRadioUplink(pdu));
+                }
             }
         }
 
