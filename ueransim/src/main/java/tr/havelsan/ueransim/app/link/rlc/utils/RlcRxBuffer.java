@@ -68,11 +68,6 @@ public class RlcRxBuffer<T extends RxPdu> {
         return stream.length() == 0 ? null : stream.toOctetString();
     }
 
-    public boolean isDelivered(int sn) {
-        var cursor = RlcFunc.firstItemWithSn(list, sn);
-        return cursor != null && cursor.value._isProcessed;
-    }
-
     public void discardSegmentIf(ISnPredicate predicate) {
         var cursor = list.getFirst();
         while (cursor != null) {

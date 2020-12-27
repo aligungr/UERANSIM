@@ -118,7 +118,7 @@ public class UmEntity extends RlcEntity {
             //  SN > current RX_Next_Reassembly that has not been reassembled and delivered to upper layer.
             if (x == rxNextReassembly) {
                 int n = rxNextReassembly;
-                while (rxBuffer.isDelivered(n)) {
+                while (RlcFunc.isDelivered(rxBuffer.getList(), n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxNextReassembly = n;
@@ -135,7 +135,7 @@ public class UmEntity extends RlcEntity {
                 // Set RX_Next_Reassembly to the SN of the first SN >= (RX_Next_Highest – UM_Window_Size)
                 //  that has not been reassembled and delivered to upper layer.
                 int n = (rxNextHighest - windowSize + snModulus) % snModulus;
-                while (rxBuffer.isDelivered(n)) {
+                while (RlcFunc.isDelivered(rxBuffer.getList(), n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxNextReassembly = n;
@@ -195,7 +195,7 @@ public class UmEntity extends RlcEntity {
     private void actionsOnReassemblyTimerExpired() {
         // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
         rxNextReassembly = rxTimerTrigger;
-        while (rxBuffer.isDelivered(rxNextReassembly))
+        while (RlcFunc.isDelivered(rxBuffer.getList(), rxNextReassembly))
             rxNextReassembly = (rxNextReassembly + 1) % snModulus;
 
         // Discard all segments with SN < updated RX_Next_Reassembly

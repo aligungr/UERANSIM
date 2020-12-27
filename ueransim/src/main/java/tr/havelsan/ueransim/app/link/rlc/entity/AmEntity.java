@@ -339,7 +339,7 @@ public class AmEntity extends RlcEntity {
             //  SN > current RX_Highest_Status for which not all bytes have been received.
             if (x == rxHighestStatus) {
                 int n = rxHighestStatus;
-                while (rxBuffer.isDelivered(n)) {
+                while (RlcFunc.isDelivered(rxBuffer.getList(), n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxHighestStatus = n;
@@ -751,7 +751,7 @@ public class AmEntity extends RlcEntity {
         // update RX_Highest_Status to the SN of the first RLC SDU with
         //  SN >= RX_Next_Status_Trigger for which not all bytes have been received;
         int sn = rxNextStatusTrigger;
-        while (rxBuffer.isDelivered(sn))
+        while (RlcFunc.isDelivered(rxBuffer.getList(), sn))
             sn = (sn + 1) % snModulus;
         rxHighestStatus = sn;
 

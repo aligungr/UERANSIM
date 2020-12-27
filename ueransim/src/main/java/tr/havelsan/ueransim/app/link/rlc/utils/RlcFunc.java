@@ -396,7 +396,7 @@ public class RlcFunc {
      * Returns the first item that covers given SN and SO. In other words, first we find the first PDU with SN.
      * Then while maintaining the SN=sn invariant, we look for the first PDU that overlaps with the given SO.
      */
-    public static  <T extends RxPdu> LinkedList<T>.Item firstItemIntersecting(LinkedList<T> list, int sn, int so) {
+    public static <T extends RxPdu> LinkedList<T>.Item firstItemIntersecting(LinkedList<T> list, int sn, int so) {
         var cursor = RlcFunc.firstItemWithSn(list, sn);
         while (cursor != null && cursor.value.sn == sn) {
             var startSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
@@ -408,5 +408,14 @@ public class RlcFunc {
             cursor = cursor.getNext();
         }
         return null;
+    }
+
+    /**
+     * Returns true if the given SN is already delivered (processed). If no such an RX PDU is found,
+     * it is treated as it is already processed.
+     */
+    public static <T extends RxPdu> boolean isDelivered(LinkedList<T> list, int sn) {
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
+        return cursor != null && cursor.value._isProcessed;
     }
 }
