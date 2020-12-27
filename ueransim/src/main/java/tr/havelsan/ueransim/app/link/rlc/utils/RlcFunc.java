@@ -234,7 +234,7 @@ public class RlcFunc {
         if (RlcFunc.snCompareRaw(startSn, endSn) > 0 || (RlcFunc.snCompareRaw(startSn, endSn) == 0 && startSo >= endSo))
             return null;
 
-        var segment = rxBuffer.firstItemIntersecting(startSn, startSo);
+        var segment = RlcFunc.firstItemIntersecting(rxBuffer.getList(), startSn, startSo);
         if (segment != null) {
             var endPointSn = segment.value.sn;
             var endPointSo = segment.value.si.requiresSo() ? segment.value.so + segment.value.size() : segment.value.size();
@@ -390,5 +390,23 @@ public class RlcFunc {
         }
 
         return false;
+    }
+
+    /**
+     * Returns the first item that covers given SN and SO. In other words, first we find the first PDU with SN.
+     * Then while maintaining the SN=sn invariant, we look for the first PDU that overlaps with the given SO.
+     */
+    public static  <T extends RxPdu> LinkedList<T>.Item firstItemIntersecting(LinkedList<T> list, int sn, int so) {
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
+        while (cursor != null && cursor.value.sn == sn) {
+            var startSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
+            var endSo = startSo + cursor.value.size();
+
+            if (so >= startSo && so < endSo) {
+                return cursor;
+            }
+            cursor = cursor.getNext();
+        }
+        return null;
     }
 }
