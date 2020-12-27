@@ -6,9 +6,12 @@
 package tr.havelsan.ueransim.app.link.rlc.utils;
 
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IComparator;
+import tr.havelsan.ueransim.app.link.rlc.interfaces.ISnCompare;
+import tr.havelsan.ueransim.app.link.rlc.interfaces.ISnPredicate;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.pdu.RxPdu;
 import tr.havelsan.ueransim.utils.LinkedList;
+import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
@@ -417,5 +420,60 @@ public class RlcFunc {
     public static <T extends RxPdu> boolean isDelivered(LinkedList<T> list, int sn) {
         var cursor = RlcFunc.firstItemWithSn(list, sn);
         return cursor != null && cursor.value._isProcessed;
+    }
+
+    /*
+     * Removes all the RX PDUs from the list, that satisfy the given predicate.
+     * Returns the total size to be decreased in bytes. Note that, if an item is already processed, then
+     * its size is treated as zero. Because buffer size is already decremented while setting isProcessed = true.
+     */
+    public static <T extends RxPdu> int discardRxPduIf(LinkedList<T> list, ISnPredicate predicate) {
+        int decreased = 0;
+
+        var cursor = list.getFirst();
+        while (cursor != null) {
+            if (predicate.decide(cursor.value.sn)) {
+                if (!cursor.value._isProcessed)
+                    decreased += cursor.value.size();
+                cursor = list.removeAndNext(cursor);
+            } else {
+                cursor = cursor.getNext();
+            }
+        }
+
+        return decreased;
+    }
+
+    /**
+     * Inserts the given RX PDU to the RX buffer as sorted. Comparison is performed according to given comparator.
+     * Size of the added item is returned. Note that this function always succeeds. Buffer size checking is not
+     * done in this function.
+     */
+    public static <T extends RxPdu> int insertToRxBuffer(LinkedList<T> list, T item, ISnCompare compare) {
+        RlcFunc.insertSortedLinkedList(list, item, (a, b) -> {
+            if (a.sn == b.sn)
+                return Integer.compare(a.so, b.so);
+            return compare.compare(a.sn, b.sn);
+        });
+        return item.data.length;
+    }
+
+    /**
+     * Performs reassembling operation for given RX buffer and SN.
+     * Reassembled parts are not removed from the list. Just isProcessed=true is assigned for the items.
+     * Reassembled full data is written into the given stream, and total number of bytes written is returned.
+     * If the given SN value is already processed, the behaviour is undefined. So don't do this.
+     */
+    public static <T extends RxPdu> int reassemble(LinkedList<T> list, int sn, OctetOutputStream stream) {
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
+        int written = 0;
+
+        while (cursor != null && cursor.value.sn == sn) {
+            stream.writeOctetString(cursor.value.data);
+            written += cursor.value.size();
+            cursor.value._isProcessed = true;
+            cursor = cursor.getNext();
+        }
+        return written;
     }
 }

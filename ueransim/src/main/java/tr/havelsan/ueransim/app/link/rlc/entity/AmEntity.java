@@ -24,6 +24,7 @@ public class AmEntity extends RlcEntity {
     private int snModulus;
     private int windowSize;
     private int txMaxSize;
+    private int rxMaxSize;
     private int pollPdu;
     private int pollByte;
     private int maxRetThreshold;
@@ -39,8 +40,11 @@ public class AmEntity extends RlcEntity {
     private int txCurrentSize;
     private LinkedList<RlcSduSegment> txBuffer;
 
-    // Buffers
-    private RlcRxBuffer<AmdPdu> rxBuffer;
+    // RX buffer
+    private int rxCurrentSize;
+    private LinkedList<AmdPdu> rxBuffer;
+
+    // Other Buffers
     private LinkedList<RlcSduSegment> retBuffer;
     private LinkedList<RlcSduSegment> waitBuffer;
     private LinkedList<RlcSduSegment> ackBuffer;
@@ -78,8 +82,8 @@ public class AmEntity extends RlcEntity {
 
         var am = new AmEntity(consumer);
         am.snLength = snLength;
+        am.rxMaxSize = rxMaxSize;
         am.txMaxSize = txMaxSize;
-        am.rxBuffer = new RlcRxBuffer<>(am::snCompareRx, rxMaxSize);
         am.pollPdu = pollPdu;
         am.pollByte = pollByte;
         am.maxRetThreshold = maxRetThreshold;
@@ -88,6 +92,7 @@ public class AmEntity extends RlcEntity {
         am.pollRetransmitTimer = new RlcTimer(pollRetransmitPeriod);
         am.reassemblyTimer = new RlcTimer(reassemblyPeriod);
         am.statusProhibitTimer = new RlcTimer(statusProhibitPeriod);
+        am.rxBuffer = new LinkedList<>();
         am.txBuffer = new LinkedList<>();
         am.retBuffer = new LinkedList<>();
         am.waitBuffer = new LinkedList<>();
@@ -106,7 +111,9 @@ public class AmEntity extends RlcEntity {
         txCurrentSize = 0;
         txBuffer.clear();
 
+        rxCurrentSize = 0;
         rxBuffer.clear();
+
         retBuffer.clear();
         waitBuffer.clear();
         ackBuffer.clear();
@@ -234,7 +241,7 @@ public class AmEntity extends RlcEntity {
             return;
         }
 
-        if (!rxBuffer.hasRoomFor(pdu)) {
+        if (rxCurrentSize + pdu.size() > rxMaxSize) {
             // No room in RX buffer, discard PDU.
             triggerControl.run();
             return;
@@ -248,13 +255,13 @@ public class AmEntity extends RlcEntity {
 
         // if byte segment numbers y to z of the RLC SDU with SN = x have been received before:
         //  discard the received AMD PDU
-        if (RlcFunc.isAlreadyReceived(rxBuffer.getList(), pdu.sn, pdu.so, pdu.data.length)) {
+        if (RlcFunc.isAlreadyReceived(rxBuffer, pdu.sn, pdu.so, pdu.data.length)) {
             triggerControl.run();
             return;
         }
 
         // Place the received AMD PDU in the reception buffer
-        rxBuffer.add(pdu);
+        rxCurrentSize += RlcFunc.insertToRxBuffer(rxBuffer, pdu, this::snCompareRx);
 
         // Actions when an AMD PDU is placed in the reception buffer
         actionsOnReception(pdu);
@@ -327,11 +334,13 @@ public class AmEntity extends RlcEntity {
         if (snCompareRx(x, rxNextHighest) >= 0)
             rxNextHighest = (x + 1) % snModulus;
 
-        if (RlcFunc.isAllSegmentsReceived(rxBuffer.getList(), x)) {
+        if (RlcFunc.isAllSegmentsReceived(rxBuffer, x)) {
             // Reassemble the RLC SDU from AMD PDU(s) with SN = x,
             //  remove RLC headers when doing so and deliver the reassembled RLC SDU to upper layer;
-            var reassembled = rxBuffer.reassemble(pdu.sn);
-            if (reassembled != null) {
+            var reassembleStream = new OctetOutputStream();
+            rxCurrentSize -= RlcFunc.reassemble(rxBuffer, pdu.sn, reassembleStream);
+            var reassembled = reassembleStream.toOctetString();
+            if (reassembled.length > 0) {
                 consumer.deliverSdu(this, reassembled);
             }
 
@@ -339,7 +348,7 @@ public class AmEntity extends RlcEntity {
             //  SN > current RX_Highest_Status for which not all bytes have been received.
             if (x == rxHighestStatus) {
                 int n = rxHighestStatus;
-                while (RlcFunc.isDelivered(rxBuffer.getList(), n)) {
+                while (RlcFunc.isDelivered(rxBuffer, n)) {
                     n = (n + 1) % snModulus;
                 }
                 rxHighestStatus = n;
@@ -348,7 +357,7 @@ public class AmEntity extends RlcEntity {
             // If x = RX_Next: update RX_Next to the SN of the first RLC SDU with SN > current RX_Next
             //  for which not all bytes have been received.
             if (x == rxNext) {
-                var rxList = rxBuffer.getList();
+                var rxList = rxBuffer;
 
                 while (!rxList.isEmpty() && rxList.getFirst().value._isProcessed && rxList.getFirst().value.sn == rxNext) {
                     do {
@@ -365,7 +374,7 @@ public class AmEntity extends RlcEntity {
                     ||
                     // if RX_Next_Status_Trigger = RX_Next + 1 and there is no missing byte segment of the SDU
                     //  associated with SN = RX_Next before the last byte of all received segments of this SDU; or
-                    (rxNextStatusTrigger == (rxNext + 1) % snModulus && !RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNext)) ||
+                    (rxNextStatusTrigger == (rxNext + 1) % snModulus && !RlcFunc.hasMissingSegment(rxBuffer, rxNext)) ||
                     // if RX_Next_Status_Trigger falls outside of the receiving window and RX_Next_Status_Trigger
                     //  is not equal to RX_Next + AM_Window_Size:
                     (!isInReceiveWindow(rxNextStatusTrigger) && rxNextStatusTrigger != (rxNext + windowSize) % snModulus)) {
@@ -381,7 +390,7 @@ public class AmEntity extends RlcEntity {
             if (snCompareRx(rxNextHighest, (rxNext + 1) % snModulus) > 0
                     // if RX_Next_Highest = RX_Next + 1 and there is at least one missing byte segment of the SDU
                     //  associated with SN = RX_Next before the last byte of all received segments of this SDU:
-                    || (rxNextHighest == (rxNext + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer.getList(), rxNext))) {
+                    || (rxNextHighest == (rxNext + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer, rxNext))) {
 
                 // Start t-Reassembly
                 reassemblyTimer.start(tCurrent);
@@ -528,7 +537,7 @@ public class AmEntity extends RlcEntity {
             if (snCompareRx(startSn, rxHighestStatus) >= 0)
                 break;
 
-            var missing = RlcFunc.findMissingBlock(rxBuffer.getList(), startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF, snModulus);
+            var missing = RlcFunc.findMissingBlock(rxBuffer, startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF, snModulus);
             if (missing == null)
                 break;
 
@@ -582,7 +591,7 @@ public class AmEntity extends RlcEntity {
 
         // Then find the ACK_SN
         int ackSn = rxNext;
-        var cursor = rxBuffer.getList().getFirst();
+        var cursor = rxBuffer.getFirst();
         while (cursor != null) {
             if (snCompareRx(cursor.value.sn, rxHighestStatus) >= 0)
                 break;
@@ -751,7 +760,7 @@ public class AmEntity extends RlcEntity {
         // update RX_Highest_Status to the SN of the first RLC SDU with
         //  SN >= RX_Next_Status_Trigger for which not all bytes have been received;
         int sn = rxNextStatusTrigger;
-        while (RlcFunc.isDelivered(rxBuffer.getList(), sn))
+        while (RlcFunc.isDelivered(rxBuffer, sn))
             sn = (sn + 1) % snModulus;
         rxHighestStatus = sn;
 
@@ -764,7 +773,7 @@ public class AmEntity extends RlcEntity {
         // or if RX_Next_Highest = RX_Highest_Status + 1 and there is at least one missing byte
         //  segment of the SDU associated with SN = RX_Highest_Status before the last byte
         //  of all received segments of this SDU:
-        else if (rxNextHighest == (rxHighestStatus + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer.getList(), rxHighestStatus)) {
+        else if (rxNextHighest == (rxHighestStatus + 1) % snModulus && RlcFunc.hasMissingSegment(rxBuffer, rxHighestStatus)) {
             condition = true;
         }
 
