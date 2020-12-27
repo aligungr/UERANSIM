@@ -110,12 +110,12 @@ public class TestRlc {
 
         @Override
         public void maxRetransmissionReached(RlcEntity entity) {
-            upper.push(new IwRadioFailure());
+            Console.println(AnsiPalette.PAINT_LOG_ERROR, "[%s] RADIO LINK FAILURE", tag);
         }
 
         @Override
         public void sduSuccessfulDelivery(RlcEntity entity, int sduId) {
-            upper.push(new IwSentIndication(sduId));
+            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] SDU %s DELIVERED", tag, sduId);
         }
     }
 
@@ -126,32 +126,23 @@ public class TestRlc {
 
         private int receivedCounter = 0;
 
-        public UpperTask() {
-            super(true);
-        }
-
         @Override
         protected void main() {
-            pushDelayed(this::transmitLoop, TRANSMISSION_PERIOD);
             while (true) {
-                var msg = take();
-                if (msg instanceof IwRadioFailure) {
-                    Console.println(AnsiPalette.PAINT_LOG_ERROR, "[%s] RADIO LINK FAILURE", tag);
-                } else if (msg instanceof IwSentIndication) {
-                    Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] SDU %s DELIVERED", tag, ((IwSentIndication) msg).sduId);
-                } else if (msg instanceof IwRadioUplink) {
+                var msg = poll();
+                if (msg instanceof IwRadioUplink) {
                     receivedCounter++;
 
                     var s = new OctetInputStream(((IwRadioUplink) msg).data);
                     int pi = s.readOctet4().intValue();
                     Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s B", tag, pi, receivedCounter * TRANSMISSION_SIZE);
                 }
+
+                upperTransmission();
             }
         }
 
-        private void transmitLoop() {
-            pushDelayed(this::transmitLoop, TRANSMISSION_PERIOD);
-
+        private void upperTransmission() {
             packetId++;
 
             if (packetId >= MAX_PACKET_SEND_COUNT) {
