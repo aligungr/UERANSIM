@@ -331,4 +331,14 @@ public class RlcFunc {
         }
         return size <= 0;
     }
+
+    /*
+     * Returns the first item in the list such that SN=sn. If no such an item is found, then null is returned.
+     */
+    public static <T extends RxPdu> LinkedList<T>.Item firstItemWithSn(LinkedList<T> list, int sn) {
+        var cursor = list.getFirst();
+        while (cursor != null && cursor.value.sn != sn)
+            cursor = cursor.getNext();
+        return cursor;
+    }
 }

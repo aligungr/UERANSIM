@@ -54,17 +54,8 @@ public class RlcRxBuffer<T extends RxPdu> {
         currentSize = 0;
     }
 
-    public LinkedList<T>.Item firstItemWithSn(int sn) {
-        var cursor = list.getFirst();
-        if (cursor == null)
-            return null;
-        while (cursor != null && cursor.value.sn != sn)
-            cursor = cursor.getNext();
-        return cursor;
-    }
-
     public boolean hasMissingSegment(int sn) {
-        var cursor = firstItemWithSn(sn);
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
 
         if (cursor == null || cursor.value._isProcessed)
             return false;
@@ -84,7 +75,7 @@ public class RlcRxBuffer<T extends RxPdu> {
     }
 
     public boolean isAllSegmentsReceived(int sn) {
-        var cursor = firstItemWithSn(sn);
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
 
         if (cursor != null && cursor.value._isProcessed)
             return false;
@@ -105,7 +96,7 @@ public class RlcRxBuffer<T extends RxPdu> {
     }
 
     public OctetString reassemble(int sn) {
-        var cursor = firstItemWithSn(sn);
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
 
         var stream = new OctetOutputStream();
         while (cursor != null && cursor.value.sn == sn) {
@@ -119,7 +110,7 @@ public class RlcRxBuffer<T extends RxPdu> {
     }
 
     public boolean isDelivered(int sn) {
-        var cursor = firstItemWithSn(sn);
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
         return cursor != null && cursor.value._isProcessed;
     }
 
@@ -137,7 +128,7 @@ public class RlcRxBuffer<T extends RxPdu> {
     }
 
     public LinkedList<T>.Item firstItemIntersecting(int sn, int so) {
-        var cursor = firstItemWithSn(sn);
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
         while (cursor != null && cursor.value.sn == sn) {
             var startSo = cursor.value.si.requiresSo() ? cursor.value.so : 0;
             var endSo = startSo + cursor.value.size();
