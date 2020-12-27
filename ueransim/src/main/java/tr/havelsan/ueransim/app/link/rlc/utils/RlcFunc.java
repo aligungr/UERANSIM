@@ -219,7 +219,8 @@ public class RlcFunc {
         // Eğer varsa,
         //    kesişen segment eğer endlinedan önce (<= değil <) bitiyorsa ve bitmiyorsa durum değişir.
         //    Bitiyorsa:
-        //        yeni start line söz konusu segmentin bitiş noktası olacak şekilde recursion çağrılır.
+        //        ve segment sağ kenara sahip değilse yeni start line söz konusu segmentin bitiş noktası olacak şekilde recursion çağrılır.
+        //        ve segment sağ kenara sahipise (hasLast) başlangıcı sn=SN+1 ve so=0 olacak şekilde recursion çağrılır.
         //    Bitmiyorsa:
         //        missin part yok demektir.
         // Eğer yoksa
@@ -247,7 +248,11 @@ public class RlcFunc {
                 throw new IncorrectImplementationException(); // bug found
             }
 
-            return findMissingBlock(rxBuffer, endPointSn, endPointSo, endSn, endSo, snModulus);
+            if (segment.value.si.hasLast()) {
+                return findMissingBlock(rxBuffer, (endPointSn + 1) % snModulus, 0, endSn, endSo, snModulus);
+            } else {
+                return findMissingBlock(rxBuffer, endPointSn, endPointSo, endSn, endSo, snModulus);
+            }
         }
 
         var res = new MissingBlock();
