@@ -106,4 +106,35 @@ public class RlcFunc {
         if (!si.hasFirst()) res += 2;
         return res;
     }
+
+    /**
+     * Performs segmentation for AM entity. The input parameter sdu is the segment to be segmented.
+     * This function must be called only if the maxSize is smaller than segments size so that the
+     * segmentation operation becomes meaningful.
+     * <p>
+     * After the successful operation, the input segment is modified and smaller part becomes that segment.
+     * The other remaining part is returned from method. That part should be added again to the buffer.
+     * <p>
+     * This function may fail if the size is not big enough for (header + 1) byte.
+     * In such a case, parameter is not modified, and a null value is returned.
+     */
+    public static RlcSduSegment amPerformSegmentation(RlcSduSegment sdu, int maxSize, int snLength) {
+        int headerSize = RlcFunc.amdPduHeaderSize(snLength, sdu.si);
+        if (headerSize + 1 > maxSize)
+            return null;
+
+        var si = sdu.si;
+
+        int overflowed = headerSize + sdu.size - maxSize;
+
+        sdu.si = si.asNotLast();
+        sdu.size -= overflowed;
+
+        var next = new RlcSduSegment(sdu.sdu);
+        next.si = si.asNotFirst();
+        next.size = overflowed;
+        next.so = sdu.so + sdu.size;
+
+        return next;
+    }
 }

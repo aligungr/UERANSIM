@@ -160,26 +160,6 @@ public class AmEntity extends RlcEntity {
                 && snCompareTx(txNext, (txNextAck + windowSize) % snModulus) < 0);
     }
 
-    private RlcSduSegment performSegmentation(RlcSduSegment sdu, int maxSize) {
-        int headerSize = RlcFunc.amdPduHeaderSize(snLength, sdu.si);
-        if (headerSize + 1 > maxSize)
-            return null;
-
-        var si = sdu.si;
-
-        int overflowed = headerSize + sdu.size - maxSize;
-
-        sdu.si = si.asNotLast();
-        sdu.size -= overflowed;
-
-        var next = new RlcSduSegment(sdu.sdu);
-        next.si = si.asNotFirst();
-        next.size = overflowed;
-        next.so = sdu.so + sdu.size;
-
-        return next;
-    }
-
     private boolean soOverlaps(int start1, int end1, int start2, int end2) {
         return start1 < start2 ? (end1 == -1 || end1 >= start2) : (end2 == -1 || start1 <= end2);
     }
@@ -776,7 +756,7 @@ public class AmEntity extends RlcEntity {
 
         // Perform segmentation if it is needed
         if (headerSize + segment.size > maxSize) {
-            var next = performSegmentation(segment, maxSize);
+            var next = RlcFunc.amPerformSegmentation(segment, maxSize, snLength);
             retBuffer.addFirst(next);
         }
 
@@ -813,7 +793,7 @@ public class AmEntity extends RlcEntity {
 
         // Perform segmentation if it is needed
         if (headerSize + segment.size > maxSize) {
-            var next = performSegmentation(segment, maxSize);
+            var next = RlcFunc.amPerformSegmentation(segment, maxSize, snLength);
             txBuffer.addFirst(next);
         }
 
