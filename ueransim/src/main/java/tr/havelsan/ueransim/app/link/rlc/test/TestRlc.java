@@ -31,7 +31,6 @@ public class TestRlc {
     private static final int STATUS_PROHIBIT_PERIOD = 400;
 
     // UPPER LAYER
-    private static final int TRANSMISSION_PERIOD = 1; // ms'de bir random packet
     private static final int TRANSMISSION_SIZE = 20000;
 
     // LOWER LAYER
@@ -45,32 +44,24 @@ public class TestRlc {
     public static void main(String[] args) {
         var ueRlc = new RlcTask();
         var gnbRlc = new RlcTask();
-        var ueUpper = new UpperTask();
-        var gnbUpper = new UpperTask();
 
-        ueRlc.upper = ueUpper;
-        gnbRlc.upper = gnbUpper;
-        ueUpper.rlcTask = ueRlc;
-        gnbUpper.rlcTask = gnbRlc;
         ueRlc.pair = gnbRlc;
         gnbRlc.pair = ueRlc;
 
         ueRlc.tag = "UE";
-        ueUpper.tag = "UE";
         gnbRlc.tag = "GNB";
-        gnbUpper.tag = "GNB";
 
         ueRlc.start();
         gnbRlc.start();
-        ueUpper.start();
-        gnbUpper.start();
     }
 
     private static class RlcTask extends NtsTask implements IRlcConsumer {
         public RlcEntity entity;
-        public UpperTask upper;
         public String tag;
         public RlcTask pair;
+
+        private int packetId;
+        private int receivedCounter;
 
         public RlcTask() {
             if (ENTITY == AmEntity.class)
@@ -87,9 +78,7 @@ public class TestRlc {
             while (true) {
                 var msg = poll();
                 if (msg != null) {
-                    if (msg instanceof IwReceiveSdu) {
-                        entity.receiveSdu(((IwReceiveSdu) msg).data, ((IwReceiveSdu) msg).sduId);
-                    } else if (msg instanceof IwRadioUplink) {
+                    if (msg instanceof IwRadioUplink) {
                         entity.receivePdu(((IwRadioUplink) msg).data);
                     }
                 }
@@ -99,43 +88,6 @@ public class TestRlc {
                 var pdu = entity.createPdu(new Random().nextInt(OPPORTUNITY_SIZE_MAX - OPPORTUNITY_SIZE_MIN) + OPPORTUNITY_SIZE_MIN);
                 if (pdu != null) {
                     pair.push(new IwRadioUplink(pdu));
-                }
-            }
-        }
-
-        @Override
-        public void deliverSdu(RlcEntity entity, OctetString sdu) {
-            upper.push(new IwRadioUplink(sdu));
-        }
-
-        @Override
-        public void maxRetransmissionReached(RlcEntity entity) {
-            Console.println(AnsiPalette.PAINT_LOG_ERROR, "[%s] RADIO LINK FAILURE", tag);
-        }
-
-        @Override
-        public void sduSuccessfulDelivery(RlcEntity entity, int sduId) {
-            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] SDU %s DELIVERED", tag, sduId);
-        }
-    }
-
-    private static class UpperTask extends NtsTask {
-        public RlcTask rlcTask;
-        public int packetId;
-        public String tag;
-
-        private int receivedCounter = 0;
-
-        @Override
-        protected void main() {
-            while (true) {
-                var msg = poll();
-                if (msg instanceof IwRadioUplink) {
-                    receivedCounter++;
-
-                    var s = new OctetInputStream(((IwRadioUplink) msg).data);
-                    int pi = s.readOctet4().intValue();
-                    Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s B", tag, pi, receivedCounter * TRANSMISSION_SIZE);
                 }
 
                 upperTransmission();
@@ -156,7 +108,26 @@ public class TestRlc {
                 packet.writeOctet4(packetId);
             }
 
-            rlcTask.push(new IwReceiveSdu(packet.toOctetString(), packetId));
+            entity.receiveSdu(packet.toOctetString(), packetId);
+        }
+
+        @Override
+        public void deliverSdu(RlcEntity entity, OctetString sdu) {
+            receivedCounter++;
+
+            var s = new OctetInputStream(sdu);
+            int pi = s.readOctet4().intValue();
+            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] PDU %s RECEIVED, TOTAL COUNT %s B", tag, pi, receivedCounter * TRANSMISSION_SIZE);
+        }
+
+        @Override
+        public void maxRetransmissionReached(RlcEntity entity) {
+            Console.println(AnsiPalette.PAINT_LOG_ERROR, "[%s] RADIO LINK FAILURE", tag);
+        }
+
+        @Override
+        public void sduSuccessfulDelivery(RlcEntity entity, int sduId) {
+            Console.println(AnsiPalette.PAINT_LOG_SUCCESS, "[%s] SDU %s DELIVERED", tag, sduId);
         }
     }
 }
