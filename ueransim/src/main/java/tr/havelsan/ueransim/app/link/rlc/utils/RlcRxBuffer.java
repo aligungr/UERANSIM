@@ -41,12 +41,8 @@ public class RlcRxBuffer<T extends RxPdu> {
         return list;
     }
 
-    public boolean hasRoomFor(int size) {
-        return currentSize + size <= maxSize;
-    }
-
     public boolean hasRoomFor(T rxPdu) {
-        return hasRoomFor(rxPdu.data.length);
+        return currentSize + rxPdu.size() <= maxSize;
     }
 
     public void clear() {
