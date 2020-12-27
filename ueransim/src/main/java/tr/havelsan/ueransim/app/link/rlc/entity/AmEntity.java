@@ -327,7 +327,7 @@ public class AmEntity extends RlcEntity {
         if (snCompareRx(x, rxNextHighest) >= 0)
             rxNextHighest = (x + 1) % snModulus;
 
-        if (rxBuffer.isAllSegmentsReceived(x)) {
+        if (RlcFunc.isAllSegmentsReceived(rxBuffer.getList(), x)) {
             // Reassemble the RLC SDU from AMD PDU(s) with SN = x,
             //  remove RLC headers when doing so and deliver the reassembled RLC SDU to upper layer;
             var reassembled = rxBuffer.reassemble(pdu.sn);

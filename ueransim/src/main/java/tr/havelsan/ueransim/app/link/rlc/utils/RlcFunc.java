@@ -365,4 +365,30 @@ public class RlcFunc {
 
         return false;
     }
+
+    /*
+     * Returns true if all segments are received with the given SN. This function also means we are ready to reassemble
+     * relevant segments. Therefore, if no such an SN is found, then false is returned. Similarly, if the SN is already
+     * processed, then false is returned.
+     */
+    public static <T extends RxPdu> boolean isAllSegmentsReceived(LinkedList<T> list, int sn) {
+        var cursor = RlcFunc.firstItemWithSn(list, sn);
+
+        if (cursor != null && cursor.value._isProcessed)
+            return false;
+
+        int last = -1;
+        while (cursor != null && cursor.value.sn == sn) {
+            if (cursor.value.so > last + 1)
+                return false;
+            if (cursor.value.si.hasLast())
+                return true;
+            int newLast = cursor.value.so + cursor.value.size() - 1;
+            if (newLast > last)
+                last = newLast;
+            cursor = cursor.getNext();
+        }
+
+        return false;
+    }
 }

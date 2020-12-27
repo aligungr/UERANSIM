@@ -106,7 +106,7 @@ public class UmEntity extends RlcEntity {
         int x = pdu.sn;
 
         // If all byte segments with SN = x are received
-        if (rxBuffer.isAllSegmentsReceived(x)) {
+        if (RlcFunc.isAllSegmentsReceived(rxBuffer.getList(), x)) {
             // Reassemble the RLC SDU from all byte segments with SN = x, remove RLC headers and deliver
             //  the reassembled RLC SDU to upper layer.
             var reassembled = rxBuffer.reassemble(pdu.sn);

@@ -54,27 +54,6 @@ public class RlcRxBuffer<T extends RxPdu> {
         currentSize = 0;
     }
 
-    public boolean isAllSegmentsReceived(int sn) {
-        var cursor = RlcFunc.firstItemWithSn(list, sn);
-
-        if (cursor != null && cursor.value._isProcessed)
-            return false;
-
-        int last = -1;
-        while (cursor != null && cursor.value.sn == sn) {
-            if (cursor.value.so > last + 1)
-                return false;
-            if (cursor.value.si.hasLast())
-                return true;
-            int newLast = cursor.value.so + cursor.value.size() - 1;
-            if (newLast > last)
-                last = newLast;
-            cursor = cursor.getNext();
-        }
-
-        return false;
-    }
-
     public OctetString reassemble(int sn) {
         var cursor = RlcFunc.firstItemWithSn(list, sn);
 
