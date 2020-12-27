@@ -837,12 +837,10 @@ public class AmEntity extends RlcEntity {
     public void timerCycle(long currentTime) {
         tCurrent = currentTime;
 
-        if (pollRetransmitTimer.cycle(currentTime)) {
+        if (pollRetransmitTimer.cycle(currentTime))
             actionPollRetransmitTimerExpired();
-        }
-        if (reassemblyTimer.cycle(currentTime)) {
+        if (reassemblyTimer.cycle(currentTime))
             actionReassemblyTimerExpired();
-        }
     }
 
     private void actionReassemblyTimerExpired() {
