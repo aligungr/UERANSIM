@@ -7,11 +7,12 @@ package tr.havelsan.ueransim.app.link.rlc.test;
 
 import tr.havelsan.ueransim.app.link.rlc.entity.AmEntity;
 import tr.havelsan.ueransim.app.link.rlc.entity.RlcEntity;
+import tr.havelsan.ueransim.app.link.rlc.entity.TmEntity;
+import tr.havelsan.ueransim.app.link.rlc.entity.UmEntity;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.nts.nts.NtsTask;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
-import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.console.Console;
 import tr.havelsan.ueransim.utils.jcolor.AnsiPalette;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -41,6 +42,7 @@ public class TestRlc {
 
     // GENERAL
     private static final int MAX_PACKET_SEND_COUNT = 60000;
+    private static final Class<?> ENTITY = TmEntity.class;
 
     public static void main(String[] args) {
         var ueLower = new LowerTask();
@@ -120,16 +122,19 @@ public class TestRlc {
         public String tag;
 
         public RlcTask() {
-            super(true);
-            entity = AmEntity.newInstance(this, SN_LENGTH, TX_MAX_SIZE, RX_MAX_SIZE, -1,
-                    -1, MAX_RET, POLL_RETRANSMIT_PERIOD, REASSEMBLY_PERIOD, STATUS_PROHIBIT_PERIOD);
+            super(false);
+            if (ENTITY == AmEntity.class)
+                entity = AmEntity.newInstance(this, SN_LENGTH, TX_MAX_SIZE, RX_MAX_SIZE, -1,
+                        -1, MAX_RET, POLL_RETRANSMIT_PERIOD, REASSEMBLY_PERIOD, STATUS_PROHIBIT_PERIOD);
+            if (ENTITY == UmEntity.class)
+                entity = UmEntity.newInstance(this, SN_LENGTH, REASSEMBLY_PERIOD, TX_MAX_SIZE, RX_MAX_SIZE);
+            if (ENTITY == TmEntity.class)
+                entity = TmEntity.newInstance(this, TX_MAX_SIZE);
         }
 
         @Override
         protected void main() {
             while (true) {
-                Utils.sleep(1);
-
                 var msg = poll();
                 if (msg != null) {
                     if (msg instanceof IwReceiveSdu) {
