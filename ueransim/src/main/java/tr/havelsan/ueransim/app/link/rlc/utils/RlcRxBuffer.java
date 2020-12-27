@@ -136,24 +136,6 @@ public class RlcRxBuffer<T extends RxPdu> {
         }
     }
 
-    public boolean isAlreadyReceived(int sn, int so, int size) {
-        var cursor = list.getFirst();
-        while (cursor != null && size > 0) {
-            if (cursor.value.sn == sn) {
-                if (cursor.value.so <= so && so < cursor.value.so + cursor.value.size()) {
-                    int done = cursor.value.size() - (so - cursor.value.so);
-                    size -= done;
-                    so += done;
-                } else if (cursor.value.so <= so + size - 1 && so + size - 1 < cursor.value.so + cursor.value.size()) {
-                    int done = size - (cursor.value.so - so);
-                    size -= done;
-                }
-            }
-            cursor = cursor.getNext();
-        }
-        return size <= 0;
-    }
-
     public LinkedList<T>.Item firstItemIntersecting(int sn, int so) {
         var cursor = firstItemWithSn(sn);
         while (cursor != null && cursor.value.sn == sn) {

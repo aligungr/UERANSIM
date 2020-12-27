@@ -248,7 +248,7 @@ public class AmEntity extends RlcEntity {
 
         // if byte segment numbers y to z of the RLC SDU with SN = x have been received before:
         //  discard the received AMD PDU
-        if (rxBuffer.isAlreadyReceived(pdu.sn, pdu.so, pdu.data.length)) {
+        if (RlcFunc.isAlreadyReceived(rxBuffer.getList(), pdu.sn, pdu.so, pdu.data.length)) {
             triggerControl.run();
             return;
         }

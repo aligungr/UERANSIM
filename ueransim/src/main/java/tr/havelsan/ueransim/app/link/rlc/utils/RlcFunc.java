@@ -7,6 +7,7 @@ package tr.havelsan.ueransim.app.link.rlc.utils;
 
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IComparator;
 import tr.havelsan.ueransim.app.link.rlc.pdu.AmdPdu;
+import tr.havelsan.ueransim.app.link.rlc.pdu.RxPdu;
 import tr.havelsan.ueransim.utils.LinkedList;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
@@ -307,5 +308,27 @@ public class RlcFunc {
             res.soNext = 0;
         }
         return res;
+    }
+
+    /**
+     * Returns true iff specified part is already covered in the receive buffer.
+     * (SO value should be non-negative.)
+     */
+    public static <T extends RxPdu> boolean isAlreadyReceived(LinkedList<T> rxList, int sn, int so, int size) {
+        var cursor = rxList.getFirst();
+        while (cursor != null && size > 0) {
+            if (cursor.value.sn == sn) {
+                if (cursor.value.so <= so && so < cursor.value.so + cursor.value.size()) {
+                    int done = cursor.value.size() - (so - cursor.value.so);
+                    size -= done;
+                    so += done;
+                } else if (cursor.value.so <= so + size - 1 && so + size - 1 < cursor.value.so + cursor.value.size()) {
+                    int done = size - (cursor.value.so - so);
+                    size -= done;
+                }
+            }
+            cursor = cursor.getNext();
+        }
+        return size <= 0;
     }
 }
