@@ -37,7 +37,7 @@ public class RlcFunc {
         }
 
         if (cursor != null) {
-            list.addAfter(cursor, item);
+            list.addBefore(cursor, item);
         } else {
             list.addLast(item);
         }
