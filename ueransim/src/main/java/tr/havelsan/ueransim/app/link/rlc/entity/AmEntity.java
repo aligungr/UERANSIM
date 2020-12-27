@@ -151,6 +151,16 @@ public class AmEntity extends RlcEntity {
         return modulusRx(sn) < windowSize;
     }
 
+    private boolean pollControlForTransmissionOrRetransmission() {
+        // if both the transmission buffer and the retransmission buffer becomes empty (excluding transmitted
+        //  RLC SDUs or RLC SDU segments awaiting acknowledgements) after the transmission of the AMD PDU;
+        //  or
+        //  if no new RLC SDU can be transmitted after the transmission of the AMD PDU (e.g. due to window stalling);
+        //  then include a poll in the AMD PDU.
+
+        return (txBuffer.isEmpty() && retBuffer.isEmpty()) || windowStalling();
+    }
+
     //======================================================================================================
     //                                          INTERNAL METHODS
     //======================================================================================================
@@ -160,30 +170,12 @@ public class AmEntity extends RlcEntity {
                 && snCompareTx(txNext, (txNextAck + windowSize) % snModulus) < 0);
     }
 
-    private boolean areAllSiblingSegmentsAreInAck(RlcSduSegment segment) {
-        // TODO: recheck this method
-        int sn = segment.sdu.sn;
-
-        for (var s : txBuffer.elements()) {
-            if (snCompareTx(s.sdu.sn, sn) > 0)
-                break;
-            if (s.sdu.sn == sn)
-                return false;
-        }
-        for (var s : retBuffer.elements()) {
-            if (snCompareTx(s.sdu.sn, sn) > 0)
-                break;
-            if (s.sdu.sn == sn)
-                return false;
-        }
-        for (var s : waitBuffer.elements()) {
-            if (snCompareTx(s.sdu.sn, sn) > 0)
-                break;
-            if (s.sdu.sn == sn)
-                return false;
-        }
-
-        return true;
+    private boolean areAllSegmentsAreInAck(int sn) {
+        // If transmission, retransmission and wait buffers don't contain such a segment, then
+        // we can say that all segments are in acknowledge buffer.
+        // TODO: Optimize this method.
+        return !RlcFunc.sduListContainsSn(txBuffer, sn) &&
+                !RlcFunc.sduListContainsSn(retBuffer, sn) && !RlcFunc.sduListContainsSn(waitBuffer, sn);
     }
 
     private int sduListCompare(RlcSduSegment a, RlcSduSegment b) {
@@ -481,7 +473,7 @@ public class AmEntity extends RlcEntity {
         var cursor = ackBuffer.getFirst();
 
         // TODO: Currently sequential succ indication, but not immediate.
-        while (cursor != null && cursor.value.sdu.sn == txNextAck && areAllSiblingSegmentsAreInAck(cursor.value)) {
+        while (cursor != null && cursor.value.sdu.sn == txNextAck && areAllSegmentsAreInAck(cursor.value.sdu.sn)) {
             txCurrentSize -= cursor.value.sdu.data.length;
             int sn = cursor.value.sdu.sn;
 
@@ -804,16 +796,6 @@ public class AmEntity extends RlcEntity {
         }
 
         return generateAmdForSdu(segment, includePoll);
-    }
-
-    private boolean pollControlForTransmissionOrRetransmission() {
-        // if both the transmission buffer and the retransmission buffer becomes empty (excluding transmitted
-        //  RLC SDUs or RLC SDU segments awaiting acknowledgements) after the transmission of the AMD PDU;
-        //  or
-        //  if no new RLC SDU can be transmitted after the transmission of the AMD PDU (e.g. due to window stalling);
-        //  then include a poll in the AMD PDU.
-
-        return (txBuffer.isEmpty() && retBuffer.isEmpty()) || windowStalling();
     }
 
     private OctetString generateAmdForSdu(RlcSduSegment segment, boolean includePoll) {

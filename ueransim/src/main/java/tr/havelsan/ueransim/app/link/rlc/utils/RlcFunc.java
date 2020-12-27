@@ -190,4 +190,17 @@ public class RlcFunc {
     public static boolean soOverlap(int start1, int end1, int start2, int end2) {
         return start1 < start2 ? (end1 == -1 || end1 >= start2) : (end2 == -1 || start1 <= end2);
     }
+
+    /**
+     * Return true iff there exists some segment in the list such that SN=sn.
+     * The list may or may not be sorted. Therefore, iteration is done until the end of the list,
+     * i.e no shortcut is performed.
+     */
+    public static boolean sduListContainsSn(LinkedList<RlcSduSegment> list, int sn) {
+        for (var item : list.elements()) {
+            if (item.sdu.sn == sn)
+                return true;
+        }
+        return false;
+    }
 }
