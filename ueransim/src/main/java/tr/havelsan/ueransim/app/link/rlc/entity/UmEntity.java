@@ -102,7 +102,7 @@ public class UmEntity extends RlcEntity {
     //                                             ACTIONS
     //======================================================================================================
 
-    private void actionReception(UmdPdu pdu) {
+    private void actionsOnReception(UmdPdu pdu) {
         int x = pdu.sn;
 
         // If all byte segments with SN = x are received
@@ -192,7 +192,7 @@ public class UmEntity extends RlcEntity {
         }
     }
 
-    private void actionReassemblyTimerExpired() {
+    private void actionsOnReassemblyTimerExpired() {
         // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
         rxNextReassembly = rxTimerTrigger;
         while (rxBuffer.isDelivered(rxNextReassembly))
@@ -252,7 +252,7 @@ public class UmEntity extends RlcEntity {
         rxBuffer.add(pdu);
 
         // Actions when an UMD PDU is placed in the reception buffer (5.2.2.2.3)
-        actionReception(pdu);
+        actionsOnReception(pdu);
     }
 
     @Override
@@ -310,7 +310,7 @@ public class UmEntity extends RlcEntity {
         tCurrent = currentTime;
 
         if (reassemblyTimer.cycle(currentTime))
-            actionReassemblyTimerExpired();
+            actionsOnReassemblyTimerExpired();
     }
 
     @Override

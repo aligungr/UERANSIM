@@ -204,8 +204,8 @@ public class AmEntity extends RlcEntity {
         }
         // Control PDU
         else {
+            // Discard the control PDU if it is not a STATUS PDU
             if (data.get1(0).getBitRangeI(4, 6) != 0) {
-                // Discard the control PDU if it is not a STATUS PDU
                 return;
             }
 
@@ -257,7 +257,7 @@ public class AmEntity extends RlcEntity {
         rxBuffer.add(pdu);
 
         // Actions when an AMD PDU is placed in the reception buffer
-        actionReception(pdu);
+        actionsOnReception(pdu);
 
         // Continue 5.3.4
         if (pdu.p) {
@@ -320,7 +320,7 @@ public class AmEntity extends RlcEntity {
         checkForSuccessIndication();
     }
 
-    private void actionReception(AmdPdu pdu) {
+    private void actionsOnReception(AmdPdu pdu) {
         int x = pdu.sn;
 
         // if x >= RX_Next_Highest update RX_Next_Highest to x+ 1.
@@ -838,12 +838,12 @@ public class AmEntity extends RlcEntity {
         tCurrent = currentTime;
 
         if (pollRetransmitTimer.cycle(currentTime))
-            actionPollRetransmitTimerExpired();
+            actionsOnPollRetransmitTimerExpired();
         if (reassemblyTimer.cycle(currentTime))
-            actionReassemblyTimerExpired();
+            actionsOnReassemblyTimerExpired();
     }
 
-    private void actionReassemblyTimerExpired() {
+    private void actionsOnReassemblyTimerExpired() {
         // When t-Reassembly expires, the receiving side of an AM RLC entity shall:
 
         // update RX_Highest_Status to the SN of the first RLC SDU with
@@ -874,7 +874,7 @@ public class AmEntity extends RlcEntity {
         }
     }
 
-    private void actionPollRetransmitTimerExpired() {
+    private void actionsOnPollRetransmitTimerExpired() {
         if (pollControlForTransmissionOrRetransmission()) {
             var first = waitBuffer.getFirst();
             if (first != null) {
