@@ -31,7 +31,7 @@ public class TestRlc {
     private static final int STATUS_PROHIBIT_PERIOD = 400;
 
     // UPPER LAYER
-    private static final int TRANSMISSION_SIZE = 20000;
+    private static final int TRANSMISSION_SIZE = 2000;
 
     // LOWER LAYER
     private static final int OPPORTUNITY_SIZE_MIN = 10000;
@@ -56,6 +56,8 @@ public class TestRlc {
     }
 
     private static class RlcTask extends NtsTask implements IRlcConsumer {
+        private final Random random = new Random();
+
         public RlcEntity entity;
         public String tag;
         public RlcTask pair;
@@ -85,7 +87,7 @@ public class TestRlc {
 
                 entity.timerCycle(System.currentTimeMillis());
 
-                var pdu = entity.createPdu(new Random().nextInt(OPPORTUNITY_SIZE_MAX - OPPORTUNITY_SIZE_MIN) + OPPORTUNITY_SIZE_MIN);
+                var pdu = entity.createPdu(random.nextInt(OPPORTUNITY_SIZE_MAX - OPPORTUNITY_SIZE_MIN) + OPPORTUNITY_SIZE_MIN);
                 if (pdu != null) {
                     pair.push(new IwRadioUplink(pdu));
                 }
