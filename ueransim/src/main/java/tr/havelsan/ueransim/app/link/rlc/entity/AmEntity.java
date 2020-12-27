@@ -449,6 +449,8 @@ public class AmEntity extends RlcEntity {
                 } else {
                     cursor = cursor.getNext();
                 }
+            } else {
+                cursor = cursor.getNext();
             }
         }
 
@@ -464,6 +466,8 @@ public class AmEntity extends RlcEntity {
                 } else {
                     cursor = cursor.getNext();
                 }
+            } else {
+                cursor = cursor.getNext();
             }
         }
     }
