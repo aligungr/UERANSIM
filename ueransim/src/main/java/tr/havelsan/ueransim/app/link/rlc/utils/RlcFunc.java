@@ -343,7 +343,8 @@ public class RlcFunc {
     }
 
     /*
-     * Returns true if given SN has a missing segment. That is, at least one segment does not exist in the RX list.
+     * Returns true if given SN has a missing segment. That is, at least one segment with SN does not exist in the RX list.
+     * NOTE: If no such a segment, the false is returned as there is no missing segment
      */
     public static <T extends RxPdu> boolean hasMissingSegment(LinkedList<T> list, int sn) {
         var cursor = RlcFunc.firstItemWithSn(list, sn);
