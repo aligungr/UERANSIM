@@ -9,12 +9,11 @@ import tr.havelsan.ueransim.app.link.rlc.encoding.UmdEncoder;
 import tr.havelsan.ueransim.app.link.rlc.interfaces.IRlcConsumer;
 import tr.havelsan.ueransim.app.link.rlc.pdu.UmdPdu;
 import tr.havelsan.ueransim.app.link.rlc.utils.*;
+import tr.havelsan.ueransim.utils.LinkedList;
 import tr.havelsan.ueransim.utils.OctetInputStream;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
 import tr.havelsan.ueransim.utils.octets.OctetString;
-
-import java.util.LinkedList;
 
 public class UmEntity extends RlcEntity {
 
@@ -258,28 +257,13 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public void receiveSdu(OctetString data, int sduId) {
-        if (data.length == 0)
-            return;
-
-        if (txCurrentSize + data.length > txMaxSize)
-            return;
-
-        var sdu = new RlcSdu(sduId, data);
-        sdu.sn = -1;
-        sdu.retransmissionCount = -1;
-
-        var segment = new RlcSduSegment(sdu);
-        segment.size = data.length;
-        segment.so = 0;
-        segment.si = ESegmentInfo.FULL;
-
-        txCurrentSize += segment.size;
-        txBuffer.addLast(segment);
+        int size = RlcFunc.insertSduToTransmissionBuffer(data, sduId, txBuffer, txCurrentSize, txMaxSize);
+        txCurrentSize += size;
     }
 
     @Override
     public OctetString createPdu(int maxSize) {
-        var segment = txBuffer.peekFirst();
+        var segment = txBuffer.getFirstElement();
         if (segment == null) {
             return null;
         }
@@ -332,30 +316,21 @@ public class UmEntity extends RlcEntity {
 
     @Override
     public void discardSdu(int sduId) {
-        RlcSduSegment p = null;
-
-        for (var segment : txBuffer) {
-            if (segment.sdu.sduId == sduId) {
-                p = segment;
-                break;
-            }
-        }
+        var segment = RlcFunc.findFirstSduSegmentWithId(txBuffer, sduId);
 
         // SDU not found, do nothing.
-        if (p == null)
+        if (segment == null)
             return;
 
         // The SDU is already segmented, do nothing.
-        if (p.si != ESegmentInfo.FULL)
+        if (segment.value.si != ESegmentInfo.FULL)
             return;
 
         // Remove the segment
-        if (!txBuffer.remove(p)) {
-            throw new RuntimeException();
-        }
+        txBuffer.remove(segment);
 
         // TODO, WARNING: not really sure here because this is not included in the a.i
-        txCurrentSize -= p.size;
+        txCurrentSize -= segment.value.size;
     }
 
     @Override

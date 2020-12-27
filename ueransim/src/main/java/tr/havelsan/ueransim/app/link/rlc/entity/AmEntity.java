@@ -160,10 +160,6 @@ public class AmEntity extends RlcEntity {
                 && snCompareTx(txNext, (txNextAck + windowSize) % snModulus) < 0);
     }
 
-    private boolean soOverlaps(int start1, int end1, int start2, int end2) {
-        return start1 < start2 ? (end1 == -1 || end1 >= start2) : (end2 == -1 || start1 <= end2);
-    }
-
     private boolean areAllSiblingSegmentsAreInAck(RlcSduSegment segment) {
         // TODO: recheck this method
         int sn = segment.sdu.sn;
@@ -190,12 +186,14 @@ public class AmEntity extends RlcEntity {
         return true;
     }
 
+    private int sduListCompare(RlcSduSegment a, RlcSduSegment b) {
+        if (a.sdu.sn == b.sdu.sn)
+            return Integer.compare(a.so, b.so);
+        return snCompareTx(a.sdu.sn, b.sdu.sn);
+    }
+
     private void insertToList(LinkedList<RlcSduSegment> list, RlcSduSegment segment) {
-        RlcFunc.insertSortedLinkedList(list, segment, (a, b) -> {
-            if (a.sdu.sn == b.sdu.sn)
-                return Integer.compare(a.so, b.so);
-            return snCompareTx(a.sdu.sn, b.sdu.sn);
-        });
+        RlcFunc.insertSortedLinkedList(list, segment, this::sduListCompare);
     }
 
     //======================================================================================================
@@ -443,7 +441,7 @@ public class AmEntity extends RlcEntity {
         while (cursor != null) {
             var segment = cursor.value;
             if (segment.sdu.sn == nackSn) {
-                if (soOverlaps(soStart, soEnd, segment.so, segment.so + segment.size - 1)) {
+                if (RlcFunc.soOverlap(soStart, soEnd, segment.so, segment.so + segment.size - 1)) {
                     cursor = waitBuffer.removeAndNext(cursor);
                     considerRetransmission(segment, !alreadyRetIncremented.contains(nackSn));
                     alreadyRetIncremented.add(nackSn);
@@ -458,7 +456,7 @@ public class AmEntity extends RlcEntity {
             var segment = cursor.value;
 
             if (segment.sdu.sn == nackSn) {
-                if (soOverlaps(soStart, soEnd, segment.so, segment.so + segment.size - 1)) {
+                if (RlcFunc.soOverlap(soStart, soEnd, segment.so, segment.so + segment.size - 1)) {
                     cursor = ackBuffer.removeAndNext(cursor);
                     considerRetransmission(segment, !alreadyRetIncremented.contains(nackSn));
                     alreadyRetIncremented.add(nackSn);
@@ -493,31 +491,6 @@ public class AmEntity extends RlcEntity {
                 cursor = ackBuffer.removeAndNext(cursor);
             txNextAck = (txNextAck + 1) % snModulus;
         }
-    }
-
-    //======================================================================================================
-    //                                          SDU RECEIVE RELATED
-    //======================================================================================================
-
-    @Override
-    public void receiveSdu(OctetString data, int sduId) {
-        if (data.length == 0)
-            return;
-
-        if (txCurrentSize + data.length > txMaxSize)
-            return;
-
-        var sdu = new RlcSdu(sduId, data);
-        sdu.sn = -1;
-        sdu.retransmissionCount = -1;
-
-        var segment = new RlcSduSegment(sdu);
-        segment.size = data.length;
-        segment.so = 0;
-        segment.si = ESegmentInfo.FULL;
-
-        txCurrentSize += segment.size;
-        insertToList(txBuffer, segment);
     }
 
     //======================================================================================================
@@ -957,25 +930,28 @@ public class AmEntity extends RlcEntity {
     //======================================================================================================
 
     @Override
+    public void receiveSdu(OctetString data, int sduId) {
+        int size = RlcFunc.insertSduToTransmissionBuffer(data, sduId, txBuffer, txCurrentSize, txMaxSize);
+        txCurrentSize += size;
+    }
+
+    @Override
     public void discardSdu(int sduId) {
-        var cursor = txBuffer.getFirst();
-        while (cursor != null && cursor.value.sdu.sduId != sduId) {
-            cursor = cursor.getNext();
-        }
+        var segment = RlcFunc.findFirstSduSegmentWithId(txBuffer, sduId);
 
         // SDU not found, do nothing.
-        if (cursor == null)
+        if (segment == null)
             return;
 
         // The SDU is already segmented, do nothing.
-        if (cursor.value.si != ESegmentInfo.FULL)
+        if (segment.value.si != ESegmentInfo.FULL)
             return;
 
         // Remove the segment
-        txBuffer.remove(cursor);
+        txBuffer.remove(segment);
 
         // TODO, WARNING: not really sure here because this is not included in the a.i
-        txCurrentSize -= cursor.value.size;
+        txCurrentSize -= segment.value.size;
     }
 
     @Override

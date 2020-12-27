@@ -5,10 +5,10 @@
 
 package tr.havelsan.ueransim.app.link.rlc.utils;
 
+import tr.havelsan.ueransim.app.link.rlc.interfaces.IComparator;
 import tr.havelsan.ueransim.utils.LinkedList;
 import tr.havelsan.ueransim.utils.exceptions.IncorrectImplementationException;
-
-import java.util.Comparator;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 /*
  * This class holds some stateless functions for RLC implementation.
@@ -18,7 +18,7 @@ public class RlcFunc {
     /**
      * Inserts the item to the linked list as sorted.
      */
-    public static <T> void insertSortedLinkedList(LinkedList<T> list, T item, Comparator<T> comparator) {
+    public static <T> void insertSortedLinkedList(LinkedList<T> list, T item, IComparator<T> comparator) {
         if (list.isEmpty()) {
             list.addFirst(item);
             return;
@@ -136,5 +136,58 @@ public class RlcFunc {
         next.so = sdu.so + sdu.size;
 
         return next;
+    }
+
+    /**
+     * Constructs RlcSdu and RlcSduSegment from given data and sduId.
+     * SN value of RlcSdu is set to -1, it must be set later sometime after this function.
+     * <p>
+     * Constructed segment is added "to the end" of the transmissionBuffer and size of the RlcSdu is returned.
+     * <p>
+     * If there is no room in the transmission buffer (determined by bufferCurrent and bufferMax), then no side effect
+     * is performed and zero is returned. While checking the available room, only data is counted i.e possible header(s)
+     * are not counted.
+     */
+    public static int insertSduToTransmissionBuffer(OctetString data, int sduId, LinkedList<RlcSduSegment> transmissionBuffer,
+                                                    int bufferCurrent, int bufferMax) {
+        if (data.length == 0)
+            return 0;
+
+        if (bufferCurrent + data.length > bufferMax)
+            return 0;
+
+        var sdu = new RlcSdu(sduId, data);
+        sdu.sn = -1;
+        sdu.retransmissionCount = -1;
+
+        var segment = new RlcSduSegment(sdu);
+        segment.size = data.length;
+        segment.so = 0;
+        segment.si = ESegmentInfo.FULL;
+
+        transmissionBuffer.addLast(segment);
+
+        return segment.size;
+    }
+
+    /**
+     * Returns the first SDU segment with given SDU ID. If no such a segment, then null is returned.
+     */
+    public static LinkedList<RlcSduSegment>.Item findFirstSduSegmentWithId(LinkedList<RlcSduSegment> list, int sduId) {
+        var cursor = list.getFirst();
+        while (cursor != null) {
+            if (cursor.value.sdu.sduId == sduId)
+                return cursor;
+            cursor = cursor.getNext();
+        }
+        return null;
+    }
+
+    /**
+     * Returns true iff given two SOs overlap. This function also handles -1 as SO values. It is better to not use
+     * this function for general purpose interval overlap checking function. It is specialized for SO overlap checking.
+     */
+    public static boolean soOverlap(int start1, int end1, int start2, int end2) {
+        return start1 < start2 ? (end1 == -1 || end1 >= start2) : (end2 == -1 || start1 <= end2);
     }
 }
