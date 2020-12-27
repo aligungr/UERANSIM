@@ -528,7 +528,7 @@ public class AmEntity extends RlcEntity {
             if (snCompareRx(startSn, rxHighestStatus) >= 0)
                 break;
 
-            var missing = RlcFunc.findMissingBlock(rxBuffer, startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF, snModulus);
+            var missing = RlcFunc.findMissingBlock(rxBuffer.getList(), startSn, startSo, (rxHighestStatus - 1 + snModulus) % snModulus, 0xFFFF, snModulus);
             if (missing == null)
                 break;
 

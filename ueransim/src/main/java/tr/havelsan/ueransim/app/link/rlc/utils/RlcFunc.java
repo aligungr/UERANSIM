@@ -209,7 +209,7 @@ public class RlcFunc {
     /**
      * Finds the next missing block and returns that block. If no such a block is found, then null is returned.
      */
-    public static MissingBlock findMissingBlock(RlcRxBuffer<AmdPdu> rxBuffer, int startSn, int startSo, int endSn, int endSo, int snModulus) {
+    public static MissingBlock findMissingBlock(LinkedList<AmdPdu> rxBuffer, int startSn, int startSo, int endSn, int endSo, int snModulus) {
         // Start line >= end line ise missin part yok demektir.
         // Aksi halde bakmaya devam edilir:
         // Start line ile kesişen bir segment var mı yok mu?
@@ -234,7 +234,7 @@ public class RlcFunc {
         if (RlcFunc.snCompareRaw(startSn, endSn) > 0 || (RlcFunc.snCompareRaw(startSn, endSn) == 0 && startSo >= endSo))
             return null;
 
-        var segment = RlcFunc.firstItemIntersecting(rxBuffer.getList(), startSn, startSo);
+        var segment = RlcFunc.firstItemIntersecting(rxBuffer, startSn, startSo);
         if (segment != null) {
             var endPointSn = segment.value.sn;
             var endPointSo = segment.value.si.requiresSo() ? segment.value.so + segment.value.size() : segment.value.size();
@@ -251,7 +251,7 @@ public class RlcFunc {
         res.snStart = startSn;
         res.soStart = startSo;
 
-        var cursor = rxBuffer.getList().getFirst();
+        var cursor = rxBuffer.getFirst();
 
         while (cursor != null) {
             var val = cursor.value;
