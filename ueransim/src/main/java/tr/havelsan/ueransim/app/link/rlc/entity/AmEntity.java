@@ -820,7 +820,7 @@ public class AmEntity extends RlcEntity {
             //  TODO: check this later
             pollSn = (txNext - 1 + snModulus) % snModulus;
 
-            // (re)start  t-PollRetransmit
+            // (re)start t-PollRetransmit
             pollRetransmitTimer.start(tCurrent);
         }
 
