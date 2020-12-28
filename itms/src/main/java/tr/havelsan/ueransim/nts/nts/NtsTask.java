@@ -44,6 +44,7 @@ public abstract class NtsTask {
             scheduler.quit();
 
         // TODO: end the thread
+        // TODO: clear the queue
     }
 
     // This method is usually not required, and it should be used with caution.

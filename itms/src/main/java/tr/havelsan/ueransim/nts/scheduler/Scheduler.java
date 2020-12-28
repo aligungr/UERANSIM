@@ -91,7 +91,10 @@ public abstract class Scheduler {
     public void quit() {
         isRunning = false;
         isQuited.set(true);
-        mutex.notify();
+
+        synchronized (mutex) {
+            mutex.notify();
+        }
     }
 
     protected abstract void onStart();
