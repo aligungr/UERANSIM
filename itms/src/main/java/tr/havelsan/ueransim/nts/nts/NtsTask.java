@@ -42,6 +42,8 @@ public abstract class NtsTask {
     public void releaseResources() {
         if (scheduler != null)
             scheduler.quit();
+
+        // TODO: end the thread
     }
 
     // This method is usually not required, and it should be used with caution.
