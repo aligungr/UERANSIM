@@ -205,6 +205,7 @@ class LinkedList
         {
             if (p(cursor->value))
                 return true;
+            cursor = cursor->getNext();
         }
         return false;
     }
