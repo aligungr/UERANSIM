@@ -810,6 +810,7 @@ public class AmEntity extends RlcEntity {
 
                     if (snCompareTx(cursor.value.sdu.sn, sn) == 0) {
                         considerRetransmission(cursor.value, cursor.value.sdu.retransmissionCount == initialRetCount);
+                        waitBuffer.remove(cursor);
                     }
 
                     cursor = cursor.getNext();
