@@ -91,7 +91,7 @@ class AmEntity : public IRlcEntity
     void checkForSuccessIndication();
 
     /* PDU construct related */
-    int createStatusPdu(uint8_t *buffer, int maxSize);
+    int createStatusPdu(uint8_t *buffer, int maxSize, bool noSideEffect);
     int createRetPdu(uint8_t *buffer, int maxSize);
     int createTxPdu(uint8_t *buffer, int maxSize);
     int generateAmdForSdu(const RlcSduSegment &segment, bool includePoll, uint8_t *buffer);

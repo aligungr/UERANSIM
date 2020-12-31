@@ -14,7 +14,6 @@ class LinkedItem
 
     ~LinkedItem()
     {
-        //delete value;
         value = nullptr;
         prev = nullptr;
         next = nullptr;
