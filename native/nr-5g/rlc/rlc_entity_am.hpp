@@ -77,7 +77,7 @@ class AmEntity : public IRlcEntity
     bool pollControlForTransmissionOrRetransmission();
 
     /* Internal */
-    bool areAllSegmentsAreInAck(int sn);
+    bool areAllSegmentsInAck(int sn);
     int sduListCompare(const RlcSduSegment &a, const RlcSduSegment &b);
     void insertToList(LinkedList<RlcSduSegment> &list, RlcSduSegment *segment);
 
