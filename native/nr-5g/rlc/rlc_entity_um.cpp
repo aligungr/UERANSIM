@@ -30,9 +30,9 @@ void nr::rlc::UmEntity::clearEntity()
 {
     // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
     txCurrentSize = 0;
-    txBuffer.clear();
+    txBuffer.clearAndDelete();
     rxCurrentSize = 0;
-    rxBuffer.clear();
+    rxBuffer.clearAndDelete();
 
     // reset all state variables to their initial values.
     txNext = 0;
@@ -144,9 +144,7 @@ void nr::rlc::UmEntity::actionsOnReception(nr::rlc::UmdPdu &pdu)
 
         // ... stop and reset t-Reassembly.
         if (condition)
-        {
             reassemblyTimer.stop();
-        }
     }
 
     // If t-Reassembly is not running (includes the case when t-Reassembly is stopped due to actions above)
@@ -217,9 +215,7 @@ void nr::rlc::UmEntity::receivePdu(uint8_t *data, int size)
 
     // If data length == 0, then discard.
     if (pdu->size == 0)
-    {
         return;
-    }
 
     // If it is a full SDU, deliver directly.
     if (pdu->si == ESegmentInfo::FULL)
@@ -230,15 +226,11 @@ void nr::rlc::UmEntity::receivePdu(uint8_t *data, int size)
 
     // If SO is invalid, then discard.
     if (si::requiresSo(pdu->si) && pdu->so == 0)
-    {
         return;
-    }
 
     // If (RX_Next_Highest – UM_Window_Size) <= SN < RX_Next_Reassembly, then discard.
     if (snCompareRx(pdu->sn, rxNextReassembly) < 0)
-    {
         return;
-    }
 
     // If no room, then discard.
     if (rxCurrentSize + pdu->size > rxMaxSize)
@@ -261,17 +253,13 @@ int nr::rlc::UmEntity::createPdu(uint8_t *buffer, int maxSize)
 {
     auto segment = txBuffer.getFirstElement();
     if (segment == nullptr)
-    {
         return 0;
-    }
 
     int headerSize = func::UmdPduHeaderSize(snLength, segment->si);
 
     // Fragmentation is irrelevant since no byte fits the size.
     if (headerSize + 1 > maxSize)
-    {
         return 0;
-    }
 
     segment->sdu->sn = txNext;
     txBuffer.removeFirst();
@@ -286,20 +274,12 @@ int nr::rlc::UmEntity::createPdu(uint8_t *buffer, int maxSize)
     }
 
     if (segment->si == ESegmentInfo::LAST)
-    {
         txNext = (txNext + 1) % snModulus;
-    }
 
     txCurrentSize -= segment->size;
 
-    UmdPdu pdu;
-    pdu.si = segment->si;
-    pdu.so = segment->so;
-    pdu.sn = segment->sdu->sn;
-    pdu.data = segment->sdu->data + segment->so;
-    pdu.size = segment->size;
-
-    return RlcEncoder::EncodeUmd(buffer, pdu, snLength == 6);
+    return RlcEncoder::EncodeUmd(buffer, snLength == 6, segment->si, segment->so, segment->sdu->sn,
+                                 segment->sdu->data + segment->so, segment->size);
 }
 
 void nr::rlc::UmEntity::timerCycle(int64_t currentTime)
@@ -323,7 +303,7 @@ void nr::rlc::UmEntity::discardSdu(int sduId)
         return;
 
     // Remove the segment
-    txBuffer.remove(segment);
+    delete txBuffer.remove(segment);
 
     // TODO, WARNING: not really sure here because this is not included in the a.i
     txCurrentSize -= segment->value->size;

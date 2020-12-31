@@ -1,10 +1,13 @@
 #include "rlc_encoder.hpp"
 #include "../utils/bit_buffer.hpp"
 
-static int octetBits(uint8_t octet, int start, int end)
+template <int start, int end>
+static inline int octetBits(uint8_t octet)
 {
-    if (start > end)
-        std::swap(start, end);
+    static_assert(start >= 0 && start <= 7);
+    static_assert(end >= 0 && end <= 7);
+    static_assert(start <= end);
+
     octet >>= start;
     int delta = end - start + 1;
     return octet & ((1 << delta) - 1);
@@ -16,7 +19,7 @@ namespace nr::rlc
 UmdPdu *RlcEncoder::DecodeUmd(uint8_t *data, int size, bool isShortSn)
 {
     auto *pdu = new UmdPdu();
-    pdu->si = static_cast<ESegmentInfo>(octetBits(data[0], 6, 7));
+    pdu->si = static_cast<ESegmentInfo>(octetBits<6, 7>(data[0]));
     pdu->so = 0;
     pdu->sn = 0;
     pdu->isProcessed = false;
@@ -27,14 +30,14 @@ UmdPdu *RlcEncoder::DecodeUmd(uint8_t *data, int size, bool isShortSn)
     {
         if (isShortSn)
         {
-            pdu->sn = octetBits(data[index], 0, 5);
+            pdu->sn = octetBits<0, 5>(data[index]);
         }
         else
         {
-            pdu->sn = octetBits(data[index], 0, 3);
+            pdu->sn = octetBits<0, 3>(data[index]);
             pdu->sn <<= 8;
             index++;
-            pdu->sn |= octetBits(data[index], 0, 7);
+            pdu->sn |= octetBits<0, 7>(data[index]);
         }
 
         if (si::requiresSo(pdu->si))
@@ -51,24 +54,24 @@ UmdPdu *RlcEncoder::DecodeUmd(uint8_t *data, int size, bool isShortSn)
     return pdu;
 }
 
-int RlcEncoder::EncodeUmd(uint8_t *buffer, const UmdPdu &pdu, bool isShortSn)
+int RlcEncoder::EncodeUmd(uint8_t *buffer, bool isShortSn, ESegmentInfo si, int so, int sn, uint8_t *data, int size)
 {
     int index = 0;
 
-    uint8_t octet0 = ((int)pdu.si) << 6;
+    uint8_t octet0 = ((int)si) << 6;
 
     int remainingSn = -1;
 
-    if (pdu.si != ESegmentInfo::FULL)
+    if (si != ESegmentInfo::FULL)
     {
         if (isShortSn)
         {
-            octet0 |= pdu.sn & 0b11111;
+            octet0 |= sn & 0b11111;
         }
         else
         {
-            octet0 |= (pdu.sn >> 8) & 0b111;
-            remainingSn = pdu.sn & 0b11111111;
+            octet0 |= (sn >> 8) & 0b111;
+            remainingSn = sn & 0b11111111;
         }
     }
 
@@ -77,14 +80,14 @@ int RlcEncoder::EncodeUmd(uint8_t *buffer, const UmdPdu &pdu, bool isShortSn)
     if (remainingSn != -1)
         buffer[index++] = remainingSn & 0xFF;
 
-    if (si::requiresSo(pdu.si))
+    if (si::requiresSo(si))
     {
-        buffer[index++] = (pdu.so >> 8) & 0xFF;
-        buffer[index++] = pdu.so & 0xFF;
+        buffer[index++] = (so >> 8) & 0xFF;
+        buffer[index++] = so & 0xFF;
     }
 
-    std::memcpy(buffer + index, pdu.data, pdu.size);
-    index += pdu.size;
+    std::memcpy(buffer + index, data, size);
+    index += size;
 
     return index;
 }
@@ -104,8 +107,8 @@ AmdPdu *RlcEncoder::DecodeAmd(uint8_t *data, int size, bool isShortSn)
     pdu->so = 0;
 
     pdu->p = (octet >> 6) & 0b1;
-    pdu->si = static_cast<ESegmentInfo>(octetBits(octet, 4, 5));
-    pdu->sn = isShortSn ? octetBits(octet, 0, 3) : octetBits(octet, 0, 1);
+    pdu->si = static_cast<ESegmentInfo>(octetBits<4, 5>(octet));
+    pdu->sn = isShortSn ? octetBits<0, 3>(octet) : octetBits<0, 1>(octet);
 
     int index = 1;
     octet = data[index++];
@@ -133,31 +136,32 @@ AmdPdu *RlcEncoder::DecodeAmd(uint8_t *data, int size, bool isShortSn)
     return pdu;
 }
 
-int RlcEncoder::EncodeAmd(uint8_t *buffer, const AmdPdu &pdu, bool isShortSn)
+int RlcEncoder::EncodeAmd(uint8_t *buffer, bool isShortSn, ESegmentInfo si, int so, int sn, uint8_t *data, int size,
+    bool p)
 {
-    uint8_t octet = pdu.p ? 0b11000000 : 0b10000000;
-    octet |= ((int)pdu.si) << 4;
+    uint8_t octet = p ? 0b11000000 : 0b10000000;
+    octet |= ((int)si) << 4;
 
     if (isShortSn)
-        octet |= (pdu.sn >> 8) & 0b1111;
+        octet |= (sn >> 8) & 0b1111;
     else
-        octet |= (pdu.sn >> 16) & 0b111;
+        octet |= (sn >> 16) & 0b111;
 
     int index = 0;
     buffer[index++] = octet;
 
     if (!isShortSn)
-        buffer[index++] = (pdu.sn >> 8) & 0xFF;
-    buffer[index++] = pdu.sn & 0xFF;
+        buffer[index++] = (sn >> 8) & 0xFF;
+    buffer[index++] = sn & 0xFF;
 
-    if (si::requiresSo(pdu.si))
+    if (si::requiresSo(si))
     {
-        buffer[index++] = (pdu.so >> 8) & 0xFF;
-        buffer[index++] = pdu.so & 0xFF;
+        buffer[index++] = (so >> 8) & 0xFF;
+        buffer[index++] = so & 0xFF;
     }
 
-    std::memcpy(buffer + index, pdu.data, pdu.size);
-    index += pdu.size;
+    std::memcpy(buffer + index, data, size);
+    index += size;
     return index;
 }
 

@@ -87,8 +87,7 @@ inline RlcSduSegment *UmPerformSegmentation(RlcSduSegment *sdu, int maxSize, int
     sdu->si = newSi;
     sdu->size -= overflowed;
 
-    auto next = new RlcSduSegment();
-    next->sdu = sdu->sdu;
+    auto next = new RlcSduSegment(sdu->sdu);
     next->si = nextSi;
     next->size = overflowed;
     next->so = sdu->so + sdu->size;
@@ -141,8 +140,7 @@ inline RlcSduSegment *AmPerformSegmentation(RlcSduSegment *sdu, int maxSize, int
     sdu->si = si::asNotLast(si);
     sdu->size -= overflowed;
 
-    auto next = new RlcSduSegment();
-    next->sdu = sdu->sdu;
+    auto next = new RlcSduSegment(sdu->sdu);
     next->si = si::asNotFirst(si);
     next->size = overflowed;
     next->so = sdu->so + sdu->size;
@@ -170,8 +168,7 @@ inline size_t InsertSduToTransmissionBuffer(uint8_t *data, size_t size, int sduI
     if (bufferCurrent + size > bufferMax)
         return 0;
 
-    auto segment = new RlcSduSegment();
-    segment->sdu = new RlcSdu(data, size, sduId);
+    auto segment = new RlcSduSegment(RlcSdu::NewFromData(data, size, sduId));
     segment->sdu->sn = -1;
     segment->sdu->retransmissionCount = -1;
     segment->size = size;
@@ -495,7 +492,7 @@ inline int DiscardRxPduIf(LinkedList<T> &list, SnPredicate predicate)
         {
             if (!cursor->value->isProcessed)
                 decreased += cursor->value->size;
-            cursor = list.removeAndNext(cursor);
+            delete list.removeAndIncrement(cursor);
         }
         else
         {

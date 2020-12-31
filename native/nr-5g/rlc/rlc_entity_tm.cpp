@@ -9,7 +9,7 @@ namespace nr::rlc
 void TmEntity::clearEntity()
 {
     txCurrentSize = 0;
-    txBuffer.clear();
+    txBuffer.clearAndDelete();
 }
 
 void TmEntity::receivePdu(uint8_t *data, int size)
@@ -22,8 +22,7 @@ void TmEntity::receiveSdu(uint8_t *data, int size, int sduId)
     if (txCurrentSize + size > txMaxSize)
         return;
 
-    auto segment = new RlcSduSegment();
-    segment->sdu = new RlcSdu(data, size, sduId);
+    auto segment = new RlcSduSegment(RlcSdu::NewFromData(data, size, sduId));
     segment->si = ESegmentInfo::FULL;
     segment->so = 0;
     segment->size = size;
@@ -53,7 +52,7 @@ int TmEntity::createPdu(uint8_t *buffer, int maxSize)
     size_t size = segment->value->size;
     std::memcpy(buffer, segment->value->sdu->data, size);
 
-    txBuffer.remove(segment);
+    delete txBuffer.remove(segment);
     txCurrentSize -= size;
 
     return size;

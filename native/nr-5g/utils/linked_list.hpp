@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <functional>
 #include <memory>
 
 template <typename T>
@@ -74,13 +76,13 @@ class LinkedList
 
     ~LinkedList()
     {
-        clear();
+        clearAndDelete();
         delete head;
         delete tail;
     }
 
   private:
-    void removeBetween(LinkedItem<T> *prev, LinkedItem<T> *next)
+    T *removeBetween(LinkedItem<T> *prev, LinkedItem<T> *next)
     {
         auto middle = prev->next;
         middle->prev = nullptr;
@@ -91,7 +93,9 @@ class LinkedList
 
         count--;
 
+        auto ret = middle->value;
         delete middle;
+        return ret;
     }
 
     void addBetween(T *element, LinkedItem<T> *prev, LinkedItem<T> *next)
@@ -126,54 +130,56 @@ class LinkedList
         return item ? item->value : nullptr;
     }
 
-    void remove(LinkedItem<T> *item)
-    {
-        if (item == nullptr)
-            return;
-
-        auto next = item->next;
-        auto prev = item->prev;
-        removeBetween(prev, next);
-    }
-
-    inline void removeFirst()
-    {
-        remove(getFirst());
-    }
-
-    inline void removeLast()
-    {
-        remove(getLast());
-    }
-
-    inline int getCount() const
-    {
-        return count;
-    }
-
-    inline bool isEmpty() const
-    {
-        return getCount() == 0;
-    }
-
-    void clear()
-    {
-        while (!isEmpty())
-            removeFirst();
-    }
-
-    // Same with remove, but returns 'next' of deleted item (as if not deleted)
-    LinkedItem<T> *removeAndNext(LinkedItem<T> *item)
+    T *remove(LinkedItem<T> *item)
     {
         if (item == nullptr)
             return nullptr;
 
-        auto nextAsItem = item->getNext();
         auto next = item->next;
         auto prev = item->prev;
-        removeBetween(prev, next);
+        return removeBetween(prev, next);
+    }
 
-        return nextAsItem;
+    inline T *removeFirst()
+    {
+        return remove(getFirst());
+    }
+
+    inline T *removeLast()
+    {
+        return remove(getLast());
+    }
+
+    [[nodiscard]] inline int getCount() const
+    {
+        return count;
+    }
+
+    [[nodiscard]] inline bool isEmpty() const
+    {
+        return getCount() == 0;
+    }
+
+    void clearAndDelete()
+    {
+        auto cursor = getFirst();
+        while (cursor != nullptr)
+        {
+            T *value = remove(cursor);
+            delete value;
+            cursor = cursor->getNext();
+        }
+    }
+
+    // Same with remove, but increments the cursor (as if not deleted)
+    T *removeAndIncrement(LinkedItem<T> *&cursor)
+    {
+        assert(cursor != nullptr);
+
+        auto nextAsItem = cursor->getNext();
+        T *value = removeBetween(cursor->prev, cursor->next);
+        cursor = nextAsItem;
+        return value;
     }
 
     inline void addFirst(T *item)

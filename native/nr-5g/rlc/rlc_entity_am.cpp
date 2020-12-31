@@ -41,14 +41,14 @@ void AmEntity::clearEntity()
     byteWithoutPoll = 0;
 
     txCurrentSize = 0;
-    txBuffer.clear();
+    txBuffer.clearAndDelete();
 
     rxCurrentSize = 0;
-    rxBuffer.clear();
+    rxBuffer.clearAndDelete();
 
-    retBuffer.clear();
-    waitBuffer.clear();
-    ackBuffer.clear();
+    retBuffer.clearAndDelete();
+    waitBuffer.clearAndDelete();
+    ackBuffer.clearAndDelete();
 
     rxNext = 0;
     rxNextHighest = 0;
@@ -163,36 +163,37 @@ void AmEntity::receivePdu(uint8_t *data, int size)
 void AmEntity::receiveAmdPdu(AmdPdu *pdu)
 {
     // 5.3.4 ... if the AMD PDU is to be discarded as specified in clause 5.2.3.2.2; or ....
-    auto triggerControl = [this, pdu]() {
+    auto discard = [this, pdu]() {
         if (pdu->p)
             statusTriggered = true;
+        delete pdu;
     };
 
     if (si::requiresSo(pdu->si) && pdu->so == 0)
     {
         // Bad SO value, discard PDU.
-        triggerControl();
+        discard();
         return;
     }
 
     if (pdu->size == 0)
     {
         // No data, discard PDU.
-        triggerControl();
+        discard();
         return;
     }
 
     if (rxCurrentSize + pdu->size > rxMaxSize)
     {
         // No room in RX buffer, discard PDU.
-        triggerControl();
+        discard();
         return;
     }
 
     // Discard if x falls outside of the receiving window
     if (!isInReceiveWindow(pdu->sn))
     {
-        triggerControl();
+        discard();
         return;
     }
 
@@ -200,7 +201,7 @@ void AmEntity::receiveAmdPdu(AmdPdu *pdu)
     //  discard the received AMD PDU
     if (func::IsAlreadyReceived(rxBuffer, pdu->sn, pdu->so, pdu->size))
     {
-        triggerControl();
+        discard();
         return;
     }
 
@@ -272,7 +273,7 @@ void AmEntity::actionsOnReception(AmdPdu &pdu)
             {
                 do
                 {
-                    rxBuffer.removeFirst();
+                    delete rxBuffer.removeFirst();
                 } while (!rxBuffer.isEmpty() && rxBuffer.getFirst()->value->sn == rxNext);
                 rxNext = (rxNext + 1) % snModulus;
             }
@@ -371,7 +372,7 @@ void AmEntity::ackReceived(int ackSn)
         auto segment = cursor->value;
         if (snCompareTx(segment->sdu->sn, ackSn) < 0)
         {
-            cursor = waitBuffer.removeAndNext(cursor);
+            waitBuffer.removeAndIncrement(cursor);
             insertToList(ackBuffer, segment);
         }
         else
@@ -391,7 +392,7 @@ void AmEntity::ackReceived(int ackSn)
                 segment->sdu->retransmissionCount--;
                 alreadyDec[segment->sdu->sn] = true;
             }
-            cursor = retBuffer.removeAndNext(cursor);
+            retBuffer.removeAndIncrement(cursor);
             insertToList(ackBuffer, segment);
         }
         else
@@ -415,7 +416,7 @@ void AmEntity::nackReceived(int nackSn, int soStart, int soEnd, AmEntity::Snset 
         {
             if (func::SoOverlap(soStart, soEnd, segment->so, segment->so + segment->size - 1))
             {
-                cursor = waitBuffer.removeAndNext(cursor);
+                waitBuffer.removeAndIncrement(cursor);
                 considerRetransmission(segment, !alreadyRetIncremented[nackSn]);
                 alreadyRetIncremented[nackSn] = true;
             }
@@ -439,7 +440,7 @@ void AmEntity::nackReceived(int nackSn, int soStart, int soEnd, AmEntity::Snset 
         {
             if (func::SoOverlap(soStart, soEnd, segment->so, segment->so + segment->size - 1))
             {
-                cursor = ackBuffer.removeAndNext(cursor);
+                ackBuffer.removeAndIncrement(cursor);
                 considerRetransmission(segment, !alreadyRetIncremented[nackSn]);
                 alreadyRetIncremented[nackSn] = true;
             }
@@ -479,7 +480,7 @@ void AmEntity::checkForSuccessIndication()
         consumer->sduSuccessfulDelivery(this, cursor->value->sdu->sduId);
 
         while (cursor != nullptr && cursor->value->sdu->sn == sn)
-            cursor = ackBuffer.removeAndNext(cursor);
+            delete ackBuffer.removeAndIncrement(cursor);
         txNextAck = (txNextAck + 1) % snModulus;
     }
 }
@@ -729,19 +730,13 @@ int AmEntity::createTxPdu(uint8_t *buffer, int maxSize)
 
 int AmEntity::generateAmdForSdu(const RlcSduSegment &segment, bool includePoll, uint8_t *buffer)
 {
-    AmdPdu pdu{};
-    pdu.p = false;
-    pdu.si = segment.si;
-    pdu.sn = segment.sdu->sn;
-    pdu.so = segment.so;
-    pdu.data = segment.sdu->data + segment.so;
-    pdu.size = segment.size;
+    bool p = false;
 
     if (includePoll)
     {
         // To include a poll in an AMD PDU, the transmitting side of an AM RLC entity shall
         // set the P field of the AMD PDU to "1";
-        pdu.p = true;
+        p = true;
 
         // set PDU_WITHOUT_POLL to 0;
         pduWithoutPoll = 0;
@@ -756,7 +751,8 @@ int AmEntity::generateAmdForSdu(const RlcSduSegment &segment, bool includePoll, 
         pollRetransmitTimer.start(tCurrent);
     }
 
-    return RlcEncoder::EncodeAmd(buffer, pdu, snLength == 12);
+    return RlcEncoder::EncodeAmd(buffer, snLength == 12, segment.si, segment.so, segment.sdu->sn,
+                                 segment.sdu->data + segment.so, segment.size, p);
 }
 
 //======================================================================================================
@@ -838,7 +834,7 @@ void AmEntity::actionsOnPollRetransmitTimerExpired()
                 {
                     considerRetransmission(cursor->value, !alreadyRetIncremented);
                     alreadyRetIncremented = true;
-                    cursor = waitBuffer.removeAndNext(cursor);
+                    waitBuffer.removeAndIncrement(cursor);
                 }
                 else
                 {
@@ -906,7 +902,7 @@ void AmEntity::discardSdu(int sduId)
         return;
 
     // Remove the segment
-    txBuffer.remove(segment);
+    delete txBuffer.remove(segment);
 
     // TODO, WARNING: not really sure here because this is not included in the a.i
     txCurrentSize -= segment->value->size;

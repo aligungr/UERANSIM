@@ -77,6 +77,11 @@ struct RxPdu
     uint8_t *data;
     int size;
     bool isProcessed;
+
+    virtual ~RxPdu()
+    {
+        delete[] data;
+    }
 };
 
 struct AmdPdu : RxPdu
@@ -93,35 +98,57 @@ struct StatusPdu
     int ackSn;
     std::vector<NackBlock> nackBlocks{};
 
-    int calculatedSize(bool isShortSn) const;
+    [[nodiscard]] int calculatedSize(bool isShortSn) const;
 };
 
-struct RlcSdu
+class RlcSdu
 {
+  public:
     const int sduId;
     const int size;
     uint8_t *const data;
     int sn;
     int retransmissionCount;
 
+    int _refCount;
+
+  private:
     RlcSdu(uint8_t *data, int size, int sduId)
-        : sduId(sduId), size(size), data(new uint8_t[size]), sn(0), retransmissionCount(0)
+        : sduId(sduId), size(size), data(data), sn(0), retransmissionCount(0), _refCount(0)
     {
-        std::memcpy(this->data, data, size);
     }
 
+  public:
     ~RlcSdu()
     {
         delete[] data;
+    }
+
+    static RlcSdu *NewFromData(uint8_t *data, int size, int sduId)
+    {
+        auto *copy = new uint8_t[size];
+        std::memcpy(copy, data, size);
+        return new RlcSdu(copy, size, sduId);
     }
 };
 
 struct RlcSduSegment
 {
-    RlcSdu *sdu;
+    RlcSdu *const sdu;
     int size;
     int so;
     ESegmentInfo si;
+
+    explicit RlcSduSegment(RlcSdu *sdu) : sdu(sdu), size{}, so{}, si{}
+    {
+        sdu->_refCount++;
+    }
+
+    ~RlcSduSegment()
+    {
+        if (--sdu->_refCount == 0)
+            delete sdu;
+    }
 };
 
 class RlcTimer
