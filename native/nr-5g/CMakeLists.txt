@@ -9,6 +9,8 @@ add_subdirectory(asn/ngap)
 add_subdirectory(utils)
 
 add_executable(ueransim
+        main.cpp
+
         rlc/rlc_utils.cpp rlc/rlc_utils.hpp
         rlc/rlc.cpp rlc/rlc.hpp
         rlc/rlc_entity_tm.cpp rlc/rlc_entity_tm.hpp
