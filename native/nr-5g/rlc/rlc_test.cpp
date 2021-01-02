@@ -33,7 +33,7 @@ struct NwRadioUplink : NtsMessage
     size_t size{};
     uint8_t *data{};
 
-    NwRadioUplink() : NtsMessage(2000)
+    NwRadioUplink() : NtsMessage(NtsMessageType::RESERVED_END)
     {
     }
 
@@ -86,7 +86,7 @@ struct RlcTask : NtsTask, IRlcConsumer
         NtsMessage *msg = poll();
         if (msg)
         {
-            if (msg->msgType == 2000)
+            if (msg->msgType == NtsMessageType::RESERVED_END)
             {
                 auto w = ((NwRadioUplink *)msg);
                 m_pEntity->receivePdu(w->data, w->size);

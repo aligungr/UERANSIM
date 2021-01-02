@@ -9,24 +9,26 @@
 #include <thread>
 #include <vector>
 
-enum NtsMessageType : int
+enum class NtsMessageType
 {
     UNDEFINED = 0,
     TIMER_EXPIRED = 1,
-
     RESERVED_END = 1000,
-    // The enums are extensible
+
+    // Start of implementation specific types
+
+    SCTP_CONNECTION_REQUEST,
+    SCTP_ASSOCIATION_SETUP,
+    SCTP_ASSOCIATION_SHUTDOWN,
+    SCTP_CLIENT_RECEIVE,
+    SCTP_UNHANDLED_NOTIFICATION_RECEIVE,
 };
 
 struct NtsMessage
 {
-    const int msgType;
+    const NtsMessageType msgType;
 
-    explicit NtsMessage(NtsMessageType msgType) : msgType((int)msgType)
-    {
-    }
-
-    explicit NtsMessage(int msgType) : msgType(msgType)
+    explicit NtsMessage(NtsMessageType msgType) : msgType(msgType)
     {
     }
 
