@@ -6,6 +6,7 @@
 #include <deque>
 #include <mutex>
 #include <queue>
+#include <scoped_thread.hpp>
 #include <thread>
 #include <vector>
 
@@ -22,6 +23,8 @@ enum class NtsMessageType
     SCTP_ASSOCIATION_SHUTDOWN,
     SCTP_CLIENT_RECEIVE,
     SCTP_UNHANDLED_NOTIFICATION_RECEIVE,
+    SCTP_CONNECTION_CLOSE,
+    SCTP_SEND_MESSAGE,
 };
 
 struct NtsMessage
@@ -76,12 +79,13 @@ class TimerBase
 // TODO: Limit queue size?
 class NtsTask
 {
+  private:
     std::deque<NtsMessage *> msgQueue{};
     TimerBase timerBase{};
     std::mutex mutex{};
     std::condition_variable cv{};
-    std::thread thread{};
     std::atomic<bool> isQuiting{};
+    std::thread thread;
 
   public:
     NtsTask() = default;
@@ -100,9 +104,6 @@ class NtsTask
 
   protected:
     // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
-    NtsMessage *take();
-
-    // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
     NtsMessage *poll();
 
     // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
@@ -115,17 +116,20 @@ class NtsTask
     // Called in (almost) endless onLoop until quit.
     virtual void onLoop() = 0;
 
+    // Called exactly once after quit() called. It is guaranteed that onLoop() is never be called after onQuit()
+    virtual void onQuit() = 0;
+
   public:
-    // NTS task starts with this function.
-    // Calling start() multiple times is undefined behaviour.
+    // - NTS task starts with this function.
+    // - Calling start() multiple times is undefined behaviour.
+    // - This function is executed by the caller as blocking.
     void start();
 
-    // NTS task begins to be quited with this function.
-    // - The task is completely quited after an indeterminate time.
-    // - The task becomes unusable immediately after calling quit(). It's better to clear all references of this task
-    // from all the places before calling quit().
-    // - The task 'delete' itself in 'indeterminate' time after calling quit. Therefore all tasks must be allocated
-    // with new(). And the pointer must be considered as a dangling pointer immediately after calling quit().
-    // - Calling quit() multiple times or calling it before start() is undefined behaviour.
+    // - NTS task begins to be stopped after called this function. The task may stop after some delay. (usually
+    // WAIT_TIME_IF_NO_TIMER).
+    // - Caller always blocked until the thread completely exit. Therefore if onLoop function does not terminate, then
+    // this function never returns.
+    // - Always call this function before destroying the task.
+    // - Calling quit() before calling start() is undefined behaviour.
     void quit();
 };

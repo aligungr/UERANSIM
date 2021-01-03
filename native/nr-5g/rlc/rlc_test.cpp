@@ -112,6 +112,8 @@ struct RlcTask : NtsTask, IRlcConsumer
             upperTransmission();
     }
 
+    void onQuit() override { }
+
     void upperTransmission()
     {
         packetId++;

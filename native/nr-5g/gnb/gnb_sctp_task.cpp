@@ -50,30 +50,19 @@ class SctpHandler : public sctp::ISctpHandler
         client->receive(handler);
 }
 
-SctpTask::SctpTask() : clients{}
+SctpTask::SctpTask(logger::LogBase &loggerBase) : clients{}
 {
-}
-
-SctpTask::~SctpTask()
-{
-    for (auto &client : clients)
-    {
-        ClientEntry *entry = client.second;
-        delete entry->receiverThread;
-        delete entry->client;
-        delete entry->handler;
-        delete entry;
-    }
-    clients.clear();
+    logger = loggerBase.makeUniqueLogger("sctp");
 }
 
 void SctpTask::onStart()
 {
+    logger->debug("SCTP task has been started");
 }
 
 void SctpTask::onLoop()
 {
-    NtsMessage *msg = take();
+    NtsMessage *msg = poll(1000);
     if (!msg)
         return;
 
@@ -93,28 +82,73 @@ void SctpTask::onLoop()
         break;
     case NtsMessageType::SCTP_UNHANDLED_NOTIFICATION_RECEIVE:
         receiveUnhandledNotification(dynamic_cast<NwSctpUnhandledNotificationReceive *>(msg));
+        break;
+    case NtsMessageType::SCTP_CONNECTION_CLOSE:
+        receiveConnectionClose(dynamic_cast<NwSctpConnectionClose *>(msg));
+        break;
+    case NtsMessageType::SCTP_SEND_MESSAGE:
+        receiveSendMessage(dynamic_cast<NwSctpSendMessage *>(msg));
+        break;
     default:
+        logger->warn("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;
         break;
     }
 }
 
+void SctpTask::onQuit()
+{
+    logger->debug("SCTP task is quiting");
+    logger->flush();
+
+    for (auto &client : clients)
+    {
+        ClientEntry *entry = client.second;
+        DeleteClientEntry(entry);
+    }
+    clients.clear();
+}
+
+void SctpTask::DeleteClientEntry(ClientEntry *entry)
+{
+    entry->associatedTask = nullptr;
+    delete entry->receiverThread;
+    delete entry->client;
+    delete entry->handler;
+    delete entry;
+}
+
 void SctpTask::receiveSctpConnectionSetupRequest(NwSctpConnectionRequest *msg)
 {
+    logger->info("Trying to establish SCTP connection... (%s:%d)", msg->remoteAddress.c_str(), msg->remotePort);
+
     auto *client = new sctp::SctpClient(msg->ppid);
 
     try
     {
         client->bind(msg->localAddress, msg->localPort);
-        client->connect(msg->remoteAddress, msg->remotePort);
     }
     catch (const SctpError &exc)
     {
-        // TODO: logging Log.Error();
+        logger->err("Binding to %s:%d failed %s", msg->localAddress.c_str(), msg->localPort, exc.what());
         delete msg;
         delete client;
         return;
     }
+
+    try
+    {
+        client->connect(msg->remoteAddress, msg->remotePort);
+    }
+    catch (const SctpError &exc)
+    {
+        logger->err("Connecting to %s:%d failed %s", msg->remoteAddress.c_str(), msg->remotePort, exc.what());
+        delete msg;
+        delete client;
+        return;
+    }
+
+    logger->info("SCTP connection established (%s:%d)", msg->remoteAddress.c_str(), msg->remotePort);
 
     sctp::ISctpHandler *handler = new SctpHandler(this, msg->clientId);
 
@@ -124,6 +158,7 @@ void SctpTask::receiveSctpConnectionSetupRequest(NwSctpConnectionRequest *msg)
     entry->id = msg->clientId;
     entry->client = client;
     entry->handler = handler;
+    entry->associatedTask = msg->associatedTask;
     entry->receiverThread = new ScopedThread(
         [](void *arg) { ReceiverThread(reinterpret_cast<std::pair<sctp::SctpClient *, sctp::ISctpHandler *> *>(arg)); },
         new std::pair<sctp::SctpClient *, sctp::ISctpHandler *>(client, handler));
@@ -133,30 +168,75 @@ void SctpTask::receiveSctpConnectionSetupRequest(NwSctpConnectionRequest *msg)
 
 void SctpTask::receiveAssociationSetup(NwSctpAssociationSetup *msg)
 {
-    // TODO: Notify NGAP task
+    logger->debug("SCTP association setup (ascId: %d)", msg->associationId);
 
-    // delete? msg
+    ClientEntry *entry = clients[msg->clientId];
+    if (entry == nullptr)
+    {
+        logger->warn("Client entry not found for id: %d", msg->clientId);
+        return;
+    }
+
+    // Notify the relevant task
+    entry->associatedTask->push(msg);
 }
 
 void SctpTask::receiveAssociationShutdown(NwSctpAssociationShutdown *msg)
 {
-    // TODO: Notify NGAP task and delete client info
+    logger->debug("SCTP association shutdown (clientId: %d)", msg->clientId);
 
-    // delete? msg
+    ClientEntry *entry = clients[msg->clientId];
+    if (entry == nullptr)
+    {
+        logger->warn("Client entry not found for id: %d", msg->clientId);
+        return;
+    }
+
+    // Notify the relevant task
+    entry->associatedTask->push(msg);
 }
 
 void SctpTask::receiveClientReceive(NwSctpClientReceive *msg)
 {
-    // TODO: Notify NGAP task
+    ClientEntry *entry = clients[msg->clientId];
+    if (entry == nullptr)
+    {
+        logger->warn("Client entry not found for id: %d", msg->clientId);
+        return;
+    }
 
-    // delete? msg
+    // Notify the relevant task
+    entry->associatedTask->push(msg);
 }
 
 void SctpTask::receiveUnhandledNotification(NwSctpUnhandledNotificationReceive *msg)
 {
-    // TODO: Notify NGAP task and maybe log warnig or terminate?
+    logger->debug("Unhandled SCTP notification received");
+    delete msg;
+}
 
-    // delete? msg
+void SctpTask::receiveConnectionClose(NwSctpConnectionClose *msg)
+{
+    ClientEntry *entry = clients[msg->clientId];
+    if (entry == nullptr)
+    {
+        logger->warn("Client entry not found for id: %d", msg->clientId);
+        return;
+    }
+
+    DeleteClientEntry(entry);
+}
+
+void SctpTask::receiveSendMessage(NwSctpSendMessage *msg)
+{
+    ClientEntry *entry = clients[msg->clientId];
+    if (entry == nullptr)
+    {
+        logger->warn("Client entry not found for id: %d", msg->clientId);
+        return;
+    }
+
+    entry->client->send(msg->stream, msg->buffer, msg->offset, msg->length);
 }
 
 } // namespace nr::gnb

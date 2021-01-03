@@ -1,5 +1,6 @@
 #pragma once
 
+#include <logger.hpp>
 #include <memory>
 #include <nts.hpp>
 #include <scoped_thread.hpp>
@@ -22,18 +23,24 @@ class SctpTask : public NtsTask
         sctp::SctpClient *client;
         ScopedThread *receiverThread;
         sctp::ISctpHandler *handler;
+        NtsTask *associatedTask;
     };
 
   private:
+    std::unique_ptr<logger::Logger> logger;
     std::unordered_map<int, ClientEntry *> clients;
 
   public:
-    SctpTask();
-    ~SctpTask() override;
+    explicit SctpTask(logger::LogBase &loggerBase);
+    ~SctpTask() override = default;
 
   protected:
     void onStart() override;
     void onLoop() override;
+    void onQuit() override;
+
+  private:
+    static void DeleteClientEntry(ClientEntry *entry);
 
   private:
     void receiveSctpConnectionSetupRequest(NwSctpConnectionRequest *msg);
@@ -41,6 +48,8 @@ class SctpTask : public NtsTask
     void receiveAssociationShutdown(NwSctpAssociationShutdown *msg);
     void receiveClientReceive(NwSctpClientReceive *msg);
     void receiveUnhandledNotification(NwSctpUnhandledNotificationReceive *msg);
+    void receiveConnectionClose(NwSctpConnectionClose *msg);
+    void receiveSendMessage(NwSctpSendMessage *msg);
 };
 
 } // namespace nr::gnb

@@ -13,7 +13,7 @@ static void *StartRoutine(void *pthreadArg)
 {
     auto arguments = (Arguments *)pthreadArg;
 
-    auto routine = (void (*)(void *))(arguments->arg);
+    auto routine = (void (*)(void *))(arguments->routine);
     auto arg = arguments->arg;
 
     delete arguments;
@@ -32,7 +32,7 @@ ScopedThread::ScopedThread(void (*routine)(void *), void *arg)
 
     pthread_t threadId;
 
-    if (pthread_create(&threadId, nullptr, StartRoutine, &arguments))
+    if (pthread_create(&threadId, nullptr, StartRoutine, arguments))
     {
         delete arguments;
         throw std::runtime_error("Thread could not be created.");

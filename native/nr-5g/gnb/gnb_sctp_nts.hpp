@@ -19,11 +19,13 @@ struct NwSctpConnectionRequest : NtsMessage
 
     sctp::PayloadProtocolId ppid;
 
+    NtsTask *associatedTask;
+
     NwSctpConnectionRequest(int clientId, std::string localAddress, uint16_t localPort, std::string remoteAddress,
-                            uint16_t remotePort, sctp::PayloadProtocolId ppid)
+                            uint16_t remotePort, sctp::PayloadProtocolId ppid, NtsTask *associatedTask)
         : NtsMessage(NtsMessageType::SCTP_CONNECTION_REQUEST), clientId(clientId),
           localAddress(std::move(localAddress)), localPort(localPort), remoteAddress(std::move(remoteAddress)),
-          remotePort(remotePort), ppid(ppid)
+          remotePort(remotePort), ppid(ppid), associatedTask(associatedTask)
     {
     }
 };
@@ -72,6 +74,30 @@ struct NwSctpUnhandledNotificationReceive : NtsMessage
 
     explicit NwSctpUnhandledNotificationReceive(int clientId)
         : NtsMessage(NtsMessageType::SCTP_UNHANDLED_NOTIFICATION_RECEIVE), clientId(clientId)
+    {
+    }
+};
+
+struct NwSctpConnectionClose : NtsMessage
+{
+    int clientId;
+
+    explicit NwSctpConnectionClose(int clientId) : NtsMessage(NtsMessageType::SCTP_CONNECTION_CLOSE), clientId(clientId)
+    {
+    }
+};
+
+struct NwSctpSendMessage : NtsMessage
+{
+    int clientId;
+    uint16_t stream;
+    uint8_t *buffer;
+    size_t offset;
+    size_t length;
+
+    NwSctpSendMessage(int clientId, uint16_t stream, uint8_t *buffer, size_t offset, size_t length)
+        : NtsMessage(NtsMessageType::SCTP_SEND_MESSAGE), clientId(clientId), stream(stream), buffer(buffer), offset(offset),
+          length(length)
     {
     }
 };
