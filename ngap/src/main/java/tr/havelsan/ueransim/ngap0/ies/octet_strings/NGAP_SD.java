@@ -1,24 +1,17 @@
 /*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
+ * This file is a part of UERANSIM open source project.
+ * Copyright (c) 2021 ALİ GÜNGÖR, Havelsan.
+ *
+ * The software and all associated files are licensed under GPL-3.0
+ * and subject to the terms and conditions defined in LICENSE file.
  */
 
 package tr.havelsan.ueransim.ngap0.ies.octet_strings;
 
-import tr.havelsan.ueransim.ngap0.core.*;
-import tr.havelsan.ueransim.ngap0.pdu.*;
-import tr.havelsan.ueransim.utils.bits.*;
-import tr.havelsan.ueransim.utils.octets.*;
-import tr.havelsan.ueransim.ngap0.ies.bit_strings.*;
-import tr.havelsan.ueransim.ngap0.ies.octet_strings.*;
-import tr.havelsan.ueransim.ngap0.ies.printable_strings.*;
-import tr.havelsan.ueransim.ngap0.ies.sequences.*;
-import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.*;
-import tr.havelsan.ueransim.ngap0.ies.choices.*;
-import tr.havelsan.ueransim.ngap0.ies.integers.*;
-import tr.havelsan.ueransim.ngap0.ies.enumerations.*;
-
-import java.util.List;
+import tr.havelsan.ueransim.ngap0.core.NGAP_OctetString;
+import tr.havelsan.ueransim.utils.bits.BitString;
+import tr.havelsan.ueransim.utils.octets.Octet;
+import tr.havelsan.ueransim.utils.octets.OctetString;
 
 public class NGAP_SD extends NGAP_OctetString {
 

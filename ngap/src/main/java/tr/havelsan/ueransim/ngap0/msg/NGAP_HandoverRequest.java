@@ -1,21 +1,29 @@
 /*
- * Copyright (c) 2020 ALİ GÜNGÖR (aligng1620@gmail.com)
- * This software and all associated files are licensed under GPL-3.0.
+ * This file is a part of UERANSIM open source project.
+ * Copyright (c) 2021 ALİ GÜNGÖR, Havelsan.
+ *
+ * The software and all associated files are licensed under GPL-3.0
+ * and subject to the terms and conditions defined in LICENSE file.
  */
 
 package tr.havelsan.ueransim.ngap0.msg;
 
-import tr.havelsan.ueransim.ngap0.pdu.*;
-import tr.havelsan.ueransim.ngap0.core.*;
-import tr.havelsan.ueransim.ngap0.*;
-import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.*;
+import tr.havelsan.ueransim.ngap0.NgapMessageType;
+import tr.havelsan.ueransim.ngap0.NgapProtocolIeType;
+import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
+import tr.havelsan.ueransim.ngap0.core.NGAP_Value;
+import tr.havelsan.ueransim.ngap0.ies.bit_strings.NGAP_MaskedIMEISV;
+import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_Cause;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_HandoverType;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_NewSecurityContextInd;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RRCInactiveTransitionReportRequest;
+import tr.havelsan.ueransim.ngap0.ies.enumerations.NGAP_RedirectionVoiceFallback;
+import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_NAS_PDU;
+import tr.havelsan.ueransim.ngap0.ies.octet_strings.NGAP_SourceToTarget_TransparentContainer;
+import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_AllowedNSSAI;
+import tr.havelsan.ueransim.ngap0.ies.sequence_ofs.NGAP_PDUSessionResourceSetupListHOReq;
 import tr.havelsan.ueransim.ngap0.ies.sequences.*;
-import tr.havelsan.ueransim.ngap0.ies.choices.*;
-import tr.havelsan.ueransim.ngap0.ies.printable_strings.*;
-import tr.havelsan.ueransim.ngap0.ies.bit_strings.*;
-import tr.havelsan.ueransim.ngap0.ies.octet_strings.*;
-import tr.havelsan.ueransim.ngap0.ies.integers.*;
-import tr.havelsan.ueransim.ngap0.ies.enumerations.*;
 
 public class NGAP_HandoverRequest extends NGAP_BaseMessage {
 
