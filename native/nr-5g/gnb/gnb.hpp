@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "gnb_config.hpp"
+#include "gnb_ngap_task.hpp"
 #include "gnb_sctp_task.hpp"
 
 #include <logger.hpp>
@@ -19,13 +21,14 @@ namespace nr::gnb
 class GNodeB
 {
   private:
-    std::string nodeName;
+    GnbConfig* config;
     logger::LogBase *logBase;
 
     SctpTask *sctpTask;
+    NgapTask *ngapTask;
 
   public:
-    explicit GNodeB(std::string nodeName);
+    explicit GNodeB(GnbConfig* config);
     virtual ~GNodeB();
 
   public:

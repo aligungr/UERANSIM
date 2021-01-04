@@ -68,7 +68,10 @@ bool NtsTask::push(NtsMessage *msg)
 {
     std::unique_lock<std::mutex> lock(mutex);
     if (isQuiting)
+    {
+        delete msg;
         return false;
+    }
     msgQueue.push_back(msg);
     cv.notify_one();
     return true;
@@ -78,7 +81,10 @@ bool NtsTask::pushFront(NtsMessage *msg)
 {
     std::unique_lock<std::mutex> lock(mutex);
     if (isQuiting)
+    {
+        delete msg;
         return false;
+    }
     msgQueue.push_front(msg);
     cv.notify_one();
     return true;

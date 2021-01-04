@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "gnb_sctp_nts.hpp"
+#include "gnb_nts.hpp"
 
 namespace nr::gnb
 {

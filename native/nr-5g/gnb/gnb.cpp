@@ -10,17 +10,23 @@
 
 #include <utility>
 
-nr::gnb::GNodeB::GNodeB(std::string nodeName) : nodeName(std::move(nodeName))
+nr::gnb::GNodeB::GNodeB(GnbConfig *config) : config(config)
 {
-    logBase = new logger::LogBase("logs/" + this->nodeName + ".log");
+    logBase = new logger::LogBase("logs/" + config->name + ".log");
 
     sctpTask = new SctpTask(*logBase);
+    ngapTask = new NgapTask(config, *logBase);
+
+    ngapTask->setExternalTasks(sctpTask);
 }
 
 nr::gnb::GNodeB::~GNodeB()
 {
     sctpTask->quit();
+    ngapTask->quit();
+
     delete sctpTask;
+    delete ngapTask;
 
     delete logBase;
 }
@@ -28,4 +34,5 @@ nr::gnb::GNodeB::~GNodeB()
 void nr::gnb::GNodeB::start()
 {
     sctpTask->start();
+    ngapTask->start();
 }

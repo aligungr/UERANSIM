@@ -9,7 +9,7 @@
 #include "sctp_internal.hpp"
 #include "sctp_error.hpp"
 
-#include <address_utils.hpp>
+#include <convert.hpp>
 #include <arpa/inet.h>
 #include <cstring>
 #include <netdb.h>
@@ -49,7 +49,7 @@ void BindSocket(int sd, const std::string &address, uint16_t port)
     auto *addr = (sockaddr *)std::malloc(sizeof(sockaddr));
     std::memset(addr, 0, sizeof(sockaddr_in));
 
-    int ipVersion = AddressUtils::GetIpVersion(address);
+    int ipVersion = Convert::GetIpVersion(address);
 
     if (ipVersion == 4)
     {

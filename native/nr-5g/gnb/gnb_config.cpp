@@ -6,4 +6,4 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "gnb_sctp_nts.hpp"
+#include "gnb_config.hpp"

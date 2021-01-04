@@ -6,13 +6,4 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#pragma once
-
-#include <string>
-
-namespace AddressUtils
-{
-
-int GetIpVersion(const std::string &address);
-
-} // namespace AddressUtils
+#include "gnb_nts.hpp"

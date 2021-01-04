@@ -97,16 +97,22 @@ struct NwSctpConnectionClose : NtsMessage
 
 struct NwSctpSendMessage : NtsMessage
 {
-    int clientId;
-    uint16_t stream;
-    uint8_t *buffer;
-    size_t offset;
-    size_t length;
+    const int clientId;
+    const uint16_t stream;
+    uint8_t *const buffer;
+    const size_t offset;
+    const size_t length;
 
     NwSctpSendMessage(int clientId, uint16_t stream, uint8_t *buffer, size_t offset, size_t length)
-        : NtsMessage(NtsMessageType::SCTP_SEND_MESSAGE), clientId(clientId), stream(stream), buffer(buffer), offset(offset),
-          length(length)
+        : NtsMessage(NtsMessageType::SCTP_SEND_MESSAGE), clientId(clientId), stream(stream), buffer(buffer),
+          offset(offset), length(length)
     {
+    }
+
+    ~NwSctpSendMessage() override
+    {
+        // This buffer was allocated by asn1c library using malloc/calloc
+        free(buffer);
     }
 };
 
