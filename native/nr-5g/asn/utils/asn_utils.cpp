@@ -8,7 +8,7 @@
 
 #include "asn_utils.hpp"
 
-namespace nr::gnb
+namespace asn
 {
 
 void SetPrintableString(PrintableString_t &target, const std::string &value)
@@ -70,6 +70,26 @@ std::string GetPrintableString(const PrintableString_t &source)
     for (size_t i = 0; i < source.size; i++)
         r += (char)source.buf[i];
     return r;
+}
+
+octet GetOctet1(const OCTET_STRING_t &source)
+{
+    return source.size < 1 ? octet{0} : OctetBuffer{source.buf}.read();
+}
+
+octet2 GetOctet2(const OCTET_STRING_t &source)
+{
+    return source.size < 2 ? octet2{0} : OctetBuffer{source.buf}.read2();
+}
+
+octet3 GetOctet3(const OCTET_STRING_t &source)
+{
+    return source.size < 3 ? octet3{0} : OctetBuffer{source.buf}.read3();
+}
+
+octet4 GetOctet4(const OCTET_STRING_t &source)
+{
+    return source.size < 4 ? octet4{0} : OctetBuffer{source.buf}.read4();
 }
 
 } // namespace nr::gnb

@@ -15,6 +15,7 @@
 #include <ASN_NGAP_InitiatingMessage.h>
 #include <ASN_NGAP_NGAP-PDU.h>
 #include <ASN_NGAP_NGSetupRequest.h>
+#include <ASN_NGAP_PLMNSupportItem.h>
 #include <ASN_NGAP_ProtocolIE-Field.h>
 #include <ASN_NGAP_ServedGUAMIItem.h>
 #include <ASN_NGAP_SliceSupportItem.h>
@@ -23,8 +24,27 @@
 namespace nr::gnb
 {
 
+void NgapTask::receiveAssociationSetup(NwSctpAssociationSetup *msg)
+{
+    logger->debug("SCTP association setup received (association id: %d)", msg->associationId);
+
+    auto *amf = findAmfContext(msg->clientId);
+    if (amf == nullptr)
+        return;
+
+    waitingSctpClients--;
+    if (waitingSctpClients == 0)
+    {
+        // TODO: send status update to gnbApp
+    }
+
+    sendNgSetupRequest(amf->ctxId);
+}
+
 void NgapTask::sendNgSetupRequest(int amfId)
 {
+    logger->debug("Sending NG Setup Request");
+
     auto *amf = findAmfContext(amfId);
     if (amf == nullptr)
         return;
@@ -91,44 +111,81 @@ void NgapTask::sendNgSetupRequest(int amfId)
 
 void NgapTask::receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg)
 {
+    logger->debug("NG Setup Response received");
+
     auto *amf = findAmfContext(amfId);
     if (amf == nullptr)
         return;
 
     auto *ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_AMFName);
     if (ie)
-        amf->amfName = asn::GetPrintableString(ie->value.choice.AMFName);
+        amf->amfName = asn::GetPrintableString(ie->AMFName);
 
     ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_RelativeAMFCapacity);
     if (ie)
-        amf->relativeCapacity = ie->value.choice.RelativeAMFCapacity;
+        amf->relativeCapacity = ie->RelativeAMFCapacity;
 
     ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_ServedGUAMIList);
     if (ie)
     {
-        for (auto &item : amf->servedGuamiList)
-            delete item;
-        amf->servedGuamiList.clear();
+        utils::ClearAndDelete(amf->servedGuamiList);
 
-        auto &list = ie->value.choice.ServedGUAMIList.list;
-        for (int i = 0; i < list.count; i++)
-        {
+        asn::ForeachItem(ie->ServedGUAMIList, [amf](ASN_NGAP_ServedGUAMIItem &item) {
             auto servedGuami = new ServedGuami();
-
-            auto &item = list.array[i];
-            if (item->backupAMFName)
-                servedGuami->backupAmfName = asn::GetPrintableString(*item->backupAMFName);
-
-            ngap_utils::SetGuamiFromAsn(item->gUAMI, servedGuami->guami);
+            if (item.backupAMFName)
+                servedGuami->backupAmfName = asn::GetPrintableString(*item.backupAMFName);
+            ngap_utils::GuamiFromAsn_Ref(item.gUAMI, servedGuami->guami);
             amf->servedGuamiList.push_back(servedGuami);
-        }
+        });
     }
 
     ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_PLMNSupportList);
     if (ie)
     {
-        // TODO
+        utils::ClearAndDelete(amf->plmnSupportList);
+
+        asn::ForeachItem(ie->PLMNSupportList, [amf](ASN_NGAP_PLMNSupportItem &item) {
+            auto plmnSupport = new PlmnSupport();
+            ngap_utils::PlmnFromAsn_Ref(item.pLMNIdentity, plmnSupport->plmn);
+            asn::ForeachItem(item.sliceSupportList, [plmnSupport](ASN_NGAP_SliceSupportItem &ssItem) {
+                plmnSupport->sliceSupportList.push_back(ngap_utils::SliceSupportFromAsn_Unique(ssItem));
+            });
+            amf->plmnSupportList.push_back(plmnSupport);
+        });
     }
+}
+
+void NgapTask::receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg)
+{
+    logger->debug("NG Setup Failure received");
+
+    auto *amf = findAmfContext(amfId);
+    if (amf == nullptr)
+        return;
+
+    amf->state = EAmfState::WAITING_NG_SETUP;
+
+    auto *ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_Cause);
+    if (ie)
+        logger->err("NG Setup procedure is failed. Cause: %s", ngap_utils::CauseToString(ie->Cause).c_str());
+    else
+        logger->err("NG Setup procedure is failed.");
+}
+
+void NgapTask::receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg)
+{
+    auto *amf = findAmfContext(amfId);
+    if (amf == nullptr)
+    {
+        logger->err("Error indication received with not found AMF context");
+        return;
+    }
+
+    auto *ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_Cause);
+    if (ie)
+        logger->err("Error indication received. Cause: %s", ngap_utils::CauseToString(ie->Cause).c_str());
+    else
+        logger->err("Error indication received.");
 }
 
 } // namespace nr::gnb

@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "common.hpp"
+#include "common_types.hpp"
 #include "convert.hpp"
 
 octet3 Plmn::toOctet3() const
 {
-    return Convert::PlmnToOctet3(*this);
+    return utils::PlmnToOctet3(*this);
 }

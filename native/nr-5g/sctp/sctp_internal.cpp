@@ -49,7 +49,7 @@ void BindSocket(int sd, const std::string &address, uint16_t port)
     auto *addr = (sockaddr *)std::malloc(sizeof(sockaddr));
     std::memset(addr, 0, sizeof(sockaddr_in));
 
-    int ipVersion = Convert::GetIpVersion(address);
+    int ipVersion = utils::GetIpVersion(address);
 
     if (ipVersion == 4)
     {
@@ -144,6 +144,7 @@ void Connect(int sd, const std::string &address, uint16_t port)
 
     for (rp = result; rp != nullptr; rp = rp->ai_next)
     {
+        // TODO: make non blocking and set timeout (O_NONBLOCK etc)
         if (connect(sd, rp->ai_addr, rp->ai_addrlen) != -1)
         {
             connected = true;

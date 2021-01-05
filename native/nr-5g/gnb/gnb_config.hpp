@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <common.hpp>
+#include <common_types.hpp>
 #include <octet.hpp>
 #include <string>
 #include <vector>
@@ -16,14 +16,23 @@
 namespace nr::gnb
 {
 
+struct GnbAmfConfig
+{
+    std::string address;
+    uint16_t port;
+};
+
 struct GnbConfig
 {
     int gnbId;
     std::string name;
     Plmn plmn;
     int tac;
-    std::vector<Nssai> nssais;
+    std::vector<SliceSupport> nssais;
     EPagingDrx pagingDrx;
+    std::vector<GnbAmfConfig> amfConfigs;
+    std::string ngapIp;
+    std::string gtpIp;
 };
 
 } // namespace nr::gnb

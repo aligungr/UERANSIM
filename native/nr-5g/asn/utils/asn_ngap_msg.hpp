@@ -1566,4 +1566,10 @@ struct NgapMessageToIeType
     typedef typename std::remove_reference<decltype(*T{}.protocolIEs.list.array[0])>::type value;
 };
 
+template <typename T>
+struct NgapMessageToIeUnionType
+{
+    typedef decltype(typename NgapMessageToIeType<T>::value{}.value.choice) value;
+};
+
 } // namespace asn::ngap

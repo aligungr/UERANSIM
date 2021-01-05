@@ -8,19 +8,31 @@
 
 #include "gnb_ngap_utils.hpp"
 
+#include <cstring>
+
 namespace nr::gnb::ngap_utils
 {
 
 ASN_NGAP_PagingDRX_t PagingDrxToAsn(EPagingDrx pagingDrx)
 {
-    return (((int)pagingDrx) / 32) - 1;
+    switch (pagingDrx)
+    {
+    case EPagingDrx::V32:
+        return ASN_NGAP_PagingDRX_v32;
+    case EPagingDrx::V64:
+        return ASN_NGAP_PagingDRX_v64;
+    case EPagingDrx::V128:
+        return ASN_NGAP_PagingDRX_v128;
+    case EPagingDrx::V256:
+        return ASN_NGAP_PagingDRX_v256;
+    }
+    return ~0;
 }
 
-void SetPlmnFromAsn(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target)
+void PlmnFromAsn_Ref(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target)
 {
-    int i;
     assert(source.size == 3);
-    i = ((source.buf[1] & 0xf0) >> 4);
+    int i = ((source.buf[1] & 0xf0) >> 4);
     if (i == 0xf)
     {
         i = 0;
@@ -32,13 +44,39 @@ void SetPlmnFromAsn(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target)
     target.mnc = (i * 100) + ((source.buf[2] & 0xf0) >> 4) + ((source.buf[2] & 0x0f) * 10);
 }
 
-void SetGuamiFromAsn(const ASN_NGAP_GUAMI_t &guami, Guami &target)
+void GuamiFromAsn_Ref(const ASN_NGAP_GUAMI_t &guami, Guami &target)
 {
     target.amfRegionId = asn::GetBitStringInt<8>(guami.aMFRegionID);
     target.amfSetId = asn::GetBitStringInt<10>(guami.aMFSetID);
     target.amfPointer = asn::GetBitStringInt<6>(guami.aMFPointer);
     target.plmn = {};
-    SetPlmnFromAsn(guami.pLMNIdentity, target.plmn);
+    PlmnFromAsn_Ref(guami.pLMNIdentity, target.plmn);
+}
+
+std::unique_ptr<SliceSupport> SliceSupportFromAsn_Unique(ASN_NGAP_SliceSupportItem &supportItem)
+{
+    auto s = std::make_unique<SliceSupport>();
+    s->sst = asn::GetOctet1(supportItem.s_NSSAI.sST);
+    s->sd = std::nullopt;
+    if (supportItem.s_NSSAI.sD)
+        s->sd = asn::GetOctet3(*supportItem.s_NSSAI.sD);
+    return s;
+}
+
+std::string CauseToString(const ASN_NGAP_Cause_t &cause)
+{
+    auto res = asn_encode_to_new_buffer(nullptr, ATS_BASIC_XER, &asn_DEF_ASN_NGAP_Cause, &cause);
+    if (res.buffer == nullptr || res.result.encoded < 0)
+        return "<?>";
+
+    char *str = (char *)malloc(res.result.encoded + 1);
+    std::memcpy(str, res.buffer, res.result.encoded);
+    str[res.result.encoded] = '\0';
+
+    std::string s = str;
+    free(str);
+    free(res.buffer);
+    return s;
 }
 
 } // namespace nr::gnb::ngap_utils

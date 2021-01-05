@@ -157,6 +157,11 @@ NtsMessage *NtsTask::poll(int64_t timeout)
     return nullptr;
 }
 
+NtsMessage *NtsTask::take()
+{
+    return poll(WAIT_TIME_IF_NO_TIMER);
+}
+
 void NtsTask::start()
 {
     std::unique_lock<std::mutex> lock(mutex);

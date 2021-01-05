@@ -8,8 +8,10 @@
 
 #pragma once
 
+#include <memory>
 #include <octet.hpp>
 #include <optional>
+#include <vector>
 
 enum class EPagingDrx
 {
@@ -28,12 +30,14 @@ struct Plmn
     octet3 toOctet3() const;
 };
 
-struct Nssai
+struct SliceSupport
 {
-    int sst;
-    std::optional<int> sd;
+    octet sst{};
+    std::optional<octet3> sd{};
+};
 
-    Nssai(int sst, std::optional<int> sd) : sst(sst), sd(sd)
-    {
-    }
+struct PlmnSupport
+{
+    Plmn plmn;
+    std::vector<std::unique_ptr<SliceSupport>> sliceSupportList;
 };

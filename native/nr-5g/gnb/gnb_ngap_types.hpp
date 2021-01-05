@@ -42,7 +42,6 @@ struct ServedGuami
 struct NgapAmfContext
 {
     int ctxId;
-    int sctpClientId;
     SctpAssociation association;
     int nextStream; // next available SCTP stream for uplink
     std::string address;
@@ -51,6 +50,7 @@ struct NgapAmfContext
     long relativeCapacity;
     EAmfState state;
     std::vector<ServedGuami *> servedGuamiList;
+    std::vector<PlmnSupport *> plmnSupportList;
 };
 
 } // namespace nr::gnb

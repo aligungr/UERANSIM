@@ -117,6 +117,9 @@ class NtsTask
     // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
     NtsMessage *poll(int64_t timeout);
 
+    // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
+    NtsMessage *take();
+
   protected:
     // Called exactly once after start() called and before onLoop() callbacks.
     virtual void onStart() = 0;

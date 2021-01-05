@@ -70,7 +70,7 @@ void SctpTask::onStart()
 
 void SctpTask::onLoop()
 {
-    NtsMessage *msg = poll(1000);
+    NtsMessage *msg = take();
     if (!msg)
         return;
 
@@ -161,7 +161,7 @@ void SctpTask::receiveSctpConnectionSetupRequest(NwSctpConnectionRequest *msg)
     sctp::ISctpHandler *handler = new SctpHandler(this, msg->clientId);
 
     auto *entry = new ClientEntry;
-    clients[entry->id] = entry;
+    clients[msg->clientId] = entry;
 
     entry->id = msg->clientId;
     entry->client = client;

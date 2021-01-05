@@ -15,7 +15,9 @@
 #include <asn_application.h>
 #include <bit_buffer.hpp>
 #include <cstdlib>
+#include <functional>
 #include <octet.hpp>
+#include <octet_buffer.hpp>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -67,6 +69,18 @@ inline int GetBitStringInt(const BIT_STRING_t &source)
         return 0;
     }
     return BitBuffer{source.buf}.readBits(BitCount);
+}
+
+octet GetOctet1(const OCTET_STRING_t &source);
+octet2 GetOctet2(const OCTET_STRING_t &source);
+octet3 GetOctet3(const OCTET_STRING_t &source);
+octet4 GetOctet4(const OCTET_STRING_t &source);
+
+template <typename T>
+inline void ForeachItem(const T &list, std::function<void(typename asn::AsnTraits_ListItemType<T>::value &)> fun)
+{
+    for (int i = 0; i < list.list.count; i++)
+        fun(*list.list.array[i]);
 }
 
 } // namespace asn

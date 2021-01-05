@@ -7,10 +7,13 @@
 //
 
 #include "convert.hpp"
+#include <atomic>
 #include <cassert>
 #include <regex>
 
-int Convert::GetIpVersion(const std::string &address)
+static std::atomic<int> idCounter = 1;
+
+int utils::GetIpVersion(const std::string &address)
 {
     const std::regex regex4(R"(\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b)");
     const std::regex regex6(
@@ -29,7 +32,7 @@ int Convert::GetIpVersion(const std::string &address)
     return 0;
 }
 
-std::vector<uint8_t> Convert::HexStringToVector(const std::string &hex)
+std::vector<uint8_t> utils::HexStringToVector(const std::string &hex)
 {
     assert(hex.length() % 2 == 0);
 
@@ -43,7 +46,7 @@ std::vector<uint8_t> Convert::HexStringToVector(const std::string &hex)
     return bytes;
 }
 
-octet3 Convert::PlmnToOctet3(const Plmn &plmn)
+octet3 utils::PlmnToOctet3(const Plmn &plmn)
 {
     int mcc = plmn.mcc;
     int mnc = plmn.mnc;
@@ -53,4 +56,15 @@ octet3 Convert::PlmnToOctet3(const Plmn &plmn)
     uint8_t oct1 = ((isLongMnc ? mnc / 100 : 15) << 4) | (mcc % 10);
     uint8_t oct2 = ((mnc % 10) << 4) | ((mnc / 10) % 10);
     return {oct0, oct1, oct2};
+}
+
+int utils::NextId()
+{
+    int res = ++idCounter;
+    if (res == 0)
+    {
+        // ID counter overflows.
+        std::terminate();
+    }
+    return res;
 }

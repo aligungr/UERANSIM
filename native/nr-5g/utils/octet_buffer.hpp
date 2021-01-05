@@ -9,6 +9,7 @@
 #pragma once
 
 #include "bits.hpp"
+#include "octet.hpp"
 
 #include <cstdint>
 #include <cstdlib>
@@ -24,30 +25,29 @@ class OctetBuffer
     {
     }
 
-    inline uint8_t peek()
+    inline octet peek()
     {
         return data[index];
     }
 
-    inline uint8_t read()
+    inline octet read()
     {
         return data[index++];
     }
 
-    inline uint16_t read2()
+    inline octet2 read2()
     {
-        uint16_t oct0 = read();
-        uint16_t oct1 = read();
-        return (oct0 << 8u) | oct1;
+        return octet2{read(), read()};
     }
 
-    inline uint32_t read4()
+    inline octet3 read3()
     {
-        uint32_t oct0 = read();
-        uint32_t oct1 = read();
-        uint32_t oct2 = read();
-        uint32_t oct3 = read();
-        return (oct0 << 24u) | (oct1 << 16u) | (oct2 << 8u) | oct3;
+        return {read(), read(), read()};
+    }
+
+    inline octet4 read4()
+    {
+        return {read(), read(), read(), read()};
     }
 
     inline void write(uint8_t octet)

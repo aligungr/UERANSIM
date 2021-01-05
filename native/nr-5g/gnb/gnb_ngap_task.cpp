@@ -7,11 +7,12 @@
 //
 
 #include "gnb_ngap_task.hpp"
+#include <convert.hpp>
 
 namespace nr::gnb
 {
 
-NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase) : config{config}, sctpTask{}
+NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase) : config{config}, sctpTask{}, waitingSctpClients{}
 {
     logger = loggerBase.makeUniqueLogger("ngap");
 }
@@ -24,24 +25,42 @@ void NgapTask::setExternalTasks(SctpTask *sctp)
 void NgapTask::onStart()
 {
     logger->debug("NGAP task has been started");
+
+    for (auto &amfConfig : config->amfConfigs)
+        createAmfContext(amfConfig);
+    if (amfContexts.empty())
+        logger->warn("No AMF configuration is provided");
+
+    for (auto &amfCtx : amfContexts)
+    {
+        sctpTask->push(new NwSctpConnectionRequest(amfCtx.second->ctxId, config->ngapIp, 0, amfCtx.second->address,
+                                                   amfCtx.second->port, sctp::PayloadProtocolId::NGAP, this));
+        waitingSctpClients++;
+    }
 }
 
 void NgapTask::onLoop()
 {
+    NtsMessage *msg = take();
+    if (!msg)
+        return;
+
+    switch (msg->msgType)
+    {
+    case NtsMessageType::SCTP_ASSOCIATION_SETUP: {
+        receiveAssociationSetup(dynamic_cast<NwSctpAssociationSetup *>(msg));
+        break;
+    }
+    default:
+        logger->warn("Unhandled NTS message received with type %d", (int)msg->msgType);
+        delete msg;
+        break;
+    }
 }
 
 void NgapTask::onQuit()
 {
-}
-
-NgapAmfContext *NgapTask::findAmfContext(int ctxId)
-{
-    NgapAmfContext *ctx = nullptr;
-    if (amfContexts.count(ctxId))
-        ctx = amfContexts[ctxId];
-    if (ctx == nullptr)
-        logger->err("AMF context not found with id: %d", ctxId);
-    return nullptr;
+    // TODO
 }
 
 } // namespace nr::gnb
