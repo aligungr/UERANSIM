@@ -29,16 +29,18 @@ void NgapTask::receiveAssociationSetup(NwSctpAssociationSetup *msg)
     logger->debug("SCTP association setup received (association id: %d)", msg->associationId);
 
     auto *amf = findAmfContext(msg->clientId);
-    if (amf == nullptr)
-        return;
-
-    waitingSctpClients--;
-    if (waitingSctpClients == 0)
+    if (amf != nullptr)
     {
-        // TODO: send status update to gnbApp
-    }
+        waitingSctpClients--;
+        if (waitingSctpClients == 0)
+        {
+            // TODO: send status update to gnbApp
+        }
 
-    sendNgSetupRequest(amf->ctxId);
+        sendNgSetupRequest(amf->ctxId);
+
+        delete msg;
+    }
 }
 
 void NgapTask::sendNgSetupRequest(int amfId)
@@ -58,7 +60,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
     auto *globalGnbId = asn::New<ASN_NGAP_GlobalGNB_ID>();
     globalGnbId->gNB_ID.present = ASN_NGAP_GNB_ID_PR_gNB_ID;
     asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID, octet4{config->gnbId});
-    asn::SetOctetString(globalGnbId->pLMNIdentity, config->plmn.toOctet3());
+    asn::SetOctetString(globalGnbId->pLMNIdentity, ngap_utils::PlmnToOctet3(config->plmn));
 
     auto *ieGlobalGnbId = asn::New<ASN_NGAP_NGSetupRequestIEs>();
     ieGlobalGnbId->id = ASN_NGAP_ProtocolIE_ID_id_GlobalRANNodeID;
@@ -74,7 +76,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
     asn::SetPrintableString(ieRanNodeName->value.choice.RANNodeName, config->name);
 
     auto *broadcastPlmn = asn::New<ASN_NGAP_BroadcastPLMNItem>();
-    asn::SetOctetString(broadcastPlmn->pLMNIdentity, config->plmn.toOctet3());
+    asn::SetOctetString(broadcastPlmn->pLMNIdentity, ngap_utils::PlmnToOctet3(config->plmn));
     for (auto &nssai : config->nssais)
     {
         auto *item = asn::New<ASN_NGAP_SliceSupportItem>();
@@ -98,7 +100,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
     asn::SequenceAdd(ieSupportedTaList->value.choice.SupportedTAList, supportedTa);
 
     auto *iePagingDrx = asn::New<ASN_NGAP_NGSetupRequestIEs>();
-    iePagingDrx->id = ASN_NGAP_ProtocolIE_ID_id_PagingDRX;
+    iePagingDrx->id = ASN_NGAP_ProtocolIE_ID_id_DefaultPagingDRX;
     iePagingDrx->criticality = ASN_NGAP_Criticality_ignore;
     iePagingDrx->value.present = ASN_NGAP_NGSetupRequestIEs__value_PR_PagingDRX;
     iePagingDrx->value.choice.PagingDRX = ngap_utils::PagingDrxToAsn(config->pagingDrx);

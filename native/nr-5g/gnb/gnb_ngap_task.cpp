@@ -24,7 +24,7 @@ void NgapTask::setExternalTasks(SctpTask *sctp)
 
 void NgapTask::onStart()
 {
-    logger->debug("NGAP task has been started");
+    logger->debug("NGAP layer has been started");
 
     for (auto &amfConfig : config->amfConfigs)
         createAmfContext(amfConfig);

@@ -8,8 +8,3 @@
 
 #include "common_types.hpp"
 #include "convert.hpp"
-
-octet3 Plmn::toOctet3() const
-{
-    return utils::PlmnToOctet3(*this);
-}

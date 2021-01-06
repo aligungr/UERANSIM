@@ -21,7 +21,6 @@ static_assert(sizeof(int) == sizeof(uint32_t));
 static_assert(sizeof(long) == sizeof(uint64_t));
 
 std::vector<uint8_t> HexStringToVector(const std::string &hex);
-octet3 PlmnToOctet3(const Plmn &plmn);
 int GetIpVersion(const std::string &address);
 
 template <typename T>

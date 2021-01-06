@@ -25,6 +25,7 @@ namespace nr::gnb::ngap_utils
 
 ASN_NGAP_PagingDRX_t PagingDrxToAsn(EPagingDrx pagingDrx);
 std::string CauseToString(const ASN_NGAP_Cause_t &cause);
+octet3 PlmnToOctet3(const Plmn &plmn);
 
 void PlmnFromAsn_Ref(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target);
 void GuamiFromAsn_Ref(const ASN_NGAP_GUAMI_t &guami, Guami &target);

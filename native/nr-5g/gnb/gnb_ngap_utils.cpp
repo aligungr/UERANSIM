@@ -29,6 +29,41 @@ ASN_NGAP_PagingDRX_t PagingDrxToAsn(EPagingDrx pagingDrx)
     return ~0;
 }
 
+octet3 PlmnToOctet3(const Plmn &plmn)
+{
+    int mcc = plmn.mcc;
+    int mcc3 = mcc % 10;
+    int mcc2 = (mcc % 100) / 10;
+    int mcc1 = (mcc % 1000) / 100;
+
+    int mnc = plmn.mnc;
+
+    if (plmn.isLongMnc)
+    {
+        int mnc1 = mnc % 1000 / 100;
+        int mnc2 = mnc % 100 / 10;
+        int mnc3 = mnc % 10;
+
+        int octet1 = mcc2 << 4 | mcc1;
+        int octet2 = mnc1 << 4 | mcc3;
+        int octet3 = mnc3 << 4 | mnc2;
+
+        return {(uint8_t)octet1, (uint8_t)octet2, (uint8_t)octet3};
+    }
+    else
+    {
+        int mnc1 = mnc % 100 / 10;
+        int mnc2 = mnc % 10;
+        int mnc3 = 0xF;
+
+        int octet1 = mcc2 << 4 | mcc1;
+        int octet2 = mnc3 << 4 | mcc3;
+        int octet3 = mnc2 << 4 | mnc1;
+
+        return {(uint8_t)octet1, (uint8_t)octet2, (uint8_t)octet3};
+    }
+}
+
 void PlmnFromAsn_Ref(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target)
 {
     assert(source.size == 3);
@@ -36,10 +71,10 @@ void PlmnFromAsn_Ref(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target)
     if (i == 0xf)
     {
         i = 0;
-        target.isLong = false;
+        target.isLongMnc = false;
     }
     else
-        target.isLong = true;
+        target.isLongMnc = true;
     target.mcc = (((source.buf[0] & 0xf0) >> 4) * 10) + ((source.buf[0] & 0x0f) * 100) + (source.buf[1] & 0x0f);
     target.mnc = (i * 100) + ((source.buf[2] & 0xf0) >> 4) + ((source.buf[2] & 0x0f) * 10);
 }

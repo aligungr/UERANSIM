@@ -25,9 +25,7 @@ struct Plmn
 {
     int mcc;
     int mnc;
-    bool isLong;
-
-    octet3 toOctet3() const;
+    bool isLongMnc;
 };
 
 struct SliceSupport

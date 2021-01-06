@@ -46,18 +46,6 @@ std::vector<uint8_t> utils::HexStringToVector(const std::string &hex)
     return bytes;
 }
 
-octet3 utils::PlmnToOctet3(const Plmn &plmn)
-{
-    int mcc = plmn.mcc;
-    int mnc = plmn.mnc;
-    bool isLongMnc = plmn.isLong;
-
-    uint8_t oct0 = (((mcc / 10) % 10) << 4) | (isLongMnc ? mnc / 100 : 15);
-    uint8_t oct1 = ((isLongMnc ? mnc / 100 : 15) << 4) | (mcc % 10);
-    uint8_t oct2 = ((mnc % 10) << 4) | ((mnc / 10) % 10);
-    return {oct0, oct1, oct2};
-}
-
 int utils::NextId()
 {
     int res = ++idCounter;
