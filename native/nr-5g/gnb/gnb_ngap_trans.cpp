@@ -58,4 +58,11 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
     // TODO
 }
 
+void NgapTask::receiveSctpMessage(NwSctpClientReceive *msg)
+{
+    // TODO
+
+    delete msg;
+}
+
 } // namespace nr::gnb

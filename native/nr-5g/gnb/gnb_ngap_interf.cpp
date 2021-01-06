@@ -11,6 +11,7 @@
 
 #include <ASN_NGAP_AMFName.h>
 #include <ASN_NGAP_BroadcastPLMNItem.h>
+#include <ASN_NGAP_ErrorIndication.h>
 #include <ASN_NGAP_GlobalGNB-ID.h>
 #include <ASN_NGAP_InitiatingMessage.h>
 #include <ASN_NGAP_NGAP-PDU.h>
@@ -188,6 +189,22 @@ void NgapTask::receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg)
         logger->err("Error indication received. Cause: %s", ngap_utils::CauseToString(ie->Cause).c_str());
     else
         logger->err("Error indication received.");
+}
+
+void NgapTask::sendErrorIndication(int amfId, NgapCause cause, int ueId)
+{
+    auto ieCause = asn::New<ASN_NGAP_ErrorIndicationIEs>();
+    ieCause->id = ASN_NGAP_ProtocolIE_ID_id_Cause;
+    ieCause->criticality = ASN_NGAP_Criticality_ignore;
+    ieCause->value.present = ASN_NGAP_ErrorIndicationIEs__value_PR_Cause;
+    ngap_utils::ToCauseAsn_Ref(cause, ieCause->value.choice.Cause);
+
+    auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_ErrorIndication>({ieCause});
+
+    if (ueId > 0)
+        sendNgapUeAssociated(ueId, pdu);
+    else
+        sendNgapNonUe(amfId, pdu);
 }
 
 } // namespace nr::gnb

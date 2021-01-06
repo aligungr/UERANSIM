@@ -114,4 +114,38 @@ std::string CauseToString(const ASN_NGAP_Cause_t &cause)
     return s;
 }
 
+void ToCauseAsn_Ref(NgapCause source, ASN_NGAP_Cause_t &target)
+{
+    int val = (int)source;
+    if (val >= 400)
+    {
+        val -= 400;
+        target.present = ASN_NGAP_Cause_PR_misc;
+        target.choice.misc = static_cast<ASN_NGAP_CauseMisc_t>(val);
+    }
+    else if (val >= 300)
+    {
+        val -= 300;
+        target.present = ASN_NGAP_Cause_PR_protocol;
+        target.choice.protocol = static_cast<ASN_NGAP_CauseProtocol_t>(val);
+    }
+    else if (val >= 200)
+    {
+        val -= 200;
+        target.present = ASN_NGAP_Cause_PR_nas;
+        target.choice.nas = static_cast<ASN_NGAP_CauseNas_t>(val);
+    }
+    else if (val >= 100)
+    {
+        val -= 100;
+        target.present = ASN_NGAP_Cause_PR_transport;
+        target.choice.transport = static_cast<ASN_NGAP_CauseTransport_t>(val);
+    }
+    else
+    {
+        target.present = ASN_NGAP_Cause_PR_radioNetwork;
+        target.choice.radioNetwork = static_cast<ASN_NGAP_CauseRadioNetwork_t>(val);
+    }
+}
+
 } // namespace nr::gnb::ngap_utils

@@ -30,6 +30,7 @@ class NgapTask : public NtsTask
     GnbConfig *config;
     std::unique_ptr<logger::Logger> logger;
     std::unordered_map<int, NgapAmfContext *> amfContexts;
+    std::unordered_map<int, NgapUeContext *> ueContexts;
     SctpTask *sctpTask;
     int waitingSctpClients;
 
@@ -50,6 +51,7 @@ class NgapTask : public NtsTask
 
     /* Interface management */
     void sendNgSetupRequest(int amfId);
+    void sendErrorIndication(int amfId, NgapCause cause = NgapCause::CauseProtocol_unspecified, int ueId = 0);
     void receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg);
     void receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg);
     void receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg);
@@ -58,6 +60,7 @@ class NgapTask : public NtsTask
     /* Message transport */
     void sendNgapNonUe(int amfId, ASN_NGAP_NGAP_PDU *pdu);
     void sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu);
+    void receiveSctpMessage(NwSctpClientReceive *msg);
 };
 
 } // namespace nr::gnb

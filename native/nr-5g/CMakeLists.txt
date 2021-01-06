@@ -12,6 +12,7 @@ add_subdirectory(utils)
 add_subdirectory(sctp)
 add_subdirectory(gnb)
 add_subdirectory(rlc)
+add_subdirectory(nas)
 
 add_executable(ueransim main.cpp)
 
@@ -23,5 +24,6 @@ target_link_libraries(ueransim utils)
 target_link_libraries(ueransim gnb)
 target_link_libraries(ueransim rlc)
 target_link_libraries(ueransim logger)
+target_link_libraries(ueransim nas)
 
 target_compile_options(ueransim PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter)
