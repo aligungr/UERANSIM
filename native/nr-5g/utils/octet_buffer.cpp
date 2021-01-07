@@ -7,4 +7,11 @@
 //
 
 #include "octet_buffer.hpp"
+#include "octet_string.hpp"
 
+OctetString OctetBuffer::readOctetString(int length)
+{
+    std::vector<uint8_t> v{data + index, data + index + length};
+    index += length;
+    return OctetString(std::move(v));
+}

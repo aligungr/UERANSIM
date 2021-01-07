@@ -7,56 +7,59 @@
 //
 
 #include "octet_string.hpp"
-#include <cstring>
 
-int OctetString::size() const
+void OctetString::append(const OctetString &v)
 {
-    return length;
+    data.insert(v.data.end(), v.data.begin(), v.data.end());
 }
 
-uint8_t &OctetString::at(size_t i)
+void OctetString::appendOctet(uint8_t v)
 {
-    return data[i + offset];
+    data.push_back(v);
 }
 
-uint8_t &OctetString::at(size_t i) const
+void OctetString::appendOctet(int v)
 {
-    return data[i + offset];
+    data.push_back(v & 0xFF);
 }
 
-OctetString *OctetString::wrapBuffer(std::shared_ptr<uint8_t[]> &data, size_t offset, size_t length)
+void OctetString::appendOctet2(octet2 v)
 {
-    return new OctetString(offset, length, data);
+    data.push_back(v[0]);
+    data.push_back(v[1]);
 }
 
-OctetString *OctetString::wrapBuffer(std::shared_ptr<uint8_t[]> &data, size_t length)
+void OctetString::appendOctet2(int v)
 {
-    return wrapBuffer(data, 0, length);
+    appendOctet2(octet2{v});
 }
 
-OctetString *OctetString::sub(size_t index)
+void OctetString::appendOctet3(octet3 v)
 {
-    return sub(index, size() - index);
+    data.push_back(v[0]);
+    data.push_back(v[1]);
+    data.push_back(v[2]);
 }
 
-OctetString *OctetString::sub(size_t index, size_t len)
+void OctetString::appendOctet3(int v)
 {
-    return wrapBuffer(data, offset + index, len);
+    appendOctet3(octet3{v});
 }
 
-OctetString *OctetString::copyBuffer(uint8_t *data, size_t offset, size_t length)
+void OctetString::appendOctet4(octet4 v)
 {
-    auto *copy = new uint8_t[length];
-    std::memcpy(copy, data + offset, length);
-    return wrapBuffer(std::shared_ptr<uint8_t[]>(copy), length);
+    data.push_back(v[0]);
+    data.push_back(v[1]);
+    data.push_back(v[2]);
+    data.push_back(v[3]);
 }
 
-OctetString *OctetString::copyBuffer(uint8_t *data, size_t length)
+void OctetString::appendOctet4(int v)
 {
-    return copyBuffer(data, 0, length);
+    appendOctet4(octet4{v});
 }
 
-OctetString *OctetString::wrapBuffer(std::shared_ptr<uint8_t[]> &&data, size_t length)
+int OctetString::length() const
 {
-    return new OctetString(0, length, data);
+    return static_cast<int>(data.size());
 }

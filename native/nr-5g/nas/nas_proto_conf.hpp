@@ -10,6 +10,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <octet_string.hpp>
+#include <utility>
 #include <vector>
 
 namespace nas
@@ -98,13 +101,12 @@ enum class EProtocolConfigId
 
 struct ProtocolConfigurationItem
 {
-    int id;
-    bool isUplink;
-    uint8_t *content;
-    size_t contentLength;
+    const int id;
+    const bool isUplink;
+    const OctetString content;
 
-    ProtocolConfigurationItem(int id, bool isUplink, uint8_t *content, const size_t &contentLength)
-        : id(id), isUplink(isUplink), content(content), contentLength(contentLength)
+    ProtocolConfigurationItem(int id, bool isUplink, OctetString content)
+        : id(id), isUplink(isUplink), content(std::move(content))
     {
     }
 };
@@ -112,19 +114,17 @@ struct ProtocolConfigurationItem
 class ProtocolConfigurationOptions
 {
   public:
-    std::vector<ProtocolConfigurationItem> configurationProtocols;
-    std::vector<ProtocolConfigurationItem> additionalParams;
+    std::vector<std::unique_ptr<ProtocolConfigurationItem>> configurationProtocols{};
+    std::vector<std::unique_ptr<ProtocolConfigurationItem>> additionalParams{};
 
   private:
-    static inline bool IsProtocolId(int id)
-    {
-        return id == 0xC021 || id == 0xC023 || id == 0xC223 || id == 0x8021;
-    }
+    static inline bool IsProtocolId(int id);
+    static inline bool IsTwoOctetLengthContainerId(int id, bool isUplink);
 
-    static inline bool IsTwoOctetLengthContainerId(int id, boolean isUplink)
-    {
-        return !isUplink && (id == 0x0023 || id == 0x0024 || id == 0x0030);
-    }
+  public:
+    static std::unique_ptr<ProtocolConfigurationOptions> Decode(uint8_t *data, size_t len, bool isUplink);
+
+    OctetString encode();
 };
 
 } // namespace nas

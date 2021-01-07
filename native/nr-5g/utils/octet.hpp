@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <bitset>
 #include <cassert>
 #include <cstdint>
 #include <utility>
@@ -33,6 +34,18 @@ struct octet
     /* no explicit */ constexpr operator uint8_t() const
     {
         return value;
+    }
+
+    explicit constexpr operator int() const
+    {
+        return value;
+    }
+
+    inline bool bit(int index) const
+    {
+        assert(index >= 0 && index <= 7);
+        std::bitset<8> bitset = value;
+        return bitset[index];
     }
 };
 
@@ -63,6 +76,11 @@ struct octet2
     {
         assert(index >= 0 && index <= 1);
         return (value >> (8 - index * 8)) & 0xFF;
+    }
+
+    explicit constexpr operator int() const
+    {
+        return value;
     }
 };
 
@@ -95,6 +113,11 @@ struct octet3
         assert(index >= 0 && index <= 2);
         return (value >> (16 - index * 8)) & 0xFF;
     }
+
+    explicit constexpr operator int() const
+    {
+        return value;
+    }
 };
 
 struct octet4
@@ -125,5 +148,10 @@ struct octet4
     {
         assert(index >= 0 && index <= 3);
         return (value >> (24 - index * 8)) & 0xFF;
+    }
+
+    explicit constexpr operator int() const
+    {
+        return value;
     }
 };

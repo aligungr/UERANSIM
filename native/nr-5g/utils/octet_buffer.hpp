@@ -15,13 +15,20 @@
 #include <cstdlib>
 #include <utility>
 
+struct OctetString;
+
 class OctetBuffer
 {
     uint8_t *data;
     size_t index;
+    size_t size;
 
   public:
-    explicit OctetBuffer(uint8_t *data) : data(data), index(0)
+    OctetBuffer(uint8_t *data, size_t size) : data(data), index(0), size(size)
+    {
+    }
+
+    explicit OctetBuffer(uint8_t *data) : data(data), index(0), size(~0)
     {
     }
 
@@ -30,9 +37,19 @@ class OctetBuffer
         return data[index];
     }
 
+    inline int peekI()
+    {
+        return (int)peek();
+    }
+
     inline octet read()
     {
         return data[index++];
+    }
+
+    inline int readI()
+    {
+        return (int)read();
     }
 
     inline octet2 read2()
@@ -40,14 +57,29 @@ class OctetBuffer
         return octet2{read(), read()};
     }
 
+    inline int read2I()
+    {
+        return (int)read2();
+    }
+
     inline octet3 read3()
     {
         return {read(), read(), read()};
     }
 
+    inline int read3I()
+    {
+        return (int)read3();
+    }
+
     inline octet4 read4()
     {
         return {read(), read(), read(), read()};
+    }
+
+    inline int read4I()
+    {
+        return (int)read4();
     }
 
     inline void write(uint8_t octet)
@@ -90,4 +122,11 @@ class OctetBuffer
     {
         return index;
     }
+
+    inline bool hasNext() const
+    {
+        return index < size;
+    }
+
+    OctetString readOctetString(int length);
 };

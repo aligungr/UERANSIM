@@ -74,22 +74,22 @@ std::string GetPrintableString(const PrintableString_t &source)
 
 octet GetOctet1(const OCTET_STRING_t &source)
 {
-    return source.size < 1 ? octet{0} : OctetBuffer{source.buf}.read();
+    return source.size < 1 ? octet{0} : OctetBuffer{source.buf, source.size}.read();
 }
 
 octet2 GetOctet2(const OCTET_STRING_t &source)
 {
-    return source.size < 2 ? octet2{0} : OctetBuffer{source.buf}.read2();
+    return source.size < 2 ? octet2{0} : OctetBuffer{source.buf, source.size}.read2();
 }
 
 octet3 GetOctet3(const OCTET_STRING_t &source)
 {
-    return source.size < 3 ? octet3{0} : OctetBuffer{source.buf}.read3();
+    return source.size < 3 ? octet3{0} : OctetBuffer{source.buf, source.size}.read3();
 }
 
 octet4 GetOctet4(const OCTET_STRING_t &source)
 {
-    return source.size < 4 ? octet4{0} : OctetBuffer{source.buf}.read4();
+    return source.size < 4 ? octet4{0} : OctetBuffer{source.buf, source.size}.read4();
 }
 
 } // namespace nr::gnb

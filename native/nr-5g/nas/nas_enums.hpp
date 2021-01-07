@@ -300,54 +300,54 @@ enum class EReflectiveQoS
 
 enum class EEmergencyServiceFallback3gppIndicator
 {
-    NOT_SUPPORTED 0b00,
-    SUPPORTED_IN_NR_CONNECTED_TO_5GCN_ONLY 0b01,
-    SUPPORTED_IN_EUTRA_CONNTECTED_TO_5GCN_ONLY 0b10,
-    SUPPORTED_IN_NR_CONNTECTED_TO_5GCN_AND_EUTRA_CONNECTED_TO_5GCN 0b11,
+    NOT_SUPPORTED = 0b00,
+    SUPPORTED_IN_NR_CONNECTED_TO_5GCN_ONLY = 0b01,
+    SUPPORTED_IN_EUTRA_CONNTECTED_TO_5GCN_ONLY = 0b10,
+    SUPPORTED_IN_NR_CONNTECTED_TO_5GCN_AND_EUTRA_CONNECTED_TO_5GCN = 0b11,
 };
 
 enum class EEmergencyServiceSupport3gppIndicator
 {
-    NOT_SUPPORTED 0b00,
-    SUPPORTED_IN_NR_CONNECTED_TO_5GCN_ONLY 0b01,
-    SUPPORTED_IN_EUTRA_CONNTECTED_TO_5GCN_ONLY 0b10,
-    SUPPORTED_IN_NR_CONNTECTED_TO_5GCN_AND_EUTRA_CONNECTED_TO_5GCN 0b11,
+    NOT_SUPPORTED = 0b00,
+    SUPPORTED_IN_NR_CONNECTED_TO_5GCN_ONLY = 0b01,
+    SUPPORTED_IN_EUTRA_CONNTECTED_TO_5GCN_ONLY = 0b10,
+    SUPPORTED_IN_NR_CONNTECTED_TO_5GCN_AND_EUTRA_CONNECTED_TO_5GCN = 0b11,
 };
 
 enum class EEmergencyServiceSupportNon3gppIndicator
 {
-    NOT_SUPPORTED 0b0,
-    SUPPORTED 0b1,
+    NOT_SUPPORTED = 0b0,
+    SUPPORTED = 0b1,
 };
 
 enum class EInterworkingWithoutN26InterfaceIndicator
 {
-    NOT_SUPPORTED 0b0,
-    SUPPORTED 0b1,
+    NOT_SUPPORTED = 0b0,
+    SUPPORTED = 0b1,
 };
 
 enum class EMpsIndicator
 {
-    NOT_SUPPORTED 0b0,
-    SUPPORTED 0b1,
+    NOT_SUPPORTED = 0b0,
+    SUPPORTED = 0b1,
 };
 
 enum class EImsVoPs3gpp
 {
-    NOT_SUPPORTED 0b0,
-    SUPPORTED 0b1,
+    NOT_SUPPORTED = 0b0,
+    SUPPORTED = 0b1,
 };
 
 enum class EImsVoPsN3gpp
 {
-    NOT_SUPPORTED 0b0,
-    SUPPORTED 0b1,
+    NOT_SUPPORTED = 0b0,
+    SUPPORTED = 0b1,
 };
 
 enum class EMcsIndicator
 {
-    NOT_VALID 0b0,
-    VALID 0b1,
+    NOT_VALID = 0b0,
+    VALID = 0b1,
 };
 
 enum class ESmsOverNasTransportAllowed
@@ -740,6 +740,13 @@ enum class EUesUsageSetting
 {
     VOICE_CENTRIC = 0b0,
     DATA_CENTRIC = 0b1,
+};
+
+enum class EQoSOperationCode
+{
+    CREATE_NEW = 0b001,
+    DELETE_EXISTING = 0b010,
+    MODIFY_EXISTING = 0b011,
 };
 
 } // namespace nas
