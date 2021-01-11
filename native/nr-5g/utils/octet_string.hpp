@@ -36,6 +36,7 @@ class OctetString
     void append(const OctetString &v);
     void appendOctet(uint8_t v);
     void appendOctet(int v);
+    void appendOctet(int bigHalf, int littleHalf);
     void appendOctet2(octet2 v);
     void appendOctet2(int v);
     void appendOctet3(octet3 v);

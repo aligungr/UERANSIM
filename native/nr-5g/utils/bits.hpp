@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <bitset>
 #include <cstdint>
 #include <type_traits>
 #include <utility>
@@ -33,6 +34,28 @@ template <int index>
 inline int BitAt(uint8_t octet)
 {
     return BitRange8<index, index>(octet);
+}
+
+template <int start, int end>
+inline void SetBitRange8(uint8_t &octet, int value)
+{
+    static_assert(start >= 0 && start <= 7);
+    static_assert(end >= 0 && end <= 7);
+    static_assert(start <= end);
+
+    std::bitset<8> v1 = octet;
+    std::bitset<8> v2 = value;
+
+    for (int i = start; i <= end; i++)
+        v1[i] = v2[i - start];
+
+    octet = v1.to_ulong() & 0xFF;
+}
+
+template <int index>
+inline void SetBitAt(uint8_t &octet, bool value)
+{
+    SetBitRange8<index, index>(octet, value);
 }
 
 inline int Clz32(uint32_t num)

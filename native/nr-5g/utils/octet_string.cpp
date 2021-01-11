@@ -63,3 +63,10 @@ int OctetString::length() const
 {
     return static_cast<int>(data.size());
 }
+
+void OctetString::appendOctet(int bigHalf, int littleHalf)
+{
+    bigHalf &= 0xF;
+    littleHalf &= 0xF;
+    appendOctet(bigHalf << 4 | littleHalf);
+}
