@@ -89,7 +89,7 @@ class OctetBuffer
 
     inline void writeRanged(const std::initializer_list<std::pair<uint8_t, int>> &list)
     {
-        write(Bits::Ranged8(list));
+        write(bits::Ranged8(list));
     }
 
     inline void write2(uint16_t octet)

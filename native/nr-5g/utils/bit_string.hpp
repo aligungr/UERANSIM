@@ -47,6 +47,6 @@ class BitString
 
     int octetLength() const
     {
-        return Bits::NearDiv(bitLength(), 8) / 8;
+        return bits::NearDiv(bitLength(), 8) / 8;
     }
 };

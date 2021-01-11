@@ -16,7 +16,7 @@ namespace nr::rlc
 UmdPdu *RlcEncoder::DecodeUmd(uint8_t *data, int size, bool isShortSn)
 {
     auto *pdu = new UmdPdu();
-    pdu->si = static_cast<ESegmentInfo>(Bits::BitRange8<6, 7>(data[0]));
+    pdu->si = static_cast<ESegmentInfo>(bits::BitRange8<6, 7>(data[0]));
     pdu->so = 0;
     pdu->sn = 0;
     pdu->isProcessed = false;
@@ -27,14 +27,14 @@ UmdPdu *RlcEncoder::DecodeUmd(uint8_t *data, int size, bool isShortSn)
     {
         if (isShortSn)
         {
-            pdu->sn = Bits::BitRange8<0, 5>(data[index]);
+            pdu->sn = bits::BitRange8<0, 5>(data[index]);
         }
         else
         {
-            pdu->sn = Bits::BitRange8<0, 3>(data[index]);
+            pdu->sn = bits::BitRange8<0, 3>(data[index]);
             pdu->sn <<= 8;
             index++;
-            pdu->sn |= Bits::BitRange8<0, 7>(data[index]);
+            pdu->sn |= bits::BitRange8<0, 7>(data[index]);
         }
 
         if (si::requiresSo(pdu->si))
@@ -104,8 +104,8 @@ AmdPdu *RlcEncoder::DecodeAmd(uint8_t *data, int size, bool isShortSn)
     pdu->so = 0;
 
     pdu->p = (octet >> 6) & 0b1;
-    pdu->si = static_cast<ESegmentInfo>(Bits::BitRange8<4, 5>(octet));
-    pdu->sn = isShortSn ? Bits::BitRange8<0, 3>(octet) : Bits::BitRange8<0, 1>(octet);
+    pdu->si = static_cast<ESegmentInfo>(bits::BitRange8<4, 5>(octet));
+    pdu->sn = isShortSn ? bits::BitRange8<0, 3>(octet) : bits::BitRange8<0, 1>(octet);
 
     int index = 1;
     octet = data[index++];

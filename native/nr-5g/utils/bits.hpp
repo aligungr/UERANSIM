@@ -9,9 +9,10 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 #include <utility>
 
-namespace Bits
+namespace bits
 {
 
 static_assert(sizeof(int) == 4);
@@ -26,6 +27,12 @@ inline int BitRange8(uint8_t octet)
     octet >>= start;
     int delta = end - start + 1;
     return octet & ((1 << delta) - 1);
+}
+
+template <int index>
+inline int BitAt(uint8_t octet)
+{
+    return BitRange8<index, index>(octet);
 }
 
 inline int Clz32(uint32_t num)
@@ -66,7 +73,7 @@ inline uint16_t Ranged16(const std::initializer_list<std::pair<uint8_t, int>> &l
     return val & 0xFFFF;
 }
 
-inline uint16_t Ranged8(const std::initializer_list<std::pair<uint8_t, int>> &list)
+inline uint8_t Ranged8(const std::initializer_list<std::pair<uint8_t, int>> &list)
 {
     uint32_t val = 0;
     for (auto &i : list)
@@ -87,4 +94,133 @@ inline int NearDiv(int val, int div)
     return (div) * ((val + (div - 1)) / (div));
 }
 
-} // namespace Bits
+template <typename T1, typename T2, typename T3, typename T4>
+inline uint8_t Bmp4Enc1111(T1 v1, T2 v2, T3 v3, T4 v4)
+{
+    return Ranged8(
+        {{1, static_cast<int>(v1)}, {1, static_cast<int>(v2)}, {1, static_cast<int>(v3)}, {1, static_cast<int>(v4)}});
+}
+
+template <typename T1, typename T2, typename T3>
+inline uint8_t Bmp4Enc112(T1 v1, T2 v2, T3 v3)
+{
+    return Ranged8({{1, static_cast<int>(v1)}, {1, static_cast<int>(v2)}, {2, static_cast<int>(v3)}});
+}
+
+template <typename T1, typename T2, typename T3>
+inline uint8_t Bmp4Enc121(T1 v1, T2 v2, T3 v3)
+{
+    return Ranged8({{1, static_cast<int>(v1)}, {2, static_cast<int>(v2)}, {1, static_cast<int>(v3)}});
+}
+
+template <typename T1, typename T2, typename T3>
+inline uint8_t Bmp4Enc211(T1 v1, T2 v2, T3 v3)
+{
+    return Ranged8({{2, static_cast<int>(v1)}, {1, static_cast<int>(v2)}, {1, static_cast<int>(v3)}});
+}
+
+template <typename T1, typename T2>
+inline uint8_t Bmp4Enc13(T1 v1, T2 v2)
+{
+    return Ranged8({{1, static_cast<int>(v1)}, {3, static_cast<int>(v2)}});
+}
+
+template <typename T1, typename T2>
+inline uint8_t Bmp4Enc22(T1 v1, T2 v2)
+{
+    return Ranged8({{2, static_cast<int>(v1)}, {2, static_cast<int>(v2)}});
+}
+
+template <typename T1, typename T2>
+inline uint8_t Bmp4Enc31(T1 v1, T2 v2)
+{
+    return Ranged8({{3, static_cast<int>(v1)}, {1, static_cast<int>(v2)}});
+}
+
+template <typename T1>
+inline uint8_t Bmp4Enc4(T1 v1)
+{
+    return Ranged8({{4, static_cast<int>(v1)}});
+}
+
+template <typename T1, typename T2, typename T3, typename T4>
+inline uint8_t Bmp4Dec1111(int v, T1 v1, T2 v2, T3 v3, T4 v4)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<3, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<2, 2>(v));
+    if (v3)
+        *v3 = static_cast<T1>(BitRange8<1, 1>(v));
+    if (v4)
+        *v4 = static_cast<T1>(BitRange8<0, 0>(v));
+}
+
+template <typename T1, typename T2, typename T3>
+inline uint8_t Bmp4Dec112(int v, T1 v1, T2 v2, T3 v3)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<3, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<2, 2>(v));
+    if (v3)
+        *v3 = static_cast<T1>(BitRange8<0, 1>(v));
+}
+
+template <typename T1, typename T2, typename T3>
+inline uint8_t Bmp4Dec121(int v, T1 v1, T2 v2, T3 v3)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<3, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<1, 2>(v));
+    if (v3)
+        *v3 = static_cast<T1>(BitRange8<0, 0>(v));
+}
+
+template <typename T1, typename T2, typename T3>
+inline uint8_t Bmp4Dec211(int v, T1 v1, T2 v2, T3 v3)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<2, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<1, 1>(v));
+    if (v3)
+        *v3 = static_cast<T1>(BitRange8<0, 0>(v));
+}
+
+template <typename T1, typename T2>
+inline uint8_t Bmp4Dec13(int v, T1 v1, T2 v2)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<3, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<0, 2>(v));
+}
+
+template <typename T1, typename T2>
+inline uint8_t Bmp4Dec22(int v, T1 v1, T2 v2)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<2, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<0, 1>(v));
+}
+
+template <typename T1, typename T2>
+inline uint8_t Bmp4Dec31(int v, T1 v1, T2 v2)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<1, 3>(v));
+    if (v2)
+        *v2 = static_cast<T1>(BitRange8<0, 0>(v));
+}
+
+template <typename T1>
+inline uint8_t Bmp4Dec4(int v, T1 v1)
+{
+    if (v1)
+        *v1 = static_cast<T1>(BitRange8<0, 3>(v));
+}
+
+} // namespace bits
