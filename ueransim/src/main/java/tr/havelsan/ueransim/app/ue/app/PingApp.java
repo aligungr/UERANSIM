@@ -23,20 +23,23 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class PingApp {
+    private static AtomicInteger idCounter = new AtomicInteger(1453);
+    private static AtomicInteger seqCounter = new AtomicInteger(1);
+
     private final UeSimContext ctx;
     private final UeConnectionInfo connectionInfo;
     private final Map<Integer, PingEntry> pingEntries;
-
-    private short idCounter;
-    private short seqCounter;
+    private final short echoId;
     private long lastTimeoutControl;
 
     public PingApp(UeSimContext ctx, UeConnectionInfo connectionInfo) {
         this.ctx = ctx;
         this.connectionInfo = connectionInfo;
         this.pingEntries = new HashMap<>();
+        this.echoId = (short) idCounter.getAndIncrement();
     }
 
     private static native byte[] createPingPacket(int src, int dest, short id, short seq);
@@ -72,11 +75,8 @@ class PingApp {
         }
 
         for (int i = 0; i < ping.count; i++) {
-            short id = ++idCounter;
-            short seq = ++seqCounter;
-
-            if (id == 0) id++;
-            if (seq == 0) seq++;
+            short id = echoId;
+            short seq = (short) (seqCounter.incrementAndGet() & 0xFFFF);
 
             pingEntries.put(id << 16 | seq, new PingEntry(System.currentTimeMillis(), ping.address, destAddrName, ping.timeoutSec));
 
