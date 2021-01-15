@@ -316,7 +316,7 @@ struct IENetworkSlicingIndication : InformationElement1<IENetworkSlicingIndicati
     IENetworkSlicingIndication decodeIE1(int val) override
     {
         IENetworkSlicingIndication res;
-        bits::Bmp4Dec211(val, 0, &res.dcni, &res.nssci);
+        bits::Bmp4Dec211(val, nullptr, &res.dcni, &res.nssci);
         return res;
     }
 
@@ -339,7 +339,7 @@ struct IENssaiInclusionMode : InformationElement1<IENssaiInclusionMode>
     IENssaiInclusionMode decodeIE1(int val) override
     {
         IENssaiInclusionMode res;
-        bits::Bmp4Dec22(val, 0, &res.nssaiInclusionMode);
+        bits::Bmp4Dec22(val, nullptr, &res.nssaiInclusionMode);
         return res;
     }
 
