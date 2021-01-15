@@ -56,6 +56,7 @@ void SetOctetString(OCTET_STRING_t &target, uint8_t value);
 void SetOctetString(OCTET_STRING_t &target, octet2 value);
 void SetOctetString(OCTET_STRING_t &target, octet3 value);
 void SetOctetString(OCTET_STRING_t &target, octet4 value);
+void SetOctetString(OCTET_STRING_t &target, const OctetString &value);
 
 void SetBitString(BIT_STRING_t &target, octet4 value);
 

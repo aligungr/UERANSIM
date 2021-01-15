@@ -32,4 +32,54 @@ void NgapTask::createAmfContext(const GnbAmfConfig &conf)
     amfContexts[ctx->ctxId] = ctx;
 }
 
+void NgapTask::createUeContext(int ueId)
+{
+    auto *ctx = new NgapUeContext();
+    ctx->ctxId = ueId;
+    ctx->amfUeNgapId = -1;
+    ctx->ranUeNgapId = ++ueNgapIdCounter;
+
+    ueContexts[ctx->ctxId] = ctx;
+
+    // Select an AMF for the UE (if any)
+    for (auto &amf : amfContexts)
+    {
+        // todo: an arbitrary AMF is selected for now
+        ctx->associatedAmfId = amf.second->ctxId;
+        break;
+    }
+}
+
+NgapUeContext *NgapTask::findUeContext(int ctxId)
+{
+    NgapUeContext *ctx = nullptr;
+    if (ueContexts.count(ctxId))
+        ctx = ueContexts[ctxId];
+    if (ctx == nullptr)
+        logger->err("UE context not found with id: %d", ctxId);
+    return ctx;
+}
+
+NgapUeContext *NgapTask::findUeByRanId(long ranUeNgapId)
+{
+    if (ranUeNgapId <= 0)
+        return nullptr;
+    // TODO: optimize
+    for (auto &ue : ueContexts)
+        if (ue.second->ranUeNgapId == ranUeNgapId)
+            return ue.second;
+    return nullptr;
+}
+
+NgapUeContext *NgapTask::findUeByAmfId(long amfUeNgapId)
+{
+    if (amfUeNgapId <= 0)
+        return nullptr;
+    // TODO: optimize
+    for (auto &ue : ueContexts)
+        if (ue.second->amfUeNgapId == amfUeNgapId)
+            return ue.second;
+    return nullptr;
+}
+
 } // namespace nr::gnb

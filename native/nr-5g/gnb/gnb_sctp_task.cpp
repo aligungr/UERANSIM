@@ -8,6 +8,7 @@
 
 #include "gnb_sctp_task.hpp"
 
+#include <cstring>
 #include <thread>
 #include <utility>
 
@@ -38,7 +39,9 @@ class SctpHandler : public sctp::ISctpHandler
 
     void onMessage(uint8_t *buffer, size_t length, uint16_t stream) override
     {
-        sctpTask->push(new NwSctpClientReceive(clientId, buffer, length, stream));
+        auto *data = new uint8_t[length];
+        std::memcpy(data, buffer, length);
+        sctpTask->push(new NwSctpClientReceive(clientId, data, length, stream));
     }
 
     void onUnhandledNotification() override
@@ -98,7 +101,7 @@ void SctpTask::onLoop()
         receiveSendMessage(dynamic_cast<NwSctpSendMessage *>(msg));
         break;
     default:
-        logger->warn("Unhandled NTS message received with type %d", (int)msg->msgType);
+        logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;
         break;
     }

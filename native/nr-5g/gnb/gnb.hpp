@@ -11,6 +11,7 @@
 #include "gnb_config.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_sctp_task.hpp"
+#include "gnb_mr_task.hpp"
 
 #include <logger.hpp>
 #include <string>
@@ -26,6 +27,7 @@ class GNodeB
 
     SctpTask *sctpTask;
     NgapTask *ngapTask;
+    GnbMrTask* mrTask;
 
   public:
     explicit GNodeB(GnbConfig* config);

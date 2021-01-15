@@ -7,6 +7,7 @@
 //
 
 #include "asn_utils.hpp"
+#include <octet_string.hpp>
 
 namespace asn
 {
@@ -46,6 +47,12 @@ void SetOctetString(OCTET_STRING_t &target, octet4 value)
     uint8_t buffer[4] = {value[0], value[1], value[2], value[3]};
 
     if (OCTET_STRING_fromBuf(&target, reinterpret_cast<char *>(buffer), 4) != 0)
+        throw std::runtime_error("OCTET_STRING_fromBuf failed");
+}
+
+void SetOctetString(OCTET_STRING_t &target, const OctetString &value)
+{
+    if (OCTET_STRING_fromBuf(&target, reinterpret_cast<const char *>(value.data()), value.length()) != 0)
         throw std::runtime_error("OCTET_STRING_fromBuf failed");
 }
 
@@ -92,4 +99,4 @@ octet4 GetOctet4(const OCTET_STRING_t &source)
     return source.size < 4 ? octet4{0} : OctetBuffer{source.buf, source.size}.read4();
 }
 
-} // namespace nr::gnb
+} // namespace asn

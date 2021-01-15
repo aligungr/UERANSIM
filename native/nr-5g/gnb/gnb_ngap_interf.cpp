@@ -32,6 +32,10 @@ void NgapTask::receiveAssociationSetup(NwSctpAssociationSetup *msg)
     auto *amf = findAmfContext(msg->clientId);
     if (amf != nullptr)
     {
+        amf->association.associationId = msg->associationId;
+        amf->association.inStreams = msg->inStreams;
+        amf->association.outStreams = msg->outStreams;
+
         waitingSctpClients--;
         if (waitingSctpClients == 0)
         {
@@ -156,6 +160,8 @@ void NgapTask::receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg)
             amf->plmnSupportList.push_back(plmnSupport);
         });
     }
+
+    logger->info("NG Setup procedure is successful");
 }
 
 void NgapTask::receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg)
@@ -198,6 +204,9 @@ void NgapTask::sendErrorIndication(int amfId, NgapCause cause, int ueId)
     ieCause->criticality = ASN_NGAP_Criticality_ignore;
     ieCause->value.present = ASN_NGAP_ErrorIndicationIEs__value_PR_Cause;
     ngap_utils::ToCauseAsn_Ref(cause, ieCause->value.choice.Cause);
+
+    logger->debug("Sending an error indication with cause: %s",
+                  ngap_utils::CauseToString(ieCause->value.choice.Cause).c_str());
 
     auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_ErrorIndication>({ieCause});
 

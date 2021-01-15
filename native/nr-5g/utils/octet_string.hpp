@@ -17,18 +17,18 @@
 class OctetString
 {
   private:
-    std::vector<uint8_t> data;
+    std::vector<uint8_t> m_data;
 
   public:
-    OctetString() : data()
+    OctetString() : m_data()
     {
     }
 
-    explicit OctetString(std::vector<uint8_t> &&data) : data(std::move(data))
+    explicit OctetString(std::vector<uint8_t> &&data) : m_data(std::move(data))
     {
     }
 
-    OctetString(OctetString &&octetString) noexcept : data(std::move(octetString.data))
+    OctetString(OctetString &&octetString) noexcept : m_data(std::move(octetString.m_data))
     {
     }
 
@@ -44,5 +44,7 @@ class OctetString
     void appendOctet4(octet4 v);
     void appendOctet4(int v);
 
+    const uint8_t* data() const;
+    const uint8_t* data();
     int length() const;
 };

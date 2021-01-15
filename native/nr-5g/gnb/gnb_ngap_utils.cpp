@@ -100,18 +100,59 @@ std::unique_ptr<SliceSupport> SliceSupportFromAsn_Unique(ASN_NGAP_SliceSupportIt
 
 std::string CauseToString(const ASN_NGAP_Cause_t &cause)
 {
-    auto res = asn_encode_to_new_buffer(nullptr, ATS_BASIC_XER, &asn_DEF_ASN_NGAP_Cause, &cause);
-    if (res.buffer == nullptr || res.result.encoded < 0)
+    std::string result;
+
+    long enumValue;
+    asn_TYPE_descriptor_t *typeDescriptor;
+
+    switch (cause.present)
+    {
+    case ASN_NGAP_Cause_PR_radioNetwork:
+        result = "radio-network";
+        enumValue = cause.choice.radioNetwork;
+        typeDescriptor = &asn_DEF_ASN_NGAP_CauseRadioNetwork;
+        break;
+    case ASN_NGAP_Cause_PR_transport:
+        result = "transport";
+        enumValue = cause.choice.transport;
+        typeDescriptor = &asn_DEF_ASN_NGAP_CauseTransport;
+        break;
+    case ASN_NGAP_Cause_PR_nas:
+        result = "nas";
+        enumValue = cause.choice.nas;
+        typeDescriptor = &asn_DEF_ASN_NGAP_CauseNas;
+        break;
+    case ASN_NGAP_Cause_PR_protocol:
+        result = "protocol";
+        enumValue = cause.choice.protocol;
+        typeDescriptor = &asn_DEF_ASN_NGAP_CauseProtocol;
+        break;
+    case ASN_NGAP_Cause_PR_misc:
+        result = "misc";
+        enumValue = cause.choice.misc;
+        typeDescriptor = &asn_DEF_ASN_NGAP_CauseMisc;
+        break;
+    default:
         return "<?>";
+    }
 
-    char *str = (char *)malloc(res.result.encoded + 1);
-    std::memcpy(str, res.buffer, res.result.encoded);
-    str[res.result.encoded] = '\0';
+    auto *specs = reinterpret_cast<const asn_INTEGER_specifics_t *>(typeDescriptor->specifics);
+    if (specs)
+    {
+        if (specs->value2enum)
+        {
+            for (int i = 0; i < specs->map_count; i++)
+            {
+                if (specs->value2enum[i].nat_value == enumValue)
+                {
+                    result += "/" + std::string(specs->value2enum[i].enum_name);
+                    break;
+                }
+            }
+        }
+    }
 
-    std::string s = str;
-    free(str);
-    free(res.buffer);
-    return s;
+    return result;
 }
 
 void ToCauseAsn_Ref(NgapCause source, ASN_NGAP_Cause_t &target)

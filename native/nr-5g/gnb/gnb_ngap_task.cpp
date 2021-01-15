@@ -12,7 +12,8 @@
 namespace nr::gnb
 {
 
-NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase) : config{config}, sctpTask{}, waitingSctpClients{}
+NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase)
+    : config{config}, sctpTask{}, waitingSctpClients{}, ueNgapIdCounter{}
 {
     logger = loggerBase.makeUniqueLogger("ngap");
 }
@@ -54,7 +55,7 @@ void NgapTask::onLoop()
         receiveSctpMessage(dynamic_cast<NwSctpClientReceive *>(msg));
         break;
     default:
-        logger->warn("Unhandled NTS message received with type %d", (int)msg->msgType);
+        logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;
         break;
     }

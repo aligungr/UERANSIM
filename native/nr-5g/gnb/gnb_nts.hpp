@@ -9,6 +9,7 @@
 #pragma once
 
 #include <nts.hpp>
+#include <octet_string.hpp>
 #include <sctp.hpp>
 #include <utility>
 
@@ -74,6 +75,11 @@ struct NwSctpClientReceive : NtsMessage
           stream(stream)
     {
     }
+
+    ~NwSctpClientReceive() override
+    {
+        delete[] buffer;
+    }
 };
 
 struct NwSctpUnhandledNotificationReceive : NtsMessage
@@ -113,6 +119,17 @@ struct NwSctpSendMessage : NtsMessage
     {
         // This buffer was allocated by asn1c library using malloc/calloc
         free(buffer);
+    }
+};
+
+struct NwInitialNasTransport : NtsMessage
+{
+    int ueId;
+    OctetString nasPdu;
+
+    NwInitialNasTransport(int ueId, OctetString &&nasPdu)
+        : NtsMessage(NtsMessageType::NGAP_INITIAL_NAS_TRANSPORT), ueId(ueId), nasPdu(std::move(nasPdu))
+    {
     }
 };
 

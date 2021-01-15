@@ -16,6 +16,7 @@ nr::gnb::GNodeB::GNodeB(GnbConfig *config) : config(config)
 
     sctpTask = new SctpTask(*logBase);
     ngapTask = new NgapTask(config, *logBase);
+    mrTask = new GnbMrTask(*logBase);
 
     ngapTask->setExternalTasks(sctpTask);
 }
@@ -24,9 +25,11 @@ nr::gnb::GNodeB::~GNodeB()
 {
     sctpTask->quit();
     ngapTask->quit();
+    mrTask->quit();
 
     delete sctpTask;
     delete ngapTask;
+    delete mrTask;
 
     delete logBase;
 }
@@ -35,4 +38,5 @@ void nr::gnb::GNodeB::start()
 {
     sctpTask->start();
     ngapTask->start();
+    mrTask->start();
 }

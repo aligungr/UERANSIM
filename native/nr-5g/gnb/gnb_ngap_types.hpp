@@ -23,6 +23,8 @@ enum class EAmfState
 struct SctpAssociation
 {
     int associationId;
+    int inStreams;
+    int outStreams;
 };
 
 struct Guami

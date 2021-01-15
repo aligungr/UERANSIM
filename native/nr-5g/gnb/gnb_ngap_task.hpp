@@ -33,6 +33,7 @@ class NgapTask : public NtsTask
     std::unordered_map<int, NgapUeContext *> ueContexts;
     SctpTask *sctpTask;
     int waitingSctpClients;
+    long ueNgapIdCounter;
 
   public:
     explicit NgapTask(GnbConfig *config, logger::LogBase &loggerBase);
@@ -48,6 +49,10 @@ class NgapTask : public NtsTask
     /* Utility functions */
     void createAmfContext(const GnbAmfConfig &config);
     NgapAmfContext *findAmfContext(int ctxId);
+    void createUeContext(int ueId);
+    NgapUeContext *findUeContext(int ctxId);
+    NgapUeContext *findUeByRanId(long ranUeNgapId);
+    NgapUeContext *findUeByAmfId(long amfUeNgapId);
 
     /* Interface management */
     void sendNgSetupRequest(int amfId);
@@ -61,6 +66,9 @@ class NgapTask : public NtsTask
     void sendNgapNonUe(int amfId, ASN_NGAP_NGAP_PDU *pdu);
     void sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu);
     void receiveSctpMessage(NwSctpClientReceive *msg);
+
+    /* NAS transport */
+    void receiveInitialNasTransport(NwInitialNasTransport *msg);
 };
 
 } // namespace nr::gnb
