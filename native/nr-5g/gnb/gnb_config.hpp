@@ -24,7 +24,8 @@ struct GnbAmfConfig
 
 struct GnbConfig
 {
-    int gnbId;
+    int64_t nci;     // 36-bit
+    int gnbIdLength; // 22..32 bit
     std::string name;
     Plmn plmn;
     int tac;
@@ -33,6 +34,11 @@ struct GnbConfig
     std::vector<GnbAmfConfig> amfConfigs;
     std::string ngapIp;
     std::string gtpIp;
+
+    inline int getGnbId() const
+    {
+        return static_cast<int>((nci >> (36LL - static_cast<int64_t>(gnbIdLength))) & ((1 << (gnbIdLength + 1)) - 1));
+    }
 };
 
 } // namespace nr::gnb

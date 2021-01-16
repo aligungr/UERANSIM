@@ -57,6 +57,20 @@ class BitBuffer
         return i;
     }
 
+	inline int64_t readBitsLong(int len)
+	{
+		assert(len > 0 && len < 64);
+
+		int64_t i = 0;
+		while (len--)
+		{
+			i <<= 1LL;
+			i |= read();
+		}
+
+		return i;
+	}
+
     inline void write(bool bit)
     {
         size_t octetIndex = m_index / 8;
@@ -78,6 +92,17 @@ class BitBuffer
 
         for (int i = 0; i < len; i++)
             write((value >> (len - 1 - i)) & 0b1);
+    }
+
+    inline void writeBits(int64_t value, int len)
+    {
+        if (len == 0)
+            return;
+
+        assert(len > 0 && len < 64);
+
+        for (int i = 0; i < len; i++)
+            write((value >> (len - 1LL - i)) & 1LL);
     }
 
     /**

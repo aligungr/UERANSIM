@@ -887,7 +887,6 @@ bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &
     ptr = reinterpret_cast<int8_t *>(ptr) + members[0].memb_offset;
     desc = members[0].type;
 
-    auto protocolIeContainerDesc = desc;
     auto protocolIeContainerPtr = ptr;
 
     members = desc->elements;
@@ -901,7 +900,6 @@ bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &
 
     unsigned ieIdOffset = members[0].memb_offset;
     unsigned ieCriticalityOffset = members[1].memb_offset;
-    unsigned ieValueOffset = members[2].memb_offset;
     unsigned ieStructSize = reinterpret_cast<const asn_SEQUENCE_specifics_t *>(desc->specifics)->struct_size;
 
     auto listPtr = ptr;

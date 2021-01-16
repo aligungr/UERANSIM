@@ -66,7 +66,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
 
     auto *globalGnbId = asn::New<ASN_NGAP_GlobalGNB_ID>();
     globalGnbId->gNB_ID.present = ASN_NGAP_GNB_ID_PR_gNB_ID;
-    asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID, octet4{config->gnbId});
+    asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID, octet4{config->getGnbId()});
     asn::SetOctetString(globalGnbId->pLMNIdentity, ngap_utils::PlmnToOctet3(config->plmn));
 
     auto *ieGlobalGnbId = asn::New<ASN_NGAP_NGSetupRequestIEs>();

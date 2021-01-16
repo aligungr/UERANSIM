@@ -67,8 +67,36 @@ void SetBitString(BIT_STRING_t &target, octet4 value);
 void SetBitString(BIT_STRING_t &target, const OctetString &value);
 
 template <size_t BitCount>
+inline void SetBitStringInt(int value, BIT_STRING_t &target)
+{
+    static_assert(BitCount >= 1 && BitCount <= 32);
+
+    if (target.buf != nullptr)
+        free(target.buf);
+    target.size = bits::NearDiv(BitCount, 8) / 8;
+    target.buf = static_cast<uint8_t *>(calloc(1, target.size));
+    target.bits_unused = (8 - (static_cast<int>(BitCount) % 8)) % 8;
+    BitBuffer{target.buf}.writeBits(value, BitCount);
+}
+
+template <size_t BitCount>
+inline void SetBitStringLong(int64_t value, BIT_STRING_t &target)
+{
+    static_assert(BitCount >= 1 && BitCount <= 64);
+
+    if (target.buf != nullptr)
+        free(target.buf);
+    target.size = bits::NearDiv(BitCount, 8) / 8;
+    target.buf = static_cast<uint8_t *>(calloc(1, target.size));
+    target.bits_unused = (8 - (static_cast<int>(BitCount) % 8)) % 8;
+    BitBuffer{target.buf}.writeBits(value, BitCount);
+}
+
+template <size_t BitCount>
 inline int GetBitStringInt(const BIT_STRING_t &source)
 {
+    static_assert(BitCount >= 1 && BitCount <= 32);
+
     size_t sourceBitLength = source.size * 8 - source.bits_unused;
     if (sourceBitLength < BitCount)
     {
@@ -76,6 +104,20 @@ inline int GetBitStringInt(const BIT_STRING_t &source)
         return 0;
     }
     return BitBuffer{source.buf}.readBits(BitCount);
+}
+
+template <size_t BitCount>
+inline int64_t GetBitStringLong(const BIT_STRING_t &source)
+{
+    static_assert(BitCount >= 1 && BitCount <= 64);
+
+    size_t sourceBitLength = source.size * 8 - source.bits_unused;
+    if (sourceBitLength < BitCount)
+    {
+        // invalid data return 0, (or throw?)
+        return 0;
+    }
+    return BitBuffer{source.buf}.readBitsLong(BitCount);
 }
 
 octet GetOctet1(const OCTET_STRING_t &source);

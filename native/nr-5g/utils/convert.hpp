@@ -12,6 +12,7 @@
 #include <octet.hpp>
 #include <octet_string.hpp>
 #include <string>
+#include <time_stamp.hpp>
 #include <vector>
 
 namespace utils
@@ -20,10 +21,13 @@ namespace utils
 static_assert(sizeof(char) == sizeof(uint8_t));
 static_assert(sizeof(int) == sizeof(uint32_t));
 static_assert(sizeof(long) == sizeof(uint64_t));
+static_assert(sizeof(long long) == sizeof(uint64_t));
 
 std::vector<uint8_t> HexStringToVector(const std::string &hex);
 int GetIpVersion(const std::string &address);
 OctetString IpToOctetString(const std::string &address);
+int64_t CurrentTimeMillis();
+TimeStamp CurrentTimeStamp();
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

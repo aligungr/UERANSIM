@@ -9,6 +9,7 @@
 #include "convert.hpp"
 #include <atomic>
 #include <cassert>
+#include <chrono>
 #include <regex>
 
 static std::atomic<int> idCounter = 1;
@@ -55,4 +56,33 @@ int utils::NextId()
         std::terminate();
     }
     return res;
+}
+
+int64_t CurrentTimeMillis()
+{
+    auto time = std::chrono::system_clock::now();
+    auto sinceEpoch = time.time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(sinceEpoch);
+    int64_t now = millis.count();
+    return now;
+}
+
+TimeStamp CurrentTimeStamp()
+{
+    int64_t tms = CurrentTimeMillis();
+
+    int64_t baseTime;
+    if (tms < 2085978496000LL)
+        baseTime = tms - (-2208988800000LL);
+    else
+        baseTime = tms - 2085978496000LL;
+
+    int64_t seconds = baseTime / 1000;
+    int64_t fraction = ((baseTime % 1000) * 0x100000000LL) / 1000;
+
+    if (tms < 2085978496000LL)
+        seconds |= 0x80000000LL;
+
+    int64_t time = (seconds << 32LL) | fraction;
+    return TimeStamp(time);
 }

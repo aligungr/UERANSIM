@@ -8,6 +8,7 @@
 
 #include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
+#include "gnb_ngap_utils.hpp"
 #include "gnb_nts.hpp"
 
 #include <asn_ngap.hpp>
@@ -20,6 +21,8 @@
 #include <ASN_NGAP_RAN-UE-NGAP-ID.h>
 #include <ASN_NGAP_SuccessfulOutcome.h>
 #include <ASN_NGAP_UnsuccessfulOutcome.h>
+#include <ASN_NGAP_UserLocationInformation.h>
+#include <ASN_NGAP_UserLocationInformationNR.h>
 
 namespace nr::gnb
 {
@@ -94,7 +97,20 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
             ASN_NGAP_Criticality_reject,
             [ue](void *mem) { *reinterpret_cast<ASN_NGAP_RAN_UE_NGAP_ID_t *>(mem) = ue->ranUeNgapId; });
 
-        // todo user location information
+        asn::ngap::AddProtocolIeIfUsable(
+            *pdu, asn_DEF_ASN_NGAP_UserLocationInformation, ASN_NGAP_ProtocolIE_ID_id_UserLocationInformation,
+            ASN_NGAP_Criticality_ignore, [this](void *mem) {
+                auto *loc = reinterpret_cast<ASN_NGAP_UserLocationInformation *>(mem);
+                loc->present = ASN_NGAP_UserLocationInformation_PR_userLocationInformationNR;
+
+                auto &nr = loc->choice.userLocationInformationNR;
+
+                ngap_utils::ToPlmnAsn_Ref(config->plmn, nr->nR_CGI.pLMNIdentity);
+                asn::SetBitStringLong<36>(config->nci, nr->nR_CGI.nRCellIdentity);
+                ngap_utils::ToPlmnAsn_Ref(config->plmn, nr->tAI.pLMNIdentity);
+                asn::SetOctetString(nr->tAI.tAC, octet3{config->tac});
+                asn::SetOctetString(*nr->timeStamp, octet4{utils::CurrentTimeStamp().seconds32()});
+            });
     }
 
     /* Encode and send the PDU */
