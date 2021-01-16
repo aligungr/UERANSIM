@@ -8,7 +8,9 @@
 
 #pragma once
 
+#include "gnb_app_task.hpp"
 #include "gnb_config.hpp"
+#include "gnb_gtp_task.hpp"
 #include "gnb_mr_task.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_rrc_task.hpp"
@@ -30,6 +32,8 @@ class GNodeB
     NgapTask *ngapTask;
     GnbRrcTask *rrcTask;
     GnbMrTask *mrTask;
+    GtpTask *gtpTask;
+    GnbAppTask *appTask;
 
   public:
     explicit GNodeB(GnbConfig *config);

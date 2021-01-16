@@ -6,26 +6,25 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "gnb_rrc_task.hpp"
+#include "gnb_app_task.hpp"
 
 namespace nr::gnb
 {
 
-GnbRrcTask::GnbRrcTask(logger::LogBase &loggerBase)
+GnbAppTask::GnbAppTask(logger::LogBase &loggerBase)
 {
-    logger = loggerBase.makeUniqueLogger("gnb-rrc");
+    logger = loggerBase.makeUniqueLogger("gnb-app");
 }
 
-void GnbRrcTask::onStart()
-{
-    logger->debug("RRC layer has been started");
-}
-
-void GnbRrcTask::onLoop()
+void GnbAppTask::onStart()
 {
 }
 
-void GnbRrcTask::onQuit()
+void GnbAppTask::onLoop()
+{
+}
+
+void GnbAppTask::onQuit()
 {
 }
 

@@ -70,16 +70,16 @@ inline ASN_NGAP_NGAP_PDU *NewMessagePdu(std::vector<typename NgapMessageToIeType
 template <typename T>
 inline typename asn::ngap::NgapMessageToIeUnionType<T>::value *GetProtocolIe(T *msg, int id, int order = 0)
 {
-    int found = 0;
+    int found = -1;
 
     for (int i = 0; i < msg->protocolIEs.list.count; i++)
     {
         auto &item = msg->protocolIEs.list.array[i];
         if (item->id == id)
         {
-            order++;
+            found++;
             if (order == found)
-                return (typename asn::ngap::NgapMessageToIeUnionType<T>::value *)item;
+                return (typename asn::ngap::NgapMessageToIeUnionType<T>::value *)(&item->value.choice);
         }
     }
 
