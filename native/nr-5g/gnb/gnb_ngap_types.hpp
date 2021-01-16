@@ -66,6 +66,21 @@ struct NgapUeContext
     int downlinkStream;
 };
 
+struct NgapIdPair
+{
+    std::optional<int64_t> amfUeNgapId;
+    std::optional<int64_t> ranUeNgapId;
+
+    NgapIdPair() : amfUeNgapId{}, ranUeNgapId{}
+    {
+    }
+
+    NgapIdPair(const std::optional<int64_t> &amfUeNgapId, const std::optional<int64_t> &ranUeNgapId)
+        : amfUeNgapId(amfUeNgapId), ranUeNgapId(ranUeNgapId)
+    {
+    }
+};
+
 enum class NgapCause
 {
     CauseRadioNetwork_unspecified = 0,
@@ -138,6 +153,17 @@ enum class NgapCause
     CauseMisc_hardware_failure,
     CauseMisc_om_intervention,
     CauseMisc_unknown_PLMN,
+};
+
+class NgapError : public std::exception
+{
+    NgapCause cause;
+    int ueId;
+
+  public:
+    NgapError(NgapCause cause, int ueId = 0) : cause(cause), ueId(ueId)
+    {
+    }
 };
 
 } // namespace nr::gnb

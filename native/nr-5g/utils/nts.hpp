@@ -38,6 +38,7 @@ enum class NtsMessageType
     MR_UPLINK_DATA,
     MR_DOWNLINK_DATA,
     NGAP_INITIAL_NAS_TRANSPORT,
+    NGAP_DOWNLINK_NAS_DELIVERY,
 };
 
 struct NtsMessage

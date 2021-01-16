@@ -9,9 +9,10 @@
 #pragma once
 
 #include "gnb_config.hpp"
-#include "gnb_ngap_task.hpp"
-#include "gnb_sctp_task.hpp"
 #include "gnb_mr_task.hpp"
+#include "gnb_ngap_task.hpp"
+#include "gnb_rrc_task.hpp"
+#include "gnb_sctp_task.hpp"
 
 #include <logger.hpp>
 #include <string>
@@ -22,15 +23,16 @@ namespace nr::gnb
 class GNodeB
 {
   private:
-    GnbConfig* config;
+    GnbConfig *config;
     logger::LogBase *logBase;
 
     SctpTask *sctpTask;
     NgapTask *ngapTask;
-    GnbMrTask* mrTask;
+    GnbRrcTask *rrcTask;
+    GnbMrTask *mrTask;
 
   public:
-    explicit GNodeB(GnbConfig* config);
+    explicit GNodeB(GnbConfig *config);
     virtual ~GNodeB();
 
   public:

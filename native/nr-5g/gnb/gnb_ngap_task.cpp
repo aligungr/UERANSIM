@@ -13,14 +13,15 @@ namespace nr::gnb
 {
 
 NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase)
-    : config{config}, sctpTask{}, waitingSctpClients{}, ueNgapIdCounter{}
+    : config{config}, ueNgapIdCounter{}, waitingSctpClients{}, sctpTask{}, rrcTask{}
 {
     logger = loggerBase.makeUniqueLogger("ngap");
 }
 
-void NgapTask::setExternalTasks(SctpTask *sctp)
+void NgapTask::setExternalTasks(SctpTask *sctp, GnbRrcTask *rrc)
 {
     this->sctpTask = sctp;
+    this->rrcTask = rrc;
 }
 
 void NgapTask::onStart()

@@ -15,6 +15,7 @@
 #include <asn_application.h>
 #include <bit_buffer.hpp>
 #include <cstdlib>
+#include <cstring>
 #include <functional>
 #include <octet.hpp>
 #include <octet_buffer.hpp>
@@ -57,6 +58,7 @@ void SetOctetString(OCTET_STRING_t &target, octet2 value);
 void SetOctetString(OCTET_STRING_t &target, octet3 value);
 void SetOctetString(OCTET_STRING_t &target, octet4 value);
 void SetOctetString(OCTET_STRING_t &target, const OctetString &value);
+OctetString GetOctetString(const OCTET_STRING_t &source);
 
 void SetBitString(BIT_STRING_t &target, octet4 value);
 
@@ -82,6 +84,24 @@ inline void ForeachItem(const T &list, std::function<void(typename asn::AsnTrait
 {
     for (int i = 0; i < list.list.count; i++)
         fun(*list.list.array[i]);
+}
+
+template <typename T>
+inline bool DeepCopy(asn_TYPE_descriptor_t &desc, const T &source, T *target)
+{
+    auto res = asn_encode_to_new_buffer(nullptr, ATS_CANONICAL_XER, &desc, &source);
+    if (res.buffer == nullptr || res.result.encoded < 0)
+        return false; // failure
+
+    std::memset(target, 0, sizeof(T));
+
+    if (xer_decode(nullptr, &desc, reinterpret_cast<void **>(&target), res.buffer, res.result.encoded).code != RC_OK)
+    {
+        free(res.buffer);
+        return false; // failure
+    }
+    free(res.buffer);
+    return true; // success
 }
 
 } // namespace asn

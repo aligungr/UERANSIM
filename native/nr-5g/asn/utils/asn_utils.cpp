@@ -7,6 +7,7 @@
 //
 
 #include "asn_utils.hpp"
+#include <cstring>
 #include <octet_string.hpp>
 
 namespace asn
@@ -97,6 +98,14 @@ octet3 GetOctet3(const OCTET_STRING_t &source)
 octet4 GetOctet4(const OCTET_STRING_t &source)
 {
     return source.size < 4 ? octet4{0} : OctetBuffer{source.buf, source.size}.read4();
+}
+
+OctetString GetOctetString(const OCTET_STRING_t &source)
+{
+    std::vector<uint8_t> v;
+    v.reserve(source.size);
+    std::memcpy(v.data(), source.buf, source.size);
+    return OctetString{std::move(v)};
 }
 
 } // namespace asn

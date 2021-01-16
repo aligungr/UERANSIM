@@ -133,4 +133,15 @@ struct NwInitialNasTransport : NtsMessage
     }
 };
 
+struct NwDownlinkNasDelivery : NtsMessage
+{
+    int ueId;
+    OctetString nasPdu;
+
+    NwDownlinkNasDelivery(int ueId, OctetString &&nasPdu)
+        : NtsMessage(NtsMessageType::NGAP_DOWNLINK_NAS_DELIVERY), ueId(ueId), nasPdu(std::move(nasPdu))
+    {
+    }
+};
+
 } // namespace nr::gnb
