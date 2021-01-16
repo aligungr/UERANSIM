@@ -13,7 +13,7 @@
 #include <common_types.hpp>
 #include <convert.hpp>
 
-#include "gnb_ngap_types.hpp"
+#include "gnb_types.hpp"
 
 #include <ASN_NGAP_Cause.h>
 #include <ASN_NGAP_GUAMI.h>
@@ -27,6 +27,7 @@ namespace nr::gnb::ngap_utils
 ASN_NGAP_PagingDRX_t PagingDrxToAsn(EPagingDrx pagingDrx);
 std::string CauseToString(const ASN_NGAP_Cause_t &cause);
 octet3 PlmnToOctet3(const Plmn &plmn);
+PduSessionType PduSessionTypeFromAsn(const ASN_NGAP_PDUSessionType_t &source);
 
 void PlmnFromAsn_Ref(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target);
 void GuamiFromAsn_Ref(const ASN_NGAP_GUAMI_t &guami, Guami &target);

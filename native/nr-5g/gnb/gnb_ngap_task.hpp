@@ -14,9 +14,10 @@
 #include <unordered_map>
 
 #include "gnb_config.hpp"
-#include "gnb_ngap_types.hpp"
+#include "gnb_gtp_task.hpp"
 #include "gnb_rrc_task.hpp"
 #include "gnb_sctp_task.hpp"
+#include "gnb_types.hpp"
 
 struct ASN_NGAP_NGAP_PDU;
 struct ASN_NGAP_NGSetupResponse;
@@ -24,6 +25,7 @@ struct ASN_NGAP_NGSetupFailure;
 struct ASN_NGAP_ErrorIndication;
 struct ASN_NGAP_DownlinkNASTransport;
 struct ASN_NGAP_RerouteNASRequest;
+struct ASN_NGAP_PDUSessionResourceSetupRequest;
 
 namespace nr::gnb
 {
@@ -39,14 +41,16 @@ class NgapTask : public NtsTask
     long ueNgapIdCounter;
 
     int waitingSctpClients;
+    uint32_t downlinkTeidCounter;
 
     SctpTask *sctpTask;
     GnbRrcTask *rrcTask;
+    GtpTask *gtpTask;
 
   public:
     explicit NgapTask(GnbConfig *config, logger::LogBase &loggerBase);
     ~NgapTask() override = default;
-    void setExternalTasks(SctpTask *sctpTask, GnbRrcTask *rrcTask);
+    void setExternalTasks(SctpTask *sctpTask, GnbRrcTask *rrcTask, GtpTask *gtpTask);
 
   protected:
     void onStart() override;
@@ -61,12 +65,12 @@ class NgapTask : public NtsTask
     NgapUeContext *findUeContext(int ctxId);
     NgapUeContext *findUeByRanId(long ranUeNgapId);
     NgapUeContext *findUeByAmfId(long amfUeNgapId);
-    NgapUeContext *findUeByNgapIdPair(const NgapIdPair &idPair);
+    NgapUeContext *findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPair);
     NgapAmfContext *selectNewAmfForReAllocation(int initiatedAmfId, int amfSetId);
 
     /* Interface management */
     void sendNgSetupRequest(int amfId);
-    void sendErrorIndication(int amfId, NgapCause cause = NgapCause::CauseProtocol_unspecified, int ueId = 0);
+    void sendErrorIndication(int amfId, NgapCause cause = NgapCause::Protocol_unspecified, int ueId = 0);
     void receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg);
     void receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg);
     void receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg);
@@ -80,10 +84,14 @@ class NgapTask : public NtsTask
     /* NAS transport */
     void receiveInitialNasTransport(NwInitialNasTransport *msg);
     void receiveUplinkNasTransport(int ueId, const OctetString &nasPdu);
-    void receiveDownlinkNasTransport(ASN_NGAP_DownlinkNASTransport *msg);
+    void receiveDownlinkNasTransport(int amfId, ASN_NGAP_DownlinkNASTransport *msg);
     void deliverDownlinkNas(int ueId, OctetString &&nasPdu);
     void sendNasNonDeliveryIndication(int ueId, const OctetString &nasPdu, NgapCause cause);
     void receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *msg);
+
+    /* PDU session management */
+    void receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSessionResourceSetupRequest *msg);
+    std::optional<NgapCause> setupPduSessionResource(PduSessionResource *resource);
 };
 
 } // namespace nr::gnb

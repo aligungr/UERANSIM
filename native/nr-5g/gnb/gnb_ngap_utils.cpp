@@ -8,8 +8,6 @@
 
 #include "gnb_ngap_utils.hpp"
 
-#include <cstring>
-
 namespace nr::gnb::ngap_utils
 {
 
@@ -186,6 +184,23 @@ void ToCauseAsn_Ref(NgapCause source, ASN_NGAP_Cause_t &target)
     {
         target.present = ASN_NGAP_Cause_PR_radioNetwork;
         target.choice.radioNetwork = static_cast<ASN_NGAP_CauseRadioNetwork_t>(val);
+    }
+}
+
+PduSessionType PduSessionTypeFromAsn(const ASN_NGAP_PDUSessionType_t &source)
+{
+    switch (source)
+    {
+    case ASN_NGAP_PDUSessionType_ipv4:
+        return PduSessionType::IPv4;
+    case ASN_NGAP_PDUSessionType_ipv6:
+        return PduSessionType::IPv6;
+    case ASN_NGAP_PDUSessionType_ipv4v6:
+        return PduSessionType::IPv4v6;
+    case ASN_NGAP_PDUSessionType_ethernet:
+        return PduSessionType::ETHERNET;
+    default:
+        return PduSessionType::UNSTRUCTURED;
     }
 }
 

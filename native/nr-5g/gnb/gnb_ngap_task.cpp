@@ -7,21 +7,23 @@
 //
 
 #include "gnb_ngap_task.hpp"
+#include "gnb_gtp_task.hpp"
 #include <convert.hpp>
 
 namespace nr::gnb
 {
 
 NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase)
-    : config{config}, ueNgapIdCounter{}, waitingSctpClients{}, sctpTask{}, rrcTask{}
+    : config{config}, ueNgapIdCounter{}, waitingSctpClients{}, downlinkTeidCounter{}, sctpTask{}, rrcTask{}, gtpTask{}
 {
     logger = loggerBase.makeUniqueLogger("ngap");
 }
 
-void NgapTask::setExternalTasks(SctpTask *sctp, GnbRrcTask *rrc)
+void NgapTask::setExternalTasks(SctpTask *sctp, GnbRrcTask *rrc, GtpTask *gtp)
 {
     this->sctpTask = sctp;
     this->rrcTask = rrc;
+    this->gtpTask = gtp;
 }
 
 void NgapTask::onStart()

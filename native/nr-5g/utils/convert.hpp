@@ -10,6 +10,7 @@
 
 #include "common_types.hpp"
 #include <octet.hpp>
+#include <octet_string.hpp>
 #include <string>
 #include <vector>
 
@@ -22,6 +23,7 @@ static_assert(sizeof(long) == sizeof(uint64_t));
 
 std::vector<uint8_t> HexStringToVector(const std::string &hex);
 int GetIpVersion(const std::string &address);
+OctetString IpToOctetString(const std::string &address);
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

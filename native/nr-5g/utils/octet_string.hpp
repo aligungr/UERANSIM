@@ -44,7 +44,13 @@ class OctetString
     void appendOctet4(octet4 v);
     void appendOctet4(int v);
 
-    const uint8_t* data() const;
-    const uint8_t* data();
+    const uint8_t *data() const;
+    const uint8_t *data();
     int length() const;
+
+    inline OctetString &operator=(OctetString &&other) noexcept
+    {
+        m_data = std::move(other.m_data);
+        return *this;
+    }
 };

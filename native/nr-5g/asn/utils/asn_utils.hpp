@@ -9,6 +9,7 @@
 #pragma once
 
 #include <BIT_STRING.h>
+#include <NativeEnumerated.h>
 #include <OCTET_STRING.h>
 #include <PrintableString.h>
 #include <asn_SEQUENCE_OF.h>
@@ -17,6 +18,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
+#include <memory>
 #include <octet.hpp>
 #include <octet_buffer.hpp>
 #include <stdexcept>
@@ -59,8 +61,10 @@ void SetOctetString(OCTET_STRING_t &target, octet3 value);
 void SetOctetString(OCTET_STRING_t &target, octet4 value);
 void SetOctetString(OCTET_STRING_t &target, const OctetString &value);
 OctetString GetOctetString(const OCTET_STRING_t &source);
+OctetString GetOctetString(const BIT_STRING_t &source);
 
 void SetBitString(BIT_STRING_t &target, octet4 value);
+void SetBitString(BIT_STRING_t &target, const OctetString &value);
 
 template <size_t BitCount>
 inline int GetBitStringInt(const BIT_STRING_t &source)
@@ -78,6 +82,9 @@ octet GetOctet1(const OCTET_STRING_t &source);
 octet2 GetOctet2(const OCTET_STRING_t &source);
 octet3 GetOctet3(const OCTET_STRING_t &source);
 octet4 GetOctet4(const OCTET_STRING_t &source);
+
+uint64_t GetUnsigned64(const INTEGER_t &source);
+int64_t GetSigned64(const INTEGER_t &source);
 
 template <typename T>
 inline void ForeachItem(const T &list, std::function<void(typename asn::AsnTraits_ListItemType<T>::value &)> fun)
@@ -102,6 +109,35 @@ inline bool DeepCopy(asn_TYPE_descriptor_t &desc, const T &source, T *target)
     }
     free(res.buffer);
     return true; // success
+}
+
+template <typename T>
+struct Deleter
+{
+    asn_TYPE_descriptor_t *desc;
+
+    explicit Deleter() : desc(nullptr)
+    {
+    }
+
+    explicit Deleter(asn_TYPE_descriptor_t &desc) : desc(&desc)
+    {
+    }
+
+    inline void operator()(T *ptr)
+    {
+        if (desc != nullptr)
+            Free(*desc, ptr);
+    }
+};
+
+template <typename T>
+using Unique = std::unique_ptr<T, asn::Deleter<T>>;
+
+template <typename T>
+inline Unique<T> WrapUnique(T *ptr, asn_TYPE_descriptor_t &desc)
+{
+    return asn::Unique<T>(ptr, asn::Deleter<T>{desc});
 }
 
 } // namespace asn

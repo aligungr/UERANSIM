@@ -34,6 +34,15 @@ struct SliceSupport
     std::optional<octet3> sd{};
 };
 
+enum class PduSessionType
+{
+    IPv4,
+    IPv6,
+    IPv4v6,
+    ETHERNET,
+    UNSTRUCTURED
+};
+
 struct PlmnSupport
 {
     Plmn plmn;

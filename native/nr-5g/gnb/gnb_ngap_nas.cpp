@@ -6,10 +6,9 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
-
-#include <cstring>
 
 #include <ASN_NGAP_DownlinkNASTransport.h>
 #include <ASN_NGAP_InitialUEMessage.h>
@@ -103,11 +102,11 @@ void NgapTask::sendNasNonDeliveryIndication(int ueId, const OctetString &nasPdu,
     sendNgapUeAssociated(ueId, pdu);
 }
 
-void NgapTask::receiveDownlinkNasTransport(ASN_NGAP_DownlinkNASTransport *msg)
+void NgapTask::receiveDownlinkNasTransport(int amfId, ASN_NGAP_DownlinkNASTransport *msg)
 {
     logger->debug("Downlink NAS transport received");
 
-    auto *ue = findUeByNgapIdPair(ngap_utils::FindNgapIdPair(msg));
+    auto *ue = findUeByNgapIdPair(amfId, ngap_utils::FindNgapIdPair(msg));
     if (ue == nullptr)
         return;
 
@@ -120,7 +119,7 @@ void NgapTask::receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *m
 {
     logger->debug("Reroute NAS request received");
 
-    auto *ue = findUeByNgapIdPair(ngap_utils::FindNgapIdPair(msg));
+    auto *ue = findUeByNgapIdPair(amfId, ngap_utils::FindNgapIdPair(msg));
     if (ue == nullptr)
         return;
 
@@ -135,14 +134,12 @@ void NgapTask::receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *m
     ngapPdu->choice.initiatingMessage->value.present = ASN_NGAP_InitiatingMessage__value_PR_InitialUEMessage;
 
     auto *initialUeMessage = &ngapPdu->choice.initiatingMessage->value.choice.InitialUEMessage;
-    auto res = aper_decode(nullptr, &asn_DEF_ASN_NGAP_InitialUEMessage, reinterpret_cast<void **>(&initialUeMessage),
-                           ieNgapMessage->OCTET_STRING.buf, ieNgapMessage->OCTET_STRING.size, 0, 0);
 
-    if (res.code != RC_OK)
+    if (!ngap_encode::DecodeInPlace(asn_DEF_ASN_NGAP_InitialUEMessage, ieNgapMessage->OCTET_STRING, &initialUeMessage))
     {
         logger->err("APER decoding failed in Reroute NAS Request");
         asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, ngapPdu);
-        sendErrorIndication(amfId, NgapCause::CauseProtocol_transfer_syntax_error);
+        sendErrorIndication(amfId, NgapCause::Protocol_transfer_syntax_error);
         return;
     }
 

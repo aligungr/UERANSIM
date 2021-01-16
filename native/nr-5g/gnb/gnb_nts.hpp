@@ -13,6 +13,8 @@
 #include <sctp.hpp>
 #include <utility>
 
+#include "gnb_types.hpp"
+
 namespace nr::gnb
 {
 
@@ -140,6 +142,16 @@ struct NwDownlinkNasDelivery : NtsMessage
 
     NwDownlinkNasDelivery(int ueId, OctetString &&nasPdu)
         : NtsMessage(NtsMessageType::NGAP_DOWNLINK_NAS_DELIVERY), ueId(ueId), nasPdu(std::move(nasPdu))
+    {
+    }
+};
+
+struct NwPduSessionResourceCreate : NtsMessage
+{
+    PduSessionResource *resource;
+
+    explicit NwPduSessionResourceCreate(PduSessionResource *resource)
+        : NtsMessage(NtsMessageType::NGAP_PDU_SESSION_RESOURCE_CREATE), resource(resource)
     {
     }
 };

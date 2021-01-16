@@ -71,6 +71,16 @@ void SetBitString(BIT_STRING_t &target, octet4 value)
     target.bits_unused = 0;
 }
 
+void SetBitString(BIT_STRING_t &target, const OctetString &value)
+{
+    if (target.buf)
+        free(target.buf);
+    target.buf = static_cast<uint8_t *>(calloc(value.length(), 1));
+    std::memcpy(target.buf, value.data(), value.length());
+    target.size = value.length();
+    target.bits_unused = 0;
+}
+
 std::string GetPrintableString(const PrintableString_t &source)
 {
     std::string r;
@@ -106,6 +116,36 @@ OctetString GetOctetString(const OCTET_STRING_t &source)
     v.reserve(source.size);
     std::memcpy(v.data(), source.buf, source.size);
     return OctetString{std::move(v)};
+}
+
+OctetString GetOctetString(const BIT_STRING_t &source)
+{
+    std::vector<uint8_t> v;
+    v.reserve(source.size);
+    std::memcpy(v.data(), source.buf, source.size);
+    return OctetString{std::move(v)};
+}
+
+uint64_t GetUnsigned64(const INTEGER_t &source)
+{
+    uint64_t res = 0;
+    if (asn_INTEGER2ulong(&source, &res) != 0)
+    {
+        // ignore the error
+        res = 0;
+    }
+    return res;
+}
+
+int64_t GetSigned64(const INTEGER_t &source)
+{
+    int64_t res = 0;
+    if (asn_INTEGER2long(&source, &res) != 0)
+    {
+        // ignore the error
+        res = 0;
+    }
+    return res;
 }
 
 } // namespace asn

@@ -36,9 +36,9 @@ struct octet
         return value;
     }
 
-    explicit constexpr operator int() const
+    explicit constexpr operator int32_t() const
     {
-        return value;
+        return static_cast<int32_t>(value);
     }
 
     inline bool bit(int index) const
@@ -78,9 +78,9 @@ struct octet2
         return (value >> (8 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator int() const
+    explicit constexpr operator int32_t() const
     {
-        return value;
+        return static_cast<int32_t>(value);
     }
 };
 
@@ -114,9 +114,9 @@ struct octet3
         return (value >> (16 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator int() const
+    explicit constexpr operator int32_t() const
     {
-        return value;
+        return static_cast<int32_t>(value);
     }
 };
 
@@ -150,7 +150,12 @@ struct octet4
         return (value >> (24 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator int() const
+    explicit constexpr operator int32_t() const
+    {
+        return static_cast<int32_t>(value);
+    }
+
+    explicit constexpr operator uint32_t() const
     {
         return value;
     }

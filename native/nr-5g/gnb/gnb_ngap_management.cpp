@@ -82,22 +82,31 @@ NgapUeContext *NgapTask::findUeByAmfId(long amfUeNgapId)
     return nullptr;
 }
 
-NgapUeContext *NgapTask::findUeByNgapIdPair(const NgapIdPair &idPair)
+NgapUeContext *NgapTask::findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPair)
 {
     auto &amfId = idPair.amfUeNgapId;
     auto &ranId = idPair.ranUeNgapId;
 
     if (!amfId.has_value() && !ranId.has_value())
-        throw NgapError(NgapCause::CauseProtocol_abstract_syntax_error_falsely_constructed_message);
+    {
+        sendErrorIndication(amfCtxId, NgapCause::Protocol_abstract_syntax_error_falsely_constructed_message);
+        return nullptr;
+    }
 
     auto ue = findUeByRanId(ranId.value());
     if (ue == nullptr)
-        throw NgapError(NgapCause::CauseRadioNetwork_unknown_local_UE_NGAP_ID);
+    {
+        sendErrorIndication(amfCtxId, NgapCause::RadioNetwork_unknown_local_UE_NGAP_ID);
+        return nullptr;
+    }
 
     if (ue->amfUeNgapId == -1)
         ue->amfUeNgapId = amfId.value();
     else if (ue->amfUeNgapId != amfId.value())
-        throw NgapError(NgapCause::CauseRadioNetwork_inconsistent_remote_UE_NGAP_ID);
+    {
+        sendErrorIndication(amfCtxId, NgapCause::RadioNetwork_inconsistent_remote_UE_NGAP_ID);
+        return nullptr;
+    }
 
     return ue;
 }
