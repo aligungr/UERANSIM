@@ -21,7 +21,7 @@ nr::gnb::GNodeB::GNodeB(GnbConfig *config) : config(config)
     gtpTask = new GtpTask(*logBase);
     mrTask = new GnbMrTask(*logBase);
 
-    ngapTask->setExternalTasks(sctpTask, rrcTask, gtpTask);
+    ngapTask->setExternalTasks(sctpTask, rrcTask, gtpTask, appTask);
 }
 
 nr::gnb::GNodeB::~GNodeB()

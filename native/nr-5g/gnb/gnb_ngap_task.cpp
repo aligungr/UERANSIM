@@ -7,6 +7,7 @@
 //
 
 #include "gnb_ngap_task.hpp"
+#include "gnb_app_task.hpp"
 #include "gnb_gtp_task.hpp"
 #include <convert.hpp>
 
@@ -19,11 +20,12 @@ NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase)
     logger = loggerBase.makeUniqueLogger("ngap");
 }
 
-void NgapTask::setExternalTasks(SctpTask *sctp, GnbRrcTask *rrc, GtpTask *gtp)
+void NgapTask::setExternalTasks(SctpTask *sctp, GnbRrcTask *rrc, GtpTask *gtp, GnbAppTask *app)
 {
     this->sctpTask = sctp;
     this->rrcTask = rrc;
     this->gtpTask = gtp;
+    this->appTask = app;
 }
 
 void NgapTask::onStart()

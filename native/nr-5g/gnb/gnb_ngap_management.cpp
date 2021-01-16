@@ -113,7 +113,7 @@ NgapUeContext *NgapTask::findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPa
 
 NgapAmfContext *NgapTask::selectNewAmfForReAllocation(int initiatedAmfId, int amfSetId)
 {
-    // TODO
+    // TODO an arbitrary AMF is selected for now
     return findAmfContext(initiatedAmfId);
 }
 

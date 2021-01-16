@@ -86,6 +86,9 @@ octet4 GetOctet4(const OCTET_STRING_t &source);
 uint64_t GetUnsigned64(const INTEGER_t &source);
 int64_t GetSigned64(const INTEGER_t &source);
 
+void SetUnsigned64(uint64_t value, INTEGER_t &target);
+void SetSigned64(int64_t value, INTEGER_t &target);
+
 template <typename T>
 inline void ForeachItem(const T &list, std::function<void(typename asn::AsnTraits_ListItemType<T>::value &)> fun)
 {

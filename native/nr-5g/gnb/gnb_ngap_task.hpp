@@ -13,6 +13,7 @@
 #include <optional>
 #include <unordered_map>
 
+#include "gnb_app_task.hpp"
 #include "gnb_config.hpp"
 #include "gnb_gtp_task.hpp"
 #include "gnb_rrc_task.hpp"
@@ -46,11 +47,12 @@ class NgapTask : public NtsTask
     SctpTask *sctpTask;
     GnbRrcTask *rrcTask;
     GtpTask *gtpTask;
+    GnbAppTask *appTask;
 
   public:
     explicit NgapTask(GnbConfig *config, logger::LogBase &loggerBase);
     ~NgapTask() override = default;
-    void setExternalTasks(SctpTask *sctpTask, GnbRrcTask *rrcTask, GtpTask *gtpTask);
+    void setExternalTasks(SctpTask *sctpTask, GnbRrcTask *rrcTask, GtpTask *gtpTask, GnbAppTask *appTask);
 
   protected:
     void onStart() override;

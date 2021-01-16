@@ -39,7 +39,9 @@ void NgapTask::receiveAssociationSetup(NwSctpAssociationSetup *msg)
         waitingSctpClients--;
         if (waitingSctpClients == 0)
         {
-            // TODO: send status update to gnbApp
+            auto *update = new NwGnbStatusUpdate(NwGnbStatusUpdate::INITIAL_SCTP_ESTABLISHED);
+            update->isInitialSctpEstablished = true;
+            appTask->push(update);
         }
 
         sendNgSetupRequest(amf->ctxId);

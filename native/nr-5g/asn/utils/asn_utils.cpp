@@ -148,4 +148,30 @@ int64_t GetSigned64(const INTEGER_t &source)
     return res;
 }
 
+void SetUnsigned64(uint64_t value, INTEGER_t &target)
+{
+    if (asn_ulong2INTEGER(&target, value) != 0)
+    {
+        if (target.buf != nullptr)
+        {
+            free(target.buf);
+            target.buf = nullptr;
+        }
+        target.size = 0;
+    }
+}
+
+void SetSigned64(int64_t value, INTEGER_t &target)
+{
+    if (asn_long2INTEGER(&target, value) != 0)
+    {
+        if (target.buf != nullptr)
+        {
+            free(target.buf);
+            target.buf = nullptr;
+        }
+        target.size = 0;
+    }
+}
+
 } // namespace asn

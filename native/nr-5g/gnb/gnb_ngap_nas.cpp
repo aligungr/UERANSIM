@@ -155,7 +155,6 @@ void NgapTask::receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *m
             newAllowedNssai->criticality = ASN_NGAP_Criticality_reject;
             newAllowedNssai->value.present = ASN_NGAP_InitialUEMessage_IEs__value_PR_AllowedNSSAI;
 
-            // Protocol IE order is not a problem since it is the last protocol IE field already.
             asn::ngap::AddProtocolIe(*initialUeMessage, newAllowedNssai);
         }
     }

@@ -13,8 +13,11 @@
 #include <asn_ngap.hpp>
 #include <asn_utils.hpp>
 
+#include <ASN_NGAP_AMF-UE-NGAP-ID.h>
 #include <ASN_NGAP_InitiatingMessage.h>
 #include <ASN_NGAP_NGAP-PDU.h>
+#include <ASN_NGAP_ProtocolIE-Field.h>
+#include <ASN_NGAP_RAN-UE-NGAP-ID.h>
 #include <ASN_NGAP_SuccessfulOutcome.h>
 #include <ASN_NGAP_UnsuccessfulOutcome.h>
 
@@ -58,7 +61,68 @@ void NgapTask::sendNgapNonUe(int associatedAmf, ASN_NGAP_NGAP_PDU *pdu)
 
 void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
 {
-    // TODO
+    /* Find UE and AMF contexts */
+
+    auto *ue = findUeContext(ueId);
+    if (ue == nullptr)
+    {
+        asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+        return;
+    }
+
+    auto *amf = findAmfContext(ue->associatedAmfId);
+    if (amf == nullptr)
+    {
+        asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+        return;
+    }
+
+    /* Insert UE-related information elements */
+    {
+        if (ue->amfUeNgapId > 0)
+        {
+            asn::ngap::AddProtocolIeIfUsable(*pdu, asn_DEF_ASN_NGAP_AMF_UE_NGAP_ID,
+                                             ASN_NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID, ASN_NGAP_Criticality_reject,
+                                             [ue](void *mem) {
+                                                 auto &id = *reinterpret_cast<ASN_NGAP_AMF_UE_NGAP_ID_t *>(mem);
+                                                 asn::SetSigned64(ue->amfUeNgapId, id);
+                                             });
+        }
+
+        asn::ngap::AddProtocolIeIfUsable(
+            *pdu, asn_DEF_ASN_NGAP_RAN_UE_NGAP_ID, ASN_NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID,
+            ASN_NGAP_Criticality_reject,
+            [ue](void *mem) { *reinterpret_cast<ASN_NGAP_RAN_UE_NGAP_ID_t *>(mem) = ue->ranUeNgapId; });
+
+        // todo user location information
+    }
+
+    /* Encode and send the PDU */
+
+    char errorBuffer[1024];
+    size_t len;
+
+    if (asn_check_constraints(&asn_DEF_ASN_NGAP_NGAP_PDU, pdu, errorBuffer, &len) != 0)
+    {
+        logger->err("NGAP PDU ASN constraint validation failed");
+        asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+        return;
+    }
+
+    ssize_t encoded;
+    uint8_t *buffer;
+    if (!ngap_encode::Encode(asn_DEF_ASN_NGAP_NGAP_PDU, pdu, encoded, buffer))
+        logger->err("NGAP APER encoding failed");
+    else
+    {
+        auto *msg = new NwSctpSendMessage(amf->ctxId, 0, buffer, 0, static_cast<size_t>(encoded));
+        sctpTask->push(msg);
+        logger->debug("UE-associated NGAP PDU with length %d is sent to SCTP layer", encoded);
+
+        // todo: trigger OnSend
+    }
+
+    asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
 }
 
 void NgapTask::receiveSctpMessage(NwSctpClientReceive *msg)

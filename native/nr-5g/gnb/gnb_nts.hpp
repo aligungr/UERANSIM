@@ -156,4 +156,18 @@ struct NwPduSessionResourceCreate : NtsMessage
     }
 };
 
+struct NwGnbStatusUpdate : NtsMessage
+{
+    static constexpr const int INITIAL_SCTP_ESTABLISHED = 1;
+
+    const int what;
+
+    // INITIAL_SCTP_ESTABLISHED
+    bool isInitialSctpEstablished{};
+
+    explicit NwGnbStatusUpdate(const int what) : NtsMessage(NtsMessageType::GNB_STATUS_UPDATE), what(what)
+    {
+    }
+};
+
 } // namespace nr::gnb

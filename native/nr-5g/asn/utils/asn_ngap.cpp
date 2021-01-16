@@ -9,6 +9,8 @@
 #include "asn_ngap.hpp"
 #include "asn_utils.hpp"
 
+#include <functional>
+
 #include <ASN_NGAP_NGAP-PDU.h>
 
 #include <ASN_NGAP_InitiatingMessage.h>
@@ -94,6 +96,8 @@
 #include <ASN_NGAP_UplinkUEAssociatedNRPPaTransport.h>
 #include <ASN_NGAP_WriteReplaceWarningRequest.h>
 #include <ASN_NGAP_WriteReplaceWarningResponse.h>
+
+#include <ASN_NGAP_ProtocolIE-Field.h>
 
 namespace asn::ngap
 {
@@ -824,6 +828,154 @@ int GetPduDescription(NgapMessageType messageType)
     default:
         assert(false);
     }
+}
+
+bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &ieType, int protocolIeId,
+                           int criticality, const std::function<void(void *)> &ieCreator)
+{
+    // This function assumes all ASN structs are "C++ standard layout".
+    // Therefore no problem is expected since the structs are already standard layout.
+
+    // TODO: assert for Little Endian
+
+    asn_TYPE_descriptor_t *desc;
+    void *ptr;
+
+    if (pdu.present == ASN_NGAP_NGAP_PDU_PR_initiatingMessage)
+    {
+        desc = &asn_DEF_ASN_NGAP_InitiatingMessage;
+        ptr = pdu.choice.initiatingMessage;
+    }
+    else if (pdu.present == ASN_NGAP_NGAP_PDU_PR_successfulOutcome)
+    {
+        desc = &asn_DEF_ASN_NGAP_SuccessfulOutcome;
+        ptr = pdu.choice.successfulOutcome;
+    }
+    else if (pdu.present == ASN_NGAP_NGAP_PDU_PR_unsuccessfulOutcome)
+    {
+        desc = &asn_DEF_ASN_NGAP_UnsuccessfulOutcome;
+        ptr = pdu.choice.unsuccessfulOutcome;
+    }
+    else
+        return false;
+
+    ptr = reinterpret_cast<int8_t *>(ptr) + desc->elements[2].memb_offset;
+    desc = desc->elements[2].type;
+
+    auto members = desc->elements;
+    unsigned memberCount = desc->elements_count;
+
+    auto choiceSpecs = reinterpret_cast<const asn_CHOICE_specifics_t *>(desc->specifics);
+
+    unsigned presentEnumSize = choiceSpecs->pres_size;
+
+    auto presPtr = reinterpret_cast<int8_t *>(ptr) + choiceSpecs->pres_offset;
+
+    uint64_t presentValue = 0;
+    for (unsigned i = 0; i < presentEnumSize; i++)
+        presentValue += (*(presPtr + i) & 0xFF) << (i * 8);
+
+    if (presentValue == 0)
+        return false;
+
+    ptr = reinterpret_cast<int8_t *>(ptr) + members[presentValue - 1].memb_offset;
+    desc = members[presentValue - 1].type;
+
+    members = desc->elements;
+    memberCount = desc->elements_count;
+
+    ptr = reinterpret_cast<int8_t *>(ptr) + members[0].memb_offset;
+    desc = members[0].type;
+
+    auto protocolIeContainerDesc = desc;
+    auto protocolIeContainerPtr = ptr;
+
+    members = desc->elements;
+    memberCount = desc->elements_count;
+
+    ptr = reinterpret_cast<int8_t *>(ptr) + members[0].memb_offset;
+    desc = members[0].type;
+
+    members = desc->elements;
+    memberCount = desc->elements_count;
+
+    unsigned ieIdOffset = members[0].memb_offset;
+    unsigned ieCriticalityOffset = members[1].memb_offset;
+    unsigned ieValueOffset = members[2].memb_offset;
+    unsigned ieStructSize = reinterpret_cast<const asn_SEQUENCE_specifics_t *>(desc->specifics)->struct_size;
+
+    auto listPtr = ptr;
+
+    unsigned presOffset = members[2].memb_offset;
+    unsigned choiceOffset = members[2].memb_offset;
+
+    ptr = reinterpret_cast<int8_t *>(ptr) + members[2].memb_offset;
+    desc = members[2].type;
+
+    members = desc->elements;
+    memberCount = desc->elements_count;
+
+    choiceSpecs = reinterpret_cast<const asn_CHOICE_specifics_t *>(desc->specifics);
+    presOffset += choiceSpecs->pres_offset;
+
+    unsigned presSize = choiceSpecs->pres_size;
+
+    unsigned memberIndex = ~0;
+
+    for (unsigned i = 0; i < memberCount; i++)
+    {
+        if (members[i].type == &ieType)
+        {
+            memberIndex = i;
+            break;
+        }
+    }
+
+    if (memberIndex == ~0U)
+        return false;
+
+    ptr = reinterpret_cast<int8_t *>(ptr) + members[memberIndex].memb_offset;
+    desc = members[memberIndex].type;
+
+    choiceOffset += members[memberIndex].memb_offset;
+
+    /* Create and add new protocol IE field */
+    {
+        void *newIe = calloc(1, ieStructSize);
+
+        *reinterpret_cast<ASN_NGAP_ProtocolIE_ID_t *>((reinterpret_cast<int8_t *>(newIe) + ieIdOffset)) = protocolIeId;
+        *reinterpret_cast<ASN_NGAP_Criticality_t *>((reinterpret_cast<int8_t *>(newIe) + ieCriticalityOffset)) =
+            criticality;
+
+        auto *newPresPtr = (reinterpret_cast<int8_t *>(newIe) + presOffset);
+
+        for (unsigned i = 0; i < presSize; i++)
+            newPresPtr[i] = ((memberIndex + 1) >> (i * 8)) & 0xFF;
+
+        auto *valuePlace = (void *)(reinterpret_cast<int8_t *>(newIe) + choiceOffset);
+        ieCreator(valuePlace);
+
+        ASN_SEQUENCE_ADD(protocolIeContainerPtr, newIe);
+
+        auto *list = reinterpret_cast<asn_anonymous_set_ *>(listPtr);
+
+        // Sorting according to present value. See "asn::ngap::AddProtocolIe" function.
+        std::sort(list->array, list->array + list->count, [presOffset, presSize](void *a, void *b) {
+            auto *aPresPtr = reinterpret_cast<int8_t *>(a) + presOffset;
+            auto *bPresPtr = reinterpret_cast<int8_t *>(b) + presOffset;
+
+            uint64_t aPresValue = 0, bPresValue = 0;
+            for (unsigned i = 0; i < presSize; i++)
+            {
+                aPresValue += (*(aPresPtr + i) & 0xFF) << (i * 8);
+                bPresValue += (*(bPresPtr + i) & 0xFF) << (i * 8);
+            }
+
+            return aPresValue < bPresValue;
+        });
+    }
+
+    return true;
 }
 
 } // namespace asn::ngap

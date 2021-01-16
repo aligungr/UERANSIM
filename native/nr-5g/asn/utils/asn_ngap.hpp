@@ -33,18 +33,20 @@ template <typename TMessage>
 inline void AddProtocolIe(TMessage &msg, typename NgapMessageToIeType<TMessage>::value *element)
 {
     ASN_SEQUENCE_ADD(&msg.protocolIEs.list, element);
+
+    // Protocol IE fields must be sorted according to ASN definition order.
+    // Using 'present' here because it is consistent with ASN definition order;
+    // This is not a constant-time operation.
+    std::stable_sort(
+        msg.protocolIEs.list.array, msg.protocolIEs.list.array + msg.protocolIEs.list.count,
+        [](typename NgapMessageToIeType<TMessage>::value *a, typename NgapMessageToIeType<TMessage>::value *b) {
+            return a->value.present < b->value.present;
+        });
 }
 
 template <typename T>
 inline ASN_NGAP_NGAP_PDU *NewMessagePdu(std::vector<typename NgapMessageToIeType<T>::value *> ies)
 {
-    // Protocol IE fields must be sorted according to ASN definition order.
-    // Using 'present' here because it is consistent with ASN definition order;
-    std::stable_sort(ies.begin(), ies.end(),
-                     [](typename NgapMessageToIeType<T>::value *a, typename NgapMessageToIeType<T>::value *b) {
-                         return a->value.present < b->value.present;
-                     });
-
     auto msgType = static_cast<NgapMessageType>(NgapMessageTypeToEnum<T>::V);
 
     void *pDescription = nullptr;
@@ -85,5 +87,9 @@ inline typename asn::ngap::NgapMessageToIeUnionType<T>::value *GetProtocolIe(T *
 
     return nullptr;
 }
+
+// Returns true iff it is usable. Also adds the IE.
+bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &ieType, int protocolIeId, int criticality,
+                           const std::function<void(void *)> &ieCreator);
 
 } // namespace asn::ngap
