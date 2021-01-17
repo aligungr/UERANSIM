@@ -49,7 +49,7 @@ class OctetString
     void appendPadding(int length);
 
     const uint8_t *data() const;
-    const uint8_t *data();
+    uint8_t *data();
     int length() const;
 
     inline OctetString &operator=(OctetString &&other) noexcept

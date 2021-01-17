@@ -59,11 +59,11 @@ struct octet2
     {
     }
 
-    explicit octet2(int32_t value) : value(static_cast<uint8_t>(value & 0xFFFF))
+    explicit octet2(int32_t value) : value(static_cast<uint16_t>(value & 0xFFFF))
     {
     }
 
-    explicit octet2(uint32_t value) : value(static_cast<uint8_t>(value & 0xFFFF))
+    explicit octet2(uint32_t value) : value(static_cast<uint16_t>(value & 0xFFFF))
     {
     }
 
@@ -81,6 +81,16 @@ struct octet2
     explicit constexpr operator int32_t() const
     {
         return static_cast<int32_t>(value);
+    }
+
+    explicit constexpr operator uint16_t() const
+    {
+        return value;
+    }
+
+    explicit constexpr operator int16_t() const
+    {
+        return static_cast<uint16_t>(value);
     }
 };
 

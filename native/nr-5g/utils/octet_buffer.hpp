@@ -57,6 +57,16 @@ class OctetBuffer
         return octet2{read(), read()};
     }
 
+    inline int16_t read2S()
+    {
+        return (int16_t)read2();
+    }
+
+    inline uint16_t read2US()
+    {
+        return (uint16_t)read2();
+    }
+
     inline int read2I()
     {
         return (int)read2();

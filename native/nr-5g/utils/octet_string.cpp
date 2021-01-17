@@ -98,7 +98,7 @@ const uint8_t *OctetString::data() const
     return m_data.data();
 }
 
-const uint8_t *OctetString::data()
+uint8_t *OctetString::data()
 {
     return m_data.data();
 }

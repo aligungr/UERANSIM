@@ -11,7 +11,7 @@
 namespace nr::gtp
 {
 
-std::unique_ptr<PduSessionInformation> gtp::PduSessionInformation::decode(OctetBuffer &stream)
+std::unique_ptr<PduSessionInformation> gtp::PduSessionInformation::Decode(OctetBuffer &stream)
 {
     int startIndex = stream.currentIndex();
 
@@ -96,7 +96,7 @@ std::unique_ptr<PduSessionInformation> gtp::PduSessionInformation::decode(OctetB
     }
 }
 
-bool PduSessionInformation::encode(const PduSessionInformation &pdu, OctetString &stream)
+bool PduSessionInformation::Encode(const PduSessionInformation &pdu, OctetString &stream)
 {
     if (pdu.pduType != 0 && pdu.pduType != 1)
         return false;

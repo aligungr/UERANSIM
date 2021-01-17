@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "gtp_ext_header.hpp"
@@ -29,8 +30,8 @@ struct GtpMessage
 
     uint8_t msgType;
     uint32_t teid;
-    uint16_t seq;
-    uint8_t nPduNum;
+    std::optional<uint16_t> seq;
+    std::optional<uint8_t> nPduNum;
     std::vector<std::unique_ptr<GtpExtHeader>> extHeaders;
     OctetString payload;
 };

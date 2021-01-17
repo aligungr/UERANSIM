@@ -32,8 +32,8 @@ struct PduSessionInformation
 
     virtual ~PduSessionInformation() = default;
 
-    static std::unique_ptr<PduSessionInformation> decode(OctetBuffer &stream);
-    static bool encode(const PduSessionInformation &pdu, OctetString &stream);
+    static std::unique_ptr<PduSessionInformation> Decode(OctetBuffer &stream);
+    static bool Encode(const PduSessionInformation &pdu, OctetString &stream);
 };
 
 struct DlPduSessionInformation : PduSessionInformation
@@ -70,32 +70,65 @@ struct UlPduSessionInformation : PduSessionInformation
     ~UlPduSessionInformation() override = default;
 };
 
+enum class ExtHeaderType
+{
+    LongPdcpPduNumberExtHeader,
+    NrRanContainerExtHeader,
+    PdcpPduNumberExtHeader,
+    PduSessionContainerExtHeader,
+    UdpPortExtHeader,
+};
+
 struct GtpExtHeader
 {
+    const ExtHeaderType type;
+
+    explicit GtpExtHeader(ExtHeaderType type) : type(type)
+    {
+    }
 };
 
 struct LongPdcpPduNumberExtHeader : GtpExtHeader
 {
-    int pdcpPduNumber; // 18-bit
+    int pdcpPduNumber{}; // 18-bit
+
+    LongPdcpPduNumberExtHeader() : GtpExtHeader(ExtHeaderType::LongPdcpPduNumberExtHeader)
+    {
+    }
 };
 
 struct NrRanContainerExtHeader : GtpExtHeader
 {
+    NrRanContainerExtHeader() : GtpExtHeader(ExtHeaderType::NrRanContainerExtHeader)
+    {
+    }
 };
 
 struct PdcpPduNumberExtHeader : GtpExtHeader
 {
-    uint16_t pdcpPduNumber;
+    uint16_t pdcpPduNumber{};
+
+    PdcpPduNumberExtHeader() : GtpExtHeader(ExtHeaderType::PdcpPduNumberExtHeader)
+    {
+    }
 };
 
 struct UdpPortExtHeader : GtpExtHeader
 {
-    uint16_t port;
+    uint16_t port{};
+
+    UdpPortExtHeader() : GtpExtHeader(ExtHeaderType::UdpPortExtHeader)
+    {
+    }
 };
 
 struct PduSessionContainerExtHeader : GtpExtHeader
 {
-    std::unique_ptr<PduSessionInformation> pduSessionInformation;
+    std::unique_ptr<PduSessionInformation> pduSessionInformation{};
+
+    PduSessionContainerExtHeader() : GtpExtHeader(ExtHeaderType::PduSessionContainerExtHeader)
+    {
+    }
 };
 
 } // namespace nr::gtp
