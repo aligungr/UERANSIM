@@ -58,7 +58,7 @@ int utils::NextId()
     return res;
 }
 
-int64_t CurrentTimeMillis()
+int64_t utils::CurrentTimeMillis()
 {
     auto time = std::chrono::system_clock::now();
     auto sinceEpoch = time.time_since_epoch();
@@ -67,7 +67,7 @@ int64_t CurrentTimeMillis()
     return now;
 }
 
-TimeStamp CurrentTimeStamp()
+TimeStamp utils::CurrentTimeStamp()
 {
     int64_t tms = CurrentTimeMillis();
 
