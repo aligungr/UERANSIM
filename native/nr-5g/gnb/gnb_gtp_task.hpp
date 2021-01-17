@@ -12,8 +12,11 @@
 #include <memory>
 #include <nts.hpp>
 #include <thread>
+#include <udp_server_task.hpp>
 #include <unordered_map>
 #include <vector>
+
+#include "gnb_config.hpp"
 
 namespace nr::gnb
 {
@@ -21,10 +24,12 @@ namespace nr::gnb
 class GtpTask : public NtsTask
 {
   private:
+    GnbConfig *config;
     std::unique_ptr<logger::Logger> logger;
+    nr::udp::UdpServerTask *udpServer;
 
   public:
-    explicit GtpTask(logger::LogBase &loggerBase);
+    explicit GtpTask(GnbConfig *config, logger::LogBase &loggerBase);
     ~GtpTask() override = default;
 
   protected:

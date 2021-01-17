@@ -7,6 +7,7 @@
 //
 
 #include "sctp_server.hpp"
+#include "sctp_error.hpp"
 #include "sctp_internal.hpp"
 
 sctp::SctpServer::SctpServer(const std::string &address, uint16_t port) : sd(0)
@@ -19,7 +20,7 @@ sctp::SctpServer::SctpServer(const std::string &address, uint16_t port) : sd(0)
         SetEventOptions(sd);
         StartListening(sd);
     }
-    catch (const std::exception &e)
+    catch (const SctpError &e)
     {
         CloseSocket(sd);
         throw;

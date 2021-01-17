@@ -121,8 +121,6 @@ void Accept(int sd)
     int clientSd = accept(sd, &saddr, &saddr_size);
     if (clientSd < 0)
         ThrowError("SCTP accept failure: ", errno);
-
-    // TODO
 }
 
 void Connect(int sd, const std::string &address, uint16_t port)
