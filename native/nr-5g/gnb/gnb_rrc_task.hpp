@@ -15,22 +15,75 @@
 #include <unordered_map>
 #include <vector>
 
+#include "gnb_nts.hpp"
+
+extern "C" struct ASN_RRC_BCCH_BCH_Message;
+extern "C" struct ASN_RRC_BCCH_DL_SCH_Message;
+extern "C" struct ASN_RRC_DL_CCCH_Message;
+extern "C" struct ASN_RRC_DL_DCCH_Message;
+extern "C" struct ASN_RRC_PCCH_Message;
+extern "C" struct ASN_RRC_UL_CCCH_Message;
+extern "C" struct ASN_RRC_UL_CCCH1_Message;
+extern "C" struct ASN_RRC_UL_DCCH_Message;
+
+extern "C" struct ASN_RRC_RRCSetupRequest;
+extern "C" struct ASN_RRC_ULInformationTransfer;
+
 namespace nr::gnb
 {
+
+class NgapTask;
+class GnbMrTask;
 
 class GnbRrcTask : public NtsTask
 {
   private:
     std::unique_ptr<logger::Logger> logger;
 
+    GnbMrTask *mrTask;
+    NgapTask *ngapTask;
+
   public:
     explicit GnbRrcTask(logger::LogBase &loggerBase);
     ~GnbRrcTask() override = default;
+    void setExternalTasks(GnbMrTask *mrTask, NgapTask *ngapTask);
 
   protected:
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
+
+  private:
+    /* Handle NTS messages */
+    void handleUplinkRrc(NwGnbUplinkRrc *msg);
+
+    /* NAS transport */
+    void handleDownlinkNasDelivery(NwDownlinkNasDelivery *msg);
+    void deliverUplinkNas(int ueId, OctetString &&nasPdu);
+
+    /* Procedure handlers */
+    void receiveUplinkInformationTransfer(int ueId, ASN_RRC_ULInformationTransfer *msg);
+    void receiveRrcSetupRequest(int ueId, ASN_RRC_RRCSetupRequest *msg);
+
+    /* RRC channel send message */
+    void sendRrcMessage(int ueId, ASN_RRC_BCCH_BCH_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_PCCH_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_UL_CCCH_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_UL_CCCH1_Message *msg);
+    void sendRrcMessage(int ueId, ASN_RRC_UL_DCCH_Message *msg);
+
+    /* RRC channel receive message */
+    void receiveRrcMessage(int ueId, ASN_RRC_BCCH_BCH_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_PCCH_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_UL_CCCH_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_UL_CCCH1_Message *msg);
+    void receiveRrcMessage(int ueId, ASN_RRC_UL_DCCH_Message *msg);
 };
 
-}
+} // namespace nr::gnb

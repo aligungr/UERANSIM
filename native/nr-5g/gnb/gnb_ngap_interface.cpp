@@ -7,6 +7,7 @@
 //
 
 #include "gnb_ngap_task.hpp"
+#include "gnb_app_task.hpp"
 #include "gnb_ngap_utils.hpp"
 
 #include <ASN_NGAP_AMFName.h>

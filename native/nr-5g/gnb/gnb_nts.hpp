@@ -10,6 +10,7 @@
 
 #include <nts.hpp>
 #include <octet_string.hpp>
+#include <rrc.hpp>
 #include <sctp.hpp>
 #include <utility>
 
@@ -178,6 +179,30 @@ struct NwUeContextUpdate : NtsMessage
 
     NwUeContextUpdate(int ueId, bool isCreate, const AggregateMaximumBitRate &ueAmbr)
         : NtsMessage(NtsMessageType::GTP_UE_CONTEXT_UPDATE), ueId(ueId), isCreate(isCreate), ueAmbr(ueAmbr)
+    {
+    }
+};
+
+struct NwGnbDownlinkRrc : NtsMessage
+{
+    int ueId;
+    nr::rrc::RrcChannel channel;
+    OctetString rrcPdu;
+
+    NwGnbDownlinkRrc(int ueId, rrc::RrcChannel channel, OctetString &&rrcPdu)
+        : NtsMessage(NtsMessageType::GNB_MR_DOWNLINK_RRC), ueId(ueId), channel(channel), rrcPdu(std::move(rrcPdu))
+    {
+    }
+};
+
+struct NwGnbUplinkRrc : NtsMessage
+{
+    int ueId;
+    nr::rrc::RrcChannel channel;
+    OctetString rrcPdu;
+
+    NwGnbUplinkRrc(int ueId, rrc::RrcChannel channel, OctetString &&rrcPdu)
+        : NtsMessage(NtsMessageType::GNB_MR_UPLINK_RRC), ueId(ueId), channel(channel), rrcPdu(std::move(rrcPdu))
     {
     }
 };

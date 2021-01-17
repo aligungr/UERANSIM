@@ -9,6 +9,7 @@
 #include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
+#include "gnb_rrc_task.hpp"
 
 #include <ASN_NGAP_DownlinkNASTransport.h>
 #include <ASN_NGAP_InitialUEMessage.h>

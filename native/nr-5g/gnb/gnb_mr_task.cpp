@@ -28,16 +28,16 @@ void GnbMrTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::MR_UPLINK_RRC:
+    case NtsMessageType::GNB_MR_UPLINK_RRC:
         // todo push to rrc task
         break;
-    case NtsMessageType::MR_DOWNLINK_RRC:
+    case NtsMessageType::GNB_MR_DOWNLINK_RRC:
         // todo send to related UE
         break;
-    case NtsMessageType::MR_UPLINK_DATA:
+    case NtsMessageType::GNB_MR_UPLINK_DATA:
         // todo push to gtp task
         break;
-    case NtsMessageType::MR_DOWNLINK_DATA:
+    case NtsMessageType::GNB_MR_DOWNLINK_DATA:
         // todo: push to related UE
         break;
     default:

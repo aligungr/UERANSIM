@@ -9,6 +9,7 @@
 #include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
+#include "gnb_gtp_task.hpp"
 
 #include <ASN_NGAP_AssociatedQosFlowItem.h>
 #include <ASN_NGAP_AssociatedQosFlowList.h>

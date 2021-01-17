@@ -9,6 +9,8 @@
 #include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
+#include "gnb_rrc_task.hpp"
+#include "gnb_sctp_task.hpp"
 #include "gnb_nts.hpp"
 
 #include <asn_ngap.hpp>

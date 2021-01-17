@@ -13,26 +13,28 @@
 #include <optional>
 #include <unordered_map>
 
-#include "gnb_app_task.hpp"
 #include "gnb_config.hpp"
-#include "gnb_gtp_task.hpp"
-#include "gnb_rrc_task.hpp"
-#include "gnb_sctp_task.hpp"
 #include "gnb_types.hpp"
+#include "gnb_nts.hpp"
 
-struct ASN_NGAP_NGAP_PDU;
-struct ASN_NGAP_NGSetupResponse;
-struct ASN_NGAP_NGSetupFailure;
-struct ASN_NGAP_ErrorIndication;
-struct ASN_NGAP_DownlinkNASTransport;
-struct ASN_NGAP_RerouteNASRequest;
-struct ASN_NGAP_PDUSessionResourceSetupRequest;
-struct ASN_NGAP_InitialContextSetupRequest;
-struct ASN_NGAP_UEContextReleaseCommand;
-struct ASN_NGAP_UEContextModificationRequest;
+extern "C" struct ASN_NGAP_NGAP_PDU;
+extern "C" struct ASN_NGAP_NGSetupResponse;
+extern "C" struct ASN_NGAP_NGSetupFailure;
+extern "C" struct ASN_NGAP_ErrorIndication;
+extern "C" struct ASN_NGAP_DownlinkNASTransport;
+extern "C" struct ASN_NGAP_RerouteNASRequest;
+extern "C" struct ASN_NGAP_PDUSessionResourceSetupRequest;
+extern "C" struct ASN_NGAP_InitialContextSetupRequest;
+extern "C" struct ASN_NGAP_UEContextReleaseCommand;
+extern "C" struct ASN_NGAP_UEContextModificationRequest;
 
 namespace nr::gnb
 {
+
+class SctpTask;
+class GnbRrcTask;
+class GtpTask;
+class GnbAppTask;
 
 class NgapTask : public NtsTask
 {
