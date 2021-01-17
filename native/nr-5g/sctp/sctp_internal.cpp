@@ -9,8 +9,8 @@
 #include "sctp_internal.hpp"
 #include "sctp_error.hpp"
 
-#include <convert.hpp>
 #include <arpa/inet.h>
+#include <common.hpp>
 #include <cstring>
 #include <netdb.h>
 #include <netinet/in.h>

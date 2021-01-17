@@ -88,8 +88,11 @@ inline typename asn::ngap::NgapMessageToIeUnionType<T>::value *GetProtocolIe(T *
     return nullptr;
 }
 
-// Returns true iff it is usable. Also adds the IE.
-bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &ieType, int protocolIeId, int criticality,
-                           const std::function<void(void *)> &ieCreator);
+bool IsProtocolIeUsable(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType);
+
+void *FindProtocolIeInPdu(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType, int protocolIeId);
+
+bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType, int protocolIeId,
+                           int criticality, const std::function<void(void *)> &ieCreator);
 
 } // namespace asn::ngap

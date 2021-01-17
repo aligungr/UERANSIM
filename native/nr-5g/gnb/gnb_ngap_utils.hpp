@@ -10,8 +10,8 @@
 
 #include <asn_ngap.hpp>
 #include <asn_utils.hpp>
+#include <common.hpp>
 #include <common_types.hpp>
-#include <convert.hpp>
 
 #include "gnb_types.hpp"
 
@@ -20,6 +20,7 @@
 #include <ASN_NGAP_PagingDRX.h>
 #include <ASN_NGAP_ProtocolIE-Field.h>
 #include <ASN_NGAP_SliceSupportItem.h>
+#include <ASN_NGAP_UE-NGAP-ID-pair.h>
 
 namespace nr::gnb::ngap_utils
 {
@@ -35,6 +36,8 @@ void ToCauseAsn_Ref(NgapCause source, ASN_NGAP_Cause_t &target);
 void ToPlmnAsn_Ref(const Plmn &source, ASN_NGAP_PLMNIdentity_t &target);
 
 std::unique_ptr<SliceSupport> SliceSupportFromAsn_Unique(ASN_NGAP_SliceSupportItem &supportItem);
+
+NgapIdPair FindNgapIdPairFromAsnNgapIds(const ASN_NGAP_UE_NGAP_IDs &ngapIDs);
 
 template <typename T>
 inline NgapIdPair FindNgapIdPair(T *msg)
@@ -54,23 +57,10 @@ inline NgapIdPair FindNgapIdPair(T *msg)
 template <typename T>
 inline NgapIdPair FindNgapIdPairFromUeNgapIds(T *msg)
 {
-    std::optional<int64_t> amfUeNgapId{}, ranUeNgapId{};
-
     auto *ieUeNgapIds = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_UE_NGAP_IDs);
     if (ieUeNgapIds)
-    {
-        if (ieUeNgapIds->UE_NGAP_IDs.present == ASN_NGAP_UE_NGAP_IDs_PR_uE_NGAP_ID_pair)
-        {
-            amfUeNgapId = asn::GetSigned64(ieUeNgapIds->UE_NGAP_IDs.choice.uE_NGAP_ID_pair->aMF_UE_NGAP_ID);
-            ranUeNgapId = ieUeNgapIds->UE_NGAP_IDs.choice.uE_NGAP_ID_pair->rAN_UE_NGAP_ID;
-        }
-        else if (ieUeNgapIds->UE_NGAP_IDs.present == ASN_NGAP_UE_NGAP_IDs_PR_aMF_UE_NGAP_ID)
-        {
-            amfUeNgapId = asn::GetSigned64(ieUeNgapIds->UE_NGAP_IDs.choice.aMF_UE_NGAP_ID);
-        }
-    }
-
-    return NgapIdPair{amfUeNgapId, ranUeNgapId};
+        return FindNgapIdPairFromAsnNgapIds(ieUeNgapIds->UE_NGAP_IDs);
+    return NgapIdPair{{}, {}};
 }
 
 } // namespace nr::gnb::ngap_utils

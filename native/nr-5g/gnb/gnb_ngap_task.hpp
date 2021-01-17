@@ -86,6 +86,7 @@ class NgapTask : public NtsTask
     void sendNgapNonUe(int amfId, ASN_NGAP_NGAP_PDU *pdu);
     void sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu);
     void handleSctpMessage(NwSctpClientReceive *msg);
+    bool handleSctpStreamId(int amfId, int stream, const ASN_NGAP_NGAP_PDU &pdu);
 
     /* NAS transport */
     void handleInitialNasTransport(int ueId, const OctetString &nasPdu);

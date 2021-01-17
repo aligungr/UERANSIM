@@ -830,8 +830,21 @@ int GetPduDescription(NgapMessageType messageType)
     }
 }
 
-bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &ieType, int protocolIeId,
-                           int criticality, const std::function<void(void *)> &ieCreator)
+struct IeFieldInfo
+{
+    unsigned int ieIdOffset;
+    unsigned int ieCriticalityOffset;
+    unsigned int ieStructSize;
+    void *listPtr;
+    unsigned int presOffset;
+    unsigned int choiceOffset;
+    unsigned int presSize;
+    unsigned int memberIndex;
+    void *protocolIeContainerPtr;
+    asn_anonymous_set_ *list;
+};
+
+static bool GetProtocolIeInfo(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType, IeFieldInfo &info)
 {
     // This function assumes all ASN structs are "C++ standard layout".
     // Therefore no problem is expected since the structs are already standard layout.
@@ -887,7 +900,7 @@ bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &
     ptr = reinterpret_cast<int8_t *>(ptr) + members[0].memb_offset;
     desc = members[0].type;
 
-    auto protocolIeContainerPtr = ptr;
+    info.protocolIeContainerPtr = ptr;
 
     members = desc->elements;
     memberCount = desc->elements_count;
@@ -898,14 +911,14 @@ bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &
     members = desc->elements;
     memberCount = desc->elements_count;
 
-    unsigned ieIdOffset = members[0].memb_offset;
-    unsigned ieCriticalityOffset = members[1].memb_offset;
-    unsigned ieStructSize = reinterpret_cast<const asn_SEQUENCE_specifics_t *>(desc->specifics)->struct_size;
+    info.ieIdOffset = members[0].memb_offset;
+    info.ieCriticalityOffset = members[1].memb_offset;
+    info.ieStructSize = reinterpret_cast<const asn_SEQUENCE_specifics_t *>(desc->specifics)->struct_size;
 
-    auto listPtr = ptr;
+    info.listPtr = ptr;
 
-    unsigned presOffset = members[2].memb_offset;
-    unsigned choiceOffset = members[2].memb_offset;
+    info.presOffset = members[2].memb_offset;
+    info.choiceOffset = members[2].memb_offset;
 
     ptr = reinterpret_cast<int8_t *>(ptr) + members[2].memb_offset;
     desc = members[2].type;
@@ -914,56 +927,94 @@ bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, asn_TYPE_descriptor_t &
     memberCount = desc->elements_count;
 
     choiceSpecs = reinterpret_cast<const asn_CHOICE_specifics_t *>(desc->specifics);
-    presOffset += choiceSpecs->pres_offset;
+    info.presOffset += choiceSpecs->pres_offset;
 
-    unsigned presSize = choiceSpecs->pres_size;
+    info.presSize = choiceSpecs->pres_size;
 
-    unsigned memberIndex = ~0;
+    info.memberIndex = ~0;
 
     for (unsigned i = 0; i < memberCount; i++)
     {
         if (members[i].type == &ieType)
         {
-            memberIndex = i;
+            // NOT: Birden fazla varsa ilk buludğunu alıyor.
+            info.memberIndex = i;
             break;
         }
     }
 
-    if (memberIndex == ~0U)
+    if (info.memberIndex == ~0U)
         return false;
 
-    ptr = reinterpret_cast<int8_t *>(ptr) + members[memberIndex].memb_offset;
-    desc = members[memberIndex].type;
+    ptr = reinterpret_cast<int8_t *>(ptr) + members[info.memberIndex].memb_offset;
+    desc = members[info.memberIndex].type;
 
-    choiceOffset += members[memberIndex].memb_offset;
+    info.choiceOffset += members[info.memberIndex].memb_offset;
+
+    info.list = reinterpret_cast<asn_anonymous_set_ *>(info.listPtr);
+
+    return true;
+}
+
+bool IsProtocolIeUsable(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType)
+{
+    IeFieldInfo inf{};
+    return GetProtocolIeInfo(pdu, ieType, inf);
+}
+
+void *FindProtocolIeInPdu(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType, int protocolIeId)
+{
+    IeFieldInfo inf{};
+    if (!GetProtocolIeInfo(pdu, ieType, inf))
+        return nullptr;
+
+    for (int i = 0; i < inf.list->count; i++)
+    {
+        void *item = inf.list->array[i];
+        ASN_NGAP_ProtocolIE_ID_t ieId =
+            *reinterpret_cast<ASN_NGAP_ProtocolIE_ID_t *>((reinterpret_cast<int8_t *>(item) + inf.ieIdOffset));
+        if (ieId == protocolIeId)
+        {
+            auto *valuePlace = (void *)(reinterpret_cast<int8_t *>(item) + inf.choiceOffset);
+            return valuePlace;
+        }
+    }
+    return nullptr;
+}
+
+bool AddProtocolIeIfUsable(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descriptor_t &ieType, int protocolIeId,
+                           int criticality, const std::function<void(void *)> &ieCreator)
+{
+    IeFieldInfo inf{};
+    if (!GetProtocolIeInfo(pdu, ieType, inf))
+        return false;
 
     /* Create and add new protocol IE field */
     {
-        void *newIe = calloc(1, ieStructSize);
+        void *newIe = calloc(1, inf.ieStructSize);
 
-        *reinterpret_cast<ASN_NGAP_ProtocolIE_ID_t *>((reinterpret_cast<int8_t *>(newIe) + ieIdOffset)) = protocolIeId;
-        *reinterpret_cast<ASN_NGAP_Criticality_t *>((reinterpret_cast<int8_t *>(newIe) + ieCriticalityOffset)) =
+        *reinterpret_cast<ASN_NGAP_ProtocolIE_ID_t *>((reinterpret_cast<int8_t *>(newIe) + inf.ieIdOffset)) =
+            protocolIeId;
+        *reinterpret_cast<ASN_NGAP_Criticality_t *>((reinterpret_cast<int8_t *>(newIe) + inf.ieCriticalityOffset)) =
             criticality;
 
-        auto *newPresPtr = (reinterpret_cast<int8_t *>(newIe) + presOffset);
+        auto *newPresPtr = (reinterpret_cast<int8_t *>(newIe) + inf.presOffset);
 
-        for (unsigned i = 0; i < presSize; i++)
-            newPresPtr[i] = ((memberIndex + 1) >> (i * 8)) & 0xFF;
+        for (unsigned i = 0; i < inf.presSize; i++)
+            newPresPtr[i] = ((inf.memberIndex + 1) >> (i * 8)) & 0xFF;
 
-        auto *valuePlace = (void *)(reinterpret_cast<int8_t *>(newIe) + choiceOffset);
+        auto *valuePlace = (void *)(reinterpret_cast<int8_t *>(newIe) + inf.choiceOffset);
         ieCreator(valuePlace);
 
-        ASN_SEQUENCE_ADD(protocolIeContainerPtr, newIe);
-
-        auto *list = reinterpret_cast<asn_anonymous_set_ *>(listPtr);
+        ASN_SEQUENCE_ADD(inf.protocolIeContainerPtr, newIe);
 
         // Sorting according to present value. See "asn::ngap::AddProtocolIe" function.
-        std::sort(list->array, list->array + list->count, [presOffset, presSize](void *a, void *b) {
-            auto *aPresPtr = reinterpret_cast<int8_t *>(a) + presOffset;
-            auto *bPresPtr = reinterpret_cast<int8_t *>(b) + presOffset;
+        std::sort(inf.list->array, inf.list->array + inf.list->count, [&inf](void *a, void *b) {
+            auto *aPresPtr = reinterpret_cast<int8_t *>(a) + inf.presOffset;
+            auto *bPresPtr = reinterpret_cast<int8_t *>(b) + inf.presOffset;
 
             uint64_t aPresValue = 0, bPresValue = 0;
-            for (unsigned i = 0; i < presSize; i++)
+            for (unsigned i = 0; i < inf.presSize; i++)
             {
                 aPresValue += (*(aPresPtr + i) & 0xFF) << (i * 8);
                 bPresValue += (*(bPresPtr + i) & 0xFF) << (i * 8);

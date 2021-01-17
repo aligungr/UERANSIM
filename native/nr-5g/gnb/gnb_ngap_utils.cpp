@@ -210,4 +210,21 @@ void ToPlmnAsn_Ref(const Plmn &source, ASN_NGAP_PLMNIdentity_t &target)
     asn::SetOctetString(target, val);
 }
 
+NgapIdPair FindNgapIdPairFromAsnNgapIds(const ASN_NGAP_UE_NGAP_IDs &ngapIDs)
+{
+    std::optional<int64_t> amfUeNgapId{}, ranUeNgapId{};
+
+    if (ngapIDs.present == ASN_NGAP_UE_NGAP_IDs_PR_uE_NGAP_ID_pair)
+    {
+        amfUeNgapId = asn::GetSigned64(ngapIDs.choice.uE_NGAP_ID_pair->aMF_UE_NGAP_ID);
+        ranUeNgapId = ngapIDs.choice.uE_NGAP_ID_pair->rAN_UE_NGAP_ID;
+    }
+    else if (ngapIDs.present == ASN_NGAP_UE_NGAP_IDs_PR_aMF_UE_NGAP_ID)
+    {
+        amfUeNgapId = asn::GetSigned64(ngapIDs.choice.aMF_UE_NGAP_ID);
+    }
+
+    return NgapIdPair{amfUeNgapId, ranUeNgapId};
+}
+
 } // namespace nr::gnb::ngap_utils

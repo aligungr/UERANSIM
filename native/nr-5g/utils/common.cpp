@@ -6,13 +6,79 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "convert.hpp"
+#include "common.hpp"
 #include <atomic>
 #include <cassert>
 #include <chrono>
 #include <regex>
+#include <sstream>
+
+static_assert(sizeof(char) == sizeof(uint8_t));
+static_assert(sizeof(int) == sizeof(uint32_t));
+static_assert(sizeof(long) == sizeof(uint64_t));
+static_assert(sizeof(long long) == sizeof(uint64_t));
 
 static std::atomic<int> idCounter = 1;
+
+static bool IPv6FromString(const char *szAddress, uint8_t *address)
+{
+    auto asciiToHex = [](char c) {
+        c |= 0x20;
+        if (c >= '0' && c <= '9')
+            return c - '0';
+        else if (c >= 'a' && c <= 'f')
+            return (c - 'a') + 10;
+        else
+            return -1;
+    };
+
+    uint16_t acc = 0;
+    uint8_t colons = 0;
+    uint8_t pos = 0;
+
+    memset(address, 0, 16);
+
+    for (uint8_t i = 1; i <= 39; i++)
+    {
+        if (szAddress[i] == ':')
+        {
+            if (szAddress[i - 1] == ':')
+                colons = 14;
+            else if (colons)
+                colons -= 2;
+        }
+        else if (szAddress[i] == '\0')
+            break;
+    }
+    for (uint8_t i = 0; i <= 39 && pos < 16; i++)
+    {
+        if (szAddress[i] == ':' || szAddress[i] == '\0')
+        {
+            address[pos] = acc >> 8;
+            address[pos + 1] = acc;
+            acc = 0;
+
+            if (colons && i && szAddress[i - 1] == ':')
+                pos = colons;
+            else
+                pos += 2;
+        }
+        else
+        {
+            int8_t val = asciiToHex(szAddress[i]);
+            if (val == -1)
+                return false;
+            else
+            {
+                acc <<= 4;
+                acc |= val;
+            }
+        }
+        if (szAddress[i] == '\0')
+            break;
+    }
+    return true;
+}
 
 int utils::GetIpVersion(const std::string &address)
 {
@@ -85,4 +151,34 @@ TimeStamp utils::CurrentTimeStamp()
 
     int64_t time = (seconds << 32LL) | fraction;
     return TimeStamp(time);
+}
+
+OctetString utils::IpToOctetString(const std::string &address)
+{
+    int ipVersion = GetIpVersion(address);
+    if (ipVersion == 4)
+    {
+        int bytes[4];
+        char dot;
+
+        std::stringstream ss(address);
+        ss >> bytes[0] >> dot >> bytes[1] >> dot >> bytes[2] >> dot >> bytes[3] >> dot;
+
+        std::vector<uint8_t> data{4};
+        data[0] = bytes[0];
+        data[1] = bytes[1];
+        data[2] = bytes[2];
+        data[3] = bytes[3];
+
+        return OctetString(std::move(data));
+    }
+    else if (ipVersion == 6)
+    {
+        std::vector<uint8_t> data{16};
+        if (!IPv6FromString(address.c_str(), data.data()))
+            return {};
+        return OctetString(std::move(data));
+    }
+    else
+        return {};
 }

@@ -162,6 +162,13 @@ void NgapTask::handleSctpMessage(NwSctpClientReceive *msg)
 
     // TODO: trigger monitor on receive
 
+    if (!handleSctpStreamId(amf->ctxId, msg->stream, *pdu))
+    {
+        asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+        delete msg;
+        return;
+    }
+
     if (pdu->present == ASN_NGAP_NGAP_PDU_PR_initiatingMessage)
     {
         auto value = pdu->choice.initiatingMessage->value;
@@ -169,6 +176,24 @@ void NgapTask::handleSctpMessage(NwSctpClientReceive *msg)
         {
         case ASN_NGAP_InitiatingMessage__value_PR_ErrorIndication:
             receiveErrorIndication(amf->ctxId, &value.choice.ErrorIndication);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_InitialContextSetupRequest:
+            receiveInitialContextSetup(amf->ctxId, &value.choice.InitialContextSetupRequest);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_RerouteNASRequest:
+            receiveRerouteNasRequest(amf->ctxId, &value.choice.RerouteNASRequest);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_UEContextReleaseCommand:
+            receiveContextRelease(amf->ctxId, &value.choice.UEContextReleaseCommand);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_UEContextModificationRequest:
+            receiveContextModification(amf->ctxId, &value.choice.UEContextModificationRequest);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_PDUSessionResourceSetupRequest:
+            receiveSessionResourceSetupRequest(amf->ctxId, &value.choice.PDUSessionResourceSetupRequest);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_DownlinkNASTransport:
+            receiveDownlinkNasTransport(amf->ctxId, &value.choice.DownlinkNASTransport);
             break;
         default:
             logger->err("Unhandled NGAP initiating-message received (%d)", value.present);
@@ -208,6 +233,79 @@ void NgapTask::handleSctpMessage(NwSctpClientReceive *msg)
 
     asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
     delete msg;
+}
+
+bool NgapTask::handleSctpStreamId(int amfId, int stream, const ASN_NGAP_NGAP_PDU &pdu)
+{
+    if (config->ignoreStreamIds)
+        return true;
+
+    auto *ptr =
+        asn::ngap::FindProtocolIeInPdu(pdu, asn_DEF_ASN_NGAP_UE_NGAP_IDs, ASN_NGAP_ProtocolIE_ID_id_UE_NGAP_IDs);
+    if (ptr != nullptr)
+    {
+        if (stream == 0)
+        {
+            logger->err("Received stream number == 0 in UE-associated signalling");
+            sendErrorIndication(amfId, NgapCause::Protocol_unspecified);
+            return false;
+        }
+
+        auto &ids = *reinterpret_cast<ASN_NGAP_UE_NGAP_IDs *>(ptr);
+        auto *ue = findUeByNgapIdPair(amfId, ngap_utils::FindNgapIdPairFromAsnNgapIds(ids));
+        if (ue == nullptr)
+            return false;
+
+        if (ue->downlinkStream == 0)
+            ue->downlinkStream = stream;
+        else if (ue->downlinkStream != stream)
+        {
+            logger->err("received stream number is inconsistent. received %d, expected :%d", stream,
+                        ue->downlinkStream);
+            sendErrorIndication(amfId, NgapCause::Protocol_unspecified);
+            return false;
+        }
+    }
+    else
+    {
+        ptr = asn::ngap::FindProtocolIeInPdu(pdu, asn_DEF_ASN_NGAP_RAN_UE_NGAP_ID,
+                                             ASN_NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID);
+        if (ptr != nullptr)
+        {
+            if (stream == 0)
+            {
+                logger->err("Received stream number == 0 in UE-associated signalling");
+                sendErrorIndication(amfId, NgapCause::Protocol_unspecified);
+                return false;
+            }
+
+            long id = static_cast<long>(*reinterpret_cast<ASN_NGAP_RAN_UE_NGAP_ID_t *>(ptr));
+            auto *ue = findUeByRanId(id);
+            if (ue == nullptr)
+                return false;
+
+            if (ue->downlinkStream == 0)
+                ue->downlinkStream = stream;
+            else if (ue->downlinkStream != stream)
+            {
+                logger->err("received stream number is inconsistent. received %d, expected :%d", stream,
+                            ue->downlinkStream);
+                sendErrorIndication(amfId, NgapCause::Protocol_unspecified);
+                return false;
+            }
+        }
+        else
+        {
+            if (stream != 0)
+            {
+                logger->err("Received stream number != 0 in non-UE-associated signalling");
+                sendErrorIndication(amfId, NgapCause::Protocol_unspecified);
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 } // namespace nr::gnb

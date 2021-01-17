@@ -34,6 +34,7 @@ struct GnbConfig
     std::vector<GnbAmfConfig> amfConfigs;
     std::string ngapIp;
     std::string gtpIp;
+    bool ignoreStreamIds;
 
     inline int getGnbId() const
     {
