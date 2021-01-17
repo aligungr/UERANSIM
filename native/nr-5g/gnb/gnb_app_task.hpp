@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "gnb_types.hpp"
 #include <logger.hpp>
 #include <memory>
 #include <nts.hpp>
@@ -22,6 +23,7 @@ class GnbAppTask : public NtsTask
 {
   private:
     std::unique_ptr<logger::Logger> logger;
+    GnbStatusInfo statusInfo;
 
   public:
     explicit GnbAppTask(logger::LogBase &loggerBase);

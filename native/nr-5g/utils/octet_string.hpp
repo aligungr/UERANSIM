@@ -43,6 +43,10 @@ class OctetString
     void appendOctet3(int v);
     void appendOctet4(octet4 v);
     void appendOctet4(int v);
+    void appendOctet8(octet8 v);
+    void appendOctet8(int64_t v);
+    void appendOctet8(uint64_t v);
+    void appendPadding(int length);
 
     const uint8_t *data() const;
     const uint8_t *data();

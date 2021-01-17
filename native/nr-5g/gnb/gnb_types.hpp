@@ -193,4 +193,9 @@ struct PduSessionResource
     }
 };
 
+struct GnbStatusInfo
+{
+    bool isInitialSctpEstablished;
+};
+
 } // namespace nr::gnb

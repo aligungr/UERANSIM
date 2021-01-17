@@ -16,6 +16,8 @@
 static_assert(sizeof(char) == sizeof(uint8_t));
 static_assert(sizeof(int) == sizeof(uint32_t));
 static_assert(sizeof(long) == sizeof(uint64_t));
+static_assert(sizeof(float) == sizeof(uint32_t));
+static_assert(sizeof(double) == sizeof(uint64_t));
 static_assert(sizeof(long long) == sizeof(uint64_t));
 
 static std::atomic<int> idCounter = 1;

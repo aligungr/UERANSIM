@@ -11,4 +11,4 @@ target_link_libraries(rrc utils)
 target_link_libraries(rrc asn-rrc)
 target_link_libraries(rrc asn-utils)
 
-target_include_directories(utils PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(rrc PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -160,3 +160,47 @@ struct octet4
         return value;
     }
 };
+
+struct octet8
+{
+  private:
+    uint64_t value;
+
+  public:
+    octet8() : value(0)
+    {
+    }
+
+    explicit octet8(int64_t value) : value(static_cast<uint64_t>(value))
+    {
+    }
+
+    explicit octet8(uint64_t value) : value(value)
+    {
+    }
+
+    octet8(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t octet5,
+           uint8_t octet6, uint8_t octet7)
+        : value{(static_cast<uint64_t>(octet0) << 56U) | (static_cast<uint64_t>(octet1) << 48U) |
+                ((static_cast<uint64_t>(octet2) << 40U)) | (static_cast<uint64_t>(octet3) << 32U) |
+                (static_cast<uint64_t>(octet4) << 24U) | (static_cast<uint64_t>(octet5) << 16U) |
+                (static_cast<uint64_t>(octet6) << 8U) | (static_cast<uint64_t>(octet7))}
+    {
+    }
+
+    inline uint8_t operator[](int index) const
+    {
+        assert(index >= 0 && index <= 7);
+        return (value >> (56 - index * 8)) & 0xFF;
+    }
+
+    explicit constexpr operator int64_t() const
+    {
+        return static_cast<int64_t>(value);
+    }
+
+    explicit constexpr operator uint64_t() const
+    {
+        return value;
+    }
+};

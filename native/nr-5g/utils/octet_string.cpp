@@ -54,6 +54,28 @@ void OctetString::appendOctet4(octet4 v)
     m_data.push_back(v[3]);
 }
 
+void OctetString::appendOctet8(octet8 v)
+{
+    m_data.push_back(v[0]);
+    m_data.push_back(v[1]);
+    m_data.push_back(v[2]);
+    m_data.push_back(v[3]);
+    m_data.push_back(v[4]);
+    m_data.push_back(v[5]);
+    m_data.push_back(v[6]);
+    m_data.push_back(v[7]);
+}
+
+void OctetString::appendOctet8(int64_t v)
+{
+    appendOctet8(octet8{v});
+}
+
+void OctetString::appendOctet8(uint64_t v)
+{
+    appendOctet8(octet8{v});
+}
+
 void OctetString::appendOctet4(int v)
 {
     appendOctet4(octet4{v});
@@ -79,4 +101,10 @@ const uint8_t *OctetString::data() const
 const uint8_t *OctetString::data()
 {
     return m_data.data();
+}
+
+void OctetString::appendPadding(int length)
+{
+    for (int i = 0; i < length; i++)
+        appendOctet(0);
 }

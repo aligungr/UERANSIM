@@ -82,6 +82,26 @@ class OctetBuffer
         return (int)read4();
     }
 
+    inline uint32_t read4UI()
+    {
+        return (uint32_t)read4();
+    }
+
+    inline octet8 read8()
+    {
+        return {read(), read(), read(), read(), read(), read(), read(), read()};
+    }
+
+    inline uint64_t read8UL()
+    {
+        return (uint64_t)read8();
+    }
+
+    inline int64_t read8L()
+    {
+        return (int64_t)read8();
+    }
+
     inline void write(uint8_t octet)
     {
         data[index++] = octet;

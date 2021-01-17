@@ -7,6 +7,7 @@
 //
 
 #include "gnb_app_task.hpp"
+#include "gnb_nts.hpp"
 
 namespace nr::gnb
 {
@@ -22,6 +23,32 @@ void GnbAppTask::onStart()
 
 void GnbAppTask::onLoop()
 {
+    NtsMessage *msg = take();
+    if (!msg)
+        return;
+
+    switch (msg->msgType)
+    {
+    case NtsMessageType::GNB_STATUS_UPDATE: {
+        auto *m = dynamic_cast<NwGnbStatusUpdate *>(msg);
+
+        switch (m->what)
+        {
+        case NwGnbStatusUpdate::INITIAL_SCTP_ESTABLISHED:
+            statusInfo.isInitialSctpEstablished = m->isInitialSctpEstablished;
+            break;
+        }
+
+        break;
+    }
+
+        // todo status info request
+
+    default:
+        logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
+        delete msg;
+        break;
+    }
 }
 
 void GnbAppTask::onQuit()
