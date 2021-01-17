@@ -34,8 +34,7 @@ void NgapTask::createAmfContext(const GnbAmfConfig &conf)
 
 void NgapTask::createUeContext(int ueId)
 {
-    auto *ctx = new NgapUeContext();
-    ctx->ctxId = ueId;
+    auto *ctx = new NgapUeContext(ueId);
     ctx->amfUeNgapId = -1;
     ctx->ranUeNgapId = ++ueNgapIdCounter;
 
@@ -93,6 +92,30 @@ NgapUeContext *NgapTask::findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPa
         return nullptr;
     }
 
+    if (!amfId.has_value())
+    {
+        auto ue = findUeByRanId(ranId.value());
+        if (ue == nullptr)
+        {
+            sendErrorIndication(amfCtxId, NgapCause::RadioNetwork_unknown_local_UE_NGAP_ID);
+            return nullptr;
+        }
+
+        return ue;
+    }
+
+    if (!ranId.has_value())
+    {
+        auto ue = findUeByAmfId(amfId.value());
+        if (ue == nullptr)
+        {
+            sendErrorIndication(amfCtxId, NgapCause::RadioNetwork_inconsistent_remote_UE_NGAP_ID);
+            return nullptr;
+        }
+
+        return ue;
+    }
+
     auto ue = findUeByRanId(ranId.value());
     if (ue == nullptr)
     {
@@ -115,6 +138,16 @@ NgapAmfContext *NgapTask::selectNewAmfForReAllocation(int initiatedAmfId, int am
 {
     // TODO an arbitrary AMF is selected for now
     return findAmfContext(initiatedAmfId);
+}
+
+void NgapTask::deleteUeContext(int ueId)
+{
+    auto *ue = ueContexts[ueId];
+    if (ue)
+    {
+        delete ue;
+        ueContexts.erase(ueId);
+    }
 }
 
 } // namespace nr::gnb

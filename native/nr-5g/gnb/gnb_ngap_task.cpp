@@ -54,10 +54,13 @@ void NgapTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::SCTP_ASSOCIATION_SETUP:
-        receiveAssociationSetup(dynamic_cast<NwSctpAssociationSetup *>(msg));
+        handleAssociationSetup(dynamic_cast<NwSctpAssociationSetup *>(msg));
         break;
     case NtsMessageType::SCTP_CLIENT_RECEIVE:
-        receiveSctpMessage(dynamic_cast<NwSctpClientReceive *>(msg));
+        handleSctpMessage(dynamic_cast<NwSctpClientReceive *>(msg));
+        break;
+    case NtsMessageType::NGAP_UPLINK_NAS_DELIVERY:
+        deliverUplinkNas(dynamic_cast<NwUplinkNasDelivery *>(msg));
         break;
     default:
         logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);

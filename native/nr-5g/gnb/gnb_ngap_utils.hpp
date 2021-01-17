@@ -32,7 +32,7 @@ PduSessionType PduSessionTypeFromAsn(const ASN_NGAP_PDUSessionType_t &source);
 void PlmnFromAsn_Ref(const ASN_NGAP_PLMNIdentity_t &source, Plmn &target);
 void GuamiFromAsn_Ref(const ASN_NGAP_GUAMI_t &guami, Guami &target);
 void ToCauseAsn_Ref(NgapCause source, ASN_NGAP_Cause_t &target);
-void ToPlmnAsn_Ref(const Plmn& source, ASN_NGAP_PLMNIdentity_t &target);
+void ToPlmnAsn_Ref(const Plmn &source, ASN_NGAP_PLMNIdentity_t &target);
 
 std::unique_ptr<SliceSupport> SliceSupportFromAsn_Unique(ASN_NGAP_SliceSupportItem &supportItem);
 
@@ -44,13 +44,31 @@ inline NgapIdPair FindNgapIdPair(T *msg)
 
     std::optional<int64_t> amfUeNgapId{}, ranUeNgapId{};
     if (ieAmfUeNgapId)
-    {
-        uint64_t v;
-        if (asn_INTEGER2ulong(&ieAmfUeNgapId->AMF_UE_NGAP_ID, &v) == 0)
-            amfUeNgapId = static_cast<int64_t>(v);
-    }
+        amfUeNgapId = asn::GetSigned64(ieAmfUeNgapId->AMF_UE_NGAP_ID);
     if (ieRanUeNgapId)
         ranUeNgapId = ieRanUeNgapId->RAN_UE_NGAP_ID;
+
+    return NgapIdPair{amfUeNgapId, ranUeNgapId};
+}
+
+template <typename T>
+inline NgapIdPair FindNgapIdPairFromUeNgapIds(T *msg)
+{
+    std::optional<int64_t> amfUeNgapId{}, ranUeNgapId{};
+
+    auto *ieUeNgapIds = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_UE_NGAP_IDs);
+    if (ieUeNgapIds)
+    {
+        if (ieUeNgapIds->UE_NGAP_IDs.present == ASN_NGAP_UE_NGAP_IDs_PR_uE_NGAP_ID_pair)
+        {
+            amfUeNgapId = asn::GetSigned64(ieUeNgapIds->UE_NGAP_IDs.choice.uE_NGAP_ID_pair->aMF_UE_NGAP_ID);
+            ranUeNgapId = ieUeNgapIds->UE_NGAP_IDs.choice.uE_NGAP_ID_pair->rAN_UE_NGAP_ID;
+        }
+        else if (ieUeNgapIds->UE_NGAP_IDs.present == ASN_NGAP_UE_NGAP_IDs_PR_aMF_UE_NGAP_ID)
+        {
+            amfUeNgapId = asn::GetSigned64(ieUeNgapIds->UE_NGAP_IDs.choice.aMF_UE_NGAP_ID);
+        }
+    }
 
     return NgapIdPair{amfUeNgapId, ranUeNgapId};
 }

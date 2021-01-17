@@ -27,6 +27,9 @@ struct ASN_NGAP_ErrorIndication;
 struct ASN_NGAP_DownlinkNASTransport;
 struct ASN_NGAP_RerouteNASRequest;
 struct ASN_NGAP_PDUSessionResourceSetupRequest;
+struct ASN_NGAP_InitialContextSetupRequest;
+struct ASN_NGAP_UEContextReleaseCommand;
+struct ASN_NGAP_UEContextModificationRequest;
 
 namespace nr::gnb
 {
@@ -69,6 +72,7 @@ class NgapTask : public NtsTask
     NgapUeContext *findUeByAmfId(long amfUeNgapId);
     NgapUeContext *findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPair);
     NgapAmfContext *selectNewAmfForReAllocation(int initiatedAmfId, int amfSetId);
+    void deleteUeContext(int ueId);
 
     /* Interface management */
     void sendNgSetupRequest(int amfId);
@@ -76,24 +80,30 @@ class NgapTask : public NtsTask
     void receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg);
     void receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg);
     void receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg);
-    void receiveAssociationSetup(NwSctpAssociationSetup *msg);
+    void handleAssociationSetup(NwSctpAssociationSetup *msg);
 
     /* Message transport */
     void sendNgapNonUe(int amfId, ASN_NGAP_NGAP_PDU *pdu);
     void sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu);
-    void receiveSctpMessage(NwSctpClientReceive *msg);
+    void handleSctpMessage(NwSctpClientReceive *msg);
 
     /* NAS transport */
-    void receiveInitialNasTransport(NwInitialNasTransport *msg);
-    void receiveUplinkNasTransport(int ueId, const OctetString &nasPdu);
+    void handleInitialNasTransport(int ueId, const OctetString &nasPdu);
+    void handleUplinkNasTransport(int ueId, const OctetString &nasPdu);
     void receiveDownlinkNasTransport(int amfId, ASN_NGAP_DownlinkNASTransport *msg);
     void deliverDownlinkNas(int ueId, OctetString &&nasPdu);
+    void deliverUplinkNas(NwUplinkNasDelivery *msg);
     void sendNasNonDeliveryIndication(int ueId, const OctetString &nasPdu, NgapCause cause);
     void receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *msg);
 
     /* PDU session management */
     void receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSessionResourceSetupRequest *msg);
     std::optional<NgapCause> setupPduSessionResource(PduSessionResource *resource);
+
+    /* UE context management */
+    void receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetupRequest *msg);
+    void receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand *msg);
+    void receiveContextModification(int amfId, ASN_NGAP_UEContextModificationRequest *msg);
 };
 
 } // namespace nr::gnb

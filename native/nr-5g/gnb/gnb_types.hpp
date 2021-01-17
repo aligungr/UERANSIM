@@ -59,15 +59,26 @@ struct NgapAmfContext
     std::vector<PlmnSupport *> plmnSupportList;
 };
 
+struct AggregateMaximumBitRate
+{
+    uint64_t dlAmbr{};
+    uint64_t ulAmbr{};
+};
+
 struct NgapUeContext
 {
-    int ctxId;
+    const int ctxId;
 
-    int64_t amfUeNgapId; // -1 if not assigned
-    int64_t ranUeNgapId;
-    int associatedAmfId;
-    int uplinkStream;
-    int downlinkStream;
+    int64_t amfUeNgapId = -1; // -1 if not assigned
+    int64_t ranUeNgapId{};
+    int associatedAmfId{};
+    int uplinkStream{};
+    int downlinkStream{};
+    AggregateMaximumBitRate ueAmbr{};
+
+    explicit NgapUeContext(int ctxId) : ctxId(ctxId)
+    {
+    }
 };
 
 struct NgapIdPair
@@ -157,12 +168,6 @@ enum class NgapCause
     Misc_hardware_failure,
     Misc_om_intervention,
     Misc_unknown_PLMN,
-};
-
-struct AggregateMaximumBitRate
-{
-    uint64_t dlAmbr{};
-    uint64_t ulAmbr{};
 };
 
 struct GtpTunnel

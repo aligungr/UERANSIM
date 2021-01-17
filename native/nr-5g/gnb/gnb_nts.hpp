@@ -124,17 +124,6 @@ struct NwSctpSendMessage : NtsMessage
     }
 };
 
-struct NwInitialNasTransport : NtsMessage
-{
-    int ueId;
-    OctetString nasPdu;
-
-    NwInitialNasTransport(int ueId, OctetString &&nasPdu)
-        : NtsMessage(NtsMessageType::NGAP_INITIAL_NAS_TRANSPORT), ueId(ueId), nasPdu(std::move(nasPdu))
-    {
-    }
-};
-
 struct NwDownlinkNasDelivery : NtsMessage
 {
     int ueId;
@@ -142,6 +131,17 @@ struct NwDownlinkNasDelivery : NtsMessage
 
     NwDownlinkNasDelivery(int ueId, OctetString &&nasPdu)
         : NtsMessage(NtsMessageType::NGAP_DOWNLINK_NAS_DELIVERY), ueId(ueId), nasPdu(std::move(nasPdu))
+    {
+    }
+};
+
+struct NwUplinkNasDelivery : NtsMessage
+{
+    int ueId;
+    OctetString nasPdu;
+
+    NwUplinkNasDelivery(int ueId, OctetString &&nasPdu)
+        : NtsMessage(NtsMessageType::NGAP_UPLINK_NAS_DELIVERY), ueId(ueId), nasPdu(std::move(nasPdu))
     {
     }
 };
@@ -166,6 +166,18 @@ struct NwGnbStatusUpdate : NtsMessage
     bool isInitialSctpEstablished{};
 
     explicit NwGnbStatusUpdate(const int what) : NtsMessage(NtsMessageType::GNB_STATUS_UPDATE), what(what)
+    {
+    }
+};
+
+struct NwUeContextUpdate : NtsMessage
+{
+    int ueId;
+    bool isCreate;
+    AggregateMaximumBitRate ueAmbr;
+
+    NwUeContextUpdate(int ueId, bool isCreate, const AggregateMaximumBitRate &ueAmbr)
+        : NtsMessage(NtsMessageType::GTP_UE_CONTEXT_UPDATE), ueId(ueId), isCreate(isCreate), ueAmbr(ueAmbr)
     {
     }
 };

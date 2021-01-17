@@ -141,7 +141,7 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
     asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
 }
 
-void NgapTask::receiveSctpMessage(NwSctpClientReceive *msg)
+void NgapTask::handleSctpMessage(NwSctpClientReceive *msg)
 {
     auto *amf = findAmfContext(msg->clientId);
     if (amf == nullptr)
@@ -159,6 +159,8 @@ void NgapTask::receiveSctpMessage(NwSctpClientReceive *msg)
         delete msg;
         return;
     }
+
+    // TODO: trigger monitor on receive
 
     if (pdu->present == ASN_NGAP_NGAP_PDU_PR_initiatingMessage)
     {

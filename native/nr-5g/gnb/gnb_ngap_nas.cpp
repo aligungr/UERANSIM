@@ -22,13 +22,13 @@
 namespace nr::gnb
 {
 
-void NgapTask::receiveInitialNasTransport(NwInitialNasTransport *msg)
+void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu)
 {
-    logger->debug("Initial NAS message received from UE %d", msg->ueId);
+    logger->debug("Initial NAS message received from UE %d", ueId);
 
-    createUeContext(msg->ueId);
+    createUeContext(ueId);
 
-    auto *ueCtx = findUeContext(msg->ueId);
+    auto *ueCtx = findUeContext(ueId);
     if (ueCtx == nullptr)
         return;
     auto *amfCtx = findAmfContext(ueCtx->associatedAmfId);
@@ -56,10 +56,10 @@ void NgapTask::receiveInitialNasTransport(NwInitialNasTransport *msg)
     ieNasPdu->id = ASN_NGAP_ProtocolIE_ID_id_NAS_PDU;
     ieNasPdu->criticality = ASN_NGAP_Criticality_reject;
     ieNasPdu->value.present = ASN_NGAP_InitialUEMessage_IEs__value_PR_NAS_PDU;
-    asn::SetOctetString(ieNasPdu->value.choice.NAS_PDU, msg->nasPdu);
+    asn::SetOctetString(ieNasPdu->value.choice.NAS_PDU, nasPdu);
 
     auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_InitialUEMessage>({ieEstablishmentCause, ieCtxRequest, ieNasPdu});
-    sendNgapUeAssociated(msg->ueId, pdu);
+    sendNgapUeAssociated(ueId, pdu);
 }
 
 void NgapTask::deliverDownlinkNas(int ueId, OctetString &&nasPdu)
@@ -68,7 +68,18 @@ void NgapTask::deliverDownlinkNas(int ueId, OctetString &&nasPdu)
     rrcTask->push(new NwDownlinkNasDelivery(ueId, std::move(nasPdu)));
 }
 
-void NgapTask::receiveUplinkNasTransport(int ueId, const OctetString &nasPdu)
+void NgapTask::deliverUplinkNas(NwUplinkNasDelivery *msg)
+{
+    logger->debug("Delivering uplink NAS PDU with length %d to UE with ID %d", msg->nasPdu.length(), msg->ueId);
+
+    if (ueContexts.count(msg->ueId))
+        handleUplinkNasTransport(msg->ueId, msg->nasPdu);
+    else
+        handleInitialNasTransport(msg->ueId, msg->nasPdu);
+    delete msg;
+}
+
+void NgapTask::handleUplinkNasTransport(int ueId, const OctetString &nasPdu)
 {
     logger->debug("Uplink NAS transport received from UE with ID %d", ueId);
 
