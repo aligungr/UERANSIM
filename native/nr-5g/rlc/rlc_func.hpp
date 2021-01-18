@@ -14,7 +14,7 @@
 #include <cassert>
 #include <functional>
 
-namespace nr::rlc::func
+namespace rlc::func
 {
 
 /**
@@ -567,4 +567,4 @@ inline int ListSum(LinkedList<T> &list, const std::function<int(const T *item)> 
     return res;
 }
 
-} // namespace nr::rlc::func
+} // namespace rlc::func

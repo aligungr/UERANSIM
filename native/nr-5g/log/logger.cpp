@@ -13,9 +13,6 @@
 
 #include <vector>
 
-namespace logger
-{
-
 Logger::Logger(const std::string &name, const std::vector<std::shared_ptr<spdlog::sinks::sink>> &sinks)
 {
     logger = new spdlog::logger(name, std::begin(sinks), std::end(sinks));
@@ -98,5 +95,3 @@ std::shared_ptr<Logger> LogBase::makeSharedLogger(const std::string &loggerName,
 
     return std::make_shared<Logger>(loggerName, v);
 }
-
-} // namespace logger

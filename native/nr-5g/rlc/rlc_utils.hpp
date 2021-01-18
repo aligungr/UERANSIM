@@ -12,7 +12,7 @@
 #include <memory>
 #include <vector>
 
-namespace nr::rlc
+namespace rlc
 {
 
 enum class ESegmentInfo
@@ -256,4 +256,4 @@ struct MissingBlock
     int soNext;
 };
 
-} // namespace nr::rlc
+} // namespace rlc

@@ -11,7 +11,7 @@
 #include "rlc_entity_tm.hpp"
 #include "rlc_entity_um.hpp"
 
-namespace nr::rlc
+namespace rlc
 {
 
 IRlcEntity *NewTmEntity(IRlcConsumer *consumer, int txMaxSize)
@@ -31,4 +31,4 @@ IRlcEntity *NewAmEntity(IRlcConsumer *consumer, int snLength, int txMaxSize, int
                         pollRetransmitPeriod, reassemblyPeriod, statusProhibitPeriod);
 }
 
-} // namespace nr::rlc
+} // namespace rlc

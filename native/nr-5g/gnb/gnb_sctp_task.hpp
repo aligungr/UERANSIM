@@ -36,7 +36,7 @@ class SctpTask : public NtsTask
 
   private:
     TaskBase *base;
-    std::unique_ptr<logger::Logger> logger;
+    std::unique_ptr<Logger> logger;
     std::unordered_map<int, ClientEntry *> clients;
 
   public:

@@ -8,7 +8,7 @@
 
 #include "gtp_ext_header.hpp"
 
-namespace nr::gtp
+namespace gtp
 {
 
 std::unique_ptr<PduSessionInformation> gtp::PduSessionInformation::Decode(OctetBuffer &stream)
@@ -182,4 +182,4 @@ bool PduSessionInformation::Encode(const PduSessionInformation &pdu, OctetString
     return true;
 }
 
-} // namespace nr::gtp
+} // namespace gtp

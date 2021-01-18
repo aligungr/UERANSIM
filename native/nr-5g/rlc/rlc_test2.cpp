@@ -15,7 +15,7 @@
 #include <cstring>
 #include <functional>
 
-using namespace nr::rlc;
+using namespace rlc;
 
 enum action
 {

@@ -11,7 +11,7 @@
 
 #include <cstring>
 
-namespace nr::rlc
+namespace rlc
 {
 
 void TmEntity::clearEntity()
@@ -94,4 +94,4 @@ void TmEntity::calculateDataVolume(RlcDataVolume &volume)
     volume.statusSize = 0;
 }
 
-} // namespace nr::rlc
+} // namespace rlc

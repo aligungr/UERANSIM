@@ -8,7 +8,7 @@
 
 #include "gtp_encode.hpp"
 
-namespace nr::gtp
+namespace gtp
 {
 
 static bool EncodeExtensionHeader(const GtpExtHeader &header, OctetString &stream)
@@ -241,4 +241,4 @@ GtpMessage *DecodeGtpMessage(OctetBuffer &stream)
     return res;
 }
 
-} // namespace nr::gtp
+} // namespace gtp

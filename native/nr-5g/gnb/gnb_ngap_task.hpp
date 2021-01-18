@@ -40,7 +40,7 @@ class NgapTask : public NtsTask
 {
   private:
     TaskBase *base;
-    std::unique_ptr<logger::Logger> logger;
+    std::unique_ptr<Logger> logger;
 
     std::unordered_map<int, NgapAmfContext *> amfContexts;
     std::unordered_map<int, NgapUeContext *> ueContexts;

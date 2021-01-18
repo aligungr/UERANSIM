@@ -13,7 +13,7 @@
 #include <bitset>
 #include <linked_list.hpp>
 
-namespace nr::rlc
+namespace rlc
 {
 
 class AmEntity : public IRlcEntity
@@ -126,4 +126,4 @@ class AmEntity : public IRlcEntity
     }
 };
 
-} // namespace nr::rlc
+} // namespace rlc

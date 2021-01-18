@@ -227,6 +227,7 @@ struct GnbConfig
     std::vector<SliceSupport> nssais;
     EPagingDrx pagingDrx;
     std::vector<GnbAmfConfig> amfConfigs;
+    std::string portalIp;
     std::string ngapIp;
     std::string gtpIp;
     bool ignoreStreamIds;
@@ -240,7 +241,7 @@ struct GnbConfig
 struct TaskBase
 {
     GnbConfig *config;
-    logger::LogBase *logBase;
+    LogBase *logBase;
     app::INodeListener *nodeListener;
 
     NtsTask *appTask;

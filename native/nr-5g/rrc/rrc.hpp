@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace nr::rrc
+namespace rrc
 {
 
 enum class RrcChannel

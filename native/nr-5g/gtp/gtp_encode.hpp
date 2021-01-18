@@ -10,10 +10,10 @@
 
 #include "gtp_message.hpp"
 
-namespace nr::gtp
+namespace gtp
 {
 
 bool EncodeGtpMessage(const GtpMessage &msg, OctetString &stream);
 GtpMessage *DecodeGtpMessage(OctetBuffer &stream);
 
-} // namespace nr::gtp
+} // namespace gtp

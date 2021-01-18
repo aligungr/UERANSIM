@@ -11,7 +11,7 @@
 #include <exception>
 #include <stdexcept>
 
-namespace nr::udp
+namespace udp
 {
 
 class UdpError : public std::runtime_error

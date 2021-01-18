@@ -15,7 +15,7 @@
 
 #include "gtp_ext_header.hpp"
 
-namespace nr::gtp
+namespace gtp
 {
 
 struct GtpMessage
@@ -36,4 +36,4 @@ struct GtpMessage
     OctetString payload;
 };
 
-} // namespace nr::gtp
+} // namespace gtp

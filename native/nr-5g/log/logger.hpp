@@ -12,9 +12,6 @@
 #include <spdlog/fwd.h>
 #include <vector>
 
-namespace logger
-{
-
 enum class Severity
 {
     DEBUG,
@@ -119,5 +116,3 @@ class LogBase
     std::unique_ptr<Logger> makeUniqueLogger(const std::string &loggerName, bool useConsole = true);
     std::shared_ptr<Logger> makeSharedLogger(const std::string &loggerName, bool useConsole = true);
 };
-
-} // namespace logger

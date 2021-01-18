@@ -11,7 +11,7 @@
 #include <network.hpp>
 #include <string>
 
-namespace nr::udp
+namespace udp
 {
 
 class UdpServer

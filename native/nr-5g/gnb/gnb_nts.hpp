@@ -186,7 +186,7 @@ struct NwUeContextUpdate : NtsMessage
 struct NwGnbDownlinkRrc : NtsMessage
 {
     int ueId;
-    nr::rrc::RrcChannel channel;
+    rrc::RrcChannel channel;
     OctetString rrcPdu;
 
     NwGnbDownlinkRrc(int ueId, rrc::RrcChannel channel, OctetString &&rrcPdu)
@@ -198,7 +198,7 @@ struct NwGnbDownlinkRrc : NtsMessage
 struct NwGnbUplinkRrc : NtsMessage
 {
     int ueId;
-    nr::rrc::RrcChannel channel;
+    rrc::RrcChannel channel;
     OctetString rrcPdu;
 
     NwGnbUplinkRrc(int ueId, rrc::RrcChannel channel, OctetString &&rrcPdu)

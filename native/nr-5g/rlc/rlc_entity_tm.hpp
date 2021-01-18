@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <linked_list.hpp>
 #include "rlc.hpp"
 #include "rlc_utils.hpp"
+#include <linked_list.hpp>
 
-namespace nr::rlc
+namespace rlc
 {
 
 class TmEntity : public IRlcEntity
@@ -49,4 +49,4 @@ class TmEntity : public IRlcEntity
     }
 };
 
-} // namespace nr::rlc
+} // namespace rlc

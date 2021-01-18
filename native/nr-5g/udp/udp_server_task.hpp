@@ -12,7 +12,7 @@
 #include <octet_string.hpp>
 #include <udp_server.hpp>
 
-namespace nr::udp
+namespace udp
 {
 
 struct NwUdpServerReceive : NtsMessage

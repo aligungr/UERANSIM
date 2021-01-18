@@ -13,19 +13,19 @@
 #define BUFFER_SIZE 65536
 #define TIMEOUT_MS 500
 
-nr::udp::UdpServerTask::UdpServerTask(const std::string &address, uint16_t port, NtsTask *targetTask)
+udp::UdpServerTask::UdpServerTask(const std::string &address, uint16_t port, NtsTask *targetTask)
     : server{}, targetTask(targetTask)
 {
     server = new UdpServer(address, port);
 }
 
-nr::udp::UdpServerTask::~UdpServerTask() = default;
+udp::UdpServerTask::~UdpServerTask() = default;
 
-void nr::udp::UdpServerTask::onStart()
+void udp::UdpServerTask::onStart()
 {
 }
 
-void nr::udp::UdpServerTask::onLoop()
+void udp::UdpServerTask::onLoop()
 {
     uint8_t buffer[BUFFER_SIZE];
 
@@ -42,12 +42,12 @@ void nr::udp::UdpServerTask::onLoop()
     }
 }
 
-void nr::udp::UdpServerTask::onQuit()
+void udp::UdpServerTask::onQuit()
 {
     delete server;
 }
 
-void nr::udp::UdpServerTask::send(const InetAddress &to, const OctetString &packet)
+void udp::UdpServerTask::send(const InetAddress &to, const OctetString &packet)
 {
     server->Send(to, packet.data(), static_cast<size_t>(packet.length()));
 }

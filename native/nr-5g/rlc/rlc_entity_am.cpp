@@ -14,7 +14,7 @@
 
 #define REASSEMBLE_BUFFER_LEN 32768
 
-namespace nr::rlc
+namespace rlc
 {
 
 //======================================================================================================
@@ -934,4 +934,4 @@ void AmEntity::reestablishment()
     clearEntity();
 }
 
-} // namespace nr::rlc
+} // namespace rlc

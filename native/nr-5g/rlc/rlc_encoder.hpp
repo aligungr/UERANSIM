@@ -10,7 +10,7 @@
 
 #include "rlc_utils.hpp"
 
-namespace nr::rlc
+namespace rlc
 {
 
 class RlcEncoder
@@ -27,4 +27,4 @@ class RlcEncoder
     static int EncodeStatus(uint8_t *buffer, const StatusPdu &pdu, bool isShortSn);
 };
 
-} // namespace nr::rlc
+} // namespace rlc

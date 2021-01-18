@@ -15,7 +15,7 @@
 #include <octet_buffer.hpp>
 #include <octet_string.hpp>
 
-namespace nr::gtp
+namespace gtp
 {
 
 // See 3GPP 38.415
@@ -131,4 +131,4 @@ struct PduSessionContainerExtHeader : GtpExtHeader
     }
 };
 
-} // namespace nr::gtp
+} // namespace gtp

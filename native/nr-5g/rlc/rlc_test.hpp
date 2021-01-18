@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace nr::rlc
+namespace rlc
 {
 
 void rlcTestMain();

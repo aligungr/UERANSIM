@@ -54,7 +54,7 @@ static uint64_t currentTimeMs()
     return std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
 }
 
-namespace nr::rlc
+namespace rlc
 {
 
 struct RlcTask : NtsTask, IRlcConsumer
@@ -120,7 +120,9 @@ struct RlcTask : NtsTask, IRlcConsumer
             upperTransmission();
     }
 
-    void onQuit() override { }
+    void onQuit() override
+    {
+    }
 
     void upperTransmission()
     {
@@ -180,4 +182,4 @@ void rlcTestMain()
     ueRlc->start();
     gnbRlc->start();
 }
-} // namespace nr::rlc
+} // namespace rlc

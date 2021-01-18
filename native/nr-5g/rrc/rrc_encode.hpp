@@ -20,7 +20,7 @@
 #include <ASN_RRC_UL-CCCH1-Message.h>
 #include <ASN_RRC_UL-DCCH-Message.h>
 
-namespace nr::rrc::encode
+namespace rrc::encode
 {
 
 template <typename T>

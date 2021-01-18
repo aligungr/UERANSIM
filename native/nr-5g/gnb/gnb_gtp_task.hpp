@@ -28,7 +28,7 @@ class GtpTask : public NtsTask
 {
   private:
     TaskBase *base;
-    std::unique_ptr<logger::Logger> logger;
+    std::unique_ptr<Logger> logger;
 
     udp::UdpServerTask *udpServer;
     std::unordered_map<int, std::unique_ptr<GtpUeContext>> ueContexts;

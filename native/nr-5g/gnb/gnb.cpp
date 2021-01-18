@@ -14,7 +14,7 @@ nr::gnb::GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
 {
     auto *base = new TaskBase();
     base->config = config;
-    base->logBase = new logger::LogBase("logs/" + config->name + ".log");
+    base->logBase = new LogBase("logs/" + config->name + ".log");
     base->nodeListener = nodeListener;
 
     base->appTask = new GnbAppTask(base);

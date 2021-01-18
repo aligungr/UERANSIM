@@ -39,7 +39,7 @@ class GnbRrcTask : public NtsTask
 {
   private:
     TaskBase *base;
-    std::unique_ptr<logger::Logger> logger;
+    std::unique_ptr<Logger> logger;
 
   public:
     explicit GnbRrcTask(TaskBase *base);

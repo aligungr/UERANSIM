@@ -10,7 +10,7 @@
 #include <bit_buffer.hpp>
 #include <bits.hpp>
 
-namespace nr::rlc
+namespace rlc
 {
 
 UmdPdu *RlcEncoder::DecodeUmd(uint8_t *data, int size, bool isShortSn)
@@ -292,4 +292,4 @@ int RlcEncoder::EncodeStatus(uint8_t *buf, const StatusPdu &pdu, bool isShortSn)
     return buffer.writtenOctets();
 }
 
-} // namespace nr::rlc
+} // namespace rlc

@@ -11,7 +11,7 @@
 
 #include <cstring>
 
-namespace nr::udp
+namespace udp
 {
 
 UdpServer::UdpServer(const std::string &address, uint16_t port) : socket{Socket::CreateAndBindUdp({address, port})}

@@ -18,8 +18,7 @@
 //                                      INITIALIZATION RELATED
 //======================================================================================================
 
-nr::rlc::UmEntity::UmEntity(nr::rlc::IRlcConsumer *consumer, int snLength, int tReassemblyPeriod, int txMaxSize,
-                            int rxMaxSize)
+rlc::UmEntity::UmEntity(rlc::IRlcConsumer *consumer, int snLength, int tReassemblyPeriod, int txMaxSize, int rxMaxSize)
     : IRlcEntity(consumer), snLength(snLength), snModulus(1 << snLength), windowSize((1 << snLength) / 2),
       txMaxSize(txMaxSize), rxMaxSize(rxMaxSize), txCurrentSize(0), txNext(0), rxCurrentSize(0), rxNextReassembly(0),
       rxNextHighest(0), rxTimerTrigger(0), tCurrent(0), reassemblyTimer(tReassemblyPeriod)
@@ -29,12 +28,12 @@ nr::rlc::UmEntity::UmEntity(nr::rlc::IRlcConsumer *consumer, int snLength, int t
     clearEntity();
 }
 
-nr::rlc::UmEntity::~UmEntity()
+rlc::UmEntity::~UmEntity()
 {
     clearEntity();
 }
 
-void nr::rlc::UmEntity::clearEntity()
+void rlc::UmEntity::clearEntity()
 {
     // discard all RLC SDUs, RLC SDU segments, and RLC PDUs, if any
     txCurrentSize = 0;
@@ -57,7 +56,7 @@ void nr::rlc::UmEntity::clearEntity()
 //                                                UTILS
 //======================================================================================================
 
-int nr::rlc::UmEntity::modulusRx(int num) const
+int rlc::UmEntity::modulusRx(int num) const
 {
     int r = num - (rxNextHighest - windowSize);
     if (r < 0)
@@ -65,7 +64,7 @@ int nr::rlc::UmEntity::modulusRx(int num) const
     return r % snModulus;
 }
 
-int nr::rlc::UmEntity::snCompareRx(int a, int b) const
+int rlc::UmEntity::snCompareRx(int a, int b) const
 {
     return modulusRx(a) - modulusRx(b);
 }
@@ -74,7 +73,7 @@ int nr::rlc::UmEntity::snCompareRx(int a, int b) const
 //                                               ACTIONS
 //======================================================================================================
 
-void nr::rlc::UmEntity::actionsOnReception(nr::rlc::UmdPdu &pdu)
+void rlc::UmEntity::actionsOnReception(rlc::UmdPdu &pdu)
 {
     int x = pdu.sn;
 
@@ -185,7 +184,7 @@ void nr::rlc::UmEntity::actionsOnReception(nr::rlc::UmdPdu &pdu)
     }
 }
 
-void nr::rlc::UmEntity::actionsOnReassemblyTimerExpired()
+void rlc::UmEntity::actionsOnReassemblyTimerExpired()
 {
     // Update RX_Next_Reassembly to the SN of the first SN >= RX_Timer_Trigger that has not been reassembled
     rxNextReassembly = rxTimerTrigger;
@@ -213,7 +212,7 @@ void nr::rlc::UmEntity::actionsOnReassemblyTimerExpired()
 //                                             BASE FUNCTIONS
 //======================================================================================================
 
-void nr::rlc::UmEntity::receivePdu(uint8_t *data, int size)
+void rlc::UmEntity::receivePdu(uint8_t *data, int size)
 {
     auto pdu = RlcEncoder::DecodeUmd(data, size, snLength == 6);
     if (pdu == nullptr)
@@ -252,12 +251,12 @@ void nr::rlc::UmEntity::receivePdu(uint8_t *data, int size)
     actionsOnReception(*pdu);
 }
 
-void nr::rlc::UmEntity::receiveSdu(uint8_t *data, int size, int sduId)
+void rlc::UmEntity::receiveSdu(uint8_t *data, int size, int sduId)
 {
     txCurrentSize += func::InsertSduToTransmissionBuffer(data, size, sduId, txBuffer, txCurrentSize, txMaxSize);
 }
 
-int nr::rlc::UmEntity::createPdu(uint8_t *buffer, int maxSize)
+int rlc::UmEntity::createPdu(uint8_t *buffer, int maxSize)
 {
     auto segment = txBuffer.getFirstElement();
     if (segment == nullptr)
@@ -290,7 +289,7 @@ int nr::rlc::UmEntity::createPdu(uint8_t *buffer, int maxSize)
                                  segment->sdu->data + segment->so, segment->size);
 }
 
-void nr::rlc::UmEntity::timerCycle(int64_t currentTime)
+void rlc::UmEntity::timerCycle(int64_t currentTime)
 {
     tCurrent = currentTime;
 
@@ -298,7 +297,7 @@ void nr::rlc::UmEntity::timerCycle(int64_t currentTime)
         actionsOnReassemblyTimerExpired();
 }
 
-void nr::rlc::UmEntity::discardSdu(int sduId)
+void rlc::UmEntity::discardSdu(int sduId)
 {
     auto segment = func::FindFirstSduSegmentWithId(txBuffer, sduId);
 
@@ -317,12 +316,12 @@ void nr::rlc::UmEntity::discardSdu(int sduId)
     txCurrentSize -= segment->value->size;
 }
 
-void nr::rlc::UmEntity::reestablishment()
+void rlc::UmEntity::reestablishment()
 {
     clearEntity();
 }
 
-void nr::rlc::UmEntity::calculateDataVolume(nr::rlc::RlcDataVolume &volume)
+void rlc::UmEntity::calculateDataVolume(rlc::RlcDataVolume &volume)
 {
     auto txCalc = [this](const RlcSduSegment *v) { return v->size + func::UmdPduHeaderSize(snLength, v->si); };
 
