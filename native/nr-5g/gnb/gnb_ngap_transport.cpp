@@ -6,12 +6,13 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#include "gnb_app_task.hpp"
 #include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
+#include "gnb_nts.hpp"
 #include "gnb_rrc_task.hpp"
 #include "gnb_sctp_task.hpp"
-#include "gnb_nts.hpp"
 
 #include <asn_ngap.hpp>
 #include <asn_utils.hpp>
@@ -55,10 +56,18 @@ void NgapTask::sendNgapNonUe(int associatedAmf, ASN_NGAP_NGAP_PDU *pdu)
     else
     {
         auto *msg = new NwSctpSendMessage(amf->ctxId, 0, buffer, 0, static_cast<size_t>(encoded));
-        sctpTask->push(msg);
+        base->sctpTask->push(msg);
         logger->debug("Non-UE-associated NGAP PDU with length %d is sent to SCTP layer", encoded);
 
-        // todo: trigger OnSend
+        if (base->nodeListener)
+        {
+            std::string xer = ngap_encode::EncodeXer(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+            if (xer.length() > 0)
+            {
+                base->nodeListener->onSend(app::NodeType::GNB, base->config->name, app::NodeType::AMF, amf->amfName,
+                                           app::ConnectionType::NGAP, xer);
+            }
+        }
     }
 
     asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
@@ -107,10 +116,10 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
 
                 auto &nr = loc->choice.userLocationInformationNR;
 
-                ngap_utils::ToPlmnAsn_Ref(config->plmn, nr->nR_CGI.pLMNIdentity);
-                asn::SetBitStringLong<36>(config->nci, nr->nR_CGI.nRCellIdentity);
-                ngap_utils::ToPlmnAsn_Ref(config->plmn, nr->tAI.pLMNIdentity);
-                asn::SetOctetString(nr->tAI.tAC, octet3{config->tac});
+                ngap_utils::ToPlmnAsn_Ref(base->config->plmn, nr->nR_CGI.pLMNIdentity);
+                asn::SetBitStringLong<36>(base->config->nci, nr->nR_CGI.nRCellIdentity);
+                ngap_utils::ToPlmnAsn_Ref(base->config->plmn, nr->tAI.pLMNIdentity);
+                asn::SetOctetString(nr->tAI.tAC, octet3{base->config->tac});
                 asn::SetOctetString(*nr->timeStamp, octet4{utils::CurrentTimeStamp().seconds32()});
             });
     }
@@ -134,10 +143,18 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
     else
     {
         auto *msg = new NwSctpSendMessage(amf->ctxId, 0, buffer, 0, static_cast<size_t>(encoded));
-        sctpTask->push(msg);
+        base->sctpTask->push(msg);
         logger->debug("UE-associated NGAP PDU with length %d is sent to SCTP layer", encoded);
 
-        // todo: trigger OnSend
+        if (base->nodeListener)
+        {
+            std::string xer = ngap_encode::EncodeXer(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+            if (xer.length() > 0)
+            {
+                base->nodeListener->onSend(app::NodeType::GNB, base->config->name, app::NodeType::AMF, amf->amfName,
+                                           app::ConnectionType::NGAP, xer);
+            }
+        }
     }
 
     asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
@@ -162,7 +179,15 @@ void NgapTask::handleSctpMessage(NwSctpClientReceive *msg)
         return;
     }
 
-    // TODO: trigger monitor on receive
+    if (base->nodeListener)
+    {
+        std::string xer = ngap_encode::EncodeXer(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
+        if (xer.length() > 0)
+        {
+            base->nodeListener->onReceive(app::NodeType::GNB, base->config->name, app::NodeType::AMF, amf->amfName,
+                                          app::ConnectionType::NGAP, xer);
+        }
+    }
 
     if (!handleSctpStreamId(amf->ctxId, msg->stream, *pdu))
     {
@@ -239,7 +264,7 @@ void NgapTask::handleSctpMessage(NwSctpClientReceive *msg)
 
 bool NgapTask::handleSctpStreamId(int amfId, int stream, const ASN_NGAP_NGAP_PDU &pdu)
 {
-    if (config->ignoreStreamIds)
+    if (base->config->ignoreStreamIds)
         return true;
 
     auto *ptr =

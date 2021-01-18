@@ -42,7 +42,7 @@ void NgapTask::handleAssociationSetup(NwSctpAssociationSetup *msg)
         {
             auto *update = new NwGnbStatusUpdate(NwGnbStatusUpdate::INITIAL_SCTP_ESTABLISHED);
             update->isInitialSctpEstablished = true;
-            appTask->push(update);
+            base->appTask->push(update);
         }
 
         sendNgSetupRequest(amf->ctxId);
@@ -67,8 +67,8 @@ void NgapTask::sendNgSetupRequest(int amfId)
 
     auto *globalGnbId = asn::New<ASN_NGAP_GlobalGNB_ID>();
     globalGnbId->gNB_ID.present = ASN_NGAP_GNB_ID_PR_gNB_ID;
-    asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID, octet4{config->getGnbId()});
-    asn::SetOctetString(globalGnbId->pLMNIdentity, ngap_utils::PlmnToOctet3(config->plmn));
+    asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID, octet4{base->config->getGnbId()});
+    asn::SetOctetString(globalGnbId->pLMNIdentity, ngap_utils::PlmnToOctet3(base->config->plmn));
 
     auto *ieGlobalGnbId = asn::New<ASN_NGAP_NGSetupRequestIEs>();
     ieGlobalGnbId->id = ASN_NGAP_ProtocolIE_ID_id_GlobalRANNodeID;
@@ -81,11 +81,11 @@ void NgapTask::sendNgSetupRequest(int amfId)
     ieRanNodeName->id = ASN_NGAP_ProtocolIE_ID_id_RANNodeName;
     ieRanNodeName->criticality = ASN_NGAP_Criticality_ignore;
     ieRanNodeName->value.present = ASN_NGAP_NGSetupRequestIEs__value_PR_RANNodeName;
-    asn::SetPrintableString(ieRanNodeName->value.choice.RANNodeName, config->name);
+    asn::SetPrintableString(ieRanNodeName->value.choice.RANNodeName, base->config->name);
 
     auto *broadcastPlmn = asn::New<ASN_NGAP_BroadcastPLMNItem>();
-    asn::SetOctetString(broadcastPlmn->pLMNIdentity, ngap_utils::PlmnToOctet3(config->plmn));
-    for (auto &nssai : config->nssais)
+    asn::SetOctetString(broadcastPlmn->pLMNIdentity, ngap_utils::PlmnToOctet3(base->config->plmn));
+    for (auto &nssai : base->config->nssais)
     {
         auto *item = asn::New<ASN_NGAP_SliceSupportItem>();
         asn::SetOctetString(item->s_NSSAI.sST, static_cast<uint8_t>(nssai.sst));
@@ -98,7 +98,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
     }
 
     auto *supportedTa = asn::New<ASN_NGAP_SupportedTAItem>();
-    asn::SetOctetString(supportedTa->tAC, octet3{config->tac});
+    asn::SetOctetString(supportedTa->tAC, octet3{base->config->tac});
     asn::SequenceAdd(supportedTa->broadcastPLMNList, broadcastPlmn);
 
     auto *ieSupportedTaList = asn::New<ASN_NGAP_NGSetupRequestIEs>();
@@ -111,7 +111,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
     iePagingDrx->id = ASN_NGAP_ProtocolIE_ID_id_DefaultPagingDRX;
     iePagingDrx->criticality = ASN_NGAP_Criticality_ignore;
     iePagingDrx->value.present = ASN_NGAP_NGSetupRequestIEs__value_PR_PagingDRX;
-    iePagingDrx->value.choice.PagingDRX = ngap_utils::PagingDrxToAsn(config->pagingDrx);
+    iePagingDrx->value.choice.PagingDRX = ngap_utils::PagingDrxToAsn(base->config->pagingDrx);
 
     auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_NGSetupRequest>(
         {ieGlobalGnbId, ieRanNodeName, ieSupportedTaList, iePagingDrx});

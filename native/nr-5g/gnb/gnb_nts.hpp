@@ -226,7 +226,8 @@ struct NwDownlinkData : NtsMessage
     OctetString data;
 
     NwDownlinkData(int ueId, int pduSessionId, OctetString &&data)
-        : NtsMessage(NtsMessageType::GNB_MR_DOWNLINK_DATA), ueId(ueId), pduSessionId(pduSessionId), data(std::move(data))
+        : NtsMessage(NtsMessageType::GNB_MR_DOWNLINK_DATA), ueId(ueId), pduSessionId(pduSessionId),
+          data(std::move(data))
     {
     }
 };

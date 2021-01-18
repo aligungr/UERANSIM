@@ -16,6 +16,19 @@ namespace nr::gnb::ngap_encode
 {
 
 template <typename T>
+inline std::string EncodeXer(const asn_TYPE_descriptor_t &desc, T *pdu)
+{
+    auto res = asn_encode_to_new_buffer(nullptr, ATS_CANONICAL_XER, &desc, pdu);
+
+    if (res.buffer == nullptr || res.result.encoded < 0)
+        return {};
+
+    std::string s{reinterpret_cast<char *>(res.buffer), reinterpret_cast<char *>(res.buffer) + res.result.encoded};
+    free(res.buffer);
+    return s;
+}
+
+template <typename T>
 inline bool Encode(const asn_TYPE_descriptor_t &desc, T *pdu, ssize_t &encoded, uint8_t *&buffer)
 {
     auto res = asn_encode_to_new_buffer(nullptr, ATS_ALIGNED_CANONICAL_PER, &desc, pdu);

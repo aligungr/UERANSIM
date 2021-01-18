@@ -23,15 +23,9 @@
 namespace nr::gnb
 {
 
-GnbRrcTask::GnbRrcTask(logger::LogBase &loggerBase) : mrTask{}, ngapTask{}
+GnbRrcTask::GnbRrcTask(TaskBase *base) : base{base}
 {
-    logger = loggerBase.makeUniqueLogger("gnb-rrc");
-}
-
-void GnbRrcTask::setExternalTasks(GnbMrTask *mr, NgapTask *ngap)
-{
-    mrTask = mr;
-    ngapTask = ngap;
+    logger = base->logBase->makeUniqueLogger("gnb-rrc");
 }
 
 void GnbRrcTask::onStart()

@@ -16,32 +16,23 @@
 namespace nr::gnb
 {
 
-NgapTask::NgapTask(GnbConfig *config, logger::LogBase &loggerBase)
-    : config{config}, ueNgapIdCounter{}, waitingSctpClients{}, downlinkTeidCounter{}, sctpTask{}, rrcTask{}, gtpTask{}
+NgapTask::NgapTask(TaskBase *base) : base{base}, ueNgapIdCounter{}, waitingSctpClients{}, downlinkTeidCounter{}
 {
-    logger = loggerBase.makeUniqueLogger("ngap");
-}
-
-void NgapTask::setExternalTasks(SctpTask *sctp, GnbRrcTask *rrc, GtpTask *gtp, GnbAppTask *app)
-{
-    this->sctpTask = sctp;
-    this->rrcTask = rrc;
-    this->gtpTask = gtp;
-    this->appTask = app;
+    logger = base->logBase->makeUniqueLogger("ngap");
 }
 
 void NgapTask::onStart()
 {
     logger->debug("NGAP layer has been started");
 
-    for (auto &amfConfig : config->amfConfigs)
+    for (auto &amfConfig : base->config->amfConfigs)
         createAmfContext(amfConfig);
     if (amfContexts.empty())
         logger->warn("No AMF configuration is provided");
 
     for (auto &amfCtx : amfContexts)
     {
-        sctpTask->push(new NwSctpConnectionRequest(amfCtx.second->ctxId, config->ngapIp, 0, amfCtx.second->address,
+        base->sctpTask->push(new NwSctpConnectionRequest(amfCtx.second->ctxId, base->config->ngapIp, 0, amfCtx.second->address,
                                                    amfCtx.second->port, sctp::PayloadProtocolId::NGAP, this));
         waitingSctpClients++;
     }
@@ -73,7 +64,12 @@ void NgapTask::onLoop()
 
 void NgapTask::onQuit()
 {
-    // TODO
+    for (auto &i : ueContexts)
+        delete i.second;
+    for (auto &i : amfContexts)
+        delete i.second;
+    ueContexts.clear();
+    amfContexts.clear();
 }
 
 } // namespace nr::gnb

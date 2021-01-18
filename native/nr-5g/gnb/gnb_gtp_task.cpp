@@ -18,23 +18,17 @@
 namespace nr::gnb
 {
 
-GtpTask::GtpTask(GnbConfig *config, logger::LogBase &loggerBase)
-    : config(config), mrTask{}, udpServer{}, ueContexts{},
-      rateLimiter(std::make_unique<RateLimiter>()), pduSessions{}, sessionTree{}
+GtpTask::GtpTask(TaskBase *base)
+    : base{base}, udpServer{}, ueContexts{}, rateLimiter(std::make_unique<RateLimiter>()), pduSessions{}, sessionTree{}
 {
-    logger = loggerBase.makeUniqueLogger("gtp");
-}
-
-void GtpTask::setExternalTasks(GnbMrTask *mr)
-{
-    mrTask = mr;
+    logger = base->logBase->makeUniqueLogger("gtp");
 }
 
 void GtpTask::onStart()
 {
     logger->debug("GTP layer has been started");
 
-    udpServer = new udp::UdpServerTask(config->gtpIp, 2152, this);
+    udpServer = new udp::UdpServerTask(base->config->gtpIp, 2152, this);
     udpServer->start();
 }
 
@@ -179,7 +173,7 @@ void GtpTask::handleUdpReceive(udp::NwUdpServerReceive *msg)
     }
 
     if (rateLimiter->allowDownlinkPacket(sessionInd, gtp->payload.length()))
-        mrTask->push(new NwDownlinkData(GetUeId(sessionInd), GetPsi(sessionInd), std::move(gtp->payload)));
+        base->mrTask->push(new NwDownlinkData(GetUeId(sessionInd), GetPsi(sessionInd), std::move(gtp->payload)));
 
     delete gtp;
     delete msg;

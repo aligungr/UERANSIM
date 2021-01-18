@@ -66,7 +66,7 @@ void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu)
 void NgapTask::deliverDownlinkNas(int ueId, OctetString &&nasPdu)
 {
     logger->debug("Delivering downlink NAS PDU with length %d to UE with ID %d", nasPdu.length(), ueId);
-    rrcTask->push(new NwDownlinkNasDelivery(ueId, std::move(nasPdu)));
+    base->rrcTask->push(new NwDownlinkNasDelivery(ueId, std::move(nasPdu)));
 }
 
 void NgapTask::deliverUplinkNas(NwUplinkNasDelivery *msg)

@@ -12,9 +12,9 @@
 namespace nr::gnb
 {
 
-GnbAppTask::GnbAppTask(logger::LogBase &loggerBase)
+GnbAppTask::GnbAppTask(TaskBase *base) : base(base), statusInfo{}
 {
-    logger = loggerBase.makeUniqueLogger("gnb-app");
+    logger = base->logBase->makeUniqueLogger("gnb-app");
 }
 
 void GnbAppTask::onStart()
@@ -31,19 +31,14 @@ void GnbAppTask::onLoop()
     {
     case NtsMessageType::GNB_STATUS_UPDATE: {
         auto *m = dynamic_cast<NwGnbStatusUpdate *>(msg);
-
         switch (m->what)
         {
         case NwGnbStatusUpdate::INITIAL_SCTP_ESTABLISHED:
             statusInfo.isInitialSctpEstablished = m->isInitialSctpEstablished;
             break;
         }
-
         break;
     }
-
-        // todo status info request
-
     default:
         logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;

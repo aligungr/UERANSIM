@@ -35,11 +35,12 @@ class SctpTask : public NtsTask
     };
 
   private:
+    TaskBase *base;
     std::unique_ptr<logger::Logger> logger;
     std::unordered_map<int, ClientEntry *> clients;
 
   public:
-    explicit SctpTask(logger::LogBase &loggerBase);
+    explicit SctpTask(TaskBase *base);
     ~SctpTask() override = default;
 
   protected:

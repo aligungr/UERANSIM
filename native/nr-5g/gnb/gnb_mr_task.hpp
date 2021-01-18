@@ -23,10 +23,11 @@ namespace nr::gnb
 class GnbMrTask : public NtsTask
 {
   private:
+    TaskBase *base;
     std::unique_ptr<logger::Logger> logger;
 
   public:
-    explicit GnbMrTask(logger::LogBase &loggerBase);
+    explicit GnbMrTask(TaskBase *base);
     ~GnbMrTask() override = default;
 
   protected:
@@ -35,4 +36,4 @@ class GnbMrTask : public NtsTask
     void onQuit() override;
 };
 
-}
+} // namespace nr::gnb

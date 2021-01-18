@@ -38,15 +38,12 @@ class GnbMrTask;
 class GnbRrcTask : public NtsTask
 {
   private:
+    TaskBase *base;
     std::unique_ptr<logger::Logger> logger;
 
-    GnbMrTask *mrTask;
-    NgapTask *ngapTask;
-
   public:
-    explicit GnbRrcTask(logger::LogBase &loggerBase);
+    explicit GnbRrcTask(TaskBase *base);
     ~GnbRrcTask() override = default;
-    void setExternalTasks(GnbMrTask *mrTask, NgapTask *ngapTask);
 
   protected:
     void onStart() override;

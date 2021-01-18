@@ -61,9 +61,9 @@ class SctpHandler : public sctp::ISctpHandler
         client->receive(handler);
 }
 
-SctpTask::SctpTask(logger::LogBase &loggerBase) : clients{}
+SctpTask::SctpTask(TaskBase *base) : base{base}, clients{}
 {
-    logger = loggerBase.makeUniqueLogger("sctp");
+    logger = base->logBase->makeUniqueLogger("sctp");
 }
 
 void SctpTask::onStart()

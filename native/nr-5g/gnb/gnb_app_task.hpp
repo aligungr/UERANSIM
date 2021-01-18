@@ -22,11 +22,12 @@ namespace nr::gnb
 class GnbAppTask : public NtsTask
 {
   private:
+    TaskBase *base;
     std::unique_ptr<logger::Logger> logger;
     GnbStatusInfo statusInfo;
 
   public:
-    explicit GnbAppTask(logger::LogBase &loggerBase);
+    explicit GnbAppTask(TaskBase *base);
     ~GnbAppTask() override = default;
 
   protected:

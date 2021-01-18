@@ -16,7 +16,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "gnb_config.hpp"
 #include "gnb_gtp_utils.hpp"
 #include "gnb_nts.hpp"
 
@@ -28,9 +27,8 @@ struct GnbMrTask;
 class GtpTask : public NtsTask
 {
   private:
-    GnbConfig *config;
+    TaskBase *base;
     std::unique_ptr<logger::Logger> logger;
-    GnbMrTask *mrTask;
 
     udp::UdpServerTask *udpServer;
     std::unordered_map<int, std::unique_ptr<GtpUeContext>> ueContexts;
@@ -39,9 +37,8 @@ class GtpTask : public NtsTask
     PduSessionTree sessionTree;
 
   public:
-    explicit GtpTask(GnbConfig *config, logger::LogBase &loggerBase);
+    explicit GtpTask(TaskBase *base);
     ~GtpTask() override = default;
-    void setExternalTasks(GnbMrTask *mrTask);
 
   protected:
     void onStart() override;

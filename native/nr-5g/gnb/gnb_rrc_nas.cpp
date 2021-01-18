@@ -36,7 +36,7 @@ void GnbRrcTask::handleDownlinkNasDelivery(NwDownlinkNasDelivery *msg)
 
 void GnbRrcTask::deliverUplinkNas(int ueId, OctetString &&nasPdu)
 {
-    ngapTask->push(new NwUplinkNasDelivery(ueId, std::move(nasPdu)));
+    base->ngapTask->push(new NwUplinkNasDelivery(ueId, std::move(nasPdu)));
 }
 
 } // namespace nr::gnb

@@ -48,7 +48,7 @@ void NgapTask::receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetu
     if (ie)
         deliverDownlinkNas(ue->ctxId, asn::GetOctetString(ie->NAS_PDU));
 
-    gtpTask->push(new NwUeContextUpdate(ue->ctxId, true, ue->ueAmbr));
+    base->gtpTask->push(new NwUeContextUpdate(ue->ctxId, true, ue->ueAmbr));
 }
 
 void NgapTask::receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand *msg)
@@ -94,7 +94,7 @@ void NgapTask::receiveContextModification(int amfId, ASN_NGAP_UEContextModificat
     auto *response = asn::ngap::NewMessagePdu<ASN_NGAP_UEContextModificationResponse>({});
     sendNgapUeAssociated(ue->ctxId, response);
 
-    gtpTask->push(new NwUeContextUpdate(ue->ctxId, false, ue->ueAmbr));
+    base->gtpTask->push(new NwUeContextUpdate(ue->ctxId, false, ue->ueAmbr));
 }
 
 } // namespace nr::gnb

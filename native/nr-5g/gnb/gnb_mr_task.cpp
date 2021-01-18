@@ -11,9 +11,9 @@
 namespace nr::gnb
 {
 
-GnbMrTask::GnbMrTask(logger::LogBase &loggerBase)
+GnbMrTask::GnbMrTask(TaskBase *base) : base{base}
 {
-    logger = loggerBase.makeUniqueLogger("gnb-mr");
+    logger = base->logBase->makeUniqueLogger("gnb-mr");
 }
 
 void GnbMrTask::onStart()

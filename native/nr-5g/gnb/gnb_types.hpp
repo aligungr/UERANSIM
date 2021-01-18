@@ -9,8 +9,11 @@
 #pragma once
 
 #include <ASN_NGAP_QosFlowSetupRequestList.h>
+#include <app_monitor.hpp>
 #include <asn_utils.hpp>
 #include <common_types.hpp>
+#include <logger.hpp>
+#include <nts.hpp>
 #include <octet_string.hpp>
 #include <string>
 
@@ -206,6 +209,46 @@ struct GtpUeContext
     explicit GtpUeContext(const int ueId) : ueId(ueId)
     {
     }
+};
+
+struct GnbAmfConfig
+{
+    std::string address;
+    uint16_t port;
+};
+
+struct GnbConfig
+{
+    int64_t nci;     // 36-bit
+    int gnbIdLength; // 22..32 bit
+    std::string name;
+    Plmn plmn;
+    int tac;
+    std::vector<SliceSupport> nssais;
+    EPagingDrx pagingDrx;
+    std::vector<GnbAmfConfig> amfConfigs;
+    std::string ngapIp;
+    std::string gtpIp;
+    bool ignoreStreamIds;
+
+    inline int getGnbId() const
+    {
+        return static_cast<int>((nci >> (36LL - static_cast<int64_t>(gnbIdLength))) & ((1 << (gnbIdLength + 1)) - 1));
+    }
+};
+
+struct TaskBase
+{
+    GnbConfig *config;
+    logger::LogBase *logBase;
+    app::INodeListener *nodeListener;
+
+    NtsTask *appTask;
+    NtsTask *gtpTask;
+    NtsTask *mrTask;
+    NtsTask *ngapTask;
+    NtsTask *rrcTask;
+    NtsTask *sctpTask;
 };
 
 } // namespace nr::gnb

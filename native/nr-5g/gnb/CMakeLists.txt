@@ -16,3 +16,7 @@ target_link_libraries(gnb asn-rrc)
 target_link_libraries(gnb asn-utils)
 target_link_libraries(gnb rrc)
 target_link_libraries(gnb udp)
+target_link_libraries(gnb gtp)
+target_link_libraries(gnb app)
+
+

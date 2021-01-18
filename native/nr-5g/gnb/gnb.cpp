@@ -10,47 +10,50 @@
 
 #include <utility>
 
-nr::gnb::GNodeB::GNodeB(GnbConfig *config) : config(config)
+nr::gnb::GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
 {
-    logBase = new logger::LogBase("logs/" + config->name + ".log");
+    auto *base = new TaskBase();
+    base->config = config;
+    base->logBase = new logger::LogBase("logs/" + config->name + ".log");
+    base->nodeListener = nodeListener;
 
-    appTask = new GnbAppTask(*logBase);
-    sctpTask = new SctpTask(*logBase);
-    ngapTask = new NgapTask(config, *logBase);
-    rrcTask = new GnbRrcTask(*logBase);
-    gtpTask = new GtpTask(config, *logBase);
-    mrTask = new GnbMrTask(*logBase);
+    base->appTask = new GnbAppTask(base);
+    base->sctpTask = new SctpTask(base);
+    base->ngapTask = new NgapTask(base);
+    base->rrcTask = new GnbRrcTask(base);
+    base->gtpTask = new GtpTask(base);
+    base->mrTask = new GnbMrTask(base);
 
-    ngapTask->setExternalTasks(sctpTask, rrcTask, gtpTask, appTask);
-    rrcTask->setExternalTasks(mrTask, ngapTask);
-    gtpTask->setExternalTasks(mrTask);
+    taskBase = base;
 }
 
 nr::gnb::GNodeB::~GNodeB()
 {
-    appTask->quit();
-    sctpTask->quit();
-    ngapTask->quit();
-    rrcTask->quit();
-    gtpTask->quit();
-    mrTask->quit();
+    taskBase->appTask->quit();
+    taskBase->sctpTask->quit();
+    taskBase->ngapTask->quit();
+    taskBase->rrcTask->quit();
+    taskBase->gtpTask->quit();
+    taskBase->mrTask->quit();
 
-    delete appTask;
-    delete sctpTask;
-    delete ngapTask;
-    delete rrcTask;
-    delete gtpTask;
-    delete mrTask;
+    delete taskBase->appTask;
+    delete taskBase->sctpTask;
+    delete taskBase->ngapTask;
+    delete taskBase->rrcTask;
+    delete taskBase->gtpTask;
+    delete taskBase->mrTask;
 
-    delete logBase;
+    delete taskBase->logBase;
+
+    delete taskBase;
 }
 
 void nr::gnb::GNodeB::start()
 {
-    appTask->start();
-    sctpTask->start();
-    ngapTask->start();
-    rrcTask->start();
-    mrTask->start();
-    gtpTask->start();
+    taskBase->appTask->start();
+    taskBase->sctpTask->start();
+    taskBase->ngapTask->start();
+    taskBase->rrcTask->start();
+    taskBase->mrTask->start();
+    taskBase->gtpTask->start();
 }

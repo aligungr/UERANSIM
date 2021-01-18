@@ -8,14 +8,14 @@
 
 #pragma once
 
+#include <app_monitor.hpp>
 #include <logger.hpp>
 #include <nts.hpp>
 #include <optional>
 #include <unordered_map>
 
-#include "gnb_config.hpp"
-#include "gnb_types.hpp"
 #include "gnb_nts.hpp"
+#include "gnb_types.hpp"
 
 extern "C" struct ASN_NGAP_NGAP_PDU;
 extern "C" struct ASN_NGAP_NGSetupResponse;
@@ -39,7 +39,7 @@ class GnbAppTask;
 class NgapTask : public NtsTask
 {
   private:
-    GnbConfig *config;
+    TaskBase *base;
     std::unique_ptr<logger::Logger> logger;
 
     std::unordered_map<int, NgapAmfContext *> amfContexts;
@@ -49,15 +49,9 @@ class NgapTask : public NtsTask
     int waitingSctpClients;
     uint32_t downlinkTeidCounter;
 
-    SctpTask *sctpTask;
-    GnbRrcTask *rrcTask;
-    GtpTask *gtpTask;
-    GnbAppTask *appTask;
-
   public:
-    explicit NgapTask(GnbConfig *config, logger::LogBase &loggerBase);
+    explicit NgapTask(TaskBase *base);
     ~NgapTask() override = default;
-    void setExternalTasks(SctpTask *sctpTask, GnbRrcTask *rrcTask, GtpTask *gtpTask, GnbAppTask *appTask);
 
   protected:
     void onStart() override;

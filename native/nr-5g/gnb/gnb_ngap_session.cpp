@@ -212,10 +212,10 @@ std::optional<NgapCause> NgapTask::setupPduSessionResource(PduSessionResource *r
         return NgapCause::Protocol_semantic_error;
     }
 
-    resource->downTunnel.address = utils::IpToOctetString(config->gtpIp);
+    resource->downTunnel.address = utils::IpToOctetString(base->config->gtpIp);
     resource->downTunnel.teid = ++downlinkTeidCounter;
 
-    gtpTask->push(new NwPduSessionResourceCreate(resource));
+    base->gtpTask->push(new NwPduSessionResourceCreate(resource));
     return {};
 }
 
