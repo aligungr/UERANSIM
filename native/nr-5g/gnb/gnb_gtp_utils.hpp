@@ -13,7 +13,7 @@
 #include <memory>
 #include <unordered_map>
 
-namespace nr::gtp
+namespace nr::gnb
 {
 
 inline uint64_t MakeSessionResInd(int ueId, int psi)

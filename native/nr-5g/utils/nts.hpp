@@ -42,7 +42,7 @@ enum class NtsMessageType
     NGAP_PDU_SESSION_RESOURCE_CREATE,
     GNB_STATUS_UPDATE,
     GTP_UE_CONTEXT_UPDATE,
-    UDP_SERVER_RECEIVE
+    UDP_SERVER_RECEIVE,
 };
 
 struct NtsMessage

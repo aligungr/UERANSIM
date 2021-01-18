@@ -21,12 +21,12 @@ namespace nr::gtp
 struct GtpMessage
 {
     // GTP Message Types. (Only GTP-U included)
-    static constexpr const int MT_ECHO_REQUEST = 1;
-    static constexpr const int MT_ECHO_RESPONSE = 2;
-    static constexpr const int MT_ERROR_INDICATION = 26;
-    static constexpr const int MT_SUPPORTED_EXT_HEADERS_NOTIFICATION = 31;
-    static constexpr const int MT_END_MARKER = 254;
-    static constexpr const int MT_G_PDU = 255;
+    static constexpr const uint8_t MT_ECHO_REQUEST = 1;
+    static constexpr const uint8_t MT_ECHO_RESPONSE = 2;
+    static constexpr const uint8_t MT_ERROR_INDICATION = 26;
+    static constexpr const uint8_t MT_SUPPORTED_EXT_HEADERS_NOTIFICATION = 31;
+    static constexpr const uint8_t MT_END_MARKER = 254;
+    static constexpr const uint8_t MT_G_PDU = 255;
 
     uint8_t msgType;
     uint32_t teid;

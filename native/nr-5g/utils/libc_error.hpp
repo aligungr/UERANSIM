@@ -8,19 +8,10 @@
 
 #pragma once
 
-#include <cstdint>
+#include <stdexcept>
 
-namespace nr::udp
+class LibError : public std::runtime_error
 {
-
-struct PeerAddress
-{
-    bool isIp4;
-    union {
-        uint32_t address4;
-        uint8_t address6[16];
-    };
-    uint16_t port;
+  public:
+    LibError(const std::string& what, int err);
 };
-
-} // namespace nr::udp

@@ -8,9 +8,8 @@
 
 #pragma once
 
+#include <network.hpp>
 #include <string>
-
-#include <udp_utils.hpp>
 
 namespace nr::udp
 {
@@ -18,13 +17,13 @@ namespace nr::udp
 class UdpServer
 {
   private:
-    int sd;
+    Socket socket;
 
   public:
     UdpServer(const std::string &address, uint16_t port);
-    ~UdpServer();
 
-    int receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, PeerAddress &outPeerAddress) const;
+    int Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const;
+    void Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const;
 };
 
 } // namespace nr::udp

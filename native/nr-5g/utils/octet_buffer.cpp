@@ -15,3 +15,15 @@ OctetString OctetBuffer::readOctetString(int length)
     index += length;
     return OctetString(std::move(v));
 }
+
+OctetBuffer::OctetBuffer(OctetString &data) : data(data.data()), index(0), size(data.length())
+{
+}
+
+OctetBuffer::OctetBuffer(uint8_t *data) : data(data), index(0), size(~0)
+{
+}
+
+OctetBuffer::OctetBuffer(uint8_t *data, size_t size) : data(data), index(0), size(size)
+{
+}

@@ -29,9 +29,9 @@ void nr::udp::UdpServerTask::onLoop()
 {
     uint8_t buffer[BUFFER_SIZE];
 
-    PeerAddress peerAddress{};
+    InetAddress peerAddress{};
 
-    int size = server->receive(buffer, BUFFER_SIZE, TIMEOUT_MS, peerAddress);
+    int size = server->Receive(buffer, BUFFER_SIZE, TIMEOUT_MS, peerAddress);
     if (size > 0)
     {
         std::vector<uint8_t> v;
@@ -45,4 +45,9 @@ void nr::udp::UdpServerTask::onLoop()
 void nr::udp::UdpServerTask::onQuit()
 {
     delete server;
+}
+
+void nr::udp::UdpServerTask::send(const InetAddress &to, const OctetString &packet)
+{
+    server->Send(to, packet.data(), static_cast<size_t>(packet.length()));
 }

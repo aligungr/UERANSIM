@@ -198,4 +198,14 @@ struct GnbStatusInfo
     bool isInitialSctpEstablished;
 };
 
+struct GtpUeContext
+{
+    const int ueId;
+    AggregateMaximumBitRate ueAmbr{};
+
+    explicit GtpUeContext(const int ueId) : ueId(ueId)
+    {
+    }
+};
+
 } // namespace nr::gnb

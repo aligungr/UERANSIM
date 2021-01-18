@@ -10,7 +10,7 @@
 
 #include <common.hpp>
 
-namespace nr::gtp
+namespace nr::gnb
 {
 
 PduSessionTree::PduSessionTree() : mapByDownTeid{}, mapByUeId{}
@@ -222,4 +222,4 @@ void RateLimiter::updateSessionDownlinkLimit(uint64_t pduSession, int64_t limit)
     }
 }
 
-} // namespace nr::gtp
+} // namespace nr::gnb

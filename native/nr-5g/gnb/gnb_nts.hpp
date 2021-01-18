@@ -207,4 +207,28 @@ struct NwGnbUplinkRrc : NtsMessage
     }
 };
 
+struct NwUplinkData : NtsMessage
+{
+    int ueId;
+    int pduSessionId;
+    OctetString data;
+
+    NwUplinkData(int ueId, int pduSessionId, OctetString &&data)
+        : NtsMessage(NtsMessageType::GNB_MR_UPLINK_DATA), ueId(ueId), pduSessionId(pduSessionId), data(std::move(data))
+    {
+    }
+};
+
+struct NwDownlinkData : NtsMessage
+{
+    int ueId;
+    int pduSessionId;
+    OctetString data;
+
+    NwDownlinkData(int ueId, int pduSessionId, OctetString &&data)
+        : NtsMessage(NtsMessageType::GNB_MR_DOWNLINK_DATA), ueId(ueId), pduSessionId(pduSessionId), data(std::move(data))
+    {
+    }
+};
+
 } // namespace nr::gnb

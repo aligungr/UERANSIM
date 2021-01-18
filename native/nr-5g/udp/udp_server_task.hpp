@@ -18,10 +18,10 @@ namespace nr::udp
 struct NwUdpServerReceive : NtsMessage
 {
     OctetString packet;
-    PeerAddress peerAddress;
+    InetAddress fromAddress;
 
-    explicit NwUdpServerReceive(OctetString &&packet, const PeerAddress &peerAddress)
-        : NtsMessage(NtsMessageType::UDP_SERVER_RECEIVE), packet(std::move(packet)), peerAddress(peerAddress)
+    explicit NwUdpServerReceive(OctetString &&packet, const InetAddress &fromAddress)
+        : NtsMessage(NtsMessageType::UDP_SERVER_RECEIVE), packet(std::move(packet)), fromAddress(fromAddress)
     {
     }
 };
@@ -40,6 +40,9 @@ class UdpServerTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
+
+  public:
+    void send(const InetAddress &to, const OctetString &packet);
 };
 
 } // namespace nr::udp

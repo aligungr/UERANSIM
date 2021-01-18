@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <utility>
 
-struct OctetString;
+class OctetString;
 
 class OctetBuffer
 {
@@ -24,13 +24,9 @@ class OctetBuffer
     size_t size;
 
   public:
-    OctetBuffer(uint8_t *data, size_t size) : data(data), index(0), size(size)
-    {
-    }
-
-    explicit OctetBuffer(uint8_t *data) : data(data), index(0), size(~0)
-    {
-    }
+    OctetBuffer(uint8_t *data, size_t size);
+    explicit OctetBuffer(uint8_t *data);
+    explicit OctetBuffer(OctetString &data);
 
     inline octet peek()
     {

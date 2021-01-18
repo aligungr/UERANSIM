@@ -23,6 +23,7 @@ nr::gnb::GNodeB::GNodeB(GnbConfig *config) : config(config)
 
     ngapTask->setExternalTasks(sctpTask, rrcTask, gtpTask, appTask);
     rrcTask->setExternalTasks(mrTask, ngapTask);
+    gtpTask->setExternalTasks(mrTask);
 }
 
 nr::gnb::GNodeB::~GNodeB()

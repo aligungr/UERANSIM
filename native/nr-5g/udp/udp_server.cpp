@@ -8,36 +8,24 @@
 
 #include "udp_server.hpp"
 #include "udp_error.hpp"
-#include "udp_internal.hpp"
 
-#include <common.hpp>
 #include <cstring>
 
 namespace nr::udp
 {
 
-UdpServer::UdpServer(const std::string &address, uint16_t port)
+UdpServer::UdpServer(const std::string &address, uint16_t port) : socket{Socket::CreateAndBindUdp({address, port})}
 {
-    try
-    {
-        sd = CreateSocket(utils::GetIpVersion(address) == 4);
-        BindSocket(sd, address, port);
-    }
-    catch (const UdpError &e)
-    {
-        CloseSocket(sd);
-        throw;
-    }
 }
 
-UdpServer::~UdpServer()
+int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const
 {
-    CloseSocket(sd);
+    return socket.receive(buffer, bufferSize, timeoutMs, outPeerAddress);
 }
 
-int UdpServer::receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, PeerAddress &outPeerAddress) const
+void UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const
 {
-    return TimedReceive(sd, buffer, bufferSize, timeoutMs, outPeerAddress);
+    socket.send(address, buffer, bufferSize);
 }
 
 } // namespace nr::udp

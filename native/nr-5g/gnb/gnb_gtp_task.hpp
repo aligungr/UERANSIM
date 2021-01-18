@@ -17,25 +17,45 @@
 #include <vector>
 
 #include "gnb_config.hpp"
+#include "gnb_gtp_utils.hpp"
+#include "gnb_nts.hpp"
 
 namespace nr::gnb
 {
+
+struct GnbMrTask;
 
 class GtpTask : public NtsTask
 {
   private:
     GnbConfig *config;
     std::unique_ptr<logger::Logger> logger;
-    nr::udp::UdpServerTask *udpServer;
+    GnbMrTask *mrTask;
+
+    udp::UdpServerTask *udpServer;
+    std::unordered_map<int, std::unique_ptr<GtpUeContext>> ueContexts;
+    std::unique_ptr<IRateLimiter> rateLimiter;
+    std::unordered_map<uint64_t, std::unique_ptr<PduSessionResource>> pduSessions;
+    PduSessionTree sessionTree;
 
   public:
     explicit GtpTask(GnbConfig *config, logger::LogBase &loggerBase);
     ~GtpTask() override = default;
+    void setExternalTasks(GnbMrTask *mrTask);
 
   protected:
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
+
+  private:
+    void handleUdpReceive(udp::NwUdpServerReceive *msg);
+    void handleUeContextUpdate(NwUeContextUpdate *msg);
+    void handleSessionCreate(NwPduSessionResourceCreate *msg);
+    void handleUplinkData(NwUplinkData *msg);
+
+    void updateAmbrForUe(int ueId);
+    void updateAmbrForSession(uint64_t pduSession);
 };
 
 } // namespace nr::gnb
