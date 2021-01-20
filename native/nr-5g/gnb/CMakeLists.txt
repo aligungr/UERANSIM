@@ -18,5 +18,6 @@ target_link_libraries(gnb rrc)
 target_link_libraries(gnb udp)
 target_link_libraries(gnb gtp)
 target_link_libraries(gnb app)
+target_link_libraries(gnb urs)
 
 

@@ -30,7 +30,6 @@ GnbRrcTask::GnbRrcTask(TaskBase *base) : base{base}
 
 void GnbRrcTask::onStart()
 {
-    logger->debug("RRC layer has been started");
 }
 
 void GnbRrcTask::onLoop()
@@ -56,6 +55,9 @@ void GnbRrcTask::onLoop()
 
 void GnbRrcTask::onQuit()
 {
+    logger->debug("RRC task is quiting");
+    logger->flush();
+
     // todo
 }
 

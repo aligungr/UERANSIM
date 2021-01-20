@@ -28,4 +28,9 @@ void UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t b
     socket.send(address, buffer, bufferSize);
 }
 
-} // namespace nr::udp
+UdpServer::~UdpServer()
+{
+    socket.close();
+}
+
+} // namespace udp

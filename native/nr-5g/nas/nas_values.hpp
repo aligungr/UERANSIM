@@ -88,4 +88,25 @@ struct VTrackingAreaIdentity
     static VTrackingAreaIdentity Decode(OctetBuffer &stream);
 };
 
+struct VTime
+{
+    octet year;
+    octet month;
+    octet day;
+    octet hour;
+    octet minute;
+    octet second;
+
+    VTime() = default;
+
+    VTime(const octet &year, const octet &month, const octet &day, const octet &hour, const octet &minute,
+          const octet &second)
+        : year(year), month(month), day(day), hour(hour), minute(minute), second(second)
+    {
+    }
+
+    static void Encode(const VTime &value, OctetString &stream);
+    static VTime Decode(OctetBuffer &stream);
+};
+
 } // namespace nas

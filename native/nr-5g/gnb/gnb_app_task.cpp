@@ -12,13 +12,19 @@
 namespace nr::gnb
 {
 
-GnbAppTask::GnbAppTask(TaskBase *base) : base(base), statusInfo{}
+GnbAppTask::GnbAppTask(TaskBase *base) : base(base), statusInfo{}, ndpTask{}
 {
     logger = base->logBase->makeUniqueLogger("gnb-app");
 }
 
 void GnbAppTask::onStart()
 {
+    uint16_t portalPort = 0;
+    uint16_t mrPort = 0;
+
+    ndpTask =
+        new urs::NdpTask(logger, urs::Ndp::NODE_GNB, base->config->name, portalPort, mrPort, base->config->portalIp);
+    ndpTask->start();
 }
 
 void GnbAppTask::onLoop()
@@ -48,6 +54,11 @@ void GnbAppTask::onLoop()
 
 void GnbAppTask::onQuit()
 {
+    logger->debug("GNB-APP task is quiting");
+    logger->flush();
+
+    ndpTask->quit();
+    delete ndpTask;
 }
 
 } // namespace nr::gnb

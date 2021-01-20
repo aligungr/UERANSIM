@@ -68,7 +68,6 @@ SctpTask::SctpTask(TaskBase *base) : base{base}, clients{}
 
 void SctpTask::onStart()
 {
-    logger->debug("SCTP layer has been started");
 }
 
 void SctpTask::onLoop()

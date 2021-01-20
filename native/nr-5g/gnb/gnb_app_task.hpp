@@ -14,6 +14,7 @@
 #include <nts.hpp>
 #include <thread>
 #include <unordered_map>
+#include <urs_ndp_task.hpp>
 #include <vector>
 
 namespace nr::gnb
@@ -26,6 +27,7 @@ class GnbAppTask : public NtsTask
     std::unique_ptr<Logger> logger;
 
     GnbStatusInfo statusInfo;
+    urs::NdpTask *ndpTask;
 
   public:
     explicit GnbAppTask(TaskBase *base);

@@ -126,4 +126,26 @@ VTrackingAreaIdentity VTrackingAreaIdentity::Decode(OctetBuffer &stream)
     return VTrackingAreaIdentity{plmn, tac};
 }
 
+void VTime::Encode(const VTime &value, OctetString &stream)
+{
+    stream.appendOctet(value.year);
+    stream.appendOctet(value.month);
+    stream.appendOctet(value.day);
+    stream.appendOctet(value.hour);
+    stream.appendOctet(value.minute);
+    stream.appendOctet(value.second);
+}
+
+VTime VTime::Decode(OctetBuffer &stream)
+{
+    VTime time;
+    time.year = stream.read();
+    time.month = stream.read();
+    time.day = stream.read();
+    time.hour = stream.read();
+    time.minute = stream.read();
+    time.second = stream.read();
+    return time;
+}
+
 } // namespace nas

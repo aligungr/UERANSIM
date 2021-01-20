@@ -11,6 +11,7 @@
 
 #include <gtp_encode.hpp>
 #include <gtp_message.hpp>
+#include <libc_error.hpp>
 
 #include <ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <ASN_NGAP_QosFlowSetupRequestList.h>
@@ -26,14 +27,22 @@ GtpTask::GtpTask(TaskBase *base)
 
 void GtpTask::onStart()
 {
-    logger->debug("GTP layer has been started");
-
-    udpServer = new udp::UdpServerTask(base->config->gtpIp, 2152, this);
-    udpServer->start();
+    try
+    {
+        udpServer = new udp::UdpServerTask(base->config->gtpIp, 2152, this);
+        udpServer->start();
+    }
+    catch (const LibError &e)
+    {
+        logger->err("GTP/UDP task could not be created. %s", e.what());
+    }
 }
 
 void GtpTask::onQuit()
 {
+    logger->debug("GTP task is quiting");
+    logger->flush();
+
     udpServer->quit();
     delete udpServer;
 

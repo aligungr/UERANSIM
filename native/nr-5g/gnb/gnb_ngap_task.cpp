@@ -23,7 +23,6 @@ NgapTask::NgapTask(TaskBase *base) : base{base}, ueNgapIdCounter{}, waitingSctpC
 
 void NgapTask::onStart()
 {
-    logger->debug("NGAP layer has been started");
 
     for (auto &amfConfig : base->config->amfConfigs)
         createAmfContext(amfConfig);
@@ -64,6 +63,9 @@ void NgapTask::onLoop()
 
 void NgapTask::onQuit()
 {
+    logger->debug("NGAP task is quiting");
+    logger->flush();
+
     for (auto &i : ueContexts)
         delete i.second;
     for (auto &i : amfContexts)

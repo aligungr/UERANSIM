@@ -162,13 +162,184 @@ struct IEGprsTimer : InformationElement3<IEGprsTimer>
     }
 };
 
-// todo: kalanlar
-//  IEIntegrityProtectionMaximumDataRate
-//  IEMaximumNumberOfSupportedPacketFilters
-//  IEN1ModeToS1ModeNasTransparentContainer
-//  IENasSecurityAlgorithms
-//  IEPduSessionIdentity2
-//  IETimeZone
-//  IETimeZoneAndTime
+struct IEIntegrityProtectionMaximumDataRate : InformationElement3<IEIntegrityProtectionMaximumDataRate>
+{
+    EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink maxRateUplink{};
+    EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink maxRateDownlink{};
+
+    IEIntegrityProtectionMaximumDataRate() = default;
+
+    IEIntegrityProtectionMaximumDataRate(
+        EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink maxRateUplink,
+        EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink maxRateDownlink)
+        : maxRateUplink(maxRateUplink), maxRateDownlink(maxRateDownlink)
+    {
+    }
+
+    IEIntegrityProtectionMaximumDataRate decodeIE3(OctetBuffer &stream) override
+    {
+        IEIntegrityProtectionMaximumDataRate r;
+        r.maxRateUplink = static_cast<EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink>(stream.readI());
+        r.maxRateDownlink =
+            static_cast<EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink>(stream.readI());
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        stream.appendOctet(static_cast<int>(maxRateUplink));
+        stream.appendOctet(static_cast<int>(maxRateDownlink));
+    }
+};
+
+struct IEMaximumNumberOfSupportedPacketFilters : InformationElement3<IEMaximumNumberOfSupportedPacketFilters>
+{
+    int value : 11;
+
+    IEMaximumNumberOfSupportedPacketFilters() : value(0)
+    {
+    }
+
+    explicit IEMaximumNumberOfSupportedPacketFilters(int value) : value(value)
+    {
+    }
+
+    IEMaximumNumberOfSupportedPacketFilters decodeIE3(OctetBuffer &stream) override
+    {
+        int v = stream.read2I();
+        v >>= 5;
+
+        IEMaximumNumberOfSupportedPacketFilters r;
+        r.value = v;
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        stream.appendOctet((value >> 3) & 0xFF);
+        stream.appendOctet((value & 0b111) << 5);
+    }
+};
+
+struct IEN1ModeToS1ModeNasTransparentContainer : InformationElement3<IEN1ModeToS1ModeNasTransparentContainer>
+{
+    octet sequenceNumber{};
+
+    IEN1ModeToS1ModeNasTransparentContainer() = default;
+
+    explicit IEN1ModeToS1ModeNasTransparentContainer(uint8_t value) : sequenceNumber(value)
+    {
+    }
+
+    IEN1ModeToS1ModeNasTransparentContainer decodeIE3(OctetBuffer &stream) override
+    {
+        IEN1ModeToS1ModeNasTransparentContainer r;
+        r.sequenceNumber = stream.read();
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        stream.appendOctet(sequenceNumber);
+    }
+};
+
+struct IENasSecurityAlgorithms : InformationElement3<IENasSecurityAlgorithms>
+{
+    ETypeOfIntegrityProtectionAlgorithm integrity{};
+    ETypeOfCipheringAlgorithm ciphering{};
+
+    IENasSecurityAlgorithms() = default;
+
+    IENasSecurityAlgorithms(ETypeOfIntegrityProtectionAlgorithm integrity, ETypeOfCipheringAlgorithm ciphering)
+        : integrity(integrity), ciphering(ciphering)
+    {
+    }
+
+    IENasSecurityAlgorithms decodeIE3(OctetBuffer &stream) override
+    {
+        IENasSecurityAlgorithms r;
+        r.integrity = static_cast<ETypeOfIntegrityProtectionAlgorithm>(stream.peekI() & 0xF);
+        r.ciphering = static_cast<ETypeOfCipheringAlgorithm>((stream.readI() >> 4) & 0xF);
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        stream.appendOctet(static_cast<int>(ciphering), static_cast<int>(integrity));
+    }
+};
+
+struct IEPduSessionIdentity2 : InformationElement3<IEPduSessionIdentity2>
+{
+    octet value{};
+
+    IEPduSessionIdentity2() = default;
+
+    explicit IEPduSessionIdentity2(uint8_t value) : value(value)
+    {
+    }
+
+    IEPduSessionIdentity2 decodeIE3(OctetBuffer &stream) override
+    {
+        IEPduSessionIdentity2 r;
+        r.value = stream.read();
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        stream.appendOctet(value);
+    }
+};
+
+struct IETimeZone : InformationElement3<IETimeZone>
+{
+    octet value{};
+
+    IETimeZone() = default;
+
+    explicit IETimeZone(uint8_t value) : value(value)
+    {
+    }
+
+    IETimeZone decodeIE3(OctetBuffer &stream) override
+    {
+        IETimeZone r;
+        r.value = stream.read();
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        stream.appendOctet(value);
+    }
+};
+
+struct IETimeZoneAndTime : InformationElement3<IETimeZoneAndTime>
+{
+    VTime time;
+    octet timezone{};
+
+    IETimeZoneAndTime() = default;
+
+    IETimeZoneAndTime(VTime time, octet timezone) : time(time), timezone(timezone)
+    {
+    }
+
+    IETimeZoneAndTime decodeIE3(OctetBuffer &stream) override
+    {
+        IETimeZoneAndTime r;
+        r.time = VTime::Decode(stream);
+        r.timezone = stream.read();
+        return r;
+    }
+
+    void encodeIE3(OctetString &stream) override
+    {
+        VTime::Encode(time, stream);
+        stream.appendOctet(timezone);
+    }
+};
 
 } // namespace nas

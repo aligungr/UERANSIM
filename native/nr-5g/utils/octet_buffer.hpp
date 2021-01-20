@@ -120,28 +120,28 @@ class OctetBuffer
 
     inline void write2(uint16_t octet)
     {
-        write(octet & 0xFF);
         write((octet >> 8) & 0xFF);
+        write(octet & 0xFF);
     }
 
     inline void write4(uint32_t octet)
     {
-        write(octet & 0xFF);
-        write((octet >> 8) & 0xFF);
-        write((octet >> 16) & 0xFF);
         write((octet >> 24) & 0xFF);
+        write((octet >> 16) & 0xFF);
+        write((octet >> 8) & 0xFF);
+        write(octet & 0xFF);
     }
 
     inline void write8(uint64_t octet)
     {
-        write(octet & 0xFF);
-        write((octet >> 8) & 0xFF);
-        write((octet >> 16) & 0xFF);
-        write((octet >> 24) & 0xFF);
-        write((octet >> 32) & 0xFF);
-        write((octet >> 40) & 0xFF);
-        write((octet >> 48) & 0xFF);
         write((octet >> 56) & 0xFF);
+        write((octet >> 48) & 0xFF);
+        write((octet >> 40) & 0xFF);
+        write((octet >> 32) & 0xFF);
+        write((octet >> 24) & 0xFF);
+        write((octet >> 16) & 0xFF);
+        write((octet >> 8) & 0xFF);
+        write(octet & 0xFF);
     }
 
     inline size_t currentIndex() const

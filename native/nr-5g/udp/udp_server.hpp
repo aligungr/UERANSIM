@@ -21,9 +21,10 @@ class UdpServer
 
   public:
     UdpServer(const std::string &address, uint16_t port);
+    ~UdpServer();
 
     int Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const;
     void Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const;
 };
 
-} // namespace nr::udp
+} // namespace udp

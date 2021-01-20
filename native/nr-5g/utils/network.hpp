@@ -45,12 +45,16 @@ class Socket
   public:
     Socket();
     Socket(int domain, int type, int protocol);
-    ~Socket();
 
   public:
     void bind(const InetAddress &address) const;
     int receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outAddress) const;
     void send(const InetAddress &address, const uint8_t *buffer, size_t size) const;
+    bool hasFd() const;
+    void close();
+
+    /* Socket options */
+    void setReuseAddress() const;
 
   public:
     static Socket CreateAndBindUdp(const InetAddress &address);
@@ -59,4 +63,12 @@ class Socket
     static Socket CreateUdp6();
     static Socket CreateTcp4();
     static Socket CreateTcp6();
+
+    static bool Select(const std::vector<Socket> &inReadSockets, const std::vector<Socket> &inWriteSockets,
+                       std::vector<Socket> &outReadSockets, std::vector<Socket> &outWriteSockets, int timeout = 0);
+
+    static Socket Select(const std::vector<Socket> &readSockets, const std::vector<Socket> &writeSockets,
+                         int timeout = 0);
+
+    static bool Select(const Socket &socket, int timeout = 0);
 };

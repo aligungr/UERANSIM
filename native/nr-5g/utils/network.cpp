@@ -89,12 +89,6 @@ InetAddress::InetAddress(const OctetString &address, uint16_t port) : InetAddres
 {
 }
 
-Socket::~Socket()
-{
-    if (fd)
-        close(fd);
-}
-
 Socket::Socket(int domain, int type, int protocol)
 {
     int sd = socket(domain, type, protocol);
@@ -123,7 +117,7 @@ Socket Socket::CreateTcp6()
     return Socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
 }
 
-Socket::Socket() : fd(0)
+Socket::Socket() : fd(-1)
 {
 }
 
@@ -136,19 +130,27 @@ void Socket::bind(const InetAddress &address) const
 
 int Socket::receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outAddress) const
 {
-    fd_set s;
-    FD_ZERO(&s);
-    FD_SET(fd, &s);
+    fd_set s1;
+    FD_ZERO(&s1);
+    FD_SET(fd, &s1);
+
+    // fd_set s2;
+    // FD_ZERO(&s2);
+    // FD_SET(fd, &s2);
+
+    fd_set s3;
+    FD_ZERO(&s3);
+    FD_SET(fd, &s3);
 
     timeval timeout{};
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
 
-    int rc = select(fd + 1, &s, &s, &s, &timeout);
+    int rc = select(fd + 1, &s1, /*&s2 no write operation for unnecessary selection */ nullptr, &s3, &timeout);
     if (rc == -1)
         throw LibError("select failed: ", errno);
 
-    if (rc > 0)
+    if (rc > 0 && FD_ISSET(fd, &s1))
     {
         sockaddr_storage peerAddr{};
         socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
@@ -171,6 +173,11 @@ void Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size
         throw LibError("sendto failed: ", errno);
 }
 
+bool Socket::hasFd() const
+{
+    return fd >= 0;
+}
+
 Socket Socket::CreateAndBindUdp(const InetAddress &address)
 {
     Socket s(address.getSockAddr()->sa_family, SOCK_DGRAM, IPPROTO_UDP);
@@ -183,4 +190,76 @@ Socket Socket::CreateAndBindTcp(const InetAddress &address)
     Socket s(address.getSockAddr()->sa_family, SOCK_STREAM, IPPROTO_TCP);
     s.bind(address);
     return s;
+}
+
+bool Socket::Select(const std::vector<Socket> &inReadSockets, const std::vector<Socket> &inWriteSockets,
+                    std::vector<Socket> &outReadSockets, std::vector<Socket> &outWriteSockets, int timeout)
+{
+    assert(inReadSockets.size() + inWriteSockets.size() < FD_SETSIZE);
+
+    int max = 0;
+
+    fd_set readFds, writeFds;
+    FD_ZERO(&readFds);
+    FD_ZERO(&writeFds);
+
+    for (const Socket &s : inReadSockets)
+    {
+        FD_SET(s.fd, &readFds);
+        max = std::max(max, s.fd);
+    }
+
+    for (const Socket &s : inWriteSockets)
+    {
+        FD_SET(s.fd, &writeFds);
+        max = std::max(max, s.fd);
+    }
+
+    timeval to{};
+    to.tv_sec = timeout / 1000;
+    to.tv_usec = (timeout % 1000) * 1000;
+
+    int ret = select(max + 1, &readFds, &writeFds, nullptr, timeout > 0 ? &to : nullptr);
+    if (ret < 0)
+        return false;
+
+    for (const Socket &s : inReadSockets)
+        if (FD_ISSET(s.fd, &readFds))
+            outReadSockets.push_back(s);
+    for (const Socket &s : inWriteSockets)
+        if (FD_ISSET(s.fd, &writeFds))
+            outWriteSockets.push_back(s);
+
+    return outReadSockets.size() + outWriteSockets.size() > 0;
+}
+
+Socket Socket::Select(const std::vector<Socket> &readSockets, const std::vector<Socket> &writeSockets, int timeout)
+{
+    std::vector<Socket> rs, ws;
+    Select(readSockets, writeSockets, rs, ws, timeout);
+
+    if (!rs.empty())
+        return rs[0];
+    if (!ws.empty())
+        return rs[0];
+    return {};
+}
+
+bool Socket::Select(const Socket &socket, int timeout)
+{
+    return Select({socket}, {socket}, timeout).hasFd();
+}
+
+void Socket::close()
+{
+    if (fd >= 0)
+        ::close(fd);
+    fd = -1;
+}
+
+void Socket::setReuseAddress() const
+{
+    int reuse = 1;
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse, sizeof(reuse)) < 0)
+        throw LibError("setsockopt SO_REUSEADDR failed: ", errno);
 }

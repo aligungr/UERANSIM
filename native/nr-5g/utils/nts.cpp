@@ -168,26 +168,28 @@ void NtsTask::start()
 
     onStart();
 
-    thread = std::thread{[this]() {
-        while (true)
-        {
-            if (this->isQuiting)
-                break;
-            this->onLoop();
-        }
-    }};
+    if (!isQuiting)
+    {
+        thread = std::thread{[this]() {
+            while (true)
+            {
+                if (this->isQuiting)
+                    break;
+                this->onLoop();
+            }
+        }};
+    }
 }
 
 void NtsTask::quit()
 {
-    std::unique_lock<std::mutex> lock(mutex);
-    if (isQuiting)
+    bool expected = false;
+    while (!isQuiting.compare_exchange_weak(expected, true, std::memory_order_relaxed, std::memory_order_relaxed))
         return;
-
-    isQuiting = true;
 
     thread.join();
 
+    std::unique_lock<std::mutex> lock(mutex);
     while (!msgQueue.empty())
     {
         NtsMessage *msg = msgQueue.front();

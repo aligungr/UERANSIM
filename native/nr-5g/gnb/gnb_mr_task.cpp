@@ -49,6 +49,8 @@ void GnbMrTask::onLoop()
 
 void GnbMrTask::onQuit()
 {
+    logger->debug("MR task is quiting");
+    logger->flush();
 }
 
 } // namespace nr::gnb
