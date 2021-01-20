@@ -74,13 +74,13 @@ public class MobilityManagement {
     public static void receiveTimerExpire(NasContext ctx, NasTimer timer) {
         if (timer.timerCode == 3512) {
             if (ctx.emulationMode && ctx.mmCtx.mmState == EMmState.MM_REGISTERED) {
-                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING, EFollowOnRequest.NO_FOR_PENDING);
+                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING, EFollowOnRequest.FOR_PENDING);
             }
         }
 
         if (timer.timerCode == 3346) {
             if (ctx.emulationMode && ctx.mmCtx.mmSubState == EMmSubState.MM_DEREGISTERED__NORMAL_SERVICE) {
-                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.NO_FOR_PENDING);
+                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION, EFollowOnRequest.FOR_PENDING);
             }
         }
     }
