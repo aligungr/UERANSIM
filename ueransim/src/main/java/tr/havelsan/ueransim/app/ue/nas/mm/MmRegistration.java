@@ -78,6 +78,8 @@ public class MmRegistration {
     }
 
     public static void receiveRegistrationAccept(NasContext ctx, RegistrationAccept message) {
+        // todo firstly check whether the state is MM_REGISTERED_INITIATED
+
         boolean sendCompleteMes = false;
 
         ctx.mmCtx.taiList = message.taiList;
