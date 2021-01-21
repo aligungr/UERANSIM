@@ -100,7 +100,11 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
-        Log.success(Tag.PROC, "Registration is successful");
+        if (ctx.mmCtx.registrationRequest != null) {
+            Log.success(Tag.PROC, "Registration is successful (%s)", ctx.mmCtx.registrationRequest.registrationType.registrationType);
+        } else {
+            Log.success(Tag.PROC, "Registration is successful");
+        }
     }
 
     public static void receiveRegistrationReject(NasContext ctx, RegistrationReject message) {
