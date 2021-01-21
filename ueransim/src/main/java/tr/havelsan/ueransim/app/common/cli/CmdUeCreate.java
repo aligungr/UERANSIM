@@ -13,4 +13,5 @@ public class CmdUeCreate extends CmdMessage {
     public String imsi;
     public String key;
     public String op;
+    public int count;
 }

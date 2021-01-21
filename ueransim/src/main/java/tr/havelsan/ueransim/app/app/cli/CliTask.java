@@ -30,6 +30,7 @@ import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.Utils;
 import tr.havelsan.ueransim.utils.octets.OctetString;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -137,19 +138,36 @@ public class CliTask extends NtsTask {
             refConfig = appConfig.createUeConfig();
         }
 
-        var config = new UeConfig(
-                cmd.key != null ? new OctetString(cmd.key) : refConfig.key,
-                cmd.op != null ? new OctetString(cmd.op) : refConfig.op,
-                refConfig.amf,
-                refConfig.imei,
-                cmd.imsi != null ? new Supi("imsi", cmd.imsi) : refConfig.supi,
-                refConfig.plmn,
-                refConfig.requestedNssai,
-                refConfig.dnn
-        );
+        if (cmd.count <= 0)
+            cmd.count = 1;
 
-        ueransim.createUe(config);
-        sendCmd(client, new CmdTerminate(0, "UE created: %s.", config.supi));
+        for (int i = 0; i < cmd.count; i++) {
+            var refSupi = cmd.imsi != null ? new Supi("imsi", cmd.imsi) : refConfig.supi;
+
+            var val = new StringBuilder(new BigInteger(refSupi.value).add(BigInteger.valueOf(i)).toString());
+            int padding = refSupi.value.length() - val.length();
+            for (int j = 0; j < padding; j++) {
+                val.insert(0, "0");
+            }
+
+            var newSupi = new Supi("imsi", val.toString());
+
+            var config = new UeConfig(
+                    cmd.key != null ? new OctetString(cmd.key) : refConfig.key,
+                    cmd.op != null ? new OctetString(cmd.op) : refConfig.op,
+                    refConfig.amf,
+                    refConfig.imei,
+                    newSupi,
+                    refConfig.plmn,
+                    refConfig.requestedNssai,
+                    refConfig.dnn
+            );
+
+            ueransim.createUe(config);
+            sendCmd(client, new CmdPrint(String.format("UE created: %s.", config.supi)));
+        }
+
+        sendCmd(client, new CmdTerminate(0, ""));
     }
 
     private void receiveUeList(UUID client, CmdUeList cmd) {

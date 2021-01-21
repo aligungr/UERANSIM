@@ -62,6 +62,12 @@ public class CliOpt {
         private String imsi;
 
         @CommandLine.Option(
+                names = {"-n", "--number-of-ue"},
+                description = "Create specified number of UEs starting the given IMSI."
+        )
+        private String count;
+
+        @CommandLine.Option(
                 names = {"-k", "--key"},
                 description = "Use specified KEY instead of default one."
         )
@@ -82,6 +88,7 @@ public class CliOpt {
             msg.imsi = imsi;
             msg.key = key;
             msg.op = op;
+            msg.count = count != null && count.length() > 0 ? Integer.parseInt(count) : 0;
 
             CliOpt.msg = msg;
         }
