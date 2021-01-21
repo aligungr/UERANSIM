@@ -86,7 +86,11 @@ public class MmRegistration {
             ctx.ueTimers.t3512.start(message.t3512Value);
         }
 
+        boolean newGutiReceived = false;
+
         if (message.mobileIdentity instanceof IE5gGutiMobileIdentity) {
+            if (ctx.mmCtx.storedGuti == null)
+                newGutiReceived = true;
             ctx.mmCtx.storedGuti = (IE5gGutiMobileIdentity) message.mobileIdentity;
             ctx.ueTimers.t3519.stop();
 
@@ -100,11 +104,21 @@ public class MmRegistration {
         MobilityManagement.switchState(ctx, ERmState.RM_REGISTERED);
         MobilityManagement.switchState(ctx, EMmState.MM_REGISTERED, EMmSubState.MM_REGISTERED__NORMAL_SERVICE);
 
-        if (ctx.mmCtx.registrationRequest != null) {
-            Log.success(Tag.PROC, "Registration is successful (%s)", ctx.mmCtx.registrationRequest.registrationType.registrationType);
+        if (newGutiReceived) {
+            if (ctx.mmCtx.registrationRequest != null) {
+                Log.success(Tag.PROC, "Registration is successful (%s) (TMSI:%s)", ctx.mmCtx.registrationRequest.registrationType.registrationType, ((IE5gGutiMobileIdentity) message.mobileIdentity).tmsi);
+            } else {
+                Log.success(Tag.PROC, "Registration is successful (TMSI:%s)", ((IE5gGutiMobileIdentity) message.mobileIdentity).tmsi);
+            }
         } else {
-            Log.success(Tag.PROC, "Registration is successful");
+            if (ctx.mmCtx.registrationRequest != null) {
+                Log.success(Tag.PROC, "Registration is successful (%s)", ctx.mmCtx.registrationRequest.registrationType.registrationType);
+            } else {
+                Log.success(Tag.PROC, "Registration is successful");
+            }
         }
+
+
     }
 
     public static void receiveRegistrationReject(NasContext ctx, RegistrationReject message) {
