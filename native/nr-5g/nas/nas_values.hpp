@@ -10,6 +10,7 @@
 
 #include <octet_buffer.hpp>
 #include <octet_string.hpp>
+#include <optional>
 #include <utility>
 
 #include "nas_enums.hpp"
@@ -107,6 +108,150 @@ struct VTime
 
     static void Encode(const VTime &value, OctetString &stream);
     static VTime Decode(OctetBuffer &stream);
+};
+
+struct VRejectedSNssai
+{
+    ERejectedSNssaiCause cause{};
+    std::optional<octet> sst{};
+    std::optional<octet3> sd{};
+
+    VRejectedSNssai() = default;
+
+    VRejectedSNssai(ERejectedSNssaiCause cause, const std::optional<octet> &sst, const std::optional<octet3> &sd)
+        : cause(cause), sst(sst), sd(sd)
+    {
+    }
+
+    static void Encode(const VRejectedSNssai &value, OctetString &stream);
+    static VRejectedSNssai Decode(OctetBuffer &stream);
+};
+
+struct VPartialServiceAreaList00
+{
+    EAllowedType allowedType;
+    VPlmn plmn;
+    std::vector<octet3> tacs;
+
+    VPartialServiceAreaList00(EAllowedType allowedType, const VPlmn &plmn, std::vector<octet3> &&tacs)
+        : allowedType(allowedType), plmn(plmn), tacs(std::move(tacs))
+    {
+    }
+
+    static void Encode(const VPartialServiceAreaList00 &value, OctetString &stream);
+    static VPartialServiceAreaList00 Decode(OctetBuffer &stream);
+};
+
+struct VPartialServiceAreaList01
+{
+    EAllowedType allowedType;
+    VPlmn plmn;
+    octet3 tac;
+
+    VPartialServiceAreaList01(EAllowedType allowedType, const VPlmn &plmn, const octet3 &tac)
+        : allowedType(allowedType), plmn(plmn), tac(tac)
+    {
+    }
+
+    static void Encode(const VPartialServiceAreaList01 &value, OctetString &stream);
+    static VPartialServiceAreaList01 Decode(OctetBuffer &stream);
+};
+
+struct VPartialServiceAreaList10
+{
+    EAllowedType allowedType;
+    std::vector<VTrackingAreaIdentity> tais;
+
+    VPartialServiceAreaList10(EAllowedType allowedType, std::vector<VTrackingAreaIdentity> &&tais)
+        : allowedType(allowedType), tais(std::move(tais))
+    {
+    }
+
+    static void Encode(const VPartialServiceAreaList10 &value, OctetString &stream);
+    static VPartialServiceAreaList10 Decode(OctetBuffer &stream);
+};
+
+struct VPartialServiceAreaList11
+{
+    EAllowedType allowedType;
+    VPlmn plmn;
+
+    VPartialServiceAreaList11(EAllowedType allowedType, const VPlmn &plmn) : allowedType(allowedType), plmn(plmn)
+    {
+    }
+
+    static void Encode(const VPartialServiceAreaList11 &value, OctetString &stream);
+    static VPartialServiceAreaList11 Decode(OctetBuffer &stream);
+};
+
+struct VPartialServiceAreaList
+{
+    uint8_t present : 2;
+    std::optional<VPartialServiceAreaList00> list00{};
+    std::optional<VPartialServiceAreaList01> list01{};
+    std::optional<VPartialServiceAreaList10> list10{};
+    std::optional<VPartialServiceAreaList11> list11{};
+
+    VPartialServiceAreaList() : present(0b00)
+    {
+    }
+
+    static void Encode(const VPartialServiceAreaList &value, OctetString &stream);
+    static VPartialServiceAreaList Decode(OctetBuffer &stream);
+};
+
+struct VPartialTrackingAreaIdentityList00
+{
+    VPlmn plmn;
+    std::vector<octet3> tacs;
+
+    VPartialTrackingAreaIdentityList00(const VPlmn &plmn, std::vector<octet3> &&tacs)
+        : plmn(plmn), tacs(std::move(tacs))
+    {
+    }
+
+    static void Encode(const VPartialTrackingAreaIdentityList00 &value, OctetString &stream);
+    static VPartialTrackingAreaIdentityList00 Decode(OctetBuffer &stream);
+};
+
+struct VPartialTrackingAreaIdentityList01
+{
+    VPlmn plmn;
+    octet3 tac;
+
+    VPartialTrackingAreaIdentityList01(const VPlmn &plmn, octet3 tac) : plmn(plmn), tac(tac)
+    {
+    }
+
+    static void Encode(const VPartialTrackingAreaIdentityList01 &value, OctetString &stream);
+    static VPartialTrackingAreaIdentityList01 Decode(OctetBuffer &stream);
+};
+
+struct VPartialTrackingAreaIdentityList10
+{
+    std::vector<VTrackingAreaIdentity> tais;
+
+    explicit VPartialTrackingAreaIdentityList10(std::vector<VTrackingAreaIdentity> &&tais) : tais(std::move(tais))
+    {
+    }
+
+    static void Encode(const VPartialTrackingAreaIdentityList10 &value, OctetString &stream);
+    static VPartialTrackingAreaIdentityList10 Decode(OctetBuffer &stream);
+};
+
+struct VPartialTrackingAreaIdentityList
+{
+    uint8_t present : 2;
+    std::optional<VPartialTrackingAreaIdentityList00> list00{};
+    std::optional<VPartialTrackingAreaIdentityList01> list01{};
+    std::optional<VPartialTrackingAreaIdentityList10> list10{};
+
+    VPartialTrackingAreaIdentityList() : present(0b00)
+    {
+    }
+
+    static void Encode(const VPartialTrackingAreaIdentityList &value, OctetString &stream);
+    static VPartialTrackingAreaIdentityList Decode(OctetBuffer &stream);
 };
 
 } // namespace nas

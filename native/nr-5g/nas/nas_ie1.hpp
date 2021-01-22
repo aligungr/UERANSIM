@@ -11,481 +11,229 @@
 #include <octet_buffer.hpp>
 #include <octet_string.hpp>
 
+#include "nas_base.hpp"
 #include "nas_enums.hpp"
 
 namespace nas
 {
 
-template <typename T>
-struct InformationElement
-{
-    virtual T decodeIE(OctetBuffer &stream) = 0;
-};
-
-template <typename T>
-struct InformationElement1 : InformationElement<T>
-{
-    virtual T decodeIE1(int value) = 0;
-    virtual int encodeIE1() = 0;
-
-    T decodeIE(OctetBuffer &stream) final
-    {
-        int octet = stream.readI();
-        int iei = octet >> 4 & 0xF;
-        int value = octet & 0xF;
-        return decodeIE1(value);
-    }
-};
-
-struct IE5gsIdentityType : InformationElement1<IE5gsIdentityType>
+struct IE5gsIdentityType : InformationElement1
 {
     EIdentityType value{};
 
     IE5gsIdentityType() = default;
+    explicit IE5gsIdentityType(EIdentityType value);
 
-    explicit IE5gsIdentityType(EIdentityType value) : value(value)
-    {
-    }
-
-    IE5gsIdentityType decodeIE1(int val) override
-    {
-        IE5gsIdentityType res;
-        bits::Bmp4Dec13(val, nullptr, &res.value);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return (int)value;
-    }
+    static IE5gsIdentityType Decode(int val);
+    static int Encode(const IE5gsIdentityType &ie);
 };
 
-struct IE5gsRegistrationType : InformationElement1<IE5gsRegistrationType>
+struct IE5gsRegistrationType : InformationElement1
 {
     EFollowOnRequest followOnRequestPending{};
     ERegistrationType registrationType{};
 
     IE5gsRegistrationType() = default;
+    IE5gsRegistrationType(EFollowOnRequest followOnRequestPending, ERegistrationType registrationType);
 
-    IE5gsRegistrationType(EFollowOnRequest followOnRequestPending, ERegistrationType registrationType)
-        : followOnRequestPending(followOnRequestPending), registrationType(registrationType)
-    {
-    }
-
-    IE5gsRegistrationType decodeIE1(int val) override
-    {
-        IE5gsRegistrationType res;
-        bits::Bmp4Dec13(val, &res.followOnRequestPending, &res.registrationType);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc13(followOnRequestPending, registrationType);
-    }
+    static IE5gsRegistrationType Decode(int val);
+    static int Encode(const IE5gsRegistrationType &ie);
 };
 
-struct IEAccessType : InformationElement1<IEAccessType>
+struct IEAccessType : InformationElement1
 {
     EAccessType value{};
 
     IEAccessType() = default;
+    explicit IEAccessType(EAccessType value);
 
-    explicit IEAccessType(EAccessType value) : value(value)
-    {
-    }
-
-    IEAccessType decodeIE1(int val) override
-    {
-        IEAccessType res;
-        bits::Bmp4Dec22(val, nullptr, &res.value);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return (int)value;
-    }
+    static IEAccessType Decode(int val);
+    static int Encode(const IEAccessType &ie);
 };
 
-struct IEAllowedSscMode : InformationElement1<IEAllowedSscMode>
+struct IEAllowedSscMode : InformationElement1
 {
     ESsc1 ssc1{};
     ESsc2 ssc2{};
     ESsc3 ssc3{};
 
     IEAllowedSscMode() = default;
+    IEAllowedSscMode(ESsc1 ssc1, ESsc2 ssc2, ESsc3 ssc3);
 
-    IEAllowedSscMode(ESsc1 ssc1, ESsc2 ssc2, ESsc3 ssc3) : ssc1(ssc1), ssc2(ssc2), ssc3(ssc3)
-    {
-    }
-
-    IEAllowedSscMode decodeIE1(int val) override
-    {
-        IEAllowedSscMode res;
-        bits::Bmp4Dec1111(val, nullptr, &res.ssc3, &res.ssc2, &res.ssc1);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc1111(0, ssc3, ssc2, ssc1);
-    }
+    static IEAllowedSscMode Decode(int val);
+    static int Encode(const IEAllowedSscMode &ie);
 };
 
-struct IEAlwaysOnPduSessionIndication : InformationElement1<IEAlwaysOnPduSessionIndication>
+struct IEAlwaysOnPduSessionIndication : InformationElement1
 {
     EAlwaysOnPduSessionIndication value{};
 
     IEAlwaysOnPduSessionIndication() = default;
+    explicit IEAlwaysOnPduSessionIndication(EAlwaysOnPduSessionIndication value);
 
-    explicit IEAlwaysOnPduSessionIndication(EAlwaysOnPduSessionIndication value) : value(value)
-    {
-    }
-
-    IEAlwaysOnPduSessionIndication decodeIE1(int val) override
-    {
-        IEAlwaysOnPduSessionIndication res;
-        bits::Bmp4Dec31(val, nullptr, &res.value);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return (int)value;
-    }
+    static IEAlwaysOnPduSessionIndication Decode(int val);
+    static int Encode(const IEAlwaysOnPduSessionIndication &ie);
 };
 
-struct IEAlwaysOnPduSessionRequested : InformationElement1<IEAlwaysOnPduSessionRequested>
+struct IEAlwaysOnPduSessionRequested : InformationElement1
 {
     EAlwaysOnPduSessionRequested value{};
 
     IEAlwaysOnPduSessionRequested() = default;
+    explicit IEAlwaysOnPduSessionRequested(EAlwaysOnPduSessionRequested value);
 
-    explicit IEAlwaysOnPduSessionRequested(EAlwaysOnPduSessionRequested value) : value(value)
-    {
-    }
-
-    IEAlwaysOnPduSessionRequested decodeIE1(int val) override
-    {
-        IEAlwaysOnPduSessionRequested res;
-        bits::Bmp4Dec31(val, nullptr, &res.value);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return (int)value;
-    }
+    static IEAlwaysOnPduSessionRequested Decode(int val);
+    static int Encode(const IEAlwaysOnPduSessionRequested &ie);
 };
 
-struct IEConfigurationUpdateIndication : InformationElement1<IEConfigurationUpdateIndication>
+struct IEConfigurationUpdateIndication : InformationElement1
 {
     EAcknowledgement ack{};
     ERegistrationRequested red{};
 
     IEConfigurationUpdateIndication() = default;
+    IEConfigurationUpdateIndication(EAcknowledgement ack, ERegistrationRequested red);
 
-    IEConfigurationUpdateIndication(EAcknowledgement ack, ERegistrationRequested red) : ack(ack), red(red)
-    {
-    }
-
-    IEConfigurationUpdateIndication decodeIE1(int val) override
-    {
-        IEConfigurationUpdateIndication res;
-        bits::Bmp4Dec211(val, nullptr, &res.red, &res.ack);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc211(0, red, ack);
-    }
+    static IEConfigurationUpdateIndication Decode(int val);
+    static int Encode(const IEConfigurationUpdateIndication &ie);
 };
 
-struct IEDeRegistrationType : InformationElement1<IEDeRegistrationType>
+struct IEDeRegistrationType : InformationElement1
 {
     EDeRegistrationAccessType accessType{};
     EReRegistrationRequired reRegistrationRequired{};
     ESwitchOff switchOff{};
 
     IEDeRegistrationType() = default;
-
     IEDeRegistrationType(EDeRegistrationAccessType accessType, EReRegistrationRequired reRegistrationRequired,
-                         ESwitchOff switchOff)
-        : accessType(accessType), reRegistrationRequired(reRegistrationRequired), switchOff(switchOff)
-    {
-    }
+                         ESwitchOff switchOff);
 
-    IEDeRegistrationType decodeIE1(int val) override
-    {
-        IEDeRegistrationType res;
-        bits::Bmp4Dec112(val, &res.switchOff, &res.reRegistrationRequired, &res.accessType);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc112(switchOff, reRegistrationRequired, accessType);
-    }
+    static IEDeRegistrationType Decode(int val);
+    static int Encode(const IEDeRegistrationType &ie);
 };
 
-struct IEImeiSvRequest : InformationElement1<IEImeiSvRequest>
+struct IEImeiSvRequest : InformationElement1
 {
     EImeiSvRequest imeiSvRequest{};
 
     IEImeiSvRequest() = default;
+    explicit IEImeiSvRequest(EImeiSvRequest imeiSvRequest);
 
-    explicit IEImeiSvRequest(EImeiSvRequest imeiSvRequest) : imeiSvRequest(imeiSvRequest)
-    {
-    }
-
-    IEImeiSvRequest decodeIE1(int val) override
-    {
-        IEImeiSvRequest res;
-        bits::Bmp4Dec13(val, nullptr, &res.imeiSvRequest);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc13(0, imeiSvRequest);
-    }
+    static IEImeiSvRequest Decode(int val);
+    static int Encode(const IEImeiSvRequest &ie);
 };
 
-struct IEMicoIndication : InformationElement1<IEMicoIndication>
+struct IEMicoIndication : InformationElement1
 {
     ERegistrationAreaAllocationIndication raai{};
 
     IEMicoIndication() = default;
+    explicit IEMicoIndication(ERegistrationAreaAllocationIndication raai);
 
-    explicit IEMicoIndication(ERegistrationAreaAllocationIndication raai) : raai(raai)
-    {
-    }
-
-    IEMicoIndication decodeIE1(int val) override
-    {
-        IEMicoIndication res;
-        bits::Bmp4Dec31(val, nullptr, &res.raai);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc31(0, raai);
-    }
+    static IEMicoIndication Decode(int val);
+    static int Encode(const IEMicoIndication &ie);
 };
 
-struct IENasKeySetIdentifier : InformationElement1<IENasKeySetIdentifier>
+struct IENasKeySetIdentifier : InformationElement1
 {
     ETypeOfSecurityContext tsc{};
     int ksi{};
 
     IENasKeySetIdentifier() = default;
+    IENasKeySetIdentifier(ETypeOfSecurityContext tsc, int ksi);
 
-    IENasKeySetIdentifier(ETypeOfSecurityContext tsc, int ksi) : tsc(tsc), ksi(ksi)
-    {
-    }
-
-    IENasKeySetIdentifier decodeIE1(int val) override
-    {
-        IENasKeySetIdentifier res;
-        bits::Bmp4Dec13(val, &res.tsc, &res.ksi);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc13(tsc, ksi);
-    }
+    static IENasKeySetIdentifier Decode(int val);
+    static int Encode(const IENasKeySetIdentifier &ie);
 };
 
-struct IENetworkSlicingIndication : InformationElement1<IENetworkSlicingIndication>
+struct IENetworkSlicingIndication : InformationElement1
 {
     ENetworkSlicingSubscriptionChangeIndication nssci{};
     EDefaultConfiguredNssaiIndication dcni{};
 
     IENetworkSlicingIndication() = default;
-
     IENetworkSlicingIndication(ENetworkSlicingSubscriptionChangeIndication nssci,
-                               EDefaultConfiguredNssaiIndication dcni)
-        : nssci(nssci), dcni(dcni)
-    {
-    }
+                               EDefaultConfiguredNssaiIndication dcni);
 
-    IENetworkSlicingIndication decodeIE1(int val) override
-    {
-        IENetworkSlicingIndication res;
-        bits::Bmp4Dec211(val, nullptr, &res.dcni, &res.nssci);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc211(0, dcni, nssci);
-    }
+    static IENetworkSlicingIndication Decode(int val);
+    static int Encode(const IENetworkSlicingIndication &ie);
 };
 
-struct IENssaiInclusionMode : InformationElement1<IENssaiInclusionMode>
+struct IENssaiInclusionMode : InformationElement1
 {
     ENssaiInclusionMode nssaiInclusionMode{};
 
     IENssaiInclusionMode() = default;
+    explicit IENssaiInclusionMode(ENssaiInclusionMode nssaiInclusionMode);
 
-    explicit IENssaiInclusionMode(ENssaiInclusionMode nssaiInclusionMode) : nssaiInclusionMode(nssaiInclusionMode)
-    {
-    }
-
-    IENssaiInclusionMode decodeIE1(int val) override
-    {
-        IENssaiInclusionMode res;
-        bits::Bmp4Dec22(val, nullptr, &res.nssaiInclusionMode);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc22(0, nssaiInclusionMode);
-    }
+    static IENssaiInclusionMode Decode(int val);
+    static int Encode(const IENssaiInclusionMode &ie);
 };
 
-struct IEPayloadContainerType : InformationElement1<IEPayloadContainerType>
+struct IEPayloadContainerType : InformationElement1
 {
     EPayloadContainerType payloadContainerType{};
 
     IEPayloadContainerType() = default;
+    explicit IEPayloadContainerType(EPayloadContainerType payloadContainerType);
 
-    explicit IEPayloadContainerType(EPayloadContainerType payloadContainerType)
-        : payloadContainerType(payloadContainerType)
-    {
-    }
-
-    IEPayloadContainerType decodeIE1(int val) override
-    {
-        IEPayloadContainerType res;
-        bits::Bmp4Dec4(val, &res.payloadContainerType);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc4(payloadContainerType);
-    }
+    static IEPayloadContainerType Decode(int val);
+    static int Encode(const IEPayloadContainerType &ie);
 };
 
-struct IEPduSessionType : InformationElement1<IEPduSessionType>
+struct IEPduSessionType : InformationElement1
 {
     EPduSessionType pduSessionType{};
 
     IEPduSessionType() = default;
+    explicit IEPduSessionType(EPduSessionType pduSessionType);
 
-    explicit IEPduSessionType(EPduSessionType pduSessionType) : pduSessionType(pduSessionType)
-    {
-    }
-
-    IEPduSessionType decodeIE1(int val) override
-    {
-        IEPduSessionType res;
-        bits::Bmp4Dec13(val, nullptr, &res.pduSessionType);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc13(0, pduSessionType);
-    }
+    static IEPduSessionType Decode(int val);
+    static int Encode(const IEPduSessionType &ie);
 };
 
-struct IERequestType : InformationElement1<IERequestType>
+struct IERequestType : InformationElement1
 {
     ERequestType requestType{};
 
     IERequestType() = default;
+    explicit IERequestType(ERequestType requestType);
 
-    explicit IERequestType(ERequestType requestType) : requestType(requestType)
-    {
-    }
-
-    IERequestType decodeIE1(int val) override
-    {
-        IERequestType res;
-        bits::Bmp4Dec13(val, nullptr, &res.requestType);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc13(0, requestType);
-    }
+    static IERequestType Decode(int val);
+    static int Encode(const IERequestType &ie);
 };
 
-struct IEServiceType : InformationElement1<IEServiceType>
+struct IEServiceType : InformationElement1
 {
     EServiceType serviceType{};
 
     IEServiceType() = default;
+    explicit IEServiceType(EServiceType serviceType);
 
-    explicit IEServiceType(EServiceType serviceType) : serviceType(serviceType)
-    {
-    }
-
-    IEServiceType decodeIE1(int val) override
-    {
-        IEServiceType res;
-        bits::Bmp4Dec4(val, &res.serviceType);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc4(serviceType);
-    }
+    static IEServiceType Decode(int val);
+    static int Encode(const IEServiceType &ie);
 };
 
-struct IESmsIndication : InformationElement1<IESmsIndication>
+struct IESmsIndication : InformationElement1
 {
     ESmsAvailabilityIndication sai{};
 
     IESmsIndication() = default;
+    explicit IESmsIndication(ESmsAvailabilityIndication sai);
 
-    explicit IESmsIndication(ESmsAvailabilityIndication sai) : sai(sai)
-    {
-    }
-
-    IESmsIndication decodeIE1(int val) override
-    {
-        IESmsIndication res;
-        bits::Bmp4Dec31(val, nullptr, &res.sai);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc31(0, sai);
-    }
+    static IESmsIndication Decode(int val);
+    static int Encode(const IESmsIndication &ie);
 };
 
-struct IESscMode : InformationElement1<IESscMode>
+struct IESscMode : InformationElement1
 {
     ESscMode sscMode{};
 
     IESscMode() = default;
+    explicit IESscMode(ESscMode sscMode);
 
-    explicit IESscMode(ESscMode sscMode) : sscMode(sscMode)
-    {
-    }
-
-    IESscMode decodeIE1(int val) override
-    {
-        IESscMode res;
-        bits::Bmp4Dec13(val, nullptr, &res.sscMode);
-        return res;
-    }
-
-    int encodeIE1() override
-    {
-        return bits::Bmp4Enc13(0, sscMode);
-    }
+    static IESscMode Decode(int val);
+    static int Encode(const IESscMode &ie);
 };
 
 } // namespace nas

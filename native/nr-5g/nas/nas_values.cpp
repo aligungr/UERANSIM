@@ -148,4 +148,249 @@ VTime VTime::Decode(OctetBuffer &stream)
     return time;
 }
 
+void VRejectedSNssai::Encode(const VRejectedSNssai &value, OctetString &stream)
+{
+    int totalLength = 0;
+    if (value.sd.has_value() && !value.sst.has_value())
+    {
+        // error: "sst must not be null if sd is not null" (currently ignoring)
+    }
+    if (value.sst.has_value())
+        totalLength++;
+    if (value.sd.has_value())
+        totalLength += 3;
+
+    int octet = totalLength << 4 | static_cast<int>(value.cause);
+    stream.appendOctet(octet);
+
+    if (value.sst.has_value())
+        stream.appendOctet(value.sst.value());
+    if (value.sd.has_value())
+        stream.appendOctet3(value.sd.value());
+}
+
+VRejectedSNssai VRejectedSNssai::Decode(OctetBuffer &stream)
+{
+    VRejectedSNssai res;
+
+    int octet = stream.readI();
+    res.cause = static_cast<ERejectedSNssaiCause>(octet & 0xF);
+
+    int length = octet >> 4 & 0xF;
+    if (length >= 1)
+        res.sst = stream.read();
+    if (length >= 2)
+        res.sd = stream.read3();
+    return res;
+}
+
+void VPartialServiceAreaList::Encode(const VPartialServiceAreaList &value, OctetString &stream)
+{
+    switch (value.present)
+    {
+    case 0b00:
+        VPartialServiceAreaList00::Encode(value.list00.value(), stream);
+        break;
+    case 0b01:
+        VPartialServiceAreaList01::Encode(value.list01.value(), stream);
+        break;
+    case 0b10:
+        VPartialServiceAreaList10::Encode(value.list10.value(), stream);
+        break;
+    case 0b11:
+        VPartialServiceAreaList11::Encode(value.list11.value(), stream);
+        break;
+    default:
+        break;
+    }
+}
+
+VPartialServiceAreaList VPartialServiceAreaList::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.peek();
+
+    VPartialServiceAreaList res;
+    res.present = bits::BitRange8<5, 6>(octet);
+    switch (res.present)
+    {
+    case 0b00:
+        res.list00 = VPartialServiceAreaList00::Decode(stream);
+        break;
+    case 0b01:
+        res.list01 = VPartialServiceAreaList01::Decode(stream);
+        break;
+    case 0b10:
+        res.list10 = VPartialServiceAreaList10::Decode(stream);
+        break;
+    case 0b11:
+        res.list11 = VPartialServiceAreaList11::Decode(stream);
+        break;
+    default:
+        break;
+    }
+    return res;
+}
+
+void VPartialServiceAreaList00::Encode(const VPartialServiceAreaList00 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8(
+        {{1, static_cast<int>(value.allowedType)}, {2, 0b00}, {5, static_cast<int>(value.tacs.size()) - 1}}));
+
+    VPlmn::Encode(value.plmn, stream);
+    for (auto &tac : value.tacs)
+        stream.appendOctet3(tac);
+}
+
+VPartialServiceAreaList00 VPartialServiceAreaList00::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.read();
+    auto allowed = static_cast<EAllowedType>(octet.bit(7));
+    int count = bits::BitRange8<0, 4>(octet) + 1;
+
+    auto plmn = VPlmn::Decode(stream);
+    std::vector<octet3> tacs;
+    for (int i = 0; i < count; i++)
+        tacs.push_back(stream.read3());
+    return VPartialServiceAreaList00{allowed, plmn, std::move(tacs)};
+}
+
+void VPartialServiceAreaList01::Encode(const VPartialServiceAreaList01 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8({{1, static_cast<int>(value.allowedType)}, {2, 0b01}, {5, 0}}));
+    VPlmn::Encode(value.plmn, stream);
+    stream.appendOctet3(value.tac);
+}
+
+VPartialServiceAreaList01 VPartialServiceAreaList01::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.read();
+    auto allowed = static_cast<EAllowedType>(octet.bit(7));
+    return VPartialServiceAreaList01{allowed, VPlmn::Decode(stream), stream.read3()};
+}
+
+void VPartialServiceAreaList10::Encode(const VPartialServiceAreaList10 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8(
+        {{1, static_cast<int>(value.allowedType)}, {2, 0b10}, {5, static_cast<int>(value.tais.size()) - 1}}));
+    for (auto &tai : value.tais)
+        VTrackingAreaIdentity::Encode(tai, stream);
+}
+
+VPartialServiceAreaList10 VPartialServiceAreaList10::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.read();
+    auto allowed = static_cast<EAllowedType>(octet.bit(7));
+    int count = bits::BitRange8<0, 4>(octet) + 1;
+
+    std::vector<VTrackingAreaIdentity> list;
+    for (int i = 0; i < count; i++)
+        list.push_back(VTrackingAreaIdentity::Decode(stream));
+    return VPartialServiceAreaList10{allowed, std::move(list)};
+}
+
+void VPartialServiceAreaList11::Encode(const VPartialServiceAreaList11 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8({{1, static_cast<int>(value.allowedType)}, {2, 0b11}, {5, 0}}));
+    VPlmn::Encode(value.plmn, stream);
+}
+
+VPartialServiceAreaList11 VPartialServiceAreaList11::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.read();
+    auto allowed = static_cast<EAllowedType>(octet.bit(7));
+    return VPartialServiceAreaList11{allowed, VPlmn::Decode(stream)};
+}
+
+void VPartialTrackingAreaIdentityList00::Encode(const VPartialTrackingAreaIdentityList00 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8({{1, 0}, {2, 0b00}, {5, static_cast<int>(value.tacs.size()) - 1}}));
+    VPlmn::Encode(value.plmn, stream);
+    for (auto &x : value.tacs)
+        stream.appendOctet3(x);
+}
+
+VPartialTrackingAreaIdentityList00 VPartialTrackingAreaIdentityList00::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.read();
+    int count = bits::BitRange8<0, 4>(octet) + 1;
+
+    auto plmn = VPlmn::Decode(stream);
+    std::vector<octet3> tacs;
+    for (int i = 0; i < count; i++)
+        tacs.push_back(stream.read3());
+    return VPartialTrackingAreaIdentityList00{plmn, std::move(tacs)};
+}
+
+void VPartialTrackingAreaIdentityList01::Encode(const VPartialTrackingAreaIdentityList01 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8({{1, 0}, {2, 0b01}, {5, 0}}));
+    VPlmn::Encode(value.plmn, stream);
+    stream.appendOctet3(value.tac);
+}
+
+VPartialTrackingAreaIdentityList01 VPartialTrackingAreaIdentityList01::Decode(OctetBuffer &stream)
+{
+    stream.read();
+    return VPartialTrackingAreaIdentityList01{VPlmn::Decode(stream), stream.read3()};
+}
+
+void VPartialTrackingAreaIdentityList10::Encode(const VPartialTrackingAreaIdentityList10 &value, OctetString &stream)
+{
+    stream.appendOctet(bits::Ranged8({{1, 0}, {2, 0b10}, {5, static_cast<int>(value.tais.size()) - 1}}));
+    for (auto &x : value.tais)
+        VTrackingAreaIdentity::Encode(x, stream);
+}
+
+VPartialTrackingAreaIdentityList10 VPartialTrackingAreaIdentityList10::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.read();
+    int count = bits::BitRange8<0, 4>(octet) + 1;
+
+    std::vector<VTrackingAreaIdentity> tacs;
+    for (int i = 0; i < count; i++)
+        tacs.push_back(VTrackingAreaIdentity::Decode(stream));
+    return VPartialTrackingAreaIdentityList10{std::move(tacs)};
+}
+
+void VPartialTrackingAreaIdentityList::Encode(const VPartialTrackingAreaIdentityList &value, OctetString &stream)
+{
+    switch (value.present)
+    {
+    case 0b00:
+        VPartialTrackingAreaIdentityList00::Encode(value.list00.value(), stream);
+        break;
+    case 0b01:
+        VPartialTrackingAreaIdentityList01::Encode(value.list01.value(), stream);
+        break;
+    case 0b10:
+        VPartialTrackingAreaIdentityList10::Encode(value.list10.value(), stream);
+        break;
+    default:
+        break;
+    }
+}
+
+VPartialTrackingAreaIdentityList VPartialTrackingAreaIdentityList::Decode(OctetBuffer &stream)
+{
+    auto octet = stream.peek();
+
+    VPartialTrackingAreaIdentityList res;
+    res.present = bits::BitRange8<5, 6>(octet);
+    switch (res.present)
+    {
+    case 0b00:
+        res.list00 = VPartialTrackingAreaIdentityList00::Decode(stream);
+        break;
+    case 0b01:
+        res.list01 = VPartialTrackingAreaIdentityList01::Decode(stream);
+        break;
+    case 0b10:
+        res.list10 = VPartialTrackingAreaIdentityList10::Decode(stream);
+        break;
+    default:
+        break;
+    }
+    return res;
+}
+
 } // namespace nas

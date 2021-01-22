@@ -1,0 +1,248 @@
+//
+// This file is a part of UERANSIM open source project.
+// Copyright (c) 2021 ALİ GÜNGÖR, Havelsan.
+//
+// The software and all associated files are licensed under GPL-3.0
+// and subject to the terms and conditions defined in LICENSE file.
+//
+
+#pragma once
+
+#include "nas_ie3.hpp"
+
+namespace nas
+{
+
+IE5gMmCause::IE5gMmCause(EMmCause value) : value(value)
+{
+}
+
+IE5gMmCause IE5gMmCause::Decode(OctetBuffer &stream)
+{
+    IE5gMmCause r;
+    r.value = static_cast<EMmCause>(stream.readI());
+    return r;
+}
+
+void IE5gMmCause::EncodeIE3(const IE5gMmCause &ie, OctetString &stream)
+{
+    stream.appendOctet(static_cast<int>(ie.value));
+}
+
+IE5gsTrackingAreaIdentity::IE5gsTrackingAreaIdentity(int mcc, int mnc, bool isLongMnc, const octet3 &trackingAreaCode)
+    : mcc(mcc), mnc(mnc), isLongMnc(isLongMnc), trackingAreaCode(trackingAreaCode)
+{
+}
+
+IE5gsTrackingAreaIdentity IE5gsTrackingAreaIdentity::Decode(OctetBuffer &stream)
+{
+    auto plmn = VPlmn::Decode(stream);
+
+    IE5gsTrackingAreaIdentity r;
+    r.mcc = plmn.mcc;
+    r.mnc = plmn.mnc;
+    r.isLongMnc = plmn.isLongMnc;
+    r.trackingAreaCode = stream.read3();
+    return r;
+}
+
+void IE5gsTrackingAreaIdentity::EncodeIE3(const IE5gsTrackingAreaIdentity &ie, OctetString &stream)
+{
+    VPlmn plmn{ie.mcc, ie.mnc, ie.isLongMnc};
+    VPlmn::Encode(plmn, stream);
+    stream.appendOctet3(ie.trackingAreaCode);
+}
+
+IEAuthenticationParameterRand::IEAuthenticationParameterRand(OctetString &&value) : value(std::move(value))
+{
+}
+
+IEAuthenticationParameterRand IEAuthenticationParameterRand::Decode(OctetBuffer &stream)
+{
+    return IEAuthenticationParameterRand{stream.readOctetString(16)};
+}
+
+void IEAuthenticationParameterRand::EncodeIE3(const IEAuthenticationParameterRand &ie, OctetString &stream)
+{
+    stream.append(ie.value);
+}
+
+IEEpsNasSecurityAlgorithms::IEEpsNasSecurityAlgorithms(EEpsTypeOfIntegrityProtectionAlgorithm integrity,
+                                                       EEpsTypeOfCipheringAlgorithm ciphering)
+    : integrity(integrity), ciphering(ciphering)
+{
+}
+
+IEEpsNasSecurityAlgorithms IEEpsNasSecurityAlgorithms::Decode(OctetBuffer &stream)
+{
+    IEEpsNasSecurityAlgorithms r;
+    r.integrity = static_cast<EEpsTypeOfIntegrityProtectionAlgorithm>(stream.peekI() & 0b111);
+    r.ciphering = static_cast<EEpsTypeOfCipheringAlgorithm>((stream.readI() >> 4) & 0b111);
+    return r;
+}
+
+void IEEpsNasSecurityAlgorithms::EncodeIE3(const IEEpsNasSecurityAlgorithms &ie, OctetString &stream)
+{
+    stream.appendOctet(static_cast<int>(ie.ciphering), static_cast<int>(ie.integrity));
+}
+
+IEGprsTimer::IEGprsTimer(int timerValue, EGprsTimerValueUnit timerValueUnit)
+    : timerValue(timerValue), timerValueUnit(timerValueUnit)
+{
+}
+
+IEGprsTimer IEGprsTimer::Decode(OctetBuffer &stream)
+{
+    int octet = stream.readI();
+    IEGprsTimer r;
+    r.timerValue = bits::BitRange8<0, 4>(octet);
+    r.timerValueUnit = static_cast<EGprsTimerValueUnit>(bits::BitAt<5>(octet));
+    return r;
+}
+
+void IEGprsTimer::EncodeIE3(const IEGprsTimer &ie, OctetString &stream)
+{
+    uint8_t octet = 0;
+    bits::SetBitRange8<0, 4>(octet, ie.timerValue);
+    bits::SetBitAt<5>(octet, static_cast<int>(ie.timerValueUnit));
+    stream.appendOctet(octet);
+}
+
+IEGprsTimer::IEGprsTimer() : timerValue(0), timerValueUnit()
+{
+}
+
+IEIntegrityProtectionMaximumDataRate::IEIntegrityProtectionMaximumDataRate(
+    EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink maxRateUplink,
+    EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink maxRateDownlink)
+    : maxRateUplink(maxRateUplink), maxRateDownlink(maxRateDownlink)
+{
+}
+
+IEIntegrityProtectionMaximumDataRate IEIntegrityProtectionMaximumDataRate::Decode(OctetBuffer &stream)
+{
+    IEIntegrityProtectionMaximumDataRate r;
+    r.maxRateUplink = static_cast<EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink>(stream.readI());
+    r.maxRateDownlink = static_cast<EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink>(stream.readI());
+    return r;
+}
+
+void IEIntegrityProtectionMaximumDataRate::EncodeIE3(const IEIntegrityProtectionMaximumDataRate &ie,
+                                                     OctetString &stream)
+{
+    stream.appendOctet(static_cast<int>(ie.maxRateUplink));
+    stream.appendOctet(static_cast<int>(ie.maxRateDownlink));
+}
+
+IEMaximumNumberOfSupportedPacketFilters::IEMaximumNumberOfSupportedPacketFilters() : value(0)
+{
+}
+
+IEMaximumNumberOfSupportedPacketFilters::IEMaximumNumberOfSupportedPacketFilters(int value) : value(value)
+{
+}
+
+IEMaximumNumberOfSupportedPacketFilters IEMaximumNumberOfSupportedPacketFilters::Decode(OctetBuffer &stream)
+{
+    int v = stream.read2I();
+    v >>= 5;
+
+    IEMaximumNumberOfSupportedPacketFilters r;
+    r.value = v;
+    return r;
+}
+
+void IEMaximumNumberOfSupportedPacketFilters::EncodeIE3(const IEMaximumNumberOfSupportedPacketFilters &ie,
+                                                        OctetString &stream)
+{
+    stream.appendOctet((ie.value >> 3) & 0xFF);
+    stream.appendOctet((ie.value & 0b111) << 5);
+}
+
+IEN1ModeToS1ModeNasTransparentContainer::IEN1ModeToS1ModeNasTransparentContainer(uint8_t value) : sequenceNumber(value)
+{
+}
+
+IEN1ModeToS1ModeNasTransparentContainer IEN1ModeToS1ModeNasTransparentContainer::Decode(OctetBuffer &stream)
+{
+    IEN1ModeToS1ModeNasTransparentContainer r;
+    r.sequenceNumber = stream.read();
+    return r;
+}
+
+void IEN1ModeToS1ModeNasTransparentContainer::EncodeIE3(const IEN1ModeToS1ModeNasTransparentContainer &ie,
+                                                        OctetString &stream)
+{
+    stream.appendOctet(ie.sequenceNumber);
+}
+
+IENasSecurityAlgorithms::IENasSecurityAlgorithms(ETypeOfIntegrityProtectionAlgorithm integrity,
+                                                 ETypeOfCipheringAlgorithm ciphering)
+    : integrity(integrity), ciphering(ciphering)
+{
+}
+
+IENasSecurityAlgorithms IENasSecurityAlgorithms::Decode(OctetBuffer &stream)
+{
+    IENasSecurityAlgorithms r;
+    r.integrity = static_cast<ETypeOfIntegrityProtectionAlgorithm>(stream.peekI() & 0xF);
+    r.ciphering = static_cast<ETypeOfCipheringAlgorithm>((stream.readI() >> 4) & 0xF);
+    return r;
+}
+
+void IENasSecurityAlgorithms::EncodeIE3(const IENasSecurityAlgorithms &ie, OctetString &stream)
+{
+    stream.appendOctet(static_cast<int>(ie.ciphering), static_cast<int>(ie.integrity));
+}
+
+IEPduSessionIdentity2::IEPduSessionIdentity2(uint8_t value) : value(value)
+{
+}
+
+IEPduSessionIdentity2 IEPduSessionIdentity2::Decode(OctetBuffer &stream)
+{
+    IEPduSessionIdentity2 r;
+    r.value = stream.read();
+    return r;
+}
+
+void IEPduSessionIdentity2::EncodeIE3(const IEPduSessionIdentity2 &ie, OctetString &stream)
+{
+    stream.appendOctet(ie.value);
+}
+
+IETimeZone::IETimeZone(uint8_t value) : value(value)
+{
+}
+
+IETimeZone IETimeZone::Decode(OctetBuffer &stream)
+{
+    IETimeZone r;
+    r.value = stream.read();
+    return r;
+}
+
+void IETimeZone::EncodeIE3(const IETimeZone &ie, OctetString &stream)
+{
+    stream.appendOctet(ie.value);
+}
+
+IETimeZoneAndTime::IETimeZoneAndTime(VTime time, octet timezone) : time(time), timezone(timezone)
+{
+}
+
+IETimeZoneAndTime IETimeZoneAndTime::Decode(OctetBuffer &stream)
+{
+    IETimeZoneAndTime r;
+    r.time = VTime::Decode(stream);
+    r.timezone = stream.read();
+    return r;
+}
+
+void IETimeZoneAndTime::EncodeIE3(const IETimeZoneAndTime &ie, OctetString &stream)
+{
+    VTime::Encode(ie.time, stream);
+    stream.appendOctet(ie.timezone);
+}
+
+}; // namespace nas
