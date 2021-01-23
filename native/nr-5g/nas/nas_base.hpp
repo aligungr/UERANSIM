@@ -48,7 +48,7 @@ static inline T DecodeIe1(OctetBuffer &stream)
     static_assert(std::is_base_of<InformationElement1, T>::value);
 
     int octet = stream.readI();
-    int iei = octet >> 4 & 0xF;
+    // int iei = octet >> 4 & 0xF;
     int value = octet & 0xF;
     return T::Decode(value);
 }
@@ -59,7 +59,7 @@ static inline void EncodeIe1(const T &big, const U &little, OctetString &stream)
     static_assert(std::is_base_of<InformationElement1, T>::value);
 
     int bigHalf = T::Encode(big) & 0xF;
-    int littleHalf = U::Decode(little) & 0xF;
+    int littleHalf = U::Encode(little) & 0xF;
     stream.appendOctet(bigHalf, littleHalf);
 }
 
@@ -68,7 +68,7 @@ static inline void EncodeIe1(int big, const T &little, OctetString &stream)
 {
     static_assert(std::is_base_of<InformationElement1, T>::value);
 
-    int littleHalf = T::Decode(little) & 0xF;
+    int littleHalf = T::Encode(little) & 0xF;
     stream.appendOctet(big, littleHalf);
 }
 
