@@ -69,8 +69,8 @@ class OctetString
 
   public:
     std::string toHexString();
-    OctetString subCopy(int index);
-    OctetString subCopy(int index, int length);
+    OctetString subCopy(int index) const;
+    OctetString subCopy(int index, int length) const;
 
   public:
     inline OctetString &operator=(OctetString &&other) noexcept

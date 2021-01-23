@@ -120,12 +120,12 @@ std::string OctetString::toHexString()
     return utils::VectorToHexString(m_data);
 }
 
-OctetString OctetString::subCopy(int index)
+OctetString OctetString::subCopy(int index) const
 {
     return subCopy(index, length() - index);
 }
 
-OctetString OctetString::subCopy(int index, int length)
+OctetString OctetString::subCopy(int index, int length) const
 {
     return OctetString{std::vector<uint8_t>{m_data.data() + index, m_data.data() + index + length}};
 }
