@@ -211,11 +211,10 @@ template <typename T>
 static inline bool DecodeListIe(OctetBuffer &stream, int length, std::vector<T> &output)
 {
     size_t readLen = 0;
-    std::vector<T> res{};
     while (readLen < static_cast<size_t>(length))
     {
         size_t streamIndex = stream.currentIndex();
-        res.push_back(DecodeIe2346<T>(stream));
+        output.push_back(DecodeIe2346<T>(stream));
         readLen += stream.currentIndex() - streamIndex;
     }
     if (readLen > static_cast<size_t>(length))
@@ -227,11 +226,10 @@ template <typename T>
 static inline bool DecodeListVal(OctetBuffer &stream, int length, std::vector<T> &output)
 {
     size_t readLen = 0;
-    std::vector<T> res{};
     while (readLen < static_cast<size_t>(length))
     {
         size_t streamIndex = stream.currentIndex();
-        res.push_back(T::Decode(stream));
+        output.push_back(T::Decode(stream));
         readLen += stream.currentIndex() - streamIndex;
     }
     if (readLen > static_cast<size_t>(length))

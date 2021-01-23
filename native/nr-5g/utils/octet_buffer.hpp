@@ -25,7 +25,6 @@ class OctetBuffer
 
   public:
     OctetBuffer(uint8_t *data, size_t size);
-    explicit OctetBuffer(uint8_t *data);
     explicit OctetBuffer(OctetString &data);
 
     inline octet peek()
@@ -165,5 +164,6 @@ class OctetBuffer
     }
 
     OctetString readOctetString(int length);
+    OctetString readOctetString();
     std::string readUtf8String(int length);
 };

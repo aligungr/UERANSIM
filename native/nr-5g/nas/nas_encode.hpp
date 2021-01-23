@@ -8,7 +8,12 @@
 
 #pragma once
 
+#include "nas_msg.hpp"
+
 namespace nas
 {
 
-}
+void EncodeNasMessage(NasMessage &msg, OctetString &stream);
+std::unique_ptr<NasMessage> DecodeNasMessage(OctetBuffer &stream);
+
+} // namespace nas

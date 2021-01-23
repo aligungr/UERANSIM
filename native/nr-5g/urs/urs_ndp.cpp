@@ -86,7 +86,7 @@ void urs::NdpEntity::handleMessage(const InetAddress &address, uint8_t *data, si
 void urs::NdpEntity::sendDiscoveryRequest(const InetAddress &address, uint8_t type, const std::string &name)
 {
     uint8_t buffer[Ndp::PACKET_MAX] = {0};
-    OctetBuffer buf{buffer};
+    OctetBuffer buf{buffer, Ndp::PACKET_MAX};
 
     for (uint8_t i : Ndp::MAGIC_NUMBER)
         buf.write(i);
@@ -104,7 +104,7 @@ void urs::NdpEntity::sendDiscoveryRequest(const InetAddress &address, uint8_t ty
 void urs::NdpEntity::onNodeMatches(const InetAddress &address)
 {
     uint8_t buffer[Ndp::PACKET_MAX] = {0};
-    OctetBuffer buf{buffer};
+    OctetBuffer buf{buffer, Ndp::PACKET_MAX};
 
     for (uint8_t i : Ndp::MAGIC_NUMBER)
         buf.write(i);
@@ -132,7 +132,7 @@ void urs::NdpEntity::onBroadcastVersionMismatch(const InetAddress &address)
 void urs::NdpEntity::sendErrorIndication(const InetAddress &address, uint8_t errorType, const std::string &message)
 {
     uint8_t buffer[Ndp::PACKET_MAX] = {0};
-    OctetBuffer buf{buffer};
+    OctetBuffer buf{buffer, Ndp::PACKET_MAX};
 
     for (uint8_t i : Ndp::MAGIC_NUMBER)
         buf.write(i);

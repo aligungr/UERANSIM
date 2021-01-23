@@ -16,11 +16,12 @@ OctetString OctetBuffer::readOctetString(int length)
     return OctetString(std::move(v));
 }
 
-OctetBuffer::OctetBuffer(OctetString &data) : data(data.data()), index(0), size(data.length())
+OctetString OctetBuffer::readOctetString()
 {
+    return readOctetString(static_cast<int>(size - index));
 }
 
-OctetBuffer::OctetBuffer(uint8_t *data) : data(data), index(0), size(~0)
+OctetBuffer::OctetBuffer(OctetString &data) : data(data.data()), index(0), size(data.length())
 {
 }
 

@@ -19,81 +19,70 @@ namespace nas
 
 struct NasMessageBuilder
 {
+    std::vector<std::function<void(OctetString &)>> mandatoryEncoders{};
+    std::vector<std::function<void(OctetString &)>> optionalEncoders{};
+
     std::vector<std::function<void(OctetBuffer &)>> mandatoryDecoders{};
     std::unordered_map<int, std::function<void(OctetBuffer &)>> optionalDecoders{};
-
-    std::vector<std::function<void(OctetString &)>> mandatoryEncoders{};
-    std::unordered_map<int, std::function<void(OctetString &)>> optionalEncoders{};
 
     template <typename T>
     inline void mandatoryIE(T *ptr)
     {
-        mandatoryDecoders.push_back([ptr](OctetBuffer &stream) { *ptr = DecodeIe2346<T>(stream); });
         mandatoryEncoders.push_back([ptr](OctetString &stream) { Encode2346(*ptr, stream); });
+        mandatoryDecoders.push_back([ptr](OctetBuffer &stream) { *ptr = DecodeIe2346<T>(stream); });
     }
 
     template <typename T>
     inline void mandatoryIE1(T *ptr)
     {
-        mandatoryDecoders.push_back([ptr](OctetBuffer &stream) { *ptr = DecodeIe1<T>(stream); });
         mandatoryEncoders.push_back([ptr](OctetString &stream) { EncodeIe1(0, *ptr, stream); });
+        mandatoryDecoders.push_back([ptr](OctetBuffer &stream) { *ptr = DecodeIe1<T>(stream); });
     }
 
     template <typename T, typename U>
     inline void mandatoryIE1(T *ptr1, U *ptr2)
     {
+        mandatoryEncoders.push_back([ptr1, ptr2](OctetString &stream) { EncodeIe1(*ptr1, *ptr2, stream); });
         mandatoryDecoders.push_back([ptr1, ptr2](OctetBuffer &stream) {
             int octet = stream.readI();
             *ptr1 = T::Decode((octet >> 4) & 0xF);
             *ptr2 = U::Decode(octet & 0xF);
         });
-        mandatoryEncoders.push_back([ptr1, ptr2](OctetString &stream) { EncodeIe1(*ptr1, *ptr2, stream); });
     }
 
     template <typename T>
     inline void optionalIE(int iei, std::optional<T> *ptr)
     {
-        optionalDecoders[iei] = [ptr](OctetBuffer &stream) { *ptr = DecodeIe2346<T>(stream); };
-        optionalEncoders[iei] = [ptr, iei](OctetString &stream) {
+        optionalEncoders.push_back([ptr, iei](OctetString &stream) {
             if (ptr->has_value())
             {
                 stream.appendOctet(iei);
                 Encode2346(ptr->value(), stream);
             }
+        });
+        optionalDecoders[iei] = [ptr](OctetBuffer &stream) {
+            stream.readI();
+            *ptr = DecodeIe2346<T>(stream);
         };
     }
 
     template <typename T>
     inline void optionalIE1(int iei, std::optional<T> *ptr)
     {
-        optionalDecoders[iei] = [ptr](OctetBuffer &stream) { *ptr = DecodeIe1<T>(stream); };
-        optionalEncoders[iei] = [ptr, iei](OctetString &stream) {
+        optionalEncoders.push_back([ptr, iei](OctetString &stream) {
             if (ptr->has_value())
                 EncodeIe1(iei, ptr->value(), stream);
-        };
+        });
+        optionalDecoders[iei] = [ptr](OctetBuffer &stream) { *ptr = DecodeIe1<T>(stream); };
     }
 };
 
 struct NasMessage
 {
     EExtendedProtocolDiscriminator epd{};
-};
 
-struct MmMessage : NasMessage
-{
-    ESecurityHeaderType sht{};
-};
-
-struct PlainMmMessage : MmMessage
-{
-    EMessageType messageType{};
-};
-
-struct SecuredMmMessage : MmMessage
-{
-    octet4 messageAuthenticationCode{};
-    octet sequenceNumber{};
-    OctetString plainNasMessage{};
+  protected:
+    NasMessage() = default;
 };
 
 struct SmMessage : NasMessage
@@ -101,6 +90,32 @@ struct SmMessage : NasMessage
     EPduSessionIdentity pduSessionId{};
     uint8_t pti{};
     EMessageType messageType{};
+
+  protected:
+    SmMessage() = default;
+};
+
+struct MmMessage : NasMessage
+{
+    ESecurityHeaderType sht{};
+
+  protected:
+    MmMessage() = default;
+};
+
+struct PlainMmMessage : MmMessage
+{
+    EMessageType messageType{};
+
+  protected:
+    PlainMmMessage() = default;
+};
+
+struct SecuredMmMessage : MmMessage
+{
+    octet4 messageAuthenticationCode{};
+    octet sequenceNumber{};
+    OctetString plainNasMessage{};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

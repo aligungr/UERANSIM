@@ -6,11 +6,8 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "nas_ie1.hpp"
-#include "nas_ie2.hpp"
-#include "nas_ie3.hpp"
-#include "nas_ie4.hpp"
-#include "nas_ie6.hpp"
+#include "nas_encode.hpp"
+#include "nas_msg.hpp"
 
 namespace nas
 {
