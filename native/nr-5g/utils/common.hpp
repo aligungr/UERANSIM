@@ -19,6 +19,7 @@ namespace utils
 {
 
 std::vector<uint8_t> HexStringToVector(const std::string &hex);
+std::string VectorToHexString(const std::vector<uint8_t> &hex);
 int GetIpVersion(const std::string &address);
 OctetString IpToOctetString(const std::string &address);
 int64_t CurrentTimeMillis();

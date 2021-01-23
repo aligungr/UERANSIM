@@ -239,4 +239,9 @@ static inline bool DecodeListVal(OctetBuffer &stream, int length, std::vector<T>
     return true;
 }
 
+void EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
+                     int skippedHalfOctet);
+
+std::string DecodeBcdString(OctetBuffer &stream, int length, bool skipFirst);
+
 } // namespace nas

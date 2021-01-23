@@ -696,13 +696,13 @@ enum class ESorDataType
     ACKNOWLEDGEMENT = 0b1,
 };
 
-enum class EListIndication
+enum class ESorListIndication
 {
     NOT_PROVIDED = 0b0,
     PROVIDED = 0b1,
 };
 
-enum class EListType
+enum class ESorListType
 {
     SECURED_PACKET = 0b0,
     PLMN_ID_AND_ACCESS_TECH = 0b1,

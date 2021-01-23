@@ -27,3 +27,10 @@ OctetBuffer::OctetBuffer(uint8_t *data) : data(data), index(0), size(~0)
 OctetBuffer::OctetBuffer(uint8_t *data, size_t size) : data(data), index(0), size(size)
 {
 }
+
+std::string OctetBuffer::readUtf8String(int length)
+{
+    auto res = std::string(data + index, data + index + length);
+    index += length;
+    return res;
+}

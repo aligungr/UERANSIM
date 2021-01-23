@@ -6,9 +6,4 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#pragma once
-
-namespace nas
-{
-
-}
+#include "nas.hpp"

@@ -7,6 +7,7 @@
 //
 
 #include "octet_string.hpp"
+#include "common.hpp"
 
 void OctetString::append(const OctetString &v)
 {
@@ -107,4 +108,167 @@ void OctetString::appendPadding(int length)
 {
     for (int i = 0; i < length; i++)
         appendOctet(0);
+}
+
+OctetString OctetString::FromHex(const std::string &hex)
+{
+    return OctetString{utils::HexStringToVector(hex)};
+}
+
+std::string OctetString::toHexString()
+{
+    return utils::VectorToHexString(m_data);
+}
+
+OctetString OctetString::subCopy(int index)
+{
+    return subCopy(index, length() - index);
+}
+
+OctetString OctetString::subCopy(int index, int length)
+{
+    return OctetString{std::vector<uint8_t>{m_data.data() + index, m_data.data() + index + length}};
+}
+
+octet OctetString::get(int index) const
+{
+    return m_data[index];
+}
+
+octet2 OctetString::get2(int index) const
+{
+    return octet2{get(index), get(index + 1)};
+}
+
+octet3 OctetString::get3(int index) const
+{
+    return octet3{get(index), get(index + 1), get(index + 2)};
+}
+
+octet4 OctetString::get4(int index) const
+{
+    return octet4{get(index), get(index + 1), get(index + 2), get(index + 3)};
+}
+
+octet8 OctetString::get8(int index) const
+{
+    return octet8{get(index),     get(index + 1), get(index + 2), get(index + 3),
+                  get(index + 4), get(index + 5), get(index + 6), get(index + 7)};
+}
+
+int OctetString::getI(int index) const
+{
+    return get(index);
+}
+
+int OctetString::get2I(int index) const
+{
+    return static_cast<int>(get2(index));
+}
+
+int OctetString::get3I(int index) const
+{
+    return static_cast<int>(get3(index));
+}
+
+int OctetString::get4I(int index) const
+{
+    return static_cast<int>(get4(index));
+}
+
+uint32_t OctetString::get4UI(int index) const
+{
+    return static_cast<uint32_t>(get4(index));
+}
+
+long OctetString::get8L(int index) const
+{
+    return static_cast<long>(get8(index));
+}
+
+uint64_t OctetString::get8UL(int index) const
+{
+    return static_cast<uint64_t>(get8(index));
+}
+
+OctetString OctetString::Concat(const OctetString &a, const OctetString &b)
+{
+    std::vector<uint8_t> v1 = a.m_data;
+    std::vector<uint8_t> v2 = b.m_data;
+    std::vector<uint8_t> v3;
+
+    v3.reserve(v1.size() + v2.size());
+    v3.insert(v3.end(), v1.begin(), v1.end());
+    v3.insert(v3.end(), v2.begin(), v2.end());
+
+    return OctetString{std::move(v3)};
+}
+
+OctetString OctetString::FromOctet(uint8_t value)
+{
+    std::vector<uint8_t> v(1);
+    v[0] = value;
+    return OctetString{std::move(v)};
+}
+
+OctetString OctetString::FromOctet(int value)
+{
+    return FromOctet(static_cast<uint8_t>(value & 0xFF));
+}
+
+OctetString OctetString::FromOctet2(octet2 value)
+{
+    std::vector<uint8_t> v(2);
+    v[0] = value[0];
+    v[1] = value[1];
+    return OctetString{std::move(v)};
+}
+
+OctetString OctetString::FromOctet2(int value)
+{
+    return FromOctet2(octet2{value});
+}
+
+OctetString OctetString::FromOctet4(octet4 value)
+{
+    std::vector<uint8_t> v(4);
+    v[0] = value[0];
+    v[1] = value[1];
+    v[2] = value[2];
+    v[3] = value[3];
+    return OctetString{std::move(v)};
+}
+
+OctetString OctetString::FromOctet4(int value)
+{
+    return FromOctet4(octet4{value});
+}
+
+OctetString OctetString::FromOctet4(uint32_t value)
+{
+    return FromOctet4(octet4{value});
+}
+
+OctetString OctetString::FromOctet8(octet8 value)
+{
+    std::vector<uint8_t> v(8);
+    v[0] = value[0];
+    v[1] = value[1];
+    v[2] = value[2];
+    v[3] = value[3];
+    v[4] = value[4];
+    v[5] = value[5];
+    v[6] = value[6];
+    v[7] = value[7];
+    return OctetString{std::move(v)};
+}
+
+OctetString OctetString::FromOctet8(long value)
+{
+    return FromOctet8(octet8{value});
+}
+
+OctetString OctetString::FromOctet8(uint64_t value)
+{
+    return FromOctet8(octet8{value});
 }

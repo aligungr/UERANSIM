@@ -184,3 +184,21 @@ OctetString utils::IpToOctetString(const std::string &address)
     else
         return {};
 }
+
+std::string utils::VectorToHexString(const std::vector<uint8_t> &hex)
+{
+    std::string str(hex.size() * 2, '0');
+    for (size_t i = 0; i < hex.size(); i++)
+    {
+        uint8_t octet = hex[i];
+        int big = (octet >> 4) & 0xF;
+        int little = octet & 0xF;
+
+        char bigChar = static_cast<char>(big < 10 ? '0' + big : 'A' + (big - 10));
+        char littleChar = static_cast<char>(little < 10 ? '0' + little : 'A' + (little - 10));
+
+        str[i * 2] = bigChar;
+        str[i * 2 + 1] = littleChar;
+    }
+    return str;
+}

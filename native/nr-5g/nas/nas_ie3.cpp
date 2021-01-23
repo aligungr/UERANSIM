@@ -6,8 +6,6 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#pragma once
-
 #include "nas_ie3.hpp"
 
 namespace nas
@@ -245,4 +243,4 @@ void IETimeZoneAndTime::EncodeIE3(const IETimeZoneAndTime &ie, OctetString &stre
     stream.appendOctet(ie.timezone);
 }
 
-}; // namespace nas
+} // namespace nas

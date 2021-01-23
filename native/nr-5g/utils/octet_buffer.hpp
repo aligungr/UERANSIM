@@ -33,9 +33,19 @@ class OctetBuffer
         return data[index];
     }
 
+    inline octet peek(int offset)
+    {
+        return data[index + offset];
+    }
+
     inline int peekI()
     {
         return (int)peek();
+    }
+
+    inline int peekI(int offset)
+    {
+        return (int)peek(offset);
     }
 
     inline octet read()
@@ -155,4 +165,5 @@ class OctetBuffer
     }
 
     OctetString readOctetString(int length);
+    std::string readUtf8String(int length);
 };
