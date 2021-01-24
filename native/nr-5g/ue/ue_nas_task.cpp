@@ -97,22 +97,72 @@ void NasTask::onLoop()
 
 void NasTask::receiveEapSuccessMessage(const eap::Eap &eap)
 {
+    // do nothing
 }
 
 void NasTask::receiveEapFailureMessage(const eap::Eap &eap)
 {
+    logger->err("EAP failure received. Deleting non-current NAS security context");
+    nonCurrentNsCtx = {};
 }
 
 void NasTask::receiveEapResponseMessage(const eap::Eap &eap)
 {
+    if (eap.eapType == eap::EEapType::EAP_AKA_PRIME)
+    {
+        // TODO
+    }
+    else
+    {
+        logger->err("Unhandled EAP Response message type");
+    }
 }
 
-void NasTask::receiveAuthenticationResult(const nas::AuthenticationResult &message)
+void NasTask::receiveAuthenticationResponse(const nas::AuthenticationResponse &msg)
 {
+    if (msg.eapMessage.has_value())
+    {
+        if (msg.eapMessage->eap->code == eap::ECode::RESPONSE)
+            receiveEapResponseMessage(*msg.eapMessage->eap);
+        else
+            logger->warn("Network sent EAP with an inconvenient type in Authentication Response, ignoring EAP IE.");
+    }
 }
 
-void NasTask::receiveAuthenticationReject(const nas::AuthenticationReject &message)
+void NasTask::receiveAuthenticationResult(const nas::AuthenticationResult &msg)
 {
+    if (msg.abba.has_value())
+        nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
+
+    if (msg.eapMessage.eap->code == eap::ECode::SUCCESS)
+        receiveEapSuccessMessage(*msg.eapMessage.eap);
+    else if (msg.eapMessage.eap->code == eap::ECode::FAILURE)
+        receiveEapFailureMessage(*msg.eapMessage.eap);
+    else
+        logger->warn("Network sent EAP with an inconvenient type in Authentication Result, ignoring EAP IE.");
+}
+
+void NasTask::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
+{
+    logger->err("Authentication Reject received.");
+
+    if (msg.eapMessage.has_value())
+    {
+        if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
+        {
+            mmCtx.storedGuti = {};
+            mmCtx.taiList = {};
+            mmCtx.lastVisitedRegisteredTai = {};
+            currentNsCtx = {};
+            nonCurrentNsCtx = {};
+
+            receiveEapFailureMessage(*msg.eapMessage->eap);
+        }
+        else
+        {
+            logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");
+        }
+    }
 }
 
 } // namespace nr::ue

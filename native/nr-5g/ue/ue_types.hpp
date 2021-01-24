@@ -34,11 +34,18 @@ struct SupportedAlgs
     bool nea3 = true;
 };
 
+enum class OpType
+{
+    OP,
+    OPC
+};
+
 struct UeConfig
 {
     bool emulationMode;
     OctetString key;
-    OctetString op;
+    OctetString opC;
+    OpType opType;
     OctetString amf;
     std::string imei;
     std::optional<Supi> supi;
@@ -168,6 +175,8 @@ struct MmContext
 
     long lastPlmnSearchTrigger{};
 
+    OctetString sqn{};
+
     MmContext()
         : rmState(ERmState::RM_DEREGISTERED), cmState(ECmState::CM_IDLE), mmState(EMmState::MM_NULL),
           mmSubState(EMmSubState::MM_NULL_NA)
@@ -224,8 +233,6 @@ struct NasCount
 
 struct UeKeys
 {
-    OctetString sqn{};
-
     OctetString abba{};
 
     OctetString rand{};
@@ -241,7 +248,6 @@ struct UeKeys
     [[nodiscard]] UeKeys deepCopy() const
     {
         UeKeys keys;
-        keys.sqn = rand.subCopy(0);
         keys.rand = rand.subCopy(0);
         keys.res = res.subCopy(0);
         keys.resStar = resStar.subCopy(0);
@@ -306,6 +312,14 @@ struct NasSecurityContext
         ctx.ciphering = ciphering;
         return ctx;
     }
+};
+
+enum class EAutnValidationRes
+{
+    OK,
+    MAC_FAILURE,
+    AMF_SEPARATION_BIT_FAILURE,
+    SYNCHRONISATION_FAILURE,
 };
 
 const char *RmStateName(ERmState state);

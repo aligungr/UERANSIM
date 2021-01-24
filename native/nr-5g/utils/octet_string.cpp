@@ -115,7 +115,7 @@ OctetString OctetString::FromHex(const std::string &hex)
     return OctetString{utils::HexStringToVector(hex)};
 }
 
-std::string OctetString::toHexString()
+std::string OctetString::toHexString() const
 {
     return utils::VectorToHexString(m_data);
 }
@@ -286,4 +286,15 @@ OctetString OctetString::FromAscii(const std::string &ascii)
 OctetString OctetString::FromSpare(int length)
 {
     return OctetString{std::vector<uint8_t>(length)};
+}
+
+OctetString OctetString::Xor(const OctetString &a, const OctetString &b)
+{
+    const OctetString &min = a.length() < b.length() ? a : b;
+    const OctetString &other = a.length() < b.length() ? b : a;
+
+    OctetString res = min.copy();
+    for (int i = 0; i < res.length(); i++)
+        res.data()[i] ^= other.data()[i];
+    return res;
 }

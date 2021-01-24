@@ -136,12 +136,12 @@ class EapAttributes
     std::array<std::optional<OctetString>, 256> attributes{};
 
   public:
-    inline OctetString getRand();
-    inline OctetString getMac();
-    inline OctetString getAutn();
-    inline int getClientErrorCode();
-    inline int getKdf();
-    inline const OctetString &getAuts();
+    [[nodiscard]] OctetString getRand() const;
+    [[nodiscard]] OctetString getMac() const;
+    [[nodiscard]] OctetString getAutn() const;
+    [[nodiscard]] int getClientErrorCode() const;
+    [[nodiscard]] int getKdf() const;
+    [[nodiscard]] const OctetString &getAuts() const;
 
   public:
     void putRes(const OctetString &value);

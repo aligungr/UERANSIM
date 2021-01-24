@@ -11,6 +11,7 @@
 #include "ue_nts.hpp"
 #include "ue_types.hpp"
 
+#include <crypt_milenage.hpp>
 #include <nas.hpp>
 #include <nas_timer.hpp>
 #include <nts.hpp>
@@ -64,15 +65,18 @@ class NasTask : public NtsTask
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
 
     /* MM authentication */
-    void receiveAuthenticationRequest(const nas::AuthenticationRequest &message);
-    void receiveAuthenticationRequestEap(const nas::AuthenticationRequest &message);
-    void receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &message);
-    void receiveAuthenticationResult(const nas::AuthenticationResult &message);
-    void receiveAuthenticationResponse(const nas::AuthenticationResponse &message);
-    void receiveAuthenticationReject(const nas::AuthenticationReject &message);
+    void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);
+    void receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg);
+    void receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg);
+    void receiveAuthenticationResult(const nas::AuthenticationResult &msg);
+    void receiveAuthenticationResponse(const nas::AuthenticationResponse &msg);
+    void receiveAuthenticationReject(const nas::AuthenticationReject &msg);
     void receiveEapSuccessMessage(const eap::Eap &eap);
     void receiveEapFailureMessage(const eap::Eap &eap);
     void receiveEapResponseMessage(const eap::Eap &eap);
+    EAutnValidationRes validateAutn(const OctetString &ak, const OctetString &mac, const OctetString &autn);
+    bool checkSqn(const OctetString &sqn);
+    crypt::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand);
 
     /* MM security */
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);

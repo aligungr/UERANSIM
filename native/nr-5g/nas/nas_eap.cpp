@@ -8,32 +8,32 @@
 
 #include "nas_eap.hpp"
 
-OctetString eap::EapAttributes::getRand()
+OctetString eap::EapAttributes::getRand() const
 {
     return attributes[(int)EAttributeType::AT_RAND].value().subCopy(2);
 }
 
-OctetString eap::EapAttributes::getMac()
+OctetString eap::EapAttributes::getMac() const
 {
     return attributes[(int)EAttributeType::AT_MAC].value().subCopy(2);
 }
 
-OctetString eap::EapAttributes::getAutn()
+OctetString eap::EapAttributes::getAutn() const
 {
     return attributes[(int)EAttributeType::AT_AUTN].value().subCopy(2);
 }
 
-int eap::EapAttributes::getClientErrorCode()
+int eap::EapAttributes::getClientErrorCode() const
 {
     return attributes[(int)EAttributeType::AT_CLIENT_ERROR_CODE].value().get2I(0);
 }
 
-int eap::EapAttributes::getKdf()
+int eap::EapAttributes::getKdf() const
 {
     return attributes[(int)EAttributeType::AT_KDF].value().get2I(0);
 }
 
-const OctetString &eap::EapAttributes::getAuts()
+const OctetString &eap::EapAttributes::getAuts() const
 {
     return attributes[(int)EAttributeType::AT_AUTS].value();
 }

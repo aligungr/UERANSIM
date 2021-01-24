@@ -68,7 +68,7 @@ class OctetString
     [[nodiscard]] uint64_t get8UL(int index) const;
 
   public:
-    std::string toHexString();
+    std::string toHexString() const;
     OctetString copy() const;
     OctetString subCopy(int index) const;
     OctetString subCopy(int index, int length) const;
@@ -83,6 +83,11 @@ class OctetString
     inline bool operator==(const OctetString &other)
     {
         return m_data == other.m_data;
+    }
+
+    inline bool operator!=(const OctetString &other)
+    {
+        return m_data != other.m_data;
     }
 
   public:
@@ -101,4 +106,5 @@ class OctetString
     static OctetString FromOctet8(uint64_t value);
 
     static OctetString Concat(const OctetString &a, const OctetString &b);
+    static OctetString Xor(const OctetString &a, const OctetString &b);
 };
