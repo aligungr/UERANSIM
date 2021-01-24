@@ -198,10 +198,12 @@ struct PduSession
     nas::IEPduAddress pduAddress{};
 };
 
-class ProcedureTransaction
+struct ProcedureTransaction
 {
     static constexpr const int MIN_ID = 1;
     static constexpr const int MAX_ID = 254;
+
+    int id;
 };
 
 struct SmContext

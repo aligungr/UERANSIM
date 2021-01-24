@@ -504,8 +504,8 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
         nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
         nonCurrentNsCtx->keys.rand = rand.copy();
-        nonCurrentNsCtx->keys.res = std::move(res);
         nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
+        nonCurrentNsCtx->keys.res = std::move(res);
         nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
         nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
@@ -797,7 +797,7 @@ void NasTask::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         auto &replayed = msg.replayedUeSecurityCapabilities;
         auto real = createSecurityCapabilityIe();
 
-        if (!nas::utils::DeepEqualsIe2346(replayed, real))
+        if (!nas::utils::DeepEqualsIe(replayed, real))
         {
             reject(nas::EMmCause::UE_SECURITY_CAP_MISMATCH);
             return;

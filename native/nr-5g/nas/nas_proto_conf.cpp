@@ -26,15 +26,15 @@ OctetString nas::ProtocolConfigurationOptions::encode()
 
     for (auto &item : configurationProtocols)
     {
-        stream.appendOctet2(item->id);
+        stream.appendOctet2((int)item->id);
         stream.appendOctet(item->content.length());
         stream.append(item->content);
     }
 
     for (auto &item : additionalParams)
     {
-        stream.appendOctet2(item->id);
-        if (IsTwoOctetLengthContainerId(item->id, item->isUplink))
+        stream.appendOctet2((int)item->id);
+        if (IsTwoOctetLengthContainerId((int)item->id, item->isUplink))
             stream.appendOctet2(item->content.length());
         else
             stream.appendOctet(item->content.length());
@@ -58,15 +58,15 @@ std::unique_ptr<nas::ProtocolConfigurationOptions> nas::ProtocolConfigurationOpt
         {
             int length = buff.readI();
             auto contents = buff.readOctetString(length);
-            res->configurationProtocols.push_back(
-                std::make_unique<ProtocolConfigurationItem>(id, isUplink, std::move(contents)));
+            res->configurationProtocols.push_back(std::make_unique<ProtocolConfigurationItem>(
+                static_cast<EProtocolConfigId>(id), isUplink, std::move(contents)));
         }
         else
         {
             int length = IsTwoOctetLengthContainerId(id, isUplink) ? buff.read2I() : buff.readI();
             auto contents = buff.readOctetString(length);
-            res->additionalParams.push_back(
-                std::make_unique<ProtocolConfigurationItem>(id, isUplink, std::move(contents)));
+            res->additionalParams.push_back(std::make_unique<ProtocolConfigurationItem>(
+                static_cast<EProtocolConfigId>(id), isUplink, std::move(contents)));
         }
     }
 

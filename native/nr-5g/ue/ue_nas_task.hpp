@@ -45,7 +45,11 @@ class NasTask : public NtsTask
     /* NAS transport related */
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
+    void receiveSmMessage(const nas::SmMessage &msg);
+    void receiveDlNasTransport(const nas::DlNasTransport &msg);
     void sendMmMessage(const nas::PlainMmMessage &msg);
+    void sendSmMessage(int psi, const nas::SmMessage &msg);
+    void sendNasMessage(const nas::NasMessage &msg);
 
     /* Timer related */
     void onTimerExpire(nas::NasTimer &timer);
@@ -98,6 +102,17 @@ class NasTask : public NtsTask
     /* MM service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
+
+    /* SM resource allocation */
+    int allocatePduSessionId();
+    int allocateProcedureTransactionId();
+    void releaseProcedureTransactionId(int pti);
+    void releasePduSession(int psi);
+
+    /* SM session establishment */
+    void sendEstablishmentRequest();
+    void receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
+    void receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
 };
 
 } // namespace nr::ue

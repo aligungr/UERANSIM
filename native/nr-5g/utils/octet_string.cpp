@@ -298,3 +298,8 @@ OctetString OctetString::Xor(const OctetString &a, const OctetString &b)
         res.data()[i] ^= other.data()[i];
     return res;
 }
+
+OctetString OctetString::Empty()
+{
+    return FromSpare(0);
+}

@@ -101,11 +101,11 @@ enum class EProtocolConfigId
 
 struct ProtocolConfigurationItem
 {
-    const int id;
+    const EProtocolConfigId id;
     const bool isUplink;
     const OctetString content;
 
-    ProtocolConfigurationItem(int id, bool isUplink, OctetString content)
+    ProtocolConfigurationItem(EProtocolConfigId id, bool isUplink, OctetString content)
         : id(id), isUplink(isUplink), content(std::move(content))
     {
     }

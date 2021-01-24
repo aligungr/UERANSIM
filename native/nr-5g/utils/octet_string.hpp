@@ -91,6 +91,7 @@ class OctetString
     }
 
   public:
+    static OctetString Empty();
     static OctetString FromHex(const std::string &hex);
     static OctetString FromAscii(const std::string &ascii);
     static OctetString FromSpare(int length);
