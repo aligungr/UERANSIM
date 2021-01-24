@@ -38,16 +38,9 @@ void EncryptEea2(uint32_t count, int bearer, int direction, OctetString &message
 void DecryptEea2(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key);
 uint32_t ComputeMacEia2(uint32_t count, int bearer, int direction, const OctetString &message, const OctetString &key);
 
-// todo:
-//  EEA3_128.java
-//  EIA1_128.java
-//  EIA2_128.java
-//  EIA3_128.java
-//  NEA1_128.java
-//  NEA2_128.java
-//  NEA3_128.java
-//  NIA1_128.java
-//  NIA2_128.java
-//  NIA3_128.java
+/* EEA3 and EIA3 */
+void EncryptEea3(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key);
+void DecryptEea3(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key);
+uint32_t ComputeMacEia3(uint32_t count, int bearer, int direction, const OctetString &message, const OctetString &key);
 
 } // namespace crypt

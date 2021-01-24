@@ -8,6 +8,8 @@
 
 #include "crypt.hpp"
 #include "crypt_eea2.hpp"
+#include "crypt_eea3.hpp"
+#include "crypt_eia2.hpp"
 #include "crypt_mac.hpp"
 #include "crypt_snow3g.hpp"
 #include "crypt_uea2.hpp"
@@ -131,6 +133,29 @@ void EncryptEea2(uint32_t count, int bearer, int direction, OctetString &message
 void DecryptEea2(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key)
 {
     eea2::Decrypt(count, bearer, direction, message, key);
+}
+
+uint32_t ComputeMacEia2(uint32_t count, int bearer, int direction, const OctetString &message, const OctetString &key)
+{
+    return eia2::Compute(count, bearer, direction, message, key);
+}
+
+void EncryptEea3(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key)
+{
+    eea3::EEA3(key.data(), count, bearer, direction, message.length() * 8,
+               reinterpret_cast<uint32_t *>(message.data()));
+}
+
+void DecryptEea3(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key)
+{
+    eea3::EEA3(key.data(), count, bearer, direction, message.length() * 8,
+               reinterpret_cast<uint32_t *>(message.data()));
+}
+
+uint32_t ComputeMacEia3(uint32_t count, int bearer, int direction, const OctetString &message, const OctetString &key)
+{
+    return eea3::EIA3(key.data(), count, direction, bearer, message.length() * 8,
+                      reinterpret_cast<const uint32_t *>(message.data()));
 }
 
 } // namespace crypt
