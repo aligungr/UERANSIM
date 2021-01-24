@@ -104,3 +104,15 @@ struct ImsiMobileIdentity
     {
     }
 };
+
+struct Supi
+{
+    std::string type;
+    std::string value;
+
+    Supi(std::string type, std::string value) : type(std::move(type)), value(std::move(value))
+    {
+    }
+
+    static Supi Parse(const std::string& supi);
+};

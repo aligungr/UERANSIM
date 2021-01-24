@@ -144,12 +144,12 @@ class EapAttributes
     inline const OctetString &getAuts();
 
   public:
-    inline void putRes(const OctetString &value);
-    inline void putMac(const OctetString &value);
-    inline void putAutn(const OctetString &value);
-    inline void putKdf(int value);
-    inline void putClientErrorCode(int code);
-    inline void putAuts(OctetString &&auts);
+    void putRes(const OctetString &value);
+    void putMac(const OctetString &value);
+    void putAutn(const OctetString &value);
+    void putKdf(int value);
+    void putClientErrorCode(int code);
+    void putAuts(OctetString &&auts);
 
   public:
     void forEachEntry(const std::function<void(EAttributeType, const OctetString &)> &fun) const;

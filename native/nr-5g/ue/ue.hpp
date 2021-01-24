@@ -8,26 +8,22 @@
 
 #pragma once
 
-#include "gnb_types.hpp"
+#include "ue_types.hpp"
 
-#include <app_monitor.hpp>
-#include <logger.hpp>
-#include <string>
-
-namespace nr::gnb
+namespace nr::ue
 {
 
-class GNodeB
+class UserEquipment
 {
   private:
     TaskBase *taskBase;
 
   public:
-    GNodeB(GnbConfig *config, app::INodeListener *nodeListener);
-    virtual ~GNodeB();
+    UserEquipment(UeConfig *config, app::INodeListener *nodeListener);
+    virtual ~UserEquipment();
 
   public:
     void start();
 };
 
-} // namespace nr::gnb
+} // namespace nr::ue

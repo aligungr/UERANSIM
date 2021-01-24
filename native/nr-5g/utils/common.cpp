@@ -202,3 +202,17 @@ std::string utils::VectorToHexString(const std::vector<uint8_t> &hex)
     }
     return str;
 }
+
+int utils::ParseInt(const std::string &str)
+{
+    return ParseInt(str.c_str());
+}
+
+int utils::ParseInt(const char *str)
+{
+    std::stringstream ss("");
+    ss << str;
+    int i;
+    ss >> i;
+    return i;
+}

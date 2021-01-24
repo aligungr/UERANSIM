@@ -7,3 +7,10 @@
 //
 
 #include "common_types.hpp"
+
+Supi Supi::Parse(const std::string &supi)
+{
+    if (supi[0] == 'i' && supi[1] == 'm' && supi[2] == 's' && supi[3] == 'i' && supi[4] == '-')
+        return Supi{"imsi", supi.substr(5)};
+    throw std::runtime_error("invalid supi value");
+}

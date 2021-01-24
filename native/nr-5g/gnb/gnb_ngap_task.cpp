@@ -23,7 +23,6 @@ NgapTask::NgapTask(TaskBase *base) : base{base}, ueNgapIdCounter{}, waitingSctpC
 
 void NgapTask::onStart()
 {
-
     for (auto &amfConfig : base->config->amfConfigs)
         createAmfContext(amfConfig);
     if (amfContexts.empty())
@@ -31,8 +30,9 @@ void NgapTask::onStart()
 
     for (auto &amfCtx : amfContexts)
     {
-        base->sctpTask->push(new NwSctpConnectionRequest(amfCtx.second->ctxId, base->config->ngapIp, 0, amfCtx.second->address,
-                                                   amfCtx.second->port, sctp::PayloadProtocolId::NGAP, this));
+        base->sctpTask->push(new NwSctpConnectionRequest(amfCtx.second->ctxId, base->config->ngapIp, 0,
+                                                         amfCtx.second->address, amfCtx.second->port,
+                                                         sctp::PayloadProtocolId::NGAP, this));
         waitingSctpClients++;
     }
 }

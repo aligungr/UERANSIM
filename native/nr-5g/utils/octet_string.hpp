@@ -69,6 +69,7 @@ class OctetString
 
   public:
     std::string toHexString();
+    OctetString copy() const;
     OctetString subCopy(int index) const;
     OctetString subCopy(int index, int length) const;
 
@@ -79,8 +80,15 @@ class OctetString
         return *this;
     }
 
+    inline bool operator==(const OctetString &other)
+    {
+        return m_data == other.m_data;
+    }
+
   public:
     static OctetString FromHex(const std::string &hex);
+    static OctetString FromAscii(const std::string &ascii);
+    static OctetString FromSpare(int length);
     static OctetString FromOctet(uint8_t value);
     static OctetString FromOctet(int value);
     static OctetString FromOctet2(octet2 value);

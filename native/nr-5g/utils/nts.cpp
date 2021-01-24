@@ -7,16 +7,11 @@
 //
 
 #include "nts.hpp"
+#include <common.hpp>
 
 #define WAIT_TIME_IF_NO_TIMER 500
 
-static int64_t currentTimeMs()
-{
-    auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
-}
-
-static NtsMessage *timerExpiredMessage(TimerInfo *timerInfo)
+static NtsMessage *TimerExpiredMessage(TimerInfo *timerInfo)
 {
     return timerInfo ? new NwTimerExpired(timerInfo->timerId) : nullptr;
 }
@@ -24,7 +19,7 @@ static NtsMessage *timerExpiredMessage(TimerInfo *timerInfo)
 void TimerBase::setTimerAbsolute(int timerId, int64_t timeMs)
 {
     auto *timerInfo = new TimerInfo();
-    timerInfo->start = currentTimeMs();
+    timerInfo->start = utils::CurrentTimeMillis();
     timerInfo->end = timeMs;
     timerInfo->timerId = timerId;
 
@@ -36,7 +31,7 @@ int64_t TimerBase::getNextWaitTime()
     if (timerQueue.empty())
         return WAIT_TIME_IF_NO_TIMER;
 
-    auto delta = timerQueue.top()->end - currentTimeMs();
+    auto delta = timerQueue.top()->end - utils::CurrentTimeMillis();
     return delta < 0 ? 0 : delta;
 }
 
@@ -46,7 +41,7 @@ TimerInfo *TimerBase::getAndRemoveExpiredTimer()
         return nullptr;
 
     TimerInfo *timer = timerQueue.top();
-    if (timer->end < currentTimeMs())
+    if (timer->end < utils::CurrentTimeMillis())
     {
         timerQueue.pop();
         return timer;
@@ -66,61 +61,81 @@ TimerBase::~TimerBase()
 
 bool NtsTask::push(NtsMessage *msg)
 {
-    std::unique_lock<std::mutex> lock(mutex);
     if (isQuiting)
     {
         delete msg;
         return false;
     }
-    msgQueue.push_back(msg);
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        msgQueue.push_back(msg);
+    }
+
     cv.notify_one();
     return true;
 }
 
 bool NtsTask::pushFront(NtsMessage *msg)
 {
-    std::unique_lock<std::mutex> lock(mutex);
     if (isQuiting)
     {
         delete msg;
         return false;
     }
-    msgQueue.push_front(msg);
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        msgQueue.push_front(msg);
+    }
+
     cv.notify_one();
     return true;
 }
 
 bool NtsTask::setTimer(int timerId, int64_t delayMs)
 {
-    return setTimerAbsolute(timerId, currentTimeMs() + delayMs);
+    return setTimerAbsolute(timerId, utils::CurrentTimeMillis() + delayMs);
 }
 
 bool NtsTask::setTimerAbsolute(int timerId, int64_t timeMs)
 {
-    std::unique_lock<std::mutex> lock(mutex);
     if (isQuiting)
         return false;
 
-    timerBase.setTimerAbsolute(timerId, timeMs);
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        timerBase.setTimerAbsolute(timerId, timeMs);
+    }
+
     cv.notify_one();
     return true;
 }
 
 NtsMessage *NtsTask::poll()
 {
-    std::unique_lock<std::mutex> lock(mutex);
-    if (!msgQueue.empty())
     {
-        NtsMessage *ret = msgQueue.front();
-        msgQueue.pop_front();
-        return ret;
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!msgQueue.empty())
+        {
+            NtsMessage *ret = msgQueue.front();
+            msgQueue.pop_front();
+            return ret;
+        }
     }
+
     if (isQuiting)
         return nullptr;
-    TimerInfo *expiredTimer = timerBase.getAndRemoveExpiredTimer();
+    TimerInfo *expiredTimer;
+
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        expiredTimer = timerBase.getAndRemoveExpiredTimer();
+    }
+
     if (expiredTimer != nullptr)
     {
-        NtsMessage *msg = timerExpiredMessage(expiredTimer);
+        NtsMessage *msg = TimerExpiredMessage(expiredTimer);
         delete expiredTimer;
         return msg;
     }
@@ -129,28 +144,42 @@ NtsMessage *NtsTask::poll()
 
 NtsMessage *NtsTask::poll(int64_t timeout)
 {
-    std::unique_lock<std::mutex> lock(mutex);
     if (isQuiting)
         return nullptr;
-    if (!msgQueue.empty())
+
     {
-        NtsMessage *ret = msgQueue.front();
-        msgQueue.pop_front();
-        return ret;
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!msgQueue.empty())
+        {
+            NtsMessage *ret = msgQueue.front();
+            msgQueue.pop_front();
+            return ret;
+        }
+        cv.wait_for(lock, std::chrono::milliseconds(std::min(timerBase.getNextWaitTime(), timeout)));
     }
-    cv.wait_for(lock, std::chrono::milliseconds(std::min(timerBase.getNextWaitTime(), timeout)));
+
     if (isQuiting)
         return nullptr;
-    if (!msgQueue.empty())
+
     {
-        NtsMessage *ret = msgQueue.front();
-        msgQueue.pop_front();
-        return ret;
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!msgQueue.empty())
+        {
+            NtsMessage *ret = msgQueue.front();
+            msgQueue.pop_front();
+            return ret;
+        }
     }
-    TimerInfo *expiredTimer = timerBase.getAndRemoveExpiredTimer();
+
+    TimerInfo *expiredTimer;
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        expiredTimer = timerBase.getAndRemoveExpiredTimer();
+    }
+
     if (expiredTimer != nullptr)
     {
-        NtsMessage *msg = timerExpiredMessage(expiredTimer);
+        NtsMessage *msg = TimerExpiredMessage(expiredTimer);
         delete expiredTimer;
         return msg;
     }
@@ -164,8 +193,6 @@ NtsMessage *NtsTask::take()
 
 void NtsTask::start()
 {
-    std::unique_lock<std::mutex> lock(mutex);
-
     onStart();
 
     if (!isQuiting)
@@ -189,14 +216,16 @@ void NtsTask::quit()
 
     thread.join();
 
-    std::unique_lock<std::mutex> lock(mutex);
-    while (!msgQueue.empty())
     {
-        NtsMessage *msg = msgQueue.front();
-        msgQueue.pop_front();
+        std::unique_lock<std::mutex> lock(mutex);
+        while (!msgQueue.empty())
+        {
+            NtsMessage *msg = msgQueue.front();
+            msgQueue.pop_front();
 
-        // Since we have the ownership at this time, we should delete the messages.
-        delete msg;
+            // Since we have the ownership at this time, we should delete the messages.
+            delete msg;
+        }
     }
 
     onQuit();

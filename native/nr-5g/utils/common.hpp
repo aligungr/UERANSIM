@@ -25,6 +25,8 @@ OctetString IpToOctetString(const std::string &address);
 int64_t CurrentTimeMillis();
 TimeStamp CurrentTimeStamp();
 int NextId();
+int ParseInt(const std::string &str);
+int ParseInt(const char *str);
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

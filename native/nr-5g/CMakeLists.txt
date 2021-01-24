@@ -19,6 +19,7 @@ add_subdirectory(udp)
 add_subdirectory(app)
 add_subdirectory(urs)
 add_subdirectory(crypt)
+add_subdirectory(ue)
 
 add_executable(ueransim main.cpp)
 
@@ -37,5 +38,6 @@ target_link_libraries(ueransim udp)
 target_link_libraries(ueransim app)
 target_link_libraries(ueransim urs)
 target_link_libraries(ueransim crypt)
+target_link_libraries(ueransim ue)
 
 target_compile_options(ueransim PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter)

@@ -136,8 +136,10 @@ struct IEMicoIndication : InformationElement1
 
 struct IENasKeySetIdentifier : InformationElement1
 {
+    static constexpr const int NOT_AVAILABLE_OR_RESERVED = 0b111;
+
     ETypeOfSecurityContext tsc{};
-    int ksi{};
+    int ksi = NOT_AVAILABLE_OR_RESERVED;
 
     IENasKeySetIdentifier() = default;
     IENasKeySetIdentifier(ETypeOfSecurityContext tsc, int ksi);

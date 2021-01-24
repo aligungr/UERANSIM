@@ -78,6 +78,11 @@ struct octet2
         return (value >> (8 - index * 8)) & 0xFF;
     }
 
+    explicit constexpr operator uint32_t() const
+    {
+        return static_cast<uint32_t>(value);
+    }
+
     explicit constexpr operator int32_t() const
     {
         return static_cast<int32_t>(value);

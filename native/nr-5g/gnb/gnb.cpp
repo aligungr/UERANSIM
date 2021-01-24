@@ -7,8 +7,12 @@
 //
 
 #include "gnb.hpp"
-
-#include <utility>
+#include "gnb_app_task.hpp"
+#include "gnb_gtp_task.hpp"
+#include "gnb_mr_task.hpp"
+#include "gnb_ngap_task.hpp"
+#include "gnb_rrc_task.hpp"
+#include "gnb_sctp_task.hpp"
 
 nr::gnb::GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
 {

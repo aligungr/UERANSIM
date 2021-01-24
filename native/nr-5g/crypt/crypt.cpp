@@ -61,10 +61,24 @@ OctetString HmacSha256(const OctetString &key, const OctetString &input)
     return OctetString{std::move(out)};
 }
 
-OctetString CalculateKdfKey(OctetString key, int fc, OctetString *parameters, int numberOfParameter)
+OctetString CalculateKdfKey(const OctetString &key, int fc, OctetString *parameters, int numberOfParameter)
 {
     OctetString inp;
     inp.appendOctet(fc);
+    for (int i = 0; i < numberOfParameter; i++)
+    {
+        inp.append(parameters[i]);
+        inp.appendOctet2(parameters[i].length());
+    }
+    return HmacSha256(key, inp);
+}
+
+OctetString CalculateKdfKey(const OctetString &key, int fc1, int fc2, OctetString *parameters,
+                                   int numberOfParameter)
+{
+    OctetString inp;
+    inp.appendOctet(fc1);
+    inp.appendOctet(fc2);
     for (int i = 0; i < numberOfParameter; i++)
     {
         inp.append(parameters[i]);

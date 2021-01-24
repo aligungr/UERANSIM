@@ -16,7 +16,8 @@ namespace crypt
 /* KDF and MAC etc. */
 OctetString CalculatePrfPrime(const OctetString &key, const OctetString &input, int outputLength);
 OctetString HmacSha256(const OctetString &key, const OctetString &input);
-OctetString CalculateKdfKey(OctetString key, int fc, OctetString *parameters, int numberOfParameter);
+OctetString CalculateKdfKey(const OctetString &key, int fc, OctetString *parameters, int numberOfParameter);
+OctetString CalculateKdfKey(const OctetString &key, int fc1, int fc2, OctetString *parameters, int numberOfParameter);
 OctetString EncodeKdfString(const std::string &string);
 
 /* Snow3G etc. */

@@ -272,3 +272,18 @@ OctetString OctetString::FromOctet8(uint64_t value)
 {
     return FromOctet8(octet8{value});
 }
+
+OctetString OctetString::copy() const
+{
+    return subCopy(0);
+}
+
+OctetString OctetString::FromAscii(const std::string &ascii)
+{
+    return OctetString{std::vector<uint8_t>{ascii.c_str(), ascii.c_str() + ascii.length()}};
+}
+
+OctetString OctetString::FromSpare(int length)
+{
+    return OctetString{std::vector<uint8_t>(length)};
+}

@@ -460,7 +460,7 @@ struct IE5gMmCapability : InformationElement4
 
 struct IESmPduDnRequestContainer : InformationElement4
 {
-    OctetString dnSpecificIdentity; // UTF-8 string
+    OctetString dnSpecificIdentity{}; // UTF-8 string
 
     IESmPduDnRequestContainer() = default;
     explicit IESmPduDnRequestContainer(OctetString &&dnSpecificIdentity);
@@ -493,7 +493,7 @@ struct IE5gsNetworkFeatureSupport : InformationElement4
 
 struct IEDnn : InformationElement4
 {
-    OctetString apn; // ASCII string
+    OctetString apn{}; // ASCII string
 
     IEDnn() = default;
     explicit IEDnn(OctetString &&apn);
@@ -506,7 +506,7 @@ struct IEDnn : InformationElement4
 
 struct IENssai : InformationElement4
 {
-    std::vector<IESNssai> sNssais;
+    std::vector<IESNssai> sNssais{};
 
     IENssai() = default;
     explicit IENssai(std::vector<IESNssai> &&sNssais);
@@ -517,7 +517,7 @@ struct IENssai : InformationElement4
 
 struct IEPlmnList : InformationElement4
 {
-    std::vector<VPlmn> plmns;
+    std::vector<VPlmn> plmns{};
 
     IEPlmnList() = default;
     explicit IEPlmnList(std::vector<VPlmn> &&plmns);
@@ -528,7 +528,7 @@ struct IEPlmnList : InformationElement4
 
 struct IEEmergencyNumberList : InformationElement4
 {
-    OctetString rawData;
+    OctetString rawData{};
 
     IEEmergencyNumberList() = default;
     explicit IEEmergencyNumberList(OctetString &&rawData);
@@ -539,7 +539,7 @@ struct IEEmergencyNumberList : InformationElement4
 
 struct IERejectedNssai : InformationElement4
 {
-    std::vector<VRejectedSNssai> list;
+    std::vector<VRejectedSNssai> list{};
 
     IERejectedNssai() = default;
     explicit IERejectedNssai(std::vector<VRejectedSNssai> &&list);
@@ -550,7 +550,7 @@ struct IERejectedNssai : InformationElement4
 
 struct IEServiceAreaList : InformationElement4
 {
-    std::vector<VPartialServiceAreaList> list;
+    std::vector<VPartialServiceAreaList> list{};
 
     IEServiceAreaList() = default;
     explicit IEServiceAreaList(std::vector<VPartialServiceAreaList> &&list);
@@ -561,7 +561,7 @@ struct IEServiceAreaList : InformationElement4
 
 struct IE5gsTrackingAreaIdentityList : InformationElement4
 {
-    std::vector<VPartialTrackingAreaIdentityList> list;
+    std::vector<VPartialTrackingAreaIdentityList> list{};
 
     IE5gsTrackingAreaIdentityList() = default;
     explicit IE5gsTrackingAreaIdentityList(std::vector<VPartialTrackingAreaIdentityList> &&list);
