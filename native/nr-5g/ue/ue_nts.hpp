@@ -9,9 +9,11 @@
 #pragma once
 
 #include <nas_timer.hpp>
+#include <network.hpp>
 #include <nts.hpp>
 #include <octet_string.hpp>
 #include <rrc.hpp>
+#include <urs_rls.hpp>
 #include <utility>
 
 namespace nr::ue
@@ -87,7 +89,66 @@ struct NwUeDownlinkRrc : NtsMessage
     OctetString rrcPdu;
 
     NwUeDownlinkRrc(rrc::RrcChannel channel, OctetString &&rrcPdu)
-        : NtsMessage(NtsMessageType::UE_MR_UPLINK_RRC), channel(channel), rrcPdu(std::move(rrcPdu))
+        : NtsMessage(NtsMessageType::UE_MR_DOWNLINK_RRC), channel(channel), rrcPdu(std::move(rrcPdu))
+    {
+    }
+};
+
+struct NwRlsConnected : NtsMessage
+{
+    std::string gnbName;
+
+    explicit NwRlsConnected(std::string gnbName)
+        : NtsMessage(NtsMessageType::UE_RLS_CONNECTED), gnbName(std::move(gnbName))
+    {
+    }
+};
+
+struct NwRlsReleased : NtsMessage
+{
+    rls::ECause cause;
+
+    explicit NwRlsReleased(rls::ECause cause) : NtsMessage(NtsMessageType::UE_RLS_RELEASED), cause(cause)
+    {
+    }
+};
+
+struct NwRlsSearchFailure : NtsMessage
+{
+    rls::ECause cause;
+
+    explicit NwRlsSearchFailure(rls::ECause cause) : NtsMessage(NtsMessageType::UE_RLS_SEARCH_FAILURE), cause(cause)
+    {
+    }
+};
+
+struct NwRlsStartWaitingTimer : NtsMessage
+{
+    int period;
+
+    explicit NwRlsStartWaitingTimer(int period) : NtsMessage(NtsMessageType::UE_RLS_START_WAITING_TIMER), period(period)
+    {
+    }
+};
+
+struct NwDownlinkPayload : NtsMessage
+{
+    rls::EPayloadType type;
+    OctetString payload;
+
+    NwDownlinkPayload(rls::EPayloadType type, OctetString &&payload)
+        : NtsMessage(NtsMessageType::UE_RLS_DOWNLINK_PAYLOAD), type(type), payload(std::move(payload))
+    {
+    }
+};
+
+struct NwRlsSendPdu : NtsMessage
+{
+    InetAddress address;
+    OctetString pdu;
+
+    NwRlsSendPdu(const InetAddress &address, OctetString &&pdu)
+        : NtsMessage(NtsMessageType::UE_RLS_SEND_PDU), address(address), pdu(std::move(pdu))
     {
     }
 };

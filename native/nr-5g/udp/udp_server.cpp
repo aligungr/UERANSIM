@@ -14,6 +14,10 @@
 namespace udp
 {
 
+UdpServer::UdpServer() : socket{Socket::CreateUdp4()}
+{
+}
+
 UdpServer::UdpServer(const std::string &address, uint16_t port) : socket{Socket::CreateAndBindUdp({address, port})}
 {
 }

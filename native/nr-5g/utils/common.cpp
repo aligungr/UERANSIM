@@ -10,6 +10,7 @@
 #include <atomic>
 #include <cassert>
 #include <chrono>
+#include <random>
 #include <regex>
 #include <sstream>
 
@@ -21,6 +22,8 @@ static_assert(sizeof(double) == sizeof(uint64_t));
 static_assert(sizeof(long long) == sizeof(uint64_t));
 
 static std::atomic<int> idCounter = 1;
+
+static std::random_device rd;
 
 static bool IPv6FromString(const char *szAddress, uint8_t *address)
 {
@@ -215,4 +218,16 @@ int utils::ParseInt(const char *str)
     int i;
     ss >> i;
     return i;
+}
+
+uint64_t utils::Random64()
+{
+    while (true)
+    {
+        std::mt19937_64 eng(rd());
+        std::uniform_int_distribution<uint64_t> distribution;
+        uint64_t r = distribution(eng);
+        if (r != 0)
+            return r;
+    }
 }

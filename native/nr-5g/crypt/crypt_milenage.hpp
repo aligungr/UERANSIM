@@ -10,7 +10,7 @@
 
 #include <octet_string.hpp>
 
-namespace crypt::milenage
+namespace crypto::milenage
 {
 
 struct Milenage

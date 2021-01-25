@@ -10,7 +10,7 @@
 
 #include <cstdint>
 
-namespace crypt::snow3g
+namespace crypto::snow3g
 {
     void Initialize(const uint32_t* pKey, const uint32_t* pIv);
     void GenerateKeyStream(uint32_t *pKeyStream, uint32_t nKeyStream);

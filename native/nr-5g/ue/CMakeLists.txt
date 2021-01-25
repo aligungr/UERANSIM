@@ -13,5 +13,6 @@ target_link_libraries(ue logger)
 target_link_libraries(ue rrc)
 target_link_libraries(ue crypt)
 target_link_libraries(ue nas)
+target_link_libraries(ue urs)
 target_link_libraries(ue app)
 

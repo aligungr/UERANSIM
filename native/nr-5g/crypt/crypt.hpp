@@ -10,7 +10,7 @@
 
 #include <octet_string.hpp>
 
-namespace crypt
+namespace crypto
 {
 
 /* KDF and MAC etc. */

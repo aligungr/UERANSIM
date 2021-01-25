@@ -32,6 +32,7 @@ class RlsUeEntity
 
   public:
     explicit RlsUeEntity(std::string nodeName, std::vector<InetAddress> gnbSearchList);
+    virtual ~RlsUeEntity() = default;
 
   protected:
     virtual void logWarn(const std::string &msg) = 0;
@@ -39,8 +40,8 @@ class RlsUeEntity
     virtual void startWaitingTimer(int period) = 0;
     virtual void searchFailure(ECause cause) = 0;
     virtual void onRelease(ECause cause) = 0;
-    virtual void onConnect(std::string gnbName) = 0;
-    virtual void sendRlsPdu(const InetAddress &address, const OctetString &pdu) = 0;
+    virtual void onConnect(const std::string &gnbName) = 0;
+    virtual void sendRlsPdu(const InetAddress &address, OctetString &&pdu) = 0;
     virtual void deliverPayload(EPayloadType type, OctetString &&payload) = 0;
 
   public:
@@ -56,7 +57,7 @@ class RlsUeEntity
     void sendSetupRequest();
     void sendSetupComplete();
     void sendReleaseIndication(ECause cause);
-    void sendRlsMessage(const RlsMessage& msg);
+    void sendRlsMessage(const InetAddress &address, const RlsMessage &msg);
 };
 
 } // namespace rls

@@ -57,7 +57,6 @@ void NgapTask::sendNgapNonUe(int associatedAmf, ASN_NGAP_NGAP_PDU *pdu)
     {
         auto *msg = new NwSctpSendMessage(amf->ctxId, 0, buffer, 0, static_cast<size_t>(encoded));
         base->sctpTask->push(msg);
-        logger->debug("Non-UE-associated NGAP PDU with length %d is sent to SCTP layer", encoded);
 
         if (base->nodeListener)
         {
@@ -113,8 +112,10 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
             ASN_NGAP_Criticality_ignore, [this](void *mem) {
                 auto *loc = reinterpret_cast<ASN_NGAP_UserLocationInformation *>(mem);
                 loc->present = ASN_NGAP_UserLocationInformation_PR_userLocationInformationNR;
+                loc->choice.userLocationInformationNR = asn::New<ASN_NGAP_UserLocationInformationNR>();
 
                 auto &nr = loc->choice.userLocationInformationNR;
+                nr->timeStamp = asn::New<ASN_NGAP_TimeStamp_t>();
 
                 ngap_utils::ToPlmnAsn_Ref(base->config->plmn, nr->nR_CGI.pLMNIdentity);
                 asn::SetBitStringLong<36>(base->config->nci, nr->nR_CGI.nRCellIdentity);
@@ -144,7 +145,6 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
     {
         auto *msg = new NwSctpSendMessage(amf->ctxId, 0, buffer, 0, static_cast<size_t>(encoded));
         base->sctpTask->push(msg);
-        logger->debug("UE-associated NGAP PDU with length %d is sent to SCTP layer", encoded);
 
         if (base->nodeListener)
         {

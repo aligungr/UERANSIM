@@ -49,8 +49,7 @@ inline OctetString EncodeS(const asn_TYPE_descriptor_t &desc, T *pdu)
     ssize_t encoded;
     if (Encode(desc, pdu, encoded, buffer))
     {
-        std::vector<uint8_t> v;
-        v.reserve(encoded);
+        std::vector<uint8_t> v(encoded);
         memcpy(v.data(), buffer, encoded);
         free(buffer);
         return OctetString{std::move(v)};

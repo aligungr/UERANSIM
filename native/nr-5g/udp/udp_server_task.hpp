@@ -33,6 +33,7 @@ class UdpServerTask : public NtsTask
     NtsTask *targetTask;
 
   public:
+    explicit UdpServerTask(NtsTask *targetTask);
     UdpServerTask(const std::string &address, uint16_t port, NtsTask *targetTask);
     ~UdpServerTask() override;
 
@@ -45,4 +46,4 @@ class UdpServerTask : public NtsTask
     void send(const InetAddress &to, const OctetString &packet);
 };
 
-} // namespace nr::udp
+} // namespace udp

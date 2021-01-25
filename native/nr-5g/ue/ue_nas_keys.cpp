@@ -25,14 +25,14 @@ void DeriveKeysSeafAmf(const UeConfig &ueConfig, NasSecurityContext &nasSecurity
     std::string snn = ConstructServingNetworkName(ueConfig.plmn);
 
     OctetString s1[1];
-    s1[0] = crypt::EncodeKdfString(snn);
+    s1[0] = crypto::EncodeKdfString(snn);
 
     OctetString s2[2];
-    s2[0] = crypt::EncodeKdfString(ueConfig.supi->value);
+    s2[0] = crypto::EncodeKdfString(ueConfig.supi->value);
     s2[1] = keys.abba.copy();
 
-    keys.kSeaf = crypt::CalculateKdfKey(keys.kAusf, 0x6C, s1, 1);
-    keys.kAmf = crypt::CalculateKdfKey(keys.kSeaf, 0x6D, s2, 2);
+    keys.kSeaf = crypto::CalculateKdfKey(keys.kAusf, 0x6C, s1, 1);
+    keys.kAmf = crypto::CalculateKdfKey(keys.kSeaf, 0x6D, s2, 2);
 }
 
 void DeriveNasKeys(NasSecurityContext &securityContext)
@@ -45,8 +45,8 @@ void DeriveNasKeys(NasSecurityContext &securityContext)
     s2[0] = OctetString::FromOctet(N_NAS_int_alg);
     s2[1] = OctetString::FromOctet((int)securityContext.integrity);
 
-    auto kdfEnc = crypt::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s1, 2);
-    auto kdfInt = crypt::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s1, 2);
+    auto kdfEnc = crypto::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s1, 2);
+    auto kdfInt = crypto::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s1, 2);
 
     securityContext.keys.kNasEnc = kdfEnc.subCopy(16, 16);
     securityContext.keys.kNasInt = kdfInt.subCopy(16, 16);
@@ -66,9 +66,9 @@ OctetString CalculateKAusfFor5gAka(const OctetString &ck, const OctetString &ik,
 {
     OctetString key = OctetString::Concat(ck, ik);
     OctetString s[2];
-    s[0] = crypt::EncodeKdfString(snn);
+    s[0] = crypto::EncodeKdfString(snn);
     s[1] = sqnXorAk.copy();
-    return crypt::CalculateKdfKey(key, 0x6A, s, 2);
+    return crypto::CalculateKdfKey(key, 0x6A, s, 2);
 }
 
 std::pair<OctetString, OctetString> CalculateCkPrimeIkPrime(const OctetString &ck, const OctetString &ik,
@@ -76,10 +76,10 @@ std::pair<OctetString, OctetString> CalculateCkPrimeIkPrime(const OctetString &c
 {
     OctetString key = OctetString::Concat(ck, ik);
     OctetString s[2];
-    s[0] = crypt::EncodeKdfString(snn);
+    s[0] = crypto::EncodeKdfString(snn);
     s[1] = sqnXorAk.copy();
 
-    auto res = crypt::CalculateKdfKey(key, 0x20, s, 2);
+    auto res = crypto::CalculateKdfKey(key, 0x20, s, 2);
     ;
 
     std::pair<OctetString, OctetString> ckIk;
@@ -94,7 +94,7 @@ OctetString CalculateMk(const OctetString &ckPrime, const OctetString &ikPrime, 
     OctetString input = OctetString::FromAscii("EAP-AKA'" + supiIdentity.type + "-" + supiIdentity.value);
 
     // Calculating the 208-octet output
-    return crypt::CalculatePrfPrime(key, input, 208);
+    return crypto::CalculatePrfPrime(key, input, 208);
 }
 
 OctetString CalculateMacForEapAkaPrime(const OctetString &kaut, const eap::EapAkaPrime &message)
@@ -112,7 +112,7 @@ OctetString CalculateMacForEapAkaPrime(const OctetString &kaut, const eap::EapAk
     OctetString input{};
     eap::EncodeEapPdu(input, copy);
 
-    auto sha = crypt::HmacSha256(kaut, input);
+    auto sha = crypto::HmacSha256(kaut, input);
     return sha.subCopy(0, 16);
 }
 
@@ -128,11 +128,11 @@ OctetString CalculateResStar(const OctetString &key, const std::string &snn, con
                              const OctetString &res)
 {
     OctetString params[3];
-    params[0] = crypt::EncodeKdfString(snn);
+    params[0] = crypto::EncodeKdfString(snn);
     params[1] = rand.copy();
     params[2] = res.copy();
 
-    auto output = crypt::CalculateKdfKey(key, 0x6B, params, 3);
+    auto output = crypto::CalculateKdfKey(key, 0x6B, params, 3);
 
     // The (X)RES* is identified with the 128 least significant bits of the output of the KDF.
     return output.subCopy(output.length() - 16);

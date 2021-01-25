@@ -90,7 +90,8 @@ IEExtendedProtocolConfigurationOptions::IEExtendedProtocolConfigurationOptions(
 {
 }
 
-IEExtendedProtocolConfigurationOptions IEExtendedProtocolConfigurationOptions::Decode(const OctetBuffer &stream, int length)
+IEExtendedProtocolConfigurationOptions IEExtendedProtocolConfigurationOptions::Decode(const OctetBuffer &stream,
+                                                                                      int length)
 {
     auto octet = stream.read();
 
@@ -334,6 +335,8 @@ void IE5gsMobileIdentity::Encode(const IE5gsMobileIdentity &ie, OctetString &str
         break;
     }
     case EIdentityType::TMSI: {
+        stream.appendOctet(0xf4);
+
         stream.appendOctet(ie.gutiOrTmsi.amfSetId >> 2);
         stream.appendOctet(((ie.gutiOrTmsi.amfSetId & 0b11) << 6) | ie.gutiOrTmsi.amfPointer);
         stream.appendOctet4(ie.gutiOrTmsi.tmsi);
@@ -348,7 +351,7 @@ void IE5gsMobileIdentity::Encode(const IE5gsMobileIdentity &ie, OctetString &str
         break;
     }
     case EIdentityType::NO_IDENTITY:
-        stream.appendOctet(0xFF);
+        stream.appendOctet(0x00);
         break;
     }
 }

@@ -81,7 +81,7 @@ class NasTask : public NtsTask
     void receiveEapResponseMessage(const eap::Eap &eap);
     EAutnValidationRes validateAutn(const OctetString &ak, const OctetString &mac, const OctetString &autn);
     bool checkSqn(const OctetString &sqn);
-    crypt::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand);
+    crypto::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand);
 
     /* MM security */
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);

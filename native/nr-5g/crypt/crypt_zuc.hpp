@@ -10,7 +10,7 @@
 
 #include <cstdint>
 
-namespace crypt::zuc
+namespace crypto::zuc
 {
 
 void Initialize(const uint8_t *pKey, const uint8_t *pIv);

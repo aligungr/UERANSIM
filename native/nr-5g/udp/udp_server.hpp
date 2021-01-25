@@ -20,6 +20,7 @@ class UdpServer
     Socket socket;
 
   public:
+    UdpServer();
     UdpServer(const std::string &address, uint16_t port);
     ~UdpServer();
 

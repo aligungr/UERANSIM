@@ -9,7 +9,7 @@
 #include "crypt_milenage.hpp"
 #include "external/milenage.hpp"
 
-namespace crypt::milenage
+namespace crypto::milenage
 {
 
 Milenage Calculate(const OctetString &opc, const OctetString &key, const OctetString &rand, const OctetString &sqn,

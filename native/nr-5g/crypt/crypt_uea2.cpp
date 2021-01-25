@@ -13,7 +13,7 @@ using u8 = uint8_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
-void crypt::uea2::F8(const u8 *pKey, u32 count, u32 bearer, u32 dir, u8 *pData, u32 length)
+void crypto::uea2::F8(const u8 *pKey, u32 count, u32 bearer, u32 dir, u8 *pData, u32 length)
 {
     u32 K[4], IV[4];
     int n = static_cast<int>((length + 31) / 32);
@@ -24,9 +24,9 @@ void crypt::uea2::F8(const u8 *pKey, u32 count, u32 bearer, u32 dir, u8 *pData, 
     IV[2] = (bearer << 27) | ((dir & 0x1) << 26);
     IV[1] = IV[3];
     IV[0] = IV[2];
-    crypt::snow3g::Initialize(K, IV);
+    crypto::snow3g::Initialize(K, IV);
     KS = new u32[n];
-    crypt::snow3g::GenerateKeyStream((u32 *)KS, n);
+    crypto::snow3g::GenerateKeyStream((u32 *)KS, n);
     for (int i = 0; i < n; i++)
     {
         pData[4 * i + 0] ^= (u8)(KS[i] >> 24) & 0xff;
@@ -67,7 +67,7 @@ static u8 mask8bit(int n)
     return 0xFF ^ ((1 << (8 - n)) - 1);
 }
 
-u32 crypt::uea2::F9(const u8 *pKey, u32 count, u32 fresh, u32 dir, const u8 *pData, u64 length)
+u32 crypto::uea2::F9(const u8 *pKey, u32 count, u32 fresh, u32 dir, const u8 *pData, u64 length)
 {
     u32 K[4], IV[4], z[5];
     u32 i = 0, D;
@@ -81,8 +81,8 @@ u32 crypt::uea2::F9(const u8 *pKey, u32 count, u32 fresh, u32 dir, const u8 *pDa
     IV[1] = count ^ (dir << 31);
     IV[0] = fresh ^ (dir << 15);
     z[0] = z[1] = z[2] = z[3] = z[4] = 0;
-    crypt::snow3g::Initialize(K, IV);
-    crypt::snow3g::GenerateKeyStream(z, 5);
+    crypto::snow3g::Initialize(K, IV);
+    crypto::snow3g::GenerateKeyStream(z, 5);
     P = (u64)z[0] << 32 | (u64)z[1];
     Q = (u64)z[2] << 32 | (u64)z[3];
     if ((length % 64) == 0)

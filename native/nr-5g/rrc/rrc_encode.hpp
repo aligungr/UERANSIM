@@ -44,8 +44,7 @@ inline OctetString EncodeS(const asn_TYPE_descriptor_t &desc, T *pdu)
     ssize_t encoded;
     if (Encode(desc, pdu, encoded, buffer))
     {
-        std::vector<uint8_t> v;
-        v.reserve(encoded);
+        std::vector<uint8_t> v(encoded);
         memcpy(v.data(), buffer, encoded);
         free(buffer);
         return OctetString{std::move(v)};
@@ -93,4 +92,4 @@ inline T *Decode(asn_TYPE_descriptor_t &desc, const OctetString &octetString)
     return Decode<T>(desc, octetString.data(), octetString.length());
 }
 
-} // namespace nr::rrc::encode
+} // namespace rrc::encode

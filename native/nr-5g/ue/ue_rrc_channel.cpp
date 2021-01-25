@@ -24,7 +24,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
         logger->err("RRC BCCH-BCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::BCCH_BCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::BCCH_BCH, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
@@ -35,7 +35,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
         logger->err("RRC BCCH-DL-SCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::BCCH_DL_SCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::BCCH_DL_SCH, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_DL_CCCH_Message *msg)
@@ -46,7 +46,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_DL_CCCH_Message *msg)
         logger->err("RRC DL-CCCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::DL_CCCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::DL_CCCH, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
@@ -57,7 +57,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
         logger->err("RRC DL-DCCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::DL_DCCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::DL_DCCH, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_PCCH_Message *msg)
@@ -68,7 +68,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_PCCH_Message *msg)
         logger->err("RRC PCCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::PCCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::PCCH, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
@@ -79,7 +79,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
         logger->err("RRC UL-CCCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::UL_CCCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::UL_CCCH, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg)
@@ -90,7 +90,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg)
         logger->err("RRC UL-CCCH1 encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::UL_CCCH1, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::UL_CCCH1, std::move(pdu)));
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
@@ -101,7 +101,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
         logger->err("RRC UL-DCCH encoding failed.");
         return;
     }
-    base->mrTask->push(new NwUeDownlinkRrc(rrc::RrcChannel::UL_DCCH, std::move(pdu)));
+    base->mrTask->push(new NwUeUplinkRrc(rrc::RrcChannel::UL_DCCH, std::move(pdu)));
 }
 
 void UeRrcTask::receiveRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)

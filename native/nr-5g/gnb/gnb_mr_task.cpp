@@ -29,7 +29,7 @@ void GnbMrTask::onStart()
     udpTask = new udp::UdpServerTask(base->config->portalIp, cons::PortalPort, this);
     udpTask->start();
 
-    setTimer(TIMER_ID_RLS_HEARTBEAT, rls::Constants::HB_TIMEOUT_UE_TO_GNB);
+    setTimer(TIMER_ID_RLS_HEARTBEAT, rls::Constants::HB_PERIOD_UE_TO_GNB);
 }
 
 void GnbMrTask::onLoop()
@@ -68,7 +68,7 @@ void GnbMrTask::onLoop()
         auto *w = dynamic_cast<NwTimerExpired *>(msg);
         if (w->timerId == TIMER_ID_RLS_HEARTBEAT)
         {
-            setTimer(TIMER_ID_RLS_HEARTBEAT, rls::Constants::HB_TIMEOUT_UE_TO_GNB);
+            setTimer(TIMER_ID_RLS_HEARTBEAT, rls::Constants::HB_PERIOD_GNB_TO_UE);
             rlsEntity->onHeartbeat();
         }
         delete w;
@@ -102,6 +102,11 @@ void GnbMrTask::onLoop()
         auto *w = dynamic_cast<NwRlsSendPdu *>(msg);
         udpTask->send(w->address, w->pdu);
         delete w;
+        break;
+    }
+    case NtsMessageType::GNB_MR_N1_IS_READY: {
+        rlsEntity->setN1IsReady(true);
+        delete msg;
         break;
     }
     default:

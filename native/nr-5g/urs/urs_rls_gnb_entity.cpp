@@ -10,20 +10,6 @@
 
 #include <common.hpp>
 #include <constants.hpp>
-#include <random>
-
-static uint64_t TokenGen()
-{
-    while (true)
-    {
-        std::random_device rd;
-        std::mt19937_64 eng(rd());
-        std::uniform_int_distribution<uint64_t> distribution;
-        uint64_t r = distribution(eng);
-        if (r != 0)
-            return r;
-    }
-}
 
 static const octet3 AppVersion = octet3{cons::Major, cons::Minor, cons::Patch};
 
@@ -31,7 +17,7 @@ namespace rls
 {
 
 RlsGnbEntity::RlsGnbEntity(std::string nodeName)
-    : nodeName(std::move(nodeName)), token(TokenGen()), ueIdMap(), idUeMap(), ueAddressMap(), heartbeatMap(),
+    : nodeName(std::move(nodeName)), token(utils::Random64()), ueIdMap(), idUeMap(), ueAddressMap(), heartbeatMap(),
       setupCompleteWaiting()
 {
 }
@@ -45,9 +31,9 @@ void RlsGnbEntity::onHeartbeat()
     for (auto &v : heartbeatMap)
     {
         if (current - v.second > Constants::HB_TIMEOUT_UE_TO_GNB)
-            uesToRemove.push_back(ueIdMap[v.first]);
+            uesToRemove.push_back(v.first);
         else
-            sendHeartbeat(ueIdMap[v.first]);
+            sendHeartbeat(v.first);
     }
 
     for (int ue : uesToRemove)
@@ -66,7 +52,7 @@ void RlsGnbEntity::downlinkPayloadDelivery(int ue, EPayloadType type, OctetStrin
     m.msgCls = EMessageClass::NORMAL_MESSAGE;
     m.msgType = EMessageType::RLS_PAYLOAD_TRANSPORT;
     m.appVersion = AppVersion;
-    m.ueToken = ueIdMap[ue];
+    m.ueToken = idUeMap[ue];
     m.gnbToken = token;
     m.payloadType = type;
     m.payload = std::move(payload);
@@ -84,7 +70,7 @@ void RlsGnbEntity::sendRlsMessage(int ue, const RlsMessage &msg)
     OctetString buf{};
     if (!Encode(msg, buf))
     {
-        logWarn("PDU encoding failed");
+        logError("PDU encoding failed");
         return;
     }
 
@@ -97,7 +83,7 @@ void RlsGnbEntity::sendHeartbeat(int ue)
     m.msgCls = EMessageClass::NORMAL_MESSAGE;
     m.msgType = EMessageType::RLS_HEARTBEAT;
     m.appVersion = AppVersion;
-    m.ueToken = ueIdMap[ue];
+    m.ueToken = idUeMap[ue];
     m.gnbToken = token;
     sendRlsMessage(ue, m);
 }
@@ -108,7 +94,7 @@ void RlsGnbEntity::sendReleaseIndication(int ue, ECause cause)
     m.msgCls = EMessageClass::NORMAL_MESSAGE;
     m.msgType = EMessageType::RLS_RELEASE_INDICATION;
     m.appVersion = AppVersion;
-    m.ueToken = ueIdMap[ue];
+    m.ueToken = idUeMap[ue];
     m.gnbToken = token;
     m.cause = cause;
     sendRlsMessage(ue, m);
@@ -133,7 +119,7 @@ void RlsGnbEntity::onReceive(const InetAddress &address, const OctetString &pdu)
     auto res = Decode(OctetBuffer{pdu}, msg, AppVersion);
     if (res == DecodeRes::FAILURE)
     {
-        logWarn("PDU decoding failed");
+        logError("PDU decoding failed");
         return;
     }
     if (res == DecodeRes::VERSION_MISMATCH)
@@ -162,8 +148,15 @@ void RlsGnbEntity::onReceive(const InetAddress &address, const OctetString &pdu)
             return;
         }
 
+        if (!isInReadyState())
+        {
+            sendSetupFailure(address, msg.ueToken, ECause::GNB_IS_NOT_READY_FOR_N1);
+            return;
+        }
+
         int ueId = utils::NextId();
         ueIdMap[msg.ueToken] = ueId;
+        idUeMap[ueId] = msg.ueToken;
         ueAddressMap[ueId] = address;
         heartbeatMap[ueId] = utils::CurrentTimeMillis();
         setupCompleteWaiting.insert(ueId);
@@ -208,9 +201,9 @@ void RlsGnbEntity::sendSetupResponse(int ue)
 {
     RlsMessage m;
     m.msgCls = EMessageClass::NORMAL_MESSAGE;
-    m.msgType = EMessageType::RLS_RELEASE_INDICATION;
+    m.msgType = EMessageType::RLS_SETUP_RESPONSE;
     m.appVersion = AppVersion;
-    m.ueToken = ueIdMap[ue];
+    m.ueToken = idUeMap[ue];
     m.gnbToken = token;
     m.str = nodeName;
     sendRlsMessage(ue, m);

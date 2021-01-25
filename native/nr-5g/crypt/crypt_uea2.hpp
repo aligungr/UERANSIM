@@ -10,7 +10,7 @@
 
 #include <cstdint>
 
-namespace crypt::uea2
+namespace crypto::uea2
 {
 
 void F8(const uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t dir, uint8_t *pData, uint32_t length);

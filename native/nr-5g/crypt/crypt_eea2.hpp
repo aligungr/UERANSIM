@@ -10,7 +10,7 @@
 
 #include <octet_string.hpp>
 
-namespace crypt::eea2
+namespace crypto::eea2
 {
 
 void Encrypt(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key);

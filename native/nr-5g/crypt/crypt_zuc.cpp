@@ -150,7 +150,7 @@ static uint32_t F()
 #define MAKEU31(a, b, c)                                                                                               \
     (((uint32_t)((uint32_t)(0) | (uint8_t)(a)) << 23) | ((uint32_t)(b) << 8) | (uint32_t)((uint32_t)(0) | (uint8_t)(c)))
 
-void crypt::zuc::Initialize(const uint8_t *pKey, const uint8_t *pIv)
+void crypto::zuc::Initialize(const uint8_t *pKey, const uint8_t *pIv)
 {
     uint32_t w;
 
@@ -173,7 +173,7 @@ void crypt::zuc::Initialize(const uint8_t *pKey, const uint8_t *pIv)
     LFSRWithWorkMode();
 }
 
-void crypt::zuc::GenerateKeyStream(uint32_t *pKeyStream, uint32_t nKeyStream)
+void crypto::zuc::GenerateKeyStream(uint32_t *pKeyStream, uint32_t nKeyStream)
 {
     for (uint32_t i = 0; i < nKeyStream; ++i)
     {

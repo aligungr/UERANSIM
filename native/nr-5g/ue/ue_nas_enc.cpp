@@ -47,13 +47,13 @@ static OctetString EncryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCoun
     case nas::ETypeOfCipheringAlgorithm::EA0:
         break;
     case nas::ETypeOfCipheringAlgorithm::EA1_128:
-        crypt::EncryptEea1((uint32_t)count.toOctet4(), bearer, direction, msg, key);
+        crypto::EncryptEea1((uint32_t)count.toOctet4(), bearer, direction, msg, key);
         break;
     case nas::ETypeOfCipheringAlgorithm::EA2_128:
-        crypt::EncryptEea2((uint32_t)count.toOctet4(), bearer, direction, msg, key);
+        crypto::EncryptEea2((uint32_t)count.toOctet4(), bearer, direction, msg, key);
         break;
     case nas::ETypeOfCipheringAlgorithm::EA3_128:
-        crypt::EncryptEea3((uint32_t)count.toOctet4(), bearer, direction, msg, key);
+        crypto::EncryptEea3((uint32_t)count.toOctet4(), bearer, direction, msg, key);
         break;
     default:
         throw std::runtime_error("Bad ciphering algorithm");
@@ -104,13 +104,13 @@ static OctetString DecryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCoun
     case nas::ETypeOfCipheringAlgorithm::EA0:
         break;
     case nas::ETypeOfCipheringAlgorithm::EA1_128:
-        crypt::DecryptEea1((uint32_t)count.toOctet4(), bearer, direction, msg, key);
+        crypto::DecryptEea1((uint32_t)count.toOctet4(), bearer, direction, msg, key);
         break;
     case nas::ETypeOfCipheringAlgorithm::EA2_128:
-        crypt::DecryptEea2((uint32_t)count.toOctet4(), bearer, direction, msg, key);
+        crypto::DecryptEea2((uint32_t)count.toOctet4(), bearer, direction, msg, key);
         break;
     case nas::ETypeOfCipheringAlgorithm::EA3_128:
-        crypt::DecryptEea3((uint32_t)count.toOctet4(), bearer, direction, msg, key);
+        crypto::DecryptEea3((uint32_t)count.toOctet4(), bearer, direction, msg, key);
         break;
     default:
         throw std::runtime_error("Bad ciphering algorithm");
@@ -177,11 +177,11 @@ uint32_t ComputeMac(nas::ETypeOfIntegrityProtectionAlgorithm alg, NasCount count
     switch (alg)
     {
     case nas::ETypeOfIntegrityProtectionAlgorithm::IA1_128:
-        return crypt::ComputeMacEia1((int)count.toOctet4(), bearer, direction, data, key);
+        return crypto::ComputeMacEia1((int)count.toOctet4(), bearer, direction, data, key);
     case nas::ETypeOfIntegrityProtectionAlgorithm::IA2_128:
-        return crypt::ComputeMacEia2((int)count.toOctet4(), bearer, direction, data, key);
+        return crypto::ComputeMacEia2((int)count.toOctet4(), bearer, direction, data, key);
     case nas::ETypeOfIntegrityProtectionAlgorithm::IA3_128:
-        return crypt::ComputeMacEia3((int)count.toOctet4(), bearer, direction, data, key);
+        return crypto::ComputeMacEia3((int)count.toOctet4(), bearer, direction, data, key);
     default:
         throw std::runtime_error("Bad integrity algorithm");
     }

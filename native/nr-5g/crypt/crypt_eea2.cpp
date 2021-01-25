@@ -11,7 +11,7 @@
 #include <bit_buffer.hpp>
 #include <octet_string.hpp>
 
-namespace crypt::eea2
+namespace crypto::eea2
 {
 
 static void Cipher(const uint8_t *key, const uint8_t *iv, uint8_t *buffer, size_t length)

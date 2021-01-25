@@ -118,10 +118,9 @@ VQoSFlowDescription VQoSFlowDescription::Decode(const OctetBuffer &stream)
     int opCode = (stream.readI() >> 5) & 0b111;
     int numOfParameters = stream.peekI() & 0b111111;
     bool eBit = stream.read().bit(6);
-    std::vector<std::unique_ptr<VQoSFlowParameter>> parametersList;
-    parametersList.reserve(numOfParameters);
+    std::vector<std::unique_ptr<VQoSFlowParameter>> parametersList(numOfParameters);
     for (int i = 0; i < numOfParameters; i++)
-        parametersList.push_back(std::make_unique<VQoSFlowParameter>(std::move(VQoSFlowParameter::Decode(stream))));
+        parametersList.push_back(std::make_unique<VQoSFlowParameter>(VQoSFlowParameter::Decode(stream)));
 
     return VQoSFlowDescription{qfi, (EQoSOperationCode)opCode, numOfParameters, eBit, std::move(parametersList)};
 }

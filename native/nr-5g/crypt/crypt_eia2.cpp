@@ -111,7 +111,7 @@ static uint32_t Cmac(const OctetString &message, const OctetString &key)
     return tag;
 }
 
-namespace crypt::eia2
+namespace crypto::eia2
 {
 
 uint32_t Compute(uint32_t count, int bearer, int direction, const OctetString &message, const OctetString &key)

@@ -10,7 +10,9 @@
 #include "ue_nts.hpp"
 
 static const int NTS_TIMER_ID_NAS_TIMER_CYCLE = 1;
+static const int NTS_TIMER_ID_MM_CYCLE = 2;
 static const int NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE = 1000;
+static const int NTS_TIMER_INTERVAL_MM_CYCLE = 400;
 
 namespace nr::ue
 {
@@ -29,6 +31,7 @@ void NasTask::onStart()
     // TODO: initial status update
 
     setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
+    setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
     triggerMmCycle();
 }
 
@@ -81,6 +84,11 @@ void NasTask::onLoop()
             setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
             performTick();
         }
+        if (timerId == NTS_TIMER_ID_MM_CYCLE)
+        {
+            setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
+            performMmCycle();
+        }
         break;
     }
     case NtsMessageType::NAS_PERFORM_MM_CYCLE: {
@@ -94,6 +102,5 @@ void NasTask::onLoop()
         break;
     }
 }
-
 
 } // namespace nr::ue

@@ -35,11 +35,6 @@ void NasTask::performMmCycle()
     {
         // TODO: Bu kısım çalışmıyor olabilir.
         long current = utils::CurrentTimeMillis();
-        if (mmCtx.lastPlmnSearchTrigger == 0)
-        {
-            mmCtx.lastPlmnSearchTrigger = current;
-            return;
-        }
         long elapsedMs = current - mmCtx.lastPlmnSearchTrigger;
         if (elapsedMs > 50)
         {
@@ -572,6 +567,7 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
         resp.authenticationResponseParameter->rawData = nonCurrentNsCtx->keys.resStar.copy();
+        sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
@@ -701,12 +697,12 @@ bool NasTask::checkSqn(const OctetString &)
     return true;
 }
 
-crypt::milenage::Milenage NasTask::calculateMilenage(const OctetString &sqn, const OctetString &rand)
+crypto::milenage::Milenage NasTask::calculateMilenage(const OctetString &sqn, const OctetString &rand)
 {
     if (base->config->opType == OpType::OPC)
-        return crypt::milenage::Calculate(base->config->opC, base->config->key, rand, sqn, base->config->amf);
-    OctetString opc = crypt::milenage::CalculateOpC(base->config->opC, base->config->key);
-    return crypt::milenage::Calculate(opc, base->config->key, rand, sqn, base->config->amf);
+        return crypto::milenage::Calculate(base->config->opC, base->config->key, rand, sqn, base->config->amf);
+    OctetString opc = crypto::milenage::CalculateOpC(base->config->opC, base->config->key);
+    return crypto::milenage::Calculate(opc, base->config->key, rand, sqn, base->config->amf);
 }
 
 void NasTask::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
@@ -957,7 +953,7 @@ nas::IE5gsMobileIdentity NasTask::generateSuci()
     if (!supi.has_value())
         return {};
 
-    if (supi->value != "imsi")
+    if (supi->type != "imsi")
     {
         logger->err("SUCI generating failed, invalid SUPI type: %s", supi->value.c_str());
         return {};

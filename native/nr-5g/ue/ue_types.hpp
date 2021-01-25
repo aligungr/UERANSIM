@@ -53,6 +53,7 @@ struct UeConfig
     std::string dnn;
     std::vector<SliceSupport> nssais;
     SupportedAlgs supportedAlgs;
+    std::vector<std::string> gnbSearchList;
 
     [[nodiscard]] std::string getNodeName() const
     {

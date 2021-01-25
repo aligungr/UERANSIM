@@ -47,7 +47,7 @@ enum class ECause : uint8_t
 {
     UNSPECIFIED = 0,
     TOKEN_CONFLICT,
-    NO_N1_IN_GNB,
+    GNB_IS_NOT_READY_FOR_N1,
     EMPTY_SEARCH_LIST,
     SETUP_TIMEOUT,
     HEARTBEAT_TIMEOUT
@@ -61,9 +61,11 @@ enum class EPayloadType : uint8_t
 
 struct Constants
 {
-    static constexpr const int UE_WAIT_TIMEOUT = 600;
+    static constexpr const int UE_WAIT_TIMEOUT = 500;
     static constexpr const int HB_TIMEOUT_GNB_TO_UE = 3000;
     static constexpr const int HB_TIMEOUT_UE_TO_GNB = 5000;
+    static constexpr const int HB_PERIOD_GNB_TO_UE = 1500;
+    static constexpr const int HB_PERIOD_UE_TO_GNB = 2000;
 };
 
 struct RlsMessage
@@ -91,5 +93,7 @@ enum class DecodeRes
 
 DecodeRes Decode(const OctetBuffer &stream, RlsMessage &output, octet3 appVersion);
 bool Encode(const RlsMessage &msg, OctetString &stream);
+
+const char *CauseToString(ECause cause);
 
 } // namespace rls

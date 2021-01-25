@@ -14,29 +14,28 @@
 #include <thread>
 #include <udp_server_task.hpp>
 #include <unordered_map>
-#include <urs_rls_gnb_entity.hpp>
 #include <vector>
 
-#include "gnb_mr_rls.hpp"
-#include "gnb_nts.hpp"
+#include "ue_mr_rls.hpp"
+#include "ue_types.hpp"
 
-namespace nr::gnb
+namespace nr::ue
 {
 
-class GnbMrTask : public NtsTask
+class UeMrTask : public NtsTask
 {
   private:
     TaskBase *base;
     std::unique_ptr<Logger> logger;
 
     udp::UdpServerTask *udpTask;
-    GnbRls *rlsEntity;
+    UeRls *rlsEntity;
 
-    std::unordered_map<int, MrUeContext> ueMap;
+    long lastPlmnSearchFailurePrinted;
 
   public:
-    explicit GnbMrTask(TaskBase *base);
-    ~GnbMrTask() override = default;
+    explicit UeMrTask(TaskBase *base);
+    ~UeMrTask() override = default;
 
   protected:
     void onStart() override;
@@ -44,9 +43,7 @@ class GnbMrTask : public NtsTask
     void onQuit() override;
 
   private:
-    void onUeConnected(int ue, const std::string &name);
-    void onUeReleased(int ue, rls::ECause cause);
-    void receiveUplinkPayload(int ue, rls::EPayloadType type, OctetString &&payload);
+    void receiveDownlinkPayload(rls::EPayloadType type, OctetString &&payload);
 };
 
-} // namespace nr::gnb
+} // namespace nr::ue

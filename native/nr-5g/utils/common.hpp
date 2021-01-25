@@ -27,6 +27,7 @@ TimeStamp CurrentTimeStamp();
 int NextId();
 int ParseInt(const std::string &str);
 int ParseInt(const char *str);
+uint64_t Random64();
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

@@ -10,21 +10,7 @@
 
 #include <common.hpp>
 #include <constants.hpp>
-#include <random>
 #include <utility>
-
-static uint64_t TokenGen()
-{
-    while (true)
-    {
-        std::random_device rd;
-        std::mt19937_64 eng(rd());
-        std::uniform_int_distribution<uint64_t> distribution;
-        uint64_t r = distribution(eng);
-        if (r != 0)
-            return r;
-    }
-}
 
 static const octet3 AppVersion = octet3{cons::Major, cons::Minor, cons::Patch};
 
@@ -60,7 +46,7 @@ void RlsUeEntity::onHeartbeat()
     msg.msgType = EMessageType::RLS_HEARTBEAT;
     msg.msgCls = EMessageClass::NORMAL_MESSAGE;
     msg.appVersion = AppVersion;
-    sendRlsMessage(msg);
+    sendRlsMessage(selected, msg);
 }
 
 void RlsUeEntity::onWaitingTimerExpire()
@@ -76,7 +62,7 @@ void RlsUeEntity::onWaitingTimerExpire()
     else
     {
         nextSearch++;
-        ueToken = TokenGen();
+        ueToken = utils::Random64();
         startWaitingTimer(Constants::UE_WAIT_TIMEOUT);
         sendSetupRequest();
     }
@@ -98,7 +84,7 @@ void RlsUeEntity::onUplinkDelivery(EPayloadType type, OctetString &&payload)
     msg.appVersion = AppVersion;
     msg.payloadType = type;
     msg.payload = std::move(payload);
-    sendRlsMessage(msg);
+    sendRlsMessage(selected, msg);
 }
 
 void RlsUeEntity::startGnbSearch()
@@ -116,7 +102,7 @@ void RlsUeEntity::startGnbSearch()
     }
 
     nextSearch = 0;
-    ueToken = TokenGen();
+    ueToken = utils::Random64();
     startWaitingTimer(Constants::UE_WAIT_TIMEOUT);
     state = EUeState::SEARCH;
     sendSetupRequest();
@@ -129,7 +115,7 @@ void RlsUeEntity::onReceive(const InetAddress &address, const OctetString &pdu)
     auto res = Decode(OctetBuffer{pdu}, msg, AppVersion);
     if (res == DecodeRes::FAILURE)
     {
-        logWarn("PDU decoding failed");
+        logError("PDU decoding failed");
         return;
     }
     if (res == DecodeRes::VERSION_MISMATCH)
@@ -216,13 +202,13 @@ void RlsUeEntity::onReceive(const InetAddress &address, const OctetString &pdu)
 
             if (nextSearch + 1 >= gnbSearchList.size())
             {
-                resetEntity();
                 searchFailure(lastError);
+                resetEntity();
             }
             else
             {
                 nextSearch++;
-                ueToken = TokenGen();
+                ueToken = utils::Random64();
                 startWaitingTimer(Constants::UE_WAIT_TIMEOUT);
                 sendSetupRequest();
             }
@@ -265,7 +251,7 @@ void RlsUeEntity::sendSetupRequest()
     m.appVersion = AppVersion;
     m.ueToken = ueToken;
     m.gnbToken = 0;
-    sendRlsMessage(m);
+    sendRlsMessage(gnbSearchList[nextSearch], m);
 }
 
 void RlsUeEntity::sendSetupComplete()
@@ -277,7 +263,7 @@ void RlsUeEntity::sendSetupComplete()
     m.ueToken = ueToken;
     m.gnbToken = gnbToken;
     m.str = nodeName;
-    sendRlsMessage(m);
+    sendRlsMessage(selected, m);
 }
 
 void RlsUeEntity::sendReleaseIndication(ECause cause)
@@ -289,10 +275,10 @@ void RlsUeEntity::sendReleaseIndication(ECause cause)
     m.ueToken = ueToken;
     m.gnbToken = gnbToken;
     m.cause = cause;
-    sendRlsMessage(m);
+    sendRlsMessage(selected, m);
 }
 
-void RlsUeEntity::sendRlsMessage(const RlsMessage &msg)
+void RlsUeEntity::sendRlsMessage(const InetAddress &address, const RlsMessage &msg)
 {
     OctetString stream{};
     if (!Encode(msg, stream))
@@ -301,7 +287,7 @@ void RlsUeEntity::sendRlsMessage(const RlsMessage &msg)
         return;
     }
 
-    sendRlsPdu(selected, stream);
+    sendRlsPdu(address, std::move(stream));
 }
 
 } // namespace rls

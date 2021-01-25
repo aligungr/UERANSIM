@@ -6,8 +6,8 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "gnb_ngap_task.hpp"
 #include "gnb_app_task.hpp"
+#include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
 
 #include <ASN_NGAP_AMFName.h>
@@ -43,6 +43,8 @@ void NgapTask::handleAssociationSetup(NwSctpAssociationSetup *msg)
             auto *update = new NwGnbStatusUpdate(NwGnbStatusUpdate::INITIAL_SCTP_ESTABLISHED);
             update->isInitialSctpEstablished = true;
             base->appTask->push(update);
+
+            base->mrTask->push(new NwGnbN1Ready());
         }
 
         sendNgSetupRequest(amf->ctxId);
@@ -164,6 +166,7 @@ void NgapTask::receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg)
         });
     }
 
+    amf->state = EAmfState::CONNECTED;
     logger->info("NG Setup procedure is successful");
 }
 

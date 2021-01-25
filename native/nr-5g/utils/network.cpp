@@ -70,9 +70,7 @@ InetAddress::InetAddress(const std::string &address, uint16_t port) : storage{},
     struct addrinfo *result;
     int s = getaddrinfo(address.c_str(), std::to_string(port).c_str(), &hints, &result);
     if (s != 0)
-    {
         throw LibError("Bad Inet address: " + address, errno);
-    }
 
     if (result->ai_family != AF_INET && result->ai_family == AF_INET6)
     {

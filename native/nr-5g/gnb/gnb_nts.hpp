@@ -175,6 +175,13 @@ struct NwGnbStatusUpdate : NtsMessage
     }
 };
 
+struct NwGnbN1Ready : NtsMessage
+{
+    NwGnbN1Ready() : NtsMessage(NtsMessageType::GNB_MR_N1_IS_READY)
+    {
+    }
+};
+
 struct NwUeContextUpdate : NtsMessage
 {
     int ueId;

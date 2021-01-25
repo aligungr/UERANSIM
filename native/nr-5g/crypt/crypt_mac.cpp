@@ -9,7 +9,7 @@
 #include "crypt_mac.hpp"
 #include "external/hmac-sha256.h"
 
-namespace crypt
+namespace crypto
 {
 
 void HmacSha256(uint8_t *out, const uint8_t *data, size_t dataLen, const uint8_t *key, size_t keyLen)

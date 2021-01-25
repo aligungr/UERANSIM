@@ -11,7 +11,7 @@
 
 void OctetString::append(const OctetString &v)
 {
-    m_data.insert(v.m_data.end(), v.m_data.begin(), v.m_data.end());
+    m_data.insert(m_data.end(), v.m_data.begin(), v.m_data.end());
 }
 
 void OctetString::appendOctet(uint8_t v)

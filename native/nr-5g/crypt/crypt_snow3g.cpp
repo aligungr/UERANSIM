@@ -171,7 +171,7 @@ static uint32_t ClockFSM()
     return F;
 }
 
-void crypt::snow3g::Initialize(const uint32_t *pKey, const uint32_t *pIv)
+void crypto::snow3g::Initialize(const uint32_t *pKey, const uint32_t *pIv)
 {
     uint8_t i = 0;
     uint32_t F = 0x0;
@@ -201,7 +201,7 @@ void crypt::snow3g::Initialize(const uint32_t *pKey, const uint32_t *pIv)
     }
 }
 
-void crypt::snow3g::GenerateKeyStream(uint32_t *pKeyStream, uint32_t nKeyStream)
+void crypto::snow3g::GenerateKeyStream(uint32_t *pKeyStream, uint32_t nKeyStream)
 {
     uint32_t t = 0;
     uint32_t F = 0x0;

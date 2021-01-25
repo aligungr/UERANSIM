@@ -37,6 +37,8 @@ class RlsGnbEntity
     virtual void logWarn(const std::string &msg) = 0;
     virtual void logError(const std::string &msg) = 0;
 
+    virtual bool isInReadyState() = 0;
+
     virtual void onUeConnected(int ue, std::string name) = 0;
     virtual void onUeReleased(int ue, ECause cause) = 0;
 

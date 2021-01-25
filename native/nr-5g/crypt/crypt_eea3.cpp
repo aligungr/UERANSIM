@@ -9,7 +9,7 @@
 #include "crypt_eea3.hpp"
 #include "crypt_zuc.hpp"
 
-namespace crypt::eea3
+namespace crypto::eea3
 {
 
 static void ZUC(const uint8_t *pKey, uint8_t *pIv, uint32_t *pKeyStream, uint32_t nKeyStream)

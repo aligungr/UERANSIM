@@ -36,6 +36,12 @@ void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu)
     if (amfCtx == nullptr)
         return;
 
+    if (amfCtx->state != EAmfState::CONNECTED)
+    {
+        logger->err("Initial NAS transport failure. AMF is not in connected state.");
+        return;
+    }
+
     amfCtx->nextStream = (amfCtx->nextStream + 1) % amfCtx->association.outStreams;
     if ((amfCtx->nextStream == 0) && (amfCtx->association.outStreams > 1))
         amfCtx->nextStream += 1;
@@ -65,14 +71,11 @@ void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu)
 
 void NgapTask::deliverDownlinkNas(int ueId, OctetString &&nasPdu)
 {
-    logger->debug("Delivering downlink NAS PDU with length %d to UE with ID %d", nasPdu.length(), ueId);
     base->rrcTask->push(new NwDownlinkNasDelivery(ueId, std::move(nasPdu)));
 }
 
 void NgapTask::deliverUplinkNas(NwUplinkNasDelivery *msg)
 {
-    logger->debug("Delivering uplink NAS PDU with length %d to UE with ID %d", msg->nasPdu.length(), msg->ueId);
-
     if (ueContexts.count(msg->ueId))
         handleUplinkNasTransport(msg->ueId, msg->nasPdu);
     else
