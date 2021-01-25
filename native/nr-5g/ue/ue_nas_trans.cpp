@@ -163,7 +163,7 @@ void NasTask::receiveDlNasTransport(const nas::DlNasTransport &msg)
         return;
     }
 
-    OctetBuffer buff{const_cast<uint8_t *>(msg.payloadContainer.data.data()),
+    OctetBuffer buff{msg.payloadContainer.data.data(),
                      static_cast<size_t>(msg.payloadContainer.data.length())};
     auto sm = nas::DecodeNasMessage(buff);
     if (sm->epd != nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)

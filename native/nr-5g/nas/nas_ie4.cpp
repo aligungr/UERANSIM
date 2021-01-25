@@ -15,7 +15,7 @@ IEDaylightSavingTime::IEDaylightSavingTime(EDaylightSavingTime value) : value(va
 {
 }
 
-IEDaylightSavingTime IEDaylightSavingTime::Decode(OctetBuffer &stream, int length)
+IEDaylightSavingTime IEDaylightSavingTime::Decode(const OctetBuffer &stream, int length)
 {
     IEDaylightSavingTime r;
     r.value = static_cast<EDaylightSavingTime>(stream.readI() & 0b11);
@@ -31,7 +31,7 @@ IEPduSessionReactivationResult::IEPduSessionReactivationResult(std::bitset<16> p
 {
 }
 
-IEPduSessionReactivationResult IEPduSessionReactivationResult::Decode(OctetBuffer &stream, int length)
+IEPduSessionReactivationResult IEPduSessionReactivationResult::Decode(const OctetBuffer &stream, int length)
 {
     octet octet1 = stream.read();
     octet octet2 = stream.read();
@@ -70,7 +70,7 @@ IEPduAddress::IEPduAddress(EPduSessionType sessionType, OctetString &&pduAddress
 {
 }
 
-IEPduAddress IEPduAddress::Decode(OctetBuffer &stream, int length)
+IEPduAddress IEPduAddress::Decode(const OctetBuffer &stream, int length)
 {
     IEPduAddress r;
     r.sessionType = static_cast<EPduSessionType>(stream.readI() & 0b111);
@@ -90,7 +90,7 @@ IESNssai::IESNssai(const octet &sst, const std::optional<octet3> &sd, const std:
 {
 }
 
-IESNssai IESNssai::Decode(OctetBuffer &stream, int length)
+IESNssai IESNssai::Decode(const OctetBuffer &stream, int length)
 {
     IESNssai res;
 
@@ -142,7 +142,7 @@ IEAdditional5gSecurityInformation::IEAdditional5gSecurityInformation(EHorizontal
 {
 }
 
-IEAdditional5gSecurityInformation IEAdditional5gSecurityInformation::Decode(OctetBuffer &stream, int length)
+IEAdditional5gSecurityInformation IEAdditional5gSecurityInformation::Decode(const OctetBuffer &stream, int length)
 {
     IEAdditional5gSecurityInformation r;
     r.hdp = static_cast<EHorizontalDerivationParameter>(stream.peekI() & 0b1);
@@ -155,7 +155,7 @@ void IEAdditional5gSecurityInformation::Encode(const IEAdditional5gSecurityInfor
     stream.appendOctet(static_cast<int>(ie.rinmr) << 1 | static_cast<int>(ie.hdp));
 }
 
-IES1UeNetworkCapability IES1UeNetworkCapability::Decode(OctetBuffer &stream, int length)
+IES1UeNetworkCapability IES1UeNetworkCapability::Decode(const OctetBuffer &stream, int length)
 {
     IES1UeNetworkCapability cap;
 
@@ -294,7 +294,7 @@ IEGprsTimer3::IEGprsTimer3(int timerValue, EGprsTimerValueUnit3 unit) : timerVal
 {
 }
 
-IEGprsTimer3 IEGprsTimer3::Decode(OctetBuffer &stream, int length)
+IEGprsTimer3 IEGprsTimer3::Decode(const OctetBuffer &stream, int length)
 {
     auto oct = stream.read();
 
@@ -316,7 +316,7 @@ IEAuthenticationFailureParameter::IEAuthenticationFailureParameter(OctetString &
 {
 }
 
-IEAuthenticationFailureParameter IEAuthenticationFailureParameter::Decode(OctetBuffer &stream, int length)
+IEAuthenticationFailureParameter IEAuthenticationFailureParameter::Decode(const OctetBuffer &stream, int length)
 {
     IEAuthenticationFailureParameter r;
     r.rawData = stream.readOctetString(length);
@@ -332,7 +332,7 @@ IEAbba::IEAbba(OctetString &&rawData) : rawData(std::move(rawData))
 {
 }
 
-IEAbba IEAbba::Decode(OctetBuffer &stream, int length)
+IEAbba IEAbba::Decode(const OctetBuffer &stream, int length)
 {
     IEAbba r;
     r.rawData = stream.readOctetString(length);
@@ -354,7 +354,7 @@ IES1ModeToN1ModeNasTransparentContainer::IES1ModeToN1ModeNasTransparentContainer
 {
 }
 
-IES1ModeToN1ModeNasTransparentContainer IES1ModeToN1ModeNasTransparentContainer::Decode(OctetBuffer &stream, int length)
+IES1ModeToN1ModeNasTransparentContainer IES1ModeToN1ModeNasTransparentContainer::Decode(const OctetBuffer &stream, int length)
 {
     IES1ModeToN1ModeNasTransparentContainer res;
     res.mac = stream.read4();
@@ -388,7 +388,7 @@ void IES1ModeToN1ModeNasTransparentContainer::Encode(const IES1ModeToN1ModeNasTr
         stream.appendOctet2(ie.ueSecurityCapabilityEps.value());
 }
 
-IEGprsTimer2 IEGprsTimer2::Decode(OctetBuffer &stream, int length)
+IEGprsTimer2 IEGprsTimer2::Decode(const OctetBuffer &stream, int length)
 {
     IEGprsTimer2 r;
     r.value = stream.read();
@@ -408,7 +408,7 @@ IE5gSmCapability::IE5gSmCapability(EReflectiveQoS rqos, EMultiHomedIPv6PduSessio
 {
 }
 
-IE5gSmCapability IE5gSmCapability::Decode(OctetBuffer &stream, int length)
+IE5gSmCapability IE5gSmCapability::Decode(const OctetBuffer &stream, int length)
 {
     IE5gSmCapability r;
     r.rqos = static_cast<EReflectiveQoS>(stream.peekI() & 0b1);
@@ -433,7 +433,7 @@ IEUeSecurityCapability::IEUeSecurityCapability()
 {
 }
 
-IEUeSecurityCapability IEUeSecurityCapability::Decode(OctetBuffer &stream, int length)
+IEUeSecurityCapability IEUeSecurityCapability::Decode(const OctetBuffer &stream, int length)
 {
     IEUeSecurityCapability cap;
 
@@ -517,7 +517,7 @@ IESessionAmbr::IESessionAmbr(EUnitForSessionAmbr unitForSessionAmbrForDownlink, 
 {
 }
 
-IESessionAmbr IESessionAmbr::Decode(OctetBuffer &stream, int length)
+IESessionAmbr IESessionAmbr::Decode(const OctetBuffer &stream, int length)
 {
     IESessionAmbr r;
     r.unitForSessionAmbrForDownlink = static_cast<EUnitForSessionAmbr>(stream.readI());
@@ -539,7 +539,7 @@ IEAuthenticationParameterAutn::IEAuthenticationParameterAutn(OctetString &&value
 {
 }
 
-IEAuthenticationParameterAutn IEAuthenticationParameterAutn::Decode(OctetBuffer &stream, int length)
+IEAuthenticationParameterAutn IEAuthenticationParameterAutn::Decode(const OctetBuffer &stream, int length)
 {
     IEAuthenticationParameterAutn r;
     r.value = stream.readOctetString(length);
@@ -556,7 +556,7 @@ IE5gsUpdateType::IE5gsUpdateType(ESmsRequested smsRequested, ENgRanRadioCapabili
 {
 }
 
-IE5gsUpdateType IE5gsUpdateType::Decode(OctetBuffer &stream, int length)
+IE5gsUpdateType IE5gsUpdateType::Decode(const OctetBuffer &stream, int length)
 {
     IE5gsUpdateType r;
     r.smsRequested = static_cast<ESmsRequested>(stream.peekI() & 0b1);
@@ -574,7 +574,7 @@ IEUplinkDataStatus::IEUplinkDataStatus(std::bitset<16> psi) : psi(psi)
 {
 }
 
-IEUplinkDataStatus IEUplinkDataStatus::Decode(OctetBuffer &stream, int length)
+IEUplinkDataStatus IEUplinkDataStatus::Decode(const OctetBuffer &stream, int length)
 {
     octet octet1 = stream.read();
     octet octet2 = stream.read();
@@ -612,7 +612,7 @@ IEAdditionalInformation::IEAdditionalInformation(OctetString &&rawData) : rawDat
 {
 }
 
-IEAdditionalInformation IEAdditionalInformation::Decode(OctetBuffer &stream, int length)
+IEAdditionalInformation IEAdditionalInformation::Decode(const OctetBuffer &stream, int length)
 {
     IEAdditionalInformation r;
     r.rawData = stream.readOctetString(length);
@@ -629,7 +629,7 @@ IEAuthenticationResponseParameter::IEAuthenticationResponseParameter(OctetString
 {
 }
 
-IEAuthenticationResponseParameter IEAuthenticationResponseParameter::Decode(OctetBuffer &stream, int length)
+IEAuthenticationResponseParameter IEAuthenticationResponseParameter::Decode(const OctetBuffer &stream, int length)
 {
     IEAuthenticationResponseParameter r;
     r.rawData = stream.readOctetString(length);
@@ -646,7 +646,7 @@ IEUeStatus::IEUeStatus(EEmmRegistrationStatus s1ModeReg, E5gMmRegistrationStatus
 {
 }
 
-IEUeStatus IEUeStatus::Decode(OctetBuffer &stream, int length)
+IEUeStatus IEUeStatus::Decode(const OctetBuffer &stream, int length)
 {
     auto octet = stream.readI();
 
@@ -667,7 +667,7 @@ IE5gsRegistrationResult::IE5gsRegistrationResult(ESmsOverNasTransportAllowed sms
 {
 }
 
-IE5gsRegistrationResult IE5gsRegistrationResult::Decode(OctetBuffer &stream, int length)
+IE5gsRegistrationResult IE5gsRegistrationResult::Decode(const OctetBuffer &stream, int length)
 {
     auto octet = stream.readI();
 
@@ -688,7 +688,7 @@ IENetworkName::IENetworkName(uint8_t numOfSpareBits, EAddCountryInitials addCi, 
 {
 }
 
-IENetworkName IENetworkName::Decode(OctetBuffer &stream, int length)
+IENetworkName IENetworkName::Decode(const OctetBuffer &stream, int length)
 {
     int flags = stream.readI();
 
@@ -711,7 +711,7 @@ IEUesUsageSetting::IEUesUsageSetting(EUesUsageSetting value) : value(value)
 {
 }
 
-IEUesUsageSetting IEUesUsageSetting::Decode(OctetBuffer &stream, int length)
+IEUesUsageSetting IEUesUsageSetting::Decode(const OctetBuffer &stream, int length)
 {
     IEUesUsageSetting r;
     r.value = static_cast<EUesUsageSetting>(stream.readI() & 0b1);
@@ -732,7 +732,7 @@ IEIntraN1ModeNasTransparentContainer::IEIntraN1ModeNasTransparentContainer(
 {
 }
 
-IEIntraN1ModeNasTransparentContainer IEIntraN1ModeNasTransparentContainer::Decode(OctetBuffer &stream, int length)
+IEIntraN1ModeNasTransparentContainer IEIntraN1ModeNasTransparentContainer::Decode(const OctetBuffer &stream, int length)
 {
     IEIntraN1ModeNasTransparentContainer res;
     res.mac = stream.read4();
@@ -765,7 +765,7 @@ IEAllowedPduSessionStatus::IEAllowedPduSessionStatus(std::bitset<16> psi) : psi(
 {
 }
 
-IEAllowedPduSessionStatus IEAllowedPduSessionStatus::Decode(OctetBuffer &stream, int length)
+IEAllowedPduSessionStatus IEAllowedPduSessionStatus::Decode(const OctetBuffer &stream, int length)
 {
     octet octet1 = stream.read();
     octet octet2 = stream.read();
@@ -803,7 +803,7 @@ IEPduSessionStatus::IEPduSessionStatus(std::bitset<16> psi) : psi(psi)
 {
 }
 
-IEPduSessionStatus IEPduSessionStatus::Decode(OctetBuffer &stream, int length)
+IEPduSessionStatus IEPduSessionStatus::Decode(const OctetBuffer &stream, int length)
 {
     octet octet1 = stream.read();
     octet octet2 = stream.read();
@@ -841,7 +841,7 @@ IE5gsDrxParameters::IE5gsDrxParameters(EDrxValue value) : value(value)
 {
 }
 
-IE5gsDrxParameters IE5gsDrxParameters::Decode(OctetBuffer &stream, int length)
+IE5gsDrxParameters IE5gsDrxParameters::Decode(const OctetBuffer &stream, int length)
 {
     IE5gsDrxParameters r;
     r.value = static_cast<EDrxValue>(stream.readI() & 0xF);
@@ -859,7 +859,7 @@ IE5gMmCapability::IE5gMmCapability(EEpcNasSupported s1Mode, EHandoverAttachSuppo
 {
 }
 
-IE5gMmCapability IE5gMmCapability::Decode(OctetBuffer &stream, int length)
+IE5gMmCapability IE5gMmCapability::Decode(const OctetBuffer &stream, int length)
 {
     auto octet = stream.read();
 
@@ -886,7 +886,7 @@ IESmPduDnRequestContainer::IESmPduDnRequestContainer(OctetString &&dnSpecificIde
 {
 }
 
-IESmPduDnRequestContainer IESmPduDnRequestContainer::Decode(OctetBuffer &stream, int length)
+IESmPduDnRequestContainer IESmPduDnRequestContainer::Decode(const OctetBuffer &stream, int length)
 {
     IESmPduDnRequestContainer r;
     r.dnSpecificIdentity = stream.readOctetString(length);
@@ -907,7 +907,7 @@ IE5gsNetworkFeatureSupport::IE5gsNetworkFeatureSupport(
 {
 }
 
-IE5gsNetworkFeatureSupport IE5gsNetworkFeatureSupport::Decode(OctetBuffer &stream, int length)
+IE5gsNetworkFeatureSupport IE5gsNetworkFeatureSupport::Decode(const OctetBuffer &stream, int length)
 {
     IE5gsNetworkFeatureSupport res;
 
@@ -960,7 +960,7 @@ IEDnn::IEDnn(const std::string &&apn) : apn{}
         this->apn.appendOctet(c);
 }
 
-IEDnn IEDnn::Decode(OctetBuffer &stream, int length)
+IEDnn IEDnn::Decode(const OctetBuffer &stream, int length)
 {
     IEDnn res;
     res.apn = stream.readOctetString(length);
@@ -976,7 +976,7 @@ IENssai::IENssai(std::vector<IESNssai> &&sNssais) : sNssais(std::move(sNssais))
 {
 }
 
-IENssai IENssai::Decode(OctetBuffer &stream, int length)
+IENssai IENssai::Decode(const OctetBuffer &stream, int length)
 {
     IENssai r;
     DecodeListIe(stream, length, r.sNssais);
@@ -993,7 +993,7 @@ IEPlmnList::IEPlmnList(std::vector<VPlmn> &&plmns) : plmns(std::move(plmns))
 {
 }
 
-IEPlmnList IEPlmnList::Decode(OctetBuffer &stream, int length)
+IEPlmnList IEPlmnList::Decode(const OctetBuffer &stream, int length)
 {
     IEPlmnList r;
     DecodeListVal(stream, length, r.plmns);
@@ -1010,7 +1010,7 @@ IEEmergencyNumberList::IEEmergencyNumberList(OctetString &&rawData) : rawData(st
 {
 }
 
-IEEmergencyNumberList IEEmergencyNumberList::Decode(OctetBuffer &stream, int length)
+IEEmergencyNumberList IEEmergencyNumberList::Decode(const OctetBuffer &stream, int length)
 {
     IEEmergencyNumberList r;
     r.rawData = stream.readOctetString(length);
@@ -1026,7 +1026,7 @@ IERejectedNssai::IERejectedNssai(std::vector<VRejectedSNssai> &&list) : list(std
 {
 }
 
-IERejectedNssai IERejectedNssai::Decode(OctetBuffer &stream, int length)
+IERejectedNssai IERejectedNssai::Decode(const OctetBuffer &stream, int length)
 {
     IERejectedNssai r;
     DecodeListVal(stream, length, r.list);
@@ -1043,7 +1043,7 @@ IEServiceAreaList::IEServiceAreaList(std::vector<VPartialServiceAreaList> &&list
 {
 }
 
-IEServiceAreaList IEServiceAreaList::Decode(OctetBuffer &stream, int length)
+IEServiceAreaList IEServiceAreaList::Decode(const OctetBuffer &stream, int length)
 {
     IEServiceAreaList r;
     DecodeListVal(stream, length, r.list);
@@ -1061,7 +1061,7 @@ IE5gsTrackingAreaIdentityList::IE5gsTrackingAreaIdentityList(std::vector<VPartia
 {
 }
 
-IE5gsTrackingAreaIdentityList IE5gsTrackingAreaIdentityList::Decode(OctetBuffer &stream, int length)
+IE5gsTrackingAreaIdentityList IE5gsTrackingAreaIdentityList::Decode(const OctetBuffer &stream, int length)
 {
     IE5gsTrackingAreaIdentityList r;
     DecodeListVal(stream, length, r.list);

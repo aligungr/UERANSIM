@@ -17,140 +17,105 @@
 
 class OctetString;
 
+// TODO: add bound check
 class OctetBuffer
 {
-    uint8_t *data;
-    size_t index;
+    const uint8_t *data;
+    mutable size_t index;
     size_t size;
 
   public:
-    OctetBuffer(uint8_t *data, size_t size);
-    explicit OctetBuffer(OctetString &data);
+    OctetBuffer(const uint8_t *data, size_t size);
+    explicit OctetBuffer(const OctetString &data);
 
-    inline octet peek()
+    inline octet peek() const
     {
         return data[index];
     }
 
-    inline octet peek(int offset)
+    inline octet peek(int offset) const
     {
         return data[index + offset];
     }
 
-    inline int peekI()
+    inline int peekI() const
     {
         return (int)peek();
     }
 
-    inline int peekI(int offset)
+    inline int peekI(int offset) const
     {
         return (int)peek(offset);
     }
 
-    inline octet read()
+    inline octet read() const
     {
         return data[index++];
     }
 
-    inline int readI()
+    inline int readI() const
     {
         return (int)read();
     }
 
-    inline octet2 read2()
+    inline octet2 read2() const
     {
         return octet2{read(), read()};
     }
 
-    inline int16_t read2S()
+    inline int16_t read2S() const
     {
         return (int16_t)read2();
     }
 
-    inline uint16_t read2US()
+    inline uint16_t read2US() const
     {
         return (uint16_t)read2();
     }
 
-    inline int read2I()
+    inline int read2I() const
     {
         return (int)read2();
     }
 
-    inline octet3 read3()
+    inline octet3 read3() const
     {
         return {read(), read(), read()};
     }
 
-    inline int read3I()
+    inline int read3I() const
     {
         return (int)read3();
     }
 
-    inline octet4 read4()
+    inline octet4 read4() const
     {
         return {read(), read(), read(), read()};
     }
 
-    inline int read4I()
+    inline int read4I() const
     {
         return (int)read4();
     }
 
-    inline uint32_t read4UI()
+    inline uint32_t read4UI() const
     {
         return (uint32_t)read4();
     }
 
-    inline octet8 read8()
+    inline octet8 read8() const
     {
         return {read(), read(), read(), read(), read(), read(), read(), read()};
     }
 
-    inline uint64_t read8UL()
+    inline uint64_t read8UL() const
     {
         return (uint64_t)read8();
     }
 
-    inline int64_t read8L()
+    inline int64_t read8L() const
     {
         return (int64_t)read8();
-    }
-
-    inline void write(uint8_t octet)
-    {
-        data[index++] = octet;
-    }
-
-    inline void writeRanged(const std::initializer_list<std::pair<uint8_t, int>> &list)
-    {
-        write(bits::Ranged8(list));
-    }
-
-    inline void write2(uint16_t octet)
-    {
-        write((octet >> 8) & 0xFF);
-        write(octet & 0xFF);
-    }
-
-    inline void write4(uint32_t octet)
-    {
-        write((octet >> 24) & 0xFF);
-        write((octet >> 16) & 0xFF);
-        write((octet >> 8) & 0xFF);
-        write(octet & 0xFF);
-    }
-
-    inline void write8(uint64_t octet)
-    {
-        write((octet >> 56) & 0xFF);
-        write((octet >> 48) & 0xFF);
-        write((octet >> 40) & 0xFF);
-        write((octet >> 32) & 0xFF);
-        write((octet >> 24) & 0xFF);
-        write((octet >> 16) & 0xFF);
-        write((octet >> 8) & 0xFF);
-        write(octet & 0xFF);
     }
 
     inline size_t currentIndex() const
@@ -163,7 +128,7 @@ class OctetBuffer
         return index < size;
     }
 
-    OctetString readOctetString(int length);
-    OctetString readOctetString();
-    std::string readUtf8String(int length);
+    OctetString readOctetString(int length) const;
+    OctetString readOctetString() const;
+    std::string readUtf8String(int length) const;
 };

@@ -52,7 +52,7 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
     }
 }
 
-std::string nas::DecodeBcdString(OctetBuffer &stream, int length, bool skipFirst)
+std::string nas::DecodeBcdString(const OctetBuffer &stream, int length, bool skipFirst)
 {
     if (length == 0)
         return "";

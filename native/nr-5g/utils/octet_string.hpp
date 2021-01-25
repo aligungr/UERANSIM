@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+// TODO: implement MemoryBlock and use it for decoders etc. instead of this.
 class OctetString
 {
   private:

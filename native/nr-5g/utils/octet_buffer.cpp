@@ -9,27 +9,27 @@
 #include "octet_buffer.hpp"
 #include "octet_string.hpp"
 
-OctetString OctetBuffer::readOctetString(int length)
+OctetBuffer::OctetBuffer(const OctetString &data) : data(data.data()), index(0), size(data.length())
+{
+}
+
+OctetBuffer::OctetBuffer(const uint8_t *data, size_t size) : data(data), index(0), size(size)
+{
+}
+
+OctetString OctetBuffer::readOctetString(int length) const
 {
     std::vector<uint8_t> v{data + index, data + index + length};
     index += length;
     return OctetString(std::move(v));
 }
 
-OctetString OctetBuffer::readOctetString()
+OctetString OctetBuffer::readOctetString() const
 {
     return readOctetString(static_cast<int>(size - index));
 }
 
-OctetBuffer::OctetBuffer(OctetString &data) : data(data.data()), index(0), size(data.length())
-{
-}
-
-OctetBuffer::OctetBuffer(uint8_t *data, size_t size) : data(data), index(0), size(size)
-{
-}
-
-std::string OctetBuffer::readUtf8String(int length)
+std::string OctetBuffer::readUtf8String(int length) const
 {
     auto res = std::string(data + index, data + index + length);
     index += length;

@@ -43,7 +43,7 @@ struct InformationElement6 : InformationElement
 //======================================================================================================
 
 template <typename T>
-static inline T DecodeIe1(OctetBuffer &stream)
+static inline T DecodeIe1(const OctetBuffer &stream)
 {
     static_assert(std::is_base_of<InformationElement1, T>::value);
 
@@ -93,7 +93,7 @@ static inline void EncodeIe2(const T &ie, OctetString &stream)
 }
 
 template <typename T>
-static inline T DecodeIe2(OctetBuffer &stream)
+static inline T DecodeIe2(const OctetBuffer &stream)
 {
     static_assert(std::is_base_of<InformationElement2, T>::value);
     // nothing to decode for type-2 information elements
@@ -113,7 +113,7 @@ static inline void EncodeIe3(const T &ie, OctetString &stream)
 }
 
 template <typename T>
-static inline T DecodeIe3(OctetBuffer &stream)
+static inline T DecodeIe3(const OctetBuffer &stream)
 {
     static_assert(std::is_base_of<InformationElement3, T>::value);
 
@@ -137,7 +137,7 @@ static inline void EncodeIe4(const T &ie, OctetString &stream)
 }
 
 template <typename T>
-static inline T DecodeIe4(OctetBuffer &stream)
+static inline T DecodeIe4(const OctetBuffer &stream)
 {
     static_assert(std::is_base_of<InformationElement4, T>::value);
 
@@ -162,7 +162,7 @@ static inline void EncodeIe6(const T &ie, OctetString &stream)
 }
 
 template <typename T>
-static inline T DecodeIe6(OctetBuffer &stream)
+static inline T DecodeIe6(const OctetBuffer &stream)
 {
     static_assert(std::is_base_of<InformationElement6, T>::value);
     return T::Decode(stream, stream.read2I());
@@ -173,7 +173,7 @@ static inline T DecodeIe6(OctetBuffer &stream)
 //======================================================================================================
 
 template <typename T>
-static inline T DecodeIe2346(OctetBuffer &stream)
+static inline T DecodeIe2346(const OctetBuffer &stream)
 {
     static_assert(std::is_base_of<InformationElement2, T>::value || std::is_base_of<InformationElement3, T>::value ||
                   std::is_base_of<InformationElement4, T>::value || std::is_base_of<InformationElement6, T>::value);
@@ -208,7 +208,7 @@ static inline void Encode2346(const T &ie, OctetString &stream)
 //======================================================================================================
 
 template <typename T>
-static inline bool DecodeListIe(OctetBuffer &stream, int length, std::vector<T> &output)
+static inline bool DecodeListIe(const OctetBuffer &stream, int length, std::vector<T> &output)
 {
     size_t readLen = 0;
     while (readLen < static_cast<size_t>(length))
@@ -223,7 +223,7 @@ static inline bool DecodeListIe(OctetBuffer &stream, int length, std::vector<T> 
 }
 
 template <typename T>
-static inline bool DecodeListVal(OctetBuffer &stream, int length, std::vector<T> &output)
+static inline bool DecodeListVal(const OctetBuffer &stream, int length, std::vector<T> &output)
 {
     size_t readLen = 0;
     while (readLen < static_cast<size_t>(length))
@@ -240,6 +240,6 @@ static inline bool DecodeListVal(OctetBuffer &stream, int length, std::vector<T>
 void EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
                      int skippedHalfOctet);
 
-std::string DecodeBcdString(OctetBuffer &stream, int length, bool skipFirst);
+std::string DecodeBcdString(const OctetBuffer &stream, int length, bool skipFirst);
 
 } // namespace nas

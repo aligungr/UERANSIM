@@ -98,7 +98,7 @@ bool EncodeGtpMessage(const GtpMessage &gtp, OctetString &stream)
     return true; // success
 }
 
-static UdpPortExtHeader *DecodeUdpPortExtHeader(int len, OctetBuffer &stream)
+static UdpPortExtHeader *DecodeUdpPortExtHeader(int len, const OctetBuffer &stream)
 {
     if (len != 1)
         return nullptr; // length must be 1 for UdpPortExtHeader
@@ -108,7 +108,7 @@ static UdpPortExtHeader *DecodeUdpPortExtHeader(int len, OctetBuffer &stream)
     return res;
 }
 
-static LongPdcpPduNumberExtHeader *DecodeLongPdcpPduNumberExtHeader(int len, OctetBuffer &stream)
+static LongPdcpPduNumberExtHeader *DecodeLongPdcpPduNumberExtHeader(int len, const OctetBuffer &stream)
 {
     if (len != 2)
         return nullptr; // length must be 2 for LongPdcpPduNumberExtHeader
@@ -124,7 +124,7 @@ static LongPdcpPduNumberExtHeader *DecodeLongPdcpPduNumberExtHeader(int len, Oct
     return res;
 }
 
-static NrRanContainerExtHeader *DecodeNrRanContainerExtHeader(int len, OctetBuffer &stream)
+static NrRanContainerExtHeader *DecodeNrRanContainerExtHeader(int len, const OctetBuffer &stream)
 {
     // obtain actual length in octets. (but not used)
     len = 4 * len - 2;
@@ -133,7 +133,7 @@ static NrRanContainerExtHeader *DecodeNrRanContainerExtHeader(int len, OctetBuff
     return nullptr;
 }
 
-static PduSessionContainerExtHeader *DecodePduSessionContainerExtHeader(int len, OctetBuffer &stream)
+static PduSessionContainerExtHeader *DecodePduSessionContainerExtHeader(int len, const OctetBuffer &stream)
 {
     // obtain actual length in octets. (but not used)
     len = 4 * len - 2;
@@ -143,7 +143,7 @@ static PduSessionContainerExtHeader *DecodePduSessionContainerExtHeader(int len,
     return res;
 }
 
-static PdcpPduNumberExtHeader *DecodePdcpPduNumberExtHeader(int len, OctetBuffer &stream)
+static PdcpPduNumberExtHeader *DecodePdcpPduNumberExtHeader(int len, const OctetBuffer &stream)
 {
     if (len != 1)
         return nullptr; // length must be 1 for PdcpPduNumberExtHeader
@@ -153,7 +153,7 @@ static PdcpPduNumberExtHeader *DecodePdcpPduNumberExtHeader(int len, OctetBuffer
     return res;
 }
 
-GtpMessage *DecodeGtpMessage(OctetBuffer &stream)
+GtpMessage *DecodeGtpMessage(const OctetBuffer &stream)
 {
     auto *res = new GtpMessage();
 

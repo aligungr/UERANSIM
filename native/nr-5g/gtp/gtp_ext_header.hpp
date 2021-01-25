@@ -32,7 +32,7 @@ struct PduSessionInformation
 
     virtual ~PduSessionInformation() = default;
 
-    static std::unique_ptr<PduSessionInformation> Decode(OctetBuffer &stream);
+    static std::unique_ptr<PduSessionInformation> Decode(const OctetBuffer &stream);
     static bool Encode(const PduSessionInformation &pdu, OctetString &stream);
 };
 

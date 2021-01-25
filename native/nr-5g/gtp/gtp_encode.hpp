@@ -14,6 +14,6 @@ namespace gtp
 {
 
 bool EncodeGtpMessage(const GtpMessage &msg, OctetString &stream);
-GtpMessage *DecodeGtpMessage(OctetBuffer &stream);
+GtpMessage *DecodeGtpMessage(const OctetBuffer &stream);
 
 } // namespace gtp

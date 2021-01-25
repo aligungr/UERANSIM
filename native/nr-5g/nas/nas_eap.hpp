@@ -194,6 +194,6 @@ class EapNotification : public Eap
 };
 
 void EncodeEapPdu(OctetString &stream, const Eap &eap);
-std::unique_ptr<Eap> DecodeEapPdu(OctetBuffer &stream);
+std::unique_ptr<Eap> DecodeEapPdu(const OctetBuffer &stream);
 
 } // namespace eap

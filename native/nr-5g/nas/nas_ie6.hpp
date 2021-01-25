@@ -25,7 +25,7 @@ struct IEQoSFlowDescriptions : InformationElement6
     IEQoSFlowDescriptions() = default;
     explicit IEQoSFlowDescriptions(std::vector<VQoSFlowDescription> &&list);
 
-    static IEQoSFlowDescriptions Decode(OctetBuffer &stream, int length);
+    static IEQoSFlowDescriptions Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEQoSFlowDescriptions &ie, OctetString &stream);
 };
 
@@ -36,7 +36,7 @@ struct IEPayloadContainer : InformationElement6
     IEPayloadContainer() = default;
     explicit IEPayloadContainer(OctetString &&data);
 
-    static IEPayloadContainer Decode(OctetBuffer &stream, int length);
+    static IEPayloadContainer Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEPayloadContainer &ie, OctetString &stream);
 };
 
@@ -47,7 +47,7 @@ struct IEExtendedEmergencyNumberList : InformationElement6
     IEExtendedEmergencyNumberList() = default;
     explicit IEExtendedEmergencyNumberList(OctetString &&data);
 
-    static IEExtendedEmergencyNumberList Decode(OctetBuffer &stream, int length);
+    static IEExtendedEmergencyNumberList Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEExtendedEmergencyNumberList &ie, OctetString &stream);
 };
 
@@ -58,7 +58,7 @@ struct IEEpsNasMessageContainer : InformationElement6
     IEEpsNasMessageContainer() = default;
     explicit IEEpsNasMessageContainer(OctetString &&data);
 
-    static IEEpsNasMessageContainer Decode(OctetBuffer &stream, int length);
+    static IEEpsNasMessageContainer Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEEpsNasMessageContainer &ie, OctetString &stream);
 };
 
@@ -69,7 +69,7 @@ struct IENasMessageContainer : InformationElement6
     IENasMessageContainer() = default;
     explicit IENasMessageContainer(OctetString &&data);
 
-    static IENasMessageContainer Decode(OctetBuffer &stream, int length);
+    static IENasMessageContainer Decode(const OctetBuffer &stream, int length);
     static void Encode(const IENasMessageContainer &ie, OctetString &stream);
 };
 
@@ -83,7 +83,7 @@ struct IEExtendedProtocolConfigurationOptions : InformationElement6
     IEExtendedProtocolConfigurationOptions(EConfigurationProtocol configurationProtocol, bool extension,
                                            OctetString &&options);
 
-    static IEExtendedProtocolConfigurationOptions Decode(OctetBuffer &stream, int length);
+    static IEExtendedProtocolConfigurationOptions Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEExtendedProtocolConfigurationOptions &ie, OctetString &stream);
 };
 
@@ -94,7 +94,7 @@ struct IEPduSessionReactivationResultErrorCause : InformationElement6
     IEPduSessionReactivationResultErrorCause() = default;
     explicit IEPduSessionReactivationResultErrorCause(std::vector<VPduSessionReactivationResultErrorCause> &&values);
 
-    static IEPduSessionReactivationResultErrorCause Decode(OctetBuffer &stream, int length);
+    static IEPduSessionReactivationResultErrorCause Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEPduSessionReactivationResultErrorCause &ie, OctetString &stream);
 };
 
@@ -105,7 +105,7 @@ struct IELadnIndication : InformationElement6
     IELadnIndication() = default;
     explicit IELadnIndication(std::vector<IEDnn> &&values);
 
-    static IELadnIndication Decode(OctetBuffer &stream, int length);
+    static IELadnIndication Decode(const OctetBuffer &stream, int length);
     static void Encode(const IELadnIndication &ie, OctetString &stream);
 };
 
@@ -118,7 +118,7 @@ struct VLadn
     VLadn(IEDnn &&dnn, IE5gsTrackingAreaIdentityList &&trackingAreaIdentityList);
 
     static void Encode(const VLadn &value, OctetString &stream);
-    static VLadn Decode(OctetBuffer &stream);
+    static VLadn Decode(const OctetBuffer &stream);
 };
 
 struct IELadnInformation : InformationElement6
@@ -128,7 +128,7 @@ struct IELadnInformation : InformationElement6
     IELadnInformation() = default;
     explicit IELadnInformation(std::vector<VLadn> &&values);
 
-    static IELadnInformation Decode(OctetBuffer &stream, int length);
+    static IELadnInformation Decode(const OctetBuffer &stream, int length);
     static void Encode(const IELadnInformation &ie, OctetString &stream);
 };
 
@@ -139,7 +139,7 @@ struct IEOperatorDefinedAccessCategoryDefinitions : InformationElement6
     IEOperatorDefinedAccessCategoryDefinitions() = default;
     explicit IEOperatorDefinedAccessCategoryDefinitions(std::vector<VOperatorDefinedAccessCategoryDefinition> &&values);
 
-    static IEOperatorDefinedAccessCategoryDefinitions Decode(OctetBuffer &stream, int length);
+    static IEOperatorDefinedAccessCategoryDefinitions Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEOperatorDefinedAccessCategoryDefinitions &ie, OctetString &stream);
 };
 
@@ -150,7 +150,7 @@ struct IEMappedEpsBearerContexts : InformationElement6
     IEMappedEpsBearerContexts() = default;
     explicit IEMappedEpsBearerContexts(OctetString &&data);
 
-    static IEMappedEpsBearerContexts Decode(OctetBuffer &stream, int length);
+    static IEMappedEpsBearerContexts Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEMappedEpsBearerContexts &ie, OctetString &stream);
 };
 
@@ -161,7 +161,7 @@ struct IEQoSRules : InformationElement6
     IEQoSRules() = default;
     explicit IEQoSRules(OctetString &&data);
 
-    static IEQoSRules Decode(OctetBuffer &stream, int length);
+    static IEQoSRules Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEQoSRules &ie, OctetString &stream);
 };
 
@@ -177,7 +177,7 @@ struct IESorTransparentContainer : InformationElement6
     OctetString securedPacket{};           // meaningful if listType is SECURED_PACKET
     std::vector<VPlmnIdAccessTech> piat{}; // meaningful if listType is PLMN_ID_AND_ACCESS_TECH
 
-    static IESorTransparentContainer Decode(OctetBuffer &stream, int length);
+    static IESorTransparentContainer Decode(const OctetBuffer &stream, int length);
     static void Encode(const IESorTransparentContainer &ie, OctetString &stream);
 };
 
@@ -191,7 +191,7 @@ struct IE5gsMobileIdentity : InformationElement6
     std::string value{};             // used for IMEI, IMEI-SV, NSI,
     ImsiMobileIdentity imsi{};       // used for IMSI
 
-    static IE5gsMobileIdentity Decode(OctetBuffer &stream, int length);
+    static IE5gsMobileIdentity Decode(const OctetBuffer &stream, int length);
     static void Encode(const IE5gsMobileIdentity &ie, OctetString &stream);
 };
 
@@ -199,7 +199,7 @@ struct IEEapMessage : InformationElement6
 {
     std::unique_ptr<eap::Eap> eap{};
 
-    static IEEapMessage Decode(OctetBuffer &stream, int length);
+    static IEEapMessage Decode(const OctetBuffer &stream, int length);
     static void Encode(const IEEapMessage &ie, OctetString &stream);
 };
 

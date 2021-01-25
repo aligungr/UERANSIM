@@ -12,8 +12,12 @@
 
 struct cons
 {
-    static constexpr const uint32_t AppVersion = 0x00'03'00'00;
+    static constexpr const uint8_t Major = 3;
+    static constexpr const uint8_t Minor = 0;
+    static constexpr const uint8_t Patch = 0;
 
     static constexpr const uint16_t NdpPort = 4997;
     static constexpr const char *NdpLoopback = "127.0.0.1";
+
+
 };

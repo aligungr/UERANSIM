@@ -130,6 +130,8 @@ void UeRrcTask::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
     case ASN_RRC_DL_DCCH_MessageType__c1_PR_dlInformationTransfer: {
         receiveDownlinkInformationTransfer(c1->choice.dlInformationTransfer);
         break;
+    default:
+        break;
     }
     }
 }

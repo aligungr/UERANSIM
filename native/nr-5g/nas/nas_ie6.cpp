@@ -15,7 +15,7 @@ IEQoSFlowDescriptions::IEQoSFlowDescriptions(std::vector<VQoSFlowDescription> &&
 {
 }
 
-IEQoSFlowDescriptions IEQoSFlowDescriptions::Decode(OctetBuffer &stream, int length)
+IEQoSFlowDescriptions IEQoSFlowDescriptions::Decode(const OctetBuffer &stream, int length)
 {
     IEQoSFlowDescriptions r;
     DecodeListVal(stream, length, r.list);
@@ -32,7 +32,7 @@ IEPayloadContainer::IEPayloadContainer(OctetString &&data) : data(std::move(data
 {
 }
 
-IEPayloadContainer IEPayloadContainer::Decode(OctetBuffer &stream, int length)
+IEPayloadContainer IEPayloadContainer::Decode(const OctetBuffer &stream, int length)
 {
     return IEPayloadContainer{stream.readOctetString(length)};
 }
@@ -46,7 +46,7 @@ IEExtendedEmergencyNumberList::IEExtendedEmergencyNumberList(OctetString &&data)
 {
 }
 
-IEExtendedEmergencyNumberList IEExtendedEmergencyNumberList::Decode(OctetBuffer &stream, int length)
+IEExtendedEmergencyNumberList IEExtendedEmergencyNumberList::Decode(const OctetBuffer &stream, int length)
 {
     return IEExtendedEmergencyNumberList{stream.readOctetString(length)};
 }
@@ -60,7 +60,7 @@ IEEpsNasMessageContainer::IEEpsNasMessageContainer(OctetString &&data) : data(st
 {
 }
 
-IEEpsNasMessageContainer IEEpsNasMessageContainer::Decode(OctetBuffer &stream, int length)
+IEEpsNasMessageContainer IEEpsNasMessageContainer::Decode(const OctetBuffer &stream, int length)
 {
     return IEEpsNasMessageContainer{stream.readOctetString(length)};
 }
@@ -74,7 +74,7 @@ IENasMessageContainer::IENasMessageContainer(OctetString &&data) : data(std::mov
 {
 }
 
-IENasMessageContainer IENasMessageContainer::Decode(OctetBuffer &stream, int length)
+IENasMessageContainer IENasMessageContainer::Decode(const OctetBuffer &stream, int length)
 {
     return IENasMessageContainer{stream.readOctetString(length)};
 }
@@ -90,7 +90,7 @@ IEExtendedProtocolConfigurationOptions::IEExtendedProtocolConfigurationOptions(
 {
 }
 
-IEExtendedProtocolConfigurationOptions IEExtendedProtocolConfigurationOptions::Decode(OctetBuffer &stream, int length)
+IEExtendedProtocolConfigurationOptions IEExtendedProtocolConfigurationOptions::Decode(const OctetBuffer &stream, int length)
 {
     auto octet = stream.read();
 
@@ -114,7 +114,7 @@ IEPduSessionReactivationResultErrorCause::IEPduSessionReactivationResultErrorCau
 {
 }
 
-IEPduSessionReactivationResultErrorCause IEPduSessionReactivationResultErrorCause::Decode(OctetBuffer &stream,
+IEPduSessionReactivationResultErrorCause IEPduSessionReactivationResultErrorCause::Decode(const OctetBuffer &stream,
                                                                                           int length)
 {
     IEPduSessionReactivationResultErrorCause r;
@@ -133,7 +133,7 @@ IELadnIndication::IELadnIndication(std::vector<IEDnn> &&values) : values(std::mo
 {
 }
 
-IELadnIndication IELadnIndication::Decode(OctetBuffer &stream, int length)
+IELadnIndication IELadnIndication::Decode(const OctetBuffer &stream, int length)
 {
     IELadnIndication r;
     DecodeListIe(stream, length, r.values);
@@ -157,7 +157,7 @@ void VLadn::Encode(const VLadn &value, OctetString &stream)
     Encode2346(value.trackingAreaIdentityList, stream);
 }
 
-VLadn VLadn::Decode(OctetBuffer &stream)
+VLadn VLadn::Decode(const OctetBuffer &stream)
 {
     return VLadn{DecodeIe2346<IEDnn>(stream), DecodeIe2346<IE5gsTrackingAreaIdentityList>(stream)};
 }
@@ -166,7 +166,7 @@ IELadnInformation::IELadnInformation(std::vector<VLadn> &&ladnList) : ladnList(s
 {
 }
 
-IELadnInformation IELadnInformation::Decode(OctetBuffer &stream, int length)
+IELadnInformation IELadnInformation::Decode(const OctetBuffer &stream, int length)
 {
     IELadnInformation r;
     DecodeListVal(stream, length, r.ladnList);
@@ -185,7 +185,7 @@ IEOperatorDefinedAccessCategoryDefinitions::IEOperatorDefinedAccessCategoryDefin
 {
 }
 
-IEOperatorDefinedAccessCategoryDefinitions IEOperatorDefinedAccessCategoryDefinitions::Decode(OctetBuffer &stream,
+IEOperatorDefinedAccessCategoryDefinitions IEOperatorDefinedAccessCategoryDefinitions::Decode(const OctetBuffer &stream,
                                                                                               int length)
 {
     IEOperatorDefinedAccessCategoryDefinitions r;
@@ -204,7 +204,7 @@ IEMappedEpsBearerContexts::IEMappedEpsBearerContexts(OctetString &&data) : data(
 {
 }
 
-IEMappedEpsBearerContexts IEMappedEpsBearerContexts::Decode(OctetBuffer &stream, int length)
+IEMappedEpsBearerContexts IEMappedEpsBearerContexts::Decode(const OctetBuffer &stream, int length)
 {
     return IEMappedEpsBearerContexts{stream.readOctetString(length)};
 }
@@ -218,7 +218,7 @@ IEQoSRules::IEQoSRules(OctetString &&data) : data(std::move(data))
 {
 }
 
-IEQoSRules IEQoSRules::Decode(OctetBuffer &stream, int length)
+IEQoSRules IEQoSRules::Decode(const OctetBuffer &stream, int length)
 {
     return IEQoSRules{stream.readOctetString(length)};
 }
@@ -228,7 +228,7 @@ void IEQoSRules::Encode(const IEQoSRules &ie, OctetString &stream)
     stream.append(ie.data);
 }
 
-IESorTransparentContainer IESorTransparentContainer::Decode(OctetBuffer &stream, int length)
+IESorTransparentContainer IESorTransparentContainer::Decode(const OctetBuffer &stream, int length)
 {
     IESorTransparentContainer res;
 
@@ -353,7 +353,7 @@ void IE5gsMobileIdentity::Encode(const IE5gsMobileIdentity &ie, OctetString &str
     }
 }
 
-IE5gsMobileIdentity IE5gsMobileIdentity::Decode(OctetBuffer &stream, int length)
+IE5gsMobileIdentity IE5gsMobileIdentity::Decode(const OctetBuffer &stream, int length)
 {
     IE5gsMobileIdentity result;
 
@@ -428,7 +428,7 @@ IE5gsMobileIdentity IE5gsMobileIdentity::Decode(OctetBuffer &stream, int length)
     return result;
 }
 
-IEEapMessage IEEapMessage::Decode(OctetBuffer &stream, int length)
+IEEapMessage IEEapMessage::Decode(const OctetBuffer &stream, int length)
 {
     IEEapMessage r;
     r.eap = eap::DecodeEapPdu(stream);

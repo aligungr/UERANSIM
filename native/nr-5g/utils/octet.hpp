@@ -19,15 +19,15 @@ struct octet
     uint8_t value;
 
   public:
-    octet() : value(0)
+    octet() noexcept : value(0)
     {
     }
 
-    /* no explicit */ octet(int32_t value) : value(static_cast<uint8_t>(value & 0xFF))
+    /* no explicit */ octet(int32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
     {
     }
 
-    /* no explicit */ octet(uint32_t value) : value(static_cast<uint8_t>(value & 0xFF))
+    /* no explicit */ octet(uint32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
     {
     }
 
@@ -55,19 +55,19 @@ struct octet2
     uint16_t value;
 
   public:
-    octet2() : value(0)
+    octet2() noexcept : value(0)
     {
     }
 
-    explicit octet2(int32_t value) : value(static_cast<uint16_t>(value & 0xFFFF))
+    explicit octet2(int32_t value) noexcept : value(static_cast<uint16_t>(value & 0xFFFF))
     {
     }
 
-    explicit octet2(uint32_t value) : value(static_cast<uint16_t>(value & 0xFFFF))
+    explicit octet2(uint32_t value) noexcept : value(static_cast<uint16_t>(value & 0xFFFF))
     {
     }
 
-    octet2(uint8_t octet0, uint8_t octet1)
+    octet2(uint8_t octet0, uint8_t octet1) noexcept
         : value{static_cast<uint16_t>((static_cast<uint32_t>(octet0) << 8U) | (static_cast<uint32_t>(octet1)))}
     {
     }
@@ -105,19 +105,19 @@ struct octet3
     uint32_t value;
 
   public:
-    octet3() : value(0)
+    octet3() noexcept : value(0)
     {
     }
 
-    explicit octet3(int32_t value) : value(static_cast<uint32_t>(value & 0xFFFFFF))
+    explicit octet3(int32_t value) noexcept : value(static_cast<uint32_t>(value & 0xFFFFFF))
     {
     }
 
-    explicit octet3(uint32_t value) : value(value & 0xFFFFFF)
+    explicit octet3(uint32_t value) noexcept : value(value & 0xFFFFFF)
     {
     }
 
-    octet3(uint8_t octet0, uint8_t octet1, uint8_t octet2)
+    octet3(uint8_t octet0, uint8_t octet1, uint8_t octet2) noexcept
         : value{(static_cast<uint32_t>(octet0) << 16U) | (static_cast<uint32_t>(octet1) << 8U) |
                 (static_cast<uint32_t>(octet2))}
     {
@@ -141,19 +141,19 @@ struct octet4
     uint32_t value;
 
   public:
-    octet4() : value(0)
+    octet4() noexcept : value(0)
     {
     }
 
-    explicit octet4(int32_t value) : value(static_cast<uint32_t>(value))
+    explicit octet4(int32_t value) noexcept : value(static_cast<uint32_t>(value))
     {
     }
 
-    explicit octet4(uint32_t value) : value(value)
+    explicit octet4(uint32_t value) noexcept : value(value)
     {
     }
 
-    octet4(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3)
+    octet4(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3) noexcept
         : value{(static_cast<uint32_t>(octet0) << 24U) | (static_cast<uint32_t>(octet1) << 16U) |
                 ((static_cast<uint32_t>(octet2) << 8U)) | (static_cast<uint32_t>(octet3))}
     {
@@ -182,20 +182,20 @@ struct octet8
     uint64_t value;
 
   public:
-    octet8() : value(0)
+    octet8() noexcept : value(0)
     {
     }
 
-    explicit octet8(int64_t value) : value(static_cast<uint64_t>(value))
+    explicit octet8(int64_t value) noexcept : value(static_cast<uint64_t>(value))
     {
     }
 
-    explicit octet8(uint64_t value) : value(value)
+    explicit octet8(uint64_t value) noexcept : value(value)
     {
     }
 
     octet8(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t octet5,
-           uint8_t octet6, uint8_t octet7)
+           uint8_t octet6, uint8_t octet7) noexcept
         : value{(static_cast<uint64_t>(octet0) << 56U) | (static_cast<uint64_t>(octet1) << 48U) |
                 ((static_cast<uint64_t>(octet2) << 40U)) | (static_cast<uint64_t>(octet3) << 32U) |
                 (static_cast<uint64_t>(octet4) << 24U) | (static_cast<uint64_t>(octet5) << 16U) |
