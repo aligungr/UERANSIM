@@ -45,11 +45,10 @@ class NasTask : public NtsTask
     /* NAS transport related */
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
-    void receiveSmMessage(const nas::SmMessage &msg);
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
-    void sendMmMessage(const nas::PlainMmMessage &msg);
+    void receiveSmMessage(const nas::SmMessage &msg);
+    void sendNasMessage(const nas::PlainMmMessage &msg);
     void sendSmMessage(int psi, const nas::SmMessage &msg);
-    void sendNasMessage(const nas::NasMessage &msg);
     void sendMmStatus(nas::EMmCause cause);
 
     /* Timer related */

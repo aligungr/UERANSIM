@@ -98,11 +98,6 @@ void NasTask::receiveNasMessage(const nas::NasMessage &msg)
     }
 }
 
-void NasTask::sendNasMessage(const nas::NasMessage &msg)
-{
-    // TODO
-}
-
 void NasTask::receiveMmMessage(const nas::PlainMmMessage &msg)
 {
     // TODO: trigger on receive
@@ -201,9 +196,26 @@ void NasTask::receiveSmMessage(const nas::SmMessage &msg)
     }
 }
 
-void NasTask::sendMmMessage(const nas::PlainMmMessage &msg)
+void NasTask::sendNasMessage(const nas::PlainMmMessage &msg)
 {
-    sendNasMessage(msg);
+    // TODO trigger on send
+
+    OctetString pdu{};
+
+    if (currentNsCtx.has_value() && (currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
+                                     currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
+    {
+        auto secured = nas_enc::Encrypt(*currentNsCtx, msg);
+        nas::EncodeNasMessage(*secured, pdu);
+    }
+    else
+    {
+        nas::EncodeNasMessage(msg, pdu);
+    }
+
+    logger->debug("Sending NAS PDU with length %d", pdu.length());
+
+    base->rrcTask->push(new NwUplinkNasDelivery(std::move(pdu)));
 }
 
 void NasTask::sendSmMessage(int psi, const nas::SmMessage &msg)
@@ -219,7 +231,7 @@ void NasTask::sendSmMessage(int psi, const nas::SmMessage &msg)
     m.dnn = nas::IEDnn{};                                          // TODO: DNN per session
     m.dnn->apn = OctetString::FromAscii(base->config->dnn);        // TODO check if it is ASCII or UTF-8
 
-    sendMmMessage(m);
+    sendNasMessage(m);
 }
 
 void NasTask::sendMmStatus(nas::EMmCause cause)
@@ -228,7 +240,7 @@ void NasTask::sendMmStatus(nas::EMmCause cause)
 
     nas::FiveGMmStatus m;
     m.mmCause.value = cause;
-    sendMmMessage(m);
+    sendNasMessage(m);
 }
 
 } // namespace nr::ue

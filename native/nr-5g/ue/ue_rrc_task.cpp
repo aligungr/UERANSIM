@@ -6,38 +6,27 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "gnb_rrc_task.hpp"
-#include "gnb_nts.hpp"
-
+#include "ue_rrc_task.hpp"
 #include <rrc_encode.hpp>
 
-#include <ASN_RRC_BCCH-BCH-Message.h>
-#include <ASN_RRC_BCCH-DL-SCH-Message.h>
-#include <ASN_RRC_DL-CCCH-Message.h>
-#include <ASN_RRC_DL-DCCH-Message.h>
-#include <ASN_RRC_PCCH-Message.h>
-#include <ASN_RRC_UL-CCCH-Message.h>
-#include <ASN_RRC_UL-CCCH1-Message.h>
-#include <ASN_RRC_UL-DCCH-Message.h>
-
-namespace nr::gnb
+namespace nr::ue
 {
 
-GnbRrcTask::GnbRrcTask(TaskBase *base) : base{base}
+UeRrcTask::UeRrcTask(TaskBase *base) : base{base}
 {
-    logger = base->logBase->makeUniqueLogger("gnb-rrc");
+    logger = base->logBase->makeUniqueLogger("ue-rrc");
 }
 
-void GnbRrcTask::onStart()
+void UeRrcTask::onStart()
 {
+    logger->debug("RRC layer started");
+}
+void UeRrcTask::onQuit()
+{
+    // TODO
 }
 
-void GnbRrcTask::onQuit()
-{
-    // todo
-}
-
-void GnbRrcTask::onLoop()
+void UeRrcTask::onLoop()
 {
     NtsMessage *msg = take();
     if (!msg)
@@ -45,12 +34,23 @@ void GnbRrcTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::NGAP_DOWNLINK_NAS_DELIVERY:
-        handleDownlinkNasDelivery(dynamic_cast<NwDownlinkNasDelivery *>(msg));
+    case NtsMessageType::UE_MR_DOWNLINK_RRC: {
+        handleDownlinkRrc(dynamic_cast<NwUeDownlinkRrc *>(msg));
         break;
-    case NtsMessageType::GNB_MR_UPLINK_RRC:
-        handleUplinkRrc(dynamic_cast<NwGnbUplinkRrc *>(msg));
+    }
+    case NtsMessageType::UE_UPLINK_NAS_DELIVERY: {
+        deliverUplinkNas(std::move(dynamic_cast<NwUplinkNasDelivery *>(msg)->nasPdu));
+        delete msg;
         break;
+    }
+    case NtsMessageType::UE_MR_PLMN_SEARCH_REQUEST: {
+        base->mrTask->push(msg);
+        break;
+    }
+    case NtsMessageType::UE_MR_PLMN_SEARCH_RESPONSE: {
+        base->nasTask->push(msg);
+        break;
+    }
     default:
         logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;
@@ -58,7 +58,7 @@ void GnbRrcTask::onLoop()
     }
 }
 
-void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
+void UeRrcTask::handleDownlinkRrc(NwUeDownlinkRrc *msg)
 {
     switch (msg->channel)
     {
@@ -67,7 +67,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC BCCH-BCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_BCCH_BCH_Message, pdu);
         break;
     }
@@ -76,7 +76,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC BCCH-DL-SCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, pdu);
         break;
     };
@@ -85,7 +85,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC DL-CCCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_DL_CCCH_Message, pdu);
         break;
     };
@@ -94,7 +94,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC DL-DCCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_DL_DCCH_Message, pdu);
         break;
     };
@@ -103,7 +103,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC PCCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_PCCH_Message, pdu);
         break;
     };
@@ -112,7 +112,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC UL-CCCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_UL_CCCH_Message, pdu);
         break;
     };
@@ -121,7 +121,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC UL-CCCH1 PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_UL_CCCH1_Message, pdu);
         break;
     };
@@ -130,7 +130,7 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
         if (pdu == nullptr)
             logger->err("RRC UL-DCCH PDU decoding failed.");
         else
-            receiveRrcMessage(msg->ueId, pdu);
+            receiveRrcMessage(pdu);
         asn::Free(asn_DEF_ASN_RRC_UL_DCCH_Message, pdu);
         break;
     };
@@ -139,4 +139,4 @@ void GnbRrcTask::handleUplinkRrc(NwGnbUplinkRrc *msg)
     delete msg;
 }
 
-} // namespace nr::gnb
+} // namespace nr::ue

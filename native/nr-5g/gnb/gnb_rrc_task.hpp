@@ -17,17 +17,20 @@
 
 #include "gnb_nts.hpp"
 
-extern "C" struct ASN_RRC_BCCH_BCH_Message;
-extern "C" struct ASN_RRC_BCCH_DL_SCH_Message;
-extern "C" struct ASN_RRC_DL_CCCH_Message;
-extern "C" struct ASN_RRC_DL_DCCH_Message;
-extern "C" struct ASN_RRC_PCCH_Message;
-extern "C" struct ASN_RRC_UL_CCCH_Message;
-extern "C" struct ASN_RRC_UL_CCCH1_Message;
-extern "C" struct ASN_RRC_UL_DCCH_Message;
+extern "C"
+{
+    struct ASN_RRC_BCCH_BCH_Message;
+    struct ASN_RRC_BCCH_DL_SCH_Message;
+    struct ASN_RRC_DL_CCCH_Message;
+    struct ASN_RRC_DL_DCCH_Message;
+    struct ASN_RRC_PCCH_Message;
+    struct ASN_RRC_UL_CCCH_Message;
+    struct ASN_RRC_UL_CCCH1_Message;
+    struct ASN_RRC_UL_DCCH_Message;
 
-extern "C" struct ASN_RRC_RRCSetupRequest;
-extern "C" struct ASN_RRC_ULInformationTransfer;
+    struct ASN_RRC_RRCSetupRequest;
+    struct ASN_RRC_ULInformationTransfer;
+}
 
 namespace nr::gnb
 {
