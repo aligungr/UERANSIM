@@ -817,6 +817,13 @@ void NasTask::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     if (msg.abba.has_value())
         nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
 
+    // Check selected algorithms
+    {
+        // TODO
+        // if (msg.selectedNasSecurityAlgorithms.integrity is supported according to config file)
+        // if (msg.selectedNasSecurityAlgorithms.ciphering is supported according to config file)
+    }
+
     // Assign selected algorithms to security context, and derive NAS keys
     nonCurrentNsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
     nonCurrentNsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
@@ -928,6 +935,11 @@ crypt::milenage::Milenage NasTask::calculateMilenage(const OctetString &sqn, con
         return crypt::milenage::Calculate(base->config->opC, base->config->key, rand, sqn, base->config->amf);
     OctetString opc = crypt::milenage::CalculateOpC(base->config->opC, base->config->key);
     return crypt::milenage::Calculate(opc, base->config->key, rand, sqn, base->config->amf);
+}
+
+void NasTask::receiveMmStatus(const nas::FiveGMmStatus &msg)
+{
+    receiveMmCause(msg.mmCause);
 }
 
 } // namespace nr::ue

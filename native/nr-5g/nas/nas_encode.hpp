@@ -13,7 +13,7 @@
 namespace nas
 {
 
-void EncodeNasMessage(NasMessage &msg, OctetString &stream);
+void EncodeNasMessage(const NasMessage &msg, OctetString &stream);
 std::unique_ptr<NasMessage> DecodeNasMessage(OctetBuffer &stream);
 
 } // namespace nas

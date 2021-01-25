@@ -168,4 +168,14 @@ void NasTask::receivePduSessionEstablishmentReject(const nas::PduSessionEstablis
     // TODO
 }
 
+void NasTask::receiveSmStatus(const nas::FiveGSmStatus &msg)
+{
+    receiveSmCause(msg.smCause);
+}
+
+void NasTask::receiveSmCause(const nas::IE5gSmCause &msg)
+{
+    logger->err("SM cause received: %s", nas::utils::EnumToString(msg.value));
+}
+
 } // namespace nr::ue

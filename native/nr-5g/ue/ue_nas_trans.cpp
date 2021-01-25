@@ -6,7 +6,9 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#include "ue_nas_enc.hpp"
 #include "ue_nas_task.hpp"
+
 #include <nas_utils.hpp>
 
 namespace nr::ue
@@ -14,7 +16,86 @@ namespace nr::ue
 
 void NasTask::receiveNasMessage(const nas::NasMessage &msg)
 {
-    // todo
+    if (msg.epd == nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
+    {
+        logger->warn("Bad constructed message received (SM)");
+        sendMmStatus(nas::EMmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+        return;
+    }
+
+    auto &mm = (const nas::MmMessage &)msg;
+
+    if (mm.sht == nas::ESecurityHeaderType::NOT_PROTECTED)
+    {
+        receiveMmMessage((const nas::PlainMmMessage &)mm);
+        return;
+    }
+
+    auto &securedMm = (const nas::SecuredMmMessage &)mm;
+
+    if (mm.sht == nas::ESecurityHeaderType::INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT)
+    {
+        auto smcMsg = nas_enc::Decrypt(*currentNsCtx, securedMm);
+        if (smcMsg == nullptr)
+        {
+            logger->err("MAC mismatch in NAS encryption. Ignoring received NAS message.");
+            sendMmStatus(nas::EMmCause::MAC_FAILURE);
+            return;
+        }
+
+        if (smcMsg->epd != nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES ||
+            (((const nas::MmMessage &)(*smcMsg)).sht != nas::ESecurityHeaderType::NOT_PROTECTED) ||
+            (((const nas::PlainMmMessage &)(*smcMsg)).messageType != nas::EMessageType::SECURITY_MODE_COMMAND))
+        {
+            logger->warn("A valid Security Mode Command expected for given SHT. Ignoring received NAS message");
+            sendMmStatus(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+            return;
+        }
+
+        receiveMmMessage((const nas::PlainMmMessage &)(*smcMsg));
+    }
+
+    if (mm.sht == nas::ESecurityHeaderType::INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT)
+    {
+        logger->warn("Bad constructed message received (SHT)");
+        sendMmStatus(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        return;
+    }
+
+    if (!currentNsCtx.has_value())
+    {
+        logger->warn("Secured NAS message received while no security context");
+        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+        return;
+    }
+
+    auto decrypted = nas_enc::Decrypt(*currentNsCtx, securedMm);
+    if (decrypted == nullptr)
+    {
+        logger->err("MAC mismatch in NAS encryption. Ignoring received NAS Message.");
+        sendMmStatus(nas::EMmCause::MAC_FAILURE);
+        return;
+    }
+
+    auto &innerMsg = *decrypted;
+    if (innerMsg.epd == nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES)
+    {
+        auto &innerMm = (const nas::MmMessage &)innerMsg;
+        if (innerMm.sht == nas::ESecurityHeaderType::NOT_PROTECTED)
+            receiveMmMessage((const nas::PlainMmMessage &)innerMm);
+        else
+        {
+            logger->warn("Nested protected NAS messages detected");
+            receiveNasMessage(innerMsg);
+        }
+    }
+    else if (innerMsg.epd == nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
+        receiveSmMessage((const nas::SmMessage &)(innerMsg));
+    else
+    {
+        logger->warn("Bad constructed message received (EPD)");
+        sendMmStatus(nas::EMmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED);
+    }
 }
 
 void NasTask::sendNasMessage(const nas::NasMessage &msg)
@@ -24,6 +105,8 @@ void NasTask::sendNasMessage(const nas::NasMessage &msg)
 
 void NasTask::receiveMmMessage(const nas::PlainMmMessage &msg)
 {
+    // TODO: trigger on receive
+
     switch (msg.messageType)
     {
     case nas::EMessageType::REGISTRATION_ACCEPT:
@@ -66,7 +149,7 @@ void NasTask::receiveMmMessage(const nas::PlainMmMessage &msg)
         receiveSecurityModeCommand((const nas::SecurityModeCommand &)msg);
         break;
     case nas::EMessageType::FIVEG_MM_STATUS:
-        receiveMmCause((const nas::IE5gMmCause &)msg);
+        receiveMmStatus((const nas::FiveGMmStatus &)msg);
         break;
     case nas::EMessageType::DL_NAS_TRANSPORT:
         receiveDlNasTransport((const nas::DlNasTransport &)msg);
@@ -99,6 +182,8 @@ void NasTask::receiveDlNasTransport(const nas::DlNasTransport &msg)
 
 void NasTask::receiveSmMessage(const nas::SmMessage &msg)
 {
+    // TODO: trigger on receive
+
     switch (msg.messageType)
     {
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
@@ -106,6 +191,9 @@ void NasTask::receiveSmMessage(const nas::SmMessage &msg)
         break;
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
         receivePduSessionEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
+        break;
+    case nas::EMessageType::FIVEG_SM_STATUS:
+        receiveSmStatus((const nas::FiveGSmStatus &)msg);
         break;
     default:
         logger->err("Unhandled NAS SM message received: %d", (int)msg.messageType);
@@ -131,6 +219,15 @@ void NasTask::sendSmMessage(int psi, const nas::SmMessage &msg)
     m.dnn = nas::IEDnn{};                                          // TODO: DNN per session
     m.dnn->apn = OctetString::FromAscii(base->config->dnn);        // TODO check if it is ASCII or UTF-8
 
+    sendMmMessage(m);
+}
+
+void NasTask::sendMmStatus(nas::EMmCause cause)
+{
+    logger->warn("Sending MM Status with cause %s", nas::utils::EnumToString(cause));
+
+    nas::FiveGMmStatus m;
+    m.mmCause.value = cause;
     sendMmMessage(m);
 }
 

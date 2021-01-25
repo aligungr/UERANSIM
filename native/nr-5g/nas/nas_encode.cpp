@@ -186,7 +186,7 @@ static void EncodeSm(SmMessage &msg, OctetString &stream)
     }
 }
 
-void EncodeNasMessage(NasMessage &msg, OctetString &stream)
+void EncodeNasMessage(const NasMessage &msg, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(msg.epd));
     if (msg.epd == EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES)

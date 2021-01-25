@@ -276,7 +276,7 @@ struct NasSecurityContext
     nas::ETypeOfIntegrityProtectionAlgorithm integrity{};
     nas::ETypeOfCipheringAlgorithm ciphering{};
 
-    void updateDownlinkCount(NasCount validatedCount)
+    void updateDownlinkCount(const NasCount& validatedCount)
     {
         downlinkCount.overflow = validatedCount.overflow;
         downlinkCount.sqn = validatedCount.sqn;

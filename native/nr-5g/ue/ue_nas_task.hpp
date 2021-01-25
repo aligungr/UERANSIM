@@ -50,17 +50,19 @@ class NasTask : public NtsTask
     void sendMmMessage(const nas::PlainMmMessage &msg);
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void sendNasMessage(const nas::NasMessage &msg);
+    void sendMmStatus(nas::EMmCause cause);
 
     /* Timer related */
     void onTimerExpire(nas::NasTimer &timer);
     void performTick();
 
-    /* Mobility Management base functions */
+    /* MM base functions */
     void triggerMmCycle();
     void performMmCycle();
     void switchMmState(EMmState state, EMmSubState subState);
     void switchRmState(ERmState state);
     void receivePlmnSearchResponse(const NwPlmnSearchResponse &msg);
+    void receiveMmStatus(const nas::FiveGMmStatus &msg);
     void receiveMmCause(const nas::IE5gMmCause &msg);
 
     /* MM registration */
@@ -103,11 +105,15 @@ class NasTask : public NtsTask
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
 
-    /* SM resource allocation */
+    /* SM base functions */
     int allocatePduSessionId();
     int allocateProcedureTransactionId();
     void releaseProcedureTransactionId(int pti);
     void releasePduSession(int psi);
+
+    /* SM resource allocation */
+    void receiveSmStatus(const nas::FiveGSmStatus &msg);
+    void receiveSmCause(const nas::IE5gSmCause &msg);
 
     /* SM session establishment */
     void sendEstablishmentRequest();
