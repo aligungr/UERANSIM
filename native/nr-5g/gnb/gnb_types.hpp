@@ -252,4 +252,10 @@ struct TaskBase
     NtsTask *sctpTask;
 };
 
+struct MrUeContext
+{
+    int ueId;
+    std::string name;
+};
+
 } // namespace nr::gnb

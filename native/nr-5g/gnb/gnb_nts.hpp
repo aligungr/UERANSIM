@@ -8,16 +8,20 @@
 
 #pragma once
 
+#include <network.hpp>
 #include <nts.hpp>
 #include <octet_string.hpp>
 #include <rrc.hpp>
 #include <sctp.hpp>
+#include <urs_rls.hpp>
 #include <utility>
 
 #include "gnb_types.hpp"
 
 namespace nr::gnb
 {
+
+// TODO: remove unused ones
 
 struct NwSctpConnectionRequest : NtsMessage
 {
@@ -228,6 +232,50 @@ struct NwDownlinkData : NtsMessage
     NwDownlinkData(int ueId, int pduSessionId, OctetString &&data)
         : NtsMessage(NtsMessageType::GNB_MR_DOWNLINK_DATA), ueId(ueId), pduSessionId(pduSessionId),
           data(std::move(data))
+    {
+    }
+};
+
+struct NwUeConnected : NtsMessage
+{
+    int ue;
+    std::string name;
+
+    NwUeConnected(int ue, std::string name)
+        : NtsMessage(NtsMessageType::GNB_RLS_UE_CONNECTED), ue(ue), name(std::move(name))
+    {
+    }
+};
+
+struct NwUeReleased : NtsMessage
+{
+    int ue;
+    rls::ECause cause;
+
+    NwUeReleased(int ue, rls::ECause cause) : NtsMessage(NtsMessageType::GNB_RLS_UE_RELEASED), ue(ue), cause(cause)
+    {
+    }
+};
+
+struct NwUplinkPayload : NtsMessage
+{
+    int ue;
+    rls::EPayloadType type;
+    OctetString payload;
+
+    NwUplinkPayload(int ue, rls::EPayloadType type, OctetString &&payload)
+        : NtsMessage(NtsMessageType::GNB_RLS_UPLINK_PAYLOAD), ue(ue), type(type), payload(std::move(payload))
+    {
+    }
+};
+
+struct NwRlsSendPdu : NtsMessage
+{
+    InetAddress address;
+    OctetString pdu;
+
+    NwRlsSendPdu(const InetAddress &address, OctetString &&pdu)
+        : NtsMessage(NtsMessageType::GNB_RLS_SEND_PDU), address(address), pdu(std::move(pdu))
     {
     }
 };

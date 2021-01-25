@@ -9,6 +9,7 @@
 #include "gnb_gtp_task.hpp"
 #include "gnb_mr_task.hpp"
 
+#include <constants.hpp>
 #include <gtp_encode.hpp>
 #include <gtp_message.hpp>
 #include <libc_error.hpp>
@@ -29,7 +30,7 @@ void GtpTask::onStart()
 {
     try
     {
-        udpServer = new udp::UdpServerTask(base->config->gtpIp, 2152, this);
+        udpServer = new udp::UdpServerTask(base->config->gtpIp, cons::GtpPort, this);
         udpServer->start();
     }
     catch (const LibError &e)
@@ -152,7 +153,7 @@ void GtpTask::handleUplinkData(NwUplinkData *msg)
             logger->err("Uplink data failure, GTP encoding failed");
         else
         {
-            udpServer->send(InetAddress(pduSession->upTunnel.address, 2152), gtpPdu);
+            udpServer->send(InetAddress(pduSession->upTunnel.address, cons::GtpPort), gtpPdu);
         }
     }
 

@@ -31,6 +31,7 @@ class RlsGnbEntity
 
   public:
     explicit RlsGnbEntity(std::string nodeName);
+    virtual ~RlsGnbEntity() = default;
 
   protected:
     virtual void logWarn(const std::string &msg) = 0;
@@ -39,8 +40,8 @@ class RlsGnbEntity
     virtual void onUeConnected(int ue, std::string name) = 0;
     virtual void onUeReleased(int ue, ECause cause) = 0;
 
-    virtual void sendRlsPdu(const InetAddress &address, const OctetString &pdu) = 0;
-    virtual void deliverUplinkPayload(EPayloadType type, OctetString &&payload) = 0;
+    virtual void sendRlsPdu(const InetAddress &address, OctetString &&pdu) = 0;
+    virtual void deliverUplinkPayload(int ue, EPayloadType type, OctetString &&payload) = 0;
 
   public:
     void onHeartbeat();

@@ -88,7 +88,7 @@ void RlsGnbEntity::sendRlsMessage(int ue, const RlsMessage &msg)
         return;
     }
 
-    sendRlsPdu(ueAddressMap[ue], buf);
+    sendRlsPdu(ueAddressMap[ue], std::move(buf));
 }
 
 void RlsGnbEntity::sendHeartbeat(int ue)
@@ -196,7 +196,7 @@ void RlsGnbEntity::onReceive(const InetAddress &address, const OctetString &pdu)
     }
     else if (msg.msgType == EMessageType::RLS_PAYLOAD_TRANSPORT)
     {
-        deliverUplinkPayload(msg.payloadType, std::move(msg.payload));
+        deliverUplinkPayload(ue, msg.payloadType, std::move(msg.payload));
     }
     else
     {
@@ -233,7 +233,7 @@ void RlsGnbEntity::sendSetupFailure(const InetAddress &address, uint64_t ueToken
         return;
     }
 
-    sendRlsPdu(address, buf);
+    sendRlsPdu(address, std::move(buf));
 }
 
 } // namespace rls

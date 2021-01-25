@@ -12,12 +12,12 @@
 
 struct cons
 {
+    // Version information
     static constexpr const uint8_t Major = 3;
     static constexpr const uint8_t Minor = 0;
     static constexpr const uint8_t Patch = 0;
 
-    static constexpr const uint16_t NdpPort = 4997;
-    static constexpr const char *NdpLoopback = "127.0.0.1";
-
-
+    // Some port values
+    static constexpr const uint16_t GtpPort = 2152;
+    static constexpr const uint16_t PortalPort = 4997;
 };
