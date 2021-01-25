@@ -77,6 +77,8 @@ public class RegistrationAccept extends PlainMmMessage {
 
     @Override
     public void build(IMessageBuilder builder) {
+        super.build(builder);
+
         builder.mandatoryIE("registrationResult");
 
         builder.optionalIE1(0x9, "networkSlicingIndication");

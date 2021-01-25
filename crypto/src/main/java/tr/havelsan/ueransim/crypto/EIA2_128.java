@@ -130,7 +130,6 @@ public class EIA2_128 {
         byte[] ret = new byte[in.length];
         int carry = shiftLeft(in, ret);
 
-        // This construction is an attempt at a constant-time implementation.
         int mask = (-carry) & 0xff;
         ret[in.length - 3] ^= ((POLY >> 16) & 0xFF) & mask;
         ret[in.length - 2] ^= ((POLY >> 8) & 0xFF) & mask;

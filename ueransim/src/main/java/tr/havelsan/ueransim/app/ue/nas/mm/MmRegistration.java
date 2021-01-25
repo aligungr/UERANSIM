@@ -119,12 +119,10 @@ public class MmRegistration {
                 Log.success(Tag.PROC, "Registration is successful");
             }
         }
-
-
     }
 
     public static void receiveRegistrationReject(NasContext ctx, RegistrationReject message) {
-        var cause = EMmCause.DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED;
+        var cause = message.mmCause.value;
         var regType = ctx.mmCtx.registrationRequest.registrationType.registrationType;
 
         Log.error(Tag.PROC, "Registration failed: %s", cause.name());
