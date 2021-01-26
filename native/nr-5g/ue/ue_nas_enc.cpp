@@ -66,14 +66,14 @@ static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, O
                                                       nas::EMessageType msgType)
 {
     auto count = ctx.uplinkCount;
-    auto cnId = ctx.is3gppAccess;
+    auto is3gppAccess = ctx.is3gppAccess;
     auto &intKey = ctx.keys.kNasInt;
     auto &encKey = ctx.keys.kNasEnc;
     auto intAlg = ctx.integrity;
     auto encAlg = ctx.ciphering;
 
-    auto encryptedData = EncryptData(encAlg, count, cnId, plainNasMessage, encKey);
-    auto mac = ComputeMac(intAlg, count, cnId, true, intKey, encryptedData);
+    auto encryptedData = EncryptData(encAlg, count, is3gppAccess, plainNasMessage, encKey);
+    auto mac = ComputeMac(intAlg, count, is3gppAccess, true, intKey, encryptedData);
 
     auto secured = std::make_unique<nas::SecuredMmMessage>();
     secured->epd = nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES;
@@ -143,13 +143,13 @@ std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::Sec
 {
     auto estimatedCount = ctx.estimatedDownlinkCount(msg.sequenceNumber);
 
-    auto cnId = ctx.is3gppAccess;
+    auto is3gppAccess = ctx.is3gppAccess;
     auto &intKey = ctx.keys.kNasInt;
     auto &encKey = ctx.keys.kNasEnc;
     auto intAlg = ctx.integrity;
     auto encAlg = ctx.ciphering;
 
-    auto mac = ComputeMac(intAlg, estimatedCount, cnId, false, intKey, msg.plainNasMessage);
+    auto mac = ComputeMac(intAlg, estimatedCount, is3gppAccess, false, intKey, msg.plainNasMessage);
 
     if (mac != (uint32_t)msg.messageAuthenticationCode)
     {
@@ -158,7 +158,7 @@ std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::Sec
     }
 
     ctx.updateDownlinkCount(estimatedCount);
-    OctetString decryptedData = DecryptData(encAlg, estimatedCount, cnId, encKey, msg.sht, msg.plainNasMessage);
+    OctetString decryptedData = DecryptData(encAlg, estimatedCount, is3gppAccess, encKey, msg.sht, msg.plainNasMessage);
     OctetBuffer buff{decryptedData};
     return nas::DecodeNasMessage(buff);
 }

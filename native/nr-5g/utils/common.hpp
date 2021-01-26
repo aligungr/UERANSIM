@@ -28,6 +28,7 @@ int NextId();
 int ParseInt(const std::string &str);
 int ParseInt(const char *str);
 uint64_t Random64();
+void Sleep(int ms);
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

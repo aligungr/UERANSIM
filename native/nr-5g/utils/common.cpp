@@ -13,6 +13,7 @@
 #include <random>
 #include <regex>
 #include <sstream>
+#include <thread>
 
 static_assert(sizeof(char) == sizeof(uint8_t));
 static_assert(sizeof(int) == sizeof(uint32_t));
@@ -230,4 +231,9 @@ uint64_t utils::Random64()
         if (r != 0)
             return r;
     }
+}
+
+void utils::Sleep(int ms)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }

@@ -36,12 +36,6 @@ void NasTask::receiveNasMessage(const nas::NasMessage &msg)
     if (mm.sht == nas::ESecurityHeaderType::INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT)
     {
         auto smcMsg = nas::DecodeNasMessage(OctetBuffer{securedMm.plainNasMessage});
-        if (smcMsg == nullptr)
-        {
-            logger->err("MAC mismatch in NAS encryption. Ignoring received NAS message.");
-            sendMmStatus(nas::EMmCause::MAC_FAILURE);
-            return;
-        }
 
         if (smcMsg->epd != nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES ||
             (((const nas::MmMessage &)(*smcMsg)).sht != nas::ESecurityHeaderType::NOT_PROTECTED) ||

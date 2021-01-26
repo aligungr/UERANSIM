@@ -8,6 +8,7 @@
 
 #include "octet_string.hpp"
 #include "common.hpp"
+#include <cstring>
 
 void OctetString::append(const OctetString &v)
 {
@@ -302,4 +303,11 @@ OctetString OctetString::Xor(const OctetString &a, const OctetString &b)
 OctetString OctetString::Empty()
 {
     return FromSpare(0);
+}
+
+OctetString OctetString::FromArray(const uint8_t *arr, size_t len)
+{
+    std::vector<uint8_t> v(len);
+    std::memcpy(v.data(), arr, len);
+    return OctetString(std::move(v));
 }

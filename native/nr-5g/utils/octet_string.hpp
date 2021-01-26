@@ -95,6 +95,7 @@ class OctetString
     static OctetString Empty();
     static OctetString FromHex(const std::string &hex);
     static OctetString FromAscii(const std::string &ascii);
+    static OctetString FromArray(const uint8_t *arr, size_t len);
     static OctetString FromSpare(int length);
     static OctetString FromOctet(uint8_t value);
     static OctetString FromOctet(int value);
