@@ -188,4 +188,46 @@ struct NwUeStatusUpdate : NtsMessage
     }
 };
 
+struct NwTunReceive : NtsMessage
+{
+    int psi;
+    OctetString data;
+
+    NwTunReceive(int psi, OctetString &&data)
+        : NtsMessage(NtsMessageType::UE_TUN_RECEIVE), psi(psi), data(std::move(data))
+    {
+    }
+};
+
+struct NwTunError : NtsMessage
+{
+    std::string error;
+
+    explicit NwTunError(std::string error) : NtsMessage(NtsMessageType::UE_TUN_ERROR), error(std::move(error))
+    {
+    }
+};
+
+struct NwUeUplinkData : NtsMessage
+{
+    int psi;
+    OctetString data;
+
+    explicit NwUeUplinkData(int psi, OctetString &&data)
+        : NtsMessage(NtsMessageType::UE_MR_UPLINK_DATA), psi(psi), data(std::move(data))
+    {
+    }
+};
+
+struct NwUeDownlinkData : NtsMessage
+{
+    int psi;
+    OctetString data;
+
+    NwUeDownlinkData(int psi, OctetString &&data)
+        : NtsMessage(NtsMessageType::UE_MR_DOWNLINK_DATA), psi(psi), data(std::move(data))
+    {
+    }
+};
+
 } // namespace nr::ue

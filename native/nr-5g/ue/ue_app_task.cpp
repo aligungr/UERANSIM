@@ -54,6 +54,26 @@ void UeAppTask::onLoop()
         delete msg;
         break;
     }
+    case NtsMessageType::UE_TUN_RECEIVE: {
+        auto *w = dynamic_cast<NwTunReceive *>(msg);
+        base->mrTask->push(new NwUeUplinkData(w->psi, std::move(w->data)));
+        delete msg;
+        break;
+    }
+    case NtsMessageType::UE_TUN_ERROR: {
+        logger->err("TUN failure [%s]", dynamic_cast<NwTunError *>(msg)->error.c_str());
+        delete msg;
+        break;
+    }
+    case NtsMessageType::UE_MR_DOWNLINK_DATA: {
+        auto *w = dynamic_cast<NwUeDownlinkData *>(msg);
+        auto *tunTask = tunTasks[w->psi];
+        if (tunTask)
+            tunTask->push(w);
+        else
+            delete w;
+        break;
+    }
     default:
         logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;
@@ -150,12 +170,12 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    auto *task = new TunTask(this, psi, fd);
+    auto *task = new TunTask(base, psi, fd);
     tunTasks[psi] = task;
     task->start();
 
-    logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.",
-                 pduSession->id, allocatedName.c_str(), ipAddress.c_str());
+    logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->id,
+                 allocatedName.c_str(), ipAddress.c_str());
 }
 
 } // namespace nr::ue

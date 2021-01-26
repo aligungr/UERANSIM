@@ -127,6 +127,18 @@ void UeMrTask::onLoop()
         delete w;
         break;
     }
+    case NtsMessageType::UE_MR_UPLINK_DATA: {
+        auto *w = dynamic_cast<NwUeUplinkData *>(msg);
+
+        // Append PDU session information
+        OctetString stream{};
+        stream.appendOctet4(w->psi);
+        stream.append(w->data);
+
+        rlsEntity->onUplinkDelivery(rls::EPayloadType::DATA, std::move(stream));
+        delete w;
+        break;
+    }
     case NtsMessageType::UE_RLS_DOWNLINK_PAYLOAD: {
         auto *w = dynamic_cast<NwDownlinkPayload *>(msg);
         receiveDownlinkPayload(w->type, std::move(w->payload));
@@ -150,10 +162,9 @@ void UeMrTask::receiveDownlinkPayload(rls::EPayloadType type, OctetString &&payl
     }
     else if (type == rls::EPayloadType::DATA)
     {
-        throw std::runtime_error("data not implemented yet");
-        // int psi = payload.get4I(0);
-        // OctetString dataPayload = payload.subCopy(4);
-        // base->gtpTask->push(new NwUplinkData(ue, psi, std::move(dataPayload)));
+        int psi = payload.get4I(0);
+        OctetString dataPayload = payload.subCopy(4);
+        base->appTask->push(new NwUeDownlinkData(psi, std::move(dataPayload)));
     }
 }
 

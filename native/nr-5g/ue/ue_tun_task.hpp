@@ -24,12 +24,13 @@ namespace nr::ue
 class TunTask : public NtsTask
 {
   private:
-    NtsTask *appTask;
+    TaskBase *base;
     int psi;
     int fd;
+    ScopedThread *receiver;
 
   public:
-    explicit TunTask(NtsTask *appTask, int psi, int fd);
+    explicit TunTask(TaskBase *taskBase, int psi, int fd);
     ~TunTask() override = default;
 
   protected:

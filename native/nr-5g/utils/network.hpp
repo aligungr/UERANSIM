@@ -50,8 +50,8 @@ class Socket
     void bind(const InetAddress &address) const;
     int receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outAddress) const;
     void send(const InetAddress &address, const uint8_t *buffer, size_t size) const;
-    bool hasFd() const;
     void close();
+    [[nodiscard]] bool hasFd() const;
 
     /* Socket options */
     void setReuseAddress() const;
