@@ -14,6 +14,7 @@
 #include <regex>
 #include <sstream>
 #include <thread>
+#include <unistd.h>
 
 static_assert(sizeof(char) == sizeof(uint8_t));
 static_assert(sizeof(int) == sizeof(uint32_t));
@@ -236,4 +237,20 @@ uint64_t utils::Random64()
 void utils::Sleep(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+}
+
+std::string utils::OctetStringToIp(const OctetString &address)
+{
+    if (address.length() == 4)
+    {
+        char buffer[20] = {0};
+        sprintf(buffer, "%d.%d.%d.%d", address.getI(0), address.getI(1), address.getI(2), address.getI(3));
+        return std::string{buffer};
+    }
+    return address.toHexString();
+}
+
+bool utils::IsRoot()
+{
+    return geteuid() == 0;
 }

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "ue_types.hpp"
 #include <nas_timer.hpp>
 #include <network.hpp>
 #include <nts.hpp>
@@ -153,9 +154,36 @@ struct NwRlsSendPdu : NtsMessage
     }
 };
 
-struct NwInitialSessionCreate : NtsMessage
+struct NwTriggerInitialSessionCreate : NtsMessage
 {
-    NwInitialSessionCreate() : NtsMessage(NtsMessageType::UE_INITIAL_SESSION_CREATE)
+    NwTriggerInitialSessionCreate() : NtsMessage(NtsMessageType::UE_TRIGGER_INITIAL_SESSION_CREATE)
+    {
+    }
+};
+
+struct NwUeStatusUpdate : NtsMessage
+{
+    static constexpr const int CONNECTED_GNB = 1;
+    static constexpr const int MM_STATE = 2;
+    static constexpr const int RM_STATE = 3;
+    static constexpr const int SESSION_ESTABLISHMENT = 4;
+
+    const int what{};
+
+    // CONNECTED_GNB
+    std::string gnbName{};
+
+    // MM_STATE
+    std::string mmState{};
+    std::string mmSubState{};
+
+    // RM_STATE
+    std::string rmState{};
+
+    // SESSION_ESTABLISHMENT
+    PduSession *pduSession{};
+
+    explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {
     }
 };

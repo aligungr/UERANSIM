@@ -22,6 +22,7 @@ std::vector<uint8_t> HexStringToVector(const std::string &hex);
 std::string VectorToHexString(const std::vector<uint8_t> &hex);
 int GetIpVersion(const std::string &address);
 OctetString IpToOctetString(const std::string &address);
+std::string OctetStringToIp(const OctetString &address);
 int64_t CurrentTimeMillis();
 TimeStamp CurrentTimeStamp();
 int NextId();
@@ -29,6 +30,7 @@ int ParseInt(const std::string &str);
 int ParseInt(const char *str);
 uint64_t Random64();
 void Sleep(int ms);
+bool IsRoot();
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

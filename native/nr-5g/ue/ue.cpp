@@ -8,6 +8,7 @@
 
 #include "ue.hpp"
 
+#include "ue_app_task.hpp"
 #include "ue_mr_task.hpp"
 #include "ue_nas_task.hpp"
 #include "ue_rrc_task.hpp"
@@ -25,6 +26,7 @@ UserEquipment::UserEquipment(UeConfig *config, app::INodeListener *nodeListener)
     base->nasTask = new NasTask(base);
     base->rrcTask = new UeRrcTask(base);
     base->mrTask = new UeMrTask(base);
+    base->appTask = new UeAppTask(base);
 
     taskBase = base;
 }
@@ -34,10 +36,12 @@ UserEquipment::~UserEquipment()
     taskBase->nasTask->quit();
     taskBase->rrcTask->quit();
     taskBase->mrTask->quit();
+    taskBase->appTask->quit();
 
     delete taskBase->nasTask;
     delete taskBase->rrcTask;
     delete taskBase->mrTask;
+    delete taskBase->appTask;
 
     delete taskBase->logBase;
 
@@ -49,6 +53,7 @@ void UserEquipment::start()
     taskBase->nasTask->start();
     taskBase->rrcTask->start();
     taskBase->mrTask->start();
+    taskBase->appTask->start();
 }
 
 } // namespace nr::ue

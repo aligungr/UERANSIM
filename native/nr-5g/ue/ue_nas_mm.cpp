@@ -33,7 +33,6 @@ void NasTask::performMmCycle()
 
     if (mmCtx.mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
     {
-        // TODO: Bu kısım çalışmıyor olabilir.
         long current = utils::CurrentTimeMillis();
         long elapsedMs = current - mmCtx.lastPlmnSearchTrigger;
         if (elapsedMs > 50)
@@ -69,11 +68,24 @@ void NasTask::performMmCycle()
 
 void NasTask::switchMmState(EMmState state, EMmSubState subState)
 {
+    EMmState oldState = mmCtx.mmState;
+    EMmSubState oldSubState = mmCtx.mmSubState;
+
     mmCtx.mmState = state;
     mmCtx.mmSubState = subState;
 
-    // TODO: trigger on switch
-    // TODO: status update
+    if (base->nodeListener)
+    {
+        base->nodeListener->onSwitch(app::NodeType::UE, base->config->getNodeName(), app::StateType::MM,
+                                     MmSubStateName(oldSubState), MmSubStateName(subState));
+        base->nodeListener->onSwitch(app::NodeType::UE, base->config->getNodeName(), app::StateType::MM_SUB,
+                                     MmStateName(oldState), MmStateName(state));
+    }
+
+    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::MM_STATE);
+    statusUpdate->mmState = MmStateName(state);
+    statusUpdate->mmSubState = MmSubStateName(subState);
+    base->appTask->push(statusUpdate);
 
     logger->info("UE switches to state: %s", MmSubStateName(subState));
 
@@ -82,10 +94,19 @@ void NasTask::switchMmState(EMmState state, EMmSubState subState)
 
 void NasTask::switchRmState(ERmState state)
 {
+    ERmState oldState = mmCtx.rmState;
+
     mmCtx.rmState = state;
 
-    // TODO: trigger on switch
-    // TODO: status update
+    if (base->nodeListener)
+    {
+        base->nodeListener->onSwitch(app::NodeType::UE, base->config->getNodeName(), app::StateType::RM,
+                                     RmStateName(oldState), RmStateName(mmCtx.rmState));
+    }
+
+    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::RM_STATE);
+    statusUpdate->rmState = RmStateName(state);
+    base->appTask->push(statusUpdate);
 
     logger->info("UE switches to state: %s", RmStateName(state));
 
@@ -94,7 +115,9 @@ void NasTask::switchRmState(ERmState state)
 
 void NasTask::receivePlmnSearchResponse(const NwPlmnSearchResponse &msg)
 {
-    // TODO trigger on connected
+    if (base->nodeListener)
+        base->nodeListener->onConnected(app::NodeType::UE, base->config->getNodeName(), app::NodeType::GNB,
+                                        msg.gnbName);
 
     logger->info("UE connected to gNB");
     switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
@@ -211,7 +234,7 @@ void NasTask::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
         regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
     {
-        push(new NwInitialSessionCreate());
+        push(new NwTriggerInitialSessionCreate());
     }
 }
 
@@ -368,7 +391,11 @@ void NasTask::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &
     auto &ckPrime = ckPrimeIkPrime.first;
     auto &ikPrime = ckPrimeIkPrime.second;
 
-    // TODO: reject if supi is nullopt
+    if (!base->config->supi.has_value())
+    {
+        logger->err("UE has no SUPI, ignoring authentication request");
+        return;
+    }
 
     auto mk = keys::CalculateMk(ckPrime, ikPrime, base->config->supi.value());
     auto kaut = mk.subCopy(16, 32);
@@ -521,9 +548,10 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
     if (IGNORE_CONTROLS_FAILURES)
         logger->warn("IGNORE_CONTROLS_FAILURES enabled");
 
-    if (!msg.authParamRAND.has_value() || !msg.authParamAUTN)
+    if (!msg.authParamRAND.has_value() || !msg.authParamAUTN.has_value())
     {
-        // todo reject
+        sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+        return;
     }
 
     auto &rand = msg.authParamRAND->value;

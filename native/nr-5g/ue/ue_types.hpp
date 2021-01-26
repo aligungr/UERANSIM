@@ -61,6 +61,7 @@ struct UeConfig
     SupportedAlgs supportedAlgs;
     std::vector<std::string> gnbSearchList;
     std::vector<SessionConfig> initSessions;
+    bool configureRouting;
 
     [[nodiscard]] std::string getNodeName() const
     {
@@ -334,6 +335,21 @@ enum class EAutnValidationRes
     MAC_FAILURE,
     AMF_SEPARATION_BIT_FAILURE,
     SYNCHRONISATION_FAILURE,
+};
+
+struct UeStatusInfo
+{
+    struct UePduSessionInfo
+    {
+        std::string type;
+        std::string address;
+    };
+
+    bool isConnected;
+    std::string connectedGnb;
+    std::string mmState;
+    std::string rmState;
+    std::optional<UePduSessionInfo> pduSessions[16];
 };
 
 const char *RmStateName(ERmState state);

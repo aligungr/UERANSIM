@@ -6,13 +6,25 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#pragma once
+#include "ue_tun_task.hpp"
 
-#include <stdexcept>
-
-class LibError : public std::runtime_error
+namespace nr::ue
 {
-  public:
-    explicit LibError(const std::string &what);
-    LibError(const std::string &what, int err);
-};
+
+ue::TunTask::TunTask(NtsTask *appTask, int psi, int fd) : appTask{appTask}, psi{psi}, fd{fd}
+{
+}
+
+void TunTask::onStart()
+{
+}
+
+void TunTask::onQuit()
+{
+}
+
+void TunTask::onLoop()
+{
+}
+
+} // namespace nr::ue

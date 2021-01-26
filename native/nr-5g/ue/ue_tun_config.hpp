@@ -8,11 +8,14 @@
 
 #pragma once
 
-#include <stdexcept>
+#include <sstream>
+#include <string>
+#include <utility>
 
-class LibError : public std::runtime_error
+namespace nr::ue::tun
 {
-  public:
-    explicit LibError(const std::string &what);
-    LibError(const std::string &what, int err);
-};
+
+int AllocateTun(const char *ifPrefix, char **allocatedName);
+void ConfigureTun(const char *tunName, const char *ipAddr, bool configureRoute);
+
+} // namespace nr::ue::tun

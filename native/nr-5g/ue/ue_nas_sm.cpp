@@ -73,20 +73,20 @@ int NasTask::allocateProcedureTransactionId()
     arr[id] = {};
     arr[id].id = id;
 
-    logger->debug("PTI allocated: %d", id);
+    logger->debug("PTI[%d] allocated", id);
     return id;
 }
 
 void NasTask::releaseProcedureTransactionId(int pti)
 {
     smCtx.procedureTransactions[pti].id = 0;
-    logger->debug("PTI released: %d", pti);
+    logger->debug("PTI[%d] released", pti);
 }
 
 void NasTask::releasePduSession(int psi)
 {
     smCtx.pduSessions[psi].id = 0;
-    logger->info("PDU session released: %d", psi);
+    logger->info("PDU session[%d] released", psi);
 }
 
 void NasTask::establishInitialSessions()
@@ -97,7 +97,7 @@ void NasTask::establishInitialSessions()
         return;
     }
 
-    logger->info("Establishing [%d] PDU sessions", base->config->initSessions.size());
+    logger->info("Initial PDU sessions are establishing [%d#]", base->config->initSessions.size());
 
     for (auto &sess : base->config->initSessions)
         sendEstablishmentRequest(sess);
@@ -181,7 +181,9 @@ void NasTask::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablis
     else
         pduSession.pduAddress = {};
 
-    // TODO status update
+    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::SESSION_ESTABLISHMENT);
+    statusUpdate->pduSession = &pduSession;
+    base->appTask->push(statusUpdate);
 
     logger->info("PDU Session establishment is successful PSI[%d]", pduSession.id);
 }

@@ -12,14 +12,13 @@
 namespace nr::gnb
 {
 
-GnbAppTask::GnbAppTask(TaskBase *base) : base(base), statusInfo{}
+GnbAppTask::GnbAppTask(TaskBase *base) : base{base}, statusInfo{}
 {
     logger = base->logBase->makeUniqueLogger("gnb-app");
 }
 
 void GnbAppTask::onStart()
 {
-
 }
 
 void GnbAppTask::onLoop()

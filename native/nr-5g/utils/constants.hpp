@@ -20,4 +20,7 @@ struct cons
     // Some port values
     static constexpr const uint16_t GtpPort = 2152;
     static constexpr const uint16_t PortalPort = 4997;
+
+    // TUN interface
+    static constexpr const char* TunNamePrefix = "uesimtun";
 };

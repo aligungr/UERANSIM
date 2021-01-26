@@ -28,7 +28,14 @@ void NasTask::onStart()
 {
     logger->debug("NAS layer started");
 
-    // TODO: initial status update
+    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::MM_STATE);
+    statusUpdate->mmState = MmStateName(mmCtx.mmState);
+    statusUpdate->mmSubState = MmSubStateName(mmCtx.mmSubState);
+    base->appTask->push(statusUpdate);
+
+    statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::RM_STATE);
+    statusUpdate->rmState = RmStateName(mmCtx.rmState);
+    base->appTask->push(statusUpdate);
 
     setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
     setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
@@ -96,7 +103,7 @@ void NasTask::onLoop()
         performMmCycle();
         break;
     }
-    case NtsMessageType::UE_INITIAL_SESSION_CREATE: {
+    case NtsMessageType::UE_TRIGGER_INITIAL_SESSION_CREATE: {
         establishInitialSessions();
         delete msg;
         break;

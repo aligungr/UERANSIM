@@ -18,6 +18,10 @@ static std::string PostfixError(const std::string &what, int err)
     return what.length() > 0 ? what + " " + str : str;
 }
 
+LibError::LibError(const std::string &what) : runtime_error(what)
+{
+}
+
 LibError::LibError(const std::string &what, int err) : std::runtime_error(PostfixError(what, err))
 {
 }
