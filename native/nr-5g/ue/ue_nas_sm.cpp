@@ -13,8 +13,14 @@
 namespace nr::ue
 {
 
-int NasTask::allocatePduSessionId()
+int NasTask::allocatePduSessionId(const SessionConfig &config)
 {
+    if (config.type != nas::EPduSessionType::IPV4)
+    {
+        logger->debug("PDU session type [%s] is not supported", nas::utils::EnumToString(config.type));
+        return 0;
+    }
+
     auto &arr = smCtx.pduSessions;
 
     int id = -1;
@@ -36,6 +42,9 @@ int NasTask::allocatePduSessionId()
     arr[id] = {};
     arr[id].id = id;
     arr[id].isEstablished = false;
+    arr[id].apn = config.apn;
+    arr[id].sessionType = config.type;
+    arr[id].sNssai = config.sNssai;
 
     logger->debug("PDU session allocated: %d", id);
     return id;
@@ -80,9 +89,25 @@ void NasTask::releasePduSession(int psi)
     logger->info("PDU session released: %d", psi);
 }
 
-void NasTask::sendEstablishmentRequest()
+void NasTask::establishInitialSessions()
 {
-    int psi = allocatePduSessionId();
+    if (base->config->initSessions.empty())
+    {
+        logger->warn("No initial PDU sessions are configured");
+        return;
+    }
+
+    logger->info("Establishing [%d] PDU sessions", base->config->initSessions.size());
+
+    for (auto &sess : base->config->initSessions)
+        sendEstablishmentRequest(sess);
+}
+
+void NasTask::sendEstablishmentRequest(const SessionConfig &config)
+{
+    logger->debug("Sending PDU session establishment request");
+
+    int psi = allocatePduSessionId(config);
     if (psi == 0)
     {
         logger->err("PDU Session Establishment Request could not send");
@@ -144,7 +169,7 @@ void NasTask::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablis
     pduSession.isEstablished = true;
     pduSession.authorizedQoSRules = nas::utils::DeepCopyIe(msg.authorizedQoSRules);
     pduSession.sessionAmbr = nas::utils::DeepCopyIe(msg.sessionAmbr);
-    pduSession.sessionType = nas::utils::DeepCopyIe(msg.selectedPduSessionType);
+    pduSession.sessionType = msg.selectedPduSessionType.pduSessionType;
 
     if (msg.authorizedQoSFlowDescriptions.has_value())
         pduSession.authorizedQoSFlowDescriptions = nas::utils::DeepCopyIe(*msg.authorizedQoSFlowDescriptions);
@@ -158,13 +183,12 @@ void NasTask::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablis
 
     // TODO status update
 
-    logger->debug("PDU session established: %s", pduSession.id);
-    logger->info("PDU Session Establishment is successful");
+    logger->info("PDU Session establishment is successful PSI[%d]", pduSession.id);
 }
 
 void NasTask::receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
 {
-    logger->err("PDU Session Establishment Reject received (%s)", nas::utils::EnumToString(msg.smCause.value));
+    logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));
     // TODO
 }
 
@@ -176,6 +200,27 @@ void NasTask::receiveSmStatus(const nas::FiveGSmStatus &msg)
 void NasTask::receiveSmCause(const nas::IE5gSmCause &msg)
 {
     logger->err("SM cause received: %s", nas::utils::EnumToString(msg.value));
+}
+
+void NasTask::sendSmMessage(int psi, const nas::SmMessage &msg)
+{
+    auto &session = smCtx.pduSessions[psi];
+
+    nas::UlNasTransport m{};
+    m.payloadContainerType.payloadContainerType = nas::EPayloadContainerType::N1_SM_INFORMATION;
+    nas::EncodeNasMessage(msg, m.payloadContainer.data);
+    m.pduSessionId = nas::IEPduSessionIdentity2{};
+    m.pduSessionId->value = psi;
+    m.requestType = nas::IERequestType{};
+    m.requestType->requestType = nas::ERequestType::INITIAL_REQUEST; // TODO
+
+    if (session.sNssai.has_value())
+        m.sNssa = nas::utils::SNssaiFrom(*session.sNssai);
+
+    if (session.apn.has_value())
+        m.dnn = nas::utils::DnnFromApn(*session.apn);
+
+    sendNasMessage(m);
 }
 
 } // namespace nr::ue

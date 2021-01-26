@@ -207,7 +207,7 @@ PduSessionType PduSessionTypeFromAsn(const ASN_NGAP_PDUSessionType_t &source)
 void ToPlmnAsn_Ref(const Plmn &source, ASN_NGAP_PLMNIdentity_t &target)
 {
     octet3 val = PlmnToOctet3(source);
-    asn::SetOctetString(target, val);
+    asn::SetOctetString3(target, val);
 }
 
 NgapIdPair FindNgapIdPairFromAsnNgapIds(const ASN_NGAP_UE_NGAP_IDs &ngapIDs)

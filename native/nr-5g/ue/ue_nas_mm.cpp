@@ -207,6 +207,12 @@ void NasTask::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
     auto regType = mmCtx.registrationRequest->registrationType.registrationType;
     logger->info("%s is successful", nas::utils::EnumToString(regType));
+
+    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
+        regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
+    {
+        push(new NwInitialSessionCreate());
+    }
 }
 
 void NasTask::receiveRegistrationReject(const nas::RegistrationReject &msg)

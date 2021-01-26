@@ -55,10 +55,10 @@ void SequenceAdd(T &list, typename AsnTraits_ListItemType<T>::value *item)
 void SetPrintableString(PrintableString_t &target, const std::string &value);
 std::string GetPrintableString(const PrintableString_t &source);
 
-void SetOctetString(OCTET_STRING_t &target, uint8_t value);
-void SetOctetString(OCTET_STRING_t &target, octet2 value);
-void SetOctetString(OCTET_STRING_t &target, octet3 value);
-void SetOctetString(OCTET_STRING_t &target, octet4 value);
+void SetOctetString1(OCTET_STRING_t &target, uint8_t value);
+void SetOctetString2(OCTET_STRING_t &target, octet2 value);
+void SetOctetString3(OCTET_STRING_t &target, octet3 value);
+void SetOctetString4(OCTET_STRING_t &target, octet4 value);
 void SetOctetString(OCTET_STRING_t &target, const OctetString &value);
 OctetString GetOctetString(const OCTET_STRING_t &source);
 OctetString GetOctetString(const BIT_STRING_t &source);

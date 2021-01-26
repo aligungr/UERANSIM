@@ -40,6 +40,13 @@ enum class OpType
     OPC
 };
 
+struct SessionConfig
+{
+    nas::EPduSessionType type{};
+    std::optional<SliceSupport> sNssai{};
+    std::optional<std::string> apn{};
+};
+
 struct UeConfig
 {
     bool emulationMode;
@@ -50,10 +57,10 @@ struct UeConfig
     std::string imei;
     std::optional<Supi> supi;
     Plmn plmn;
-    std::string dnn;
     std::vector<SliceSupport> nssais;
     SupportedAlgs supportedAlgs;
     std::vector<std::string> gnbSearchList;
+    std::vector<SessionConfig> initSessions;
 
     [[nodiscard]] std::string getNodeName() const
     {
@@ -192,11 +199,15 @@ struct PduSession
 
     int id;
     bool isEstablished{};
-    nas::IEQoSRules authorizedQoSRules{};
-    nas::IESessionAmbr sessionAmbr{};
-    nas::IEQoSFlowDescriptions authorizedQoSFlowDescriptions{};
-    nas::IEPduSessionType sessionType{};
-    nas::IEPduAddress pduAddress{};
+
+    nas::EPduSessionType sessionType{};
+    std::optional<std::string> apn{};
+    std::optional<SliceSupport> sNssai{};
+
+    std::optional<nas::IEQoSRules> authorizedQoSRules{};
+    std::optional<nas::IESessionAmbr> sessionAmbr{};
+    std::optional<nas::IEQoSFlowDescriptions> authorizedQoSFlowDescriptions{};
+    std::optional<nas::IEPduAddress> pduAddress{};
 };
 
 struct ProcedureTransaction
@@ -277,7 +288,7 @@ struct NasSecurityContext
     nas::ETypeOfIntegrityProtectionAlgorithm integrity{};
     nas::ETypeOfCipheringAlgorithm ciphering{};
 
-    void updateDownlinkCount(const NasCount& validatedCount)
+    void updateDownlinkCount(const NasCount &validatedCount)
     {
         downlinkCount.overflow = validatedCount.overflow;
         downlinkCount.sqn = validatedCount.sqn;

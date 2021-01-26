@@ -8,6 +8,8 @@
 
 #include "nas_utils.hpp"
 
+#include <cstring>
+
 namespace nas::utils
 {
 
@@ -230,6 +232,34 @@ const char *EnumToString(ESmCause v)
     default:
         return "?";
     }
+}
+
+const char *EnumToString(EPduSessionType v)
+{
+    switch (v)
+    {
+    case EPduSessionType::IPV4:
+        return "IPV4";
+    case EPduSessionType::IPV6:
+        return "IPV6";
+    case EPduSessionType::IPV4V6:
+        return "IPV4V6";
+    case EPduSessionType::UNSTRUCTURED:
+        return "UNSTRUCTURED";
+    case EPduSessionType::ETHERNET:
+        return "ETHERNET";
+    default:
+        return "?";
+    }
+}
+
+IEDnn DnnFromApn(const std::string &apn)
+{
+    IEDnn dnn;
+    dnn.apn = OctetString::FromSpare(static_cast<int>(apn.length()) + 1);
+    dnn.apn.data()[0] = static_cast<uint8_t>(apn.length());
+    std::memcpy(dnn.apn.data() + 1, apn.data(), apn.length());
+    return dnn;
 }
 
 } // namespace nas::utils

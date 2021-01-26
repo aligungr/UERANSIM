@@ -210,22 +210,6 @@ void NasTask::sendNasMessage(const nas::PlainMmMessage &msg)
     base->rrcTask->push(new NwUplinkNasDelivery(std::move(pdu)));
 }
 
-void NasTask::sendSmMessage(int psi, const nas::SmMessage &msg)
-{
-    nas::UlNasTransport m;
-    m.payloadContainerType.payloadContainerType = nas::EPayloadContainerType::N1_SM_INFORMATION;
-    m.pduSessionId = nas::IEPduSessionIdentity2{};
-    m.pduSessionId->value = psi;
-    m.requestType = nas::IERequestType{};
-    m.requestType->requestType = nas::ERequestType::INITIAL_REQUEST; // TODO
-    if (!base->config->nssais.empty())
-        m.sNssa = nas::utils::SNssaiFrom(base->config->nssais[0]); // TODO S-NNSAI per session
-    m.dnn = nas::IEDnn{};                                          // TODO: DNN per session
-    m.dnn->apn = OctetString::FromAscii(base->config->dnn);        // TODO check if it is ASCII or UTF-8
-
-    sendNasMessage(m);
-}
-
 void NasTask::sendMmStatus(nas::EMmCause cause)
 {
     logger->warn("Sending MM Status with cause %s", nas::utils::EnumToString(cause));

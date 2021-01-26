@@ -153,4 +153,11 @@ struct NwRlsSendPdu : NtsMessage
     }
 };
 
+struct NwInitialSessionCreate : NtsMessage
+{
+    NwInitialSessionCreate() : NtsMessage(NtsMessageType::UE_INITIAL_SESSION_CREATE)
+    {
+    }
+};
+
 } // namespace nr::ue

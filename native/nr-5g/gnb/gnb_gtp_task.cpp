@@ -93,10 +93,9 @@ void GtpTask::handleUeContextUpdate(NwUeContextUpdate *msg)
 void GtpTask::handleSessionCreate(NwPduSessionResourceCreate *msg)
 {
     PduSessionResource *session = msg->resource;
-    if (ueContexts.count(session->ueId))
+    if (!ueContexts.count(session->ueId))
     {
-        logger->err("PDU session resource could not be created, UE context with ID %d not found", session->ueId);
-        delete session;
+        logger->err("PDU session resource could not be created, UE context with ID[%d] not found", session->ueId);
         return;
     }
 

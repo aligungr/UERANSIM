@@ -96,6 +96,11 @@ void NasTask::onLoop()
         performMmCycle();
         break;
     }
+    case NtsMessageType::UE_INITIAL_SESSION_CREATE: {
+        establishInitialSessions();
+        delete msg;
+        break;
+    }
     default:
         logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
         delete msg;

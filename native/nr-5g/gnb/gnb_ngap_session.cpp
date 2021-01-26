@@ -9,7 +9,6 @@
 #include "gnb_ngap_encode.hpp"
 #include "gnb_ngap_task.hpp"
 #include "gnb_ngap_utils.hpp"
-#include "gnb_gtp_task.hpp"
 
 #include <ASN_NGAP_AssociatedQosFlowItem.h>
 #include <ASN_NGAP_AssociatedQosFlowList.h>
@@ -103,6 +102,10 @@ void NgapTask::receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSession
 
                 OctetString encodedTr =
                     ngap_encode::EncodeS(asn_DEF_ASN_NGAP_PDUSessionResourceSetupUnsuccessfulTransfer, tr);
+
+                if (encodedTr.length() == 0)
+                    throw std::runtime_error("PDUSessionResourceSetupUnsuccessfulTransfer encoding failed");
+
                 asn::Free(asn_DEF_ASN_NGAP_PDUSessionResourceSetupUnsuccessfulTransfer, tr);
 
                 auto *res = asn::New<ASN_NGAP_PDUSessionResourceFailedToSetupItemSURes>();
@@ -127,13 +130,17 @@ void NgapTask::receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSession
                 }
 
                 auto &upInfo = tr->dLQosFlowPerTNLInformation.uPTransportLayerInformation;
-
                 upInfo.present = ASN_NGAP_UPTransportLayerInformation_PR_gTPTunnel;
+                upInfo.choice.gTPTunnel = asn::New<ASN_NGAP_GTPTunnel>();
                 asn::SetBitString(upInfo.choice.gTPTunnel->transportLayerAddress, resource->downTunnel.address);
-                asn::SetOctetString(upInfo.choice.gTPTunnel->gTP_TEID, resource->downTunnel.teid);
+                asn::SetOctetString4(upInfo.choice.gTPTunnel->gTP_TEID, (octet4)resource->downTunnel.teid);
 
                 OctetString encodedTr =
                     ngap_encode::EncodeS(asn_DEF_ASN_NGAP_PDUSessionResourceSetupResponseTransfer, tr);
+
+                if (encodedTr.length() == 0)
+                    throw std::runtime_error("PDUSessionResourceSetupResponseTransfer encoding failed");
+
                 asn::Free(asn_DEF_ASN_NGAP_PDUSessionResourceSetupResponseTransfer, tr);
 
                 auto *res = asn::New<ASN_NGAP_PDUSessionResourceSetupItemSURes>();
@@ -184,11 +191,11 @@ void NgapTask::receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSession
     sendNgapUeAssociated(ue->ctxId, respPdu);
 
     if (failedList.empty())
-        logger->info("%d PDU session resource is established for UE %d", failedList.size(), ue->ctxId);
+        logger->info("[%d] PDU session resource is established for UE[%d]", successList.size(), ue->ctxId);
     else if (successList.empty())
-        logger->err("%d PDU session resource establishment was failed for UE %d", failedList.size(), ue->ctxId);
+        logger->err("[%d] PDU session resource establishment was failed for UE[%d]", failedList.size(), ue->ctxId);
     else
-        logger->err("PDU session establishment is partially successful for UE %d, success: %d, failed: %d",
+        logger->err("PDU session establishment is partially successful for UE[%d], success[%d], failed[%d]",
                     successList.size(), failedList.size());
 }
 

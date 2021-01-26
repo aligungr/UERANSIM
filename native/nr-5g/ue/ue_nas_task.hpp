@@ -105,7 +105,7 @@ class NasTask : public NtsTask
     void receiveServiceReject(const nas::ServiceReject &msg);
 
     /* SM base functions */
-    int allocatePduSessionId();
+    int allocatePduSessionId(const SessionConfig &config);
     int allocateProcedureTransactionId();
     void releaseProcedureTransactionId(int pti);
     void releasePduSession(int psi);
@@ -115,7 +115,8 @@ class NasTask : public NtsTask
     void receiveSmCause(const nas::IE5gSmCause &msg);
 
     /* SM session establishment */
-    void sendEstablishmentRequest();
+    void establishInitialSessions();
+    void sendEstablishmentRequest(const SessionConfig &config);
     void receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
 };

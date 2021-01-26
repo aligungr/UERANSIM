@@ -120,8 +120,8 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
                 ngap_utils::ToPlmnAsn_Ref(base->config->plmn, nr->nR_CGI.pLMNIdentity);
                 asn::SetBitStringLong<36>(base->config->nci, nr->nR_CGI.nRCellIdentity);
                 ngap_utils::ToPlmnAsn_Ref(base->config->plmn, nr->tAI.pLMNIdentity);
-                asn::SetOctetString(nr->tAI.tAC, octet3{base->config->tac});
-                asn::SetOctetString(*nr->timeStamp, octet4{utils::CurrentTimeStamp().seconds32()});
+                asn::SetOctetString3(nr->tAI.tAC, octet3{base->config->tac});
+                asn::SetOctetString4(*nr->timeStamp, octet4{utils::CurrentTimeStamp().seconds32()});
             });
     }
 

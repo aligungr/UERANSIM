@@ -170,7 +170,7 @@ OctetString utils::IpToOctetString(const std::string &address)
         std::stringstream ss(address);
         ss >> bytes[0] >> dot >> bytes[1] >> dot >> bytes[2] >> dot >> bytes[3] >> dot;
 
-        std::vector<uint8_t> data{4};
+        std::vector<uint8_t> data(4);
         data[0] = bytes[0];
         data[1] = bytes[1];
         data[2] = bytes[2];

@@ -15,6 +15,7 @@ namespace nas::utils
 
 IESNssai SNssaiFrom(const SliceSupport &v);
 IENssai NssaiFrom(const std::vector<SliceSupport> &v);
+IEDnn DnnFromApn(const std::string& apn);
 
 bool HasValue(const IEGprsTimer3 &v);
 bool HasValue(const IEGprsTimer2 &v);
@@ -23,6 +24,7 @@ const char *EnumToString(ERegistrationType v);
 const char *EnumToString(EMmCause v);
 const char *EnumToString(ESmCause v);
 const char *EnumToString(eap::ECode v);
+const char *EnumToString(EPduSessionType v);
 
 template <typename T>
 inline bool DeepEqualsIe(const T &a, const T &b)
