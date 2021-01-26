@@ -75,7 +75,7 @@ void NasTask::switchMmState(EMmState state, EMmSubState subState)
     // TODO: trigger on switch
     // TODO: status update
 
-    logger->info("UE switches to state: %s/%s", MmStateName(state), MmSubStateName(subState));
+    logger->info("UE switches to state: %s", MmSubStateName(subState));
 
     triggerMmCycle();
 }
@@ -206,7 +206,7 @@ void NasTask::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     switchRmState(ERmState::RM_REGISTERED);
 
     auto regType = mmCtx.registrationRequest->registrationType.registrationType;
-    logger->info("Registration is successful (%s)", nas::utils::EnumToString(regType));
+    logger->info("%s is successful", nas::utils::EnumToString(regType));
 }
 
 void NasTask::receiveRegistrationReject(const nas::RegistrationReject &msg)
@@ -214,7 +214,7 @@ void NasTask::receiveRegistrationReject(const nas::RegistrationReject &msg)
     auto cause = msg.mmCause.value;
     auto regType = mmCtx.registrationRequest->registrationType.registrationType;
 
-    logger->err("Registration failed (%s) (%s)", nas::utils::EnumToString(regType), nas::utils::EnumToString(cause));
+    logger->err("%s failed [%s]", nas::utils::EnumToString(regType), nas::utils::EnumToString(cause));
 
     if (msg.eapMessage.has_value())
     {
@@ -523,8 +523,7 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    logger->debug("received rand: %s", rand.toHexString().c_str());
-    logger->debug("received autn: %s", autn.toHexString().c_str());
+    logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
 
     if (USE_SQN_HACK)
     {
@@ -542,13 +541,10 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
     auto sqnXorAk = OctetString::Xor(mmCtx.sqn, milenageAk);
     auto snn = keys::ConstructServingNetworkName(base->config->plmn);
 
-    logger->debug("calculated res: %s", res.toHexString().c_str());
-    logger->debug("calculated ck: %s", ck.toHexString().c_str());
-    logger->debug("calculated ik: %s", ik.toHexString().c_str());
-    logger->debug("calculated milenageAk: %s", milenageAk.toHexString().c_str());
-    logger->debug("calculated milenageMac: %s", milenageMac.toHexString().c_str());
-    logger->debug("used snn: %s", snn.c_str());
-    logger->debug("used sqn: %s", mmCtx.sqn.toHexString().c_str());
+    logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
+                  ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
+                  milenageMac.toHexString().c_str());
+    logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), mmCtx.sqn.toHexString().c_str());
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
 
@@ -566,9 +562,9 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
 
         keys::DeriveKeysSeafAmf(*base->config, *nonCurrentNsCtx);
 
-        logger->debug("derived kSeaf: %s", nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
-        logger->debug("derived kAusf: %s", nonCurrentNsCtx->keys.kAusf.toHexString().c_str());
-        logger->debug("derived kAmf: %s", nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+        logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]", nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
+                      nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
+                      nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
         // Send response
         nas::AuthenticationResponse resp;
@@ -770,10 +766,10 @@ void NasTask::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     nonCurrentNsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
     keys::DeriveNasKeys(*nonCurrentNsCtx);
 
-    logger->debug("kNasEnc: %s", nonCurrentNsCtx->keys.kNasEnc.toHexString().c_str());
-    logger->debug("kNasInt: %s", nonCurrentNsCtx->keys.kNasInt.toHexString().c_str());
-    logger->debug("selectedIntAlg: %d", (int)nonCurrentNsCtx->integrity);
-    logger->debug("selectedEncAlg: %d", (int)nonCurrentNsCtx->ciphering);
+    logger->debug("Derived kNasEnc[%s] kNasInt[%s]", nonCurrentNsCtx->keys.kNasEnc.toHexString().c_str(),
+                  nonCurrentNsCtx->keys.kNasInt.toHexString().c_str());
+    logger->debug("Selected integrity[%d] ciphering[%d]", (int)nonCurrentNsCtx->integrity,
+                  (int)nonCurrentNsCtx->ciphering);
 
     // Set non-current NAS Security Context as current one.
     currentNsCtx = nonCurrentNsCtx->deepCopy();

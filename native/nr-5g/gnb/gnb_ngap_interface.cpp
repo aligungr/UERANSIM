@@ -28,7 +28,7 @@ namespace nr::gnb
 
 void NgapTask::handleAssociationSetup(NwSctpAssociationSetup *msg)
 {
-    logger->debug("SCTP association setup received (association id: %d)", msg->associationId);
+    logger->debug("SCTP association setup received ascId[%d]", msg->associationId);
 
     auto *amf = findAmfContext(msg->clientId);
     if (amf != nullptr)

@@ -178,7 +178,7 @@ void SctpTask::receiveSctpConnectionSetupRequest(NwSctpConnectionRequest *msg)
 
 void SctpTask::receiveAssociationSetup(NwSctpAssociationSetup *msg)
 {
-    logger->debug("SCTP association setup (ascId: %d)", msg->associationId);
+    logger->debug("SCTP association setup ascId[%d]", msg->associationId);
 
     ClientEntry *entry = clients[msg->clientId];
     if (entry == nullptr)
