@@ -146,7 +146,7 @@ IEAdditional5gSecurityInformation IEAdditional5gSecurityInformation::Decode(cons
 {
     IEAdditional5gSecurityInformation r;
     r.hdp = static_cast<EHorizontalDerivationParameter>(stream.peekI() & 0b1);
-    r.rinmr = static_cast<ERetransmissionOfInitialNasMessageRequest>((stream.peekI() >> 1) & 0b1);
+    r.rinmr = static_cast<ERetransmissionOfInitialNasMessageRequest>((stream.readI() >> 1) & 0b1);
     return r;
 }
 

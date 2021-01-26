@@ -46,7 +46,7 @@ void DeriveNasKeys(NasSecurityContext &securityContext)
     s2[1] = OctetString::FromOctet((int)securityContext.integrity);
 
     auto kdfEnc = crypto::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s1, 2);
-    auto kdfInt = crypto::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s1, 2);
+    auto kdfInt = crypto::CalculateKdfKey(securityContext.keys.kAmf, 0x69, s2, 2);
 
     securityContext.keys.kNasEnc = kdfEnc.subCopy(16, 16);
     securityContext.keys.kNasInt = kdfInt.subCopy(16, 16);

@@ -85,7 +85,7 @@ void NgapTask::deliverUplinkNas(NwUplinkNasDelivery *msg)
 
 void NgapTask::handleUplinkNasTransport(int ueId, const OctetString &nasPdu)
 {
-    logger->debug("Uplink NAS transport received from UE with ID %d", ueId);
+    logger->debug("Uplink NAS transport received from UE[%d]", ueId);
 
     auto *ieNasPdu = asn::New<ASN_NGAP_UplinkNASTransport_IEs>();
     ieNasPdu->id = ASN_NGAP_ProtocolIE_ID_id_NAS_PDU;
@@ -99,7 +99,7 @@ void NgapTask::handleUplinkNasTransport(int ueId, const OctetString &nasPdu)
 
 void NgapTask::sendNasNonDeliveryIndication(int ueId, const OctetString &nasPdu, NgapCause cause)
 {
-    logger->debug("Sending non-delivery indication for UE with ID %d", ueId);
+    logger->debug("Sending non-delivery indication for UE[%d]", ueId);
 
     auto *ieNasPdu = asn::New<ASN_NGAP_NASNonDeliveryIndication_IEs>();
     ieNasPdu->id = ASN_NGAP_ProtocolIE_ID_id_NAS_PDU;

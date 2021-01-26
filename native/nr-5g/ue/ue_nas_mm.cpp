@@ -46,7 +46,7 @@ void NasTask::performMmCycle()
 
     if (mmCtx.mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
-        if (emulationMode && !timers.t3346.running())
+        if (emulationMode && !timers.t3346.isRunning())
             sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, nas::EFollowOnRequest::FOR_PENDING);
         return;
     }
@@ -148,7 +148,7 @@ void NasTask::sendRegistration(nas::ERegistrationType registrationType, nas::EFo
         if (suci.type != nas::EIdentityType::NO_IDENTITY)
         {
             registrationRequest->mobileIdentity = suci;
-            if (!timers.t3519.running())
+            if (!timers.t3519.isRunning())
                 timers.t3519.start();
         }
         else if (base->config->imei.length() > 0)
@@ -186,7 +186,10 @@ void NasTask::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     mmCtx.taiList = msg.taiList;
 
     if (msg.t3512Value.has_value() && nas::utils::HasValue(msg.t3512Value.value()))
-        timers.t3512.start(msg.t3512Value.value());
+    {
+        timers.t3512.start(*msg.t3512Value);
+        logger->debug("T3512 started with int[%d]", timers.t3512.getInterval());
+    }
 
     if (msg.mobileIdentity.has_value() && msg.mobileIdentity->type == nas::EIdentityType::GUTI)
     {
@@ -563,6 +566,10 @@ void NasTask::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest
 
         keys::DeriveKeysSeafAmf(*base->config, *nonCurrentNsCtx);
 
+        logger->debug("derived kSeaf: %s", nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
+        logger->debug("derived kAusf: %s", nonCurrentNsCtx->keys.kAusf.toHexString().c_str());
+        logger->debug("derived kAmf: %s", nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+
         // Send response
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
@@ -765,8 +772,8 @@ void NasTask::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     logger->debug("kNasEnc: %s", nonCurrentNsCtx->keys.kNasEnc.toHexString().c_str());
     logger->debug("kNasInt: %s", nonCurrentNsCtx->keys.kNasInt.toHexString().c_str());
-    logger->debug("selectedIntAlg: %s", nonCurrentNsCtx->integrity);
-    logger->debug("selectedEncAlg: %s", nonCurrentNsCtx->ciphering);
+    logger->debug("selectedIntAlg: %d", (int)nonCurrentNsCtx->integrity);
+    logger->debug("selectedEncAlg: %d", (int)nonCurrentNsCtx->ciphering);
 
     // Set non-current NAS Security Context as current one.
     currentNsCtx = nonCurrentNsCtx->deepCopy();
@@ -929,7 +936,7 @@ void NasTask::receiveIdentityRequest(const nas::IdentityRequest &msg)
 
 nas::IE5gsMobileIdentity NasTask::getOrGenerateSuci()
 {
-    if (timers.t3519.running())
+    if (timers.t3519.isRunning())
     {
         logger->debug("T3519 is running, returning stored SUCI.");
         return mmCtx.storedSuci;

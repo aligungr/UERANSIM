@@ -228,6 +228,10 @@ static T *DecodeViaBuilder(const OctetBuffer &stream)
         int iei = stream.peekI();
         if (builder.optionalDecoders.count(iei))
             builder.optionalDecoders[iei](stream);
+        else if (builder.optionalDecoders.count((iei >> 4) & 0xF))
+            builder.optionalDecoders[(iei >> 4) & 0xF](stream);
+        else
+            throw std::runtime_error("Bad constructed NAS message");
     }
 
     return p;

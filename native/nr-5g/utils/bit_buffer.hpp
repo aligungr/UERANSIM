@@ -88,7 +88,7 @@ class BitBuffer
         if (len == 0)
             return;
 
-        assert(len > 0 && len < 32);
+        assert(len > 0 && len <= 32);
 
         for (int i = 0; i < len; i++)
             write((value >> (len - 1 - i)) & 0b1);
@@ -99,7 +99,7 @@ class BitBuffer
         if (len == 0)
             return;
 
-        assert(len > 0 && len < 64);
+        assert(len > 0 && len <= 64);
 
         for (int i = 0; i < len; i++)
             write((value >> (len - 1LL - i)) & 1LL);

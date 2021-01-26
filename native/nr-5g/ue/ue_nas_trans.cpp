@@ -35,7 +35,7 @@ void NasTask::receiveNasMessage(const nas::NasMessage &msg)
 
     if (mm.sht == nas::ESecurityHeaderType::INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT)
     {
-        auto smcMsg = nas_enc::Decrypt(*currentNsCtx, securedMm);
+        auto smcMsg = nas::DecodeNasMessage(OctetBuffer{securedMm.plainNasMessage});
         if (smcMsg == nullptr)
         {
             logger->err("MAC mismatch in NAS encryption. Ignoring received NAS message.");
@@ -53,6 +53,7 @@ void NasTask::receiveNasMessage(const nas::NasMessage &msg)
         }
 
         receiveMmMessage((const nas::PlainMmMessage &)(*smcMsg));
+        return;
     }
 
     if (mm.sht == nas::ESecurityHeaderType::INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT)
@@ -163,8 +164,7 @@ void NasTask::receiveDlNasTransport(const nas::DlNasTransport &msg)
         return;
     }
 
-    OctetBuffer buff{msg.payloadContainer.data.data(),
-                     static_cast<size_t>(msg.payloadContainer.data.length())};
+    OctetBuffer buff{msg.payloadContainer.data.data(), static_cast<size_t>(msg.payloadContainer.data.length())};
     auto sm = nas::DecodeNasMessage(buff);
     if (sm->epd != nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
     {
@@ -212,8 +212,6 @@ void NasTask::sendNasMessage(const nas::PlainMmMessage &msg)
     {
         nas::EncodeNasMessage(msg, pdu);
     }
-
-    logger->debug("Sending NAS PDU with length %d", pdu.length());
 
     base->rrcTask->push(new NwUplinkNasDelivery(std::move(pdu)));
 }

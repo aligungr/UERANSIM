@@ -13,7 +13,7 @@ namespace nr::ue
 
 void NasTask::onTimerExpire(nas::NasTimer &timer)
 {
-    switch (timer.code())
+    switch (timer.getCode())
     {
     case 3512: {
         if (emulationMode && mmCtx.mmState == EMmState::MM_REGISTERED)

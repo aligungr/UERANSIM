@@ -271,7 +271,7 @@ struct NasSecurityContext
     NasCount downlinkCount{};
     NasCount uplinkCount{};
 
-    EConnectionIdentifier connectionIdentifier{};
+    bool is3gppAccess = true;
 
     UeKeys keys{};
     nas::ETypeOfIntegrityProtectionAlgorithm integrity{};
@@ -309,7 +309,7 @@ struct NasSecurityContext
         ctx.ngKsi = ngKsi;
         ctx.downlinkCount = downlinkCount;
         ctx.uplinkCount = uplinkCount;
-        ctx.connectionIdentifier = connectionIdentifier;
+        ctx.is3gppAccess = is3gppAccess;
         ctx.keys = keys.deepCopy();
         ctx.integrity = integrity;
         ctx.ciphering = ciphering;

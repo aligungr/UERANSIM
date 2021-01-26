@@ -75,12 +75,26 @@ static uint32_t Cmac(const OctetString &message, const OctetString &key)
 
     ///////////// Process last block ///////////
     {
-        const uint8_t *msg = message.data();
+        // Add padding
+        if (copy.length() % BLOCK_SIZE != 0)
+        {
+            int padding = BLOCK_SIZE - (copy.length() % BLOCK_SIZE);
+            copy.appendOctet(0b10000000);
+            if (padding > 1)
+                copy.appendPadding(padding - 1);
 
-        // Xor with subKey1
-        int offset = message.length() - BLOCK_SIZE;
-        for (int i = 0; i < BLOCK_SIZE; i++)
-            copy.data()[offset + i] ^= subKey1[i];
+            // Xor with subKey2
+            int offset = copy.length() - BLOCK_SIZE;
+            for (int i = 0; i < BLOCK_SIZE; i++)
+                copy.data()[offset + i] ^= subKey2[i];
+        }
+        else
+        {
+            // Xor with subKey1
+            int offset = copy.length() - BLOCK_SIZE;
+            for (int i = 0; i < BLOCK_SIZE; i++)
+                copy.data()[offset + i] ^= subKey1[i];
+        }
     }
 
     ///////////// Perform tag calculation ///////////
@@ -89,13 +103,13 @@ static uint32_t Cmac(const OctetString &message, const OctetString &key)
         int currentOffset = 0;
         uint8_t lastCode[BLOCK_SIZE] = {0};
 
-        while (currentOffset < message.length())
+        while (currentOffset < copy.length())
         {
             for (int i = 0; i < BLOCK_SIZE; i++)
                 copy.data()[currentOffset + i] ^= lastCode[i];
 
             uint8_t code[BLOCK_SIZE] = {0};
-            cipher.processBlock(copy.data(), currentOffset, message.length(), code, 0, BLOCK_SIZE);
+            cipher.processBlock(copy.data(), currentOffset, copy.length(), code, 0, BLOCK_SIZE);
 
             std::memcpy(lastCode, code, BLOCK_SIZE);
 
@@ -123,4 +137,4 @@ uint32_t Compute(uint32_t count, int bearer, int direction, const OctetString &m
     return Cmac(macInput, key);
 }
 
-} // namespace crypt::eia2
+} // namespace crypto::eia2

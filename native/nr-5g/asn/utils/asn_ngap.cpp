@@ -450,7 +450,7 @@ int GetProcedureCode(NgapMessageType messageType)
     case NgapMessageType::UEContextReleaseCommand:
     case NgapMessageType::UEContextReleaseComplete:
     case NgapMessageType::UEContextReleaseRequest:
-        return 42;
+        return 41;
     case NgapMessageType::UERadioCapabilityCheckRequest:
     case NgapMessageType::UERadioCapabilityCheckResponse:
     case NgapMessageType::UERadioCapabilityInfoIndication:

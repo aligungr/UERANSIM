@@ -73,8 +73,7 @@ OctetString CalculateKdfKey(const OctetString &key, int fc, OctetString *paramet
     return HmacSha256(key, inp);
 }
 
-OctetString CalculateKdfKey(const OctetString &key, int fc1, int fc2, OctetString *parameters,
-                                   int numberOfParameter)
+OctetString CalculateKdfKey(const OctetString &key, int fc1, int fc2, OctetString *parameters, int numberOfParameter)
 {
     OctetString inp;
     inp.appendOctet(fc1);
@@ -115,12 +114,12 @@ std::vector<uint32_t> Zuc(const OctetString &key, const OctetString &iv, int len
 uint32_t ComputeMacUia2(const uint8_t *pKey, uint32_t count, uint32_t fresh, uint32_t dir, const uint8_t *pData,
                         uint64_t length)
 {
-    return crypto::uea2::F9(pKey, count, fresh, dir, pData, length);
+    return crypto::uea2::F9(pKey, count, fresh, dir, pData, length * 8);
 }
 
 void EncryptUea2(const uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t dir, uint8_t *pData, uint32_t length)
 {
-    crypto::uea2::F8(pKey, count, bearer, dir, pData, length);
+    crypto::uea2::F8(pKey, count, bearer, dir, pData, length * 8);
 }
 
 void EncryptEea1(uint32_t count, int bearer, int direction, OctetString &message, const OctetString &key)
@@ -172,4 +171,4 @@ uint32_t ComputeMacEia3(uint32_t count, int bearer, int direction, const OctetSt
                       reinterpret_cast<const uint32_t *>(message.data()));
 }
 
-} // namespace crypt
+} // namespace crypto

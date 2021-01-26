@@ -34,10 +34,10 @@ static nas::ESecurityHeaderType MakeSecurityHeaderType(const NasSecurityContext 
                     : nas::ESecurityHeaderType::INTEGRITY_PROTECTED;
 }
 
-static OctetString EncryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCount &count, EConnectionIdentifier cnId,
+static OctetString EncryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCount &count, bool is3gppAccess,
                                const OctetString &data, const OctetString &key)
 {
-    int bearer = static_cast<int>(cnId);
+    int bearer = is3gppAccess ? 1 : 2;
     int direction = 0;
 
     OctetString msg = data.copy();
@@ -66,7 +66,7 @@ static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, O
                                                       nas::EMessageType msgType)
 {
     auto count = ctx.uplinkCount;
-    auto cnId = ctx.connectionIdentifier;
+    auto cnId = ctx.is3gppAccess;
     auto &intKey = ctx.keys.kNasInt;
     auto &encKey = ctx.keys.kNasEnc;
     auto intAlg = ctx.integrity;
@@ -87,7 +87,7 @@ static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, O
     return secured;
 }
 
-static OctetString DecryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCount &count, EConnectionIdentifier cnId,
+static OctetString DecryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCount &count, bool is3gppAccess,
                                const OctetString &key, nas::ESecurityHeaderType sht, const OctetString &data)
 {
     OctetString msg = data.copy();
@@ -96,7 +96,7 @@ static OctetString DecryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCoun
         sht != nas::ESecurityHeaderType::INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT)
         return msg;
 
-    int bearer = static_cast<int>(cnId);
+    int bearer = is3gppAccess ? 1 : 2;
     int direction = 1;
 
     switch (alg)
@@ -143,7 +143,7 @@ std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::Sec
 {
     auto estimatedCount = ctx.estimatedDownlinkCount(msg.sequenceNumber);
 
-    auto cnId = ctx.connectionIdentifier;
+    auto cnId = ctx.is3gppAccess;
     auto &intKey = ctx.keys.kNasInt;
     auto &encKey = ctx.keys.kNasEnc;
     auto intAlg = ctx.integrity;
@@ -163,15 +163,15 @@ std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::Sec
     return nas::DecodeNasMessage(buff);
 }
 
-uint32_t ComputeMac(nas::ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, EConnectionIdentifier cnId,
-                    bool isUplink, const OctetString &key, const OctetString &plainMessage)
+uint32_t ComputeMac(nas::ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, bool is3gppAccess, bool isUplink,
+                    const OctetString &key, const OctetString &plainMessage)
 {
     if (alg == nas::ETypeOfIntegrityProtectionAlgorithm::IA0)
         return 0;
 
     auto data = OctetString::Concat(OctetString::FromOctet(count.sqn), plainMessage);
 
-    int bearer = static_cast<int>(cnId);
+    int bearer = is3gppAccess ? 1 : 2;
     int direction = isUplink ? 0 : 1;
 
     switch (alg)

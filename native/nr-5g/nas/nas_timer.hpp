@@ -17,11 +17,11 @@ class NasTimer
 {
   private:
     const int timerCode;
-    const bool isMmTimer;
+    const bool mmTimer;
 
     int interval;
     long startMillis;
-    bool isRunning;
+    bool running;
     long _lastDebugPrintMs;
 
   public:
@@ -33,9 +33,11 @@ class NasTimer
     void start(const IEGprsTimer3 &v);
     void stop();
     bool performTick();
-    [[nodiscard]] bool running() const;
-    [[nodiscard]] int code() const;
-    [[nodiscard]] bool mmTimer() const;
+    [[nodiscard]] bool isRunning() const;
+    [[nodiscard]] int getCode() const;
+    [[nodiscard]] bool isMmTimer() const;
+    [[nodiscard]] int getInterval() const;
+    [[nodiscard]] int getRemaining() const;
 };
 
 } // namespace nas

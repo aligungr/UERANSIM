@@ -14,37 +14,37 @@ namespace nas
 {
 
 NasTimer::NasTimer(int timerCode, bool isMmTimer, int defaultInterval)
-    : timerCode(timerCode), isMmTimer(isMmTimer), interval(defaultInterval), startMillis(0), isRunning(false),
+    : timerCode(timerCode), mmTimer(isMmTimer), interval(defaultInterval), startMillis(0), running(false),
       _lastDebugPrintMs(0)
 {
 }
 
-bool NasTimer::running() const
+bool NasTimer::isRunning() const
 {
-    return isRunning;
+    return running;
 }
 
-int NasTimer::code() const
+int NasTimer::getCode() const
 {
     return timerCode;
 }
 
-bool NasTimer::mmTimer() const
+bool NasTimer::isMmTimer() const
 {
-    return isMmTimer;
+    return mmTimer;
 }
 
 void NasTimer::start()
 {
     startMillis = utils::CurrentTimeMillis();
-    isRunning = true;
+    running = true;
 }
 
 void NasTimer::start(const nas::IEGprsTimer2 &v)
 {
     interval = v.value;
     startMillis = utils::CurrentTimeMillis();
-    isRunning = true;
+    running = true;
 }
 
 void NasTimer::start(const nas::IEGprsTimer3 &v)
@@ -69,21 +69,21 @@ void NasTimer::start(const nas::IEGprsTimer3 &v)
 
     interval = secs;
     startMillis = utils::CurrentTimeMillis();
-    isRunning = true;
+    running = true;
 }
 
 void NasTimer::stop()
 {
-    if (isRunning)
+    if (running)
     {
         startMillis = utils::CurrentTimeMillis();
-        isRunning = false;
+        running = false;
     }
 }
 
 bool NasTimer::performTick()
 {
-    if (isRunning)
+    if (running)
     {
         long currentMs = utils::CurrentTimeMillis();
         long deltaSec = (currentMs - startMillis) / 1000;
@@ -102,6 +102,20 @@ bool NasTimer::performTick()
         }
     }
     return false;
+}
+
+int NasTimer::getInterval() const
+{
+    return interval;
+}
+
+int NasTimer::getRemaining() const
+{
+    if (!running)
+        return 0;
+
+    long elapsed = utils::CurrentTimeMillis() - startMillis;
+    return static_cast<int>(std::max(interval - elapsed, 0L));
 }
 
 } // namespace nas
