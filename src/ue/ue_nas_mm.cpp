@@ -276,7 +276,7 @@ void NasTask::receiveRegistrationReject(const nas::RegistrationReject &msg)
             // TODO Normally UE switches to PLMN SEARCH, but this leads to endless registration attempt again and again.
             // due to RLS.
             // switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_NULL_NA);
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
             switchRmState(ERmState::RM_DEREGISTERED);
         }
