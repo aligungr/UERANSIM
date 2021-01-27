@@ -91,12 +91,6 @@ void SetEventOptions(int sd)
     events.sctp_peer_error_event = 1;
     events.sctp_shutdown_event = 1;
     events.sctp_partial_delivery_event = 1;
-    events.sctp_adaptation_layer_event = 1;
-    events.sctp_authentication_event = 1;
-    events.sctp_sender_dry_event = 1;
-    events.sctp_stream_reset_event = 1;
-    events.sctp_assoc_reset_event = 1;
-    events.sctp_stream_change_event = 1;
 
     if (setsockopt(sd, IPPROTO_SCTP, SCTP_EVENTS, &events, 8) < 0)
         ThrowError("SCTP SCTP_EVENTS option failed");
