@@ -71,10 +71,8 @@ static nr::gnb::GnbConfig *GetConfig(const std::string &file)
     }
 }
 
-int main(int argc, char **argv)
+static void ReadOptions(int argc, char **argv, std::string &configFile)
 {
-    std::string configFile;
-
     try
     {
         cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 UERANSIM");
@@ -96,6 +94,12 @@ int main(int argc, char **argv)
         std::cerr << "ERROR: " << e.what() << std::endl;
         exit(1);
     }
+}
+
+int main(int argc, char **argv)
+{
+    std::string configFile;
+    ReadOptions(argc, argv, configFile);
 
     nr::gnb::GnbConfig *config = GetConfig(configFile);
 
