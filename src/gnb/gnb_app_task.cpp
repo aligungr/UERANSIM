@@ -14,7 +14,7 @@ namespace nr::gnb
 
 GnbAppTask::GnbAppTask(TaskBase *base) : base{base}, statusInfo{}
 {
-    logger = base->logBase->makeUniqueLogger("gnb-app");
+    logger = base->logBase->makeUniqueLogger("app");
 }
 
 void GnbAppTask::onStart()

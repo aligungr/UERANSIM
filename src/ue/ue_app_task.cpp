@@ -18,7 +18,7 @@ namespace nr::ue
 
 UeAppTask::UeAppTask(TaskBase *base) : base{base}, statusInfo{}, tunTasks{}
 {
-    logger = base->logBase->makeUniqueLogger("ue-app");
+    logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "app");
 }
 
 void UeAppTask::onStart()

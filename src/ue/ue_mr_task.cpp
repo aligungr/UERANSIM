@@ -21,7 +21,7 @@ namespace nr::ue
 
 ue::UeMrTask::UeMrTask(TaskBase *base) : base{base}, udpTask{}, rlsEntity{}, lastPlmnSearchFailurePrinted{}
 {
-    logger = base->logBase->makeUniqueLogger("ue-mr");
+    logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "mr");
 }
 
 void UeMrTask::onStart()
@@ -32,7 +32,8 @@ void UeMrTask::onStart()
     for (auto &ip : base->config->gnbSearchList)
         gnbSearchList.emplace_back(ip, cons::PortalPort);
 
-    rlsEntity = new UeRls(base->config->getNodeName(), gnbSearchList, base->logBase->makeUniqueLogger("ue-rls"), this);
+    rlsEntity = new UeRls(base->config->getNodeName(), gnbSearchList,
+                          base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls"), this);
 
     udpTask->start();
 

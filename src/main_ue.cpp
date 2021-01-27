@@ -15,7 +15,7 @@
 #include <yaml-cpp/yaml.h>
 #include <yaml_utils.hpp>
 
-static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureRouting)
+static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureRouting, bool prefixLogger)
 {
     auto *result = new nr::ue::UeConfig();
     auto config = YAML::LoadFile(file);
@@ -45,6 +45,7 @@ static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureR
 
     result->emulationMode = true;
     result->configureRouting = configureRouting;
+    result->prefixLogger = prefixLogger;
 
     if (yaml::HasField(config, "supi"))
         result->supi = Supi::Parse(yaml::GetString(config, "supi"));
@@ -105,11 +106,11 @@ static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureR
     return result;
 }
 
-static nr::ue::UeConfig *GetConfig(const std::string &file, bool configureRouting)
+static nr::ue::UeConfig *GetConfig(const std::string &file, bool configureRouting, bool prefixLogger)
 {
     try
     {
-        return ReadConfigYaml(file, configureRouting);
+        return ReadConfigYaml(file, configureRouting, prefixLogger);
     }
     catch (const std::runtime_error &e)
     {
@@ -225,6 +226,7 @@ nr::ue::UeConfig *GetConfigByUe(nr::ue::UeConfig *refConfig, int ueIndex)
     c->gnbSearchList = refConfig->gnbSearchList;
     c->initSessions = refConfig->initSessions;
     c->configureRouting = refConfig->configureRouting;
+    c->prefixLogger = refConfig->prefixLogger;
 
     if (c->supi.has_value())
         IncrementNumber(c->supi->value, ueIndex);
@@ -242,7 +244,10 @@ int main(int argc, char **argv)
 
     ReadOptions(argc, argv, configFile, noRoutingConfigs, imsi, count);
 
-    nr::ue::UeConfig *refConfig = GetConfig(configFile, !noRoutingConfigs);
+    // If we have multiple UEs in the same process, then log names should be separated.
+    bool prefixLogger = count > 1;
+
+    nr::ue::UeConfig *refConfig = GetConfig(configFile, !noRoutingConfigs, prefixLogger);
     if (imsi.length() > 0)
         refConfig->supi = Supi::Parse("imsi-" + imsi);
 

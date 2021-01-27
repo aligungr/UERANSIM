@@ -14,7 +14,7 @@ namespace nr::ue
 
 UeRrcTask::UeRrcTask(TaskBase *base) : base{base}
 {
-    logger = base->logBase->makeUniqueLogger("ue-rrc");
+    logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
 }
 
 void UeRrcTask::onStart()

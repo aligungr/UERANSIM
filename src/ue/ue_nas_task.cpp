@@ -21,7 +21,7 @@ NasTask::NasTask(TaskBase *base)
     : base{base}, timers{}, mmCtx{}, smCtx{}, currentNsCtx{}, nonCurrentNsCtx{},
       emulationMode(base->config->emulationMode)
 {
-    logger = base->logBase->makeUniqueLogger("nas");
+    logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 }
 
 void NasTask::onStart()

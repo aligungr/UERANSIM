@@ -219,18 +219,21 @@ struct GnbAmfConfig
 
 struct GnbConfig
 {
+    /* Read from config file */
     int64_t nci;     // 36-bit
     int gnbIdLength; // 22..32 bit
-    std::string name;
     Plmn plmn;
     int tac;
     std::vector<SliceSupport> nssais;
-    EPagingDrx pagingDrx;
     std::vector<GnbAmfConfig> amfConfigs;
     std::string portalIp;
     std::string ngapIp;
     std::string gtpIp;
     bool ignoreStreamIds;
+
+    /* Assigned by program */
+    std::string name;
+    EPagingDrx pagingDrx;
 
     [[nodiscard]] inline int getGnbId() const
     {

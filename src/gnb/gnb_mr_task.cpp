@@ -20,12 +20,12 @@ namespace nr::gnb
 
 GnbMrTask::GnbMrTask(TaskBase *base) : base{base}, udpTask{}, rlsEntity{}, ueMap{}
 {
-    logger = base->logBase->makeUniqueLogger("gnb-mr");
+    logger = base->logBase->makeUniqueLogger("mr");
 }
 
 void GnbMrTask::onStart()
 {
-    rlsEntity = new GnbRls(base->config->name, base->logBase->makeUniqueLogger("gnb-rls"), this);
+    rlsEntity = new GnbRls(base->config->name, base->logBase->makeUniqueLogger("rls"), this);
 
     try
     {

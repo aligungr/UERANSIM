@@ -49,7 +49,7 @@ struct SessionConfig
 
 struct UeConfig
 {
-    bool emulationMode;
+    /* Read from config file */
     OctetString key;
     OctetString opC;
     OpType opType;
@@ -61,7 +61,11 @@ struct UeConfig
     SupportedAlgs supportedAlgs;
     std::vector<std::string> gnbSearchList;
     std::vector<SessionConfig> initSessions;
+
+    /* Assigned by program */
+    bool emulationMode;
     bool configureRouting;
+    bool prefixLogger;
 
     [[nodiscard]] std::string getNodeName() const
     {
@@ -70,6 +74,17 @@ struct UeConfig
         if (imei.length() > 0)
             return imei;
         return "unknown-ue";
+    }
+
+    [[nodiscard]] std::string getLoggerPrefix() const
+    {
+        if (!prefixLogger)
+            return "";
+        if (supi.has_value())
+            return supi->value + "|";
+        if (imei.length() > 0)
+            return imei + "|";
+        return "unknown-ue|";
     }
 };
 

@@ -25,7 +25,7 @@ namespace nr::gnb
 
 GnbRrcTask::GnbRrcTask(TaskBase *base) : base{base}
 {
-    logger = base->logBase->makeUniqueLogger("gnb-rrc");
+    logger = base->logBase->makeUniqueLogger("rrc");
 }
 
 void GnbRrcTask::onStart()
