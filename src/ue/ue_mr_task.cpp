@@ -99,7 +99,7 @@ void UeMrTask::onLoop()
     }
     case NtsMessageType::UE_RLS_RELEASED: {
         auto *w = dynamic_cast<NwRlsReleased *>(msg);
-        logger->warn("UE RLS released (%s)", rls::CauseToString(w->cause));
+        logger->warn("UE disconnected from gNB, RLS released (%s)", rls::CauseToString(w->cause));
         delete w;
         break;
     }
