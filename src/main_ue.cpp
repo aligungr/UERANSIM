@@ -156,7 +156,7 @@ static void ReadOptions(int argc, char **argv, std::string &configFile, bool &no
         if (result.count("imsi"))
         {
             imsi = result["imsi"].as<std::string>();
-            Supi::Parse(imsi); // validate the string by parsing
+            Supi::Parse("imsi-" + imsi); // validate the string by parsing
         }
     }
     catch (const cxxopts::OptionException &e)
