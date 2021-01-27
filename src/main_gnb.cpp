@@ -7,38 +7,105 @@
 //
 
 #include <common.hpp>
+#include <constants.hpp>
+#include <cxxopts/cxxopts.hpp>
 #include <gnb.hpp>
+#include <iostream>
+#include <unistd.h>
+#include <yaml-cpp/yaml.h>
+#include <yaml_utils.hpp>
 
-bool isOgs = true; // or free5gc
-
-int mcc = isOgs ? 901 : 208;
-int mnc = isOgs ? 70 : 93;
-const char *key = isOgs ? "465B5CE8B199B49FAA5F0A2EE238A6BC" : "8baf473f2f8fd09487cccbd7097c6862";
-const char *opC = isOgs ? "E8ED289DEBA952E4283B54E88E6183CA" : "8e27b6af0e692e750f32667a3b14605d";
-const char *supi = isOgs ? "imsi-901700000000003" : "imsi-208930000000003";
-const char *ip = isOgs ? "192.168.1.55" : "192.168.1.48";
-
-int main()
+static nr::gnb::GnbConfig *ReadConfigYaml(const std::string &file)
 {
-    auto *gnbConfig = new nr::gnb::GnbConfig();
-    gnbConfig->gnbIdLength = 32;
-    gnbConfig->nci = 0x0000000100;
-    gnbConfig->name = "UERANSIM-gnb1";
-    gnbConfig->amfConfigs.push_back({ip, 38412});
-    gnbConfig->portalIp = "192.168.1.37";
-    gnbConfig->ngapIp = "192.168.1.37";
-    gnbConfig->gtpIp = "192.168.1.37";
-    gnbConfig->nssais.push_back(SliceSupport{1, octet3{0x010203}});
-    gnbConfig->pagingDrx = EPagingDrx::V128;
-    gnbConfig->plmn.mcc = mcc;
-    gnbConfig->plmn.mnc = mnc;
-    gnbConfig->plmn.isLongMnc = false;
-    gnbConfig->tac = 1;
-    gnbConfig->ignoreStreamIds = true;
+    auto *result = new nr::gnb::GnbConfig();
+    auto config = YAML::LoadFile(file);
 
-    auto *gnb = new nr::gnb::GNodeB(gnbConfig, nullptr);
+    result->plmn.mcc = yaml::GetInt32(config, "mcc", 1, 999);
+    result->plmn.mnc = yaml::GetInt32(config, "mnc", 1, 999);
+    result->plmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
+
+    result->nci = yaml::GetInt64(config, "nci", 0, 0xFFFFFFFFFll);
+    result->gnbIdLength = yaml::GetInt32(config, "idLength", 22, 32);
+    result->tac = yaml::GetInt32(config, "tac", 0, 0xFFFFFF);
+
+    result->portalIp = yaml::GetIp4(config, "linkIp");
+    result->ngapIp = yaml::GetIp4(config, "ngapIp");
+    result->gtpIp = yaml::GetIp4(config, "gtpIp");
+
+    result->ignoreStreamIds = yaml::GetBool(config, "ignoreStreamIds");
+    result->pagingDrx = EPagingDrx::V128;
+    result->name = "UERANSIM-gnb-" + std::to_string(result->plmn.mcc) + "-" + std::to_string(result->plmn.mnc) + "-" +
+                   std::to_string(result->getGnbId()); // NOTE: Avoid using "/" dir separator character.
+
+    for (auto &amfConfig : yaml::GetSequence(config, "amfConfigs"))
+    {
+        nr::gnb::GnbAmfConfig c{};
+        c.address = yaml::GetIp4(amfConfig, "address");
+        c.port = static_cast<uint16_t>(yaml::GetInt32(amfConfig, "port", 1024, 65535));
+        result->amfConfigs.push_back(c);
+    }
+
+    for (auto &nssai : yaml::GetSequence(config, "slices"))
+    {
+        SliceSupport s{};
+        s.sst = yaml::GetInt32(nssai, "sst", 1, 0xFF);
+        if (yaml::HasField(nssai, "sd"))
+            s.sd = octet3{yaml::GetInt32(nssai, "sd", 1, 0xFFFFFF)};
+        result->nssais.push_back(s);
+    }
+
+    return result;
+}
+
+static nr::gnb::GnbConfig *GetConfig(const std::string &file)
+{
+    try
+    {
+        return ReadConfigYaml(file);
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << "Config file could not read. " << e.what() << std::endl;
+        exit(1);
+    }
+}
+
+int main(int argc, char **argv)
+{
+    cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 UERANSIM");
+    options.add_options()("c,config", "Use specified configuration file for gNB",
+                          cxxopts::value<std::string>())("h,help", "Show this help message and exit");
+
+    auto result = options.parse(argc, argv);
+
+    if (result.arguments().empty() || result.count("help"))
+    {
+        std::cout << options.help() << std::endl;
+        exit(0);
+    }
+
+    std::string configFile;
+
+    try
+    {
+        configFile = result["config"].as<std::string>();
+    }
+    catch (const cxxopts::OptionException &e)
+    {
+        std::cerr << "Command line error. " << e.what() << std::endl;
+        exit(1);
+    }
+    catch (const cxxopts::missing_argument_exception &e)
+    {
+        std::cerr << "Command line error. " << e.what() << std::endl;
+        exit(1);
+    }
+
+    nr::gnb::GnbConfig *config = GetConfig(configFile);
+
+    auto *gnb = new nr::gnb::GNodeB(config, nullptr);
     gnb->start();
 
     while (true)
-        utils::Sleep(1000);
+        ::pause();
 }
