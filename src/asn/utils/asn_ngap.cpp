@@ -336,6 +336,7 @@ void *NewDescFromMessageType(NgapMessageType type, void *&pOutDescription)
     }
 
     assert(false);
+    return nullptr;
 }
 
 int GetProcedureCode(NgapMessageType messageType)
@@ -476,6 +477,8 @@ int GetProcedureCode(NgapMessageType messageType)
         assert(false);
         break;
     }
+
+    return 0;
 }
 
 int GetProcedureCriticality(NgapMessageType messageType)
@@ -736,6 +739,8 @@ int GetProcedurePresent(NgapMessageType messageType)
         assert(false);
         break;
     }
+
+    return 0;
 }
 
 int GetPduDescription(NgapMessageType messageType)
@@ -830,6 +835,8 @@ int GetPduDescription(NgapMessageType messageType)
         assert(false);
         break;
     }
+
+    return 0;
 }
 
 struct IeFieldInfo
