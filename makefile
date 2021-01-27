@@ -2,13 +2,13 @@ GREEN=\033[0;1;92m
 NC=\033[0m
 
 build: FORCE
-	rm -fr build_tmp
-	mkdir -p build_tmp
+	rm -fr .build_tmp
+	mkdir -p .build_tmp
 	mkdir -p build/cmake
-	cp -r build/cmake build_tmp
+	cp -r build/cmake .build_tmp
 	rm -fr build/*
-	cp -r build_tmp/cmake build
-	rm -fr build_tmp
+	cp -r .build_tmp/cmake build
+	rm -fr .build_tmp
 	
 	# cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" ./src -B build/cmake/debug
 	cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" ./src -B build/cmake/release
