@@ -6,9 +6,9 @@ build: FORCE
 	mkdir -p build
 	rm -fr build/*
 	
-	cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" . -B cmake-build-debug
+	# cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" . -B cmake-build-debug
 	cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" . -B cmake-build-release
-	cmake --build cmake-build-debug --target all
+	# cmake --build cmake-build-debug --target all
 	cmake --build cmake-build-release --target all
 	
 	cp cmake-build-release/nr-gnb build/
