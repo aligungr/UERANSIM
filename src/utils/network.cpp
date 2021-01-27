@@ -9,11 +9,13 @@
 #include "network.hpp"
 #include "libc_error.hpp"
 
+#include <arpa/inet.h>
 #include <cstring>
 #include <netdb.h>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 static std::string OctetStringToIpString(const OctetString &address)
 {
