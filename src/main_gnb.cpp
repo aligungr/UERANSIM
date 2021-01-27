@@ -98,6 +98,8 @@ static void ReadOptions(int argc, char **argv, std::string &configFile)
 
 int main(int argc, char **argv)
 {
+    std::cout << cons::Name << std::endl;
+
     std::string configFile;
     ReadOptions(argc, argv, configFile);
 

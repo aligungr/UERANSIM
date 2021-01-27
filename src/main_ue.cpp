@@ -238,6 +238,8 @@ nr::ue::UeConfig *GetConfigByUe(nr::ue::UeConfig *refConfig, int ueIndex)
 
 int main(int argc, char **argv)
 {
+    std::cout << cons::Name << std::endl;
+
     std::string configFile, imsi;
     bool noRoutingConfigs;
     int count;
