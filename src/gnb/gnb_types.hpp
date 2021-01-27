@@ -221,7 +221,7 @@ struct GnbConfig
 {
     int64_t nci;     // 36-bit
     int gnbIdLength; // 22..32 bit
-    std::string name; // TODO: avoid "/" etc. in the name since it is directory. (same for the UE)
+    std::string name;
     Plmn plmn;
     int tac;
     std::vector<SliceSupport> nssais;
@@ -232,7 +232,7 @@ struct GnbConfig
     std::string gtpIp;
     bool ignoreStreamIds;
 
-    inline int getGnbId() const
+    [[nodiscard]] inline int getGnbId() const
     {
         return static_cast<int>((nci >> (36LL - static_cast<int64_t>(gnbIdLength))) & ((1 << (gnbIdLength + 1)) - 1));
     }
