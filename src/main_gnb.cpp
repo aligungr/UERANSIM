@@ -65,34 +65,34 @@ static nr::gnb::GnbConfig *GetConfig(const std::string &file)
     }
     catch (const std::runtime_error &e)
     {
-        std::cerr << "Config file could not read. " << e.what() << std::endl;
+        std::cerr << "ERROR: " << e.what() << std::endl;
         exit(1);
     }
 }
 
 int main(int argc, char **argv)
 {
-    cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 UERANSIM");
-    options.add_options()("c,config", "Use specified configuration file for gNB",
-                          cxxopts::value<std::string>())("h,help", "Show this help message and exit");
-
-    auto result = options.parse(argc, argv);
-
-    if (result.arguments().empty() || result.count("help"))
-    {
-        std::cout << options.help() << std::endl;
-        exit(0);
-    }
-
     std::string configFile;
 
     try
     {
+        cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 UERANSIM");
+        options.add_options()("c,config", "Use specified configuration file for gNB",
+                              cxxopts::value<std::string>())("h,help", "Show this help message and exit");
+
+        auto result = options.parse(argc, argv);
+
+        if (result.arguments().empty() || result.count("help"))
+        {
+            std::cout << options.help() << std::endl;
+            exit(0);
+        }
+
         configFile = result["config"].as<std::string>();
     }
     catch (const cxxopts::OptionException &e)
     {
-        std::cerr << "Command line error. " << e.what() << std::endl;
+        std::cerr << "ERROR: " << e.what() << std::endl;
         exit(1);
     }
 
