@@ -115,14 +115,17 @@ static nr::ue::UeConfig *GetConfig(const std::string &file, bool configureRoutin
     }
 }
 
-static void ReadOptions(int argc, char **argv, std::string &configFile, bool &noRoutingConfigs)
+static void ReadOptions(int argc, char **argv, std::string &configFile, bool &noRoutingConfigs, std::string &imsi,
+                        int &count)
 {
     try
     {
         cxxopts::Options options("nr-ue", "5G-SA UE implementation | Copyright (c) 2021 UERANSIM");
         options.add_options()("c,config", "Use specified configuration file for UE", cxxopts::value<std::string>())(
-            "r,no-routing-config",
-            "Do not auto configure routing for UE TUN interface")("h,help", "Show this help message and exit");
+            "i,imsi", "Use specified IMSI number instead of provided one", cxxopts::value<int>())(
+            "n,num-of-UE", "Create specified number of UEs starting from the given IMSI",
+            cxxopts::value<std::string>())("r,no-routing-config", "Do not auto configure routing for UE TUN interface")(
+            "h,help", "Show this help message and exit");
 
         auto result = options.parse(argc, argv);
 
@@ -134,6 +137,27 @@ static void ReadOptions(int argc, char **argv, std::string &configFile, bool &no
 
         configFile = result["config"].as<std::string>();
         noRoutingConfigs = result.count("no-routing-config");
+
+        if (result.count("num-of-UE"))
+        {
+            count = result["num-of-UE"].as<int>();
+            if (count <= 0)
+                throw std::runtime_error("Invalid number of UEs");
+            if (count > 512)
+                throw std::runtime_error("Number of UEs is too big");
+        }
+        else
+        {
+            count = 1;
+        }
+
+        imsi = "";
+
+        if (result.count("imsi"))
+        {
+            imsi = result["imsi"].as<std::string>();
+            Supi::Parse(imsi); // validate the string by parsing
+        }
     }
     catch (const cxxopts::OptionException &e)
     {
@@ -147,17 +171,81 @@ static void ReadOptions(int argc, char **argv, std::string &configFile, bool &no
     }
 }
 
+std::string LargeSum(std::string a, std::string b)
+{
+    if (a.length() > b.length())
+        std::swap(a, b);
+
+    std::string str;
+    int n1 = a.length(), n2 = b.length();
+
+    reverse(a.begin(), a.end());
+    reverse(b.begin(), b.end());
+
+    int carry = 0;
+    for (int i = 0; i < n1; i++)
+    {
+        int sum = ((a[i] - '0') + (b[i] - '0') + carry);
+        str.push_back(sum % 10 + '0');
+        carry = sum / 10;
+    }
+    for (int i = n1; i < n2; i++)
+    {
+        int sum = ((b[i] - '0') + carry);
+        str.push_back(sum % 10 + '0');
+        carry = sum / 10;
+    }
+    if (carry)
+        throw std::runtime_error("UE serial number overflow");
+    reverse(str.begin(), str.end());
+    return str;
+}
+
+static void IncrementNumber(std::string &s, int delta)
+{
+    s = LargeSum(s, std::to_string(delta));
+}
+
+nr::ue::UeConfig *GetConfigByUe(nr::ue::UeConfig *refConfig, int ueIndex)
+{
+    auto *c = new nr::ue::UeConfig();
+    c->emulationMode = refConfig->emulationMode;
+    c->key = refConfig->key.copy();
+    c->opC = refConfig->opC.copy();
+    c->opType = refConfig->opType;
+    c->amf = refConfig->amf.copy();
+    c->imei = refConfig->imei;
+    c->supi = refConfig->supi;
+    c->plmn = refConfig->plmn;
+    c->nssais = refConfig->nssais;
+    c->supportedAlgs = refConfig->supportedAlgs;
+    c->gnbSearchList = refConfig->gnbSearchList;
+    c->initSessions = refConfig->initSessions;
+    c->configureRouting = refConfig->configureRouting;
+
+    if (c->supi.has_value())
+        IncrementNumber(c->supi->value, ueIndex);
+
+    IncrementNumber(c->imei, ueIndex);
+
+    return c;
+}
+
 int main(int argc, char **argv)
 {
-    std::string configFile;
+    std::string configFile, imsi;
     bool noRoutingConfigs;
+    int count;
 
-    ReadOptions(argc, argv, configFile, noRoutingConfigs);
+    ReadOptions(argc, argv, configFile, noRoutingConfigs, imsi, count);
 
-    nr::ue::UeConfig *config = GetConfig(configFile, !noRoutingConfigs);
+    nr::ue::UeConfig *refConfig = GetConfig(configFile, !noRoutingConfigs);
 
-    auto *ue = new nr::ue::UserEquipment(config, nullptr);
-    ue->start();
+    for (int i = 0; i < count; i++)
+    {
+        auto *ue = new nr::ue::UserEquipment(GetConfigByUe(refConfig, i), nullptr);
+        ue->start();
+    }
 
     while (true)
         ::pause();
