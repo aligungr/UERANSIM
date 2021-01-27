@@ -11,6 +11,7 @@
 #include "gnb_nts.hpp"
 
 #include <constants.hpp>
+#include <libc_error.hpp>
 
 static const int TIMER_ID_RLS_HEARTBEAT = 1;
 
@@ -26,8 +27,17 @@ void GnbMrTask::onStart()
 {
     rlsEntity = new GnbRls(base->config->name, base->logBase->makeUniqueLogger("gnb-rls"), this);
 
-    udpTask = new udp::UdpServerTask(base->config->portalIp, cons::PortalPort, this);
-    udpTask->start();
+    try
+    {
+        udpTask = new udp::UdpServerTask(base->config->portalIp, cons::PortalPort, this);
+        udpTask->start();
+    }
+    catch (const LibError &e)
+    {
+        logger->err("MR failure [%s]", e.what());
+        quit();
+        return;
+    }
 
     setTimer(TIMER_ID_RLS_HEARTBEAT, rls::Constants::HB_PERIOD_UE_TO_GNB);
 }
@@ -123,7 +133,8 @@ void GnbMrTask::onQuit()
 
     delete rlsEntity;
 
-    udpTask->quit();
+    if (udpTask != nullptr)
+        udpTask->quit();
     delete udpTask;
 }
 
