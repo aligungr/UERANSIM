@@ -89,6 +89,9 @@ void RlsUeEntity::onUplinkDelivery(EPayloadType type, OctetString &&payload)
 
 void RlsUeEntity::startGnbSearch()
 {
+    if (state == EUeState::SEARCH)
+        return;
+
     if (state != EUeState::IDLE)
     {
         logWarn("gNB search request while in not IDLE state");
