@@ -20,7 +20,7 @@ namespace yaml
 
 bool HasField(const YAML::Node &node, const std::string &name)
 {
-    return node[name].IsDefined();
+    return node[name].IsDefined() && !node[name].IsNull();
 }
 
 void AssertHasField(const YAML::Node &node, const std::string &name)
