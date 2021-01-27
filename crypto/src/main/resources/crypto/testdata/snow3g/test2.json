@@ -1,9 +1,0 @@
-{
-  "key": "8C E3 3E 2C C3 C0 B5 FC 1F 3D E8 A6 DC 66 B1 F3",
-  "iv": "D3 C5 D5 92 32 7F B1 1C DE 55 19 88 CE B2 F9 B7",
-  "length": 2,
-  "output": {
-    "1": "EFF8A342",
-    "2": "F751480F"
-  }
-}

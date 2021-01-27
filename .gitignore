@@ -1,11 +1,17 @@
-# Project specific (MARBEN)
-misc/marben/lib
-ngap/src/main/java/tr/havelsan/ueransim/ngap
-utils/src/main/java/tr/havelsan/ueransim/utils/NgapFix.java
-ueransim/src/main/resources/asntable.dat
-dependency-reduced-pom.xml
-
 # Project specific (OTHERS)
+.idea
+cmake-build-*
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
 .directory
 .idea
 .vscode
