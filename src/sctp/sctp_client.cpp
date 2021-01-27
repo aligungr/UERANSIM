@@ -28,7 +28,7 @@ sctp::SctpClient::~SctpClient()
     CloseSocket(sd);
 }
 
-void sctp::SctpClient::connect(const std::string &address, uint16_t port)
+void sctp::SctpClient::connect(const std::string &address, uint16_t port) const
 {
     Connect(sd, address, port);
 }

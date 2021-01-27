@@ -28,7 +28,7 @@ class SctpClient
     ~SctpClient();
 
     void bind(const std::string &address, uint16_t port);
-    void connect(const std::string &address, uint16_t port);
+    void connect(const std::string &address, uint16_t port) const;
 
     void send(uint16_t stream, const uint8_t *buffer, size_t offset, size_t length);
     void send(uint16_t stream, const uint8_t *buffer, size_t length);
