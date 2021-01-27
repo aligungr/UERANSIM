@@ -67,36 +67,39 @@ static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureR
     else
         throw std::runtime_error("Invalid OP type: " + opType);
 
-    for (auto &sess : yaml::GetSequence(config, "sessions"))
+    if (yaml::HasField(config, "sessions"))
     {
-        nr::ue::SessionConfig s{};
-
-        if (yaml::HasField(sess, "apn"))
-            s.apn = yaml::GetString(sess, "apn");
-        if (yaml::HasField(sess, "slice"))
+        for (auto &sess : yaml::GetSequence(config, "sessions"))
         {
-            auto slice = sess["slice"];
-            s.sNssai = SliceSupport{};
-            s.sNssai->sst = yaml::GetInt32(slice, "sst", 1, 0xFF);
-            if (yaml::HasField(slice, "sd"))
-                s.sNssai->sd = octet3{yaml::GetInt32(slice, "sd", 1, 0xFFFFFF)};
+            nr::ue::SessionConfig s{};
+
+            if (yaml::HasField(sess, "apn"))
+                s.apn = yaml::GetString(sess, "apn");
+            if (yaml::HasField(sess, "slice"))
+            {
+                auto slice = sess["slice"];
+                s.sNssai = SliceSupport{};
+                s.sNssai->sst = yaml::GetInt32(slice, "sst", 1, 0xFF);
+                if (yaml::HasField(slice, "sd"))
+                    s.sNssai->sd = octet3{yaml::GetInt32(slice, "sd", 1, 0xFFFFFF)};
+            }
+
+            std::string type = yaml::GetString(sess, "type");
+            if (type == "IPv4")
+                s.type = nas::EPduSessionType::IPV4;
+            else if (type == "IPv6")
+                s.type = nas::EPduSessionType::IPV6;
+            else if (type == "IPv4v6")
+                s.type = nas::EPduSessionType::IPV4V6;
+            else if (type == "Ethernet")
+                s.type = nas::EPduSessionType::ETHERNET;
+            else if (type == "Unstructured")
+                s.type = nas::EPduSessionType::UNSTRUCTURED;
+            else
+                throw std::runtime_error("Invalid PDU session type: " + type);
+
+            result->initSessions.push_back(s);
         }
-
-        std::string type = yaml::GetString(sess, "type");
-        if (type == "IPv4")
-            s.type = nas::EPduSessionType::IPV4;
-        else if (type == "IPv6")
-            s.type = nas::EPduSessionType::IPV6;
-        else if (type == "IPv4v6")
-            s.type = nas::EPduSessionType::IPV4V6;
-        else if (type == "Ethernet")
-            s.type = nas::EPduSessionType::ETHERNET;
-        else if (type == "Unstructured")
-            s.type = nas::EPduSessionType::UNSTRUCTURED;
-        else
-            throw std::runtime_error("Invalid PDU session type: " + type);
-
-        result->initSessions.push_back(s);
     }
 
     return result;
