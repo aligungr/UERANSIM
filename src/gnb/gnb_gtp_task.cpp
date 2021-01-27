@@ -41,9 +41,6 @@ void GtpTask::onStart()
 
 void GtpTask::onQuit()
 {
-    logger->debug("GTP task is quiting");
-    logger->flush();
-
     udpServer->quit();
     delete udpServer;
 

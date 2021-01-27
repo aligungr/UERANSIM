@@ -48,8 +48,6 @@ void GnbAppTask::onLoop()
 
 void GnbAppTask::onQuit()
 {
-    logger->debug("GNB-APP task is quiting");
-    logger->flush();
 }
 
 } // namespace nr::gnb

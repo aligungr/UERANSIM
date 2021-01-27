@@ -134,9 +134,6 @@ void SctpTask::onLoop()
 
 void SctpTask::onQuit()
 {
-    logger->debug("SCTP task is quiting");
-    logger->flush();
-
     for (auto &client : clients)
     {
         ClientEntry *entry = client.second;

@@ -36,9 +36,6 @@ void UeAppTask::onQuit()
             tunTask = nullptr;
         }
     }
-
-    logger->debug("UE-APP task is quiting");
-    logger->flush();
 }
 
 void UeAppTask::onLoop()

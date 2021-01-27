@@ -63,9 +63,6 @@ void NgapTask::onLoop()
 
 void NgapTask::onQuit()
 {
-    logger->debug("NGAP task is quiting");
-    logger->flush();
-
     for (auto &i : ueContexts)
         delete i.second;
     for (auto &i : amfContexts)
