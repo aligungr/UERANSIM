@@ -21,6 +21,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml(const std::string &file)
     auto config = YAML::LoadFile(file);
 
     result->plmn.mcc = yaml::GetInt32(config, "mcc", 1, 999);
+    yaml::GetString(config, "mcc", 3, 3);
     result->plmn.mnc = yaml::GetInt32(config, "mnc", 1, 999);
     result->plmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
 
