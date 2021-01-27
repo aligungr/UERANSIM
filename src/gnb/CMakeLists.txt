@@ -10,7 +10,6 @@ target_include_directories(gnb PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(gnb utils)
 target_link_libraries(gnb sctp-cxx)
-target_link_libraries(gnb logger)
 target_link_libraries(gnb asn-ngap)
 target_link_libraries(gnb asn-rrc)
 target_link_libraries(gnb asn-utils)

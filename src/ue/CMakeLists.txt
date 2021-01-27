@@ -9,7 +9,6 @@ target_compile_options(ue PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter)
 target_include_directories(ue PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(ue utils)
-target_link_libraries(ue logger)
 target_link_libraries(ue rrc)
 target_link_libraries(ue crypt)
 target_link_libraries(ue nas)

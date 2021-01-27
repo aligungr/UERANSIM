@@ -10,6 +10,5 @@ target_include_directories(asn-utils PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(asn-utils utils)
 target_link_libraries(asn-utils sctp-cxx)
-target_link_libraries(asn-utils logger)
 target_link_libraries(asn-utils asn-ngap)
 target_link_libraries(asn-utils asn-rrc)

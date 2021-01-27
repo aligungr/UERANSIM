@@ -9,6 +9,5 @@ target_compile_options(urs PRIVATE -Wall -Wextra -pedantic -Wno-unused-parameter
 
 target_link_libraries(urs utils)
 target_link_libraries(urs udp)
-target_link_libraries(urs logger)
 
 target_include_directories(urs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
