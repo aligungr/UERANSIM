@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <asn_SEQUENCE_OF.h>
 #include <asn_application.h>
+#include <exception>
 #include <functional>
 #include <vector>
 

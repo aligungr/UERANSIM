@@ -9,13 +9,8 @@
 #include "asn_ngap.hpp"
 #include "asn_utils.hpp"
 
+#include <algorithm>
 #include <functional>
-
-#include <ASN_NGAP_NGAP-PDU.h>
-
-#include <ASN_NGAP_InitiatingMessage.h>
-#include <ASN_NGAP_SuccessfulOutcome.h>
-#include <ASN_NGAP_UnsuccessfulOutcome.h>
 
 #include <ASN_NGAP_AMFConfigurationUpdate.h>
 #include <ASN_NGAP_AMFConfigurationUpdateAcknowledge.h>
@@ -42,10 +37,12 @@
 #include <ASN_NGAP_InitialContextSetupRequest.h>
 #include <ASN_NGAP_InitialContextSetupResponse.h>
 #include <ASN_NGAP_InitialUEMessage.h>
+#include <ASN_NGAP_InitiatingMessage.h>
 #include <ASN_NGAP_LocationReport.h>
 #include <ASN_NGAP_LocationReportingControl.h>
 #include <ASN_NGAP_LocationReportingFailureIndication.h>
 #include <ASN_NGAP_NASNonDeliveryIndication.h>
+#include <ASN_NGAP_NGAP-PDU.h>
 #include <ASN_NGAP_NGReset.h>
 #include <ASN_NGAP_NGResetAcknowledge.h>
 #include <ASN_NGAP_NGSetupFailure.h>
@@ -77,6 +74,7 @@
 #include <ASN_NGAP_RRCInactiveTransitionReport.h>
 #include <ASN_NGAP_RerouteNASRequest.h>
 #include <ASN_NGAP_SecondaryRATDataUsageReport.h>
+#include <ASN_NGAP_SuccessfulOutcome.h>
 #include <ASN_NGAP_TraceFailureIndication.h>
 #include <ASN_NGAP_TraceStart.h>
 #include <ASN_NGAP_UEContextModificationFailure.h>
@@ -89,6 +87,7 @@
 #include <ASN_NGAP_UERadioCapabilityCheckResponse.h>
 #include <ASN_NGAP_UERadioCapabilityInfoIndication.h>
 #include <ASN_NGAP_UETNLABindingReleaseRequest.h>
+#include <ASN_NGAP_UnsuccessfulOutcome.h>
 #include <ASN_NGAP_UplinkNASTransport.h>
 #include <ASN_NGAP_UplinkNonUEAssociatedNRPPaTransport.h>
 #include <ASN_NGAP_UplinkRANConfigurationTransfer.h>
