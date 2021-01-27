@@ -57,8 +57,8 @@ void Logger::flush()
 
 LogBase::LogBase(const std::string &filename)
 {
-    fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename);
-    fileSink->set_level(spdlog::level::trace);
+    // fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename);
+    // fileSink->set_level(spdlog::level::trace);
 
     consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     consoleSink->set_level(spdlog::level::trace); // todo: set to 'trace'.
@@ -69,7 +69,7 @@ LogBase::~LogBase() = default;
 Logger *LogBase::makeLogger(const std::string &loggerName, bool useConsole)
 {
     std::vector<std::shared_ptr<spdlog::sinks::sink>> v;
-    v.push_back(fileSink);
+    // v.push_back(fileSink);
     if (useConsole)
         v.push_back(consoleSink);
 
@@ -79,7 +79,7 @@ Logger *LogBase::makeLogger(const std::string &loggerName, bool useConsole)
 std::unique_ptr<Logger> LogBase::makeUniqueLogger(const std::string &loggerName, bool useConsole)
 {
     std::vector<std::shared_ptr<spdlog::sinks::sink>> v;
-    v.push_back(fileSink);
+    // v.push_back(fileSink);
     if (useConsole)
         v.push_back(consoleSink);
 
@@ -89,7 +89,7 @@ std::unique_ptr<Logger> LogBase::makeUniqueLogger(const std::string &loggerName,
 std::shared_ptr<Logger> LogBase::makeSharedLogger(const std::string &loggerName, bool useConsole)
 {
     std::vector<std::shared_ptr<spdlog::sinks::sink>> v;
-    v.push_back(fileSink);
+    // v.push_back(fileSink);
     if (useConsole)
         v.push_back(consoleSink);
 

@@ -105,7 +105,7 @@ class Logger
 class LogBase
 {
   private:
-    std::shared_ptr<spdlog::sinks::sink> fileSink;
+    // std::shared_ptr<spdlog::sinks::sink> fileSink;
     std::shared_ptr<spdlog::sinks::sink> consoleSink;
 
   public:
