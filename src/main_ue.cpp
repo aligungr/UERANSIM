@@ -122,9 +122,9 @@ static void ReadOptions(int argc, char **argv, std::string &configFile, bool &no
     {
         cxxopts::Options options("nr-ue", "5G-SA UE implementation | Copyright (c) 2021 UERANSIM");
         options.add_options()("c,config", "Use specified configuration file for UE", cxxopts::value<std::string>())(
-            "i,imsi", "Use specified IMSI number instead of provided one", cxxopts::value<int>())(
+            "i,imsi", "Use specified IMSI number instead of provided one", cxxopts::value<std::string>())(
             "n,num-of-UE", "Create specified number of UEs starting from the given IMSI",
-            cxxopts::value<std::string>())("r,no-routing-config", "Do not auto configure routing for UE TUN interface")(
+            cxxopts::value<int>())("r,no-routing-config", "Do not auto configure routing for UE TUN interface")(
             "h,help", "Show this help message and exit");
 
         auto result = options.parse(argc, argv);
