@@ -23,9 +23,7 @@ static_assert(sizeof(float) == sizeof(uint32_t));
 static_assert(sizeof(double) == sizeof(uint64_t));
 static_assert(sizeof(long long) == sizeof(uint64_t));
 
-static std::atomic<int> idCounter = 1;
-
-static std::random_device rd;
+static std::atomic<int> IdCounter = 1;
 
 static bool IPv6FromString(const char *szAddress, uint8_t *address)
 {
@@ -134,7 +132,7 @@ std::vector<uint8_t> utils::HexStringToVector(const std::string &hex)
 
 int utils::NextId()
 {
-    int res = ++idCounter;
+    int res = ++IdCounter;
     if (res == 0)
     {
         // ID counter overflows.
@@ -236,11 +234,20 @@ int utils::ParseInt(const char *str)
 
 uint64_t utils::Random64()
 {
+    static bool initiated = false;
+    static std::random_device randomDevice{};
+    static std::mt19937_64 randomEngine(randomDevice());
+
+    if (!initiated)
+    {
+        randomEngine.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+        initiated = true;
+    }
+
     while (true)
     {
-        std::mt19937_64 eng(rd());
         std::uniform_int_distribution<uint64_t> distribution;
-        uint64_t r = distribution(eng);
+        uint64_t r = distribution(randomEngine);
         if (r != 0)
             return r;
     }
