@@ -75,7 +75,7 @@ static void ReadOptions(int argc, char **argv, std::string &configFile)
 {
     try
     {
-        cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 UERANSIM");
+        cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 HAVELSAN");
         options.add_options()("c,config", "Use specified configuration file for gNB",
                               cxxopts::value<std::string>())("h,help", "Show this help message and exit");
 

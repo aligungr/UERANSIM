@@ -124,7 +124,7 @@ static void ReadOptions(int argc, char **argv, std::string &configFile, bool &no
 {
     try
     {
-        cxxopts::Options options("nr-ue", "5G-SA UE implementation | Copyright (c) 2021 UERANSIM");
+        cxxopts::Options options("nr-ue", "5G-SA UE implementation | Copyright (c) 2021 HAVELSAN");
         options.add_options()("c,config", "Use specified configuration file for UE", cxxopts::value<std::string>())(
             "i,imsi", "Use specified IMSI number instead of provided one", cxxopts::value<std::string>())(
             "n,num-of-UE", "Create specified number of UEs starting from the given IMSI",
