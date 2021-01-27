@@ -7,8 +7,9 @@ mnc: '001'
 
 # Permanent subscription key
 key: '465b5ce8b199b49faa5f0a2ee238a001'
-# Operator code (OP) of the UE. This value be either 'OP' or 'OPC'
+# Operator code (OP or OPC) of the UE
 op: 'cdc202d5123e20f62b6d676ac72cb318'
+# This value specifies the OP type and it can be either 'OP' or 'OPC'
 opType: 'OP'
 # Authentication Management Field (AMF) value
 amf: '8000'
