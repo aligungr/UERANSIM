@@ -240,6 +240,8 @@ int main(int argc, char **argv)
     ReadOptions(argc, argv, configFile, noRoutingConfigs, imsi, count);
 
     nr::ue::UeConfig *refConfig = GetConfig(configFile, !noRoutingConfigs);
+    if (imsi.length() > 0)
+        refConfig->supi = Supi::Parse("imsi-" + imsi);
 
     for (int i = 0; i < count; i++)
     {
