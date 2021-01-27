@@ -108,7 +108,19 @@ int utils::GetIpVersion(const std::string &address)
 
 std::vector<uint8_t> utils::HexStringToVector(const std::string &hex)
 {
-    assert(hex.length() % 2 == 0);
+    if (hex.length() % 2 != 0)
+        throw std::runtime_error("hex string has an odd length");
+
+    for (char c : hex)
+    {
+        if (c >= '0' && c <= '9')
+            continue;
+        if (c >= 'a' && c <= 'f')
+            continue;
+        if (c >= 'A' && c <= 'F')
+            continue;
+        throw std::runtime_error("hex string contains invalid characters");
+    }
 
     std::vector<uint8_t> bytes;
     for (unsigned int i = 0; i < hex.length(); i += 2)

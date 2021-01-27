@@ -11,6 +11,14 @@
 Supi Supi::Parse(const std::string &supi)
 {
     if (supi[0] == 'i' && supi[1] == 'm' && supi[2] == 's' && supi[3] == 'i' && supi[4] == '-')
-        return Supi{"imsi", supi.substr(5)};
-    throw std::runtime_error("invalid supi value");
+    {
+        std::string val = supi.substr(5);
+        if (val.size() != 15 && val.size() != 16)
+            throw std::runtime_error("invalid IMSI value");
+        for (char c : val)
+            if (c < '0' || c > '9')
+                throw std::runtime_error("invalid IMSI value");
+        return Supi{"imsi", val};
+    }
+    throw std::runtime_error("invalid SUPI value");
 }
