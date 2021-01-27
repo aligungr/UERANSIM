@@ -95,11 +95,6 @@ int main(int argc, char **argv)
         std::cerr << "Command line error. " << e.what() << std::endl;
         exit(1);
     }
-    catch (const cxxopts::missing_argument_exception &e)
-    {
-        std::cerr << "Command line error. " << e.what() << std::endl;
-        exit(1);
-    }
 
     nr::gnb::GnbConfig *config = GetConfig(configFile);
 
