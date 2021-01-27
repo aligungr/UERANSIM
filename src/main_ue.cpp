@@ -94,7 +94,7 @@ static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureR
         else if (type == "Unstructured")
             s.type = nas::EPduSessionType::UNSTRUCTURED;
         else
-            throw std::runtime_error("PDU session type: " + type);
+            throw std::runtime_error("Invalid PDU session type: " + type);
 
         result->initSessions.push_back(s);
     }
