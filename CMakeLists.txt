@@ -3,6 +3,8 @@ project(ueransim)
 
 set(CMAKE_CXX_STANDARD 17)
 
+#################### SUB DIRECTORIES ####################
+
 add_subdirectory(src/asn/asn1c)
 add_subdirectory(src/asn/rrc)
 add_subdirectory(src/asn/ngap)
@@ -20,14 +22,13 @@ add_subdirectory(src/urs)
 add_subdirectory(src/crypt)
 add_subdirectory(src/ue)
 
+#################### GNB EXECUTABLE ####################
+
 add_executable(nr-gnb src/main_gnb.cpp)
-add_executable(nr-ue src/main_ue.cpp)
 
 target_link_libraries(nr-gnb pthread)
-target_link_libraries(nr-ue pthread)
 
 target_compile_options(nr-gnb PRIVATE -Wall -Wextra -pedantic)
-target_compile_options(nr-ue PRIVATE -Wall -Wextra -pedantic)
 
 target_link_libraries(nr-gnb asn-rrc)
 target_link_libraries(nr-gnb asn-ngap)
@@ -41,6 +42,12 @@ target_link_libraries(nr-gnb app)
 target_link_libraries(nr-gnb urs)
 target_link_libraries(nr-gnb crypt)
 
+#################### UE EXECUTABLE ####################
+
+add_executable(nr-ue src/main_ue.cpp)
+target_link_libraries(nr-ue pthread)
+target_compile_options(nr-ue PRIVATE -Wall -Wextra -pedantic)
+
 target_link_libraries(nr-ue utils)
 target_link_libraries(nr-ue rlc)
 target_link_libraries(nr-ue nas)
@@ -50,3 +57,8 @@ target_link_libraries(nr-ue app)
 target_link_libraries(nr-ue urs)
 target_link_libraries(nr-ue crypt)
 target_link_libraries(nr-ue ue)
+
+###################### IF BINDER ######################
+add_library(libdevbnd SHARED src/main_binder.cpp)
+target_compile_options(libdevbnd PRIVATE -D_GNU_SOURCE -Wall -Wextra)
+target_link_options(libdevbnd PRIVATE -nostartfiles)
