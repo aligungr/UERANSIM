@@ -91,7 +91,7 @@ void UeMrTask::onLoop()
         long current = utils::CurrentTimeMillis();
         if (current - lastPlmnSearchFailurePrinted > PLMN_SEARCH_FAILED_PRINT_THRESHOLD)
         {
-            logger->err("PLMN search failed (%s)", rls::CauseToString(w->cause));
+            logger->err("PLMN search failed [%s]", rls::CauseToString(w->cause));
             lastPlmnSearchFailurePrinted = current;
         }
         delete w;
@@ -99,7 +99,7 @@ void UeMrTask::onLoop()
     }
     case NtsMessageType::UE_RLS_RELEASED: {
         auto *w = dynamic_cast<NwRlsReleased *>(msg);
-        logger->warn("UE disconnected from gNB, RLS released (%s)", rls::CauseToString(w->cause));
+        logger->warn("UE disconnected from gNB, RLS released [%s]", rls::CauseToString(w->cause));
         delete w;
         break;
     }
@@ -146,7 +146,7 @@ void UeMrTask::onLoop()
         break;
     }
     default:
-        logger->err("Unhandled NTS message received with type %d", (int)msg->msgType);
+        logger->err("Unhandled NTS message received with type [%d]", (int)msg->msgType);
         delete msg;
         break;
     }
