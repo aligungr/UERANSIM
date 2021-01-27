@@ -8,8 +8,11 @@
 
 #include "ue_tun_task.hpp"
 #include "ue_nts.hpp"
+
+#include <cstring>
 #include <libc_error.hpp>
 #include <scoped_thread.hpp>
+#include <unistd.h>
 
 // TODO: May be reduced to MTU 1500
 #define RECEIVER_BUFFER_SIZE 16000
