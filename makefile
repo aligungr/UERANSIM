@@ -1,4 +1,5 @@
-GREEN=\033[0;32m
+GREEN=\033[0;1;92m
+NC=\033[0m
 
 build: FORCE
 	mkdir -p build
