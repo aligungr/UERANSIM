@@ -140,6 +140,11 @@ static void ReadOptions(int argc, char **argv, std::string &configFile, bool &no
         std::cerr << "ERROR: " << e.what() << std::endl;
         exit(1);
     }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        exit(1);
+    }
 }
 
 int main(int argc, char **argv)
