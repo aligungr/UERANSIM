@@ -214,7 +214,8 @@ void NtsTask::quit()
     while (!isQuiting.compare_exchange_weak(expected, true, std::memory_order_relaxed, std::memory_order_relaxed))
         return;
 
-    thread.join();
+    if (thread.joinable())
+        thread.join();
 
     {
         std::unique_lock<std::mutex> lock(mutex);
