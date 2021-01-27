@@ -59,6 +59,6 @@ target_link_libraries(nr-ue crypt)
 target_link_libraries(nr-ue ue)
 
 ###################### IF BINDER ######################
-add_library(libdevbnd SHARED src/main_binder.cpp)
-target_compile_options(libdevbnd PRIVATE -D_GNU_SOURCE -Wall -Wextra)
-target_link_options(libdevbnd PRIVATE -nostartfiles)
+add_library(devbnd SHARED src/main_binder.cpp)
+target_compile_options(devbnd PRIVATE -D_GNU_SOURCE -Wall -Wextra)
+target_link_options(devbnd PRIVATE -nostartfiles)
