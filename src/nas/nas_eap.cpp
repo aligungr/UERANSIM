@@ -8,6 +8,8 @@
 
 #include "nas_eap.hpp"
 
+#include <memory>
+
 OctetString eap::EapAttributes::getRand() const
 {
     return attributes[(int)EAttributeType::AT_RAND].value().subCopy(2);
@@ -153,7 +155,7 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetBuffer &stream)
     int length = stream.read2I();
 
     if (length == 4)
-        return std::unique_ptr<Eap>(new Eap(code, id, EEapType::NO_TYPE));
+        return std::make_unique<Eap>(code, id, EEapType::NO_TYPE);
 
     auto type = static_cast<EEapType>(stream.readI());
 
@@ -176,7 +178,7 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetBuffer &stream)
         stream.read2I();
         readBytes += 2;
 
-        while (readBytes < length)
+        while (readBytes < innerLength)
         {
             // decode attribute type
             auto t = static_cast<EAttributeType>(stream.readI());
@@ -193,10 +195,10 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetBuffer &stream)
             akaPrime->attributes.putRawAttribute(t, std::move(attributeVal));
         }
 
-        if (readBytes != length)
+        if (readBytes != innerLength)
         {
             // Error: "readBytes exceeds the element length"
-            return nullptr;
+            throw std::runtime_error("EAP decoding failure: readBytes exceeds the element length");
         }
 
         return std::unique_ptr<Eap>(akaPrime);
