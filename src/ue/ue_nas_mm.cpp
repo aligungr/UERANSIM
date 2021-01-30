@@ -346,6 +346,9 @@ void NasTask::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg
 
 void NasTask::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg)
 {
+    logger->err("EAP AKA' not implemented yet. Use 5G AKA instead");
+    return;
+
     auto ueRejectionTimers = [this]() {
         timers.t3520.start();
 
