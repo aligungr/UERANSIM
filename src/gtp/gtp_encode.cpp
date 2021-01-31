@@ -91,7 +91,8 @@ bool EncodeGtpMessage(const GtpMessage &gtp, OctetString &stream)
     stream.append(gtp.payload);
 
     // assigning length field
-    int length = stream.length() - initialLength;
+    // Length will not include GTP mandatory header, so subtract 8.
+    int length = stream.length() - initialLength - 8;
     stream.data()[initialLength + 2] = (uint8_t)(length >> 8 & 0xFF);
     stream.data()[initialLength + 3] = (uint8_t)(length & 0xFF);
 
