@@ -14,7 +14,7 @@
 namespace nr::gnb
 {
 
-NgapTask::NgapTask(TaskBase *base) : m_base{base}, m_ueNgapIdCounter{}, m_downlinkTeidCounter{}
+NgapTask::NgapTask(TaskBase *base) : m_base{base}, m_ueNgapIdCounter{}, m_downlinkTeidCounter{}, m_isInitialized{}
 {
     m_logger = base->logBase->makeUniqueLogger("ngap");
 }
