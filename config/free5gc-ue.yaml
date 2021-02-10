@@ -1,0 +1,46 @@
+# IMSI number of the UE. IMSI = [MCC|MNC|MSISDN] (In total 15 or 16 digits)
+supi: 'imsi-208930000000003'
+# Mobile Country Code value
+mcc: '208'
+# Mobile Network Code value (2 or 3 digits)
+mnc: '93'
+
+# Permanent subscription key
+key: '8baf473f2f8fd09487cccbd7097c6862'
+# Operator code (OP or OPC) of the UE
+op: '8e27b6af0e692e750f32667a3b14605d'
+# This value specifies the OP type and it can be either 'OP' or 'OPC'
+opType: 'OP'
+# Authentication Management Field (AMF) value
+amf: '8000'
+# IMEI number of the device. It is used if no SUPI is provided
+imei: '356938035643803'
+# IMEISV number of the device. It is used if no SUPI and IMEI is provided
+imeiSv: '4370816125816151'
+
+# List of gNB IP addresses for Radio Link Simulation
+gnbSearchList:
+  - 127.0.0.1
+
+# Initial PDU sessions to be established
+sessions:
+  - type: 'IPv4'
+    apn: 'internet'
+    slice:
+      sst: 0x01
+      sd: 0x010203
+
+# List of requested S-NSSAIs by this UE
+slices:
+  - sst: 0x01
+    sd: 0x010203
+
+# Supported encryption and integrity algorithms by this UE
+integrity:
+  IA1: true
+  IA2: true
+  IA3: true
+ciphering:
+  EA1: true
+  EA2: true
+  EA3: true
