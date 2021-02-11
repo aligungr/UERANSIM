@@ -15,8 +15,9 @@ struct cons
     // Version information
     static constexpr const uint8_t Major = 3;
     static constexpr const uint8_t Minor = 0;
-    static constexpr const uint8_t Patch = 3;
-    static constexpr const char *Name = "UERANSIM v3.0.3";
+    static constexpr const uint8_t Patch = 4;
+    static constexpr const char *Name = "UERANSIM v3.0.4";
+    static constexpr const char *Tag = "v3.0.4";
 
     // Some port values
     static constexpr const uint16_t GtpPort = 2152;
@@ -24,4 +25,8 @@ struct cons
 
     // TUN interface
     static constexpr const char *TunNamePrefix = "uesimtun";
+
+    // Others
+    static constexpr const char *CMD_SERVER_IP = "127.0.0.1";
+    static constexpr const char* PROC_TABLE_DIR = "/tmp/UERANSIM.proc-table/";
 };
