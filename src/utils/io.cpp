@@ -8,6 +8,7 @@
 
 #include "io.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <ostream>
 
@@ -21,6 +22,23 @@ std::string ReadAllText(const std::string &file)
     ifs.open(file);
     std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
     return content;
+}
+
+void CreateDirectory(const std::string &path)
+{
+    if (!std::filesystem::exists(path))
+    {
+        if (!std::filesystem::is_directory(path))
+            throw std::runtime_error("Required path '" + path + "' exists but not a directory.");
+
+        std::filesystem::create_directory(path);
+        std::filesystem::permissions(path, std::filesystem::perms::all);
+    }
+}
+
+bool Exists(const std::string &path)
+{
+    return std::filesystem::exists(path);
 }
 
 } // namespace io

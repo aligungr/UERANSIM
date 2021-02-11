@@ -11,6 +11,10 @@
 namespace io
 {
 
+void CreateDirectory(const std::string &path);
+
 std::string ReadAllText(const std::string &file);
+
+bool Exists(const std::string &path);
 
 } // namespace io
