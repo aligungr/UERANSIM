@@ -13,8 +13,14 @@ namespace io
 
 void CreateDirectory(const std::string &path);
 
+bool Exists(const std::string &path);
+
 std::string ReadAllText(const std::string &file);
 
-bool Exists(const std::string &path);
+void WriteAllText(const std::string &path, const std::string &content);
+
+void RelaxPermissions(const std::string &path);
+
+bool Remove(const std::string &path);
 
 } // namespace io

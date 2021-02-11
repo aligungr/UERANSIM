@@ -32,6 +32,7 @@ int ParseInt(const char *str);
 uint64_t Random64();
 void Sleep(int ms);
 bool IsRoot();
+bool IsNumeric(const std::string& str);
 void AssertNodeName(const std::string &str);
 
 template <typename T>

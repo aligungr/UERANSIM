@@ -72,4 +72,5 @@ add_executable(nr-cli src/cli.cpp)
 target_link_libraries(nr-cli pthread)
 target_compile_options(nr-cli PRIVATE -Wall -Wextra -pedantic)
 
+target_link_libraries(nr-cli app)
 target_link_libraries(nr-cli utils)

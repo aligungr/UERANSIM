@@ -26,19 +26,41 @@ std::string ReadAllText(const std::string &file)
 
 void CreateDirectory(const std::string &path)
 {
-    if (!std::filesystem::exists(path))
+    if (!Exists(path))
     {
         if (!std::filesystem::is_directory(path))
             throw std::runtime_error("Required path '" + path + "' exists but not a directory.");
 
         std::filesystem::create_directory(path);
-        std::filesystem::permissions(path, std::filesystem::perms::all);
+        RelaxPermissions(path);
     }
 }
 
 bool Exists(const std::string &path)
 {
     return std::filesystem::exists(path);
+}
+
+void WriteAllText(const std::string &path, const std::string &content)
+{
+    std::ofstream ofs{};
+    ofs.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+    ofs.open(path);
+    ofs << content;
+    ofs.close();
+    RelaxPermissions(path);
+}
+
+void RelaxPermissions(const std::string &path)
+{
+    std::filesystem::permissions(path, std::filesystem::perms::all);
+}
+
+bool Remove(const std::string &path)
+{
+    std::error_code err{};
+    std::filesystem::remove_all(path, err);
+    return (bool)err;
 }
 
 } // namespace io

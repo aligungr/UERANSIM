@@ -7,6 +7,7 @@
 //
 
 #include "common.hpp"
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <random>
@@ -294,4 +295,9 @@ void utils::AssertNodeName(const std::string &str)
         throw std::runtime_error("Node name assertion failed: string '" + str +
                                  "' contains illegal character: " + std::string(1, c));
     }
+}
+
+bool utils::IsNumeric(const std::string &str)
+{
+    return !str.empty() && std::all_of(str.begin(), str.end(), [](char c) { return (c >= '0' && c <= '9'); });
 }
