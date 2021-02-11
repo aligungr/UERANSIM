@@ -8,11 +8,11 @@
 
 #include "common.hpp"
 #include <atomic>
-#include <cassert>
 #include <chrono>
 #include <random>
 #include <regex>
 #include <sstream>
+#include <stdexcept>
 #include <thread>
 #include <unistd.h>
 
@@ -272,4 +272,26 @@ std::string utils::OctetStringToIp(const OctetString &address)
 bool utils::IsRoot()
 {
     return geteuid() == 0;
+}
+
+void utils::AssertNodeName(const std::string &str)
+{
+    if (str.length() <= 2)
+        throw std::runtime_error("Node name assertion failed: string'" + str + "' is too short");
+    if (str.length() > 1024)
+        throw std::runtime_error("Node name assertion failed: string'" + str + "' is too long");
+
+    for (char c : str)
+    {
+        if (c >= '0' && c <= '9')
+            continue;
+        if (c >= 'a' && c <= 'z')
+            continue;
+        if (c >= 'A' && c <= 'Z')
+            continue;
+        if (c == '-' || c == '_')
+            continue;
+        throw std::runtime_error("Node name assertion failed: string '" + str +
+                                 "' contains illegal character: " + std::string(1, c));
+    }
 }
