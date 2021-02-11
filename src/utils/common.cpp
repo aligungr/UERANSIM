@@ -7,6 +7,7 @@
 //
 
 #include "common.hpp"
+#include "constants.hpp"
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -277,9 +278,9 @@ bool utils::IsRoot()
 
 void utils::AssertNodeName(const std::string &str)
 {
-    if (str.length() <= 2)
+    if (str.length() < cons::MinNodeName)
         throw std::runtime_error("Node name assertion failed: string'" + str + "' is too short");
-    if (str.length() > 1024)
+    if (str.length() > cons::MaxNodeName)
         throw std::runtime_error("Node name assertion failed: string'" + str + "' is too long");
 
     for (char c : str)
