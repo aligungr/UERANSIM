@@ -26,15 +26,17 @@ struct InetAddress
     InetAddress(const sockaddr_storage &storage, socklen_t len);
     InetAddress(const std::string &address, uint16_t port);
 
-    inline const sockaddr *getSockAddr() const
+    [[nodiscard]] inline const sockaddr *getSockAddr() const
     {
         return reinterpret_cast<const sockaddr *>(&storage);
     }
 
-    inline socklen_t getSockLen() const
+    [[nodiscard]] inline socklen_t getSockLen() const
     {
         return len;
     }
+
+    [[nodiscard]] uint16_t getPort() const;
 };
 
 class Socket
@@ -52,6 +54,7 @@ class Socket
     void send(const InetAddress &address, const uint8_t *buffer, size_t size) const;
     void close();
     [[nodiscard]] bool hasFd() const;
+    [[nodiscard]] InetAddress getAddress() const;
 
     /* Socket options */
     void setReuseAddress() const;

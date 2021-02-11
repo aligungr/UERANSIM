@@ -89,6 +89,21 @@ InetAddress::InetAddress(const OctetString &address, uint16_t port) : InetAddres
 {
 }
 
+uint16_t InetAddress::getPort() const
+{
+    if (storage.ss_family == AF_INET)
+    {
+        auto &sin = reinterpret_cast<const sockaddr_in &>(storage);
+        return static_cast<uint16_t>(sin.sin_port);
+    }
+    else if (storage.ss_family == AF_INET6)
+    {
+        auto &sin6 = reinterpret_cast<const sockaddr_in6 &>(storage);
+        return static_cast<uint16_t>(sin6.sin6_port);
+    }
+    return 0;
+}
+
 Socket::Socket(int domain, int type, int protocol)
 {
     int sd = socket(domain, type, protocol);
@@ -262,4 +277,15 @@ void Socket::setReuseAddress() const
     int reuse = 1;
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse, sizeof(reuse)) < 0)
         throw LibError("setsockopt SO_REUSEADDR failed: ", errno);
+}
+
+InetAddress Socket::getAddress() const
+{
+    struct sockaddr_storage storage = {};
+    socklen_t len = sizeof(storage);
+
+    if (getsockname(fd, reinterpret_cast<struct sockaddr *>(&storage), &len) != 0)
+        throw LibError("getsockname failed: ", errno);
+
+    return InetAddress(storage, len);
 }
