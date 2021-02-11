@@ -26,6 +26,10 @@ struct cons
     // TUN interface
     static constexpr const char *TunNamePrefix = "uesimtun";
 
+    // Constraints
+    static constexpr const int MinNodeName = 3;
+    static constexpr const int MaxNodeName = 1024;
+
     // Others
     static constexpr const char *CMD_SERVER_IP = "127.0.0.1";
     static constexpr const char *PROC_TABLE_DIR = "/tmp/UERANSIM.proc-table/";
