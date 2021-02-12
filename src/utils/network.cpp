@@ -94,12 +94,12 @@ uint16_t InetAddress::getPort() const
     if (storage.ss_family == AF_INET)
     {
         auto &sin = reinterpret_cast<const sockaddr_in &>(storage);
-        return static_cast<uint16_t>(sin.sin_port);
+        return static_cast<uint16_t>(ntohs(sin.sin_port));
     }
     else if (storage.ss_family == AF_INET6)
     {
         auto &sin6 = reinterpret_cast<const sockaddr_in6 &>(storage);
-        return static_cast<uint16_t>(sin6.sin6_port);
+        return static_cast<uint16_t>(ntohs(sin6.sin6_port));
     }
     return 0;
 }
