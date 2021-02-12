@@ -28,9 +28,6 @@ void CreateDirectory(const std::string &path)
 {
     if (!Exists(path))
     {
-        if (!std::filesystem::is_directory(path))
-            throw std::runtime_error("Required path '" + path + "' exists but not a directory.");
-
         std::filesystem::create_directory(path);
         RelaxPermissions(path);
     }
