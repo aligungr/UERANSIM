@@ -13,7 +13,6 @@
 #include <iostream>
 #include <set>
 #include <string>
-#include <thread>
 #include <unordered_map>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -161,18 +160,20 @@ static void ReadOptions(int argc, char **argv)
     }
 }
 
-static void HandleMessage(const app::CliMessage &msg, bool isOneShot)
+static bool HandleMessage(const app::CliMessage &msg, bool isOneShot)
 {
     if (msg.type == app::CliMessage::Type::ERROR)
     {
         std::cerr << "ERROR: " << msg.value << std::endl;
         if (isOneShot)
             exit(1);
+        return true;
     }
 
     if (msg.type == app::CliMessage::Type::ECHO)
     {
         std::cout << msg.value << std::endl;
+        return true;
     }
 
     if (msg.type == app::CliMessage::Type::RESULT)
@@ -180,7 +181,10 @@ static void HandleMessage(const app::CliMessage &msg, bool isOneShot)
         std::cout << msg.value << std::endl;
         if (isOneShot)
             exit(0);
+        return true;
     }
+
+    return false;
 }
 
 [[noreturn]] static void SendCommand(uint16_t port)
@@ -189,20 +193,21 @@ static void HandleMessage(const app::CliMessage &msg, bool isOneShot)
 
     if (g_options.directCmd.empty())
     {
-        std::thread receiver{[&server]() {
-            while (true)
-                HandleMessage(server.receiveMessage(), false);
-        }};
-
         while (true)
         {
             std::string line{};
+            std::cout << ">> ";
             std::getline(std::cin, line);
             if (!std::cin)
                 exit(0);
 
             server.sendMessage(
                 app::CliMessage::Command(InetAddress{cons::CMD_SERVER_IP, port}, line, g_options.nodeName));
+
+            while (!HandleMessage(server.receiveMessage(), false))
+            {
+                // empty
+            }
         }
     }
     else
