@@ -92,6 +92,8 @@ class OptionsResult
     bool hasFlag(const OptionItem &item) const;
     int positionalCount() const;
     int count() const;
+    std::string getPositional(int index) const;
+    std::string getOption(const OptionItem &item) const;
 
   public:
     [[noreturn]] void help() const;

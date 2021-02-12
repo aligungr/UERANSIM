@@ -79,7 +79,7 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
                     help();
 
                 for (auto &item : desc.items)
-                    if (item.shortName.has_value() && *item.shortName == arg[1])
+                    if (strlen(arg) == 2 && item.shortName.has_value() && *item.shortName == arg[1])
                         parsingItem = &item;
             }
             else
@@ -104,24 +104,26 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
 
                 if (parsingItem->shortName.has_value())
                 {
-                    std::string key = std::string{1, *parsingItem->shortName};
+                    std::string key = std::string(1, *parsingItem->shortName);
                     if (m_options.count(key))
                         error("Option " + std::string{arg} + " already used");
                     m_options[key] = argv[i + 1];
+                    i++;
                 }
-                if (parsingItem->longName.has_value())
+                else
                 {
                     std::string key = *parsingItem->longName;
                     if (m_options.count(key))
                         error("Option " + std::string{arg} + " already used");
                     m_options[key] = argv[i + 1];
+                    i++;
                 }
             }
             else
             {
                 if (parsingItem->shortName.has_value())
                 {
-                    std::string key = std::string{1, *parsingItem->shortName};
+                    std::string key = std::string(1, *parsingItem->shortName);
                     if (m_options.count(key))
                         error("Option " + std::string{arg} + " already used");
                     m_options[key] = {};
@@ -140,7 +142,7 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
 
 bool opt::OptionsResult::hasFlag(const opt::OptionItem &item) const
 {
-    if (item.shortName.has_value() && m_options.count(std::string{1, *item.shortName}) > 0)
+    if (item.shortName.has_value() && m_options.count(std::string(1, *item.shortName)) > 0)
         return true;
     if (item.longName.has_value() && m_options.count(*item.longName) > 0)
         return true;
@@ -219,4 +221,20 @@ void opt::OptionsResult::error(const std::string &msg) const
 {
     std::cerr << "ERROR: " << msg << std::endl;
     exit(1);
+}
+
+std::string opt::OptionsResult::getPositional(int index) const
+{
+    if (positionalCount() <= index)
+        error("Missing positional parameter at index " + std::to_string(index));
+    return m_positionalParams[index];
+}
+
+std::string opt::OptionsResult::getOption(const OptionItem &item) const
+{
+    if (item.shortName.has_value() && m_options.count(std::string(1, *item.shortName)) > 0)
+        return m_options.at(std::string(1, *item.shortName));
+    if (item.longName.has_value() && m_options.count(*item.longName))
+        return m_options.at(*item.longName);
+    return {};
 }
