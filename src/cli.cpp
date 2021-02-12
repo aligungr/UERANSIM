@@ -78,7 +78,7 @@ static uint16_t DiscoverNode(const std::string &node)
         // If searching node exists in this file, extract port number from it.
         for (auto &n : e.second.nodes)
         {
-            if (n == node)
+            if (n == node) // TODO: version checking
                 return e.second.port;
         }
     }
