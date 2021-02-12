@@ -69,7 +69,7 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
             m_positionalParams.emplace_back(arg);
         else
         {
-            const OptionItem *parsingItem = nullptr;
+            const OptionItem *parsingItem{};
 
             if (dashCount == 1)
             {
