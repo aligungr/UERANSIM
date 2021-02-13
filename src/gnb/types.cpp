@@ -10,7 +10,10 @@
 #include <iomanip>
 #include <sstream>
 
-std::string nr::gnb::GnbStatusInfo::toString() const
+namespace nr::gnb
+{
+
+std::string GnbStatusInfo::toString() const
 {
     std::stringstream ss{};
     ss << "is-NGAP-up: ";
@@ -18,7 +21,7 @@ std::string nr::gnb::GnbStatusInfo::toString() const
     return ss.str();
 }
 
-std::string nr::gnb::GnbConfig::toString() const
+std::string GnbConfig::toString() const
 {
     std::stringstream ss{};
     ss << "nci: " << this->nci << "\n";
@@ -30,3 +33,20 @@ std::string nr::gnb::GnbConfig::toString() const
     ss << "name: " << this->name;
     return ss.str();
 }
+
+const char *EnumToString(EAmfState v)
+{
+    switch (v)
+    {
+    case EAmfState::NOT_CONNECTED:
+        return "NOT_CONNECTED";
+    case EAmfState::WAITING_NG_SETUP:
+        return "WAITING_NG_SETUP";
+    case EAmfState::CONNECTED:
+        return "CONNECTED";
+    default:
+        return "<?>";
+    }
+}
+
+} // namespace nr::gnb

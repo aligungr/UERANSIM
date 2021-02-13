@@ -302,4 +302,6 @@ struct MrUeContext
     std::string name;
 };
 
+const char *EnumToString(EAmfState v);
+
 } // namespace nr::gnb

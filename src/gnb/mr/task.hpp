@@ -10,6 +10,7 @@
 
 #include "rls.hpp"
 #include <gnb/nts.hpp>
+#include <gnb/types.hpp>
 #include <memory>
 #include <thread>
 #include <udp/server_task.hpp>
