@@ -10,6 +10,7 @@
 
 #include <sstream>
 #include <string>
+#include <utility>
 
 class Printer
 {
@@ -21,13 +22,7 @@ class Printer
 
   public:
     void appendKeyValue(const std::string &key, const std::string &value);
-
-    void appendKeyValue(const std::string &key, int16_t value);
-    void appendKeyValue(const std::string &key, uint16_t value);
-    void appendKeyValue(const std::string &key, int32_t value);
-    void appendKeyValue(const std::string &key, uint32_t value);
-    void appendKeyValue(const std::string &key, int64_t value);
-    void appendKeyValue(const std::string &key, uint64_t value);
+    void appendKeyValue(const std::initializer_list<std::pair<std::string, std::string>> &pairs);
 
     std::string makeString() const;
 

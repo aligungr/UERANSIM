@@ -115,11 +115,13 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
             auto amf = base.ngapTask->m_amfCtx[msg.cmd->amfId];
 
             Printer printer{};
-            printer.appendKeyValue("address", amf->address);
-            printer.appendKeyValue("port", amf->port);
-            printer.appendKeyValue("name", amf->amfName);
-            printer.appendKeyValue("relative-capacity", amf->relativeCapacity);
-            printer.appendKeyValue("state", EnumToString(amf->state));
+            printer.appendKeyValue({
+                {"address", amf->address},
+                {"port", std::to_string(amf->port)},
+                {"name", amf->amfName},
+                {"capacity", std::to_string(amf->relativeCapacity)},
+                {"state", EnumToString(amf->state)},
+            });
             printer.trim();
             msg.sendResult(printer.makeString());
         }

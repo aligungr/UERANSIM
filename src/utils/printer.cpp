@@ -30,32 +30,18 @@ void Printer::trim()
     utils::Trim(m_ss);
 }
 
-void Printer::appendKeyValue(const std::string &key, int16_t value)
+void Printer::appendKeyValue(const std::initializer_list<std::pair<std::string, std::string>> &pairs)
 {
-    appendKeyValue(key, std::to_string(value));
-}
-
-void Printer::appendKeyValue(const std::string &key, uint16_t value)
-{
-    appendKeyValue(key, std::to_string(value));
-}
-
-void Printer::appendKeyValue(const std::string &key, int32_t value)
-{
-    appendKeyValue(key, std::to_string(value));
-}
-
-void Printer::appendKeyValue(const std::string &key, uint32_t value)
-{
-    appendKeyValue(key, std::to_string(value));
-}
-
-void Printer::appendKeyValue(const std::string &key, int64_t value)
-{
-    appendKeyValue(key, std::to_string(value));
-}
-
-void Printer::appendKeyValue(const std::string &key, uint64_t value)
-{
-    appendKeyValue(key, std::to_string(value));
+    size_t maxKey = 0;
+    for (auto &pair : pairs)
+        maxKey = std::max(maxKey, pair.first.size());
+    for (auto &pair : pairs)
+    {
+        appendIndentation();
+        m_ss << pair.first;
+        m_ss << std::string(maxKey - pair.first.size(), ' ');
+        m_ss << " : ";
+        m_ss << pair.second;
+        m_ss << "\n";
+    }
 }
