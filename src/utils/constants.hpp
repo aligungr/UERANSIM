@@ -17,6 +17,7 @@ struct cons
     static constexpr const uint8_t Minor = 0;
     static constexpr const uint8_t Patch = 4;
     static constexpr const char *Name = "UERANSIM v3.0.4";
+    static constexpr const char *Project = "UERANSIM";
     static constexpr const char *Tag = "v3.0.4";
     static constexpr const char *Owner = "ALİ GÜNGÖR";
 
