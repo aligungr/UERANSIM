@@ -196,9 +196,8 @@ static bool HandleMessage(const app::CliMessage &msg, bool isOneShot)
         while (true)
         {
             std::string line{};
-            std::cout << ">> ";
-            std::getline(std::cin, line);
-            if (!std::cin)
+            std::vector<std::string> tokens{};
+            if (!opt::ReadLine(std::cin, std::cout, line, tokens))
                 exit(0);
 
             server.sendMessage(
