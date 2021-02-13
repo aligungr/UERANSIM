@@ -40,7 +40,7 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
     argc--;
     argv++;
 
-    if (argc == 0)
+    if (argc <= 0)
         help();
 
     for (int i = 0; i < argc; i++)
