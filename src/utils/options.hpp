@@ -83,8 +83,8 @@ struct OptionsDescription
 
 class IOptionsHandler
 {
-    virtual std::istream istream() = 0;
-    virtual std::ostream ostream() = 0;
+  public:
+    virtual std::ostream &ostream(bool isError) = 0;
     virtual void status(int code) = 0;
 };
 
@@ -93,13 +93,12 @@ class OptionsResult
   private:
     std::vector<std::string> m_positionalParams{};
     std::unordered_map<std::string, std::string> m_options{};
-    std::unique_ptr<IOptionsHandler> m_handler;
+    IOptionsHandler *m_handler;
     OptionsDescription m_description;
 
   public:
-    OptionsResult(int argc, char **argv, const OptionsDescription &desc, bool freeArgv = false,
-                  std::unique_ptr<IOptionsHandler> handler = nullptr);
-    OptionsResult(const std::vector<std::string> &args, const OptionsDescription &desc);
+    OptionsResult(int argc, char **argv, const OptionsDescription &desc, bool freeArgv, IOptionsHandler *handler);
+    OptionsResult(const std::vector<std::string> &args, const OptionsDescription &desc, IOptionsHandler *handler);
 
   public:
     bool hasFlag(const OptionItem &item) const;
@@ -109,9 +108,9 @@ class OptionsResult
     std::string getOption(const OptionItem &item) const;
 
   public:
-    [[noreturn]] void help() const;
-    [[noreturn]] void version() const;
-    [[noreturn]] void error(const std::string &msg) const;
+    void showHelp() const;
+    void showVersion() const;
+    void showError(const std::string &msg) const;
 };
 
 enum class ExpansionResult

@@ -43,31 +43,51 @@ static std::string ItemNameDisplay(const opt::OptionItem &item)
     return ss.str();
 }
 
-opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const opt::OptionsDescription &desc)
-    : OptionsResult(static_cast<int>(args.size()), ConvertArgs(args), desc, true)
+class DefaultOptionsHandler : public opt::IOptionsHandler
+{
+  public:
+    DefaultOptionsHandler() noexcept = default;
+
+  public:
+    std::ostream &ostream(bool isError) override
+    {
+        return isError ? std::cerr : std::cout;
+    }
+
+    void status(int code) override
+    {
+        exit(code);
+    }
+};
+
+static DefaultOptionsHandler g_defaultOptHandler{};
+
+opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const opt::OptionsDescription &desc,
+                                  IOptionsHandler *handler)
+    : OptionsResult(static_cast<int>(args.size()), ConvertArgs(args), desc, true, handler)
 {
 }
 
 opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc, bool freeArgv,
-                                  std::unique_ptr<IOptionsHandler> handler)
-    : m_handler{std::move(handler)}, m_description{desc}
+                                  IOptionsHandler *handler)
+    : m_handler{handler ? handler : &g_defaultOptHandler}, m_description{desc}
 {
+    // Hide the first arguments
     argc--;
     argv++;
 
     if (argc <= 0)
-        help();
+        showHelp();
 
     for (int i = 0; i < argc; i++)
     {
         auto &arg = argv[i];
 
-        if (strlen(arg) == 0)
-            continue;
-        if (strcmp(arg, "-") == 0)
-            error("Empty option is not allowed");
-        if (strcmp(arg, "--") == 0)
-            error("Empty option is not allowed");
+        if (strlen(arg) == 0 || strcmp(arg, "-") == 0 || strcmp(arg, "--") == 0)
+        {
+            showError("Empty option is not allowed");
+            break;
+        }
 
         int dashCount = 0;
         if (arg[0] == '-')
@@ -77,7 +97,10 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
             {
                 dashCount++;
                 if (arg[2] == '-')
-                    error("Invalid argument: " + std::string(arg));
+                {
+                    showError("Invalid argument: " + std::string(arg));
+                    break;
+                }
             }
         }
 
@@ -90,9 +113,15 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
             if (dashCount == 1)
             {
                 if (strcmp(arg, "-v") == 0)
-                    version();
+                {
+                    showVersion();
+                    break;
+                }
                 if (strcmp(arg, "-h") == 0)
-                    help();
+                {
+                    showHelp();
+                    break;
+                }
 
                 for (auto &item : desc.items)
                     if (strlen(arg) == 2 && item.shortName.has_value() && *item.shortName == arg[1])
@@ -101,9 +130,15 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
             else
             {
                 if (strcmp(arg, "--version") == 0)
-                    version();
+                {
+                    showVersion();
+                    break;
+                }
                 if (strcmp(arg, "--help") == 0)
-                    help();
+                {
+                    showHelp();
+                    break;
+                }
 
                 for (auto &item : desc.items)
                     if (item.longName.has_value() && *item.longName == arg + 2)
@@ -111,18 +146,27 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
             }
 
             if (parsingItem == nullptr)
-                error("Option not recognized: " + std::string(arg));
+            {
+                showError("Option not recognized: " + std::string(arg));
+                break;
+            }
 
             if (parsingItem->argument.has_value())
             {
                 if (i == argc - 1 || strlen(argv[i + 1]) == 0 || argv[i + 1][0] == '-')
-                    error("Argument <" + *parsingItem->argument + "> is expected for option: " + arg);
+                {
+                    showError("Argument <" + *parsingItem->argument + "> is expected for option: " + arg);
+                    break;
+                }
 
                 if (parsingItem->shortName.has_value())
                 {
                     std::string key = std::string(1, *parsingItem->shortName);
                     if (m_options.count(key))
-                        error("Option " + std::string{arg} + " already used");
+                    {
+                        showError("Option " + std::string{arg} + " already used");
+                        break;
+                    }
                     m_options[key] = argv[i + 1];
                     i++;
                 }
@@ -130,7 +174,10 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
                 {
                     std::string key = *parsingItem->longName;
                     if (m_options.count(key))
-                        error("Option " + std::string{arg} + " already used");
+                    {
+                        showError("Option " + std::string{arg} + " already used");
+                        break;
+                    }
                     m_options[key] = argv[i + 1];
                     i++;
                 }
@@ -141,19 +188,29 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
                 {
                     std::string key = std::string(1, *parsingItem->shortName);
                     if (m_options.count(key))
-                        error("Option " + std::string{arg} + " already used");
+                    {
+                        showError("Option " + std::string{arg} + " already used");
+                        break;
+                    }
                     m_options[key] = {};
                 }
                 if (parsingItem->longName.has_value())
                 {
                     std::string key = *parsingItem->longName;
                     if (m_options.count(key))
-                        error("Option " + std::string{arg} + " already used");
+                    {
+                        showError("Option " + std::string{arg} + " already used");
+                        break;
+                    }
                     m_options[key] = {};
                 }
             }
         }
     }
+
+    // Restore first argument
+    argc++;
+    argv--;
 
     if (freeArgv)
     {
@@ -182,35 +239,37 @@ int opt::OptionsResult::count() const
     return static_cast<int>(m_options.size());
 }
 
-void opt::OptionsResult::help() const
+void opt::OptionsResult::showHelp() const
 {
+    auto &ostream = m_handler->ostream(false);
+
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto parts = std::localtime(&now);
     auto year = 1900 + parts->tm_year;
 
     if (!m_description.projectName.empty())
-        std::cout << m_description.projectName << " ";
+        ostream << m_description.projectName << " ";
     if (!m_description.version.empty())
-        std::cout << m_description.version << " ";
+        ostream << m_description.version << " ";
     if (!m_description.projectName.empty() || !m_description.version.empty())
-        std::cout << "| ";
+        ostream << "| ";
     if (!m_description.appDescription.empty())
-        std::cout << m_description.appDescription << " ";
+        ostream << m_description.appDescription << " ";
     if (!m_description.copyright.empty())
     {
         if (!m_description.appDescription.empty())
-            std::cout << "| ";
-        std::cout << "Copyright (c) " << year << " " << m_description.copyright;
+            ostream << "| ";
+        ostream << "Copyright (c) " << year << " " << m_description.copyright;
     }
 
-    std::cout << std::endl;
+    ostream << std::endl;
 
-    std::cout << "Usage:" << std::endl;
+    ostream << "Usage:" << std::endl;
     for (auto &usage : m_description.usages)
-        std::cout << "  " << m_description.programName << " " << usage << std::endl;
-    std::cout << std::endl;
+        ostream << "  " << m_description.programName << " " << usage << std::endl;
+    ostream << std::endl;
 
-    std::cout << "Options:" << std::endl;
+    ostream << "Options:" << std::endl;
     std::vector<OptionItem> items = m_description.items;
     items.emplace_back('h', "help", "Show this help message and exit", std::nullopt);
     items.emplace_back('v', "version", "Show version information and exit", std::nullopt);
@@ -222,11 +281,11 @@ void opt::OptionsResult::help() const
     for (auto &item : items)
     {
         std::string nameDisplay = ItemNameDisplay(item);
-        std::cout << nameDisplay;
-        std::cout << "  ";
+        ostream << nameDisplay;
+        ostream << "  ";
 
         size_t delta = maxLengthOfItemName - nameDisplay.size();
-        std::cout << std::string(delta, ' ');
+        ostream << std::string(delta, ' ');
 
         if (item.description.has_value())
         {
@@ -235,35 +294,38 @@ void opt::OptionsResult::help() const
             while (desc.size() > MAX_WIDTH)
             {
                 std::string s = desc.substr(0, MAX_WIDTH);
-                std::cout << s << std::endl << std::string(maxLengthOfItemName + 2, ' ');
+                ostream << s << std::endl << std::string(maxLengthOfItemName + 2, ' ');
                 s = desc.substr(MAX_WIDTH);
                 desc = std::move(s);
             }
 
-            std::cout << desc;
+            ostream << desc;
         }
-        std::cout << std::endl;
+        ostream << std::endl;
     }
 
-    exit(1);
+    m_handler->status(1);
 }
 
-void opt::OptionsResult::version() const
+void opt::OptionsResult::showVersion() const
 {
-    std::cout << m_description.version << std::endl;
-    exit(1);
+    m_handler->ostream(false) << m_description.version << std::endl;
+    m_handler->status(1);
 }
 
-void opt::OptionsResult::error(const std::string &msg) const
+void opt::OptionsResult::showError(const std::string &msg) const
 {
-    std::cerr << "ERROR: " << msg << std::endl;
-    exit(1);
+    m_handler->ostream(true) << "ERROR: " << msg << std::endl;
+    m_handler->status(1);
 }
 
 std::string opt::OptionsResult::getPositional(int index) const
 {
     if (positionalCount() <= index)
-        error("Missing positional parameter at index " + std::to_string(index));
+    {
+        showError("Missing positional parameter at index " + std::to_string(index));
+        return {};
+    }
     return m_positionalParams[index];
 }
 
@@ -304,14 +366,14 @@ opt::ExpansionResult opt::PerformExpansion(const std::string &command, std::vect
 
 bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens)
 {
-    std::cout << ">> ";
+    ostream << ">> ";
     std::string input{};
 
     while (true)
     {
         std::string ln{};
-        std::getline(std::cin, ln);
-        if (!std::cin)
+        std::getline(istream, ln);
+        if (!istream)
             return false;
         input += ln;
 
@@ -325,7 +387,7 @@ bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &li
         }
         if (exp == ExpansionResult::SYNTAX_ERROR)
         {
-            std::cout << ".. ";
+            ostream << ".. ";
             input += "\n";
             continue;
         }
