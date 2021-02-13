@@ -144,6 +144,8 @@ NtsMessage *NtsTask::poll()
 
 NtsMessage *NtsTask::poll(int64_t timeout)
 {
+    timeout = std::min(timeout, (int64_t)WAIT_TIME_IF_NO_TIMER);
+
     if (isQuiting)
         return nullptr;
 
