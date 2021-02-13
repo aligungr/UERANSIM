@@ -64,21 +64,21 @@ namespace app
 static std::map<std::string, std::string> g_gnbCmdToDescription = {
     {"status", "Show some status information about the gNB"},
     {"amf-list", "List all AMFs associated with the gNB"},
-    {"amf-status", "Show some status information about the given AMF"},
+    {"amf-info", "Show some status information about the given AMF"},
     {"info", "Show some information about the gNB"},
 };
 
 static std::map<std::string, std::string> g_gnbCmdToUsage = {
     {"status", "[option...]"},
     {"amf-list", "[option...]"},
-    {"amf-status", "<amf-id> [option...]"},
+    {"amf-info", "<amf-id> [option...]"},
     {"info", "[option...]"},
 };
 
 static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {
     {"status", false},
     {"amf-list", false},
-    {"amf-status", true},
+    {"amf-info", true},
     {"info", false},
 };
 
@@ -133,9 +133,9 @@ std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tok
     {
         return std::make_unique<GnbCliCommand>(GnbCliCommand::AMF_LIST);
     }
-    else if (subCmd == "amf-status")
+    else if (subCmd == "amf-info")
     {
-        auto cmd = std::make_unique<GnbCliCommand>(GnbCliCommand::AMF_STATUS);
+        auto cmd = std::make_unique<GnbCliCommand>(GnbCliCommand::AMF_INFO);
         if (options.positionalCount() == 0)
             CMD_ERR("AMF ID is expected")
         if (options.positionalCount() > 1)

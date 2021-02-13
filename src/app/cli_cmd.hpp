@@ -22,10 +22,10 @@ struct GnbCliCommand
         STATUS,
         INFO,
         AMF_LIST,
-        AMF_STATUS
+        AMF_INFO
     } present;
 
-    // AMF_STATUS
+    // AMF_INFO
     int amfId{};
 
     explicit GnbCliCommand(PR present) : present(present)

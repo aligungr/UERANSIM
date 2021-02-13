@@ -107,7 +107,7 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
         msg.sendResult(ss.str());
         break;
     }
-    case app::GnbCliCommand::AMF_STATUS: {
+    case app::GnbCliCommand::AMF_INFO: {
         if (base.ngapTask->m_amfCtx.count(msg.cmd->amfId) == 0)
             msg.sendError("AMF not found with given ID");
         else
