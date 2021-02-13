@@ -9,6 +9,10 @@
 #pragma once
 
 #include "types.hpp"
+#include <app/cli_cmd.hpp>
+#include <memory>
+#include <utils/network.hpp>
+#include <utils/nts.hpp>
 
 namespace nr::ue
 {
@@ -24,6 +28,7 @@ class UserEquipment
 
   public:
     void start();
+    void pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address, NtsTask *callbackTask);
 };
 
 } // namespace nr::ue

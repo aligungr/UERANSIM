@@ -82,6 +82,18 @@ static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {
     {"info", false},
 };
 
+static std::map<std::string, std::string> g_ueCmdToDescription = {
+    {"info", "Show some information about the UE"},
+};
+
+static std::map<std::string, std::string> g_ueCmdToUsage = {
+    {"info", "[option...]"},
+};
+
+static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
+    {"info", false},
+};
+
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
                                                   std::string &output)
 {
@@ -145,6 +157,48 @@ std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tok
             CMD_ERR("Invalid AMF ID")
         return cmd;
     }
+
+    return nullptr;
+}
+
+std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&tokens, std::string &error,
+                                                std::string &output)
+{
+    if (tokens.empty())
+    {
+        error = "Empty command";
+        return nullptr;
+    }
+
+    std::string &subCmd = tokens[0];
+
+    if (subCmd == "commands")
+    {
+        output = DumpCommands(g_ueCmdToDescription);
+        return nullptr;
+    }
+
+    if (g_ueCmdToDescription.count(subCmd) == 0 || g_ueCmdToUsage.count(subCmd) == 0 ||
+        g_ueCmdToHelpIfEmpty.count(subCmd) == 0)
+    {
+        error = "Command not recognized: " + subCmd;
+        return nullptr;
+    }
+
+    opt::OptionsDescription desc =
+        Desc(subCmd, g_ueCmdToDescription[subCmd], g_ueCmdToUsage[subCmd], g_ueCmdToHelpIfEmpty[subCmd]);
+
+    OptionsHandler handler{};
+
+    opt::OptionsResult options{tokens, desc, &handler};
+
+    error = handler.m_err.str();
+    output = handler.m_output.str();
+    utils::Trim(error);
+    utils::Trim(output);
+
+    if (!error.empty() || !output.empty())
+        return nullptr;
 
     return nullptr;
 }

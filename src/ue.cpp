@@ -6,19 +6,37 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include <utils/common.hpp>
-#include <utils/constants.hpp>
-#include <cxxopts/cxxopts.hpp>
+#include <app/base_app.hpp>
+#include <app/cli_base.hpp>
+#include <app/cli_cmd.hpp>
+#include <app/proc_table.hpp>
 #include <iostream>
 #include <ue/ue.hpp>
 #include <unistd.h>
-#include <yaml-cpp/yaml.h>
+#include <utils/common.hpp>
+#include <utils/constants.hpp>
+#include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
+#include <yaml-cpp/yaml.h>
 
-static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureRouting, bool prefixLogger)
+static app::CliServer *g_cliServer = nullptr;
+nr::ue::UeConfig *g_refConfig = nullptr;
+static std::unordered_map<std::string, nr::ue::UserEquipment *> g_ueMap{};
+static app::CliResponseTask *g_cliRespTask = nullptr;
+
+static struct Options
+{
+    std::string configFile{};
+    bool noRoutingConfigs{};
+    bool disableCmd{};
+    std::string imsi{};
+    int count{};
+} g_options{};
+
+static nr::ue::UeConfig *ReadConfigYaml()
 {
     auto *result = new nr::ue::UeConfig();
-    auto config = YAML::LoadFile(file);
+    auto config = YAML::LoadFile(g_options.configFile);
 
     result->plmn.mcc = yaml::GetInt32(config, "mcc", 1, 999);
     yaml::GetString(config, "mcc", 3, 3);
@@ -42,8 +60,10 @@ static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureR
     result->amf = OctetString::FromHex(yaml::GetString(config, "amf", 4, 4));
 
     result->emulationMode = true;
-    result->configureRouting = configureRouting;
-    result->prefixLogger = prefixLogger;
+    result->configureRouting = !g_options.noRoutingConfigs;
+
+    // If we have multiple UEs in the same process, then log names should be separated.
+    result->prefixLogger = g_options.count > 1;
 
     if (yaml::HasField(config, "supi"))
         result->supi = Supi::Parse(yaml::GetString(config, "supi"));
@@ -108,76 +128,55 @@ static nr::ue::UeConfig *ReadConfigYaml(const std::string &file, bool configureR
     return result;
 }
 
-static nr::ue::UeConfig *GetConfig(const std::string &file, bool configureRouting, bool prefixLogger)
+static void ReadOptions(int argc, char **argv)
 {
-    try
+    opt::OptionsDescription desc{cons::Project, cons::Tag, "5G-SA UE implementation",
+                                 cons::Owner,   "nr-ue",   {"-c <config-file> [option...]"},
+                                 true};
+
+    opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for UE", "config-file"};
+    opt::OptionItem itemImsi = {'i', "imsi", "Use specified IMSI number instead of provided one", "imsi"};
+    opt::OptionItem itemCount = {'n', "num-of-UE", "Generate specified number of UEs starting from the given IMSI",
+                                 "num"};
+    opt::OptionItem itemDisableCmd = {'l', "disable-cmd", "Disable command line functionality for this instance",
+                                      std::nullopt};
+    opt::OptionItem itemDisableRouting = {'r', "no-routing-config",
+                                          "Do not auto configure routing for UE TUN interface", std::nullopt};
+
+    desc.items.push_back(itemConfigFile);
+    desc.items.push_back(itemImsi);
+    desc.items.push_back(itemCount);
+    desc.items.push_back(itemDisableCmd);
+    desc.items.push_back(itemDisableRouting);
+
+    opt::OptionsResult opt{argc, argv, desc, false, nullptr};
+
+    g_options.configFile = opt.getOption(itemConfigFile);
+    g_options.noRoutingConfigs = opt.hasFlag(itemDisableRouting);
+    if (opt.hasFlag(itemCount))
     {
-        return ReadConfigYaml(file, configureRouting, prefixLogger);
+        g_options.count = utils::ParseInt(opt.getOption(itemCount));
+        if (g_options.count <= 0)
+            throw std::runtime_error("Invalid number of UEs");
+        if (g_options.count > 512)
+            throw std::runtime_error("Number of UEs is too big");
     }
-    catch (const std::runtime_error &e)
+    else
     {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        exit(1);
+        g_options.count = 1;
     }
+
+    g_options.imsi = {};
+    if (opt.hasFlag(itemImsi))
+    {
+        g_options.imsi = opt.getOption(itemImsi);
+        Supi::Parse("imsi-" + g_options.imsi); // validate the string by parsing
+    }
+
+    g_options.disableCmd = opt.hasFlag(itemDisableCmd);
 }
 
-static void ReadOptions(int argc, char **argv, std::string &configFile, bool &noRoutingConfigs, std::string &imsi,
-                        int &count)
-{
-    try
-    {
-        cxxopts::Options options("nr-ue", "5G-SA UE implementation | Copyright (c) 2021 Ali Güngör");
-        options.add_options()("c,config", "Use specified configuration file for UE", cxxopts::value<std::string>())(
-            "i,imsi", "Use specified IMSI number instead of provided one", cxxopts::value<std::string>())(
-            "n,num-of-UE", "Create specified number of UEs starting from the given IMSI",
-            cxxopts::value<int>())("r,no-routing-config", "Do not auto configure routing for UE TUN interface")(
-            "h,help", "Show this help message and exit");
-
-        auto result = options.parse(argc, argv);
-
-        if (result.arguments().empty() || result.count("help"))
-        {
-            std::cout << options.help() << std::endl;
-            exit(0);
-        }
-
-        configFile = result["config"].as<std::string>();
-        noRoutingConfigs = result.count("no-routing-config");
-
-        if (result.count("num-of-UE"))
-        {
-            count = result["num-of-UE"].as<int>();
-            if (count <= 0)
-                throw std::runtime_error("Invalid number of UEs");
-            if (count > 512)
-                throw std::runtime_error("Number of UEs is too big");
-        }
-        else
-        {
-            count = 1;
-        }
-
-        imsi = "";
-
-        if (result.count("imsi"))
-        {
-            imsi = result["imsi"].as<std::string>();
-            Supi::Parse("imsi-" + imsi); // validate the string by parsing
-        }
-    }
-    catch (const cxxopts::OptionException &e)
-    {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        exit(1);
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        exit(1);
-    }
-}
-
-std::string LargeSum(std::string a, std::string b)
+static std::string LargeSum(std::string a, std::string b)
 {
     if (a.length() > b.length())
         std::swap(a, b);
@@ -212,24 +211,24 @@ static void IncrementNumber(std::string &s, int delta)
     s = LargeSum(s, std::to_string(delta));
 }
 
-nr::ue::UeConfig *GetConfigByUe(nr::ue::UeConfig *refConfig, int ueIndex)
+static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
 {
     auto *c = new nr::ue::UeConfig();
-    c->emulationMode = refConfig->emulationMode;
-    c->key = refConfig->key.copy();
-    c->opC = refConfig->opC.copy();
-    c->opType = refConfig->opType;
-    c->amf = refConfig->amf.copy();
-    c->imei = refConfig->imei;
-    c->imeiSv = refConfig->imeiSv;
-    c->supi = refConfig->supi;
-    c->plmn = refConfig->plmn;
-    c->nssais = refConfig->nssais;
-    c->supportedAlgs = refConfig->supportedAlgs;
-    c->gnbSearchList = refConfig->gnbSearchList;
-    c->initSessions = refConfig->initSessions;
-    c->configureRouting = refConfig->configureRouting;
-    c->prefixLogger = refConfig->prefixLogger;
+    c->emulationMode = g_refConfig->emulationMode;
+    c->key = g_refConfig->key.copy();
+    c->opC = g_refConfig->opC.copy();
+    c->opType = g_refConfig->opType;
+    c->amf = g_refConfig->amf.copy();
+    c->imei = g_refConfig->imei;
+    c->imeiSv = g_refConfig->imeiSv;
+    c->supi = g_refConfig->supi;
+    c->plmn = g_refConfig->plmn;
+    c->nssais = g_refConfig->nssais;
+    c->supportedAlgs = g_refConfig->supportedAlgs;
+    c->gnbSearchList = g_refConfig->gnbSearchList;
+    c->initSessions = g_refConfig->initSessions;
+    c->configureRouting = g_refConfig->configureRouting;
+    c->prefixLogger = g_refConfig->prefixLogger;
 
     if (c->supi.has_value())
         IncrementNumber(c->supi->value, ueIndex);
@@ -241,29 +240,128 @@ nr::ue::UeConfig *GetConfigByUe(nr::ue::UeConfig *refConfig, int ueIndex)
     return c;
 }
 
-int main(int argc, char **argv)
+static void ReceiveCommand(app::CliMessage &msg)
 {
-    std::cout << cons::Name << std::endl;
-
-    std::string configFile, imsi;
-    bool noRoutingConfigs;
-    int count;
-
-    ReadOptions(argc, argv, configFile, noRoutingConfigs, imsi, count);
-
-    // If we have multiple UEs in the same process, then log names should be separated.
-    bool prefixLogger = count > 1;
-
-    nr::ue::UeConfig *refConfig = GetConfig(configFile, !noRoutingConfigs, prefixLogger);
-    if (imsi.length() > 0)
-        refConfig->supi = Supi::Parse("imsi-" + imsi);
-
-    for (int i = 0; i < count; i++)
+    if (msg.value.empty())
     {
-        auto *ue = new nr::ue::UserEquipment(GetConfigByUe(refConfig, i), nullptr);
-        ue->start();
+        g_cliServer->sendMessage(app::CliMessage::Result(msg.clientAddr, ""));
+        return;
     }
 
-    while (true)
+    std::vector<std::string> tokens{};
+
+    auto exp = opt::PerformExpansion(msg.value, tokens);
+    if (exp != opt::ExpansionResult::SUCCESS)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Invalid command: " + msg.value));
+        return;
+    }
+
+    if (tokens.empty())
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Empty command"));
+        return;
+    }
+
+    std::string error{}, output{};
+    auto cmd = app::ParseUeCliCommand(std::move(tokens), error, output);
+    if (!error.empty())
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, error));
+        return;
+    }
+    if (!output.empty())
+    {
+        g_cliServer->sendMessage(app::CliMessage::Result(msg.clientAddr, output));
+        return;
+    }
+    if (cmd == nullptr)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, ""));
+        return;
+    }
+
+    if (g_ueMap.count(msg.nodeName) == 0)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node not found: " + msg.nodeName));
+        return;
+    }
+
+    auto *ue = g_ueMap[msg.nodeName];
+    ue->pushCommand(std::move(cmd), msg.clientAddr, g_cliRespTask);
+}
+
+static void Loop()
+{
+    if (!g_cliServer)
+    {
         ::pause();
+        return;
+    }
+
+    auto msg = g_cliServer->receiveMessage();
+    if (msg.type == app::CliMessage::Type::ECHO)
+    {
+        g_cliServer->sendMessage(msg);
+        return;
+    }
+
+    if (msg.type != app::CliMessage::Type::COMMAND)
+        return;
+
+    if (msg.value.size() > 0xFFFF)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Command is too large"));
+        return;
+    }
+
+    if (msg.nodeName.size() > 0xFFFF)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node name is too large"));
+        return;
+    }
+
+    ReceiveCommand(msg);
+}
+
+int main(int argc, char **argv)
+{
+    app::Initialize();
+
+    try
+    {
+        ReadOptions(argc, argv);
+        g_refConfig = ReadConfigYaml();
+        if (g_options.imsi.length() > 0)
+            g_refConfig->supi = Supi::Parse("imsi-" + g_options.imsi);
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return 1;
+    }
+
+    std::cout << cons::Name << std::endl;
+
+    for (int i = 0; i < g_options.count; i++)
+    {
+        auto *config = GetConfigByUe(i);
+        auto *ue = new nr::ue::UserEquipment(config, nullptr);
+        g_ueMap[config->getNodeName()] = ue;
+    }
+
+    if (!g_options.disableCmd)
+    {
+        g_cliServer = new app::CliServer{};
+        app::CreateProcTable(g_ueMap, g_cliServer->assignedAddress().getPort());
+
+        g_cliRespTask = new app::CliResponseTask(g_cliServer);
+        g_cliRespTask->start();
+    }
+
+    for (auto &ue : g_ueMap)
+        ue.second->start();
+
+    while (true)
+        Loop();
 }

@@ -24,7 +24,7 @@
 static app::CliServer *g_cliServer = nullptr;
 static nr::gnb::GnbConfig *g_refConfig = nullptr;
 static std::unordered_map<std::string, nr::gnb::GNodeB *> g_gnbMap{};
-static app::CliResponseTask *g_cliRespTask;
+static app::CliResponseTask *g_cliRespTask = nullptr;
 
 static struct Options
 {
@@ -78,7 +78,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
 static void ReadOptions(int argc, char **argv)
 {
     opt::OptionsDescription desc{cons::Project, cons::Tag, "5G-SA gNB implementation",
-                                 cons::Owner,   "nr-cli",  {"-c <config-file> [option...]"},
+                                 cons::Owner,   "nr-gnb",  {"-c <config-file> [option...]"},
                                  true};
 
     opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for gNB", "config-file"};

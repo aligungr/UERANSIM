@@ -33,7 +33,21 @@ struct GnbCliCommand
     }
 };
 
+struct UeCliCommand
+{
+    enum PR
+    {
+    } present;
+
+    explicit UeCliCommand(PR present) : present(present)
+    {
+    }
+};
+
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
                                                   std::string &output);
+
+std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&tokens, std::string &error,
+                                                std::string &output);
 
 } // namespace app
