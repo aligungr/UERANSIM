@@ -21,8 +21,6 @@
 namespace nr::gnb
 {
 
-struct GnbMrTask;
-
 class GtpTask : public NtsTask
 {
   private:
@@ -34,6 +32,8 @@ class GtpTask : public NtsTask
     std::unique_ptr<IRateLimiter> m_rateLimiter;
     std::unordered_map<uint64_t, std::unique_ptr<PduSessionResource>> m_pduSessions;
     PduSessionTree m_sessionTree;
+
+    friend class GnbCmdHandler;
 
   public:
     explicit GtpTask(TaskBase *base);

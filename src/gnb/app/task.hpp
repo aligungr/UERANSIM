@@ -27,6 +27,8 @@ class GnbAppTask : public NtsTask
 
     GnbStatusInfo m_statusInfo;
 
+    friend class GnbCmdHandler;
+
   public:
     explicit GnbAppTask(TaskBase *base);
     ~GnbAppTask() override = default;

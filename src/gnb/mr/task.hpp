@@ -32,6 +32,8 @@ class GnbMrTask : public NtsTask
     GnbRls *m_rlsEntity;
     std::unordered_map<int, MrUeContext> m_ueMap;
 
+    friend class GnbCmdHandler;
+
   public:
     explicit GnbMrTask(TaskBase *base);
     ~GnbMrTask() override = default;

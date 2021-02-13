@@ -49,6 +49,8 @@ class NgapTask : public NtsTask
     uint32_t m_downlinkTeidCounter;
     bool m_isInitialized;
 
+    friend class GnbCmdHandler;
+
   public:
     explicit NgapTask(TaskBase *base);
     ~NgapTask() override = default;

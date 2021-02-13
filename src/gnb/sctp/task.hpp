@@ -39,6 +39,8 @@ class SctpTask : public NtsTask
     std::unique_ptr<Logger> m_logger;
     std::unordered_map<int, ClientEntry *> m_clients;
 
+    friend class GnbCmdHandler;
+
   public:
     explicit SctpTask(TaskBase *base);
     ~SctpTask() override = default;
@@ -52,9 +54,9 @@ class SctpTask : public NtsTask
     static void DeleteClientEntry(ClientEntry *entry);
 
   private:
-    void receiveSctpConnectionSetupRequest(int clientId, const std::string& localAddress, uint16_t localPort,
-                                           const std::string& remoteAddress, uint16_t remotePort, sctp::PayloadProtocolId ppid,
-                                           NtsTask *associatedTask);
+    void receiveSctpConnectionSetupRequest(int clientId, const std::string &localAddress, uint16_t localPort,
+                                           const std::string &remoteAddress, uint16_t remotePort,
+                                           sctp::PayloadProtocolId ppid, NtsTask *associatedTask);
     void receiveAssociationSetup(int clientId, int associationId, int inStreams, int outStreams);
     void receiveAssociationShutdown(int clientId);
     void receiveClientReceive(int clientId, uint16_t stream, UniqueBuffer &&buffer);
