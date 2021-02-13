@@ -15,6 +15,7 @@
 #include <gnb/rrc/task.hpp>
 #include <gnb/sctp/task.hpp>
 #include <utils/common.hpp>
+#include <utils/printer.hpp>
 
 #define PAUSE_CONFIRM_TIMEOUT 3000
 #define PAUSE_POLLING 10
@@ -101,7 +102,7 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
     case app::GnbCliCommand::AMF_LIST: {
         std::stringstream ss{};
         for (auto &amf : base.ngapTask->m_amfCtx)
-            ss << "* amf-id: " << amf.first << "\n";
+            ss << "- ID[" << amf.first << "] Address[" << amf.second->address << ":" << amf.second->port << "]\n";
         utils::Trim(ss);
         msg.sendResult(ss.str());
         break;
@@ -112,7 +113,15 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
         else
         {
             auto amf = base.ngapTask->m_amfCtx[msg.cmd->amfId];
-            msg.sendResult("state: " + std::to_string((int)amf->state));
+
+            Printer printer{};
+            printer.appendKeyValue("address", amf->address);
+            printer.appendKeyValue("port", amf->port);
+            printer.appendKeyValue("name", amf->amfName);
+            printer.appendKeyValue("relative-capacity", amf->relativeCapacity);
+            printer.appendKeyValue("state", EnumToString(amf->state));
+            printer.trim();
+            msg.sendResult(printer.makeString());
         }
         break;
     }
