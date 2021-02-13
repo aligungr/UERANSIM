@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <app/cli_base.hpp>
 #include <app/cli_cmd.hpp>
 #include <rrc/rrc.hpp>
 #include <sctp/sctp.hpp>
@@ -250,6 +251,16 @@ struct NwGnbCliCommand : NtsMessage
     NwGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address, NtsTask *callbackTask)
         : NtsMessage(NtsMessageType::GNB_CLI_COMMAND), cmd(std::move(cmd)), address(address), callbackTask(callbackTask)
     {
+    }
+
+    void sendResult(const std::string &output) const
+    {
+        callbackTask->push(new app::NwCliSendResponse(address, output, false));
+    }
+
+    void sendError(const std::string &output) const
+    {
+        callbackTask->push(new app::NwCliSendResponse(address, output, true));
     }
 };
 

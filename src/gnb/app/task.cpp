@@ -30,12 +30,37 @@ void GnbAppTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_STATUS_UPDATE: {
-        auto *m = dynamic_cast<NwGnbStatusUpdate *>(msg);
-        switch (m->what)
+        auto *w = dynamic_cast<NwGnbStatusUpdate *>(msg);
+        switch (w->what)
         {
         case NwGnbStatusUpdate::NGAP_IS_UP:
-            m_statusInfo.isNgapUp = m->isNgapUp;
+            m_statusInfo.isNgapUp = w->isNgapUp;
             break;
+        }
+        break;
+    }
+    case NtsMessageType::GNB_CLI_COMMAND: {
+        auto *w = dynamic_cast<NwGnbCliCommand *>(msg);
+        if (w->cmd == nullptr)
+            break;
+        switch (w->cmd->present)
+        {
+        case app::GnbCliCommand::STATUS: {
+            w->sendError("status command not implemented yet");
+            break;
+        }
+        case app::GnbCliCommand::INFO: {
+            w->sendError("info command not implemented yet");
+            break;
+        }
+        case app::GnbCliCommand::AMF_LIST: {
+            w->sendError("amf-list command not implemented yet");
+            break;
+        }
+        case app::GnbCliCommand::AMF_STATUS: {
+            w->sendError("amf-status command not implemented yet");
+            break;
+        }
         }
         break;
     }
