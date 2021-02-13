@@ -361,17 +361,22 @@ opt::ExpansionResult opt::PerformExpansion(const std::string &command, std::vect
     return ExpansionResult::UNSPECIFIED_ERROR;
 }
 
-bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens)
+bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens,
+                   bool &isEof)
 {
     ostream << "$ ";
     std::string input{};
+    isEof = false;
 
     while (true)
     {
         std::string ln{};
         std::getline(istream, ln);
         if (!istream)
+        {
+            isEof = true;
             return false;
+        }
         input += ln;
 
         std::vector<std::string> vec{};

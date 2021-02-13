@@ -214,9 +214,15 @@ static bool HandleMessage(const app::CliMessage &msg, bool isOneShot)
             std::cout << "\x1b[1m";
             std::cout << std::string(92, '-') << std::endl;
             std::string line{};
+            bool isEof{};
             std::vector<std::string> tokens{};
-            if (!opt::ReadLine(std::cin, std::cout, line, tokens))
-                exit(0);
+            if (!opt::ReadLine(std::cin, std::cout, line, tokens, isEof))
+            {
+                if (isEof)
+                    exit(0);
+                else
+                    std::cout << "ERROR: Invalid command" << std::endl;
+            }
             std::cout << "\x1b[0m";
             if (line.empty())
                 continue;

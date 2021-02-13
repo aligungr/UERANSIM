@@ -127,6 +127,7 @@ enum class ExpansionResult
 
 ExpansionResult PerformExpansion(const std::string &command, std::vector<std::string> &argv);
 
-bool ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens);
+bool ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens,
+              bool &isEof);
 
 } // namespace opt
