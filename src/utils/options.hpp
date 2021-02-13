@@ -10,6 +10,7 @@
 
 #include <cstring>
 #include <istream>
+#include <memory>
 #include <optional>
 #include <ostream>
 #include <stdexcept>
@@ -80,15 +81,24 @@ struct OptionsDescription
     }
 };
 
+class IOptionsHandler
+{
+    virtual std::istream istream() = 0;
+    virtual std::ostream ostream() = 0;
+    virtual void status(int code) = 0;
+};
+
 class OptionsResult
 {
   private:
     std::vector<std::string> m_positionalParams{};
     std::unordered_map<std::string, std::string> m_options{};
+    std::unique_ptr<IOptionsHandler> m_handler;
     OptionsDescription m_description;
 
   public:
-    OptionsResult(int argc, char **argv, const OptionsDescription &desc, bool freeArgv = false);
+    OptionsResult(int argc, char **argv, const OptionsDescription &desc, bool freeArgv = false,
+                  std::unique_ptr<IOptionsHandler> handler = nullptr);
     OptionsResult(const std::vector<std::string> &args, const OptionsDescription &desc);
 
   public:

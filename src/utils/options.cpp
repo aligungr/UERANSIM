@@ -48,8 +48,9 @@ opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const op
 {
 }
 
-opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc, bool freeArgv)
-    : m_description{desc}
+opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc, bool freeArgv,
+                                  std::unique_ptr<IOptionsHandler> handler)
+    : m_handler{std::move(handler)}, m_description{desc}
 {
     argc--;
     argv++;
