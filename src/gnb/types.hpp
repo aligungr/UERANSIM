@@ -21,6 +21,13 @@
 namespace nr::gnb
 {
 
+class GnbAppTask;
+class GtpTask;
+class GnbMrTask;
+class NgapTask;
+class GnbRrcTask;
+class SctpTask;
+
 enum class EAmfState
 {
     NOT_CONNECTED,
@@ -281,12 +288,12 @@ struct TaskBase
     LogBase *logBase;
     app::INodeListener *nodeListener;
 
-    NtsTask *appTask;
-    NtsTask *gtpTask;
-    NtsTask *mrTask;
-    NtsTask *ngapTask;
-    NtsTask *rrcTask;
-    NtsTask *sctpTask;
+    GnbAppTask *appTask;
+    GtpTask *gtpTask;
+    GnbMrTask *mrTask;
+    NgapTask *ngapTask;
+    GnbRrcTask *rrcTask;
+    SctpTask *sctpTask;
 };
 
 struct MrUeContext
