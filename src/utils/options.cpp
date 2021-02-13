@@ -199,8 +199,10 @@ void opt::OptionsResult::help() const
     {
         if (!m_description.appDescription.empty())
             std::cout << "| ";
-        std::cout << "Copyright (c) " << year << " " << m_description.copyright << std::endl;
+        std::cout << "Copyright (c) " << year << " " << m_description.copyright;
     }
+
+    std::cout << std::endl;
 
     std::cout << "Usage:" << std::endl;
     for (auto &usage : m_description.usages)
