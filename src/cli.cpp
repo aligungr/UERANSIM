@@ -215,6 +215,8 @@ static bool HandleMessage(const app::CliMessage &msg, bool isOneShot)
             std::vector<std::string> tokens{};
             if (!opt::ReadLine(std::cin, std::cout, line, tokens))
                 exit(0);
+            if (line.empty())
+                continue;
 
             server.sendMessage(
                 app::CliMessage::Command(InetAddress{cons::CMD_SERVER_IP, port}, line, g_options.nodeName));
