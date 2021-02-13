@@ -9,7 +9,9 @@
 #pragma once
 
 #include <cstring>
+#include <istream>
 #include <optional>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -100,5 +102,19 @@ class OptionsResult
     [[noreturn]] void version() const;
     [[noreturn]] void error(const std::string &msg) const;
 };
+
+enum class ExpansionResult
+{
+    SUCCESS,
+    ILLEGAL_CHARACTER,
+    UNDEFINED_VARIABLE,
+    CMD_SUBS_NOT_ALLOWED,
+    SYNTAX_ERROR,
+    UNSPECIFIED_ERROR
+};
+
+ExpansionResult PerformExpansion(const std::string &command, std::vector<std::string> &argv);
+
+bool ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens);
 
 } // namespace opt

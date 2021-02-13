@@ -14,6 +14,7 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <wordexp.h>
 
 static constexpr const size_t MAX_WIDTH = 90;
 
@@ -237,4 +238,61 @@ std::string opt::OptionsResult::getOption(const OptionItem &item) const
     if (item.longName.has_value() && m_options.count(*item.longName))
         return m_options.at(*item.longName);
     return {};
+}
+
+opt::ExpansionResult opt::PerformExpansion(const std::string &command, std::vector<std::string> &argv)
+{
+    wordexp_t p = {};
+
+    int ret = wordexp(command.c_str(), &p, WRDE_NOCMD | WRDE_UNDEF);
+    if (ret == 0)
+    {
+        for (size_t i = 0; i < p.we_wordc; i++)
+            argv.emplace_back(p.we_wordv[i]);
+        wordfree(&p);
+        return ExpansionResult::SUCCESS;
+    }
+
+    wordfree(&p);
+
+    if (ret == WRDE_BADCHAR)
+        return ExpansionResult::ILLEGAL_CHARACTER;
+    if (ret == WRDE_BADVAL)
+        return ExpansionResult::UNDEFINED_VARIABLE;
+    if (ret == WRDE_CMDSUB)
+        return ExpansionResult::CMD_SUBS_NOT_ALLOWED;
+    if (ret == WRDE_SYNTAX)
+        return ExpansionResult::SYNTAX_ERROR;
+    return ExpansionResult::UNSPECIFIED_ERROR;
+}
+
+bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens)
+{
+    std::cout << ">> ";
+    std::string input{};
+
+    while (true)
+    {
+        std::string ln{};
+        std::getline(std::cin, ln);
+        if (!std::cin)
+            return false;
+        input += ln;
+
+        std::vector<std::string> vec{};
+        auto exp = PerformExpansion(input, vec);
+        if (exp == ExpansionResult::SUCCESS)
+        {
+            line = input;
+            tokens = vec;
+            return true;
+        }
+        if (exp == ExpansionResult::SYNTAX_ERROR)
+        {
+            std::cout << ".. ";
+            input += "\n";
+            continue;
+        }
+        return false;
+    }
 }
