@@ -39,6 +39,8 @@ struct UeCliCommand
 {
     enum PR
     {
+        INFO,
+        STATUS,
     } present;
 
     explicit UeCliCommand(PR present) : present(present)

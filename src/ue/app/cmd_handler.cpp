@@ -1,0 +1,95 @@
+//
+// This file is a part of UERANSIM open source project.
+// Copyright (c) 2021 ALİ GÜNGÖR.
+//
+// The software and all associated files are licensed under GPL-3.0
+// and subject to the terms and conditions defined in LICENSE file.
+//
+
+#include "cmd_handler.hpp"
+
+#include <ue/app/task.hpp>
+#include <ue/mr/task.hpp>
+#include <ue/nas/task.hpp>
+#include <ue/rrc/task.hpp>
+#include <ue/tun/task.hpp>
+#include <utils/common.hpp>
+
+#define PAUSE_CONFIRM_TIMEOUT 3000
+#define PAUSE_POLLING 10
+
+namespace nr::ue
+{
+
+void UeCmdHandler::PauseTasks(TaskBase &base)
+{
+    base.mrTask->requestPause();
+    base.nasTask->requestPause();
+    base.rrcTask->requestPause();
+}
+
+void UeCmdHandler::UnpauseTasks(TaskBase &base)
+{
+    base.mrTask->requestUnpause();
+    base.nasTask->requestUnpause();
+    base.rrcTask->requestUnpause();
+}
+
+bool UeCmdHandler::IsAllPaused(TaskBase &base)
+{
+    if (!base.mrTask->isPauseConfirmed())
+        return false;
+    if (!base.nasTask->isPauseConfirmed())
+        return false;
+    if (!base.rrcTask->isPauseConfirmed())
+        return false;
+    return true;
+}
+
+void UeCmdHandler::HandleCmd(TaskBase &base, NwUeCliCommand &msg)
+{
+    PauseTasks(base);
+
+    uint64_t currentTime = utils::CurrentTimeMillis();
+    uint64_t endTime = currentTime + PAUSE_CONFIRM_TIMEOUT;
+
+    bool isPaused = false;
+    while (currentTime < endTime)
+    {
+        currentTime = utils::CurrentTimeMillis();
+        if (IsAllPaused(base))
+        {
+            isPaused = true;
+            break;
+        }
+        utils::Sleep(PAUSE_POLLING);
+    }
+
+    if (!isPaused)
+    {
+        msg.sendError("UE is unable process command due to pausing timeout");
+    }
+    else
+    {
+        HandleCmdImpl(base, msg);
+    }
+
+    UnpauseTasks(base);
+}
+
+void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
+{
+    switch (msg.cmd->present)
+    {
+    case app::UeCliCommand::STATUS: {
+        msg.sendResult(base.appTask->m_statusInfo.toString());
+        break;
+    }
+    case app::UeCliCommand::INFO: {
+        msg.sendResult(base.config->toString());
+        break;
+    }
+    }
+}
+
+} // namespace nr::ue

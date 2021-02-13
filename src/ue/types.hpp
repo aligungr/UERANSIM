@@ -19,6 +19,11 @@
 namespace nr::ue
 {
 
+class UeAppTask;
+class UeMrTask;
+class NasTask;
+class UeRrcTask;
+
 struct SupportedAlgs
 {
     bool nia1 = true;
@@ -86,6 +91,8 @@ struct UeConfig
             return *imeiSv + "|";
         return "unknown-ue|";
     }
+
+    [[nodiscard]] std::string toString() const;
 };
 
 struct TaskBase
@@ -94,10 +101,10 @@ struct TaskBase
     LogBase *logBase{};
     app::INodeListener *nodeListener{};
 
-    NtsTask *appTask{};
-    NtsTask *mrTask{};
-    NtsTask *nasTask{};
-    NtsTask *rrcTask{};
+    UeAppTask *appTask{};
+    UeMrTask *mrTask{};
+    NasTask *nasTask{};
+    UeRrcTask *rrcTask{};
 };
 
 struct UeTimers
@@ -356,6 +363,8 @@ struct UeStatusInfo
     std::string rmState{};
     std::string cmState{};
     std::optional<UePduSessionInfo> pduSessions[16]{};
+
+    [[nodiscard]] std::string toString() const;
 };
 
 const char *CmStateName(ECmState state);

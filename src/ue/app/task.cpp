@@ -7,8 +7,10 @@
 //
 
 #include "task.hpp"
+#include "cmd_handler.hpp"
 #include <nas/utils.hpp>
 #include <ue/tun/tun.hpp>
+#include <ue/mr/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -83,6 +85,11 @@ void UeAppTask::onLoop()
     }
     case NtsMessageType::UE_STATUS_UPDATE: {
         receiveStatusUpdate(*dynamic_cast<NwUeStatusUpdate *>(msg));
+        break;
+    }
+    case NtsMessageType::UE_CLI_COMMAND: {
+        auto *w = dynamic_cast<NwUeCliCommand *>(msg);
+        UeCmdHandler::HandleCmd(*m_base, *w);
         break;
     }
     default:

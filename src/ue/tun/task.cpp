@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 #include <cstring>
+#include <ue/app/task.hpp>
 #include <ue/nts.hpp>
 #include <unistd.h>
 #include <utils/libc_error.hpp>

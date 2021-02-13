@@ -30,6 +30,8 @@ class UeAppTask : public NtsTask
     UeStatusInfo m_statusInfo;
     TunTask *m_tunTasks[16];
 
+    friend class UeCmdHandler;
+
   public:
     explicit UeAppTask(TaskBase *base);
     ~UeAppTask() override = default;

@@ -9,6 +9,8 @@
 #include "mm.hpp"
 
 #include <nas/utils.hpp>
+#include <ue/app/task.hpp>
+#include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue

@@ -31,6 +31,8 @@ class NasSm
     PduSession m_pduSessions[16]{};
     ProcedureTransaction m_procedureTransactions[255]{};
 
+    friend class UeCmdHandler;
+
   public:
     NasSm(TaskBase *base, NtsTask *nas, UeTimers *timers);
 

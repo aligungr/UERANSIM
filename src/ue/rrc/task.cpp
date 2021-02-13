@@ -12,6 +12,9 @@
 #include <asn/rrc/ASN_RRC_ULInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
 #include <rrc/encode.hpp>
+#include <ue/app/task.hpp>
+#include <ue/mr/task.hpp>
+#include <ue/nas/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue

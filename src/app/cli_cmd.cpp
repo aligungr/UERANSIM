@@ -82,14 +82,17 @@ static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},  
 
 static std::map<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
+    {"status", "Show some status information about the UE"},
 };
 
 static std::map<std::string, std::string> g_ueCmdToUsage = {
     {"info", "[option...]"},
+    {"status", "[option...]"},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
     {"info", false},
+    {"status", false},
 };
 
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
@@ -205,6 +208,15 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
 
     if (!error.empty() || !output.empty())
         return nullptr;
+
+    if (subCmd == "info")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::INFO);
+    }
+    else if (subCmd == "status")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::STATUS);
+    }
 
     return nullptr;
 }

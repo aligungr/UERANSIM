@@ -49,6 +49,8 @@ class NasMm
     long m_lastPlmnSearchTrigger{};
     OctetString m_sqn{};
 
+    friend class UeCmdHandler;
+
   public:
     NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers);
 

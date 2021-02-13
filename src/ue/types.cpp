@@ -7,6 +7,7 @@
 //
 
 #include "types.hpp"
+#include <utils/printer.hpp>
 
 namespace nr::ue
 {
@@ -117,6 +118,33 @@ const char *MmSubStateName(EMmSubState state)
     default:
         return "?";
     }
+}
+
+std::string UeStatusInfo::toString() const
+{
+    Printer printer{};
+    printer.appendKeyValue({
+        {"gnb", this->connectedGnb},
+        {"mm-state", this->mmState},
+        {"rm-state", this->rmState},
+        {"cm-state", this->cmState},
+    });
+    printer.trim();
+    return printer.makeString();
+}
+
+std::string UeConfig::toString() const
+{
+    std::string supiStr{};
+    if (this->supi.has_value())
+        supiStr = this->supi->type + "-" + this->supi->value;
+
+    Printer printer{};
+    printer.appendKeyValue({
+        {"supi", supiStr},
+    });
+    printer.trim();
+    return printer.makeString();
 }
 
 } // namespace nr::ue

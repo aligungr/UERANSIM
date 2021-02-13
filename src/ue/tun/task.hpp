@@ -28,6 +28,8 @@ class TunTask : public NtsTask
     int m_fd;
     ScopedThread *m_receiver;
 
+    friend class UeCmdHandler;
+
   public:
     explicit TunTask(TaskBase *taskBase, int psi, int fd);
     ~TunTask() override = default;
