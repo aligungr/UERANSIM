@@ -102,7 +102,7 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
     case app::GnbCliCommand::AMF_LIST: {
         std::stringstream ss{};
         for (auto &amf : base.ngapTask->m_amfCtx)
-            ss << "- ID[" << amf.first << "] Address[" << amf.second->address << ":" << amf.second->port << "]\n";
+            ss << "- ID[" << amf.first << "]\n";
         utils::Trim(ss);
         msg.sendResult(ss.str());
         break;
