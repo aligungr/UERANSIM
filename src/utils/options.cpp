@@ -60,7 +60,7 @@ class DefaultOptionsHandler : public opt::IOptionsHandler
     }
 };
 
-static DefaultOptionsHandler g_defaultOptHandler{};
+static DefaultOptionsHandler g_defaultOptsHandler{};
 
 opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const opt::OptionsDescription &desc,
                                   IOptionsHandler *handler)
@@ -70,13 +70,13 @@ opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const op
 
 opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc, bool freeArgv,
                                   IOptionsHandler *handler)
-    : m_handler{handler ? handler : &g_defaultOptHandler}, m_description{desc}
+    : m_handler{handler ? handler : &g_defaultOptsHandler}, m_description{desc}
 {
     // Hide the first arguments
     argc--;
     argv++;
 
-    if (argc <= 0)
+    if (argc <= 0 && desc.helpIfEmpty)
         showHelp();
 
     for (int i = 0; i < argc; i++)
@@ -322,10 +322,7 @@ void opt::OptionsResult::showError(const std::string &msg) const
 std::string opt::OptionsResult::getPositional(int index) const
 {
     if (positionalCount() <= index)
-    {
-        showError("Missing positional parameter at index " + std::to_string(index));
         return {};
-    }
     return m_positionalParams[index];
 }
 

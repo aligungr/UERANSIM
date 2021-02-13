@@ -72,11 +72,13 @@ struct OptionsDescription
     std::string programName{};
     std::vector<OptionItem> items{};
     std::vector<std::string> usages{};
+    bool helpIfEmpty{};
 
     OptionsDescription(std::string projectName, std::string version, std::string appDescription, std::string copyright,
-                       std::string programName, std::vector<std::string> usages)
+                       std::string programName, std::vector<std::string> usages, bool helpIfEmpty)
         : projectName(std::move(projectName)), version(std::move(version)), appDescription(std::move(appDescription)),
-          copyright(std::move(copyright)), programName(std::move(programName)), usages(std::move(usages))
+          copyright(std::move(copyright)), programName(std::move(programName)), usages(std::move(usages)),
+          helpIfEmpty(helpIfEmpty)
     {
     }
 };
