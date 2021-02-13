@@ -34,6 +34,7 @@ void Sleep(int ms);
 bool IsRoot();
 bool IsNumeric(const std::string& str);
 void AssertNodeName(const std::string &str);
+void Trim(std::string& str);
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

@@ -10,6 +10,7 @@
 #include "constants.hpp"
 #include <algorithm>
 #include <atomic>
+#include <cctype>
 #include <chrono>
 #include <random>
 #include <regex>
@@ -301,4 +302,10 @@ void utils::AssertNodeName(const std::string &str)
 bool utils::IsNumeric(const std::string &str)
 {
     return !str.empty() && std::all_of(str.begin(), str.end(), [](char c) { return (c >= '0' && c <= '9'); });
+}
+
+void utils::Trim(std::string &s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
 }
