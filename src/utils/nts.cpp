@@ -10,7 +10,7 @@
 #include "common.hpp"
 
 #define WAIT_TIME_IF_NO_TIMER 500
-#define PAUSE_POLLING_PERIOD 150
+#define PAUSE_POLLING_PERIOD 20
 
 static NtsMessage *TimerExpiredMessage(TimerInfo *timerInfo)
 {
@@ -208,8 +208,8 @@ void NtsTask::start()
 
                 if (pauseReqCount > 0)
                 {
-                    utils::Sleep(PAUSE_POLLING_PERIOD);
                     pauseConfirmed = true;
+                    utils::Sleep(PAUSE_POLLING_PERIOD);
                 }
                 else
                 {
