@@ -112,7 +112,9 @@ class NtsTask
     TimerBase timerBase{};
     std::mutex mutex{};
     std::condition_variable cv{};
-    std::atomic<bool> isQuiting{};
+    std::atomic_bool isQuiting{};
+    std::atomic_int pauseReqCount{};
+    std::atomic_bool pauseConfirmed{};
     std::thread thread;
 
   public:
@@ -163,4 +165,16 @@ class NtsTask
     // - Always call this function before destroying the task.
     // - Calling quit() before calling start() is undefined behaviour.
     void quit();
+
+    // - NTS task begin to be paused. The pause request is confirmed after the next loop() call.
+    // - If the task quits immediately and loop() never called again, this pause request will never be confirmed.
+    // - This should not be used if the task is quiting or quited.
+    void requestPause();
+
+    // - NTS task begin to be un-paused. The un-pause request is confirmed after the next loop() call.
+    // - This should not be used if the task is quiting or quited.
+    void requestUnpause();
+
+    // - Returns true iff pause was requested and now is confirmed.
+    bool isPauseConfirmed();
 };
