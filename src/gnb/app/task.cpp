@@ -46,11 +46,11 @@ void GnbAppTask::onLoop()
         switch (w->cmd->present)
         {
         case app::GnbCliCommand::STATUS: {
-            w->sendError("status command not implemented yet");
+            w->sendResult(m_statusInfo.toString());
             break;
         }
         case app::GnbCliCommand::INFO: {
-            w->sendError("info command not implemented yet");
+            w->sendResult(m_base->config->toString());
             break;
         }
         case app::GnbCliCommand::AMF_LIST: {
