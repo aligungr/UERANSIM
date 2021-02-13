@@ -9,29 +9,33 @@
 #include <gnb/types.hpp>
 #include <iomanip>
 #include <sstream>
+#include <utils/printer.hpp>
 
 namespace nr::gnb
 {
 
 std::string GnbStatusInfo::toString() const
 {
-    std::stringstream ss{};
-    ss << "is-NGAP-up: ";
-    ss << std::boolalpha << this->isNgapUp;
-    return ss.str();
+    Printer printer{};
+    printer.appendKeyValue({{"is-ngap-up", this->isNgapUp ? "true" : "false"}});
+    printer.trim();
+    return printer.makeString();
 }
 
 std::string GnbConfig::toString() const
 {
-    std::stringstream ss{};
-    ss << "nci: " << this->nci << "\n";
-    ss << "gnb-id: " << this->getGnbId() << "\n";
-    ss << "cell-id: " << this->getGnbId() << "\n";
-    ss << "mcc: " << this->plmn.mcc << "\n";
-    ss << "mnc: " << this->plmn.mnc << "\n";
-    ss << "tac: " << this->tac << "\n";
-    ss << "name: " << this->name;
-    return ss.str();
+    Printer printer{};
+    printer.appendKeyValue({
+        {"nci", std::to_string(this->nci)},
+        {"gnb-id", std::to_string(this->getGnbId())},
+        {"cell-id", std::to_string(this->getCellId())},
+        {"mcc", std::to_string(this->plmn.mcc)},
+        {"mnc", std::to_string(this->plmn.mnc)},
+        {"tac", std::to_string(this->tac)},
+        {"name", this->name},
+    });
+    printer.trim();
+    return printer.makeString();
 }
 
 const char *EnumToString(EAmfState v)
