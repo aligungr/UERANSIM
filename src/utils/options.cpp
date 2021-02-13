@@ -363,7 +363,7 @@ opt::ExpansionResult opt::PerformExpansion(const std::string &command, std::vect
 
 bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &line, std::vector<std::string> &tokens)
 {
-    ostream << ">> ";
+    ostream << "$ ";
     std::string input{};
 
     while (true)
@@ -384,7 +384,7 @@ bool opt::ReadLine(std::istream &istream, std::ostream &ostream, std::string &li
         }
         if (exp == ExpansionResult::SYNTAX_ERROR)
         {
-            ostream << ".. ";
+            ostream << "> ";
             input += "\n";
             continue;
         }
