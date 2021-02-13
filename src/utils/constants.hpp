@@ -18,6 +18,7 @@ struct cons
     static constexpr const uint8_t Patch = 4;
     static constexpr const char *Name = "UERANSIM v3.0.4";
     static constexpr const char *Tag = "v3.0.4";
+    static constexpr const char *Owner = "ALİ GÜNGÖR";
 
     // Some port values
     static constexpr const uint16_t GtpPort = 2152;
