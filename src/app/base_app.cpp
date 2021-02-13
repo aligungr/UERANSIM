@@ -39,7 +39,6 @@ void Initialize()
     if (g_instanceCount++ != 0)
         std::terminate();
 
-    std::cout << cons::Name << std::endl;
     std::signal(SIGTERM, BaseSignalHandler);
     std::signal(SIGINT, BaseSignalHandler);
 }
