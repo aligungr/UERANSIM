@@ -46,9 +46,13 @@ class OptionsHandler : public opt::IOptionsHandler
 
 static std::string DumpCommands(const std::map<std::string, std::string> &descTable)
 {
+    size_t maxLength = 0;
+    for (auto &item : descTable)
+        maxLength = std::max(maxLength, item.first.size());
+
     std::stringstream ss{};
     for (auto &item : descTable)
-        ss << item.first << " | " << item.second << "\n";
+        ss << item.first << std::string(maxLength - item.first.size(), ' ') << " | " << item.second << "\n";
     std::string output = ss.str();
     utils::Trim(output);
     return output;
