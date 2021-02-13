@@ -10,6 +10,7 @@
 #include <asn/rrc/ASN_RRC_UL-CCCH-Message.h>
 #include <asn/rrc/ASN_RRC_UL-DCCH-Message.h>
 #include <rrc/encode.hpp>
+#include <gnb/mr/task.hpp>
 
 namespace nr::gnb
 {

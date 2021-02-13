@@ -13,6 +13,7 @@
 #include <asn/utils/utils.hpp>
 #include <gnb/app/task.hpp>
 #include <gnb/nts.hpp>
+#include <gnb/sctp/task.hpp>
 
 #include <asn/ngap/ASN_NGAP_AMF-UE-NGAP-ID.h>
 #include <asn/ngap/ASN_NGAP_InitiatingMessage.h>
