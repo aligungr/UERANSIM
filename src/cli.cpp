@@ -127,8 +127,9 @@ static std::vector<std::string> DumpNames()
 
 static void ReadOptions(int argc, char **argv)
 {
-    opt::OptionsDescription desc{"UERANSIM",   cons::Tag, "Command Line Interface",
-                                 "ALİ GÜNGÖR", "nr-cli",  {"<node-name> [option...]", "--dump"}};
+    opt::OptionsDescription desc{"UERANSIM",  cons::Tag, "Command Line Interface",
+                                 cons::Owner, "nr-cli",  {"<node-name> [option...]", "--dump"},
+                                 true};
 
     opt::OptionItem itemDump = {'d', "dump", "List all UE and gNBs in the environment", std::nullopt};
     opt::OptionItem itemExec = {'e', "exec", "Execute the given command directly without an interactive shell",
@@ -137,26 +138,41 @@ static void ReadOptions(int argc, char **argv)
     desc.items.push_back(itemDump);
     desc.items.push_back(itemExec);
 
-    opt::OptionsResult opt{argc, argv, desc};
+    opt::OptionsResult opt{argc, argv, desc, false, nullptr};
 
     g_options.dumpNodes = opt.hasFlag(itemDump);
 
     if (!g_options.dumpNodes)
     {
         if (opt.positionalCount() == 0)
-            opt.error("Node name is expected");
+        {
+            opt.showError("Node name is expected");
+            return;
+        }
         if (opt.positionalCount() > 1)
-            opt.error("Only one node name is expected");
+        {
+            opt.showError("Only one node name is expected");
+            return;
+        }
 
         g_options.nodeName = opt.getPositional(0);
         if (g_options.nodeName.size() < cons::MinNodeName)
-            opt.error("Node name is too short");
+        {
+            opt.showError("Node name is too short");
+            return;
+        }
         if (g_options.nodeName.size() > cons::MaxNodeName)
-            opt.error("Node name is too long");
+        {
+            opt.showError("Node name is too long");
+            return;
+        }
 
         g_options.directCmd = opt.getOption(itemExec);
         if (opt.hasFlag(itemExec) && g_options.directCmd.size() < 3)
-            opt.error("Command is too short");
+        {
+            opt.showError("Command is too short");
+            return;
+        }
     }
 }
 
