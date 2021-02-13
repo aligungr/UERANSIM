@@ -9,6 +9,7 @@
 #include "task.hpp"
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
+#include <gnb/mr/task.hpp>
 #include <gnb/nts.hpp>
 #include <rrc/encode.hpp>
 

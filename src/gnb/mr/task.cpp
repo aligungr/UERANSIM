@@ -9,6 +9,8 @@
 #include "task.hpp"
 #include "rls.hpp"
 #include <gnb/nts.hpp>
+#include <gnb/rrc/task.hpp>
+#include <gnb/gtp/task.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 

@@ -8,8 +8,8 @@
 
 #include "task.hpp"
 #include <gnb/app/task.hpp>
+#include <gnb/sctp/task.hpp>
 #include <sstream>
-#include <utils/common.hpp>
 
 namespace nr::gnb
 {
@@ -79,34 +79,6 @@ void NgapTask::onLoop()
         default:
             m_logger->unhandledNts(msg);
             break;
-        }
-        break;
-    }
-    case NtsMessageType::GNB_CLI_COMMAND: {
-        auto *w = dynamic_cast<NwGnbCliCommand *>(msg);
-        switch (w->cmd->present)
-        {
-        case app::GnbCliCommand::AMF_LIST: {
-            std::stringstream ss{};
-            for (auto &amf : m_amfCtx)
-                ss << "* amf-id: " << amf.first << "\n";
-            utils::Trim(ss);
-            w->sendResult(ss.str());
-            break;
-        }
-        case app::GnbCliCommand::AMF_STATUS: {
-            if (m_amfCtx.count(w->cmd->amfId) == 0)
-                w->sendError("AMF not found with given ID");
-            else
-            {
-                auto amf = m_amfCtx[w->cmd->amfId];
-                w->sendResult("state: " + std::to_string((int)amf->state));
-            }
-            break;
-        }
-        default: {
-            break;
-        }
         }
         break;
     }
