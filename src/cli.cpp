@@ -7,7 +7,7 @@
 //
 
 #include <algorithm>
-#include <app/node_cli.hpp>
+#include <app/cli_base.hpp>
 #include <app/proc_table.hpp>
 #include <filesystem>
 #include <iostream>

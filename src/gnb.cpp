@@ -7,8 +7,8 @@
 //
 
 #include <app/base_app.hpp>
+#include <app/cli_base.hpp>
 #include <app/cli_cmd.hpp>
-#include <app/node_cli.hpp>
 #include <app/proc_table.hpp>
 #include <gnb/gnb.hpp>
 #include <iostream>
@@ -24,6 +24,7 @@
 static app::CliServer *g_cliServer = nullptr;
 static nr::gnb::GnbConfig *g_refConfig = nullptr;
 static std::unordered_map<std::string, nr::gnb::GNodeB *> g_gnbMap{};
+static app::CliResponseTask *g_cliRespTask;
 
 static struct Options
 {
@@ -137,8 +138,14 @@ static void ReceiveCommand(app::CliMessage &msg)
         return;
     }
 
-    // TODO
-    g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Not implemented yet"));
+    if (g_gnbMap.count(msg.nodeName) == 0)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node not found: " + msg.nodeName));
+        return;
+    }
+
+    auto *gnb = g_gnbMap[msg.nodeName];
+    gnb->pushCommand(std::move(cmd), msg.clientAddr, g_cliRespTask);
 }
 
 static void Loop()
@@ -183,13 +190,17 @@ int main(int argc, char **argv)
 
     auto *gnb = new nr::gnb::GNodeB(g_refConfig, nullptr);
     g_gnbMap[g_refConfig->name] = gnb;
-    gnb->start();
 
     if (!g_options.disableCmd)
     {
         g_cliServer = new app::CliServer{};
         app::CreateProcTable(g_gnbMap, g_cliServer->assignedAddress().getPort());
+
+        g_cliRespTask = new app::CliResponseTask(g_cliServer);
+        g_cliRespTask->start();
     }
+
+    gnb->start();
 
     while (true)
         Loop();

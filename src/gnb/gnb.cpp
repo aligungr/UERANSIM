@@ -14,6 +14,8 @@
 #include "rrc/task.hpp"
 #include "sctp/task.hpp"
 
+#include <app/cli_base.hpp>
+
 nr::gnb::GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
 {
     auto *base = new TaskBase();
@@ -60,4 +62,10 @@ void nr::gnb::GNodeB::start()
     taskBase->rrcTask->start();
     taskBase->mrTask->start();
     taskBase->gtpTask->start();
+}
+
+void nr::gnb::GNodeB::pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address,
+                                  NtsTask *callbackTask)
+{
+    taskBase->appTask->push(new NwGnbCliCommand(std::move(cmd), address, callbackTask));
 }

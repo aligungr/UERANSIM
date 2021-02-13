@@ -6,7 +6,7 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "node_cli.hpp"
+#include "cli_base.hpp"
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
 

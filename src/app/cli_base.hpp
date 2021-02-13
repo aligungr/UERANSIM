@@ -13,6 +13,7 @@
 #include <utility>
 #include <utils/constants.hpp>
 #include <utils/network.hpp>
+#include <utils/nts.hpp>
 #include <vector>
 
 namespace app
@@ -93,6 +94,50 @@ class CliServer
 
     CliMessage receiveMessage();
     void sendMessage(const CliMessage &msg);
+};
+
+struct NwCliSendResponse : NtsMessage
+{
+    InetAddress address{};
+    std::string output{};
+    bool isError{};
+
+    NwCliSendResponse(const InetAddress &address, std::string output, bool isError)
+        : NtsMessage(NtsMessageType::CLI_SEND_RESPONSE), address(address), output(std::move(output)), isError(isError)
+    {
+    }
+};
+
+class CliResponseTask : public NtsTask
+{
+  private:
+    app::CliServer *cliServer;
+
+  public:
+    explicit CliResponseTask(CliServer *cliServer) : cliServer(cliServer)
+    {
+    }
+
+  protected:
+    void onStart() override
+    {
+    }
+    void onLoop() override
+    {
+        auto *msg = take();
+        if (msg == nullptr)
+            return;
+        if (msg->msgType == NtsMessageType::CLI_SEND_RESPONSE)
+        {
+            auto *w = dynamic_cast<NwCliSendResponse *>(msg);
+            cliServer->sendMessage(w->isError ? CliMessage::Error(w->address, w->output)
+                                              : CliMessage::Result(w->address, w->output));
+        }
+        delete msg;
+    }
+    void onQuit() override
+    {
+    }
 };
 
 } // namespace app
