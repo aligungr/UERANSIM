@@ -63,24 +63,22 @@ namespace app
 
 static std::map<std::string, std::string> g_gnbCmdToDescription = {
     {"status", "Show some status information about the gNB"},
+    {"info", "Show some information about the gNB"},
     {"amf-list", "List all AMFs associated with the gNB"},
     {"amf-info", "Show some status information about the given AMF"},
-    {"info", "Show some information about the gNB"},
+    {"ue-list", "List all UEs associated with the gNB"},
+    {"ue-count", "Print the total number of UEs connected the this gNB"},
 };
 
 static std::map<std::string, std::string> g_gnbCmdToUsage = {
-    {"status", "[option...]"},
-    {"amf-list", "[option...]"},
-    {"amf-info", "<amf-id> [option...]"},
-    {"info", "[option...]"},
+    {"status", "[option...]"},   {"info", "[option...]"},
+    {"amf-list", "[option...]"}, {"amf-info", "<amf-id> [option...]"},
+    {"ue-list", "[option...]"},  {"ue-count", "[option...]"},
 };
 
-static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {
-    {"status", false},
-    {"amf-list", false},
-    {"amf-info", true},
-    {"info", false},
-};
+static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
+                                                            {"amf-list", false}, {"amf-info", true},
+                                                            {"ue-list", false},  {"ue-count", false}};
 
 static std::map<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
@@ -156,6 +154,14 @@ std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tok
         if (cmd->amfId <= 0)
             CMD_ERR("Invalid AMF ID")
         return cmd;
+    }
+    else if (subCmd == "ue-list")
+    {
+        return std::make_unique<GnbCliCommand>(GnbCliCommand::UE_LIST);
+    }
+    else if (subCmd == "ue-count")
+    {
+        return std::make_unique<GnbCliCommand>(GnbCliCommand::UE_COUNT);
     }
 
     return nullptr;

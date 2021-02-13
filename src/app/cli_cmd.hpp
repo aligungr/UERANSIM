@@ -22,7 +22,9 @@ struct GnbCliCommand
         STATUS,
         INFO,
         AMF_LIST,
-        AMF_INFO
+        AMF_INFO,
+        UE_LIST,
+        UE_COUNT
     } present;
 
     // AMF_INFO

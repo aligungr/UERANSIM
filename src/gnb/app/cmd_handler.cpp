@@ -127,6 +127,25 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
         }
         break;
     }
+    case app::GnbCliCommand::UE_LIST: {
+        Printer printer{};
+        for (auto &ue : base.ngapTask->m_ueCtx)
+        {
+            printer.appendKeyValueList({
+                {"ue-name", base.mrTask->m_ueMap[ue.first].name},
+                {"ran-ngap-id", std::to_string(ue.second->ranUeNgapId)},
+                {"amf-ngap-id", std::to_string(ue.second->amfUeNgapId)},
+            });
+            printer.decrement(2);
+        }
+        printer.trim();
+        msg.sendResult(printer.makeString());
+        break;
+    }
+    case app::GnbCliCommand::UE_COUNT: {
+        msg.sendResult(std::to_string(base.ngapTask->m_ueCtx.size()));
+        break;
+    }
     }
 }
 
