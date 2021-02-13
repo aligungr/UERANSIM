@@ -18,6 +18,14 @@
 
 static constexpr const size_t MAX_WIDTH = 90;
 
+static char **ConvertArgs(const std::vector<std::string> &vec)
+{
+    char **res = static_cast<char **>(malloc(sizeof(char *) * vec.size()));
+    for (size_t i = 0; i < vec.size(); i++)
+        res[i] = strdup(vec[i].c_str());
+    return res;
+}
+
 static std::string ItemNameDisplay(const opt::OptionItem &item)
 {
     std::stringstream ss{};
@@ -35,7 +43,18 @@ static std::string ItemNameDisplay(const opt::OptionItem &item)
     return ss.str();
 }
 
-opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc) : m_description{desc}
+opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const opt::OptionsDescription &desc)
+    : OptionsResult(static_cast<int>(args.size()), ConvertArgs(args), desc, true)
+{
+}
+
+opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc)
+    : OptionsResult(argc, argv, desc, false)
+{
+}
+
+opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc, bool freeArgv)
+    : m_description{desc}
 {
     argc--;
     argv++;
@@ -138,6 +157,13 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
                 }
             }
         }
+    }
+
+    if (freeArgv)
+    {
+        for (int i = 0; i < argc; i++)
+            free(argv[i]);
+        free(argv);
     }
 }
 
