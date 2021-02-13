@@ -187,8 +187,20 @@ void opt::OptionsResult::help() const
     auto parts = std::localtime(&now);
     auto year = 1900 + parts->tm_year;
 
-    std::cout << m_description.projectName << " " << m_description.version << " " << m_description.appDescription
-              << " | Copyright (c) " << year << " " << m_description.copyright << std::endl;
+    if (!m_description.projectName.empty())
+        std::cout << m_description.projectName << " ";
+    if (!m_description.version.empty())
+        std::cout << m_description.version << " ";
+    if (!m_description.projectName.empty() || !m_description.version.empty())
+        std::cout << "| ";
+    if (!m_description.appDescription.empty())
+        std::cout << m_description.appDescription << " ";
+    if (!m_description.copyright.empty())
+    {
+        if (!m_description.appDescription.empty())
+            std::cout << "| ";
+        std::cout << "Copyright (c) " << year << " " << m_description.copyright << std::endl;
+    }
 
     std::cout << "Usage:" << std::endl;
     for (auto &usage : m_description.usages)
