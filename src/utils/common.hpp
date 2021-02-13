@@ -13,6 +13,7 @@
 #include "octet_string.hpp"
 #include "time_stamp.hpp"
 #include <iomanip>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,9 +33,10 @@ int ParseInt(const char *str);
 uint64_t Random64();
 void Sleep(int ms);
 bool IsRoot();
-bool IsNumeric(const std::string& str);
+bool IsNumeric(const std::string &str);
 void AssertNodeName(const std::string &str);
-void Trim(std::string& str);
+void Trim(std::string &str);
+void Trim(std::stringstream &str);
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)
