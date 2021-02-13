@@ -87,11 +87,8 @@ class OptionsResult
     std::unordered_map<std::string, std::string> m_options{};
     OptionsDescription m_description;
 
-  private:
-    OptionsResult(int argc, char **argv, const OptionsDescription &desc, bool freeArgv);
-
   public:
-    OptionsResult(int argc, char **argv, const OptionsDescription &desc);
+    OptionsResult(int argc, char **argv, const OptionsDescription &desc, bool freeArgv = false);
     OptionsResult(const std::vector<std::string> &args, const OptionsDescription &desc);
 
   public:

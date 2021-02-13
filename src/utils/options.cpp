@@ -48,11 +48,6 @@ opt::OptionsResult::OptionsResult(const std::vector<std::string> &args, const op
 {
 }
 
-opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc)
-    : OptionsResult(argc, argv, desc, false)
-{
-}
-
 opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescription &desc, bool freeArgv)
     : m_description{desc}
 {
