@@ -249,6 +249,9 @@ void NtsTask::requestPause()
 {
     if (++pauseReqCount < 0)
         throw std::runtime_error("NTS pause overflow");
+
+    if (!isQuiting)
+        cv.notify_one();
 }
 
 void NtsTask::requestUnpause()
