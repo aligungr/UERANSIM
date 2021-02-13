@@ -211,10 +211,12 @@ static bool HandleMessage(const app::CliMessage &msg, bool isOneShot)
     {
         while (true)
         {
+            std::cout << "\x1b[1m";
             std::string line{};
             std::vector<std::string> tokens{};
             if (!opt::ReadLine(std::cin, std::cout, line, tokens))
                 exit(0);
+            std::cout << "\x1b[0m";
             if (line.empty())
                 continue;
 
