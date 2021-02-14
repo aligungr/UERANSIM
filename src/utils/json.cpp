@@ -349,7 +349,15 @@ void Json::put(std::string key, Json value)
     if (m_type != Type::OBJECT)
         return;
 
-
+    // Replace if the key is already present
+    for (auto &item : m_children)
+    {
+        if (item.first == key)
+        {
+            item.second = std::move(value);
+            return;
+        }
+    }
 
     m_children.emplace_back(std::move(key), std::move(value));
 }

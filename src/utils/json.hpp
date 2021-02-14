@@ -34,9 +34,11 @@ class Json
     std::string m_strVal{};
     int64_t m_intVal{};
 
-    // Holding children via vector instead of map/unordered_map (because insertion order is needed to be preserved).
-    // Therefore remove operation will be O(n), but performance is not a concern for JSONs. (and add operation is also
-    // O(n) if we compare to check the key is already present)
+    // - Holding children via vector instead of map/unordered_map (because insertion order is needed to be preserved).
+    //   Therefore add/remove operation is O(n), but performance is not a concern for JSONs. (Add operation is also
+    //   O(n) since we compare to check the key is already present)
+    // - NOTE: We're using Json type itself here which is incomplete herein. But C++17 allows std::vector, std::list,
+    //   and std::forward_list to have incomplete types. For older versions we would need pointer etc.
     std::vector<std::pair<std::string, Json>> m_children{};
 
   private:
