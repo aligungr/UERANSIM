@@ -177,7 +177,7 @@ void NasMm::switchCmState(ECmState state)
     }
 
     auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::CM_STATE);
-    statusUpdate->rmState = CmStateName(state);
+    statusUpdate->cmState = CmStateName(state);
     m_base->appTask->push(statusUpdate);
 
     if (state != oldState)
