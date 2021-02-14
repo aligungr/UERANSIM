@@ -7,6 +7,8 @@
 //
 
 #include "common_types.hpp"
+#include <iomanip>
+#include <sstream>
 
 Supi Supi::Parse(const std::string &supi)
 {
@@ -21,4 +23,17 @@ Supi Supi::Parse(const std::string &supi)
         return Supi{"imsi", val};
     }
     throw std::runtime_error("invalid SUPI value");
+}
+
+std::string Supi::toString() const
+{
+    return type + "-" + value;
+}
+
+std::string Plmn::toString() const
+{
+    std::stringstream ss{};
+    ss << std::setfill('0') << std::setw(3) << mcc << "/";
+    ss << std::setfill('0') << std::setw(isLongMnc ? 3 : 2) << mnc;
+    return ss.str();
 }

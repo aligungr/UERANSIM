@@ -226,26 +226,9 @@ struct NwUeNasToNas : NtsMessage
 
 struct NwUeStatusUpdate : NtsMessage
 {
-    static constexpr const int CONNECTED_GNB = 1;
-    static constexpr const int MM_STATE = 2;
-    static constexpr const int RM_STATE = 3;
-    static constexpr const int CM_STATE = 4;
     static constexpr const int SESSION_ESTABLISHMENT = 5;
 
     const int what{};
-
-    // CONNECTED_GNB
-    std::string gnbName{};
-
-    // MM_STATE
-    std::string mmState{};
-    std::string mmSubState{};
-
-    // RM_STATE
-    std::string rmState{};
-
-    // CM_STATE
-    std::string cmState{};
 
     // SESSION_ESTABLISHMENT
     PduSession *pduSession{};

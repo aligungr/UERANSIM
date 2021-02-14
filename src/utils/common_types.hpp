@@ -27,6 +27,8 @@ struct Plmn
     int mcc;
     int mnc;
     bool isLongMnc;
+
+    [[nodiscard]] std::string toString() const;
 };
 
 struct SliceSupport
@@ -115,4 +117,6 @@ struct Supi
     }
 
     static Supi Parse(const std::string &supi);
+
+    [[nodiscard]] std::string toString() const;
 };

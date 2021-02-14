@@ -9,8 +9,8 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <nas/utils.hpp>
-#include <ue/tun/tun.hpp>
 #include <ue/mr/task.hpp>
+#include <ue/tun/tun.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -101,32 +101,7 @@ void UeAppTask::onLoop()
 
 void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
 {
-    if (msg.what == NwUeStatusUpdate::CONNECTED_GNB)
-    {
-        if (msg.gnbName.length() > 0)
-        {
-            m_statusInfo.connectedGnb = std::move(msg.gnbName);
-            m_statusInfo.isConnected = true;
-        }
-        else
-        {
-            m_statusInfo.connectedGnb = {};
-            m_statusInfo.isConnected = false;
-        }
-    }
-    else if (msg.what == NwUeStatusUpdate::MM_STATE)
-    {
-        m_statusInfo.mmState = msg.mmSubState;
-    }
-    else if (msg.what == NwUeStatusUpdate::RM_STATE)
-    {
-        m_statusInfo.rmState = msg.rmState;
-    }
-    else if (msg.what == NwUeStatusUpdate::CM_STATE)
-    {
-        m_statusInfo.cmState = msg.cmState;
-    }
-    else if (msg.what == NwUeStatusUpdate::SESSION_ESTABLISHMENT)
+    if (msg.what == NwUeStatusUpdate::SESSION_ESTABLISHMENT)
     {
         auto *session = msg.pduSession;
 

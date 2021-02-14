@@ -71,7 +71,7 @@ struct UeConfig
     [[nodiscard]] std::string getNodeName() const
     {
         if (supi.has_value())
-            return supi->type + "-" + supi->value;
+            return supi->toString();
         if (imei.has_value())
             return "imei-" + *imei;
         if (imeiSv.has_value())
@@ -91,8 +91,6 @@ struct UeConfig
             return *imeiSv + "|";
         return "unknown-ue|";
     }
-
-    [[nodiscard]] std::string toString() const;
 };
 
 struct TaskBase
@@ -357,14 +355,7 @@ struct UeStatusInfo
         std::string address{};
     };
 
-    bool isConnected{};
-    std::string connectedGnb{};
-    std::string mmState{};
-    std::string rmState{};
-    std::string cmState{};
     std::optional<UePduSessionInfo> pduSessions[16]{};
-
-    [[nodiscard]] std::string toString() const;
 };
 
 const char *CmStateName(ECmState state);

@@ -31,15 +31,6 @@ NasMm::NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers) : m_base{base}, m_n
 void NasMm::onStart(NasSm *sm)
 {
     m_sm = sm;
-
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::MM_STATE);
-    statusUpdate->mmState = MmStateName(m_mmState);
-    statusUpdate->mmSubState = MmSubStateName(m_mmSubState);
-    m_base->appTask->push(statusUpdate);
-
-    statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::RM_STATE);
-    statusUpdate->rmState = RmStateName(m_rmState);
-    m_base->appTask->push(statusUpdate);
 }
 
 void NasMm::onQuit()
@@ -129,11 +120,6 @@ void NasMm::switchMmState(EMmState state, EMmSubState subState)
                                        MmStateName(oldState), MmStateName(state));
     }
 
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::MM_STATE);
-    statusUpdate->mmState = MmStateName(state);
-    statusUpdate->mmSubState = MmSubStateName(subState);
-    m_base->appTask->push(statusUpdate);
-
     if (state != oldState || subState != oldSubState)
         m_logger->info("UE switches to state: %s", MmSubStateName(subState));
 
@@ -153,10 +139,6 @@ void NasMm::switchRmState(ERmState state)
                                        RmStateName(oldState), RmStateName(m_rmState));
     }
 
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::RM_STATE);
-    statusUpdate->rmState = RmStateName(state);
-    m_base->appTask->push(statusUpdate);
-
     // No need to log it
     // m_logger->info("UE switches to state: %s", RmStateName(state));
 
@@ -175,10 +157,6 @@ void NasMm::switchCmState(ECmState state)
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::CM,
                                        CmStateName(oldState), CmStateName(m_cmState));
     }
-
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::CM_STATE);
-    statusUpdate->cmState = CmStateName(state);
-    m_base->appTask->push(statusUpdate);
 
     if (state != oldState)
         m_logger->info("UE switches to state: %s", CmStateName(state));

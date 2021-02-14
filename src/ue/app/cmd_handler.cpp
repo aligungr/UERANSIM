@@ -14,6 +14,7 @@
 #include <ue/rrc/task.hpp>
 #include <ue/tun/task.hpp>
 #include <utils/common.hpp>
+#include <utils/printer.hpp>
 
 #define PAUSE_CONFIRM_TIMEOUT 3000
 #define PAUSE_POLLING 10
@@ -82,11 +83,27 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
-        msg.sendResult(base.appTask->m_statusInfo.toString());
+        Printer printer{};
+        printer.appendKeyValue({
+            {"cm-state", nr::ue::CmStateName(base.nasTask->mm->m_cmState)},
+            {"rm-state", nr::ue::RmStateName(base.nasTask->mm->m_rmState)},
+            {"mm-state", nr::ue::MmSubStateName(base.nasTask->mm->m_mmSubState)},
+            {"sim-inserted", base.nasTask->mm->m_validSim ? "true" : "false"},
+        });
+        printer.trim();
+        msg.sendResult(printer.makeString());
         break;
     }
     case app::UeCliCommand::INFO: {
-        msg.sendResult(base.config->toString());
+        Printer printer{};
+        printer.appendKeyValue({
+            {"supi", base.config->supi.has_value() ? base.config->supi->toString() : ""},
+            {"plmn", base.config->plmn.toString()},
+            {"imei", base.config->imei.has_value() ? *base.config->imei : ""},
+            {"imeisv", base.config->imeiSv.has_value() ? *base.config->imeiSv : ""},
+        });
+        printer.trim();
+        msg.sendResult(printer.makeString());
         break;
     }
     }
