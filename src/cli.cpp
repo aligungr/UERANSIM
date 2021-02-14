@@ -64,6 +64,8 @@ static uint16_t DiscoverNode(const std::string &node)
         entries[file.path()] = app::ProcTableEntry::Decode(content);
     }
 
+    uint16_t found = 0;
+
     for (auto &e : entries)
     {
         // If no such process, it means that this ProcTable file is outdated
@@ -78,12 +80,11 @@ static uint16_t DiscoverNode(const std::string &node)
         for (auto &n : e.second.nodes)
         {
             if (n == node) // TODO: version checking
-                return e.second.port;
+                found = e.second.port;
         }
     }
 
-    // No process found for this node name
-    return 0;
+    return found;
 }
 
 static std::vector<std::string> DumpNames()
