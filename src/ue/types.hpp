@@ -359,9 +359,9 @@ struct UeStatusInfo
     std::optional<UePduSessionInfo> pduSessions[16]{};
 };
 
-Json ToJson(ECmState state);
-Json ToJson(ERmState state);
-Json ToJson(EMmState state);
-Json ToJson(EMmSubState state);
+Json ToJson(const ECmState& state);
+Json ToJson(const ERmState& state);
+Json ToJson(const EMmState& state);
+Json ToJson(const EMmSubState& state);
 
 } // namespace nr::ue

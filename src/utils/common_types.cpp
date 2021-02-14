@@ -37,3 +37,11 @@ Json ToJson(const Plmn &v)
     ss << std::setfill('0') << std::setw(v.isLongMnc ? 3 : 2) << v.mnc;
     return ss.str();
 }
+
+Json ToJson(const SliceSupport &v)
+{
+    return Json::Obj({
+        {"sst", ToJson(v.sst)},
+        {"sd", ToJson(v.sd)}
+    });
+}

@@ -120,3 +120,4 @@ struct Supi
 
 Json ToJson(const Supi &v);
 Json ToJson(const Plmn &v);
+Json ToJson(const SliceSupport &v);

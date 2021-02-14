@@ -13,6 +13,7 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 class Json
 {
@@ -106,4 +107,13 @@ template <typename T>
 inline Json ToJson(const std::optional<T> &v)
 {
     return v.has_value() ? ToJson(*v) : Json{nullptr};
+}
+
+template <typename T>
+inline Json ToJson(const std::vector<T> &v)
+{
+    Json j = Json::Arr({});
+    for (auto &item : v)
+        j.push(ToJson(item));
+    return j;
 }
