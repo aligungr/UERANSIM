@@ -364,5 +364,6 @@ Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
 Json ToJson(const EMmSubState &state);
 Json ToJson(const UeConfig &v);
+Json ToJson(const UeTimers &v);
 
 } // namespace nr::ue

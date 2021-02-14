@@ -118,4 +118,15 @@ int NasTimer::getRemaining() const
     return static_cast<int>(std::max(interval - elapsed, 0L));
 }
 
+Json ToJson(const NasTimer &v)
+{
+    int interval = v.getInterval();
+
+    return Json::Obj({
+        {"interval", interval == INT32_MAX ? Json{"inf"} : interval},
+        {"remaining", v.getRemaining()},
+        {"running", v.isRunning()},
+    });
+}
+
 } // namespace nas

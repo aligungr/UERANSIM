@@ -111,6 +111,10 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
         msg.sendResult(ToJson(*base.config).dumpYaml());
         break;
     }
+    case app::UeCliCommand::TIMERS: {
+        msg.sendResult(ToJson(base.nasTask->timers).dumpYaml());
+        break;
+    }
     }
 }
 

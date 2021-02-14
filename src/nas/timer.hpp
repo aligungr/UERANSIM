@@ -10,6 +10,8 @@
 
 #include "ie4.hpp"
 
+#include <utils/json.hpp>
+
 namespace nas
 {
 
@@ -39,5 +41,7 @@ class NasTimer
     [[nodiscard]] int getInterval() const;
     [[nodiscard]] int getRemaining() const;
 };
+
+Json ToJson(const NasTimer &v);
 
 } // namespace nas

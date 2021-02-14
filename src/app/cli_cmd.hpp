@@ -41,6 +41,7 @@ struct UeCliCommand
     {
         INFO,
         STATUS,
+        TIMERS,
     } present;
 
     explicit UeCliCommand(PR present) : present(present)
