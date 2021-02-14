@@ -45,7 +45,7 @@ static std::set<int> FindProcesses()
     return res;
 }
 
-static uint16_t DiscoverNode(const std::string &node)
+static uint16_t DiscoverNode(const std::string &node, int &skippedDueToVersion)
 {
     if (!io::Exists(cons::PROC_TABLE_DIR))
         return 0;
@@ -65,6 +65,7 @@ static uint16_t DiscoverNode(const std::string &node)
     }
 
     uint16_t found = 0;
+    skippedDueToVersion = 0;
 
     for (auto &e : entries)
     {
@@ -79,8 +80,13 @@ static uint16_t DiscoverNode(const std::string &node)
         // If searching node exists in this file, extract port number from it.
         for (auto &n : e.second.nodes)
         {
-            if (n == node) // TODO: version checking
-                found = e.second.port;
+            if (n == node)
+            {
+                if (e.second.major == cons::Major && e.second.minor == cons::Minor && e.second.patch == cons::Patch)
+                    found = e.second.port;
+                else
+                    skippedDueToVersion++;
+            }
         }
     }
 
@@ -278,11 +284,12 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    uint16_t cmdPort;
+    uint16_t cmdPort{};
+    int skippedDueToVersion{};
 
     try
     {
-        cmdPort = DiscoverNode(g_options.nodeName);
+        cmdPort = DiscoverNode(g_options.nodeName, skippedDueToVersion);
     }
     catch (const std::runtime_error &e)
     {
@@ -292,6 +299,9 @@ int main(int argc, char **argv)
     if (cmdPort == 0)
     {
         std::cerr << "ERROR: No node found with name: " << g_options.nodeName << std::endl;
+        if (skippedDueToVersion > 0)
+            std::cerr << "WARNING: " << skippedDueToVersion
+                      << " node(s) skipped due to version mismatch between the node and the CLI" << std::endl;
         return 1;
     }
 
