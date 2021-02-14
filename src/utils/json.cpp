@@ -208,10 +208,6 @@ Json::Json(std::string str) : m_type{Type::STRING}, m_strVal(std::move(str))
 {
 }
 
-Json::Json(const char *str) : m_type{Type::STRING}, m_strVal(str)
-{
-}
-
 Json::Json(bool v) : m_type{Type::BOOL}, m_strVal(v ? "true" : "false"), m_intVal{v}
 {
 }
@@ -387,11 +383,6 @@ Json ToJson(bool v)
 }
 
 Json ToJson(const std::string &v)
-{
-    return v;
-}
-
-Json ToJson(const char *v)
 {
     return v;
 }

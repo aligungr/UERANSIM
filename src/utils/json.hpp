@@ -10,6 +10,7 @@
 
 #include <initializer_list>
 #include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <utility>
@@ -44,7 +45,6 @@ class Json
     Json();
     /* no-explicit */ Json(nullptr_t v);
     /* no-explicit */ Json(std::string str);
-    /* no-explicit */ Json(const char *str);
     /* no-explicit */ Json(bool v);
     /* no-explicit */ Json(uint8_t v);
     /* no-explicit */ Json(int8_t v);
@@ -54,6 +54,14 @@ class Json
     /* no-explicit */ Json(int32_t v);
     /* no-explicit */ Json(int64_t v);
     /* no-explicit */ Json(uint64_t v) = delete;
+
+    template <std::size_t N>
+    inline /* no-explicit */ Json(const char (&v)[N]) : Json(std::string(v))
+    {
+    }
+
+    template <typename T>
+    Json(T) = delete;
 
   public:
     static Json Arr(std::initializer_list<Json> &&elements);
@@ -94,7 +102,6 @@ class Json
 Json ToJson(nullptr_t);
 Json ToJson(bool v);
 Json ToJson(const std::string &v);
-Json ToJson(const char *v);
 Json ToJson(uint8_t v);
 Json ToJson(int8_t v);
 Json ToJson(uint16_t v);
@@ -110,6 +117,24 @@ inline Json ToJson(const std::optional<T> &v)
 }
 
 template <typename T>
+inline Json ToJson(T *v)
+{
+    return v != nullptr ? ToJson(*v) : Json{nullptr};
+}
+
+template <typename T>
+inline Json ToJson(const std::unique_ptr<T> &v)
+{
+    return v != nullptr ? ToJson(*v) : Json{nullptr};
+}
+
+template <typename T>
+inline Json ToJson(const T *v)
+{
+    return v != nullptr ? ToJson(*v) : Json{nullptr};
+}
+
+template <typename T>
 inline Json ToJson(const std::vector<T> &v)
 {
     Json j = Json::Arr({});
@@ -117,3 +142,6 @@ inline Json ToJson(const std::vector<T> &v)
         j.push(ToJson(item));
     return j;
 }
+
+template <typename T>
+Json ToJson(T) = delete;

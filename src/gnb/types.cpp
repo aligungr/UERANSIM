@@ -37,10 +37,14 @@ Json ToJson(const GnbConfig &v)
 Json ToJson(const NgapAmfContext &v)
 {
     return Json::Obj({
+        {"ctx-id", v.ctxId},
         {"name", v.amfName},
-        {"capacity", v.relativeCapacity},
-        {"state", ToJson(v.state).str()},
         {"address", v.address + ":" + std::to_string(v.port)},
+        {"state", ToJson(v.state).str()},
+        {"capacity", v.relativeCapacity},
+        {"association", ToJson(v.association)},
+        {"served-guami", ::ToJson(v.servedGuamiList)},
+        {"served-plmn", ::ToJson(v.plmnSupportList)},
     });
 }
 
@@ -74,6 +78,26 @@ Json ToJson(const EPagingDrx &v)
     default:
         return "?";
     }
+}
+
+Json ToJson(const SctpAssociation &v)
+{
+    return Json::Obj({{"id", v.associationId}, {"rx-num", v.inStreams}, {"tx-num", v.outStreams}});
+}
+
+Json ToJson(const ServedGuami &v)
+{
+    return Json::Obj({{"guami", ToJson(v.guami)}, {"backup-amf", v.backupAmfName}});
+}
+
+Json ToJson(const Guami &v)
+{
+    return Json::Obj({
+        {"plmn", ToJson(v.plmn)},
+        {"region-id", ::ToJson(v.amfRegionId)},
+        {"set-id", ::ToJson(v.amfSetId)},
+        {"pointer", ::ToJson(v.amfPointer)},
+    });
 }
 
 } // namespace nr::gnb

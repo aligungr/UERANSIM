@@ -40,8 +40,10 @@ Json ToJson(const Plmn &v)
 
 Json ToJson(const SliceSupport &v)
 {
-    return Json::Obj({
-        {"sst", ToJson(v.sst)},
-        {"sd", ToJson(v.sd)}
-    });
+    return Json::Obj({{"sst", ToJson(v.sst)}, {"sd", ToJson(v.sd)}});
+}
+
+Json ToJson(const PlmnSupport &v)
+{
+    return Json::Obj({{"plmn", ToJson(v.plmn)}, {"nssai", ToJson(v.sliceSupportList)}});
 }

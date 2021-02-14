@@ -303,5 +303,8 @@ Json ToJson(const GnbConfig &v);
 Json ToJson(const NgapAmfContext &v);
 Json ToJson(const EAmfState &v);
 Json ToJson(const EPagingDrx &v);
+Json ToJson(const SctpAssociation &v);
+Json ToJson(const ServedGuami &v);
+Json ToJson(const Guami &v);
 
 } // namespace nr::gnb
