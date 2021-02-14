@@ -65,6 +65,8 @@ class Json
 
   public:
     static Json Arr(std::initializer_list<Json> &&elements);
+    static Json Arr(const std::vector<Json> &elements);
+    static Json Arr(std::vector<Json> &&elements);
     static Json Obj(std::initializer_list<std::pair<std::string, Json>> &&elements);
 
   public:

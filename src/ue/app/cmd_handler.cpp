@@ -83,6 +83,18 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
+        std::vector<Json> pduSessions{};
+        int index = 0;
+        for (auto &pduSession : base.appTask->m_statusInfo.pduSessions)
+        {
+            if (pduSession.has_value())
+            {
+                pduSessions.push_back(
+                    Json::Obj({{"id", index}, {"type", pduSession->type}, {"address", pduSession->address}}));
+            }
+            index++;
+        }
+
         Json json = Json::Obj({
             {"cm-state", ToJson(base.nasTask->mm->m_cmState)},
             {"rm-state", ToJson(base.nasTask->mm->m_rmState)},
@@ -90,6 +102,7 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
             {"sim-inserted", base.nasTask->mm->m_validSim},
             {"stored-suci", ToJson(base.nasTask->mm->m_storedSuci)},
             {"stored-guti", ToJson(base.nasTask->mm->m_storedGuti)},
+            {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         msg.sendResult(json.dumpYaml());
         break;

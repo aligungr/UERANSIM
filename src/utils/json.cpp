@@ -349,6 +349,26 @@ Json Json::Arr(std::initializer_list<Json> &&elements)
     return json;
 }
 
+Json Json::Arr(const std::vector<Json> &elements)
+{
+    Json json{};
+    json.m_type = Type::ARRAY;
+    int index = 0;
+    for (auto &item : elements)
+        json.m_children[std::to_string(index++)] = item;
+    return json;
+}
+
+Json Json::Arr(std::vector<Json> &&elements)
+{
+    Json json{};
+    json.m_type = Type::ARRAY;
+    int index = 0;
+    for (auto &item : elements)
+        json.m_children[std::to_string(index++)] = std::move(item);
+    return json;
+}
+
 Json Json::Obj(std::initializer_list<std::pair<std::string, Json>> &&elements)
 {
     Json json{};
