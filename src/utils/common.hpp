@@ -50,7 +50,10 @@ template <typename T>
 static std::string IntToHex(T i)
 {
     std::stringstream stream;
-    stream << std::setfill('0') << std::setw(sizeof(T) * 2) << std::hex << i;
+    if constexpr (sizeof(T) == 1)
+        stream << std::setfill('0') << std::setw(sizeof(T) * 2) << std::hex << static_cast<int>(i);
+    else
+        stream << std::setfill('0') << std::setw(sizeof(T) * 2) << std::hex << i;
     return stream.str();
 }
 
