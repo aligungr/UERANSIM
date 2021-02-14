@@ -52,48 +52,6 @@ static std::string EscapeJson(const std::string &str)
     return output;
 }
 
-// TODO
-static std::string EscapeYaml(const std::string &str)
-{
-    std::string output;
-    output.reserve(str.length());
-
-    for (char i : str)
-    {
-        switch (i)
-        {
-        case '"':
-            output += "\\\"";
-            break;
-        case '/':
-            output += "\\/";
-            break;
-        case '\b':
-            output += "\\b";
-            break;
-        case '\f':
-            output += "\\f";
-            break;
-        case '\n':
-            output += "\\n";
-            break;
-        case '\r':
-            output += "\\r";
-            break;
-        case '\t':
-            output += "\\t";
-            break;
-        case '\\':
-            output += "\\\\";
-            break;
-        default:
-            output += i;
-            break;
-        }
-    }
-    return output;
-}
-
 static void AppendJson(const Json &json, std::stringstream &stream, int indentation)
 {
     std::string indent(indentation, ' ');
@@ -157,7 +115,7 @@ static void AppendYaml(const Json &json, std::stringstream &stream, int indentat
     case Json::Type::STRING:
     case Json::Type::NUMBER:
     case Json::Type::BOOL:
-        stream << json.str();
+        stream << json.str(); // TODO: Escape YAML
         break;
     case Json::Type::OBJECT: {
         int index = 0;
@@ -173,7 +131,7 @@ static void AppendYaml(const Json &json, std::stringstream &stream, int indentat
             else
             {
                 stream << "\n";
-				initialPos = stream.tellp();
+                initialPos = stream.tellp();
                 AppendYaml(item.second, stream, indentation + 1, true);
             }
             if (index != json.itemCount() - 1 && initialPos != stream.tellp())
