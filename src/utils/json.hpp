@@ -30,6 +30,8 @@ class Json
     Type m_type{};
     std::string m_strVal{};
     int64_t m_intVal{};
+
+    // TODO: Switch to some ordered map (preserving insertion order)
     std::map<std::string, Json> m_children{};
 
   private:
