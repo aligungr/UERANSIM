@@ -6,7 +6,7 @@ file(GLOB_RECURSE YAML_SRC_FILES *.cpp)
 file(GLOB HDR_FILES *.hpp)
 file(GLOB SRC_FILES *.cpp)
 
-add_library(utils ${YAML_HDR_FILES} ${YAML_SRC_FILES} ../ext/cxxopts/cxxopts.hpp ${HDR_FILES} ${SRC_FILES})
+add_library(utils ${YAML_HDR_FILES} ${YAML_SRC_FILES} ${HDR_FILES} ${SRC_FILES})
 
 target_link_libraries(utils pthread)
 target_link_libraries(utils ext)
