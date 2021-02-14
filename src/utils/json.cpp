@@ -166,14 +166,17 @@ static void AppendYaml(const Json &json, std::stringstream &stream, int indentat
             if (index > 0 || initialIndentation)
                 stream << indent;
             stream << item.first << ": ";
+
+            int initialPos = -1;
             if (item.second.isPrimitive())
                 AppendYaml(item.second, stream, indentation + 1, false);
             else
             {
                 stream << "\n";
+				initialPos = stream.tellp();
                 AppendYaml(item.second, stream, indentation + 1, true);
             }
-            if (index != json.itemCount() - 1)
+            if (index != json.itemCount() - 1 && initialPos != stream.tellp())
                 stream << "\n";
             index++;
         }
