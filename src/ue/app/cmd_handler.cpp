@@ -88,6 +88,8 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
             {"rm-state", ToJson(base.nasTask->mm->m_rmState)},
             {"mm-state", ToJson(base.nasTask->mm->m_mmSubState)},
             {"sim-inserted", base.nasTask->mm->m_validSim},
+            {"stored-suci", ToJson(base.nasTask->mm->m_storedSuci)},
+            {"stored-guti", ToJson(base.nasTask->mm->m_storedGuti)},
         });
         msg.sendResult(json.dumpYaml());
         break;

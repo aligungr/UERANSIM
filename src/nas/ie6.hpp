@@ -14,6 +14,7 @@
 #include "values.hpp"
 
 #include <utils/common_types.hpp>
+#include <utils/json.hpp>
 
 namespace nas
 {
@@ -187,7 +188,7 @@ struct IE5gsMobileIdentity : InformationElement6
     ESupiFormat supiFormat; // meaningful if identityType is SUCI
 
     // using at most one of the following 3 members:
-    GutiMobileIdentity gutiOrTmsi{}; // used for TMSI and GUTI (first two member not exist in TMSI)
+    GutiMobileIdentity gutiOrTmsi{}; // used for TMSI and GUTI (some members not exist in TMSI)
     std::string value{};             // used for IMEI, IMEI-SV, NSI,
     ImsiMobileIdentity imsi{};       // used for IMSI
 
@@ -202,5 +203,7 @@ struct IEEapMessage : InformationElement6
     static IEEapMessage Decode(const OctetView &stream, int length);
     static void Encode(const IEEapMessage &ie, OctetString &stream);
 };
+
+Json ToJson(const IE5gsMobileIdentity &v);
 
 } // namespace nas

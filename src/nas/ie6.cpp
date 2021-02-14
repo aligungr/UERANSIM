@@ -443,4 +443,50 @@ void IEEapMessage::Encode(const IEEapMessage &ie, OctetString &stream)
     eap::EncodeEapPdu(stream, *ie.eap);
 }
 
+Json ToJson(const IE5gsMobileIdentity &v)
+{
+    switch (v.type)
+    {
+    case EIdentityType::NO_IDENTITY:
+        return "no-identitiy";
+    case EIdentityType::SUCI: {
+        switch (v.supiFormat)
+        {
+        case ESupiFormat::IMSI:
+            return Json::Obj({
+                {"plmn", ToJson(v.imsi.plmn)},
+                {"routing-indicator", v.imsi.routingIndicator},
+                {"protection-schema", v.imsi.protectionSchemaId},
+                {"hnp-key-id", ToJson(v.imsi.homeNetworkPublicKeyIdentifier)},
+                {"scheme-output", v.imsi.schemeOutput},
+            });
+        case ESupiFormat::NETWORK_SPECIFIC_IDENTIFIER:
+            return "nai-" + v.value;
+        default:
+            return "?";
+        }
+    }
+    case EIdentityType::GUTI:
+        return Json::Obj({
+            {"plmn", ToJson(v.gutiOrTmsi.plmn)},
+            {"amf-region-id", ToJson(v.gutiOrTmsi.amfRegionId)},
+            {"amf-set-id", v.gutiOrTmsi.amfSetId},
+            {"amf-pointer", v.gutiOrTmsi.amfPointer},
+            {"tmsi", ToJson(v.gutiOrTmsi.tmsi)},
+        });
+    case EIdentityType::IMEI:
+        return "imei-" + v.value;
+    case EIdentityType::TMSI:
+        return Json::Obj({
+            {"amf-set-id", v.gutiOrTmsi.amfSetId},
+            {"amf-pointer", v.gutiOrTmsi.amfPointer},
+            {"tmsi", ToJson(v.gutiOrTmsi.tmsi)},
+        });
+    case EIdentityType::IMEISV:
+        return "imeisv-" + v.value;
+    default:
+        return "?";
+    }
+}
+
 } // namespace nas
