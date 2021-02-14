@@ -95,13 +95,7 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::INFO: {
-        Json json = Json::Obj({
-            {"supi", ToJson(base.config->supi)},
-            {"plmn", ToJson(base.config->plmn)},
-            {"imei", ::ToJson(base.config->imei)},
-            {"imeisv", ::ToJson(base.config->imeiSv)},
-        });
-        msg.sendResult(json.dumpYaml());
+        msg.sendResult(ToJson(*base.config).dumpYaml());
         break;
     }
     }

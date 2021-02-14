@@ -22,7 +22,7 @@ UeTimers::UeTimers()
 {
 }
 
-Json ToJson(const ECmState& state)
+Json ToJson(const ECmState &state)
 {
     switch (state)
     {
@@ -35,7 +35,7 @@ Json ToJson(const ECmState& state)
     }
 }
 
-Json ToJson(const ERmState& state)
+Json ToJson(const ERmState &state)
 {
     switch (state)
     {
@@ -48,7 +48,7 @@ Json ToJson(const ERmState& state)
     }
 }
 
-Json ToJson(const EMmState& state)
+Json ToJson(const EMmState &state)
 {
     switch (state)
     {
@@ -69,7 +69,7 @@ Json ToJson(const EMmState& state)
     }
 }
 
-Json ToJson(const EMmSubState& state)
+Json ToJson(const EMmSubState &state)
 {
     switch (state)
     {
@@ -118,6 +118,17 @@ Json ToJson(const EMmSubState& state)
     default:
         return "?";
     }
+}
+
+Json ToJson(const UeConfig &v)
+{
+    return Json::Obj({
+        {"supi", ToJson(v.supi)},
+        {"plmn", ToJson(v.plmn)},
+        {"imei", ::ToJson(v.imei)},
+        {"imeiSv", ::ToJson(v.imeiSv)},
+        {"nssai", ::ToJson(v.nssais)},
+    });
 }
 
 } // namespace nr::ue
