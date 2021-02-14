@@ -304,9 +304,8 @@ Json Json::Arr(std::initializer_list<Json> &&elements)
 {
     Json json{};
     json.m_type = Type::ARRAY;
-    int index = 0;
     for (auto &item : elements)
-        json.m_children[std::to_string(index++)] = item;
+        json.push(item);
     return json;
 }
 
@@ -314,9 +313,8 @@ Json Json::Arr(const std::vector<Json> &elements)
 {
     Json json{};
     json.m_type = Type::ARRAY;
-    int index = 0;
     for (auto &item : elements)
-        json.m_children[std::to_string(index++)] = item;
+        json.push(item);
     return json;
 }
 
@@ -324,9 +322,8 @@ Json Json::Arr(std::vector<Json> &&elements)
 {
     Json json{};
     json.m_type = Type::ARRAY;
-    int index = 0;
     for (auto &item : elements)
-        json.m_children[std::to_string(index++)] = std::move(item);
+        json.push(std::move(item));
     return json;
 }
 
@@ -335,7 +332,7 @@ Json Json::Obj(std::initializer_list<std::pair<std::string, Json>> &&elements)
     Json json{};
     json.m_type = Type::OBJECT;
     for (auto &item : elements)
-        json.m_children[item.first] = item.second;
+        json.put(item.first, item.second);
     return json;
 }
 
@@ -343,14 +340,18 @@ void Json::push(Json element)
 {
     if (m_type != Type::ARRAY)
         return;
-    m_children[std::to_string(m_children.size())] = std::move(element);
+
+    m_children.emplace_back(std::to_string(m_children.size()), std::move(element));
 }
 
 void Json::put(std::string key, Json value)
 {
     if (m_type != Type::OBJECT)
         return;
-    m_children[std::move(key)] = std::move(value);
+
+
+
+    m_children.emplace_back(std::move(key), std::move(value));
 }
 
 Json ToJson(nullptr_t)

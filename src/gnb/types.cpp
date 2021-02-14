@@ -37,7 +37,7 @@ Json ToJson(const GnbConfig &v)
 Json ToJson(const NgapAmfContext &v)
 {
     return Json::Obj({
-        {"ctx-id", v.ctxId},
+        {"id", v.ctxId},
         {"name", v.amfName},
         {"address", v.address + ":" + std::to_string(v.port)},
         {"state", ToJson(v.state).str()},

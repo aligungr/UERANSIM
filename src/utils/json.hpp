@@ -34,12 +34,14 @@ class Json
     std::string m_strVal{};
     int64_t m_intVal{};
 
-    // TODO: Switch to some ordered map (preserving insertion order)
-    std::map<std::string, Json> m_children{};
+    // Holding children via vector instead of map/unordered_map (because insertion order is needed to be preserved).
+    // Therefore remove operation will be O(n), but performance is not a concern for JSONs. (and add operation is also
+    // O(n) if we compare to check the key is already present)
+    std::vector<std::pair<std::string, Json>> m_children{};
 
   private:
     typedef decltype(m_children.begin()) iterator;
-    typedef decltype(const_cast<const std::map<std::string, Json> &>(m_children).begin()) const_iterator;
+    typedef decltype(const_cast<const std::vector<std::pair<std::string, Json>> &>(m_children).begin()) const_iterator;
 
   public:
     Json();
