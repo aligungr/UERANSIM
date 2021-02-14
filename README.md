@@ -2,7 +2,7 @@
   <a href="https://github.com/aligungr/UERANSIM"><img src="/.github/logo.png" width="75" title="UERANSIM"></a>
 </p>
 <p align="center">
-<img src="https://img.shields.io/badge/UERANSIM-v3.0.3-blue" />
+<img src="https://img.shields.io/badge/UERANSIM-v3.1.0-blue" />
 <img src="https://img.shields.io/badge/3GPP-R15-orange" />
 <img src="https://img.shields.io/badge/License-GPL--3.0-green"/>
 </p>
