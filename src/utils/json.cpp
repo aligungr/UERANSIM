@@ -346,7 +346,7 @@ void Json::push(Json element)
     m_children[std::to_string(m_children.size())] = std::move(element);
 }
 
-void Json::add(std::string key, Json value)
+void Json::put(std::string key, Json value)
 {
     if (m_type != Type::OBJECT)
         return;

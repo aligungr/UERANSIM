@@ -88,7 +88,7 @@ class Json
 
   public:
     void push(Json element);
-    void add(std::string key, Json value);
+    void put(std::string key, Json value);
 
   public:
     [[nodiscard]] iterator begin();
