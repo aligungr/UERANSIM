@@ -10,6 +10,7 @@
 
 #include <initializer_list>
 #include <map>
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -84,3 +85,21 @@ class Json
     [[nodiscard]] std::string dumpJson() const;
     [[nodiscard]] std::string dumpYaml() const;
 };
+
+Json ToJson(nullptr_t);
+Json ToJson(bool v);
+Json ToJson(const std::string &v);
+Json ToJson(const char *v);
+Json ToJson(uint8_t v);
+Json ToJson(int8_t v);
+Json ToJson(uint16_t v);
+Json ToJson(int16_t v);
+Json ToJson(uint32_t v);
+Json ToJson(int32_t v);
+Json ToJson(int64_t v);
+
+template <typename T>
+inline Json ToJson(const std::optional<T> &v)
+{
+    return v.has_value() ? ToJson(*v) : Json{nullptr};
+}

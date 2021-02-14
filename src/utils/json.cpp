@@ -360,3 +360,59 @@ Json Json::Obj(std::initializer_list<std::pair<std::string, Json>> &&elements)
         json.m_children[item.first] = item.second;
     return json;
 }
+
+Json ToJson(nullptr_t)
+{
+    return nullptr;
+}
+
+Json ToJson(bool v)
+{
+    return v;
+}
+
+Json ToJson(const std::string &v)
+{
+    return v;
+}
+
+Json ToJson(const char *v)
+{
+    return v;
+}
+
+Json ToJson(uint8_t v)
+{
+    return v;
+}
+
+Json ToJson(int8_t v)
+{
+    return v;
+}
+
+Json ToJson(uint16_t v)
+{
+    return v;
+}
+
+Json ToJson(int16_t v)
+{
+    return v;
+}
+
+Json ToJson(uint32_t v)
+{
+    return v;
+}
+
+Json ToJson(int32_t v)
+{
+    return v;
+}
+
+Json ToJson(int64_t v)
+{
+    return v;
+}
+
