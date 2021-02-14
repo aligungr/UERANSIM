@@ -25,15 +25,15 @@ Supi Supi::Parse(const std::string &supi)
     throw std::runtime_error("invalid SUPI value");
 }
 
-std::string Supi::toString() const
+Json ToJson(const Supi &v)
 {
-    return type + "-" + value;
+    return v.type + "-" + v.value;
 }
 
-std::string Plmn::toString() const
+Json ToJson(const Plmn &v)
 {
     std::stringstream ss{};
-    ss << std::setfill('0') << std::setw(3) << mcc << "/";
-    ss << std::setfill('0') << std::setw(isLongMnc ? 3 : 2) << mnc;
+    ss << std::setfill('0') << std::setw(3) << v.mcc << "/";
+    ss << std::setfill('0') << std::setw(v.isLongMnc ? 3 : 2) << v.mnc;
     return ss.str();
 }

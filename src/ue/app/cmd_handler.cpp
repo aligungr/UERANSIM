@@ -83,27 +83,23 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
-        Printer printer{};
-        printer.appendKeyValue({
-            {"cm-state", nr::ue::CmStateName(base.nasTask->mm->m_cmState)},
-            {"rm-state", nr::ue::RmStateName(base.nasTask->mm->m_rmState)},
-            {"mm-state", nr::ue::MmSubStateName(base.nasTask->mm->m_mmSubState)},
-            {"sim-inserted", base.nasTask->mm->m_validSim ? "true" : "false"},
+        Json json = Json::Obj({
+            {"cm-state", ToJson(base.nasTask->mm->m_cmState)},
+            {"rm-state", ToJson(base.nasTask->mm->m_rmState)},
+            {"mm-state", ToJson(base.nasTask->mm->m_mmSubState)},
+            {"sim-inserted", base.nasTask->mm->m_validSim},
         });
-        printer.trim();
-        msg.sendResult(printer.makeString());
+        msg.sendResult(json.dumpYaml());
         break;
     }
     case app::UeCliCommand::INFO: {
-        Printer printer{};
-        printer.appendKeyValue({
-            {"supi", base.config->supi.has_value() ? base.config->supi->toString() : ""},
-            {"plmn", base.config->plmn.toString()},
-            {"imei", base.config->imei.has_value() ? *base.config->imei : ""},
-            {"imeisv", base.config->imeiSv.has_value() ? *base.config->imeiSv : ""},
+        Json json = Json::Obj({
+            {"supi", ToJson(base.config->supi)},
+            {"plmn", ToJson(base.config->plmn)},
+            {"imei", ::ToJson(base.config->imei)},
+            {"imeisv", ::ToJson(base.config->imeiSv)},
         });
-        printer.trim();
-        msg.sendResult(printer.makeString());
+        msg.sendResult(json.dumpYaml());
         break;
     }
     }

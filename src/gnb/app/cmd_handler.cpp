@@ -92,19 +92,18 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::GnbCliCommand::STATUS: {
-        msg.sendResult(base.appTask->m_statusInfo.toString());
+        msg.sendResult(ToJson(base.appTask->m_statusInfo).dumpYaml());
         break;
     }
     case app::GnbCliCommand::INFO: {
-        msg.sendResult(base.config->toString());
+        msg.sendResult(ToJson(*base.config).dumpYaml());
         break;
     }
     case app::GnbCliCommand::AMF_LIST: {
-        std::stringstream ss{};
+        Json json = Json::Arr({});
         for (auto &amf : base.ngapTask->m_amfCtx)
-            ss << "- ID[" << amf.first << "]\n";
-        utils::Trim(ss);
-        msg.sendResult(ss.str());
+            json.push(Json::Obj({{"id", amf.first}}));
+        msg.sendResult(json.dumpYaml());
         break;
     }
     case app::GnbCliCommand::AMF_INFO: {
@@ -113,33 +112,21 @@ void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
         else
         {
             auto amf = base.ngapTask->m_amfCtx[msg.cmd->amfId];
-
-            Printer printer{};
-            printer.appendKeyValue({
-                {"address", amf->address},
-                {"port", std::to_string(amf->port)},
-                {"name", amf->amfName},
-                {"capacity", std::to_string(amf->relativeCapacity)},
-                {"state", EnumToString(amf->state)},
-            });
-            printer.trim();
-            msg.sendResult(printer.makeString());
+            msg.sendResult(ToJson(*amf).dumpYaml());
         }
         break;
     }
     case app::GnbCliCommand::UE_LIST: {
-        Printer printer{};
+        Json json = Json::Arr({});
         for (auto &ue : base.ngapTask->m_ueCtx)
         {
-            printer.appendKeyValueList({
+            json.push(Json::Obj({
                 {"ue-name", base.mrTask->m_ueMap[ue.first].name},
-                {"ran-ngap-id", std::to_string(ue.second->ranUeNgapId)},
-                {"amf-ngap-id", std::to_string(ue.second->amfUeNgapId)},
-            });
-            printer.decrement(2);
+                {"ran-ngap-id", ue.second->ranUeNgapId},
+                {"amf-ngap-id", ue.second->amfUeNgapId},
+            }));
         }
-        printer.trim();
-        msg.sendResult(printer.makeString());
+        msg.sendResult(json.dumpYaml());
         break;
     }
     case app::GnbCliCommand::UE_COUNT: {

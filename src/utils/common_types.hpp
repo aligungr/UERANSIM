@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "json.hpp"
 #include "octet.hpp"
 #include <memory>
 #include <optional>
@@ -27,8 +28,6 @@ struct Plmn
     int mcc;
     int mnc;
     bool isLongMnc;
-
-    [[nodiscard]] std::string toString() const;
 };
 
 struct SliceSupport
@@ -117,6 +116,7 @@ struct Supi
     }
 
     static Supi Parse(const std::string &supi);
-
-    [[nodiscard]] std::string toString() const;
 };
+
+Json ToJson(const Supi &v);
+Json ToJson(const Plmn &v);

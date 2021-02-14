@@ -12,6 +12,7 @@
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <utils/common_types.hpp>
+#include <utils/json.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -71,7 +72,7 @@ struct UeConfig
     [[nodiscard]] std::string getNodeName() const
     {
         if (supi.has_value())
-            return supi->toString();
+            return ToJson(supi).str();
         if (imei.has_value())
             return "imei-" + *imei;
         if (imeiSv.has_value())
@@ -358,9 +359,9 @@ struct UeStatusInfo
     std::optional<UePduSessionInfo> pduSessions[16]{};
 };
 
-const char *CmStateName(ECmState state);
-const char *RmStateName(ERmState state);
-const char *MmStateName(EMmState state);
-const char *MmSubStateName(EMmSubState state);
+Json ToJson(ECmState state);
+Json ToJson(ERmState state);
+Json ToJson(EMmState state);
+Json ToJson(EMmSubState state);
 
 } // namespace nr::ue

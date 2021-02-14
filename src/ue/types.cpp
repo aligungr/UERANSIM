@@ -22,7 +22,7 @@ UeTimers::UeTimers()
 {
 }
 
-const char *CmStateName(ECmState state)
+Json ToJson(ECmState state)
 {
     switch (state)
     {
@@ -35,7 +35,7 @@ const char *CmStateName(ECmState state)
     }
 }
 
-const char *RmStateName(ERmState state)
+Json ToJson(ERmState state)
 {
     switch (state)
     {
@@ -48,7 +48,7 @@ const char *RmStateName(ERmState state)
     }
 }
 
-const char *MmStateName(EMmState state)
+Json ToJson(EMmState state)
 {
     switch (state)
     {
@@ -69,7 +69,7 @@ const char *MmStateName(EMmState state)
     }
 }
 
-const char *MmSubStateName(EMmSubState state)
+Json ToJson(EMmSubState state)
 {
     switch (state)
     {

@@ -219,8 +219,6 @@ struct PduSessionResource
 struct GnbStatusInfo
 {
     bool isNgapUp;
-
-    [[nodiscard]] std::string toString() const;
 };
 
 struct GtpUeContext
@@ -278,8 +276,6 @@ struct GnbConfig
     {
         return static_cast<int>(nci & static_cast<uint64_t>((1 << (36 - gnbIdLength)) - 1));
     }
-
-    [[nodiscard]] std::string toString() const;
 };
 
 struct TaskBase
@@ -302,6 +298,9 @@ struct MrUeContext
     std::string name;
 };
 
-const char *EnumToString(EAmfState v);
+Json ToJson(const GnbStatusInfo &v);
+Json ToJson(const GnbConfig &v);
+Json ToJson(const NgapAmfContext &v);
+Json ToJson(const EAmfState &v);
 
 } // namespace nr::gnb

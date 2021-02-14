@@ -115,13 +115,13 @@ void NasMm::switchMmState(EMmState state, EMmSubState subState)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM,
-                                       MmSubStateName(oldSubState), MmSubStateName(subState));
+                                       ToJson(oldSubState).str(), ToJson(subState).str());
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
-                                       MmStateName(oldState), MmStateName(state));
+                                       ToJson(oldState).str(), ToJson(state).str());
     }
 
     if (state != oldState || subState != oldSubState)
-        m_logger->info("UE switches to state: %s", MmSubStateName(subState));
+        m_logger->info("UE switches to state: %s", ToJson(subState).str().c_str());
 
     triggerMmCycle();
 }
@@ -136,7 +136,7 @@ void NasMm::switchRmState(ERmState state)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RM,
-                                       RmStateName(oldState), RmStateName(m_rmState));
+                                       ToJson(oldState).str(), ToJson(m_rmState).str());
     }
 
     // No need to log it
@@ -155,11 +155,11 @@ void NasMm::switchCmState(ECmState state)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::CM,
-                                       CmStateName(oldState), CmStateName(m_cmState));
+                                       ToJson(oldState).str(), ToJson(m_cmState).str());
     }
 
     if (state != oldState)
-        m_logger->info("UE switches to state: %s", CmStateName(state));
+        m_logger->info("UE switches to state: %s", ToJson(state).str().c_str());
 
     triggerMmCycle();
 }

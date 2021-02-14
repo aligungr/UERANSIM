@@ -14,31 +14,32 @@
 namespace nr::gnb
 {
 
-std::string GnbStatusInfo::toString() const
+Json ToJson(const GnbStatusInfo &v)
 {
-    Printer printer{};
-    printer.appendKeyValue({{"is-ngap-up", this->isNgapUp ? "true" : "false"}});
-    printer.trim();
-    return printer.makeString();
+    return Json::Obj({{"is-ngap-up", v.isNgapUp}});
 }
 
-std::string GnbConfig::toString() const
+Json ToJson(const GnbConfig &v)
 {
-    Printer printer{};
-    printer.appendKeyValue({
-        {"nci", std::to_string(this->nci)},
-        {"gnb-id", std::to_string(this->getGnbId())},
-        {"cell-id", std::to_string(this->getCellId())},
-        {"mcc", std::to_string(this->plmn.mcc)},
-        {"mnc", std::to_string(this->plmn.mnc)},
-        {"tac", std::to_string(this->tac)},
-        {"name", this->name},
+    return Json::Obj({
+        {"nci", v.nci},
+        {"plmn", ToJson(v.plmn)},
+        {"tac", v.tac},
+        {"name", v.name},
     });
-    printer.trim();
-    return printer.makeString();
 }
 
-const char *EnumToString(EAmfState v)
+Json ToJson(const NgapAmfContext &v)
+{
+    return Json::Obj({
+        {"name", v.amfName},
+        {"capacity", v.relativeCapacity},
+        {"state", ToJson(v.state).str()},
+        {"address", v.address + ":" + std::to_string(v.port)},
+    });
+}
+
+Json ToJson(const EAmfState &v)
 {
     switch (v)
     {
@@ -49,7 +50,7 @@ const char *EnumToString(EAmfState v)
     case EAmfState::CONNECTED:
         return "CONNECTED";
     default:
-        return "<?>";
+        return "?";
     }
 }
 
