@@ -115,8 +115,7 @@ static void AppendJson(const Json &json, std::stringstream &stream, int indentat
         for (auto &item : json)
         {
             stream << indent << " " << item.first << ": ";
-            if (item.second.isArray())
-                AppendJson(item.second, stream, indentation + 1);
+            AppendJson(item.second, stream, indentation + 1);
             if (index == json.itemCount() - 1)
                 stream << "\n";
             else
