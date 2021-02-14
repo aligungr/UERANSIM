@@ -76,6 +76,10 @@ class Json
     [[nodiscard]] bool boolean() const;
 
   public:
+    void push(Json element);
+    void add(std::string key, Json value);
+
+  public:
     [[nodiscard]] iterator begin();
     [[nodiscard]] const_iterator begin() const;
     [[nodiscard]] iterator end();

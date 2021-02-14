@@ -9,6 +9,7 @@
 #include "json.hpp"
 
 #include <sstream>
+#include <utility>
 
 static std::string EscapeJson(const std::string &str)
 {
@@ -361,6 +362,20 @@ Json Json::Obj(std::initializer_list<std::pair<std::string, Json>> &&elements)
     return json;
 }
 
+void Json::push(Json element)
+{
+    if (m_type != Type::ARRAY)
+        return;
+    m_children[std::to_string(m_children.size())] = std::move(element);
+}
+
+void Json::add(std::string key, Json value)
+{
+    if (m_type != Type::OBJECT)
+        return;
+    m_children[std::move(key)] = std::move(value);
+}
+
 Json ToJson(nullptr_t)
 {
     return nullptr;
@@ -415,4 +430,3 @@ Json ToJson(int64_t v)
 {
     return v;
 }
-
