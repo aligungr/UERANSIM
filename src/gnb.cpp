@@ -94,7 +94,15 @@ static void ReadOptions(int argc, char **argv)
         g_options.disableCmd = true;
     g_options.configFile = opt.getOption(itemConfigFile);
 
-    g_refConfig = ReadConfigYaml();
+    try
+    {
+        g_refConfig = ReadConfigYaml();
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        exit(1);
+    }
 }
 
 static void ReceiveCommand(app::CliMessage &msg)
