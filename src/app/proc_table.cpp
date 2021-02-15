@@ -8,7 +8,6 @@
 
 #include "proc_table.hpp"
 #include "base_app.hpp"
-#include <filesystem>
 #include <fstream>
 #include <ostream>
 #include <sstream>

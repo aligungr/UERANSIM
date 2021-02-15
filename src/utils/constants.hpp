@@ -36,4 +36,5 @@ struct cons
     static constexpr const char *CMD_SERVER_IP = "127.0.0.1";
     static constexpr const char *PROC_TABLE_DIR = "/tmp/UERANSIM.proc-table/";
     static constexpr const char *PROCESS_DIR = "/proc/";
+    static constexpr const char DIR_SEPARATOR = '/';
 };

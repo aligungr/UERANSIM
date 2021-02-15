@@ -8,9 +8,37 @@
 
 #include "io.hpp"
 
-#include <filesystem>
+#include <cstring>
 #include <fstream>
 #include <ostream>
+#include <queue>
+#include <stack>
+#include <utils/constants.hpp>
+#include <utils/libc_error.hpp>
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+static void AppendEntries(const std::string &path, std::vector<std::string> &vec)
+{
+    struct dirent *files;
+    DIR *dir = opendir(path.c_str());
+    if (dir == nullptr)
+        return;
+    while ((files = readdir(dir)) != nullptr)
+    {
+        if (strcmp(files->d_name, ".") != 0 && strcmp(files->d_name, "..") != 0)
+        {
+            std::string fullPath = path;
+            io::AppendPath(fullPath, files->d_name);
+            vec.push_back(fullPath);
+        }
+    }
+
+    closedir(dir);
+}
 
 namespace io
 {
@@ -28,14 +56,15 @@ void CreateDirectory(const std::string &path)
 {
     if (!Exists(path))
     {
-        std::filesystem::create_directory(path);
+        if (mkdir(path.c_str(), 0777) != 0)
+            throw LibError("Directory '" + path + "' could not be created:", errno);
         RelaxPermissions(path);
     }
 }
 
 bool Exists(const std::string &path)
 {
-    return std::filesystem::exists(path);
+    return IsRegularFile(path) || IsDirectory(path);
 }
 
 void WriteAllText(const std::string &path, const std::string &content)
@@ -50,14 +79,107 @@ void WriteAllText(const std::string &path, const std::string &content)
 
 void RelaxPermissions(const std::string &path)
 {
-    std::filesystem::permissions(path, std::filesystem::perms::all);
+    if (chmod(path.c_str(), 0777) != 0)
+        throw LibError("Permission could not set for '" + path + "':", errno);
+}
+
+void PreOrderEntries(const std::string &root, std::vector<std::string> &visitor)
+{
+    std::stack<std::string> stack{};
+    stack.push(root);
+
+    while (!stack.empty())
+    {
+        std::string top = stack.top();
+        stack.pop();
+
+        visitor.push_back(top);
+
+        for (auto &entry : GetEntries(top))
+            stack.push(entry);
+    }
 }
 
 bool Remove(const std::string &path)
 {
-    std::error_code err{};
-    std::filesystem::remove_all(path, err);
-    return (bool)err;
+    int success = 0;
+    int failed = 0;
+
+    std::vector<std::string> entries;
+    PreOrderEntries(path, entries);
+    while (!entries.empty())
+    {
+        std::string s = entries.back();
+        entries.pop_back();
+        int r = remove(s.c_str());
+        if (r == 0)
+            success++;
+        else
+            failed++;
+    }
+
+    return failed == 0;
+}
+
+std::vector<std::string> GetEntries(const std::string &path)
+{
+    std::vector<std::string> res{};
+    AppendEntries(path, res);
+    return res;
+}
+
+std::vector<std::string> GetAllEntries(const std::string &path)
+{
+    std::vector<std::string> entries{};
+    PreOrderEntries(path, entries);
+    return entries;
+}
+
+bool IsDirectory(const std::string &path)
+{
+    struct stat s = {};
+    if (::stat(path.c_str(), &s) == 0)
+        return S_ISDIR(s.st_mode);
+    if (errno == EACCES)
+        throw LibError("Unable to get stats for '" + path + "':", errno);
+    return false;
+}
+
+bool IsRegularFile(const std::string &path)
+{
+    struct stat s = {};
+    if (::stat(path.c_str(), &s) == 0)
+        return S_ISREG(s.st_mode);
+    if (errno == EACCES)
+        throw LibError("Unable to get stats for '" + path + "':", errno);
+    return false;
+}
+
+std::string GetStem(const std::string &path)
+{
+    char *c = strdup(path.c_str());
+    const char *p = strrchr(c, cons::DIR_SEPARATOR);
+    if (p == nullptr)
+    {
+        free(c);
+        return path;
+    }
+    std::string s{p + 1};
+    free(c);
+    return s;
+}
+
+void AppendPath(std::string &source, const std::string &target)
+{
+    if (source.empty())
+    {
+        source += target;
+        return;
+    }
+
+    if (source[source.size() - 1] != cons::DIR_SEPARATOR)
+        source += std::string(1, cons::DIR_SEPARATOR);
+    source += target;
 }
 
 } // namespace io

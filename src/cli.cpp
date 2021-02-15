@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <app/cli_base.hpp>
 #include <app/proc_table.hpp>
-#include <filesystem>
 #include <iostream>
 #include <set>
 #include <string>
@@ -31,11 +30,11 @@ static struct Options
 static std::set<int> FindProcesses()
 {
     std::set<int> res{};
-    for (const auto &file : std::filesystem::directory_iterator(cons::PROCESS_DIR))
+    for (const auto &file : io::GetEntries(cons::PROCESS_DIR))
     {
-        if (file.is_directory())
+        if (!io::IsRegularFile(file))
         {
-            auto name = file.path().stem().string();
+            auto name = io::GetStem(file);
             if (!utils::IsNumeric(name))
                 continue;
             int pid = utils::ParseInt(name);
@@ -55,13 +54,12 @@ static uint16_t DiscoverNode(const std::string &node, int &skippedDueToVersion)
 
     // Read and parse ProcTable entries.
     std::unordered_map<std::string, app::ProcTableEntry> entries{};
-    for (const auto &file : std::filesystem::directory_iterator(cons::PROC_TABLE_DIR))
+    for (const auto &file : io::GetEntries(cons::PROC_TABLE_DIR))
     {
-        if (file.is_directory())
+        if (!io::IsRegularFile(file))
             continue;
-        std::string path = file.path().string();
-        std::string content = io::ReadAllText(path);
-        entries[file.path()] = app::ProcTableEntry::Decode(content);
+        std::string content = io::ReadAllText(file);
+        entries[file] = app::ProcTableEntry::Decode(content);
     }
 
     uint16_t found = 0;
@@ -105,13 +103,12 @@ static std::vector<std::string> DumpNames()
 
     // Read and parse ProcTable entries.
     std::unordered_map<std::string, app::ProcTableEntry> entries{};
-    for (const auto &file : std::filesystem::directory_iterator(cons::PROC_TABLE_DIR))
+    for (const auto &file : io::GetEntries(cons::PROC_TABLE_DIR))
     {
-        if (file.is_directory())
+        if (!io::IsRegularFile(file))
             continue;
-        std::string path = file.path().string();
-        std::string content = io::ReadAllText(path);
-        entries[file.path()] = app::ProcTableEntry::Decode(content);
+        std::string content = io::ReadAllText(file);
+        entries[file] = app::ProcTableEntry::Decode(content);
     }
 
     for (auto &e : entries)

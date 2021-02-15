@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace io
 {
@@ -24,5 +25,19 @@ void WriteAllText(const std::string &path, const std::string &content);
 void RelaxPermissions(const std::string &path);
 
 bool Remove(const std::string &path);
+
+std::vector<std::string> GetEntries(const std::string &path);
+
+std::vector<std::string> GetAllEntries(const std::string &path);
+
+void PreOrderEntries(const std::string &root, std::vector<std::string> &visitor);
+
+bool IsDirectory(const std::string &path);
+
+bool IsRegularFile(const std::string &path);
+
+std::string GetStem(const std::string &path);
+
+void AppendPath(std::string &source, const std::string &target);
 
 } // namespace io
