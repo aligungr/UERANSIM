@@ -6,19 +6,36 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include <utils/common.hpp>
-#include <utils/constants.hpp>
-#include <cxxopts/cxxopts.hpp>
+#include <app/base_app.hpp>
+#include <app/cli_base.hpp>
+#include <app/cli_cmd.hpp>
+#include <app/proc_table.hpp>
 #include <gnb/gnb.hpp>
 #include <iostream>
 #include <unistd.h>
-#include <yaml-cpp/yaml.h>
+#include <unordered_map>
+#include <utils/common.hpp>
+#include <utils/constants.hpp>
+#include <utils/io.hpp>
+#include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
+#include <yaml-cpp/yaml.h>
 
-static nr::gnb::GnbConfig *ReadConfigYaml(const std::string &file)
+static app::CliServer *g_cliServer = nullptr;
+static nr::gnb::GnbConfig *g_refConfig = nullptr;
+static std::unordered_map<std::string, nr::gnb::GNodeB *> g_gnbMap{};
+static app::CliResponseTask *g_cliRespTask = nullptr;
+
+static struct Options
+{
+    std::string configFile{};
+    bool disableCmd{};
+} g_options{};
+
+static nr::gnb::GnbConfig *ReadConfigYaml()
 {
     auto *result = new nr::gnb::GnbConfig();
-    auto config = YAML::LoadFile(file);
+    auto config = YAML::LoadFile(g_options.configFile);
 
     result->plmn.mcc = yaml::GetInt32(config, "mcc", 1, 999);
     yaml::GetString(config, "mcc", 3, 3);
@@ -58,11 +75,28 @@ static nr::gnb::GnbConfig *ReadConfigYaml(const std::string &file)
     return result;
 }
 
-static nr::gnb::GnbConfig *GetConfig(const std::string &file)
+static void ReadOptions(int argc, char **argv)
 {
+    opt::OptionsDescription desc{cons::Project, cons::Tag, "5G-SA gNB implementation",
+                                 cons::Owner,   "nr-gnb",  {"-c <config-file> [option...]"},
+                                 true};
+
+    opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for gNB", "config-file"};
+    opt::OptionItem itemDisableCmd = {'l', "disable-cmd", "Disable command line functionality for this instance",
+                                      std::nullopt};
+
+    desc.items.push_back(itemConfigFile);
+    desc.items.push_back(itemDisableCmd);
+
+    opt::OptionsResult opt{argc, argv, desc, false, nullptr};
+
+    if (opt.hasFlag(itemDisableCmd))
+        g_options.disableCmd = true;
+    g_options.configFile = opt.getOption(itemConfigFile);
+
     try
     {
-        return ReadConfigYaml(file);
+        g_refConfig = ReadConfigYaml();
     }
     catch (const std::runtime_error &e)
     {
@@ -71,43 +105,111 @@ static nr::gnb::GnbConfig *GetConfig(const std::string &file)
     }
 }
 
-static void ReadOptions(int argc, char **argv, std::string &configFile)
+static void ReceiveCommand(app::CliMessage &msg)
 {
-    try
+    if (msg.value.empty())
     {
-        cxxopts::Options options("nr-gnb", "5G-SA gNB implementation | Copyright (c) 2021 Ali Güngör");
-        options.add_options()("c,config", "Use specified configuration file for gNB",
-                              cxxopts::value<std::string>())("h,help", "Show this help message and exit");
-
-        auto result = options.parse(argc, argv);
-
-        if (result.arguments().empty() || result.count("help"))
-        {
-            std::cout << options.help() << std::endl;
-            exit(0);
-        }
-
-        configFile = result["config"].as<std::string>();
+        g_cliServer->sendMessage(app::CliMessage::Result(msg.clientAddr, ""));
+        return;
     }
-    catch (const cxxopts::OptionException &e)
+
+    std::vector<std::string> tokens{};
+
+    auto exp = opt::PerformExpansion(msg.value, tokens);
+    if (exp != opt::ExpansionResult::SUCCESS)
     {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        exit(1);
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Invalid command: " + msg.value));
+        return;
     }
+
+    if (tokens.empty())
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Empty command"));
+        return;
+    }
+
+    std::string error{}, output{};
+    auto cmd = app::ParseGnbCliCommand(std::move(tokens), error, output);
+    if (!error.empty())
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, error));
+        return;
+    }
+    if (!output.empty())
+    {
+        g_cliServer->sendMessage(app::CliMessage::Result(msg.clientAddr, output));
+        return;
+    }
+    if (cmd == nullptr)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, ""));
+        return;
+    }
+
+    if (g_gnbMap.count(msg.nodeName) == 0)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node not found: " + msg.nodeName));
+        return;
+    }
+
+    auto *gnb = g_gnbMap[msg.nodeName];
+    gnb->pushCommand(std::move(cmd), msg.clientAddr, g_cliRespTask);
+}
+
+static void Loop()
+{
+    if (!g_cliServer)
+    {
+        ::pause();
+        return;
+    }
+
+    auto msg = g_cliServer->receiveMessage();
+    if (msg.type == app::CliMessage::Type::ECHO)
+    {
+        g_cliServer->sendMessage(msg);
+        return;
+    }
+
+    if (msg.type != app::CliMessage::Type::COMMAND)
+        return;
+
+    if (msg.value.size() > 0xFFFF)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Command is too large"));
+        return;
+    }
+
+    if (msg.nodeName.size() > 0xFFFF)
+    {
+        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node name is too large"));
+        return;
+    }
+
+    ReceiveCommand(msg);
 }
 
 int main(int argc, char **argv)
 {
+    app::Initialize();
+    ReadOptions(argc, argv);
+
     std::cout << cons::Name << std::endl;
 
-    std::string configFile;
-    ReadOptions(argc, argv, configFile);
+    auto *gnb = new nr::gnb::GNodeB(g_refConfig, nullptr);
+    g_gnbMap[g_refConfig->name] = gnb;
 
-    nr::gnb::GnbConfig *config = GetConfig(configFile);
+    if (!g_options.disableCmd)
+    {
+        g_cliServer = new app::CliServer{};
+        app::CreateProcTable(g_gnbMap, g_cliServer->assignedAddress().getPort());
 
-    auto *gnb = new nr::gnb::GNodeB(config, nullptr);
+        g_cliRespTask = new app::CliResponseTask(g_cliServer);
+        g_cliRespTask->start();
+    }
+
     gnb->start();
 
     while (true)
-        ::pause();
+        Loop();
 }

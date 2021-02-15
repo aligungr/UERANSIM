@@ -9,6 +9,7 @@
 #include "sm.hpp"
 #include <nas/utils.hpp>
 #include <nas/proto_conf.hpp>
+#include <ue/app/task.hpp>
 
 namespace nr::ue
 {

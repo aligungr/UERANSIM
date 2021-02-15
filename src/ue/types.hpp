@@ -12,12 +12,18 @@
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <utils/common_types.hpp>
+#include <utils/json.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
 
 namespace nr::ue
 {
+
+class UeAppTask;
+class UeMrTask;
+class NasTask;
+class UeRrcTask;
 
 struct SupportedAlgs
 {
@@ -66,7 +72,7 @@ struct UeConfig
     [[nodiscard]] std::string getNodeName() const
     {
         if (supi.has_value())
-            return supi->type + "-" + supi->value;
+            return ToJson(supi).str();
         if (imei.has_value())
             return "imei-" + *imei;
         if (imeiSv.has_value())
@@ -94,10 +100,10 @@ struct TaskBase
     LogBase *logBase{};
     app::INodeListener *nodeListener{};
 
-    NtsTask *appTask{};
-    NtsTask *mrTask{};
-    NtsTask *nasTask{};
-    NtsTask *rrcTask{};
+    UeAppTask *appTask{};
+    UeMrTask *mrTask{};
+    NasTask *nasTask{};
+    UeRrcTask *rrcTask{};
 };
 
 struct UeTimers
@@ -350,17 +356,14 @@ struct UeStatusInfo
         std::string address{};
     };
 
-    bool isConnected{};
-    std::string connectedGnb{};
-    std::string mmState{};
-    std::string rmState{};
-    std::string cmState{};
     std::optional<UePduSessionInfo> pduSessions[16]{};
 };
 
-const char *CmStateName(ECmState state);
-const char *RmStateName(ERmState state);
-const char *MmStateName(EMmState state);
-const char *MmSubStateName(EMmSubState state);
+Json ToJson(const ECmState &state);
+Json ToJson(const ERmState &state);
+Json ToJson(const EMmState &state);
+Json ToJson(const EMmSubState &state);
+Json ToJson(const UeConfig &v);
+Json ToJson(const UeTimers &v);
 
 } // namespace nr::ue

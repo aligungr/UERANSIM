@@ -10,6 +10,7 @@
 #include "common.hpp"
 
 #define WAIT_TIME_IF_NO_TIMER 500
+#define PAUSE_POLLING_PERIOD 20
 
 static NtsMessage *TimerExpiredMessage(TimerInfo *timerInfo)
 {
@@ -144,6 +145,8 @@ NtsMessage *NtsTask::poll()
 
 NtsMessage *NtsTask::poll(int64_t timeout)
 {
+    timeout = std::min(timeout, (int64_t)WAIT_TIME_IF_NO_TIMER);
+
     if (isQuiting)
         return nullptr;
 
@@ -202,7 +205,17 @@ void NtsTask::start()
             {
                 if (this->isQuiting)
                     break;
-                this->onLoop();
+
+                if (pauseReqCount > 0)
+                {
+                    pauseConfirmed = true;
+                    utils::Sleep(PAUSE_POLLING_PERIOD);
+                }
+                else
+                {
+                    pauseConfirmed = false;
+                    this->onLoop();
+                }
             }
         }};
     }
@@ -230,4 +243,24 @@ void NtsTask::quit()
     }
 
     onQuit();
+}
+
+void NtsTask::requestPause()
+{
+    if (++pauseReqCount < 0)
+        throw std::runtime_error("NTS pause overflow");
+
+    if (!isQuiting)
+        cv.notify_one();
+}
+
+void NtsTask::requestUnpause()
+{
+    if (--pauseReqCount < 0)
+        throw std::runtime_error("NTS un-pause underflow");
+}
+
+bool NtsTask::isPauseConfirmed()
+{
+    return pauseConfirmed;
 }

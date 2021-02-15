@@ -23,6 +23,7 @@
 #include <asn/ngap/ASN_NGAP_UEContextReleaseCommand.h>
 #include <asn/ngap/ASN_NGAP_UEContextReleaseComplete.h>
 #include <asn/ngap/ASN_NGAP_UESecurityCapabilities.h>
+#include <gnb/gtp/task.hpp>
 
 namespace nr::gnb
 {

@@ -51,6 +51,8 @@ class UeRrcTask : public NtsTask
     ASN_RRC_InitialUE_Identity_t m_initialId{};
     OctetString m_initialNasPdu{};
 
+    friend class UeCmdHandler;
+
   public:
     explicit UeRrcTask(TaskBase *base);
     ~UeRrcTask() override = default;

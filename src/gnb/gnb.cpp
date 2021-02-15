@@ -14,7 +14,13 @@
 #include "rrc/task.hpp"
 #include "sctp/task.hpp"
 
-nr::gnb::GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
+#include <app/cli_base.hpp>
+#include <utils/common.hpp>
+
+namespace nr::gnb
+{
+
+GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
 {
     auto *base = new TaskBase();
     base->config = config;
@@ -31,7 +37,7 @@ nr::gnb::GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
     taskBase = base;
 }
 
-nr::gnb::GNodeB::~GNodeB()
+GNodeB::~GNodeB()
 {
     taskBase->appTask->quit();
     taskBase->sctpTask->quit();
@@ -52,7 +58,7 @@ nr::gnb::GNodeB::~GNodeB()
     delete taskBase;
 }
 
-void nr::gnb::GNodeB::start()
+void GNodeB::start()
 {
     taskBase->appTask->start();
     taskBase->sctpTask->start();
@@ -61,3 +67,10 @@ void nr::gnb::GNodeB::start()
     taskBase->mrTask->start();
     taskBase->gtpTask->start();
 }
+
+void GNodeB::pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address, NtsTask *callbackTask)
+{
+    taskBase->appTask->push(new NwGnbCliCommand(std::move(cmd), address, callbackTask));
+}
+
+} // namespace nr::gnb

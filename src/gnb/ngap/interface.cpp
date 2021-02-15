@@ -11,6 +11,8 @@
 
 #include <algorithm>
 #include <gnb/app/task.hpp>
+#include <gnb/sctp/task.hpp>
+#include <gnb/rrc/task.hpp>
 
 #include <asn/ngap/ASN_NGAP_AMFConfigurationUpdate.h>
 #include <asn/ngap/ASN_NGAP_AMFConfigurationUpdateFailure.h>

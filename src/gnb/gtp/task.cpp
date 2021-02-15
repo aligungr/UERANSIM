@@ -9,6 +9,7 @@
 #include "task.hpp"
 
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
+#include <gnb/mr/task.hpp>
 #include <gtp/encode.hpp>
 #include <gtp/message.hpp>
 #include <utils/constants.hpp>

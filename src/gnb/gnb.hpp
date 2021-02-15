@@ -10,9 +10,13 @@
 
 #include "types.hpp"
 
+#include <app/cli_cmd.hpp>
 #include <app/monitor.hpp>
-#include <utils/logger.hpp>
+#include <memory>
 #include <string>
+#include <utils/logger.hpp>
+#include <utils/network.hpp>
+#include <utils/nts.hpp>
 
 namespace nr::gnb
 {
@@ -28,6 +32,7 @@ class GNodeB
 
   public:
     void start();
+    void pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address, NtsTask *callbackTask);
 };
 
 } // namespace nr::gnb

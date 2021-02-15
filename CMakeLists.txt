@@ -66,3 +66,12 @@ add_library(devbnd SHARED src/binder.cpp)
 target_compile_options(devbnd PRIVATE -D_GNU_SOURCE -Wall -Wextra)
 target_link_options(devbnd PRIVATE -nostartfiles)
 target_link_libraries(devbnd dl)
+
+#################### CLI EXECUTABLE ####################
+add_executable(nr-cli src/cli.cpp)
+target_link_libraries(nr-cli pthread)
+target_compile_options(nr-cli PRIVATE -Wall -Wextra -pedantic)
+
+target_link_libraries(nr-cli app)
+target_link_libraries(nr-cli udp)
+target_link_libraries(nr-cli utils)

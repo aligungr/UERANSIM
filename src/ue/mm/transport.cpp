@@ -10,6 +10,7 @@
 #include <asn/rrc/ASN_RRC_EstablishmentCause.h>
 #include <nas/utils.hpp>
 #include <ue/nas/enc.hpp>
+#include <ue/rrc/task.hpp>
 #include <ue/sm/sm.hpp>
 
 namespace nr::ue

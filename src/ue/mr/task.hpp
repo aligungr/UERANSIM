@@ -32,6 +32,8 @@ class UeMrTask : public NtsTask
 
     long m_lastPlmnSearchFailurePrinted;
 
+    friend class UeCmdHandler;
+
   public:
     explicit UeMrTask(TaskBase *base);
     ~UeMrTask() override = default;

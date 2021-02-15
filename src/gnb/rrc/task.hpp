@@ -46,6 +46,8 @@ class GnbRrcTask : public NtsTask
     std::unordered_map<int, RrcUeContext *> m_ueCtx;
     int m_tidCounter;
 
+    friend class GnbCmdHandler;
+
   public:
     explicit GnbRrcTask(TaskBase *base);
     ~GnbRrcTask() override = default;

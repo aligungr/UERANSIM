@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "json.hpp"
 #include <bitset>
 #include <cassert>
 #include <cstdint>
@@ -133,6 +134,11 @@ struct octet3
     {
         return static_cast<int32_t>(value);
     }
+
+    explicit constexpr operator uint32_t() const
+    {
+        return value;
+    }
 };
 
 struct octet4
@@ -219,3 +225,9 @@ struct octet8
         return value;
     }
 };
+
+Json ToJson(const octet &v);
+Json ToJson(const octet2 &v);
+Json ToJson(const octet3 &v);
+Json ToJson(const octet4 &v);
+Json ToJson(const octet8 &v);

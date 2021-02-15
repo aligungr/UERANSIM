@@ -9,6 +9,8 @@
 #pragma once
 
 #include "types.hpp"
+#include "ue.hpp"
+#include <app/cli_base.hpp>
 #include <nas/timer.hpp>
 #include <rrc/rrc.hpp>
 #include <urs/rls/rls.hpp>
@@ -224,32 +226,37 @@ struct NwUeNasToNas : NtsMessage
 
 struct NwUeStatusUpdate : NtsMessage
 {
-    static constexpr const int CONNECTED_GNB = 1;
-    static constexpr const int MM_STATE = 2;
-    static constexpr const int RM_STATE = 3;
-    static constexpr const int CM_STATE = 4;
     static constexpr const int SESSION_ESTABLISHMENT = 5;
 
     const int what{};
-
-    // CONNECTED_GNB
-    std::string gnbName{};
-
-    // MM_STATE
-    std::string mmState{};
-    std::string mmSubState{};
-
-    // RM_STATE
-    std::string rmState{};
-
-    // CM_STATE
-    std::string cmState{};
 
     // SESSION_ESTABLISHMENT
     PduSession *pduSession{};
 
     explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {
+    }
+};
+
+struct NwUeCliCommand : NtsMessage
+{
+    std::unique_ptr<app::UeCliCommand> cmd;
+    InetAddress address;
+    NtsTask *callbackTask;
+
+    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address, NtsTask *callbackTask)
+        : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address), callbackTask(callbackTask)
+    {
+    }
+
+    void sendResult(const std::string &output) const
+    {
+        callbackTask->push(new app::NwCliSendResponse(address, output, false));
+    }
+
+    void sendError(const std::string &output) const
+    {
+        callbackTask->push(new app::NwCliSendResponse(address, output, true));
     }
 };
 

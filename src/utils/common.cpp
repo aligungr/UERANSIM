@@ -7,12 +7,15 @@
 //
 
 #include "common.hpp"
+#include "constants.hpp"
+#include <algorithm>
 #include <atomic>
-#include <cassert>
+#include <cctype>
 #include <chrono>
 #include <random>
 #include <regex>
 #include <sstream>
+#include <stdexcept>
 #include <thread>
 #include <unistd.h>
 
@@ -272,4 +275,45 @@ std::string utils::OctetStringToIp(const OctetString &address)
 bool utils::IsRoot()
 {
     return geteuid() == 0;
+}
+
+void utils::AssertNodeName(const std::string &str)
+{
+    if (str.length() < cons::MinNodeName)
+        throw std::runtime_error("Node name assertion failed: string'" + str + "' is too short");
+    if (str.length() > cons::MaxNodeName)
+        throw std::runtime_error("Node name assertion failed: string'" + str + "' is too long");
+
+    for (char c : str)
+    {
+        if (c >= '0' && c <= '9')
+            continue;
+        if (c >= 'a' && c <= 'z')
+            continue;
+        if (c >= 'A' && c <= 'Z')
+            continue;
+        if (c == '-' || c == '_')
+            continue;
+        throw std::runtime_error("Node name assertion failed: string '" + str +
+                                 "' contains illegal character: " + std::string(1, c));
+    }
+}
+
+bool utils::IsNumeric(const std::string &str)
+{
+    return !str.empty() && std::all_of(str.begin(), str.end(), [](char c) { return (c >= '0' && c <= '9'); });
+}
+
+void utils::Trim(std::string &s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
+}
+
+void utils::Trim(std::stringstream &s)
+{
+    std::string str{};
+    str = s.str();
+    Trim(str);
+    s.str(str);
 }

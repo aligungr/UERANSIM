@@ -9,6 +9,8 @@
 #include "mm.hpp"
 
 #include <nas/utils.hpp>
+#include <ue/app/task.hpp>
+#include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -29,15 +31,6 @@ NasMm::NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers) : m_base{base}, m_n
 void NasMm::onStart(NasSm *sm)
 {
     m_sm = sm;
-
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::MM_STATE);
-    statusUpdate->mmState = MmStateName(m_mmState);
-    statusUpdate->mmSubState = MmSubStateName(m_mmSubState);
-    m_base->appTask->push(statusUpdate);
-
-    statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::RM_STATE);
-    statusUpdate->rmState = RmStateName(m_rmState);
-    m_base->appTask->push(statusUpdate);
 }
 
 void NasMm::onQuit()
@@ -122,18 +115,13 @@ void NasMm::switchMmState(EMmState state, EMmSubState subState)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM,
-                                       MmSubStateName(oldSubState), MmSubStateName(subState));
+                                       ToJson(oldSubState).str(), ToJson(subState).str());
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
-                                       MmStateName(oldState), MmStateName(state));
+                                       ToJson(oldState).str(), ToJson(state).str());
     }
 
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::MM_STATE);
-    statusUpdate->mmState = MmStateName(state);
-    statusUpdate->mmSubState = MmSubStateName(subState);
-    m_base->appTask->push(statusUpdate);
-
     if (state != oldState || subState != oldSubState)
-        m_logger->info("UE switches to state: %s", MmSubStateName(subState));
+        m_logger->info("UE switches to state: %s", ToJson(subState).str().c_str());
 
     triggerMmCycle();
 }
@@ -148,12 +136,8 @@ void NasMm::switchRmState(ERmState state)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RM,
-                                       RmStateName(oldState), RmStateName(m_rmState));
+                                       ToJson(oldState).str(), ToJson(m_rmState).str());
     }
-
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::RM_STATE);
-    statusUpdate->rmState = RmStateName(state);
-    m_base->appTask->push(statusUpdate);
 
     // No need to log it
     // m_logger->info("UE switches to state: %s", RmStateName(state));
@@ -171,15 +155,11 @@ void NasMm::switchCmState(ECmState state)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::CM,
-                                       CmStateName(oldState), CmStateName(m_cmState));
+                                       ToJson(oldState).str(), ToJson(m_cmState).str());
     }
 
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::CM_STATE);
-    statusUpdate->rmState = CmStateName(state);
-    m_base->appTask->push(statusUpdate);
-
     if (state != oldState)
-        m_logger->info("UE switches to state: %s", CmStateName(state));
+        m_logger->info("UE switches to state: %s", ToJson(state).str().c_str());
 
     triggerMmCycle();
 }

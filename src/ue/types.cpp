@@ -7,6 +7,7 @@
 //
 
 #include "types.hpp"
+#include <utils/printer.hpp>
 
 namespace nr::ue
 {
@@ -21,7 +22,7 @@ UeTimers::UeTimers()
 {
 }
 
-const char *CmStateName(ECmState state)
+Json ToJson(const ECmState &state)
 {
     switch (state)
     {
@@ -34,7 +35,7 @@ const char *CmStateName(ECmState state)
     }
 }
 
-const char *RmStateName(ERmState state)
+Json ToJson(const ERmState &state)
 {
     switch (state)
     {
@@ -47,7 +48,7 @@ const char *RmStateName(ERmState state)
     }
 }
 
-const char *MmStateName(EMmState state)
+Json ToJson(const EMmState &state)
 {
     switch (state)
     {
@@ -68,7 +69,7 @@ const char *MmStateName(EMmState state)
     }
 }
 
-const char *MmSubStateName(EMmSubState state)
+Json ToJson(const EMmSubState &state)
 {
     switch (state)
     {
@@ -117,6 +118,30 @@ const char *MmSubStateName(EMmSubState state)
     default:
         return "?";
     }
+}
+
+Json ToJson(const UeConfig &v)
+{
+    return Json::Obj({
+        {"supi", ToJson(v.supi)},
+        {"plmn", ToJson(v.plmn)},
+        {"imei", ::ToJson(v.imei)},
+        {"imeiSv", ::ToJson(v.imeiSv)},
+        {"nssai", ::ToJson(v.nssais)},
+    });
+}
+
+Json ToJson(const UeTimers &v)
+{
+    return Json::Obj({
+        {"T3346", ToJson(v.t3346)}, {"T3396", ToJson(v.t3396)}, {"T3444", ToJson(v.t3444)},
+        {"T3445", ToJson(v.t3445)}, {"T3502", ToJson(v.t3502)}, {"T3510", ToJson(v.t3510)},
+        {"T3511", ToJson(v.t3511)}, {"T3512", ToJson(v.t3512)}, {"T3516", ToJson(v.t3516)},
+        {"T3517", ToJson(v.t3517)}, {"T3519", ToJson(v.t3519)}, {"T3520", ToJson(v.t3520)},
+        {"T3521", ToJson(v.t3521)}, {"T3525", ToJson(v.t3525)}, {"T3540", ToJson(v.t3540)},
+        {"T3580", ToJson(v.t3580)}, {"T3581", ToJson(v.t3581)}, {"T3582", ToJson(v.t3582)},
+        {"T3583", ToJson(v.t3583)}, {"T3584", ToJson(v.t3584)}, {"T3585", ToJson(v.t3585)},
+    });
 }
 
 } // namespace nr::ue

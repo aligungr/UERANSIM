@@ -7,6 +7,8 @@
 //
 
 #include "common_types.hpp"
+#include <iomanip>
+#include <sstream>
 
 Supi Supi::Parse(const std::string &supi)
 {
@@ -21,4 +23,27 @@ Supi Supi::Parse(const std::string &supi)
         return Supi{"imsi", val};
     }
     throw std::runtime_error("invalid SUPI value");
+}
+
+Json ToJson(const Supi &v)
+{
+    return v.type + "-" + v.value;
+}
+
+Json ToJson(const Plmn &v)
+{
+    std::stringstream ss{};
+    ss << std::setfill('0') << std::setw(3) << v.mcc << "/";
+    ss << std::setfill('0') << std::setw(v.isLongMnc ? 3 : 2) << v.mnc;
+    return ss.str();
+}
+
+Json ToJson(const SliceSupport &v)
+{
+    return Json::Obj({{"sst", ToJson(v.sst)}, {"sd", ToJson(v.sd)}});
+}
+
+Json ToJson(const PlmnSupport &v)
+{
+    return Json::Obj({{"plmn", ToJson(v.plmn)}, {"nssai", ToJson(v.sliceSupportList)}});
 }

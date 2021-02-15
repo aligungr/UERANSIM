@@ -56,4 +56,10 @@ void UserEquipment::start()
     taskBase->appTask->start();
 }
 
+void UserEquipment::pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address,
+                                NtsTask *callbackTask)
+{
+    taskBase->appTask->push(new NwUeCliCommand(std::move(cmd), address, callbackTask));
+}
+
 } // namespace nr::ue

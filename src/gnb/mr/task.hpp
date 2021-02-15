@@ -10,6 +10,7 @@
 
 #include "rls.hpp"
 #include <gnb/nts.hpp>
+#include <gnb/types.hpp>
 #include <memory>
 #include <thread>
 #include <udp/server_task.hpp>
@@ -31,6 +32,8 @@ class GnbMrTask : public NtsTask
     udp::UdpServerTask *m_udpTask;
     GnbRls *m_rlsEntity;
     std::unordered_map<int, MrUeContext> m_ueMap;
+
+    friend class GnbCmdHandler;
 
   public:
     explicit GnbMrTask(TaskBase *base);

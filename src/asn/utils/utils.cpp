@@ -85,7 +85,7 @@ std::string GetPrintableString(const PrintableString_t &source)
 {
     std::string r(source.size, '0');
     for (size_t i = 0; i < source.size; i++)
-        r += (char)source.buf[i];
+        r[i] = (char)source.buf[i];
     return r;
 }
 

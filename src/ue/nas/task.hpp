@@ -30,6 +30,8 @@ class NasTask : public NtsTask
     NasMm *mm;
     NasSm *sm;
 
+    friend class UeCmdHandler;
+
   public:
     explicit NasTask(TaskBase *base);
     ~NasTask() override = default;

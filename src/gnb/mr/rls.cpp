@@ -37,7 +37,7 @@ void GnbRls::onUeConnected(int ue, std::string name)
 
 void GnbRls::onUeReleased(int ue, rls::ECause cause)
 {
-    auto *w = new NwGnbMrToMr(NwGnbMrToMr::UE_CONNECTED);
+    auto *w = new NwGnbMrToMr(NwGnbMrToMr::UE_RELEASED);
     w->ue = ue;
     w->cause = cause;
     m_targetTask->push(w);

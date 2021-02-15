@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+#include "cmd_handler.hpp"
 #include <gnb/nts.hpp>
 
 namespace nr::gnb
@@ -30,20 +31,26 @@ void GnbAppTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_STATUS_UPDATE: {
-        auto *m = dynamic_cast<NwGnbStatusUpdate *>(msg);
-        switch (m->what)
+        auto *w = dynamic_cast<NwGnbStatusUpdate *>(msg);
+        switch (w->what)
         {
         case NwGnbStatusUpdate::NGAP_IS_UP:
-            m_statusInfo.isNgapUp = m->isNgapUp;
+            m_statusInfo.isNgapUp = w->isNgapUp;
             break;
         }
         break;
     }
-    default:
-        m_logger->unhandledNts(msg);
-        delete msg;
+    case NtsMessageType::GNB_CLI_COMMAND: {
+        auto *w = dynamic_cast<NwGnbCliCommand *>(msg);
+        GnbCmdHandler::HandleCmd(*m_base, *w);
         break;
     }
+    default:
+        m_logger->unhandledNts(msg);
+        break;
+    }
+
+    delete msg;
 }
 
 void GnbAppTask::onQuit()

@@ -25,6 +25,7 @@
 #include <asn/rrc/ASN_RRC_UL-DCCH-Message.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
+#include <gnb/ngap/task.hpp>
 #include <rrc/encode.hpp>
 
 namespace nr::gnb

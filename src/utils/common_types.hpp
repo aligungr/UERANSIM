@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "json.hpp"
 #include "octet.hpp"
 #include <memory>
 #include <optional>
@@ -68,8 +69,8 @@ struct TmsiMobileIdentity
 
 struct GutiMobileIdentity
 {
-    Plmn plmn;
-    octet amfRegionId;
+    Plmn plmn;         // Not used in TMSI
+    octet amfRegionId; // Not used in TMSI
     int amfSetId : 10;
     int amfPointer : 6;
     octet4 tmsi;
@@ -116,3 +117,8 @@ struct Supi
 
     static Supi Parse(const std::string &supi);
 };
+
+Json ToJson(const Supi &v);
+Json ToJson(const Plmn &v);
+Json ToJson(const SliceSupport &v);
+Json ToJson(const PlmnSupport &v);
