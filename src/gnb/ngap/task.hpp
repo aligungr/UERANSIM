@@ -73,14 +73,14 @@ class NgapTask : public NtsTask
     void deleteAmfContext(int amfId);
 
     /* Interface management */
+    void handleAssociationSetup(int amfId, int ascId, int inCount, int outCount);
+    void handleAssociationShutdown(int amfId);
     void sendNgSetupRequest(int amfId);
     void sendErrorIndication(int amfId, NgapCause cause = NgapCause::Protocol_unspecified, int ueId = 0);
     void receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg);
     void receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg);
     void receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg);
     void receiveAmfConfigurationUpdate(int amfId, ASN_NGAP_AMFConfigurationUpdate *msg);
-    void handleAssociationSetup(int amfId, int ascId, int inCount, int outCount);
-    void handleAssociationShutdown(int amfId);
 
     /* Message transport */
     void sendNgapNonUe(int amfId, ASN_NGAP_NGAP_PDU *pdu);
