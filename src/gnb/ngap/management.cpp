@@ -40,13 +40,12 @@ void NgapTask::createUeContext(int ueId)
 
     m_ueCtx[ctx->ctxId] = ctx;
 
-    // Select an AMF for the UE (if any)
-    for (auto &amf : m_amfCtx)
-    {
-        // todo: an arbitrary AMF is selected for now
-        ctx->associatedAmfId = amf.second->ctxId;
-        break;
-    }
+    // Perform AMF selection
+    auto *amf = selectAmf(ueId);
+    if (amf == nullptr)
+        m_logger->err("AMF selection for UE[%d] failed. Could not find a suitable AMF.", ueId);
+    else
+        ctx->associatedAmfId = amf->ctxId;
 }
 
 NgapUeContext *NgapTask::findUeContext(int ctxId)
@@ -132,12 +131,6 @@ NgapUeContext *NgapTask::findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPa
     }
 
     return ue;
-}
-
-NgapAmfContext *NgapTask::selectNewAmfForReAllocation(int initiatedAmfId, int amfSetId)
-{
-    // TODO an arbitrary AMF is selected for now
-    return findAmfContext(initiatedAmfId);
 }
 
 void NgapTask::deleteUeContext(int ueId)

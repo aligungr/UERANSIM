@@ -69,7 +69,6 @@ class NgapTask : public NtsTask
     NgapUeContext *findUeByRanId(long ranUeNgapId);
     NgapUeContext *findUeByAmfId(long amfUeNgapId);
     NgapUeContext *findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPair);
-    NgapAmfContext *selectNewAmfForReAllocation(int initiatedAmfId, int amfSetId);
     void deleteUeContext(int ueId);
     void deleteAmfContext(int amfId);
 
@@ -105,6 +104,10 @@ class NgapTask : public NtsTask
     void receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetupRequest *msg);
     void receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand *msg);
     void receiveContextModification(int amfId, ASN_NGAP_UEContextModificationRequest *msg);
+
+    /* NAS Node Selection */
+    NgapAmfContext *selectAmf(int ueId);
+    NgapAmfContext *selectNewAmfForReAllocation(int ueId, int initiatedAmfId, int amfSetId);
 };
 
 } // namespace nr::gnb

@@ -174,7 +174,7 @@ void NgapTask::receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *m
         }
     }
 
-    auto *newAmf = selectNewAmfForReAllocation(amfId, asn::GetBitStringInt<10>(ieAmfSetId->AMFSetID));
+    auto *newAmf = selectNewAmfForReAllocation(ue->ctxId, amfId, asn::GetBitStringInt<10>(ieAmfSetId->AMFSetID));
     if (newAmf == nullptr)
     {
         m_logger->err("AMF selection for re-allocation failed. Could not find a suitable AMF.");
