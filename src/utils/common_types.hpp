@@ -73,7 +73,7 @@ struct ImsiMobileIdentity
 {
     Plmn plmn;
     std::string routingIndicator;
-    int protectionSchemaId : 4; // 4-bit
+    int protectionSchemaId; // 4-bit
     octet homeNetworkPublicKeyIdentifier;
     std::string schemeOutput;
 
