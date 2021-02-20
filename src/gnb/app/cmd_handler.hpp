@@ -33,6 +33,10 @@ class GnbCmdHandler
 
   private:
     void handleCmdImpl(NwGnbCliCommand &msg);
+
+  private:
+    void sendResult(const InetAddress &address, const std::string &output);
+    void sendError(const InetAddress &address, const std::string &output);
 };
 
 } // namespace nr::gnb

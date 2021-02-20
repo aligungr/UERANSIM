@@ -316,6 +316,7 @@ struct TaskBase
     GnbConfig *config{};
     LogBase *logBase{};
     app::INodeListener *nodeListener{};
+    NtsTask *cliCallbackTask{};
 
     GnbAppTask *appTask{};
     GtpTask *gtpTask{};

@@ -153,7 +153,7 @@ static void ReceiveCommand(app::CliMessage &msg)
     }
 
     auto *gnb = g_gnbMap[msg.nodeName];
-    gnb->pushCommand(std::move(cmd), msg.clientAddr, g_cliRespTask);
+    gnb->pushCommand(std::move(cmd), msg.clientAddr);
 }
 
 static void Loop()
@@ -196,15 +196,18 @@ int main(int argc, char **argv)
 
     std::cout << cons::Name << std::endl;
 
-    auto *gnb = new nr::gnb::GNodeB(g_refConfig, nullptr);
+    if (!g_options.disableCmd)
+    {
+        g_cliServer = new app::CliServer{};
+        g_cliRespTask = new app::CliResponseTask(g_cliServer);
+    }
+
+    auto *gnb = new nr::gnb::GNodeB(g_refConfig, nullptr, g_cliRespTask);
     g_gnbMap[g_refConfig->name] = gnb;
 
     if (!g_options.disableCmd)
     {
-        g_cliServer = new app::CliServer{};
         app::CreateProcTable(g_gnbMap, g_cliServer->assignedAddress().getPort());
-
-        g_cliRespTask = new app::CliResponseTask(g_cliServer);
         g_cliRespTask->start();
     }
 

@@ -23,6 +23,16 @@
 namespace nr::gnb
 {
 
+void GnbCmdHandler::sendResult(const InetAddress &address, const std::string &output)
+{
+    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, false));
+}
+
+void GnbCmdHandler::sendError(const InetAddress &address, const std::string &output)
+{
+    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, true));
+}
+
 void GnbCmdHandler::pauseTasks()
 {
     m_base->gtpTask->requestPause();
@@ -77,7 +87,7 @@ void GnbCmdHandler::handleCmd(NwGnbCliCommand &msg)
 
     if (!isPaused)
     {
-        msg.sendError("gNB is unable process command due to pausing timeout");
+        sendError(msg.address, "gNB is unable process command due to pausing timeout");
     }
     else
     {
@@ -92,27 +102,27 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::GnbCliCommand::STATUS: {
-        msg.sendResult(ToJson(m_base->appTask->m_statusInfo).dumpYaml());
+        sendResult(msg.address, ToJson(m_base->appTask->m_statusInfo).dumpYaml());
         break;
     }
     case app::GnbCliCommand::INFO: {
-        msg.sendResult(ToJson(*m_base->config).dumpYaml());
+        sendResult(msg.address, ToJson(*m_base->config).dumpYaml());
         break;
     }
     case app::GnbCliCommand::AMF_LIST: {
         Json json = Json::Arr({});
         for (auto &amf : m_base->ngapTask->m_amfCtx)
             json.push(Json::Obj({{"id", amf.first}}));
-        msg.sendResult(json.dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::GnbCliCommand::AMF_INFO: {
         if (m_base->ngapTask->m_amfCtx.count(msg.cmd->amfId) == 0)
-            msg.sendError("AMF not found with given ID");
+            sendError(msg.address, "AMF not found with given ID");
         else
         {
             auto amf = m_base->ngapTask->m_amfCtx[msg.cmd->amfId];
-            msg.sendResult(ToJson(*amf).dumpYaml());
+            sendResult(msg.address, ToJson(*amf).dumpYaml());
         }
         break;
     }
@@ -126,11 +136,11 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
                 {"amf-ngap-id", ue.second->amfUeNgapId},
             }));
         }
-        msg.sendResult(json.dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::GnbCliCommand::UE_COUNT: {
-        msg.sendResult(std::to_string(m_base->ngapTask->m_ueCtx.size()));
+        sendResult(msg.address, std::to_string(m_base->ngapTask->m_ueCtx.size()));
         break;
     }
     }
