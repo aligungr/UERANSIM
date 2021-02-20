@@ -15,8 +15,8 @@ template <typename TKey, typename TValue>
 class ConcurrentMap
 {
   private:
-    mutable std::recursive_mutex m_mutex{};
     std::unordered_map<TKey, TValue> m_map{};
+    mutable std::recursive_mutex m_mutex{};
 
   public:
     ConcurrentMap() = default;
