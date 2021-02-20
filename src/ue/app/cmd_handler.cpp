@@ -116,7 +116,10 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::DE_REGISTER: {
-        msg.sendError("not implemented yet");
+        base.nasTask->mm->sendDeregistration(msg.cmd->isSwitchOff ? nas::ESwitchOff::SWITCH_OFF
+                                                                  : nas::ESwitchOff::NORMAL_DE_REGISTRATION,
+                                             msg.cmd->dueToDisable5g);
+        msg.sendResult("De-registration procedure triggered");
         break;
     }
     }

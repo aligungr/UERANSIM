@@ -74,6 +74,9 @@ class NasMm
     void sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
 
+    /* De-registration */
+    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
+
   private:
     /* Base */
     void switchMmState(EMmState state, EMmSubState subState);
@@ -121,7 +124,6 @@ class NasMm
     void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
 
     /* De-registration */
-    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
 
