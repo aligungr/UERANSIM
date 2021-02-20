@@ -10,6 +10,7 @@
 #include <app/cli_base.hpp>
 #include <app/cli_cmd.hpp>
 #include <app/proc_table.hpp>
+#include <app/ue_ctl.hpp>
 #include <iostream>
 #include <ue/ue.hpp>
 #include <unistd.h>
@@ -324,6 +325,19 @@ static void Loop()
     ReceiveCommand(msg);
 }
 
+class UeController : public app::IUeController
+{
+  public:
+    void performSwitchOff() override
+    {
+        // todo ue' için ptr çek
+        // o ptru delete et
+        // mapten sil
+        // map boşaldıysa exit yap
+        // tabi bunları switc off olan appin kendi threadin yapıyoz o yüzden burası atomic değil dikkat!!
+    }
+} g_ueController;
+
 int main(int argc, char **argv)
 {
     app::Initialize();
@@ -346,7 +360,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < g_options.count; i++)
     {
         auto *config = GetConfigByUe(i);
-        auto *ue = new nr::ue::UserEquipment(config, nullptr);
+        auto *ue = new nr::ue::UserEquipment(config, &g_ueController, nullptr);
         g_ueMap[config->getNodeName()] = ue;
     }
 

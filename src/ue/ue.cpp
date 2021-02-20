@@ -16,11 +16,12 @@
 namespace nr::ue
 {
 
-UserEquipment::UserEquipment(UeConfig *config, app::INodeListener *nodeListener)
+UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener)
 {
     auto *base = new TaskBase();
     base->config = config;
     base->logBase = new LogBase("logs/ue-" + config->getNodeName() + ".log");
+    base->ueController = ueController;
     base->nodeListener = nodeListener;
 
     base->nasTask = new NasTask(base);

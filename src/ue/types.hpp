@@ -9,6 +9,7 @@
 #pragma once
 
 #include <app/monitor.hpp>
+#include <app/ue_ctl.hpp>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <utils/common_types.hpp>
@@ -98,6 +99,7 @@ struct TaskBase
 {
     UeConfig *config{};
     LogBase *logBase{};
+    app::IUeController *ueController{};
     app::INodeListener *nodeListener{};
 
     UeAppTask *appTask{};

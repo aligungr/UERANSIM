@@ -119,7 +119,10 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
         base.nasTask->mm->sendDeregistration(msg.cmd->isSwitchOff ? nas::ESwitchOff::SWITCH_OFF
                                                                   : nas::ESwitchOff::NORMAL_DE_REGISTRATION,
                                              msg.cmd->dueToDisable5g);
-        msg.sendResult("De-registration procedure triggered");
+        if (!msg.cmd->isSwitchOff)
+            msg.sendResult("De-registration procedure triggered");
+        else
+            msg.sendResult("De-registration procedure triggered. UE device will be switched off.");
         break;
     }
     }

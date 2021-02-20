@@ -23,7 +23,7 @@ class UserEquipment
     TaskBase *taskBase;
 
   public:
-    UserEquipment(UeConfig *config, app::INodeListener *nodeListener);
+    UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener);
     virtual ~UserEquipment();
 
   public:

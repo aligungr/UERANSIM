@@ -14,6 +14,9 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
+static constexpr const int SWITCH_OFF_TIMER_ID = 1;
+static constexpr const int SWITCH_OFF_DELAY = 500;
+
 namespace nr::ue
 {
 
@@ -83,6 +86,17 @@ void UeAppTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::UE_NAS_TO_APP: {
+        auto *w = dynamic_cast<NwUeNasToApp *>(msg);
+        switch (w->present)
+        {
+        case NwUeNasToApp::PERFORM_SWITCH_OFF: {
+            setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
+            break;
+        }
+        }
+        break;
+    }
     case NtsMessageType::UE_STATUS_UPDATE: {
         receiveStatusUpdate(*dynamic_cast<NwUeStatusUpdate *>(msg));
         break;
@@ -90,6 +104,15 @@ void UeAppTask::onLoop()
     case NtsMessageType::UE_CLI_COMMAND: {
         auto *w = dynamic_cast<NwUeCliCommand *>(msg);
         UeCmdHandler::HandleCmd(*m_base, *w);
+        break;
+    }
+    case NtsMessageType::TIMER_EXPIRED: {
+        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        if (w->timerId == SWITCH_OFF_TIMER_ID)
+        {
+            m_logger->info("UE device is switching off");
+            m_base->ueController->performSwitchOff();
+        }
         break;
     }
     default:

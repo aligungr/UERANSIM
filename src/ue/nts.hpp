@@ -224,6 +224,18 @@ struct NwUeNasToNas : NtsMessage
     }
 };
 
+struct NwUeNasToApp : NtsMessage
+{
+    enum PR
+    {
+        PERFORM_SWITCH_OFF,
+    } present;
+
+    explicit NwUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
+    {
+    }
+};
+
 struct NwUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 5;

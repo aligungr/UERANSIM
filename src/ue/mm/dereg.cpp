@@ -8,6 +8,7 @@
 
 #include "mm.hpp"
 #include <nas/utils.hpp>
+#include <ue/app/task.hpp>
 #include <ue/sm/sm.hpp>
 
 namespace nr::ue
@@ -56,7 +57,9 @@ void NasMm::sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g)
     switchMmState(EMmState::MM_DEREGISTERED_INITIATED, EMmSubState::MM_DEREGISTERED_INITIATED_NA);
 
     // TODO local release of all PDU sessions
-    // TODO: switch off the UE if it's switch off
+
+    if (switchOff == nas::ESwitchOff::SWITCH_OFF)
+        m_base->appTask->push(new NwUeNasToApp(NwUeNasToApp::PERFORM_SWITCH_OFF));
 }
 
 void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg)
