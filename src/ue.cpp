@@ -331,6 +331,9 @@ class UeController : public app::IUeController
   public:
     void performSwitchOff() override
     {
+        // WARNING: This method is executed in UE AppTask's thread.
+        //  Therefore be careful about thread safety.
+
         // todo ue' için ptr çek
         // o ptru delete et
         // mapten sil
