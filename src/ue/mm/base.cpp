@@ -25,6 +25,7 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_cmState = ECmState::CM_IDLE;
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
+    m_uState = E5UState::U1_UPDATED;
     m_autoBehaviour = base->config->autoBehaviour;
     m_validSim = base->config->supi.has_value();
 }
@@ -165,6 +166,25 @@ void NasMm::switchCmState(ECmState state)
     triggerMmCycle();
 }
 
+void NasMm::switchUState(E5UState state)
+{
+    E5UState oldState = m_uState;
+    m_uState = state;
+
+    onSwitchUState(oldState, m_uState);
+
+    if (m_base->nodeListener)
+    {
+        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::U5,
+                                       ToJson(oldState).str(), ToJson(m_uState).str());
+    }
+
+    if (state != oldState)
+        m_logger->info("UE switches to state: %s", ToJson(state).str().c_str());
+
+    triggerMmCycle();
+}
+
 void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate)
 {
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
@@ -208,6 +228,10 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
             m_lastDeregDueToDisable5g = false;
         }
     }
+}
+
+void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
+{
 }
 
 void NasMm::receivePlmnSearchResponse(const std::string &gnbName)
@@ -282,6 +306,22 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         break;
     }
     }
+}
+
+void NasMm::invalidateAcquiredParams()
+{
+    m_storedGuti = {};
+    m_lastVisitedRegisteredTai = {};
+    m_taiList = {};
+    m_currentNsCtx = {};
+    m_nonCurrentNsCtx = {};
+}
+
+void NasMm::invalidateSim()
+{
+    m_logger->warn("USIM is removed or invalidated");
+    m_validSim = false;
+    invalidateAcquiredParams();
 }
 
 } // namespace nr::ue

@@ -33,6 +33,7 @@ class NasMm
     ECmState m_cmState;
     EMmState m_mmState;
     EMmSubState m_mmSubState;
+    E5UState m_uState;
 
     nas::IE5gsMobileIdentity m_storedSuci{};
     nas::IE5gsMobileIdentity m_storedGuti{};
@@ -78,9 +79,13 @@ class NasMm
     void switchMmState(EMmState state, EMmSubState subState);
     void switchRmState(ERmState state);
     void switchCmState(ECmState state);
+    void switchUState(E5UState state);
     void onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate);
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
+    void onSwitchUState(E5UState oldState, E5UState newState);
+    void invalidateAcquiredParams();
+    void invalidateSim();
 
     /* Transport */
     void sendMmStatus(nas::EMmCause cause);
