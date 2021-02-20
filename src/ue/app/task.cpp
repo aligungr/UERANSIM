@@ -112,7 +112,7 @@ void UeAppTask::onLoop()
         if (w->timerId == SWITCH_OFF_TIMER_ID)
         {
             m_logger->info("UE device is switching off");
-            m_base->ueController->performSwitchOff();
+            m_base->ueController->performSwitchOff(m_base->ue);
         }
         break;
     }

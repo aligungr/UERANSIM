@@ -329,16 +329,24 @@ static void Loop()
 class UeController : public app::IUeController
 {
   public:
-    void performSwitchOff() override
+    void performSwitchOff(nr::ue::UserEquipment *ue) override
     {
         // WARNING: This method is executed in UE AppTask's thread.
         //  Therefore be careful about thread safety.
 
-        // todo ue' için ptr çek
-        // o ptru delete et
-        // mapten sil
-        // map boşaldıysa exit yap
-        // tabi bunları switc off olan appin kendi threadin yapıyoz o yüzden burası atomic değil dikkat!!
+        std::string key{};
+        g_ueMap.invokeForeach([&key, ue](auto &item) {
+            if (item.second == ue)
+                key = item.first;
+        });
+
+        if (key.empty())
+            return;
+
+        if (g_ueMap.removeAndGetSize(key) == 0)
+            exit(0);
+
+        delete ue;
     }
 } g_ueController;
 

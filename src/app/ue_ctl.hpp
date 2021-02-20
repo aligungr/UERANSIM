@@ -8,13 +8,18 @@
 
 #pragma once
 
+namespace nr::ue
+{
+class UserEquipment;
+}
+
 namespace app
 {
 
 class IUeController
 {
   public:
-    virtual void performSwitchOff() = 0;
+    virtual void performSwitchOff(nr::ue::UserEquipment *ue) = 0;
 };
 
 } // namespace app

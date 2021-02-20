@@ -20,6 +20,7 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
                              NtsTask *cliCallbackTask)
 {
     auto *base = new TaskBase();
+    base->ue = this;
     base->config = config;
     base->logBase = new LogBase("logs/ue-" + config->getNodeName() + ".log");
     base->ueController = ueController;

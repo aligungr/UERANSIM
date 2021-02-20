@@ -43,4 +43,17 @@ class ConcurrentMap
         for (auto i : m_map)
             fun(i);
     }
+
+    void remove(const TKey &key)
+    {
+        std::lock_guard lk(m_mutex);
+        m_map.erase(key);
+    }
+
+    size_t removeAndGetSize(const TKey &key)
+    {
+        std::lock_guard lk(m_mutex);
+        m_map.erase(key);
+        return m_map.size();
+    }
 };

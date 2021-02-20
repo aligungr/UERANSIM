@@ -25,6 +25,7 @@ class UeAppTask;
 class UeMrTask;
 class NasTask;
 class UeRrcTask;
+class UserEquipment;
 
 struct SupportedAlgs
 {
@@ -97,6 +98,7 @@ struct UeConfig
 
 struct TaskBase
 {
+    UserEquipment *ue{};
     UeConfig *config{};
     LogBase *logBase{};
     app::IUeController *ueController{};
