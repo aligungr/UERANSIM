@@ -28,6 +28,8 @@ extern "C" struct ASN_NGAP_InitialContextSetupRequest;
 extern "C" struct ASN_NGAP_UEContextReleaseCommand;
 extern "C" struct ASN_NGAP_UEContextModificationRequest;
 extern "C" struct ASN_NGAP_AMFConfigurationUpdate;
+extern "C" struct ASN_NGAP_OverloadStart;
+extern "C" struct ASN_NGAP_OverloadStop;
 
 namespace nr::gnb
 {
@@ -81,6 +83,8 @@ class NgapTask : public NtsTask
     void receiveNgSetupFailure(int amfId, ASN_NGAP_NGSetupFailure *msg);
     void receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg);
     void receiveAmfConfigurationUpdate(int amfId, ASN_NGAP_AMFConfigurationUpdate *msg);
+    void receiveOverloadStart(int amfId, ASN_NGAP_OverloadStart *msg);
+    void receiveOverloadStop(int amfId, ASN_NGAP_OverloadStop *msg);
 
     /* Message transport */
     void sendNgapNonUe(int amfId, ASN_NGAP_NGAP_PDU *pdu);
