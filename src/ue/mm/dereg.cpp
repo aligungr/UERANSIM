@@ -128,8 +128,6 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
                 "Network-initiated de-registration request received but re-registration-required is ignored");
             forceIgnoreReregistration = true;
         }
-
-        return;
     }
 
     bool reRegistrationRequired =
