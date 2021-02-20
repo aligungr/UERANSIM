@@ -15,6 +15,7 @@
 #include <ue/ue.hpp>
 #include <unistd.h>
 #include <utils/common.hpp>
+#include <utils/concurrent_map.hpp>
 #include <utils/constants.hpp>
 #include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
@@ -22,7 +23,7 @@
 
 static app::CliServer *g_cliServer = nullptr;
 static nr::ue::UeConfig *g_refConfig = nullptr;
-static std::unordered_map<std::string, nr::ue::UserEquipment *> g_ueMap{};
+static ConcurrentMap<std::string, nr::ue::UserEquipment *> g_ueMap{};
 static app::CliResponseTask *g_cliRespTask = nullptr;
 
 static struct Options
@@ -282,13 +283,13 @@ static void ReceiveCommand(app::CliMessage &msg)
         return;
     }
 
-    if (g_ueMap.count(msg.nodeName) == 0)
+    auto *ue = g_ueMap.getOrDefault(msg.nodeName);
+    if (ue == nullptr)
     {
         g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node not found: " + msg.nodeName));
         return;
     }
 
-    auto *ue = g_ueMap[msg.nodeName];
     ue->pushCommand(std::move(cmd), msg.clientAddr);
 }
 
@@ -367,7 +368,7 @@ int main(int argc, char **argv)
     {
         auto *config = GetConfigByUe(i);
         auto *ue = new nr::ue::UserEquipment(config, &g_ueController, nullptr, g_cliRespTask);
-        g_ueMap[config->getNodeName()] = ue;
+        g_ueMap.put(config->getNodeName(), ue);
     }
 
     if (!g_options.disableCmd)
@@ -376,8 +377,7 @@ int main(int argc, char **argv)
         g_cliRespTask->start();
     }
 
-    for (auto &ue : g_ueMap)
-        ue.second->start();
+    g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
 
     while (true)
         Loop();
