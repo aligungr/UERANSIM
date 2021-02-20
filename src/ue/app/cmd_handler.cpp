@@ -95,7 +95,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
     case app::UeCliCommand::STATUS: {
         std::vector<Json> pduSessions{};
         int index = 0;
-        for (auto &pduSession : m_base->appTask->m_statusInfo.pduSessions)
+        for (auto &pduSession : m_base->appTask->m_pduSessions)
         {
             if (pduSession.has_value())
             {

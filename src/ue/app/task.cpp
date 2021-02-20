@@ -20,7 +20,7 @@ static constexpr const int SWITCH_OFF_DELAY = 500;
 namespace nr::ue
 {
 
-UeAppTask::UeAppTask(TaskBase *base) : m_base{base}, m_statusInfo{}, m_tunTasks{}
+UeAppTask::UeAppTask(TaskBase *base) : m_base{base}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "app");
 }
@@ -129,12 +129,12 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
     {
         auto *session = msg.pduSession;
 
-        UeStatusInfo::UePduSessionInfo sessionInfo{};
+        UePduSessionInfo sessionInfo{};
         sessionInfo.type = nas::utils::EnumToString(session->sessionType);
         if (session->pduAddress.has_value())
             sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
 
-        m_statusInfo.pduSessions[session->id] = std::move(sessionInfo);
+        m_pduSessions[session->id] = std::move(sessionInfo);
 
         setupTunInterface(session);
         return;
@@ -142,8 +142,18 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
 
     if (msg.what == NwUeStatusUpdate::SESSION_RELEASE)
     {
-        // TODO
-        m_logger->err("todo: release");
+        if (m_tunTasks[msg.psi] != nullptr)
+        {
+            m_tunTasks[msg.psi]->quit();
+            delete m_tunTasks[msg.psi];
+            m_tunTasks[msg.psi] = nullptr;
+        }
+
+        if (m_pduSessions[msg.psi].has_value())
+        {
+            m_logger->info("PDU session[%d] released", msg.psi);
+            m_pduSessions[msg.psi] = {};
+        }
     }
 }
 

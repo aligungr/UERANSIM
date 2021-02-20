@@ -76,28 +76,12 @@ int NasSm::allocateProcedureTransactionId()
 
 void NasSm::freeProcedureTransactionId(int pti)
 {
-    if (pti == 0)
-    {
-        for (auto &transaction : m_procedureTransactions)
-            transaction = {};
-    }
-    else
-    {
-        m_procedureTransactions[pti].id = 0;
-    }
+    m_procedureTransactions[pti] = {};
 }
 
 void NasSm::freePduSessionId(int psi)
 {
-    if (psi == 0)
-    {
-        for (auto &session : m_pduSessions)
-            session = {};
-    }
-    else
-    {
-        m_pduSessions[psi] = {};
-    }
+    m_pduSessions[psi] = {};
 }
 
 } // namespace nr::ue

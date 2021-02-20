@@ -247,7 +247,7 @@ struct NwUeStatusUpdate : NtsMessage
     PduSession *pduSession{};
 
     // SESSION_RELEASE
-    int psi{}; // psi=0 means release all of the sessions
+    int psi{};
 
     explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {

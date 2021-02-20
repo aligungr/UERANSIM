@@ -10,6 +10,7 @@
 
 #include <app/monitor.hpp>
 #include <app/ue_ctl.hpp>
+#include <array>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <utils/common_types.hpp>
@@ -353,15 +354,10 @@ enum class EAutnValidationRes
     SYNCHRONISATION_FAILURE,
 };
 
-struct UeStatusInfo
+struct UePduSessionInfo
 {
-    struct UePduSessionInfo
-    {
-        std::string type{};
-        std::string address{};
-    };
-
-    std::optional<UePduSessionInfo> pduSessions[16]{};
+    std::string type{};
+    std::string address{};
 };
 
 Json ToJson(const ECmState &state);

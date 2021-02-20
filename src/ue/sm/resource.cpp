@@ -18,11 +18,23 @@ void NasSm::localReleaseSession(int psi)
 {
     m_logger->debug("Performing local release of PDU session[%d]", psi);
 
+    bool isEstablished = m_pduSessions[psi].isEstablished;
+
     freePduSessionId(psi);
 
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::SESSION_RELEASE);
-    statusUpdate->psi = psi;
-    m_base->appTask->push(statusUpdate);
+    if (isEstablished)
+    {
+        auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::SESSION_RELEASE);
+        statusUpdate->psi = psi;
+        m_base->appTask->push(statusUpdate);
+    }
+}
+
+void NasSm::localReleaseAllSessions()
+{
+    for (auto &session : m_pduSessions)
+        if (session.id != 0)
+            localReleaseSession(session.id);
 }
 
 } // namespace nr::ue
