@@ -51,22 +51,6 @@ struct PlmnSupport
     std::vector<std::unique_ptr<SliceSupport>> sliceSupportList;
 };
 
-struct TmsiMobileIdentity
-{
-    int amfSetId : 10;
-    int amfPointer : 6;
-    octet4 tmsi;
-
-    TmsiMobileIdentity() : amfSetId{}, amfPointer{}, tmsi{}
-    {
-    }
-
-    TmsiMobileIdentity(int amfSetId, int amfPointer, const octet4 &tmsi)
-        : amfSetId(amfSetId), amfPointer(amfPointer), tmsi(tmsi)
-    {
-    }
-};
-
 struct GutiMobileIdentity
 {
     Plmn plmn;         // Not used in TMSI
