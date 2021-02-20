@@ -30,7 +30,7 @@ class SctpTask;
 
 enum class EAmfState
 {
-    NOT_CONNECTED,
+    NOT_CONNECTED = 0,
     WAITING_NG_SETUP,
     CONNECTED
 };
@@ -56,6 +56,38 @@ struct ServedGuami
     std::string backupAmfName;
 };
 
+// TODO: update cli and json for overload related types
+
+enum class EOverloadAction
+{
+    UNSPECIFIED_OVERLOAD,
+    REJECT_NON_EMERGENCY_MO_DATA,
+    REJECT_SIGNALLING,
+    ONLY_EMERGENCY_AND_MT,
+    ONLY_HIGH_PRI_AND_MT,
+};
+
+enum class EOverloadStatus
+{
+    NOT_OVERLOADED,
+    OVERLOADED
+};
+
+struct OverloadInfo
+{
+    struct Indication
+    {
+        // Reduce the signalling traffic by the indicated percentage
+        int loadReductionPerc{};
+
+        // If reduction percentage is not present, this action shall be used
+        EOverloadAction action{};
+    };
+
+    EOverloadStatus status{};
+    Indication indication{};
+};
+
 struct NgapAmfContext
 {
     int ctxId;
@@ -66,6 +98,7 @@ struct NgapAmfContext
     std::string amfName;
     long relativeCapacity;
     EAmfState state;
+    OverloadInfo overloadInfo;
     std::vector<ServedGuami *> servedGuamiList;
     std::vector<PlmnSupport *> plmnSupportList;
 };
