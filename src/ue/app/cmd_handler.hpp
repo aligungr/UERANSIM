@@ -17,15 +17,26 @@ namespace nr::ue
 class UeCmdHandler
 {
   private:
-    static void PauseTasks(TaskBase &base);
-    static void UnpauseTasks(TaskBase &base);
-    static bool IsAllPaused(TaskBase &base);
+    TaskBase *m_base;
 
   public:
-    static void HandleCmd(TaskBase &base, NwUeCliCommand &msg);
+    explicit UeCmdHandler(TaskBase *base) : m_base(base)
+    {
+    }
+
+    void handleCmd(NwUeCliCommand &msg);
 
   private:
-    static void HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg);
+    void pauseTasks();
+    void unpauseTasks();
+    bool isAllPaused();
+
+  private:
+    void handleCmdImpl(NwUeCliCommand &msg);
+
+  private:
+    void sendResult(const InetAddress &address, const std::string &output);
+    void sendError(const InetAddress &address, const std::string &output);
 };
 
 } // namespace nr::ue

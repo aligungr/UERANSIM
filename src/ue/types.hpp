@@ -101,6 +101,7 @@ struct TaskBase
     LogBase *logBase{};
     app::IUeController *ueController{};
     app::INodeListener *nodeListener{};
+    NtsTask *cliCallbackTask{};
 
     UeAppTask *appTask{};
     UeMrTask *mrTask{};

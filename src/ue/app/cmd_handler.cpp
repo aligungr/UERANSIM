@@ -22,34 +22,44 @@
 namespace nr::ue
 {
 
-void UeCmdHandler::PauseTasks(TaskBase &base)
+void UeCmdHandler::sendResult(const InetAddress &address, const std::string &output)
 {
-    base.mrTask->requestPause();
-    base.nasTask->requestPause();
-    base.rrcTask->requestPause();
+    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, false));
 }
 
-void UeCmdHandler::UnpauseTasks(TaskBase &base)
+void UeCmdHandler::sendError(const InetAddress &address, const std::string &output)
 {
-    base.mrTask->requestUnpause();
-    base.nasTask->requestUnpause();
-    base.rrcTask->requestUnpause();
+    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, true));
 }
 
-bool UeCmdHandler::IsAllPaused(TaskBase &base)
+void UeCmdHandler::pauseTasks()
 {
-    if (!base.mrTask->isPauseConfirmed())
+    m_base->mrTask->requestPause();
+    m_base->nasTask->requestPause();
+    m_base->rrcTask->requestPause();
+}
+
+void UeCmdHandler::unpauseTasks()
+{
+    m_base->mrTask->requestUnpause();
+    m_base->nasTask->requestUnpause();
+    m_base->rrcTask->requestUnpause();
+}
+
+bool UeCmdHandler::isAllPaused()
+{
+    if (!m_base->mrTask->isPauseConfirmed())
         return false;
-    if (!base.nasTask->isPauseConfirmed())
+    if (!m_base->nasTask->isPauseConfirmed())
         return false;
-    if (!base.rrcTask->isPauseConfirmed())
+    if (!m_base->rrcTask->isPauseConfirmed())
         return false;
     return true;
 }
 
-void UeCmdHandler::HandleCmd(TaskBase &base, NwUeCliCommand &msg)
+void UeCmdHandler::handleCmd(NwUeCliCommand &msg)
 {
-    PauseTasks(base);
+    pauseTasks();
 
     uint64_t currentTime = utils::CurrentTimeMillis();
     uint64_t endTime = currentTime + PAUSE_CONFIRM_TIMEOUT;
@@ -58,7 +68,7 @@ void UeCmdHandler::HandleCmd(TaskBase &base, NwUeCliCommand &msg)
     while (currentTime < endTime)
     {
         currentTime = utils::CurrentTimeMillis();
-        if (IsAllPaused(base))
+        if (isAllPaused())
         {
             isPaused = true;
             break;
@@ -68,24 +78,24 @@ void UeCmdHandler::HandleCmd(TaskBase &base, NwUeCliCommand &msg)
 
     if (!isPaused)
     {
-        msg.sendError("UE is unable process command due to pausing timeout");
+        sendError(msg.address, "UE is unable process command due to pausing timeout");
     }
     else
     {
-        HandleCmdImpl(base, msg);
+        handleCmdImpl(msg);
     }
 
-    UnpauseTasks(base);
+    unpauseTasks();
 }
 
-void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
+void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
 {
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
         std::vector<Json> pduSessions{};
         int index = 0;
-        for (auto &pduSession : base.appTask->m_statusInfo.pduSessions)
+        for (auto &pduSession : m_base->appTask->m_statusInfo.pduSessions)
         {
             if (pduSession.has_value())
             {
@@ -96,33 +106,33 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
         }
 
         Json json = Json::Obj({
-            {"cm-state", ToJson(base.nasTask->mm->m_cmState)},
-            {"rm-state", ToJson(base.nasTask->mm->m_rmState)},
-            {"mm-state", ToJson(base.nasTask->mm->m_mmSubState)},
-            {"sim-inserted", base.nasTask->mm->m_validSim},
-            {"stored-suci", ToJson(base.nasTask->mm->m_storedSuci)},
-            {"stored-guti", ToJson(base.nasTask->mm->m_storedGuti)},
+            {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
+            {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
+            {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
+            {"sim-inserted", m_base->nasTask->mm->m_validSim},
+            {"stored-suci", ToJson(m_base->nasTask->mm->m_storedSuci)},
+            {"stored-guti", ToJson(m_base->nasTask->mm->m_storedGuti)},
             {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
-        msg.sendResult(json.dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::INFO: {
-        msg.sendResult(ToJson(*base.config).dumpYaml());
+        sendResult(msg.address, ToJson(*m_base->config).dumpYaml());
         break;
     }
     case app::UeCliCommand::TIMERS: {
-        msg.sendResult(ToJson(base.nasTask->timers).dumpYaml());
+        sendResult(msg.address, ToJson(m_base->nasTask->timers).dumpYaml());
         break;
     }
     case app::UeCliCommand::DE_REGISTER: {
-        base.nasTask->mm->sendDeregistration(msg.cmd->isSwitchOff ? nas::ESwitchOff::SWITCH_OFF
-                                                                  : nas::ESwitchOff::NORMAL_DE_REGISTRATION,
-                                             msg.cmd->dueToDisable5g);
+        m_base->nasTask->mm->sendDeregistration(msg.cmd->isSwitchOff ? nas::ESwitchOff::SWITCH_OFF
+                                                                    : nas::ESwitchOff::NORMAL_DE_REGISTRATION,
+                                               msg.cmd->dueToDisable5g);
         if (!msg.cmd->isSwitchOff)
-            msg.sendResult("De-registration procedure triggered");
+            sendResult(msg.address, "De-registration procedure triggered");
         else
-            msg.sendResult("De-registration procedure triggered. UE device will be switched off.");
+            sendResult(msg.address, "De-registration procedure triggered. UE device will be switched off.");
         break;
     }
     }

@@ -289,7 +289,7 @@ static void ReceiveCommand(app::CliMessage &msg)
     }
 
     auto *ue = g_ueMap[msg.nodeName];
-    ue->pushCommand(std::move(cmd), msg.clientAddr, g_cliRespTask);
+    ue->pushCommand(std::move(cmd), msg.clientAddr);
 }
 
 static void Loop()
@@ -357,19 +357,22 @@ int main(int argc, char **argv)
 
     std::cout << cons::Name << std::endl;
 
+    if (!g_options.disableCmd)
+    {
+        g_cliServer = new app::CliServer{};
+        g_cliRespTask = new app::CliResponseTask(g_cliServer);
+    }
+
     for (int i = 0; i < g_options.count; i++)
     {
         auto *config = GetConfigByUe(i);
-        auto *ue = new nr::ue::UserEquipment(config, &g_ueController, nullptr);
+        auto *ue = new nr::ue::UserEquipment(config, &g_ueController, nullptr, g_cliRespTask);
         g_ueMap[config->getNodeName()] = ue;
     }
 
     if (!g_options.disableCmd)
     {
-        g_cliServer = new app::CliServer{};
         app::CreateProcTable(g_ueMap, g_cliServer->assignedAddress().getPort());
-
-        g_cliRespTask = new app::CliResponseTask(g_cliServer);
         g_cliRespTask->start();
     }
 

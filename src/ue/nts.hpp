@@ -254,21 +254,10 @@ struct NwUeCliCommand : NtsMessage
 {
     std::unique_ptr<app::UeCliCommand> cmd;
     InetAddress address;
-    NtsTask *callbackTask;
 
-    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address, NtsTask *callbackTask)
-        : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address), callbackTask(callbackTask)
+    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
+        : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
-    }
-
-    void sendResult(const std::string &output) const
-    {
-        callbackTask->push(new app::NwCliSendResponse(address, output, false));
-    }
-
-    void sendError(const std::string &output) const
-    {
-        callbackTask->push(new app::NwCliSendResponse(address, output, true));
     }
 };
 

@@ -103,7 +103,8 @@ void UeAppTask::onLoop()
     }
     case NtsMessageType::UE_CLI_COMMAND: {
         auto *w = dynamic_cast<NwUeCliCommand *>(msg);
-        UeCmdHandler::HandleCmd(*m_base, *w);
+        UeCmdHandler handler{m_base};
+        handler.handleCmd(*w);
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {

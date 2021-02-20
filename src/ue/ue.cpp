@@ -16,13 +16,15 @@
 namespace nr::ue
 {
 
-UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener)
+UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener,
+                             NtsTask *cliCallbackTask)
 {
     auto *base = new TaskBase();
     base->config = config;
     base->logBase = new LogBase("logs/ue-" + config->getNodeName() + ".log");
     base->ueController = ueController;
     base->nodeListener = nodeListener;
+    base->cliCallbackTask = cliCallbackTask;
 
     base->nasTask = new NasTask(base);
     base->rrcTask = new UeRrcTask(base);
@@ -57,10 +59,9 @@ void UserEquipment::start()
     taskBase->appTask->start();
 }
 
-void UserEquipment::pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address,
-                                NtsTask *callbackTask)
+void UserEquipment::pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address)
 {
-    taskBase->appTask->push(new NwUeCliCommand(std::move(cmd), address, callbackTask));
+    taskBase->appTask->push(new NwUeCliCommand(std::move(cmd), address));
 }
 
 } // namespace nr::ue
