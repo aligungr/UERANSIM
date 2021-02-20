@@ -21,7 +21,7 @@
 #include <yaml-cpp/yaml.h>
 
 static app::CliServer *g_cliServer = nullptr;
-nr::ue::UeConfig *g_refConfig = nullptr;
+static nr::ue::UeConfig *g_refConfig = nullptr;
 static std::unordered_map<std::string, nr::ue::UserEquipment *> g_ueMap{};
 static app::CliResponseTask *g_cliRespTask = nullptr;
 
