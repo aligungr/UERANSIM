@@ -11,8 +11,8 @@
 
 #include <algorithm>
 #include <gnb/app/task.hpp>
-#include <gnb/sctp/task.hpp>
 #include <gnb/rrc/task.hpp>
+#include <gnb/sctp/task.hpp>
 
 #include <asn/ngap/ASN_NGAP_AMFConfigurationUpdate.h>
 #include <asn/ngap/ASN_NGAP_AMFConfigurationUpdateFailure.h>
@@ -28,6 +28,7 @@
 #include <asn/ngap/ASN_NGAP_ServedGUAMIItem.h>
 #include <asn/ngap/ASN_NGAP_SliceSupportItem.h>
 #include <asn/ngap/ASN_NGAP_SupportedTAItem.h>
+#include <asn/ngap/ASN_NGAP_OverloadStartNSSAIItem.h>
 
 namespace nr::gnb
 {
@@ -296,6 +297,62 @@ void NgapTask::receiveAmfConfigurationUpdate(int amfId, ASN_NGAP_AMFConfiguratio
         auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_AMFConfigurationUpdateAcknowledge>({ieList});
         sendNgapNonUe(amfId, pdu);
     }
+}
+
+void NgapTask::receiveOverloadStart(int amfId, ASN_NGAP_OverloadStart *msg)
+{
+    m_logger->debug("AMF overload start received");
+
+    auto *amf = findAmfContext(amfId);
+    if (amf == nullptr)
+        return;
+
+    amf->overloadInfo = {};
+    amf->overloadInfo.status = EOverloadStatus::OVERLOADED;
+
+    auto *ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_AMFOverloadResponse);
+    if (ie && ie->OverloadResponse.present == ASN_NGAP_OverloadResponse_PR_overloadAction)
+    {
+        switch (ie->OverloadResponse.choice.overloadAction)
+        {
+        case ASN_NGAP_OverloadAction_reject_non_emergency_mo_dt:
+            amf->overloadInfo.indication.action = EOverloadAction::REJECT_NON_EMERGENCY_MO_DATA;
+            break;
+        case ASN_NGAP_OverloadAction_reject_rrc_cr_signalling:
+            amf->overloadInfo.indication.action = EOverloadAction::REJECT_SIGNALLING;
+            break;
+        case ASN_NGAP_OverloadAction_permit_emergency_sessions_and_mobile_terminated_services_only:
+            amf->overloadInfo.indication.action = EOverloadAction::ONLY_EMERGENCY_AND_MT;
+            break;
+        case ASN_NGAP_OverloadAction_permit_high_priority_sessions_and_mobile_terminated_services_only:
+            amf->overloadInfo.indication.action = EOverloadAction::ONLY_HIGH_PRI_AND_MT;
+            break;
+        default:
+            m_logger->warn("AMF overload action [%d] could not understand",
+                           (int)ie->OverloadResponse.choice.overloadAction);
+            break;
+        }
+    }
+
+    ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_AMFTrafficLoadReductionIndication);
+    if (ie)
+        amf->overloadInfo.indication.loadReductionPerc = static_cast<int>(ie->TrafficLoadReductionIndication);
+
+    ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_OverloadStartNSSAIList);
+    if (ie)
+    {
+        // TODO
+        /*asn::ForeachItem(ie->OverloadStartNSSAIList, [](auto &item) {
+            item.sliceOverloadList;
+        });*/
+    }
+}
+
+void NgapTask::receiveOverloadStop(int amfId, ASN_NGAP_OverloadStop *msg)
+{
+    m_logger->debug("AMF overload stop received");
+
+    // TODO
 }
 
 } // namespace nr::gnb
