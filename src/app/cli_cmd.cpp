@@ -91,7 +91,7 @@ static std::map<std::string, std::string> g_ueCmdToUsage = {
     {"info", "[option...]"},
     {"status", "[option...]"},
     {"timers", "[option...]"},
-    {"deregister", "<SWITCH-OFF|DISABLE-5G|NORMAL>"},
+    {"deregister", "<switch-off|disable-5g|normal>"},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
@@ -235,12 +235,12 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
         if (options.positionalCount() > 1)
             CMD_ERR("Only one de-registration type is expected")
         auto type = options.getPositional(0);
-        if (type == "SWITCH-0FF")
+        if (type == "switch-off")
             cmd->isSwitchOff = true;
-        else if (type == "DISABLE-5G")
+        else if (type == "disable-5g")
             cmd->dueToDisable5g = true;
-        else if (type != "NORMAL")
-            CMD_ERR("Invalid de-registration type, possible values are: SWITCH-OFF, DISABLE-5G, NORMAL")
+        else if (type != "normal")
+            CMD_ERR("Invalid de-registration type, possible values are: switch-off, disable-5g, normal")
         return cmd;
     }
 
