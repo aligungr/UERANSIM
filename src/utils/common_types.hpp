@@ -53,10 +53,10 @@ struct PlmnSupport
 
 struct GutiMobileIdentity
 {
-    Plmn plmn;         // Not used in TMSI
-    octet amfRegionId; // Not used in TMSI
-    int amfSetId : 10;
-    int amfPointer : 6;
+    Plmn plmn;          // Not used in TMSI
+    octet amfRegionId;  // Not used in TMSI
+    int amfSetId : 10;  // 10-bit
+    int amfPointer : 6; // 6-bit
     octet4 tmsi;
 
     GutiMobileIdentity() : plmn{}, amfRegionId{}, amfSetId{}, amfPointer{}, tmsi{}
