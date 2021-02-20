@@ -65,9 +65,9 @@ struct UeConfig
     std::vector<SessionConfig> initSessions{};
 
     /* Assigned by program */
-    bool emulationMode;
-    bool configureRouting;
-    bool prefixLogger;
+    bool emulationMode{};
+    bool configureRouting{};
+    bool prefixLogger{};
 
     [[nodiscard]] std::string getNodeName() const
     {

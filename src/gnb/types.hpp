@@ -37,23 +37,23 @@ enum class EAmfState
 
 struct SctpAssociation
 {
-    int associationId;
-    int inStreams;
-    int outStreams;
+    int associationId{};
+    int inStreams{};
+    int outStreams{};
 };
 
 struct Guami
 {
-    Plmn plmn;
-    int amfRegionId; // 8-bit
-    int amfSetId;    // 10-bit
-    int amfPointer;  // 6-bit
+    Plmn plmn{};
+    int amfRegionId{}; // 8-bit
+    int amfSetId{};    // 10-bit
+    int amfPointer{};  // 6-bit
 };
 
 struct ServedGuami
 {
-    Guami guami;
-    std::string backupAmfName;
+    Guami guami{};
+    std::string backupAmfName{};
 };
 
 // TODO: update cli and json for overload related types
@@ -90,17 +90,17 @@ struct OverloadInfo
 
 struct NgapAmfContext
 {
-    int ctxId;
-    SctpAssociation association;
-    int nextStream; // next available SCTP stream for uplink
-    std::string address;
-    uint16_t port;
-    std::string amfName;
-    long relativeCapacity;
-    EAmfState state;
-    OverloadInfo overloadInfo;
-    std::vector<ServedGuami *> servedGuamiList;
-    std::vector<PlmnSupport *> plmnSupportList;
+    int ctxId{};
+    SctpAssociation association{};
+    int nextStream{}; // next available SCTP stream for uplink
+    std::string address{};
+    uint16_t port{};
+    std::string amfName{};
+    long relativeCapacity{};
+    EAmfState state{};
+    OverloadInfo overloadInfo{};
+    std::vector<ServedGuami *> servedGuamiList{};
+    std::vector<PlmnSupport *> plmnSupportList{};
 };
 
 struct AggregateMaximumBitRate
@@ -111,7 +111,7 @@ struct AggregateMaximumBitRate
 
 struct NgapUeContext
 {
-    const int ctxId;
+    const int ctxId{};
 
     int64_t amfUeNgapId = -1; // -1 if not assigned
     int64_t ranUeNgapId{};
@@ -127,7 +127,7 @@ struct NgapUeContext
 
 struct RrcUeContext
 {
-    const int ueId;
+    const int ueId{};
 
     int64_t initialRandomId = -1;
     long establishmentCause{};
@@ -139,8 +139,8 @@ struct RrcUeContext
 
 struct NgapIdPair
 {
-    std::optional<int64_t> amfUeNgapId;
-    std::optional<int64_t> ranUeNgapId;
+    std::optional<int64_t> amfUeNgapId{};
+    std::optional<int64_t> ranUeNgapId{};
 
     NgapIdPair() : amfUeNgapId{}, ranUeNgapId{}
     {
@@ -242,7 +242,7 @@ struct PduSessionResource
     PduSessionType sessionType = PduSessionType::UNSTRUCTURED;
     GtpTunnel upTunnel{};
     GtpTunnel downTunnel{};
-    asn::Unique<ASN_NGAP_QosFlowSetupRequestList> qosFlows;
+    asn::Unique<ASN_NGAP_QosFlowSetupRequestList> qosFlows{};
 
     PduSessionResource(const int ueId, const int psi) : ueId(ueId), psi(psi)
     {
@@ -251,7 +251,7 @@ struct PduSessionResource
 
 struct GnbStatusInfo
 {
-    bool isNgapUp;
+    bool isNgapUp{};
 };
 
 struct GtpUeContext
@@ -266,9 +266,9 @@ struct GtpUeContext
 
 struct GtpUeContextUpdate
 {
-    bool isCreate;
-    int ueId;
-    AggregateMaximumBitRate ueAmbr;
+    bool isCreate{};
+    int ueId{};
+    AggregateMaximumBitRate ueAmbr{};
 
     GtpUeContextUpdate(bool isCreate, int ueId, const AggregateMaximumBitRate &ueAmbr)
         : isCreate(isCreate), ueId(ueId), ueAmbr(ueAmbr)
@@ -278,27 +278,27 @@ struct GtpUeContextUpdate
 
 struct GnbAmfConfig
 {
-    std::string address;
-    uint16_t port;
+    std::string address{};
+    uint16_t port{};
 };
 
 struct GnbConfig
 {
     /* Read from config file */
-    int64_t nci;     // 36-bit
-    int gnbIdLength; // 22..32 bit
-    Plmn plmn;
-    int tac;
-    std::vector<SliceSupport> nssais;
-    std::vector<GnbAmfConfig> amfConfigs;
-    std::string portalIp;
-    std::string ngapIp;
-    std::string gtpIp;
-    bool ignoreStreamIds;
+    int64_t nci{};     // 36-bit
+    int gnbIdLength{}; // 22..32 bit
+    Plmn plmn{};
+    int tac{};
+    std::vector<SliceSupport> nssais{};
+    std::vector<GnbAmfConfig> amfConfigs{};
+    std::string portalIp{};
+    std::string ngapIp{};
+    std::string gtpIp{};
+    bool ignoreStreamIds{};
 
     /* Assigned by program */
-    std::string name;
-    EPagingDrx pagingDrx;
+    std::string name{};
+    EPagingDrx pagingDrx{};
 
     [[nodiscard]] inline uint32_t getGnbId() const
     {
@@ -313,22 +313,22 @@ struct GnbConfig
 
 struct TaskBase
 {
-    GnbConfig *config;
-    LogBase *logBase;
-    app::INodeListener *nodeListener;
+    GnbConfig *config{};
+    LogBase *logBase{};
+    app::INodeListener *nodeListener{};
 
-    GnbAppTask *appTask;
-    GtpTask *gtpTask;
-    GnbMrTask *mrTask;
-    NgapTask *ngapTask;
-    GnbRrcTask *rrcTask;
-    SctpTask *sctpTask;
+    GnbAppTask *appTask{};
+    GtpTask *gtpTask{};
+    GnbMrTask *mrTask{};
+    NgapTask *ngapTask{};
+    GnbRrcTask *rrcTask{};
+    SctpTask *sctpTask{};
 };
 
 struct MrUeContext
 {
-    int ueId;
-    std::string name;
+    int ueId{};
+    std::string name{};
 };
 
 Json ToJson(const GnbStatusInfo &v);
