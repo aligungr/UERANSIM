@@ -17,15 +17,23 @@ namespace nr::gnb
 class GnbCmdHandler
 {
   private:
-    static void PauseTasks(TaskBase &base);
-    static void UnpauseTasks(TaskBase &base);
-    static bool IsAllPaused(TaskBase &base);
+    TaskBase *m_base;
 
   public:
-    static void HandleCmd(TaskBase &base, NwGnbCliCommand &msg);
+    explicit GnbCmdHandler(TaskBase *base) : m_base(base)
+    {
+    }
 
   private:
-    static void HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg);
+    void pauseTasks();
+    void unpauseTasks();
+    bool isAllPaused();
+
+  public:
+    void handleCmd(NwGnbCliCommand &msg);
+
+  private:
+    void handleCmdImpl(NwGnbCliCommand &msg);
 };
 
 } // namespace nr::gnb
