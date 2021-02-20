@@ -132,7 +132,7 @@ static void ReadOptions(int argc, char **argv)
 {
     opt::OptionsDescription desc{cons::Project, cons::Tag, "5G-SA UE implementation",
                                  cons::Owner,   "nr-ue",   {"-c <config-file> [option...]"},
-                                 true, false};
+                                 true,          false};
 
     opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for UE", "config-file"};
     opt::OptionItem itemImsi = {'i', "imsi", "Use specified IMSI number instead of provided one", "imsi"};
