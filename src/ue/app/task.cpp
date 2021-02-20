@@ -154,6 +154,7 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
             m_logger->info("PDU session[%d] released", msg.psi);
             m_pduSessions[msg.psi] = {};
         }
+        return;
     }
 }
 
