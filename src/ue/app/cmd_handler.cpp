@@ -115,6 +115,10 @@ void UeCmdHandler::HandleCmdImpl(TaskBase &base, NwUeCliCommand &msg)
         msg.sendResult(ToJson(base.nasTask->timers).dumpYaml());
         break;
     }
+    case app::UeCliCommand::DE_REGISTER: {
+        msg.sendError("not implemented yet");
+        break;
+    }
     }
 }
 

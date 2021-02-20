@@ -84,18 +84,21 @@ static std::map<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
     {"status", "Show some status information about the UE"},
     {"timers", "Dump current status of the timers in the UE"},
+    {"deregister", "Perform de-registration by the UE"},
 };
 
 static std::map<std::string, std::string> g_ueCmdToUsage = {
     {"info", "[option...]"},
     {"status", "[option...]"},
     {"timers", "[option...]"},
+    {"deregister", "<deregister-type>"},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
     {"info", false},
     {"status", false},
     {"timers", false},
+    {"deregister", true},
 };
 
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
@@ -223,6 +226,11 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
     else if (subCmd == "timers")
     {
         return std::make_unique<UeCliCommand>(UeCliCommand::TIMERS);
+    }
+    else if (subCmd == "deregister")
+    {
+        auto cmd = std::make_unique<UeCliCommand>(UeCliCommand::DE_REGISTER);
+        return cmd;
     }
 
     return nullptr;
