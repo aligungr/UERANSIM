@@ -91,7 +91,7 @@ static std::map<std::string, std::string> g_ueCmdToUsage = {
     {"info", "[option...]"},
     {"status", "[option...]"},
     {"timers", "[option...]"},
-    {"deregister", "<deregister-type>"},
+    {"deregister", "[option...]"},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
