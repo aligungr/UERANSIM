@@ -29,7 +29,7 @@ And, since the project is rapidly developing, please make sure that you have alw
 
 ## Contributing
 
-Implementing UE and RAN is not an easy task and requires a lot of time. We are always open to public contributions and pull requests.
+Implementing UE and RAN is not an easy task and is very time-consuming. We are always open to public contributions and pull requests.
 
 ## Supporting
 
