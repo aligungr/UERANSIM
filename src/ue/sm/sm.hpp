@@ -23,7 +23,6 @@ class NasSm
 {
   private:
     TaskBase *m_base;
-    NtsTask *m_nas;
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasMm *m_mm;
@@ -34,7 +33,7 @@ class NasSm
     friend class UeCmdHandler;
 
   public:
-    NasSm(TaskBase *base, NtsTask *nas, UeTimers *timers);
+    NasSm(TaskBase *base, UeTimers *timers);
 
   public:
     /* Base */
@@ -54,8 +53,8 @@ class NasSm
     /* Resource */
     int allocatePduSessionId(const SessionConfig &config);
     int allocateProcedureTransactionId();
-    void releaseProcedureTransactionId(int pti);
-    void releasePduSession(int psi);
+    void freeProcedureTransactionId(int pti);
+    void freePduSessionId(int psi);
 
     /* Session */
     void sendEstablishmentRequest(const SessionConfig &config);

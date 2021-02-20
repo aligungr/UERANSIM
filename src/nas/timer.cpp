@@ -15,7 +15,7 @@ namespace nas
 
 NasTimer::NasTimer(int timerCode, bool isMmTimer, int defaultInterval)
     : timerCode(timerCode), mmTimer(isMmTimer), interval(defaultInterval), startMillis(0), running(false),
-      _lastDebugPrintMs(0)
+      expiryCount(0), _lastDebugPrintMs(0)
 {
 }
 
@@ -34,21 +34,28 @@ bool NasTimer::isMmTimer() const
     return mmTimer;
 }
 
-void NasTimer::start()
+void NasTimer::start(bool clearExpiryCount)
 {
+    if (clearExpiryCount)
+        resetExpiryCount();
     startMillis = utils::CurrentTimeMillis();
     running = true;
 }
 
-void NasTimer::start(const nas::IEGprsTimer2 &v)
+void NasTimer::start(const nas::IEGprsTimer2 &v, bool clearExpiryCount)
 {
+    if (clearExpiryCount)
+        resetExpiryCount();
     interval = v.value;
     startMillis = utils::CurrentTimeMillis();
     running = true;
 }
 
-void NasTimer::start(const nas::IEGprsTimer3 &v)
+void NasTimer::start(const nas::IEGprsTimer3 &v, bool clearExpiryCount)
 {
+    if (clearExpiryCount)
+        resetExpiryCount();
+
     int secs = 0;
     int val = v.timerValue;
 
@@ -72,8 +79,11 @@ void NasTimer::start(const nas::IEGprsTimer3 &v)
     running = true;
 }
 
-void NasTimer::stop()
+void NasTimer::stop(bool clearExpiryCount)
 {
+    if (clearExpiryCount)
+        resetExpiryCount();
+
     if (running)
     {
         startMillis = utils::CurrentTimeMillis();
@@ -98,6 +108,7 @@ bool NasTimer::performTick()
         if (remainingSec < 0)
         {
             stop();
+            expiryCount++;
             return true;
         }
     }
@@ -116,6 +127,16 @@ int NasTimer::getRemaining() const
 
     long elapsed = utils::CurrentTimeMillis() - startMillis;
     return static_cast<int>(std::max(interval - elapsed, 0L));
+}
+
+void NasTimer::resetExpiryCount()
+{
+    expiryCount = 0;
+}
+
+int NasTimer::getExpiryCount() const
+{
+    return expiryCount;
 }
 
 Json ToJson(const NasTimer &v)

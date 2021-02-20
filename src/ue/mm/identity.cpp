@@ -91,4 +91,38 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     return ret;
 }
 
+nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()
+{
+    if (m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
+        return m_storedGuti;
+    else
+    {
+        auto suci = getOrGenerateSuci();
+        if (suci.type != nas::EIdentityType::NO_IDENTITY)
+        {
+            return suci;
+        }
+        else if (m_base->config->imei.has_value())
+        {
+            nas::IE5gsMobileIdentity res{};
+            res.type = nas::EIdentityType::IMEI;
+            res.value = *m_base->config->imei;
+            return res;
+        }
+        else if (m_base->config->imeiSv.has_value())
+        {
+            nas::IE5gsMobileIdentity res{};
+            res.type = nas::EIdentityType::IMEISV;
+            res.value = *m_base->config->imeiSv;
+            return res;
+        }
+        else
+        {
+            nas::IE5gsMobileIdentity res{};
+            res.type = nas::EIdentityType::NO_IDENTITY;
+            return res;
+        }
+    }
+}
+
 } // namespace nr::ue

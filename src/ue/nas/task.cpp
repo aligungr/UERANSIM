@@ -21,8 +21,8 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 {
     logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 
-    mm = new NasMm(base, this, &timers);
-    sm = new NasSm(base, this, &timers);
+    mm = new NasMm(base, &timers);
+    sm = new NasSm(base, &timers);
 }
 
 void NasTask::onStart()
@@ -133,6 +133,8 @@ void NasTask::onTimerExpire(nas::NasTimer &timer)
 void NasTask::performTick()
 {
     auto sendExpireMsg = [this](nas::NasTimer *timer) {
+        logger->debug("NAS timer[%d] expired", timer->getCode());
+
         auto *nw = new NwUeNasToNas(NwUeNasToNas::NAS_TIMER_EXPIRE);
         nw->timer = timer;
         push(nw);

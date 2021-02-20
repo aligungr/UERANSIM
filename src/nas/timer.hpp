@@ -24,22 +24,26 @@ class NasTimer
     int interval;
     long startMillis;
     bool running;
+    int expiryCount;
+
     long _lastDebugPrintMs;
 
   public:
     NasTimer(int timerCode, bool isMmTimer, int defaultInterval);
 
   public:
-    void start();
-    void start(const IEGprsTimer2 &v);
-    void start(const IEGprsTimer3 &v);
-    void stop();
+    void start(bool clearExpiryCount = true);
+    void start(const IEGprsTimer2 &v, bool clearExpiryCount = true);
+    void start(const IEGprsTimer3 &v, bool clearExpiryCount = true);
+    void stop(bool clearExpiryCount = true);
+    void resetExpiryCount();
     bool performTick();
     [[nodiscard]] bool isRunning() const;
     [[nodiscard]] int getCode() const;
     [[nodiscard]] bool isMmTimer() const;
     [[nodiscard]] int getInterval() const;
     [[nodiscard]] int getRemaining() const;
+    [[nodiscard]] int getExpiryCount() const;
 };
 
 Json ToJson(const NasTimer &v);

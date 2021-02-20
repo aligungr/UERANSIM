@@ -9,6 +9,7 @@
 #include "mm.hpp"
 
 #include <nas/utils.hpp>
+#include <ue/nas/task.hpp>
 
 namespace nr::ue
 {
@@ -49,34 +50,7 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
         request->mmCapability->lpp = nas::ELtePositioningProtocolCapability::NOT_SUPPORTED;
     }
 
-    if (m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
-    {
-        request->mobileIdentity = m_storedGuti;
-    }
-    else
-    {
-        auto suci = getOrGenerateSuci();
-        if (suci.type != nas::EIdentityType::NO_IDENTITY)
-        {
-            request->mobileIdentity = suci;
-            if (!m_timers->t3519.isRunning())
-                m_timers->t3519.start();
-        }
-        else if (m_base->config->imei.has_value())
-        {
-            request->mobileIdentity.type = nas::EIdentityType::IMEI;
-            request->mobileIdentity.value = *m_base->config->imei;
-        }
-        else if (m_base->config->imeiSv.has_value())
-        {
-            request->mobileIdentity.type = nas::EIdentityType::IMEISV;
-            request->mobileIdentity.value = *m_base->config->imeiSv;
-        }
-        else
-        {
-            request->mobileIdentity.type = nas::EIdentityType::NO_IDENTITY;
-        }
-    }
+    request->mobileIdentity = getOrGeneratePreferredId();
 
     if (m_lastVisitedRegisteredTai.has_value())
         request->lastVisitedRegisteredTai = m_lastVisitedRegisteredTai.value();
@@ -127,7 +101,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
         regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
     {
-        m_nas->push(new NwUeNasToNas(NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS));
+        m_base->nasTask->push(new NwUeNasToNas(NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS));
     }
 }
 

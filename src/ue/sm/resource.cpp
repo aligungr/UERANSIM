@@ -74,12 +74,12 @@ int NasSm::allocateProcedureTransactionId()
     return id;
 }
 
-void NasSm::releaseProcedureTransactionId(int pti)
+void NasSm::freeProcedureTransactionId(int pti)
 {
     m_procedureTransactions[pti].id = 0;
 }
 
-void NasSm::releasePduSession(int psi)
+void NasSm::freePduSessionId(int psi)
 {
     m_pduSessions[psi].id = 0;
     m_logger->info("PDU session[%d] released", psi);

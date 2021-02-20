@@ -25,7 +25,6 @@ class NasMm
 {
   private:
     TaskBase *m_base;
-    NtsTask *m_nas;
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
@@ -35,16 +34,21 @@ class NasMm
     EMmState m_mmState;
     EMmSubState m_mmSubState;
 
-    std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
     nas::IE5gsMobileIdentity m_storedSuci{};
     nas::IE5gsMobileIdentity m_storedGuti{};
+
+    std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
+
+    std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    bool m_lastDeregDueToDisable5g{};
+
     std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
     std::optional<nas::IE5gsTrackingAreaIdentityList> m_taiList{};
 
     std::optional<NasSecurityContext> m_currentNsCtx;
     std::optional<NasSecurityContext> m_nonCurrentNsCtx;
 
-    bool m_emulationMode;
+    bool m_autoBehaviour;
     bool m_validSim;
     long m_lastPlmnSearchTrigger{};
     OctetString m_sqn{};
@@ -52,7 +56,7 @@ class NasMm
     friend class UeCmdHandler;
 
   public:
-    NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers);
+    NasMm(TaskBase *base, UeTimers *timers);
 
   public:
     /* Base */
@@ -112,7 +116,7 @@ class NasMm
     void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
 
     /* De-registration */
-    void sendDeregistration(nas::ESwitchOff switchOff);
+    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
 
@@ -120,6 +124,7 @@ class NasMm
     void receiveIdentityRequest(const nas::IdentityRequest &msg);
     nas::IE5gsMobileIdentity getOrGenerateSuci();
     nas::IE5gsMobileIdentity generateSuci();
+    nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
     /* Service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);

@@ -65,7 +65,7 @@ struct UeConfig
     std::vector<SessionConfig> initSessions{};
 
     /* Assigned by program */
-    bool emulationMode{};
+    bool autoBehaviour{};
     bool configureRouting{};
     bool prefixLogger{};
 
