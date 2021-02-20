@@ -35,6 +35,65 @@ static struct Options
     int count{};
 } g_options{};
 
+struct NwUeControllerCmd : NtsMessage
+{
+    enum PR
+    {
+        PERFORM_SWITCH_OFF,
+    } present;
+
+    // PERFORM_SWITCH_OFF
+    nr::ue::UserEquipment *ue{};
+
+    explicit NwUeControllerCmd(PR present) : NtsMessage(NtsMessageType::UE_CTL_COMMAND), present(present)
+    {
+    }
+};
+
+class UeControllerTask : public NtsTask
+{
+  protected:
+    void onStart() override
+    {
+    }
+
+    void onLoop() override
+    {
+        auto *msg = take();
+        if (msg == nullptr)
+            return;
+        if (msg->msgType == NtsMessageType::UE_CTL_COMMAND)
+        {
+            auto *w = dynamic_cast<NwUeControllerCmd *>(msg);
+            switch (w->present)
+            {
+            case NwUeControllerCmd::PERFORM_SWITCH_OFF: {
+                std::string key{};
+                g_ueMap.invokeForeach([&key, &w](auto &item) {
+                    if (item.second == w->ue)
+                        key = item.first;
+                });
+
+                if (key.empty())
+                    return;
+
+                if (g_ueMap.removeAndGetSize(key) == 0)
+                    exit(0);
+
+                delete w->ue;
+                break;
+            }
+            }
+        }
+    }
+
+    void onQuit() override
+    {
+    }
+};
+
+static UeControllerTask *g_controllerTask;
+
 static nr::ue::UeConfig *ReadConfigYaml()
 {
     auto *result = new nr::ue::UeConfig();
@@ -331,22 +390,7 @@ static class UeController : public app::IUeController
   public:
     void performSwitchOff(nr::ue::UserEquipment *ue) override
     {
-        // WARNING: This method is executed in UE AppTask's thread.
-        //  Therefore be careful about thread safety.
-
-        std::string key{};
-        g_ueMap.invokeForeach([&key, ue](auto &item) {
-            if (item.second == ue)
-                key = item.first;
-        });
-
-        if (key.empty())
-            return;
-
-        if (g_ueMap.removeAndGetSize(key) == 0)
-            exit(0);
-
-        delete ue;
+        g_controllerTask->push(new NwUeControllerCmd(NwUeControllerCmd::PERFORM_SWITCH_OFF));
     }
 } g_ueController;
 
@@ -368,6 +412,9 @@ int main(int argc, char **argv)
     }
 
     std::cout << cons::Name << std::endl;
+
+    g_controllerTask = new UeControllerTask();
+    g_controllerTask->start();
 
     if (!g_options.disableCmd)
     {
