@@ -390,7 +390,9 @@ static class UeController : public app::IUeController
   public:
     void performSwitchOff(nr::ue::UserEquipment *ue) override
     {
-        g_controllerTask->push(new NwUeControllerCmd(NwUeControllerCmd::PERFORM_SWITCH_OFF));
+        auto *w = new NwUeControllerCmd(NwUeControllerCmd::PERFORM_SWITCH_OFF);
+        w->ue = ue;
+        g_controllerTask->push(w);
     }
 } g_ueController;
 
