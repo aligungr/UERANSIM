@@ -25,9 +25,9 @@ enum class EPagingDrx
 
 struct Plmn
 {
-    int mcc;
-    int mnc;
-    bool isLongMnc;
+    int mcc{};
+    int mnc{};
+    bool isLongMnc{};
 };
 
 struct SliceSupport
@@ -47,16 +47,16 @@ enum class PduSessionType
 
 struct PlmnSupport
 {
-    Plmn plmn;
-    std::vector<std::unique_ptr<SliceSupport>> sliceSupportList;
+    Plmn plmn{};
+    std::vector<std::unique_ptr<SliceSupport>> sliceSupportList{};
 };
 
 struct GutiMobileIdentity
 {
-    Plmn plmn;          // Not used in TMSI
-    octet amfRegionId;  // Not used in TMSI
-    int amfSetId : 10;  // 10-bit
-    int amfPointer : 6; // 6-bit
+    Plmn plmn;         // Not used in TMSI
+    octet amfRegionId; // Not used in TMSI
+    int amfSetId;      // 10-bit
+    int amfPointer;    // 6-bit
     octet4 tmsi;
 
     GutiMobileIdentity() : plmn{}, amfRegionId{}, amfSetId{}, amfPointer{}, tmsi{}
