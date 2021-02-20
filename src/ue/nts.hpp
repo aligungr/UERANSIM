@@ -239,11 +239,15 @@ struct NwUeNasToApp : NtsMessage
 struct NwUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;
+    static constexpr const int SESSION_RELEASE = 2;
 
     const int what{};
 
     // SESSION_ESTABLISHMENT
     PduSession *pduSession{};
+
+    // SESSION_RELEASE
+    int psi{}; // psi=0 means release all of the sessions
 
     explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {

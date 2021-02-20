@@ -137,6 +137,13 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
         m_statusInfo.pduSessions[session->id] = std::move(sessionInfo);
 
         setupTunInterface(session);
+        return;
+    }
+
+    if (msg.what == NwUeStatusUpdate::SESSION_RELEASE)
+    {
+        // TODO
+        m_logger->err("todo: release");
     }
 }
 

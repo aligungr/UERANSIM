@@ -7,82 +7,22 @@
 //
 
 #include "sm.hpp"
+#include <nas/proto_conf.hpp>
 #include <nas/utils.hpp>
+#include <ue/app/task.hpp>
 
 namespace nr::ue
 {
 
-int NasSm::allocatePduSessionId(const SessionConfig &config)
+void NasSm::localReleaseSession(int psi)
 {
-    if (config.type != nas::EPduSessionType::IPV4)
-    {
-        m_logger->debug("PDU session type [%s] is not supported", nas::utils::EnumToString(config.type));
-        return 0;
-    }
+    m_logger->debug("Performing local release of PDU session[%d]", psi);
 
-    auto &arr = m_pduSessions;
+    freePduSessionId(psi);
 
-    int id = -1;
-    for (int i = PduSession::MIN_ID; i <= PduSession::MAX_ID; i++)
-    {
-        if (arr[i].id == 0)
-        {
-            id = i;
-            break;
-        }
-    }
-
-    if (id == -1)
-    {
-        m_logger->err("PDU session allocation failed");
-        return 0;
-    }
-
-    arr[id] = {};
-    arr[id].id = id;
-    arr[id].isEstablished = false;
-    arr[id].apn = config.apn;
-    arr[id].sessionType = config.type;
-    arr[id].sNssai = config.sNssai;
-
-    return id;
-}
-
-int NasSm::allocateProcedureTransactionId()
-{
-    auto &arr = m_procedureTransactions;
-
-    int id = -1;
-    for (int i = ProcedureTransaction::MIN_ID; i <= ProcedureTransaction::MAX_ID; i++)
-    {
-        if (arr[i].id == 0)
-        {
-            id = i;
-            break;
-        }
-    }
-
-    if (id == -1)
-    {
-        m_logger->err("PTI allocation failed");
-        return 0;
-    }
-
-    arr[id] = {};
-    arr[id].id = id;
-
-    return id;
-}
-
-void NasSm::freeProcedureTransactionId(int pti)
-{
-    m_procedureTransactions[pti].id = 0;
-}
-
-void NasSm::freePduSessionId(int psi)
-{
-    m_pduSessions[psi].id = 0;
-    m_logger->info("PDU session[%d] released", psi);
+    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::SESSION_RELEASE);
+    statusUpdate->psi = psi;
+    m_base->appTask->push(statusUpdate);
 }
 
 } // namespace nr::ue

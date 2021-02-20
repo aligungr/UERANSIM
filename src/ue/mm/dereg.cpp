@@ -56,7 +56,8 @@ void NasMm::sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g)
 
     switchMmState(EMmState::MM_DEREGISTERED_INITIATED, EMmSubState::MM_DEREGISTERED_INITIATED_NA);
 
-    // TODO local release of all PDU sessions
+    // Release all PDU sessions
+    m_sm->localReleaseSession(0);
 
     if (switchOff == nas::ESwitchOff::SWITCH_OFF)
         m_base->appTask->push(new NwUeNasToApp(NwUeNasToApp::PERFORM_SWITCH_OFF));
@@ -137,7 +138,8 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         msg.deRegistrationType.reRegistrationRequired == nas::EReRegistrationRequired::REQUIRED &&
         !forceIgnoreReregistration;
 
-    // todo local release of pdu sessions
+    // Release all PDU sessions
+    m_sm->localReleaseSession(0);
 
     if (reRegistrationRequired)
     {

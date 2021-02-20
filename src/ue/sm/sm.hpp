@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <array>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <ue/nts.hpp>
@@ -27,7 +28,7 @@ class NasSm
     std::unique_ptr<Logger> m_logger;
     NasMm *m_mm;
 
-    PduSession m_pduSessions[16]{};
+    std::array<PduSession, 16> m_pduSessions{};
     ProcedureTransaction m_procedureTransactions[255]{};
 
     friend class UeCmdHandler;
@@ -44,13 +45,16 @@ class NasSm
     /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);
 
+    /* Resource */
+    void localReleaseSession(int psi);
+
   private:
     /* Transport */
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
     void receiveSmCause(const nas::IE5gSmCause &msg);
 
-    /* Resource */
+    /* Allocation */
     int allocatePduSessionId(const SessionConfig &config);
     int allocateProcedureTransactionId();
     void freeProcedureTransactionId(int pti);
