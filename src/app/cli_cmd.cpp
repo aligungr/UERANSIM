@@ -23,7 +23,7 @@
 static opt::OptionsDescription Desc(const std::string &subCommand, const std::string &desc, const std::string &usage,
                                     bool helpIfEmpty)
 {
-    return {subCommand, cons::Tag, desc, {}, subCommand, {usage}, helpIfEmpty};
+    return {{}, {}, desc, {}, subCommand, {usage}, helpIfEmpty, true};
 }
 
 class OptionsHandler : public opt::IOptionsHandler
@@ -71,9 +71,9 @@ static std::map<std::string, std::string> g_gnbCmdToDescription = {
 };
 
 static std::map<std::string, std::string> g_gnbCmdToUsage = {
-    {"status", "[option...]"},   {"info", "[option...]"},
-    {"amf-list", "[option...]"}, {"amf-info", "<amf-id> [option...]"},
-    {"ue-list", "[option...]"},  {"ue-count", "[option...]"},
+    {"status", ""},   {"info", ""},
+    {"amf-list", ""}, {"amf-info", "<amf-id>"},
+    {"ue-list", ""},  {"ue-count", ""},
 };
 
 static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
@@ -88,9 +88,9 @@ static std::map<std::string, std::string> g_ueCmdToDescription = {
 };
 
 static std::map<std::string, std::string> g_ueCmdToUsage = {
-    {"info", "[option...]"},
-    {"status", "[option...]"},
-    {"timers", "[option...]"},
+    {"info", ""},
+    {"status", ""},
+    {"timers", ""},
     {"deregister", "<switch-off|disable-5g|normal>"},
 };
 
