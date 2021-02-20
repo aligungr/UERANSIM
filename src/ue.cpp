@@ -326,7 +326,7 @@ static void Loop()
     ReceiveCommand(msg);
 }
 
-class UeController : public app::IUeController
+static class UeController : public app::IUeController
 {
   public:
     void performSwitchOff(nr::ue::UserEquipment *ue) override
