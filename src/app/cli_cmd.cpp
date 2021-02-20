@@ -71,9 +71,7 @@ static std::map<std::string, std::string> g_gnbCmdToDescription = {
 };
 
 static std::map<std::string, std::string> g_gnbCmdToUsage = {
-    {"status", ""},   {"info", ""},
-    {"amf-list", ""}, {"amf-info", "<amf-id>"},
-    {"ue-list", ""},  {"ue-count", ""},
+    {"status", ""}, {"info", ""}, {"amf-list", ""}, {"amf-info", "<amf-id>"}, {"ue-list", ""}, {"ue-count", ""},
 };
 
 static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
@@ -91,7 +89,7 @@ static std::map<std::string, std::string> g_ueCmdToUsage = {
     {"info", ""},
     {"status", ""},
     {"timers", ""},
-    {"deregister", "<switch-off|disable-5g|normal>"},
+    {"deregister", "<normal|disable-5g|switch-off>"},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
@@ -240,7 +238,7 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
         else if (type == "disable-5g")
             cmd->dueToDisable5g = true;
         else if (type != "normal")
-            CMD_ERR("Invalid de-registration type, possible values are: switch-off, disable-5g, normal")
+            CMD_ERR("Invalid de-registration type, possible values are: \"normal\", \"disable-5g\", \"switch-off\"")
         return cmd;
     }
 

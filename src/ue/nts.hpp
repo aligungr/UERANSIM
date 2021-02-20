@@ -238,7 +238,7 @@ struct NwUeNasToApp : NtsMessage
 
 struct NwUeStatusUpdate : NtsMessage
 {
-    static constexpr const int SESSION_ESTABLISHMENT = 5;
+    static constexpr const int SESSION_ESTABLISHMENT = 1;
 
     const int what{};
 
