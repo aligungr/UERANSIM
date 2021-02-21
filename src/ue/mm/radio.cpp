@@ -18,7 +18,7 @@ void NasMm::handlePlmnSearchResponse(const std::string &gnbName)
 {
     if (m_base->nodeListener)
         m_base->nodeListener->onConnected(app::NodeType::UE, m_base->config->getNodeName(), app::NodeType::GNB,
-            gnbName);
+                                          gnbName);
 
     m_logger->info("UE connected to gNB");
 
@@ -45,7 +45,7 @@ void NasMm::handleRrcConnectionSetup()
 
 void NasMm::handleRrcConnectionRelease()
 {
-    m_logger->err("TODO: handle RRC connection release");
+    switchCmState(ECmState::CM_IDLE);
 }
 
 void NasMm::handleRadioLinkFailure()
@@ -54,4 +54,4 @@ void NasMm::handleRadioLinkFailure()
     handleRrcConnectionRelease();
 }
 
-}
+} // namespace nr::ue
