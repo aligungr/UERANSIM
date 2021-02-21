@@ -10,18 +10,20 @@
 #include <app/cli_base.hpp>
 #include <app/cli_cmd.hpp>
 #include <app/proc_table.hpp>
+#include <app/ue_ctl.hpp>
 #include <iostream>
 #include <ue/ue.hpp>
 #include <unistd.h>
 #include <utils/common.hpp>
+#include <utils/concurrent_map.hpp>
 #include <utils/constants.hpp>
 #include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
 
 static app::CliServer *g_cliServer = nullptr;
-nr::ue::UeConfig *g_refConfig = nullptr;
-static std::unordered_map<std::string, nr::ue::UserEquipment *> g_ueMap{};
+static nr::ue::UeConfig *g_refConfig = nullptr;
+static ConcurrentMap<std::string, nr::ue::UserEquipment *> g_ueMap{};
 static app::CliResponseTask *g_cliRespTask = nullptr;
 
 static struct Options
@@ -32,6 +34,65 @@ static struct Options
     std::string imsi{};
     int count{};
 } g_options{};
+
+struct NwUeControllerCmd : NtsMessage
+{
+    enum PR
+    {
+        PERFORM_SWITCH_OFF,
+    } present;
+
+    // PERFORM_SWITCH_OFF
+    nr::ue::UserEquipment *ue{};
+
+    explicit NwUeControllerCmd(PR present) : NtsMessage(NtsMessageType::UE_CTL_COMMAND), present(present)
+    {
+    }
+};
+
+class UeControllerTask : public NtsTask
+{
+  protected:
+    void onStart() override
+    {
+    }
+
+    void onLoop() override
+    {
+        auto *msg = take();
+        if (msg == nullptr)
+            return;
+        if (msg->msgType == NtsMessageType::UE_CTL_COMMAND)
+        {
+            auto *w = dynamic_cast<NwUeControllerCmd *>(msg);
+            switch (w->present)
+            {
+            case NwUeControllerCmd::PERFORM_SWITCH_OFF: {
+                std::string key{};
+                g_ueMap.invokeForeach([&key, &w](auto &item) {
+                    if (item.second == w->ue)
+                        key = item.first;
+                });
+
+                if (key.empty())
+                    return;
+
+                if (g_ueMap.removeAndGetSize(key) == 0)
+                    exit(0);
+
+                delete w->ue;
+                break;
+            }
+            }
+        }
+    }
+
+    void onQuit() override
+    {
+    }
+};
+
+static UeControllerTask *g_controllerTask;
 
 static nr::ue::UeConfig *ReadConfigYaml()
 {
@@ -59,7 +120,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
     result->opC = OctetString::FromHex(yaml::GetString(config, "op", 32, 32));
     result->amf = OctetString::FromHex(yaml::GetString(config, "amf", 4, 4));
 
-    result->emulationMode = true;
+    result->autoBehaviour = true;
     result->configureRouting = !g_options.noRoutingConfigs;
 
     // If we have multiple UEs in the same process, then log names should be separated.
@@ -132,7 +193,7 @@ static void ReadOptions(int argc, char **argv)
 {
     opt::OptionsDescription desc{cons::Project, cons::Tag, "5G-SA UE implementation",
                                  cons::Owner,   "nr-ue",   {"-c <config-file> [option...]"},
-                                 true};
+                                 true,          false};
 
     opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for UE", "config-file"};
     opt::OptionItem itemImsi = {'i', "imsi", "Use specified IMSI number instead of provided one", "imsi"};
@@ -214,7 +275,7 @@ static void IncrementNumber(std::string &s, int delta)
 static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
 {
     auto *c = new nr::ue::UeConfig();
-    c->emulationMode = g_refConfig->emulationMode;
+    c->autoBehaviour = g_refConfig->autoBehaviour;
     c->key = g_refConfig->key.copy();
     c->opC = g_refConfig->opC.copy();
     c->opType = g_refConfig->opType;
@@ -281,14 +342,14 @@ static void ReceiveCommand(app::CliMessage &msg)
         return;
     }
 
-    if (g_ueMap.count(msg.nodeName) == 0)
+    auto *ue = g_ueMap.getOrDefault(msg.nodeName);
+    if (ue == nullptr)
     {
         g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node not found: " + msg.nodeName));
         return;
     }
 
-    auto *ue = g_ueMap[msg.nodeName];
-    ue->pushCommand(std::move(cmd), msg.clientAddr, g_cliRespTask);
+    ue->pushCommand(std::move(cmd), msg.clientAddr);
 }
 
 static void Loop()
@@ -324,6 +385,17 @@ static void Loop()
     ReceiveCommand(msg);
 }
 
+static class UeController : public app::IUeController
+{
+  public:
+    void performSwitchOff(nr::ue::UserEquipment *ue) override
+    {
+        auto *w = new NwUeControllerCmd(NwUeControllerCmd::PERFORM_SWITCH_OFF);
+        w->ue = ue;
+        g_controllerTask->push(w);
+    }
+} g_ueController;
+
 int main(int argc, char **argv)
 {
     app::Initialize();
@@ -343,24 +415,29 @@ int main(int argc, char **argv)
 
     std::cout << cons::Name << std::endl;
 
-    for (int i = 0; i < g_options.count; i++)
-    {
-        auto *config = GetConfigByUe(i);
-        auto *ue = new nr::ue::UserEquipment(config, nullptr);
-        g_ueMap[config->getNodeName()] = ue;
-    }
+    g_controllerTask = new UeControllerTask();
+    g_controllerTask->start();
 
     if (!g_options.disableCmd)
     {
         g_cliServer = new app::CliServer{};
-        app::CreateProcTable(g_ueMap, g_cliServer->assignedAddress().getPort());
-
         g_cliRespTask = new app::CliResponseTask(g_cliServer);
+    }
+
+    for (int i = 0; i < g_options.count; i++)
+    {
+        auto *config = GetConfigByUe(i);
+        auto *ue = new nr::ue::UserEquipment(config, &g_ueController, nullptr, g_cliRespTask);
+        g_ueMap.put(config->getNodeName(), ue);
+    }
+
+    if (!g_options.disableCmd)
+    {
+        app::CreateProcTable(g_ueMap, g_cliServer->assignedAddress().getPort());
         g_cliRespTask->start();
     }
 
-    for (auto &ue : g_ueMap)
-        ue.second->start();
+    g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
 
     while (true)
         Loop();

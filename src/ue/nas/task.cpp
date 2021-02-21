@@ -21,8 +21,8 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 {
     logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 
-    mm = new NasMm(base, this, &timers);
-    sm = new NasSm(base, this, &timers);
+    mm = new NasMm(base, &timers);
+    sm = new NasSm(base, &timers);
 }
 
 void NasTask::onStart()
@@ -60,15 +60,15 @@ void NasTask::onLoop()
         switch (w->present)
         {
         case NwUeRrcToNas::RRC_CONNECTION_SETUP: {
-            mm->receiveRrcConnectionSetup();
+            mm->handleRrcConnectionSetup();
             break;
         }
         case NwUeRrcToNas::PLMN_SEARCH_RESPONSE: {
-            mm->receivePlmnSearchResponse(w->gnbName);
+            mm->handlePlmnSearchResponse(w->gnbName);
             break;
         }
         case NwUeRrcToNas::PLMN_SEARCH_FAILURE: {
-            mm->receivePlmnSearchFailure();
+            mm->handlePlmnSearchFailure();
             break;
         }
         case NwUeRrcToNas::NAS_DELIVERY: {
@@ -76,6 +76,14 @@ void NasTask::onLoop()
             auto nasMessage = nas::DecodeNasMessage(buffer);
             if (nasMessage != nullptr)
                 mm->receiveNasMessage(*nasMessage);
+            break;
+        }
+        case NwUeRrcToNas::RRC_CONNECTION_RELEASE: {
+            mm->handleRrcConnectionRelease();
+            break;
+        }
+        case NwUeRrcToNas::RADIO_LINK_FAILURE: {
+            mm->handleRadioLinkFailure();
             break;
         }
         }
@@ -133,6 +141,8 @@ void NasTask::onTimerExpire(nas::NasTimer &timer)
 void NasTask::performTick()
 {
     auto sendExpireMsg = [this](nas::NasTimer *timer) {
+        logger->debug("NAS timer[%d] expired [%d]", timer->getCode(), timer->getExpiryCount());
+
         auto *nw = new NwUeNasToNas(NwUeNasToNas::NAS_TIMER_EXPIRE);
         nw->timer = timer;
         push(nw);

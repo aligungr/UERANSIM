@@ -25,9 +25,9 @@ enum class EPagingDrx
 
 struct Plmn
 {
-    int mcc;
-    int mnc;
-    bool isLongMnc;
+    int mcc{};
+    int mnc{};
+    bool isLongMnc{};
 };
 
 struct SliceSupport
@@ -47,32 +47,16 @@ enum class PduSessionType
 
 struct PlmnSupport
 {
-    Plmn plmn;
-    std::vector<std::unique_ptr<SliceSupport>> sliceSupportList;
-};
-
-struct TmsiMobileIdentity
-{
-    int amfSetId : 10;
-    int amfPointer : 6;
-    octet4 tmsi;
-
-    TmsiMobileIdentity() : amfSetId{}, amfPointer{}, tmsi{}
-    {
-    }
-
-    TmsiMobileIdentity(int amfSetId, int amfPointer, const octet4 &tmsi)
-        : amfSetId(amfSetId), amfPointer(amfPointer), tmsi(tmsi)
-    {
-    }
+    Plmn plmn{};
+    std::vector<std::unique_ptr<SliceSupport>> sliceSupportList{};
 };
 
 struct GutiMobileIdentity
 {
     Plmn plmn;         // Not used in TMSI
     octet amfRegionId; // Not used in TMSI
-    int amfSetId : 10;
-    int amfPointer : 6;
+    int amfSetId;      // 10-bit
+    int amfPointer;    // 6-bit
     octet4 tmsi;
 
     GutiMobileIdentity() : plmn{}, amfRegionId{}, amfSetId{}, amfPointer{}, tmsi{}
@@ -89,7 +73,7 @@ struct ImsiMobileIdentity
 {
     Plmn plmn;
     std::string routingIndicator;
-    int protectionSchemaId : 4;
+    int protectionSchemaId; // 4-bit
     octet homeNetworkPublicKeyIdentifier;
     std::string schemeOutput;
 

@@ -224,6 +224,12 @@ void NgapTask::handleSctpMessage(int amfId, uint16_t stream, const UniqueBuffer 
         case ASN_NGAP_InitiatingMessage__value_PR_AMFConfigurationUpdate:
             receiveAmfConfigurationUpdate(amf->ctxId, &value.choice.AMFConfigurationUpdate);
             break;
+        case ASN_NGAP_InitiatingMessage__value_PR_OverloadStart:
+            receiveOverloadStart(amf->ctxId, &value.choice.OverloadStart);
+            break;
+        case ASN_NGAP_InitiatingMessage__value_PR_OverloadStop:
+            receiveOverloadStop(amf->ctxId, &value.choice.OverloadStop);
+            break;
         default:
             m_logger->err("Unhandled NGAP initiating-message received (%d)", value.present);
             break;

@@ -33,21 +33,13 @@ DecodeRes Decode(const OctetView &stream, RlsMessage &output, octet3 appVersion)
             output.msgType != EMessageType::RLS_PAYLOAD_TRANSPORT && output.msgType != EMessageType::RLS_SETUP_RESPONSE)
             return DecodeRes::FAILURE;
         output.ueToken = stream.read8UL();
-        if (output.msgType != EMessageType::RLS_SETUP_REQUEST)
-            output.gnbToken = stream.read8UL();
-        if (output.msgType == EMessageType::RLS_PAYLOAD_TRANSPORT)
-        {
-            output.payloadType = static_cast<EPayloadType>(stream.readI());
-            uint16_t len = stream.read2US();
-            output.payload = stream.readOctetString(len);
-        }
-        if (output.msgType == EMessageType::RLS_SETUP_FAILURE)
-            output.cause = static_cast<ECause>(stream.readI());
-        if (output.msgType == EMessageType::RLS_SETUP_RESPONSE || output.msgType == EMessageType::RLS_SETUP_COMPLETE)
-        {
-            uint16_t len = stream.read2US();
-            output.str = stream.readUtf8String(len);
-        }
+        output.gnbToken = stream.read8UL();
+        output.payloadType = static_cast<EPayloadType>(stream.readI());
+        uint16_t len = stream.read2US();
+        output.payload = stream.readOctetString(len);
+        output.cause = static_cast<ECause>(stream.readI());
+        len = stream.read2US();
+        output.str = stream.readUtf8String(len);
         return DecodeRes::OK;
     }
 
@@ -67,30 +59,23 @@ bool Encode(const RlsMessage &msg, OctetString &stream)
     }
     if (msg.msgCls == EMessageClass::NORMAL_MESSAGE)
     {
-        stream.appendOctet3(msg.appVersion);
-        stream.appendOctet(static_cast<int>(msg.msgType));
-        stream.appendOctet8(msg.ueToken);
         if (msg.msgType != EMessageType::RLS_SETUP_REQUEST && msg.msgType != EMessageType::RLS_SETUP_COMPLETE &&
             msg.msgType != EMessageType::RLS_SETUP_FAILURE && msg.msgType != EMessageType::RLS_HEARTBEAT &&
             msg.msgType != EMessageType::RLS_RELEASE_INDICATION && msg.msgType != EMessageType::RLS_PAYLOAD_TRANSPORT &&
             msg.msgType != EMessageType::RLS_SETUP_RESPONSE)
             return false;
-        if (msg.msgType != EMessageType::RLS_SETUP_REQUEST)
-            stream.appendOctet8(msg.gnbToken);
-        if (msg.msgType == EMessageType::RLS_SETUP_FAILURE)
-            stream.appendOctet(static_cast<int>(msg.cause));
-        if (msg.msgType == EMessageType::RLS_PAYLOAD_TRANSPORT)
-        {
-            stream.appendOctet(static_cast<int>(msg.payloadType));
-            stream.appendOctet2(msg.payload.length());
-            stream.append(msg.payload);
-        }
-        if (msg.msgType == EMessageType::RLS_SETUP_RESPONSE || msg.msgType == EMessageType::RLS_SETUP_COMPLETE)
-        {
-            stream.appendOctet2(msg.str.length());
-            for (char c : msg.str)
-                stream.appendOctet(c);
-        }
+
+        stream.appendOctet3(msg.appVersion);
+        stream.appendOctet(static_cast<int>(msg.msgType));
+        stream.appendOctet8(msg.ueToken);
+        stream.appendOctet8(msg.gnbToken);
+        stream.appendOctet(static_cast<int>(msg.payloadType));
+        stream.appendOctet2(msg.payload.length());
+        stream.append(msg.payload);
+        stream.appendOctet(static_cast<int>(msg.cause));
+        stream.appendOctet2(msg.str.length());
+        stream.appendUtf8(msg.str);
+
         return true;
     }
     return false;
@@ -101,15 +86,17 @@ const char *CauseToString(ECause cause)
     switch (cause)
     {
     case ECause::UNSPECIFIED:
-        return "RLS_UNSPECIFIED";
+        return "RLS-UNSPECIFIED";
     case ECause::TOKEN_CONFLICT:
-        return "RLS_TOKEN_CONFLICT";
+        return "RLS-TOKEN-CONFLICT";
     case ECause::EMPTY_SEARCH_LIST:
-        return "RLS_EMPTY_SEARCH_LIST";
+        return "RLS-EMPTY-SEARCH-LIST";
     case ECause::SETUP_TIMEOUT:
-        return "RLS_SETUP_TIMEOUT";
+        return "RLS-SETUP-TIMEOUT";
     case ECause::HEARTBEAT_TIMEOUT:
-        return "RLS_HEARTBEAT_TIMEOUT";
+        return "RLS-HEARTBEAT-TIMEOUT";
+    case ECause::RRC_RELEASE:
+        return "RLS-RRC-RELEASE";
     default:
         return "?";
     }

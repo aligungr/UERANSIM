@@ -10,6 +10,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <utils/concurrent_map.hpp>
 #include <vector>
 
 namespace app
@@ -38,6 +39,14 @@ inline void CreateProcTable(const std::unordered_map<std::string, T> &nodeMap, i
     std::vector<std::string> nodes{};
     for (auto &node : nodeMap)
         nodes.push_back(node.first);
+    CreateProcTable(nodes, cmdPort);
+}
+
+template <typename T>
+inline void CreateProcTable(const ConcurrentMap<std::string, T> &nodeMap, int cmdPort)
+{
+    std::vector<std::string> nodes{};
+    nodeMap.invokeForeach([&nodes](const auto &node) { nodes.push_back(node.first); });
     CreateProcTable(nodes, cmdPort);
 }
 

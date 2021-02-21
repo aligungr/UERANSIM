@@ -15,6 +15,11 @@ void OctetString::append(const OctetString &v)
     m_data.insert(m_data.end(), v.m_data.begin(), v.m_data.end());
 }
 
+void OctetString::appendUtf8(const std::string &v)
+{
+    m_data.insert(m_data.end(), v.begin(), v.end());
+}
+
 void OctetString::appendOctet(uint8_t v)
 {
     m_data.push_back(v);

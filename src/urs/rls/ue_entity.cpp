@@ -8,9 +8,9 @@
 
 #include "ue_entity.hpp"
 
+#include <utility>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
-#include <utility>
 
 static const octet3 AppVersion = octet3{cons::Major, cons::Minor, cons::Patch};
 
@@ -226,13 +226,7 @@ void RlsUeEntity::onReceive(const InetAddress &address, const OctetString &pdu)
 void RlsUeEntity::releaseConnection(ECause cause)
 {
     sendReleaseIndication(cause);
-    state = EUeState::RELEASED;
-    nextSearch = 0;
-    ueToken = 0;
-    gnbToken = 0;
-    lastGnbHeartbeat = 0;
-    lastError = ECause::UNSPECIFIED;
-    onRelease(cause);
+    localReleaseConnection(cause);
 }
 
 void RlsUeEntity::resetEntity()
@@ -291,6 +285,17 @@ void RlsUeEntity::sendRlsMessage(const InetAddress &address, const RlsMessage &m
     }
 
     sendRlsPdu(address, std::move(stream));
+}
+
+void RlsUeEntity::localReleaseConnection(ECause cause)
+{
+    state = EUeState::RELEASED;
+    nextSearch = 0;
+    ueToken = 0;
+    gnbToken = 0;
+    lastGnbHeartbeat = 0;
+    lastError = ECause::UNSPECIFIED;
+    onRelease(cause);
 }
 
 } // namespace rls

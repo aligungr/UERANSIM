@@ -27,12 +27,12 @@ class GNodeB
     TaskBase *taskBase;
 
   public:
-    GNodeB(GnbConfig *config, app::INodeListener *nodeListener);
+    GNodeB(GnbConfig *config, app::INodeListener *nodeListener, NtsTask *cliCallbackTask);
     virtual ~GNodeB();
 
   public:
     void start();
-    void pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address, NtsTask *callbackTask);
+    void pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address);
 };
 
 } // namespace nr::gnb

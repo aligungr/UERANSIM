@@ -10,10 +10,10 @@
 
 #include "rls.hpp"
 
-#include <utils/network.hpp>
 #include <optional>
 #include <set>
 #include <unordered_map>
+#include <utils/network.hpp>
 
 namespace rls
 {
@@ -50,6 +50,7 @@ class RlsGnbEntity
     void downlinkPayloadDelivery(int ue, EPayloadType type, OctetString &&payload);
     void setAcceptConnections(bool accept);
     void releaseConnection(int ue, ECause cause);
+    void localReleaseConnection(int ue, ECause cause);
 
   private:
     void sendReleaseIndication(int ue, ECause cause);

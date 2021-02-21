@@ -133,7 +133,7 @@ static void ReadOptions(int argc, char **argv)
 {
     opt::OptionsDescription desc{"UERANSIM",  cons::Tag, "Command Line Interface",
                                  cons::Owner, "nr-cli",  {"<node-name> [option...]", "--dump"},
-                                 true};
+                                 true,        false};
 
     opt::OptionItem itemDump = {'d', "dump", "List all UE and gNBs in the environment", std::nullopt};
     opt::OptionItem itemExec = {'e', "exec", "Execute the given command directly without an interactive shell",

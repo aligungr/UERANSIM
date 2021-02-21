@@ -255,12 +255,14 @@ void UeRrcTask::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
     auto &c1 = msg->message.choice.c1;
     switch (c1->present)
     {
-    case ASN_RRC_DL_DCCH_MessageType__c1_PR_dlInformationTransfer: {
+    case ASN_RRC_DL_DCCH_MessageType__c1_PR_dlInformationTransfer:
         receiveDownlinkInformationTransfer(*c1->choice.dlInformationTransfer);
+        break;
+    case ASN_RRC_DL_DCCH_MessageType__c1_PR_rrcRelease:
+        receiveRrcRelease(*c1->choice.rrcRelease);
         break;
     default:
         break;
-    }
     }
 }
 

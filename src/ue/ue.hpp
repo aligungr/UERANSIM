@@ -23,12 +23,13 @@ class UserEquipment
     TaskBase *taskBase;
 
   public:
-    UserEquipment(UeConfig *config, app::INodeListener *nodeListener);
+    UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener,
+                  NtsTask *cliCallbackTask);
     virtual ~UserEquipment();
 
   public:
     void start();
-    void pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address, NtsTask *callbackTask);
+    void pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address);
 };
 
 } // namespace nr::ue

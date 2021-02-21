@@ -42,7 +42,12 @@ struct UeCliCommand
         INFO,
         STATUS,
         TIMERS,
+        DE_REGISTER,
     } present;
+
+    // DE_REGISTER
+    bool isSwitchOff{};
+    bool dueToDisable5g{};
 
     explicit UeCliCommand(PR present) : present(present)
     {

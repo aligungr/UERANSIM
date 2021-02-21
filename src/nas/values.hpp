@@ -20,7 +20,7 @@ namespace nas
 
 struct VAmfSetId
 {
-    int value : 10;
+    int value; // 10-bit
 
     explicit VAmfSetId(int value);
 
@@ -53,9 +53,9 @@ struct VQoSFlowParameter
 
 struct VQoSFlowDescription
 {
-    int qfi : 6;
+    int qfi; // 6-bit
     EQoSOperationCode opCode;
-    int numOfParameters : 6;
+    int numOfParameters; // 6-bit
     bool eBit;
     std::vector<std::unique_ptr<VQoSFlowParameter>> parameterList;
 
@@ -216,7 +216,7 @@ struct VPartialTrackingAreaIdentityList
 
 struct VPduSessionReactivationResultErrorCause
 {
-    int pduSessionId : 4;
+    int pduSessionId;
     EMmCause causeValue;
 
     VPduSessionReactivationResultErrorCause(int pduSessionId, EMmCause causeValue);

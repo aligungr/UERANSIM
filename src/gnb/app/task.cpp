@@ -42,7 +42,8 @@ void GnbAppTask::onLoop()
     }
     case NtsMessageType::GNB_CLI_COMMAND: {
         auto *w = dynamic_cast<NwGnbCliCommand *>(msg);
-        GnbCmdHandler::HandleCmd(*m_base, *w);
+        GnbCmdHandler handler{m_base};
+        handler.handleCmd(*w);
         break;
     }
     default:

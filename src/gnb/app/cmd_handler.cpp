@@ -23,42 +23,52 @@
 namespace nr::gnb
 {
 
-void GnbCmdHandler::PauseTasks(TaskBase &base)
+void GnbCmdHandler::sendResult(const InetAddress &address, const std::string &output)
 {
-    base.gtpTask->requestPause();
-    base.mrTask->requestPause();
-    base.ngapTask->requestPause();
-    base.rrcTask->requestPause();
-    base.sctpTask->requestPause();
+    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, false));
 }
 
-void GnbCmdHandler::UnpauseTasks(TaskBase &base)
+void GnbCmdHandler::sendError(const InetAddress &address, const std::string &output)
 {
-    base.gtpTask->requestUnpause();
-    base.mrTask->requestUnpause();
-    base.ngapTask->requestUnpause();
-    base.rrcTask->requestUnpause();
-    base.sctpTask->requestUnpause();
+    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, true));
 }
 
-bool GnbCmdHandler::IsAllPaused(TaskBase &base)
+void GnbCmdHandler::pauseTasks()
 {
-    if (!base.gtpTask->isPauseConfirmed())
+    m_base->gtpTask->requestPause();
+    m_base->mrTask->requestPause();
+    m_base->ngapTask->requestPause();
+    m_base->rrcTask->requestPause();
+    m_base->sctpTask->requestPause();
+}
+
+void GnbCmdHandler::unpauseTasks()
+{
+    m_base->gtpTask->requestUnpause();
+    m_base->mrTask->requestUnpause();
+    m_base->ngapTask->requestUnpause();
+    m_base->rrcTask->requestUnpause();
+    m_base->sctpTask->requestUnpause();
+}
+
+bool GnbCmdHandler::isAllPaused()
+{
+    if (!m_base->gtpTask->isPauseConfirmed())
         return false;
-    if (!base.mrTask->isPauseConfirmed())
+    if (!m_base->mrTask->isPauseConfirmed())
         return false;
-    if (!base.ngapTask->isPauseConfirmed())
+    if (!m_base->ngapTask->isPauseConfirmed())
         return false;
-    if (!base.rrcTask->isPauseConfirmed())
+    if (!m_base->rrcTask->isPauseConfirmed())
         return false;
-    if (!base.sctpTask->isPauseConfirmed())
+    if (!m_base->sctpTask->isPauseConfirmed())
         return false;
     return true;
 }
 
-void GnbCmdHandler::HandleCmd(TaskBase &base, NwGnbCliCommand &msg)
+void GnbCmdHandler::handleCmd(NwGnbCliCommand &msg)
 {
-    PauseTasks(base);
+    pauseTasks();
 
     uint64_t currentTime = utils::CurrentTimeMillis();
     uint64_t endTime = currentTime + PAUSE_CONFIRM_TIMEOUT;
@@ -67,7 +77,7 @@ void GnbCmdHandler::HandleCmd(TaskBase &base, NwGnbCliCommand &msg)
     while (currentTime < endTime)
     {
         currentTime = utils::CurrentTimeMillis();
-        if (IsAllPaused(base))
+        if (isAllPaused())
         {
             isPaused = true;
             break;
@@ -77,60 +87,60 @@ void GnbCmdHandler::HandleCmd(TaskBase &base, NwGnbCliCommand &msg)
 
     if (!isPaused)
     {
-        msg.sendError("gNB is unable process command due to pausing timeout");
+        sendError(msg.address, "gNB is unable process command due to pausing timeout");
     }
     else
     {
-        HandleCmdImpl(base, msg);
+        handleCmdImpl(msg);
     }
 
-    UnpauseTasks(base);
+    unpauseTasks();
 }
 
-void GnbCmdHandler::HandleCmdImpl(TaskBase &base, NwGnbCliCommand &msg)
+void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
 {
     switch (msg.cmd->present)
     {
     case app::GnbCliCommand::STATUS: {
-        msg.sendResult(ToJson(base.appTask->m_statusInfo).dumpYaml());
+        sendResult(msg.address, ToJson(m_base->appTask->m_statusInfo).dumpYaml());
         break;
     }
     case app::GnbCliCommand::INFO: {
-        msg.sendResult(ToJson(*base.config).dumpYaml());
+        sendResult(msg.address, ToJson(*m_base->config).dumpYaml());
         break;
     }
     case app::GnbCliCommand::AMF_LIST: {
         Json json = Json::Arr({});
-        for (auto &amf : base.ngapTask->m_amfCtx)
+        for (auto &amf : m_base->ngapTask->m_amfCtx)
             json.push(Json::Obj({{"id", amf.first}}));
-        msg.sendResult(json.dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::GnbCliCommand::AMF_INFO: {
-        if (base.ngapTask->m_amfCtx.count(msg.cmd->amfId) == 0)
-            msg.sendError("AMF not found with given ID");
+        if (m_base->ngapTask->m_amfCtx.count(msg.cmd->amfId) == 0)
+            sendError(msg.address, "AMF not found with given ID");
         else
         {
-            auto amf = base.ngapTask->m_amfCtx[msg.cmd->amfId];
-            msg.sendResult(ToJson(*amf).dumpYaml());
+            auto amf = m_base->ngapTask->m_amfCtx[msg.cmd->amfId];
+            sendResult(msg.address, ToJson(*amf).dumpYaml());
         }
         break;
     }
     case app::GnbCliCommand::UE_LIST: {
         Json json = Json::Arr({});
-        for (auto &ue : base.ngapTask->m_ueCtx)
+        for (auto &ue : m_base->ngapTask->m_ueCtx)
         {
             json.push(Json::Obj({
-                {"ue-name", base.mrTask->m_ueMap[ue.first].name},
+                {"ue-name", m_base->mrTask->m_ueMap[ue.first].name},
                 {"ran-ngap-id", ue.second->ranUeNgapId},
                 {"amf-ngap-id", ue.second->amfUeNgapId},
             }));
         }
-        msg.sendResult(json.dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::GnbCliCommand::UE_COUNT: {
-        msg.sendResult(std::to_string(base.ngapTask->m_ueCtx.size()));
+        sendResult(msg.address, std::to_string(m_base->ngapTask->m_ueCtx.size()));
         break;
     }
     }

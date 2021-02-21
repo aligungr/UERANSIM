@@ -23,7 +23,7 @@
 static opt::OptionsDescription Desc(const std::string &subCommand, const std::string &desc, const std::string &usage,
                                     bool helpIfEmpty)
 {
-    return {subCommand, cons::Tag, desc, {}, subCommand, {usage}, helpIfEmpty};
+    return {{}, {}, desc, {}, subCommand, {usage}, helpIfEmpty, true};
 }
 
 class OptionsHandler : public opt::IOptionsHandler
@@ -71,9 +71,7 @@ static std::map<std::string, std::string> g_gnbCmdToDescription = {
 };
 
 static std::map<std::string, std::string> g_gnbCmdToUsage = {
-    {"status", "[option...]"},   {"info", "[option...]"},
-    {"amf-list", "[option...]"}, {"amf-info", "<amf-id> [option...]"},
-    {"ue-list", "[option...]"},  {"ue-count", "[option...]"},
+    {"status", ""}, {"info", ""}, {"amf-list", ""}, {"amf-info", "<amf-id>"}, {"ue-list", ""}, {"ue-count", ""},
 };
 
 static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
@@ -84,18 +82,21 @@ static std::map<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
     {"status", "Show some status information about the UE"},
     {"timers", "Dump current status of the timers in the UE"},
+    {"deregister", "Perform de-registration by the UE"},
 };
 
 static std::map<std::string, std::string> g_ueCmdToUsage = {
-    {"info", "[option...]"},
-    {"status", "[option...]"},
-    {"timers", "[option...]"},
+    {"info", ""},
+    {"status", ""},
+    {"timers", ""},
+    {"deregister", "<normal|disable-5g|switch-off>"},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
     {"info", false},
     {"status", false},
     {"timers", false},
+    {"deregister", true},
 };
 
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
@@ -223,6 +224,22 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
     else if (subCmd == "timers")
     {
         return std::make_unique<UeCliCommand>(UeCliCommand::TIMERS);
+    }
+    else if (subCmd == "deregister")
+    {
+        auto cmd = std::make_unique<UeCliCommand>(UeCliCommand::DE_REGISTER);
+        if (options.positionalCount() == 0)
+            CMD_ERR("De-registration type is expected")
+        if (options.positionalCount() > 1)
+            CMD_ERR("Only one de-registration type is expected")
+        auto type = options.getPositional(0);
+        if (type == "switch-off")
+            cmd->isSwitchOff = true;
+        else if (type == "disable-5g")
+            cmd->dueToDisable5g = true;
+        else if (type != "normal")
+            CMD_ERR("Invalid de-registration type, possible values are: \"normal\", \"disable-5g\", \"switch-off\"")
+        return cmd;
     }
 
     return nullptr;

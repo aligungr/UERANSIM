@@ -10,13 +10,14 @@
 
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
+#include <ue/nas/task.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
 {
 
-NasMm::NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers) : m_base{base}, m_nas{nas}, m_timers{timers}, m_sm{nullptr}
+NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers}, m_sm{nullptr}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 
@@ -24,7 +25,8 @@ NasMm::NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers) : m_base{base}, m_n
     m_cmState = ECmState::CM_IDLE;
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
-    m_emulationMode = base->config->emulationMode;
+    m_uState = E5UState::U1_UPDATED;
+    m_autoBehaviour = base->config->autoBehaviour;
     m_validSim = base->config->supi.has_value();
 }
 
@@ -40,7 +42,7 @@ void NasMm::onQuit()
 
 void NasMm::triggerMmCycle()
 {
-    m_nas->push(new NwUeNasToNas(NwUeNasToNas::PERFORM_MM_CYCLE));
+    m_base->nasTask->push(new NwUeNasToNas(NwUeNasToNas::PERFORM_MM_CYCLE));
 }
 
 void NasMm::performMmCycle()
@@ -79,7 +81,7 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
-        if (m_emulationMode && !m_timers->t3346.isRunning())
+        if (m_autoBehaviour && !m_timers->t3346.isRunning())
             sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, nas::EFollowOnRequest::FOR_PENDING);
         return;
     }
@@ -95,7 +97,7 @@ void NasMm::performMmCycle()
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI)
         return;
 
-    if (m_emulationMode)
+    if (m_autoBehaviour)
     {
         m_logger->err("unhandled UE MM state");
         return;
@@ -164,6 +166,25 @@ void NasMm::switchCmState(ECmState state)
     triggerMmCycle();
 }
 
+void NasMm::switchUState(E5UState state)
+{
+    E5UState oldState = m_uState;
+    m_uState = state;
+
+    onSwitchUState(oldState, m_uState);
+
+    if (m_base->nodeListener)
+    {
+        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::U5,
+                                       ToJson(oldState).str(), ToJson(m_uState).str());
+    }
+
+    if (state != oldState)
+        m_logger->info("UE switches to state: %s", ToJson(state).str().c_str());
+
+    triggerMmCycle();
+}
+
 void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate)
 {
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
@@ -187,57 +208,95 @@ void NasMm::onSwitchRmState(ERmState oldState, ERmState newState)
 
 void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
 {
+    if (oldState == ECmState::CM_CONNECTED && newState == ECmState::CM_IDLE)
+    {
+        // 5.5.2.2.6 Abnormal cases in the UE (in de-registration)
+        if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+        {
+            // The de-registration procedure shall be aborted and the UE proceeds as follows:
+            // if the de-registration procedure was performed due to disabling of 5GS services, the UE shall enter the
+            // 5GMM-NULL state;
+            if (m_lastDeregDueToDisable5g)
+                switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+            // if the de-registration type "normal de-registration" was requested for reasons other than disabling of
+            // 5GS services, the UE shall enter the 5GMM-DEREGISTERED state.
+            else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
+                     nas::ESwitchOff::NORMAL_DE_REGISTRATION)
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+
+            m_lastDeregistrationRequest = nullptr;
+            m_lastDeregDueToDisable5g = false;
+        }
+    }
 }
 
-void NasMm::receivePlmnSearchResponse(const std::string &gnbName)
+void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 {
-    if (m_base->nodeListener)
-        m_base->nodeListener->onConnected(app::NodeType::UE, m_base->config->getNodeName(), app::NodeType::GNB,
-                                          gnbName);
-
-    m_logger->info("UE connected to gNB");
-
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
-        m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-    else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
-             m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-}
-
-void NasMm::receivePlmnSearchFailure()
-{
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE);
-    else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE);
-}
-
-void NasMm::receiveRrcConnectionSetup()
-{
-    switchCmState(ECmState::CM_CONNECTED);
 }
 
 void NasMm::onTimerExpire(nas::NasTimer &timer)
 {
     switch (timer.getCode())
     {
+    case 3346: {
+        if (m_autoBehaviour && m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
+        {
+            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, nas::EFollowOnRequest::FOR_PENDING);
+        }
+        break;
+    }
     case 3512: {
-        if (m_emulationMode && m_mmState == EMmState::MM_REGISTERED)
+        if (m_autoBehaviour && m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
         {
             sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING,
                              nas::EFollowOnRequest::FOR_PENDING);
         }
         break;
     }
-    case 3346: {
-        if (m_emulationMode && m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
+    case 3521: {
+        if (timer.getExpiryCount() == 5)
         {
-            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, nas::EFollowOnRequest::FOR_PENDING);
+            timer.resetExpiryCount();
+            if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
+            {
+                m_logger->debug("De-registration aborted");
+
+                if (m_lastDeregDueToDisable5g)
+                    switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+                else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
+                         nas::ESwitchOff::NORMAL_DE_REGISTRATION)
+                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+            }
+        }
+        else
+        {
+            if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
+            {
+                m_logger->debug("Retrying de-registration request");
+
+                sendNasMessage(*m_lastDeregistrationRequest);
+                m_timers->t3521.start(false);
+            }
         }
         break;
     }
     }
+}
+
+void NasMm::invalidateAcquiredParams()
+{
+    m_storedGuti = {};
+    m_lastVisitedRegisteredTai = {};
+    m_taiList = {};
+    m_currentNsCtx = {};
+    m_nonCurrentNsCtx = {};
+}
+
+void NasMm::invalidateSim()
+{
+    m_logger->warn("USIM is removed or invalidated");
+    m_validSim = false;
+    invalidateAcquiredParams();
 }
 
 } // namespace nr::ue

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <array>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <ue/nts.hpp>
@@ -23,18 +24,17 @@ class NasSm
 {
   private:
     TaskBase *m_base;
-    NtsTask *m_nas;
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasMm *m_mm;
 
-    PduSession m_pduSessions[16]{};
+    std::array<PduSession, 16> m_pduSessions{};
     ProcedureTransaction m_procedureTransactions[255]{};
 
     friend class UeCmdHandler;
 
   public:
-    NasSm(TaskBase *base, NtsTask *nas, UeTimers *timers);
+    NasSm(TaskBase *base, UeTimers *timers);
 
   public:
     /* Base */
@@ -45,17 +45,21 @@ class NasSm
     /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);
 
+    /* Resource */
+    void localReleaseSession(int psi);
+    void localReleaseAllSessions();
+
   private:
     /* Transport */
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
     void receiveSmCause(const nas::IE5gSmCause &msg);
 
-    /* Resource */
+    /* Allocation */
     int allocatePduSessionId(const SessionConfig &config);
     int allocateProcedureTransactionId();
-    void releaseProcedureTransactionId(int pti);
-    void releasePduSession(int psi);
+    void freeProcedureTransactionId(int pti);
+    void freePduSessionId(int psi);
 
     /* Session */
     void sendEstablishmentRequest(const SessionConfig &config);

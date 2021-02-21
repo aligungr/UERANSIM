@@ -66,6 +66,7 @@ struct NwUeMrToRrc : NtsMessage
         PLMN_SEARCH_RESPONSE,
         PLMN_SEARCH_FAILURE,
         RRC_PDU_DELIVERY,
+        RADIO_LINK_FAILURE
     } present;
 
     // PLMN_SEARCH_RESPONSE
@@ -156,6 +157,8 @@ struct NwUeRrcToNas : NtsMessage
         PLMN_SEARCH_RESPONSE,
         PLMN_SEARCH_FAILURE,
         RRC_CONNECTION_SETUP,
+        RRC_CONNECTION_RELEASE,
+        RADIO_LINK_FAILURE,
     } present;
 
     // NAS_DELIVERY
@@ -195,7 +198,8 @@ struct NwUeRrcToMr : NtsMessage
     enum PR
     {
         PLMN_SEARCH_REQUEST,
-        RRC_PDU_DELIVERY
+        RRC_PDU_DELIVERY,
+        RRC_CONNECTION_RELEASE,
     } present;
 
     // RRC_PDU_DELIVERY
@@ -224,14 +228,30 @@ struct NwUeNasToNas : NtsMessage
     }
 };
 
+struct NwUeNasToApp : NtsMessage
+{
+    enum PR
+    {
+        PERFORM_SWITCH_OFF,
+    } present;
+
+    explicit NwUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
+    {
+    }
+};
+
 struct NwUeStatusUpdate : NtsMessage
 {
-    static constexpr const int SESSION_ESTABLISHMENT = 5;
+    static constexpr const int SESSION_ESTABLISHMENT = 1;
+    static constexpr const int SESSION_RELEASE = 2;
 
     const int what{};
 
     // SESSION_ESTABLISHMENT
     PduSession *pduSession{};
+
+    // SESSION_RELEASE
+    int psi{};
 
     explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {
@@ -242,21 +262,10 @@ struct NwUeCliCommand : NtsMessage
 {
     std::unique_ptr<app::UeCliCommand> cmd;
     InetAddress address;
-    NtsTask *callbackTask;
 
-    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address, NtsTask *callbackTask)
-        : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address), callbackTask(callbackTask)
+    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
+        : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
-    }
-
-    void sendResult(const std::string &output) const
-    {
-        callbackTask->push(new app::NwCliSendResponse(address, output, false));
-    }
-
-    void sendError(const std::string &output) const
-    {
-        callbackTask->push(new app::NwCliSendResponse(address, output, true));
     }
 };
 

@@ -29,6 +29,7 @@ enum class NtsMessageType
     GNB_CLI_COMMAND,
     UE_STATUS_UPDATE,
     UE_CLI_COMMAND,
+    UE_CTL_COMMAND,
 
     UDP_SERVER_RECEIVE,
     CLI_SEND_RESPONSE,
@@ -52,7 +53,8 @@ enum class NtsMessageType
     UE_RRC_TO_NAS,
     UE_NAS_TO_RRC,
     UE_RRC_TO_MR,
-    UE_NAS_TO_NAS,
+	UE_NAS_TO_NAS,
+	UE_NAS_TO_APP,
 };
 
 struct NtsMessage

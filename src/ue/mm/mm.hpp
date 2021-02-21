@@ -25,7 +25,6 @@ class NasMm
 {
   private:
     TaskBase *m_base;
-    NtsTask *m_nas;
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
@@ -34,17 +33,23 @@ class NasMm
     ECmState m_cmState;
     EMmState m_mmState;
     EMmSubState m_mmSubState;
+    E5UState m_uState;
 
-    std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
     nas::IE5gsMobileIdentity m_storedSuci{};
     nas::IE5gsMobileIdentity m_storedGuti{};
+
+    std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
+
+    std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    bool m_lastDeregDueToDisable5g{};
+
     std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
     std::optional<nas::IE5gsTrackingAreaIdentityList> m_taiList{};
 
     std::optional<NasSecurityContext> m_currentNsCtx;
     std::optional<NasSecurityContext> m_nonCurrentNsCtx;
 
-    bool m_emulationMode;
+    bool m_autoBehaviour;
     bool m_validSim;
     long m_lastPlmnSearchTrigger{};
     OctetString m_sqn{};
@@ -52,7 +57,7 @@ class NasMm
     friend class UeCmdHandler;
 
   public:
-    NasMm(TaskBase *base, NtsTask *nas, UeTimers *timers);
+    NasMm(TaskBase *base, UeTimers *timers);
 
   public:
     /* Base */
@@ -61,22 +66,33 @@ class NasMm
     void triggerMmCycle();
     void performMmCycle();
     void onTimerExpire(nas::NasTimer &timer);
-    void receivePlmnSearchResponse(const std::string &gnbName);
-    void receivePlmnSearchFailure();
-    void receiveRrcConnectionSetup();
+
+    /* Radio resource control */
+    void handlePlmnSearchResponse(const std::string &gnbName);
+    void handlePlmnSearchFailure();
+    void handleRrcConnectionSetup();
+    void handleRrcConnectionRelease();
+    void handleRadioLinkFailure();
 
     /* Transport */
     void sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
+
+    /* De-registration */
+    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
 
   private:
     /* Base */
     void switchMmState(EMmState state, EMmSubState subState);
     void switchRmState(ERmState state);
     void switchCmState(ECmState state);
+    void switchUState(E5UState state);
     void onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate);
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
+    void onSwitchUState(E5UState oldState, E5UState newState);
+    void invalidateAcquiredParams();
+    void invalidateSim();
 
     /* Transport */
     void sendMmStatus(nas::EMmCause cause);
@@ -112,7 +128,6 @@ class NasMm
     void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
 
     /* De-registration */
-    void sendDeregistration(nas::ESwitchOff switchOff);
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
 
@@ -120,6 +135,7 @@ class NasMm
     void receiveIdentityRequest(const nas::IdentityRequest &msg);
     nas::IE5gsMobileIdentity getOrGenerateSuci();
     nas::IE5gsMobileIdentity generateSuci();
+    nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
     /* Service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);

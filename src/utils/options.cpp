@@ -269,10 +269,15 @@ void opt::OptionsResult::showHelp() const
         ostream << "  " << m_description.programName << " " << usage << std::endl;
     ostream << std::endl;
 
-    ostream << "Options:" << std::endl;
     std::vector<OptionItem> items = m_description.items;
-    items.emplace_back('h', "help", "Show this help message and exit", std::nullopt);
-    items.emplace_back('v', "version", "Show version information and exit", std::nullopt);
+    if (!m_description.hideDefaultOptionsInUsage)
+    {
+        items.emplace_back('h', "help", "Show this help message and exit", std::nullopt);
+        items.emplace_back('v', "version", "Show version information and exit", std::nullopt);
+    }
+
+    if (!items.empty())
+        ostream << "Options:" << std::endl;
 
     size_t maxLengthOfItemName = 0;
     for (auto &item : items)

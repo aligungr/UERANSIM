@@ -28,11 +28,15 @@ struct NwGnbMrToRrc : NtsMessage
 {
     enum PR
     {
-        RRC_PDU_DELIVERY
+        RRC_PDU_DELIVERY,
+        RADIO_LINK_FAILURE,
     } present;
 
     // RRC_PDU_DELIVERY
+    // RADIO_LINK_FAILURE
     int ueId{};
+
+    // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
@@ -46,11 +50,15 @@ struct NwGnbRrcToMr : NtsMessage
     enum PR
     {
         NGAP_LAYER_INITIALIZED,
-        RRC_PDU_DELIVERY
+        RRC_PDU_DELIVERY,
+        AN_RELEASE,
     } present;
 
     // RRC_PDU_DELIVERY
+    // AN_RELEASE
     int ueId{};
+
+    // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
@@ -65,10 +73,14 @@ struct NwGnbNgapToRrc : NtsMessage
     {
         NGAP_LAYER_INITIALIZED,
         NAS_DELIVERY,
+        AN_RELEASE,
     } present;
 
     // NAS_DELIVERY
+    // AN_RELEASE
     int ueId{};
+
+    // NAS_DELIVERY
     OctetString pdu{};
 
     explicit NwGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
@@ -81,12 +93,17 @@ struct NwGnbRrcToNgap : NtsMessage
     enum PR
     {
         INITIAL_NAS_DELIVERY,
-        UPLINK_NAS_DELIVERY
+        UPLINK_NAS_DELIVERY,
+        RADIO_LINK_FAILURE
     } present;
 
     // INITIAL_NAS_DELIVERY
     // UPLINK_NAS_DELIVERY
+    // RADIO_LINK_FAILURE
     int ueId{};
+
+    // INITIAL_NAS_DELIVERY
+    // UPLINK_NAS_DELIVERY
     OctetString pdu{};
 
     // INITIAL_NAS_DELIVERY
@@ -102,7 +119,8 @@ struct NwGnbNgapToGtp : NtsMessage
     enum PR
     {
         UE_CONTEXT_UPDATE,
-        SESSION_CREATE
+        SESSION_CREATE,
+        UE_CONTEXT_RELEASE,
     } present;
 
     // UE_CONTEXT_UPDATE
@@ -110,6 +128,9 @@ struct NwGnbNgapToGtp : NtsMessage
 
     // SESSION_CREATE
     PduSessionResource *resource{};
+
+    // UE_CONTEXT_RELEASE
+    int ueId{};
 
     explicit NwGnbNgapToGtp(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_GTP), present(present)
     {
@@ -246,21 +267,10 @@ struct NwGnbCliCommand : NtsMessage
 {
     std::unique_ptr<app::GnbCliCommand> cmd;
     InetAddress address;
-    NtsTask *callbackTask;
 
-    NwGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address, NtsTask *callbackTask)
-        : NtsMessage(NtsMessageType::GNB_CLI_COMMAND), cmd(std::move(cmd)), address(address), callbackTask(callbackTask)
+    NwGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address)
+        : NtsMessage(NtsMessageType::GNB_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
-    }
-
-    void sendResult(const std::string &output) const
-    {
-        callbackTask->push(new app::NwCliSendResponse(address, output, false));
-    }
-
-    void sendError(const std::string &output) const
-    {
-        callbackTask->push(new app::NwCliSendResponse(address, output, true));
     }
 };
 
