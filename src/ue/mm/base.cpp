@@ -246,7 +246,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         break;
     }
     case 3512: {
-        if (m_autoBehaviour && m_mmState == EMmState::MM_REGISTERED)
+        if (m_autoBehaviour && m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
         {
             sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING,
                              nas::EFollowOnRequest::FOR_PENDING);
