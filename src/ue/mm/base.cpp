@@ -288,6 +288,8 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
             timer.resetExpiryCount();
             if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
             {
+                m_logger->debug("De-registration aborted");
+
                 if (m_lastDeregDueToDisable5g)
                     switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
                 else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
@@ -299,6 +301,8 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         {
             if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
             {
+                m_logger->debug("Retrying de-registration request");
+
                 sendNasMessage(*m_lastDeregistrationRequest);
                 m_timers->t3521.start(false);
             }
