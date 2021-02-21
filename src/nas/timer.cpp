@@ -107,7 +107,7 @@ bool NasTimer::performTick()
 
         if (remainingSec < 0)
         {
-            stop();
+            stop(false);
             expiryCount++;
             return true;
         }
