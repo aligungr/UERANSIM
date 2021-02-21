@@ -123,6 +123,7 @@ void UeMrTask::onLoop()
         }
         case NwUeRrcToMr::RRC_CONNECTION_RELEASE: {
             m_rlsEntity->localReleaseConnection(rls::ECause::RRC_RELEASE);
+            m_rlsEntity->resetEntity();
             break;
         }
         }
