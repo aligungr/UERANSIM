@@ -133,7 +133,7 @@ void NasTask::onTimerExpire(nas::NasTimer &timer)
 void NasTask::performTick()
 {
     auto sendExpireMsg = [this](nas::NasTimer *timer) {
-        logger->debug("NAS timer[%d] expired", timer->getCode());
+        logger->debug("NAS timer[%d] expired [%d]", timer->getCode(), timer->getExpiryCount());
 
         auto *nw = new NwUeNasToNas(NwUeNasToNas::NAS_TIMER_EXPIRE);
         nw->timer = timer;
