@@ -70,6 +70,11 @@ void RlsGnbEntity::releaseConnection(int ue, ECause cause)
     removeUe(ue, cause);
 }
 
+void RlsGnbEntity::localReleaseConnection(int ue, ECause cause)
+{
+    removeUe(ue, cause);
+}
+
 void RlsGnbEntity::sendRlsMessage(int ue, const RlsMessage &msg)
 {
     OctetString buf{};
@@ -107,6 +112,9 @@ void RlsGnbEntity::sendReleaseIndication(int ue, ECause cause)
 
 void RlsGnbEntity::removeUe(int ue, ECause cause)
 {
+    if (idUeMap.count(ue) == 0)
+        return;
+
     uint64_t ueToken = idUeMap[ue];
     ueIdMap.erase(ueToken);
     idUeMap.erase(ue);

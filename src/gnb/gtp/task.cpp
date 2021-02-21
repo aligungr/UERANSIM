@@ -66,6 +66,10 @@ void GtpTask::onLoop()
             handleSessionCreate(w->resource);
             break;
         }
+        case NwGnbNgapToGtp::UE_CONTEXT_RELEASE: {
+            handleUeContextDelete(w->ueId);
+            break;
+        }
         }
         break;
     }
@@ -117,6 +121,34 @@ void GtpTask::handleSessionCreate(PduSessionResource *session)
 
     updateAmbrForUe(session->ueId);
     updateAmbrForSession(sessionInd);
+}
+
+void GtpTask::handleUeContextDelete(int ueId)
+{
+    // Find PDU sessions of the UE
+    std::vector<uint64_t> sessions{};
+    m_sessionTree.enumerateByUe(ueId, sessions);
+
+    for (auto &session : sessions)
+    {
+        // Remove all session information from rate limiter
+        m_rateLimiter->updateSessionUplinkLimit(session, 0);
+        m_rateLimiter->updateUeDownlinkLimit(session, 0);
+
+        // And remove from PDU session table
+        int teid = m_pduSessions[session]->downTunnel.teid;
+        m_pduSessions.erase(session);
+
+        // And remove from the tree
+        m_sessionTree.remove(session, teid);
+    }
+
+    // Remove all user information from rate limiter
+    m_rateLimiter->updateUeUplinkLimit(ueId, 0);
+    m_rateLimiter->updateUeDownlinkLimit(ueId, 0);
+
+    // Remove UE context
+    m_ueContexts.erase(ueId);
 }
 
 void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)

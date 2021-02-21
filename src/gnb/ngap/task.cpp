@@ -60,6 +60,10 @@ void NgapTask::onLoop()
             handleUplinkNasTransport(w->ueId, w->pdu);
             break;
         }
+        case NwGnbRrcToNgap::RADIO_LINK_FAILURE: {
+            handleRadioLinkFailure(w->ueId);
+            break;
+        }
         }
         break;
     }
