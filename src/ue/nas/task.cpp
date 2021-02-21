@@ -60,15 +60,15 @@ void NasTask::onLoop()
         switch (w->present)
         {
         case NwUeRrcToNas::RRC_CONNECTION_SETUP: {
-            mm->receiveRrcConnectionSetup();
+            mm->handleRrcConnectionSetup();
             break;
         }
         case NwUeRrcToNas::PLMN_SEARCH_RESPONSE: {
-            mm->receivePlmnSearchResponse(w->gnbName);
+            mm->handlePlmnSearchResponse(w->gnbName);
             break;
         }
         case NwUeRrcToNas::PLMN_SEARCH_FAILURE: {
-            mm->receivePlmnSearchFailure();
+            mm->handlePlmnSearchFailure();
             break;
         }
         case NwUeRrcToNas::NAS_DELIVERY: {
@@ -76,6 +76,14 @@ void NasTask::onLoop()
             auto nasMessage = nas::DecodeNasMessage(buffer);
             if (nasMessage != nullptr)
                 mm->receiveNasMessage(*nasMessage);
+            break;
+        }
+        case NwUeRrcToNas::RRC_CONNECTION_RELEASE: {
+            mm->handleRrcConnectionRelease();
+            break;
+        }
+        case NwUeRrcToNas::RADIO_LINK_FAILURE: {
+            mm->handleRadioLinkFailure();
             break;
         }
         }

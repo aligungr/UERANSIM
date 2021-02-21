@@ -66,9 +66,13 @@ class NasMm
     void triggerMmCycle();
     void performMmCycle();
     void onTimerExpire(nas::NasTimer &timer);
-    void receivePlmnSearchResponse(const std::string &gnbName);
-    void receivePlmnSearchFailure();
-    void receiveRrcConnectionSetup();
+
+    /* Radio resource control */
+    void handlePlmnSearchResponse(const std::string &gnbName);
+    void handlePlmnSearchFailure();
+    void handleRrcConnectionSetup();
+    void handleRrcConnectionRelease();
+    void handleRadioLinkFailure();
 
     /* Transport */
     void sendNasMessage(const nas::PlainMmMessage &msg);

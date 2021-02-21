@@ -66,6 +66,7 @@ struct NwUeMrToRrc : NtsMessage
         PLMN_SEARCH_RESPONSE,
         PLMN_SEARCH_FAILURE,
         RRC_PDU_DELIVERY,
+        RADIO_LINK_FAILURE
     } present;
 
     // PLMN_SEARCH_RESPONSE
@@ -156,6 +157,8 @@ struct NwUeRrcToNas : NtsMessage
         PLMN_SEARCH_RESPONSE,
         PLMN_SEARCH_FAILURE,
         RRC_CONNECTION_SETUP,
+        RRC_CONNECTION_RELEASE,
+        RADIO_LINK_FAILURE,
     } present;
 
     // NAS_DELIVERY
@@ -195,7 +198,8 @@ struct NwUeRrcToMr : NtsMessage
     enum PR
     {
         PLMN_SEARCH_REQUEST,
-        RRC_PDU_DELIVERY
+        RRC_PDU_DELIVERY,
+        RRC_CONNECTION_RELEASE,
     } present;
 
     // RRC_PDU_DELIVERY

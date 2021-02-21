@@ -234,35 +234,6 @@ void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 {
 }
 
-void NasMm::receivePlmnSearchResponse(const std::string &gnbName)
-{
-    if (m_base->nodeListener)
-        m_base->nodeListener->onConnected(app::NodeType::UE, m_base->config->getNodeName(), app::NodeType::GNB,
-                                          gnbName);
-
-    m_logger->info("UE connected to gNB");
-
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
-        m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-    else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
-             m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-}
-
-void NasMm::receivePlmnSearchFailure()
-{
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE);
-    else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE);
-}
-
-void NasMm::receiveRrcConnectionSetup()
-{
-    switchCmState(ECmState::CM_CONNECTED);
-}
-
 void NasMm::onTimerExpire(nas::NasTimer &timer)
 {
     switch (timer.getCode())
