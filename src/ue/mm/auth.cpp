@@ -342,23 +342,26 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
 {
     m_logger->err("Authentication Reject received.");
 
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap->code != eap::ECode::FAILURE)
     {
-        if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
-        {
-            m_storedGuti = {};
-            m_taiList = {};
-            m_lastVisitedRegisteredTai = {};
-            m_currentNsCtx = {};
-            m_nonCurrentNsCtx = {};
-
-            receiveEapFailureMessage(*msg.eapMessage->eap);
-        }
-        else
-        {
-            m_logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");
-        }
+        m_logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");
+        return;
     }
+
+    // The UE shall set the update status to 5U3 ROAMING NOT ALLOWED,
+    switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+    // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI The USIM shall be considered invalid
+    // until switching off the UE or the UICC containing the USIM is removed
+    invalidateSim();
+    // The UE shall abort any 5GMM signalling procedure, stop any of the timers T3510, T3516, T3517, T3519 or T3521 (if
+    // they were running) ..
+    m_timers->t3510.stop();
+    m_timers->t3516.stop();
+    m_timers->t3517.stop();
+    m_timers->t3519.stop();
+    m_timers->t3521.stop();
+    // .. and enter state 5GMM-DEREGISTERED.
+    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 }
 
 void NasMm::receiveEapSuccessMessage(const eap::Eap &eap)
