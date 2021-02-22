@@ -17,6 +17,9 @@ namespace nr::ue
 
 void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 {
+    if (!m_validSim)
+        m_logger->warn("Authentication request is ignored. USIM is invalid");
+
     if (msg.eapMessage.has_value())
         receiveAuthenticationRequestEap(msg);
     else
@@ -29,11 +32,11 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     return;
 
     auto ueRejectionTimers = [this]() {
-      m_timers->t3520.start();
+        m_timers->t3520.start();
 
-      m_timers->t3510.stop();
-      m_timers->t3517.stop();
-      m_timers->t3521.stop();
+        m_timers->t3510.stop();
+        m_timers->t3517.stop();
+        m_timers->t3521.stop();
     };
 
     m_timers->t3520.stop();
@@ -106,7 +109,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         nas::AuthenticationReject resp;
         resp.eapMessage = nas::IEEapMessage{};
         resp.eapMessage->eap = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-            eap::ESubType::AKA_AUTHENTICATION_REJECT);
+                                                                  eap::ESubType::AKA_AUTHENTICATION_REJECT);
 
         sendNasMessage(resp);
         return;
@@ -159,14 +162,14 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     if (expectedMac != receivedMac)
     {
         m_logger->err("AT_MAC failure in EAP AKA'. expected: %s received: %s", expectedMac.toHexString().c_str(),
-            receivedMac.toHexString().c_str());
+                      receivedMac.toHexString().c_str());
 
         if (!IGNORE_CONTROLS_FAILURES)
         {
             ueRejectionTimers();
 
             auto eapResponse = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-                eap::ESubType::AKA_CLIENT_ERROR);
+                                                                  eap::ESubType::AKA_CLIENT_ERROR);
             eapResponse->attributes.putClientErrorCode(0);
 
             nas::AuthenticationReject response;
@@ -221,9 +224,9 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
     auto sendFailure = [this](nas::EMmCause cause) {
-      nas::AuthenticationFailure resp;
-      resp.mmCause.value = cause;
-      sendNasMessage(resp);
+        nas::AuthenticationFailure resp;
+        resp.mmCause.value = cause;
+        sendNasMessage(resp);
     };
 
     if (USE_SQN_HACK)
@@ -262,8 +265,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto snn = keys::ConstructServingNetworkName(m_base->config->plmn);
 
     m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
-        ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
-        milenageMac.toHexString().c_str());
+                    ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
+                    milenageMac.toHexString().c_str());
     m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_sqn.toHexString().c_str());
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
@@ -283,8 +286,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         keys::DeriveKeysSeafAmf(*m_base->config, *m_nonCurrentNsCtx);
 
         m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]", m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
-            m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
-            m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+                        m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
+                        m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
         // Send response
         nas::AuthenticationResponse resp;
@@ -390,7 +393,7 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     if (receivedMAC != mac)
     {
         m_logger->err("AUTN validation MAC mismatch. expected: %s received: %s", mac.toHexString().c_str(),
-            receivedMAC.toHexString().c_str());
+                      receivedMAC.toHexString().c_str());
         return EAutnValidationRes::MAC_FAILURE;
     }
 
@@ -428,5 +431,4 @@ crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, cons
     return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, m_base->config->amf);
 }
 
-
-}
+} // namespace nr::ue
