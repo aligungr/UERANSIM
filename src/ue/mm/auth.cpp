@@ -227,7 +227,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
     auto sendFailure = [this](nas::EMmCause cause) {
-        nas::AuthenticationFailure resp;
+        nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
         sendNasMessage(resp);
     };
