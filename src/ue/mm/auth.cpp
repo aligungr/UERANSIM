@@ -18,7 +18,10 @@ namespace nr::ue
 void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 {
     if (!m_validSim)
+    {
         m_logger->warn("Authentication request is ignored. USIM is invalid");
+        return;
+    }
 
     if (msg.eapMessage.has_value())
         receiveAuthenticationRequestEap(msg);
