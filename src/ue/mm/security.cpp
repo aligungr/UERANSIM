@@ -81,7 +81,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     m_storage.m_currentNsCtx = m_storage.m_nonCurrentNsCtx->deepCopy();
 
     // Prepare response
-    nas::SecurityModeComplete resp;
+    nas::SecurityModeComplete resp{};
 
     // Append IMEISV if requested
     if (msg.imeiSvRequest.has_value() && msg.imeiSvRequest->imeiSvRequest == nas::EImeiSvRequest::REQUESTED)
