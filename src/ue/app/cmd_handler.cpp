@@ -109,9 +109,9 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
-            {"sim-inserted", m_base->nasTask->mm->m_validSim},
-            {"stored-suci", ToJson(m_base->nasTask->mm->m_storedSuci)},
-            {"stored-guti", ToJson(m_base->nasTask->mm->m_storedGuti)},
+            {"sim-inserted", m_base->nasTask->mm->m_storage.isSimValid()},
+            {"stored-suci", ToJson(m_base->nasTask->mm->m_storage.m_storedSuci)},
+            {"stored-guti", ToJson(m_base->nasTask->mm->m_storage.m_storedGuti)},
             {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         sendResult(msg.address, json.dumpYaml());
@@ -127,8 +127,8 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
     }
     case app::UeCliCommand::DE_REGISTER: {
         m_base->nasTask->mm->sendDeregistration(msg.cmd->isSwitchOff ? nas::ESwitchOff::SWITCH_OFF
-                                                                    : nas::ESwitchOff::NORMAL_DE_REGISTRATION,
-                                               msg.cmd->dueToDisable5g);
+                                                                     : nas::ESwitchOff::NORMAL_DE_REGISTRATION,
+                                                msg.cmd->dueToDisable5g);
         if (!msg.cmd->isSwitchOff)
             sendResult(msg.address, "De-registration procedure triggered");
         else

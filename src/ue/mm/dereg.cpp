@@ -30,10 +30,10 @@ void NasMm::sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g)
     request->deRegistrationType.reRegistrationRequired = nas::EReRegistrationRequired::NOT_REQUIRED;
     request->deRegistrationType.switchOff = switchOff;
 
-    if (m_currentNsCtx.has_value())
+    if (m_storage.m_currentNsCtx.has_value())
     {
-        request->ngKSI.tsc = m_currentNsCtx->tsc;
-        request->ngKSI.ksi = m_currentNsCtx->ngKsi;
+        request->ngKSI.tsc = m_storage.m_currentNsCtx->tsc;
+        request->ngKSI.ksi = m_storage.m_currentNsCtx->ngKsi;
     }
     else
     {
@@ -76,7 +76,7 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     m_timers->t3521.stop();
     m_timers->t3519.stop();
 
-    m_storedSuci = {};
+    m_storage.m_storedSuci = {};
 
     switchRmState(ERmState::RM_DEREGISTERED);
 
@@ -162,7 +162,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             case nas::EMmCause::ILLEGAL_ME:
             case nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateSim();
+                m_storage.invalidateSim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }
@@ -175,13 +175,13 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             //}
             case nas::EMmCause::TA_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateAcquiredParams();
+                m_storage.discardUsim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
                 break;
             }
             case nas::EMmCause::N1_MODE_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateAcquiredParams();
+                m_storage.discardUsim();
                 switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
                 break;
             }
@@ -198,7 +198,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
                               nas::utils::EnumToString(msg.mmCause->value));
 
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateSim();
+                m_storage.invalidateSim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }

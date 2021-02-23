@@ -22,7 +22,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         m_logger->err("Rejecting Security Mode Command with cause: %s", nas::utils::EnumToString(cause));
     };
 
-    if (!m_nonCurrentNsCtx.has_value())
+    if (!m_storage.m_nonCurrentNsCtx.has_value())
     {
         reject(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
         return;
@@ -58,7 +58,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // Assign ABBA (if any)
     if (msg.abba.has_value())
-        m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
+        m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
 
     // Check selected algorithms
     {
@@ -68,17 +68,17 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     }
 
     // Assign selected algorithms to security context, and derive NAS keys
-    m_nonCurrentNsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
-    m_nonCurrentNsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
-    keys::DeriveNasKeys(*m_nonCurrentNsCtx);
+    m_storage.m_nonCurrentNsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
+    m_storage.m_nonCurrentNsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
+    keys::DeriveNasKeys(*m_storage.m_nonCurrentNsCtx);
 
-    m_logger->debug("Derived kNasEnc[%s] kNasInt[%s]", m_nonCurrentNsCtx->keys.kNasEnc.toHexString().c_str(),
-                    m_nonCurrentNsCtx->keys.kNasInt.toHexString().c_str());
-    m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)m_nonCurrentNsCtx->integrity,
-                    (int)m_nonCurrentNsCtx->ciphering);
+    m_logger->debug("Derived kNasEnc[%s] kNasInt[%s]", m_storage.m_nonCurrentNsCtx->keys.kNasEnc.toHexString().c_str(),
+        m_storage.m_nonCurrentNsCtx->keys.kNasInt.toHexString().c_str());
+    m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)m_storage.m_nonCurrentNsCtx->integrity,
+                    (int)m_storage.m_nonCurrentNsCtx->ciphering);
 
     // Set non-current NAS Security Context as current one.
-    m_currentNsCtx = m_nonCurrentNsCtx->deepCopy();
+    m_storage.m_currentNsCtx = m_storage.m_nonCurrentNsCtx->deepCopy();
 
     // Prepare response
     nas::SecurityModeComplete resp;

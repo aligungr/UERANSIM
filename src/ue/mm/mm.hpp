@@ -11,6 +11,7 @@
 #include <crypt/milenage.hpp>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
+#include <ue/nas/storage.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
@@ -28,31 +29,22 @@ class NasMm
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
+    MobileStorage m_storage{};
+    bool m_autoBehaviour;
 
     ERmState m_rmState;
     ECmState m_cmState;
     EMmState m_mmState;
     EMmSubState m_mmSubState;
-    E5UState m_uState;
 
-    nas::IE5gsMobileIdentity m_storedSuci{};
-    nas::IE5gsMobileIdentity m_storedGuti{};
-
+    // The very last registration request (or null)
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
-
+    // The very last de-registration request (or null)
     std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    // Indicates that the last de-registration request is issued due to disable 5G services
     bool m_lastDeregDueToDisable5g{};
-
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
-    std::optional<nas::IE5gsTrackingAreaIdentityList> m_taiList{};
-
-    std::optional<NasSecurityContext> m_currentNsCtx;
-    std::optional<NasSecurityContext> m_nonCurrentNsCtx;
-
-    bool m_autoBehaviour;
-    bool m_validSim;
+    // Last time PLMN search is triggered
     long m_lastPlmnSearchTrigger{};
-    OctetString m_sqn{};
 
     friend class UeCmdHandler;
 
@@ -91,8 +83,6 @@ class NasMm
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
-    void invalidateAcquiredParams();
-    void invalidateSim();
 
     /* Transport */
     void sendMmStatus(nas::EMmCause cause);

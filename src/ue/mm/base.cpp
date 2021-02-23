@@ -25,9 +25,9 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_cmState = ECmState::CM_IDLE;
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
-    m_uState = E5UState::U1_UPDATED;
+    m_storage.m_uState = E5UState::U1_UPDATED;
     m_autoBehaviour = base->config->autoBehaviour;
-    m_validSim = base->config->supi.has_value();
+    m_storage.initialize(base->config->supi.has_value());
 }
 
 void NasMm::onStart(NasSm *sm)
@@ -52,7 +52,7 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
     {
-        if (m_validSim)
+        if (m_storage.isSimValid())
         {
             if (m_cmState == ECmState::CM_IDLE)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
@@ -168,15 +168,15 @@ void NasMm::switchCmState(ECmState state)
 
 void NasMm::switchUState(E5UState state)
 {
-    E5UState oldState = m_uState;
-    m_uState = state;
+    E5UState oldState = m_storage.m_uState;
+    m_storage.m_uState = state;
 
-    onSwitchUState(oldState, m_uState);
+    onSwitchUState(oldState, m_storage.m_uState);
 
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::U5,
-                                       ToJson(oldState).str(), ToJson(m_uState).str());
+                                       ToJson(oldState).str(), ToJson(m_storage.m_uState).str());
     }
 
     if (state != oldState)
@@ -192,12 +192,12 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
     // 5GMM-DEREGISTERED for any other state except 5GMM-NULL.
     if (oldState == EMmState::MM_DEREGISTERED && newState != EMmState::MM_DEREGISTERED && newState != EMmState::MM_NULL)
     {
-        if (m_currentNsCtx.has_value() || m_nonCurrentNsCtx.has_value())
+        if (m_storage.m_currentNsCtx.has_value() || m_storage.m_nonCurrentNsCtx.has_value())
         {
             m_logger->debug("Deleting NAS security context");
 
-            m_currentNsCtx = {};
-            m_nonCurrentNsCtx = {};
+            m_storage.m_currentNsCtx = {};
+            m_storage.m_nonCurrentNsCtx = {};
         }
     }
 }
@@ -281,22 +281,6 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         break;
     }
     }
-}
-
-void NasMm::invalidateAcquiredParams()
-{
-    m_storedGuti = {};
-    m_lastVisitedRegisteredTai = {};
-    m_taiList = {};
-    m_currentNsCtx = {};
-    m_nonCurrentNsCtx = {};
-}
-
-void NasMm::invalidateSim()
-{
-    m_logger->warn("USIM is removed or invalidated");
-    m_validSim = false;
-    invalidateAcquiredParams();
 }
 
 } // namespace nr::ue

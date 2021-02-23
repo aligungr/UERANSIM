@@ -21,10 +21,11 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
     // TODO trigger on send
 
     OctetString pdu{};
-    if (m_currentNsCtx.has_value() && (m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
-                                       m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
+    if (m_storage.m_currentNsCtx.has_value() &&
+        (m_storage.m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
+         m_storage.m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
     {
-        auto secured = nas_enc::Encrypt(*m_currentNsCtx, msg);
+        auto secured = nas_enc::Encrypt(*m_storage.m_currentNsCtx, msg);
         nas::EncodeNasMessage(*secured, pdu);
     }
     else
@@ -62,7 +63,7 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
     {
         //  If any NAS signalling message is received as not integrity protected even though the secure exchange of NAS
         //  messages has been established by the network, then the NAS shall discard this message
-        if (m_currentNsCtx.has_value())
+        if (m_storage.m_currentNsCtx.has_value())
         {
             m_logger->err(
                 "Not integrity protected NAS message received after security establishment. Ignoring received "
@@ -100,14 +101,14 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
         return;
     }
 
-    if (!m_currentNsCtx.has_value())
+    if (!m_storage.m_currentNsCtx.has_value())
     {
         m_logger->warn("Secured NAS message received while no security context");
         sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
         return;
     }
 
-    auto decrypted = nas_enc::Decrypt(*m_currentNsCtx, securedMm);
+    auto decrypted = nas_enc::Decrypt(*m_storage.m_currentNsCtx, securedMm);
     if (decrypted == nullptr)
     {
         m_logger->err("MAC mismatch in NAS encryption. Ignoring received NAS Message.");

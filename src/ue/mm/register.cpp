@@ -19,19 +19,16 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
     if (registrationType == nas::ERegistrationType::INITIAL_REGISTRATION)
-    {
-        m_currentNsCtx = {};
-        m_nonCurrentNsCtx = {};
-    }
+        m_storage.discardCurrentSecurity();
 
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
 
     nas::IENasKeySetIdentifier ngKsi;
 
-    if (m_currentNsCtx.has_value())
+    if (m_storage.m_currentNsCtx.has_value())
     {
-        ngKsi.tsc = m_currentNsCtx->tsc;
-        ngKsi.ksi = m_currentNsCtx->ngKsi;
+        ngKsi.tsc = m_storage.m_currentNsCtx->tsc;
+        ngKsi.ksi = m_storage.m_currentNsCtx->ngKsi;
     }
 
     auto request = std::make_unique<nas::RegistrationRequest>();
@@ -52,8 +49,8 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
 
     request->mobileIdentity = getOrGeneratePreferredId();
 
-    if (m_lastVisitedRegisteredTai.has_value())
-        request->lastVisitedRegisteredTai = m_lastVisitedRegisteredTai.value();
+    if (m_storage.m_lastVisitedRegisteredTai.has_value())
+        request->lastVisitedRegisteredTai = m_storage.m_lastVisitedRegisteredTai.value();
 
     m_timers->t3510.start();
     m_timers->t3502.stop();
@@ -73,7 +70,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
     bool sendCompleteMes = false;
 
-    m_taiList = msg.taiList;
+    m_storage.m_taiList = msg.taiList;
 
     if (msg.t3512Value.has_value() && nas::utils::HasValue(msg.t3512Value.value()))
     {
@@ -83,7 +80,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
     if (msg.mobileIdentity.has_value() && msg.mobileIdentity->type == nas::EIdentityType::GUTI)
     {
-        m_storedGuti = msg.mobileIdentity.value();
+        m_storage.m_storedGuti = msg.mobileIdentity.value();
         m_timers->t3519.stop();
 
         sendCompleteMes = true;
@@ -122,6 +119,8 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
     }
 
     auto unhandledRejectCase = [cause, this]() {
+        m_storage.discardUsim();
+
         m_logger->err("Registration rejected with unhandled MMCause: %s", nas::utils::EnumToString(cause));
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
         switchRmState(ERmState::RM_DEREGISTERED);
@@ -134,11 +133,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
             cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            m_storedGuti = {};
-            m_lastVisitedRegisteredTai = {};
-            m_taiList = {};
-            m_currentNsCtx = {};
-            m_nonCurrentNsCtx = {};
+            m_storage.discardUsim();
 
             // TODO Normally UE switches to PLMN SEARCH, but this leads to endless registration attempt again and again.
             // due to RLS.
@@ -168,11 +163,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         }
         else if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
-            m_storedGuti = {};
-            m_lastVisitedRegisteredTai = {};
-            m_taiList = {};
-            m_currentNsCtx = {};
-            m_nonCurrentNsCtx = {};
+            m_storage.discardUsim();
 
             switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
             switchRmState(ERmState::RM_DEREGISTERED);
