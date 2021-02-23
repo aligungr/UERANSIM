@@ -106,7 +106,7 @@ nas::IEUeSecurityCapability NasMm::createSecurityCapabilityIe()
     auto &algs = m_base->config->supportedAlgs;
     auto supported = ~0;
 
-    nas::IEUeSecurityCapability res;
+    nas::IEUeSecurityCapability res{};
     res.b_5G_EA0 = supported;
     res.b_5G_IA0 = supported;
     res.b_EEA0 = supported;
