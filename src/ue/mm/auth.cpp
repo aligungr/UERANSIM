@@ -353,7 +353,7 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
     // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI. The USIM shall be considered invalid
     // until switching off the UE or the UICC containing the USIM is removed
-    m_storage.invalidateSim();
+    m_storage.invalidateSim__();
     // The UE shall abort any 5GMM signalling procedure, stop any of the timers T3510, T3516, T3517, T3519 or T3521 (if
     // they were running) ..
     m_timers->t3510.stop();

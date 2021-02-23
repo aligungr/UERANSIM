@@ -162,7 +162,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             case nas::EMmCause::ILLEGAL_ME:
             case nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                m_storage.invalidateSim();
+                m_storage.invalidateSim__();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }
@@ -198,7 +198,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
                               nas::utils::EnumToString(msg.mmCause->value));
 
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                m_storage.invalidateSim();
+                m_storage.invalidateSim__();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }

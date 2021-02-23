@@ -76,7 +76,10 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
     bool sendCompleteMes = false;
 
-    m_storage.m_taiList = msg.taiList;
+    if (msg.taiList.has_value())
+        m_storage.m_taiList = *msg.taiList;
+    else
+        m_storage.m_taiList = {};
 
     if (msg.t3512Value.has_value() && nas::utils::HasValue(msg.t3512Value.value()))
     {
