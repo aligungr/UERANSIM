@@ -16,6 +16,12 @@ namespace nr::ue
 
 void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn)
 {
+    if (m_mmState != EMmState::MM_DEREGISTERED)
+    {
+        m_logger->warn("Registration could be triggered. UE is not in MM-DEREGISTERED state.");
+        return;
+    }
+
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
     if (registrationType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -133,10 +139,11 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
             cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            m_storage.discardUsim();
+            switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+            m_storage.invalidateSim();
 
             // TODO Normally UE switches to PLMN SEARCH, but this leads to endless registration attempt again and again.
-            // due to RLS.
+            //  due to RLS.
             // switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
             switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
