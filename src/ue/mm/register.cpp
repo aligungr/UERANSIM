@@ -130,6 +130,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         m_logger->debug("Handling Registration Reject abnormal case");
         // todo
         m_storage.invalidateSim__();
+        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
     };
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
