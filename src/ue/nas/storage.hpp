@@ -29,7 +29,10 @@ class MobileStorage
     nas::IE5gsMobileIdentity m_storedSuci{};
 
     // Plmn related
-    std::optional<nas::IE5gsTrackingAreaIdentityList> m_taiList{};
+    nas::IE5gsTrackingAreaIdentityList m_taiList{};
+    nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiList{};
+    nas::IEPlmnList m_equivalentPlmnList{};
+    nas::IEPlmnList m_forbiddenPlmnList{};
 
     // Security related
     std::optional<NasSecurityContext> m_currentNsCtx{};
@@ -72,10 +75,9 @@ class MobileStorage
         discardSecurity();
     }
 
-    void invalidateSim()
+    void invalidateSim__()
     {
         // TODO: log
-        discardUsim();
         m_simIsValid = false;
     }
 

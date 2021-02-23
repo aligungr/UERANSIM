@@ -124,12 +124,11 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
                            nas::utils::EnumToString(msg.eapMessage->eap->code));
     }
 
-    auto unhandledRejectCase = [cause, this]() {
-        m_storage.discardUsim();
+    switchRmState(ERmState::RM_DEREGISTERED);
 
-        m_logger->err("Registration rejected with unhandled MMCause: %s", nas::utils::EnumToString(cause));
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-        switchRmState(ERmState::RM_DEREGISTERED);
+    auto handleAbnormalCase = [cause, this]() {
+        m_logger->debug("Handling Registration Reject abnormal case");
+        // todo
     };
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -137,24 +136,86 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
             cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
-            cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+            cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
             switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-            m_storage.invalidateSim();
-
-            // TODO Normally UE switches to PLMN SEARCH, but this leads to endless registration attempt again and again.
-            //  due to RLS.
-            // switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-
-            switchRmState(ERmState::RM_DEREGISTERED);
         }
-        else if (cause == nas::EMmCause::CONGESTION)
+
+        if (cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+        {
+            switchUState(E5UState::U2_NOT_UPDATED);
+        }
+
+        if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+            cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+            cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+            cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+        {
+            m_storage.m_storedGuti = {};
+            m_storage.m_lastVisitedRegisteredTai = {};
+            m_storage.m_taiList = {};
+            m_storage.m_currentNsCtx = {};
+            m_storage.m_nonCurrentNsCtx = {};
+        }
+
+        if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+            cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+        {
+            m_storage.invalidateSim__();
+        }
+
+        if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+            cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+        {
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        }
+
+        if (cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+            cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+        {
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+        }
+
+        if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+        {
+            switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+            // TODO: disable n1 mode capability (See 4.9)
+        }
+
+        if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+        {
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        }
+
+        if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
+            cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||
+            cause == nas::EMmCause::N1_MODE_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+        {
+            m_regCounter = 0;
+        }
+
+        if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+            cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
+        {
+            m_storage.m_equivalentPlmnList = {};
+        }
+
+        if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+        {
+            // TODO add to forbidden tai
+        }
+
+        if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+        {
+            // todo add to forbidden plmn
+        }
+
+        if (cause == nas::EMmCause::CONGESTION)
         {
             if (msg.t3346value.has_value() && nas::utils::HasValue(*msg.t3346value))
             {
+                switchUState(E5UState::U2_NOT_UPDATED);
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
-                switchRmState(ERmState::RM_DEREGISTERED);
 
                 m_timers->t3346.stop();
                 if (msg.sht != nas::ESecurityHeaderType::NOT_PROTECTED)
@@ -164,41 +225,32 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
             }
             else
             {
-                // TODO abnormal case see 5.5.1.2.7.
-                unhandledRejectCase();
+                handleAbnormalCase();
             }
         }
-        else if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-        {
-            m_storage.discardUsim();
 
-            switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
-            switchRmState(ERmState::RM_DEREGISTERED);
-        }
-        else
+        if (cause != nas::EMmCause::ILLEGAL_UE && cause != nas::EMmCause::ILLEGAL_ME &&
+            cause != nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED && cause != nas::EMmCause::PLMN_NOT_ALLOWED &&
+            cause != nas::EMmCause::TA_NOT_ALLOWED && cause != nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA &&
+            cause != nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA && cause != nas::EMmCause::CONGESTION &&
+            cause != nas::EMmCause::N1_MODE_NOT_ALLOWED && cause != nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            // TODO
-            unhandledRejectCase();
+            handleAbnormalCase();
         }
     }
     else if (regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
     {
-        if (cause == nas::EMmCause::PEI_NOT_ACCEPTED)
-        {
-            // TODO
-            unhandledRejectCase();
-        }
-        else
-        {
-            // TODO: abnormal case
-            unhandledRejectCase();
-        }
+        // TODO
     }
     else
     {
         // TODO
-        unhandledRejectCase();
     }
+}
+
+void NasMm::incrementRegistrationAttempt()
+{
+    m_regCounter++;
 }
 
 } // namespace nr::ue

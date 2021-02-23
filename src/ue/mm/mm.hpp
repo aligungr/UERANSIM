@@ -45,6 +45,8 @@ class NasMm
     bool m_lastDeregDueToDisable5g{};
     // Last time PLMN search is triggered
     long m_lastPlmnSearchTrigger{};
+    // Registration attempt counter
+    int m_regCounter{};
 
     friend class UeCmdHandler;
 
@@ -95,6 +97,7 @@ class NasMm
     void sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
+    void incrementRegistrationAttempt();
 
     /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);
