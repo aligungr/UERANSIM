@@ -283,4 +283,9 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
     }
 }
 
+void NasMm::setN1Capability(bool enabled)
+{
+    // TODO
+}
+
 } // namespace nr::ue

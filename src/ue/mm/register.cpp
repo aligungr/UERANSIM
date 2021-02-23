@@ -181,7 +181,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
             switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
-            // TODO: disable n1 mode capability (See 4.9)
+            setN1Capability(false);
         }
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
