@@ -62,12 +62,6 @@ class MobileStorage
         m_nonCurrentNsCtx = {};
     }
 
-    void discardCurrentSecurity()
-    {
-        m_currentNsCtx = {};
-        // normally NON-current nsCtx is not stored in USIM
-    }
-
     void discardUsim()
     {
         discardLocation();

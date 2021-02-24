@@ -25,7 +25,7 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
     if (registrationType == nas::ERegistrationType::INITIAL_REGISTRATION)
-        m_storage.discardCurrentSecurity();
+        m_storage.m_currentNsCtx = {};
 
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
 
@@ -56,7 +56,7 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
     request->mobileIdentity = getOrGeneratePreferredId();
 
     if (m_storage.m_lastVisitedRegisteredTai.has_value())
-        request->lastVisitedRegisteredTai = m_storage.m_lastVisitedRegisteredTai.value();
+        request->lastVisitedRegisteredTai = *m_storage.m_lastVisitedRegisteredTai;
 
     m_timers->t3510.start();
     m_timers->t3502.stop();
