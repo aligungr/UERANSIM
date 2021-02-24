@@ -51,9 +51,9 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto receivedAutn = receivedEap.attributes.getAutn();
     auto receivedKdf = receivedEap.attributes.getKdf();
 
-    m_logger->debug("received at_rand: %s", receivedRand.toHexString().c_str());
-    m_logger->debug("received at_mac: %s", receivedMac.toHexString().c_str());
-    m_logger->debug("received at_autn: %s", receivedAutn.toHexString().c_str());
+    // m_logger->debug("received at_rand: %s", receivedRand.toHexString().c_str());
+    // m_logger->debug("received at_mac: %s", receivedMac.toHexString().c_str());
+    // m_logger->debug("received at_autn: %s", receivedAutn.toHexString().c_str());
 
     // Derive keys
     if (USE_SQN_HACK)
@@ -92,17 +92,17 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto mk = keys::CalculateMk(ckPrime, ikPrime, m_base->config->supi.value());
     auto kaut = mk.subCopy(16, 32);
 
-    m_logger->debug("ueData.sqn: %s", m_storage.m_sqn.toHexString().c_str());
-    m_logger->debug("ueData.op(C): %s", m_base->config->opC.toHexString().c_str());
-    m_logger->debug("ueData.K: %s", m_base->config->key.toHexString().c_str());
-    m_logger->debug("calculated res: %s", res.toHexString().c_str());
-    m_logger->debug("calculated ck: %s", ck.toHexString().c_str());
-    m_logger->debug("calculated ik: %s", ik.toHexString().c_str());
-    m_logger->debug("calculated milenageAk: %s", milenageAk.toHexString().c_str());
-    m_logger->debug("calculated milenageMac: %s", milenageMac.toHexString().c_str());
-    m_logger->debug("calculated ckPrime: %s", ckPrime.toHexString().c_str());
-    m_logger->debug("calculated ikPrime: %s", ikPrime.toHexString().c_str());
-    m_logger->debug("calculated kaut: %s", kaut.toHexString().c_str());
+    // m_logger->debug("ueData.sqn: %s", m_storage.m_sqn.toHexString().c_str());
+    // m_logger->debug("ueData.op(C): %s", m_base->config->opC.toHexString().c_str());
+    // m_logger->debug("ueData.K: %s", m_base->config->key.toHexString().c_str());
+    // m_logger->debug("calculated res: %s", res.toHexString().c_str());
+    // m_logger->debug("calculated ck: %s", ck.toHexString().c_str());
+    // m_logger->debug("calculated ik: %s", ik.toHexString().c_str());
+    // m_logger->debug("calculated milenageAk: %s", milenageAk.toHexString().c_str());
+    // m_logger->debug("calculated milenageMac: %s", milenageMac.toHexString().c_str());
+    // m_logger->debug("calculated ckPrime: %s", ckPrime.toHexString().c_str());
+    // m_logger->debug("calculated ikPrime: %s", ikPrime.toHexString().c_str());
+    // m_logger->debug("calculated kaut: %s", kaut.toHexString().c_str());
 
     // Control received KDF
     if (!IGNORE_CONTROLS_FAILURES && receivedKdf != 1)
@@ -199,8 +199,8 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
     keys::DeriveKeysSeafAmf(*m_base->config, *m_storage.m_nonCurrentNsCtx);
 
-    m_logger->debug("kSeaf: %s", m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
-    m_logger->debug("kAmf: %s", m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+    // m_logger->debug("kSeaf: %s", m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
+    // m_logger->debug("kAmf: %s", m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
     // Send Response
     {
@@ -249,7 +249,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    m_logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
+    // m_logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
 
     if (USE_SQN_HACK)
     {
@@ -267,10 +267,10 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto sqnXorAk = OctetString::Xor(m_storage.m_sqn, milenageAk);
     auto snn = keys::ConstructServingNetworkName(m_base->config->plmn);
 
-    m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
-                    ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
-                    milenageMac.toHexString().c_str());
-    m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_storage.m_sqn.toHexString().c_str());
+    // m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
+    //                ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
+    //                milenageMac.toHexString().c_str());
+    // m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_storage.m_sqn.toHexString().c_str());
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
 
@@ -288,10 +288,10 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 
         keys::DeriveKeysSeafAmf(*m_base->config, *m_storage.m_nonCurrentNsCtx);
 
-        m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
-                        m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
-                        m_storage.m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
-                        m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+        // m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
+        //                m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
+        //                m_storage.m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
+        //                m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
         // Send response
         nas::AuthenticationResponse resp;
