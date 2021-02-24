@@ -29,9 +29,9 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
 
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
 
-    nas::IENasKeySetIdentifier ngKsi;
+    nas::IENasKeySetIdentifier ngKsi{};
 
-    if (m_storage.m_currentNsCtx.has_value())
+    if (m_storage.m_currentNsCtx)
     {
         ngKsi.tsc = m_storage.m_currentNsCtx->tsc;
         ngKsi.ksi = m_storage.m_currentNsCtx->ngKsi;

@@ -188,7 +188,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto kAusf = keys::CalculateKAusfForEapAkaPrime(mk);
     m_logger->debug("kAusf: %s", kAusf.toHexString().c_str());
 
-    m_storage.m_nonCurrentNsCtx = NasSecurityContext{};
+    m_storage.m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
     m_storage.m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
     m_storage.m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
     m_storage.m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
@@ -277,7 +277,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes::OK)
     {
         // Create new partial native NAS security context and continue with key derivation
-        m_storage.m_nonCurrentNsCtx = NasSecurityContext{};
+        m_storage.m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
         m_storage.m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_storage.m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
         m_storage.m_nonCurrentNsCtx->keys.rand = rand.copy();

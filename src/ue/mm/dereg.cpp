@@ -30,7 +30,7 @@ void NasMm::sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g)
     request->deRegistrationType.reRegistrationRequired = nas::EReRegistrationRequired::NOT_REQUIRED;
     request->deRegistrationType.switchOff = switchOff;
 
-    if (m_storage.m_currentNsCtx.has_value())
+    if (m_storage.m_currentNsCtx)
     {
         request->ngKSI.tsc = m_storage.m_currentNsCtx->tsc;
         request->ngKSI.ksi = m_storage.m_currentNsCtx->ngKsi;

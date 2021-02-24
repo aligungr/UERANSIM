@@ -13,8 +13,26 @@
 namespace nr::ue
 {
 
+static bool IsValidKsi(const nas::IENasKeySetIdentifier &ngKsi)
+{
+    return ngKsi.tsc == nas::ETypeOfSecurityContext::NATIVE_SECURITY_CONTEXT &&
+           ngKsi.ksi != nas::IENasKeySetIdentifier::NOT_AVAILABLE_OR_RESERVED;
+}
+
+static int FindSecurityContext(int ksi, const std::unique_ptr<NasSecurityContext> &current,
+                               const std::unique_ptr<NasSecurityContext> &nonCurrent)
+{
+    if (current != nullptr && current->ngKsi == ksi)
+        return 0;
+    if (nonCurrent != nullptr && nonCurrent->ngKsi == ksi)
+        return 1;
+    return -1;
+}
+
 void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 {
+    m_logger->debug("Security Mode Command received");
+
     auto reject = [this](nas::EMmCause cause) {
         nas::SecurityModeReject resp;
         resp.mmCause.value = cause;
@@ -22,31 +40,99 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         m_logger->err("Rejecting Security Mode Command with cause: %s", nas::utils::EnumToString(cause));
     };
 
-    if (!m_storage.m_nonCurrentNsCtx.has_value())
+    // ============================== Check the received ngKSI ==============================
+
+    if (!IsValidKsi(msg.ngKsi))
     {
-        reject(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+        m_logger->err("Invalid ngKSI received, tsc[%d], ksi[%d]", (int)msg.ngKsi.tsc, msg.ngKsi.ksi);
+        reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
         return;
     }
 
-    // TODO: check the integrity with new security context
+    if (msg.ngKsi.ksi == 0 &&
+        msg.selectedNasSecurityAlgorithms.integrity == nas::ETypeOfIntegrityProtectionAlgorithm::IA0 &&
+        msg.selectedNasSecurityAlgorithms.ciphering == nas::ETypeOfCipheringAlgorithm::EA0)
     {
+        // TODO
+    }
+
+    int whichCtx = FindSecurityContext(msg.ngKsi.ksi, m_storage.m_currentNsCtx, m_storage.m_nonCurrentNsCtx);
+    if (whichCtx == -1)
+    {
+        m_logger->err("Security context with ngKSI[%d] not found", msg.ngKsi.ksi);
+        reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
+        return;
+    }
+
+    auto &nsCtx = whichCtx == 0 ? m_storage.m_currentNsCtx : m_storage.m_nonCurrentNsCtx;
+
+    // ======================== Check the integrity with new security context ========================
+
+    {
+        // TODO:
         octet4 mac = msg._macForNewSC;
         (void)mac;
     }
 
-    // Check replayed UE security capabilities
-    {
-        auto &replayed = msg.replayedUeSecurityCapabilities;
-        auto real = createSecurityCapabilityIe();
+    // ======================== Check replayed UE security capabilities ========================
 
-        if (!nas::utils::DeepEqualsIe(replayed, real))
+    if (!nas::utils::DeepEqualsIe(msg.replayedUeSecurityCapabilities, createSecurityCapabilityIe()))
+    {
+        m_logger->err("Replayed UE security capability mismatch");
+        reject(nas::EMmCause::UE_SECURITY_CAP_MISMATCH);
+        return;
+    }
+
+    // ======================== Check selected NAS security algorithms ========================
+
+    {
+        auto integrity = msg.selectedNasSecurityAlgorithms.integrity;
+        auto ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
+
+        if (integrity > nas::ETypeOfIntegrityProtectionAlgorithm::IA3_128 ||
+            ciphering > nas::ETypeOfCipheringAlgorithm::EA3_128)
         {
+            m_logger->err("Selected NAS security algorithms are invalid");
             reject(nas::EMmCause::UE_SECURITY_CAP_MISMATCH);
             return;
         }
     }
 
-    // Handle EAP-Success message if any.
+    // ============================ Process the security context. ============================
+
+    // Assign ABBA (if any)
+    if (msg.abba.has_value())
+        nsCtx->keys.abba = msg.abba->rawData.copy();
+
+    // Assign selected algorithms to security context, and derive NAS keys
+    nsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
+    nsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
+    keys::DeriveNasKeys(*nsCtx);
+
+    m_logger->debug("Derived kNasEnc[%s] kNasInt[%s]", nsCtx->keys.kNasEnc.toHexString().c_str(),
+                    nsCtx->keys.kNasInt.toHexString().c_str());
+    m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)nsCtx->integrity, (int)nsCtx->ciphering);
+
+    // The UE shall in addition reset the uplink NAS COUNT counter if a) the SECURITY MODE COMMAND message is received
+    // in order to take a 5G NAS security context into use created after a successful execution of the 5G AKA based
+    // primary authentication and key agreement procedure or the EAP based ...
+    if (whichCtx == 1) // It is unclear how we can detect this, but checking if it is 'non-current' one.
+    {
+        nsCtx->uplinkCount.sqn = 0;
+        nsCtx->uplinkCount.overflow = octet2{0};
+    }
+
+    if (msg.selectedNasSecurityAlgorithms.integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0)
+    {
+        // TODO
+    }
+
+    // Set the new NAS Security Context as current one. (If it is not already the current one)
+    if (whichCtx == 1)
+        m_storage.m_currentNsCtx = std::make_unique<NasSecurityContext>(nsCtx->deepCopy());
+
+    // ============================ Handle EAP-Success message if any. ============================
+
     if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::SUCCESS)
@@ -56,31 +142,8 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
                 "EAP message with inconvenient code received in Security Mode Command. Ignoring EAP message.");
     }
 
-    // Assign ABBA (if any)
-    if (msg.abba.has_value())
-        m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
+    // ============================ Send the Security Mode Complete. ============================
 
-    // Check selected algorithms
-    {
-        // TODO
-        // if (msg.selectedNasSecurityAlgorithms.integrity is supported according to config file)
-        // if (msg.selectedNasSecurityAlgorithms.ciphering is supported according to config file)
-    }
-
-    // Assign selected algorithms to security context, and derive NAS keys
-    m_storage.m_nonCurrentNsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
-    m_storage.m_nonCurrentNsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
-    keys::DeriveNasKeys(*m_storage.m_nonCurrentNsCtx);
-
-    m_logger->debug("Derived kNasEnc[%s] kNasInt[%s]", m_storage.m_nonCurrentNsCtx->keys.kNasEnc.toHexString().c_str(),
-        m_storage.m_nonCurrentNsCtx->keys.kNasInt.toHexString().c_str());
-    m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)m_storage.m_nonCurrentNsCtx->integrity,
-                    (int)m_storage.m_nonCurrentNsCtx->ciphering);
-
-    // Set non-current NAS Security Context as current one.
-    m_storage.m_currentNsCtx = m_storage.m_nonCurrentNsCtx->deepCopy();
-
-    // Prepare response
     nas::SecurityModeComplete resp{};
 
     // Append IMEISV if requested
@@ -94,6 +157,8 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         }
     }
 
+    // TODO: Bu service request de olabilir en son hangisiyse, ayrıca son mesaj yerine son unciphered mesaj da olabilir
+    //  See 4.4.6
     resp.nasMessageContainer = nas::IENasMessageContainer{};
     nas::EncodeNasMessage(*m_lastRegistrationRequest, resp.nasMessageContainer->data);
 

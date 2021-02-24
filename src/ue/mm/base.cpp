@@ -192,7 +192,7 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
     // 5GMM-DEREGISTERED for any other state except 5GMM-NULL.
     if (oldState == EMmState::MM_DEREGISTERED && newState != EMmState::MM_DEREGISTERED && newState != EMmState::MM_NULL)
     {
-        if (m_storage.m_currentNsCtx.has_value() || m_storage.m_nonCurrentNsCtx.has_value())
+        if (m_storage.m_currentNsCtx || m_storage.m_nonCurrentNsCtx)
         {
             m_logger->debug("Deleting NAS security context");
 

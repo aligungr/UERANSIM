@@ -35,8 +35,8 @@ class MobileStorage
     nas::IEPlmnList m_forbiddenPlmnList{};
 
     // Security related
-    std::optional<NasSecurityContext> m_currentNsCtx{};
-    std::optional<NasSecurityContext> m_nonCurrentNsCtx{};
+    std::unique_ptr<NasSecurityContext> m_currentNsCtx{};
+    std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};
     OctetString m_sqn{};
 
   public:
@@ -75,6 +75,7 @@ class MobileStorage
         discardSecurity();
     }
 
+    // todo metodları kaldır geri
     void invalidateSim__()
     {
         // TODO: log
