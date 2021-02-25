@@ -342,7 +342,14 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
     }
     else if (regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
     {
-        // TODO
+        if (cause == nas::EMmCause::PEI_NOT_ACCEPTED)
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
+        else
+        {
+            // Spec perseveringly says that upper layers should be informed as well, for additional action for emergency
+            // registration, but no need for now.
+            handleAbnormalCase();
+        }
     }
     else
     {
