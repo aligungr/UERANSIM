@@ -30,10 +30,15 @@ struct Plmn
     bool isLongMnc{};
 };
 
-struct SliceSupport
+struct SingleSlice
 {
     octet sst{};
     std::optional<octet3> sd{};
+};
+
+struct NetworkSlice
+{
+    std::vector<SingleSlice> slices{};
 };
 
 enum class PduSessionType
@@ -48,7 +53,7 @@ enum class PduSessionType
 struct PlmnSupport
 {
     Plmn plmn{};
-    std::vector<std::unique_ptr<SliceSupport>> sliceSupportList{};
+    NetworkSlice sliceSupportList{};
 };
 
 struct GutiMobileIdentity
@@ -104,5 +109,8 @@ struct Supi
 
 Json ToJson(const Supi &v);
 Json ToJson(const Plmn &v);
-Json ToJson(const SliceSupport &v);
+Json ToJson(const SingleSlice &v);
+Json ToJson(const NetworkSlice &v);
 Json ToJson(const PlmnSupport &v);
+
+bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);

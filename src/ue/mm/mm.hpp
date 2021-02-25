@@ -47,6 +47,8 @@ class NasMm
     long m_lastPlmnSearchTrigger{};
     // Registration attempt counter
     int m_regCounter{};
+    // Indicates registered for emergency services
+    bool m_registeredForEmergency{};
 
     friend class UeCmdHandler;
 
@@ -134,6 +136,9 @@ class NasMm
     /* Service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
+
+    /* Network Slicing */
+    NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
 };
 
 } // namespace nr::ue

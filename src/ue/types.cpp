@@ -124,10 +124,9 @@ Json ToJson(const UeConfig &v)
 {
     return Json::Obj({
         {"supi", ToJson(v.supi)},
-        {"plmn", ToJson(v.plmn)},
+        {"hplmn", ToJson(v.hplmn)},
         {"imei", ::ToJson(v.imei)},
         {"imeiSv", ::ToJson(v.imeiSv)},
-        {"nssai", ::ToJson(v.nssais)},
     });
 }
 

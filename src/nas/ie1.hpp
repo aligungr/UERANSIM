@@ -150,8 +150,8 @@ struct IENasKeySetIdentifier : InformationElement1
 
 struct IENetworkSlicingIndication : InformationElement1
 {
-    ENetworkSlicingSubscriptionChangeIndication nssci{};
-    EDefaultConfiguredNssaiIndication dcni{};
+    ENetworkSlicingSubscriptionChangeIndication nssci{}; // This is spare if dir is UE->NW
+    EDefaultConfiguredNssaiIndication dcni{};            // This is spare if dir is NW->UE
 
     IENetworkSlicingIndication() = default;
     IENetworkSlicingIndication(ENetworkSlicingSubscriptionChangeIndication nssci,

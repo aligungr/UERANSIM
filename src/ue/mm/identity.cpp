@@ -57,7 +57,7 @@ nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
 nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
     auto &supi = m_base->config->supi;
-    auto &plmn = m_base->config->plmn;
+    auto &plmn = m_storage.m_currentPlmn;
 
     if (!supi.has_value())
         return {};
@@ -69,14 +69,6 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     }
 
     const std::string &imsi = supi->value;
-    int mccInImsi = utils::ParseInt(imsi.substr(0, 3));
-    int mncInImsi = utils::ParseInt(imsi.substr(3, plmn.isLongMnc ? 3 : 2));
-
-    if (mccInImsi != plmn.mcc || mncInImsi != plmn.mnc)
-    {
-        m_logger->err("MCC/MNC mismatch in SUCI generation.");
-        return {};
-    }
 
     nas::IE5gsMobileIdentity ret;
     ret.type = nas::EIdentityType::SUCI;

@@ -23,12 +23,12 @@
 #include <asn/ngap/ASN_NGAP_InitiatingMessage.h>
 #include <asn/ngap/ASN_NGAP_NGAP-PDU.h>
 #include <asn/ngap/ASN_NGAP_NGSetupRequest.h>
+#include <asn/ngap/ASN_NGAP_OverloadStartNSSAIItem.h>
 #include <asn/ngap/ASN_NGAP_PLMNSupportItem.h>
 #include <asn/ngap/ASN_NGAP_ProtocolIE-Field.h>
 #include <asn/ngap/ASN_NGAP_ServedGUAMIItem.h>
 #include <asn/ngap/ASN_NGAP_SliceSupportItem.h>
 #include <asn/ngap/ASN_NGAP_SupportedTAItem.h>
-#include <asn/ngap/ASN_NGAP_OverloadStartNSSAIItem.h>
 
 namespace nr::gnb
 {
@@ -67,7 +67,7 @@ static void AssignDefaultAmfConfigs(NgapAmfContext *amf, T *msg)
             auto plmnSupport = new PlmnSupport();
             ngap_utils::PlmnFromAsn_Ref(item.pLMNIdentity, plmnSupport->plmn);
             asn::ForeachItem(item.sliceSupportList, [plmnSupport](ASN_NGAP_SliceSupportItem &ssItem) {
-                plmnSupport->sliceSupportList.push_back(ngap_utils::SliceSupportFromAsn_Unique(ssItem));
+                plmnSupport->sliceSupportList.slices.push_back(ngap_utils::SliceSupportFromAsn(ssItem));
             });
             amf->plmnSupportList.push_back(plmnSupport);
         });
@@ -139,7 +139,7 @@ void NgapTask::sendNgSetupRequest(int amfId)
 
     auto *broadcastPlmn = asn::New<ASN_NGAP_BroadcastPLMNItem>();
     asn::SetOctetString3(broadcastPlmn->pLMNIdentity, ngap_utils::PlmnToOctet3(m_base->config->plmn));
-    for (auto &nssai : m_base->config->nssais)
+    for (auto &nssai : m_base->config->nssai.slices)
     {
         auto *item = asn::New<ASN_NGAP_SliceSupportItem>();
         asn::SetOctetString1(item->s_NSSAI.sST, static_cast<uint8_t>(nssai.sst));

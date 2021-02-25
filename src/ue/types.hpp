@@ -47,7 +47,7 @@ enum class OpType
 struct SessionConfig
 {
     nas::EPduSessionType type{};
-    std::optional<SliceSupport> sNssai{};
+    std::optional<SingleSlice> sNssai{};
     std::optional<std::string> apn{};
 };
 
@@ -55,17 +55,24 @@ struct UeConfig
 {
     /* Read from config file */
     std::optional<Supi> supi{};
-    Plmn plmn{};
+    Plmn hplmn{};
     OctetString key{};
     OctetString opC{};
     OpType opType{};
     OctetString amf{};
     std::optional<std::string> imei{};
     std::optional<std::string> imeiSv{};
-    std::vector<SliceSupport> nssais{};
     SupportedAlgs supportedAlgs{};
     std::vector<std::string> gnbSearchList{};
     std::vector<SessionConfig> initSessions{};
+
+    /* Read from config file as well, but should be stored in non-volatile
+     * mobile storage and subject to change in runtime  */
+    struct Initials
+    {
+        NetworkSlice defaultConfiguredNssai{};
+        NetworkSlice configuredNssai{};
+    } initials{};
 
     /* Assigned by program */
     bool autoBehaviour{};
@@ -226,7 +233,7 @@ struct PduSession
 
     nas::EPduSessionType sessionType{};
     std::optional<std::string> apn{};
-    std::optional<SliceSupport> sNssai{};
+    std::optional<SingleSlice> sNssai{};
 
     std::optional<nas::IEQoSRules> authorizedQoSRules{};
     std::optional<nas::IESessionAmbr> sessionAmbr{};

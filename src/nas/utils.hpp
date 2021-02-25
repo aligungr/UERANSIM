@@ -13,8 +13,8 @@
 namespace nas::utils
 {
 
-IESNssai SNssaiFrom(const SliceSupport &v);
-IENssai NssaiFrom(const std::vector<SliceSupport> &v);
+IESNssai SNssaiFrom(const SingleSlice &v);
+IENssai NssaiFrom(const NetworkSlice &v);
 IEDnn DnnFromApn(const std::string& apn);
 
 bool HasValue(const IEGprsTimer3 &v);

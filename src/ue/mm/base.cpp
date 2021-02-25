@@ -27,7 +27,9 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
     m_storage.m_uState = E5UState::U1_UPDATED;
     m_autoBehaviour = base->config->autoBehaviour;
-    m_storage.initialize(base->config->supi.has_value());
+
+    m_storage.initialize(base->config->supi.has_value(), base->config->initials);
+    m_storage.m_currentPlmn = base->config->hplmn; // TODO: normally assigned after plmn search
 }
 
 void NasMm::onStart(NasSm *sm)

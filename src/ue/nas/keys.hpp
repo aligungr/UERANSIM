@@ -16,7 +16,7 @@ namespace nr::ue::keys
 /**
  * Derives SEAF and AMF keys
  */
-void DeriveKeysSeafAmf(const UeConfig &ueConfig, NasSecurityContext &nasSecurityContext);
+void DeriveKeysSeafAmf(const UeConfig &ueConfig, const Plmn &currentPlmn, NasSecurityContext &nasSecurityContext);
 
 /**
  * Derives NAS keys

@@ -29,6 +29,7 @@ class MobileStorage
     nas::IE5gsMobileIdentity m_storedSuci{};
 
     // Plmn related
+    Plmn m_currentPlmn{};
     nas::IE5gsTrackingAreaIdentityList m_taiList{};
     nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiList{};
     nas::IEPlmnList m_equivalentPlmnList{};
@@ -39,10 +40,19 @@ class MobileStorage
     std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};
     OctetString m_sqn{};
 
+    // NSSAI related
+    NetworkSlice m_defConfiguredNssai{};
+    NetworkSlice m_configuredNssai{};
+    NetworkSlice m_allowedNssai{};
+    NetworkSlice m_rejectedNssaiInPlmn{};
+    NetworkSlice m_rejectedNssaiInTa{};
+
   public:
-    void initialize(bool hasSupi)
+    void initialize(bool hasSupi, const UeConfig::Initials &initials)
     {
         m_simIsValid = hasSupi;
+        m_defConfiguredNssai = initials.defaultConfiguredNssai;
+        m_configuredNssai = initials.configuredNssai;
     }
 
     void discardLocation()

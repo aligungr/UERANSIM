@@ -13,7 +13,7 @@
 namespace nas::utils
 {
 
-IESNssai SNssaiFrom(const SliceSupport &v)
+IESNssai SNssaiFrom(const SingleSlice &v)
 {
     IESNssai r;
     r.sst = v.sst;
@@ -22,10 +22,10 @@ IESNssai SNssaiFrom(const SliceSupport &v)
     return r;
 }
 
-IENssai NssaiFrom(const std::vector<SliceSupport> &v)
+IENssai NssaiFrom(const NetworkSlice &v)
 {
     IENssai r;
-    for (auto &x : v)
+    for (auto &x : v.slices)
         r.sNssais.push_back(SNssaiFrom(x));
     return r;
 }

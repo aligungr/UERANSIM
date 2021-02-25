@@ -38,12 +38,28 @@ Json ToJson(const Plmn &v)
     return ss.str();
 }
 
-Json ToJson(const SliceSupport &v)
+Json ToJson(const SingleSlice &v)
 {
     return Json::Obj({{"sst", ToJson(v.sst)}, {"sd", ToJson(v.sd)}});
+}
+
+Json ToJson(const NetworkSlice &v)
+{
+    return ToJson(v.slices);
 }
 
 Json ToJson(const PlmnSupport &v)
 {
     return Json::Obj({{"plmn", ToJson(v.plmn)}, {"nssai", ToJson(v.sliceSupportList)}});
+}
+
+bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
+{
+    if ((int)lhs.sst != (int)rhs.sst)
+        return false;
+    if (lhs.sd.has_value() != rhs.sd.has_value())
+        return false;
+    if (!lhs.sd.has_value())
+        return true;
+    return ((int)*lhs.sd) == ((int)*rhs.sd);
 }

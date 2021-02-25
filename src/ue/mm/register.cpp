@@ -37,13 +37,24 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
         ngKsi.ksi = m_storage.m_currentNsCtx->ngKsi;
     }
 
+    bool isDefaultNssai{};
+    auto requestedNssai = makeRequestedNssai(isDefaultNssai);
+
     auto request = std::make_unique<nas::RegistrationRequest>();
     request->registrationType = nas::IE5gsRegistrationType{followOn, registrationType};
     request->nasKeySetIdentifier = ngKsi;
-    request->requestedNSSAI = nas::utils::NssaiFrom(m_base->config->nssais);
+    request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
     request->updateType =
         nas::IE5gsUpdateType(nas::ESmsRequested::NOT_SUPPORTED, nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED);
+
+#if 0
+    // TODO: Wireshark cannot decode the message if this IE is used, check later
+    request->networkSlicingIndication = nas::IENetworkSlicingIndication{};
+    request->networkSlicingIndication->dcni =
+        isDefaultNssai ? nas::EDefaultConfiguredNssaiIndication::CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
+                       : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
+#endif
 
     if (registrationType != nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
     {
@@ -70,7 +81,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 {
     if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
     {
-        m_logger->warn("Registration Accept ignored since the MM state is MM_REGISTERED_INITIATED");
+        m_logger->warn("Registration Accept ignored since the MM state is not MM_REGISTERED_INITIATED");
         return;
     }
 
@@ -102,13 +113,16 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     switchRmState(ERmState::RM_REGISTERED);
 
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
-    m_logger->info("%s is successful", nas::utils::EnumToString(regType));
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
         regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
     {
         m_base->nasTask->push(new NwUeNasToNas(NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS));
     }
+
+    m_registeredForEmergency = regType == nas::ERegistrationType::EMERGENCY_REGISTRATION;
+
+    m_logger->info("%s is successful", nas::utils::EnumToString(regType));
 }
 
 void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
