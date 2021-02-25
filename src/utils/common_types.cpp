@@ -7,6 +7,7 @@
 //
 
 #include "common_types.hpp"
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
@@ -62,4 +63,10 @@ bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
     if (!lhs.sd.has_value())
         return true;
     return ((int)*lhs.sd) == ((int)*rhs.sd);
+}
+
+void NetworkSlice::addIfNotExists(const SingleSlice &slice)
+{
+    if (!std::any_of(slices.begin(), slices.end(), [&slice](auto &s) { return s == slice; }))
+        slices.push_back(slice);
 }

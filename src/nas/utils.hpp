@@ -18,6 +18,9 @@ IENssai NssaiFrom(const NetworkSlice &v);
 IEDnn DnnFromApn(const std::string &apn);
 VPlmn PlmnFrom(const Plmn &plmn);
 
+NetworkSlice NssaiTo(const IENssai &v);
+SingleSlice SNssaiTo(const IESNssai &v);
+
 bool HasValue(const IEGprsTimer3 &v);
 bool HasValue(const IEGprsTimer2 &v);
 

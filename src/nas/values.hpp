@@ -98,12 +98,12 @@ struct VTime
 struct VRejectedSNssai
 {
     ERejectedSNssaiCause cause{};
-    std::optional<octet> sst{};
+    octet sst{};
     std::optional<octet3> sd{};
 
     VRejectedSNssai() = default;
 
-    VRejectedSNssai(ERejectedSNssaiCause cause, const std::optional<octet> &sst, const std::optional<octet3> &sd);
+    VRejectedSNssai(ERejectedSNssaiCause cause, octet sst, const std::optional<octet3> &sd);
 
     static void Encode(const VRejectedSNssai &value, OctetString &stream);
     static VRejectedSNssai Decode(const OctetView &stream);

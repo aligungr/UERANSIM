@@ -39,6 +39,8 @@ struct SingleSlice
 struct NetworkSlice
 {
     std::vector<SingleSlice> slices{};
+
+    void addIfNotExists(const SingleSlice &slice);
 };
 
 enum class PduSessionType

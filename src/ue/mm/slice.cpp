@@ -69,4 +69,9 @@ NetworkSlice NasMm::makeRequestedNssai(bool &isDefaultNssai) const
     return res;
 }
 
+void NasMm::handleNetworkSlicingSubscriptionChange()
+{
+    // TODO
+}
+
 } // namespace nr::ue

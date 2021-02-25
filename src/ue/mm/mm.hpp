@@ -49,6 +49,8 @@ class NasMm
     int m_regCounter{};
     // Indicates registered for emergency services
     bool m_registeredForEmergency{};
+    // Network feature support information
+    nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
 
     friend class UeCmdHandler;
 
@@ -139,6 +141,7 @@ class NasMm
 
     /* Network Slicing */
     NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
+    void handleNetworkSlicingSubscriptionChange();
 };
 
 } // namespace nr::ue

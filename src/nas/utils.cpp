@@ -273,4 +273,20 @@ VPlmn PlmnFrom(const Plmn &plmn)
     return VPlmn{plmn.mcc, plmn.mnc, plmn.isLongMnc};
 }
 
+NetworkSlice NssaiTo(const IENssai &v)
+{
+    NetworkSlice nssai{};
+    for (auto &item : v.sNssais)
+        nssai.slices.push_back(SNssaiTo(item));
+    return nssai;
+}
+
+SingleSlice SNssaiTo(const IESNssai &v)
+{
+    SingleSlice sNssai{};
+    sNssai.sst = v.sst;
+    sNssai.sd = v.sd;
+    return sNssai;
+}
+
 } // namespace nas::utils
