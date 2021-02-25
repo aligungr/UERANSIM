@@ -15,10 +15,13 @@ namespace nas::utils
 
 IESNssai SNssaiFrom(const SingleSlice &v);
 IENssai NssaiFrom(const NetworkSlice &v);
-IEDnn DnnFromApn(const std::string& apn);
+IEDnn DnnFromApn(const std::string &apn);
+VPlmn PlmnFrom(const Plmn &plmn);
 
 bool HasValue(const IEGprsTimer3 &v);
 bool HasValue(const IEGprsTimer2 &v);
+
+void AddToPlmnList(IEPlmnList &list, VPlmn item);
 
 const char *EnumToString(ERegistrationType v);
 const char *EnumToString(EMmCause v);
@@ -40,6 +43,15 @@ inline bool DeepEqualsIe(const T &a, const T &b)
         Encode2346(a, s1);
         Encode2346(b, s2);
     }
+    return s1 == s2;
+}
+
+template <typename T>
+inline bool DeepEqualsV(const T &a, const T &b)
+{
+    OctetString s1{}, s2{};
+    T::Encode(a, s1);
+    T::Encode(b, s2);
     return s1 == s2;
 }
 

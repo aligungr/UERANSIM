@@ -262,4 +262,15 @@ IEDnn DnnFromApn(const std::string &apn)
     return dnn;
 }
 
+void AddToPlmnList(IEPlmnList &list, VPlmn item)
+{
+    if (!std::any_of(list.plmns.begin(), list.plmns.end(), [&item](auto &i) { return DeepEqualsV(i, item); }))
+        list.plmns.push_back(item);
+}
+
+VPlmn PlmnFrom(const Plmn &plmn)
+{
+    return VPlmn{plmn.mcc, plmn.mnc, plmn.isLongMnc};
+}
+
 } // namespace nas::utils
