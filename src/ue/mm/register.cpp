@@ -82,6 +82,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
     {
         m_logger->warn("Registration Accept ignored since the MM state is not MM_REGISTERED_INITIATED");
+        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
         return;
     }
 
@@ -127,6 +128,13 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
 void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
 {
+    if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
+    {
+        m_logger->warn("Registration Reject ignored since the MM state is not MM_REGISTERED_INITIATED");
+        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+        return;
+    }
+
     auto cause = msg.mmCause.value;
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
