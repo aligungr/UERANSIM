@@ -46,7 +46,8 @@ nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
         return m_storage.m_storedSuci;
 
     m_storage.m_storedSuci = generateSuci();
-    m_timers->t3519.start();
+    if (!m_timers->t3519.isRunning())
+        m_timers->t3519.start();
 
     if (m_storage.m_storedSuci.type == nas::EIdentityType::NO_IDENTITY)
         return {};
