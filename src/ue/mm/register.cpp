@@ -238,7 +238,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
                 m_regCounter = 5;
         }
 
-        handleCommonAbnormalInitialRegFailure(regType, cause);
+      handleCommonAbnormalRegFailure(regType, cause);
     };
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -365,7 +365,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
     }
 }
 
-void NasMm::handleCommonAbnormalInitialRegFailure(nas::ERegistrationType regType, nas::EMmCause cause)
+void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType, nas::EMmCause cause)
 {
     // TODO
 }

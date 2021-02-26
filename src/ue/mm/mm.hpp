@@ -102,7 +102,7 @@ class NasMm
     void sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
-    void handleCommonAbnormalInitialRegFailure(nas::ERegistrationType regType, nas::EMmCause cause);
+    void handleCommonAbnormalRegFailure(nas::ERegistrationType regType, nas::EMmCause cause);
 
     /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);
