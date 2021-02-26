@@ -63,7 +63,6 @@ class NasMm
     void onQuit();
     void triggerMmCycle();
     void performMmCycle();
-    void onTimerExpire(nas::NasTimer &timer);
 
     /* Radio resource control */
     void handlePlmnSearchResponse(const std::string &gnbName);
@@ -78,6 +77,9 @@ class NasMm
 
     /* De-registration */
     void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
+
+    /* Timer */
+    void onTimerExpire(nas::NasTimer &timer);
 
   private:
     /* Base */
