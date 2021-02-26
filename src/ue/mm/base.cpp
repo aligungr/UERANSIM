@@ -212,8 +212,21 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
 {
     if (oldState == ECmState::CM_CONNECTED && newState == ECmState::CM_IDLE)
     {
+        // 5.5.1.2.7 Abnormal cases in the UE (in registration)
+        if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+        {
+            // e) Lower layer failure or release of the NAS signalling connection received from lower layers before the
+            // REGISTRATION ACCEPT or REGISTRATION REJECT message is received. The UE shall abort the registration
+            // procedure for initial registration and proceed as ...
+
+            switchRmState(ERmState::RM_DEREGISTERED);
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+            switchUState(E5UState::U2_NOT_UPDATED);
+
+            handleCommonAbnormalRegFailure(m_lastRegistrationRequest->registrationType.registrationType);
+        }
         // 5.5.2.2.6 Abnormal cases in the UE (in de-registration)
-        if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+        else if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         {
             // The de-registration procedure shall be aborted and the UE proceeds as follows:
             // if the de-registration procedure was performed due to disabling of 5GS services, the UE shall enter the

@@ -38,9 +38,8 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
     }
     case 3510: {
         // The UE shall abort the registration procedure for initial registration and the NAS signalling connection, if
-        // any, shall be released locally if the initial registration request is not for emergency services. The UE
-        // shall proceed as ...
-        if (/*m_mmState == EMmState::MM_REGISTERED_INITIATED &&*/ m_lastRegistrationRequest)
+        // any, shall be released locally if the initial registration request is not for emergency services..
+        if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest)
         {
             switchRmState(ERmState::RM_DEREGISTERED);
             switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
