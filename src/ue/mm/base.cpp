@@ -232,6 +232,8 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
                      nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
+            switchRmState(ERmState::RM_DEREGISTERED);
+
             m_lastDeregDueToDisable5g = false;
         }
     }
