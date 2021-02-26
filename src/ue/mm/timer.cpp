@@ -19,19 +19,17 @@ namespace nr::ue
 
 void NasMm::onTimerExpire(nas::NasTimer &timer)
 {
+    auto logExpired = [this, &timer]() {
+        m_logger->debug("NAS timer[%d] expired [%d]", timer.getCode(), timer.getExpiryCount());
+    };
+
     switch (timer.getCode())
     {
     case 3346: {
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
+            logExpired();
             sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, false);
-        }
-        break;
-    }
-    case 3512: {
-        if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
-        {
-            sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING, false);
         }
         break;
     }
@@ -40,6 +38,8 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         // any, shall be released locally if the initial registration request is not for emergency services..
         if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest)
         {
+            logExpired();
+
             switchRmState(ERmState::RM_DEREGISTERED);
             switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
             switchUState(E5UState::U2_NOT_UPDATED);
@@ -55,12 +55,21 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
 
         break;
     }
+    case 3512: {
+        if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
+        {
+            logExpired();
+            sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING, false);
+        }
+        break;
+    }
     case 3521: {
         if (timer.getExpiryCount() == 5)
         {
             timer.resetExpiryCount();
             if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
             {
+                logExpired();
                 m_logger->debug("De-registration aborted");
 
                 if (m_lastDeregDueToDisable5g)
@@ -74,6 +83,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         {
             if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
             {
+                logExpired();
                 m_logger->debug("Retrying de-registration request");
 
                 sendNasMessage(*m_lastDeregistrationRequest);
