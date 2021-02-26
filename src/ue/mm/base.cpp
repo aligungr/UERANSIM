@@ -226,7 +226,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
                      nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
-            m_lastDeregistrationRequest = nullptr;
             m_lastDeregDueToDisable5g = false;
         }
     }
@@ -234,55 +233,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
 
 void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 {
-}
-
-void NasMm::onTimerExpire(nas::NasTimer &timer)
-{
-    switch (timer.getCode())
-    {
-    case 3346: {
-        if (m_autoBehaviour && m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
-        {
-            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, nas::EFollowOnRequest::FOR_PENDING);
-        }
-        break;
-    }
-    case 3512: {
-        if (m_autoBehaviour && m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
-        {
-            sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING,
-                             nas::EFollowOnRequest::FOR_PENDING);
-        }
-        break;
-    }
-    case 3521: {
-        if (timer.getExpiryCount() == 5)
-        {
-            timer.resetExpiryCount();
-            if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
-            {
-                m_logger->debug("De-registration aborted");
-
-                if (m_lastDeregDueToDisable5g)
-                    switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
-                else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
-                         nas::ESwitchOff::NORMAL_DE_REGISTRATION)
-                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-            }
-        }
-        else
-        {
-            if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
-            {
-                m_logger->debug("Retrying de-registration request");
-
-                sendNasMessage(*m_lastDeregistrationRequest);
-                m_timers->t3521.start(false);
-            }
-        }
-        break;
-    }
-    }
 }
 
 void NasMm::setN1Capability(bool enabled)

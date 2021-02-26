@@ -85,7 +85,6 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     else
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
-    m_lastDeregistrationRequest = nullptr;
     m_lastDeregDueToDisable5g = false;
 
     m_logger->info("De-registration is successful");
