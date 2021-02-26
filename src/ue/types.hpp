@@ -126,9 +126,9 @@ struct UeTimers
     nas::NasTimer t3444; /* MM - ... */
     nas::NasTimer t3445; /* MM - ... */
 
-    nas::NasTimer t3502; /* MM - ... */
+    nas::NasTimer t3502; /* MM - Initiation of the registration procedure, if still required */
     nas::NasTimer t3510; /* MM - Registration Request transmission timer */
-    nas::NasTimer t3511; /* MM - ... */
+    nas::NasTimer t3511; /* MM - Retransmission of the REGISTRATION REQUEST, if still required */
     nas::NasTimer t3512; /* MM - Periodic registration update timer */
     nas::NasTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
     nas::NasTimer t3517; /* MM - Service Request transmission timer */
