@@ -130,7 +130,10 @@ void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
 
-    m_base->mrTask->push(new NwUeRrcToMr(NwUeRrcToMr::RRC_CONNECTION_RELEASE));
+    auto *wr = new NwUeRrcToMr(NwUeRrcToMr::RRC_CONNECTION_RELEASE);
+    wr->cause = rls::ECause::RRC_NORMAL_RELEASE;
+    m_base->mrTask->push(wr);
+
     m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
 }
 

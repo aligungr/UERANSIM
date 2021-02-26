@@ -64,7 +64,7 @@ class NasMm
     void triggerMmCycle();
     void performMmCycle();
 
-    /* Radio resource control */
+    /* Radio */
     void handlePlmnSearchResponse(const std::string &gnbName);
     void handlePlmnSearchFailure();
     void handleRrcConnectionSetup();
@@ -104,7 +104,7 @@ class NasMm
     void sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
-    void handleCommonAbnormalRegFailure(nas::ERegistrationType regType, nas::EMmCause cause);
+    void handleCommonAbnormalRegFailure(nas::ERegistrationType regType);
 
     /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);
@@ -144,6 +144,9 @@ class NasMm
     /* Network Slicing */
     NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
     void handleNetworkSlicingSubscriptionChange();
+
+    /* Radio */
+    void localReleaseConnection();
 };
 
 } // namespace nr::ue

@@ -24,6 +24,8 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
         return;
     }
 
+    m_logger->debug("Sending %s", nas::utils::EnumToString(registrationType));
+
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
     if (registrationType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -238,7 +240,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
                 m_regCounter = 5;
         }
 
-        handleCommonAbnormalRegFailure(regType, cause);
+        handleCommonAbnormalRegFailure(regType);
     };
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -365,7 +367,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
     }
 }
 
-void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType, nas::EMmCause cause)
+void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType)
 {
     // TODO
 }

@@ -106,7 +106,7 @@ void GnbMrTask::onLoop()
             break;
         }
         case NwGnbRrcToMr::AN_RELEASE: {
-            m_rlsEntity->localReleaseConnection(w->ueId, rls::ECause::RRC_RELEASE);
+            m_rlsEntity->localReleaseConnection(w->ueId, rls::ECause::RRC_NORMAL_RELEASE);
             break;
         }
         }

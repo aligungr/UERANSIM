@@ -177,6 +177,7 @@ struct NwUeNasToRrc : NtsMessage
     enum PR
     {
         PLMN_SEARCH_REQUEST,
+        LOCAL_RELEASE_CONNECTION,
         INITIAL_NAS_DELIVERY,
         UPLINK_NAS_DELIVERY
     } present;
@@ -205,6 +206,9 @@ struct NwUeRrcToMr : NtsMessage
     // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
     OctetString pdu{};
+
+    // RRC_CONNECTION_RELEASE
+    rls::ECause cause{};
 
     explicit NwUeRrcToMr(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_MR), present(present)
     {

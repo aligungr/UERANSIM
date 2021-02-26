@@ -95,8 +95,10 @@ const char *CauseToString(ECause cause)
         return "RLS-SETUP-TIMEOUT";
     case ECause::HEARTBEAT_TIMEOUT:
         return "RLS-HEARTBEAT-TIMEOUT";
-    case ECause::RRC_RELEASE:
-        return "RLS-RRC-RELEASE";
+    case ECause::RRC_NORMAL_RELEASE:
+        return "RLS-RRC-NORMAL-RELEASE";
+    case ECause::RRC_LOCAL_RELEASE:
+        return "RLS-RRC-LOCAL-RELEASE";
     default:
         return "?";
     }

@@ -33,15 +33,13 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
         return;
     }
 
-    // TODO
-    nas::ProtocolConfigurationOptions opt;
+    nas::ProtocolConfigurationOptions opt{};
     opt.additionalParams.push_back(std::make_unique<nas::ProtocolConfigurationItem>(
         nas::EProtocolConfigId::CONT_ID_UP_IP_ADDRESS_ALLOCATION_VIA_NAS_SIGNALLING, true, OctetString::Empty()));
     opt.additionalParams.push_back(std::make_unique<nas::ProtocolConfigurationItem>(
         nas::EProtocolConfigId::CONT_ID_DOWN_DNS_SERVER_IPV4_ADDRESS, true, OctetString::Empty()));
 
-    // TODO
-    nas::PduSessionEstablishmentRequest req;
+    nas::PduSessionEstablishmentRequest req{};
     req.pti = pti;
     req.pduSessionId = static_cast<nas::EPduSessionIdentity>(psi);
     req.integrityProtectionMaximumDataRate.maxRateUplink =
@@ -58,7 +56,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     req.extendedProtocolConfigurationOptions->options = opt.encode();
 
     m_timers->t3580.start();
-    sendSmMessage(pti, req);
+    sendSmMessage(psi, req);
 }
 
 void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
