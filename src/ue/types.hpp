@@ -75,7 +75,6 @@ struct UeConfig
     } initials{};
 
     /* Assigned by program */
-    bool autoBehaviour{};
     bool configureRouting{};
     bool prefixLogger{};
 

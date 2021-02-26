@@ -135,7 +135,6 @@ static nr::ue::UeConfig *ReadConfigYaml()
     result->opC = OctetString::FromHex(yaml::GetString(config, "op", 32, 32));
     result->amf = OctetString::FromHex(yaml::GetString(config, "amf", 4, 4));
 
-    result->autoBehaviour = true;
     result->configureRouting = !g_options.noRoutingConfigs;
 
     // If we have multiple UEs in the same process, then log names should be separated.
@@ -290,7 +289,6 @@ static void IncrementNumber(std::string &s, int delta)
 static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
 {
     auto *c = new nr::ue::UeConfig();
-    c->autoBehaviour = g_refConfig->autoBehaviour;
     c->key = g_refConfig->key.copy();
     c->opC = g_refConfig->opC.copy();
     c->opType = g_refConfig->opType;

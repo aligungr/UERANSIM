@@ -30,7 +30,6 @@ class NasMm
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
     MobileStorage m_storage{};
-    bool m_autoBehaviour;
 
     ERmState m_rmState;
     ECmState m_cmState;

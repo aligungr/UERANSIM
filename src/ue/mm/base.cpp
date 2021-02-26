@@ -26,7 +26,6 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
     m_storage.m_uState = E5UState::U1_UPDATED;
-    m_autoBehaviour = base->config->autoBehaviour;
 
     m_storage.initialize(base->config->supi.has_value(), base->config->initials);
     m_storage.m_currentPlmn = base->config->hplmn; // TODO: normally assigned after plmn search
@@ -83,7 +82,7 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
-        if (m_autoBehaviour && !m_timers->t3346.isRunning())
+        if (!m_timers->t3346.isRunning())
             sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, false);
         return;
     }
@@ -98,12 +97,6 @@ void NasMm::performMmCycle()
         return;
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI)
         return;
-
-    if (m_autoBehaviour)
-    {
-        m_logger->err("unhandled UE MM state");
-        return;
-    }
 }
 
 void NasMm::switchMmState(EMmState state, EMmSubState subState)
