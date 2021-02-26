@@ -16,7 +16,7 @@
 namespace nr::ue
 {
 
-void NasMm::sendRegistration(nas::ERegistrationType registrationType)
+void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
 {
     if (m_mmState != EMmState::MM_DEREGISTERED)
     {
@@ -24,11 +24,27 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType)
         return;
     }
 
-    m_logger->debug("Sending %s", nas::utils::EnumToString(registrationType));
+    // 5.5.1.2.7 Abnormal cases in the UE
+    // a) Timer T3346 is running.
+    if (m_timers->t3346.isRunning() && regType == nas::ERegistrationType::INITIAL_REGISTRATION)
+    {
+        // From 24.501: A UE configured with one or more access identities equal to 1, 2, or 11-15 applicable in the
+        // selected PLMN as specified in subclause 4.5.2. Definition derived from 3GPP TS 22.261
+        bool isHighPriority = false; // TODO: Assign this property properly.
+
+        // The UE shall not start the registration procedure for initial registration in the following case
+        if (!isHighPriority && !dueToDereg)
+        {
+            m_logger->debug("Initial registration canceled, T3346 is running");
+            return;
+        }
+    }
+
+    m_logger->debug("Sending %s", nas::utils::EnumToString(regType));
 
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
-    if (registrationType == nas::ERegistrationType::INITIAL_REGISTRATION)
+    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
         m_storage.m_currentNsCtx = {};
 
     // Switch MM state
@@ -43,7 +59,7 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType)
 
     // Create registration request
     auto request = std::make_unique<nas::RegistrationRequest>();
-    request->registrationType = nas::IE5gsRegistrationType{followOn, registrationType};
+    request->registrationType = nas::IE5gsRegistrationType{followOn, regType};
     if (m_storage.m_currentNsCtx)
     {
         request->nasKeySetIdentifier.tsc = m_storage.m_currentNsCtx->tsc;
@@ -63,7 +79,7 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType)
 #endif
 
     // MM capability should be included if it is not a periodic registration
-    if (registrationType != nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
+    if (regType != nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
     {
         request->mmCapability = nas::IE5gMmCapability{};
         request->mmCapability->s1Mode = nas::EEpcNasSupported::NOT_SUPPORTED;

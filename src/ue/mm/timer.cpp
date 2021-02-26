@@ -24,14 +24,14 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
     case 3346: {
         if (m_autoBehaviour && m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
-            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION);
+            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, false);
         }
         break;
     }
     case 3512: {
         if (m_autoBehaviour && m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
         {
-            sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING);
+            sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING, false);
         }
         break;
     }
