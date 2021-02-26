@@ -219,7 +219,14 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
         m_base->nasTask->push(new NwUeNasToNas(NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS));
     }
 
-    m_registeredForEmergency = regType == nas::ERegistrationType::EMERGENCY_REGISTRATION;
+    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
+        m_registeredForEmergency = false;
+    else if (regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
+        m_registeredForEmergency = true;
+    else
+    {
+        // Other registration types will *not* alter 'is registered for emergency' state
+    }
 
     m_logger->info("%s is successful", nas::utils::EnumToString(regType));
 }
@@ -390,7 +397,46 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
 
 void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType)
 {
-    // TODO
+    // Timer T3510 shall be stopped if still running
+    m_timers->t3510.stop();
+
+    // If the registration procedure is neither an initial registration for emergency services nor for establishing an
+    // emergency PDU session with registration type not set to "emergency registration", the registration attempt
+    // counter shall be incremented, unless it was already set to 5.
+    if (regType != nas::ERegistrationType::EMERGENCY_REGISTRATION && !hasEmergency() && m_regCounter != 5)
+        m_regCounter++;
+
+    // If the registration attempt counter is less than 5:
+    if (m_regCounter < 5)
+    {
+        // If the initial registration request is not for emergency services, timer T3511 is started and the state is
+        // changed to 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. When timer T3511 expires the registration procedure for
+        // initial registration shall be restarted, if still required.
+        if (!hasEmergency())
+        {
+            m_timers->t3511.start();
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
+        }
+    }
+    else
+    {
+        // The UE shall delete 5G-GUTI, TAI list, last visited TAI, list of equivalent PLMNs and ngKSI, ..
+        m_storage.m_storedGuti = {};
+        m_storage.m_taiList = {};
+        m_storage.m_lastVisitedRegisteredTai = {};
+        m_storage.m_equivalentPlmnList = {};
+        m_storage.m_currentNsCtx = {};
+        m_storage.m_nonCurrentNsCtx = {};
+
+        // .. start timer T3502 ..
+        m_timers->t3502.start();
+
+        // .. and shall set the 5GS update status to 5U2 NOT UPDATED. The state is changed to
+        // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH in order to perform
+        // a PLMN selection according to 3GPP TS 23.122 [5].
+        switchUState(E5UState::U2_NOT_UPDATED);
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
+    }
 }
 
 } // namespace nr::ue

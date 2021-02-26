@@ -46,7 +46,7 @@ class NasMm
     long m_lastPlmnSearchTrigger{};
     // Registration attempt counter
     int m_regCounter{};
-    // Indicates registered for emergency services
+    // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state)
     bool m_registeredForEmergency{};
     // Network feature support information
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
@@ -91,6 +91,7 @@ class NasMm
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
     void setN1Capability(bool enabled);
+    bool hasEmergency();
 
     /* Transport */
     void sendMmStatus(nas::EMmCause cause);

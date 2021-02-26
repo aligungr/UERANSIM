@@ -246,4 +246,17 @@ void NasMm::setN1Capability(bool enabled)
     // TODO
 }
 
+bool NasMm::hasEmergency()
+{
+    // Indicates emergency services are required (even if registered for normal initial registration)
+    // This usually happens if it 'has' or 'need' some emergency PDU Session.
+
+    if (m_rmState == ERmState::RM_REGISTERED && m_registeredForEmergency)
+        return true;
+
+    // TODO: Other case which is an emergency PDU session is established, or need to be established (and wanted to be
+    //  established soon)
+    return false;
+}
+
 } // namespace nr::ue
