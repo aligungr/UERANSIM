@@ -37,9 +37,9 @@ class NasMm
     EMmState m_mmState;
     EMmSubState m_mmSubState;
 
-    // The very last registration request (or null)
+    // Most recent registration request
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
-    // The very last de-registration request (or null)
+    // Most recent de-registration request
     std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
     // Indicates that the last de-registration request is issued due to disable 5G services
     bool m_lastDeregDueToDisable5g{};
@@ -102,7 +102,7 @@ class NasMm
     void sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
-    void incrementRegistrationAttempt();
+    void handleCommonAbnormalInitialRegFailure(nas::ERegistrationType regType, nas::EMmCause cause);
 
     /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);

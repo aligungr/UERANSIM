@@ -226,11 +226,19 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
 
     switchRmState(ERmState::RM_DEREGISTERED);
 
-    auto handleAbnormalCase = [cause, this]() {
+    auto handleAbnormalCase = [this, regType, cause]() {
         m_logger->debug("Handling Registration Reject abnormal case");
-        // todo
-        m_storage.invalidateSim__();
-        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+
+        // If the registration request is not an initial registration request for emergency services, upon reception of
+        // the 5GMM causes #95, #96, #97, #99 and #111 the UE should set the registration attempt counter to 5.
+        if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
+        {
+            int n = static_cast<int>(cause);
+            if (n == 95 || n == 96 || n == 97 || n == 99 || n == 111)
+                m_regCounter = 5;
+        }
+
+        handleCommonAbnormalInitialRegFailure(regType, cause);
     };
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -357,9 +365,9 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
     }
 }
 
-void NasMm::incrementRegistrationAttempt()
+void NasMm::handleCommonAbnormalInitialRegFailure(nas::ERegistrationType regType, nas::EMmCause cause)
 {
-    m_regCounter++;
+    // TODO
 }
 
 } // namespace nr::ue
