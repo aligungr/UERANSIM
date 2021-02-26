@@ -8,6 +8,7 @@
 
 #include "timer.hpp"
 
+#include <sstream>
 #include <utils/common.hpp>
 
 namespace nas
@@ -96,16 +97,16 @@ bool NasTimer::performTick()
     if (running)
     {
         long currentMs = utils::CurrentTimeMillis();
-        long deltaSec = (currentMs - startMillis) / 1000;
+        long deltaSec = (currentMs - startMillis) / 1000LL;
         long remainingSec = interval - deltaSec;
 
-        if (currentMs - _lastDebugPrintMs > 10 * 1000)
+        if (currentMs - _lastDebugPrintMs > 10LL * 1000LL)
         {
             _lastDebugPrintMs = currentMs;
             // Log.debug(Tag.TIMER, "NAS Timer %s int:%ss rem:%ss", timerCode, interval, remainingSec);
         }
 
-        if (remainingSec < 0)
+        if (remainingSec <= 0LL)
         {
             stop(false);
             expiryCount++;
@@ -125,8 +126,8 @@ int NasTimer::getRemaining() const
     if (!running)
         return 0;
 
-    long elapsed = utils::CurrentTimeMillis() - startMillis;
-    return static_cast<int>(std::max(interval - elapsed, 0L));
+    int elapsed = static_cast<int>((utils::CurrentTimeMillis() - startMillis) / 1000LL);
+    return std::max(interval - elapsed, 0);
 }
 
 void NasTimer::resetExpiryCount()
@@ -141,13 +142,13 @@ int NasTimer::getExpiryCount() const
 
 Json ToJson(const NasTimer &v)
 {
-    int interval = v.getInterval();
+    std::stringstream ss{};
+    if (v.isRunning())
+        ss << "rem[" << v.getRemaining() << "] int[" << v.getInterval() << "]";
+    else
+        ss << ".";
 
-    return Json::Obj({
-        {"interval", interval == INT32_MAX ? Json{"inf"} : interval},
-        {"remaining", v.getRemaining()},
-        {"running", v.isRunning()},
-    });
+    return ss.str();
 }
 
 } // namespace nas
