@@ -101,7 +101,7 @@ class NasMm
     void receiveMmCause(const nas::IE5gMmCause &msg);
 
     /* Registration */
-    void sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn);
+    void sendRegistration(nas::ERegistrationType registrationType);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
     void handleCommonAbnormalRegFailure(nas::ERegistrationType regType);

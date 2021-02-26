@@ -84,7 +84,7 @@ void NasMm::performMmCycle()
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
         if (m_autoBehaviour && !m_timers->t3346.isRunning())
-            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, nas::EFollowOnRequest::FOR_PENDING);
+            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION);
         return;
     }
 

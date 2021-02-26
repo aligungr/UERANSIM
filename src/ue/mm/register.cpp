@@ -16,7 +16,7 @@
 namespace nr::ue
 {
 
-void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn)
+void NasMm::sendRegistration(nas::ERegistrationType registrationType)
 {
     if (m_mmState != EMmState::MM_DEREGISTERED)
     {
@@ -31,22 +31,24 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
     if (registrationType == nas::ERegistrationType::INITIAL_REGISTRATION)
         m_storage.m_currentNsCtx = {};
 
+    // Switch MM state
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
 
-    nas::IENasKeySetIdentifier ngKsi{};
-
-    if (m_storage.m_currentNsCtx)
-    {
-        ngKsi.tsc = m_storage.m_currentNsCtx->tsc;
-        ngKsi.ksi = m_storage.m_currentNsCtx->ngKsi;
-    }
-
+    // Prepare requested NSSAI
     bool isDefaultNssai{};
     auto requestedNssai = makeRequestedNssai(isDefaultNssai);
 
+    // Prepare FOR pending field
+    nas::EFollowOnRequest followOn = nas::EFollowOnRequest::FOR_PENDING;
+
+    // Create registration request
     auto request = std::make_unique<nas::RegistrationRequest>();
     request->registrationType = nas::IE5gsRegistrationType{followOn, registrationType};
-    request->nasKeySetIdentifier = ngKsi;
+    if (m_storage.m_currentNsCtx)
+    {
+        request->nasKeySetIdentifier.tsc = m_storage.m_currentNsCtx->tsc;
+        request->nasKeySetIdentifier.ksi = m_storage.m_currentNsCtx->ngKsi;
+    }
     request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
     request->updateType =
@@ -60,6 +62,7 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
                        : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
 #endif
 
+    // MM capability should be included if it is not a periodic registration
     if (registrationType != nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
     {
         request->mmCapability = nas::IE5gMmCapability{};
@@ -68,8 +71,10 @@ void NasMm::sendRegistration(nas::ERegistrationType registrationType, nas::EFoll
         request->mmCapability->lpp = nas::ELtePositioningProtocolCapability::NOT_SUPPORTED;
     }
 
+    // Assign mobile identity
     request->mobileIdentity = getOrGeneratePreferredId();
 
+    // Assign last visited registered if available
     if (m_storage.m_lastVisitedRegisteredTai.has_value())
         request->lastVisitedRegisteredTai = *m_storage.m_lastVisitedRegisteredTai;
 
