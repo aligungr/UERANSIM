@@ -108,9 +108,16 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
     m_logger->debug("Network initiated de-registration request received");
 
     bool forceIgnoreReregistration = false;
+    bool forceLocalReleaseNas = false;
 
+    // 5.5.1.2.7 Abnormal cases in the UE (de-registration collision)
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+    {
+        if (msg.deRegistrationType.reRegistrationRequired == nas::EReRegistrationRequired::REQUIRED)
+            forceLocalReleaseNas = true;
+    }
     // 5.5.2.2.6 Abnormal cases in the UE (de-registration collision)
-    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+    else if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
     {
         // De-registration containing de-registration type "switch off", If the UE receives a DEREGISTRATION REQUEST
         // message before the UE-initiated de-registration procedure has been completed, this message shall be ignored
@@ -203,6 +210,13 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             }
             }
         }
+    }
+
+    if (reRegistrationRequired)
+    {
+        // TODO: Perform re-registration, but consider forceLocalReleaseNas
+        //  if 'forceLocalReleaseNas' is true, local release nas before re-registration.
+        //  See "5.5.1.2.7 g) De-registration procedure collision."
     }
 }
 
