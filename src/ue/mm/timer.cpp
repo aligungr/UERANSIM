@@ -63,6 +63,10 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         }
         break;
     }
+    case 3519: {
+        m_storage.m_storedSuci = {};
+        break;
+    }
     case 3521: {
         if (timer.getExpiryCount() == 5)
         {
