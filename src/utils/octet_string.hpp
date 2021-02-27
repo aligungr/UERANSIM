@@ -35,6 +35,7 @@ class OctetString
 
   public:
     void append(const OctetString &v);
+    void appendUtf8(const std::string &v);
     void appendOctet(uint8_t v);
     void appendOctet(int v);
     void appendOctet(int bigHalf, int littleHalf);

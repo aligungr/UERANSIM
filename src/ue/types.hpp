@@ -9,6 +9,8 @@
 #pragma once
 
 #include <app/monitor.hpp>
+#include <app/ue_ctl.hpp>
+#include <array>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <utils/common_types.hpp>
@@ -24,6 +26,7 @@ class UeAppTask;
 class UeMrTask;
 class NasTask;
 class UeRrcTask;
+class UserEquipment;
 
 struct SupportedAlgs
 {
@@ -65,9 +68,9 @@ struct UeConfig
     std::vector<SessionConfig> initSessions{};
 
     /* Assigned by program */
-    bool emulationMode;
-    bool configureRouting;
-    bool prefixLogger;
+    bool autoBehaviour{};
+    bool configureRouting{};
+    bool prefixLogger{};
 
     [[nodiscard]] std::string getNodeName() const
     {
@@ -96,9 +99,12 @@ struct UeConfig
 
 struct TaskBase
 {
+    UserEquipment *ue{};
     UeConfig *config{};
     LogBase *logBase{};
+    app::IUeController *ueController{};
     app::INodeListener *nodeListener{};
+    NtsTask *cliCallbackTask{};
 
     UeAppTask *appTask{};
     UeMrTask *mrTask{};
@@ -348,21 +354,17 @@ enum class EAutnValidationRes
     SYNCHRONISATION_FAILURE,
 };
 
-struct UeStatusInfo
+struct UePduSessionInfo
 {
-    struct UePduSessionInfo
-    {
-        std::string type{};
-        std::string address{};
-    };
-
-    std::optional<UePduSessionInfo> pduSessions[16]{};
+    std::string type{};
+    std::string address{};
 };
 
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
 Json ToJson(const EMmSubState &state);
+Json ToJson(const E5UState &state);
 Json ToJson(const UeConfig &v);
 Json ToJson(const UeTimers &v);
 

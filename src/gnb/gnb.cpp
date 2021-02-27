@@ -20,12 +20,13 @@
 namespace nr::gnb
 {
 
-GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener)
+GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener, NtsTask *cliCallbackTask)
 {
     auto *base = new TaskBase();
     base->config = config;
     base->logBase = new LogBase("logs/" + config->name + ".log");
     base->nodeListener = nodeListener;
+    base->cliCallbackTask = cliCallbackTask;
 
     base->appTask = new GnbAppTask(base);
     base->sctpTask = new SctpTask(base);
@@ -68,9 +69,9 @@ void GNodeB::start()
     taskBase->gtpTask->start();
 }
 
-void GNodeB::pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address, NtsTask *callbackTask)
+void GNodeB::pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address)
 {
-    taskBase->appTask->push(new NwGnbCliCommand(std::move(cmd), address, callbackTask));
+    taskBase->appTask->push(new NwGnbCliCommand(std::move(cmd), address));
 }
 
 } // namespace nr::gnb

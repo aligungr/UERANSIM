@@ -34,6 +34,7 @@ extern "C"
     struct ASN_RRC_ULInformationTransfer;
     struct ASN_RRC_RRCSetup;
     struct ASN_RRC_RRCReject;
+    struct ASN_RRC_RRCRelease;
 }
 
 namespace nr::ue
@@ -64,13 +65,16 @@ class UeRrcTask : public NtsTask
 
   private:
     /* Handlers */
-    void handleDownlinkRrc(rrc::RrcChannel channel, const OctetString& pdu);
+    void handleDownlinkRrc(rrc::RrcChannel channel, const OctetString &pdu);
     void deliverInitialNas(OctetString &&nasPdu, long establishmentCause);
     void deliverUplinkNas(OctetString &&nasPdu);
 
     void receiveRrcSetup(const ASN_RRC_RRCSetup &msg);
     void receiveRrcReject(const ASN_RRC_RRCReject &msg);
+    void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
+
+    void handleRadioLinkFailure();
 
     /* RRC channel send message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);

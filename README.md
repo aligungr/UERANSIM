@@ -2,7 +2,7 @@
   <a href="https://github.com/aligungr/UERANSIM"><img src="/.github/logo.png" width="75" title="UERANSIM"></a>
 </p>
 <p align="center">
-<img src="https://img.shields.io/badge/UERANSIM-v3.1.0-blue" />
+<img src="https://img.shields.io/badge/UERANSIM-v3.1.1-blue" />
 <img src="https://img.shields.io/badge/3GPP-R15-orange" />
 <img src="https://img.shields.io/badge/License-GPL--3.0-green"/>
 </p>
@@ -29,7 +29,7 @@ And, since the project is rapidly developing, please make sure that you have alw
 
 ## Contributing
 
-Implementing UE and RAN is not an easy task and requires a lot of time. We are always open to public contributions and pull requests.
+Implementing UE and RAN is not an easy task and is very time-consuming. We are always open to public contributions and pull requests.
 
 ## Supporting
 

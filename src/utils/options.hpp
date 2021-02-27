@@ -73,12 +73,14 @@ struct OptionsDescription
     std::vector<OptionItem> items{};
     std::vector<std::string> usages{};
     bool helpIfEmpty{};
+    bool hideDefaultOptionsInUsage{};
 
     OptionsDescription(std::string projectName, std::string version, std::string appDescription, std::string copyright,
-                       std::string programName, std::vector<std::string> usages, bool helpIfEmpty)
+                       std::string programName, std::vector<std::string> usages, bool helpIfEmpty,
+                       bool hideDefaultOptionsInUsage)
         : projectName(std::move(projectName)), version(std::move(version)), appDescription(std::move(appDescription)),
           copyright(std::move(copyright)), programName(std::move(programName)), usages(std::move(usages)),
-          helpIfEmpty(helpIfEmpty)
+          helpIfEmpty(helpIfEmpty), hideDefaultOptionsInUsage(hideDefaultOptionsInUsage)
     {
     }
 };

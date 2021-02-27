@@ -8,9 +8,9 @@
 
 #include "task.hpp"
 #include "rls.hpp"
+#include <gnb/gtp/task.hpp>
 #include <gnb/nts.hpp>
 #include <gnb/rrc/task.hpp>
-#include <gnb/gtp/task.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
@@ -105,6 +105,10 @@ void GnbMrTask::onLoop()
             m_rlsEntity->setAcceptConnections(true);
             break;
         }
+        case NwGnbRrcToMr::AN_RELEASE: {
+            m_rlsEntity->localReleaseConnection(w->ueId, rls::ECause::RRC_RELEASE);
+            break;
+        }
         }
         break;
     }
@@ -150,6 +154,15 @@ void GnbMrTask::onUeConnected(int ue, const std::string &name)
 
 void GnbMrTask::onUeReleased(int ue, rls::ECause cause)
 {
+    if (rls::IsRlf(cause))
+    {
+        m_logger->err("Radio link failure for UE[%d] with cause[%s]", ue, rls::CauseToString(cause));
+
+        auto *w = new NwGnbMrToRrc(NwGnbMrToRrc::RADIO_LINK_FAILURE);
+        w->ueId = ue;
+        m_base->rrcTask->push(w);
+    }
+
     m_ueMap.erase(ue);
     m_logger->info("A UE disconnected from gNB. Total number of UEs is now: %d", m_ueMap.size());
 }

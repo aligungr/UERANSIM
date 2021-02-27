@@ -57,6 +57,16 @@ void PduSessionTree::remove(uint64_t session, uint32_t downTeid)
     }
 }
 
+void PduSessionTree::enumerateByUe(int ue, std::vector<uint64_t> &output)
+{
+    if (mapByUeId.count(ue) == 0)
+        return;
+    auto &map = mapByUeId[ue];
+
+    for (auto &item : map)
+        output.push_back(item.second);
+}
+
 TokenBucket::TokenBucket(long byteCapacity) : byteCapacity(byteCapacity)
 {
     if (byteCapacity > 0)

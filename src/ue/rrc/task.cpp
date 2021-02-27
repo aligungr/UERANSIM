@@ -63,6 +63,10 @@ void UeRrcTask::onLoop()
             handleDownlinkRrc(w->channel, w->pdu);
             break;
         }
+        case NwUeMrToRrc::RADIO_LINK_FAILURE: {
+            handleRadioLinkFailure();
+            break;
+        }
         }
         break;
     }
@@ -89,6 +93,11 @@ void UeRrcTask::onLoop()
     }
 
     delete msg;
+}
+
+void UeRrcTask::handleRadioLinkFailure()
+{
+    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RADIO_LINK_FAILURE));
 }
 
 } // namespace nr::ue

@@ -152,7 +152,7 @@ struct IES1UeNetworkCapability : InformationElement4
 
 struct IEGprsTimer3 : InformationElement4
 {
-    int timerValue : 5;
+    int timerValue; // 5-bit
     EGprsTimerValueUnit3 unit;
 
     IEGprsTimer3();

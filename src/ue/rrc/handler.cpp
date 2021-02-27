@@ -9,6 +9,7 @@
 #include "task.hpp"
 #include <asn/utils/utils.hpp>
 #include <rrc/encode.hpp>
+#include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/common.hpp>
@@ -122,6 +123,15 @@ void UeRrcTask::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTr
     auto *nw = new NwUeRrcToNas(NwUeRrcToNas::NAS_DELIVERY);
     nw->nasPdu = std::move(nasPdu);
     m_base->nasTask->push(nw);
+}
+
+void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
+{
+    m_logger->debug("RRC Release received");
+    m_state = ERrcState::RRC_IDLE;
+
+    m_base->mrTask->push(new NwUeRrcToMr(NwUeRrcToMr::RRC_CONNECTION_RELEASE));
+    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
 }
 
 } // namespace nr::ue

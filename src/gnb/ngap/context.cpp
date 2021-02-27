@@ -9,6 +9,9 @@
 #include "task.hpp"
 #include "utils.hpp"
 
+#include <gnb/gtp/task.hpp>
+#include <gnb/rrc/task.hpp>
+
 #include <asn/ngap/ASN_NGAP_AMF-UE-NGAP-ID.h>
 #include <asn/ngap/ASN_NGAP_InitialContextSetupRequest.h>
 #include <asn/ngap/ASN_NGAP_InitialContextSetupResponse.h>
@@ -22,8 +25,8 @@
 #include <asn/ngap/ASN_NGAP_UEContextModificationResponse.h>
 #include <asn/ngap/ASN_NGAP_UEContextReleaseCommand.h>
 #include <asn/ngap/ASN_NGAP_UEContextReleaseComplete.h>
+#include <asn/ngap/ASN_NGAP_UEContextReleaseRequest.h>
 #include <asn/ngap/ASN_NGAP_UESecurityCapabilities.h>
-#include <gnb/gtp/task.hpp>
 
 namespace nr::gnb
 {
@@ -63,8 +66,15 @@ void NgapTask::receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand
     if (ue == nullptr)
         return;
 
-    // todo: NG-RAN node shall release all related signalling and user data transport resources
-    // ...
+    // Notify RRC task
+    auto *w1 = new NwGnbNgapToRrc(NwGnbNgapToRrc::AN_RELEASE);
+    w1->ueId = ue->ctxId;
+    m_base->rrcTask->push(w1);
+
+    // Notify GTP task
+    auto *w2 = new NwGnbNgapToGtp(NwGnbNgapToGtp::UE_CONTEXT_RELEASE);
+    w2->ueId = ue->ctxId;
+    m_base->gtpTask->push(w2);
 
     auto *response = asn::ngap::NewMessagePdu<ASN_NGAP_UEContextReleaseComplete>({});
     sendNgapUeAssociated(ue->ctxId, response);
@@ -101,6 +111,20 @@ void NgapTask::receiveContextModification(int amfId, ASN_NGAP_UEContextModificat
     auto *w = new NwGnbNgapToGtp(NwGnbNgapToGtp::UE_CONTEXT_UPDATE);
     w->update = std::make_unique<GtpUeContextUpdate>(false, ue->ctxId, ue->ueAmbr);
     m_base->gtpTask->push(w);
+}
+
+void NgapTask::sendContextRelease(int ueId, NgapCause cause)
+{
+    m_logger->debug("Sending UE Context release request (NG-RAN node initiated)");
+
+    auto *ieCause = asn::New<ASN_NGAP_UEContextReleaseRequest_IEs>();
+    ieCause->id = ASN_NGAP_ProtocolIE_ID_id_Cause;
+    ieCause->criticality = ASN_NGAP_Criticality_ignore;
+    ieCause->value.present = ASN_NGAP_UEContextReleaseRequest_IEs__value_PR_Cause;
+    ngap_utils::ToCauseAsn_Ref(cause, ieCause->value.choice.Cause);
+
+    auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_UEContextReleaseRequest>({ieCause});
+    sendNgapUeAssociated(ueId, pdu);
 }
 
 } // namespace nr::gnb

@@ -65,7 +65,7 @@ struct IEEpsNasSecurityAlgorithms : InformationElement3
 
 struct IEGprsTimer : InformationElement3
 {
-    int timerValue : 5;
+    int timerValue; // 5-bit
     EGprsTimerValueUnit timerValueUnit;
 
     IEGprsTimer();
@@ -91,7 +91,7 @@ struct IEIntegrityProtectionMaximumDataRate : InformationElement3
 
 struct IEMaximumNumberOfSupportedPacketFilters : InformationElement3
 {
-    int value : 11;
+    int value; // 11-bit
 
     IEMaximumNumberOfSupportedPacketFilters();
     explicit IEMaximumNumberOfSupportedPacketFilters(int value);

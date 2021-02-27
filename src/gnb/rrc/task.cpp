@@ -46,6 +46,10 @@ void GnbRrcTask::onLoop()
             handleUplinkRrc(w->ueId, w->channel, w->pdu);
             break;
         }
+        case NwGnbMrToRrc::RADIO_LINK_FAILURE: {
+            handleRadioLinkFailure(w->ueId);
+            break;
+        }
         }
         break;
     }
@@ -59,6 +63,10 @@ void GnbRrcTask::onLoop()
         }
         case NwGnbNgapToRrc::NAS_DELIVERY: {
             handleDownlinkNasDelivery(w->ueId, w->pdu);
+            break;
+        }
+        case NwGnbNgapToRrc::AN_RELEASE: {
+            releaseConnection(w->ueId);
             break;
         }
         }

@@ -68,7 +68,15 @@ void UeMrTask::onLoop()
             break;
         }
         case NwUeMrToMr::RLS_RELEASED: {
-            m_logger->warn("UE disconnected from gNB, RLS released [%s]", rls::CauseToString(w->cause));
+            if (rls::IsRlf(w->cause))
+            {
+                m_logger->err("Radio link failure with cause[%s]", rls::CauseToString(w->cause));
+                m_base->rrcTask->push(new NwUeMrToRrc(NwUeMrToRrc::RADIO_LINK_FAILURE));
+            }
+            else
+            {
+                m_logger->debug("UE disconnected from gNB [%s]", rls::CauseToString(w->cause));
+            }
             break;
         }
         case NwUeMrToMr::RLS_SEARCH_FAILURE: {
@@ -111,6 +119,11 @@ void UeMrTask::onLoop()
             stream.append(w->pdu);
 
             m_rlsEntity->onUplinkDelivery(rls::EPayloadType::RRC, std::move(stream));
+            break;
+        }
+        case NwUeRrcToMr::RRC_CONNECTION_RELEASE: {
+            m_rlsEntity->localReleaseConnection(rls::ECause::RRC_RELEASE);
+            m_rlsEntity->resetEntity();
             break;
         }
         }

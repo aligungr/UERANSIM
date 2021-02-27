@@ -7,6 +7,11 @@
 //
 
 #include "task.hpp"
+
+#include <gnb/mr/task.hpp>
+#include <gnb/ngap/task.hpp>
+#include <rrc/encode.hpp>
+
 #include <asn/rrc/ASN_RRC_BCCH-BCH-Message.h>
 #include <asn/rrc/ASN_RRC_BCCH-DL-SCH-Message.h>
 #include <asn/rrc/ASN_RRC_CellGroupConfig.h>
@@ -15,6 +20,8 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 #include <asn/rrc/ASN_RRC_PCCH-Message.h>
+#include <asn/rrc/ASN_RRC_RRCRelease-IEs.h>
+#include <asn/rrc/ASN_RRC_RRCRelease.h>
 #include <asn/rrc/ASN_RRC_RRCSetup-IEs.h>
 #include <asn/rrc/ASN_RRC_RRCSetup.h>
 #include <asn/rrc/ASN_RRC_RRCSetupComplete-IEs.h>
@@ -25,8 +32,6 @@
 #include <asn/rrc/ASN_RRC_UL-DCCH-Message.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
-#include <gnb/ngap/task.hpp>
-#include <rrc/encode.hpp>
 
 namespace nr::gnb
 {
@@ -132,6 +137,42 @@ void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplet
     w->pdu = asn::GetOctetString(setupComplete->dedicatedNAS_Message);
     w->rrcEstablishmentCause = ue->establishmentCause;
     m_base->ngapTask->push(w);
+}
+
+void GnbRrcTask::releaseConnection(int ueId)
+{
+    m_logger->debug("Releasing RRC connection for UE[%d]", ueId);
+
+    // Send RRC Release message
+    auto *pdu = asn::New<ASN_RRC_DL_DCCH_Message>();
+    pdu->message.present = ASN_RRC_DL_DCCH_MessageType_PR_c1;
+    pdu->message.choice.c1 = asn::NewFor(pdu->message.choice.c1);
+    pdu->message.choice.c1->present = ASN_RRC_DL_DCCH_MessageType__c1_PR_rrcRelease;
+    auto &rrcRelease = pdu->message.choice.c1->choice.rrcRelease = asn::New<ASN_RRC_RRCRelease>();
+    rrcRelease->rrc_TransactionIdentifier = getNextTid();
+    rrcRelease->criticalExtensions.present = ASN_RRC_RRCRelease__criticalExtensions_PR_rrcRelease;
+    rrcRelease->criticalExtensions.choice.rrcRelease = asn::New<ASN_RRC_RRCRelease_IEs>();
+
+    sendRrcMessage(ueId, pdu);
+
+    // Notify MR task
+    auto *w = new NwGnbRrcToMr(NwGnbRrcToMr::AN_RELEASE);
+    w->ueId = ueId;
+    m_base->mrTask->push(w);
+
+    // Delete UE RRC context
+    m_ueCtx.erase(ueId);
+}
+
+void GnbRrcTask::handleRadioLinkFailure(int ueId)
+{
+    // Notify NGAP task
+    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::RADIO_LINK_FAILURE);
+    w->ueId = ueId;
+    m_base->ngapTask->push(w);
+
+    // Delete UE RRC context
+    m_ueCtx.erase(ueId);
 }
 
 } // namespace nr::gnb

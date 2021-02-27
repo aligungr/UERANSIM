@@ -45,12 +45,22 @@ enum class EMessageType : uint8_t
 
 enum class ECause : uint8_t
 {
+    // Error causes (treated as radio link failure)
     UNSPECIFIED = 0,
     TOKEN_CONFLICT,
     EMPTY_SEARCH_LIST,
     SETUP_TIMEOUT,
-    HEARTBEAT_TIMEOUT
+    HEARTBEAT_TIMEOUT,
+
+    // Successful causes
+    RRC_RELEASE,
 };
+
+// Checks if the cause treated as radio link failure
+inline bool IsRlf(ECause cause)
+{
+    return cause != ECause::RRC_RELEASE;
+}
 
 enum class EPayloadType : uint8_t
 {

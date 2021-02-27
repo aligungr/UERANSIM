@@ -51,6 +51,7 @@ class RlsUeEntity
     void onUplinkDelivery(EPayloadType type, OctetString &&payload);
     void startGnbSearch();
     void releaseConnection(ECause cause);
+    void localReleaseConnection(ECause cause);
     void resetEntity();
 
   private:

@@ -7,8 +7,8 @@
 //
 
 #include "sm.hpp"
-#include <nas/utils.hpp>
 #include <nas/proto_conf.hpp>
+#include <nas/utils.hpp>
 #include <ue/app/task.hpp>
 
 namespace nr::ue
@@ -29,7 +29,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     if (pti == 0)
     {
         m_logger->err("PDU Session Establishment Request could not send");
-        releasePduSession(psi);
+        freePduSessionId(psi);
         return;
     }
 
@@ -71,7 +71,7 @@ void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishm
 
     m_timers->t3580.stop();
 
-    releaseProcedureTransactionId(msg.pti);
+    freeProcedureTransactionId(msg.pti);
 
     auto &pduSession = m_pduSessions[static_cast<int>(msg.pduSessionId)];
     if (pduSession.id == 0)

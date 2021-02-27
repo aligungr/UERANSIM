@@ -134,14 +134,28 @@ Json ToJson(const UeConfig &v)
 Json ToJson(const UeTimers &v)
 {
     return Json::Obj({
-        {"T3346", ToJson(v.t3346)}, {"T3396", ToJson(v.t3396)}, {"T3444", ToJson(v.t3444)},
-        {"T3445", ToJson(v.t3445)}, {"T3502", ToJson(v.t3502)}, {"T3510", ToJson(v.t3510)},
-        {"T3511", ToJson(v.t3511)}, {"T3512", ToJson(v.t3512)}, {"T3516", ToJson(v.t3516)},
-        {"T3517", ToJson(v.t3517)}, {"T3519", ToJson(v.t3519)}, {"T3520", ToJson(v.t3520)},
-        {"T3521", ToJson(v.t3521)}, {"T3525", ToJson(v.t3525)}, {"T3540", ToJson(v.t3540)},
-        {"T3580", ToJson(v.t3580)}, {"T3581", ToJson(v.t3581)}, {"T3582", ToJson(v.t3582)},
-        {"T3583", ToJson(v.t3583)}, {"T3584", ToJson(v.t3584)}, {"T3585", ToJson(v.t3585)},
+        {"T3346", ToJson(v.t3346)}, {"T3396", ToJson(v.t3396)}, {"T3444", ToJson(v.t3444)}, {"T3445", ToJson(v.t3445)},
+        {"T3502", ToJson(v.t3502)}, {"T3510", ToJson(v.t3510)}, {"T3511", ToJson(v.t3511)}, {"T3512", ToJson(v.t3512)},
+        {"T3516", ToJson(v.t3516)}, {"T3517", ToJson(v.t3517)}, {"T3519", ToJson(v.t3519)}, {"T3520", ToJson(v.t3520)},
+        {"T3521", ToJson(v.t3521)}, {"T3525", ToJson(v.t3525)}, {"T3540", ToJson(v.t3540)}, {"T3580", ToJson(v.t3580)},
+        {"T3581", ToJson(v.t3581)}, {"T3582", ToJson(v.t3582)}, {"T3583", ToJson(v.t3583)}, {"T3584", ToJson(v.t3584)},
+        {"T3585", ToJson(v.t3585)},
     });
+}
+
+Json ToJson(const E5UState &state)
+{
+    switch (state)
+    {
+    case E5UState::U1_UPDATED:
+        return "5U1-UPDATED";
+    case E5UState::U2_NOT_UPDATED:
+        return "5U2-NOT-UPDATED";
+    case E5UState::U3_ROAMING_NOT_ALLOWED:
+        return "5U3-ROAMING-NOT-ALLOWED";
+    default:
+        return "?";
+    }
 }
 
 } // namespace nr::ue
