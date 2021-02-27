@@ -20,7 +20,7 @@ void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
 {
     if (m_mmState != EMmState::MM_DEREGISTERED)
     {
-        m_logger->warn("Registration could be triggered. UE is not in MM-DEREGISTERED state.");
+        m_logger->warn("Registration could not be triggered. UE is not in MM-DEREGISTERED state.");
         return;
     }
 
@@ -90,7 +90,7 @@ void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
     // Assign mobile identity
     request->mobileIdentity = getOrGeneratePreferredId();
 
-    // Assign last visited registered if available
+    // Assign last visited registered TAI if available
     if (m_storage.m_lastVisitedRegisteredTai.has_value())
         request->lastVisitedRegisteredTai = *m_storage.m_lastVisitedRegisteredTai;
 
@@ -301,7 +301,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
         {
-            m_storage.invalidateSim__();
+            m_storage.invalidateSim();
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||

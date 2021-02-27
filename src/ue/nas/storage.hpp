@@ -56,34 +56,8 @@ class MobileStorage
         m_configuredNssai = initials.configuredNssai;
     }
 
-    void discardLocation()
+    void invalidateSim()
     {
-        m_storedGuti = {};
-        m_lastVisitedRegisteredTai = {};
-    }
-
-    void discardPlmn()
-    {
-        m_taiList = {};
-    }
-
-    void discardSecurity()
-    {
-        m_currentNsCtx = {};
-        m_nonCurrentNsCtx = {};
-    }
-
-    void discardUsim()
-    {
-        discardLocation();
-        discardPlmn();
-        discardSecurity();
-    }
-
-    // todo metodları kaldır geri
-    void invalidateSim__()
-    {
-        // TODO: log
         m_simIsValid = false;
     }
 

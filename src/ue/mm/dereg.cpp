@@ -168,7 +168,12 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             case nas::EMmCause::ILLEGAL_ME:
             case nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                m_storage.invalidateSim__();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
+                m_storage.invalidateSim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }
@@ -181,13 +186,21 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             //}
             case nas::EMmCause::TA_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                m_storage.discardUsim();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
                 break;
             }
             case nas::EMmCause::N1_MODE_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                m_storage.discardUsim();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
                 switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
                 break;
             }
@@ -204,7 +217,12 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
                               nas::utils::EnumToString(msg.mmCause->value));
 
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                m_storage.invalidateSim__();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
+                m_storage.invalidateSim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }
