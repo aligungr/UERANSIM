@@ -53,13 +53,14 @@ enum class ECause : uint8_t
     HEARTBEAT_TIMEOUT,
 
     // Successful causes
-    RRC_RELEASE,
+    RRC_NORMAL_RELEASE, // release with UE-gNB coordination over RRC
+    RRC_LOCAL_RELEASE,  // release locally without UE-gNB coordination
 };
 
 // Checks if the cause treated as radio link failure
 inline bool IsRlf(ECause cause)
 {
-    return cause != ECause::RRC_RELEASE;
+    return cause != ECause::RRC_NORMAL_RELEASE && cause != ECause::RRC_LOCAL_RELEASE;
 }
 
 enum class EPayloadType : uint8_t

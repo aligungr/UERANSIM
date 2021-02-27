@@ -13,7 +13,7 @@
 namespace nas::utils
 {
 
-IESNssai SNssaiFrom(const SliceSupport &v)
+IESNssai SNssaiFrom(const SingleSlice &v)
 {
     IESNssai r;
     r.sst = v.sst;
@@ -22,10 +22,10 @@ IESNssai SNssaiFrom(const SliceSupport &v)
     return r;
 }
 
-IENssai NssaiFrom(const std::vector<SliceSupport> &v)
+IENssai NssaiFrom(const NetworkSlice &v)
 {
     IENssai r;
-    for (auto &x : v)
+    for (auto &x : v.slices)
         r.sNssais.push_back(SNssaiFrom(x));
     return r;
 }
@@ -260,6 +260,33 @@ IEDnn DnnFromApn(const std::string &apn)
     dnn.apn.data()[0] = static_cast<uint8_t>(apn.length());
     std::memcpy(dnn.apn.data() + 1, apn.data(), apn.length());
     return dnn;
+}
+
+void AddToPlmnList(IEPlmnList &list, VPlmn item)
+{
+    if (!std::any_of(list.plmns.begin(), list.plmns.end(), [&item](auto &i) { return DeepEqualsV(i, item); }))
+        list.plmns.push_back(item);
+}
+
+VPlmn PlmnFrom(const Plmn &plmn)
+{
+    return VPlmn{plmn.mcc, plmn.mnc, plmn.isLongMnc};
+}
+
+NetworkSlice NssaiTo(const IENssai &v)
+{
+    NetworkSlice nssai{};
+    for (auto &item : v.sNssais)
+        nssai.slices.push_back(SNssaiTo(item));
+    return nssai;
+}
+
+SingleSlice SNssaiTo(const IESNssai &v)
+{
+    SingleSlice sNssai{};
+    sNssai.sst = v.sst;
+    sNssai.sd = v.sd;
+    return sNssai;
 }
 
 } // namespace nas::utils

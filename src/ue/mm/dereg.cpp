@@ -30,10 +30,10 @@ void NasMm::sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g)
     request->deRegistrationType.reRegistrationRequired = nas::EReRegistrationRequired::NOT_REQUIRED;
     request->deRegistrationType.switchOff = switchOff;
 
-    if (m_currentNsCtx.has_value())
+    if (m_storage.m_currentNsCtx)
     {
-        request->ngKSI.tsc = m_currentNsCtx->tsc;
-        request->ngKSI.ksi = m_currentNsCtx->ngKsi;
+        request->ngKSI.tsc = m_storage.m_currentNsCtx->tsc;
+        request->ngKSI.ksi = m_storage.m_currentNsCtx->ngKsi;
     }
     else
     {
@@ -76,7 +76,7 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     m_timers->t3521.stop();
     m_timers->t3519.stop();
 
-    m_storedSuci = {};
+    m_storage.m_storedSuci = {};
 
     switchRmState(ERmState::RM_DEREGISTERED);
 
@@ -85,7 +85,6 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     else
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
-    m_lastDeregistrationRequest = nullptr;
     m_lastDeregDueToDisable5g = false;
 
     m_logger->info("De-registration is successful");
@@ -109,9 +108,16 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
     m_logger->debug("Network initiated de-registration request received");
 
     bool forceIgnoreReregistration = false;
+    bool forceLocalReleaseNas = false;
 
+    // 5.5.1.2.7 Abnormal cases in the UE (de-registration collision)
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+    {
+        if (msg.deRegistrationType.reRegistrationRequired == nas::EReRegistrationRequired::REQUIRED)
+            forceLocalReleaseNas = true;
+    }
     // 5.5.2.2.6 Abnormal cases in the UE (de-registration collision)
-    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+    else if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
     {
         // De-registration containing de-registration type "switch off", If the UE receives a DEREGISTRATION REQUEST
         // message before the UE-initiated de-registration procedure has been completed, this message shall be ignored
@@ -162,7 +168,12 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             case nas::EMmCause::ILLEGAL_ME:
             case nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateSim();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
+                m_storage.invalidateSim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }
@@ -175,13 +186,21 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             //}
             case nas::EMmCause::TA_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateAcquiredParams();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
                 break;
             }
             case nas::EMmCause::N1_MODE_NOT_ALLOWED: {
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateAcquiredParams();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
                 switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
                 break;
             }
@@ -198,12 +217,24 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
                               nas::utils::EnumToString(msg.mmCause->value));
 
                 switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-                invalidateSim();
+                m_storage.m_storedGuti = {};
+                m_storage.m_lastVisitedRegisteredTai = {};
+                m_storage.m_taiList = {};
+                m_storage.m_currentNsCtx = {};
+                m_storage.m_nonCurrentNsCtx = {};
+                m_storage.invalidateSim();
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 break;
             }
             }
         }
+    }
+
+    if (reRegistrationRequired)
+    {
+        // TODO: Perform re-registration, but consider forceLocalReleaseNas
+        //  if 'forceLocalReleaseNas' is true, local release nas before re-registration.
+        //  See "5.5.1.2.7 g) De-registration procedure collision."
     }
 }
 

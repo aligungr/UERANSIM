@@ -11,6 +11,7 @@
 #include <crypt/milenage.hpp>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
+#include <ue/nas/storage.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
@@ -28,31 +29,27 @@ class NasMm
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
+    MobileStorage m_storage{};
 
     ERmState m_rmState;
     ECmState m_cmState;
     EMmState m_mmState;
     EMmSubState m_mmSubState;
-    E5UState m_uState;
 
-    nas::IE5gsMobileIdentity m_storedSuci{};
-    nas::IE5gsMobileIdentity m_storedGuti{};
-
+    // Most recent registration request
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
-
+    // Most recent de-registration request
     std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    // Indicates that the last de-registration request is issued due to disable 5G services
     bool m_lastDeregDueToDisable5g{};
-
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
-    std::optional<nas::IE5gsTrackingAreaIdentityList> m_taiList{};
-
-    std::optional<NasSecurityContext> m_currentNsCtx;
-    std::optional<NasSecurityContext> m_nonCurrentNsCtx;
-
-    bool m_autoBehaviour;
-    bool m_validSim;
+    // Last time PLMN search is triggered
     long m_lastPlmnSearchTrigger{};
-    OctetString m_sqn{};
+    // Registration attempt counter
+    int m_regCounter{};
+    // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state)
+    bool m_registeredForEmergency{};
+    // Network feature support information
+    nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
 
     friend class UeCmdHandler;
 
@@ -65,9 +62,8 @@ class NasMm
     void onQuit();
     void triggerMmCycle();
     void performMmCycle();
-    void onTimerExpire(nas::NasTimer &timer);
 
-    /* Radio resource control */
+    /* Radio */
     void handlePlmnSearchResponse(const std::string &gnbName);
     void handlePlmnSearchFailure();
     void handleRrcConnectionSetup();
@@ -81,6 +77,9 @@ class NasMm
     /* De-registration */
     void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
 
+    /* Timer */
+    void onTimerExpire(nas::NasTimer &timer);
+
   private:
     /* Base */
     void switchMmState(EMmState state, EMmSubState subState);
@@ -91,8 +90,8 @@ class NasMm
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
-    void invalidateAcquiredParams();
-    void invalidateSim();
+    void setN1Capability(bool enabled);
+    bool hasEmergency();
 
     /* Transport */
     void sendMmStatus(nas::EMmCause cause);
@@ -102,9 +101,10 @@ class NasMm
     void receiveMmCause(const nas::IE5gMmCause &msg);
 
     /* Registration */
-    void sendRegistration(nas::ERegistrationType registrationType, nas::EFollowOnRequest followOn);
+    void sendRegistration(nas::ERegistrationType regType, bool dueToDereg);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
+    void handleCommonAbnormalRegFailure(nas::ERegistrationType regType);
 
     /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);
@@ -140,6 +140,13 @@ class NasMm
     /* Service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
+
+    /* Network Slicing */
+    NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
+    void handleNetworkSlicingSubscriptionChange();
+
+    /* Radio */
+    void localReleaseConnection();
 };
 
 } // namespace nr::ue

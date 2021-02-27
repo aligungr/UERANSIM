@@ -26,7 +26,7 @@ Json ToJson(const GnbConfig &v)
         {"nci", v.nci},
         {"plmn", ToJson(v.plmn)},
         {"tac", v.tac},
-        {"nssai", ToJson(v.nssais)},
+        {"nssai", ToJson(v.nssai)},
         {"ngap-ip", v.ngapIp},
         {"gtp-ip", v.gtpIp},
         {"paging-drx", ToJson(v.pagingDrx)},

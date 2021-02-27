@@ -9,6 +9,7 @@
 #include "mm.hpp"
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
+#include <ue/rrc/task.hpp>
 #include <ue/sm/sm.hpp>
 
 namespace nr::ue
@@ -52,6 +53,13 @@ void NasMm::handleRadioLinkFailure()
 {
     m_logger->debug("Radio link failure detected");
     handleRrcConnectionRelease();
+}
+
+void NasMm::localReleaseConnection()
+{
+    m_logger->info("Performing local release of NAS connection");
+
+    m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::LOCAL_RELEASE_CONNECTION));
 }
 
 } // namespace nr::ue

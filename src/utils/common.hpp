@@ -12,6 +12,7 @@
 #include "octet.hpp"
 #include "octet_string.hpp"
 #include "time_stamp.hpp"
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -44,6 +45,12 @@ inline void ClearAndDelete(std::vector<T *> &vector)
     for (T *item : vector)
         delete item;
     vector.clear();
+}
+
+template <typename T, typename P>
+inline void EraseWhere(std::vector<T> &vector, P predicate)
+{
+    vector.erase(std::remove_if(vector.begin(), vector.end(), std::forward<P>(predicate)), vector.end());
 }
 
 template <typename T>

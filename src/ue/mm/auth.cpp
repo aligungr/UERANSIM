@@ -17,6 +17,12 @@ namespace nr::ue
 
 void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 {
+    if (!m_storage.isSimValid())
+    {
+        m_logger->warn("Authentication request is ignored. USIM is invalid");
+        return;
+    }
+
     if (msg.eapMessage.has_value())
         receiveAuthenticationRequestEap(msg);
     else
@@ -25,15 +31,16 @@ void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 
 void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg)
 {
+    // TODO
     m_logger->err("EAP AKA' not implemented yet. Use 5G AKA instead");
     return;
 
     auto ueRejectionTimers = [this]() {
-      m_timers->t3520.start();
+        m_timers->t3520.start();
 
-      m_timers->t3510.stop();
-      m_timers->t3517.stop();
-      m_timers->t3521.stop();
+        m_timers->t3510.stop();
+        m_timers->t3517.stop();
+        m_timers->t3521.stop();
     };
 
     m_timers->t3520.stop();
@@ -45,9 +52,9 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto receivedAutn = receivedEap.attributes.getAutn();
     auto receivedKdf = receivedEap.attributes.getKdf();
 
-    m_logger->debug("received at_rand: %s", receivedRand.toHexString().c_str());
-    m_logger->debug("received at_mac: %s", receivedMac.toHexString().c_str());
-    m_logger->debug("received at_autn: %s", receivedAutn.toHexString().c_str());
+    // m_logger->debug("received at_rand: %s", receivedRand.toHexString().c_str());
+    // m_logger->debug("received at_mac: %s", receivedMac.toHexString().c_str());
+    // m_logger->debug("received at_autn: %s", receivedAutn.toHexString().c_str());
 
     // Derive keys
     if (USE_SQN_HACK)
@@ -61,19 +68,19 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand).ak;
-        m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
+        m_storage.m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
     }
 
-    auto milenage = calculateMilenage(m_sqn, receivedRand);
+    auto milenage = calculateMilenage(m_storage.m_sqn, receivedRand);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
 
-    auto sqnXorAk = OctetString::Xor(m_sqn, milenageAk);
+    auto sqnXorAk = OctetString::Xor(m_storage.m_sqn, milenageAk);
     auto ckPrimeIkPrime =
-        keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(m_base->config->plmn), sqnXorAk);
+        keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(m_storage.m_currentPlmn), sqnXorAk);
     auto &ckPrime = ckPrimeIkPrime.first;
     auto &ikPrime = ckPrimeIkPrime.second;
 
@@ -86,17 +93,17 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto mk = keys::CalculateMk(ckPrime, ikPrime, m_base->config->supi.value());
     auto kaut = mk.subCopy(16, 32);
 
-    m_logger->debug("ueData.sqn: %s", m_sqn.toHexString().c_str());
-    m_logger->debug("ueData.op(C): %s", m_base->config->opC.toHexString().c_str());
-    m_logger->debug("ueData.K: %s", m_base->config->key.toHexString().c_str());
-    m_logger->debug("calculated res: %s", res.toHexString().c_str());
-    m_logger->debug("calculated ck: %s", ck.toHexString().c_str());
-    m_logger->debug("calculated ik: %s", ik.toHexString().c_str());
-    m_logger->debug("calculated milenageAk: %s", milenageAk.toHexString().c_str());
-    m_logger->debug("calculated milenageMac: %s", milenageMac.toHexString().c_str());
-    m_logger->debug("calculated ckPrime: %s", ckPrime.toHexString().c_str());
-    m_logger->debug("calculated ikPrime: %s", ikPrime.toHexString().c_str());
-    m_logger->debug("calculated kaut: %s", kaut.toHexString().c_str());
+    // m_logger->debug("ueData.sqn: %s", m_storage.m_sqn.toHexString().c_str());
+    // m_logger->debug("ueData.op(C): %s", m_base->config->opC.toHexString().c_str());
+    // m_logger->debug("ueData.K: %s", m_base->config->key.toHexString().c_str());
+    // m_logger->debug("calculated res: %s", res.toHexString().c_str());
+    // m_logger->debug("calculated ck: %s", ck.toHexString().c_str());
+    // m_logger->debug("calculated ik: %s", ik.toHexString().c_str());
+    // m_logger->debug("calculated milenageAk: %s", milenageAk.toHexString().c_str());
+    // m_logger->debug("calculated milenageMac: %s", milenageMac.toHexString().c_str());
+    // m_logger->debug("calculated ckPrime: %s", ckPrime.toHexString().c_str());
+    // m_logger->debug("calculated ikPrime: %s", ikPrime.toHexString().c_str());
+    // m_logger->debug("calculated kaut: %s", kaut.toHexString().c_str());
 
     // Control received KDF
     if (!IGNORE_CONTROLS_FAILURES && receivedKdf != 1)
@@ -106,7 +113,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         nas::AuthenticationReject resp;
         resp.eapMessage = nas::IEEapMessage{};
         resp.eapMessage->eap = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-            eap::ESubType::AKA_AUTHENTICATION_REJECT);
+                                                                  eap::ESubType::AKA_AUTHENTICATION_REJECT);
 
         sendNasMessage(resp);
         return;
@@ -159,14 +166,14 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     if (expectedMac != receivedMac)
     {
         m_logger->err("AT_MAC failure in EAP AKA'. expected: %s received: %s", expectedMac.toHexString().c_str(),
-            receivedMac.toHexString().c_str());
+                      receivedMac.toHexString().c_str());
 
         if (!IGNORE_CONTROLS_FAILURES)
         {
             ueRejectionTimers();
 
             auto eapResponse = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-                eap::ESubType::AKA_CLIENT_ERROR);
+                                                                  eap::ESubType::AKA_CLIENT_ERROR);
             eapResponse->attributes.putClientErrorCode(0);
 
             nas::AuthenticationReject response;
@@ -182,25 +189,25 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto kAusf = keys::CalculateKAusfForEapAkaPrime(mk);
     m_logger->debug("kAusf: %s", kAusf.toHexString().c_str());
 
-    m_nonCurrentNsCtx = NasSecurityContext{};
-    m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
-    m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-    m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
-    m_nonCurrentNsCtx->keys.res = std::move(res);
-    m_nonCurrentNsCtx->keys.resStar = {};
-    m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
-    m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
+    m_storage.m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
+    m_storage.m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
+    m_storage.m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
+    m_storage.m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
+    m_storage.m_nonCurrentNsCtx->keys.res = std::move(res);
+    m_storage.m_nonCurrentNsCtx->keys.resStar = {};
+    m_storage.m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
+    m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-    keys::DeriveKeysSeafAmf(*m_base->config, *m_nonCurrentNsCtx);
+    keys::DeriveKeysSeafAmf(*m_base->config, m_storage.m_currentPlmn, *m_storage.m_nonCurrentNsCtx);
 
-    m_logger->debug("kSeaf: %s", m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
-    m_logger->debug("kAmf: %s", m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+    // m_logger->debug("kSeaf: %s", m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
+    // m_logger->debug("kAmf: %s", m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
     // Send Response
     {
         auto *akaPrimeResponse =
             new eap::EapAkaPrime(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CHALLENGE);
-        akaPrimeResponse->attributes.putRes(m_nonCurrentNsCtx->keys.res);
+        akaPrimeResponse->attributes.putRes(m_storage.m_nonCurrentNsCtx->keys.res);
         akaPrimeResponse->attributes.putMac(OctetString::FromSpare(16)); // Dummy mac for now
         akaPrimeResponse->attributes.putKdf(1);
 
@@ -221,9 +228,9 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
     auto sendFailure = [this](nas::EMmCause cause) {
-      nas::AuthenticationFailure resp;
-      resp.mmCause.value = cause;
-      sendNasMessage(resp);
+        nas::AuthenticationFailure resp{};
+        resp.mmCause.value = cause;
+        sendNasMessage(resp);
     };
 
     if (USE_SQN_HACK)
@@ -243,53 +250,54 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    m_logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
+    // m_logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
 
     if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), rand).ak;
-        m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
+        m_storage.m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
     }
 
-    auto milenage = calculateMilenage(m_sqn, rand);
+    auto milenage = calculateMilenage(m_storage.m_sqn, rand);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto ckIk = OctetString::Concat(ck, ik);
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
-    auto sqnXorAk = OctetString::Xor(m_sqn, milenageAk);
-    auto snn = keys::ConstructServingNetworkName(m_base->config->plmn);
+    auto sqnXorAk = OctetString::Xor(m_storage.m_sqn, milenageAk);
+    auto snn = keys::ConstructServingNetworkName(m_storage.m_currentPlmn);
 
-    m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
-        ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
-        milenageMac.toHexString().c_str());
-    m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_sqn.toHexString().c_str());
+    // m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
+    //                ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
+    //                milenageMac.toHexString().c_str());
+    // m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_storage.m_sqn.toHexString().c_str());
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
 
     if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes::OK)
     {
         // Create new partial native NAS security context and continue with key derivation
-        m_nonCurrentNsCtx = NasSecurityContext{};
-        m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
-        m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_nonCurrentNsCtx->keys.rand = rand.copy();
-        m_nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
-        m_nonCurrentNsCtx->keys.res = std::move(res);
-        m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
-        m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
+        m_storage.m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
+        m_storage.m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
+        m_storage.m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
+        m_storage.m_nonCurrentNsCtx->keys.rand = rand.copy();
+        m_storage.m_nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
+        m_storage.m_nonCurrentNsCtx->keys.res = std::move(res);
+        m_storage.m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+        m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, *m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, m_storage.m_currentPlmn, *m_storage.m_nonCurrentNsCtx);
 
-        m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]", m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
-            m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
-            m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+        // m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
+        //                m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
+        //                m_storage.m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
+        //                m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
         // Send response
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
-        resp.authenticationResponseParameter->rawData = m_nonCurrentNsCtx->keys.resStar.copy();
+        resp.authenticationResponseParameter->rawData = m_storage.m_nonCurrentNsCtx->keys.resStar.copy();
         sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
@@ -311,7 +319,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 void NasMm::receiveAuthenticationResult(const nas::AuthenticationResult &msg)
 {
     if (msg.abba.has_value())
-        m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
+        m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
 
     if (msg.eapMessage.eap->code == eap::ECode::SUCCESS)
         receiveEapSuccessMessage(*msg.eapMessage.eap);
@@ -336,23 +344,31 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
 {
     m_logger->err("Authentication Reject received.");
 
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap->code != eap::ECode::FAILURE)
     {
-        if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
-        {
-            m_storedGuti = {};
-            m_taiList = {};
-            m_lastVisitedRegisteredTai = {};
-            m_currentNsCtx = {};
-            m_nonCurrentNsCtx = {};
-
-            receiveEapFailureMessage(*msg.eapMessage->eap);
-        }
-        else
-        {
-            m_logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");
-        }
+        m_logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");
+        return;
     }
+
+    // The UE shall set the update status to 5U3 ROAMING NOT ALLOWED,
+    switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+    // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI. The USIM shall be considered invalid
+    // until switching off the UE or the UICC containing the USIM is removed
+    m_storage.m_storedGuti = {};
+    m_storage.m_lastVisitedRegisteredTai = {};
+    m_storage.m_taiList = {};
+    m_storage.m_currentNsCtx = {};
+    m_storage.m_nonCurrentNsCtx = {};
+    m_storage.invalidateSim();
+    // The UE shall abort any 5GMM signalling procedure, stop any of the timers T3510, T3516, T3517, T3519 or T3521 (if
+    // they were running) ..
+    m_timers->t3510.stop();
+    m_timers->t3516.stop();
+    m_timers->t3517.stop();
+    m_timers->t3519.stop();
+    m_timers->t3521.stop();
+    // .. and enter state 5GMM-DEREGISTERED.
+    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 }
 
 void NasMm::receiveEapSuccessMessage(const eap::Eap &eap)
@@ -363,7 +379,7 @@ void NasMm::receiveEapSuccessMessage(const eap::Eap &eap)
 void NasMm::receiveEapFailureMessage(const eap::Eap &eap)
 {
     m_logger->err("EAP failure received. Deleting non-current NAS security context");
-    m_nonCurrentNsCtx = {};
+    m_storage.m_nonCurrentNsCtx = {};
 }
 
 void NasMm::receiveEapResponseMessage(const eap::Eap &eap)
@@ -390,7 +406,7 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     if (receivedMAC != mac)
     {
         m_logger->err("AUTN validation MAC mismatch. expected: %s received: %s", mac.toHexString().c_str(),
-            receivedMAC.toHexString().c_str());
+                      receivedMAC.toHexString().c_str());
         return EAutnValidationRes::MAC_FAILURE;
     }
 
@@ -428,5 +444,4 @@ crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, cons
     return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, m_base->config->amf);
 }
 
-
-}
+} // namespace nr::ue

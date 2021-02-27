@@ -47,7 +47,7 @@ enum class OpType
 struct SessionConfig
 {
     nas::EPduSessionType type{};
-    std::optional<SliceSupport> sNssai{};
+    std::optional<SingleSlice> sNssai{};
     std::optional<std::string> apn{};
 };
 
@@ -55,20 +55,26 @@ struct UeConfig
 {
     /* Read from config file */
     std::optional<Supi> supi{};
-    Plmn plmn{};
+    Plmn hplmn{};
     OctetString key{};
     OctetString opC{};
     OpType opType{};
     OctetString amf{};
     std::optional<std::string> imei{};
     std::optional<std::string> imeiSv{};
-    std::vector<SliceSupport> nssais{};
     SupportedAlgs supportedAlgs{};
     std::vector<std::string> gnbSearchList{};
     std::vector<SessionConfig> initSessions{};
 
+    /* Read from config file as well, but should be stored in non-volatile
+     * mobile storage and subject to change in runtime  */
+    struct Initials
+    {
+        NetworkSlice defaultConfiguredNssai{};
+        NetworkSlice configuredNssai{};
+    } initials{};
+
     /* Assigned by program */
-    bool autoBehaviour{};
     bool configureRouting{};
     bool prefixLogger{};
 
@@ -120,9 +126,9 @@ struct UeTimers
     nas::NasTimer t3444; /* MM - ... */
     nas::NasTimer t3445; /* MM - ... */
 
-    nas::NasTimer t3502; /* MM - ... */
+    nas::NasTimer t3502; /* MM - Initiation of the registration procedure, if still required */
     nas::NasTimer t3510; /* MM - Registration Request transmission timer */
-    nas::NasTimer t3511; /* MM - ... */
+    nas::NasTimer t3511; /* MM - Retransmission of the REGISTRATION REQUEST, if still required */
     nas::NasTimer t3512; /* MM - Periodic registration update timer */
     nas::NasTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
     nas::NasTimer t3517; /* MM - Service Request transmission timer */
@@ -226,7 +232,7 @@ struct PduSession
 
     nas::EPduSessionType sessionType{};
     std::optional<std::string> apn{};
-    std::optional<SliceSupport> sNssai{};
+    std::optional<SingleSlice> sNssai{};
 
     std::optional<nas::IEQoSRules> authorizedQoSRules{};
     std::optional<nas::IESessionAmbr> sessionAmbr{};

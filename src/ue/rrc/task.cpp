@@ -84,6 +84,15 @@ void UeRrcTask::onLoop()
         case NwUeNasToRrc::UPLINK_NAS_DELIVERY:
             deliverUplinkNas(std::move(w->nasPdu));
             break;
+        case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION:
+            m_state = ERrcState::RRC_IDLE;
+
+            auto *wr = new NwUeRrcToMr(NwUeRrcToMr::RRC_CONNECTION_RELEASE);
+            wr->cause = rls::ECause::RRC_LOCAL_RELEASE;
+            m_base->mrTask->push(wr);
+
+            m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
+            break;
         }
         break;
     }

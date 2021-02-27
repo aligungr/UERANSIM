@@ -17,13 +17,13 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
 
     if (msg.guti.has_value() && msg.guti->type == nas::EIdentityType::GUTI)
     {
-        m_storedGuti = msg.guti.value();
-        m_storedSuci = {};
+        m_storage.m_storedSuci = {};
+        m_storage.m_storedGuti = *msg.guti;
         m_timers->t3519.stop();
     }
 
     if (msg.taiList.has_value())
-        m_taiList = msg.taiList.value();
+        m_storage.m_taiList = msg.taiList.value();
 
     if (msg.configurationUpdateIndication.has_value())
     {

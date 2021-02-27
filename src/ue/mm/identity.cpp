@@ -42,22 +42,21 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
 
 nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
 {
-    if (m_timers->t3519.isRunning())
-        return m_storedSuci;
+    if (m_timers->t3519.isRunning() && m_storage.m_storedSuci.type != nas::EIdentityType::NO_IDENTITY)
+        return m_storage.m_storedSuci;
 
-    m_storedSuci = generateSuci();
-
+    m_storage.m_storedSuci = generateSuci();
     m_timers->t3519.start();
 
-    if (m_storedSuci.type == nas::EIdentityType::NO_IDENTITY)
+    if (m_storage.m_storedSuci.type == nas::EIdentityType::NO_IDENTITY)
         return {};
-    return m_storedSuci;
+    return m_storage.m_storedSuci;
 }
 
 nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
     auto &supi = m_base->config->supi;
-    auto &plmn = m_base->config->plmn;
+    auto &plmn = m_storage.m_currentPlmn;
 
     if (!supi.has_value())
         return {};
@@ -69,14 +68,6 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     }
 
     const std::string &imsi = supi->value;
-    int mccInImsi = utils::ParseInt(imsi.substr(0, 3));
-    int mncInImsi = utils::ParseInt(imsi.substr(3, plmn.isLongMnc ? 3 : 2));
-
-    if (mccInImsi != plmn.mcc || mncInImsi != plmn.mnc)
-    {
-        m_logger->err("MCC/MNC mismatch in SUCI generation.");
-        return {};
-    }
 
     nas::IE5gsMobileIdentity ret;
     ret.type = nas::EIdentityType::SUCI;
@@ -93,35 +84,33 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
 
 nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()
 {
-    if (m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
-        return m_storedGuti;
+    if (m_storage.m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
+        return m_storage.m_storedGuti;
+
+    auto suci = getOrGenerateSuci();
+    if (suci.type != nas::EIdentityType::NO_IDENTITY)
+    {
+        return suci;
+    }
+    else if (m_base->config->imei.has_value())
+    {
+        nas::IE5gsMobileIdentity res{};
+        res.type = nas::EIdentityType::IMEI;
+        res.value = *m_base->config->imei;
+        return res;
+    }
+    else if (m_base->config->imeiSv.has_value())
+    {
+        nas::IE5gsMobileIdentity res{};
+        res.type = nas::EIdentityType::IMEISV;
+        res.value = *m_base->config->imeiSv;
+        return res;
+    }
     else
     {
-        auto suci = getOrGenerateSuci();
-        if (suci.type != nas::EIdentityType::NO_IDENTITY)
-        {
-            return suci;
-        }
-        else if (m_base->config->imei.has_value())
-        {
-            nas::IE5gsMobileIdentity res{};
-            res.type = nas::EIdentityType::IMEI;
-            res.value = *m_base->config->imei;
-            return res;
-        }
-        else if (m_base->config->imeiSv.has_value())
-        {
-            nas::IE5gsMobileIdentity res{};
-            res.type = nas::EIdentityType::IMEISV;
-            res.value = *m_base->config->imeiSv;
-            return res;
-        }
-        else
-        {
-            nas::IE5gsMobileIdentity res{};
-            res.type = nas::EIdentityType::NO_IDENTITY;
-            return res;
-        }
+        nas::IE5gsMobileIdentity res{};
+        res.type = nas::EIdentityType::NO_IDENTITY;
+        return res;
     }
 }
 

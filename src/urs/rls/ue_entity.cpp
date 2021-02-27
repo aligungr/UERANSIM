@@ -113,6 +113,12 @@ void RlsUeEntity::startGnbSearch()
 
 void RlsUeEntity::onReceive(const InetAddress &address, const OctetString &pdu)
 {
+    if (ueToken == 0)
+    {
+        logWarn("Received PDU ignored, UE entity is not initialized");
+        return;
+    }
+
     RlsMessage msg{};
 
     auto res = Decode(OctetView{pdu}, msg, AppVersion);

@@ -160,7 +160,7 @@ void VTime::Encode(const VTime &value, OctetString &stream)
 
 VTime VTime::Decode(const OctetView &stream)
 {
-    VTime time;
+    VTime time{};
     time.year = stream.read();
     time.month = stream.read();
     time.day = stream.read();
@@ -178,28 +178,21 @@ VTime::VTime(const octet &year, const octet &month, const octet &day, const octe
 
 void VRejectedSNssai::Encode(const VRejectedSNssai &value, OctetString &stream)
 {
-    int totalLength = 0;
-    if (value.sd.has_value() && !value.sst.has_value())
-    {
-        // error: "sst must not be null if sd is not null" (currently ignoring)
-    }
-    if (value.sst.has_value())
-        totalLength++;
+    int totalLength = 1;
     if (value.sd.has_value())
         totalLength += 3;
 
     int octet = totalLength << 4 | static_cast<int>(value.cause);
     stream.appendOctet(octet);
 
-    if (value.sst.has_value())
-        stream.appendOctet(value.sst.value());
+    stream.appendOctet(value.sst);
     if (value.sd.has_value())
         stream.appendOctet3(value.sd.value());
 }
 
 VRejectedSNssai VRejectedSNssai::Decode(const OctetView &stream)
 {
-    VRejectedSNssai res;
+    VRejectedSNssai res{};
 
     int octet = stream.readI();
     res.cause = static_cast<ERejectedSNssaiCause>(octet & 0xF);
@@ -212,8 +205,7 @@ VRejectedSNssai VRejectedSNssai::Decode(const OctetView &stream)
     return res;
 }
 
-VRejectedSNssai::VRejectedSNssai(ERejectedSNssaiCause cause, const std::optional<octet> &sst,
-                                 const std::optional<octet3> &sd)
+VRejectedSNssai::VRejectedSNssai(ERejectedSNssaiCause cause, octet sst, const std::optional<octet3> &sd)
     : cause(cause), sst(sst), sd(sd)
 {
 }
@@ -243,7 +235,7 @@ VPartialServiceAreaList VPartialServiceAreaList::Decode(const OctetView &stream)
 {
     auto octet = stream.peek();
 
-    VPartialServiceAreaList res;
+    VPartialServiceAreaList res{};
     res.present = bits::BitRange8<5, 6>(octet);
     switch (res.present)
     {

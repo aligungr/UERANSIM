@@ -19,10 +19,10 @@ static const int N_UP_int_alg = 0x06;
 namespace nr::ue::keys
 {
 
-void DeriveKeysSeafAmf(const UeConfig &ueConfig, NasSecurityContext &nasSecurityContext)
+void DeriveKeysSeafAmf(const UeConfig &ueConfig, const Plmn& currentPlmn, NasSecurityContext &nasSecurityContext)
 {
     auto &keys = nasSecurityContext.keys;
-    std::string snn = ConstructServingNetworkName(ueConfig.plmn);
+    std::string snn = ConstructServingNetworkName(currentPlmn);
 
     OctetString s1[1];
     s1[0] = crypto::EncodeKdfString(snn);

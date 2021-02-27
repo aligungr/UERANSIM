@@ -289,7 +289,7 @@ struct GnbConfig
     int gnbIdLength{}; // 22..32 bit
     Plmn plmn{};
     int tac{};
-    std::vector<SliceSupport> nssais{};
+    NetworkSlice nssai{};
     std::vector<GnbAmfConfig> amfConfigs{};
     std::string portalIp{};
     std::string ngapIp{};
