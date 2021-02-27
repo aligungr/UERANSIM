@@ -109,9 +109,11 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
+            {"5u-state", ToJson(m_base->nasTask->mm->m_storage.m_uState)},
             {"sim-inserted", m_base->nasTask->mm->m_storage.isSimValid()},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage.m_storedSuci)},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_storage.m_storedGuti)},
+            {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
             {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         sendResult(msg.address, json.dumpYaml());
