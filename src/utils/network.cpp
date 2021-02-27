@@ -184,8 +184,12 @@ int Socket::receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddre
 void Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size) const
 {
     ssize_t rc = sendto(fd, buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
-    if (static_cast<size_t>(rc) != size)
-        throw LibError("sendto failed: ", errno);
+    if (rc == -1)
+    {
+        int err = errno;
+        if (err != EAGAIN)
+            throw LibError("sendto failed: ", errno);
+    }
 }
 
 bool Socket::hasFd() const
