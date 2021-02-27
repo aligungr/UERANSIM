@@ -31,6 +31,7 @@ void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 
 void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg)
 {
+    // TODO
     m_logger->err("EAP AKA' not implemented yet. Use 5G AKA instead");
     return;
 
