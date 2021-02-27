@@ -26,7 +26,7 @@ void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
 
     // 5.5.1.2.7 Abnormal cases in the UE
     // a) Timer T3346 is running.
-    if (m_timers->t3346.isRunning() && regType == nas::ERegistrationType::INITIAL_REGISTRATION)
+    if (m_timers->t3346.isRunning() && regType == nas::ERegistrationType::INITIAL_REGISTRATION && !hasEmergency())
     {
         // From 24.501: A UE configured with one or more access identities equal to 1, 2, or 11-15 applicable in the
         // selected PLMN as specified in subclause 4.5.2. Definition derived from 3GPP TS 22.261
@@ -129,7 +129,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
     m_storage.m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
     // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
     // PLMN code that is already in the list of "forbidden PLMNs". ..
-    if (m_lastRegistrationRequest->registrationType.registrationType != nas::ERegistrationType::EMERGENCY_REGISTRATION)
+    if (!hasEmergency())
     {
         utils::EraseWhere(m_storage.m_equivalentPlmnList.plmns, [this](auto &plmn) {
             return std::any_of(m_storage.m_forbiddenPlmnList.plmns.begin(), m_storage.m_forbiddenPlmnList.plmns.end(),
