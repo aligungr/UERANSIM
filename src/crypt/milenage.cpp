@@ -8,6 +8,7 @@
 
 #include "milenage.hpp"
 #include <crypt-ext/milenage.hpp>
+#include <stdexcept>
 
 namespace crypto::milenage
 {
