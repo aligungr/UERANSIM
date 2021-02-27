@@ -48,6 +48,13 @@ class MobileStorage
     NetworkSlice m_rejectedNssaiInPlmn{};
     NetworkSlice m_rejectedNssaiInTa{};
 
+    // NITZ related
+    std::optional<nas::IENetworkName> networkFullName{};
+    std::optional<nas::IENetworkName> networkShortName{};
+    std::optional<nas::IETimeZone> localTimeZone{};
+    std::optional<nas::IETimeZoneAndTime> universalTimeAndLocalTimeZone{};
+    std::optional<nas::IEDaylightSavingTime> networkDaylightSavingTime{};
+
   public:
     void initialize(bool hasSupi, const UeConfig::Initials &initials)
     {
