@@ -11,6 +11,7 @@
 #include <app/proc_table.hpp>
 #include <iostream>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <utils/common.hpp>

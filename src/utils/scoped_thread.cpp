@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <pthread.h>
+#include <stdexcept>
 
 struct Arguments
 {

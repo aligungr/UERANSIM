@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include <stdexcept>
 
 Supi Supi::Parse(const std::string &supi)
 {
