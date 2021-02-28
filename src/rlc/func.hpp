@@ -13,6 +13,7 @@
 
 #include <cassert>
 #include <functional>
+#include <stdexcept>
 
 namespace rlc::func
 {
