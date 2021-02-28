@@ -11,6 +11,7 @@
 #include <fstream>
 #include <ostream>
 #include <sstream>
+#include <stdexcept>
 #include <sys/types.h>
 #include <unistd.h>
 #include <utils/common.hpp>
