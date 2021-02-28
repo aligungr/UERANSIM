@@ -88,13 +88,13 @@ class NasMm
 
   private: /* Registration */
     void sendInitialRegistration(bool isEmergencyReg, bool dueToDereg);
-    void sendUpdatingRegistration(ERegUpdateCause updateCause);
+    void sendMobilityRegistration(ERegUpdateCause updateCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
-    void receiveUpdatingRegistrationAccept(const nas::RegistrationAccept &msg);
+    void receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
     void receiveInitialRegistrationReject(const nas::RegistrationReject &msg);
-    void receiveUpdatingRegistrationReject(const nas::RegistrationReject &msg);
+    void receiveMobilityRegistrationReject(const nas::RegistrationReject &msg);
     void handleCommonAbnormalRegFailure(nas::ERegistrationType regType);
 
   private: /* Authentication */

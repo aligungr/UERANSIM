@@ -59,7 +59,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
         {
             logExpired();
-            sendUpdatingRegistration(ERegUpdateCause::PERIODIC_REGISTRATION);
+            sendMobilityRegistration(ERegUpdateCause::PERIODIC_REGISTRATION);
         }
         break;
     }

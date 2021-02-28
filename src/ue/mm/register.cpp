@@ -101,7 +101,7 @@ void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
     m_timers->t3511.stop();
 }
 
-void NasMm::sendUpdatingRegistration(ERegUpdateCause updateCause)
+void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
 {
     if (m_rmState == ERmState::RM_DEREGISTERED)
     {
@@ -192,7 +192,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
         regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
         receiveInitialRegistrationAccept(msg);
     else
-        receiveUpdatingRegistrationAccept(msg);
+        receiveMobilityRegistrationAccept(msg);
 }
 
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
@@ -302,7 +302,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     m_logger->info("%s is successful", nas::utils::EnumToString(regType));
 }
 
-void NasMm::receiveUpdatingRegistrationAccept(const nas::RegistrationAccept &msg)
+void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg)
 {
     // "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI
     // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
@@ -421,7 +421,7 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
         receiveInitialRegistrationReject(msg);
     else
-        receiveUpdatingRegistrationReject(msg);
+        receiveMobilityRegistrationReject(msg);
 }
 
 void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
@@ -575,7 +575,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
     }
 }
 
-void NasMm::receiveUpdatingRegistrationReject(const nas::RegistrationReject &msg)
+void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg)
 {
     // TODO:
 
