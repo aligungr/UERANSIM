@@ -9,6 +9,7 @@
 #include "yaml_utils.hpp"
 #include "common.hpp"
 #include <yaml-cpp/yaml.h>
+#include <stdexcept>
 
 namespace yaml
 {

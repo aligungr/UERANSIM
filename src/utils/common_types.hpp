@@ -14,6 +14,7 @@
 #include <optional>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
 enum class EPagingDrx
 {

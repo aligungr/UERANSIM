@@ -12,6 +12,7 @@
 #include <app/proc_table.hpp>
 #include <gnb/gnb.hpp>
 #include <iostream>
+#include <stdexcept>
 #include <unistd.h>
 #include <unordered_map>
 #include <utils/common.hpp>

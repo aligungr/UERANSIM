@@ -9,6 +9,7 @@
 #include "eap.hpp"
 
 #include <memory>
+#include <stdexcept>
 
 OctetString eap::EapAttributes::getRand() const
 {

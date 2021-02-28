@@ -12,6 +12,7 @@
 #include <app/proc_table.hpp>
 #include <app/ue_ctl.hpp>
 #include <iostream>
+#include <stdexcept>
 #include <ue/ue.hpp>
 #include <unistd.h>
 #include <utils/common.hpp>

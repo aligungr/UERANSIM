@@ -7,6 +7,7 @@
 //
 
 #include "encode.hpp"
+#include <stdexcept>
 
 namespace nas
 {
