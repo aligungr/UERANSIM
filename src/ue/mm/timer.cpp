@@ -29,7 +29,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
             logExpired();
-            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, false);
+            sendInitialRegistration(false, false);
         }
         break;
     }
@@ -59,7 +59,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
         {
             logExpired();
-            sendRegistration(nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING, false);
+            sendUpdatingRegistration(ERegUpdateCause::PERIODIC_REGISTRATION);
         }
         break;
     }

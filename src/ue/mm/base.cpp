@@ -83,7 +83,7 @@ void NasMm::performMmCycle()
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
         if (!m_timers->t3346.isRunning())
-            sendRegistration(nas::ERegistrationType::INITIAL_REGISTRATION, false);
+            sendInitialRegistration(false, false);
         return;
     }
 
@@ -246,22 +246,6 @@ void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 void NasMm::setN1Capability(bool enabled)
 {
     // TODO
-}
-
-bool NasMm::hasEmergency()
-{
-    // Indicates emergency services are required (even if registered for normal initial registration)
-    // This happens if it 'has' or 'need' some emergency PDU Session, as well.
-
-    if (m_rmState == ERmState::RM_REGISTERED && m_registeredForEmergency)
-        return true;
-    if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest &&
-        m_lastRegistrationRequest->registrationType.registrationType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
-        return true;
-
-    // TODO: Other case which is an emergency PDU session is established, or need to be established (and wanted to be
-    //  established soon)
-    return false;
 }
 
 } // namespace nr::ue

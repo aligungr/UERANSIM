@@ -56,32 +56,13 @@ class NasMm
   public:
     NasMm(TaskBase *base, UeTimers *timers);
 
-  public:
-    /* Base */
+  public: /* Base */
     void onStart(NasSm *sm);
     void onQuit();
     void triggerMmCycle();
     void performMmCycle();
 
-    /* Radio */
-    void handlePlmnSearchResponse(const std::string &gnbName);
-    void handlePlmnSearchFailure();
-    void handleRrcConnectionSetup();
-    void handleRrcConnectionRelease();
-    void handleRadioLinkFailure();
-
-    /* Transport */
-    void sendNasMessage(const nas::PlainMmMessage &msg);
-    void receiveNasMessage(const nas::NasMessage &msg);
-
-    /* De-registration */
-    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
-
-    /* Timer */
-    void onTimerExpire(nas::NasTimer &timer);
-
-  private:
-    /* Base */
+  private: /* Base */
     void switchMmState(EMmState state, EMmSubState subState);
     void switchRmState(ERmState state);
     void switchCmState(ECmState state);
@@ -91,22 +72,30 @@ class NasMm
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
     void setN1Capability(bool enabled);
-    bool hasEmergency();
 
-    /* Transport */
+  public: /* Transport */
+    void sendNasMessage(const nas::PlainMmMessage &msg);
+    void receiveNasMessage(const nas::NasMessage &msg);
+
+  private: /* Transport */
     void sendMmStatus(nas::EMmCause cause);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
     void receiveMmCause(const nas::IE5gMmCause &msg);
 
-    /* Registration */
-    void sendRegistration(nas::ERegistrationType regType, bool dueToDereg);
+  private: /* Registration */
+    void sendInitialRegistration(bool isEmergencyReg, bool dueToDereg);
+    void sendUpdatingRegistration(ERegUpdateCause updateCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
+    void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
+    void receiveUpdatingRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveRegistrationReject(const nas::RegistrationReject &msg);
+    void receiveInitialRegistrationReject(const nas::RegistrationReject &msg);
+    void receiveUpdatingRegistrationReject(const nas::RegistrationReject &msg);
     void handleCommonAbnormalRegFailure(nas::ERegistrationType regType);
 
-    /* Authentication */
+  private: /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);
     void receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg);
     void receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg);
@@ -120,33 +109,50 @@ class NasMm
     bool checkSqn(const OctetString &sqn);
     crypto::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand);
 
-    /* Security */
+  private: /* Security */
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);
     nas::IEUeSecurityCapability createSecurityCapabilityIe();
 
-    /* Configuration */
-    void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
+  public: /* De-registration */
+    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
 
-    /* De-registration */
+  private: /* De-registration */
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
 
-    /* Identity */
+  private: /* Configuration */
+    void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
+
+  private: /* Identity */
     void receiveIdentityRequest(const nas::IdentityRequest &msg);
     nas::IE5gsMobileIdentity getOrGenerateSuci();
     nas::IE5gsMobileIdentity generateSuci();
     nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
-    /* Service */
+  private: /* Service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
 
-    /* Network Slicing */
+  private: /* Network Slicing */
     NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
     void handleNetworkSlicingSubscriptionChange();
 
-    /* Radio */
+  public: /* Radio */
+    void handlePlmnSearchResponse(const std::string &gnbName);
+    void handlePlmnSearchFailure();
+    void handleRrcConnectionSetup();
+    void handleRrcConnectionRelease();
+    void handleRadioLinkFailure();
+
+  private: /* Radio */
     void localReleaseConnection();
+
+  private: /* Access Control */
+    bool isHighPriority();
+    bool hasEmergency();
+
+  public: /* Timer */
+    void onTimerExpire(nas::NasTimer &timer);
 };
 
 } // namespace nr::ue

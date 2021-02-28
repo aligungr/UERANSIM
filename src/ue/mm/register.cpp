@@ -16,36 +16,37 @@
 namespace nr::ue
 {
 
-void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
+void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
 {
-    if (m_mmState != EMmState::MM_DEREGISTERED)
+    if (m_rmState != ERmState::RM_DEREGISTERED)
     {
-        m_logger->warn("Registration could not be triggered. UE is not in MM-DEREGISTERED state.");
+        m_logger->warn("Registration could not be triggered. UE is not in RM-DEREGISTERED state.");
         return;
     }
 
     // 5.5.1.2.7 Abnormal cases in the UE
     // a) Timer T3346 is running.
-    if (m_timers->t3346.isRunning() && regType == nas::ERegistrationType::INITIAL_REGISTRATION && !hasEmergency())
+    if (m_timers->t3346.isRunning() && !isEmergencyReg && !hasEmergency())
     {
         // From 24.501: A UE configured with one or more access identities equal to 1, 2, or 11-15 applicable in the
         // selected PLMN as specified in subclause 4.5.2. Definition derived from 3GPP TS 22.261
-        bool isHighPriority = false; // TODO: Assign this property properly.
+        bool highPriority = isHighPriority();
 
         // The UE shall not start the registration procedure for initial registration in the following case
-        if (!isHighPriority && !dueToDereg)
+        if (!highPriority && !dueToDereg)
         {
             m_logger->debug("Initial registration canceled, T3346 is running");
             return;
         }
     }
 
-    m_logger->debug("Sending %s", nas::utils::EnumToString(regType));
+    m_logger->debug("Sending %s",
+                    nas::utils::EnumToString(isEmergencyReg ? nas::ERegistrationType::EMERGENCY_REGISTRATION
+                                                            : nas::ERegistrationType::INITIAL_REGISTRATION));
 
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
-    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
-        m_storage.m_currentNsCtx = {};
+    m_storage.m_currentNsCtx = {};
 
     // Switch MM state
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
@@ -59,27 +60,86 @@ void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
 
     // Create registration request
     auto request = std::make_unique<nas::RegistrationRequest>();
-    request->registrationType = nas::IE5gsRegistrationType{followOn, regType};
-    if (m_storage.m_currentNsCtx)
-    {
-        request->nasKeySetIdentifier.tsc = m_storage.m_currentNsCtx->tsc;
-        request->nasKeySetIdentifier.ksi = m_storage.m_currentNsCtx->ngKsi;
-    }
+    request->registrationType =
+        nas::IE5gsRegistrationType{followOn, isEmergencyReg ? nas::ERegistrationType::EMERGENCY_REGISTRATION
+                                                            : nas::ERegistrationType::INITIAL_REGISTRATION};
+
+    // TODO: Wireshark cannot decode the message if this IE is used, check later
+    // request->networkSlicingIndication = nas::IENetworkSlicingIndication{};
+    // request->networkSlicingIndication->dcni =
+    //    isDefaultNssai ? nas::EDefaultConfiguredNssaiIndication::CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
+    //                   : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
+
+    // Assign MM capability
+    request->mmCapability = nas::IE5gMmCapability{};
+    request->mmCapability->s1Mode = nas::EEpcNasSupported::NOT_SUPPORTED;
+    request->mmCapability->hoAttach = nas::EHandoverAttachSupported::NOT_SUPPORTED;
+    request->mmCapability->lpp = nas::ELtePositioningProtocolCapability::NOT_SUPPORTED;
+
+    // Assign other fields
+    request->mobileIdentity = getOrGeneratePreferredId();
+    request->lastVisitedRegisteredTai = m_storage.m_lastVisitedRegisteredTai;
     request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
     request->updateType =
         nas::IE5gsUpdateType(nas::ESmsRequested::NOT_SUPPORTED, nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED);
 
-#if 0
-    // TODO: Wireshark cannot decode the message if this IE is used, check later
-    request->networkSlicingIndication = nas::IENetworkSlicingIndication{};
-    request->networkSlicingIndication->dcni =
-        isDefaultNssai ? nas::EDefaultConfiguredNssaiIndication::CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
-                       : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
-#endif
+    // Assign ngKSI
+    if (m_storage.m_currentNsCtx)
+    {
+        request->nasKeySetIdentifier.tsc = m_storage.m_currentNsCtx->tsc;
+        request->nasKeySetIdentifier.ksi = m_storage.m_currentNsCtx->ngKsi;
+    }
+
+    // Send the message
+    sendNasMessage(*request);
+    m_lastRegistrationRequest = std::move(request);
+
+    // Process timers
+    m_timers->t3510.start();
+    m_timers->t3502.stop();
+    m_timers->t3511.stop();
+}
+
+void NasMm::sendUpdatingRegistration(ERegUpdateCause updateCause)
+{
+    if (m_rmState == ERmState::RM_DEREGISTERED)
+    {
+        m_logger->warn("Registration updating could not be triggered. UE is in RM-DEREGISTERED state.");
+        return;
+    }
+
+    m_logger->debug("Sending %s",
+                    nas::utils::EnumToString(updateCause == ERegUpdateCause::PERIODIC_REGISTRATION
+                                                 ? nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING
+                                                 : nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING));
+
+    // Switch state
+    switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
+
+    // Prepare FOR pending field
+    nas::EFollowOnRequest followOn = nas::EFollowOnRequest::FOR_PENDING;
+
+    // Prepare requested NSSAI
+    bool isDefaultNssai{};
+    auto requestedNssai = makeRequestedNssai(isDefaultNssai);
+
+    // Create registration request
+    auto request = std::make_unique<nas::RegistrationRequest>();
+    request->registrationType =
+        nas::IE5gsRegistrationType{followOn, updateCause == ERegUpdateCause::PERIODIC_REGISTRATION
+                                                 ? nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING
+                                                 : nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING};
+
+    // Assign update type
+    request->updateType = nas::IE5gsUpdateType{};
+    request->updateType->smsRequested = nas::ESmsRequested::NOT_SUPPORTED;
+    request->updateType->ngRanRcu = updateCause == ERegUpdateCause::RADIO_CAP_CHANGE
+                                        ? nas::ENgRanRadioCapabilityUpdate::NEEDED
+                                        : nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED;
 
     // MM capability should be included if it is not a periodic registration
-    if (regType != nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
+    if (updateCause != ERegUpdateCause::PERIODIC_REGISTRATION)
     {
         request->mmCapability = nas::IE5gMmCapability{};
         request->mmCapability->s1Mode = nas::EEpcNasSupported::NOT_SUPPORTED;
@@ -87,19 +147,26 @@ void NasMm::sendRegistration(nas::ERegistrationType regType, bool dueToDereg)
         request->mmCapability->lpp = nas::ELtePositioningProtocolCapability::NOT_SUPPORTED;
     }
 
-    // Assign mobile identity
+    // Assign other fields
+    request->lastVisitedRegisteredTai = m_storage.m_lastVisitedRegisteredTai;
     request->mobileIdentity = getOrGeneratePreferredId();
+    request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
+    request->ueSecurityCapability = createSecurityCapabilityIe();
 
-    // Assign last visited registered TAI if available
-    if (m_storage.m_lastVisitedRegisteredTai.has_value())
-        request->lastVisitedRegisteredTai = *m_storage.m_lastVisitedRegisteredTai;
+    // TODO: Wireshark cannot decode the message if this IE is used, check later
+    // request->networkSlicingIndication = nas::IENetworkSlicingIndication{};
+    // request->networkSlicingIndication->dcni =
+    //    isDefaultNssai ? nas::EDefaultConfiguredNssaiIndication::CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
+    //                   : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
 
+    // Send the message
+    sendNasMessage(*request);
+    m_lastRegistrationRequest = std::move(request);
+
+    // Process timers
     m_timers->t3510.start();
     m_timers->t3502.stop();
     m_timers->t3511.stop();
-
-    sendNasMessage(*request);
-    m_lastRegistrationRequest = std::move(request);
 }
 
 void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
@@ -120,6 +187,16 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
         return;
     }
 
+    auto regType = m_lastRegistrationRequest->registrationType.registrationType;
+    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
+        regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
+        receiveInitialRegistrationAccept(msg);
+    else
+        receiveUpdatingRegistrationAccept(msg);
+}
+
+void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
+{
     // Store the TAI list as a registration area
     m_storage.m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
     // Store the service area list
@@ -223,12 +300,13 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
         m_registeredForEmergency = false;
     else if (regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
         m_registeredForEmergency = true;
-    else
-    {
-        // Other registration types will *not* alter 'is registered for emergency' state
-    }
 
     m_logger->info("%s is successful", nas::utils::EnumToString(regType));
+}
+
+void NasMm::receiveUpdatingRegistrationAccept(const nas::RegistrationAccept &msg)
+{
+    // TODO
 }
 
 void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
@@ -244,6 +322,18 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
     m_logger->err("%s failed [%s]", nas::utils::EnumToString(regType), nas::utils::EnumToString(cause));
+
+    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
+        regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
+        receiveInitialRegistrationReject(msg);
+    else
+        receiveUpdatingRegistrationReject(msg);
+}
+
+void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
+{
+    auto cause = msg.mmCause.value;
+    auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
     if (msg.eapMessage.has_value())
     {
@@ -389,10 +479,13 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
             handleAbnormalCase();
         }
     }
-    else
-    {
-        // TODO
-    }
+}
+
+void NasMm::receiveUpdatingRegistrationReject(const nas::RegistrationReject &msg)
+{
+    // TODO:
+
+    // todo handleCommonAbnormalRegFailure ikisi için de ortak mı diye özellikle bakılacak
 }
 
 void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType)

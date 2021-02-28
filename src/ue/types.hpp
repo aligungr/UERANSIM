@@ -366,6 +366,13 @@ struct UePduSessionInfo
     std::string address{};
 };
 
+enum class ERegUpdateCause
+{
+    UNSPECIFIED,
+    PERIODIC_REGISTRATION,
+    RADIO_CAP_CHANGE
+};
+
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
