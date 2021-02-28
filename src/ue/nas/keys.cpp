@@ -8,6 +8,7 @@
 
 #include "keys.hpp"
 #include <crypt/crypt.hpp>
+#include <stdexcept>
 
 static const int N_NAS_enc_alg = 0x01;
 static const int N_NAS_int_alg = 0x02;
