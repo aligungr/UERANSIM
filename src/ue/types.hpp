@@ -368,9 +368,56 @@ struct UePduSessionInfo
 
 enum class ERegUpdateCause
 {
+    // unspecified cause
     UNSPECIFIED,
-    PERIODIC_REGISTRATION,
-    RADIO_CAP_CHANGE
+    // when the UE detects entering a tracking area that is not in the list of tracking areas that the UE previously
+    // registered in the AMF
+    ENTER_UNLISTED_TRACKING_AREA,
+    // when the periodic registration updating timer T3512 expires
+    T3512_EXPIRY,
+    // when the UE receives a CONFIGURATION UPDATE COMMAND message indicating "registration requested" in the
+    // Configuration update indication IE as specified in subclauses 5.4.4.3;
+    CONFIGURATION_UPDATE,
+    // when the UE in state 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE either receives a paging or the UE receives a
+    // NOTIFICATION message with access type indicating 3GPP access over the non-3GPP access for PDU sessions associated
+    // with 3GPP access
+    PAGING_OR_NOTIFICATION,
+    // upon inter-system change from S1 mode to N1 mode
+    INTER_SYSTEM_CHANGE_S1_TO_N1,
+    // when the UE receives an indication of "RRC Connection failure" from the lower layers and does not have signalling
+    // pending (i.e. when the lower layer requests NAS signalling connection recovery) except for the case specified in
+    // subclause 5.3.1.4;
+    // when the UE receives a fallback indication from the lower layers and does not have signalling pending (i.e. when
+    // the lower layer requests NAS signalling connection recovery, see subclauses 5.3.1.4 and 5.3.1.2);
+    CONNECTION_RECOVERY,
+    // when the UE changes the 5GMM capability or the S1 UE network capability or both
+    MM_OR_S1_CAPABILITY_CHANGE,
+    // when the UE's usage setting changes
+    USAGE_SETTING_CHANGE,
+    // when the UE needs to change the slice(s) it is currently registered to
+    SLICE_CHANGE,
+    // when the UE changes the UE specific DRX parameters
+    DRX_CHANGE,
+    // when the UE in state 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE receives a request from the upper layers to
+    // establish an emergency PDU session or perform emergency services fallback
+    EMERGENCY_CASE,
+    // when the UE needs to register for SMS over NAS, indicate a change in the requirements to use SMS over NAS, or
+    // de-register from SMS over NAS;
+    SMS_OVER_NAS_CHANGE,
+    // when the UE needs to indicate PDU session status to the network after performing a local release of PDU
+    // session(s) as specified in subclauses 6.4.1.5 and 6.4.3.5;
+    PS_STATUS_INFORM,
+    // when the UE in 5GMM-IDLE mode changes the radio capability for NG-RAN
+    RADIO_CAP_CHANGE,
+    // when the UE needs to request new LADN information
+    NEW_LADN_NEEDED,
+    // when the UE needs to request the use of MICO mode or needs to stop the use of MICO mode
+    MICO_MODE_CHANGE,
+    // when the UE in 5GMM-CONNECTED mode with RRC inactive indication enters a cell in the current registration area
+    // belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN;
+    ENTER_EQUIVALENT_PLMN_CELL,
+    // when the UE receives a SERVICE REJECT message with the 5GMM cause value set to #28 "Restricted service area".
+    RESTRICTED_SERVICE_AREA
 };
 
 Json ToJson(const ECmState &state);
@@ -380,5 +427,6 @@ Json ToJson(const EMmSubState &state);
 Json ToJson(const E5UState &state);
 Json ToJson(const UeConfig &v);
 Json ToJson(const UeTimers &v);
+Json ToJson(const ERegUpdateCause &v);
 
 } // namespace nr::ue

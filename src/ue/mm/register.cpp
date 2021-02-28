@@ -109,10 +109,24 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
         return;
     }
 
-    m_logger->debug("Sending %s",
-                    nas::utils::EnumToString(updateCause == ERegUpdateCause::PERIODIC_REGISTRATION
+    // 5.5.1.3.7 Abnormal cases in the UE
+    // a) Timer T3346 is running.
+    if (m_timers->t3346.isRunning())
+    {
+        bool allowed = m_cmState == ECmState::CM_CONNECTED || updateCause == ERegUpdateCause::PAGING_OR_NOTIFICATION ||
+                       isHighPriority() || hasEmergency() || updateCause == ERegUpdateCause::CONFIGURATION_UPDATE;
+        if (!allowed)
+        {
+            m_logger->debug("Registration updating canceled, T3346 is running");
+            return;
+        }
+    }
+
+    m_logger->debug("Sending %s with update cause [%s]",
+                    nas::utils::EnumToString(updateCause == ERegUpdateCause::T3512_EXPIRY
                                                  ? nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING
-                                                 : nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING));
+                                                 : nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING),
+                    ToJson(updateCause).str().c_str());
 
     // Switch state
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
@@ -127,7 +141,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     // Create registration request
     auto request = std::make_unique<nas::RegistrationRequest>();
     request->registrationType =
-        nas::IE5gsRegistrationType{followOn, updateCause == ERegUpdateCause::PERIODIC_REGISTRATION
+        nas::IE5gsRegistrationType{followOn, updateCause == ERegUpdateCause::T3512_EXPIRY
                                                  ? nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING
                                                  : nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING};
 
@@ -139,7 +153,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
                                         : nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED;
 
     // MM capability should be included if it is not a periodic registration
-    if (updateCause != ERegUpdateCause::PERIODIC_REGISTRATION)
+    if (updateCause != ERegUpdateCause::T3512_EXPIRY)
     {
         request->mmCapability = nas::IE5gMmCapability{};
         request->mmCapability->s1Mode = nas::EEpcNasSupported::NOT_SUPPORTED;
@@ -452,7 +466,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
                 m_regCounter = 5;
         }
 
-        handleCommonAbnormalRegFailure(regType);
+        handleAbnormalInitialRegFailure(regType);
     };
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
@@ -568,7 +582,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
         else
         {
-            // Spec perseveringly says that upper layers should be informed as well, for additional action for emergency
+            // Spec says that upper layers should be informed as well, for additional action for emergency
             // registration, but no need for now.
             handleAbnormalCase();
         }
@@ -577,12 +591,165 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
 void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg)
 {
-    // TODO:
+    auto cause = msg.mmCause.value;
+    auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
-    // todo handleCommonAbnormalRegFailure ikisi için de ortak mı diye özellikle bakılacak
+    if (msg.eapMessage.has_value())
+    {
+        if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
+            receiveEapFailureMessage(*msg.eapMessage->eap);
+        else
+            m_logger->warn("Network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
+                           nas::utils::EnumToString(msg.eapMessage->eap->code));
+    }
+
+    switchRmState(ERmState::RM_DEREGISTERED);
+
+    auto handleAbnormalCase = [this, regType, cause]() {
+        m_logger->debug("Handling Registration Reject abnormal case");
+
+        // Upon reception of the 5GMM causes #95, #96, #97, #99 and #111 the UE should set the registration attempt
+        // counter to 5.
+        int n = static_cast<int>(cause);
+        if (n == 95 || n == 96 || n == 97 || n == 99 || n == 111)
+            m_regCounter = 5;
+
+        handleAbnormalMobilityRegFailure(regType);
+    };
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+        cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+        cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    {
+        switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+    }
+
+    if (cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED ||
+        cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    {
+        switchUState(E5UState::U2_NOT_UPDATED);
+    }
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+        cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+        cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED ||
+        cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    {
+        m_storage.m_storedGuti = {};
+        m_storage.m_lastVisitedRegisteredTai = {};
+        m_storage.m_taiList = {};
+        m_storage.m_currentNsCtx = {};
+        m_storage.m_nonCurrentNsCtx = {};
+    }
+
+    if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
+    {
+        m_storage.m_currentNsCtx = {};
+        m_storage.m_nonCurrentNsCtx = {};
+    }
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+    {
+        m_storage.invalidateSim();
+    }
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
+        cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+    }
+
+    if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+    }
+
+    if (cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+        cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+    }
+
+    if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    {
+        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+        setN1Capability(false);
+    }
+
+    if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+    }
+
+    if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
+        cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||
+        cause == nas::EMmCause::N1_MODE_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    {
+        m_regCounter = 0;
+    }
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
+    {
+        m_storage.m_equivalentPlmnList = {};
+    }
+
+    if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+    {
+        // TODO add to forbidden tai
+    }
+
+    if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    {
+        nas::utils::AddToPlmnList(m_storage.m_forbiddenPlmnList, nas::utils::PlmnFrom(m_storage.m_currentPlmn));
+    }
+
+    if (cause == nas::EMmCause::CONGESTION)
+    {
+        if (msg.t3346value.has_value() && nas::utils::HasValue(*msg.t3346value))
+        {
+            if (!hasEmergency())
+            {
+                switchUState(E5UState::U2_NOT_UPDATED);
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
+            }
+
+            m_timers->t3346.stop();
+            if (msg.sht != nas::ESecurityHeaderType::NOT_PROTECTED)
+                m_timers->t3346.start(*msg.t3346value);
+            else
+                m_timers->t3346.start(nas::IEGprsTimer2{5});
+        }
+        else
+        {
+            handleAbnormalCase();
+        }
+    }
+
+    if (cause != nas::EMmCause::ILLEGAL_UE && cause != nas::EMmCause::ILLEGAL_ME &&
+        cause != nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED && cause != nas::EMmCause::PLMN_NOT_ALLOWED &&
+        cause != nas::EMmCause::TA_NOT_ALLOWED && cause != nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA &&
+        cause != nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA && cause != nas::EMmCause::CONGESTION &&
+        cause != nas::EMmCause::N1_MODE_NOT_ALLOWED && cause != nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED &&
+        cause != nas::EMmCause::IMPLICITY_DEREGISTERED &&
+        cause != nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    {
+        handleAbnormalCase();
+    }
+
+    if (hasEmergency())
+    {
+        // Spec says that upper layers should be informed as well, for additional action for emergency
+        // registration, but no need for now.
+        handleAbnormalCase();
+    }
 }
 
-void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType)
+void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
 {
     // Timer T3510 shall be stopped if still running
     m_timers->t3510.stop();
@@ -623,6 +790,56 @@ void NasMm::handleCommonAbnormalRegFailure(nas::ERegistrationType regType)
         // a PLMN selection according to 3GPP TS 23.122 [5].
         switchUState(E5UState::U2_NOT_UPDATED);
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
+    }
+}
+
+void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
+{
+    // "Timer T3510 shall be stopped if still running"
+    m_timers->t3510.stop();
+
+    // "The registration attempt counter shall be incremented, unless it was already set to 5."
+    if (m_regCounter != 5)
+        m_regCounter++;
+
+    // "If the registration attempt counter is less than 5:"
+    if (m_regCounter < 5)
+    {
+        bool includedInTaiList = false; // TODO
+
+        // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
+        // to 5U1 UPDATED"
+        if (!includedInTaiList || m_storage.m_uState != E5UState::U1_UPDATED)
+        {
+            // "The UE shall start timer T3511, shall set the 5GS update status to 5U2 NOT UPDATED and change to state
+            // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE. When timer T3511 expires and the registration update
+            // procedure is triggered again"
+            m_timers->t3511.start(); // todo
+            switchUState(E5UState::U2_NOT_UPDATED);
+            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
+        }
+
+        // "If the TAI of the current serving cell is included in the TAI list, the 5GS update status is equal to 5U1
+        // UPDATED, and the UE is not performing the registration procedure after an inter-system change from S1 mode to
+        // N1 mode"
+        if (includedInTaiList && m_storage.m_uState == E5UState::U1_UPDATED)
+        {
+            // "The UE shall keep the 5GS update status to 5U1 UPDATED and enter state 5GMM-REGISTERED.NORMAL-SERVICE."
+            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+            // "The UE shall start timer T3511"
+            m_timers->t3511.start();
+        }
+    }
+    else
+    {
+        // "The UE shall start timer T3502, shall set the 5GS update status to 5U2 NOT UPDATED."
+        m_timers->t3502.start();
+        switchUState(E5UState::U2_NOT_UPDATED);
+
+        // "The UE shall delete the list of equivalent PLMNs and shall change to state
+        // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE UPDATE"
+        m_storage.m_equivalentPlmnList = {};
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
     }
 }
 

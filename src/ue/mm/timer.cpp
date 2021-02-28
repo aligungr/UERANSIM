@@ -34,32 +34,47 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         break;
     }
     case 3510: {
-        // The UE shall abort the registration procedure for initial registration and the NAS signalling connection, if
-        // any, shall be released locally if the initial registration request is not for emergency services..
-        if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest)
+        if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
         {
             logExpired();
 
-            switchRmState(ERmState::RM_DEREGISTERED);
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-            switchUState(E5UState::U2_NOT_UPDATED);
+            auto regType = m_lastRegistrationRequest->registrationType.registrationType;
+            if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
+                regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
+            {
+                // The UE shall abort the registration procedure for initial registration and the NAS signalling
+                // connection, if any, shall be released locally if the initial registration request is not for
+                // emergency services..
+                switchRmState(ERmState::RM_DEREGISTERED);
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+                switchUState(E5UState::U2_NOT_UPDATED);
 
-            if (m_lastRegistrationRequest->registrationType.registrationType !=
-                nas::ERegistrationType::EMERGENCY_REGISTRATION)
+                if (m_lastRegistrationRequest->registrationType.registrationType !=
+                    nas::ERegistrationType::EMERGENCY_REGISTRATION)
+                {
+                    localReleaseConnection();
+                }
+
+                handleAbnormalInitialRegFailure(regType);
+            }
+            else if (regType == nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING ||
+                     regType == nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
             {
                 localReleaseConnection();
+                handleAbnormalMobilityRegFailure(regType);
             }
-
-            handleCommonAbnormalRegFailure(m_lastRegistrationRequest->registrationType.registrationType);
         }
-
+        break;
+    }
+    case 3511: {
+        // TODO
         break;
     }
     case 3512: {
         if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
         {
             logExpired();
-            sendMobilityRegistration(ERegUpdateCause::PERIODIC_REGISTRATION);
+            sendMobilityRegistration(ERegUpdateCause::T3512_EXPIRY);
         }
         break;
     }
