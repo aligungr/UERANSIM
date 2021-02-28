@@ -46,6 +46,8 @@ class NasMm
     long m_lastPlmnSearchTrigger{};
     // Registration attempt counter
     int m_regCounter{};
+    // Service request attempt counter
+    int m_serCounter{};
     // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state)
     bool m_registeredForEmergency{};
     // Network feature support information

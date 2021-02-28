@@ -226,15 +226,13 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // If the REGISTRATION ACCEPT message included a T3512 value IE, the UE shall use the value in the T3512 value IE as
     // periodic registration update timer (T3512).
     if (msg.t3512Value.has_value() && nas::utils::HasValue(msg.t3512Value.value()))
-    {
         m_timers->t3512.start(*msg.t3512Value);
-        m_logger->debug("T3512 started with int[%d]", m_timers->t3512.getInterval());
-    }
 
     // Registration complete is sent conditionally
     bool sendComplete = false;
 
-    // Process the received GUTI
+    // "If the REGISTRATION ACCEPT message contains a 5G-GUTI, the UE shall return a REGISTRATION COMPLETE message to
+    // the AMF to acknowledge the received 5G-GUTI, stop timer T3519 if running, and delete any stored SUCI."
     if (msg.mobileIdentity.has_value())
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
@@ -306,7 +304,103 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 
 void NasMm::receiveUpdatingRegistrationAccept(const nas::RegistrationAccept &msg)
 {
-    // TODO
+    // "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI
+    // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
+    if (msg.taiList.has_value())
+        m_storage.m_taiList = *msg.taiList;
+
+    // Store the E-PLMN list and ..
+    m_storage.m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
+    // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
+    // PLMN code that is already in the list of "forbidden PLMNs". ..
+    if (!hasEmergency())
+    {
+        utils::EraseWhere(m_storage.m_equivalentPlmnList.plmns, [this](auto &plmn) {
+            return std::any_of(m_storage.m_forbiddenPlmnList.plmns.begin(), m_storage.m_forbiddenPlmnList.plmns.end(),
+                               [&plmn](auto &forbidden) { return nas::utils::DeepEqualsV(plmn, forbidden); });
+        });
+    }
+    // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
+    nas::utils::AddToPlmnList(m_storage.m_equivalentPlmnList, nas::utils::PlmnFrom(m_storage.m_currentPlmn));
+
+    // Store the service area list
+    m_storage.m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
+
+    // "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter and service
+    // request attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
+    m_regCounter = 0;
+    m_serCounter = 0;
+    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+    switchRmState(ERmState::RM_REGISTERED);
+    switchUState(E5UState::U1_UPDATED);
+
+    // "If the ACCEPT message included a T3512 value IE, the UE shall use the value in T3512 value IE as
+    // periodic registration update timer (T3512). If the T3512 value IE is not included, the UE shall use the value
+    // currently stored, e.g. from a prior REGISTRATION ACCEPT message."
+    if (msg.t3512Value.has_value() && nas::utils::HasValue(*msg.t3512Value))
+        m_timers->t3512.start(*msg.t3512Value);
+
+    // Registration complete is sent conditionally
+    bool sendComplete = false;
+
+    // "If the REGISTRATION ACCEPT message contains a 5G-GUTI, the UE shall return a REGISTRATION COMPLETE message to
+    // the AMF to acknowledge the received 5G-GUTI, stop timer T3519 if running, and delete any stored SUCI."
+    if (msg.mobileIdentity.has_value())
+    {
+        if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
+        {
+            m_storage.m_storedGuti = *msg.mobileIdentity;
+            m_timers->t3519.stop();
+            sendComplete = true;
+        }
+        else
+        {
+            m_logger->warn("GUTI was expected in registration accept but another identity type received");
+        }
+    }
+
+    // Process rejected NSSAI
+    if (msg.rejectedNSSAI.has_value())
+    {
+        for (auto &rejectedSlice : msg.rejectedNSSAI->list)
+        {
+            SingleSlice slice{};
+            slice.sst = rejectedSlice.sst;
+            slice.sd = rejectedSlice.sd;
+
+            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage.m_rejectedNssaiInPlmn
+                                                                                      : m_storage.m_rejectedNssaiInTa;
+            list.addIfNotExists(slice);
+        }
+    }
+
+    // Process network slicing subscription indication
+    if (msg.networkSlicingIndication.has_value() &&
+        msg.networkSlicingIndication->nssci == nas::ENetworkSlicingSubscriptionChangeIndication::CHANGED)
+    {
+        handleNetworkSlicingSubscriptionChange();
+        sendComplete = true;
+    }
+
+    // Store the allowed NSSAI
+    m_storage.m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
+
+    // Process configured NSSAI IE
+    if (msg.configuredNSSAI.has_value())
+    {
+        m_storage.m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
+        sendComplete = true;
+    }
+
+    // Store the network feature support
+    if (msg.networkFeatureSupport.has_value())
+        m_nwFeatureSupport = *msg.networkFeatureSupport;
+
+    if (sendComplete)
+        sendNasMessage(nas::RegistrationComplete{});
+
+    auto regType = m_lastRegistrationRequest->registrationType.registrationType;
+    m_logger->info("%s is successful", nas::utils::EnumToString(regType));
 }
 
 void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
