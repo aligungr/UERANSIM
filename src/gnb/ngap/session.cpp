@@ -27,6 +27,7 @@
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestList.h>
 #include <gnb/gtp/task.hpp>
+#include <stdexcept>
 
 namespace nr::gnb
 {
