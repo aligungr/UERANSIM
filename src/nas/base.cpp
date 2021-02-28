@@ -7,6 +7,7 @@
 //
 
 #include "base.hpp"
+#include <stdexcept>
 
 void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
                           int skippedHalfOctet)
