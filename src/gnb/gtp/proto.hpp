@@ -13,6 +13,7 @@
 #include <optional>
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
+#include <vector>
 
 namespace gtp
 {
@@ -129,5 +130,26 @@ struct PduSessionContainerExtHeader : GtpExtHeader
     {
     }
 };
+
+struct GtpMessage
+{
+    // GTP Message Types. (Only GTP-U included)
+    static constexpr const uint8_t MT_ECHO_REQUEST = 1;
+    static constexpr const uint8_t MT_ECHO_RESPONSE = 2;
+    static constexpr const uint8_t MT_ERROR_INDICATION = 26;
+    static constexpr const uint8_t MT_SUPPORTED_EXT_HEADERS_NOTIFICATION = 31;
+    static constexpr const uint8_t MT_END_MARKER = 254;
+    static constexpr const uint8_t MT_G_PDU = 255;
+
+    uint8_t msgType;
+    uint32_t teid;
+    std::optional<uint16_t> seq;
+    std::optional<uint8_t> nPduNum;
+    std::vector<std::unique_ptr<GtpExtHeader>> extHeaders;
+    OctetString payload;
+};
+
+bool EncodeGtpMessage(const GtpMessage &msg, OctetString &stream);
+GtpMessage *DecodeGtpMessage(const OctetView &stream);
 
 } // namespace gtp
