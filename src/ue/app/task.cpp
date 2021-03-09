@@ -202,7 +202,7 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     std::string ipAddress = utils::OctetStringToIp(pduSession->pduAddress->pduAddressInformation);
 
-    bool r = tun::TunConfigure(allocatedName, ipAddress, m_base->config->configureRouting, error);
+    bool r = tun::TunConfigure(allocatedName, ipAddress, cons::TunMtu, m_base->config->configureRouting, error);
     if (!r || error.length() > 0)
     {
         m_logger->err("TUN configuration failure [%s]", error.c_str());

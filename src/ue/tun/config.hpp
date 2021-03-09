@@ -16,6 +16,6 @@ namespace nr::ue::tun
 {
 
 int AllocateTun(const char *ifPrefix, char **allocatedName);
-void ConfigureTun(const char *tunName, const char *ipAddr, bool configureRoute);
+void ConfigureTun(const char *tunName, const char *ipAddr, int mtu, bool configureRoute);
 
 } // namespace nr::ue::tun

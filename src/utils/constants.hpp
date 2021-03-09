@@ -27,6 +27,7 @@ struct cons
 
     // TUN interface
     static constexpr const char *TunNamePrefix = "uesimtun";
+    static constexpr const int TunMtu = 1400;
 
     // Constraints
     static constexpr const int MinNodeName = 3;
