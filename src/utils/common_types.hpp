@@ -110,10 +110,19 @@ struct Supi
     static Supi Parse(const std::string &supi);
 };
 
+enum class EDeregCause
+{
+    UNSPECIFIED,
+    SWITCH_OFF,
+    USIM_REMOVAL,
+    DISABLE_5G,
+};
+
 Json ToJson(const Supi &v);
 Json ToJson(const Plmn &v);
 Json ToJson(const SingleSlice &v);
 Json ToJson(const NetworkSlice &v);
 Json ToJson(const PlmnSupport &v);
+Json ToJson(const EDeregCause &v);
 
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);

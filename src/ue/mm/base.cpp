@@ -118,7 +118,7 @@ void NasMm::switchMmState(EMmState state, EMmSubState subState)
     }
 
     if (state != oldState || subState != oldSubState)
-        m_logger->info("UE switches to state: %s", ToJson(subState).str().c_str());
+        m_logger->info("UE switches to state [%s]", ToJson(subState).str().c_str());
 
     triggerMmCycle();
 }
@@ -137,7 +137,7 @@ void NasMm::switchRmState(ERmState state)
     }
 
     // No need to log it
-    // m_logger->info("UE switches to state: %s", RmStateName(state));
+    // m_logger->info("UE switches to state [%s]", RmStateName(state));
 
     triggerMmCycle();
 }
@@ -156,7 +156,7 @@ void NasMm::switchCmState(ECmState state)
     }
 
     if (state != oldState)
-        m_logger->info("UE switches to state: %s", ToJson(state).str().c_str());
+        m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
 
     triggerMmCycle();
 }
@@ -175,7 +175,7 @@ void NasMm::switchUState(E5UState state)
     }
 
     if (state != oldState)
-        m_logger->info("UE switches to state: %s", ToJson(state).str().c_str());
+        m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
 
     triggerMmCycle();
 }
@@ -234,7 +234,7 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
             // The de-registration procedure shall be aborted and the UE proceeds as follows:
             // if the de-registration procedure was performed due to disabling of 5GS services, the UE shall enter the
             // 5GMM-NULL state;
-            if (m_lastDeregDueToDisable5g)
+            if (m_lastDeregCause == EDeregCause::DISABLE_5G)
                 switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
             // if the de-registration type "normal de-registration" was requested for reasons other than disabling of
             // 5GS services, the UE shall enter the 5GMM-DEREGISTERED state.
@@ -243,8 +243,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
             switchRmState(ERmState::RM_DEREGISTERED);
-
-            m_lastDeregDueToDisable5g = false;
         }
     }
 }

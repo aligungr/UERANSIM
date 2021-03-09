@@ -101,7 +101,7 @@ struct IEConfigurationUpdateIndication : InformationElement1
 struct IEDeRegistrationType : InformationElement1
 {
     EDeRegistrationAccessType accessType{};
-    EReRegistrationRequired reRegistrationRequired{};
+    EReRegistrationRequired reRegistrationRequired{}; // This bit is spare in UE to Network direction
     ESwitchOff switchOff{};
 
     IEDeRegistrationType() = default;

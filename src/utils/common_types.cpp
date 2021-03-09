@@ -55,6 +55,23 @@ Json ToJson(const PlmnSupport &v)
     return Json::Obj({{"plmn", ToJson(v.plmn)}, {"nssai", ToJson(v.sliceSupportList)}});
 }
 
+Json ToJson(const EDeregCause &v)
+{
+    switch (v)
+    {
+    case EDeregCause::UNSPECIFIED:
+        return "NORMAL";
+    case EDeregCause::SWITCH_OFF:
+        return "SWITCH-OFF";
+    case EDeregCause::USIM_REMOVAL:
+        return "USIM-REMOVAL";
+    case EDeregCause::DISABLE_5G:
+        return "DISABLE-5G";
+    default:
+        return "?";
+    }
+}
+
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
 {
     if ((int)lhs.sst != (int)rhs.sst)

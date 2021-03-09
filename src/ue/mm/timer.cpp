@@ -91,7 +91,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
                 logExpired();
                 m_logger->debug("De-registration aborted");
 
-                if (m_lastDeregDueToDisable5g)
+                if (m_lastDeregCause == EDeregCause::DISABLE_5G)
                     switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
                 else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                          nas::ESwitchOff::NORMAL_DE_REGISTRATION)

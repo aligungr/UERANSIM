@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <string>
+#include <utils/common_types.hpp>
 #include <vector>
 
 namespace app
@@ -46,8 +47,7 @@ struct UeCliCommand
     } present;
 
     // DE_REGISTER
-    bool isSwitchOff{};
-    bool dueToDisable5g{};
+    EDeregCause deregCause{};
 
     explicit UeCliCommand(PR present) : present(present)
     {

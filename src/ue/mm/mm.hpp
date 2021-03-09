@@ -40,8 +40,8 @@ class NasMm
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
     // Most recent de-registration request
     std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
-    // Indicates that the last de-registration request is issued due to disable 5G services
-    bool m_lastDeregDueToDisable5g{};
+    // Indicates the last de-registration cause
+    EDeregCause m_lastDeregCause{};
     // Last time PLMN search is triggered
     long m_lastPlmnSearchTrigger{};
     // Registration attempt counter
@@ -117,7 +117,7 @@ class NasMm
     nas::IEUeSecurityCapability createSecurityCapabilityIe();
 
   public: /* De-registration */
-    void sendDeregistration(nas::ESwitchOff switchOff, bool dueToDisable5g);
+    void sendDeregistration(EDeregCause deregCause);
 
   private: /* De-registration */
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
