@@ -29,6 +29,8 @@ void NasMm::handlePlmnSearchResponse(const std::string &gnbName)
     else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
              m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+
+    resetRegAttemptCounter();
 }
 
 void NasMm::handlePlmnSearchFailure()
