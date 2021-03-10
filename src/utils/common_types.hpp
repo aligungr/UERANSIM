@@ -116,6 +116,7 @@ enum class EDeregCause
     SWITCH_OFF,
     USIM_REMOVAL,
     DISABLE_5G,
+    ECALL_INACTIVITY,
 };
 
 Json ToJson(const Supi &v);

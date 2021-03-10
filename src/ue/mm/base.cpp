@@ -53,6 +53,9 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
     {
+        if (switchToECallInactivityIfNeeded())
+            return;
+
         if (m_storage.isSimValid())
         {
             if (m_cmState == ECmState::CM_IDLE)
@@ -87,16 +90,11 @@ void NasMm::performMmCycle()
         return;
     }
 
-    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
-        return;
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
-        return;
-    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
-        return;
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
-        return;
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI)
-        return;
+    if (m_mmState == EMmState::MM_REGISTERED)
+    {
+        if (startECallInactivityIfNeeded())
+            return;
+    }
 }
 
 void NasMm::switchMmState(EMmState state, EMmSubState subState)

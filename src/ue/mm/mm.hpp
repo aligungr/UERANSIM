@@ -154,6 +154,10 @@ class NasMm
     bool isHighPriority();
     bool hasEmergency();
 
+  private: /* eCall */
+    bool startECallInactivityIfNeeded();
+    bool switchToECallInactivityIfNeeded();
+
   public: /* Timer */
     void onTimerExpire(nas::NasTimer &timer);
 };

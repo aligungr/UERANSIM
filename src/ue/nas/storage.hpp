@@ -55,6 +55,9 @@ class MobileStorage
     std::optional<nas::IETimeZoneAndTime> universalTimeAndLocalTimeZone{};
     std::optional<nas::IEDaylightSavingTime> networkDaylightSavingTime{};
 
+    // eCall related
+    bool isECallOnly{};
+
   public:
     void initialize(bool hasSupi, const UeConfig::Initials &initials)
     {

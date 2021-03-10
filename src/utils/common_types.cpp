@@ -67,6 +67,8 @@ Json ToJson(const EDeregCause &v)
         return "USIM-REMOVAL";
     case EDeregCause::DISABLE_5G:
         return "DISABLE-5G";
+    case EDeregCause::ECALL_INACTIVITY:
+        return "ECALL-INACTIVITY";
     default:
         return "?";
     }
