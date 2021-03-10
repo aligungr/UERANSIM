@@ -857,7 +857,6 @@ void NasMm::resetRegAttemptCounter()
     // Additionally, the registration attempt counter shall be reset when the UE is in substate
     // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE, and:
     // - a new tracking area is entered;
-    // - timer T3502 expires; or
     // - timer T3346 is started.
 }
 

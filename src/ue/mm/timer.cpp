@@ -33,6 +33,15 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         }
         break;
     }
+    case 3502: {
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
+            m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+        {
+            logExpired();
+            resetRegAttemptCounter();
+        }
+        break;
+    }
     case 3510: {
         if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
         {
