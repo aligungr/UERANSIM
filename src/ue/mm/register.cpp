@@ -854,8 +854,8 @@ void NasMm::resetRegAttemptCounter()
     // TODO: Registration attempt counter shall be reset for these cases as well (not implemented yet)
     // - the UE is powered on;
     // - a USIM is inserted
-    // Additionally, the registration attempt counter shall be reset when the UE is in substate
-    // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE, and:
+    // "Additionally, the registration attempt counter shall be reset when the UE is in substate
+    // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE, and:"
     // - a new tracking area is entered;
     // - timer T3346 is started.
 }
