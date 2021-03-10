@@ -97,6 +97,7 @@ class NasMm
     void receiveMobilityRegistrationReject(const nas::RegistrationReject &msg);
     void handleAbnormalInitialRegFailure(nas::ERegistrationType regType);
     void handleAbnormalMobilityRegFailure(nas::ERegistrationType regType);
+    void resetRegAttemptCounter();
 
   private: /* Authentication */
     void receiveAuthenticationRequest(const nas::AuthenticationRequest &msg);

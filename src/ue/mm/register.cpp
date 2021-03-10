@@ -232,7 +232,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 
     // Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state
     // 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
-    m_regCounter = 0;
+    resetRegAttemptCounter();
     switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
     switchRmState(ERmState::RM_REGISTERED);
     switchUState(E5UState::U1_UPDATED);
@@ -342,7 +342,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
 
     // "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter and service
     // request attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
-    m_regCounter = 0;
+    resetRegAttemptCounter();
     m_serCounter = 0;
     switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
     switchRmState(ERmState::RM_REGISTERED);
@@ -529,7 +529,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||
             cause == nas::EMmCause::N1_MODE_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            m_regCounter = 0;
+            resetRegAttemptCounter();
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
@@ -689,7 +689,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||
         cause == nas::EMmCause::N1_MODE_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        m_regCounter = 0;
+        resetRegAttemptCounter();
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
@@ -841,6 +841,15 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
         m_storage.m_equivalentPlmnList = {};
         switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
     }
+}
+
+void NasMm::resetRegAttemptCounter()
+{
+    // "When the registration attempt counter is reset,
+    // the UE shall stop timer T3519 if running, and delete any stored SUCI"
+    m_regCounter = 0;
+    m_timers->t3519.stop();
+    m_storage.m_storedSuci = {};
 }
 
 } // namespace nr::ue

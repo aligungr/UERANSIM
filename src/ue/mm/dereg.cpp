@@ -229,7 +229,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
             cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||
             cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-            m_regCounter = 0;
+            resetRegAttemptCounter();
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
         {
