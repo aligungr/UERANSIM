@@ -61,10 +61,10 @@ class NasMm
   public: /* Base */
     void onStart(NasSm *sm);
     void onQuit();
-    void performMmCycle();
 
   private: /* Base */
     void triggerMmCycle();
+    void performMmCycle();
     void switchMmState(EMmState state, EMmSubState subState);
     void switchRmState(ERmState state);
     void switchCmState(ECmState state);

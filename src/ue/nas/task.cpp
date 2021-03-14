@@ -91,7 +91,7 @@ void NasTask::onLoop()
         if (timerId == NTS_TIMER_ID_MM_CYCLE)
         {
             setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
-            mm->performMmCycle();
+            mm->handleNasEvent(NwUeNasToNas{NwUeNasToNas::PERFORM_MM_CYCLE});
         }
         break;
     }
