@@ -67,7 +67,12 @@ void NasTask::onLoop()
             mm->performMmCycle();
             break;
         case NwUeNasToNas::NAS_TIMER_EXPIRE:
-            onTimerExpire(*w->timer);
+            if (w->timer->isMmTimer())
+                mm->handleNasEvent(*w);
+            else
+            {
+                // TODO, handle SM timer
+            }
             break;
         case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS:
             sm->establishInitialSessions();
@@ -96,16 +101,6 @@ void NasTask::onLoop()
     }
 
     delete msg;
-}
-
-void NasTask::onTimerExpire(nas::NasTimer &timer)
-{
-    if (timer.isMmTimer())
-        mm->onTimerExpire(timer);
-    else
-    {
-        // TODO
-    }
 }
 
 void NasTask::performTick()

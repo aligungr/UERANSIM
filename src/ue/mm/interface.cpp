@@ -47,4 +47,16 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
     }
 }
 
+void NasMm::handleNasEvent(const NwUeNasToNas &msg)
+{
+    switch (msg.present)
+    {
+    case NwUeNasToNas::NAS_TIMER_EXPIRE:
+        onTimerExpire(*msg.timer);
+        break;
+    default:
+        break;
+    }
+}
+
 } // namespace nr::ue

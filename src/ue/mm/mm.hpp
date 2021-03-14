@@ -157,11 +157,12 @@ class NasMm
     bool startECallInactivityIfNeeded();
     bool switchToECallInactivityIfNeeded();
 
-  public: /* Timer */
+  private: /* Timer */
     void onTimerExpire(nas::NasTimer &timer);
 
   public: /* Interface */
     void handleRrcEvent(const NwUeRrcToNas &msg);
+    void handleNasEvent(const NwUeNasToNas &msg);
 };
 
 } // namespace nr::ue

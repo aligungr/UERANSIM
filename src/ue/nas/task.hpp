@@ -42,7 +42,6 @@ class NasTask : public NtsTask
     void onQuit() override;
 
   private:
-    void onTimerExpire(nas::NasTimer &timer);
     void performTick();
 };
 
