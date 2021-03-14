@@ -17,7 +17,7 @@ namespace nr::ue
 
 void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 {
-    if (!m_storage.isSimValid())
+    if (!m_usim->isValid())
     {
         m_logger->warn("Authentication request is ignored. USIM is invalid");
         return;
@@ -68,19 +68,19 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand).ak;
-        m_storage.m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
+        m_usim->m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
     }
 
-    auto milenage = calculateMilenage(m_storage.m_sqn, receivedRand);
+    auto milenage = calculateMilenage(m_usim->m_sqn, receivedRand);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
 
-    auto sqnXorAk = OctetString::Xor(m_storage.m_sqn, milenageAk);
+    auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
     auto ckPrimeIkPrime =
-        keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(m_storage.m_currentPlmn), sqnXorAk);
+        keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(m_usim->m_currentPlmn), sqnXorAk);
     auto &ckPrime = ckPrimeIkPrime.first;
     auto &ikPrime = ckPrimeIkPrime.second;
 
@@ -93,7 +93,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto mk = keys::CalculateMk(ckPrime, ikPrime, m_base->config->supi.value());
     auto kaut = mk.subCopy(16, 32);
 
-    // m_logger->debug("ueData.sqn: %s", m_storage.m_sqn.toHexString().c_str());
+    // m_logger->debug("ueData.sqn: %s", m_usim->m_sqn.toHexString().c_str());
     // m_logger->debug("ueData.op(C): %s", m_base->config->opC.toHexString().c_str());
     // m_logger->debug("ueData.K: %s", m_base->config->key.toHexString().c_str());
     // m_logger->debug("calculated res: %s", res.toHexString().c_str());
@@ -189,25 +189,25 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto kAusf = keys::CalculateKAusfForEapAkaPrime(mk);
     m_logger->debug("kAusf: %s", kAusf.toHexString().c_str());
 
-    m_storage.m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
-    m_storage.m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
-    m_storage.m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-    m_storage.m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
-    m_storage.m_nonCurrentNsCtx->keys.res = std::move(res);
-    m_storage.m_nonCurrentNsCtx->keys.resStar = {};
-    m_storage.m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
-    m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
+    m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
+    m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
+    m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
+    m_usim->m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
+    m_usim->m_nonCurrentNsCtx->keys.res = std::move(res);
+    m_usim->m_nonCurrentNsCtx->keys.resStar = {};
+    m_usim->m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
+    m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-    keys::DeriveKeysSeafAmf(*m_base->config, m_storage.m_currentPlmn, *m_storage.m_nonCurrentNsCtx);
+    keys::DeriveKeysSeafAmf(*m_base->config, m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
-    // m_logger->debug("kSeaf: %s", m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
-    // m_logger->debug("kAmf: %s", m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+    // m_logger->debug("kSeaf: %s", m_usim->m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
+    // m_logger->debug("kAmf: %s", m_usim->m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
     // Send Response
     {
         auto *akaPrimeResponse =
             new eap::EapAkaPrime(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CHALLENGE);
-        akaPrimeResponse->attributes.putRes(m_storage.m_nonCurrentNsCtx->keys.res);
+        akaPrimeResponse->attributes.putRes(m_usim->m_nonCurrentNsCtx->keys.res);
         akaPrimeResponse->attributes.putMac(OctetString::FromSpare(16)); // Dummy mac for now
         akaPrimeResponse->attributes.putKdf(1);
 
@@ -255,49 +255,49 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), rand).ak;
-        m_storage.m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
+        m_usim->m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
     }
 
-    auto milenage = calculateMilenage(m_storage.m_sqn, rand);
+    auto milenage = calculateMilenage(m_usim->m_sqn, rand);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto ckIk = OctetString::Concat(ck, ik);
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
-    auto sqnXorAk = OctetString::Xor(m_storage.m_sqn, milenageAk);
-    auto snn = keys::ConstructServingNetworkName(m_storage.m_currentPlmn);
+    auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
+    auto snn = keys::ConstructServingNetworkName(m_usim->m_currentPlmn);
 
     // m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
     //                ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
     //                milenageMac.toHexString().c_str());
-    // m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_storage.m_sqn.toHexString().c_str());
+    // m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_usim->m_sqn.toHexString().c_str());
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
 
     if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes::OK)
     {
         // Create new partial native NAS security context and continue with key derivation
-        m_storage.m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
-        m_storage.m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
-        m_storage.m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_storage.m_nonCurrentNsCtx->keys.rand = rand.copy();
-        m_storage.m_nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
-        m_storage.m_nonCurrentNsCtx->keys.res = std::move(res);
-        m_storage.m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
-        m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
+        m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
+        m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
+        m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
+        m_usim->m_nonCurrentNsCtx->keys.rand = rand.copy();
+        m_usim->m_nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
+        m_usim->m_nonCurrentNsCtx->keys.res = std::move(res);
+        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+        m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, m_storage.m_currentPlmn, *m_storage.m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
         // m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
-        //                m_storage.m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
-        //                m_storage.m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
-        //                m_storage.m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
+        //                m_usim->m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
+        //                m_usim->m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
+        //                m_usim->m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
         // Send response
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
-        resp.authenticationResponseParameter->rawData = m_storage.m_nonCurrentNsCtx->keys.resStar.copy();
+        resp.authenticationResponseParameter->rawData = m_usim->m_nonCurrentNsCtx->keys.resStar.copy();
         sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
@@ -319,7 +319,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 void NasMm::receiveAuthenticationResult(const nas::AuthenticationResult &msg)
 {
     if (msg.abba.has_value())
-        m_storage.m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
+        m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba->rawData.copy();
 
     if (msg.eapMessage.eap->code == eap::ECode::SUCCESS)
         receiveEapSuccessMessage(*msg.eapMessage.eap);
@@ -354,12 +354,12 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
     // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI. The USIM shall be considered invalid
     // until switching off the UE or the UICC containing the USIM is removed
-    m_storage.m_storedGuti = {};
-    m_storage.m_lastVisitedRegisteredTai = {};
-    m_storage.m_taiList = {};
-    m_storage.m_currentNsCtx = {};
-    m_storage.m_nonCurrentNsCtx = {};
-    m_storage.invalidateSim();
+    m_usim->m_storedGuti = {};
+    m_usim->m_lastVisitedRegisteredTai = {};
+    m_usim->m_taiList = {};
+    m_usim->m_currentNsCtx = {};
+    m_usim->m_nonCurrentNsCtx = {};
+    m_usim->invalidate();
     // The UE shall abort any 5GMM signalling procedure, stop any of the timers T3510, T3516, T3517, T3519 or T3521 (if
     // they were running) ..
     m_timers->t3510.stop();
@@ -379,7 +379,7 @@ void NasMm::receiveEapSuccessMessage(const eap::Eap &eap)
 void NasMm::receiveEapFailureMessage(const eap::Eap &eap)
 {
     m_logger->err("EAP failure received. Deleting non-current NAS security context");
-    m_storage.m_nonCurrentNsCtx = {};
+    m_usim->m_nonCurrentNsCtx = {};
 }
 
 void NasMm::receiveEapResponseMessage(const eap::Eap &eap)

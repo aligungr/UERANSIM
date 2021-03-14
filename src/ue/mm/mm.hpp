@@ -11,7 +11,7 @@
 #include <crypt/milenage.hpp>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
-#include <ue/nas/storage.hpp>
+#include <ue/nas/usim.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
@@ -29,7 +29,7 @@ class NasMm
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
-    MobileStorage m_storage{};
+    Usim *m_usim{};
 
     ERmState m_rmState;
     ECmState m_cmState;
@@ -59,7 +59,7 @@ class NasMm
     NasMm(TaskBase *base, UeTimers *timers);
 
   public: /* Base */
-    void onStart(NasSm *sm);
+    void onStart(NasSm *sm, Usim *usim);
     void onQuit();
 
   private: /* Base */

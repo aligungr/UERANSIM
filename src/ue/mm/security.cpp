@@ -56,7 +56,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         // TODO
     }
 
-    int whichCtx = FindSecurityContext(msg.ngKsi.ksi, m_storage.m_currentNsCtx, m_storage.m_nonCurrentNsCtx);
+    int whichCtx = FindSecurityContext(msg.ngKsi.ksi, m_usim->m_currentNsCtx, m_usim->m_nonCurrentNsCtx);
     if (whichCtx == -1)
     {
         m_logger->err("Security context with ngKSI[%d] not found", msg.ngKsi.ksi);
@@ -64,7 +64,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         return;
     }
 
-    auto &nsCtx = whichCtx == 0 ? m_storage.m_currentNsCtx : m_storage.m_nonCurrentNsCtx;
+    auto &nsCtx = whichCtx == 0 ? m_usim->m_currentNsCtx : m_usim->m_nonCurrentNsCtx;
 
     // ======================== Check the integrity with new security context ========================
 
@@ -129,7 +129,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // Set the new NAS Security Context as current one. (If it is not already the current one)
     if (whichCtx == 1)
-        m_storage.m_currentNsCtx = std::make_unique<NasSecurityContext>(nsCtx->deepCopy());
+        m_usim->m_currentNsCtx = std::make_unique<NasSecurityContext>(nsCtx->deepCopy());
 
     // ============================ Handle EAP-Success message if any. ============================
 

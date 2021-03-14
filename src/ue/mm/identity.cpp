@@ -42,21 +42,21 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
 
 nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
 {
-    if (m_timers->t3519.isRunning() && m_storage.m_storedSuci.type != nas::EIdentityType::NO_IDENTITY)
-        return m_storage.m_storedSuci;
+    if (m_timers->t3519.isRunning() && m_usim->m_storedSuci.type != nas::EIdentityType::NO_IDENTITY)
+        return m_usim->m_storedSuci;
 
-    m_storage.m_storedSuci = generateSuci();
+    m_usim->m_storedSuci = generateSuci();
     m_timers->t3519.start();
 
-    if (m_storage.m_storedSuci.type == nas::EIdentityType::NO_IDENTITY)
+    if (m_usim->m_storedSuci.type == nas::EIdentityType::NO_IDENTITY)
         return {};
-    return m_storage.m_storedSuci;
+    return m_usim->m_storedSuci;
 }
 
 nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
     auto &supi = m_base->config->supi;
-    auto &plmn = m_storage.m_currentPlmn;
+    auto &plmn = m_usim->m_currentPlmn;
 
     if (!supi.has_value())
         return {};
@@ -84,8 +84,8 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
 
 nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()
 {
-    if (m_storage.m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
-        return m_storage.m_storedGuti;
+    if (m_usim->m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
+        return m_usim->m_storedGuti;
 
     auto suci = getOrGenerateSuci();
     if (suci.type != nas::EIdentityType::NO_IDENTITY)

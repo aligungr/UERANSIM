@@ -6,7 +6,29 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#include "usim.hpp"
+
 namespace nr::ue
 {
 
+void ue::Usim::initialize(bool hasSupi, const UeConfig::Initials &initials)
+{
+    m_isValid = hasSupi;
+
+    m_uState = E5UState::U1_UPDATED;
+
+    m_defConfiguredNssai = initials.defaultConfiguredNssai;
+    m_configuredNssai = initials.configuredNssai;
 }
+
+bool Usim::isValid()
+{
+    return m_isValid;
+}
+
+void Usim::invalidate()
+{
+    m_isValid = false;
+}
+
+} // namespace nr::ue

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "usim.hpp"
 #include <crypt/milenage.hpp>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
@@ -29,6 +30,7 @@ class NasTask : public NtsTask
     UeTimers timers;
     NasMm *mm;
     NasSm *sm;
+    Usim *usim;
 
     friend class UeCmdHandler;
 

@@ -26,8 +26,8 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.guti.has_value() && msg.guti->type == nas::EIdentityType::GUTI)
     {
         hasNewConfig = true;
-        m_storage.m_storedSuci = {};
-        m_storage.m_storedGuti = *msg.guti;
+        m_usim->m_storedSuci = {};
+        m_usim->m_storedGuti = *msg.guti;
         m_timers->t3519.stop();
     }
 
@@ -36,7 +36,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.taiList.has_value())
     {
         hasNewConfig = true;
-        m_storage.m_taiList = *msg.taiList;
+        m_usim->m_taiList = *msg.taiList;
     }
 
     // "If the UE receives a new service area list in the CONFIGURATION UPDATE COMMAND message, the UE shall consider
@@ -46,7 +46,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.serviceAreaList.has_value())
     {
         hasNewConfig = true;
-        m_storage.m_serviceAreaList = *msg.serviceAreaList;
+        m_usim->m_serviceAreaList = *msg.serviceAreaList;
     }
 
     // "If the UE receives new NITZ information in the CONFIGURATION UPDATE COMMAND message, the UE considers the new
@@ -55,27 +55,27 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.networkFullName.has_value())
     {
         hasNewConfig = true;
-        m_storage.networkFullName = nas::utils::DeepCopyIe(*msg.networkFullName);
+        m_usim->m_networkFullName = nas::utils::DeepCopyIe(*msg.networkFullName);
     }
     if (msg.networkShortName.has_value())
     {
         hasNewConfig = true;
-        m_storage.networkShortName = nas::utils::DeepCopyIe(*msg.networkShortName);
+        m_usim->m_networkShortName = nas::utils::DeepCopyIe(*msg.networkShortName);
     }
     if (msg.localTimeZone.has_value())
     {
         hasNewConfig = true;
-        m_storage.localTimeZone = *msg.localTimeZone;
+        m_usim->m_localTimeZone = *msg.localTimeZone;
     }
     if (msg.universalTimeAndLocalTimeZone.has_value())
     {
         hasNewConfig = true;
-        m_storage.universalTimeAndLocalTimeZone = *msg.universalTimeAndLocalTimeZone;
+        m_usim->m_universalTimeAndLocalTimeZone = *msg.universalTimeAndLocalTimeZone;
     }
     if (msg.networkDaylightSavingTime.has_value())
     {
         hasNewConfig = true;
-        m_storage.networkDaylightSavingTime = *msg.networkDaylightSavingTime;
+        m_usim->m_networkDaylightSavingTime = *msg.networkDaylightSavingTime;
     }
 
     // "If the UE receives a new allowed NSSAI for the associated access type in the CONFIGURATION UPDATE COMMAND
@@ -86,7 +86,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.allowedNssai.has_value())
     {
         hasNewConfig = true;
-        m_storage.m_allowedNssai = nas::utils::NssaiTo(*msg.allowedNssai);
+        m_usim->m_allowedNssai = nas::utils::NssaiTo(*msg.allowedNssai);
     }
 
     // "If the UE receives a new configured NSSAI in the CONFIGURATION UPDATE COMMAND message, the UE shall consider the
@@ -96,7 +96,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.configuredNssai.has_value())
     {
         hasNewConfig = true;
-        m_storage.m_configuredNssai = nas::utils::NssaiTo(*msg.configuredNssai);
+        m_usim->m_configuredNssai = nas::utils::NssaiTo(*msg.configuredNssai);
     }
 
     // "If the UE receives the Network slicing indication IE in the CONFIGURATION UPDATE COMMAND message with the
@@ -121,8 +121,8 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
             slice.sst = rejectedSlice.sst;
             slice.sd = rejectedSlice.sd;
 
-            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage.m_rejectedNssaiInPlmn
-                                                                                      : m_storage.m_rejectedNssaiInTa;
+            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_usim->m_rejectedNssaiInPlmn
+                                                                                      : m_usim->m_rejectedNssaiInTa;
             list.addIfNotExists(slice);
         }
     }

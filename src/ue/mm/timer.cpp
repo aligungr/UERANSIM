@@ -88,7 +88,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         break;
     }
     case 3519: {
-        m_storage.m_storedSuci = {};
+        m_usim->m_storedSuci = {};
         break;
     }
     case 3521: {

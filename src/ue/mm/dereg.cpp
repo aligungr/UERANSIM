@@ -38,10 +38,10 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
     auto request = std::make_unique<nas::DeRegistrationRequestUeOriginating>();
     request->deRegistrationType = MakeDeRegistrationType(deregCause);
 
-    if (m_storage.m_currentNsCtx)
+    if (m_usim->m_currentNsCtx)
     {
-        request->ngKSI.tsc = m_storage.m_currentNsCtx->tsc;
-        request->ngKSI.ksi = m_storage.m_currentNsCtx->ngKsi;
+        request->ngKSI.tsc = m_usim->m_currentNsCtx->tsc;
+        request->ngKSI.ksi = m_usim->m_currentNsCtx->ngKsi;
     }
     else
     {
@@ -68,7 +68,7 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
     else if (deregCause == EDeregCause::USIM_REMOVAL)
     {
         m_logger->info("SIM card has been invalidated");
-        m_storage.invalidateSim();
+        m_usim->invalidate();
     }
 
     m_sm->localReleaseAllSessions();
@@ -96,7 +96,7 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     m_timers->t3521.stop();
     m_timers->t3519.stop();
 
-    m_storage.m_storedSuci = {};
+    m_usim->m_storedSuci = {};
 
     m_sm->localReleaseAllSessions();
 
@@ -178,8 +178,8 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
     // "Upon sending a DEREGISTRATION ACCEPT message, the UE shall delete the rejected NSSAI as specified in
     // subclause 4.6.2.2."
-    m_storage.m_rejectedNssaiInTa = {};
-    m_storage.m_rejectedNssaiInPlmn = {};
+    m_usim->m_rejectedNssaiInTa = {};
+    m_usim->m_rejectedNssaiInPlmn = {};
 
     // Handle 5.5.2.3.4 Abnormal cases in the UE, item b)
     auto handleAbnormal = [this]() {
@@ -187,12 +187,12 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         // set the 5GS update status to 5U2 NOT UPDATED and shall start timer T3502. A UE not supporting S1 mode may
         // enter the state 5GMM-DEREGISTERED.PLMN-SEARCH in order to perform a PLMN selection according to 3GPP
         // TS 23.122 [5]; otherwise the UE shall enter the state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
-        m_storage.m_storedGuti = {};
-        m_storage.m_taiList = {};
-        m_storage.m_lastVisitedRegisteredTai = {};
-        m_storage.m_equivalentPlmnList = {};
-        m_storage.m_currentNsCtx = {};
-        m_storage.m_nonCurrentNsCtx = {};
+        m_usim->m_storedGuti = {};
+        m_usim->m_taiList = {};
+        m_usim->m_lastVisitedRegisteredTai = {};
+        m_usim->m_equivalentPlmnList = {};
+        m_usim->m_currentNsCtx = {};
+        m_usim->m_nonCurrentNsCtx = {};
         switchUState(E5UState::U2_NOT_UPDATED);
         m_timers->t3502.start();
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
@@ -210,21 +210,21 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
             switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-            m_storage.m_storedGuti = {};
-            m_storage.m_lastVisitedRegisteredTai = {};
-            m_storage.m_taiList = {};
-            m_storage.m_currentNsCtx = {};
-            m_storage.m_nonCurrentNsCtx = {};
+            m_usim->m_storedGuti = {};
+            m_usim->m_lastVisitedRegisteredTai = {};
+            m_usim->m_taiList = {};
+            m_usim->m_currentNsCtx = {};
+            m_usim->m_nonCurrentNsCtx = {};
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
-            m_storage.invalidateSim();
+            m_usim->invalidate();
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
             cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
-            m_storage.m_equivalentPlmnList = {};
+            m_usim->m_equivalentPlmnList = {};
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
             cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||

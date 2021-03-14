@@ -23,14 +23,18 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 
     mm = new NasMm(base, &timers);
     sm = new NasSm(base, &timers);
+    usim = new Usim();
 }
 
 void NasTask::onStart()
 {
     logger->debug("NAS layer started");
 
+    usim->initialize(base->config->supi.has_value(), base->config->initials);
+    usim->m_currentPlmn = base->config->hplmn; // TODO: normally assigned after plmn search
+
     sm->onStart(mm);
-    mm->onStart(sm);
+    mm->onStart(sm, usim);
 
     setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
     setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
@@ -43,6 +47,8 @@ void NasTask::onQuit()
 
     delete mm;
     delete sm;
+
+    delete usim;
 }
 
 void NasTask::onLoop()

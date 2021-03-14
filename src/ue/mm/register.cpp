@@ -46,7 +46,7 @@ void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
 
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
-    m_storage.m_currentNsCtx = {};
+    m_usim->m_currentNsCtx = {};
 
     // Switch MM state
     switchMmState(EMmState::MM_REGISTERED_INITIATED, EMmSubState::MM_REGISTERED_INITIATED_NA);
@@ -78,17 +78,17 @@ void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
 
     // Assign other fields
     request->mobileIdentity = getOrGeneratePreferredId();
-    request->lastVisitedRegisteredTai = m_storage.m_lastVisitedRegisteredTai;
+    request->lastVisitedRegisteredTai = m_usim->m_lastVisitedRegisteredTai;
     request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
     request->updateType =
         nas::IE5gsUpdateType(nas::ESmsRequested::NOT_SUPPORTED, nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED);
 
     // Assign ngKSI
-    if (m_storage.m_currentNsCtx)
+    if (m_usim->m_currentNsCtx)
     {
-        request->nasKeySetIdentifier.tsc = m_storage.m_currentNsCtx->tsc;
-        request->nasKeySetIdentifier.ksi = m_storage.m_currentNsCtx->ngKsi;
+        request->nasKeySetIdentifier.tsc = m_usim->m_currentNsCtx->tsc;
+        request->nasKeySetIdentifier.ksi = m_usim->m_currentNsCtx->ngKsi;
     }
 
     // Send the message
@@ -162,7 +162,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     }
 
     // Assign other fields
-    request->lastVisitedRegisteredTai = m_storage.m_lastVisitedRegisteredTai;
+    request->lastVisitedRegisteredTai = m_usim->m_lastVisitedRegisteredTai;
     request->mobileIdentity = getOrGeneratePreferredId();
     request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
@@ -212,23 +212,23 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 {
     // Store the TAI list as a registration area
-    m_storage.m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
+    m_usim->m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
     // Store the service area list
-    m_storage.m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
+    m_usim->m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
 
     // Store the E-PLMN list and ..
-    m_storage.m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
+    m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
     // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
     // PLMN code that is already in the list of "forbidden PLMNs". ..
     if (!hasEmergency())
     {
-        utils::EraseWhere(m_storage.m_equivalentPlmnList.plmns, [this](auto &plmn) {
-            return std::any_of(m_storage.m_forbiddenPlmnList.plmns.begin(), m_storage.m_forbiddenPlmnList.plmns.end(),
+        utils::EraseWhere(m_usim->m_equivalentPlmnList.plmns, [this](auto &plmn) {
+            return std::any_of(m_usim->m_forbiddenPlmnList.plmns.begin(), m_usim->m_forbiddenPlmnList.plmns.end(),
                                [&plmn](auto &forbidden) { return nas::utils::DeepEqualsV(plmn, forbidden); });
         });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    nas::utils::AddToPlmnList(m_storage.m_equivalentPlmnList, nas::utils::PlmnFrom(m_storage.m_currentPlmn));
+    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_usim->m_currentPlmn));
 
     // Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state
     // 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
@@ -251,7 +251,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
         {
-            m_storage.m_storedGuti = *msg.mobileIdentity;
+            m_usim->m_storedGuti = *msg.mobileIdentity;
             m_timers->t3519.stop();
             sendComplete = true;
         }
@@ -270,8 +270,8 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
             slice.sst = rejectedSlice.sst;
             slice.sd = rejectedSlice.sd;
 
-            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage.m_rejectedNssaiInPlmn
-                                                                                      : m_storage.m_rejectedNssaiInTa;
+            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_usim->m_rejectedNssaiInPlmn
+                                                                                      : m_usim->m_rejectedNssaiInTa;
             list.addIfNotExists(slice);
         }
     }
@@ -285,12 +285,12 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     }
 
     // Store the allowed NSSAI
-    m_storage.m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
+    m_usim->m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
 
     // Process configured NSSAI IE
     if (msg.configuredNSSAI.has_value())
     {
-        m_storage.m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
+        m_usim->m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
         sendComplete = true;
     }
 
@@ -321,24 +321,24 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     // "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI
     // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
     if (msg.taiList.has_value())
-        m_storage.m_taiList = *msg.taiList;
+        m_usim->m_taiList = *msg.taiList;
 
     // Store the E-PLMN list and ..
-    m_storage.m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
+    m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
     // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
     // PLMN code that is already in the list of "forbidden PLMNs". ..
     if (!hasEmergency())
     {
-        utils::EraseWhere(m_storage.m_equivalentPlmnList.plmns, [this](auto &plmn) {
-            return std::any_of(m_storage.m_forbiddenPlmnList.plmns.begin(), m_storage.m_forbiddenPlmnList.plmns.end(),
+        utils::EraseWhere(m_usim->m_equivalentPlmnList.plmns, [this](auto &plmn) {
+            return std::any_of(m_usim->m_forbiddenPlmnList.plmns.begin(), m_usim->m_forbiddenPlmnList.plmns.end(),
                                [&plmn](auto &forbidden) { return nas::utils::DeepEqualsV(plmn, forbidden); });
         });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    nas::utils::AddToPlmnList(m_storage.m_equivalentPlmnList, nas::utils::PlmnFrom(m_storage.m_currentPlmn));
+    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_usim->m_currentPlmn));
 
     // Store the service area list
-    m_storage.m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
+    m_usim->m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
 
     // "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter and service
     // request attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
@@ -363,7 +363,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
         {
-            m_storage.m_storedGuti = *msg.mobileIdentity;
+            m_usim->m_storedGuti = *msg.mobileIdentity;
             m_timers->t3519.stop();
             sendComplete = true;
         }
@@ -382,8 +382,8 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
             slice.sst = rejectedSlice.sst;
             slice.sd = rejectedSlice.sd;
 
-            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage.m_rejectedNssaiInPlmn
-                                                                                      : m_storage.m_rejectedNssaiInTa;
+            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_usim->m_rejectedNssaiInPlmn
+                                                                                      : m_usim->m_rejectedNssaiInTa;
             list.addIfNotExists(slice);
         }
     }
@@ -397,12 +397,12 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     }
 
     // Store the allowed NSSAI
-    m_storage.m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
+    m_usim->m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
 
     // Process configured NSSAI IE
     if (msg.configuredNSSAI.has_value())
     {
-        m_storage.m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
+        m_usim->m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
         sendComplete = true;
     }
 
@@ -489,17 +489,17 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
-            m_storage.m_storedGuti = {};
-            m_storage.m_lastVisitedRegisteredTai = {};
-            m_storage.m_taiList = {};
-            m_storage.m_currentNsCtx = {};
-            m_storage.m_nonCurrentNsCtx = {};
+            m_usim->m_storedGuti = {};
+            m_usim->m_lastVisitedRegisteredTai = {};
+            m_usim->m_taiList = {};
+            m_usim->m_currentNsCtx = {};
+            m_usim->m_nonCurrentNsCtx = {};
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
         {
-            m_storage.invalidateSim();
+            m_usim->invalidate();
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
@@ -535,7 +535,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
         {
-            m_storage.m_equivalentPlmnList = {};
+            m_usim->m_equivalentPlmnList = {};
         }
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
@@ -545,7 +545,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            nas::utils::AddToPlmnList(m_storage.m_forbiddenPlmnList, nas::utils::PlmnFrom(m_storage.m_currentPlmn));
+            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(m_usim->m_currentPlmn));
         }
 
         if (cause == nas::EMmCause::CONGESTION)
@@ -637,23 +637,23 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED ||
         cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
-        m_storage.m_storedGuti = {};
-        m_storage.m_lastVisitedRegisteredTai = {};
-        m_storage.m_taiList = {};
-        m_storage.m_currentNsCtx = {};
-        m_storage.m_nonCurrentNsCtx = {};
+        m_usim->m_storedGuti = {};
+        m_usim->m_lastVisitedRegisteredTai = {};
+        m_usim->m_taiList = {};
+        m_usim->m_currentNsCtx = {};
+        m_usim->m_nonCurrentNsCtx = {};
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
-        m_storage.m_currentNsCtx = {};
-        m_storage.m_nonCurrentNsCtx = {};
+        m_usim->m_currentNsCtx = {};
+        m_usim->m_nonCurrentNsCtx = {};
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
     {
-        m_storage.invalidateSim();
+        m_usim->invalidate();
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
@@ -695,7 +695,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
     {
-        m_storage.m_equivalentPlmnList = {};
+        m_usim->m_equivalentPlmnList = {};
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
@@ -705,7 +705,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        nas::utils::AddToPlmnList(m_storage.m_forbiddenPlmnList, nas::utils::PlmnFrom(m_storage.m_currentPlmn));
+        nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(m_usim->m_currentPlmn));
     }
 
     if (cause == nas::EMmCause::CONGESTION)
@@ -775,12 +775,12 @@ void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
     else
     {
         // The UE shall delete 5G-GUTI, TAI list, last visited TAI, list of equivalent PLMNs and ngKSI, ..
-        m_storage.m_storedGuti = {};
-        m_storage.m_taiList = {};
-        m_storage.m_lastVisitedRegisteredTai = {};
-        m_storage.m_equivalentPlmnList = {};
-        m_storage.m_currentNsCtx = {};
-        m_storage.m_nonCurrentNsCtx = {};
+        m_usim->m_storedGuti = {};
+        m_usim->m_taiList = {};
+        m_usim->m_lastVisitedRegisteredTai = {};
+        m_usim->m_equivalentPlmnList = {};
+        m_usim->m_currentNsCtx = {};
+        m_usim->m_nonCurrentNsCtx = {};
 
         // .. start timer T3502 ..
         m_timers->t3502.start();
@@ -809,7 +809,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
 
         // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
         // to 5U1 UPDATED"
-        if (!includedInTaiList || m_storage.m_uState != E5UState::U1_UPDATED)
+        if (!includedInTaiList || m_usim->m_uState != E5UState::U1_UPDATED)
         {
             // "The UE shall start timer T3511, shall set the 5GS update status to 5U2 NOT UPDATED and change to state
             // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE. When timer T3511 expires and the registration update
@@ -822,7 +822,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
         // "If the TAI of the current serving cell is included in the TAI list, the 5GS update status is equal to 5U1
         // UPDATED, and the UE is not performing the registration procedure after an inter-system change from S1 mode to
         // N1 mode"
-        if (includedInTaiList && m_storage.m_uState == E5UState::U1_UPDATED)
+        if (includedInTaiList && m_usim->m_uState == E5UState::U1_UPDATED)
         {
             // "The UE shall keep the 5GS update status to 5U1 UPDATED and enter state 5GMM-REGISTERED.NORMAL-SERVICE."
             switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
@@ -838,7 +838,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
 
         // "The UE shall delete the list of equivalent PLMNs and shall change to state
         // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE UPDATE"
-        m_storage.m_equivalentPlmnList = {};
+        m_usim->m_equivalentPlmnList = {};
         switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
     }
 }
@@ -849,7 +849,7 @@ void NasMm::resetRegAttemptCounter()
     // the UE shall stop timer T3519 if running, and delete any stored SUCI"
     m_regCounter = 0;
     m_timers->t3519.stop();
-    m_storage.m_storedSuci = {};
+    m_usim->m_storedSuci = {};
 
     // TODO: Registration attempt counter shall be reset for these cases as well (not implemented yet)
     // - the UE is powered on;

@@ -11,6 +11,7 @@
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
+#include <ue/nas/usim.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
@@ -25,15 +26,12 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_cmState = ECmState::CM_IDLE;
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
-    m_storage.m_uState = E5UState::U1_UPDATED;
-
-    m_storage.initialize(base->config->supi.has_value(), base->config->initials);
-    m_storage.m_currentPlmn = base->config->hplmn; // TODO: normally assigned after plmn search
 }
 
-void NasMm::onStart(NasSm *sm)
+void NasMm::onStart(NasSm *sm, Usim *usim)
 {
     m_sm = sm;
+    m_usim = usim;
     triggerMmCycle();
 }
 
@@ -57,7 +55,7 @@ void NasMm::performMmCycle()
         if (switchToECallInactivityIfNeeded())
             return;
 
-        if (m_storage.isSimValid())
+        if (m_usim->isValid())
         {
             if (m_cmState == ECmState::CM_IDLE)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
@@ -162,15 +160,15 @@ void NasMm::switchCmState(ECmState state)
 
 void NasMm::switchUState(E5UState state)
 {
-    E5UState oldState = m_storage.m_uState;
-    m_storage.m_uState = state;
+    E5UState oldState = m_usim->m_uState;
+    m_usim->m_uState = state;
 
-    onSwitchUState(oldState, m_storage.m_uState);
+    onSwitchUState(oldState, m_usim->m_uState);
 
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::U5,
-                                       ToJson(oldState).str(), ToJson(m_storage.m_uState).str());
+                                       ToJson(oldState).str(), ToJson(m_usim->m_uState).str());
     }
 
     if (state != oldState)
@@ -186,12 +184,12 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
     // 5GMM-DEREGISTERED for any other state except 5GMM-NULL.
     if (oldState == EMmState::MM_DEREGISTERED && newState != EMmState::MM_DEREGISTERED && newState != EMmState::MM_NULL)
     {
-        if (m_storage.m_currentNsCtx || m_storage.m_nonCurrentNsCtx)
+        if (m_usim->m_currentNsCtx || m_usim->m_nonCurrentNsCtx)
         {
             m_logger->debug("Deleting NAS security context");
 
-            m_storage.m_currentNsCtx = {};
-            m_storage.m_nonCurrentNsCtx = {};
+            m_usim->m_currentNsCtx = {};
+            m_usim->m_nonCurrentNsCtx = {};
         }
     }
 }

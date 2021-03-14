@@ -23,7 +23,7 @@ bool NasMm::startECallInactivityIfNeeded()
 
     // "The eCall inactivity procedure is performed only in 3GPP access and applicable only to a UE configured for eCall
     // only mode as specified in 3GPP TS 31.102 [22].
-    if (!m_storage.isECallOnly)
+    if (!m_usim->m_isECallOnly)
         return false;
 
     // The procedure shall be started when
@@ -72,7 +72,7 @@ bool NasMm::startECallInactivityIfNeeded()
 
 bool NasMm::switchToECallInactivityIfNeeded()
 {
-    if (!m_storage.isECallOnly)
+    if (!m_usim->m_isECallOnly)
         return false;
 
     if (m_mmState != EMmState::MM_DEREGISTERED)
@@ -86,12 +86,12 @@ bool NasMm::switchToECallInactivityIfNeeded()
         return false;
 
     // Perform item c) in 5.5.3
-    m_storage.m_storedGuti = {};
-    m_storage.m_taiList = {};
-    m_storage.m_lastVisitedRegisteredTai = {};
-    m_storage.m_equivalentPlmnList = {};
-    m_storage.m_currentNsCtx = {};
-    m_storage.m_nonCurrentNsCtx = {};
+    m_usim->m_storedGuti = {};
+    m_usim->m_taiList = {};
+    m_usim->m_lastVisitedRegisteredTai = {};
+    m_usim->m_equivalentPlmnList = {};
+    m_usim->m_currentNsCtx = {};
+    m_usim->m_nonCurrentNsCtx = {};
 
     // Perform item d) in 5.5.3
     switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE);

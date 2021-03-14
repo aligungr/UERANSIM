@@ -43,25 +43,25 @@ NetworkSlice NasMm::makeRequestedNssai(bool &isDefaultNssai) const
 
     NetworkSlice res{};
 
-    if (!m_storage.m_allowedNssai.slices.empty() || !m_storage.m_configuredNssai.slices.empty())
+    if (!m_usim->m_allowedNssai.slices.empty() || !m_usim->m_configuredNssai.slices.empty())
     {
-        if (!m_storage.m_allowedNssai.slices.empty())
+        if (!m_usim->m_allowedNssai.slices.empty())
         {
-            AppendSubset(m_storage.m_allowedNssai, res, m_storage.m_rejectedNssaiInPlmn, m_storage.m_rejectedNssaiInTa,
+            AppendSubset(m_usim->m_allowedNssai, res, m_usim->m_rejectedNssaiInPlmn, m_usim->m_rejectedNssaiInTa,
                          8);
-            AppendSubset(m_storage.m_configuredNssai, res, m_storage.m_rejectedNssaiInPlmn,
-                         m_storage.m_rejectedNssaiInTa, static_cast<size_t>(8) - res.slices.size());
+            AppendSubset(m_usim->m_configuredNssai, res, m_usim->m_rejectedNssaiInPlmn,
+                         m_usim->m_rejectedNssaiInTa, static_cast<size_t>(8) - res.slices.size());
         }
         else
         {
-            AppendSubset(m_storage.m_configuredNssai, res, m_storage.m_rejectedNssaiInPlmn,
-                         m_storage.m_rejectedNssaiInTa, 8);
+            AppendSubset(m_usim->m_configuredNssai, res, m_usim->m_rejectedNssaiInPlmn,
+                         m_usim->m_rejectedNssaiInTa, 8);
         }
     }
-    else if (!m_storage.m_defConfiguredNssai.slices.empty())
+    else if (!m_usim->m_defConfiguredNssai.slices.empty())
     {
-        AppendSubset(m_storage.m_defConfiguredNssai, res, m_storage.m_rejectedNssaiInPlmn,
-                     m_storage.m_rejectedNssaiInTa, 8);
+        AppendSubset(m_usim->m_defConfiguredNssai, res, m_usim->m_rejectedNssaiInPlmn,
+                     m_usim->m_rejectedNssaiInTa, 8);
 
         isDefaultNssai = true;
     }
