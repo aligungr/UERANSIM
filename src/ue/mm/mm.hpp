@@ -74,10 +74,8 @@ class NasMm
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
 
-  public: /* Transport */
-    void sendNasMessage(const nas::PlainMmMessage &msg);
-
   private: /* Transport */
+    void sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
@@ -163,6 +161,7 @@ class NasMm
   public: /* Interface */
     void handleRrcEvent(const NwUeRrcToNas &msg);
     void handleNasEvent(const NwUeNasToNas &msg);
+    void deliverUlTransport(const nas::UlNasTransport &msg);
 };
 
 } // namespace nr::ue

@@ -62,4 +62,9 @@ void NasMm::handleNasEvent(const NwUeNasToNas &msg)
     }
 }
 
+void NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
+{
+    sendNasMessage(msg);
+}
+
 } // namespace nr::ue

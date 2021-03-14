@@ -31,7 +31,7 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
     if (session.apn.has_value())
         m.dnn = nas::utils::DnnFromApn(*session.apn);
 
-    m_mm->sendNasMessage(m);
+    m_mm->deliverUlTransport(m);
 }
 
 void NasSm::receiveSmMessage(const nas::SmMessage &msg)
