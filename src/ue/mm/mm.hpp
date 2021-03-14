@@ -77,14 +77,14 @@ class NasMm
 
   public: /* Transport */
     void sendNasMessage(const nas::PlainMmMessage &msg);
-    void receiveNasMessage(const nas::NasMessage &msg);
 
   private: /* Transport */
-    void sendMmStatus(nas::EMmCause cause);
+    void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
     void receiveMmCause(const nas::IE5gMmCause &msg);
+    void sendMmStatus(nas::EMmCause cause);
 
   private: /* Registration */
     void sendInitialRegistration(bool isEmergencyReg, bool dueToDereg);
@@ -141,15 +141,13 @@ class NasMm
     NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
     void handleNetworkSlicingSubscriptionChange();
 
-  public: /* Radio */
+  private: /* Radio */
+    void localReleaseConnection();
     void handlePlmnSearchResponse(const std::string &gnbName);
     void handlePlmnSearchFailure();
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handleRadioLinkFailure();
-
-  private: /* Radio */
-    void localReleaseConnection();
 
   private: /* Access Control */
     bool isHighPriority();
@@ -161,6 +159,9 @@ class NasMm
 
   public: /* Timer */
     void onTimerExpire(nas::NasTimer &timer);
+
+  public: /* Interface */
+    void handleRrcEvent(const NwUeRrcToNas &msg);
 };
 
 } // namespace nr::ue

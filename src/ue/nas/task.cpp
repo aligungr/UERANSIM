@@ -56,37 +56,7 @@ void NasTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RRC_TO_NAS: {
-        auto *w = dynamic_cast<NwUeRrcToNas *>(msg);
-        switch (w->present)
-        {
-        case NwUeRrcToNas::RRC_CONNECTION_SETUP: {
-            mm->handleRrcConnectionSetup();
-            break;
-        }
-        case NwUeRrcToNas::PLMN_SEARCH_RESPONSE: {
-            mm->handlePlmnSearchResponse(w->gnbName);
-            break;
-        }
-        case NwUeRrcToNas::PLMN_SEARCH_FAILURE: {
-            mm->handlePlmnSearchFailure();
-            break;
-        }
-        case NwUeRrcToNas::NAS_DELIVERY: {
-            OctetView buffer{w->nasPdu};
-            auto nasMessage = nas::DecodeNasMessage(buffer);
-            if (nasMessage != nullptr)
-                mm->receiveNasMessage(*nasMessage);
-            break;
-        }
-        case NwUeRrcToNas::RRC_CONNECTION_RELEASE: {
-            mm->handleRrcConnectionRelease();
-            break;
-        }
-        case NwUeRrcToNas::RADIO_LINK_FAILURE: {
-            mm->handleRadioLinkFailure();
-            break;
-        }
-        }
+        mm->handleRrcEvent(*dynamic_cast<NwUeRrcToNas *>(msg));
         break;
     }
     case NtsMessageType::UE_NAS_TO_NAS: {
