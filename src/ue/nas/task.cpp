@@ -34,8 +34,6 @@ void NasTask::onStart()
 
     setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
     setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
-
-    mm->triggerMmCycle();
 }
 
 void NasTask::onQuit()
@@ -64,7 +62,7 @@ void NasTask::onLoop()
         switch (w->present)
         {
         case NwUeNasToNas::PERFORM_MM_CYCLE:
-            mm->performMmCycle();
+            mm->handleNasEvent(*w);
             break;
         case NwUeNasToNas::NAS_TIMER_EXPIRE:
             if (w->timer->isMmTimer())
@@ -76,6 +74,8 @@ void NasTask::onLoop()
             break;
         case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS:
             sm->establishInitialSessions();
+            break;
+        default:
             break;
         }
         break;

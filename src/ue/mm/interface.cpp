@@ -51,6 +51,9 @@ void NasMm::handleNasEvent(const NwUeNasToNas &msg)
 {
     switch (msg.present)
     {
+    case NwUeNasToNas::PERFORM_MM_CYCLE:
+        performMmCycle();
+        break;
     case NwUeNasToNas::NAS_TIMER_EXPIRE:
         onTimerExpire(*msg.timer);
         break;

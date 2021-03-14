@@ -61,10 +61,10 @@ class NasMm
   public: /* Base */
     void onStart(NasSm *sm);
     void onQuit();
-    void triggerMmCycle();
     void performMmCycle();
 
   private: /* Base */
+    void triggerMmCycle();
     void switchMmState(EMmState state, EMmSubState subState);
     void switchRmState(ERmState state);
     void switchCmState(ECmState state);
@@ -73,7 +73,6 @@ class NasMm
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
-    void setN1Capability(bool enabled);
 
   public: /* Transport */
     void sendNasMessage(const nas::PlainMmMessage &msg);
@@ -152,6 +151,7 @@ class NasMm
   private: /* Access Control */
     bool isHighPriority();
     bool hasEmergency();
+    void setN1Capability(bool enabled);
 
   private: /* eCall */
     bool startECallInactivityIfNeeded();

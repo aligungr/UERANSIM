@@ -34,6 +34,7 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
 void NasMm::onStart(NasSm *sm)
 {
     m_sm = sm;
+    triggerMmCycle();
 }
 
 void NasMm::onQuit()
@@ -247,11 +248,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
 
 void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 {
-}
-
-void NasMm::setN1Capability(bool enabled)
-{
-    // TODO
 }
 
 } // namespace nr::ue

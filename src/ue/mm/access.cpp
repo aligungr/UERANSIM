@@ -35,4 +35,9 @@ bool NasMm::isHighPriority()
     return false;
 }
 
+void NasMm::setN1Capability(bool enabled)
+{
+    // TODO
+}
+
 } // namespace nr::ue
