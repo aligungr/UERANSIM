@@ -25,7 +25,7 @@ int NasSm::allocatePduSessionId(const SessionConfig &config)
     int id = -1;
     for (int i = PduSession::MIN_ID; i <= PduSession::MAX_ID; i++)
     {
-        if (arr[i].id == 0)
+        if (arr[i]->psState == EPsState::INACTIVE)
         {
             id = i;
             break;
@@ -38,13 +38,6 @@ int NasSm::allocatePduSessionId(const SessionConfig &config)
         return 0;
     }
 
-    arr[id] = {};
-    arr[id].id = id;
-    arr[id].isEstablished = false;
-    arr[id].apn = config.apn;
-    arr[id].sessionType = config.type;
-    arr[id].sNssai = config.sNssai;
-
     return id;
 }
 
@@ -55,7 +48,7 @@ int NasSm::allocateProcedureTransactionId()
     int id = -1;
     for (int i = ProcedureTransaction::MIN_ID; i <= ProcedureTransaction::MAX_ID; i++)
     {
-        if (arr[i].id == 0)
+        if (!arr[i].isUsed)
         {
             id = i;
             break;
@@ -69,7 +62,6 @@ int NasSm::allocateProcedureTransactionId()
     }
 
     arr[id] = {};
-    arr[id].id = id;
 
     return id;
 }
@@ -81,7 +73,7 @@ void NasSm::freeProcedureTransactionId(int pti)
 
 void NasSm::freePduSessionId(int psi)
 {
-    m_pduSessions[psi] = {};
+    m_pduSessions[psi]->psState = EPsState::INACTIVE;
 }
 
 } // namespace nr::ue
