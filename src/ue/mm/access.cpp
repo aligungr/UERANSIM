@@ -9,6 +9,7 @@
 #include "mm.hpp"
 
 #include <nas/utils.hpp>
+#include <ue/sm/sm.hpp>
 
 namespace nr::ue
 {
@@ -26,6 +27,8 @@ bool NasMm::hasEmergency()
 
     // TODO: Other case which is an emergency PDU session is established, or need to be established (and wanted to be
     //  established soon)
+    if (m_sm->anyEmergencySession())
+        return true;
     return false;
 }
 

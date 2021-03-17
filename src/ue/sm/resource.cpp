@@ -7,6 +7,7 @@
 //
 
 #include "sm.hpp"
+#include <algorithm>
 #include <nas/proto_conf.hpp>
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
@@ -14,11 +15,24 @@
 namespace nr::ue
 {
 
+static bool IsEstablished(EPsState state)
+{
+    switch (state)
+    {
+    case EPsState::ACTIVE:
+    case EPsState::INACTIVE_PENDING:
+    case EPsState::MODIFICATION_PENDING:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void NasSm::localReleaseSession(int psi)
 {
     m_logger->debug("Performing local release of PDU session[%d]", psi);
 
-    bool isEstablished = m_pduSessions[psi].isEstablished;
+    bool isEstablished = IsEstablished(m_pduSessions[psi]->psState);
 
     freePduSessionId(psi);
 
@@ -33,8 +47,15 @@ void NasSm::localReleaseSession(int psi)
 void NasSm::localReleaseAllSessions()
 {
     for (auto &session : m_pduSessions)
-        if (session.id != 0)
-            localReleaseSession(session.id);
+        if (IsEstablished(session->psState))
+            localReleaseSession(session->psi);
+}
+
+bool NasSm::anyEmergencySession()
+{
+    // ACTIVE_PENDING etc. are also included
+    return std::any_of(m_pduSessions.begin(), m_pduSessions.end(),
+                       [](auto &ps) { return ps->psState != EPsState::INACTIVE && ps->isEmergency; });
 }
 
 } // namespace nr::ue
