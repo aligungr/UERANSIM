@@ -94,16 +94,9 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
     {
     case app::UeCliCommand::STATUS: {
         std::vector<Json> pduSessions{};
-        int index = 0;
         for (auto &pduSession : m_base->appTask->m_pduSessions)
-        {
             if (pduSession.has_value())
-            {
-                pduSessions.push_back(
-                    Json::Obj({{"id", index}, {"type", pduSession->type}, {"address", pduSession->address}}));
-            }
-            index++;
-        }
+                pduSessions.push_back(ToJson(*pduSession));
 
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
