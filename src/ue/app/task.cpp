@@ -130,11 +130,13 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
         auto *session = msg.pduSession;
 
         UePduSessionInfo sessionInfo{};
+        sessionInfo.psi = session->psi;
         sessionInfo.type = nas::utils::EnumToString(session->sessionType);
         if (session->pduAddress.has_value())
             sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
+        sessionInfo.isEmergency = session->isEmergency;
 
-        m_pduSessions[session->id] = std::move(sessionInfo);
+        m_pduSessions[session->psi] = std::move(sessionInfo);
 
         setupTunInterface(session);
         return;
@@ -179,7 +181,7 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    int psi = pduSession->id;
+    int psi = pduSession->psi;
     if (psi == 0 || psi > 15)
     {
         m_logger->err("Connection could not setup. Invalid PSI.");
@@ -213,7 +215,7 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
     m_tunTasks[psi] = task;
     task->start();
 
-    m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->id,
+    m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
                    allocatedName.c_str(), ipAddress.c_str());
 }
 
