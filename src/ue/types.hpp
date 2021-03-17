@@ -49,6 +49,13 @@ struct SessionConfig
     nas::EPduSessionType type{};
     std::optional<SingleSlice> sNssai{};
     std::optional<std::string> apn{};
+    bool isEmergency{};
+};
+
+struct IntegrityMaxDataRateConfig
+{
+    bool uplinkFull{};
+    bool downlinkFull{};
 };
 
 struct UeConfig
@@ -65,9 +72,10 @@ struct UeConfig
     SupportedAlgs supportedAlgs{};
     std::vector<std::string> gnbSearchList{};
     std::vector<SessionConfig> initSessions{};
+    IntegrityMaxDataRateConfig integrityMaxRate{};
 
     /* Read from config file as well, but should be stored in non-volatile
-     * mobile storage and subject to change in runtime  */
+     * mobile storage and subject to change in runtime */
     struct Initials
     {
         NetworkSlice defaultConfiguredNssai{};
@@ -222,22 +230,37 @@ enum class EMmSubState
     MM_SERVICE_REQUEST_INITIATED_NA
 };
 
+enum class EPsState
+{
+    INACTIVE,
+    ACTIVE_PENDING,
+    ACTIVE,
+    INACTIVE_PENDING,
+    MODIFICATION_PENDING
+};
+
 struct PduSession
 {
     static constexpr const int MIN_ID = 1;
     static constexpr const int MAX_ID = 15;
 
-    int id{};
-    bool isEstablished{};
+    const int psi;
+
+    EPsState psState{};
 
     nas::EPduSessionType sessionType{};
     std::optional<std::string> apn{};
     std::optional<SingleSlice> sNssai{};
+    bool isEmergency{};
 
     std::optional<nas::IEQoSRules> authorizedQoSRules{};
     std::optional<nas::IESessionAmbr> sessionAmbr{};
     std::optional<nas::IEQoSFlowDescriptions> authorizedQoSFlowDescriptions{};
     std::optional<nas::IEPduAddress> pduAddress{};
+
+    explicit PduSession(int psi) : psi(psi)
+    {
+    }
 };
 
 struct ProcedureTransaction
@@ -245,7 +268,7 @@ struct ProcedureTransaction
     static constexpr const int MIN_ID = 1;
     static constexpr const int MAX_ID = 254;
 
-    int id{};
+    bool isUsed{};
 };
 
 enum class EConnectionIdentifier
@@ -362,8 +385,10 @@ enum class EAutnValidationRes
 
 struct UePduSessionInfo
 {
+    int psi{};
     std::string type{};
     std::string address{};
+    bool isEmergency{};
 };
 
 enum class ERegUpdateCause
@@ -428,5 +453,7 @@ Json ToJson(const E5UState &state);
 Json ToJson(const UeConfig &v);
 Json ToJson(const UeTimers &v);
 Json ToJson(const ERegUpdateCause &v);
+Json ToJson(const EPsState &v);
+Json ToJson(const UePduSessionInfo &v);
 
 } // namespace nr::ue

@@ -197,8 +197,22 @@ static nr::ue::UeConfig *ReadConfigYaml()
             else
                 throw std::runtime_error("Invalid PDU session type: " + type);
 
+            s.isEmergency = yaml::GetBool(sess, "emergency");
+
             result->initSessions.push_back(s);
         }
+    }
+
+    yaml::AssertHasField(config, "integrityMaxRate");
+    {
+        auto uplink = yaml::GetString(config["integrityMaxRate"], "uplink");
+        auto downlink = yaml::GetString(config["integrityMaxRate"], "downlink");
+        if (uplink != "full" && uplink != "64kbps")
+            throw std::runtime_error("Invalid integrity protection maximum uplink data rate: " + uplink);
+        if (downlink != "full" && downlink != "64kbps")
+            throw std::runtime_error("Invalid integrity protection maximum downlink data rate: " + downlink);
+        result->integrityMaxRate.uplinkFull = uplink == "full";
+        result->integrityMaxRate.downlinkFull = downlink == "full";
     }
 
     return result;
@@ -304,6 +318,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->initSessions = g_refConfig->initSessions;
     c->configureRouting = g_refConfig->configureRouting;
     c->prefixLogger = g_refConfig->prefixLogger;
+    c->integrityMaxRate = g_refConfig->integrityMaxRate;
 
     if (c->supi.has_value())
         IncrementNumber(c->supi->value, ueIndex);
