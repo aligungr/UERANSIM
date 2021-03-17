@@ -125,7 +125,7 @@ void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishm
 {
     if (msg.smCause.has_value())
     {
-        m_logger->warn("SM cause received in PduSessionEstablishmentAccept: %s",
+        m_logger->warn("SM cause received in PduSessionEstablishmentAccept [%s]",
                        nas::utils::EnumToString(msg.smCause->value));
     }
 
