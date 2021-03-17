@@ -204,4 +204,33 @@ Json ToJson(const ERegUpdateCause &v)
     }
 }
 
+Json ToJson(const EPsState &state)
+{
+    switch (state)
+    {
+    case EPsState::INACTIVE:
+        return "PS-INACTIVE";
+    case EPsState::ACTIVE_PENDING:
+        return "PS-ACTIVE-PENDING";
+    case EPsState::ACTIVE:
+        return "PS-ACTIVE";
+    case EPsState::INACTIVE_PENDING:
+        return "PS-INACTIVE-PENDING";
+    case EPsState::MODIFICATION_PENDING:
+        return "PS-MODIFICATION-PENDING";
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const UePduSessionInfo &v)
+{
+    return Json::Obj({
+        {"id", v.psi},
+        {"type", v.type},
+        {"address", v.address},
+        {"emergency", v.isEmergency},
+    });
+}
+
 } // namespace nr::ue
