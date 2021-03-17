@@ -67,4 +67,14 @@ void NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
     sendNasMessage(msg);
 }
 
+bool NasMm::isRegistered()
+{
+    return m_rmState == ERmState::RM_REGISTERED;
+}
+
+bool NasMm::isRegisteredForEmergency()
+{
+    return isRegistered() && m_registeredForEmergency;
+}
+
 } // namespace nr::ue
