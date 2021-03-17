@@ -28,8 +28,8 @@ class NasSm
     std::unique_ptr<Logger> m_logger;
     NasMm *m_mm;
 
-    std::array<PduSession, 16> m_pduSessions{};
-    ProcedureTransaction m_procedureTransactions[255]{};
+    std::array<PduSession*, 16> m_pduSessions{};
+    std::array<ProcedureTransaction, 255> m_procedureTransactions{};
 
     friend class UeCmdHandler;
 
@@ -48,12 +48,14 @@ class NasSm
     /* Resource */
     void localReleaseSession(int psi);
     void localReleaseAllSessions();
+    bool anyEmergencySession();
 
   private:
     /* Transport */
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
     void receiveSmCause(const nas::IE5gSmCause &msg);
+    void sendSmCause(const nas::ESmCause &cause, int psi);
 
     /* Allocation */
     int allocatePduSessionId(const SessionConfig &config);
