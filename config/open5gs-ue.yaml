@@ -29,6 +29,7 @@ sessions:
     slice:
       sst: 1
       sd: 1
+    emergency: false
 
 # Configured NSSAI for this UE by HPLMN
 configured-nssai:
@@ -51,3 +52,8 @@ ciphering:
   EA1: true
   EA2: true
   EA3: true
+
+# Integrity protection maximum data rate for user plane
+integrityMaxRate:
+  uplink: 'full'
+  downlink: 'full'
