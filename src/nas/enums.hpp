@@ -519,13 +519,13 @@ enum class EProtectionSchemeIdentifier
 
 enum class EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink
 {
-    SIXTY_FOR_KBPS = 0b00000000,
+    SIXTY_FOUR_KBPS = 0b00000000,
     FULL_DATA_RATE = 0b11111111,
 };
 
 enum class EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink
 {
-    SIXTY_FOR_KBPS = 0b00000000,
+    SIXTY_FOUR_KBPS = 0b00000000,
     FULL_DATA_RATE = 0b11111111,
 };
 
