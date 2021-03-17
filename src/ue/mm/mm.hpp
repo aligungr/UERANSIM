@@ -158,10 +158,13 @@ class NasMm
   private: /* Timer */
     void onTimerExpire(nas::NasTimer &timer);
 
-  public: /* Interface */
-    void handleRrcEvent(const NwUeRrcToNas &msg);
-    void handleNasEvent(const NwUeNasToNas &msg);
-    void deliverUlTransport(const nas::UlNasTransport &msg);
+  public:
+    /* Interface */
+    void handleRrcEvent(const NwUeRrcToNas &msg);            // used by RRC
+    void handleNasEvent(const NwUeNasToNas &msg);            // used by NAS
+    void deliverUlTransport(const nas::UlNasTransport &msg); // used by SM
+    bool isRegistered();                                     // used by SM
+    bool isRegisteredForEmergency();                         // used by SM
 };
 
 } // namespace nr::ue
