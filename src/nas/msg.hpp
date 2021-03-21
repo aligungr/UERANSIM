@@ -87,8 +87,8 @@ struct NasMessage
 
 struct SmMessage : NasMessage
 {
-    EPduSessionIdentity pduSessionId{};
-    uint8_t pti{};
+    int pduSessionId{};
+    int pti{};
     EMessageType messageType{};
 
   protected:

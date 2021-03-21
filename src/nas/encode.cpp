@@ -369,7 +369,7 @@ std::unique_ptr<NasMessage> DecodeNasMessage(const OctetView &stream)
     }
     else
     {
-        auto pduSessionId = static_cast<EPduSessionIdentity>(stream.readI());
+        auto pduSessionId = stream.readI();
         uint8_t pti = stream.read();
         auto messageType = static_cast<EMessageType>(stream.readI());
 

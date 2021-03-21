@@ -105,7 +105,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     /* Prepare the establishment request message */
     auto req = std::make_unique<nas::PduSessionEstablishmentRequest>();
     req->pti = pti;
-    req->pduSessionId = static_cast<nas::EPduSessionIdentity>(psi);
+    req->pduSessionId = psi;
     req->integrityProtectionMaximumDataRate = MakeIntegrityMaxRate(m_base->config->integrityMaxRate);
     req->pduSessionType = nas::IEPduSessionType{};
     req->pduSessionType->pduSessionType = nas::EPduSessionType::IPV4;
@@ -127,15 +127,33 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
 
 void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
 {
+    m_logger->debug("PDU Session Establishment Accept received");
+
     if (msg.smCause.has_value())
     {
         m_logger->warn("SM cause received in PduSessionEstablishmentAccept [%s]",
                        nas::utils::EnumToString(msg.smCause->value));
     }
 
+    if (msg.pti < ProcedureTransaction::MIN_ID || msg.pti > ProcedureTransaction::MAX_ID)
+    {
+        // PTI is required for PDU session establishment request
+        m_logger->err("Received PTI [%d] value is invalid", msg.pti);
+        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pduSessionId);
+        return;
+    }
+
+    if (m_procedureTransactions[msg.pti].psi != msg.pduSessionId)
+    {
+        m_logger->err("Received PSI value [%d] is invalid, expected was [%d]", msg.pduSessionId,
+                      m_procedureTransactions[msg.pti].psi);
+        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pduSessionId);
+        return;
+    }
+
     freeProcedureTransactionId(msg.pti);
 
-    auto pduSession = m_pduSessions[static_cast<int>(msg.pduSessionId)];
+    auto& pduSession = m_pduSessions[msg.pduSessionId];
     if (pduSession->psState != EPsState::ACTIVE_PENDING)
     {
         m_logger->err("PS establishment accept received without requested");
