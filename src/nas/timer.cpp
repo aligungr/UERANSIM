@@ -15,41 +15,41 @@ namespace nas
 {
 
 NasTimer::NasTimer(int timerCode, bool isMmTimer, int defaultInterval)
-    : timerCode(timerCode), mmTimer(isMmTimer), interval(defaultInterval), startMillis(0), running(false),
-      expiryCount(0), _lastDebugPrintMs(0)
+    : m_code(timerCode), m_isMm(isMmTimer), m_interval(defaultInterval), m_startMillis(0), m_isRunning(false),
+      m_expiryCount(0), m_lastDebugPrintMs(0)
 {
 }
 
 bool NasTimer::isRunning() const
 {
-    return running;
+    return m_isRunning;
 }
 
 int NasTimer::getCode() const
 {
-    return timerCode;
+    return m_code;
 }
 
 bool NasTimer::isMmTimer() const
 {
-    return mmTimer;
+    return m_isMm;
 }
 
 void NasTimer::start(bool clearExpiryCount)
 {
     if (clearExpiryCount)
         resetExpiryCount();
-    startMillis = utils::CurrentTimeMillis();
-    running = true;
+    m_startMillis = utils::CurrentTimeMillis();
+    m_isRunning = true;
 }
 
 void NasTimer::start(const nas::IEGprsTimer2 &v, bool clearExpiryCount)
 {
     if (clearExpiryCount)
         resetExpiryCount();
-    interval = v.value;
-    startMillis = utils::CurrentTimeMillis();
-    running = true;
+    m_interval = v.value;
+    m_startMillis = utils::CurrentTimeMillis();
+    m_isRunning = true;
 }
 
 void NasTimer::start(const nas::IEGprsTimer3 &v, bool clearExpiryCount)
@@ -75,9 +75,9 @@ void NasTimer::start(const nas::IEGprsTimer3 &v, bool clearExpiryCount)
     else if (v.unit == nas::EGprsTimerValueUnit3::MULTIPLES_OF_320HOUR)
         secs = val * 60 * 60 * 320;
 
-    interval = secs;
-    startMillis = utils::CurrentTimeMillis();
-    running = true;
+    m_interval = secs;
+    m_startMillis = utils::CurrentTimeMillis();
+    m_isRunning = true;
 }
 
 void NasTimer::stop(bool clearExpiryCount)
@@ -85,31 +85,31 @@ void NasTimer::stop(bool clearExpiryCount)
     if (clearExpiryCount)
         resetExpiryCount();
 
-    if (running)
+    if (m_isRunning)
     {
-        startMillis = utils::CurrentTimeMillis();
-        running = false;
+        m_startMillis = utils::CurrentTimeMillis();
+        m_isRunning = false;
     }
 }
 
 bool NasTimer::performTick()
 {
-    if (running)
+    if (m_isRunning)
     {
         long currentMs = utils::CurrentTimeMillis();
-        long deltaSec = (currentMs - startMillis) / 1000LL;
-        long remainingSec = interval - deltaSec;
+        long deltaSec = (currentMs - m_startMillis) / 1000LL;
+        long remainingSec = m_interval - deltaSec;
 
-        if (currentMs - _lastDebugPrintMs > 10LL * 1000LL)
+        if (currentMs - m_lastDebugPrintMs > 10LL * 1000LL)
         {
-            _lastDebugPrintMs = currentMs;
+            m_lastDebugPrintMs = currentMs;
             // Log.debug(Tag.TIMER, "NAS Timer %s int:%ss rem:%ss", timerCode, interval, remainingSec);
         }
 
         if (remainingSec <= 0LL)
         {
             stop(false);
-            expiryCount++;
+            m_expiryCount++;
             return true;
         }
     }
@@ -118,26 +118,26 @@ bool NasTimer::performTick()
 
 int NasTimer::getInterval() const
 {
-    return interval;
+    return m_interval;
 }
 
 int NasTimer::getRemaining() const
 {
-    if (!running)
+    if (!m_isRunning)
         return 0;
 
-    int elapsed = static_cast<int>((utils::CurrentTimeMillis() - startMillis) / 1000LL);
-    return std::max(interval - elapsed, 0);
+    int elapsed = static_cast<int>((utils::CurrentTimeMillis() - m_startMillis) / 1000LL);
+    return std::max(m_interval - elapsed, 0);
 }
 
 void NasTimer::resetExpiryCount()
 {
-    expiryCount = 0;
+    m_expiryCount = 0;
 }
 
 int NasTimer::getExpiryCount() const
 {
-    return expiryCount;
+    return m_expiryCount;
 }
 
 Json ToJson(const NasTimer &v)

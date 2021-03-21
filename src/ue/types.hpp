@@ -11,6 +11,7 @@
 #include <app/monitor.hpp>
 #include <app/ue_ctl.hpp>
 #include <array>
+#include <memory>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
 #include <utils/common_types.hpp>
@@ -146,10 +147,6 @@ struct UeTimers
     nas::NasTimer t3525; /* MM - ... */
     nas::NasTimer t3540; /* MM - ... */
 
-    nas::NasTimer t3580; /* SM - ... */
-    nas::NasTimer t3581; /* SM - ... */
-    nas::NasTimer t3582; /* SM - ... */
-    nas::NasTimer t3583; /* SM - ... */
     nas::NasTimer t3584; /* SM - ... */
     nas::NasTimer t3585; /* SM - ... */
 
@@ -239,6 +236,12 @@ enum class EPsState
     MODIFICATION_PENDING
 };
 
+enum class EPtState
+{
+    INACTIVE,
+    PENDING,
+};
+
 struct PduSession
 {
     static constexpr const int MIN_ID = 1;
@@ -268,7 +271,10 @@ struct ProcedureTransaction
     static constexpr const int MIN_ID = 1;
     static constexpr const int MAX_ID = 254;
 
-    bool isUsed{};
+    EPtState state{};
+    std::unique_ptr<nas::NasTimer> timer{};
+    std::unique_ptr<nas::SmMessage> message{};
+    int psi{};
 };
 
 enum class EConnectionIdentifier

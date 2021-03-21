@@ -28,7 +28,7 @@ class NasSm
     std::unique_ptr<Logger> m_logger;
     NasMm *m_mm;
 
-    std::array<PduSession*, 16> m_pduSessions{};
+    std::array<PduSession *, 16> m_pduSessions{};
     std::array<ProcedureTransaction, 255> m_procedureTransactions{};
 
     friend class UeCmdHandler;
@@ -67,6 +67,17 @@ class NasSm
     void sendEstablishmentRequest(const SessionConfig &config);
     void receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
+    void abortEstablishmentRequest(int pti);
+
+    /* Timer */
+    std::unique_ptr<nas::NasTimer> newTransactionTimer(int code);
+    void onTimerExpire(nas::NasTimer &timer);
+    void onTransactionTimerExpire(int pti);
+
+  public:
+    /* Interface */
+    void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
+    void onTimerTick();                           // used by NAS
 };
 
 } // namespace nr::ue

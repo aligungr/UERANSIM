@@ -18,15 +18,15 @@ namespace nas
 class NasTimer
 {
   private:
-    const int timerCode;
-    const bool mmTimer;
+    const int m_code;
+    const bool m_isMm;
 
-    int interval;
-    long startMillis;
-    bool running;
-    int expiryCount;
+    int m_interval;
+    long m_startMillis;
+    bool m_isRunning;
+    int m_expiryCount;
 
-    long _lastDebugPrintMs;
+    long m_lastDebugPrintMs;
 
   public:
     NasTimer(int timerCode, bool isMmTimer, int defaultInterval);

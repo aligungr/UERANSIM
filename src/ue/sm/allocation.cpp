@@ -48,7 +48,7 @@ int NasSm::allocateProcedureTransactionId()
     int id = -1;
     for (int i = ProcedureTransaction::MIN_ID; i <= ProcedureTransaction::MAX_ID; i++)
     {
-        if (!arr[i].isUsed)
+        if (arr[i].state == EPtState::INACTIVE)
         {
             id = i;
             break;

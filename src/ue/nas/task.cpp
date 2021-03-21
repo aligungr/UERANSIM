@@ -74,9 +74,7 @@ void NasTask::onLoop()
             if (w->timer->isMmTimer())
                 mm->handleNasEvent(*w);
             else
-            {
-                // TODO, handle SM timer
-            }
+                sm->handleNasEvent(*w);
             break;
         case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS:
             sm->establishInitialSessions();
@@ -147,18 +145,12 @@ void NasTask::performTick()
         sendExpireMsg(&timers.t3525);
     if (timers.t3540.performTick())
         sendExpireMsg(&timers.t3540);
-    if (timers.t3580.performTick())
-        sendExpireMsg(&timers.t3580);
-    if (timers.t3581.performTick())
-        sendExpireMsg(&timers.t3581);
-    if (timers.t3582.performTick())
-        sendExpireMsg(&timers.t3582);
-    if (timers.t3583.performTick())
-        sendExpireMsg(&timers.t3583);
     if (timers.t3584.performTick())
         sendExpireMsg(&timers.t3584);
     if (timers.t3585.performTick())
         sendExpireMsg(&timers.t3585);
+
+    sm->onTimerTick();
 }
 
 } // namespace nr::ue

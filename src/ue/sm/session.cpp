@@ -79,7 +79,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     }
 
     /* Set relevant fields of the PS description */
-    auto ps = m_pduSessions[psi];
+    auto &ps = m_pduSessions[psi];
     ps->psState = EPsState::ACTIVE_PENDING;
     ps->sessionType = config.type;
     ps->apn = config.apn;
@@ -103,22 +103,26 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     iePco.options = opt.encode();
 
     /* Prepare the establishment request message */
-    nas::PduSessionEstablishmentRequest req{};
-    req.pti = pti;
-    req.pduSessionId = static_cast<nas::EPduSessionIdentity>(psi);
-    req.integrityProtectionMaximumDataRate = MakeIntegrityMaxRate(m_base->config->integrityMaxRate);
-    req.pduSessionType = nas::IEPduSessionType{};
-    req.pduSessionType->pduSessionType = nas::EPduSessionType::IPV4;
-    req.sscMode = nas::IESscMode{};
-    req.sscMode->sscMode = nas::ESscMode::SSC_MODE_1;
-    req.extendedProtocolConfigurationOptions = std::move(iePco);
-    req.smCapability = MakeSmCapability();
+    auto req = std::make_unique<nas::PduSessionEstablishmentRequest>();
+    req->pti = pti;
+    req->pduSessionId = static_cast<nas::EPduSessionIdentity>(psi);
+    req->integrityProtectionMaximumDataRate = MakeIntegrityMaxRate(m_base->config->integrityMaxRate);
+    req->pduSessionType = nas::IEPduSessionType{};
+    req->pduSessionType->pduSessionType = nas::EPduSessionType::IPV4;
+    req->sscMode = nas::IESscMode{};
+    req->sscMode->sscMode = nas::ESscMode::SSC_MODE_1;
+    req->extendedProtocolConfigurationOptions = std::move(iePco);
+    req->smCapability = MakeSmCapability();
 
-    /* Start T3580 */
-    m_timers->t3580.start();
+    /* Set relevant fields of the PT, and start T3580 */
+    auto &pt = m_procedureTransactions[pti];
+    pt.state = EPtState::PENDING;
+    pt.timer = newTransactionTimer(3580);
+    pt.message = std::move(req);
+    pt.psi = psi;
 
     /* Send SM message */
-    sendSmMessage(psi, req);
+    sendSmMessage(psi, *pt.message);
 }
 
 void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
@@ -128,8 +132,6 @@ void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishm
         m_logger->warn("SM cause received in PduSessionEstablishmentAccept [%s]",
                        nas::utils::EnumToString(msg.smCause->value));
     }
-
-    m_timers->t3580.stop();
 
     freeProcedureTransactionId(msg.pti);
 
@@ -167,6 +169,16 @@ void NasSm::receivePduSessionEstablishmentReject(const nas::PduSessionEstablishm
 {
     m_logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));
     // TODO
+}
+
+void NasSm::abortEstablishmentRequest(int pti)
+{
+    int psi = m_procedureTransactions[pti].psi;
+
+    m_logger->debug("PDU Session Establishment Procedure aborted for PTI[%d], PSI[%d]", pti, psi);
+
+    freeProcedureTransactionId(pti);
+    freePduSessionId(psi);
 }
 
 } // namespace nr::ue

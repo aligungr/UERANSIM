@@ -149,7 +149,7 @@ void GnbMrTask::onUeConnected(int ue, const std::string &name)
     m_ueMap[ue].ueId = ue;
     m_ueMap[ue].name = name;
 
-    m_logger->info("New UE connected to gNB. Total number of UEs is now: %d", m_ueMap.size());
+    m_logger->info("New UE connected to gNB. Total number of UEs [%d]", m_ueMap.size());
 }
 
 void GnbMrTask::onUeReleased(int ue, rls::ECause cause)
@@ -164,7 +164,7 @@ void GnbMrTask::onUeReleased(int ue, rls::ECause cause)
     }
 
     m_ueMap.erase(ue);
-    m_logger->info("A UE disconnected from gNB. Total number of UEs is now: %d", m_ueMap.size());
+    m_logger->info("A UE disconnected from gNB. Total number of UEs [%d]", m_ueMap.size());
 }
 
 void GnbMrTask::receiveUplinkPayload(int ue, rls::EPayloadType type, OctetString &&payload)

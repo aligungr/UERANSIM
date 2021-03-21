@@ -17,7 +17,6 @@ UeTimers::UeTimers()
       t3445(3445, true, 12 * 60 * 60), t3502(3502, true, 12 * 60), t3510(3510, true, 15), t3511(3511, true, 10),
       t3512(3512, true, 54 * 60), t3516(3516, true, 30), t3517(3517, true, 15), t3519(3519, true, 60),
       t3520(3520, true, 15), t3521(3521, true, 15), t3525(3525, true, 60), t3540(3540, true, 10),
-      t3580(3580, false, 16), t3581(3581, false, 16), t3582(3582, false, 16), t3583(3583, false, 60),
       t3584(3584, false, INT32_MAX), t3585(3585, false, INT32_MAX)
 {
 }
@@ -133,11 +132,22 @@ Json ToJson(const UeConfig &v)
 Json ToJson(const UeTimers &v)
 {
     return Json::Obj({
-        {"T3346", ToJson(v.t3346)}, {"T3396", ToJson(v.t3396)}, {"T3444", ToJson(v.t3444)}, {"T3445", ToJson(v.t3445)},
-        {"T3502", ToJson(v.t3502)}, {"T3510", ToJson(v.t3510)}, {"T3511", ToJson(v.t3511)}, {"T3512", ToJson(v.t3512)},
-        {"T3516", ToJson(v.t3516)}, {"T3517", ToJson(v.t3517)}, {"T3519", ToJson(v.t3519)}, {"T3520", ToJson(v.t3520)},
-        {"T3521", ToJson(v.t3521)}, {"T3525", ToJson(v.t3525)}, {"T3540", ToJson(v.t3540)}, {"T3580", ToJson(v.t3580)},
-        {"T3581", ToJson(v.t3581)}, {"T3582", ToJson(v.t3582)}, {"T3583", ToJson(v.t3583)}, {"T3584", ToJson(v.t3584)},
+        {"T3346", ToJson(v.t3346)},
+        {"T3396", ToJson(v.t3396)},
+        {"T3444", ToJson(v.t3444)},
+        {"T3445", ToJson(v.t3445)},
+        {"T3502", ToJson(v.t3502)},
+        {"T3510", ToJson(v.t3510)},
+        {"T3511", ToJson(v.t3511)},
+        {"T3512", ToJson(v.t3512)},
+        {"T3516", ToJson(v.t3516)},
+        {"T3517", ToJson(v.t3517)},
+        {"T3519", ToJson(v.t3519)},
+        {"T3520", ToJson(v.t3520)},
+        {"T3521", ToJson(v.t3521)},
+        {"T3525", ToJson(v.t3525)},
+        {"T3540", ToJson(v.t3540)},
+        {"T3584", ToJson(v.t3584)},
         {"T3585", ToJson(v.t3585)},
     });
 }
