@@ -128,7 +128,7 @@ static void EncodeSecured(SecuredMmMessage &msg, OctetString &stream)
 
 static void EncodeSm(SmMessage &msg, OctetString &stream)
 {
-    stream.appendOctet(static_cast<int>(msg.pduSessionId));
+    stream.appendOctet(msg.pduSessionId);
     stream.appendOctet(msg.pti);
     stream.appendOctet(static_cast<int>(msg.messageType));
 
