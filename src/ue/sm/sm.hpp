@@ -63,7 +63,7 @@ class NasSm
     void freeProcedureTransactionId(int pti);
     void freePduSessionId(int psi);
 
-    /* Session */
+    /* Session Establishment */
     void sendEstablishmentRequest(const SessionConfig &config);
     void receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
