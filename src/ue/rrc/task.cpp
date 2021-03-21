@@ -106,6 +106,7 @@ void UeRrcTask::onLoop()
 
 void UeRrcTask::handleRadioLinkFailure()
 {
+    m_state = ERrcState::RRC_IDLE;
     m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RADIO_LINK_FAILURE));
 }
 
