@@ -79,7 +79,8 @@ void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
     // Assign other fields
     request->mobileIdentity = getOrGeneratePreferredId();
     request->lastVisitedRegisteredTai = m_usim->m_lastVisitedRegisteredTai;
-    request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
+    if (!requestedNssai.slices.empty())
+        request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
     request->updateType =
         nas::IE5gsUpdateType(nas::ESmsRequested::NOT_SUPPORTED, nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED);
@@ -164,7 +165,8 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     // Assign other fields
     request->lastVisitedRegisteredTai = m_usim->m_lastVisitedRegisteredTai;
     request->mobileIdentity = getOrGeneratePreferredId();
-    request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
+    if (!requestedNssai.slices.empty())
+        request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
 
     // TODO: Wireshark cannot decode the message if this IE is used, check later
