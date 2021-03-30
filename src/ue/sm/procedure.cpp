@@ -41,6 +41,12 @@ void NasSm::abortProcedureByPti(int pti)
     if (pt.state != EPtState::PENDING)
         return;
 
+    if (pt.message == nullptr)
+    {
+        m_logger->err("Procedure abortion failure, stored SM message is null");
+        return;
+    }
+
     auto msgType = pt.message->messageType;
 
     int psi = m_procedureTransactions[pti].psi;

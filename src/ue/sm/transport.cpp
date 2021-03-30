@@ -56,6 +56,9 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
     case nas::EMessageType::PDU_SESSION_RELEASE_REJECT:
         receiveReleaseReject((const nas::PduSessionReleaseReject &)msg);
         break;
+    case nas::EMessageType::PDU_SESSION_RELEASE_COMMAND:
+        receiveReleaseCommand((const nas::PduSessionReleaseCommand &)msg);
+        break;
     case nas::EMessageType::FIVEG_SM_STATUS:
         receiveSmStatus((const nas::FiveGSmStatus &)msg);
         break;
