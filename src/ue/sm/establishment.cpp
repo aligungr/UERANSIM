@@ -138,7 +138,7 @@ void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept 
     if (pduSession->psState != EPsState::ACTIVE_PENDING)
     {
         m_logger->err("PS establishment accept received without being requested");
-        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, pduSession->psi);
+        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, msg.pti, msg.pduSessionId);
         return;
     }
 
@@ -193,7 +193,7 @@ void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject 
     if (pduSession->psState != EPsState::ACTIVE_PENDING)
     {
         m_logger->err("PS establishment reject received without being requested");
-        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, pduSession->psi);
+        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, msg.pti, msg.pduSessionId);
         return;
     }
 
