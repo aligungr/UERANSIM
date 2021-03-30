@@ -41,17 +41,25 @@ void NasSm::abortProcedureByPti(int pti)
     if (pt.state != EPtState::PENDING)
         return;
 
+    auto msgType = pt.message->messageType;
+
     int psi = m_procedureTransactions[pti].psi;
     auto &ps = m_pduSessions[psi];
 
     m_logger->debug("Aborting SM procedure for PTI[%d], PSI[%d]", pti, psi);
 
-    freeProcedureTransactionId(pti);
-
-    if (ps->psState == EPsState::ACTIVE_PENDING)
+    if (msgType == nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST)
+    {
+        freeProcedureTransactionId(pti);
         freePduSessionId(psi);
-    if (ps->psState == EPsState::INACTIVE_PENDING || ps->psState == EPsState::MODIFICATION_PENDING)
-        ps->psState = EPsState::ACTIVE;
+    }
+    else if (msgType == nas::EMessageType::PDU_SESSION_RELEASE_REQUEST)
+    {
+        freeProcedureTransactionId(pti);
+        localReleaseSession(psi);
+    }
+
+    // todo: others
 }
 
 void NasSm::abortProcedureByPtiOrPsi(int pti, int psi)

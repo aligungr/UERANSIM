@@ -68,6 +68,10 @@ class NasSm
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
     void receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg);
 
+    /* Session Release */
+    void sendReleaseRequest(int psi);
+    void receiveReleaseReject(const nas::PduSessionReleaseReject& msg);
+
     /* Timer */
     std::unique_ptr<nas::NasTimer> newTransactionTimer(int code);
     void onTimerExpire(nas::NasTimer &timer);

@@ -38,7 +38,7 @@ static nas::IEIntegrityProtectionMaximumDataRate MakeIntegrityMaxRate(const Inte
 
 void NasSm::sendEstablishmentRequest(const SessionConfig &config)
 {
-    m_logger->debug("Sending PDU session establishment request");
+    m_logger->debug("Sending PDU Session Establishment Request");
 
     /* Control the protocol state */
     if (!m_mm->isRegistered())
@@ -190,6 +190,7 @@ void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject 
     freeProcedureTransactionId(msg.pti);
 
     auto &pduSession = m_pduSessions[msg.pduSessionId];
+
     if (pduSession->psState != EPsState::ACTIVE_PENDING)
     {
         m_logger->err("PS establishment reject received without being requested");
@@ -198,6 +199,7 @@ void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject 
     }
 
     pduSession->psState = EPsState::INACTIVE;
+
     if (pduSession->isEmergency)
     {
         // This not much important and no need for now

@@ -62,8 +62,24 @@ void NasSm::onTransactionTimerExpire(int pti)
         }
         else
         {
-            m_logger->err("PDU Session Establishment Procedure failure, no response from the network after 5 attempts");
+            m_logger->err("PDU Session Establishment procedure failure, no response from the network after 5 attempts");
             abortProcedureByPti(pti);
+        }
+        break;
+    }
+    case 3582: {
+        if (pt.timer->getExpiryCount() < 5)
+        {
+            m_logger->warn("Retransmitting PDU Session Release Request due to T3582 expiry");
+            sendSmMessage(pt.psi, *pt.message);
+
+            pt.timer->start(false);
+        }
+        else
+        {
+            m_logger->err("PDU Session Release procedure failure, no response from the network after 5 attempts");
+            abortProcedureByPti(pti);
+            m_mm->sendMobilityRegistration(ERegUpdateCause::PS_STATUS_INFORM);
         }
         break;
     }
