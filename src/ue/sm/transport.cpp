@@ -64,12 +64,19 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
 
 void NasSm::receiveSmStatus(const nas::FiveGSmStatus &msg)
 {
-    receiveSmCause(msg.smCause);
-}
+    m_logger->err("SM Status received: %s", nas::utils::EnumToString(msg.smCause.value));
 
-void NasSm::receiveSmCause(const nas::IE5gSmCause &msg)
-{
-    m_logger->err("SM cause received: %s", nas::utils::EnumToString(msg.value));
+    if (msg.smCause.value == nas::ESmCause::INVALID_PTI_VALUE)
+    {
+        // "The UE shall abort any ongoing 5GSM procedure related to the received PTI value and stop any related timer."
+        abortProcedureByPti(msg.pti);
+    }
+    else if (msg.smCause.value == nas::ESmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED)
+    {
+        // "The UE shall abort any ongoing 5GSM procedure related to the PTI or PDU session Id and stop any related
+        // timer."
+        abortProcedureByPtiOrPsi(msg.pti, msg.pduSessionId);
+    }
 }
 
 void NasSm::sendSmCause(const nas::ESmCause &cause, int pti, int psi)

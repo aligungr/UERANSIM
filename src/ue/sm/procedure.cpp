@@ -8,6 +8,7 @@
 
 #include "sm.hpp"
 #include <nas/utils.hpp>
+#include <set>
 #include <ue/app/task.hpp>
 #include <ue/mm/mm.hpp>
 
@@ -32,6 +33,42 @@ bool NasSm::checkPtiAndPsi(const nas::SmMessage &msg)
     }
 
     return true;
+}
+
+void NasSm::abortProcedureByPti(int pti)
+{
+    auto &pt = m_procedureTransactions[pti];
+    if (pt.state != EPtState::PENDING)
+        return;
+
+    int psi = m_procedureTransactions[pti].psi;
+    auto &ps = m_pduSessions[psi];
+
+    m_logger->debug("Aborting SM procedure for PTI[%d], PSI[%d]", pti, psi);
+
+    freeProcedureTransactionId(pti);
+
+    if (ps->psState == EPsState::ACTIVE_PENDING)
+        freePduSessionId(psi);
+    if (ps->psState == EPsState::INACTIVE_PENDING || ps->psState == EPsState::MODIFICATION_PENDING)
+        ps->psState = EPsState::ACTIVE;
+}
+
+void NasSm::abortProcedureByPtiOrPsi(int pti, int psi)
+{
+    std::set<int> ptiToAbort{};
+    int i = 0;
+    for (auto &pt : m_procedureTransactions)
+    {
+        if (pt.state == EPtState::PENDING && pt.psi == psi)
+            ptiToAbort.insert(i);
+        i++;
+    }
+
+    ptiToAbort.insert(pti);
+
+    for (int id : ptiToAbort)
+        abortProcedureByPti(id);
 }
 
 } // namespace nr::ue

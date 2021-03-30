@@ -54,7 +54,6 @@ class NasSm
     /* Transport */
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
-    void receiveSmCause(const nas::IE5gSmCause &msg);
     void sendSmCause(const nas::ESmCause &cause, int pti, int psi);
 
     /* Allocation */
@@ -68,15 +67,16 @@ class NasSm
     void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
     void receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg);
-    void abortEstablishmentRequest(int pti);
 
     /* Timer */
     std::unique_ptr<nas::NasTimer> newTransactionTimer(int code);
     void onTimerExpire(nas::NasTimer &timer);
     void onTransactionTimerExpire(int pti);
 
-    /* Utils */
+    /* Procedure */
     bool checkPtiAndPsi(const nas::SmMessage &msg);
+    void abortProcedureByPti(int pti);
+    void abortProcedureByPtiOrPsi(int pti, int psi);
 
   public:
     /* Interface */

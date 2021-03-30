@@ -63,7 +63,7 @@ void NasSm::onTransactionTimerExpire(int pti)
         else
         {
             m_logger->err("PDU Session Establishment Procedure failure, no response from the network after 5 attempts");
-            abortEstablishmentRequest(pti);
+            abortProcedureByPti(pti);
         }
         break;
     }

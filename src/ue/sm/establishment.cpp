@@ -177,7 +177,7 @@ void NasSm::receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmen
     if (!checkPtiAndPsi(msg))
         return;
 
-    abortEstablishmentRequest(msg.pti);
+    abortProcedureByPti(msg.pti);
 }
 
 void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
@@ -203,16 +203,6 @@ void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject 
         // This not much important and no need for now
         // TODO: inform the upper layers of the failure of the procedure
     }
-}
-
-void NasSm::abortEstablishmentRequest(int pti)
-{
-    int psi = m_procedureTransactions[pti].psi;
-
-    m_logger->debug("PDU Session Establishment Procedure aborted for PTI[%d], PSI[%d]", pti, psi);
-
-    freeProcedureTransactionId(pti);
-    freePduSessionId(psi);
 }
 
 } // namespace nr::ue
