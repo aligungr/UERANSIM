@@ -45,10 +45,10 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
     switch (msg.messageType)
     {
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
-        receivePduSessionEstablishmentAccept((const nas::PduSessionEstablishmentAccept &)msg);
+        receiveEstablishmentAccept((const nas::PduSessionEstablishmentAccept &)msg);
         break;
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
-        receivePduSessionEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
+        receiveEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
         break;
     case nas::EMessageType::FIVEG_SM_STATUS:
         receiveSmStatus((const nas::FiveGSmStatus &)msg);
