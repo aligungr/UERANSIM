@@ -125,7 +125,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     sendSmMessage(psi, *pt.message);
 }
 
-void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
+void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
 {
     m_logger->debug("PDU Session Establishment Accept received");
 
@@ -180,7 +180,7 @@ void NasSm::abortEstablishmentRequest(int pti)
     freePduSessionId(psi);
 }
 
-void NasSm::receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
+void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
 {
     m_logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));
 

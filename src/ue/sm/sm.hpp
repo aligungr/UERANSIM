@@ -65,8 +65,8 @@ class NasSm
 
     /* Session Establishment */
     void sendEstablishmentRequest(const SessionConfig &config);
-    void receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
-    void receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
+    void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
+    void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
     void abortEstablishmentRequest(int pti);
 
     /* Timer */
