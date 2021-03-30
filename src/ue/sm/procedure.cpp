@@ -44,7 +44,6 @@ void NasSm::abortProcedureByPti(int pti)
     auto msgType = pt.message->messageType;
 
     int psi = m_procedureTransactions[pti].psi;
-    auto &ps = m_pduSessions[psi];
 
     m_logger->debug("Aborting SM procedure for PTI[%d], PSI[%d]", pti, psi);
 
