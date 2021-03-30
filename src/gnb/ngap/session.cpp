@@ -199,10 +199,10 @@ void NgapTask::receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSession
     sendNgapUeAssociated(ue->ctxId, respPdu);
 
     if (failedList.empty())
-        m_logger->info("PDU session resource is setup for UE[%d] count[%d]", ue->ctxId,
+        m_logger->info("PDU session resource(s) setup for UE[%d] count[%d]", ue->ctxId,
                        static_cast<int>(successList.size()));
     else if (successList.empty())
-        m_logger->err("PDU session resource setup was failed for UE[%d] count[%d]", ue->ctxId,
+        m_logger->err("PDU session resource(s) setup was failed for UE[%d] count[%d]", ue->ctxId,
                       static_cast<int>(failedList.size()));
     else
         m_logger->err("PDU session establishment is partially successful for UE[%d], success[%d], failed[%d]",

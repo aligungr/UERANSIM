@@ -188,7 +188,7 @@ void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)
 
     if (!m_pduSessions.count(sessionInd))
     {
-        m_logger->err("Uplink data failure, PDU session not found. UE: %d PSI: %d", ueId, psi);
+        m_logger->err("Uplink data failure, PDU session not found. UE[%d] PSI[%d]", ueId, psi);
         return;
     }
 
