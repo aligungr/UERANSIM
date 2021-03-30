@@ -72,10 +72,22 @@ void NasSm::receiveSmCause(const nas::IE5gSmCause &msg)
     m_logger->err("SM cause received: %s", nas::utils::EnumToString(msg.value));
 }
 
-void NasSm::sendSmCause(const nas::ESmCause &cause, int psi)
+void NasSm::sendSmCause(const nas::ESmCause &cause, int pti, int psi)
 {
     m_logger->warn("Sending SM Cause[%s] for PSI[%d]", nas::utils::EnumToString(cause), psi);
-    // TODO
+
+    nas::FiveGSmStatus smStatus{};
+    smStatus.smCause.value = cause;
+    smStatus.pti = pti;
+    smStatus.pduSessionId = psi;
+
+    nas::UlNasTransport ulTransport{};
+    ulTransport.payloadContainerType.payloadContainerType = nas::EPayloadContainerType::N1_SM_INFORMATION;
+    nas::EncodeNasMessage(smStatus, ulTransport.payloadContainer.data);
+    ulTransport.pduSessionId = nas::IEPduSessionIdentity2{};
+    ulTransport.pduSessionId->value = psi;
+
+    m_mm->deliverUlTransport(ulTransport);
 }
 
 } // namespace nr::ue

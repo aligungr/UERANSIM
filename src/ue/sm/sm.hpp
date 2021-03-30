@@ -55,7 +55,7 @@ class NasSm
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
     void receiveSmCause(const nas::IE5gSmCause &msg);
-    void sendSmCause(const nas::ESmCause &cause, int psi);
+    void sendSmCause(const nas::ESmCause &cause, int pti, int psi);
 
     /* Allocation */
     int allocatePduSessionId(const SessionConfig &config);

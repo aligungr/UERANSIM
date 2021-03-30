@@ -19,7 +19,7 @@ bool NasSm::checkPtiAndPsi(const nas::SmMessage &msg)
     if (msg.pti < ProcedureTransaction::MIN_ID || msg.pti > ProcedureTransaction::MAX_ID)
     {
         m_logger->err("Received PTI [%d] value is invalid", msg.pti);
-        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pduSessionId);
+        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pti, msg.pduSessionId);
         return false;
     }
 
@@ -27,7 +27,7 @@ bool NasSm::checkPtiAndPsi(const nas::SmMessage &msg)
     {
         m_logger->err("Received PSI value [%d] is invalid, expected was [%d]", msg.pduSessionId,
                       m_procedureTransactions[msg.pti].psi);
-        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pduSessionId);
+        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pti, msg.pduSessionId);
         return false;
     }
 
