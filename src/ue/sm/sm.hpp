@@ -74,6 +74,9 @@ class NasSm
     void onTimerExpire(nas::NasTimer &timer);
     void onTransactionTimerExpire(int pti);
 
+    /* Utils */
+    bool checkPtiAndPsi(const nas::SmMessage& msg);
+
   public:
     /* Interface */
     void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
