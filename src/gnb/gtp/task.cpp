@@ -9,8 +9,8 @@
 #include "task.hpp"
 
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
-#include <gnb/mr/task.hpp>
 #include <gnb/gtp/proto.hpp>
+#include <gnb/mr/task.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
@@ -61,12 +61,16 @@ void GtpTask::onLoop()
             handleUeContextUpdate(*w->update);
             break;
         }
+        case NwGnbNgapToGtp::UE_CONTEXT_RELEASE: {
+            handleUeContextDelete(w->ueId);
+            break;
+        }
         case NwGnbNgapToGtp::SESSION_CREATE: {
             handleSessionCreate(w->resource);
             break;
         }
-        case NwGnbNgapToGtp::UE_CONTEXT_RELEASE: {
-            handleUeContextDelete(w->ueId);
+        case NwGnbNgapToGtp::SESSION_RELEASE: {
+            handleSessionRelease(w->ueId, w->psi);
             break;
         }
         }
@@ -120,6 +124,28 @@ void GtpTask::handleSessionCreate(PduSessionResource *session)
 
     updateAmbrForUe(session->ueId);
     updateAmbrForSession(sessionInd);
+}
+
+void GtpTask::handleSessionRelease(int ueId, int psi)
+{
+    if (!m_ueContexts.count(ueId))
+    {
+        m_logger->err("PDU session resource could not be released, UE context with ID[%d] not found", ueId);
+        return;
+    }
+
+    uint64_t sessionInd = MakeSessionResInd(ueId, psi);
+
+    // Remove all session information from rate limiter
+    m_rateLimiter->updateSessionUplinkLimit(sessionInd, 0);
+    m_rateLimiter->updateUeDownlinkLimit(sessionInd, 0);
+
+    // And remove from PDU session table
+    int teid = m_pduSessions[sessionInd]->downTunnel.teid;
+    m_pduSessions.erase(sessionInd);
+
+    // And remove from the tree
+    m_sessionTree.remove(sessionInd, teid);
 }
 
 void GtpTask::handleUeContextDelete(int ueId)

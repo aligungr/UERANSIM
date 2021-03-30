@@ -119,8 +119,9 @@ struct NwGnbNgapToGtp : NtsMessage
     enum PR
     {
         UE_CONTEXT_UPDATE,
-        SESSION_CREATE,
         UE_CONTEXT_RELEASE,
+        SESSION_CREATE,
+        SESSION_RELEASE,
     } present;
 
     // UE_CONTEXT_UPDATE
@@ -130,7 +131,11 @@ struct NwGnbNgapToGtp : NtsMessage
     PduSessionResource *resource{};
 
     // UE_CONTEXT_RELEASE
+    // SESSION_RELEASE
     int ueId{};
+
+    // SESSION_RELEASE
+    int psi{};
 
     explicit NwGnbNgapToGtp(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_GTP), present(present)
     {

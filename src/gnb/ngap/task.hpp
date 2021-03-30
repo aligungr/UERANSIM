@@ -30,6 +30,7 @@ extern "C" struct ASN_NGAP_UEContextModificationRequest;
 extern "C" struct ASN_NGAP_AMFConfigurationUpdate;
 extern "C" struct ASN_NGAP_OverloadStart;
 extern "C" struct ASN_NGAP_OverloadStop;
+extern "C" struct ASN_NGAP_PDUSessionResourceReleaseCommand;
 
 namespace nr::gnb
 {
@@ -102,6 +103,7 @@ class NgapTask : public NtsTask
 
     /* PDU session management */
     void receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSessionResourceSetupRequest *msg);
+    void receiveSessionResourceReleaseCommand(int amfId, ASN_NGAP_PDUSessionResourceReleaseCommand *msg);
     std::optional<NgapCause> setupPduSessionResource(PduSessionResource *resource);
 
     /* UE context management */
