@@ -50,6 +50,9 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
         receiveEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
         break;
+    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST:
+        receiveEstablishmentRoutingFailure((const nas::PduSessionEstablishmentRequest &)msg);
+        break;
     case nas::EMessageType::FIVEG_SM_STATUS:
         receiveSmStatus((const nas::FiveGSmStatus &)msg);
         break;

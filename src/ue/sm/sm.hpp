@@ -67,6 +67,7 @@ class NasSm
     void sendEstablishmentRequest(const SessionConfig &config);
     void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
+    void receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg);
     void abortEstablishmentRequest(int pti);
 
     /* Timer */
@@ -75,7 +76,7 @@ class NasSm
     void onTransactionTimerExpire(int pti);
 
     /* Utils */
-    bool checkPtiAndPsi(const nas::SmMessage& msg);
+    bool checkPtiAndPsi(const nas::SmMessage &msg);
 
   public:
     /* Interface */
