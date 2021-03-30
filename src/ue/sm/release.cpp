@@ -18,15 +18,15 @@ namespace nr::ue
 
 void NasSm::sendReleaseRequest(int psi)
 {
-    m_logger->debug("Sending PDU Session Release Request");
-
     /* Control the PDU session state */
     auto &ps = m_pduSessions[psi];
     if (ps->psState != EPsState::ACTIVE)
     {
-        m_logger->warn("PDU session release procedure could not start: PS[%d] is not active", psi);
+        m_logger->warn("PDU session release procedure could not start: PS[%d] is not active already", psi);
         return;
     }
+
+    m_logger->debug("Sending PDU Session Release Request for PSI[%d]", psi);
 
     /* Allocate PTI */
     int pti = allocateProcedureTransactionId();
@@ -49,6 +49,13 @@ void NasSm::sendReleaseRequest(int psi)
 
     /* Send SM message */
     sendSmMessage(psi, *pt.message);
+}
+
+void NasSm::sendReleaseRequestForAll()
+{
+    for (auto &ps : m_pduSessions)
+        if (ps->psState == EPsState::ACTIVE)
+            sendReleaseRequest(ps->psi);
 }
 
 void NasSm::receiveReleaseReject(const nas::PduSessionReleaseReject &msg)

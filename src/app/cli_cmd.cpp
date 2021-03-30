@@ -82,7 +82,9 @@ static std::map<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
     {"status", "Show some status information about the UE"},
     {"timers", "Dump current status of the timers in the UE"},
-    {"deregister", "Perform de-registration by the UE"},
+    {"deregister", "Perform a de-registration by the UE"},
+    {"ps-release", "Trigger a PDU session release procedure"},
+    {"ps-release-all", "Trigger PDU session release procedures for all active sessions"},
 };
 
 static std::map<std::string, std::string> g_ueCmdToUsage = {
@@ -90,13 +92,13 @@ static std::map<std::string, std::string> g_ueCmdToUsage = {
     {"status", ""},
     {"timers", ""},
     {"deregister", "<normal|disable-5g|switch-off|remove-sim>"},
+    {"ps-release", "<pdu-session-id>..."},
+    {"ps-release-all", ""},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
-    {"info", false},
-    {"status", false},
-    {"timers", false},
-    {"deregister", true},
+    {"info", false},      {"status", false},    {"timers", false},
+    {"deregister", true}, {"ps-release", true}, {"ps-release-all", false},
 };
 
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
@@ -244,6 +246,31 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
             CMD_ERR("Invalid de-registration type, possible values are: \"normal\", \"disable-5g\", \"switch-off\", "
                     "\"remove-sim\"")
         return cmd;
+    }
+    else if (subCmd == "ps-release")
+    {
+        auto cmd = std::make_unique<UeCliCommand>(UeCliCommand::PS_RELEASE);
+        if (options.positionalCount() == 0)
+            CMD_ERR("At least one PDU session ID is expected")
+        if (options.positionalCount() > 15)
+            CMD_ERR("Too many PDU session IDs")
+        cmd->psCount = options.positionalCount();
+        for (int i = 0; i < cmd->psCount; i++)
+        {
+            int n = 0;
+            if (!utils::TryParseInt(options.getPositional(i), n))
+                CMD_ERR("Invalid PDU session ID value")
+            if (n <= 0)
+                CMD_ERR("PDU session IDs must be positive integer")
+            if (n > 15)
+                CMD_ERR("PDU session IDs cannot be greater than 15")
+            cmd->psIds[i] = static_cast<int8_t>(n);
+        }
+        return cmd;
+    }
+    else if (subCmd == "ps-release-all")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::PS_RELEASE_ALL);
     }
 
     return nullptr;

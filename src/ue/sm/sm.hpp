@@ -50,6 +50,10 @@ class NasSm
     void localReleaseAllSessions();
     bool anyEmergencySession();
 
+    /* Session Release */
+    void sendReleaseRequest(int psi);
+    void sendReleaseRequestForAll();
+
   private:
     /* Transport */
     void sendSmMessage(int psi, const nas::SmMessage &msg);
@@ -69,7 +73,6 @@ class NasSm
     void receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg);
 
     /* Session Release */
-    void sendReleaseRequest(int psi);
     void receiveReleaseReject(const nas::PduSessionReleaseReject& msg);
 
     /* Timer */

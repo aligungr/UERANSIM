@@ -12,6 +12,7 @@
 #include <string>
 #include <utils/common_types.hpp>
 #include <vector>
+#include <array>
 
 namespace app
 {
@@ -44,10 +45,16 @@ struct UeCliCommand
         STATUS,
         TIMERS,
         DE_REGISTER,
+        PS_RELEASE,
+        PS_RELEASE_ALL
     } present;
 
     // DE_REGISTER
     EDeregCause deregCause{};
+
+    // PS_RELEASE
+    std::array<int8_t, 16> psIds{};
+    int psCount{};
 
     explicit UeCliCommand(PR present) : present(present)
     {

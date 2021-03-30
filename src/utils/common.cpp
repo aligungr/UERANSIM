@@ -317,3 +317,21 @@ void utils::Trim(std::stringstream &s)
     Trim(str);
     s.str(str);
 }
+
+bool utils::TryParseInt(const std::string &str, int &output)
+{
+    return TryParseInt(str.c_str(), output);
+}
+
+bool utils::TryParseInt(const char *str, int &output)
+{
+    try
+    {
+        output = std::stoi(str);
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
