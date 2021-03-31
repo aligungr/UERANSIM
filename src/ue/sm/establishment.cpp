@@ -43,7 +43,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     /* Control the protocol state */
     if (!m_mm->isRegistered())
     {
-        m_logger->err("PDU session establishment could be triggered, UE is not registered");
+        m_logger->err("PDU session establishment could not be triggered, UE is not registered");
         return;
     }
 
