@@ -80,7 +80,7 @@ static std::optional<opt::OptionsResult> ParseCliCommandCommon(OrderedMap<std::s
     if (tokens.empty())
     {
         error = "Empty command";
-        return {};
+        return std::nullopt;
     }
 
     subCmd = tokens[0];
@@ -88,13 +88,13 @@ static std::optional<opt::OptionsResult> ParseCliCommandCommon(OrderedMap<std::s
     if (subCmd == "commands")
     {
         output = DumpCommands(cmdEntries);
-        return {};
+        return std::nullopt;
     }
 
     if (cmdEntries.count(subCmd) == 0)
     {
         error = "Command not recognized: " + subCmd;
-        return {};
+        return std::nullopt;
     }
 
     opt::OptionsDescription desc = cmdEntries[subCmd].descriptionFunc(subCmd, cmdEntries[subCmd]);
