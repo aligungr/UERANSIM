@@ -74,6 +74,47 @@ static std::string DumpCommands(const OrderedMap<std::string, CmdEntry> &entryTa
     return output;
 }
 
+static std::optional<opt::OptionsResult> ParseCliCommandCommon(OrderedMap<std::string, CmdEntry> &cmdEntries,
+    std::vector<std::string> &&tokens, std::string &error,
+    std::string &output, std::string &subCmd)
+{
+    if (tokens.empty())
+    {
+        error = "Empty command";
+        return {};
+    }
+
+    subCmd = tokens[0];
+
+    if (subCmd == "commands")
+    {
+        output = DumpCommands(cmdEntries);
+        return {};
+    }
+
+    if (cmdEntries.count(subCmd) == 0)
+    {
+        error = "Command not recognized: " + subCmd;
+        return {};
+    }
+
+    opt::OptionsDescription desc = cmdEntries[subCmd].descriptionFunc(subCmd, cmdEntries[subCmd]);
+
+    OptionsHandler handler{};
+
+    opt::OptionsResult options{tokens, desc, &handler};
+
+    error = handler.m_err.str();
+    output = handler.m_output.str();
+    utils::Trim(error);
+    utils::Trim(output);
+
+    if (!error.empty() || !output.empty())
+        return {};
+
+    return options;
+}
+
 //======================================================================================================
 //                                      IMPLEMENTATION
 //======================================================================================================
@@ -207,47 +248,6 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
     }
 
     return nullptr;
-}
-
-static std::optional<opt::OptionsResult> ParseCliCommandCommon(OrderedMap<std::string, CmdEntry> &cmdEntries,
-                                                               std::vector<std::string> &&tokens, std::string &error,
-                                                               std::string &output, std::string &subCmd)
-{
-    if (tokens.empty())
-    {
-        error = "Empty command";
-        return {};
-    }
-
-    subCmd = tokens[0];
-
-    if (subCmd == "commands")
-    {
-        output = DumpCommands(cmdEntries);
-        return {};
-    }
-
-    if (cmdEntries.count(subCmd) == 0)
-    {
-        error = "Command not recognized: " + subCmd;
-        return {};
-    }
-
-    opt::OptionsDescription desc = cmdEntries[subCmd].descriptionFunc(subCmd, cmdEntries[subCmd]);
-
-    OptionsHandler handler{};
-
-    opt::OptionsResult options{tokens, desc, &handler};
-
-    error = handler.m_err.str();
-    output = handler.m_output.str();
-    utils::Trim(error);
-    utils::Trim(output);
-
-    if (!error.empty() || !output.empty())
-        return {};
-
-    return options;
 }
 
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
