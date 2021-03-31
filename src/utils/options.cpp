@@ -349,10 +349,16 @@ std::string opt::OptionsResult::getPositional(int index) const
 
 std::string opt::OptionsResult::getOption(const OptionItem &item) const
 {
-    if (item.shortName.has_value() && m_options.count(std::string(1, *item.shortName)) > 0)
-        return m_options.at(std::string(1, *item.shortName));
-    if (item.longName.has_value() && m_options.count(*item.longName))
-        return m_options.at(*item.longName);
+    return getOption(item.shortName, item.longName);
+}
+
+std::string opt::OptionsResult::getOption(const std::optional<char> &shortName,
+                                          const std::optional<std::string> &longName) const
+{
+    if (shortName.has_value() && m_options.count(std::string(1, *shortName)) > 0)
+        return m_options.at(std::string(1, *shortName));
+    if (longName.has_value() && m_options.count(*longName))
+        return m_options.at(*longName);
     return {};
 }
 

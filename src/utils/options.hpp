@@ -112,6 +112,7 @@ class OptionsResult
     int count() const;
     std::string getPositional(int index) const;
     std::string getOption(const OptionItem &item) const;
+    std::string getOption(const std::optional<char> &shortName, const std::optional<std::string>& longName) const;
 
   public:
     void showHelp() const;
