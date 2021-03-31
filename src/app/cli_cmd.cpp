@@ -21,11 +21,13 @@
         return nullptr;                                                                                                \
     }
 
-static opt::OptionsDescription Desc(const std::string &subCommand, const std::string &desc, const std::string &usage,
-                                    bool helpIfEmpty)
+static opt::OptionsDescription DefaultDesc(const std::string &subCommand, const std::string &desc,
+                                           const std::string &usage, bool helpIfEmpty)
 {
     return {{}, {}, desc, {}, subCommand, {usage}, helpIfEmpty, true};
 }
+
+using DescType = decltype(&DefaultDesc);
 
 class OptionsHandler : public opt::IOptionsHandler
 {
@@ -63,6 +65,11 @@ static std::string DumpCommands(const OrderedMap<std::string, std::string> &desc
 namespace app
 {
 
+static OrderedMap<std::string, DescType> g_gnbCmdToDescFunc = {
+    {"status", DefaultDesc},   {"info", DefaultDesc},    {"amf-list", DefaultDesc},
+    {"amf-info", DefaultDesc}, {"ue-list", DefaultDesc}, {"ue-count", DefaultDesc},
+};
+
 static OrderedMap<std::string, std::string> g_gnbCmdToDescription = {
     {"status", "Show some status information about the gNB"},
     {"info", "Show some information about the gNB"},
@@ -79,6 +86,12 @@ static OrderedMap<std::string, std::string> g_gnbCmdToUsage = {
 static OrderedMap<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
                                                               {"amf-list", false}, {"amf-info", true},
                                                               {"ue-list", false},  {"ue-count", false}};
+
+static OrderedMap<std::string, DescType> g_ueCmdToDescFunc = {
+    {"info", DefaultDesc},           {"status", DefaultDesc},       {"timers", DefaultDesc},
+    {"deregister", DefaultDesc},     {"ps-establish", DefaultDesc}, {"ps-release", DefaultDesc},
+    {"ps-release-all", DefaultDesc},
+};
 
 static OrderedMap<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
@@ -126,8 +139,8 @@ std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tok
         return nullptr;
     }
 
-    opt::OptionsDescription desc =
-        Desc(subCmd, g_gnbCmdToDescription[subCmd], g_gnbCmdToUsage[subCmd], g_gnbCmdToHelpIfEmpty[subCmd]);
+    opt::OptionsDescription desc = g_gnbCmdToDescFunc[subCmd](subCmd, g_gnbCmdToDescription[subCmd],
+                                                              g_gnbCmdToUsage[subCmd], g_gnbCmdToHelpIfEmpty[subCmd]);
 
     OptionsHandler handler{};
 
@@ -201,8 +214,8 @@ std::unique_ptr<UeCliCommand> ParseUeCliCommand(std::vector<std::string> &&token
         return nullptr;
     }
 
-    opt::OptionsDescription desc =
-        Desc(subCmd, g_ueCmdToDescription[subCmd], g_ueCmdToUsage[subCmd], g_ueCmdToHelpIfEmpty[subCmd]);
+    opt::OptionsDescription desc = g_ueCmdToDescFunc[subCmd](subCmd, g_ueCmdToDescription[subCmd],
+                                                             g_ueCmdToUsage[subCmd], g_ueCmdToHelpIfEmpty[subCmd]);
 
     OptionsHandler handler{};
 
