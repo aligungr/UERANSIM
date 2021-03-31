@@ -27,11 +27,11 @@ class OrderedMap
         {
             if (!m_map.count(pair.first))
                 m_keyOrder.push_back(pair.first);
-            m_map[pair.first] = pair.second;
+            m_map.insert(pair);
         }
     }
 
-    inline auto count(const TKey &key)
+    inline auto count(const TKey &key) const
     {
         return m_map.count(key);
     }
