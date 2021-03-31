@@ -222,9 +222,14 @@ opt::OptionsResult::OptionsResult(int argc, char **argv, const opt::OptionsDescr
 
 bool opt::OptionsResult::hasFlag(const opt::OptionItem &item) const
 {
-    if (item.shortName.has_value() && m_options.count(std::string(1, *item.shortName)) > 0)
+    return hasFlag(item.shortName, item.longName);
+}
+
+bool opt::OptionsResult::hasFlag(const std::optional<char> &shortName, const std::optional<std::string> &longName) const
+{
+    if (shortName.has_value() && m_options.count(std::string(1, *shortName)) > 0)
         return true;
-    if (item.longName.has_value() && m_options.count(*item.longName) > 0)
+    if (longName.has_value() && m_options.count(*longName) > 0)
         return true;
     return false;
 }
@@ -264,10 +269,21 @@ void opt::OptionsResult::showHelp() const
 
     ostream << std::endl;
 
-    ostream << "Usage:" << std::endl;
-    for (auto &usage : m_description.usages)
-        ostream << "  " << m_description.programName << " " << usage << std::endl;
-    ostream << std::endl;
+    if (!m_description.usages.empty())
+    {
+        ostream << "Usage:" << std::endl;
+        for (auto &usage : m_description.usages)
+            ostream << "  " << m_description.programName << " " << usage << std::endl;
+        ostream << std::endl;
+    }
+
+    if (!m_description.examples.empty())
+    {
+        ostream << (m_description.examples.size() > 1 ? "Examples:" : "Example:") << std::endl;
+        for (auto &example : m_description.examples)
+            ostream << "  " << m_description.programName << " " << example << std::endl;
+        ostream << std::endl;
+    }
 
     std::vector<OptionItem> items = m_description.items;
     if (!m_description.hideDefaultOptionsInUsage)
@@ -333,10 +349,16 @@ std::string opt::OptionsResult::getPositional(int index) const
 
 std::string opt::OptionsResult::getOption(const OptionItem &item) const
 {
-    if (item.shortName.has_value() && m_options.count(std::string(1, *item.shortName)) > 0)
-        return m_options.at(std::string(1, *item.shortName));
-    if (item.longName.has_value() && m_options.count(*item.longName))
-        return m_options.at(*item.longName);
+    return getOption(item.shortName, item.longName);
+}
+
+std::string opt::OptionsResult::getOption(const std::optional<char> &shortName,
+                                          const std::optional<std::string> &longName) const
+{
+    if (shortName.has_value() && m_options.count(std::string(1, *shortName)) > 0)
+        return m_options.at(std::string(1, *shortName));
+    if (longName.has_value() && m_options.count(*longName))
+        return m_options.at(*longName);
     return {};
 }
 

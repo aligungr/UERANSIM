@@ -129,6 +129,27 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             sendResult(msg.address, "De-registration procedure triggered. UE device will be switched off.");
         break;
     }
+    case app::UeCliCommand::PS_RELEASE: {
+        for (int i = 0; i < msg.cmd->psCount; i++)
+            m_base->nasTask->sm->sendReleaseRequest(static_cast<int>(msg.cmd->psIds[i]) % 16);
+        sendResult(msg.address, "PDU session release procedure(s) triggered");
+        break;
+    }
+    case app::UeCliCommand::PS_RELEASE_ALL: {
+        m_base->nasTask->sm->sendReleaseRequestForAll();
+        sendResult(msg.address, "PDU session release procedure(s) triggered");
+        break;
+    }
+    case app::UeCliCommand::PS_ESTABLISH: {
+        SessionConfig config{};
+        config.type = nas::EPduSessionType::IPV4;
+        config.isEmergency = msg.cmd->isEmergency;
+        config.apn = msg.cmd->apn;
+        config.sNssai = msg.cmd->sNssai;
+        m_base->nasTask->sm->sendEstablishmentRequest(config);
+        sendResult(msg.address, "PDU session establishment procedure triggered");
+        break;
+    }
     }
 }
 

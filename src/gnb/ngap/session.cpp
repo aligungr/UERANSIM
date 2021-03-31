@@ -14,6 +14,10 @@
 #include <asn/ngap/ASN_NGAP_AssociatedQosFlowList.h>
 #include <asn/ngap/ASN_NGAP_GTPTunnel.h>
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceFailedToSetupItemSURes.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceReleaseCommand.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceReleaseResponse.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceReleaseResponseTransfer.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceReleasedItemRelRes.h>
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceSetupItemSUReq.h>
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceSetupItemSURes.h>
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceSetupRequest.h>
@@ -21,12 +25,14 @@
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceSetupResponse.h>
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceSetupResponseTransfer.h>
 #include <asn/ngap/ASN_NGAP_PDUSessionResourceSetupUnsuccessfulTransfer.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceToReleaseItemRelCmd.h>
 #include <asn/ngap/ASN_NGAP_ProtocolIE-Field.h>
 #include <asn/ngap/ASN_NGAP_QosFlowPerTNLInformationItem.h>
 #include <asn/ngap/ASN_NGAP_QosFlowPerTNLInformationList.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestList.h>
 #include <gnb/gtp/task.hpp>
+#include <set>
 #include <stdexcept>
 
 namespace nr::gnb
@@ -193,12 +199,14 @@ void NgapTask::receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSession
     sendNgapUeAssociated(ue->ctxId, respPdu);
 
     if (failedList.empty())
-        m_logger->info("PDU session resource is setup for UE[%d] count[%d]", ue->ctxId, successList.size());
+        m_logger->info("PDU session resource(s) setup for UE[%d] count[%d]", ue->ctxId,
+                       static_cast<int>(successList.size()));
     else if (successList.empty())
-        m_logger->err("PDU session resource setup was failed for UE[%d] count[%d]", ue->ctxId, failedList.size());
+        m_logger->err("PDU session resource(s) setup was failed for UE[%d] count[%d]", ue->ctxId,
+                      static_cast<int>(failedList.size()));
     else
         m_logger->err("PDU session establishment is partially successful for UE[%d], success[%d], failed[%d]",
-                      successList.size(), failedList.size());
+                      static_cast<int>(successList.size()), static_cast<int>(failedList.size()));
 }
 
 std::optional<NgapCause> NgapTask::setupPduSessionResource(PduSessionResource *resource)
@@ -229,6 +237,70 @@ std::optional<NgapCause> NgapTask::setupPduSessionResource(PduSessionResource *r
     m_base->gtpTask->push(w);
 
     return {};
+}
+
+void NgapTask::receiveSessionResourceReleaseCommand(int amfId, ASN_NGAP_PDUSessionResourceReleaseCommand *msg)
+{
+    auto *ue = findUeByNgapIdPair(amfId, ngap_utils::FindNgapIdPair(msg));
+    if (ue == nullptr)
+        return;
+
+    std::set<int> psIds{};
+
+    auto *ieReq = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_PDUSessionResourceToReleaseListRelCmd);
+    if (ieReq)
+    {
+        auto &list = ieReq->PDUSessionResourceToReleaseListRelCmd.list;
+
+        for (int i = 0; i < list.count; i++)
+        {
+            auto &item = list.array[i];
+            if (item)
+                psIds.insert(static_cast<int>(item->pDUSessionID));
+        }
+    }
+
+    ieReq = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_NAS_PDU);
+    if (ieReq)
+        deliverDownlinkNas(ue->ctxId, asn::GetOctetString(ieReq->NAS_PDU));
+
+    auto *ieResp = asn::New<ASN_NGAP_PDUSessionResourceReleaseResponseIEs>();
+    ieResp->id = ASN_NGAP_ProtocolIE_ID_id_PDUSessionResourceReleasedListRelRes;
+    ieResp->criticality = ASN_NGAP_Criticality_ignore;
+    ieResp->value.present =
+        ASN_NGAP_PDUSessionResourceReleaseResponseIEs__value_PR_PDUSessionResourceReleasedListRelRes;
+
+    // Perform release
+    for (auto &psi : psIds)
+    {
+        auto *w = new NwGnbNgapToGtp(NwGnbNgapToGtp::SESSION_RELEASE);
+        w->ueId = ue->ctxId;
+        w->psi = psi;
+        m_base->gtpTask->push(w);
+    }
+
+    for (auto &psi : psIds)
+    {
+        auto *tr = asn::New<ASN_NGAP_PDUSessionResourceReleaseResponseTransfer>();
+
+        OctetString encodedTr = ngap_encode::EncodeS(asn_DEF_ASN_NGAP_PDUSessionResourceReleaseResponseTransfer, tr);
+
+        if (encodedTr.length() == 0)
+            throw std::runtime_error("PDUSessionResourceReleaseResponseTransfer encoding failed");
+
+        asn::Free(asn_DEF_ASN_NGAP_PDUSessionResourceReleaseResponseTransfer, tr);
+
+        auto *item = asn::New<ASN_NGAP_PDUSessionResourceReleasedItemRelRes>();
+        item->pDUSessionID = static_cast<ASN_NGAP_PDUSessionID_t>(psi);
+        asn::SetOctetString(item->pDUSessionResourceReleaseResponseTransfer, encodedTr);
+
+        asn::SequenceAdd(ieResp->value.choice.PDUSessionResourceReleasedListRelRes, item);
+    }
+
+    auto *respPdu = asn::ngap::NewMessagePdu<ASN_NGAP_PDUSessionResourceReleaseResponse>({ieResp});
+    sendNgapUeAssociated(ue->ctxId, respPdu);
+
+    m_logger->info("PDU session resource(s) released for UE[%d] count[%d]", ue->ctxId, static_cast<int>(psIds.size()));
 }
 
 } // namespace nr::gnb

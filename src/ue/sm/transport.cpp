@@ -45,10 +45,19 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
     switch (msg.messageType)
     {
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
-        receivePduSessionEstablishmentAccept((const nas::PduSessionEstablishmentAccept &)msg);
+        receiveEstablishmentAccept((const nas::PduSessionEstablishmentAccept &)msg);
         break;
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
-        receivePduSessionEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
+        receiveEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
+        break;
+    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST:
+        receiveEstablishmentRoutingFailure((const nas::PduSessionEstablishmentRequest &)msg);
+        break;
+    case nas::EMessageType::PDU_SESSION_RELEASE_REJECT:
+        receiveReleaseReject((const nas::PduSessionReleaseReject &)msg);
+        break;
+    case nas::EMessageType::PDU_SESSION_RELEASE_COMMAND:
+        receiveReleaseCommand((const nas::PduSessionReleaseCommand &)msg);
         break;
     case nas::EMessageType::FIVEG_SM_STATUS:
         receiveSmStatus((const nas::FiveGSmStatus &)msg);
@@ -61,18 +70,37 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
 
 void NasSm::receiveSmStatus(const nas::FiveGSmStatus &msg)
 {
-    receiveSmCause(msg.smCause);
+    m_logger->err("SM Status received: %s", nas::utils::EnumToString(msg.smCause.value));
+
+    if (msg.smCause.value == nas::ESmCause::INVALID_PTI_VALUE)
+    {
+        // "The UE shall abort any ongoing 5GSM procedure related to the received PTI value and stop any related timer."
+        abortProcedureByPti(msg.pti);
+    }
+    else if (msg.smCause.value == nas::ESmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED)
+    {
+        // "The UE shall abort any ongoing 5GSM procedure related to the PTI or PDU session Id and stop any related
+        // timer."
+        abortProcedureByPtiOrPsi(msg.pti, msg.pduSessionId);
+    }
 }
 
-void NasSm::receiveSmCause(const nas::IE5gSmCause &msg)
-{
-    m_logger->err("SM cause received: %s", nas::utils::EnumToString(msg.value));
-}
-
-void NasSm::sendSmCause(const nas::ESmCause &cause, int psi)
+void NasSm::sendSmCause(const nas::ESmCause &cause, int pti, int psi)
 {
     m_logger->warn("Sending SM Cause[%s] for PSI[%d]", nas::utils::EnumToString(cause), psi);
-    // TODO
+
+    nas::FiveGSmStatus smStatus{};
+    smStatus.smCause.value = cause;
+    smStatus.pti = pti;
+    smStatus.pduSessionId = psi;
+
+    nas::UlNasTransport ulTransport{};
+    ulTransport.payloadContainerType.payloadContainerType = nas::EPayloadContainerType::N1_SM_INFORMATION;
+    nas::EncodeNasMessage(smStatus, ulTransport.payloadContainer.data);
+    ulTransport.pduSessionId = nas::IEPduSessionIdentity2{};
+    ulTransport.pduSessionId->value = psi;
+
+    m_mm->deliverUlTransport(ulTransport);
 }
 
 } // namespace nr::ue

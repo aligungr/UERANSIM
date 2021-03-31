@@ -50,12 +50,15 @@ class NasSm
     void localReleaseAllSessions();
     bool anyEmergencySession();
 
+    /* Session Release */
+    void sendReleaseRequest(int psi);
+    void sendReleaseRequestForAll();
+
   private:
     /* Transport */
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
-    void receiveSmCause(const nas::IE5gSmCause &msg);
-    void sendSmCause(const nas::ESmCause &cause, int psi);
+    void sendSmCause(const nas::ESmCause &cause, int pti, int psi);
 
     /* Allocation */
     int allocatePduSessionId(const SessionConfig &config);
@@ -65,14 +68,23 @@ class NasSm
 
     /* Session Establishment */
     void sendEstablishmentRequest(const SessionConfig &config);
-    void receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
-    void receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
-    void abortEstablishmentRequest(int pti);
+    void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
+    void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
+    void receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg);
+
+    /* Session Release */
+    void receiveReleaseReject(const nas::PduSessionReleaseReject &msg);
+    void receiveReleaseCommand(const nas::PduSessionReleaseCommand &msg);
 
     /* Timer */
     std::unique_ptr<nas::NasTimer> newTransactionTimer(int code);
     void onTimerExpire(nas::NasTimer &timer);
     void onTransactionTimerExpire(int pti);
+
+    /* Procedure */
+    bool checkPtiAndPsi(const nas::SmMessage &msg);
+    void abortProcedureByPti(int pti);
+    void abortProcedureByPtiOrPsi(int pti, int psi);
 
   public:
     /* Interface */

@@ -221,6 +221,33 @@ std::string utils::VectorToHexString(const std::vector<uint8_t> &hex)
     return str;
 }
 
+bool utils::TryParseInt(const std::string &str, int &output)
+{
+    return TryParseInt(str.c_str(), output);
+}
+
+bool utils::TryParseInt(const char *str, int &output)
+{
+    int base = 10;
+    if (strlen(str) > 2)
+    {
+        if (str[0] == '0' && str[1] == 'x')
+            base = 16;
+        else if (str[0] == '0' && str[1] == 'b')
+            base = 2;
+    }
+
+    try
+    {
+        output = std::stoi(str, nullptr, base);
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
 int utils::ParseInt(const std::string &str)
 {
     return ParseInt(str.c_str());
@@ -228,11 +255,9 @@ int utils::ParseInt(const std::string &str)
 
 int utils::ParseInt(const char *str)
 {
-    std::stringstream ss("");
-    ss << str;
-    int i;
-    ss >> i;
-    return i;
+    int n = 0;
+    TryParseInt(str, n);
+    return n;
 }
 
 uint64_t utils::Random64()
@@ -306,6 +331,8 @@ bool utils::IsNumeric(const std::string &str)
 
 void utils::Trim(std::string &s)
 {
+    if (s.length() == 0)
+        return;
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
 }

@@ -38,12 +38,12 @@ static nas::IEIntegrityProtectionMaximumDataRate MakeIntegrityMaxRate(const Inte
 
 void NasSm::sendEstablishmentRequest(const SessionConfig &config)
 {
-    m_logger->debug("Sending PDU session establishment request");
+    m_logger->debug("Sending PDU Session Establishment Request");
 
     /* Control the protocol state */
     if (!m_mm->isRegistered())
     {
-        m_logger->err("UE is not registered");
+        m_logger->err("PDU session establishment could not be triggered, UE is not registered");
         return;
     }
 
@@ -125,40 +125,27 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     sendSmMessage(psi, *pt.message);
 }
 
-void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
+void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
 {
     m_logger->debug("PDU Session Establishment Accept received");
+
+    if (!checkPtiAndPsi(msg))
+        return;
+
+    freeProcedureTransactionId(msg.pti);
+
+    auto &pduSession = m_pduSessions[msg.pduSessionId];
+    if (pduSession->psState != EPsState::ACTIVE_PENDING)
+    {
+        m_logger->err("PS establishment accept received without being requested");
+        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, msg.pti, msg.pduSessionId);
+        return;
+    }
 
     if (msg.smCause.has_value())
     {
         m_logger->warn("SM cause received in PduSessionEstablishmentAccept [%s]",
                        nas::utils::EnumToString(msg.smCause->value));
-    }
-
-    if (msg.pti < ProcedureTransaction::MIN_ID || msg.pti > ProcedureTransaction::MAX_ID)
-    {
-        // PTI is required for PDU session establishment request
-        m_logger->err("Received PTI [%d] value is invalid", msg.pti);
-        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pduSessionId);
-        return;
-    }
-
-    if (m_procedureTransactions[msg.pti].psi != msg.pduSessionId)
-    {
-        m_logger->err("Received PSI value [%d] is invalid, expected was [%d]", msg.pduSessionId,
-                      m_procedureTransactions[msg.pti].psi);
-        sendSmCause(nas::ESmCause::INVALID_PTI_VALUE, msg.pduSessionId);
-        return;
-    }
-
-    freeProcedureTransactionId(msg.pti);
-
-    auto& pduSession = m_pduSessions[msg.pduSessionId];
-    if (pduSession->psState != EPsState::ACTIVE_PENDING)
-    {
-        m_logger->err("PS establishment accept received without requested");
-        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, pduSession->psi);
-        return;
     }
 
     pduSession->psState = EPsState::ACTIVE;
@@ -183,20 +170,41 @@ void NasSm::receivePduSessionEstablishmentAccept(const nas::PduSessionEstablishm
     m_logger->info("PDU Session establishment is successful PSI[%d]", pduSession->psi);
 }
 
-void NasSm::receivePduSessionEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
+void NasSm::receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg)
 {
-    m_logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));
-    // TODO
+    m_logger->err("PDU Session Establishment Request received due to a routing failure");
+
+    if (!checkPtiAndPsi(msg))
+        return;
+
+    abortProcedureByPti(msg.pti);
 }
 
-void NasSm::abortEstablishmentRequest(int pti)
+void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
 {
-    int psi = m_procedureTransactions[pti].psi;
+    m_logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));
 
-    m_logger->debug("PDU Session Establishment Procedure aborted for PTI[%d], PSI[%d]", pti, psi);
+    if (!checkPtiAndPsi(msg))
+        return;
 
-    freeProcedureTransactionId(pti);
-    freePduSessionId(psi);
+    freeProcedureTransactionId(msg.pti);
+
+    auto &pduSession = m_pduSessions[msg.pduSessionId];
+
+    if (pduSession->psState != EPsState::ACTIVE_PENDING)
+    {
+        m_logger->err("PS establishment reject received without being requested");
+        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NOT_COMPATIBLE_WITH_THE_PROTOCOL_STATE, msg.pti, msg.pduSessionId);
+        return;
+    }
+
+    pduSession->psState = EPsState::INACTIVE;
+
+    if (pduSession->isEmergency)
+    {
+        // This not much important and no need for now
+        // TODO: inform the upper layers of the failure of the procedure
+    }
 }
 
 } // namespace nr::ue

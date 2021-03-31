@@ -25,7 +25,7 @@ namespace nr::gnb
 
 void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu, long rrcEstablishmentCause)
 {
-    m_logger->debug("Initial NAS message received from UE %d", ueId);
+    m_logger->debug("Initial NAS message received from UE[%d]", ueId);
 
     if (m_ueCtx.count(ueId))
     {

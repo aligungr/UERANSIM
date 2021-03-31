@@ -83,9 +83,11 @@ class NasMm
     void receiveMmCause(const nas::IE5gMmCause &msg);
     void sendMmStatus(nas::EMmCause cause);
 
+  public: /* Registration */
+    void sendMobilityRegistration(ERegUpdateCause updateCause);
+
   private: /* Registration */
     void sendInitialRegistration(bool isEmergencyReg, bool dueToDereg);
-    void sendMobilityRegistration(ERegUpdateCause updateCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg);
