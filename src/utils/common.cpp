@@ -228,9 +228,18 @@ bool utils::TryParseInt(const std::string &str, int &output)
 
 bool utils::TryParseInt(const char *str, int &output)
 {
+    int base = 10;
+    if (strlen(str) > 2)
+    {
+        if (str[0] == '0' && str[1] == 'x')
+            base = 16;
+        else if (str[0] == '0' && str[1] == 'b')
+            base = 2;
+    }
+
     try
     {
-        output = std::stoi(str);
+        output = std::stoi(str, nullptr, base);
         return true;
     }
     catch (...)
