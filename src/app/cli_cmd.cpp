@@ -40,7 +40,6 @@ class OptionsHandler : public opt::IOptionsHandler
     }
 };
 
-
 struct CmdEntry
 {
     using DescType = opt::OptionsDescription (*)(const std::string &, const CmdEntry &);
@@ -75,8 +74,8 @@ static std::string DumpCommands(const OrderedMap<std::string, CmdEntry> &entryTa
 }
 
 static std::optional<opt::OptionsResult> ParseCliCommandCommon(OrderedMap<std::string, CmdEntry> &cmdEntries,
-    std::vector<std::string> &&tokens, std::string &error,
-    std::string &output, std::string &subCmd)
+                                                               std::vector<std::string> &&tokens, std::string &error,
+                                                               std::string &output, std::string &subCmd)
 {
     if (tokens.empty())
     {
@@ -142,7 +141,7 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"timers", {"Dump current status of the timers in the UE", "", DefaultDesc, false}},
     {"deregister",
      {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
-    {"ps-establish", {"Trigger a PDU session establishment procedure", "", DefaultDesc, true}},
+    {"ps-establish", {"Trigger a PDU session establishment procedure", "<options>", DefaultDesc, true}},
     {"ps-release", {"Trigger a PDU session release procedure", "<pdu-session-id>...", DefaultDesc, true}},
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
 };
