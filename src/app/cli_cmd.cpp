@@ -273,6 +273,33 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
         std::string type = options.getPositional(0);
         if (type != "IPv4" && type != "ipv4" && type != "IPV4" && type != "Ipv4" && type != "IpV4")
             CMD_ERR("Only IPv4 is supported for now")
+        cmd->isEmergency = options.hasFlag('e', "emergency");
+        if (cmd->isEmergency)
+        {
+            if (options.hasFlag(std::nullopt, "sst") || options.hasFlag(std::nullopt, "sd") ||
+                options.hasFlag('n', "dnn"))
+                CMD_ERR("SST, SD, and DNN parameters cannot be used for emergency PDU sessions")
+        }
+        if (options.hasFlag('n', "dnn"))
+            cmd->apn = options.getOption('n', "dnn");
+        if (options.hasFlag(std::nullopt, "sd") && !options.hasFlag(std::nullopt, "sst"))
+            CMD_ERR("SST is also required in case of an SD is provided")
+        if (options.hasFlag(std::nullopt, "sst"))
+        {
+            int n = 0;
+            if (!utils::TryParseInt(options.getOption(std::nullopt, "sst"), n) || n <= 0 || n >= 256)
+                CMD_ERR("Invalid SST value")
+            cmd->sNssai = SingleSlice{};
+            cmd->sNssai->sst = static_cast<uint8_t>(n);
+
+            if (options.hasFlag(std::nullopt, "sd"))
+            {
+                if (!utils::TryParseInt(options.getOption(std::nullopt, "sd"), n) || n <= 0 || n > 0xFFFFFF)
+                    CMD_ERR("Invalid SD value")
+                cmd->sNssai->sd = octet3{n};
+            }
+            return cmd;
+        }
     }
 
     return nullptr;
