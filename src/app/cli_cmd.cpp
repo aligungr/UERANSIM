@@ -13,6 +13,7 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 #include <utils/options.hpp>
+#include <utils/ordered_map.hpp>
 
 #define CMD_ERR(x)                                                                                                     \
     {                                                                                                                  \
@@ -44,16 +45,17 @@ class OptionsHandler : public opt::IOptionsHandler
     }
 };
 
-static std::string DumpCommands(const std::map<std::string, std::string> &descTable)
+static std::string DumpCommands(const OrderedMap<std::string, std::string> &descTable)
 {
     size_t maxLength = 0;
     for (auto &item : descTable)
-        maxLength = std::max(maxLength, item.first.size());
+        maxLength = std::max(maxLength, item.size());
 
     std::stringstream ss{};
     for (auto &item : descTable)
-        ss << item.first << std::string(maxLength - item.first.size(), ' ') << " | " << item.second << "\n";
+        ss << item << std::string(maxLength - item.size(), ' ') << " | " << descTable[item] << "\n";
     std::string output = ss.str();
+
     utils::Trim(output);
     return output;
 }
@@ -61,7 +63,7 @@ static std::string DumpCommands(const std::map<std::string, std::string> &descTa
 namespace app
 {
 
-static std::map<std::string, std::string> g_gnbCmdToDescription = {
+static OrderedMap<std::string, std::string> g_gnbCmdToDescription = {
     {"status", "Show some status information about the gNB"},
     {"info", "Show some information about the gNB"},
     {"amf-list", "List all AMFs associated with the gNB"},
@@ -70,15 +72,15 @@ static std::map<std::string, std::string> g_gnbCmdToDescription = {
     {"ue-count", "Print the total number of UEs connected the this gNB"},
 };
 
-static std::map<std::string, std::string> g_gnbCmdToUsage = {
+static OrderedMap<std::string, std::string> g_gnbCmdToUsage = {
     {"status", ""}, {"info", ""}, {"amf-list", ""}, {"amf-info", "<amf-id>"}, {"ue-list", ""}, {"ue-count", ""},
 };
 
-static std::map<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
+static OrderedMap<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
                                                             {"amf-list", false}, {"amf-info", true},
                                                             {"ue-list", false},  {"ue-count", false}};
 
-static std::map<std::string, std::string> g_ueCmdToDescription = {
+static OrderedMap<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
     {"status", "Show some status information about the UE"},
     {"timers", "Dump current status of the timers in the UE"},
