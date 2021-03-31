@@ -77,30 +77,29 @@ static OrderedMap<std::string, std::string> g_gnbCmdToUsage = {
 };
 
 static OrderedMap<std::string, bool> g_gnbCmdToHelpIfEmpty = {{"status", false},   {"info", false},
-                                                            {"amf-list", false}, {"amf-info", true},
-                                                            {"ue-list", false},  {"ue-count", false}};
+                                                              {"amf-list", false}, {"amf-info", true},
+                                                              {"ue-list", false},  {"ue-count", false}};
 
 static OrderedMap<std::string, std::string> g_ueCmdToDescription = {
     {"info", "Show some information about the UE"},
     {"status", "Show some status information about the UE"},
     {"timers", "Dump current status of the timers in the UE"},
     {"deregister", "Perform a de-registration by the UE"},
+    {"ps-establish", "Trigger a PDU session establishment procedure"},
     {"ps-release", "Trigger a PDU session release procedure"},
     {"ps-release-all", "Trigger PDU session release procedures for all active sessions"},
 };
 
 static std::map<std::string, std::string> g_ueCmdToUsage = {
-    {"info", ""},
-    {"status", ""},
-    {"timers", ""},
-    {"deregister", "<normal|disable-5g|switch-off|remove-sim>"},
-    {"ps-release", "<pdu-session-id>..."},
+    {"info", ""},           {"status", ""},
+    {"timers", ""},         {"deregister", "<normal|disable-5g|switch-off|remove-sim>"},
+    {"ps-establish", ""},   {"ps-release", "<pdu-session-id>..."},
     {"ps-release-all", ""},
 };
 
 static std::map<std::string, bool> g_ueCmdToHelpIfEmpty = {
-    {"info", false},      {"status", false},    {"timers", false},
-    {"deregister", true}, {"ps-release", true}, {"ps-release-all", false},
+    {"info", false},        {"status", false},    {"timers", false},         {"deregister", true},
+    {"ps-establish", true}, {"ps-release", true}, {"ps-release-all", false},
 };
 
 std::unique_ptr<GnbCliCommand> ParseGnbCliCommand(std::vector<std::string> &&tokens, std::string &error,
