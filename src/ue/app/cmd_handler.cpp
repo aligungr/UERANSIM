@@ -140,6 +140,16 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         sendResult(msg.address, "PDU session release procedure(s) triggered");
         break;
     }
+    case app::UeCliCommand::PS_ESTABLISH: {
+        SessionConfig config{};
+        config.type = nas::EPduSessionType::IPV4;
+        config.isEmergency = msg.cmd->isEmergency;
+        config.apn = msg.cmd->apn;
+        config.sNssai = msg.cmd->sNssai;
+        m_base->nasTask->sm->sendEstablishmentRequest(config);
+        sendResult(msg.address, "PDU session establishment procedure triggered");
+        break;
+    }
     }
 }
 
