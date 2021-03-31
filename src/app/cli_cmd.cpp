@@ -123,6 +123,23 @@ static opt::OptionsDescription DefaultDesc(const std::string &subCommand, const 
     return {{}, {}, entry.descriptionText, {}, subCommand, {entry.usageText}, entry.helpIfEmpty, true};
 }
 
+static opt::OptionsDescription DescForPsEstablish(const std::string &subCommand, const CmdEntry &entry)
+{
+    std::string usage1 = "<session-type> [options]";
+    std::string usage2 = "IPv4 --sst 1 --sd 1 --dnn internet";
+    std::string usage3 = "IPv4 --emergency";
+
+    auto res = opt::OptionsDescription{
+        {}, {}, entry.descriptionText, {}, subCommand, {usage1, usage2, usage3}, entry.helpIfEmpty, true};
+
+    res.items.emplace_back(std::nullopt, "sst", "SST value of the PDU session (Optional)", "value");
+    res.items.emplace_back(std::nullopt, "sd", "SD value of the PDU session (Optional)", "value");
+    res.items.emplace_back('n', "dnn", "DNN/APN value of the PDU session (Optional)", "apn");
+    res.items.emplace_back('e', "emergency", "Request as an emergency session (Optional)", std::nullopt);
+
+    return res;
+}
+
 namespace app
 {
 
@@ -141,7 +158,7 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"timers", {"Dump current status of the timers in the UE", "", DefaultDesc, false}},
     {"deregister",
      {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
-    {"ps-establish", {"Trigger a PDU session establishment procedure", "<options>", DefaultDesc, true}},
+    {"ps-establish", {"Trigger a PDU session establishment procedure", "", DescForPsEstablish, true}},
     {"ps-release", {"Trigger a PDU session release procedure", "<pdu-session-id>...", DefaultDesc, true}},
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
 };
