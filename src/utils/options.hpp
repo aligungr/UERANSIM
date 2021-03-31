@@ -107,6 +107,7 @@ class OptionsResult
 
   public:
     bool hasFlag(const OptionItem &item) const;
+    bool hasFlag(const std::optional<char> &shortName, const std::optional<std::string>& longName) const;
     int positionalCount() const;
     int count() const;
     std::string getPositional(int index) const;
