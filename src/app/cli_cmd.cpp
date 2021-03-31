@@ -156,12 +156,12 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"info", {"Show some information about the UE", "", DefaultDesc, false}},
     {"status", {"Show some status information about the UE", "", DefaultDesc, false}},
     {"timers", {"Dump current status of the timers in the UE", "", DefaultDesc, false}},
-    {"deregister",
-     {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
     {"ps-establish",
      {"Trigger a PDU session establishment procedure", "<session-type> [options]", DescForPsEstablish, true}},
     {"ps-release", {"Trigger a PDU session release procedure", "<pdu-session-id>...", DefaultDesc, true}},
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
+    {"deregister",
+     {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
 };
 
 static std::unique_ptr<GnbCliCommand> GnbCliParseImpl(const std::string &subCmd, const opt::OptionsResult &options,
@@ -262,6 +262,17 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
     else if (subCmd == "ps-release-all")
     {
         return std::make_unique<UeCliCommand>(UeCliCommand::PS_RELEASE_ALL);
+    }
+    else if (subCmd == "ps-establish")
+    {
+        auto cmd = std::make_unique<UeCliCommand>(UeCliCommand::PS_ESTABLISH);
+        if (options.positionalCount() == 0)
+            CMD_ERR("PDU session type is expected")
+        if (options.positionalCount() > 15)
+            CMD_ERR("Only one PDU session type is expected")
+        std::string type = options.getPositional(0);
+        if (type != "IPv4" || type != "ipv4" || type != "IPV4" || type != "Ipv4" || type != "IpV4")
+            CMD_ERR("Only IPv4 is supported for now")
     }
 
     return nullptr;

@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include <array>
 #include <memory>
 #include <string>
 #include <utils/common_types.hpp>
 #include <vector>
-#include <array>
 
 namespace app
 {
@@ -44,9 +44,10 @@ struct UeCliCommand
         INFO,
         STATUS,
         TIMERS,
-        DE_REGISTER,
+        PS_ESTABLISH,
         PS_RELEASE,
-        PS_RELEASE_ALL
+        PS_RELEASE_ALL,
+        DE_REGISTER,
     } present;
 
     // DE_REGISTER
@@ -55,6 +56,11 @@ struct UeCliCommand
     // PS_RELEASE
     std::array<int8_t, 16> psIds{};
     int psCount{};
+
+    // PS_ESTABLISH
+    std::optional<SingleSlice> sNssai{};
+    std::optional<std::string> apn{};
+    bool isEmergency{};
 
     explicit UeCliCommand(PR present) : present(present)
     {
