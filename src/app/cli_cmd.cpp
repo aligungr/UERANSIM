@@ -298,8 +298,8 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
                     CMD_ERR("Invalid SD value")
                 cmd->sNssai->sd = octet3{n};
             }
-            return cmd;
         }
+        return cmd;
     }
 
     return nullptr;
