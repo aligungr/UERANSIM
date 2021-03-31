@@ -264,10 +264,21 @@ void opt::OptionsResult::showHelp() const
 
     ostream << std::endl;
 
-    ostream << "Usage:" << std::endl;
-    for (auto &usage : m_description.usages)
-        ostream << "  " << m_description.programName << " " << usage << std::endl;
-    ostream << std::endl;
+    if (!m_description.usages.empty())
+    {
+        ostream << "Usage:" << std::endl;
+        for (auto &usage : m_description.usages)
+            ostream << "  " << m_description.programName << " " << usage << std::endl;
+        ostream << std::endl;
+    }
+
+    if (!m_description.examples.empty())
+    {
+        ostream << (m_description.examples.size() > 1 ? "Examples:" : "Example:") << std::endl;
+        for (auto &example : m_description.examples)
+            ostream << "  " << m_description.programName << " " << example << std::endl;
+        ostream << std::endl;
+    }
 
     std::vector<OptionItem> items = m_description.items;
     if (!m_description.hideDefaultOptionsInUsage)

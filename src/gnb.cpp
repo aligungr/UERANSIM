@@ -78,9 +78,15 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
 
 static void ReadOptions(int argc, char **argv)
 {
-    opt::OptionsDescription desc{cons::Project, cons::Tag, "5G-SA gNB implementation",
-                                 cons::Owner,   "nr-gnb",  {"-c <config-file> [option...]"},
-                                 true,          false};
+    opt::OptionsDescription desc{cons::Project,
+                                 cons::Tag,
+                                 "5G-SA gNB implementation",
+                                 cons::Owner,
+                                 "nr-gnb",
+                                 {"-c <config-file> [option...]"},
+                                 {},
+                                 true,
+                                 false};
 
     opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for gNB", "config-file"};
     opt::OptionItem itemDisableCmd = {'l', "disable-cmd", "Disable command line functionality for this instance",
