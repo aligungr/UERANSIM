@@ -221,6 +221,24 @@ std::string utils::VectorToHexString(const std::vector<uint8_t> &hex)
     return str;
 }
 
+bool utils::TryParseInt(const std::string &str, int &output)
+{
+    return TryParseInt(str.c_str(), output);
+}
+
+bool utils::TryParseInt(const char *str, int &output)
+{
+    try
+    {
+        output = std::stoi(str);
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
 int utils::ParseInt(const std::string &str)
 {
     return ParseInt(str.c_str());
@@ -228,11 +246,9 @@ int utils::ParseInt(const std::string &str)
 
 int utils::ParseInt(const char *str)
 {
-    std::stringstream ss("");
-    ss << str;
-    int i;
-    ss >> i;
-    return i;
+    int n = 0;
+    TryParseInt(str, n);
+    return n;
 }
 
 uint64_t utils::Random64()
@@ -318,22 +334,4 @@ void utils::Trim(std::stringstream &s)
     str = s.str();
     Trim(str);
     s.str(str);
-}
-
-bool utils::TryParseInt(const std::string &str, int &output)
-{
-    return TryParseInt(str.c_str(), output);
-}
-
-bool utils::TryParseInt(const char *str, int &output)
-{
-    try
-    {
-        output = std::stoi(str);
-        return true;
-    }
-    catch (...)
-    {
-        return false;
-    }
 }
