@@ -54,9 +54,9 @@ enum class NtsMessageType
     UE_NAS_TO_RRC,
     UE_RRC_TO_MR,
     UE_RRC_TO_SRA,
-	UE_NAS_TO_NAS,
+    UE_NAS_TO_NAS,
     UE_SRA_TO_RRC,
-	UE_NAS_TO_APP,
+    UE_NAS_TO_APP,
 };
 
 struct NtsMessage
