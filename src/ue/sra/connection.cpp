@@ -14,7 +14,7 @@
 namespace nr::ue
 {
 
-void UeSasTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
+void UeSraTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
 {
     if (!m_activeMeasurements.count(cellId))
     {
@@ -31,7 +31,7 @@ void UeSasTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuita
     m_servingCell->linkIp = measurement.linkIp;
     m_servingCell->cellCategory = isSuitable ? ECellCategory::SUITABLE_CELL : ECellCategory::ACCEPTABLE_CELL;
 
-    auto *w = new NwUeSasToRrc(NwUeSasToRrc::SERVING_CELL_CHANGE);
+    auto *w = new NwUeSraToRrc(NwUeSraToRrc::SERVING_CELL_CHANGE);
     w->servingCell = *m_servingCell;
     m_base->rrcTask->push(w);
 }

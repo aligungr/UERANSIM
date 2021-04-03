@@ -12,7 +12,7 @@
 #include "mr/task.hpp"
 #include "nas/task.hpp"
 #include "rrc/task.hpp"
-#include "sas/task.hpp"
+#include "sra/task.hpp"
 
 namespace nr::ue
 {
@@ -32,7 +32,7 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
     base->rrcTask = new UeRrcTask(base);
     base->mrTask = new UeMrTask(base);
     base->appTask = new UeAppTask(base);
-    base->sasTask = new UeSasTask(base);
+    base->sraTask = new UeSraTask(base);
 
     taskBase = base;
 }
@@ -42,13 +42,13 @@ UserEquipment::~UserEquipment()
     taskBase->nasTask->quit();
     taskBase->rrcTask->quit();
     taskBase->mrTask->quit();
-    taskBase->sasTask->quit();
+    taskBase->sraTask->quit();
     taskBase->appTask->quit();
 
     delete taskBase->nasTask;
     delete taskBase->rrcTask;
     delete taskBase->mrTask;
-    delete taskBase->sasTask;
+    delete taskBase->sraTask;
     delete taskBase->appTask;
 
     delete taskBase->logBase;
@@ -61,7 +61,7 @@ void UserEquipment::start()
     taskBase->nasTask->start();
     taskBase->rrcTask->start();
     taskBase->mrTask->start();
-    taskBase->sasTask->start();
+    taskBase->sraTask->start();
     taskBase->appTask->start();
 }
 

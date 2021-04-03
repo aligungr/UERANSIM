@@ -15,7 +15,7 @@
 #include <udp/server_task.hpp>
 #include <unordered_map>
 #include <urs/rls/gnb_entity.hpp>
-#include <urs/sas_pdu.hpp>
+#include <urs/sra_pdu.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <vector>
@@ -23,7 +23,7 @@
 namespace nr::gnb
 {
 
-class GnbSasTask : public NtsTask
+class GnbSraTask : public NtsTask
 {
   private:
     TaskBase *m_base;
@@ -33,8 +33,8 @@ class GnbSasTask : public NtsTask
     friend class GnbCmdHandler;
 
   public:
-    explicit GnbSasTask(TaskBase *base);
-    ~GnbSasTask() override = default;
+    explicit GnbSraTask(TaskBase *base);
+    ~GnbSraTask() override = default;
 
   protected:
     void onStart() override;
@@ -42,11 +42,11 @@ class GnbSasTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSasMessage(const InetAddress &addr, const sas::SasMessage &msg);
-    void sendSasMessage(const InetAddress &addr, const sas::SasMessage &msg);
+    void receiveSraMessage(const InetAddress &addr, const sra::SraMessage &msg);
+    void sendSraMessage(const InetAddress &addr, const sra::SraMessage &msg);
 
   private: /* Handler */
-    void handleCellInfoRequest(const InetAddress &addr, const sas::SasCellInfoRequest &msg);
+    void handleCellInfoRequest(const InetAddress &addr, const sra::SraCellInfoRequest &msg);
 };
 
 } // namespace nr::gnb

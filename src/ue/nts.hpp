@@ -218,7 +218,7 @@ struct NwUeRrcToMr : NtsMessage
     }
 };
 
-struct NwUeRrcToSas : NtsMessage
+struct NwUeRrcToSra : NtsMessage
 {
     enum PR
     {
@@ -230,12 +230,12 @@ struct NwUeRrcToSas : NtsMessage
     GlobalNci cellId{};
     bool isSuitableCell{}; // otherwise 'acceptable'
 
-    explicit NwUeRrcToSas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_SAS), present(present)
+    explicit NwUeRrcToSra(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_SRA), present(present)
     {
     }
 };
 
-struct NwUeSasToRrc : NtsMessage
+struct NwUeSraToRrc : NtsMessage
 {
     enum PR
     {
@@ -249,7 +249,7 @@ struct NwUeSasToRrc : NtsMessage
     // SERVING_CELL_CHANGE
     UeCellInfo servingCell{};
 
-    explicit NwUeSasToRrc(PR present) : NtsMessage(NtsMessageType::UE_SAS_TO_RRC), present(present)
+    explicit NwUeSraToRrc(PR present) : NtsMessage(NtsMessageType::UE_SRA_TO_RRC), present(present)
     {
     }
 };

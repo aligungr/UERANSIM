@@ -11,23 +11,23 @@
 namespace nr::gnb
 {
 
-void GnbSasTask::receiveSasMessage(const InetAddress &addr, const sas::SasMessage &msg)
+void GnbSraTask::receiveSraMessage(const InetAddress &addr, const sra::SraMessage &msg)
 {
     switch (msg.msgType)
     {
-    case sas::SasMessageType::CELL_INFO_REQUEST:
-        handleCellInfoRequest(addr, (const sas::SasCellInfoRequest &)msg);
+    case sra::SraMessageType::CELL_INFO_REQUEST:
+        handleCellInfoRequest(addr, (const sra::SraCellInfoRequest &)msg);
         break;
     default:
-        m_logger->err("Unhandled SAS message received with type[%d]", static_cast<int>(msg.msgType));
+        m_logger->err("Unhandled SRA message received with type[%d]", static_cast<int>(msg.msgType));
         break;
     }
 }
 
-void GnbSasTask::sendSasMessage(const InetAddress &addr, const sas::SasMessage &msg)
+void GnbSraTask::sendSraMessage(const InetAddress &addr, const sra::SraMessage &msg)
 {
     OctetString stream{};
-    sas::EncodeSasMessage(msg, stream);
+    sra::EncodeSraMessage(msg, stream);
     m_udpTask->send(addr, stream);
 }
 

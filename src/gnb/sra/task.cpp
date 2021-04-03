@@ -16,12 +16,12 @@
 namespace nr::gnb
 {
 
-GnbSasTask::GnbSasTask(TaskBase *base) : m_base{base}, m_udpTask{}
+GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}
 {
-    m_logger = m_base->logBase->makeUniqueLogger("sas");
+    m_logger = m_base->logBase->makeUniqueLogger("sra");
 }
 
-void GnbSasTask::onStart()
+void GnbSraTask::onStart()
 {
     try
     {
@@ -30,13 +30,13 @@ void GnbSasTask::onStart()
     }
     catch (const LibError &e)
     {
-        m_logger->err("SAS failure [%s]", e.what());
+        m_logger->err("SRA failure [%s]", e.what());
         quit();
         return;
     }
 }
 
-void GnbSasTask::onLoop()
+void GnbSraTask::onLoop()
 {
     NtsMessage *msg = take();
     if (!msg)
@@ -46,13 +46,13 @@ void GnbSasTask::onLoop()
     {
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto sasMsg = sas::DecodeSasMessage(OctetView{w->packet});
-        if (sasMsg == nullptr)
+        auto sraMsg = sra::DecodeSraMessage(OctetView{w->packet});
+        if (sraMsg == nullptr)
         {
-            m_logger->err("Unable to decode SAS message");
+            m_logger->err("Unable to decode SRA message");
             break;
         }
-        receiveSasMessage(w->fromAddress, *sasMsg);
+        receiveSraMessage(w->fromAddress, *sraMsg);
         break;
     }
     default:
@@ -63,7 +63,7 @@ void GnbSasTask::onLoop()
     delete msg;
 }
 
-void GnbSasTask::onQuit()
+void GnbSraTask::onQuit()
 {
     if (m_udpTask != nullptr)
         m_udpTask->quit();

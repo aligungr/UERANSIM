@@ -26,7 +26,7 @@ static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 namespace nr::gnb
 {
 
-void GnbSasTask::handleCellInfoRequest(const InetAddress &addr, const sas::SasCellInfoRequest &msg)
+void GnbSraTask::handleCellInfoRequest(const InetAddress &addr, const sra::SraCellInfoRequest &msg)
 {
     int dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
     if (dbm < MIN_ALLOWED_DBM)
@@ -35,7 +35,7 @@ void GnbSasTask::handleCellInfoRequest(const InetAddress &addr, const sas::SasCe
         return;
     }
 
-    sas::SasCellInfoResponse resp{};
+    sra::SraCellInfoResponse resp{};
     resp.cellId.nci = m_base->config->nci;
     resp.cellId.plmn = m_base->config->plmn;
     resp.tac = m_base->config->tac;
@@ -43,7 +43,7 @@ void GnbSasTask::handleCellInfoRequest(const InetAddress &addr, const sas::SasCe
     resp.gnbName = m_base->config->name;
     resp.linkIp = m_base->config->portalIp;
 
-    sendSasMessage(addr, resp);
+    sendSraMessage(addr, resp);
 }
 
 } // namespace nr::gnb

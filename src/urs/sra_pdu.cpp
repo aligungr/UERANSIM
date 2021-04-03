@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "sas_pdu.hpp"
+#include "sra_pdu.hpp"
 #include <utils/constants.hpp>
 
-namespace sas
+namespace sra
 {
 
 static void AppendPlmn(const Plmn &plmn, OctetString &stream)
@@ -42,7 +42,7 @@ static GlobalNci DecodeGlobalNci(const OctetView &stream)
     return res;
 }
 
-void EncodeSasMessage(const SasMessage &msg, OctetString &stream)
+void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
 {
     stream.appendOctet(0x03); // (Just for old RLS compatibility)
 
@@ -50,16 +50,16 @@ void EncodeSasMessage(const SasMessage &msg, OctetString &stream)
     stream.appendOctet(cons::Minor);
     stream.appendOctet(cons::Patch);
     stream.appendOctet(static_cast<uint8_t>(msg.msgType));
-    if (msg.msgType == SasMessageType::CELL_INFO_REQUEST)
+    if (msg.msgType == SraMessageType::CELL_INFO_REQUEST)
     {
-        auto m = (const SasCellInfoRequest &)msg;
+        auto m = (const SraCellInfoRequest &)msg;
         stream.appendOctet4(m.simPos.x);
         stream.appendOctet4(m.simPos.y);
         stream.appendOctet4(m.simPos.z);
     }
-    else if (msg.msgType == SasMessageType::CELL_INFO_RESPONSE)
+    else if (msg.msgType == SraMessageType::CELL_INFO_RESPONSE)
     {
-        auto m = (const SasCellInfoResponse &)msg;
+        auto m = (const SraCellInfoResponse &)msg;
         AppendGlobalNci(m.cellId, stream);
         stream.appendOctet4(m.tac);
         stream.appendOctet4(m.dbm);
@@ -70,7 +70,7 @@ void EncodeSasMessage(const SasMessage &msg, OctetString &stream)
     }
 }
 
-std::unique_ptr<SasMessage> DecodeSasMessage(const OctetView &stream)
+std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
 {
     auto first = stream.readI(); // (Just for old RLS compatibility)
     if (first != 3)
@@ -83,18 +83,18 @@ std::unique_ptr<SasMessage> DecodeSasMessage(const OctetView &stream)
     if (stream.read() != cons::Patch)
         return nullptr;
 
-    auto msgType = static_cast<SasMessageType>(stream.readI());
-    if (msgType == SasMessageType::CELL_INFO_REQUEST)
+    auto msgType = static_cast<SraMessageType>(stream.readI());
+    if (msgType == SraMessageType::CELL_INFO_REQUEST)
     {
-        auto res = std::make_unique<SasCellInfoRequest>();
+        auto res = std::make_unique<SraCellInfoRequest>();
         res->simPos.x = stream.read4I();
         res->simPos.y = stream.read4I();
         res->simPos.z = stream.read4I();
         return res;
     }
-    else if (msgType == SasMessageType::CELL_INFO_RESPONSE)
+    else if (msgType == SraMessageType::CELL_INFO_RESPONSE)
     {
-        auto res = std::make_unique<SasCellInfoResponse>();
+        auto res = std::make_unique<SraCellInfoResponse>();
         res->cellId = DecodeGlobalNci(stream);
         res->tac = stream.read4I();
         res->dbm = stream.read4I();
@@ -106,4 +106,4 @@ std::unique_ptr<SasMessage> DecodeSasMessage(const OctetView &stream)
     return nullptr;
 }
 
-} // namespace sas
+} // namespace sra

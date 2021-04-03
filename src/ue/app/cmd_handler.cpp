@@ -12,7 +12,7 @@
 #include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rrc/task.hpp>
-#include <ue/sas/task.hpp>
+#include <ue/sra/task.hpp>
 #include <ue/tun/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
@@ -163,7 +163,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::COVERAGE: {
-        auto &map = m_base->sasTask->m_activeMeasurements;
+        auto &map = m_base->sraTask->m_activeMeasurements;
         if (map.empty())
         {
             sendResult(msg.address, "No cell exists in the range");

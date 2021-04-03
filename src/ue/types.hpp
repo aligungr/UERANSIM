@@ -27,7 +27,7 @@ class UeAppTask;
 class UeMrTask;
 class NasTask;
 class UeRrcTask;
-class UeSasTask;
+class UeSraTask;
 class UserEquipment;
 
 struct SupportedAlgs
@@ -126,7 +126,7 @@ struct TaskBase
     UeMrTask *mrTask{};
     NasTask *nasTask{};
     UeRrcTask *rrcTask{};
-    UeSasTask *sasTask{};
+    UeSraTask *sraTask{};
 };
 
 struct UeTimers

@@ -14,7 +14,7 @@
 #include <udp/server_task.hpp>
 #include <ue/types.hpp>
 #include <unordered_map>
-#include <urs/sas_pdu.hpp>
+#include <urs/sra_pdu.hpp>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
@@ -23,7 +23,7 @@
 namespace nr::ue
 {
 
-class UeSasTask : public NtsTask
+class UeSraTask : public NtsTask
 {
   private:
     TaskBase *m_base;
@@ -39,8 +39,8 @@ class UeSasTask : public NtsTask
     friend class UeCmdHandler;
 
   public:
-    explicit UeSasTask(TaskBase *base);
-    ~UeSasTask() override = default;
+    explicit UeSraTask(TaskBase *base);
+    ~UeSraTask() override = default;
 
   protected:
     void onStart() override;
@@ -48,12 +48,12 @@ class UeSasTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSasMessage(const InetAddress &address, const sas::SasMessage &msg);
-    void sendSasMessage(const InetAddress &address, const sas::SasMessage &msg);
+    void receiveSraMessage(const InetAddress &address, const sra::SraMessage &msg);
+    void sendSraMessage(const InetAddress &address, const sra::SraMessage &msg);
 
   private: /* Measurement */
     void onMeasurement();
-    void receiveCellInfoResponse(const sas::SasCellInfoResponse &msg);
+    void receiveCellInfoResponse(const sra::SraCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
     void plmnSearchRequested();
 

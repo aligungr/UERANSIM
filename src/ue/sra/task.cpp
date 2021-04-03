@@ -16,16 +16,16 @@ static const int TIMER_PERIOD_MEASUREMENT = 2000;
 namespace nr::ue
 {
 
-UeSasTask::UeSasTask(TaskBase *base)
+UeSraTask::UeSraTask(TaskBase *base)
     : m_base{base}, m_udpTask{}, m_cellSearchSpace{}, m_pendingMeasurements{}, m_activeMeasurements{}, m_servingCell{}
 {
-    m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "sas");
+    m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "sra");
 
     for (auto &addr : m_base->config->gnbSearchList)
         m_cellSearchSpace.emplace_back(addr, cons::PortalPort);
 }
 
-void UeSasTask::onStart()
+void UeSraTask::onStart()
 {
     m_udpTask = new udp::UdpServerTask(this);
 
@@ -39,7 +39,7 @@ void UeSasTask::onStart()
     onMeasurement();
 }
 
-void UeSasTask::onLoop()
+void UeSraTask::onLoop()
 {
     NtsMessage *msg = take();
     if (!msg)
@@ -47,11 +47,11 @@ void UeSasTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RRC_TO_SAS: {
-        auto *w = dynamic_cast<NwUeRrcToSas *>(msg);
-        if (w->present == NwUeRrcToSas::PLMN_SEARCH_REQUEST)
+    case NtsMessageType::UE_RRC_TO_SRA: {
+        auto *w = dynamic_cast<NwUeRrcToSra *>(msg);
+        if (w->present == NwUeRrcToSra::PLMN_SEARCH_REQUEST)
             plmnSearchRequested();
-        else if (w->present == NwUeRrcToSas::CELL_SELECTION_COMMAND)
+        else if (w->present == NwUeRrcToSra::CELL_SELECTION_COMMAND)
             handleCellSelectionCommand(w->cellId, w->isSuitableCell);
         break;
     }
@@ -66,13 +66,13 @@ void UeSasTask::onLoop()
     }
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto sasMsg = sas::DecodeSasMessage(OctetView{w->packet});
-        if (sasMsg == nullptr)
+        auto sraMsg = sra::DecodeSraMessage(OctetView{w->packet});
+        if (sraMsg == nullptr)
         {
-            m_logger->err("Unable to decode SAS message");
+            m_logger->err("Unable to decode SRA message");
             break;
         }
-        receiveSasMessage(w->fromAddress, *sasMsg);
+        receiveSraMessage(w->fromAddress, *sraMsg);
         break;
     }
     default:
@@ -83,7 +83,7 @@ void UeSasTask::onLoop()
     delete msg;
 }
 
-void UeSasTask::onQuit()
+void UeSraTask::onQuit()
 {
     m_udpTask->quit();
     delete m_udpTask;

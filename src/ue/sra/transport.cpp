@@ -11,24 +11,24 @@
 namespace nr::ue
 {
 
-void UeSasTask::receiveSasMessage(const InetAddress &address, const sas::SasMessage &msg)
+void UeSraTask::receiveSraMessage(const InetAddress &address, const sra::SraMessage &msg)
 {
     switch (msg.msgType)
     {
-    case sas::SasMessageType::CELL_INFO_RESPONSE: {
-        receiveCellInfoResponse((const sas::SasCellInfoResponse &)msg);
+    case sra::SraMessageType::CELL_INFO_RESPONSE: {
+        receiveCellInfoResponse((const sra::SraCellInfoResponse &)msg);
         break;
     default:
-        m_logger->err("Unhandled SAS message type[%d]", static_cast<int>(msg.msgType));
+        m_logger->err("Unhandled SRA message type[%d]", static_cast<int>(msg.msgType));
         break;
     }
     }
 }
 
-void UeSasTask::sendSasMessage(const InetAddress &address, const sas::SasMessage &msg)
+void UeSraTask::sendSraMessage(const InetAddress &address, const sra::SraMessage &msg)
 {
     OctetString stream{};
-    sas::EncodeSasMessage(msg, stream);
+    sra::EncodeSraMessage(msg, stream);
     m_udpTask->send(address, stream);
 }
 

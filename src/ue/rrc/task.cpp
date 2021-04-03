@@ -15,7 +15,7 @@
 #include <ue/app/task.hpp>
 #include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/sas/task.hpp>
+#include <ue/sra/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -65,7 +65,7 @@ void UeRrcTask::onLoop()
         switch (w->present)
         {
         case NwUeNasToRrc::PLMN_SEARCH_REQUEST: {
-            m_base->sasTask->push(new NwUeRrcToSas(NwUeRrcToSas::PLMN_SEARCH_REQUEST));
+            m_base->sraTask->push(new NwUeRrcToSra(NwUeRrcToSra::PLMN_SEARCH_REQUEST));
             break;
         }
         case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
@@ -87,26 +87,26 @@ void UeRrcTask::onLoop()
             break;
         }
         case NwUeNasToRrc::CELL_SELECTION_COMMAND: {
-            auto *wr = new NwUeRrcToSas(NwUeRrcToSas::CELL_SELECTION_COMMAND);
+            auto *wr = new NwUeRrcToSra(NwUeRrcToSra::CELL_SELECTION_COMMAND);
             wr->cellId = w->cellId;
             wr->isSuitableCell = w->isSuitableCell;
-            m_base->sasTask->push(wr);
+            m_base->sraTask->push(wr);
             break;
         }
         }
         break;
     }
-    case NtsMessageType::UE_SAS_TO_RRC: {
-        auto *w = dynamic_cast<NwUeSasToRrc *>(msg);
+    case NtsMessageType::UE_SRA_TO_RRC: {
+        auto *w = dynamic_cast<NwUeSraToRrc *>(msg);
         switch (w->present)
         {
-        case NwUeSasToRrc::PLMN_SEARCH_RESPONSE: {
+        case NwUeSraToRrc::PLMN_SEARCH_RESPONSE: {
             auto *wr = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
             wr->measurements = std::move(w->measurements);
             m_base->nasTask->push(wr);
             break;
         }
-        case NwUeSasToRrc::SERVING_CELL_CHANGE: {
+        case NwUeSraToRrc::SERVING_CELL_CHANGE: {
             auto *wr = new NwUeRrcToNas(NwUeRrcToNas::SERVING_CELL_CHANGE);
             wr->servingCell = w->servingCell;
             m_base->nasTask->push(wr);

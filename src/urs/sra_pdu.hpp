@@ -14,35 +14,35 @@
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
 
-namespace sas
+namespace sra
 {
 
-enum class SasMessageType : uint8_t
+enum class SraMessageType : uint8_t
 {
     RESERVED = 0,
     CELL_INFO_REQUEST,
     CELL_INFO_RESPONSE,
 };
 
-struct SasMessage
+struct SraMessage
 {
-    const SasMessageType msgType;
+    const SraMessageType msgType;
 
-    explicit SasMessage(SasMessageType msgType) : msgType(msgType)
+    explicit SraMessage(SraMessageType msgType) : msgType(msgType)
     {
     }
 };
 
-struct SasCellInfoRequest : SasMessage
+struct SraCellInfoRequest : SraMessage
 {
     Vector3 simPos{};
 
-    SasCellInfoRequest() : SasMessage(SasMessageType::CELL_INFO_REQUEST)
+    SraCellInfoRequest() : SraMessage(SraMessageType::CELL_INFO_REQUEST)
     {
     }
 };
 
-struct SasCellInfoResponse : SasMessage
+struct SraCellInfoResponse : SraMessage
 {
     GlobalNci cellId{};
     int tac{};
@@ -50,12 +50,12 @@ struct SasCellInfoResponse : SasMessage
     std::string gnbName{};
     std::string linkIp{};
 
-    SasCellInfoResponse() : SasMessage(SasMessageType::CELL_INFO_RESPONSE)
+    SraCellInfoResponse() : SraMessage(SraMessageType::CELL_INFO_RESPONSE)
     {
     }
 };
 
-void EncodeSasMessage(const SasMessage &msg, OctetString &stream);
-std::unique_ptr<SasMessage> DecodeSasMessage(const OctetView &stream);
+void EncodeSraMessage(const SraMessage &msg, OctetString &stream);
+std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream);
 
-} // namespace sas
+} // namespace sra

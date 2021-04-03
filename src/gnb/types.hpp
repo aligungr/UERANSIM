@@ -26,7 +26,7 @@ class GtpTask;
 class GnbMrTask;
 class NgapTask;
 class GnbRrcTask;
-class GnbSasTask;
+class GnbSraTask;
 class SctpTask;
 
 enum class EAmfState
@@ -326,7 +326,7 @@ struct TaskBase
     NgapTask *ngapTask{};
     GnbRrcTask *rrcTask{};
     SctpTask *sctpTask{};
-    GnbSasTask *sasTask{};
+    GnbSraTask *sraTask{};
 };
 
 struct MrUeContext

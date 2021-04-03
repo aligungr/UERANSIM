@@ -14,7 +14,7 @@
 namespace nr::ue
 {
 
-void UeSasTask::onMeasurement()
+void UeSraTask::onMeasurement()
 {
     std::vector<GlobalNci> entered{};
     std::vector<GlobalNci> exited{};
@@ -41,12 +41,12 @@ void UeSasTask::onMeasurement()
     // Issue another cell info request for each address in the search space
     for (auto &ip : m_cellSearchSpace)
     {
-        sas::SasCellInfoRequest req{};
-        sendSasMessage(ip, req);
+        sra::SraCellInfoRequest req{};
+        sendSraMessage(ip, req);
     }
 }
 
-void UeSasTask::receiveCellInfoResponse(const sas::SasCellInfoResponse &msg)
+void UeSraTask::receiveCellInfoResponse(const sra::SraCellInfoResponse &msg)
 {
     UeCellMeasurement meas{};
     meas.cellId = msg.cellId;
@@ -58,19 +58,19 @@ void UeSasTask::receiveCellInfoResponse(const sas::SasCellInfoResponse &msg)
     m_pendingMeasurements[meas.cellId] = meas;
 }
 
-void UeSasTask::onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited)
+void UeSraTask::onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited)
 {
     m_logger->debug("Coverage change detected. [%d] cell entered, [%d] cell exited", static_cast<int>(entered.size()),
                     static_cast<int>(exited.size()));
 }
 
-void UeSasTask::plmnSearchRequested()
+void UeSraTask::plmnSearchRequested()
 {
     std::vector<UeCellMeasurement> measurements{};
     for (auto &m : m_activeMeasurements)
         measurements.push_back(m.second);
 
-    auto *w = new NwUeSasToRrc(NwUeSasToRrc::PLMN_SEARCH_RESPONSE);
+    auto *w = new NwUeSraToRrc(NwUeSraToRrc::PLMN_SEARCH_RESPONSE);
     w->measurements = std::move(measurements);
     m_base->rrcTask->push(w);
 }
