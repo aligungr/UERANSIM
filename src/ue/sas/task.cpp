@@ -52,7 +52,7 @@ void UeSasTask::onLoop()
         if (w->present == NwUeRrcToSas::PLMN_SEARCH_REQUEST)
             plmnSearchRequested();
         else if (w->present == NwUeRrcToSas::CELL_SELECTION_COMMAND)
-            receiveCellSelectionCommand(w->cellId, w->isSuitableCell);
+            handleCellSelectionCommand(w->cellId, w->isSuitableCell);
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {

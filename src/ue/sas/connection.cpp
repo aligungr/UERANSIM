@@ -14,7 +14,7 @@
 namespace nr::ue
 {
 
-void UeSasTask::receiveCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
+void UeSasTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
 {
     m_logger->err("TODO"); // TODO perform camp
 }

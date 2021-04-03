@@ -55,7 +55,7 @@ class UeSasTask : public NtsTask
     void plmnSearchRequested();
 
   private: /* Connection */
-    void receiveCellSelectionCommand(const GlobalNci &cellId, bool isSuitable);
+    void handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable);
 };
 
 } // namespace nr::ue
