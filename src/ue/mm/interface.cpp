@@ -22,11 +22,7 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
         break;
     }
     case NwUeRrcToNas::PLMN_SEARCH_RESPONSE: {
-        handlePlmnSearchResponse(msg.gnbName);
-        break;
-    }
-    case NwUeRrcToNas::PLMN_SEARCH_FAILURE: {
-        handlePlmnSearchFailure();
+        handlePlmnSearchResponse(msg.measurements);
         break;
     }
     case NwUeRrcToNas::NAS_DELIVERY: {

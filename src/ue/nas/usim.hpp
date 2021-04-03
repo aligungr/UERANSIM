@@ -24,13 +24,15 @@ class Usim
     bool m_isValid{};
 
   public:
-    // Location related
-    nas::IE5gsMobileIdentity m_storedGuti{};
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
+    // State related
     E5UState m_uState{};
+
+    // Location related
+    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
 
     // Identity related
     nas::IE5gsMobileIdentity m_storedSuci{};
+    nas::IE5gsMobileIdentity m_storedGuti{};
 
     // Plmn related
     Plmn m_currentPlmn{};

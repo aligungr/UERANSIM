@@ -142,8 +142,7 @@ class NasMm
 
   private: /* Radio */
     void localReleaseConnection();
-    void handlePlmnSearchResponse(const std::string &gnbName);
-    void handlePlmnSearchFailure();
+    void handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measures);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handleRadioLinkFailure();

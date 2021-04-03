@@ -62,9 +62,9 @@ void UeMrTask::onLoop()
         switch (w->present)
         {
         case NwUeMrToMr::RLS_CONNECTED: {
-            auto tw = new NwUeMrToRrc(NwUeMrToRrc::PLMN_SEARCH_RESPONSE);
-            tw->gnbName = std::move(w->gnbName);
-            m_base->rrcTask->push(tw);
+            //auto tw = new NwUeMrToRrc(NwUeMrToRrc::PLMN_SEARCH_RESPONSE);
+            //tw->gnbName = std::move(w->gnbName);
+            //m_base->rrcTask->push(tw);
             break;
         }
         case NwUeMrToMr::RLS_RELEASED: {
@@ -80,13 +80,13 @@ void UeMrTask::onLoop()
             break;
         }
         case NwUeMrToMr::RLS_SEARCH_FAILURE: {
-            long current = utils::CurrentTimeMillis();
-            if (current - m_lastPlmnSearchFailurePrinted > PLMN_SEARCH_FAILED_PRINT_THRESHOLD)
-            {
-                m_logger->err("PLMN search failed [%s]", rls::CauseToString(w->cause));
-                m_lastPlmnSearchFailurePrinted = current;
-                m_base->rrcTask->push(new NwUeMrToRrc(NwUeMrToRrc::PLMN_SEARCH_FAILURE));
-            }
+            //long current = utils::CurrentTimeMillis();
+            //if (current - m_lastPlmnSearchFailurePrinted > PLMN_SEARCH_FAILED_PRINT_THRESHOLD)
+            //{
+            //    m_logger->err("PLMN search failed [%s]", rls::CauseToString(w->cause));
+            //    m_lastPlmnSearchFailurePrinted = current;
+            //    m_base->rrcTask->push(new NwUeMrToRrc(NwUeMrToRrc::PLMN_SEARCH_FAILURE));
+            //}
             break;
         }
         case NwUeMrToMr::RLS_START_WAITING_TIMER: {

@@ -49,16 +49,6 @@ void UeRrcTask::onLoop()
         auto *w = dynamic_cast<NwUeMrToRrc *>(msg);
         switch (w->present)
         {
-        case NwUeMrToRrc::PLMN_SEARCH_RESPONSE: {
-            auto *nw = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
-            nw->gnbName = std::move(w->gnbName);
-            m_base->nasTask->push(nw);
-            break;
-        }
-        case NwUeMrToRrc::PLMN_SEARCH_FAILURE: {
-            m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_FAILURE));
-            break;
-        }
         case NwUeMrToRrc::RRC_PDU_DELIVERY: {
             handleDownlinkRrc(w->channel, w->pdu);
             break;
@@ -78,13 +68,15 @@ void UeRrcTask::onLoop()
             m_base->sasTask->push(new NwUeRrcToSas(NwUeRrcToSas::PLMN_SEARCH_REQUEST));
             break;
         }
-        case NwUeNasToRrc::INITIAL_NAS_DELIVERY:
+        case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
             deliverInitialNas(std::move(w->nasPdu), w->rrcEstablishmentCause);
             break;
-        case NwUeNasToRrc::UPLINK_NAS_DELIVERY:
+        }
+        case NwUeNasToRrc::UPLINK_NAS_DELIVERY: {
             deliverUplinkNas(std::move(w->nasPdu));
             break;
-        case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION:
+        }
+        case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
             m_state = ERrcState::RRC_IDLE;
 
             auto *wr = new NwUeRrcToMr(NwUeRrcToMr::RRC_CONNECTION_RELEASE);
@@ -93,6 +85,27 @@ void UeRrcTask::onLoop()
 
             m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
             break;
+        }
+        case NwUeNasToRrc::CELL_SELECTION_COMMAND: {
+            auto *wr = new NwUeRrcToSas(NwUeRrcToSas::CELL_SELECTION_COMMAND);
+            wr->cellId = w->cellId;
+            wr->isSuitableCell = w->isSuitableCell;
+            m_base->sasTask->push(wr);
+            break;
+        }
+        }
+        break;
+    }
+    case NtsMessageType::UE_SAS_TO_RRC: {
+        auto *w = dynamic_cast<NwUeSasToRrc *>(msg);
+        switch (w->present)
+        {
+        case NwUeSasToRrc::PLMN_SEARCH_RESPONSE: {
+            auto *wr = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
+            wr->measurements = std::move(w->measurements);
+            m_base->nasTask->push(wr);
+            break;
+        }
         }
         break;
     }

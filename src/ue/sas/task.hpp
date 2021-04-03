@@ -9,11 +9,11 @@
 #pragma once
 
 #include <memory>
-#include <urs/sas_pdu.hpp>
 #include <thread>
 #include <udp/server_task.hpp>
 #include <ue/types.hpp>
 #include <unordered_map>
+#include <urs/sas_pdu.hpp>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
@@ -53,6 +53,9 @@ class UeSasTask : public NtsTask
     void receiveCellInfoResponse(const sas::SasCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
     void plmnSearchRequested();
+
+  private: /* Connection */
+    void receiveCellSelectionCommand(const GlobalNci &cellId, bool isSuitable);
 };
 
 } // namespace nr::ue

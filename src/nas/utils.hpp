@@ -25,6 +25,14 @@ bool HasValue(const IEGprsTimer3 &v);
 bool HasValue(const IEGprsTimer2 &v);
 
 void AddToPlmnList(IEPlmnList &list, VPlmn item);
+bool PlmnListContains(const IEPlmnList &list, VPlmn item);
+bool PlmnListContains(const IEPlmnList &list, Plmn item);
+bool TaiListContains(const nas::IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai);
+bool TaiListContains(const nas::VPartialTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai);
+bool ServiceAreaListForbidsPlmn(const nas::IEServiceAreaList &list, const VPlmn &plmn);
+bool ServiceAreaListForbidsTai(const nas::IEServiceAreaList &list, const VTrackingAreaIdentity &tai);
+bool ServiceAreaListForbidsPlmn(const nas::VPartialServiceAreaList &list, const VPlmn &plmn);
+bool ServiceAreaListForbidsTai(const nas::VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai);
 
 const char *EnumToString(ERegistrationType v);
 const char *EnumToString(EMmCause v);

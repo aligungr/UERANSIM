@@ -51,6 +51,8 @@ void UeSasTask::onLoop()
         auto *w = dynamic_cast<NwUeRrcToSas *>(msg);
         if (w->present == NwUeRrcToSas::PLMN_SEARCH_REQUEST)
             plmnSearchRequested();
+        else if (w->present == NwUeRrcToSas::CELL_SELECTION_COMMAND)
+            receiveCellSelectionCommand(w->cellId, w->isSuitableCell);
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
