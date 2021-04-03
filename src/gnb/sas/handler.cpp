@@ -9,6 +9,8 @@
 #include "task.hpp"
 #include <cmath>
 
+static int MIN_ALLOWED_DBM = -100;
+
 static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 {
     int deltaX = myPos.x - uePos.x;
@@ -24,11 +26,18 @@ namespace nr::gnb
 
 void GnbSasTask::handleCellInfoRequest(const InetAddress &addr, const sas::SasCellInfoRequest &msg)
 {
+    int dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
+    if (dbm < MIN_ALLOWED_DBM)
+    {
+        // if the simulated signal strength is such low, then do not send a response to this message
+        return;
+    }
+
     sas::SasCellInfoResponse resp{};
     resp.cellId.nci = m_base->config->nci;
     resp.cellId.plmn = m_base->config->plmn;
     resp.tac = m_base->config->tac;
-    resp.dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
+    resp.dbm = dbm;
 
     sendSasMessage(addr, resp);
 }
