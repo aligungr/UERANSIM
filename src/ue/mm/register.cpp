@@ -807,7 +807,9 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
     // "If the registration attempt counter is less than 5:"
     if (m_regCounter < 5)
     {
-        bool includedInTaiList = false; // TODO
+        bool includedInTaiList = nas::utils::TaiListContains(
+            m_usim->m_taiList, nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(m_usim->m_servingCell->cellId.plmn),
+                                                          octet3{m_usim->m_servingCell->tac}});
 
         // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
         // to 5U1 UPDATED"
