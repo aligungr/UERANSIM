@@ -72,9 +72,10 @@ void NasMm::performMmCycle()
         m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE ||
         m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
     {
-        long current = utils::CurrentTimeMillis();
-        long elapsedMs = current - m_lastPlmnSearchTrigger;
-        if (elapsedMs > 50)
+        int64_t current = utils::CurrentTimeMillis();
+        int64_t backoff = m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ? -1 : 1500;
+
+        if (current - m_lastPlmnSearchTrigger > backoff)
         {
             m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::PLMN_SEARCH_REQUEST));
             m_lastPlmnSearchTrigger = current;

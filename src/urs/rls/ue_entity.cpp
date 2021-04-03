@@ -290,7 +290,7 @@ void RlsUeEntity::sendRlsMessage(const InetAddress &address, const RlsMessage &m
         return;
     }
 
-    sendRlsPdu(address, std::move(stream));
+    //sendRlsPdu(address, std::move(stream));
 }
 
 void RlsUeEntity::localReleaseConnection(ECause cause)
