@@ -7,6 +7,8 @@
 //
 
 #include "task.hpp"
+#include <ue/nts.hpp>
+#include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -59,6 +61,17 @@ void UeSasTask::onCoverageChange(const std::vector<GlobalNci> &entered, const st
 {
     m_logger->debug("Coverage change detected. [%d] cell entered, [%d] cell exited", static_cast<int>(entered.size()),
                     static_cast<int>(exited.size()));
+}
+
+void UeSasTask::plmnSearchRequested()
+{
+    std::vector<UeCellMeasurement> measurements{};
+    for (auto &m : m_activeMeasurements)
+        measurements.push_back(m.second);
+
+    auto *w = new NwUeSasToRrc(NwUeSasToRrc::PLMN_SEARCH_RESPONSE);
+    w->measurements = std::move(measurements);
+    m_base->rrcTask->push(w);
 }
 
 } // namespace nr::ue

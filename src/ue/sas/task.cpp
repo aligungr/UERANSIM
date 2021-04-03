@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+#include <ue/nts.hpp>
 #include <utils/constants.hpp>
 
 static const int TIMER_ID_MEASUREMENT = 1;
@@ -46,6 +47,12 @@ void UeSasTask::onLoop()
 
     switch (msg->msgType)
     {
+    case NtsMessageType::UE_RRC_TO_SAS: {
+        auto *w = dynamic_cast<NwUeRrcToSas *>(msg);
+        if (w->present == NwUeRrcToSas::PLMN_SEARCH_REQUEST)
+            plmnSearchRequested();
+        break;
+    }
     case NtsMessageType::TIMER_EXPIRED: {
         auto *w = dynamic_cast<NwTimerExpired *>(msg);
         if (w->timerId == TIMER_ID_MEASUREMENT)

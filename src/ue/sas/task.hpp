@@ -52,6 +52,7 @@ class UeSasTask : public NtsTask
     void onMeasurement();
     void receiveCellInfoResponse(const sas::SasCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
+    void plmnSearchRequested();
 };
 
 } // namespace nr::ue

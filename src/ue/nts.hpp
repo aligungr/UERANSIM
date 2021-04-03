@@ -215,6 +215,33 @@ struct NwUeRrcToMr : NtsMessage
     }
 };
 
+struct NwUeRrcToSas : NtsMessage
+{
+    enum PR
+    {
+        PLMN_SEARCH_REQUEST,
+    } present;
+
+    explicit NwUeRrcToSas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_SAS), present(present)
+    {
+    }
+};
+
+struct NwUeSasToRrc : NtsMessage
+{
+    enum PR
+    {
+        PLMN_SEARCH_RESPONSE,
+    } present;
+
+    // PLMN_SEARCH_RESPONSE
+    std::vector<UeCellMeasurement> measurements{};
+
+    explicit NwUeSasToRrc(PR present) : NtsMessage(NtsMessageType::UE_SAS_TO_RRC), present(present)
+    {
+    }
+};
+
 struct NwUeNasToNas : NtsMessage
 {
     enum PR

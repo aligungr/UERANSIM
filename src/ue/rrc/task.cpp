@@ -15,6 +15,7 @@
 #include <ue/app/task.hpp>
 #include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
+#include <ue/sas/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -74,7 +75,7 @@ void UeRrcTask::onLoop()
         switch (w->present)
         {
         case NwUeNasToRrc::PLMN_SEARCH_REQUEST: {
-            m_base->mrTask->push(new NwUeRrcToMr(NwUeRrcToMr::PLMN_SEARCH_REQUEST));
+            m_base->sasTask->push(new NwUeRrcToSas(NwUeRrcToSas::PLMN_SEARCH_REQUEST));
             break;
         }
         case NwUeNasToRrc::INITIAL_NAS_DELIVERY:
