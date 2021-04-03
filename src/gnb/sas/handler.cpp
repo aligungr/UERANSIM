@@ -9,7 +9,7 @@
 #include "task.hpp"
 #include <cmath>
 
-static int MIN_ALLOWED_DBM = -100;
+static int MIN_ALLOWED_DBM = -120;
 
 static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 {
@@ -18,6 +18,8 @@ static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
     int deltaZ = myPos.z - uePos.z;
 
     int distance = static_cast<int>(std::sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+    if (distance == 0)
+        return -1; // 0 may be confusing for people
     return -distance;
 }
 

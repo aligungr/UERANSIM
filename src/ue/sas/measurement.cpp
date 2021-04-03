@@ -9,8 +9,6 @@
 #include "task.hpp"
 #include <utils/common.hpp>
 
-static int DBM_STRONG_STRENGTH_THRESHOLD = -70;
-
 namespace nr::ue
 {
 
@@ -22,20 +20,12 @@ void UeSasTask::onMeasurement()
     // compare active and pending measurements
     for (auto &m : m_activeMeasurements)
     {
-        bool oldStrong = m.second.dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
-        if (m_pendingMeasurements.count(m.first))
-        {
-            bool newStrong = m_pendingMeasurements[m.first].dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
-            if (newStrong ^ oldStrong)
-                (newStrong ? entered : exited).push_back(m.first);
-        }
-        else if (oldStrong)
+        if (!m_pendingMeasurements.count(m.first))
             exited.push_back(m.first);
     }
     for (auto &m : m_pendingMeasurements)
     {
-        bool newStrong = m_pendingMeasurements[m.first].dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
-        if (!m_activeMeasurements.count(m.first) && newStrong)
+        if (!m_activeMeasurements.count(m.first))
             entered.push_back(m.first);
     }
     if (!entered.empty() || !exited.empty())
