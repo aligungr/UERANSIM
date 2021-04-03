@@ -16,8 +16,24 @@ namespace nr::ue
 
 void UeSasTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
 {
-    m_logger->err("TODO"); // TODO perform camp
-}
+    if (!m_activeMeasurements.count(cellId))
+    {
+        m_logger->err("Selected cell is no longer available for camping");
+        return;
+    }
 
+    auto &measurement = m_activeMeasurements[cellId];
+
+    m_servingCell = UeCellInfo{};
+    m_servingCell->cellId = measurement.cellId;
+    m_servingCell->tac = measurement.tac;
+    m_servingCell->gnbName = measurement.gnbName;
+    m_servingCell->linkIp = measurement.linkIp;
+    m_servingCell->cellCategory = isSuitable ? ECellCategory::SUITABLE_CELL : ECellCategory::ACCEPTABLE_CELL;
+
+    auto *w = new NwUeSasToRrc(NwUeSasToRrc::SERVING_CELL_CHANGE);
+    w->servingCell = *m_servingCell;
+    m_base->rrcTask->push(w);
+}
 
 } // namespace nr::ue

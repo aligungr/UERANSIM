@@ -9,6 +9,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <thread>
 #include <udp/server_task.hpp>
 #include <ue/types.hpp>
@@ -32,6 +33,8 @@ class UeSasTask : public NtsTask
     std::vector<InetAddress> m_cellSearchSpace;
     std::unordered_map<GlobalNci, UeCellMeasurement> m_pendingMeasurements;
     std::unordered_map<GlobalNci, UeCellMeasurement> m_activeMeasurements;
+
+    std::optional<UeCellInfo> m_servingCell;
 
     friend class UeCmdHandler;
 

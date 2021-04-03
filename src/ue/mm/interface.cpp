@@ -40,6 +40,9 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
         handleRadioLinkFailure();
         break;
     }
+    case NwUeRrcToNas::SERVING_CELL_CHANGE: {
+        handleServingCellChange(msg.servingCell);
+    }
     }
 }
 

@@ -153,6 +153,7 @@ struct NwUeRrcToNas : NtsMessage
         RRC_CONNECTION_SETUP,
         RRC_CONNECTION_RELEASE,
         RADIO_LINK_FAILURE,
+        SERVING_CELL_CHANGE,
     } present;
 
     // NAS_DELIVERY
@@ -160,6 +161,9 @@ struct NwUeRrcToNas : NtsMessage
 
     // PLMN_SEARCH_RESPONSE
     std::vector<UeCellMeasurement> measurements{};
+
+    // SERVING_CELL_CHANGE
+    UeCellInfo servingCell{};
 
     explicit NwUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {
@@ -236,10 +240,14 @@ struct NwUeSasToRrc : NtsMessage
     enum PR
     {
         PLMN_SEARCH_RESPONSE,
+        SERVING_CELL_CHANGE
     } present;
 
     // PLMN_SEARCH_RESPONSE
     std::vector<UeCellMeasurement> measurements{};
+
+    // SERVING_CELL_CHANGE
+    UeCellInfo servingCell{};
 
     explicit NwUeSasToRrc(PR present) : NtsMessage(NtsMessageType::UE_SAS_TO_RRC), present(present)
     {

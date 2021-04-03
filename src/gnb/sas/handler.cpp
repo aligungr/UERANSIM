@@ -41,6 +41,7 @@ void GnbSasTask::handleCellInfoRequest(const InetAddress &addr, const sas::SasCe
     resp.tac = m_base->config->tac;
     resp.dbm = dbm;
     resp.gnbName = m_base->config->name;
+    resp.linkIp = m_base->config->portalIp;
 
     sendSasMessage(addr, resp);
 }

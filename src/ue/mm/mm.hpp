@@ -145,6 +145,7 @@ class NasMm
     void handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measures);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
+    void handleServingCellChange(const UeCellInfo &servingCell);
     void handleRadioLinkFailure();
 
   private: /* Access Control */

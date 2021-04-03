@@ -48,6 +48,7 @@ struct SasCellInfoResponse : SasMessage
     int tac{};
     int dbm{};
     std::string gnbName{};
+    std::string linkIp{};
 
     SasCellInfoResponse() : SasMessage(SasMessageType::CELL_INFO_RESPONSE)
     {

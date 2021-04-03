@@ -131,13 +131,31 @@ struct GlobalNci
     }
 };
 
+enum class ECellCategory
+{
+    UNDEFINED,
+    ACCEPTABLE_CELL,
+    SUITABLE_CELL,
+    BARRED_CELL,
+    RESERVED_CELL,
+};
+
 struct UeCellMeasurement
 {
     GlobalNci cellId{};
     int tac{};
     int dbm{};
     std::string gnbName{};
-    uint64_t time{};
+    std::string linkIp{};
+};
+
+struct UeCellInfo
+{
+    GlobalNci cellId{};
+    int tac{};
+    ECellCategory cellCategory{};
+    std::string gnbName{};
+    std::string linkIp{};
 };
 
 struct Vector3

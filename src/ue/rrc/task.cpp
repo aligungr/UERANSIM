@@ -106,6 +106,12 @@ void UeRrcTask::onLoop()
             m_base->nasTask->push(wr);
             break;
         }
+        case NwUeSasToRrc::SERVING_CELL_CHANGE: {
+            auto *wr = new NwUeRrcToNas(NwUeRrcToNas::SERVING_CELL_CHANGE);
+            wr->servingCell = w->servingCell;
+            m_base->nasTask->push(wr);
+            break;
+        }
         }
         break;
     }

@@ -151,6 +151,36 @@ void NasMm::handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measu
     }
 }
 
+void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
+{
+    if (m_cmState == ECmState::CM_CONNECTED)
+    {
+        m_logger->err("Serving cell change in CM-CONNECTED");
+        return;
+    }
+
+    if (servingCell.cellCategory != ECellCategory::ACCEPTABLE_CELL &&
+        servingCell.cellCategory != ECellCategory::SUITABLE_CELL)
+    {
+        m_logger->err("Serving cell change with unhandled cell category");
+        return;
+    }
+
+    m_logger->info("Serving cell determined [%s]", servingCell.gnbName.c_str());
+
+    if (m_mmState == EMmState::MM_REGISTERED || m_mmState == EMmState::MM_DEREGISTERED)
+    {
+        bool isSuitable = servingCell.cellCategory == ECellCategory::SUITABLE_CELL;
+
+        if (m_mmState == EMmState::MM_REGISTERED)
+            switchMmState(EMmState::MM_REGISTERED, isSuitable ? EMmSubState::MM_REGISTERED_NORMAL_SERVICE
+                                                              : EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+        else
+            switchMmState(EMmState::MM_DEREGISTERED, isSuitable ? EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE
+                                                                : EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+    }
+}
+
 void NasMm::handleRrcConnectionSetup()
 {
     switchCmState(ECmState::CM_CONNECTED);
