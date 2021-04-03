@@ -80,7 +80,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
     auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
     auto ckPrimeIkPrime =
-        keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(m_usim->m_currentPlmn), sqnXorAk);
+        keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(*m_usim->m_currentPlmn), sqnXorAk);
     auto &ckPrime = ckPrimeIkPrime.first;
     auto &ikPrime = ckPrimeIkPrime.second;
 
@@ -198,7 +198,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     m_usim->m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
     m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-    keys::DeriveKeysSeafAmf(*m_base->config, m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
+    keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
     // m_logger->debug("kSeaf: %s", m_usim->m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str());
     // m_logger->debug("kAmf: %s", m_usim->m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
@@ -266,7 +266,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
     auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
-    auto snn = keys::ConstructServingNetworkName(m_usim->m_currentPlmn);
+    auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
 
     // m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
     //                ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
@@ -287,7 +287,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
         // m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
         //                m_usim->m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),

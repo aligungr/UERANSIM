@@ -178,9 +178,13 @@ void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
         else
             switchMmState(EMmState::MM_DEREGISTERED, isSuitable ? EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE
                                                                 : EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-
-        resetRegAttemptCounter();
     }
+    // todo: else, other states abnormal case
+
+    resetRegAttemptCounter();
+
+    m_usim->m_servingCell = servingCell;
+    m_usim->m_currentPlmn = servingCell.cellId.plmn;
 }
 
 void NasMm::handleRrcConnectionSetup()

@@ -29,7 +29,6 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 void NasTask::onStart()
 {
     usim->initialize(base->config->supi.has_value(), base->config->initials);
-    usim->m_currentPlmn = base->config->hplmn; // TODO: normally assigned after plmn search
 
     sm->onStart(mm);
     mm->onStart(sm, usim);

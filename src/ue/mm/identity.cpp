@@ -56,7 +56,7 @@ nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
 nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
     auto &supi = m_base->config->supi;
-    auto &plmn = m_usim->m_currentPlmn;
+    auto &plmn = m_base->config->hplmn;
 
     if (!supi.has_value())
         return {};

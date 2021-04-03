@@ -27,15 +27,14 @@ class Usim
     // State related
     E5UState m_uState{};
 
-    // Location related
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
-
     // Identity related
     nas::IE5gsMobileIdentity m_storedSuci{};
     nas::IE5gsMobileIdentity m_storedGuti{};
 
     // Plmn related
-    Plmn m_currentPlmn{};
+    std::optional<UeCellInfo> m_servingCell{};
+    std::optional<Plmn> m_currentPlmn{};
+    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
     nas::IE5gsTrackingAreaIdentityList m_taiList{};
     nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiList{};
     nas::IEPlmnList m_equivalentPlmnList{};
