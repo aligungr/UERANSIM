@@ -40,6 +40,7 @@ void GnbSasTask::handleCellInfoRequest(const InetAddress &addr, const sas::SasCe
     resp.cellId.plmn = m_base->config->plmn;
     resp.tac = m_base->config->tac;
     resp.dbm = dbm;
+    resp.gnbName = m_base->config->name;
 
     sendSasMessage(addr, resp);
 }

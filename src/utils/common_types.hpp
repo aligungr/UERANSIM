@@ -136,6 +136,7 @@ struct UeCellMeasurement
     GlobalNci cellId{};
     int tac{};
     int dbm{};
+    std::string gnbName{};
     uint64_t time{};
 };
 

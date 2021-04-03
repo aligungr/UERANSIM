@@ -63,6 +63,8 @@ void EncodeSasMessage(const SasMessage &msg, OctetString &stream)
         AppendGlobalNci(m.cellId, stream);
         stream.appendOctet4(m.tac);
         stream.appendOctet4(m.dbm);
+        stream.appendOctet4(static_cast<int>(m.gnbName.size()));
+        stream.appendUtf8(m.gnbName);
     }
 }
 
@@ -94,6 +96,7 @@ std::unique_ptr<SasMessage> DecodeSasMessage(const OctetView &stream)
         res->cellId = DecodeGlobalNci(stream);
         res->tac = stream.read4I();
         res->dbm = stream.read4I();
+        res->gnbName = stream.readUtf8String(stream.read4I());
         return res;
     }
 

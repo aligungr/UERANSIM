@@ -47,6 +47,7 @@ struct SasCellInfoResponse : SasMessage
     GlobalNci cellId{};
     int tac{};
     int dbm{};
+    std::string gnbName{};
 
     SasCellInfoResponse() : SasMessage(SasMessageType::CELL_INFO_RESPONSE)
     {

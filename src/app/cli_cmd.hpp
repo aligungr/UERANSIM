@@ -48,6 +48,7 @@ struct UeCliCommand
         PS_RELEASE,
         PS_RELEASE_ALL,
         DE_REGISTER,
+        COVERAGE,
     } present;
 
     // DE_REGISTER

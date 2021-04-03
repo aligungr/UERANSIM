@@ -12,12 +12,24 @@
 #include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rrc/task.hpp>
+#include <ue/sas/task.hpp>
 #include <ue/tun/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
 
 #define PAUSE_CONFIRM_TIMEOUT 3000
 #define PAUSE_POLLING 10
+
+static std::string SignalDescription(int dbm)
+{
+    if (dbm > -90)
+        return "Excellent";
+    if (dbm > -105)
+        return "Good";
+    if (dbm > -120)
+        return "Fair";
+    return "Poor";
+}
 
 namespace nr::ue
 {
@@ -148,6 +160,30 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         config.sNssai = msg.cmd->sNssai;
         m_base->nasTask->sm->sendEstablishmentRequest(config);
         sendResult(msg.address, "PDU session establishment procedure triggered");
+        break;
+    }
+    case app::UeCliCommand::COVERAGE: {
+        auto &map = m_base->sasTask->m_activeMeasurements;
+        if (map.empty())
+        {
+            sendResult(msg.address, "No cell exists in the range");
+            break;
+        }
+
+        std::vector<Json> cellInfo{};
+        for (auto &entry : map)
+        {
+            auto &measurement = entry.second;
+            cellInfo.push_back(Json::Obj({
+                {"gnb", measurement.gnbName},
+                {"plmn", ToJson(measurement.cellId.plmn)},
+                {"nci", measurement.cellId.nci},
+                {"tac", measurement.tac},
+                {"signal", std::to_string(measurement.dbm) + "dBm [" + SignalDescription(measurement.dbm) + "]"},
+            }));
+        }
+
+        sendResult(msg.address, Json::Arr(cellInfo).dumpYaml());
         break;
     }
     }

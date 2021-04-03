@@ -52,6 +52,7 @@ void UeSasTask::receiveCellInfoResponse(const sas::SasCellInfoResponse &msg)
     meas.cellId = msg.cellId;
     meas.tac = msg.tac;
     meas.dbm = msg.dbm;
+    meas.gnbName = msg.gnbName;
     meas.time = utils::CurrentTimeMillis();
 
     m_pendingMeasurements[meas.cellId] = meas;

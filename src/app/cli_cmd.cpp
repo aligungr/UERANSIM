@@ -162,6 +162,7 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
     {"deregister",
      {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
+    {"coverage", {"Show gNodeB cell coverage information", "", DefaultDesc, false}},
 };
 
 static std::unique_ptr<GnbCliCommand> GnbCliParseImpl(const std::string &subCmd, const opt::OptionsResult &options,
@@ -300,6 +301,10 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
             }
         }
         return cmd;
+    }
+    else if (subCmd == "coverage")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::COVERAGE);
     }
 
     return nullptr;
