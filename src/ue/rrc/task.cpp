@@ -29,7 +29,6 @@ UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}
 
 void UeRrcTask::onStart()
 {
-    m_logger->debug("RRC layer started");
 }
 
 void UeRrcTask::onQuit()
