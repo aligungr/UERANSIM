@@ -16,12 +16,6 @@ namespace nr::ue
 
 void UeSasTask::onMeasurement()
 {
-    evaluatePendingMeasurements();
-    requestCellInfo();
-}
-
-void UeSasTask::evaluatePendingMeasurements()
-{
     std::vector<GlobalNci> entered{};
     std::vector<GlobalNci> exited{};
 
@@ -51,10 +45,8 @@ void UeSasTask::evaluatePendingMeasurements()
     m_activeMeasurements = m_pendingMeasurements;
     // clear pending measurements
     m_pendingMeasurements = {};
-}
 
-void UeSasTask::requestCellInfo()
-{
+    // Issue another cell info request for search space
     for (auto &ip : m_cellSearchSpace)
     {
         sas::SasCellInfoRequest req{};

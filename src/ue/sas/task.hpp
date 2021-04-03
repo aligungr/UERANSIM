@@ -50,8 +50,6 @@ class UeSasTask : public NtsTask
 
   private: /* Measurement */
     void onMeasurement();
-    void evaluatePendingMeasurements();
-    void requestCellInfo();
     void receiveCellInfoResponse(const sas::SasCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
 };
