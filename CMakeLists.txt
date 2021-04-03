@@ -23,6 +23,7 @@ add_subdirectory(src/app)
 add_subdirectory(src/urs)
 add_subdirectory(src/crypt)
 add_subdirectory(src/ue)
+add_subdirectory(src/sas)
 
 #################### GNB EXECUTABLE ####################
 
@@ -42,6 +43,7 @@ target_link_libraries(nr-gnb udp)
 target_link_libraries(nr-gnb app)
 target_link_libraries(nr-gnb urs)
 target_link_libraries(nr-gnb crypt)
+target_link_libraries(nr-gnb sas)
 
 #################### UE EXECUTABLE ####################
 
@@ -58,6 +60,7 @@ target_link_libraries(nr-ue app)
 target_link_libraries(nr-ue urs)
 target_link_libraries(nr-ue crypt)
 target_link_libraries(nr-ue ue)
+target_link_libraries(nr-ue sas)
 
 ###################### IF BINDER ######################
 add_library(devbnd SHARED src/binder.cpp)

@@ -12,9 +12,9 @@
 #include "octet.hpp"
 #include <memory>
 #include <optional>
+#include <stdexcept>
 #include <utility>
 #include <vector>
-#include <stdexcept>
 
 enum class EPagingDrx
 {
@@ -126,4 +126,43 @@ Json ToJson(const NetworkSlice &v);
 Json ToJson(const PlmnSupport &v);
 Json ToJson(const EDeregCause &v);
 
+struct GlobalNci
+{
+    Plmn plmn{};
+    int64_t nci{};
+
+    GlobalNci() = default;
+
+    GlobalNci(const Plmn &plmn, int64_t nci) : plmn(plmn), nci(nci)
+    {
+    }
+};
+
+struct UeCellMeasurement
+{
+    GlobalNci cellId{};
+    int tac{};
+    int dbm{};
+    uint64_t time{};
+};
+
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
+bool operator==(const Plmn &lhs, const Plmn &rhs);
+bool operator==(const GlobalNci &lhs, const GlobalNci &rhs);
+
+namespace std
+{
+
+template <>
+struct hash<Plmn>
+{
+    std::size_t operator()(const Plmn &v) const noexcept;
+};
+
+template <>
+struct hash<GlobalNci>
+{
+    std::size_t operator()(const GlobalNci &v) const noexcept;
+};
+
+} // namespace std
