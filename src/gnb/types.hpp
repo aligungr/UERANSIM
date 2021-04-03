@@ -26,6 +26,7 @@ class GtpTask;
 class GnbMrTask;
 class NgapTask;
 class GnbRrcTask;
+class GnbSasTask;
 class SctpTask;
 
 enum class EAmfState
@@ -299,6 +300,7 @@ struct GnbConfig
     /* Assigned by program */
     std::string name{};
     EPagingDrx pagingDrx{};
+    Vector3 phyLocation{};
 
     [[nodiscard]] inline uint32_t getGnbId() const
     {
@@ -324,6 +326,7 @@ struct TaskBase
     NgapTask *ngapTask{};
     GnbRrcTask *rrcTask{};
     SctpTask *sctpTask{};
+    GnbSasTask *sasTask{};
 };
 
 struct MrUeContext

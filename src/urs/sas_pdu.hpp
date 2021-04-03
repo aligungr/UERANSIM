@@ -35,7 +35,7 @@ struct SasMessage
 
 struct SasCellInfoRequest : SasMessage
 {
-    int32_t simPos{};
+    Vector3 simPos{};
 
     SasCellInfoRequest() : SasMessage(SasMessageType::CELL_INFO_REQUEST)
     {
@@ -45,8 +45,8 @@ struct SasCellInfoRequest : SasMessage
 struct SasCellInfoResponse : SasMessage
 {
     GlobalNci cellId{};
-    int32_t tac{};
-    int32_t dbm{};
+    int tac{};
+    int dbm{};
 
     SasCellInfoResponse() : SasMessage(SasMessageType::CELL_INFO_RESPONSE)
     {

@@ -22,23 +22,23 @@ void UeSasTask::onMeasurement()
     // compare active and pending measurements
     for (auto &m : m_activeMeasurements)
     {
-        bool newStrong = m.second.dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
+        bool oldStrong = m.second.dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
         if (m_pendingMeasurements.count(m.first))
         {
-            bool oldStrong = m_pendingMeasurements[m.first].dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
+            bool newStrong = m_pendingMeasurements[m.first].dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
             if (newStrong ^ oldStrong)
                 (newStrong ? entered : exited).push_back(m.first);
         }
-        else if (newStrong)
-            entered.push_back(m.first);
+        else if (oldStrong)
+            exited.push_back(m.first);
     }
     for (auto &m : m_pendingMeasurements)
     {
-        bool oldStrong = m_pendingMeasurements[m.first].dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
-        if (!m_activeMeasurements.count(m.first) && oldStrong)
-            exited.push_back(m.first);
+        bool newStrong = m_pendingMeasurements[m.first].dbm >= DBM_STRONG_STRENGTH_THRESHOLD;
+        if (!m_activeMeasurements.count(m.first) && newStrong)
+            entered.push_back(m.first);
     }
-    if (!entered.empty() && !exited.empty())
+    if (!entered.empty() || !exited.empty())
         onCoverageChange(entered, exited);
 
     // copy from pending to active measurements
@@ -46,7 +46,7 @@ void UeSasTask::onMeasurement()
     // clear pending measurements
     m_pendingMeasurements = {};
 
-    // Issue another cell info request for search space
+    // Issue another cell info request for each address in the search space
     for (auto &ip : m_cellSearchSpace)
     {
         sas::SasCellInfoRequest req{};
@@ -67,10 +67,8 @@ void UeSasTask::receiveCellInfoResponse(const sas::SasCellInfoResponse &msg)
 
 void UeSasTask::onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited)
 {
-    m_logger->debug("Coverage change detected. [%d] cell entered, [%d] exited to/from coverage",
-                    static_cast<int>(entered.size()), static_cast<int>(exited.size()));
-
-    // TODO
+    m_logger->debug("Coverage change detected. [%d] cell entered, [%d] cell exited", static_cast<int>(entered.size()),
+                    static_cast<int>(exited.size()));
 }
 
 } // namespace nr::ue

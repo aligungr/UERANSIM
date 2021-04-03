@@ -53,7 +53,9 @@ void EncodeSasMessage(const SasMessage &msg, OctetString &stream)
     if (msg.msgType == SasMessageType::CELL_INFO_REQUEST)
     {
         auto m = (const SasCellInfoRequest &)msg;
-        stream.appendOctet4(m.simPos);
+        stream.appendOctet4(m.simPos.x);
+        stream.appendOctet4(m.simPos.y);
+        stream.appendOctet4(m.simPos.z);
     }
     else if (msg.msgType == SasMessageType::CELL_INFO_RESPONSE)
     {
@@ -81,7 +83,9 @@ std::unique_ptr<SasMessage> DecodeSasMessage(const OctetView &stream)
     if (msgType == SasMessageType::CELL_INFO_REQUEST)
     {
         auto res = std::make_unique<SasCellInfoRequest>();
-        res->simPos = stream.read4I();
+        res->simPos.x = stream.read4I();
+        res->simPos.y = stream.read4I();
+        res->simPos.z = stream.read4I();
         return res;
     }
     else if (msgType == SasMessageType::CELL_INFO_RESPONSE)

@@ -119,13 +119,6 @@ enum class EDeregCause
     ECALL_INACTIVITY,
 };
 
-Json ToJson(const Supi &v);
-Json ToJson(const Plmn &v);
-Json ToJson(const SingleSlice &v);
-Json ToJson(const NetworkSlice &v);
-Json ToJson(const PlmnSupport &v);
-Json ToJson(const EDeregCause &v);
-
 struct GlobalNci
 {
     Plmn plmn{};
@@ -146,9 +139,29 @@ struct UeCellMeasurement
     uint64_t time{};
 };
 
+struct Vector3
+{
+    int x{};
+    int y{};
+    int z{};
+
+    Vector3() = default;
+
+    Vector3(int x, int y, int z) : x(x), y(y), z(z)
+    {
+    }
+};
+
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
 bool operator==(const Plmn &lhs, const Plmn &rhs);
 bool operator==(const GlobalNci &lhs, const GlobalNci &rhs);
+
+Json ToJson(const Supi &v);
+Json ToJson(const Plmn &v);
+Json ToJson(const SingleSlice &v);
+Json ToJson(const NetworkSlice &v);
+Json ToJson(const PlmnSupport &v);
+Json ToJson(const EDeregCause &v);
 
 namespace std
 {
