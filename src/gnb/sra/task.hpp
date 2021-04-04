@@ -47,13 +47,14 @@ class GnbSraTask : public NtsTask
 
   private: /* Transport */
     void receiveSraMessage(const InetAddress &addr, const sra::SraMessage &msg);
-    void sendSraMessage(const InetAddress &addr, const sra::SraMessage &msg);
+    void sendSraMessage(int ueId, const sra::SraMessage &msg);
 
   private: /* Handler */
-    void handleCellInfoRequest(const InetAddress &addr, const sra::SraCellInfoRequest &msg);
+    void handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &msg);
+    void handleUplinkPduDelivery(int ueId, const sra::SraPduDelivery &msg);
 
   private: /* UE Management */
-    void updateUeInfo(const InetAddress &addr, uint64_t sti);
+    int updateUeInfo(const InetAddress &addr, uint64_t sti);
     void onPeriodicLostControl();
 };
 

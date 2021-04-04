@@ -26,7 +26,7 @@ static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 namespace nr::gnb
 {
 
-void GnbSraTask::handleCellInfoRequest(const InetAddress &addr, const sra::SraCellInfoRequest &msg)
+void GnbSraTask::handleCellInfoRequest(int ueId,const sra::SraCellInfoRequest &msg)
 {
     int dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
     if (dbm < MIN_ALLOWED_DBM)
@@ -43,7 +43,12 @@ void GnbSraTask::handleCellInfoRequest(const InetAddress &addr, const sra::SraCe
     resp.gnbName = m_base->config->name;
     resp.linkIp = m_base->config->portalIp;
 
-    sendSraMessage(addr, resp);
+    sendSraMessage(ueId, resp);
+}
+
+void GnbSraTask::handleUplinkPduDelivery(int ueId, const sra::SraPduDelivery &msg)
+{
+
 }
 
 } // namespace nr::gnb

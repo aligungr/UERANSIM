@@ -15,7 +15,7 @@ static const int64_t LAST_SEEN_THRESHOLD = 3000;
 namespace nr::gnb
 {
 
-void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
+int GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
 {
     if (m_stiToUeId.count(sti))
     {
@@ -23,6 +23,7 @@ void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
         auto &ctx = m_ueCtx[ueId];
         ctx->addr = addr;
         ctx->lastSeen = utils::CurrentTimeMillis();
+        return ueId;
     }
     else
     {
@@ -35,6 +36,7 @@ void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
         m_ueCtx[ueId] = std::move(ctx);
 
         m_logger->debug("New UE signal detected, total [%d] UEs in coverage", static_cast<int>(m_stiToUeId.size()));
+        return ueId;
     }
 }
 
