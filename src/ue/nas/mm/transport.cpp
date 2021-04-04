@@ -11,7 +11,7 @@
 #include <nas/utils.hpp>
 #include <ue/nas/enc.hpp>
 #include <ue/rrc/task.hpp>
-#include <ue/sm/sm.hpp>
+#include <ue/nas/sm/sm.hpp>
 
 namespace nr::ue
 {

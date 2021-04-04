@@ -11,7 +11,7 @@
 #include <nas/proto_conf.hpp>
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
-#include <ue/mm/mm.hpp>
+#include <ue/nas/mm/mm.hpp>
 
 namespace nr::ue
 {

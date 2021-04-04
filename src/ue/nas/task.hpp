@@ -12,9 +12,9 @@
 #include <crypt/milenage.hpp>
 #include <nas/nas.hpp>
 #include <nas/timer.hpp>
-#include <ue/mm/mm.hpp>
+#include <ue/nas/mm/mm.hpp>
+#include <ue/nas/sm/sm.hpp>
 #include <ue/nts.hpp>
-#include <ue/sm/sm.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
 
