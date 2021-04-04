@@ -49,7 +49,7 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    //case NtsMessageType::UE_MR_TO_APP: {
+    // case NtsMessageType::UE_MR_TO_APP: {
     //    auto *w = dynamic_cast<NwUeMrToApp *>(msg);
     //    switch (w->present)
     //    {
@@ -72,10 +72,10 @@ void UeAppTask::onLoop()
         switch (w->present)
         {
         case NwUeTunToApp::DATA_PDU_DELIVERY: {
-            //auto *nw = new NwAppToMr(NwAppToMr::DATA_PDU_DELIVERY);
-            //nw->psi = w->psi;
-            //nw->data = std::move(w->data);
-            //m_base->mrTask->push(nw);
+            // auto *nw = new NwAppToMr(NwAppToMr::DATA_PDU_DELIVERY);
+            // nw->psi = w->psi;
+            // nw->data = std::move(w->data);
+            // m_base->mrTask->push(nw);
             break;
         }
         case NwUeTunToApp::TUN_ERROR: {
