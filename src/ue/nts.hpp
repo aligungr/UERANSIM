@@ -13,7 +13,6 @@
 #include <app/cli_base.hpp>
 #include <nas/timer.hpp>
 #include <rrc/rrc.hpp>
-#include <urs/rls/rls.hpp>
 #include <utility>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
@@ -21,87 +20,6 @@
 
 namespace nr::ue
 {
-
-struct NwUeMrToMr : NtsMessage
-{
-    enum PR
-    {
-        RLS_CONNECTED,
-        RLS_RELEASED,
-        RLS_SEARCH_FAILURE,
-        RLS_START_WAITING_TIMER,
-        RLS_SEND_OVER_UDP,
-        RLS_RECEIVE_OVER_UDP
-    } present;
-
-    // RLS_CONNECTED
-    std::string gnbName{};
-
-    // RLS_RELEASED
-    // RLS_SEARCH_FAILURE
-    rls::ECause cause{};
-
-    // RLS_START_WAITING_TIMER
-    int period{};
-
-    // RLS_SEND_OVER_UDP
-    InetAddress address{};
-
-    // RLS_RECEIVE_OVER_UDP
-    rls::EPayloadType type{};
-
-    // RLS_SEND_OVER_UDP
-    // RLS_RECEIVE_OVER_UDP
-    OctetString pdu{};
-
-    explicit NwUeMrToMr(PR present) : NtsMessage(NtsMessageType::UE_MR_TO_MR), present(present)
-    {
-    }
-};
-
-struct NwUeMrToRrc : NtsMessage
-{
-    enum PR
-    {
-        RADIO_LINK_FAILURE
-    } present;
-
-    explicit NwUeMrToRrc(PR present) : NtsMessage(NtsMessageType::UE_MR_TO_RRC), present(present)
-    {
-    }
-};
-
-struct NwUeMrToApp : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString data{};
-
-    explicit NwUeMrToApp(PR present) : NtsMessage(NtsMessageType::UE_MR_TO_APP), present(present)
-    {
-    }
-};
-
-struct NwAppToMr : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString data{};
-
-    explicit NwAppToMr(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_MR), present(present)
-    {
-    }
-};
 
 struct NwAppToTun : NtsMessage
 {

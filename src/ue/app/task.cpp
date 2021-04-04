@@ -9,7 +9,6 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <nas/utils.hpp>
-#include <ue/mr/task.hpp>
 #include <ue/tun/tun.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -50,33 +49,33 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_MR_TO_APP: {
-        auto *w = dynamic_cast<NwUeMrToApp *>(msg);
-        switch (w->present)
-        {
-        case NwUeMrToApp::DATA_PDU_DELIVERY: {
-            auto *tunTask = m_tunTasks[w->psi];
-            if (tunTask)
-            {
-                auto *nw = new NwAppToTun(NwAppToTun::DATA_PDU_DELIVERY);
-                nw->psi = w->psi;
-                nw->data = std::move(w->data);
-                tunTask->push(nw);
-            }
-            break;
-        }
-        }
-        break;
-    }
+    //case NtsMessageType::UE_MR_TO_APP: {
+    //    auto *w = dynamic_cast<NwUeMrToApp *>(msg);
+    //    switch (w->present)
+    //    {
+    //    case NwUeMrToApp::DATA_PDU_DELIVERY: {
+    //        auto *tunTask = m_tunTasks[w->psi];
+    //        if (tunTask)
+    //        {
+    //            auto *nw = new NwAppToTun(NwAppToTun::DATA_PDU_DELIVERY);
+    //            nw->psi = w->psi;
+    //            nw->data = std::move(w->data);
+    //            tunTask->push(nw);
+    //        }
+    //        break;
+    //    }
+    //    }
+    //    break;
+    //}
     case NtsMessageType::UE_TUN_TO_APP: {
         auto *w = dynamic_cast<NwUeTunToApp *>(msg);
         switch (w->present)
         {
         case NwUeTunToApp::DATA_PDU_DELIVERY: {
-            auto *nw = new NwAppToMr(NwAppToMr::DATA_PDU_DELIVERY);
-            nw->psi = w->psi;
-            nw->data = std::move(w->data);
-            m_base->mrTask->push(nw);
+            //auto *nw = new NwAppToMr(NwAppToMr::DATA_PDU_DELIVERY);
+            //nw->psi = w->psi;
+            //nw->data = std::move(w->data);
+            //m_base->mrTask->push(nw);
             break;
         }
         case NwUeTunToApp::TUN_ERROR: {

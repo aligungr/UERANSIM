@@ -9,7 +9,6 @@
 #include "cmd_handler.hpp"
 
 #include <ue/app/task.hpp>
-#include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rrc/task.hpp>
 #include <ue/sra/task.hpp>
@@ -46,25 +45,25 @@ void UeCmdHandler::sendError(const InetAddress &address, const std::string &outp
 
 void UeCmdHandler::pauseTasks()
 {
-    m_base->mrTask->requestPause();
     m_base->nasTask->requestPause();
     m_base->rrcTask->requestPause();
+    m_base->sraTask->requestPause();
 }
 
 void UeCmdHandler::unpauseTasks()
 {
-    m_base->mrTask->requestUnpause();
     m_base->nasTask->requestUnpause();
     m_base->rrcTask->requestUnpause();
+    m_base->sraTask->requestUnpause();
 }
 
 bool UeCmdHandler::isAllPaused()
 {
-    if (!m_base->mrTask->isPauseConfirmed())
-        return false;
     if (!m_base->nasTask->isPauseConfirmed())
         return false;
     if (!m_base->rrcTask->isPauseConfirmed())
+        return false;
+    if (!m_base->sraTask->isPauseConfirmed())
         return false;
     return true;
 }

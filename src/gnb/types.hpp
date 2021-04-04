@@ -24,7 +24,6 @@ namespace nr::gnb
 
 class GnbAppTask;
 class GtpTask;
-class GnbMrTask;
 class NgapTask;
 class GnbRrcTask;
 class GnbSraTask;
@@ -335,7 +334,6 @@ struct TaskBase
 
     GnbAppTask *appTask{};
     GtpTask *gtpTask{};
-    GnbMrTask *mrTask{};
     NgapTask *ngapTask{};
     GnbRrcTask *rrcTask{};
     SctpTask *sctpTask{};

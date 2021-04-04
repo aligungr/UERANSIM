@@ -24,7 +24,6 @@ namespace nr::ue
 {
 
 class UeAppTask;
-class UeMrTask;
 class NasTask;
 class UeRrcTask;
 class UeSraTask;
@@ -123,7 +122,6 @@ struct TaskBase
     NtsTask *cliCallbackTask{};
 
     UeAppTask *appTask{};
-    UeMrTask *mrTask{};
     NasTask *nasTask{};
     UeRrcTask *rrcTask{};
     UeSraTask *sraTask{};

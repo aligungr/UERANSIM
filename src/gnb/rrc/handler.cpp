@@ -8,7 +8,6 @@
 
 #include "task.hpp"
 
-#include <gnb/mr/task.hpp>
 #include <gnb/ngap/task.hpp>
 #include <rrc/encode.hpp>
 
@@ -154,11 +153,6 @@ void GnbRrcTask::releaseConnection(int ueId)
     rrcRelease->criticalExtensions.choice.rrcRelease = asn::New<ASN_RRC_RRCRelease_IEs>();
 
     sendRrcMessage(ueId, pdu);
-
-    // Notify MR task
-    auto *w = new NwGnbRrcToMr(NwGnbRrcToMr::AN_RELEASE);
-    w->ueId = ueId;
-    m_base->mrTask->push(w);
 
     // Delete UE RRC context
     m_ueCtx.erase(ueId);

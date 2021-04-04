@@ -10,7 +10,6 @@
 
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <gnb/gtp/proto.hpp>
-#include <gnb/mr/task.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
@@ -76,17 +75,17 @@ void GtpTask::onLoop()
         }
         break;
     }
-    case NtsMessageType::GNB_MR_TO_GTP: {
-        auto *w = dynamic_cast<NwGnbMrToGtp *>(msg);
-        switch (w->present)
-        {
-        case NwGnbMrToGtp::UPLINK_DELIVERY: {
-            handleUplinkData(w->ueId, w->pduSessionId, std::move(w->data));
-            break;
-        }
-        }
-        break;
-    }
+    //case NtsMessageType::GNB_MR_TO_GTP: {
+    //    auto *w = dynamic_cast<NwGnbMrToGtp *>(msg);
+    //    switch (w->present)
+    //    {
+    //    case NwGnbMrToGtp::UPLINK_DELIVERY: {
+    //        handleUplinkData(w->ueId, w->pduSessionId, std::move(w->data));
+    //        break;
+    //    }
+    //    }
+    //    break;
+    //}
     case NtsMessageType::UDP_SERVER_RECEIVE:
         handleUdpReceive(*dynamic_cast<udp::NwUdpServerReceive *>(msg));
         break;
@@ -239,11 +238,11 @@ void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
 
     if (m_rateLimiter->allowDownlinkPacket(sessionInd, gtp->payload.length()))
     {
-        auto *w = new NwGnbGtpToMr(NwGnbGtpToMr::DATA_PDU_DELIVERY);
-        w->ueId = GetUeId(sessionInd);
-        w->pduSessionId = GetPsi(sessionInd);
-        w->data = std::move(gtp->payload);
-        m_base->mrTask->push(w);
+        //auto *w = new NwGnbGtpToMr(NwGnbGtpToMr::DATA_PDU_DELIVERY);
+        //w->ueId = GetUeId(sessionInd);
+        //w->pduSessionId = GetPsi(sessionInd);
+        //w->data = std::move(gtp->payload);
+        //m_base->mrTask->push(w);
     }
 
     delete gtp;

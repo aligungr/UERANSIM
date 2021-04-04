@@ -14,7 +14,6 @@
 #include <thread>
 #include <udp/server_task.hpp>
 #include <unordered_map>
-#include <urs/rls/gnb_entity.hpp>
 #include <urs/sra_pdu.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
