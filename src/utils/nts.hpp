@@ -104,6 +104,7 @@ class TimerBase
 };
 
 // TODO: Limit queue size?
+// todo: message priority, especially control plane messages should have more priorty in appTask etc
 class NtsTask
 {
   private:
