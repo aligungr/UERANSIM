@@ -44,6 +44,8 @@ class NasMm
     std::unique_ptr<nas::ServiceRequest> m_lastServiceRequest{};
     // Indicates the last de-registration cause
     EDeregCause m_lastDeregCause{};
+    // Indicates the last service request cause
+    EServiceReqCause m_lastServiceReqCause{};
     // Last time PLMN search is triggered
     long m_lastPlmnSearchTrigger{};
     // Registration attempt counter

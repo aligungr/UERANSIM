@@ -105,6 +105,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     // Send the message and process the timers
     sendNasMessage(*request);
     m_lastServiceRequest = std::move(request);
+    m_lastServiceReqCause = reqCause;
     m_timers->t3517.start();
     switchMmState(EMmState::MM_SERVICE_REQUEST_INITIATED, EMmSubState::MM_SERVICE_REQUEST_INITIATED_NA);
 }
