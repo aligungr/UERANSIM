@@ -109,8 +109,8 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     nsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
     keys::DeriveNasKeys(*nsCtx);
 
-    m_logger->debug("Derived NAS keys integrity[%s] ciphering[%s]", nsCtx->keys.kNasInt.toHexString().c_str(),
-                    nsCtx->keys.kNasEnc.toHexString().c_str());
+    // m_logger->debug("Derived NAS keys integrity[%s] ciphering[%s]", nsCtx->keys.kNasInt.toHexString().c_str(),
+    //                nsCtx->keys.kNasEnc.toHexString().c_str());
     m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)nsCtx->integrity, (int)nsCtx->ciphering);
 
     // The UE shall in addition reset the uplink NAS COUNT counter if a) the SECURITY MODE COMMAND message is received
