@@ -7,6 +7,7 @@
 //
 
 #include "mm.hpp"
+#include <nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
 
 namespace nr::ue
@@ -112,6 +113,50 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
 
 void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
 {
+    if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        m_logger->warn("Service Accept ignored since the MM state is not MM_SERVICE_REQUEST_INITIATED");
+        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+        return;
+    }
+
+    if (m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
+    {
+        m_logger->info("Service Accept received");
+        m_serCounter = 0;
+        m_timers->t3517.stop();
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+    }
+    else
+    {
+        // todo: emergency fallback
+    }
+
+    // Handle PDU session status
+    if (msg.pduSessionStatus.has_value())
+    {
+        auto statusInUe = m_sm->getPduSessionStatus();
+        auto statusInNw = msg.pduSessionStatus->psi;
+        for (int i = 1; i < 16; i++)
+            if (statusInUe[i] && !statusInNw[i])
+                m_sm->localReleaseSession(i);
+    }
+
+    // Handle PDU session reactivation result
+    if (msg.pduSessionReactivationResult.has_value())
+    {
+        // todo: not handled since non-3gpp access is not supported
+    }
+
+    // Handle PDU session reactivation result error cause
+    if (msg.pduSessionReactivationResultErrorCause.has_value())
+    {
+        for (auto &item : msg.pduSessionReactivationResultErrorCause->values)
+            m_logger->err("PDU session reactivation result error PSI[%d] cause[%s]", item.pduSessionId,
+                          nas::utils::EnumToString(item.causeValue));
+    }
+
+    // Handle EAP message
     if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
@@ -119,8 +164,6 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
         else
             m_logger->warn("Network sent EAP with inconvenient type in ServiceAccept, ignoring EAP IE.");
     }
-
-    // TODO
 }
 
 void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
