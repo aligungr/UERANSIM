@@ -41,12 +41,12 @@ void UeRlsTask::onMeasurement()
     // Issue another cell info request for each address in the search space
     for (auto &ip : m_cellSearchSpace)
     {
-        rls::SraCellInfoRequest req{m_sti};
+        rls::RlsCellInfoRequest req{m_sti};
         sendRlsMessage(ip, req);
     }
 }
 
-void UeRlsTask::receiveCellInfoResponse(const rls::SraCellInfoResponse &msg)
+void UeRlsTask::receiveCellInfoResponse(const rls::RlsCellInfoResponse &msg)
 {
     UeCellMeasurement meas{};
     meas.sti = msg.sti;

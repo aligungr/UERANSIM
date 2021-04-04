@@ -15,25 +15,25 @@
 namespace nr::ue
 {
 
-void UeRlsTask::receiveRlsMessage(const InetAddress &address, rls::SraMessage &msg)
+void UeRlsTask::receiveRlsMessage(const InetAddress &address, rls::RlsMessage &msg)
 {
     switch (msg.msgType)
     {
     case rls::EMessageType::CELL_INFO_RESPONSE: {
-        receiveCellInfoResponse((const rls::SraCellInfoResponse &)msg);
+        receiveCellInfoResponse((const rls::RlsCellInfoResponse &)msg);
         break;
     case rls::EMessageType::PDU_DELIVERY: {
-        deliverDownlinkPdu((rls::SraPduDelivery &)msg);
+        deliverDownlinkPdu((rls::RlsPduDelivery &)msg);
         break;
     }
     default:
-        m_logger->err("Unhandled SRA message type[%d]", static_cast<int>(msg.msgType));
+        m_logger->err("Unhandled RLS message type[%d]", static_cast<int>(msg.msgType));
         break;
     }
     }
 }
 
-void UeRlsTask::sendRlsMessage(const InetAddress &address, const rls::SraMessage &msg)
+void UeRlsTask::sendRlsMessage(const InetAddress &address, const rls::RlsMessage &msg)
 {
     OctetString stream{};
     rls::EncodeRlsMessage(msg, stream);
@@ -44,18 +44,18 @@ void UeRlsTask::deliverUplinkPdu(rls::EPduType pduType, OctetString &&pdu, Octet
 {
     if (!m_servingCell.has_value())
     {
-        m_logger->warn("SRA uplink delivery requested without a serving cell");
+        m_logger->warn("RLS uplink delivery requested without a serving cell");
         return;
     }
 
-    rls::SraPduDelivery msg{m_sti};
+    rls::RlsPduDelivery msg{m_sti};
     msg.pduType = pduType;
     msg.pdu = std::move(pdu);
     msg.payload = std::move(payload);
     sendRlsMessage(InetAddress{m_servingCell->linkIp, cons::PortalPort}, msg);
 }
 
-void UeRlsTask::deliverDownlinkPdu(rls::SraPduDelivery &msg)
+void UeRlsTask::deliverDownlinkPdu(rls::RlsPduDelivery &msg)
 {
     if (msg.pduType == rls::EPduType::RRC)
     {

@@ -82,13 +82,13 @@ void GnbRlsTask::onLoop()
     }
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto sraMsg = rls::DecodeRlsMessage(OctetView{w->packet});
-        if (sraMsg == nullptr)
+        auto rlsMsg = rls::DecodeRlsMessage(OctetView{w->packet});
+        if (rlsMsg == nullptr)
         {
-            m_logger->err("Unable to decode SRA message");
+            m_logger->err("Unable to decode RLS message");
             break;
         }
-        receiveSraMessage(w->fromAddress, *sraMsg);
+        receiveRlsMessage(w->fromAddress, *rlsMsg);
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {

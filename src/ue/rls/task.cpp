@@ -20,7 +20,7 @@ namespace nr::ue
 UeRlsTask::UeRlsTask(TaskBase *base)
     : m_base{base}, m_udpTask{}, m_cellSearchSpace{}, m_pendingMeasurements{}, m_activeMeasurements{}, m_servingCell{}
 {
-    m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "sra");
+    m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "rls");
 
     for (auto &addr : m_base->config->gnbSearchList)
         m_cellSearchSpace.emplace_back(addr, cons::PortalPort);

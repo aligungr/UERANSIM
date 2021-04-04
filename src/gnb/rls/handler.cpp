@@ -28,7 +28,7 @@ static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 namespace nr::gnb
 {
 
-void GnbRlsTask::handleCellInfoRequest(int ueId, const rls::SraCellInfoRequest &msg)
+void GnbRlsTask::handleCellInfoRequest(int ueId, const rls::RlsCellInfoRequest &msg)
 {
     int dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
     if (dbm < MIN_ALLOWED_DBM)
@@ -37,7 +37,7 @@ void GnbRlsTask::handleCellInfoRequest(int ueId, const rls::SraCellInfoRequest &
         return;
     }
 
-    rls::SraCellInfoResponse resp{m_sti};
+    rls::RlsCellInfoResponse resp{m_sti};
     resp.cellId.nci = m_base->config->nci;
     resp.cellId.plmn = m_base->config->plmn;
     resp.tac = m_base->config->tac;
@@ -45,10 +45,10 @@ void GnbRlsTask::handleCellInfoRequest(int ueId, const rls::SraCellInfoRequest &
     resp.gnbName = m_base->config->name;
     resp.linkIp = m_base->config->portalIp;
 
-    sendSraMessage(ueId, resp);
+    sendRlsMessage(ueId, resp);
 }
 
-void GnbRlsTask::handleUplinkPduDelivery(int ueId, rls::SraPduDelivery &msg)
+void GnbRlsTask::handleUplinkPduDelivery(int ueId, rls::RlsPduDelivery &msg)
 {
     if (msg.pduType == rls::EPduType::RRC)
     {
@@ -70,11 +70,11 @@ void GnbRlsTask::handleUplinkPduDelivery(int ueId, rls::SraPduDelivery &msg)
 
 void GnbRlsTask::handleDownlinkDelivery(int ueId, rls::EPduType pduType, OctetString &&pdu, OctetString &&payload)
 {
-    rls::SraPduDelivery resp{m_sti};
+    rls::RlsPduDelivery resp{m_sti};
     resp.pduType = pduType;
     resp.pdu = std::move(pdu);
     resp.payload = std::move(payload);
-    sendSraMessage(ueId, resp);
+    sendRlsMessage(ueId, resp);
 }
 
 } // namespace nr::gnb

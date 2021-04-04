@@ -11,11 +11,11 @@
 namespace nr::gnb
 {
 
-void GnbRlsTask::receiveSraMessage(const InetAddress &addr, rls::SraMessage &msg)
+void GnbRlsTask::receiveRlsMessage(const InetAddress &addr, rls::RlsMessage &msg)
 {
     if (!m_powerOn)
     {
-        // ignore received SRA message
+        // ignore received RLS message
         return;
     }
 
@@ -24,24 +24,24 @@ void GnbRlsTask::receiveSraMessage(const InetAddress &addr, rls::SraMessage &msg
     switch (msg.msgType)
     {
     case rls::EMessageType::CELL_INFO_REQUEST: {
-        handleCellInfoRequest(ueId, (const rls::SraCellInfoRequest &)msg);
+        handleCellInfoRequest(ueId, (const rls::RlsCellInfoRequest &)msg);
         break;
     }
     case rls::EMessageType::PDU_DELIVERY: {
-        handleUplinkPduDelivery(ueId, (rls::SraPduDelivery &)msg);
+        handleUplinkPduDelivery(ueId, (rls::RlsPduDelivery &)msg);
         break;
     }
     default:
-        m_logger->err("Unhandled SRA message received with type[%d]", static_cast<int>(msg.msgType));
+        m_logger->err("Unhandled RLS message received with type[%d]", static_cast<int>(msg.msgType));
         break;
     }
 }
 
-void GnbRlsTask::sendSraMessage(int ueId, const rls::SraMessage &msg)
+void GnbRlsTask::sendRlsMessage(int ueId, const rls::RlsMessage &msg)
 {
     if (!m_ueCtx.count(ueId))
     {
-        m_logger->err("SRA message sending failure, UE[%d] not exists", ueId);
+        m_logger->err("RLS message sending failure, UE[%d] not exists", ueId);
         return;
     }
 

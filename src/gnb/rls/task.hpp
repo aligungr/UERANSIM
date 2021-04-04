@@ -31,7 +31,7 @@ class GnbRlsTask : public NtsTask
 
     bool m_powerOn;
     uint64_t m_sti;
-    std::unordered_map<int, std::unique_ptr<SraUeContext>> m_ueCtx;
+    std::unordered_map<int, std::unique_ptr<RlsUeContext>> m_ueCtx;
     std::unordered_map<uint64_t, int> m_stiToUeId;
     int m_ueIdCounter;
 
@@ -47,12 +47,12 @@ class GnbRlsTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSraMessage(const InetAddress &addr, rls::SraMessage &msg);
-    void sendSraMessage(int ueId, const rls::SraMessage &msg);
+    void receiveRlsMessage(const InetAddress &addr, rls::RlsMessage &msg);
+    void sendRlsMessage(int ueId, const rls::RlsMessage &msg);
 
   private: /* Handler */
-    void handleCellInfoRequest(int ueId, const rls::SraCellInfoRequest &msg);
-    void handleUplinkPduDelivery(int ueId, rls::SraPduDelivery &msg);
+    void handleCellInfoRequest(int ueId, const rls::RlsCellInfoRequest &msg);
+    void handleUplinkPduDelivery(int ueId, rls::RlsPduDelivery &msg);
     void handleDownlinkDelivery(int ueId, rls::EPduType pduType, OctetString &&pdu, OctetString &&payload);
 
   private: /* UE Management */

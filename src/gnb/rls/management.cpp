@@ -30,7 +30,7 @@ int GnbRlsTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
     {
         int ueId = ++m_ueIdCounter;
         m_stiToUeId[sti] = ueId;
-        auto ctx = std::make_unique<SraUeContext>(ueId);
+        auto ctx = std::make_unique<RlsUeContext>(ueId);
         ctx->sti = sti;
         ctx->addr = addr;
         ctx->lastSeen = utils::CurrentTimeMillis();

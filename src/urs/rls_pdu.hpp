@@ -32,26 +32,26 @@ enum class EPduType : uint8_t
     DATA
 };
 
-struct SraMessage
+struct RlsMessage
 {
     const EMessageType msgType;
     const uint64_t sti{};
 
-    explicit SraMessage(EMessageType msgType, uint64_t sti) : msgType(msgType), sti(sti)
+    explicit RlsMessage(EMessageType msgType, uint64_t sti) : msgType(msgType), sti(sti)
     {
     }
 };
 
-struct SraCellInfoRequest : SraMessage
+struct RlsCellInfoRequest : RlsMessage
 {
     Vector3 simPos{};
 
-    explicit SraCellInfoRequest(uint64_t sti) : SraMessage(EMessageType::CELL_INFO_REQUEST, sti)
+    explicit RlsCellInfoRequest(uint64_t sti) : RlsMessage(EMessageType::CELL_INFO_REQUEST, sti)
     {
     }
 };
 
-struct SraCellInfoResponse : SraMessage
+struct RlsCellInfoResponse : RlsMessage
 {
     GlobalNci cellId{};
     int tac{};
@@ -59,23 +59,23 @@ struct SraCellInfoResponse : SraMessage
     std::string gnbName{};
     std::string linkIp{};
 
-    explicit SraCellInfoResponse(uint64_t sti) : SraMessage(EMessageType::CELL_INFO_RESPONSE, sti)
+    explicit RlsCellInfoResponse(uint64_t sti) : RlsMessage(EMessageType::CELL_INFO_RESPONSE, sti)
     {
     }
 };
 
-struct SraPduDelivery : SraMessage
+struct RlsPduDelivery : RlsMessage
 {
     EPduType pduType{};
     OctetString pdu{};
     OctetString payload{};
 
-    explicit SraPduDelivery(uint64_t sti) : SraMessage(EMessageType::PDU_DELIVERY, sti)
+    explicit RlsPduDelivery(uint64_t sti) : RlsMessage(EMessageType::PDU_DELIVERY, sti)
     {
     }
 };
 
-void EncodeRlsMessage(const SraMessage &msg, OctetString &stream);
-std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream);
+void EncodeRlsMessage(const RlsMessage &msg, OctetString &stream);
+std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream);
 
-} // namespace sra
+} // namespace rls

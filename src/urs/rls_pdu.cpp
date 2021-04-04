@@ -42,7 +42,7 @@ static GlobalNci DecodeGlobalNci(const OctetView &stream)
     return res;
 }
 
-void EncodeRlsMessage(const SraMessage &msg, OctetString &stream)
+void EncodeRlsMessage(const RlsMessage &msg, OctetString &stream)
 {
     stream.appendOctet(0x03); // (Just for old RLS compatibility)
 
@@ -53,14 +53,14 @@ void EncodeRlsMessage(const SraMessage &msg, OctetString &stream)
     stream.appendOctet8(msg.sti);
     if (msg.msgType == EMessageType::CELL_INFO_REQUEST)
     {
-        auto &m = (const SraCellInfoRequest &)msg;
+        auto &m = (const RlsCellInfoRequest &)msg;
         stream.appendOctet4(m.simPos.x);
         stream.appendOctet4(m.simPos.y);
         stream.appendOctet4(m.simPos.z);
     }
     else if (msg.msgType == EMessageType::CELL_INFO_RESPONSE)
     {
-        auto &m = (const SraCellInfoResponse &)msg;
+        auto &m = (const RlsCellInfoResponse &)msg;
         AppendGlobalNci(m.cellId, stream);
         stream.appendOctet4(m.tac);
         stream.appendOctet4(m.dbm);
@@ -71,7 +71,7 @@ void EncodeRlsMessage(const SraMessage &msg, OctetString &stream)
     }
     else if (msg.msgType == EMessageType::PDU_DELIVERY)
     {
-        auto &m = (const SraPduDelivery &)msg;
+        auto &m = (const RlsPduDelivery &)msg;
         stream.appendOctet(static_cast<uint8_t>(m.pduType));
         stream.appendOctet4(m.pdu.length());
         stream.append(m.pdu);
@@ -80,7 +80,7 @@ void EncodeRlsMessage(const SraMessage &msg, OctetString &stream)
     }
 }
 
-std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream)
+std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream)
 {
     auto first = stream.readI(); // (Just for old RLS compatibility)
     if (first != 3)
@@ -98,7 +98,7 @@ std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream)
 
     if (msgType == EMessageType::CELL_INFO_REQUEST)
     {
-        auto res = std::make_unique<SraCellInfoRequest>(sti);
+        auto res = std::make_unique<RlsCellInfoRequest>(sti);
         res->simPos.x = stream.read4I();
         res->simPos.y = stream.read4I();
         res->simPos.z = stream.read4I();
@@ -106,7 +106,7 @@ std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream)
     }
     else if (msgType == EMessageType::CELL_INFO_RESPONSE)
     {
-        auto res = std::make_unique<SraCellInfoResponse>(sti);
+        auto res = std::make_unique<RlsCellInfoResponse>(sti);
         res->cellId = DecodeGlobalNci(stream);
         res->tac = stream.read4I();
         res->dbm = stream.read4I();
@@ -116,7 +116,7 @@ std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream)
     }
     else if (msgType == EMessageType::PDU_DELIVERY)
     {
-        auto res = std::make_unique<SraPduDelivery>(sti);
+        auto res = std::make_unique<RlsPduDelivery>(sti);
         res->pduType = static_cast<EPduType>(stream.readI());
         res->pdu = stream.readOctetString(stream.read4I());
         res->payload = stream.readOctetString(stream.read4I());
@@ -126,4 +126,4 @@ std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream)
     return nullptr;
 }
 
-} // namespace sra
+} // namespace rls

@@ -104,14 +104,14 @@ struct NgapAmfContext
     std::vector<PlmnSupport *> plmnSupportList{};
 };
 
-struct SraUeContext
+struct RlsUeContext
 {
     const int ueId;
     uint64_t sti{};
     InetAddress addr{};
     int64_t lastSeen{};
 
-    explicit SraUeContext(int ueId) : ueId(ueId)
+    explicit RlsUeContext(int ueId) : ueId(ueId)
     {
     }
 };

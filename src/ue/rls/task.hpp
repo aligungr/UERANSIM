@@ -50,14 +50,14 @@ class UeRlsTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveRlsMessage(const InetAddress &address, rls::SraMessage &msg);
-    void sendRlsMessage(const InetAddress &address, const rls::SraMessage &msg);
+    void receiveRlsMessage(const InetAddress &address, rls::RlsMessage &msg);
+    void sendRlsMessage(const InetAddress &address, const rls::RlsMessage &msg);
     void deliverUplinkPdu(rls::EPduType pduType, OctetString &&pdu, OctetString &&payload);
-    void deliverDownlinkPdu(rls::SraPduDelivery &msg);
+    void deliverDownlinkPdu(rls::RlsPduDelivery &msg);
 
   private: /* Measurement */
     void onMeasurement();
-    void receiveCellInfoResponse(const rls::SraCellInfoResponse &msg);
+    void receiveCellInfoResponse(const rls::RlsCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
     void plmnSearchRequested();
     void handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable);
