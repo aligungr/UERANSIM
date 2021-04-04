@@ -112,7 +112,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
             if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED && m_lastDeregistrationRequest != nullptr)
             {
                 logExpired();
-                m_logger->debug("Retrying de-registration request");
+                m_logger->debug("Retransmitting De-registration Request due to T3521 expiry");
 
                 sendNasMessage(*m_lastDeregistrationRequest);
                 m_timers->t3521.start(false);
