@@ -27,7 +27,7 @@ static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 namespace nr::gnb
 {
 
-void GnbSraTask::handleCellInfoRequest(int ueId,const sra::SraCellInfoRequest &msg)
+void GnbSraTask::handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &msg)
 {
     int dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
     if (dbm < MIN_ALLOWED_DBM)
@@ -50,13 +50,22 @@ void GnbSraTask::handleCellInfoRequest(int ueId,const sra::SraCellInfoRequest &m
 void GnbSraTask::handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg)
 {
     if (msg.pduType == sra::EPduType::RRC)
-	{
-		auto *nw = new NwGnbSraToRrc(NwGnbSraToRrc::RRC_PDU_DELIVERY);
-		nw->ueId = ueId;
-		nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
-		nw->pdu = std::move(msg.pdu);
-		m_base->rrcTask->push(nw);
+    {
+        auto *nw = new NwGnbSraToRrc(NwGnbSraToRrc::RRC_PDU_DELIVERY);
+        nw->ueId = ueId;
+        nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
+        nw->pdu = std::move(msg.pdu);
+        m_base->rrcTask->push(nw);
     }
+}
+
+void GnbSraTask::handleDownlinkDelivery(int ueId, sra::EPduType pduType, OctetString &&pdu, OctetString &&payload)
+{
+    sra::SraPduDelivery resp{m_sti};
+    resp.pduType = pduType;
+    resp.pdu = std::move(pdu);
+    resp.payload = std::move(payload);
+    sendSraMessage(ueId, resp);
 }
 
 } // namespace nr::gnb

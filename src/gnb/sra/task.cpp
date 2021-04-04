@@ -51,6 +51,18 @@ void GnbSraTask::onLoop()
 
     switch (msg->msgType)
     {
+    case NtsMessageType::GNB_RRC_TO_SRA: {
+        auto *w = dynamic_cast<NwGnbRrcToSra *>(msg);
+        switch (w->present)
+        {
+        case NwGnbRrcToSra::RRC_PDU_DELIVERY: {
+            handleDownlinkDelivery(w->ueId, sra::EPduType::RRC, std::move(w->pdu),
+                                   OctetString::FromOctet4(static_cast<int>(w->channel)));
+            break;
+        }
+        }
+        break;
+    }
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
         auto sraMsg = sra::DecodeSraMessage(OctetView{w->packet});

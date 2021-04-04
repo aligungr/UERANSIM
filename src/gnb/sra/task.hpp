@@ -52,6 +52,7 @@ class GnbSraTask : public NtsTask
   private: /* Handler */
     void handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &msg);
     void handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg);
+    void handleDownlinkDelivery(int ueId, sra::EPduType pduType, OctetString &&pdu, OctetString &&payload);
 
   private: /* UE Management */
     int updateUeInfo(const InetAddress &addr, uint64_t sti);

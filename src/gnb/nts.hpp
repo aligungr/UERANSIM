@@ -80,6 +80,23 @@ struct NwGnbRrcToMr : NtsMessage
     }
 };
 
+struct NwGnbRrcToSra : NtsMessage
+{
+    enum PR
+    {
+        RRC_PDU_DELIVERY,
+    } present;
+
+    // RRC_PDU_DELIVERY
+    int ueId{};
+    rrc::RrcChannel channel{};
+    OctetString pdu{};
+
+    explicit NwGnbRrcToSra(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_SRA), present(present)
+    {
+    }
+};
+
 struct NwGnbNgapToRrc : NtsMessage
 {
     enum PR
