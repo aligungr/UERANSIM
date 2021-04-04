@@ -30,6 +30,8 @@ class GnbSraTask : public NtsTask
     std::unique_ptr<Logger> m_logger;
     udp::UdpServerTask *m_udpTask;
 
+    uint64_t m_sti;
+
     friend class GnbCmdHandler;
 
   public:

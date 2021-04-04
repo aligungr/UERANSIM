@@ -41,7 +41,7 @@ void UeSraTask::onMeasurement()
     // Issue another cell info request for each address in the search space
     for (auto &ip : m_cellSearchSpace)
     {
-        sra::SraCellInfoRequest req{};
+        sra::SraCellInfoRequest req{m_sti};
         sendSraMessage(ip, req);
     }
 }

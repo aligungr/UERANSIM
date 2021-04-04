@@ -34,8 +34,9 @@ enum class EPduType : uint8_t
 struct SraMessage
 {
     const EMessageType msgType;
+    const uint64_t sti{};
 
-    explicit SraMessage(EMessageType msgType) : msgType(msgType)
+    explicit SraMessage(EMessageType msgType, uint64_t sti) : msgType(msgType), sti(sti)
     {
     }
 };
@@ -44,7 +45,7 @@ struct SraCellInfoRequest : SraMessage
 {
     Vector3 simPos{};
 
-    SraCellInfoRequest() : SraMessage(EMessageType::CELL_INFO_REQUEST)
+    explicit SraCellInfoRequest(uint64_t sti) : SraMessage(EMessageType::CELL_INFO_REQUEST, sti)
     {
     }
 };
@@ -57,19 +58,18 @@ struct SraCellInfoResponse : SraMessage
     std::string gnbName{};
     std::string linkIp{};
 
-    SraCellInfoResponse() : SraMessage(EMessageType::CELL_INFO_RESPONSE)
+    explicit SraCellInfoResponse(uint64_t sti) : SraMessage(EMessageType::CELL_INFO_RESPONSE, sti)
     {
     }
 };
 
 struct SraPduDelivery : SraMessage
 {
-    uint64_t sti{};
     EPduType pduType{};
     OctetString pdu{};
     OctetString payload{};
 
-    SraPduDelivery() : SraMessage(EMessageType::PDU_DELIVERY)
+    explicit SraPduDelivery(uint64_t sti) : SraMessage(EMessageType::PDU_DELIVERY, sti)
     {
     }
 };

@@ -35,7 +35,7 @@ void GnbSraTask::handleCellInfoRequest(const InetAddress &addr, const sra::SraCe
         return;
     }
 
-    sra::SraCellInfoResponse resp{};
+    sra::SraCellInfoResponse resp{m_sti};
     resp.cellId.nci = m_base->config->nci;
     resp.cellId.plmn = m_base->config->plmn;
     resp.tac = m_base->config->tac;

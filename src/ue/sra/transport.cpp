@@ -41,8 +41,7 @@ void UeSraTask::deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, Octet
         return;
     }
 
-    sra::SraPduDelivery msg{};
-    msg.sti = m_sti;
+    sra::SraPduDelivery msg{m_sti};
     msg.pduType = pduType;
     msg.pdu = std::move(pdu);
     msg.payload = std::move(payload);

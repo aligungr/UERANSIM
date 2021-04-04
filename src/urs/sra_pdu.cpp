@@ -50,6 +50,7 @@ void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
     stream.appendOctet(cons::Minor);
     stream.appendOctet(cons::Patch);
     stream.appendOctet(static_cast<uint8_t>(msg.msgType));
+    stream.appendOctet8(msg.sti);
     if (msg.msgType == EMessageType::CELL_INFO_REQUEST)
     {
         auto &m = (const SraCellInfoRequest &)msg;
@@ -71,7 +72,6 @@ void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
     else if (msg.msgType == EMessageType::PDU_DELIVERY)
     {
         auto &m = (const SraPduDelivery &)msg;
-        stream.appendOctet8(m.sti);
         stream.appendOctet(static_cast<uint8_t>(m.pduType));
         stream.appendOctet4(m.pdu.length());
         stream.append(m.pdu);
@@ -94,9 +94,11 @@ std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
         return nullptr;
 
     auto msgType = static_cast<EMessageType>(stream.readI());
+    uint64_t sti = stream.read8UL();
+
     if (msgType == EMessageType::CELL_INFO_REQUEST)
     {
-        auto res = std::make_unique<SraCellInfoRequest>();
+        auto res = std::make_unique<SraCellInfoRequest>(sti);
         res->simPos.x = stream.read4I();
         res->simPos.y = stream.read4I();
         res->simPos.z = stream.read4I();
@@ -104,7 +106,7 @@ std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
     }
     else if (msgType == EMessageType::CELL_INFO_RESPONSE)
     {
-        auto res = std::make_unique<SraCellInfoResponse>();
+        auto res = std::make_unique<SraCellInfoResponse>(sti);
         res->cellId = DecodeGlobalNci(stream);
         res->tac = stream.read4I();
         res->dbm = stream.read4I();
@@ -114,8 +116,7 @@ std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
     }
     else if (msgType == EMessageType::PDU_DELIVERY)
     {
-        auto res = std::make_unique<SraPduDelivery>();
-        res->sti = stream.read8UL();
+        auto res = std::make_unique<SraPduDelivery>(sti);
         res->pduType = static_cast<EPduType>(stream.readI());
         res->pdu = stream.readOctetString(stream.read4I());
         res->payload = stream.readOctetString(stream.read4I());

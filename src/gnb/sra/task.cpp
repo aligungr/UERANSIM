@@ -10,6 +10,7 @@
 #include <gnb/gtp/task.hpp>
 #include <gnb/nts.hpp>
 #include <gnb/rrc/task.hpp>
+#include <utils/common.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
@@ -19,6 +20,7 @@ namespace nr::gnb
 GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}
 {
     m_logger = m_base->logBase->makeUniqueLogger("sra");
+    m_sti = utils::Random64();
 }
 
 void GnbSraTask::onStart()
@@ -69,6 +71,5 @@ void GnbSraTask::onQuit()
         m_udpTask->quit();
     delete m_udpTask;
 }
-
 
 } // namespace nr::gnb
