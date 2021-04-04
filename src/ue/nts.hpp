@@ -192,22 +192,6 @@ struct NwUeNasToRrc : NtsMessage
     }
 };
 
-struct NwUeRrcToMr : NtsMessage
-{
-    enum PR
-    {
-        PLMN_SEARCH_REQUEST,
-        RRC_CONNECTION_RELEASE,
-    } present;
-
-    // RRC_CONNECTION_RELEASE
-    rls::ECause cause{};
-
-    explicit NwUeRrcToMr(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_MR), present(present)
-    {
-    }
-};
-
 struct NwUeRrcToSra : NtsMessage
 {
     enum PR

@@ -104,22 +104,6 @@ void UeMrTask::onLoop()
         }
         break;
     }
-    case NtsMessageType::UE_RRC_TO_MR: {
-        auto *w = dynamic_cast<NwUeRrcToMr *>(msg);
-        switch (w->present)
-        {
-        case NwUeRrcToMr::PLMN_SEARCH_REQUEST: {
-            m_rlsEntity->startGnbSearch();
-            break;
-        }
-        case NwUeRrcToMr::RRC_CONNECTION_RELEASE: {
-            m_rlsEntity->localReleaseConnection(w->cause);
-            m_rlsEntity->resetEntity();
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_APP_TO_MR: {
         auto *w = dynamic_cast<NwAppToMr *>(msg);
         switch (w->present)
