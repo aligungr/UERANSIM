@@ -10,6 +10,7 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 #include <gnb/nts.hpp>
+#include <gnb/sra/task.hpp>
 #include <rrc/encode.hpp>
 
 namespace nr::gnb
@@ -56,8 +57,8 @@ void GnbRrcTask::onLoop()
         auto *w = dynamic_cast<NwGnbNgapToRrc *>(msg);
         switch (w->present)
         {
-        case NwGnbNgapToRrc::NGAP_LAYER_INITIALIZED: {
-            //m_base->mrTask->push(new NwGnbRrcToMr(NwGnbRrcToMr::NGAP_LAYER_INITIALIZED));
+        case NwGnbNgapToRrc::RADIO_POWER_ON: {
+            m_base->sraTask->push(new NwGnbRrcToSra(NwGnbRrcToSra::RADIO_POWER_ON));
             break;
         }
         case NwGnbNgapToRrc::NAS_DELIVERY: {

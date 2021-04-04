@@ -48,6 +48,7 @@ struct NwGnbRrcToSra : NtsMessage
 {
     enum PR
     {
+        RADIO_POWER_ON,
         RRC_PDU_DELIVERY,
     } present;
 
@@ -65,7 +66,7 @@ struct NwGnbNgapToRrc : NtsMessage
 {
     enum PR
     {
-        NGAP_LAYER_INITIALIZED,
+        RADIO_POWER_ON,
         NAS_DELIVERY,
         AN_RELEASE,
     } present;

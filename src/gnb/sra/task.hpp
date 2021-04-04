@@ -29,6 +29,7 @@ class GnbSraTask : public NtsTask
     std::unique_ptr<Logger> m_logger;
     udp::UdpServerTask *m_udpTask;
 
+    bool m_powerOn;
     uint64_t m_sti;
     std::unordered_map<int, std::unique_ptr<SraUeContext>> m_ueCtx;
     std::unordered_map<uint64_t, int> m_stiToUeId;

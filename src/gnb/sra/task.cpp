@@ -60,6 +60,10 @@ void GnbSraTask::onLoop()
                                    OctetString::FromOctet4(static_cast<int>(w->channel)));
             break;
         }
+        case NwGnbRrcToSra::RADIO_POWER_ON: {
+            m_powerOn = true;
+            break;
+        }
         }
         break;
     }

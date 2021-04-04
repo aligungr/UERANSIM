@@ -195,7 +195,7 @@ void NgapTask::receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg)
         update->isNgapUp = true;
         m_base->appTask->push(update);
 
-        m_base->rrcTask->push(new NwGnbNgapToRrc(NwGnbNgapToRrc::NGAP_LAYER_INITIALIZED));
+        m_base->rrcTask->push(new NwGnbNgapToRrc(NwGnbNgapToRrc::RADIO_POWER_ON));
     }
 }
 

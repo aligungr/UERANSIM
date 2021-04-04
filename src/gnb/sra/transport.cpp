@@ -13,6 +13,12 @@ namespace nr::gnb
 
 void GnbSraTask::receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg)
 {
+    if (!m_powerOn)
+    {
+        // ignore received SRA message
+        return;
+    }
+
     int ueId = updateUeInfo(addr, msg.sti);
 
     switch (msg.msgType)
