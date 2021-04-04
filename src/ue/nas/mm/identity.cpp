@@ -31,6 +31,21 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
         resp.mobileIdentity.type = nas::EIdentityType::IMEISV;
         resp.mobileIdentity.value = *m_base->config->imeiSv;
     }
+    else if (msg.identityType.value == nas::EIdentityType::GUTI)
+    {
+        resp.mobileIdentity = m_usim->m_storedGuti;
+    }
+    else if (msg.identityType.value == nas::EIdentityType::TMSI)
+    {
+        // TMSI is already a part of GUTI
+        resp.mobileIdentity = m_usim->m_storedGuti;
+        if (resp.mobileIdentity.type != nas::EIdentityType::NO_IDENTITY)
+        {
+            resp.mobileIdentity.type = nas::EIdentityType::TMSI;
+            resp.mobileIdentity.gutiOrTmsi.plmn = {};
+            resp.mobileIdentity.gutiOrTmsi.amfRegionId = {};
+        }
+    }
     else
     {
         resp.mobileIdentity.type = nas::EIdentityType::NO_IDENTITY;
