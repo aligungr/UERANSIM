@@ -177,8 +177,30 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         return;
     }
 
+    if (msg.sht == nas::ESecurityHeaderType::NOT_PROTECTED)
+    {
+        m_logger->warn("Not protected Service Reject message received");
+        sendMmStatus(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        return;
+    }
+
+    // "On receipt of the SERVICE REJECT message, if the UE is in state 5GMM-SERVICE-REQUEST-INITIATED and the message
+    // is integrity protected, the UE shall reset the service request attempt counter and stop timer T3517 if running."
+    m_serCounter = 0;
+    m_timers->t3517.stop();
+
     auto cause = msg.mmCause.value;
     m_logger->err("Service Request failed [%s]", nas::utils::EnumToString(cause));
+
+    // Handle PDU session status
+    if (msg.pduSessionStatus.has_value() && msg.sht != nas::ESecurityHeaderType::NOT_PROTECTED)
+    {
+        auto statusInUe = m_sm->getPduSessionStatus();
+        auto statusInNw = msg.pduSessionStatus->psi;
+        for (int i = 1; i < 16; i++)
+            if (statusInUe[i] && !statusInNw[i])
+                m_sm->localReleaseSession(i);
+    }
 
     // Handle EAP message
     if (msg.eapMessage.has_value())
