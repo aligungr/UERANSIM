@@ -451,6 +451,38 @@ enum class ERegUpdateCause
     RESTRICTED_SERVICE_AREA
 };
 
+enum class EServiceReqCause
+{
+    // unspecified cause
+    UNSPECIFIED,
+    // the UE, in 5GMM-IDLE mode over 3GPP access, receives a paging request from the network
+    IDLE_PAGING,
+    // the UE, in 5GMM-CONNECTED mode over 3GPP access, receives a notification from the network with access type
+    // indicating non-3GPP access
+    CONNECTED_3GPP_NOTIFICATION_N3GPP,
+    // the UE, in 5GMM-IDLE mode over 3GPP access, has uplink signalling pending
+    IDLE_UPLINK_SIGNAL_PENDING,
+    // the UE, in 5GMM-IDLE mode over 3GPP access, has uplink user data pending
+    IDLE_UPLINK_DATA_PENDING,
+    // the UE, in 5GMM-CONNECTED mode or in 5GMM-CONNECTED mode with RRC inactive indication, has user data pending due
+    // to no user-plane resources established for PDU session(s) used for user data transport
+    CONNECTED_UPLINK_DATA_PENDING,
+    // the UE in 5GMM-IDLE mode over non-3GPP access, receives an indication from the lower layers of non-3GPP access,
+    // that the access stratum connection is established between UE and network
+    NON_3GPP_AS_ESTABLISHED,
+    // the UE, in 5GMM-IDLE mode over 3GPP access, receives a notification from the network with access type indicating
+    // 3GPP access when the UE is in 5GMM-CONNECTED mode over non-3GPP access
+    IDLE_3GPP_NOTIFICATION_N3GPP,
+    // the UE, in 5GMM-IDLE, 5GMM-CONNECTED mode over 3GPP access, or 5GMM-CONNECTED mode with RRC inactive indication,
+    // receives a request for emergency services fallback from the upper layer and performs emergency services fallback
+    // as specified in subclause 4.13.4.2 of 3GPP TS 23.502 [9]
+    EMERGENCY_FALLBACK,
+    // the UE, in 5GMM-CONNECTED mode over 3GPP access or in 5GMM-CONNECTED mode with RRC inactive indication, receives
+    // a fallback indication from the lower layers (see subclauses 5.3.1.2 and 5.3.1.4) and or the UE has a pending NAS
+    // procedure other than a registration, service request, or de-registration procedure
+    FALLBACK_INDICATION
+};
+
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
