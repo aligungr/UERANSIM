@@ -112,15 +112,6 @@ void UeMrTask::onLoop()
             m_rlsEntity->startGnbSearch();
             break;
         }
-        case NwUeRrcToMr::RRC_PDU_DELIVERY: {
-            // Append channel information
-            OctetString stream{};
-            stream.appendOctet(static_cast<int>(w->channel));
-            stream.append(w->pdu);
-
-            m_rlsEntity->onUplinkDelivery(rls::EPayloadType::RRC, std::move(stream));
-            break;
-        }
         case NwUeRrcToMr::RRC_CONNECTION_RELEASE: {
             m_rlsEntity->localReleaseConnection(w->cause);
             m_rlsEntity->resetEntity();

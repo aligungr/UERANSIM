@@ -197,13 +197,8 @@ struct NwUeRrcToMr : NtsMessage
     enum PR
     {
         PLMN_SEARCH_REQUEST,
-        RRC_PDU_DELIVERY,
         RRC_CONNECTION_RELEASE,
     } present;
-
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu{};
 
     // RRC_CONNECTION_RELEASE
     rls::ECause cause{};
