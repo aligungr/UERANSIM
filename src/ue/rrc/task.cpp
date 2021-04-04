@@ -49,10 +49,6 @@ void UeRrcTask::onLoop()
         auto *w = dynamic_cast<NwUeMrToRrc *>(msg);
         switch (w->present)
         {
-        case NwUeMrToRrc::RRC_PDU_DELIVERY: {
-            handleDownlinkRrc(w->channel, w->pdu);
-            break;
-        }
         case NwUeMrToRrc::RADIO_LINK_FAILURE: {
             handleRadioLinkFailure();
             break;
@@ -110,6 +106,10 @@ void UeRrcTask::onLoop()
             auto *wr = new NwUeRrcToNas(NwUeRrcToNas::SERVING_CELL_CHANGE);
             wr->servingCell = w->servingCell;
             m_base->nasTask->push(wr);
+            break;
+        }
+        case NwUeSraToRrc::RRC_PDU_DELIVERY: {
+            handleDownlinkRrc(w->channel, w->pdu);
             break;
         }
         }

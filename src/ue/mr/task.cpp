@@ -175,10 +175,10 @@ void UeMrTask::receiveDownlinkPayload(rls::EPayloadType type, OctetString &&payl
 {
     if (type == rls::EPayloadType::RRC)
     {
-        auto *nw = new NwUeMrToRrc(NwUeMrToRrc::RRC_PDU_DELIVERY);
-        nw->channel = static_cast<rrc::RrcChannel>(payload.getI(0));
-        nw->pdu = payload.subCopy(1);
-        m_base->rrcTask->push(nw);
+        //auto *nw = new NwUeMrToRrc(NwUeMrToRrc::RRC_PDU_DELIVERY);
+        //nw->channel = static_cast<rrc::RrcChannel>(payload.getI(0));
+        //nw->pdu = payload.subCopy(1);
+        //m_base->rrcTask->push(nw);
     }
     else if (type == rls::EPayloadType::DATA)
     {

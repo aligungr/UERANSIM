@@ -50,10 +50,10 @@ class UeSraTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSraMessage(const InetAddress &address, const sra::SraMessage &msg);
+    void receiveSraMessage(const InetAddress &address, sra::SraMessage &msg);
     void sendSraMessage(const InetAddress &address, const sra::SraMessage &msg);
     void deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, OctetString &&payload);
-    void deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu);
+    void deliverDownlinkPdu(sra::SraPduDelivery &msg);
 
   private: /* Measurement */
     void onMeasurement();

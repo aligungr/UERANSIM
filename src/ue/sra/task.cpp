@@ -61,7 +61,8 @@ void UeSraTask::onLoop()
             handleCellSelectionCommand(w->cellId, w->isSuitableCell);
             break;
         case NwUeRrcToSra::RRC_PDU_DELIVERY:
-            deliverUplinkRrc(w->channel, std::move(w->pdu));
+            deliverUplinkPdu(sra::EPduType::RRC, std::move(w->pdu),
+                             OctetString::FromOctet4(static_cast<int>(w->channel)));
             break;
         }
         break;

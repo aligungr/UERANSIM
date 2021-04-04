@@ -63,13 +63,8 @@ struct NwUeMrToRrc : NtsMessage
 {
     enum PR
     {
-        RRC_PDU_DELIVERY,
         RADIO_LINK_FAILURE
     } present;
-
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu{};
 
     explicit NwUeMrToRrc(PR present) : NtsMessage(NtsMessageType::UE_MR_TO_RRC), present(present)
     {
@@ -245,7 +240,8 @@ struct NwUeSraToRrc : NtsMessage
     enum PR
     {
         PLMN_SEARCH_RESPONSE,
-        SERVING_CELL_CHANGE
+        SERVING_CELL_CHANGE,
+        RRC_PDU_DELIVERY
     } present;
 
     // PLMN_SEARCH_RESPONSE
@@ -253,6 +249,10 @@ struct NwUeSraToRrc : NtsMessage
 
     // SERVING_CELL_CHANGE
     UeCellInfo servingCell{};
+
+    // RRC_PDU_DELIVERY
+    rrc::RrcChannel channel{};
+    OctetString pdu{};
 
     explicit NwUeSraToRrc(PR present) : NtsMessage(NtsMessageType::UE_SRA_TO_RRC), present(present)
     {
