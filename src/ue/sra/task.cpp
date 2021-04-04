@@ -67,6 +67,17 @@ void UeSraTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::UE_APP_TO_SRA: {
+        auto *w = dynamic_cast<NwUeAppToSra *>(msg);
+        switch (w->present)
+        {
+        case NwUeAppToSra::DATA_PDU_DELIVERY: {
+            deliverUplinkPdu(sra::EPduType::DATA, std::move(w->pdu), OctetString::FromOctet4(static_cast<int>(w->psi)));
+            break;
+        }
+        }
+        break;
+    }
     case NtsMessageType::TIMER_EXPIRED: {
         auto *w = dynamic_cast<NwTimerExpired *>(msg);
         if (w->timerId == TIMER_ID_MEASUREMENT)
