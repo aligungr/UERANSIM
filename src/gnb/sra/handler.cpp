@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 #include <cmath>
+#include <gnb/rrc/task.hpp>
 
 static int MIN_ALLOWED_DBM = -120;
 
@@ -46,9 +47,16 @@ void GnbSraTask::handleCellInfoRequest(int ueId,const sra::SraCellInfoRequest &m
     sendSraMessage(ueId, resp);
 }
 
-void GnbSraTask::handleUplinkPduDelivery(int ueId, const sra::SraPduDelivery &msg)
+void GnbSraTask::handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg)
 {
-
+    if (msg.pduType == sra::EPduType::RRC)
+	{
+		auto *nw = new NwGnbSraToRrc(NwGnbSraToRrc::RRC_PDU_DELIVERY);
+		nw->ueId = ueId;
+		nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
+		nw->pdu = std::move(msg.pdu);
+		m_base->rrcTask->push(nw);
+    }
 }
 
 } // namespace nr::gnb

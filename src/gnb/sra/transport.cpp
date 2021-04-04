@@ -11,7 +11,7 @@
 namespace nr::gnb
 {
 
-void GnbSraTask::receiveSraMessage(const InetAddress &addr, const sra::SraMessage &msg)
+void GnbSraTask::receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg)
 {
     int ueId = updateUeInfo(addr, msg.sti);
 
@@ -22,7 +22,7 @@ void GnbSraTask::receiveSraMessage(const InetAddress &addr, const sra::SraMessag
         break;
     }
     case sra::EMessageType::PDU_DELIVERY: {
-        handleUplinkPduDelivery(ueId, (const sra::SraPduDelivery &)msg);
+        handleUplinkPduDelivery(ueId, (sra::SraPduDelivery &)msg);
         break;
     }
     default:

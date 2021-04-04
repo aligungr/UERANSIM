@@ -36,6 +36,7 @@ enum class NtsMessageType
 
     GNB_MR_TO_MR,
     GNB_MR_TO_RRC,
+    GNB_SRA_TO_RRC,
     GNB_RRC_TO_MR,
     GNB_NGAP_TO_RRC,
     GNB_RRC_TO_NGAP,

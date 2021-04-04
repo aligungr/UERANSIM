@@ -46,12 +46,12 @@ class GnbSraTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSraMessage(const InetAddress &addr, const sra::SraMessage &msg);
+    void receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg);
     void sendSraMessage(int ueId, const sra::SraMessage &msg);
 
   private: /* Handler */
     void handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &msg);
-    void handleUplinkPduDelivery(int ueId, const sra::SraPduDelivery &msg);
+    void handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg);
 
   private: /* UE Management */
     int updateUeInfo(const InetAddress &addr, uint64_t sti);
