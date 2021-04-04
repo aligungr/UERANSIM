@@ -15,6 +15,8 @@ namespace nr::ue
 
 void NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
+    m_logger->debug("Sending Service Request");
+
     auto request = std::make_unique<nas::ServiceRequest>();
 
     if (reqCause == EServiceReqCause::IDLE_PAGING)
