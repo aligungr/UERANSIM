@@ -89,6 +89,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     ps->sessionAmbr = {};
     ps->authorizedQoSFlowDescriptions = {};
     ps->pduAddress = {};
+    ps->uplinkPending = false;
 
     /* Make PCO */
     nas::ProtocolConfigurationOptions opt{};

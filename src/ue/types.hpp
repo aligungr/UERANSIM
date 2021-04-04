@@ -250,6 +250,7 @@ struct PduSession
     const int psi;
 
     EPsState psState{};
+    bool uplinkPending{};
 
     nas::EPduSessionType sessionType{};
     std::optional<std::string> apn{};
