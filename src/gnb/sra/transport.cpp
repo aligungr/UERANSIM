@@ -15,7 +15,7 @@ void GnbSraTask::receiveSraMessage(const InetAddress &addr, const sra::SraMessag
 {
     switch (msg.msgType)
     {
-    case sra::SraMessageType::CELL_INFO_REQUEST:
+    case sra::EMessageType::CELL_INFO_REQUEST:
         handleCellInfoRequest(addr, (const sra::SraCellInfoRequest &)msg);
         break;
     default:

@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+#include <utils/constants.hpp>
 
 namespace nr::ue
 {
@@ -15,7 +16,7 @@ void UeSraTask::receiveSraMessage(const InetAddress &address, const sra::SraMess
 {
     switch (msg.msgType)
     {
-    case sra::SraMessageType::CELL_INFO_RESPONSE: {
+    case sra::EMessageType::CELL_INFO_RESPONSE: {
         receiveCellInfoResponse((const sra::SraCellInfoResponse &)msg);
         break;
     default:
@@ -30,6 +31,22 @@ void UeSraTask::sendSraMessage(const InetAddress &address, const sra::SraMessage
     OctetString stream{};
     sra::EncodeSraMessage(msg, stream);
     m_udpTask->send(address, stream);
+}
+
+void UeSraTask::deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu)
+{
+    if (!m_servingCell.has_value())
+    {
+        m_logger->warn("SRA uplink delivery requested without a serving cell");
+        return;
+    }
+
+    sra::SraPduDelivery msg{};
+    msg.sti = m_sti;
+    msg.pduType = sra::EPduType::RRC;
+    msg.pdu = std::move(pdu);
+    msg.payload.appendOctet4(static_cast<int>(channel));
+    sendSraMessage(InetAddress{m_servingCell->linkIp, cons::PortalPort}, msg);
 }
 
 } // namespace nr::ue

@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 #include <ue/nts.hpp>
+#include <utils/common.hpp>
 #include <utils/constants.hpp>
 
 static const int TIMER_ID_MEASUREMENT = 1;
@@ -23,6 +24,8 @@ UeSraTask::UeSraTask(TaskBase *base)
 
     for (auto &addr : m_base->config->gnbSearchList)
         m_cellSearchSpace.emplace_back(addr, cons::PortalPort);
+
+    m_sti = utils::Random64();
 }
 
 void UeSraTask::onStart()
@@ -49,10 +52,18 @@ void UeSraTask::onLoop()
     {
     case NtsMessageType::UE_RRC_TO_SRA: {
         auto *w = dynamic_cast<NwUeRrcToSra *>(msg);
-        if (w->present == NwUeRrcToSra::PLMN_SEARCH_REQUEST)
+        switch (w->present)
+        {
+        case NwUeRrcToSra::PLMN_SEARCH_REQUEST:
             plmnSearchRequested();
-        else if (w->present == NwUeRrcToSra::CELL_SELECTION_COMMAND)
+            break;
+        case NwUeRrcToSra::CELL_SELECTION_COMMAND:
             handleCellSelectionCommand(w->cellId, w->isSuitableCell);
+            break;
+        case NwUeRrcToSra::RRC_PDU_DELIVERY:
+            deliverUplinkRrc(w->channel, std::move(w->pdu));
+            break;
+        }
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {

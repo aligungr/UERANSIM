@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <optional>
+#include <rrc/rrc.hpp>
 #include <thread>
 #include <udp/server_task.hpp>
 #include <ue/types.hpp>
@@ -34,6 +35,7 @@ class UeSraTask : public NtsTask
     std::unordered_map<GlobalNci, UeCellMeasurement> m_pendingMeasurements;
     std::unordered_map<GlobalNci, UeCellMeasurement> m_activeMeasurements;
 
+    uint64_t m_sti;
     std::optional<UeCellInfo> m_servingCell;
 
     friend class UeCmdHandler;
@@ -50,6 +52,7 @@ class UeSraTask : public NtsTask
   private: /* Transport */
     void receiveSraMessage(const InetAddress &address, const sra::SraMessage &msg);
     void sendSraMessage(const InetAddress &address, const sra::SraMessage &msg);
+    void deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu);
 
   private: /* Measurement */
     void onMeasurement();

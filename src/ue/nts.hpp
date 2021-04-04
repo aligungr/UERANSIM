@@ -224,11 +224,16 @@ struct NwUeRrcToSra : NtsMessage
     {
         PLMN_SEARCH_REQUEST,
         CELL_SELECTION_COMMAND,
+        RRC_PDU_DELIVERY
     } present;
 
     // CELL_SELECTION_COMMAND
     GlobalNci cellId{};
     bool isSuitableCell{}; // otherwise 'acceptable'
+
+    // RRC_PDU_DELIVERY
+    rrc::RrcChannel channel{};
+    OctetString pdu{};
 
     explicit NwUeRrcToSra(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_SRA), present(present)
     {

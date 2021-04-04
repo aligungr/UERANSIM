@@ -50,16 +50,16 @@ void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
     stream.appendOctet(cons::Minor);
     stream.appendOctet(cons::Patch);
     stream.appendOctet(static_cast<uint8_t>(msg.msgType));
-    if (msg.msgType == SraMessageType::CELL_INFO_REQUEST)
+    if (msg.msgType == EMessageType::CELL_INFO_REQUEST)
     {
-        auto m = (const SraCellInfoRequest &)msg;
+        auto &m = (const SraCellInfoRequest &)msg;
         stream.appendOctet4(m.simPos.x);
         stream.appendOctet4(m.simPos.y);
         stream.appendOctet4(m.simPos.z);
     }
-    else if (msg.msgType == SraMessageType::CELL_INFO_RESPONSE)
+    else if (msg.msgType == EMessageType::CELL_INFO_RESPONSE)
     {
-        auto m = (const SraCellInfoResponse &)msg;
+        auto &m = (const SraCellInfoResponse &)msg;
         AppendGlobalNci(m.cellId, stream);
         stream.appendOctet4(m.tac);
         stream.appendOctet4(m.dbm);
@@ -67,6 +67,16 @@ void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
         stream.appendUtf8(m.gnbName);
         stream.appendOctet4(static_cast<int>(m.linkIp.size()));
         stream.appendUtf8(m.linkIp);
+    }
+    else if (msg.msgType == EMessageType::PDU_DELIVERY)
+    {
+        auto &m = (const SraPduDelivery &)msg;
+        stream.appendOctet8(m.sti);
+        stream.appendOctet(static_cast<uint8_t>(m.pduType));
+        stream.appendOctet4(m.pdu.length());
+        stream.append(m.pdu);
+        stream.appendOctet4(m.payload.length());
+        stream.append(m.payload);
     }
 }
 
@@ -83,8 +93,8 @@ std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
     if (stream.read() != cons::Patch)
         return nullptr;
 
-    auto msgType = static_cast<SraMessageType>(stream.readI());
-    if (msgType == SraMessageType::CELL_INFO_REQUEST)
+    auto msgType = static_cast<EMessageType>(stream.readI());
+    if (msgType == EMessageType::CELL_INFO_REQUEST)
     {
         auto res = std::make_unique<SraCellInfoRequest>();
         res->simPos.x = stream.read4I();
@@ -92,7 +102,7 @@ std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
         res->simPos.z = stream.read4I();
         return res;
     }
-    else if (msgType == SraMessageType::CELL_INFO_RESPONSE)
+    else if (msgType == EMessageType::CELL_INFO_RESPONSE)
     {
         auto res = std::make_unique<SraCellInfoResponse>();
         res->cellId = DecodeGlobalNci(stream);
@@ -100,6 +110,15 @@ std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
         res->dbm = stream.read4I();
         res->gnbName = stream.readUtf8String(stream.read4I());
         res->linkIp = stream.readUtf8String(stream.read4I());
+        return res;
+    }
+    else if (msgType == EMessageType::PDU_DELIVERY)
+    {
+        auto res = std::make_unique<SraPduDelivery>();
+        res->sti = stream.read8UL();
+        res->pduType = static_cast<EPduType>(stream.readI());
+        res->pdu = stream.readOctetString(stream.read4I());
+        res->payload = stream.readOctetString(stream.read4I());
         return res;
     }
 

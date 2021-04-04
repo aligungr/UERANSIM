@@ -17,18 +17,25 @@
 namespace sra
 {
 
-enum class SraMessageType : uint8_t
+enum class EMessageType : uint8_t
 {
     RESERVED = 0,
     CELL_INFO_REQUEST,
     CELL_INFO_RESPONSE,
+    PDU_DELIVERY
+};
+
+enum class EPduType : uint8_t
+{
+    RESERVED = 0,
+    RRC
 };
 
 struct SraMessage
 {
-    const SraMessageType msgType;
+    const EMessageType msgType;
 
-    explicit SraMessage(SraMessageType msgType) : msgType(msgType)
+    explicit SraMessage(EMessageType msgType) : msgType(msgType)
     {
     }
 };
@@ -37,7 +44,7 @@ struct SraCellInfoRequest : SraMessage
 {
     Vector3 simPos{};
 
-    SraCellInfoRequest() : SraMessage(SraMessageType::CELL_INFO_REQUEST)
+    SraCellInfoRequest() : SraMessage(EMessageType::CELL_INFO_REQUEST)
     {
     }
 };
@@ -50,7 +57,19 @@ struct SraCellInfoResponse : SraMessage
     std::string gnbName{};
     std::string linkIp{};
 
-    SraCellInfoResponse() : SraMessage(SraMessageType::CELL_INFO_RESPONSE)
+    SraCellInfoResponse() : SraMessage(EMessageType::CELL_INFO_RESPONSE)
+    {
+    }
+};
+
+struct SraPduDelivery : SraMessage
+{
+    uint64_t sti{};
+    EPduType pduType{};
+    OctetString pdu{};
+    OctetString payload{};
+
+    SraPduDelivery() : SraMessage(EMessageType::PDU_DELIVERY)
     {
     }
 };
