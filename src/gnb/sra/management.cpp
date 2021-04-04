@@ -19,6 +19,7 @@ void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
         int ueId = m_stiToUeId[sti];
         auto &ctx = m_ueCtx[ueId];
         ctx->addr = addr;
+        ctx->lastSeen = utils::CurrentTimeMillis();
     }
     else
     {
@@ -27,6 +28,7 @@ void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
         auto ctx = std::make_unique<SraUeContext>(ueId);
         ctx->sti = sti;
         ctx->addr = addr;
+        ctx->lastSeen = utils::CurrentTimeMillis();
         m_ueCtx[ueId] = std::move(ctx);
 
         m_logger->debug("New UE signal detected, UE[%d]", ueId);

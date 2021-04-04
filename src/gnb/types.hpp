@@ -110,6 +110,7 @@ struct SraUeContext
     const int ueId;
     uint64_t sti{};
     InetAddress addr{};
+    int64_t lastSeen{};
 
     explicit SraUeContext(int ueId) : ueId(ueId)
     {
