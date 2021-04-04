@@ -40,6 +40,8 @@ class NasMm
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
     // Most recent de-registration request
     std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    // Most recent service request
+    std::unique_ptr<nas::ServiceRequest> m_lastServiceRequest{};
     // Indicates the last de-registration cause
     EDeregCause m_lastDeregCause{};
     // Last time PLMN search is triggered
@@ -133,6 +135,7 @@ class NasMm
     nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
   private: /* Service */
+    void sendServiceRequest(EServiceReqCause reqCause);
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
 
@@ -152,6 +155,7 @@ class NasMm
     bool isHighPriority();
     bool hasEmergency();
     void setN1Capability(bool enabled);
+    bool isInNonAllowedArea();
 
   private: /* eCall */
     bool startECallInactivityIfNeeded();

@@ -52,7 +52,9 @@ class NasSm
     bool anyEmergencySession();
     void handleUplinkStatusChange(int psi, bool isPending);
     bool anyUplinkDataPending();
+    bool anyEmergencyUplinkDataPending();
     std::bitset<16> getUplinkDataStatus();
+    std::bitset<16> getPduSessionStatus();
 
     /* Session Release */
     void sendReleaseRequest(int psi);

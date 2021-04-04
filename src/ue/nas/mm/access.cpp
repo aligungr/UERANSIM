@@ -25,7 +25,7 @@ bool NasMm::hasEmergency()
         m_lastRegistrationRequest->registrationType.registrationType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
         return true;
 
-    // TODO: Other case which is an emergency PDU session is established, or need to be established (and wanted to be
+    // TODO: Other case which is an emergency PDU session need to be established (and wanted to be
     //  established soon)
     if (m_sm->anyEmergencySession())
         return true;
@@ -41,6 +41,29 @@ bool NasMm::isHighPriority()
 void NasMm::setN1Capability(bool enabled)
 {
     // TODO
+}
+
+bool NasMm::isInNonAllowedArea()
+{
+    if (!m_usim->isValid())
+        return false;
+    if (!m_usim->m_currentPlmn.has_value())
+        return false;
+
+    auto &plmn = *m_usim->m_currentPlmn;
+
+    if (nas::utils::ServiceAreaListForbidsPlmn(m_usim->m_serviceAreaList, nas::utils::PlmnFrom(plmn)))
+        return true;
+
+    if (m_usim->m_servingCell.has_value())
+    {
+        if (nas::utils::ServiceAreaListForbidsTai(
+                m_usim->m_serviceAreaList,
+                nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(plmn), octet3{m_usim->m_servingCell->tac}}))
+            return true;
+    }
+
+    return false;
 }
 
 } // namespace nr::ue
