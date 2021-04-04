@@ -34,7 +34,6 @@ enum class NtsMessageType
     UDP_SERVER_RECEIVE,
     CLI_SEND_RESPONSE,
 
-    GNB_MR_TO_RRC,
     GNB_SRA_TO_RRC,
     GNB_SRA_TO_GTP,
     GNB_GTP_TO_SRA,

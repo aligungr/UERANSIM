@@ -340,12 +340,6 @@ struct TaskBase
     GnbSraTask *sraTask{};
 };
 
-struct MrUeContext
-{
-    int ueId{};
-    std::string name{};
-};
-
 Json ToJson(const GnbStatusInfo &v);
 Json ToJson(const GnbConfig &v);
 Json ToJson(const NgapAmfContext &v);
