@@ -15,6 +15,7 @@
 #include <string>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
+#include <utils/network.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
 
@@ -102,6 +103,17 @@ struct NgapAmfContext
     OverloadInfo overloadInfo{};
     std::vector<ServedGuami *> servedGuamiList{};
     std::vector<PlmnSupport *> plmnSupportList{};
+};
+
+struct SraUeContext
+{
+    const int ueId;
+    uint64_t sti{};
+    InetAddress addr{};
+
+    explicit SraUeContext(int ueId) : ueId(ueId)
+    {
+    }
 };
 
 struct AggregateMaximumBitRate

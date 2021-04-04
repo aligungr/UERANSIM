@@ -13,6 +13,8 @@ namespace nr::gnb
 
 void GnbSraTask::receiveSraMessage(const InetAddress &addr, const sra::SraMessage &msg)
 {
+    updateUeInfo(addr, msg.sti);
+
     switch (msg.msgType)
     {
     case sra::EMessageType::CELL_INFO_REQUEST:

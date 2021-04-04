@@ -17,7 +17,7 @@
 namespace nr::gnb
 {
 
-GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}
+GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}, m_ueCtx{}, m_stiToUeId{}
 {
     m_logger = m_base->logBase->makeUniqueLogger("sra");
     m_sti = utils::Random64();

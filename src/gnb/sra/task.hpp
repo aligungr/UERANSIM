@@ -31,6 +31,8 @@ class GnbSraTask : public NtsTask
     udp::UdpServerTask *m_udpTask;
 
     uint64_t m_sti;
+    std::unordered_map<int, std::unique_ptr<SraUeContext>> m_ueCtx;
+    std::unordered_map<uint64_t, int> m_stiToUeId;
 
     friend class GnbCmdHandler;
 
@@ -49,6 +51,9 @@ class GnbSraTask : public NtsTask
 
   private: /* Handler */
     void handleCellInfoRequest(const InetAddress &addr, const sra::SraCellInfoRequest &msg);
+
+  private: /* UE Management */
+    void updateUeInfo(const InetAddress &addr, uint64_t sti);
 };
 
 } // namespace nr::gnb
