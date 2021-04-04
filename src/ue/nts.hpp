@@ -186,10 +186,27 @@ struct NwUeNasToApp : NtsMessage
     }
 };
 
+struct NwUeAppToSra : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int psi{};
+    OctetString pdu{};
+
+    explicit NwUeAppToSra(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_SRA), present(present)
+    {
+    }
+};
+
 struct NwUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;
     static constexpr const int SESSION_RELEASE = 2;
+    static constexpr const int CM_STATE = 3;
 
     const int what{};
 
@@ -198,6 +215,9 @@ struct NwUeStatusUpdate : NtsMessage
 
     // SESSION_RELEASE
     int psi{};
+
+    // CM_STATE
+    ECmState cmState{};
 
     explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {

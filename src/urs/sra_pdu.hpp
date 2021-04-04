@@ -28,7 +28,8 @@ enum class EMessageType : uint8_t
 enum class EPduType : uint8_t
 {
     RESERVED = 0,
-    RRC
+    RRC,
+    DATA
 };
 
 struct SraMessage

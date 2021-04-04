@@ -154,6 +154,10 @@ void NasMm::switchCmState(ECmState state)
 
     onSwitchCmState(oldState, m_cmState);
 
+    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::CM_STATE);
+    statusUpdate->cmState = m_cmState;
+    m_base->appTask->push(statusUpdate);
+
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::CM,
