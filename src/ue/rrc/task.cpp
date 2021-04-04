@@ -14,7 +14,7 @@
 #include <rrc/encode.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/sra/task.hpp>
+#include <ue/rls/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -49,7 +49,7 @@ void UeRrcTask::onLoop()
         switch (w->present)
         {
         case NwUeNasToRrc::PLMN_SEARCH_REQUEST: {
-            m_base->sraTask->push(new NwUeRrcToSra(NwUeRrcToSra::PLMN_SEARCH_REQUEST));
+            m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::PLMN_SEARCH_REQUEST));
             break;
         }
         case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
@@ -66,36 +66,36 @@ void UeRrcTask::onLoop()
             break;
         }
         case NwUeNasToRrc::CELL_SELECTION_COMMAND: {
-            auto *wr = new NwUeRrcToSra(NwUeRrcToSra::CELL_SELECTION_COMMAND);
+            auto *wr = new NwUeRrcToRls(NwUeRrcToRls::CELL_SELECTION_COMMAND);
             wr->cellId = w->cellId;
             wr->isSuitableCell = w->isSuitableCell;
-            m_base->sraTask->push(wr);
+            m_base->rlsTask->push(wr);
             break;
         }
         }
         break;
     }
-    case NtsMessageType::UE_SRA_TO_RRC: {
-        auto *w = dynamic_cast<NwUeSraToRrc *>(msg);
+    case NtsMessageType::UE_RLS_TO_RRC: {
+        auto *w = dynamic_cast<NwUeRlsToRrc *>(msg);
         switch (w->present)
         {
-        case NwUeSraToRrc::PLMN_SEARCH_RESPONSE: {
+        case NwUeRlsToRrc::PLMN_SEARCH_RESPONSE: {
             auto *wr = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
             wr->measurements = std::move(w->measurements);
             m_base->nasTask->push(wr);
             break;
         }
-        case NwUeSraToRrc::SERVING_CELL_CHANGE: {
+        case NwUeRlsToRrc::SERVING_CELL_CHANGE: {
             auto *wr = new NwUeRrcToNas(NwUeRrcToNas::SERVING_CELL_CHANGE);
             wr->servingCell = w->servingCell;
             m_base->nasTask->push(wr);
             break;
         }
-        case NwUeSraToRrc::RRC_PDU_DELIVERY: {
+        case NwUeRlsToRrc::RRC_PDU_DELIVERY: {
             handleDownlinkRrc(w->channel, w->pdu);
             break;
         }
-        case NwUeSraToRrc::RADIO_LINK_FAILURE: {
+        case NwUeRlsToRrc::RADIO_LINK_FAILURE: {
             handleRadioLinkFailure();
             break;
         }

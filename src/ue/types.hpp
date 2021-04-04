@@ -26,7 +26,7 @@ namespace nr::ue
 class UeAppTask;
 class NasTask;
 class UeRrcTask;
-class UeSraTask;
+class UeRlsTask;
 class UserEquipment;
 
 struct SupportedAlgs
@@ -124,7 +124,7 @@ struct TaskBase
     UeAppTask *appTask{};
     NasTask *nasTask{};
     UeRrcTask *rrcTask{};
-    UeSraTask *sraTask{};
+    UeRlsTask *rlsTask{};
 };
 
 struct UeTimers

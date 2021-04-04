@@ -11,7 +11,7 @@
 namespace nr::gnb
 {
 
-void GnbSraTask::receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg)
+void GnbRlsTask::receiveSraMessage(const InetAddress &addr, rls::SraMessage &msg)
 {
     if (!m_powerOn)
     {
@@ -23,12 +23,12 @@ void GnbSraTask::receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg
 
     switch (msg.msgType)
     {
-    case sra::EMessageType::CELL_INFO_REQUEST: {
-        handleCellInfoRequest(ueId, (const sra::SraCellInfoRequest &)msg);
+    case rls::EMessageType::CELL_INFO_REQUEST: {
+        handleCellInfoRequest(ueId, (const rls::SraCellInfoRequest &)msg);
         break;
     }
-    case sra::EMessageType::PDU_DELIVERY: {
-        handleUplinkPduDelivery(ueId, (sra::SraPduDelivery &)msg);
+    case rls::EMessageType::PDU_DELIVERY: {
+        handleUplinkPduDelivery(ueId, (rls::SraPduDelivery &)msg);
         break;
     }
     default:
@@ -37,7 +37,7 @@ void GnbSraTask::receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg
     }
 }
 
-void GnbSraTask::sendSraMessage(int ueId, const sra::SraMessage &msg)
+void GnbRlsTask::sendSraMessage(int ueId, const rls::SraMessage &msg)
 {
     if (!m_ueCtx.count(ueId))
     {
@@ -46,7 +46,7 @@ void GnbSraTask::sendSraMessage(int ueId, const sra::SraMessage &msg)
     }
 
     OctetString stream{};
-    sra::EncodeSraMessage(msg, stream);
+    rls::EncodeRlsMessage(msg, stream);
     m_udpTask->send(m_ueCtx[ueId]->addr, stream);
 }
 

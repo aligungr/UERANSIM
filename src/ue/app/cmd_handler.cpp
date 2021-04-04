@@ -11,7 +11,7 @@
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rrc/task.hpp>
-#include <ue/sra/task.hpp>
+#include <ue/rls/task.hpp>
 #include <ue/tun/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
@@ -47,14 +47,14 @@ void UeCmdHandler::pauseTasks()
 {
     m_base->nasTask->requestPause();
     m_base->rrcTask->requestPause();
-    m_base->sraTask->requestPause();
+    m_base->rlsTask->requestPause();
 }
 
 void UeCmdHandler::unpauseTasks()
 {
     m_base->nasTask->requestUnpause();
     m_base->rrcTask->requestUnpause();
-    m_base->sraTask->requestUnpause();
+    m_base->rlsTask->requestUnpause();
 }
 
 bool UeCmdHandler::isAllPaused()
@@ -63,7 +63,7 @@ bool UeCmdHandler::isAllPaused()
         return false;
     if (!m_base->rrcTask->isPauseConfirmed())
         return false;
-    if (!m_base->sraTask->isPauseConfirmed())
+    if (!m_base->rlsTask->isPauseConfirmed())
         return false;
     return true;
 }
@@ -115,7 +115,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
             {"5u-state", ToJson(m_base->nasTask->mm->m_usim->m_uState)},
             {"camped-cell",
-             ::ToJson(m_base->sraTask->m_servingCell.has_value() ? m_base->sraTask->m_servingCell->gnbName : "")},
+             ::ToJson(m_base->rlsTask->m_servingCell.has_value() ? m_base->rlsTask->m_servingCell->gnbName : "")},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_usim->m_storedSuci)},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_usim->m_storedGuti)},
@@ -164,7 +164,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::COVERAGE: {
-        auto &map = m_base->sraTask->m_activeMeasurements;
+        auto &map = m_base->rlsTask->m_activeMeasurements;
         if (map.empty())
         {
             sendResult(msg.address, "No cell exists in the range");

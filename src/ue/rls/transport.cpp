@@ -15,15 +15,15 @@
 namespace nr::ue
 {
 
-void UeSraTask::receiveSraMessage(const InetAddress &address, sra::SraMessage &msg)
+void UeRlsTask::receiveRlsMessage(const InetAddress &address, rls::SraMessage &msg)
 {
     switch (msg.msgType)
     {
-    case sra::EMessageType::CELL_INFO_RESPONSE: {
-        receiveCellInfoResponse((const sra::SraCellInfoResponse &)msg);
+    case rls::EMessageType::CELL_INFO_RESPONSE: {
+        receiveCellInfoResponse((const rls::SraCellInfoResponse &)msg);
         break;
-    case sra::EMessageType::PDU_DELIVERY: {
-        deliverDownlinkPdu((sra::SraPduDelivery &)msg);
+    case rls::EMessageType::PDU_DELIVERY: {
+        deliverDownlinkPdu((rls::SraPduDelivery &)msg);
         break;
     }
     default:
@@ -33,14 +33,14 @@ void UeSraTask::receiveSraMessage(const InetAddress &address, sra::SraMessage &m
     }
 }
 
-void UeSraTask::sendSraMessage(const InetAddress &address, const sra::SraMessage &msg)
+void UeRlsTask::sendRlsMessage(const InetAddress &address, const rls::SraMessage &msg)
 {
     OctetString stream{};
-    sra::EncodeSraMessage(msg, stream);
+    rls::EncodeRlsMessage(msg, stream);
     m_udpTask->send(address, stream);
 }
 
-void UeSraTask::deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, OctetString &&payload)
+void UeRlsTask::deliverUplinkPdu(rls::EPduType pduType, OctetString &&pdu, OctetString &&payload)
 {
     if (!m_servingCell.has_value())
     {
@@ -48,25 +48,25 @@ void UeSraTask::deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, Octet
         return;
     }
 
-    sra::SraPduDelivery msg{m_sti};
+    rls::SraPduDelivery msg{m_sti};
     msg.pduType = pduType;
     msg.pdu = std::move(pdu);
     msg.payload = std::move(payload);
-    sendSraMessage(InetAddress{m_servingCell->linkIp, cons::PortalPort}, msg);
+    sendRlsMessage(InetAddress{m_servingCell->linkIp, cons::PortalPort}, msg);
 }
 
-void UeSraTask::deliverDownlinkPdu(sra::SraPduDelivery &msg)
+void UeRlsTask::deliverDownlinkPdu(rls::SraPduDelivery &msg)
 {
-    if (msg.pduType == sra::EPduType::RRC)
+    if (msg.pduType == rls::EPduType::RRC)
     {
-        auto *nw = new NwUeSraToRrc(NwUeSraToRrc::RRC_PDU_DELIVERY);
+        auto *nw = new NwUeRlsToRrc(NwUeRlsToRrc::RRC_PDU_DELIVERY);
         nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
         nw->pdu = std::move(msg.pdu);
         m_base->rrcTask->push(nw);
     }
-    else if (msg.pduType == sra::EPduType::DATA)
+    else if (msg.pduType == rls::EPduType::DATA)
     {
-        auto *nw = new NwUeSraToApp(NwUeSraToApp::DATA_PDU_DELIVERY);
+        auto *nw = new NwUeRlsToApp(NwUeRlsToApp::DATA_PDU_DELIVERY);
         nw->psi = msg.payload.get4I(0);
         nw->pdu = std::move(msg.pdu);
         m_base->appTask->push(nw);

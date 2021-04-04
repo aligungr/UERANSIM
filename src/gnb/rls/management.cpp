@@ -16,7 +16,7 @@ static const int64_t LAST_SEEN_THRESHOLD = 3000;
 namespace nr::gnb
 {
 
-int GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
+int GnbRlsTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
 {
     if (m_stiToUeId.count(sti))
     {
@@ -41,7 +41,7 @@ int GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
     }
 }
 
-void GnbSraTask::onPeriodicLostControl()
+void GnbRlsTask::onPeriodicLostControl()
 {
     int64_t current = utils::CurrentTimeMillis();
 
@@ -64,7 +64,7 @@ void GnbSraTask::onPeriodicLostControl()
         m_ueCtx.erase(ueId);
         m_logger->debug("Signal lost detected for UE[%d]", ueId);
 
-        auto *w = new NwGnbSraToRrc(NwGnbSraToRrc::SIGNAL_LOST);
+        auto *w = new NwGnbRlsToRrc(NwGnbRlsToRrc::SIGNAL_LOST);
         w->ueId = ueId;
         m_base->rrcTask->push(w);
     }

@@ -17,7 +17,7 @@ static const int TIMER_PERIOD_MEASUREMENT = 2000;
 namespace nr::ue
 {
 
-UeSraTask::UeSraTask(TaskBase *base)
+UeRlsTask::UeRlsTask(TaskBase *base)
     : m_base{base}, m_udpTask{}, m_cellSearchSpace{}, m_pendingMeasurements{}, m_activeMeasurements{}, m_servingCell{}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "sra");
@@ -28,7 +28,7 @@ UeSraTask::UeSraTask(TaskBase *base)
     m_sti = utils::Random64();
 }
 
-void UeSraTask::onStart()
+void UeRlsTask::onStart()
 {
     m_udpTask = new udp::UdpServerTask(this);
 
@@ -42,7 +42,7 @@ void UeSraTask::onStart()
     onMeasurement();
 }
 
-void UeSraTask::onLoop()
+void UeRlsTask::onLoop()
 {
     NtsMessage *msg = take();
     if (!msg)
@@ -50,29 +50,29 @@ void UeSraTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RRC_TO_SRA: {
-        auto *w = dynamic_cast<NwUeRrcToSra *>(msg);
+    case NtsMessageType::UE_RRC_TO_RLS: {
+        auto *w = dynamic_cast<NwUeRrcToRls *>(msg);
         switch (w->present)
         {
-        case NwUeRrcToSra::PLMN_SEARCH_REQUEST:
+        case NwUeRrcToRls::PLMN_SEARCH_REQUEST:
             plmnSearchRequested();
             break;
-        case NwUeRrcToSra::CELL_SELECTION_COMMAND:
+        case NwUeRrcToRls::CELL_SELECTION_COMMAND:
             handleCellSelectionCommand(w->cellId, w->isSuitableCell);
             break;
-        case NwUeRrcToSra::RRC_PDU_DELIVERY:
-            deliverUplinkPdu(sra::EPduType::RRC, std::move(w->pdu),
+        case NwUeRrcToRls::RRC_PDU_DELIVERY:
+            deliverUplinkPdu(rls::EPduType::RRC, std::move(w->pdu),
                              OctetString::FromOctet4(static_cast<int>(w->channel)));
             break;
         }
         break;
     }
-    case NtsMessageType::UE_APP_TO_SRA: {
-        auto *w = dynamic_cast<NwUeAppToSra *>(msg);
+    case NtsMessageType::UE_APP_TO_RLS: {
+        auto *w = dynamic_cast<NwUeAppToRls *>(msg);
         switch (w->present)
         {
-        case NwUeAppToSra::DATA_PDU_DELIVERY: {
-            deliverUplinkPdu(sra::EPduType::DATA, std::move(w->pdu), OctetString::FromOctet4(static_cast<int>(w->psi)));
+        case NwUeAppToRls::DATA_PDU_DELIVERY: {
+            deliverUplinkPdu(rls::EPduType::DATA, std::move(w->pdu), OctetString::FromOctet4(static_cast<int>(w->psi)));
             break;
         }
         }
@@ -89,13 +89,13 @@ void UeSraTask::onLoop()
     }
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto sraMsg = sra::DecodeSraMessage(OctetView{w->packet});
-        if (sraMsg == nullptr)
+        auto rlsMsg = rls::DecodeRlsMessage(OctetView{w->packet});
+        if (rlsMsg == nullptr)
         {
-            m_logger->err("Unable to decode SRA message");
+            m_logger->err("Unable to decode RLS message");
             break;
         }
-        receiveSraMessage(w->fromAddress, *sraMsg);
+        receiveRlsMessage(w->fromAddress, *rlsMsg);
         break;
     }
     default:
@@ -106,7 +106,7 @@ void UeSraTask::onLoop()
     delete msg;
 }
 
-void UeSraTask::onQuit()
+void UeRlsTask::onQuit()
 {
     m_udpTask->quit();
     delete m_udpTask;

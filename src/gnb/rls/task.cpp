@@ -20,13 +20,14 @@ static const int TIMER_PERIOD_LOST_CONTROL = 2000;
 namespace nr::gnb
 {
 
-GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}, m_ueCtx{}, m_stiToUeId{}, m_ueIdCounter{}
+GnbRlsTask::GnbRlsTask(TaskBase *base)
+    : m_base{base}, m_udpTask{}, m_powerOn{}, m_ueCtx{}, m_stiToUeId{}, m_ueIdCounter{}
 {
-    m_logger = m_base->logBase->makeUniqueLogger("sra");
+    m_logger = m_base->logBase->makeUniqueLogger("rls");
     m_sti = utils::Random64();
 }
 
-void GnbSraTask::onStart()
+void GnbRlsTask::onStart()
 {
     try
     {
@@ -35,7 +36,7 @@ void GnbSraTask::onStart()
     }
     catch (const LibError &e)
     {
-        m_logger->err("SRA failure [%s]", e.what());
+        m_logger->err("RLS failure [%s]", e.what());
         quit();
         return;
     }
@@ -43,7 +44,7 @@ void GnbSraTask::onStart()
     setTimer(TIMER_ID_LOST_CONTROL, TIMER_PERIOD_LOST_CONTROL);
 }
 
-void GnbSraTask::onLoop()
+void GnbRlsTask::onLoop()
 {
     NtsMessage *msg = take();
     if (!msg)
@@ -51,28 +52,28 @@ void GnbSraTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::GNB_RRC_TO_SRA: {
-        auto *w = dynamic_cast<NwGnbRrcToSra *>(msg);
+    case NtsMessageType::GNB_RRC_TO_RLS: {
+        auto *w = dynamic_cast<NwGnbRrcToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbRrcToSra::RRC_PDU_DELIVERY: {
-            handleDownlinkDelivery(w->ueId, sra::EPduType::RRC, std::move(w->pdu),
+        case NwGnbRrcToRls::RRC_PDU_DELIVERY: {
+            handleDownlinkDelivery(w->ueId, rls::EPduType::RRC, std::move(w->pdu),
                                    OctetString::FromOctet4(static_cast<int>(w->channel)));
             break;
         }
-        case NwGnbRrcToSra::RADIO_POWER_ON: {
+        case NwGnbRrcToRls::RADIO_POWER_ON: {
             m_powerOn = true;
             break;
         }
         }
         break;
     }
-    case NtsMessageType::GNB_GTP_TO_SRA: {
-        auto *w = dynamic_cast<NwGnbGtpToSra *>(msg);
+    case NtsMessageType::GNB_GTP_TO_RLS: {
+        auto *w = dynamic_cast<NwGnbGtpToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbGtpToSra::DATA_PDU_DELIVERY: {
-            handleDownlinkDelivery(w->ueId, sra::EPduType::DATA, std::move(w->pdu),
+        case NwGnbGtpToRls::DATA_PDU_DELIVERY: {
+            handleDownlinkDelivery(w->ueId, rls::EPduType::DATA, std::move(w->pdu),
                                    OctetString::FromOctet4(static_cast<int>(w->psi)));
             break;
         }
@@ -81,7 +82,7 @@ void GnbSraTask::onLoop()
     }
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto sraMsg = sra::DecodeSraMessage(OctetView{w->packet});
+        auto sraMsg = rls::DecodeRlsMessage(OctetView{w->packet});
         if (sraMsg == nullptr)
         {
             m_logger->err("Unable to decode SRA message");
@@ -107,7 +108,7 @@ void GnbSraTask::onLoop()
     delete msg;
 }
 
-void GnbSraTask::onQuit()
+void GnbRlsTask::onQuit()
 {
     if (m_udpTask != nullptr)
         m_udpTask->quit();

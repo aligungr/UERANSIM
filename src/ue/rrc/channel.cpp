@@ -9,7 +9,7 @@
 #include "task.hpp"
 
 #include <rrc/encode.hpp>
-#include <ue/sra/task.hpp>
+#include <ue/rls/task.hpp>
 
 #include <asn/rrc/ASN_RRC_RRCReject.h>
 #include <asn/rrc/ASN_RRC_RRCSetup.h>
@@ -107,10 +107,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::BCCH_BCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
@@ -122,10 +122,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::BCCH_DL_SCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_DL_CCCH_Message *msg)
@@ -137,10 +137,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_DL_CCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::DL_CCCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
@@ -152,10 +152,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::DL_DCCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_PCCH_Message *msg)
@@ -167,10 +167,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_PCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::PCCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
@@ -182,10 +182,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::UL_CCCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg)
@@ -197,10 +197,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::UL_CCCH1;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
@@ -212,10 +212,10 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NwUeRrcToSra(NwUeRrcToSra::RRC_PDU_DELIVERY);
+    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
     nw->channel = rrc::RrcChannel::UL_DCCH;
     nw->pdu = std::move(pdu);
-    m_base->sraTask->push(nw);
+    m_base->rlsTask->push(nw);
 }
 
 void UeRrcTask::receiveRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)

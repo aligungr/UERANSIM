@@ -14,7 +14,7 @@
 #include <thread>
 #include <udp/server_task.hpp>
 #include <unordered_map>
-#include <urs/sra_pdu.hpp>
+#include <urs/rls_pdu.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <vector>
@@ -22,7 +22,7 @@
 namespace nr::gnb
 {
 
-class GnbSraTask : public NtsTask
+class GnbRlsTask : public NtsTask
 {
   private:
     TaskBase *m_base;
@@ -38,8 +38,8 @@ class GnbSraTask : public NtsTask
     friend class GnbCmdHandler;
 
   public:
-    explicit GnbSraTask(TaskBase *base);
-    ~GnbSraTask() override = default;
+    explicit GnbRlsTask(TaskBase *base);
+    ~GnbRlsTask() override = default;
 
   protected:
     void onStart() override;
@@ -47,13 +47,13 @@ class GnbSraTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSraMessage(const InetAddress &addr, sra::SraMessage &msg);
-    void sendSraMessage(int ueId, const sra::SraMessage &msg);
+    void receiveSraMessage(const InetAddress &addr, rls::SraMessage &msg);
+    void sendSraMessage(int ueId, const rls::SraMessage &msg);
 
   private: /* Handler */
-    void handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &msg);
-    void handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg);
-    void handleDownlinkDelivery(int ueId, sra::EPduType pduType, OctetString &&pdu, OctetString &&payload);
+    void handleCellInfoRequest(int ueId, const rls::SraCellInfoRequest &msg);
+    void handleUplinkPduDelivery(int ueId, rls::SraPduDelivery &msg);
+    void handleDownlinkDelivery(int ueId, rls::EPduType pduType, OctetString &&pdu, OctetString &&payload);
 
   private: /* UE Management */
     int updateUeInfo(const InetAddress &addr, uint64_t sti);

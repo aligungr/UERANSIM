@@ -14,7 +14,7 @@
 namespace nr::ue
 {
 
-void UeSraTask::onMeasurement()
+void UeRlsTask::onMeasurement()
 {
     std::vector<GlobalNci> entered{};
     std::vector<GlobalNci> exited{};
@@ -41,12 +41,12 @@ void UeSraTask::onMeasurement()
     // Issue another cell info request for each address in the search space
     for (auto &ip : m_cellSearchSpace)
     {
-        sra::SraCellInfoRequest req{m_sti};
-        sendSraMessage(ip, req);
+        rls::SraCellInfoRequest req{m_sti};
+        sendRlsMessage(ip, req);
     }
 }
 
-void UeSraTask::receiveCellInfoResponse(const sra::SraCellInfoResponse &msg)
+void UeRlsTask::receiveCellInfoResponse(const rls::SraCellInfoResponse &msg)
 {
     UeCellMeasurement meas{};
     meas.sti = msg.sti;
@@ -59,7 +59,7 @@ void UeSraTask::receiveCellInfoResponse(const sra::SraCellInfoResponse &msg)
     m_pendingMeasurements[meas.cellId] = meas;
 }
 
-void UeSraTask::onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited)
+void UeRlsTask::onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited)
 {
     m_logger->debug("Coverage change detected. [%d] cell entered, [%d] cell exited", static_cast<int>(entered.size()),
                     static_cast<int>(exited.size()));
@@ -71,22 +71,22 @@ void UeSraTask::onCoverageChange(const std::vector<GlobalNci> &entered, const st
     {
         m_logger->warn("Signal lost from camped cell");
         m_servingCell = std::nullopt;
-        m_base->rrcTask->push(new NwUeSraToRrc(NwUeSraToRrc::RADIO_LINK_FAILURE));
+        m_base->rrcTask->push(new NwUeRlsToRrc(NwUeRlsToRrc::RADIO_LINK_FAILURE));
     }
 }
 
-void UeSraTask::plmnSearchRequested()
+void UeRlsTask::plmnSearchRequested()
 {
     std::vector<UeCellMeasurement> measurements{};
     for (auto &m : m_activeMeasurements)
         measurements.push_back(m.second);
 
-    auto *w = new NwUeSraToRrc(NwUeSraToRrc::PLMN_SEARCH_RESPONSE);
+    auto *w = new NwUeRlsToRrc(NwUeRlsToRrc::PLMN_SEARCH_RESPONSE);
     w->measurements = std::move(measurements);
     m_base->rrcTask->push(w);
 }
 
-void UeSraTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
+void UeRlsTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
 {
     if (!m_activeMeasurements.count(cellId))
     {
@@ -104,7 +104,7 @@ void UeSraTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuita
     m_servingCell->linkIp = measurement.linkIp;
     m_servingCell->cellCategory = isSuitable ? ECellCategory::SUITABLE_CELL : ECellCategory::ACCEPTABLE_CELL;
 
-    auto *w = new NwUeSraToRrc(NwUeSraToRrc::SERVING_CELL_CHANGE);
+    auto *w = new NwUeRlsToRrc(NwUeRlsToRrc::SERVING_CELL_CHANGE);
     w->servingCell = *m_servingCell;
     m_base->rrcTask->push(w);
 }

@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "sra_pdu.hpp"
+#include "rls_pdu.hpp"
 #include <utils/constants.hpp>
 
-namespace sra
+namespace rls
 {
 
 static void AppendPlmn(const Plmn &plmn, OctetString &stream)
@@ -42,7 +42,7 @@ static GlobalNci DecodeGlobalNci(const OctetView &stream)
     return res;
 }
 
-void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
+void EncodeRlsMessage(const SraMessage &msg, OctetString &stream)
 {
     stream.appendOctet(0x03); // (Just for old RLS compatibility)
 
@@ -80,7 +80,7 @@ void EncodeSraMessage(const SraMessage &msg, OctetString &stream)
     }
 }
 
-std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream)
+std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream)
 {
     auto first = stream.readI(); // (Just for old RLS compatibility)
     if (first != 3)

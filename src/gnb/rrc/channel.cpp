@@ -9,7 +9,7 @@
 #include "task.hpp"
 #include <asn/rrc/ASN_RRC_UL-CCCH-Message.h>
 #include <asn/rrc/ASN_RRC_UL-DCCH-Message.h>
-#include <gnb/sra/task.hpp>
+#include <gnb/rls/task.hpp>
 #include <rrc/encode.hpp>
 
 namespace nr::gnb
@@ -103,11 +103,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_BCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::BCCH_BCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg)
@@ -119,11 +119,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::BCCH_DL_SCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg)
@@ -135,11 +135,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::DL_CCCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg)
@@ -151,11 +151,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::DL_DCCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_PCCH_Message *msg)
@@ -167,11 +167,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_PCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::PCCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_UL_CCCH_Message *msg)
@@ -183,11 +183,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_UL_CCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::UL_CCCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_UL_CCCH1_Message *msg)
@@ -199,11 +199,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_UL_CCCH1_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::UL_CCCH1;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_UL_DCCH_Message *msg)
@@ -215,11 +215,11 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_UL_DCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToSra(NwGnbRrcToSra::RRC_PDU_DELIVERY);
+    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::UL_DCCH;
     w->pdu = std::move(pdu);
-    m_base->sraTask->push(w);
+    m_base->rlsTask->push(w);
 }
 
 void GnbRrcTask::receiveRrcMessage(int ueId, ASN_RRC_BCCH_BCH_Message *msg)

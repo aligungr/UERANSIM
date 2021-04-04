@@ -10,7 +10,7 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 #include <gnb/nts.hpp>
-#include <gnb/sra/task.hpp>
+#include <gnb/rls/task.hpp>
 #include <rrc/encode.hpp>
 
 namespace nr::gnb
@@ -38,15 +38,15 @@ void GnbRrcTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::GNB_SRA_TO_RRC: {
-        auto *w = dynamic_cast<NwGnbSraToRrc *>(msg);
+    case NtsMessageType::GNB_RLS_TO_RRC: {
+        auto *w = dynamic_cast<NwGnbRlsToRrc *>(msg);
         switch (w->present)
         {
-        case NwGnbSraToRrc::RRC_PDU_DELIVERY: {
+        case NwGnbRlsToRrc::RRC_PDU_DELIVERY: {
             handleUplinkRrc(w->ueId, w->channel, w->pdu);
             break;
         }
-        case NwGnbSraToRrc::SIGNAL_LOST: {
+        case NwGnbRlsToRrc::SIGNAL_LOST: {
             handleRadioLinkFailure(w->ueId);
             break;
         }
@@ -58,7 +58,7 @@ void GnbRrcTask::onLoop()
         switch (w->present)
         {
         case NwGnbNgapToRrc::RADIO_POWER_ON: {
-            m_base->sraTask->push(new NwGnbRrcToSra(NwGnbRrcToSra::RADIO_POWER_ON));
+            m_base->rlsTask->push(new NwGnbRrcToRls(NwGnbRrcToRls::RADIO_POWER_ON));
             break;
         }
         case NwGnbNgapToRrc::NAS_DELIVERY: {

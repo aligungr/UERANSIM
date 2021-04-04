@@ -15,7 +15,7 @@
 #include <udp/server_task.hpp>
 #include <ue/types.hpp>
 #include <unordered_map>
-#include <urs/sra_pdu.hpp>
+#include <urs/rls_pdu.hpp>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
@@ -24,7 +24,7 @@
 namespace nr::ue
 {
 
-class UeSraTask : public NtsTask
+class UeRlsTask : public NtsTask
 {
   private:
     TaskBase *m_base;
@@ -41,8 +41,8 @@ class UeSraTask : public NtsTask
     friend class UeCmdHandler;
 
   public:
-    explicit UeSraTask(TaskBase *base);
-    ~UeSraTask() override = default;
+    explicit UeRlsTask(TaskBase *base);
+    ~UeRlsTask() override = default;
 
   protected:
     void onStart() override;
@@ -50,14 +50,14 @@ class UeSraTask : public NtsTask
     void onQuit() override;
 
   private: /* Transport */
-    void receiveSraMessage(const InetAddress &address, sra::SraMessage &msg);
-    void sendSraMessage(const InetAddress &address, const sra::SraMessage &msg);
-    void deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, OctetString &&payload);
-    void deliverDownlinkPdu(sra::SraPduDelivery &msg);
+    void receiveRlsMessage(const InetAddress &address, rls::SraMessage &msg);
+    void sendRlsMessage(const InetAddress &address, const rls::SraMessage &msg);
+    void deliverUplinkPdu(rls::EPduType pduType, OctetString &&pdu, OctetString &&payload);
+    void deliverDownlinkPdu(rls::SraPduDelivery &msg);
 
   private: /* Measurement */
     void onMeasurement();
-    void receiveCellInfoResponse(const sra::SraCellInfoResponse &msg);
+    void receiveCellInfoResponse(const rls::SraCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
     void plmnSearchRequested();
     void handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable);

@@ -110,7 +110,7 @@ struct NwUeNasToRrc : NtsMessage
     }
 };
 
-struct NwUeRrcToSra : NtsMessage
+struct NwUeRrcToRls : NtsMessage
 {
     enum PR
     {
@@ -127,12 +127,12 @@ struct NwUeRrcToSra : NtsMessage
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
-    explicit NwUeRrcToSra(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_SRA), present(present)
+    explicit NwUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeSraToRrc : NtsMessage
+struct NwUeRlsToRrc : NtsMessage
 {
     enum PR
     {
@@ -152,7 +152,7 @@ struct NwUeSraToRrc : NtsMessage
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
-    explicit NwUeSraToRrc(PR present) : NtsMessage(NtsMessageType::UE_SRA_TO_RRC), present(present)
+    explicit NwUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
     {
     }
 };
@@ -186,7 +186,7 @@ struct NwUeNasToApp : NtsMessage
     }
 };
 
-struct NwUeAppToSra : NtsMessage
+struct NwUeAppToRls : NtsMessage
 {
     enum PR
     {
@@ -197,12 +197,12 @@ struct NwUeAppToSra : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwUeAppToSra(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_SRA), present(present)
+    explicit NwUeAppToRls(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeSraToApp : NtsMessage
+struct NwUeRlsToApp : NtsMessage
 {
     enum PR
     {
@@ -213,7 +213,7 @@ struct NwUeSraToApp : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwUeSraToApp(PR present) : NtsMessage(NtsMessageType::UE_SRA_TO_APP), present(present)
+    explicit NwUeRlsToApp(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_APP), present(present)
     {
     }
 };

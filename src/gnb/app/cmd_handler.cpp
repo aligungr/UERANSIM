@@ -12,7 +12,7 @@
 #include <gnb/gtp/task.hpp>
 #include <gnb/ngap/task.hpp>
 #include <gnb/rrc/task.hpp>
-#include <gnb/sra/task.hpp>
+#include <gnb/rls/task.hpp>
 #include <gnb/sctp/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
@@ -36,7 +36,7 @@ void GnbCmdHandler::sendError(const InetAddress &address, const std::string &out
 void GnbCmdHandler::pauseTasks()
 {
     m_base->gtpTask->requestPause();
-    m_base->sraTask->requestPause();
+    m_base->rlsTask->requestPause();
     m_base->ngapTask->requestPause();
     m_base->rrcTask->requestPause();
     m_base->sctpTask->requestPause();
@@ -45,7 +45,7 @@ void GnbCmdHandler::pauseTasks()
 void GnbCmdHandler::unpauseTasks()
 {
     m_base->gtpTask->requestUnpause();
-    m_base->sraTask->requestUnpause();
+    m_base->rlsTask->requestUnpause();
     m_base->ngapTask->requestUnpause();
     m_base->rrcTask->requestUnpause();
     m_base->sctpTask->requestUnpause();
@@ -55,7 +55,7 @@ bool GnbCmdHandler::isAllPaused()
 {
     if (!m_base->gtpTask->isPauseConfirmed())
         return false;
-    if (!m_base->sraTask->isPauseConfirmed())
+    if (!m_base->rlsTask->isPauseConfirmed())
         return false;
     if (!m_base->ngapTask->isPauseConfirmed())
         return false;

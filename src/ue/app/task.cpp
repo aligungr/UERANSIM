@@ -9,7 +9,7 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <nas/utils.hpp>
-#include <ue/sra/task.hpp>
+#include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -50,11 +50,11 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_SRA_TO_APP: {
-        auto *w = dynamic_cast<NwUeSraToApp *>(msg);
+    case NtsMessageType::UE_RLS_TO_APP: {
+        auto *w = dynamic_cast<NwUeRlsToApp *>(msg);
         switch (w->present)
         {
-        case NwUeSraToApp::DATA_PDU_DELIVERY: {
+        case NwUeRlsToApp::DATA_PDU_DELIVERY: {
             auto *tunTask = m_tunTasks[w->psi];
             if (tunTask)
             {
@@ -226,10 +226,10 @@ void UeAppTask::handleUplinkDataRequest(int psi, OctetString &&data)
 {
     if (m_cmState == ECmState::CM_CONNECTED)
     {
-        auto *nw = new NwUeAppToSra(NwUeAppToSra::DATA_PDU_DELIVERY);
+        auto *nw = new NwUeAppToRls(NwUeAppToRls::DATA_PDU_DELIVERY);
         nw->psi = psi;
         nw->pdu = std::move(data);
-        m_base->sraTask->push(nw);
+        m_base->rlsTask->push(nw);
     }
     else
     {

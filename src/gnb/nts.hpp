@@ -23,7 +23,7 @@
 namespace nr::gnb
 {
 
-struct NwGnbSraToRrc : NtsMessage
+struct NwGnbRlsToRrc : NtsMessage
 {
     enum PR
     {
@@ -39,12 +39,12 @@ struct NwGnbSraToRrc : NtsMessage
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
-    explicit NwGnbSraToRrc(PR present) : NtsMessage(NtsMessageType::GNB_SRA_TO_RRC), present(present)
+    explicit NwGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
     {
     }
 };
 
-struct NwGnbSraToGtp : NtsMessage
+struct NwGnbRlsToGtp : NtsMessage
 {
     enum PR
     {
@@ -56,12 +56,12 @@ struct NwGnbSraToGtp : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwGnbSraToGtp(PR present) : NtsMessage(NtsMessageType::GNB_SRA_TO_GTP), present(present)
+    explicit NwGnbRlsToGtp(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_GTP), present(present)
     {
     }
 };
 
-struct NwGnbGtpToSra : NtsMessage
+struct NwGnbGtpToRls : NtsMessage
 {
     enum PR
     {
@@ -73,12 +73,12 @@ struct NwGnbGtpToSra : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwGnbGtpToSra(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_SRA), present(present)
+    explicit NwGnbGtpToRls(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_RLS), present(present)
     {
     }
 };
 
-struct NwGnbRrcToSra : NtsMessage
+struct NwGnbRrcToRls : NtsMessage
 {
     enum PR
     {
@@ -91,7 +91,7 @@ struct NwGnbRrcToSra : NtsMessage
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
-    explicit NwGnbRrcToSra(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_SRA), present(present)
+    explicit NwGnbRrcToRls(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_RLS), present(present)
     {
     }
 };

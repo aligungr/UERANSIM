@@ -26,7 +26,7 @@ class GnbAppTask;
 class GtpTask;
 class NgapTask;
 class GnbRrcTask;
-class GnbSraTask;
+class GnbRlsTask;
 class SctpTask;
 
 enum class EAmfState
@@ -337,7 +337,7 @@ struct TaskBase
     NgapTask *ngapTask{};
     GnbRrcTask *rrcTask{};
     SctpTask *sctpTask{};
-    GnbSraTask *sraTask{};
+    GnbRlsTask *rlsTask{};
 };
 
 Json ToJson(const GnbStatusInfo &v);

@@ -14,7 +14,7 @@
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
 
-namespace sra
+namespace rls
 {
 
 enum class EMessageType : uint8_t
@@ -75,7 +75,7 @@ struct SraPduDelivery : SraMessage
     }
 };
 
-void EncodeSraMessage(const SraMessage &msg, OctetString &stream);
-std::unique_ptr<SraMessage> DecodeSraMessage(const OctetView &stream);
+void EncodeRlsMessage(const SraMessage &msg, OctetString &stream);
+std::unique_ptr<SraMessage> DecodeRlsMessage(const OctetView &stream);
 
 } // namespace sra

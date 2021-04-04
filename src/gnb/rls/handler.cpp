@@ -28,7 +28,7 @@ static int EstimateSimulatedDbm(const Vector3 &myPos, const Vector3 &uePos)
 namespace nr::gnb
 {
 
-void GnbSraTask::handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &msg)
+void GnbRlsTask::handleCellInfoRequest(int ueId, const rls::SraCellInfoRequest &msg)
 {
     int dbm = EstimateSimulatedDbm(m_base->config->phyLocation, msg.simPos);
     if (dbm < MIN_ALLOWED_DBM)
@@ -37,7 +37,7 @@ void GnbSraTask::handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &
         return;
     }
 
-    sra::SraCellInfoResponse resp{m_sti};
+    rls::SraCellInfoResponse resp{m_sti};
     resp.cellId.nci = m_base->config->nci;
     resp.cellId.plmn = m_base->config->plmn;
     resp.tac = m_base->config->tac;
@@ -48,19 +48,19 @@ void GnbSraTask::handleCellInfoRequest(int ueId, const sra::SraCellInfoRequest &
     sendSraMessage(ueId, resp);
 }
 
-void GnbSraTask::handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg)
+void GnbRlsTask::handleUplinkPduDelivery(int ueId, rls::SraPduDelivery &msg)
 {
-    if (msg.pduType == sra::EPduType::RRC)
+    if (msg.pduType == rls::EPduType::RRC)
     {
-        auto *nw = new NwGnbSraToRrc(NwGnbSraToRrc::RRC_PDU_DELIVERY);
+        auto *nw = new NwGnbRlsToRrc(NwGnbRlsToRrc::RRC_PDU_DELIVERY);
         nw->ueId = ueId;
         nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
         nw->pdu = std::move(msg.pdu);
         m_base->rrcTask->push(nw);
     }
-    else if (msg.pduType == sra::EPduType::DATA)
+    else if (msg.pduType == rls::EPduType::DATA)
     {
-        auto *nw = new NwGnbSraToGtp(NwGnbSraToGtp::DATA_PDU_DELIVERY);
+        auto *nw = new NwGnbRlsToGtp(NwGnbRlsToGtp::DATA_PDU_DELIVERY);
         nw->ueId = ueId;
         nw->psi = msg.payload.get4I(0);
         nw->pdu = std::move(msg.pdu);
@@ -68,9 +68,9 @@ void GnbSraTask::handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg)
     }
 }
 
-void GnbSraTask::handleDownlinkDelivery(int ueId, sra::EPduType pduType, OctetString &&pdu, OctetString &&payload)
+void GnbRlsTask::handleDownlinkDelivery(int ueId, rls::EPduType pduType, OctetString &&pdu, OctetString &&payload)
 {
-    sra::SraPduDelivery resp{m_sti};
+    rls::SraPduDelivery resp{m_sti};
     resp.pduType = pduType;
     resp.pdu = std::move(pdu);
     resp.payload = std::move(payload);
