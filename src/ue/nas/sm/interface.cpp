@@ -39,40 +39,4 @@ void NasSm::onTimerTick()
     }
 }
 
-bool NasSm::anyUplinkDataPending()
-{
-    auto status = getUplinkDataStatus();
-    for (int i = 1; i < 16; i++)
-        if (status[i])
-            return true;
-    return false;
-}
-
-bool NasSm::anyEmergencyUplinkDataPending()
-{
-    auto status = getUplinkDataStatus();
-    for (int i = 1; i < 16; i++)
-        if (status[i] && m_pduSessions[i]->isEmergency)
-            return true;
-    return false;
-}
-
-std::bitset<16> NasSm::getUplinkDataStatus()
-{
-    std::bitset<16> res{};
-    for (int i = 1; i < 16; i++)
-        if (m_pduSessions[i]->psState == EPsState::ACTIVE && m_pduSessions[i]->uplinkPending)
-            res[i] = true;
-    return res;
-}
-
-std::bitset<16> NasSm::getPduSessionStatus()
-{
-    std::bitset<16> res{};
-    for (int i = 1; i < 16; i++)
-        if (m_pduSessions[i]->psState == EPsState::ACTIVE)
-            res[i] = true;
-    return res;
-}
-
 } // namespace nr::ue
