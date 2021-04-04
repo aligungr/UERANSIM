@@ -395,6 +395,7 @@ struct UePduSessionInfo
     std::string type{};
     std::string address{};
     bool isEmergency{};
+    bool uplinkPending{};
 };
 
 enum class ERegUpdateCause
