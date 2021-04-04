@@ -37,23 +37,16 @@ void GnbRrcTask::onLoop()
 
     switch (msg->msgType)
     {
-    //case NtsMessageType::GNB_MR_TO_RRC: {
-    //    auto *w = dynamic_cast<NwGnbMrToRrc *>(msg);
-    //    switch (w->present)
-    //    {
-    //    case NwGnbMrToRrc::RADIO_LINK_FAILURE: {
-    //        handleRadioLinkFailure(w->ueId);
-    //        break;
-    //    }
-    //    }
-    //    break;
-    //}
     case NtsMessageType::GNB_SRA_TO_RRC: {
         auto *w = dynamic_cast<NwGnbSraToRrc *>(msg);
         switch (w->present)
         {
         case NwGnbSraToRrc::RRC_PDU_DELIVERY: {
             handleUplinkRrc(w->ueId, w->channel, w->pdu);
+            break;
+        }
+        case NwGnbSraToRrc::SIGNAL_LOST: {
+            handleRadioLinkFailure(w->ueId);
             break;
         }
         }

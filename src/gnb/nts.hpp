@@ -28,9 +28,11 @@ struct NwGnbSraToRrc : NtsMessage
     enum PR
     {
         RRC_PDU_DELIVERY,
+        SIGNAL_LOST
     } present;
 
     // RRC_PDU_DELIVERY
+    // SIGNAL_LOST
     int ueId{};
 
     // RRC_PDU_DELIVERY

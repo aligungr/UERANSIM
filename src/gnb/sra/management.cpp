@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+#include <gnb/rrc/task.hpp>
 #include <set>
 #include <utils/common.hpp>
 
@@ -62,6 +63,10 @@ void GnbSraTask::onPeriodicLostControl()
     {
         m_ueCtx.erase(ueId);
         m_logger->debug("Signal lost detected for UE[%d]", ueId);
+
+        auto *w = new NwGnbSraToRrc(NwGnbSraToRrc::SIGNAL_LOST);
+        w->ueId = ueId;
+        m_base->rrcTask->push(w);
     }
 }
 
