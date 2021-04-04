@@ -7,7 +7,10 @@
 //
 
 #include "task.hpp"
+#include <set>
 #include <utils/common.hpp>
+
+static const int64_t LAST_SEEN_THRESHOLD = 3000;
 
 namespace nr::gnb
 {
@@ -31,13 +34,33 @@ void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
         ctx->lastSeen = utils::CurrentTimeMillis();
         m_ueCtx[ueId] = std::move(ctx);
 
-        m_logger->debug("New UE signal detected, UE[%d]", ueId);
+        m_logger->debug("New UE signal detected, total [%d] UEs in coverage", static_cast<int>(m_stiToUeId.size()));
     }
 }
 
 void GnbSraTask::onPeriodicLostControl()
 {
+    int64_t current = utils::CurrentTimeMillis();
 
+    std::set<int> lostUeId{};
+    std::set<uint64_t> lostSti{};
+
+    for (auto &item : m_ueCtx)
+    {
+        if (current - item.second->lastSeen > LAST_SEEN_THRESHOLD)
+        {
+            lostUeId.insert(item.second->ueId);
+            lostSti.insert(item.second->sti);
+        }
+    }
+
+    for (uint64_t sti : lostSti)
+        m_stiToUeId.erase(sti);
+    for (int ueId : lostUeId)
+    {
+        m_ueCtx.erase(ueId);
+        m_logger->debug("Signal lost detected for UE[%d]", ueId);
+    }
 }
 
 } // namespace nr::gnb
