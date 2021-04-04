@@ -186,6 +186,22 @@ struct NwUeNasToApp : NtsMessage
     }
 };
 
+struct NwUeAppToNas : NtsMessage
+{
+    enum PR
+    {
+        UPLINK_STATUS_CHANGE,
+    } present;
+
+    // UPLINK_STATUS_CHANGE
+    int psi{};
+    bool isPending{};
+
+    explicit NwUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
+    {
+    }
+};
+
 struct NwUeAppToRls : NtsMessage
 {
     enum PR

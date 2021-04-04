@@ -58,4 +58,10 @@ bool NasSm::anyEmergencySession()
                        [](auto &ps) { return ps->psState != EPsState::INACTIVE && ps->isEmergency; });
 }
 
+void NasSm::handleUplinkStatusChange(int psi, bool isPending)
+{
+    m_logger->debug("Uplink data status changed PSI[%d] pending[%s]", psi, isPending ? "true" : "false");
+    // TODO
+}
+
 } // namespace nr::ue

@@ -49,6 +49,7 @@ class NasSm
     void localReleaseSession(int psi);
     void localReleaseAllSessions();
     bool anyEmergencySession();
+	void handleUplinkStatusChange(int psi, bool isPending);
 
     /* Session Release */
     void sendReleaseRequest(int psi);
@@ -88,8 +89,8 @@ class NasSm
 
   public:
     /* Interface */
-    void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
-    void onTimerTick();                           // used by NAS
+    void handleNasEvent(const NwUeNasToNas &msg);           // used by NAS
+    void onTimerTick();                                     // used by NAS
 };
 
 } // namespace nr::ue

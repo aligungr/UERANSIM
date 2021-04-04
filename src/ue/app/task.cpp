@@ -9,6 +9,7 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <nas/utils.hpp>
+#include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>
 #include <utils/common.hpp>
@@ -132,6 +133,7 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
         if (session->pduAddress.has_value())
             sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
         sessionInfo.isEmergency = session->isEmergency;
+        sessionInfo.uplinkPending = false;
 
         m_pduSessions[session->psi] = std::move(sessionInfo);
 
@@ -224,8 +226,21 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
 void UeAppTask::handleUplinkDataRequest(int psi, OctetString &&data)
 {
+    if (!m_pduSessions[psi].has_value())
+        return;
+
     if (m_cmState == ECmState::CM_CONNECTED)
     {
+        if (m_pduSessions[psi]->uplinkPending)
+        {
+            m_pduSessions[psi]->uplinkPending = false;
+
+            auto *w = new NwUeAppToNas(NwUeAppToNas::UPLINK_STATUS_CHANGE);
+            w->psi = psi;
+            w->isPending = false;
+            m_base->nasTask->push(w);
+        }
+
         auto *nw = new NwUeAppToRls(NwUeAppToRls::DATA_PDU_DELIVERY);
         nw->psi = psi;
         nw->pdu = std::move(data);
@@ -233,8 +248,15 @@ void UeAppTask::handleUplinkDataRequest(int psi, OctetString &&data)
     }
     else
     {
-        // TODO
-        m_logger->err("Uplink data is pending");
+        if (!m_pduSessions[psi]->uplinkPending)
+        {
+            m_pduSessions[psi]->uplinkPending = true;
+
+            auto *w = new NwUeAppToNas(NwUeAppToNas::UPLINK_STATUS_CHANGE);
+            w->psi = psi;
+            w->isPending = true;
+            m_base->nasTask->push(w);
+        }
     }
 }
 
