@@ -49,6 +49,7 @@ void UeSraTask::onMeasurement()
 void UeSraTask::receiveCellInfoResponse(const sra::SraCellInfoResponse &msg)
 {
     UeCellMeasurement meas{};
+    meas.sti = msg.sti;
     meas.cellId = msg.cellId;
     meas.tac = msg.tac;
     meas.dbm = msg.dbm;
@@ -86,6 +87,7 @@ void UeSraTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuita
     auto &measurement = m_activeMeasurements[cellId];
 
     m_servingCell = UeCellInfo{};
+    m_servingCell->sti = measurement.sti;
     m_servingCell->cellId = measurement.cellId;
     m_servingCell->tac = measurement.tac;
     m_servingCell->gnbName = measurement.gnbName;

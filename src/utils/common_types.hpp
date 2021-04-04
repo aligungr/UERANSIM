@@ -142,6 +142,7 @@ enum class ECellCategory
 
 struct UeCellMeasurement
 {
+	uint64_t sti{};
     GlobalNci cellId{};
     int tac{};
     int dbm{};
@@ -151,6 +152,7 @@ struct UeCellMeasurement
 
 struct UeCellInfo
 {
+    uint64_t sti{};
     GlobalNci cellId{};
     int tac{};
     ECellCategory cellCategory{};
