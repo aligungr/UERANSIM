@@ -171,11 +171,11 @@ void GnbMrTask::receiveUplinkPayload(int ue, rls::EPayloadType type, OctetString
 {
     if (type == rls::EPayloadType::RRC)
     {
-        auto *nw = new NwGnbMrToRrc(NwGnbMrToRrc::RRC_PDU_DELIVERY);
-        nw->ueId = ue;
-        nw->channel = static_cast<rrc::RrcChannel>(payload.getI(0));
-        nw->pdu = payload.subCopy(1);
-        m_base->rrcTask->push(nw);
+        //auto *nw = new NwGnbMrToRrc(NwGnbMrToRrc::RRC_PDU_DELIVERY);
+        //nw->ueId = ue;
+        //nw->channel = static_cast<rrc::RrcChannel>(payload.getI(0));
+        //nw->pdu = payload.subCopy(1);
+        //m_base->rrcTask->push(nw);
     }
     else if (type == rls::EPayloadType::DATA)
     {

@@ -28,17 +28,11 @@ struct NwGnbMrToRrc : NtsMessage
 {
     enum PR
     {
-        RRC_PDU_DELIVERY,
         RADIO_LINK_FAILURE,
     } present;
 
-    // RRC_PDU_DELIVERY
     // RADIO_LINK_FAILURE
     int ueId{};
-
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu{};
 
     explicit NwGnbMrToRrc(PR present) : NtsMessage(NtsMessageType::GNB_MR_TO_RRC), present(present)
     {
