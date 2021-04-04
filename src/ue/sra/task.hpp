@@ -59,8 +59,6 @@ class UeSraTask : public NtsTask
     void receiveCellInfoResponse(const sra::SraCellInfoResponse &msg);
     void onCoverageChange(const std::vector<GlobalNci> &entered, const std::vector<GlobalNci> &exited);
     void plmnSearchRequested();
-
-  private: /* Connection */
     void handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable);
 };
 
