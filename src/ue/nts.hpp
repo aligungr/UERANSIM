@@ -138,7 +138,8 @@ struct NwUeSraToRrc : NtsMessage
     {
         PLMN_SEARCH_RESPONSE,
         SERVING_CELL_CHANGE,
-        RRC_PDU_DELIVERY
+        RRC_PDU_DELIVERY,
+        RADIO_LINK_FAILURE
     } present;
 
     // PLMN_SEARCH_RESPONSE

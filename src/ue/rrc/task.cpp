@@ -44,17 +44,6 @@ void UeRrcTask::onLoop()
 
     switch (msg->msgType)
     {
-    //case NtsMessageType::UE_MR_TO_RRC: {
-    //    auto *w = dynamic_cast<NwUeMrToRrc *>(msg);
-    //    switch (w->present)
-    //    {
-    //    case NwUeMrToRrc::RADIO_LINK_FAILURE: {
-    //        handleRadioLinkFailure();
-    //        break;
-    //    }
-    //    }
-    //    break;
-    //}
     case NtsMessageType::UE_NAS_TO_RRC: {
         auto *w = dynamic_cast<NwUeNasToRrc *>(msg);
         switch (w->present)
@@ -104,6 +93,10 @@ void UeRrcTask::onLoop()
         }
         case NwUeSraToRrc::RRC_PDU_DELIVERY: {
             handleDownlinkRrc(w->channel, w->pdu);
+            break;
+        }
+        case NwUeSraToRrc::RADIO_LINK_FAILURE: {
+            handleRadioLinkFailure();
             break;
         }
         }

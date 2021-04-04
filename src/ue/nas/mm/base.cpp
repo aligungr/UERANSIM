@@ -70,10 +70,14 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
         m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE ||
+        m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
         m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
     {
         int64_t current = utils::CurrentTimeMillis();
-        int64_t backoff = m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ? -1 : 1500;
+        int64_t backoff = (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
+                           m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
+                              ? -1
+                              : 1500;
 
         if (current - m_lastPlmnSearchTrigger > backoff)
         {
@@ -145,6 +149,9 @@ void NasMm::switchCmState(ECmState state)
     ECmState oldState = m_cmState;
     m_cmState = state;
 
+    if (state != oldState)
+        m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
+
     onSwitchCmState(oldState, m_cmState);
 
     if (m_base->nodeListener)
@@ -152,9 +159,6 @@ void NasMm::switchCmState(ECmState state)
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::CM,
                                        ToJson(oldState).str(), ToJson(m_cmState).str());
     }
-
-    if (state != oldState)
-        m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
 
     triggerMmCycle();
 }
@@ -241,6 +245,14 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 
             switchRmState(ERmState::RM_DEREGISTERED);
+        }
+        else if (m_mmState == EMmState::MM_REGISTERED)
+        {
+            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        }
+        else if (m_mmState == EMmState::MM_DEREGISTERED)
+        {
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
         }
     }
 }

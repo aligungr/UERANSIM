@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
-#include <ue/rrc/task.hpp>
 #include <ue/nas/sm/sm.hpp>
+#include <ue/rrc/task.hpp>
 
 namespace nr::ue
 {
@@ -199,7 +199,14 @@ void NasMm::handleRrcConnectionRelease()
 
 void NasMm::handleRadioLinkFailure()
 {
-    m_logger->debug("Radio link failure detected");
+    if (m_cmState == ECmState::CM_CONNECTED)
+    {
+        m_logger->err("Radio link failure detected");
+    }
+
+    m_usim->m_servingCell = std::nullopt;
+    m_usim->m_currentPlmn = std::nullopt;
+
     handleRrcConnectionRelease();
 }
 

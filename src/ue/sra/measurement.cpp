@@ -63,6 +63,16 @@ void UeSraTask::onCoverageChange(const std::vector<GlobalNci> &entered, const st
 {
     m_logger->debug("Coverage change detected. [%d] cell entered, [%d] cell exited", static_cast<int>(entered.size()),
                     static_cast<int>(exited.size()));
+
+    bool campedCellLost = m_servingCell.has_value() && std::any_of(exited.begin(), exited.end(), [this](auto &i) {
+                              return i == m_servingCell->cellId;
+                          });
+    if (campedCellLost)
+    {
+        m_logger->warn("Signal lost from camped cell");
+        m_servingCell = std::nullopt;
+        m_base->rrcTask->push(new NwUeSraToRrc(NwUeSraToRrc::RADIO_LINK_FAILURE));
+    }
 }
 
 void UeSraTask::plmnSearchRequested()

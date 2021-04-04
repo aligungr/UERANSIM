@@ -114,6 +114,8 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
             {"5u-state", ToJson(m_base->nasTask->mm->m_usim->m_uState)},
+            {"camped-cell",
+             ::ToJson(m_base->sraTask->m_servingCell.has_value() ? m_base->sraTask->m_servingCell->gnbName : "")},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_usim->m_storedSuci)},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_usim->m_storedGuti)},
