@@ -35,4 +35,9 @@ void GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
     }
 }
 
+void GnbSraTask::onPeriodicLostControl()
+{
+
+}
+
 } // namespace nr::gnb

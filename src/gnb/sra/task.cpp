@@ -14,6 +14,9 @@
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
+static const int TIMER_ID_LOST_CONTROL = 1;
+static const int TIMER_PERIOD_LOST_CONTROL = 2000;
+
 namespace nr::gnb
 {
 
@@ -36,6 +39,8 @@ void GnbSraTask::onStart()
         quit();
         return;
     }
+
+    setTimer(TIMER_ID_LOST_CONTROL, TIMER_PERIOD_LOST_CONTROL);
 }
 
 void GnbSraTask::onLoop()
@@ -55,6 +60,15 @@ void GnbSraTask::onLoop()
             break;
         }
         receiveSraMessage(w->fromAddress, *sraMsg);
+        break;
+    }
+    case NtsMessageType::TIMER_EXPIRED: {
+        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        if (w->timerId == TIMER_ID_LOST_CONTROL)
+        {
+            setTimer(TIMER_ID_LOST_CONTROL, TIMER_PERIOD_LOST_CONTROL);
+            onPeriodicLostControl();
+        }
         break;
     }
     default:

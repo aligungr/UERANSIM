@@ -54,6 +54,7 @@ class GnbSraTask : public NtsTask
 
   private: /* UE Management */
     void updateUeInfo(const InetAddress &addr, uint64_t sti);
+    void onPeriodicLostControl();
 };
 
 } // namespace nr::gnb
