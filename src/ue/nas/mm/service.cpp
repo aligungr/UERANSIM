@@ -15,7 +15,7 @@ namespace nr::ue
 
 void NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
-    m_logger->debug("Sending Service Request");
+    m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
 
     auto request = std::make_unique<nas::ServiceRequest>();
 
@@ -170,15 +170,24 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
 
 void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 {
+    if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        m_logger->warn("Service Reject ignored since the MM state is not MM_SERVICE_REQUEST_INITIATED");
+        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+        return;
+    }
+
+    auto cause = msg.mmCause.value;
+    m_logger->err("Service Request failed [%s]", nas::utils::EnumToString(cause));
+
+    // Handle EAP message
     if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
         else
-            m_logger->warn("Network sent EAP with inconvenient type in ServiceAccept, ignoring EAP IE.");
+            m_logger->warn("Network sent EAP with inconvenient type in ServiceReject, ignoring EAP IE.");
     }
-
-    // TODO
 }
 
 } // namespace nr::ue

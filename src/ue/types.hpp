@@ -495,5 +495,6 @@ Json ToJson(const UeTimers &v);
 Json ToJson(const ERegUpdateCause &v);
 Json ToJson(const EPsState &v);
 Json ToJson(const UePduSessionInfo &v);
+Json ToJson(const EServiceReqCause &v);
 
 } // namespace nr::ue
