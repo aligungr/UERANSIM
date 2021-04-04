@@ -32,6 +32,7 @@ class GnbSraTask : public NtsTask
     uint64_t m_sti;
     std::unordered_map<int, std::unique_ptr<SraUeContext>> m_ueCtx;
     std::unordered_map<uint64_t, int> m_stiToUeId;
+    int m_ueIdCounter;
 
     friend class GnbCmdHandler;
 

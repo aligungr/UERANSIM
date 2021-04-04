@@ -20,7 +20,7 @@ static const int TIMER_PERIOD_LOST_CONTROL = 2000;
 namespace nr::gnb
 {
 
-GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}, m_ueCtx{}, m_stiToUeId{}
+GnbSraTask::GnbSraTask(TaskBase *base) : m_base{base}, m_udpTask{}, m_ueCtx{}, m_stiToUeId{}, m_ueIdCounter{}
 {
     m_logger = m_base->logBase->makeUniqueLogger("sra");
     m_sti = utils::Random64();

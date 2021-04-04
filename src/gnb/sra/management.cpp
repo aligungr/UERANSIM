@@ -28,7 +28,7 @@ int GnbSraTask::updateUeInfo(const InetAddress &addr, uint64_t sti)
     }
     else
     {
-        int ueId = utils::NextId();
+        int ueId = ++m_ueIdCounter;
         m_stiToUeId[sti] = ueId;
         auto ctx = std::make_unique<SraUeContext>(ueId);
         ctx->sti = sti;
