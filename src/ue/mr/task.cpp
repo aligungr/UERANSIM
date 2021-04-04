@@ -15,12 +15,11 @@
 
 static const int TIMER_ID_RLS_WAITING_TIMER = 1;
 static const int TIMER_ID_RLS_HEARTBEAT = 2;
-static const int PLMN_SEARCH_FAILED_PRINT_THRESHOLD = 10000;
 
 namespace nr::ue
 {
 
-ue::UeMrTask::UeMrTask(TaskBase *base) : m_base{base}, m_udpTask{}, m_rlsEntity{}, m_lastPlmnSearchFailurePrinted{}
+ue::UeMrTask::UeMrTask(TaskBase *base) : m_base{base}, m_udpTask{}, m_rlsEntity{}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "mr");
 }

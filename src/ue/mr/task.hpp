@@ -30,8 +30,6 @@ class UeMrTask : public NtsTask
     udp::UdpServerTask *m_udpTask;
     UeRls *m_rlsEntity;
 
-    long m_lastPlmnSearchFailurePrinted;
-
     friend class UeCmdHandler;
 
   public:
