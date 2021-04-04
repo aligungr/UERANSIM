@@ -12,7 +12,6 @@
 #include "sra/task.hpp"
 #include "nas/task.hpp"
 #include "rrc/task.hpp"
-#include "sra/task.hpp"
 
 namespace nr::ue
 {
