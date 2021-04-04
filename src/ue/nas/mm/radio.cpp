@@ -208,6 +208,11 @@ void NasMm::handleRadioLinkFailure()
     m_usim->m_currentPlmn = std::nullopt;
 
     handleRrcConnectionRelease();
+
+    if (m_mmState == EMmState::MM_REGISTERED)
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+    else if (m_mmState == EMmState::MM_DEREGISTERED)
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
 }
 
 void NasMm::localReleaseConnection()

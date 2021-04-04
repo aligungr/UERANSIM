@@ -246,14 +246,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
 
             switchRmState(ERmState::RM_DEREGISTERED);
         }
-        else if (m_mmState == EMmState::MM_REGISTERED)
-        {
-            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-        }
-        else if (m_mmState == EMmState::MM_DEREGISTERED)
-        {
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-        }
     }
 }
 
