@@ -33,7 +33,7 @@ void UeSraTask::sendSraMessage(const InetAddress &address, const sra::SraMessage
     m_udpTask->send(address, stream);
 }
 
-void UeSraTask::deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu)
+void UeSraTask::deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, OctetString &&payload)
 {
     if (!m_servingCell.has_value())
     {
@@ -43,10 +43,15 @@ void UeSraTask::deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu)
 
     sra::SraPduDelivery msg{};
     msg.sti = m_sti;
-    msg.pduType = sra::EPduType::RRC;
+    msg.pduType = pduType;
     msg.pdu = std::move(pdu);
-    msg.payload.appendOctet4(static_cast<int>(channel));
+    msg.payload = std::move(payload);
     sendSraMessage(InetAddress{m_servingCell->linkIp, cons::PortalPort}, msg);
+}
+
+void UeSraTask::deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu)
+{
+    deliverUplinkPdu(sra::EPduType::RRC, std::move(pdu), OctetString::FromOctet4(static_cast<int>(channel)));
 }
 
 } // namespace nr::ue

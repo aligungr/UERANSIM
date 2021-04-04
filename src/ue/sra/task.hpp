@@ -52,6 +52,7 @@ class UeSraTask : public NtsTask
   private: /* Transport */
     void receiveSraMessage(const InetAddress &address, const sra::SraMessage &msg);
     void sendSraMessage(const InetAddress &address, const sra::SraMessage &msg);
+    void deliverUplinkPdu(sra::EPduType pduType, OctetString &&pdu, OctetString &&payload);
     void deliverUplinkRrc(rrc::RrcChannel channel, OctetString &&pdu);
 
   private: /* Measurement */
