@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 #include <cmath>
+#include <gnb/gtp/task.hpp>
 #include <gnb/rrc/task.hpp>
 
 static int MIN_ALLOWED_DBM = -120;
@@ -56,6 +57,14 @@ void GnbSraTask::handleUplinkPduDelivery(int ueId, sra::SraPduDelivery &msg)
         nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
         nw->pdu = std::move(msg.pdu);
         m_base->rrcTask->push(nw);
+    }
+    else if (msg.pduType == sra::EPduType::DATA)
+    {
+        auto *nw = new NwGnbSraToGtp(NwGnbSraToGtp::DATA_PDU_DELIVERY);
+        nw->ueId = ueId;
+        nw->psi = msg.payload.get4I(0);
+        nw->pdu = std::move(msg.pdu);
+        m_base->gtpTask->push(nw);
     }
 }
 

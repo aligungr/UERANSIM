@@ -44,6 +44,40 @@ struct NwGnbSraToRrc : NtsMessage
     }
 };
 
+struct NwGnbSraToGtp : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY,
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int ueId{};
+    int psi{};
+    OctetString pdu{};
+
+    explicit NwGnbSraToGtp(PR present) : NtsMessage(NtsMessageType::GNB_SRA_TO_GTP), present(present)
+    {
+    }
+};
+
+struct NwGnbGtpToSra : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY,
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int ueId{};
+    int psi{};
+    OctetString pdu{};
+
+    explicit NwGnbGtpToSra(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_SRA), present(present)
+    {
+    }
+};
+
 struct NwGnbRrcToSra : NtsMessage
 {
     enum PR

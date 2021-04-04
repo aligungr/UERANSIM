@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+#include <ue/app/task.hpp>
 #include <ue/nts.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/constants.hpp>
@@ -62,6 +63,13 @@ void UeSraTask::deliverDownlinkPdu(sra::SraPduDelivery &msg)
         nw->channel = static_cast<rrc::RrcChannel>(msg.payload.get4I(0));
         nw->pdu = std::move(msg.pdu);
         m_base->rrcTask->push(nw);
+    }
+    else if (msg.pduType == sra::EPduType::DATA)
+    {
+        auto *nw = new NwUeSraToApp(NwUeSraToApp::DATA_PDU_DELIVERY);
+        nw->psi = msg.payload.get4I(0);
+        nw->pdu = std::move(msg.pdu);
+        m_base->appTask->push(nw);
     }
 }
 

@@ -36,6 +36,8 @@ enum class NtsMessageType
 
     GNB_MR_TO_RRC,
     GNB_SRA_TO_RRC,
+    GNB_SRA_TO_GTP,
+    GNB_GTP_TO_SRA,
     GNB_RRC_TO_SRA,
     GNB_NGAP_TO_RRC,
     GNB_RRC_TO_NGAP,
@@ -50,6 +52,7 @@ enum class NtsMessageType
     UE_RRC_TO_SRA,
     UE_NAS_TO_NAS,
     UE_SRA_TO_RRC,
+    UE_SRA_TO_APP,
     UE_NAS_TO_APP,
 };
 

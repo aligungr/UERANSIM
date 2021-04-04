@@ -9,6 +9,7 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <nas/utils.hpp>
+#include <ue/sra/task.hpp>
 #include <ue/tun/tun.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -49,33 +50,30 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    // case NtsMessageType::UE_MR_TO_APP: {
-    //    auto *w = dynamic_cast<NwUeMrToApp *>(msg);
-    //    switch (w->present)
-    //    {
-    //    case NwUeMrToApp::DATA_PDU_DELIVERY: {
-    //        auto *tunTask = m_tunTasks[w->psi];
-    //        if (tunTask)
-    //        {
-    //            auto *nw = new NwAppToTun(NwAppToTun::DATA_PDU_DELIVERY);
-    //            nw->psi = w->psi;
-    //            nw->data = std::move(w->data);
-    //            tunTask->push(nw);
-    //        }
-    //        break;
-    //    }
-    //    }
-    //    break;
-    //}
+    case NtsMessageType::UE_SRA_TO_APP: {
+        auto *w = dynamic_cast<NwUeSraToApp *>(msg);
+        switch (w->present)
+        {
+        case NwUeSraToApp::DATA_PDU_DELIVERY: {
+            auto *tunTask = m_tunTasks[w->psi];
+            if (tunTask)
+            {
+                auto *nw = new NwAppToTun(NwAppToTun::DATA_PDU_DELIVERY);
+                nw->psi = w->psi;
+                nw->data = std::move(w->pdu);
+                tunTask->push(nw);
+            }
+            break;
+        }
+        }
+        break;
+    }
     case NtsMessageType::UE_TUN_TO_APP: {
         auto *w = dynamic_cast<NwUeTunToApp *>(msg);
         switch (w->present)
         {
         case NwUeTunToApp::DATA_PDU_DELIVERY: {
-            // auto *nw = new NwAppToMr(NwAppToMr::DATA_PDU_DELIVERY);
-            // nw->psi = w->psi;
-            // nw->data = std::move(w->data);
-            // m_base->mrTask->push(nw);
+            handleUplinkDataRequest(w->psi, std::move(w->data));
             break;
         }
         case NwUeTunToApp::TUN_ERROR: {
@@ -157,6 +155,12 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
         }
         return;
     }
+
+    if (msg.what == NwUeStatusUpdate::CM_STATE)
+    {
+        m_cmState = msg.cmState;
+        return;
+    }
 }
 
 void UeAppTask::setupTunInterface(const PduSession *pduSession)
@@ -216,6 +220,22 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
                    allocatedName.c_str(), ipAddress.c_str());
+}
+
+void UeAppTask::handleUplinkDataRequest(int psi, OctetString &&data)
+{
+    if (m_cmState == ECmState::CM_CONNECTED)
+    {
+        auto *nw = new NwUeAppToSra(NwUeAppToSra::DATA_PDU_DELIVERY);
+        nw->psi = psi;
+        nw->pdu = std::move(data);
+        m_base->sraTask->push(nw);
+    }
+    else
+    {
+        // TODO
+        m_logger->err("Uplink data is pending");
+    }
 }
 
 } // namespace nr::ue

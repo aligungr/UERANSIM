@@ -202,6 +202,22 @@ struct NwUeAppToSra : NtsMessage
     }
 };
 
+struct NwUeSraToApp : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int psi{};
+    OctetString pdu{};
+
+    explicit NwUeSraToApp(PR present) : NtsMessage(NtsMessageType::UE_SRA_TO_APP), present(present)
+    {
+    }
+};
+
 struct NwUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;

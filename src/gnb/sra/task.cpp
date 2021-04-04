@@ -67,6 +67,18 @@ void GnbSraTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::GNB_GTP_TO_SRA: {
+        auto *w = dynamic_cast<NwGnbGtpToSra *>(msg);
+        switch (w->present)
+        {
+        case NwGnbGtpToSra::DATA_PDU_DELIVERY: {
+            handleDownlinkDelivery(w->ueId, sra::EPduType::DATA, std::move(w->pdu),
+                                   OctetString::FromOctet4(static_cast<int>(w->psi)));
+            break;
+        }
+        }
+        break;
+    }
     case NtsMessageType::UDP_SERVER_RECEIVE: {
         auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
         auto sraMsg = sra::DecodeSraMessage(OctetView{w->packet});
