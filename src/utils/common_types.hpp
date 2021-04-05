@@ -119,6 +119,16 @@ enum class EDeregCause
     ECALL_INACTIVITY,
 };
 
+enum class EInitialRegCause
+{
+    UNSPECIFIED,
+    EMERGENCY_SERVICES,
+    MM_DEREG_NORMAL_SERVICE,
+    T3346_EXPIRY,
+    DUE_TO_DEREGISTRATION,
+    DUE_TO_SERVICE_REJECT,
+};
+
 struct GlobalNci
 {
     Plmn plmn{};

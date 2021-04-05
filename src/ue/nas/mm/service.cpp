@@ -327,17 +327,13 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
         if (m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
-        {
-            // TODO: new initial registration
-        }
+            sendInitialRegistration(EInitialRegCause::DUE_TO_SERVICE_REJECT);
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
-        if (hasEmergency())
-        {
-            // TODO: new initial registration
-        }
+        if (!hasEmergency())
+            sendInitialRegistration(EInitialRegCause::DUE_TO_SERVICE_REJECT);
     }
 
     if (cause == nas::EMmCause::CONGESTION)

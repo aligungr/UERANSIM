@@ -29,7 +29,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
             logExpired();
-            sendInitialRegistration(false, false);
+            sendInitialRegistration(EInitialRegCause::T3346_EXPIRY);
         }
         break;
     }

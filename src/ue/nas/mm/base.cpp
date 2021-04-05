@@ -106,7 +106,7 @@ void NasMm::performMmCycle()
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
         if (!m_timers->t3346.isRunning())
-            sendInitialRegistration(false, false);
+            sendInitialRegistration(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
         return;
     }
 

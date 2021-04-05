@@ -16,13 +16,15 @@
 namespace nr::ue
 {
 
-void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
+void NasMm::sendInitialRegistration(EInitialRegCause regCause)
 {
     if (m_rmState != ERmState::RM_DEREGISTERED)
     {
         m_logger->warn("Registration could not be triggered. UE is not in RM-DEREGISTERED state.");
         return;
     }
+
+    bool isEmergencyReg = regCause == EInitialRegCause::EMERGENCY_SERVICES;
 
     // 5.5.1.2.7 Abnormal cases in the UE
     // a) Timer T3346 is running.
@@ -33,7 +35,7 @@ void NasMm::sendInitialRegistration(bool isEmergencyReg, bool dueToDereg)
         bool highPriority = isHighPriority();
 
         // The UE shall not start the registration procedure for initial registration in the following case
-        if (!highPriority && !dueToDereg)
+        if (!highPriority && regCause != EInitialRegCause::DUE_TO_DEREGISTRATION)
         {
             m_logger->debug("Initial registration canceled, T3346 is running");
             return;
