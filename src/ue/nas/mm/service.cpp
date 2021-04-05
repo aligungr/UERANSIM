@@ -17,6 +17,20 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
     m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
 
+    // 5.6.1.7 Abnormal cases in the UE
+    // c) Timer T3346 is running.
+    if (m_timers->t3346.isRunning())
+    {
+        if (reqCause != EServiceReqCause::IDLE_PAGING &&
+            reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP && !isHighPriority() && !hasEmergency() &&
+            reqCause != EServiceReqCause::EMERGENCY_FALLBACK)
+        {
+            m_logger->debug("Service Request canceled, T3346 is running");
+            return;
+        }
+    }
+
     auto request = std::make_unique<nas::ServiceRequest>();
 
     if (reqCause == EServiceReqCause::IDLE_PAGING)
