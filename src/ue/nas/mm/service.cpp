@@ -192,9 +192,12 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     auto cause = msg.mmCause.value;
     m_logger->err("Service Request failed [%s]", nas::utils::EnumToString(cause));
 
-    auto handleAbnormalCase = [this, cause]() {
+    auto handleAbnormalCase = [this]() {
         m_logger->debug("Handling Service Reject abnormal case");
-        // TODO
+
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+        switchRmState(ERmState::RM_REGISTERED);
+        m_timers->t3517.stop();
     };
 
     // Handle PDU session status
@@ -368,6 +371,18 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
         if (m_lastServiceRequest->serviceType.serviceType != nas::EServiceType::ELEVATED_SIGNALLING)
             sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
+    }
+
+    if (cause != nas::EMmCause::ILLEGAL_UE && cause != nas::EMmCause::ILLEGAL_ME &&
+        cause != nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED &&
+        cause != nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK &&
+        cause != nas::EMmCause::IMPLICITY_DEREGISTERED && cause != nas::EMmCause::PLMN_NOT_ALLOWED &&
+        cause != nas::EMmCause::TA_NOT_ALLOWED && cause != nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA &&
+        cause != nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA && cause != nas::EMmCause::CONGESTION &&
+        cause != nas::EMmCause::N1_MODE_NOT_ALLOWED && cause != nas::EMmCause::RESTRICTED_SERVICE_AREA &&
+        cause != nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    {
+        handleAbnormalCase();
     }
 }
 
