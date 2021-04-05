@@ -158,6 +158,13 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             forceIgnoreReregistration = true;
         }
     }
+    // 5.6.1.7 Abnormal cases in the UE (de-registration collision)
+    else if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        // "UE shall progress the DEREGISTRATION REQUEST message and the service request procedure shall be aborted."
+        // (no specific action is required herein to abort service request procedure)
+        (void)0;
+    }
 
     bool reRegistrationRequired =
         msg.deRegistrationType.reRegistrationRequired == nas::EReRegistrationRequired::REQUIRED &&

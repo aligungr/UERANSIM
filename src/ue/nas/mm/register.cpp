@@ -125,6 +125,13 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
         }
     }
 
+    // 5.6.1.7 Abnormal cases in the UE
+    // d) Registration procedure for mobility and periodic registration update is triggered
+    if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        m_timers->t3517.stop();
+    }
+
     m_logger->debug("Sending %s with update cause [%s]",
                     nas::utils::EnumToString(updateCause == ERegUpdateCause::T3512_EXPIRY
                                                  ? nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING
