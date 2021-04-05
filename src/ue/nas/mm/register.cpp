@@ -544,7 +544,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            // TODO add to forbidden tai
+            nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRoaming, *m_usim->m_currentTai);
         }
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
@@ -704,7 +704,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        // TODO add to forbidden tai
+        nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRoaming, *m_usim->m_currentTai);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
