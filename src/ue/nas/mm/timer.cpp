@@ -87,6 +87,27 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         }
         break;
     }
+    case 3517: {
+        if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+        {
+            logExpired();
+
+            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+            switchRmState(ERmState::RM_REGISTERED);
+
+            if (m_cmState == ECmState::CM_IDLE && m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
+            {
+                if (!hasEmergency() && !isHighPriority() && m_lastServiceReqCause != EServiceReqCause::IDLE_PAGING &&
+                    m_lastServiceReqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP &&
+                    m_lastServiceReqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP)
+                    m_serCounter++;
+
+                if (m_serCounter >= 5)
+                    m_timers->t3525.start();
+            }
+        }
+        break;
+    }
     case 3519: {
         m_usim->m_storedSuci = {};
         break;
