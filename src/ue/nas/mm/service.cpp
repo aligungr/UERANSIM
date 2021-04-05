@@ -373,6 +373,13 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
             sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
     }
 
+    if (hasEmergency())
+    {
+        // Spec says that upper layers should be informed as well, for additional action for emergency
+        // registration, but no need for now.
+        handleAbnormalCase();
+    }
+
     if (cause != nas::EMmCause::ILLEGAL_UE && cause != nas::EMmCause::ILLEGAL_ME &&
         cause != nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED &&
         cause != nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK &&
