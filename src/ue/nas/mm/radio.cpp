@@ -68,7 +68,10 @@ void NasMm::handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measu
             continue;
         }
         if (nas::utils::TaiListContains(
-                m_usim->m_forbiddenTaiList,
+                m_usim->m_forbiddenTaiListRps,
+                nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(item.cellId.plmn), octet3{item.tac}}) ||
+            nas::utils::TaiListContains(
+                m_usim->m_forbiddenTaiListRoaming,
                 nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(item.cellId.plmn), octet3{item.tac}}))
         {
             listedAsForbiddenTai++;
@@ -185,6 +188,8 @@ void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
 
     m_usim->m_servingCell = servingCell;
     m_usim->m_currentPlmn = servingCell.cellId.plmn;
+    m_usim->m_currentTai =
+        nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(servingCell.cellId.plmn), octet3{servingCell.tac}};
 }
 
 void NasMm::handleRrcConnectionSetup()
@@ -206,6 +211,7 @@ void NasMm::handleRadioLinkFailure()
 
     m_usim->m_servingCell = std::nullopt;
     m_usim->m_currentPlmn = std::nullopt;
+    m_usim->m_currentTai = std::nullopt;
 
     handleRrcConnectionRelease();
 

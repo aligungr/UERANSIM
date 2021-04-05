@@ -8,6 +8,7 @@
 
 #include "utils.hpp"
 
+#include <algorithm>
 #include <cstring>
 
 namespace nas::utils
@@ -262,7 +263,7 @@ IEDnn DnnFromApn(const std::string &apn)
     return dnn;
 }
 
-void AddToPlmnList(IEPlmnList &list, VPlmn item)
+void AddToPlmnList(IEPlmnList &list, const VPlmn &item)
 {
     if (!std::any_of(list.plmns.begin(), list.plmns.end(), [&item](auto &i) { return DeepEqualsV(i, item); }))
         list.plmns.push_back(item);
@@ -379,6 +380,58 @@ bool ServiceAreaListForbidsTai(const VPartialServiceAreaList &list, const VTrack
             return true;
     }
     return false;
+}
+
+void AddToTaiList(IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai)
+{
+    if (!TaiListContains(list, tai))
+    {
+        VPartialTrackingAreaIdentityList ls{};
+        ls.list01 = VPartialTrackingAreaIdentityList01{tai.plmn, tai.tac};
+        ls.present = 1;
+        list.list.push_back(ls);
+    }
+}
+
+void RemoveFromTaiList(IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai)
+{
+    list.list.erase(std::remove_if(list.list.begin(), list.list.end(),
+                                   [&tai](auto &itemList) {
+                                       return itemList.present == 1 && DeepEqualsV(itemList.list01->plmn, tai.plmn) &&
+                                              (int)itemList.list01->tac == (int)tai.tac;
+                                   }),
+                    list.list.end());
+
+    for (auto &itemList : list.list)
+    {
+        if (itemList.present == 0)
+        {
+            auto &list0 = itemList.list00;
+            if (DeepEqualsV(list0->plmn, tai.plmn))
+            {
+                list0->tacs.erase(std::remove_if(list0->tacs.begin(), list0->tacs.end(),
+                                                 [&tai](auto tac) { return (int)tac == (int)tai.tac; }),
+                                  list0->tacs.end());
+            }
+        }
+        else if (itemList.present == 2)
+        {
+            auto &list2 = itemList.list10;
+            list2->tais.erase(
+                std::remove_if(list2->tais.begin(), list2->tais.end(), [&tai](auto &i) { return DeepEqualsV(i, tai); }),
+                list2->tais.end());
+        }
+    }
+
+    list.list.erase(
+        std::remove_if(list.list.begin(), list.list.end(),
+                       [](auto &itemList) { return itemList.present == 0 && itemList.list00->tacs.empty(); }),
+        list.list.end());
+
+    list.list.erase(
+        std::remove_if(list.list.begin(), list.list.end(),
+                       [](auto &itemList) { return itemList.present == 2 && itemList.list10->tais.empty(); }),
+        list.list.end());
 }
 
 } // namespace nas::utils

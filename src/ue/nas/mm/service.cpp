@@ -258,13 +258,13 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
-        // TODO: add current tai to 5GS forbidden tracking areas for regional provision of service
+        nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRps, *m_usim->m_currentTai);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        // TODO: add current tai to 5GS forbidden tracking areas for roaming
-        // TODO: remove current tai from stored tai list if present
+        nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRoaming, *m_usim->m_currentTai);
+        nas::utils::RemoveFromTaiList(m_usim->m_taiList, *m_usim->m_currentTai);
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
