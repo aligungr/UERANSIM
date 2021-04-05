@@ -210,6 +210,113 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         else
             m_logger->warn("Network sent EAP with inconvenient type in ServiceReject, ignoring EAP IE.");
     }
+
+    /* Handle MM Cause */
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+        cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+        cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+        switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+
+    if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK ||
+        cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+        switchUState(E5UState::U2_NOT_UPDATED);
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
+        cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK ||
+        cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
+        cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    {
+        m_usim->m_storedGuti = {};
+        m_usim->m_lastVisitedRegisteredTai = {};
+        m_usim->m_taiList = {};
+        m_usim->m_currentNsCtx = {};
+        m_usim->m_nonCurrentNsCtx = {};
+    }
+
+    if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
+    {
+        m_usim->m_nonCurrentNsCtx = {};
+    }
+
+    if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
+    {
+        m_usim->m_equivalentPlmnList = {};
+    }
+
+    if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    {
+        // TODO: add to forbidden plmn list
+    }
+
+    if (cause == nas::EMmCause::TA_NOT_ALLOWED)
+    {
+        // TODO: add current tai to 5GS forbidden tracking areas for regional provision of service
+    }
+
+    if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+    {
+        // TODO: add current tai to 5GS forbidden tracking areas for roaming
+        // TODO: remove current tai from stored tai list if present
+    }
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+    {
+        m_usim->invalidate();
+    }
+
+    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        switchRmState(ERmState::RM_DEREGISTERED);
+    }
+
+    if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+        switchRmState(ERmState::RM_DEREGISTERED);
+    }
+
+    if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        switchRmState(ERmState::RM_DEREGISTERED);
+    }
+
+    if (cause == nas::EMmCause::TA_NOT_ALLOWED)
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+        switchRmState(ERmState::RM_DEREGISTERED);
+    }
+
+    if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
+    {
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        switchRmState(ERmState::RM_REGISTERED);
+    }
+
+    if (cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+    {
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+        switchRmState(ERmState::RM_REGISTERED);
+    }
+
+    if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    {
+        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+        switchRmState(ERmState::RM_DEREGISTERED);
+
+        setN1Capability(false);
+    }
+
+    if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    {
+        setN1Capability(false);
+    }
 }
 
 } // namespace nr::ue
