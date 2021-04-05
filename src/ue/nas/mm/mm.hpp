@@ -136,8 +136,10 @@ class NasMm
     nas::IE5gsMobileIdentity generateSuci();
     nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
-  private: /* Service */
+  public: /* Service */
     void sendServiceRequest(EServiceReqCause reqCause);
+
+  private: /* Service */
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
 
