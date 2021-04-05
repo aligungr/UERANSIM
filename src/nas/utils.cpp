@@ -95,8 +95,8 @@ const char *EnumToString(EMmCause v)
         return "NON_5G_AUTHENTICATION_UNACCEPTABLE";
     case EMmCause::N1_MODE_NOT_ALLOWED:
         return "N1_MODE_NOT_ALLOWED";
-    case EMmCause::RESTRICTED_NOT_SERVICE_AREA:
-        return "RESTRICTED_NOT_SERVICE_AREA";
+    case EMmCause::RESTRICTED_SERVICE_AREA:
+        return "RESTRICTED_SERVICE_AREA";
     case EMmCause::LADN_NOT_AVAILABLE:
         return "LADN_NOT_AVAILABLE";
     case EMmCause::MAX_PDU_SESSIONS_REACHED:

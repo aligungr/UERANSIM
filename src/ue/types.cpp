@@ -185,6 +185,8 @@ Json ToJson(const ERegUpdateCause &v)
         return "INTER_SYSTEM_CHANGE_S1_TO_N1";
     case ERegUpdateCause::CONNECTION_RECOVERY:
         return "CONNECTION_RECOVERY";
+    case ERegUpdateCause::FALLBACK_INDICATION:
+        return "FALLBACK_INDICATION";
     case ERegUpdateCause::MM_OR_S1_CAPABILITY_CHANGE:
         return "MM_OR_S1_CAPABILITY_CHANGE";
     case ERegUpdateCause::USAGE_SETTING_CHANGE:

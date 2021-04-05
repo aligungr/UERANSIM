@@ -170,7 +170,7 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
 
 void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 {
-    if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
+    if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED || !m_lastServiceRequest)
     {
         m_logger->warn("Service Reject ignored since the MM state is not MM_SERVICE_REQUEST_INITIATED");
         sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
@@ -191,6 +191,11 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     auto cause = msg.mmCause.value;
     m_logger->err("Service Request failed [%s]", nas::utils::EnumToString(cause));
+
+    auto handleAbnormalCase = [this, cause]() {
+        m_logger->debug("Handling Service Reject abnormal case");
+        // TODO
+    };
 
     // Handle PDU session status
     if (msg.pduSessionStatus.has_value() && msg.sht != nas::ESecurityHeaderType::NOT_PROTECTED)
@@ -269,7 +274,8 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
+        cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
         switchRmState(ERmState::RM_DEREGISTERED);
@@ -316,6 +322,56 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
         setN1Capability(false);
+    }
+
+    if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    {
+        if (m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
+        {
+            // TODO: new initial registration
+        }
+    }
+
+    if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
+    {
+        if (hasEmergency())
+        {
+            // TODO: new initial registration
+        }
+    }
+
+    if (cause == nas::EMmCause::CONGESTION)
+    {
+        if (msg.t3346Value.has_value() && nas::utils::HasValue(*msg.t3346Value))
+        {
+            if (!hasEmergency())
+            {
+                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+                switchRmState(ERmState::RM_REGISTERED);
+
+                m_timers->t3517.stop();
+            }
+
+            m_timers->t3346.stop();
+
+            if (msg.sht != nas::ESecurityHeaderType::NOT_PROTECTED)
+                m_timers->t3346.start(*msg.t3346Value);
+            else
+                m_timers->t3346.start(nas::IEGprsTimer2{5});
+        }
+        else
+        {
+            handleAbnormalCase();
+        }
+    }
+
+    if (cause == nas::EMmCause::RESTRICTED_SERVICE_AREA)
+    {
+        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+        switchRmState(ERmState::RM_REGISTERED);
+
+        if (m_lastServiceRequest->serviceType.serviceType != nas::EServiceType::ELEVATED_SIGNALLING)
+            sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
     }
 }
 

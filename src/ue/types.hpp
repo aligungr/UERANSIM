@@ -420,9 +420,10 @@ enum class ERegUpdateCause
     // when the UE receives an indication of "RRC Connection failure" from the lower layers and does not have signalling
     // pending (i.e. when the lower layer requests NAS signalling connection recovery) except for the case specified in
     // subclause 5.3.1.4;
+    CONNECTION_RECOVERY,
     // when the UE receives a fallback indication from the lower layers and does not have signalling pending (i.e. when
     // the lower layer requests NAS signalling connection recovery, see subclauses 5.3.1.4 and 5.3.1.2);
-    CONNECTION_RECOVERY,
+    FALLBACK_INDICATION,
     // when the UE changes the 5GMM capability or the S1 UE network capability or both
     MM_OR_S1_CAPABILITY_CHANGE,
     // when the UE's usage setting changes
