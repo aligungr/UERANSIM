@@ -126,6 +126,8 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
                 else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                          nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                     switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+
+                switchRmState(ERmState::RM_DEREGISTERED);
             }
         }
         else
