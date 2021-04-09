@@ -25,6 +25,61 @@
 #include <asn/ngap/ASN_NGAP_UserLocationInformation.h>
 #include <asn/ngap/ASN_NGAP_UserLocationInformationNR.h>
 
+static e_ASN_NGAP_Criticality FindCriticalityOfUserIe(ASN_NGAP_NGAP_PDU *pdu, ASN_NGAP_ProtocolIE_ID_t ieId)
+{
+    auto procedureCode =
+        pdu->present == ASN_NGAP_NGAP_PDU_PR_initiatingMessage   ? pdu->choice.initiatingMessage->procedureCode
+        : pdu->present == ASN_NGAP_NGAP_PDU_PR_successfulOutcome ? pdu->choice.successfulOutcome->procedureCode
+                                                                 : pdu->choice.unsuccessfulOutcome->procedureCode;
+
+    if (ieId == ASN_NGAP_ProtocolIE_ID_id_UserLocationInformation)
+    {
+        return procedureCode == ASN_NGAP_ProcedureCode_id_InitialUEMessage ? ASN_NGAP_Criticality_reject
+                                                                           : ASN_NGAP_Criticality_ignore;
+    }
+
+    if (ieId == ASN_NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID || ieId == ASN_NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID)
+    {
+        if (procedureCode == ASN_NGAP_ProcedureCode_id_RerouteNASRequest)
+        {
+            return ieId == ASN_NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID ? ASN_NGAP_Criticality_reject
+                                                                    : ASN_NGAP_Criticality_ignore;
+        }
+
+        if (pdu->present == ASN_NGAP_NGAP_PDU_PR_initiatingMessage)
+        {
+            if (procedureCode == ASN_NGAP_ProcedureCode_id_UEContextReleaseRequest ||
+                procedureCode == ASN_NGAP_ProcedureCode_id_HandoverPreparation)
+                return ASN_NGAP_Criticality_reject;
+        }
+
+        if (procedureCode == ASN_NGAP_ProcedureCode_id_PDUSessionResourceNotify ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_PDUSessionResourceModifyIndication ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_RRCInactiveTransitionReport ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_HandoverNotification ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_PathSwitchRequest ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_HandoverCancel ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_UplinkRANStatusTransfer ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_InitialUEMessage ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_DownlinkNASTransport ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_UplinkNASTransport ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_NASNonDeliveryIndication ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_UplinkUEAssociatedNRPPaTransport ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_UplinkNonUEAssociatedNRPPaTransport ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_CellTrafficTrace ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_TraceStart ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_DeactivateTrace ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_TraceFailureIndication ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_LocationReport ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_LocationReportingControl ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_LocationReportingFailureIndication ||
+            procedureCode == ASN_NGAP_ProcedureCode_id_UERadioCapabilityInfoIndication)
+            return ASN_NGAP_Criticality_reject;
+    }
+
+    return ASN_NGAP_Criticality_ignore;
+}
+
 namespace nr::gnb
 {
 
@@ -95,22 +150,22 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
     {
         if (ue->amfUeNgapId > 0)
         {
-            asn::ngap::AddProtocolIeIfUsable(*pdu, asn_DEF_ASN_NGAP_AMF_UE_NGAP_ID,
-                                             ASN_NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID, ASN_NGAP_Criticality_reject,
-                                             [ue](void *mem) {
-                                                 auto &id = *reinterpret_cast<ASN_NGAP_AMF_UE_NGAP_ID_t *>(mem);
-                                                 asn::SetSigned64(ue->amfUeNgapId, id);
-                                             });
+            asn::ngap::AddProtocolIeIfUsable(
+                *pdu, asn_DEF_ASN_NGAP_AMF_UE_NGAP_ID, ASN_NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID,
+                FindCriticalityOfUserIe(pdu, ASN_NGAP_ProtocolIE_ID_id_AMF_UE_NGAP_ID), [ue](void *mem) {
+                    auto &id = *reinterpret_cast<ASN_NGAP_AMF_UE_NGAP_ID_t *>(mem);
+                    asn::SetSigned64(ue->amfUeNgapId, id);
+                });
         }
 
         asn::ngap::AddProtocolIeIfUsable(
             *pdu, asn_DEF_ASN_NGAP_RAN_UE_NGAP_ID, ASN_NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID,
-            ASN_NGAP_Criticality_reject,
+            FindCriticalityOfUserIe(pdu, ASN_NGAP_ProtocolIE_ID_id_RAN_UE_NGAP_ID),
             [ue](void *mem) { *reinterpret_cast<ASN_NGAP_RAN_UE_NGAP_ID_t *>(mem) = ue->ranUeNgapId; });
 
         asn::ngap::AddProtocolIeIfUsable(
             *pdu, asn_DEF_ASN_NGAP_UserLocationInformation, ASN_NGAP_ProtocolIE_ID_id_UserLocationInformation,
-            ASN_NGAP_Criticality_ignore, [this](void *mem) {
+            FindCriticalityOfUserIe(pdu, ASN_NGAP_ProtocolIE_ID_id_UserLocationInformation), [this](void *mem) {
                 auto *loc = reinterpret_cast<ASN_NGAP_UserLocationInformation *>(mem);
                 loc->present = ASN_NGAP_UserLocationInformation_PR_userLocationInformationNR;
                 loc->choice.userLocationInformationNR = asn::New<ASN_NGAP_UserLocationInformationNR>();
