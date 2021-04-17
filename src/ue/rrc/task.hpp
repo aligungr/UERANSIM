@@ -35,6 +35,7 @@ extern "C"
     struct ASN_RRC_RRCSetup;
     struct ASN_RRC_RRCReject;
     struct ASN_RRC_RRCRelease;
+    struct ASN_RRC_Paging;
 }
 
 namespace nr::ue
@@ -73,6 +74,7 @@ class UeRrcTask : public NtsTask
     void receiveRrcReject(const ASN_RRC_RRCReject &msg);
     void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
+    void receivePaging(const ASN_RRC_Paging &msg);
 
     void handleRadioLinkFailure();
 

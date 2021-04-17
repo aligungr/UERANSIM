@@ -185,7 +185,18 @@ void UeRrcTask::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
 
 void UeRrcTask::receiveRrcMessage(ASN_RRC_PCCH_Message *msg)
 {
-    // TODO
+    if (msg->message.present != ASN_RRC_PCCH_MessageType_PR_c1)
+        return;
+
+    auto &c1 = msg->message.choice.c1;
+    switch (c1->present)
+    {
+    case ASN_RRC_PCCH_MessageType__c1_PR_paging:
+        receivePaging(*c1->choice.paging);
+        break;
+    default:
+        break;
+    }
 }
 
 } // namespace nr::ue
