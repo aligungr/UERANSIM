@@ -421,6 +421,10 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     if (msg.networkFeatureSupport.has_value())
         m_nwFeatureSupport = *msg.networkFeatureSupport;
 
+    // The service request attempt counter shall be reset when  registration procedure for mobility and periodic
+    // registration update is successfully completed
+    m_serCounter = 0;
+
     if (sendComplete)
         sendNasMessage(nas::RegistrationComplete{});
 
