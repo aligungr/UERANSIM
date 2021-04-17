@@ -50,14 +50,8 @@ void NgapTask::receivePaging(int amfId, ASN_NGAP_Paging *msg)
 
     auto *w = new NwGnbNgapToRrc(NwGnbNgapToRrc::PAGING);
     w->uePagingTmsi =
-        ngap_encode::EncodeS(asn_DEF_ASN_NGAP_FiveG_S_TMSI, ieUePagingIdentity->UEPagingIdentity.choice.fiveG_S_TMSI);
+        asn::UniqueCopy(*ieUePagingIdentity->UEPagingIdentity.choice.fiveG_S_TMSI, asn_DEF_ASN_NGAP_FiveG_S_TMSI);
     w->taiListForPaging = asn::UniqueCopy(ieTaiListForPaging->TAIListForPaging, asn_DEF_ASN_NGAP_TAIListForPaging);
-    if (w->uePagingTmsi.length() == 0)
-    {
-        m_logger->err("FiveG-S-TMSI encoding failed");
-        delete w;
-        return;
-    }
 
     m_base->rrcTask->push(w);
 }
