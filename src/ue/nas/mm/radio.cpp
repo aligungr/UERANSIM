@@ -252,7 +252,7 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||
         m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
     {
-        m_logger->debug("Ignoring received Paging. Already initiated another MM specific procedure or Service Request");
+        m_logger->debug("Ignoring received Paging, another procedure already initiated");
         return;
     }
 
