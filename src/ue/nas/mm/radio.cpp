@@ -230,6 +230,26 @@ void NasMm::localReleaseConnection()
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
 {
+    // Check received TMSI identities
+    if (m_usim->m_storedGuti.type == nas::EIdentityType::NO_IDENTITY)
+        return;
+    bool tmsiMatches = false;
+    for (auto &tmsi : tmsiIds)
+    {
+        if (tmsi.amfSetId == m_usim->m_storedGuti.gutiOrTmsi.amfSetId &&
+            tmsi.amfPointer == m_usim->m_storedGuti.gutiOrTmsi.amfPointer &&
+            tmsi.tmsi == m_usim->m_storedGuti.gutiOrTmsi.tmsi)
+        {
+            tmsiMatches = true;
+            break;
+        }
+    }
+
+    if (!tmsiMatches)
+        return;
+
+    // Handle Paging message
+    m_logger->debug("Paging received");
     // TODO
 }
 
