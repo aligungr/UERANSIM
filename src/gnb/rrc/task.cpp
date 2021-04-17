@@ -69,6 +69,9 @@ void GnbRrcTask::onLoop()
             releaseConnection(w->ueId);
             break;
         }
+        case NwGnbNgapToRrc::PAGING:
+            handlePaging(w->uePagingTmsi, w->taiListForPaging);
+            break;
         }
         break;
     }

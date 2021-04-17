@@ -169,4 +169,10 @@ void GnbRrcTask::handleRadioLinkFailure(int ueId)
     m_ueCtx.erase(ueId);
 }
 
+void GnbRrcTask::handlePaging(const asn::Unique<ASN_NGAP_FiveG_S_TMSI> &tmsi,
+                              const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList)
+{
+    // TODO
+}
+
 } // namespace nr::gnb
