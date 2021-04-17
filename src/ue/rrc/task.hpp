@@ -78,10 +78,6 @@ class UeRrcTask : public NtsTask
 
     /* RRC channel send message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_DL_CCCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_PCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
@@ -92,9 +88,6 @@ class UeRrcTask : public NtsTask
     void receiveRrcMessage(ASN_RRC_DL_CCCH_Message *msg);
     void receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
     void receiveRrcMessage(ASN_RRC_PCCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
-    void receiveRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
 };
 
 } // namespace nr::ue
