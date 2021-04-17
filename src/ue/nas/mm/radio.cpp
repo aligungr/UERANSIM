@@ -230,7 +230,6 @@ void NasMm::localReleaseConnection()
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
 {
-    // Check received TMSI identities
     if (m_usim->m_storedGuti.type == nas::EIdentityType::NO_IDENTITY)
         return;
     bool tmsiMatches = false;
@@ -248,9 +247,21 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
     if (!tmsiMatches)
         return;
 
-    // Handle Paging message
     m_logger->debug("Paging received");
-    // TODO
+
+    m_timers->t3346.stop();
+
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||
+        m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        m_logger->debug("Paging ignored");
+        return;
+    }
+
+    if (m_cmState == ECmState::CM_CONNECTED)
+        sendMobilityRegistration(ERegUpdateCause::PAGING_OR_NOTIFICATION);
+    else
+        sendServiceRequest(EServiceReqCause::IDLE_PAGING);
 }
 
 } // namespace nr::ue
