@@ -11,6 +11,7 @@
 #include <gnb/ngap/task.hpp>
 #include <rrc/encode.hpp>
 
+#include <asn/ngap/ASN_NGAP_FiveG-S-TMSI.h>
 #include <asn/rrc/ASN_RRC_BCCH-BCH-Message.h>
 #include <asn/rrc/ASN_RRC_BCCH-DL-SCH-Message.h>
 #include <asn/rrc/ASN_RRC_CellGroupConfig.h>
@@ -172,7 +173,8 @@ void GnbRrcTask::handleRadioLinkFailure(int ueId)
     m_ueCtx.erase(ueId);
 }
 
-void GnbRrcTask::handlePaging(const OctetString &tmsi, const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList)
+void GnbRrcTask::handlePaging(const asn::Unique<ASN_NGAP_FiveG_S_TMSI> &tmsi,
+                              const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList)
 {
     // Construct and send a Paging message
     auto *pdu = asn::New<ASN_RRC_PCCH_Message>();
@@ -183,7 +185,15 @@ void GnbRrcTask::handlePaging(const OctetString &tmsi, const asn::Unique<ASN_NGA
 
     auto *record = asn::New<ASN_RRC_PagingRecord>();
     record->ue_Identity.present = ASN_RRC_PagingUE_Identity_PR_ng_5G_S_TMSI;
-    asn::SetBitString(record->ue_Identity.choice.ng_5G_S_TMSI, tmsi);
+
+    OctetString tmsiOctets{};
+    tmsiOctets.appendOctet2(bits::Ranged16({
+        {10, asn::GetBitStringInt<10>(tmsi->aMFSetID)},
+        {6, asn::GetBitStringInt<10>(tmsi->aMFPointer)},
+    }));
+    tmsiOctets.append(asn::GetOctetString(tmsi->fiveG_TMSI));
+
+    asn::SetBitString(record->ue_Identity.choice.ng_5G_S_TMSI, tmsiOctets);
 
     paging->pagingRecordList = asn::NewFor(paging->pagingRecordList);
     asn::SequenceAdd(*paging->pagingRecordList, record);
