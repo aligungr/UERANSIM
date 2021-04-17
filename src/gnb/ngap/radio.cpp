@@ -38,20 +38,25 @@ void NgapTask::receivePaging(int amfId, ASN_NGAP_Paging *msg)
     if (amf == nullptr)
         return;
 
-    auto *w = new NwGnbNgapToRrc(NwGnbNgapToRrc::PAGING);
-
     auto *ieUePagingIdentity = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_UEPagingIdentity);
-    if (ieUePagingIdentity)
+    auto *ieTaiListForPaging = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_TAIListForPaging);
+
+    if (ieUePagingIdentity == nullptr || ieTaiListForPaging == nullptr ||
+        ieUePagingIdentity->UEPagingIdentity.present != ASN_NGAP_UEPagingIdentity_PR_fiveG_S_TMSI)
     {
-        if (ieUePagingIdentity->UEPagingIdentity.present == ASN_NGAP_UEPagingIdentity_PR_fiveG_S_TMSI)
-            w->uePagingTmsi = asn::UniqueCopy(*ieUePagingIdentity->UEPagingIdentity.choice.fiveG_S_TMSI,
-                                              asn_DEF_ASN_NGAP_FiveG_S_TMSI);
+        m_logger->err("Invalid parameters received in Paging message");
+        return;
     }
 
-    auto *ieTaiListForPaging = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_TAIListForPaging);
-    if (ieTaiListForPaging)
+    auto *w = new NwGnbNgapToRrc(NwGnbNgapToRrc::PAGING);
+    w->uePagingTmsi =
+        ngap_encode::EncodeS(asn_DEF_ASN_NGAP_FiveG_S_TMSI, ieUePagingIdentity->UEPagingIdentity.choice.fiveG_S_TMSI);
+    w->taiListForPaging = asn::UniqueCopy(ieTaiListForPaging->TAIListForPaging, asn_DEF_ASN_NGAP_TAIListForPaging);
+    if (w->uePagingTmsi.length() == 0)
     {
-        w->taiListForPaging = asn::UniqueCopy(ieTaiListForPaging->TAIListForPaging, asn_DEF_ASN_NGAP_TAIListForPaging);
+        m_logger->err("FiveG-S-TMSI encoding failed");
+        delete w;
+        return;
     }
 
     m_base->rrcTask->push(w);

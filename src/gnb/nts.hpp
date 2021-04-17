@@ -20,7 +20,6 @@
 #include <utils/octet_string.hpp>
 #include <utils/unique_buffer.hpp>
 
-extern "C" struct ASN_NGAP_FiveG_S_TMSI;
 extern "C" struct ASN_NGAP_TAIListForPaging;
 
 namespace nr::gnb
@@ -117,7 +116,7 @@ struct NwGnbNgapToRrc : NtsMessage
     OctetString pdu{};
 
     // PAGING
-    asn::Unique<ASN_NGAP_FiveG_S_TMSI> uePagingTmsi{};
+    OctetString uePagingTmsi{};
     asn::Unique<ASN_NGAP_TAIListForPaging> taiListForPaging{};
 
     explicit NwGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
