@@ -204,11 +204,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     }
 
     if (msg.sht == nas::ESecurityHeaderType::NOT_PROTECTED)
-    {
         m_logger->warn("Not protected Service Reject message received");
-        sendMmStatus(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
-        return;
-    }
 
     // "On receipt of the SERVICE REJECT message, if the UE is in state 5GMM-SERVICE-REQUEST-INITIATED and the message
     // is integrity protected, the UE shall reset the service request attempt counter and stop timer T3517 if running."
@@ -216,7 +212,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     m_timers->t3517.stop();
 
     auto cause = msg.mmCause.value;
-    m_logger->err("Service Request failed [%s]", nas::utils::EnumToString(cause));
+    m_logger->err("Service Reject received with cause [%s]", nas::utils::EnumToString(cause));
 
     auto handleAbnormalCase = [this]() {
         m_logger->debug("Handling Service Reject abnormal case");

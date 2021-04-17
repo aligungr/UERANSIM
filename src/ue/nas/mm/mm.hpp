@@ -85,7 +85,6 @@ class NasMm
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
-    void receiveMmCause(const nas::IE5gMmCause &msg);
     void sendMmStatus(nas::EMmCause cause);
 
   public: /* Registration */

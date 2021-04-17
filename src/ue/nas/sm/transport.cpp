@@ -70,7 +70,7 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
 
 void NasSm::receiveSmStatus(const nas::FiveGSmStatus &msg)
 {
-    m_logger->err("SM Status received: %s", nas::utils::EnumToString(msg.smCause.value));
+    m_logger->err("SM Status received with cause [%s]", nas::utils::EnumToString(msg.smCause.value));
 
     if (msg.smCause.value == nas::ESmCause::INVALID_PTI_VALUE)
     {

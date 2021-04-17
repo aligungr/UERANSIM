@@ -115,7 +115,7 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
 
     if (!m_usim->m_currentNsCtx)
     {
-        m_logger->warn("Secured NAS message received while no security context");
+        m_logger->err("Secured NAS message received while no security context");
         sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
         return;
     }
@@ -203,7 +203,7 @@ void NasMm::receiveMmMessage(const nas::PlainMmMessage &msg)
         receiveDlNasTransport((const nas::DlNasTransport &)msg);
         break;
     default:
-        m_logger->err("Unhandled NAS MM message received: %d", (int)msg.messageType);
+        m_logger->err("Unhandled NAS MM message received [%d]", (int)msg.messageType);
         break;
     }
 }
@@ -212,7 +212,7 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
 {
     if (msg.payloadContainerType.payloadContainerType != nas::EPayloadContainerType::N1_SM_INFORMATION)
     {
-        m_logger->err("Unhandled DL NAS Transport type: %d", (int)msg.payloadContainerType.payloadContainerType);
+        m_logger->err("Unhandled DL NAS Transport type [%d]", (int)msg.payloadContainerType.payloadContainerType);
         return;
     }
 
@@ -229,7 +229,7 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
 
 void NasMm::sendMmStatus(nas::EMmCause cause)
 {
-    m_logger->warn("Sending MM Status with cause %s", nas::utils::EnumToString(cause));
+    m_logger->warn("Sending MM Status with cause [%s]", nas::utils::EnumToString(cause));
 
     nas::FiveGMmStatus m;
     m.mmCause.value = cause;
@@ -238,12 +238,7 @@ void NasMm::sendMmStatus(nas::EMmCause cause)
 
 void NasMm::receiveMmStatus(const nas::FiveGMmStatus &msg)
 {
-    receiveMmCause(msg.mmCause);
-}
-
-void NasMm::receiveMmCause(const nas::IE5gMmCause &msg)
-{
-    m_logger->err("MM cause received: %s", nas::utils::EnumToString(msg.value));
+    m_logger->err("MM status received with cause [%s]", nas::utils::EnumToString(msg.mmCause.value));
 }
 
 } // namespace nr::ue
