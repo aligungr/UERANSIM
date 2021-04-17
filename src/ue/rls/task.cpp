@@ -11,15 +11,19 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
-static const int TIMER_ID_MEASUREMENT = 1;
-static const int TIMER_PERIOD_MEASUREMENT = 2000;
+static constexpr const int TIMER_ID_MEASUREMENT = 1;
+static constexpr const int TIMER_PERIOD_MEASUREMENT_MIN = 1;
+static constexpr const int TIMER_PERIOD_MEASUREMENT_MAX = 2000;
+
+static constexpr const int TIMER_ID_RAPID_LAUNCH = 2;
+static constexpr const int TIMER_PERIOD_RAPID_LAUNCH = 750;
 
 namespace nr::ue
 {
 
 UeRlsTask::UeRlsTask(TaskBase *base)
     : m_base{base}, m_udpTask{}, m_cellSearchSpace{}, m_pendingMeasurements{}, m_activeMeasurements{},
-      m_pendingPlmnResponse{}, m_servingCell{}
+      m_pendingPlmnResponse{}, m_measurementPeriod{TIMER_PERIOD_MEASUREMENT_MIN}, m_servingCell{}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "rls");
 
@@ -39,7 +43,8 @@ void UeRlsTask::onStart()
 
     m_udpTask->start();
 
-    setTimer(TIMER_ID_MEASUREMENT, TIMER_PERIOD_MEASUREMENT);
+    setTimer(TIMER_ID_MEASUREMENT, m_measurementPeriod);
+    setTimer(TIMER_ID_RAPID_LAUNCH, TIMER_PERIOD_RAPID_LAUNCH);
     onMeasurement();
 }
 
@@ -86,8 +91,12 @@ void UeRlsTask::onLoop()
         auto *w = dynamic_cast<NwTimerExpired *>(msg);
         if (w->timerId == TIMER_ID_MEASUREMENT)
         {
-            setTimer(TIMER_ID_MEASUREMENT, TIMER_PERIOD_MEASUREMENT);
+            setTimer(TIMER_ID_MEASUREMENT, m_measurementPeriod);
             onMeasurement();
+        }
+        else if (w->timerId == TIMER_ID_RAPID_LAUNCH)
+        {
+            slowDownMeasurements();
         }
         break;
     }
@@ -114,6 +123,11 @@ void UeRlsTask::onQuit()
 {
     m_udpTask->quit();
     delete m_udpTask;
+}
+
+void UeRlsTask::slowDownMeasurements()
+{
+    m_measurementPeriod = TIMER_PERIOD_MEASUREMENT_MAX;
 }
 
 } // namespace nr::ue

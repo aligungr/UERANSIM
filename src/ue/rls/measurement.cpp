@@ -96,6 +96,8 @@ void UeRlsTask::plmnSearchRequested()
 
 void UeRlsTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
 {
+    slowDownMeasurements();
+
     if (!m_activeMeasurements.count(cellId))
     {
         m_logger->err("Selected cell is no longer available for camping");

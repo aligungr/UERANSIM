@@ -35,6 +35,7 @@ class UeRlsTask : public NtsTask
     std::unordered_map<GlobalNci, UeCellMeasurement> m_pendingMeasurements;
     std::unordered_map<GlobalNci, UeCellMeasurement> m_activeMeasurements;
     bool m_pendingPlmnResponse;
+    int64_t m_measurementPeriod;
 
     uint64_t m_sti;
     std::optional<UeCellInfo> m_servingCell;
@@ -49,6 +50,9 @@ class UeRlsTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
+
+  private: /* Base */
+    void slowDownMeasurements();
 
   private: /* Transport */
     void receiveRlsMessage(const InetAddress &address, rls::RlsMessage &msg);
