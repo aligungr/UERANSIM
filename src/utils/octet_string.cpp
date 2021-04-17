@@ -36,6 +36,12 @@ void OctetString::appendOctet2(octet2 v)
     m_data.push_back(v[1]);
 }
 
+void OctetString::appendOctet2(uint16_t v)
+{
+    appendOctet(static_cast<uint8_t>(v >> 8 & 0xFF));
+    appendOctet(static_cast<uint8_t>(v & 0xFF));
+}
+
 void OctetString::appendOctet2(int v)
 {
     appendOctet2(octet2{v});

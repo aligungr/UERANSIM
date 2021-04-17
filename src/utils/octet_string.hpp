@@ -40,6 +40,7 @@ class OctetString
     void appendOctet(int v);
     void appendOctet(int bigHalf, int littleHalf);
     void appendOctet2(octet2 v);
+    void appendOctet2(uint16_t v);
     void appendOctet2(int v);
     void appendOctet3(octet3 v);
     void appendOctet3(int v);
