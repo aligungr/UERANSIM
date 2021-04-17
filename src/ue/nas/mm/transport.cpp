@@ -18,9 +18,20 @@ namespace nr::ue
 
 static bool IsInitialNasMessage(const nas::PlainMmMessage &msg)
 {
-    return msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
-           msg.messageType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING ||
-           msg.messageType == nas::EMessageType::SERVICE_REQUEST;
+    auto msgType = msg.messageType;
+    return msgType == nas::EMessageType::REGISTRATION_REQUEST ||
+           msgType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING ||
+           msgType == nas::EMessageType::SERVICE_REQUEST;
+}
+
+static bool IsAcceptedWithoutIntegrity(const nas::PlainMmMessage &msg)
+{
+    auto msgType = msg.messageType;
+    return msgType == nas::EMessageType::IDENTITY_REQUEST || msgType == nas::EMessageType::AUTHENTICATION_REQUEST ||
+           msgType == nas::EMessageType::AUTHENTICATION_RESULT || msgType == nas::EMessageType::AUTHENTICATION_REJECT ||
+           msgType == nas::EMessageType::REGISTRATION_REJECT ||
+           msgType == nas::EMessageType::DEREGISTRATION_ACCEPT_UE_TERMINATED ||
+           msgType == nas::EMessageType::SERVICE_REJECT;
 }
 
 void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
@@ -73,9 +84,9 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
 
     if (mmMsg.sht == nas::ESecurityHeaderType::NOT_PROTECTED)
     {
-        //  If any NAS signalling message is received as not integrity protected even though the secure exchange of NAS
-        //  messages has been established by the network, then the NAS shall discard this message
-        if (m_usim->m_currentNsCtx)
+        // If any NAS signalling message is received as not integrity protected even though the secure exchange of NAS
+        // messages has been established by the network, then the NAS shall discard this message
+        if (m_usim->m_currentNsCtx && !IsAcceptedWithoutIntegrity((const nas::PlainMmMessage &)mmMsg))
         {
             m_logger->err(
                 "Not integrity protected NAS message received after security establishment. Ignoring received "
