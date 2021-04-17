@@ -247,16 +247,16 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
     if (!tmsiMatches)
         return;
 
-    m_logger->debug("Paging received");
-
     m_timers->t3346.stop();
 
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||
         m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
     {
-        m_logger->debug("Paging ignored");
+        m_logger->debug("Ignoring received Paging. Already initiated another MM specific procedure or Service Request");
         return;
     }
+
+    m_logger->debug("Responding to received Paging");
 
     if (m_cmState == ECmState::CM_CONNECTED)
         sendMobilityRegistration(ERegUpdateCause::PAGING_OR_NOTIFICATION);
