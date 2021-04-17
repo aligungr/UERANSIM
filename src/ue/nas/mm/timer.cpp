@@ -54,7 +54,6 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
                 // The UE shall abort the registration procedure for initial registration and the NAS signalling
                 // connection, if any, shall be released locally if the initial registration request is not for
                 // emergency services..
-                switchRmState(ERmState::RM_DEREGISTERED);
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 switchUState(E5UState::U2_NOT_UPDATED);
 
@@ -93,7 +92,6 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
             logExpired();
 
             switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
-            switchRmState(ERmState::RM_REGISTERED);
 
             if (m_cmState == ECmState::CM_IDLE && m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
             {
@@ -126,8 +124,6 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
                 else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                          nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                     switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-
-                switchRmState(ERmState::RM_DEREGISTERED);
             }
         }
         else

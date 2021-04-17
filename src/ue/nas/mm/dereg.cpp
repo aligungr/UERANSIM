@@ -77,7 +77,6 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
         switchMmState(EMmState::MM_DEREGISTERED_INITIATED, EMmSubState::MM_DEREGISTERED_INITIATED_NA);
     else
     {
-        switchRmState(ERmState::RM_DEREGISTERED);
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
     }
 }
@@ -99,8 +98,6 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     m_usim->m_storedSuci = {};
 
     m_sm->localReleaseAllSessions();
-
-    switchRmState(ERmState::RM_DEREGISTERED);
 
     if (m_lastDeregCause == EDeregCause::DISABLE_5G)
         switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
@@ -181,7 +178,6 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
     }
 
     sendNasMessage(nas::DeRegistrationAcceptUeTerminated{});
-    switchRmState(ERmState::RM_DEREGISTERED);
 
     // "Upon sending a DEREGISTRATION ACCEPT message, the UE shall delete the rejected NSSAI as specified in
     // subclause 4.6.2.2."

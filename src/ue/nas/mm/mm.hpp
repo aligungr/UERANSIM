@@ -72,7 +72,6 @@ class NasMm
     void triggerMmCycle();
     void performMmCycle();
     void switchMmState(EMmState state, EMmSubState subState);
-    void switchRmState(ERmState state);
     void switchCmState(ECmState state);
     void switchUState(E5UState state);
     void onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate);

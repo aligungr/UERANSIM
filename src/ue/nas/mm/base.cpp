@@ -138,6 +138,21 @@ void NasMm::performMmCycle()
 
 void NasMm::switchMmState(EMmState state, EMmSubState subState)
 {
+    ERmState oldRmState = m_rmState;
+    if (state == EMmState::MM_DEREGISTERED || state == EMmState::MM_REGISTERED_INITIATED)
+        m_rmState = ERmState::RM_DEREGISTERED;
+    else if (state == EMmState::MM_REGISTERED || state == EMmState::MM_SERVICE_REQUEST_INITIATED ||
+             state == EMmState::MM_DEREGISTERED_INITIATED)
+        m_rmState = ERmState::RM_REGISTERED;
+
+    onSwitchRmState(oldRmState, m_rmState);
+
+    if (m_base->nodeListener)
+    {
+        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RM,
+                                       ToJson(oldRmState).str(), ToJson(m_rmState).str());
+    }
+
     EMmState oldState = m_mmState;
     EMmSubState oldSubState = m_mmSubState;
 
@@ -156,25 +171,6 @@ void NasMm::switchMmState(EMmState state, EMmSubState subState)
 
     if (state != oldState || subState != oldSubState)
         m_logger->info("UE switches to state [%s]", ToJson(subState).str().c_str());
-
-    triggerMmCycle();
-}
-
-void NasMm::switchRmState(ERmState state)
-{
-    ERmState oldState = m_rmState;
-    m_rmState = state;
-
-    onSwitchRmState(oldState, m_rmState);
-
-    if (m_base->nodeListener)
-    {
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RM,
-                                       ToJson(oldState).str(), ToJson(m_rmState).str());
-    }
-
-    // No need to log it
-    // m_logger->info("UE switches to state [%s]", RmStateName(state));
 
     triggerMmCycle();
 }
@@ -258,7 +254,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
             if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
                 regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
             {
-                switchRmState(ERmState::RM_DEREGISTERED);
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
                 switchUState(E5UState::U2_NOT_UPDATED);
 
@@ -282,8 +277,6 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
             else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                      nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-
-            switchRmState(ERmState::RM_DEREGISTERED);
         }
     }
 }

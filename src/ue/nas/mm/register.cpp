@@ -245,7 +245,6 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
     resetRegAttemptCounter();
     switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-    switchRmState(ERmState::RM_REGISTERED);
     switchUState(E5UState::U1_UPDATED);
 
     // If the REGISTRATION ACCEPT message included a T3512 value IE, the UE shall use the value in the T3512 value IE as
@@ -356,7 +355,6 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     resetRegAttemptCounter();
     m_serCounter = 0;
     switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-    switchRmState(ERmState::RM_REGISTERED);
     switchUState(E5UState::U1_UPDATED);
 
     // "If the ACCEPT message included a T3512 value IE, the UE shall use the value in T3512 value IE as
@@ -466,8 +464,6 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             m_logger->warn("Network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                            nas::utils::EnumToString(msg.eapMessage->eap->code));
     }
-
-    switchRmState(ERmState::RM_DEREGISTERED);
 
     auto handleAbnormalCase = [this, regType, cause]() {
         m_logger->debug("Handling Registration Reject abnormal case");
@@ -617,8 +613,6 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
             m_logger->warn("Network sent EAP with type of %s in RegistrationReject, ignoring EAP IE.",
                            nas::utils::EnumToString(msg.eapMessage->eap->code));
     }
-
-    switchRmState(ERmState::RM_DEREGISTERED);
 
     auto handleAbnormalCase = [this, regType, cause]() {
         m_logger->debug("Handling Registration Reject abnormal case");

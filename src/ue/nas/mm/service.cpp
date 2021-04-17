@@ -222,7 +222,6 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         m_logger->debug("Handling Service Reject abnormal case");
 
         switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
-        switchRmState(ERmState::RM_REGISTERED);
         m_timers->t3517.stop();
     };
 
@@ -307,43 +306,36 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
-        switchRmState(ERmState::RM_DEREGISTERED);
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-        switchRmState(ERmState::RM_DEREGISTERED);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-        switchRmState(ERmState::RM_DEREGISTERED);
     }
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
         switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-        switchRmState(ERmState::RM_DEREGISTERED);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
     {
         switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-        switchRmState(ERmState::RM_REGISTERED);
     }
 
     if (cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
         switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
-        switchRmState(ERmState::RM_REGISTERED);
     }
 
     if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
         switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
-        switchRmState(ERmState::RM_DEREGISTERED);
 
         setN1Capability(false);
     }
@@ -372,7 +364,6 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
             if (!hasEmergency())
             {
                 switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
-                switchRmState(ERmState::RM_REGISTERED);
 
                 m_timers->t3517.stop();
             }
@@ -393,7 +384,6 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     if (cause == nas::EMmCause::RESTRICTED_SERVICE_AREA)
     {
         switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
-        switchRmState(ERmState::RM_REGISTERED);
 
         if (m_lastServiceRequest->serviceType.serviceType != nas::EServiceType::ELEVATED_SIGNALLING)
             sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
