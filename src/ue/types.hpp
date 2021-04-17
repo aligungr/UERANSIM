@@ -24,9 +24,9 @@ namespace nr::ue
 {
 
 class UeAppTask;
-class UeMrTask;
 class NasTask;
 class UeRrcTask;
+class UeRlsTask;
 class UserEquipment;
 
 struct SupportedAlgs
@@ -122,9 +122,9 @@ struct TaskBase
     NtsTask *cliCallbackTask{};
 
     UeAppTask *appTask{};
-    UeMrTask *mrTask{};
     NasTask *nasTask{};
     UeRrcTask *rrcTask{};
+    UeRlsTask *rlsTask{};
 };
 
 struct UeTimers
@@ -250,6 +250,7 @@ struct PduSession
     const int psi;
 
     EPsState psState{};
+    bool uplinkPending{};
 
     nas::EPduSessionType sessionType{};
     std::optional<std::string> apn{};
@@ -395,6 +396,7 @@ struct UePduSessionInfo
     std::string type{};
     std::string address{};
     bool isEmergency{};
+    bool uplinkPending{};
 };
 
 enum class ERegUpdateCause
@@ -418,9 +420,10 @@ enum class ERegUpdateCause
     // when the UE receives an indication of "RRC Connection failure" from the lower layers and does not have signalling
     // pending (i.e. when the lower layer requests NAS signalling connection recovery) except for the case specified in
     // subclause 5.3.1.4;
+    CONNECTION_RECOVERY,
     // when the UE receives a fallback indication from the lower layers and does not have signalling pending (i.e. when
     // the lower layer requests NAS signalling connection recovery, see subclauses 5.3.1.4 and 5.3.1.2);
-    CONNECTION_RECOVERY,
+    FALLBACK_INDICATION,
     // when the UE changes the 5GMM capability or the S1 UE network capability or both
     MM_OR_S1_CAPABILITY_CHANGE,
     // when the UE's usage setting changes
@@ -451,6 +454,38 @@ enum class ERegUpdateCause
     RESTRICTED_SERVICE_AREA
 };
 
+enum class EServiceReqCause
+{
+    // unspecified cause
+    UNSPECIFIED,
+    // a) the UE, in 5GMM-IDLE mode over 3GPP access, receives a paging request from the network
+    IDLE_PAGING,
+    // b) the UE, in 5GMM-CONNECTED mode over 3GPP access, receives a notification from the network with access type
+    // indicating non-3GPP access
+    CONNECTED_3GPP_NOTIFICATION_N3GPP,
+    // c) the UE, in 5GMM-IDLE mode over 3GPP access, has uplink signalling pending
+    IDLE_UPLINK_SIGNAL_PENDING,
+    // d) the UE, in 5GMM-IDLE mode over 3GPP access, has uplink user data pending
+    IDLE_UPLINK_DATA_PENDING,
+    // e) the UE, in 5GMM-CONNECTED mode or in 5GMM-CONNECTED mode with RRC inactive indication, has user data pending
+    // due to no user-plane resources established for PDU session(s) used for user data transport
+    CONNECTED_UPLINK_DATA_PENDING,
+    // f) the UE in 5GMM-IDLE mode over non-3GPP access, receives an indication from the lower layers of non-3GPP
+    // access, that the access stratum connection is established between UE and network
+    NON_3GPP_AS_ESTABLISHED,
+    // g) the UE, in 5GMM-IDLE mode over 3GPP access, receives a notification from the network with access type
+    // indicating 3GPP access when the UE is in 5GMM-CONNECTED mode over non-3GPP access
+    IDLE_3GPP_NOTIFICATION_N3GPP,
+    // h) the UE, in 5GMM-IDLE, 5GMM-CONNECTED mode over 3GPP access, or 5GMM-CONNECTED mode with RRC inactive
+    // indication, receives a request for emergency services fallback from the upper layer and performs emergency
+    // services fallback as specified in subclause 4.13.4.2 of 3GPP TS 23.502 [9]
+    EMERGENCY_FALLBACK,
+    // i) the UE, in 5GMM-CONNECTED mode over 3GPP access or in 5GMM-CONNECTED mode with RRC inactive indication,
+    // receives a fallback indication from the lower layers (see subclauses 5.3.1.2 and 5.3.1.4) and or the UE has a
+    // pending NAS procedure other than a registration, service request, or de-registration procedure
+    FALLBACK_INDICATION
+};
+
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
@@ -461,5 +496,6 @@ Json ToJson(const UeTimers &v);
 Json ToJson(const ERegUpdateCause &v);
 Json ToJson(const EPsState &v);
 Json ToJson(const UePduSessionInfo &v);
+Json ToJson(const EServiceReqCause &v);
 
 } // namespace nr::ue

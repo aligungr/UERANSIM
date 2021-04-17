@@ -24,18 +24,21 @@ class Usim
     bool m_isValid{};
 
   public:
-    // Location related
-    nas::IE5gsMobileIdentity m_storedGuti{};
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
+    // State related
     E5UState m_uState{};
 
     // Identity related
     nas::IE5gsMobileIdentity m_storedSuci{};
+    nas::IE5gsMobileIdentity m_storedGuti{};
 
     // Plmn related
-    Plmn m_currentPlmn{};
+    std::optional<UeCellInfo> m_servingCell{};
+    std::optional<Plmn> m_currentPlmn{};
+    std::optional<nas::VTrackingAreaIdentity> m_currentTai{};
+    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
     nas::IE5gsTrackingAreaIdentityList m_taiList{};
-    nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiList{};
+    nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiListRoaming{}; // 5GS TAs for roaming
+    nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiListRps{}; // 5GS forbidden TAs for regional provision of service
     nas::IEPlmnList m_equivalentPlmnList{};
     nas::IEPlmnList m_forbiddenPlmnList{};
     nas::IEServiceAreaList m_serviceAreaList{};

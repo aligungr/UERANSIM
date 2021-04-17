@@ -10,8 +10,8 @@
 
 #include <gnb/app/task.hpp>
 #include <gnb/gtp/task.hpp>
-#include <gnb/mr/task.hpp>
 #include <gnb/ngap/task.hpp>
+#include <gnb/rls/task.hpp>
 #include <gnb/rrc/task.hpp>
 #include <gnb/sctp/task.hpp>
 #include <utils/common.hpp>
@@ -36,7 +36,7 @@ void GnbCmdHandler::sendError(const InetAddress &address, const std::string &out
 void GnbCmdHandler::pauseTasks()
 {
     m_base->gtpTask->requestPause();
-    m_base->mrTask->requestPause();
+    m_base->rlsTask->requestPause();
     m_base->ngapTask->requestPause();
     m_base->rrcTask->requestPause();
     m_base->sctpTask->requestPause();
@@ -45,7 +45,7 @@ void GnbCmdHandler::pauseTasks()
 void GnbCmdHandler::unpauseTasks()
 {
     m_base->gtpTask->requestUnpause();
-    m_base->mrTask->requestUnpause();
+    m_base->rlsTask->requestUnpause();
     m_base->ngapTask->requestUnpause();
     m_base->rrcTask->requestUnpause();
     m_base->sctpTask->requestUnpause();
@@ -55,7 +55,7 @@ bool GnbCmdHandler::isAllPaused()
 {
     if (!m_base->gtpTask->isPauseConfirmed())
         return false;
-    if (!m_base->mrTask->isPauseConfirmed())
+    if (!m_base->rlsTask->isPauseConfirmed())
         return false;
     if (!m_base->ngapTask->isPauseConfirmed())
         return false;
@@ -131,7 +131,7 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
         for (auto &ue : m_base->ngapTask->m_ueCtx)
         {
             json.push(Json::Obj({
-                {"ue-name", m_base->mrTask->m_ueMap[ue.first].name},
+                {"ue-id", ue.first},
                 {"ran-ngap-id", ue.second->ranUeNgapId},
                 {"amf-ngap-id", ue.second->amfUeNgapId},
             }));
@@ -141,6 +141,17 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
     }
     case app::GnbCliCommand::UE_COUNT: {
         sendResult(msg.address, std::to_string(m_base->ngapTask->m_ueCtx.size()));
+        break;
+    }
+    case app::GnbCliCommand::UE_RELEASE_REQ: {
+        if (m_base->ngapTask->m_ueCtx.count(msg.cmd->ueId) == 0)
+            sendError(msg.address, "UE not found with given ID");
+        else
+        {
+            auto ue = m_base->ngapTask->m_ueCtx[msg.cmd->ueId];
+            m_base->ngapTask->sendContextRelease(ue->ctxId, NgapCause::RadioNetwork_unspecified);
+            sendResult(msg.address, "Requesting UE context release");
+        }
         break;
     }
     }

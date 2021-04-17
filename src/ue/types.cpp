@@ -185,6 +185,8 @@ Json ToJson(const ERegUpdateCause &v)
         return "INTER_SYSTEM_CHANGE_S1_TO_N1";
     case ERegUpdateCause::CONNECTION_RECOVERY:
         return "CONNECTION_RECOVERY";
+    case ERegUpdateCause::FALLBACK_INDICATION:
+        return "FALLBACK_INDICATION";
     case ERegUpdateCause::MM_OR_S1_CAPABILITY_CHANGE:
         return "MM_OR_S1_CAPABILITY_CHANGE";
     case ERegUpdateCause::USAGE_SETTING_CHANGE:
@@ -241,6 +243,35 @@ Json ToJson(const UePduSessionInfo &v)
         {"address", v.address},
         {"emergency", v.isEmergency},
     });
+}
+
+Json ToJson(const EServiceReqCause &v)
+{
+    switch (v)
+    {
+    case EServiceReqCause::UNSPECIFIED:
+        return "UNSPECIFIED";
+    case EServiceReqCause::IDLE_PAGING:
+        return "IDLE_PAGING";
+    case EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP:
+        return "CONNECTED_3GPP_NOTIFICATION_N3GPP";
+    case EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING:
+        return "IDLE_UPLINK_SIGNAL_PENDING";
+    case EServiceReqCause::IDLE_UPLINK_DATA_PENDING:
+        return "IDLE_UPLINK_DATA_PENDING";
+    case EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING:
+        return "CONNECTED_UPLINK_DATA_PENDING";
+    case EServiceReqCause::NON_3GPP_AS_ESTABLISHED:
+        return "NON_3GPP_AS_ESTABLISHED";
+    case EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP:
+        return "IDLE_3GPP_NOTIFICATION_N3GPP";
+    case EServiceReqCause::EMERGENCY_FALLBACK:
+        return "EMERGENCY_FALLBACK";
+    case EServiceReqCause::FALLBACK_INDICATION:
+        return "FALLBACK_INDICATION";
+    default:
+        return "?";
+    }
 }
 
 } // namespace nr::ue

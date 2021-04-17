@@ -26,11 +26,15 @@ struct GnbCliCommand
         AMF_LIST,
         AMF_INFO,
         UE_LIST,
-        UE_COUNT
+        UE_COUNT,
+        UE_RELEASE_REQ,
     } present;
 
     // AMF_INFO
     int amfId{};
+
+    // UE_RELEASE_REQ
+    int ueId{};
 
     explicit GnbCliCommand(PR present) : present(present)
     {
@@ -48,6 +52,7 @@ struct UeCliCommand
         PS_RELEASE,
         PS_RELEASE_ALL,
         DE_REGISTER,
+        COVERAGE,
     } present;
 
     // DE_REGISTER

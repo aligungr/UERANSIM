@@ -28,10 +28,7 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 
 void NasTask::onStart()
 {
-    logger->debug("NAS layer started");
-
     usim->initialize(base->config->supi.has_value(), base->config->initials);
-    usim->m_currentPlmn = base->config->hplmn; // TODO: normally assigned after plmn search
 
     sm->onStart(mm);
     mm->onStart(sm, usim);
@@ -67,18 +64,34 @@ void NasTask::onLoop()
         auto *w = dynamic_cast<NwUeNasToNas *>(msg);
         switch (w->present)
         {
-        case NwUeNasToNas::PERFORM_MM_CYCLE:
+        case NwUeNasToNas::PERFORM_MM_CYCLE: {
             mm->handleNasEvent(*w);
             break;
-        case NwUeNasToNas::NAS_TIMER_EXPIRE:
+        }
+        case NwUeNasToNas::NAS_TIMER_EXPIRE: {
             if (w->timer->isMmTimer())
                 mm->handleNasEvent(*w);
             else
                 sm->handleNasEvent(*w);
             break;
-        case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS:
+        }
+        case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS: {
             sm->establishInitialSessions();
             break;
+        }
+        default:
+            break;
+        }
+        break;
+    }
+    case NtsMessageType::UE_APP_TO_NAS: {
+        auto *w = dynamic_cast<NwUeAppToNas *>(msg);
+        switch (w->present)
+        {
+        case NwUeAppToNas::UPLINK_STATUS_CHANGE: {
+            sm->handleUplinkStatusChange(w->psi, w->isPending);
+            break;
+        }
         default:
             break;
         }

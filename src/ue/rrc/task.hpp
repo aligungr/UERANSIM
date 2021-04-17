@@ -35,6 +35,7 @@ extern "C"
     struct ASN_RRC_RRCSetup;
     struct ASN_RRC_RRCReject;
     struct ASN_RRC_RRCRelease;
+    struct ASN_RRC_Paging;
 }
 
 namespace nr::ue
@@ -73,15 +74,12 @@ class UeRrcTask : public NtsTask
     void receiveRrcReject(const ASN_RRC_RRCReject &msg);
     void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
+    void receivePaging(const ASN_RRC_Paging &msg);
 
     void handleRadioLinkFailure();
 
     /* RRC channel send message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_DL_CCCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_PCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
@@ -92,9 +90,6 @@ class UeRrcTask : public NtsTask
     void receiveRrcMessage(ASN_RRC_DL_CCCH_Message *msg);
     void receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
     void receiveRrcMessage(ASN_RRC_PCCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
-    void receiveRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
 };
 
 } // namespace nr::ue

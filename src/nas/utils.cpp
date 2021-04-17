@@ -8,6 +8,7 @@
 
 #include "utils.hpp"
 
+#include <algorithm>
 #include <cstring>
 
 namespace nas::utils
@@ -95,8 +96,8 @@ const char *EnumToString(EMmCause v)
         return "NON_5G_AUTHENTICATION_UNACCEPTABLE";
     case EMmCause::N1_MODE_NOT_ALLOWED:
         return "N1_MODE_NOT_ALLOWED";
-    case EMmCause::RESTRICTED_NOT_SERVICE_AREA:
-        return "RESTRICTED_NOT_SERVICE_AREA";
+    case EMmCause::RESTRICTED_SERVICE_AREA:
+        return "RESTRICTED_SERVICE_AREA";
     case EMmCause::LADN_NOT_AVAILABLE:
         return "LADN_NOT_AVAILABLE";
     case EMmCause::MAX_PDU_SESSIONS_REACHED:
@@ -262,7 +263,7 @@ IEDnn DnnFromApn(const std::string &apn)
     return dnn;
 }
 
-void AddToPlmnList(IEPlmnList &list, VPlmn item)
+void AddToPlmnList(IEPlmnList &list, const VPlmn &item)
 {
     if (!std::any_of(list.plmns.begin(), list.plmns.end(), [&item](auto &i) { return DeepEqualsV(i, item); }))
         list.plmns.push_back(item);
@@ -287,6 +288,150 @@ SingleSlice SNssaiTo(const IESNssai &v)
     sNssai.sst = v.sst;
     sNssai.sd = v.sd;
     return sNssai;
+}
+
+bool PlmnListContains(const IEPlmnList &list, Plmn item)
+{
+    return PlmnListContains(list, PlmnFrom(item));
+}
+
+bool PlmnListContains(const IEPlmnList &list, VPlmn item)
+{
+    return std::any_of(list.plmns.begin(), list.plmns.end(), [&item](auto &i) { return DeepEqualsV(i, item); });
+}
+
+bool TaiListContains(const IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai)
+{
+    return std::any_of(list.list.begin(), list.list.end(), [&tai](auto &i) { return TaiListContains(i, tai); });
+}
+
+bool TaiListContains(const VPartialTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai)
+{
+    if (list.present == 0)
+    {
+        auto &list0 = list.list00;
+        if (DeepEqualsV(list0->plmn, tai.plmn))
+        {
+            if (std::any_of(list0->tacs.begin(), list0->tacs.end(), [&tai](auto &i) { return (int)i == (int)tai.tac; }))
+                return true;
+        }
+    }
+    else if (list.present == 1)
+    {
+        auto &list1 = list.list01;
+        if (DeepEqualsV(list1->plmn, tai.plmn) && (int)list1->tac == (int)tai.tac)
+            return true;
+    }
+    else if (list.present == 2)
+    {
+        auto &list2 = list.list10;
+        if (std::any_of(list2->tais.begin(), list2->tais.end(), [&tai](auto &i) { return DeepEqualsV(i, tai); }))
+            return true;
+    }
+
+    return false;
+}
+
+bool ServiceAreaListForbidsPlmn(const IEServiceAreaList &list, const VPlmn &plmn)
+{
+    return std::any_of(list.list.begin(), list.list.end(),
+                       [&plmn](auto &i) { return ServiceAreaListForbidsPlmn(i, plmn); });
+}
+
+bool ServiceAreaListForbidsTai(const IEServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    return std::any_of(list.list.begin(), list.list.end(),
+                       [&tai](auto &i) { return ServiceAreaListForbidsTai(i, tai); });
+}
+
+bool ServiceAreaListForbidsPlmn(const VPartialServiceAreaList &list, const VPlmn &plmn)
+{
+    if (list.present == 3)
+    {
+        if (list.list11->allowedType == EAllowedType::IN_THE_NON_ALLOWED_AREA && DeepEqualsV(list.list11->plmn, plmn))
+            return true;
+    }
+    return false;
+}
+
+bool ServiceAreaListForbidsTai(const VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    if (ServiceAreaListForbidsPlmn(list, tai.plmn))
+        return true;
+    if (list.present == 0)
+    {
+        if (list.list00->allowedType == EAllowedType::IN_THE_NON_ALLOWED_AREA &&
+            DeepEqualsV(list.list00->plmn, tai.plmn) &&
+            std::any_of(list.list00->tacs.begin(), list.list00->tacs.end(),
+                        [&tai](auto &i) { return (int)i == (int)tai.tac; }))
+            return true;
+    }
+    else if (list.present == 1)
+    {
+        if (list.list01->allowedType == EAllowedType::IN_THE_NON_ALLOWED_AREA &&
+            DeepEqualsV(list.list01->plmn, tai.plmn) && (int)list.list01->tac == (int)tai.tac)
+            return true;
+    }
+    else if (list.present == 2)
+    {
+        if (list.list10->allowedType == EAllowedType::IN_THE_NON_ALLOWED_AREA &&
+            std::any_of(list.list10->tais.begin(), list.list10->tais.end(),
+                        [tai](auto &i) { return DeepEqualsV(i, tai); }))
+            return true;
+    }
+    return false;
+}
+
+void AddToTaiList(IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai)
+{
+    if (!TaiListContains(list, tai))
+    {
+        VPartialTrackingAreaIdentityList ls{};
+        ls.list01 = VPartialTrackingAreaIdentityList01{tai.plmn, tai.tac};
+        ls.present = 1;
+        list.list.push_back(ls);
+    }
+}
+
+void RemoveFromTaiList(IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai)
+{
+    list.list.erase(std::remove_if(list.list.begin(), list.list.end(),
+                                   [&tai](auto &itemList) {
+                                       return itemList.present == 1 && DeepEqualsV(itemList.list01->plmn, tai.plmn) &&
+                                              (int)itemList.list01->tac == (int)tai.tac;
+                                   }),
+                    list.list.end());
+
+    for (auto &itemList : list.list)
+    {
+        if (itemList.present == 0)
+        {
+            auto &list0 = itemList.list00;
+            if (DeepEqualsV(list0->plmn, tai.plmn))
+            {
+                list0->tacs.erase(std::remove_if(list0->tacs.begin(), list0->tacs.end(),
+                                                 [&tai](auto tac) { return (int)tac == (int)tai.tac; }),
+                                  list0->tacs.end());
+            }
+        }
+        else if (itemList.present == 2)
+        {
+            auto &list2 = itemList.list10;
+            list2->tais.erase(
+                std::remove_if(list2->tais.begin(), list2->tais.end(), [&tai](auto &i) { return DeepEqualsV(i, tai); }),
+                list2->tais.end());
+        }
+    }
+
+    list.list.erase(
+        std::remove_if(list.list.begin(), list.list.end(),
+                       [](auto &itemList) { return itemList.present == 0 && itemList.list00->tacs.empty(); }),
+        list.list.end());
+
+    list.list.erase(
+        std::remove_if(list.list.begin(), list.list.end(),
+                       [](auto &itemList) { return itemList.present == 2 && itemList.list10->tais.empty(); }),
+        list.list.end());
 }
 
 } // namespace nas::utils

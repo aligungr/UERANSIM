@@ -31,6 +31,7 @@ extern "C" struct ASN_NGAP_AMFConfigurationUpdate;
 extern "C" struct ASN_NGAP_OverloadStart;
 extern "C" struct ASN_NGAP_OverloadStop;
 extern "C" struct ASN_NGAP_PDUSessionResourceReleaseCommand;
+extern "C" struct ASN_NGAP_Paging;
 
 namespace nr::gnb
 {
@@ -118,6 +119,7 @@ class NgapTask : public NtsTask
 
     /* Radio resource control */
     void handleRadioLinkFailure(int ueId);
+    void receivePaging(int amfId, ASN_NGAP_Paging *msg);
 };
 
 } // namespace nr::gnb

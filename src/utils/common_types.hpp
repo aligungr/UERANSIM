@@ -12,9 +12,9 @@
 #include "octet.hpp"
 #include <memory>
 #include <optional>
+#include <stdexcept>
 #include <utility>
 #include <vector>
-#include <stdexcept>
 
 enum class EPagingDrx
 {
@@ -119,6 +119,74 @@ enum class EDeregCause
     ECALL_INACTIVITY,
 };
 
+enum class EInitialRegCause
+{
+    UNSPECIFIED,
+    EMERGENCY_SERVICES,
+    MM_DEREG_NORMAL_SERVICE,
+    T3346_EXPIRY,
+    DUE_TO_DEREGISTRATION,
+    DUE_TO_SERVICE_REJECT,
+};
+
+struct GlobalNci
+{
+    Plmn plmn{};
+    int64_t nci{};
+
+    GlobalNci() = default;
+
+    GlobalNci(const Plmn &plmn, int64_t nci) : plmn(plmn), nci(nci)
+    {
+    }
+};
+
+enum class ECellCategory
+{
+    UNDEFINED,
+    ACCEPTABLE_CELL,
+    SUITABLE_CELL,
+    BARRED_CELL,
+    RESERVED_CELL,
+};
+
+struct UeCellMeasurement
+{
+	uint64_t sti{};
+    GlobalNci cellId{};
+    int tac{};
+    int dbm{};
+    std::string gnbName{};
+    std::string linkIp{};
+};
+
+struct UeCellInfo
+{
+    uint64_t sti{};
+    GlobalNci cellId{};
+    int tac{};
+    ECellCategory cellCategory{};
+    std::string gnbName{};
+    std::string linkIp{};
+};
+
+struct Vector3
+{
+    int x{};
+    int y{};
+    int z{};
+
+    Vector3() = default;
+
+    Vector3(int x, int y, int z) : x(x), y(y), z(z)
+    {
+    }
+};
+
+bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
+bool operator==(const Plmn &lhs, const Plmn &rhs);
+bool operator==(const GlobalNci &lhs, const GlobalNci &rhs);
+
 Json ToJson(const Supi &v);
 Json ToJson(const Plmn &v);
 Json ToJson(const SingleSlice &v);
@@ -126,4 +194,19 @@ Json ToJson(const NetworkSlice &v);
 Json ToJson(const PlmnSupport &v);
 Json ToJson(const EDeregCause &v);
 
-bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
+namespace std
+{
+
+template <>
+struct hash<Plmn>
+{
+    std::size_t operator()(const Plmn &v) const noexcept;
+};
+
+template <>
+struct hash<GlobalNci>
+{
+    std::size_t operator()(const GlobalNci &v) const noexcept;
+};
+
+} // namespace std

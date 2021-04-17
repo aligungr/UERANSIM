@@ -9,9 +9,9 @@
 #include "ue.hpp"
 
 #include "app/task.hpp"
-#include "mr/task.hpp"
 #include "nas/task.hpp"
 #include "rrc/task.hpp"
+#include "rls/task.hpp"
 
 namespace nr::ue
 {
@@ -29,8 +29,8 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
 
     base->nasTask = new NasTask(base);
     base->rrcTask = new UeRrcTask(base);
-    base->mrTask = new UeMrTask(base);
     base->appTask = new UeAppTask(base);
+    base->rlsTask = new UeRlsTask(base);
 
     taskBase = base;
 }
@@ -39,12 +39,12 @@ UserEquipment::~UserEquipment()
 {
     taskBase->nasTask->quit();
     taskBase->rrcTask->quit();
-    taskBase->mrTask->quit();
+    taskBase->rlsTask->quit();
     taskBase->appTask->quit();
 
     delete taskBase->nasTask;
     delete taskBase->rrcTask;
-    delete taskBase->mrTask;
+    delete taskBase->rlsTask;
     delete taskBase->appTask;
 
     delete taskBase->logBase;
@@ -56,7 +56,7 @@ void UserEquipment::start()
 {
     taskBase->nasTask->start();
     taskBase->rrcTask->start();
-    taskBase->mrTask->start();
+    taskBase->rlsTask->start();
     taskBase->appTask->start();
 }
 

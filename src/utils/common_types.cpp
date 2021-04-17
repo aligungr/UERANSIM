@@ -7,6 +7,7 @@
 //
 
 #include "common_types.hpp"
+#include "common.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -85,8 +86,39 @@ bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
     return ((int)*lhs.sd) == ((int)*rhs.sd);
 }
 
+bool operator==(const Plmn &lhs, const Plmn &rhs)
+{
+    if (lhs.mcc != rhs.mcc)
+        return false;
+    if (lhs.mnc != rhs.mnc)
+        return false;
+    return lhs.isLongMnc == rhs.isLongMnc;
+}
+
+bool operator==(const GlobalNci &lhs, const GlobalNci &rhs)
+{
+    return lhs.plmn == rhs.plmn && lhs.nci == rhs.nci;
+}
+
 void NetworkSlice::addIfNotExists(const SingleSlice &slice)
 {
     if (!std::any_of(slices.begin(), slices.end(), [&slice](auto &s) { return s == slice; }))
         slices.push_back(slice);
+}
+
+std::size_t std::hash<Plmn>::operator()(const Plmn &v) const noexcept
+{
+    std::size_t h = 0;
+    utils::HashCombine(h, v.mcc);
+    utils::HashCombine(h, v.mnc);
+    utils::HashCombine(h, v.isLongMnc);
+    return h;
+}
+
+std::size_t std::hash<GlobalNci>::operator()(const GlobalNci &v) const noexcept
+{
+    std::size_t h = 0;
+    utils::HashCombine(h, v.plmn);
+    utils::HashCombine(h, v.nci);
+    return h;
 }

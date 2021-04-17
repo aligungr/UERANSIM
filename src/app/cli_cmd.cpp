@@ -150,6 +150,7 @@ static OrderedMap<std::string, CmdEntry> g_gnbCmdEntries = {
     {"amf-info", {"Show some status information about the given AMF", "<amf-id>", DefaultDesc, true}},
     {"ue-list", {"List all UEs associated with the gNB", "", DefaultDesc, false}},
     {"ue-count", {"Print the total number of UEs connected the this gNB", "", DefaultDesc, false}},
+    {"ue-release", {"Request a UE context release for the given UE", "<ue-id>", DefaultDesc, false}},
 };
 
 static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
@@ -162,6 +163,7 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
     {"deregister",
      {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
+    {"coverage", {"Show gNodeB cell coverage information", "", DefaultDesc, false}},
 };
 
 static std::unique_ptr<GnbCliCommand> GnbCliParseImpl(const std::string &subCmd, const opt::OptionsResult &options,
@@ -198,6 +200,18 @@ static std::unique_ptr<GnbCliCommand> GnbCliParseImpl(const std::string &subCmd,
     else if (subCmd == "ue-count")
     {
         return std::make_unique<GnbCliCommand>(GnbCliCommand::UE_COUNT);
+    }
+    else if (subCmd == "ue-release")
+    {
+        auto cmd = std::make_unique<GnbCliCommand>(GnbCliCommand::UE_RELEASE_REQ);
+        if (options.positionalCount() == 0)
+            CMD_ERR("UE ID is expected")
+        if (options.positionalCount() > 1)
+            CMD_ERR("Only one UE ID is expected")
+        cmd->ueId = utils::ParseInt(options.getPositional(0));
+        if (cmd->ueId <= 0)
+            CMD_ERR("Invalid UE ID")
+        return cmd;
     }
 
     return nullptr;
@@ -300,6 +314,10 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
             }
         }
         return cmd;
+    }
+    else if (subCmd == "coverage")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::COVERAGE);
     }
 
     return nullptr;

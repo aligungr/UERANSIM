@@ -13,8 +13,8 @@
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
 #include <rrc/encode.hpp>
 #include <ue/app/task.hpp>
-#include <ue/mr/task.hpp>
 #include <ue/nas/task.hpp>
+#include <ue/rls/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -29,7 +29,6 @@ UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}
 
 void UeRrcTask::onStart()
 {
-    m_logger->debug("RRC layer started");
 }
 
 void UeRrcTask::onQuit()
@@ -45,54 +44,62 @@ void UeRrcTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_MR_TO_RRC: {
-        auto *w = dynamic_cast<NwUeMrToRrc *>(msg);
-        switch (w->present)
-        {
-        case NwUeMrToRrc::PLMN_SEARCH_RESPONSE: {
-            auto *nw = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
-            nw->gnbName = std::move(w->gnbName);
-            m_base->nasTask->push(nw);
-            break;
-        }
-        case NwUeMrToRrc::PLMN_SEARCH_FAILURE: {
-            m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_FAILURE));
-            break;
-        }
-        case NwUeMrToRrc::RRC_PDU_DELIVERY: {
-            handleDownlinkRrc(w->channel, w->pdu);
-            break;
-        }
-        case NwUeMrToRrc::RADIO_LINK_FAILURE: {
-            handleRadioLinkFailure();
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_NAS_TO_RRC: {
         auto *w = dynamic_cast<NwUeNasToRrc *>(msg);
         switch (w->present)
         {
         case NwUeNasToRrc::PLMN_SEARCH_REQUEST: {
-            m_base->mrTask->push(new NwUeRrcToMr(NwUeRrcToMr::PLMN_SEARCH_REQUEST));
+            m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::PLMN_SEARCH_REQUEST));
             break;
         }
-        case NwUeNasToRrc::INITIAL_NAS_DELIVERY:
+        case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
             deliverInitialNas(std::move(w->nasPdu), w->rrcEstablishmentCause);
             break;
-        case NwUeNasToRrc::UPLINK_NAS_DELIVERY:
+        }
+        case NwUeNasToRrc::UPLINK_NAS_DELIVERY: {
             deliverUplinkNas(std::move(w->nasPdu));
             break;
-        case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION:
+        }
+        case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
             m_state = ERrcState::RRC_IDLE;
-
-            auto *wr = new NwUeRrcToMr(NwUeRrcToMr::RRC_CONNECTION_RELEASE);
-            wr->cause = rls::ECause::RRC_LOCAL_RELEASE;
-            m_base->mrTask->push(wr);
-
             m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
+            m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::RESET_STI));
             break;
+        }
+        case NwUeNasToRrc::CELL_SELECTION_COMMAND: {
+            auto *wr = new NwUeRrcToRls(NwUeRrcToRls::CELL_SELECTION_COMMAND);
+            wr->cellId = w->cellId;
+            wr->isSuitableCell = w->isSuitableCell;
+            m_base->rlsTask->push(wr);
+            break;
+        }
+        }
+        break;
+    }
+    case NtsMessageType::UE_RLS_TO_RRC: {
+        auto *w = dynamic_cast<NwUeRlsToRrc *>(msg);
+        switch (w->present)
+        {
+        case NwUeRlsToRrc::PLMN_SEARCH_RESPONSE: {
+            auto *wr = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
+            wr->measurements = std::move(w->measurements);
+            m_base->nasTask->push(wr);
+            break;
+        }
+        case NwUeRlsToRrc::SERVING_CELL_CHANGE: {
+            auto *wr = new NwUeRrcToNas(NwUeRrcToNas::SERVING_CELL_CHANGE);
+            wr->servingCell = w->servingCell;
+            m_base->nasTask->push(wr);
+            break;
+        }
+        case NwUeRlsToRrc::RRC_PDU_DELIVERY: {
+            handleDownlinkRrc(w->channel, w->pdu);
+            break;
+        }
+        case NwUeRlsToRrc::RADIO_LINK_FAILURE: {
+            handleRadioLinkFailure();
+            break;
+        }
         }
         break;
     }

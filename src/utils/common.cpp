@@ -26,7 +26,7 @@ static_assert(sizeof(float) == sizeof(uint32_t));
 static_assert(sizeof(double) == sizeof(uint64_t));
 static_assert(sizeof(long long) == sizeof(uint64_t));
 
-static std::atomic<int> IdCounter = 1;
+static std::atomic<int> g_idCounter = 1;
 
 static bool IPv6FromString(const char *szAddress, uint8_t *address)
 {
@@ -135,7 +135,7 @@ std::vector<uint8_t> utils::HexStringToVector(const std::string &hex)
 
 int utils::NextId()
 {
-    int res = ++IdCounter;
+    int res = ++g_idCounter;
     if (res == 0)
     {
         // ID counter overflows.
