@@ -63,6 +63,7 @@ void UeRrcTask::onLoop()
         case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
             m_state = ERrcState::RRC_IDLE;
             m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
+            m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::RESET_STI));
             break;
         }
         case NwUeNasToRrc::CELL_SELECTION_COMMAND: {

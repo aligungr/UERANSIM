@@ -120,7 +120,8 @@ struct NwUeRrcToRls : NtsMessage
     {
         PLMN_SEARCH_REQUEST,
         CELL_SELECTION_COMMAND,
-        RRC_PDU_DELIVERY
+        RRC_PDU_DELIVERY,
+        RESET_STI,
     } present;
 
     // CELL_SELECTION_COMMAND

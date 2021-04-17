@@ -64,6 +64,9 @@ void UeRlsTask::onLoop()
             deliverUplinkPdu(rls::EPduType::RRC, std::move(w->pdu),
                              OctetString::FromOctet4(static_cast<int>(w->channel)));
             break;
+        case NwUeRrcToRls::RESET_STI:
+            m_sti = utils::Random64();
+            break;
         }
         break;
     }
