@@ -8,8 +8,10 @@
 
 #pragma once
 
+#include "types.hpp"
 #include <app/cli_base.hpp>
 #include <app/cli_cmd.hpp>
+#include <asn/utils/utils.hpp>
 #include <rrc/rrc.hpp>
 #include <sctp/sctp.hpp>
 #include <utility>
@@ -18,7 +20,8 @@
 #include <utils/octet_string.hpp>
 #include <utils/unique_buffer.hpp>
 
-#include "types.hpp"
+extern "C" struct ASN_NGAP_FiveG_S_TMSI;
+extern "C" struct ASN_NGAP_TAIListForPaging;
 
 namespace nr::gnb
 {
@@ -103,6 +106,7 @@ struct NwGnbNgapToRrc : NtsMessage
         RADIO_POWER_ON,
         NAS_DELIVERY,
         AN_RELEASE,
+        PAGING,
     } present;
 
     // NAS_DELIVERY
@@ -111,6 +115,10 @@ struct NwGnbNgapToRrc : NtsMessage
 
     // NAS_DELIVERY
     OctetString pdu{};
+
+    // PAGING
+    asn::Unique<ASN_NGAP_FiveG_S_TMSI> uePagingTmsi{};
+    asn::Unique<ASN_NGAP_TAIListForPaging> taiListForPaging{};
 
     explicit NwGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
     {

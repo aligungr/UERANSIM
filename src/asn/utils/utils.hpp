@@ -198,4 +198,12 @@ inline Unique<T> WrapUnique(T *ptr, asn_TYPE_descriptor_t &desc)
     return asn::Unique<T>(ptr, asn::Deleter<T>{desc});
 }
 
+template <typename T>
+inline Unique<T> UniqueCopy(const T &value, asn_TYPE_descriptor_t &desc)
+{
+    auto *ptr = New<T>();
+    DeepCopy(desc, value, ptr);
+    return WrapUnique(ptr, desc);
+}
+
 } // namespace asn
