@@ -11,8 +11,8 @@
 #include <gnb/app/task.hpp>
 #include <gnb/gtp/task.hpp>
 #include <gnb/ngap/task.hpp>
-#include <gnb/rrc/task.hpp>
 #include <gnb/rls/task.hpp>
+#include <gnb/rrc/task.hpp>
 #include <gnb/sctp/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
@@ -131,6 +131,7 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
         for (auto &ue : m_base->ngapTask->m_ueCtx)
         {
             json.push(Json::Obj({
+                {"ue-id", ue.first},
                 {"ran-ngap-id", ue.second->ranUeNgapId},
                 {"amf-ngap-id", ue.second->amfUeNgapId},
             }));
@@ -140,6 +141,17 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
     }
     case app::GnbCliCommand::UE_COUNT: {
         sendResult(msg.address, std::to_string(m_base->ngapTask->m_ueCtx.size()));
+        break;
+    }
+    case app::GnbCliCommand::UE_RELEASE_REQ: {
+        if (m_base->ngapTask->m_ueCtx.count(msg.cmd->ueId) == 0)
+            sendError(msg.address, "UE not found with given ID");
+        else
+        {
+            auto ue = m_base->ngapTask->m_ueCtx[msg.cmd->ueId];
+            m_base->ngapTask->sendContextRelease(ue->ctxId, NgapCause::RadioNetwork_unspecified);
+            sendResult(msg.address, "UE Context Release Request is sending for specified UE");
+        }
         break;
     }
     }
