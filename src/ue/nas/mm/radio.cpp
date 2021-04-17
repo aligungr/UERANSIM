@@ -228,4 +228,9 @@ void NasMm::localReleaseConnection()
     m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::LOCAL_RELEASE_CONNECTION));
 }
 
+void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
+{
+    // TODO
+}
+
 } // namespace nr::ue

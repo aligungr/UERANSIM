@@ -152,6 +152,7 @@ class NasMm
     void handleRrcConnectionRelease();
     void handleServingCellChange(const UeCellInfo &servingCell);
     void handleRadioLinkFailure();
+    void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
 
   private: /* Access Control */
     bool isHighPriority();

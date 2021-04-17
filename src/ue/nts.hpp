@@ -67,6 +67,7 @@ struct NwUeRrcToNas : NtsMessage
         RRC_CONNECTION_RELEASE,
         RADIO_LINK_FAILURE,
         SERVING_CELL_CHANGE,
+        PAGING,
     } present;
 
     // NAS_DELIVERY
@@ -77,6 +78,9 @@ struct NwUeRrcToNas : NtsMessage
 
     // SERVING_CELL_CHANGE
     UeCellInfo servingCell{};
+
+    // PAGING
+    std::vector<GutiMobileIdentity> pagingTmsi{};
 
     explicit NwUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {

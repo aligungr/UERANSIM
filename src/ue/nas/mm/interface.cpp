@@ -44,6 +44,11 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
     }
     case NwUeRrcToNas::SERVING_CELL_CHANGE: {
         handleServingCellChange(msg.servingCell);
+        break;
+    }
+    case NwUeRrcToNas::PAGING: {
+        handlePaging(msg.pagingTmsi);
+        break;
     }
     }
 }
