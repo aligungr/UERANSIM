@@ -42,7 +42,7 @@ struct octet
         return static_cast<int32_t>(value);
     }
 
-    inline bool bit(int index) const
+    [[nodiscard]] inline bool bit(int index) const
     {
         assert(index >= 0 && index <= 7);
         std::bitset<8> bitset = value;
@@ -92,11 +92,6 @@ struct octet2
     explicit constexpr operator uint16_t() const
     {
         return value;
-    }
-
-    explicit constexpr operator int16_t() const
-    {
-        return static_cast<uint16_t>(value);
     }
 };
 
@@ -171,14 +166,19 @@ struct octet4
         return (value >> (24 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator int32_t() const
+    inline explicit constexpr operator int32_t() const
     {
         return static_cast<int32_t>(value);
     }
 
-    explicit constexpr operator uint32_t() const
+    inline explicit constexpr operator uint32_t() const
     {
         return value;
+    }
+
+    inline bool operator==(const octet4 &other) const
+    {
+        return value == other.value;
     }
 };
 

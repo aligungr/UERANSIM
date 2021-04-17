@@ -63,11 +63,6 @@ class OctetView
         return octet2{read(), read()};
     }
 
-    inline int16_t read2S() const
-    {
-        return (int16_t)read2();
-    }
-
     inline uint16_t read2US() const
     {
         return (uint16_t)read2();
