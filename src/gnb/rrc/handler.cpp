@@ -120,7 +120,7 @@ void GnbRrcTask::receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest 
     asn::SetOctetString(rrcSetupIEs->masterCellGroup,
                         rrc::encode::EncodeS(asn_DEF_ASN_RRC_CellGroupConfig, &masterCellGroup));
 
-    m_logger->debug("Sending RRC Setup for UE[%d]", ueId);
+    m_logger->info("RRC Setup for UE[%d]", ueId);
     sendRrcMessage(ueId, pdu);
 }
 
@@ -144,7 +144,7 @@ void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplet
 
 void GnbRrcTask::releaseConnection(int ueId)
 {
-    m_logger->debug("Releasing RRC connection for UE[%d]", ueId);
+    m_logger->info("Releasing RRC connection for UE[%d]", ueId);
 
     // Send RRC Release message
     auto *pdu = asn::New<ASN_RRC_DL_DCCH_Message>();
