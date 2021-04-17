@@ -56,6 +56,8 @@ class NasMm
     bool m_registeredForEmergency{};
     // Network feature support information
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
+    // Last time Service Request needed indication for Data
+    long m_lastTimeServiceReqNeededIndForData{};
 
     friend class UeCmdHandler;
 
@@ -173,6 +175,7 @@ class NasMm
     void deliverUlTransport(const nas::UlNasTransport &msg); // used by SM
     bool isRegistered();                                     // used by SM
     bool isRegisteredForEmergency();                         // used by SM
+    void serviceNeededForUplinkData();                       // used by SM
 };
 
 } // namespace nr::ue

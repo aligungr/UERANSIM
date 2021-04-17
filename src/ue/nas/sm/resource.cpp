@@ -11,6 +11,7 @@
 #include <nas/proto_conf.hpp>
 #include <nas/utils.hpp>
 #include <ue/app/task.hpp>
+#include <ue/nas/mm/mm.hpp>
 
 namespace nr::ue
 {
@@ -64,7 +65,8 @@ void NasSm::handleUplinkStatusChange(int psi, bool isPending)
 
     m_pduSessions[psi]->uplinkPending = isPending;
 
-    // TODO
+    if (isPending)
+        m_mm->serviceNeededForUplinkData();
 }
 
 bool NasSm::anyUplinkDataPending()

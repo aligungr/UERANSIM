@@ -10,6 +10,8 @@
 
 #include <utils/common.hpp>
 
+static constexpr const int64_t SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD = 1000;
+
 namespace nr::ue
 {
 
@@ -74,6 +76,18 @@ bool NasMm::isRegistered()
 bool NasMm::isRegisteredForEmergency()
 {
     return isRegistered() && m_registeredForEmergency;
+}
+
+void NasMm::serviceNeededForUplinkData()
+{
+    auto currentTime = utils::CurrentTimeMillis();
+    if (currentTime - m_lastTimeServiceReqNeededIndForData <= SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD)
+    {
+        sendServiceRequest(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
+                                                               : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
+
+        m_lastTimeServiceReqNeededIndForData = currentTime;
+    }
 }
 
 } // namespace nr::ue
