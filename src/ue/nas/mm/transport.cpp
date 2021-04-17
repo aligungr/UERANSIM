@@ -18,8 +18,6 @@ namespace nr::ue
 
 void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
-    // TODO trigger on send
-
     OctetString pdu{};
     if (m_usim->m_currentNsCtx &&
         (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
