@@ -74,7 +74,16 @@ void GnbRlsTask::handleDownlinkDelivery(int ueId, rls::EPduType pduType, OctetSt
     resp.pduType = pduType;
     resp.pdu = std::move(pdu);
     resp.payload = std::move(payload);
-    sendRlsMessage(ueId, resp);
+
+    if (ueId != 0)
+    {
+        sendRlsMessage(ueId, resp);
+    }
+    else
+    {
+        for (auto &ue : m_ueCtx)
+            sendRlsMessage(ue.first, resp);
+    }
 }
 
 } // namespace nr::gnb
