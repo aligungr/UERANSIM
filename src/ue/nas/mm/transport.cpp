@@ -34,6 +34,11 @@ static bool IsAcceptedWithoutIntegrity(const nas::PlainMmMessage &msg)
            msgType == nas::EMessageType::SERVICE_REJECT;
 }
 
+static bool BypassCiphering(const nas::PlainMmMessage &msg)
+{
+    return IsInitialNasMessage(msg);
+}
+
 void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
     if (m_cmState == ECmState::CM_IDLE && !IsInitialNasMessage(msg))
@@ -48,7 +53,7 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
     if (m_usim->m_currentNsCtx && (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
                                    m_usim->m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
     {
-        auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg);
+        auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, BypassCiphering(msg));
         nas::EncodeNasMessage(*secured, pdu);
     }
     else
