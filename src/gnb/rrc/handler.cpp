@@ -19,6 +19,9 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 #include <asn/rrc/ASN_RRC_PCCH-Message.h>
+#include <asn/rrc/ASN_RRC_Paging.h>
+#include <asn/rrc/ASN_RRC_PagingRecord.h>
+#include <asn/rrc/ASN_RRC_PagingRecordList.h>
 #include <asn/rrc/ASN_RRC_RRCRelease-IEs.h>
 #include <asn/rrc/ASN_RRC_RRCRelease.h>
 #include <asn/rrc/ASN_RRC_RRCSetup-IEs.h>
@@ -169,10 +172,23 @@ void GnbRrcTask::handleRadioLinkFailure(int ueId)
     m_ueCtx.erase(ueId);
 }
 
-void GnbRrcTask::handlePaging(const asn::Unique<ASN_NGAP_FiveG_S_TMSI> &tmsi,
-                              const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList)
+void GnbRrcTask::handlePaging(const OctetString &tmsi, const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList)
 {
-    // TODO
+    // Construct and send a Paging message
+    auto *pdu = asn::New<ASN_RRC_PCCH_Message>();
+    pdu->message.present = ASN_RRC_PCCH_MessageType_PR_c1;
+    pdu->message.choice.c1 = asn::NewFor(pdu->message.choice.c1);
+    pdu->message.choice.c1->present = ASN_RRC_PCCH_MessageType__c1_PR_paging;
+    auto &paging = pdu->message.choice.c1->choice.paging = asn::New<ASN_RRC_Paging>();
+
+    auto *record = asn::New<ASN_RRC_PagingRecord>();
+    record->ue_Identity.present = ASN_RRC_PagingUE_Identity_PR_ng_5G_S_TMSI;
+    asn::SetBitString(record->ue_Identity.choice.ng_5G_S_TMSI, tmsi);
+
+    paging->pagingRecordList = asn::NewFor(paging->pagingRecordList);
+    asn::SequenceAdd(*paging->pagingRecordList, record);
+
+    sendRrcMessage(pdu);
 }
 
 } // namespace nr::gnb
