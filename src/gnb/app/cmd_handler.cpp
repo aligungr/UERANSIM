@@ -150,7 +150,7 @@ void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
         {
             auto ue = m_base->ngapTask->m_ueCtx[msg.cmd->ueId];
             m_base->ngapTask->sendContextRelease(ue->ctxId, NgapCause::RadioNetwork_unspecified);
-            sendResult(msg.address, "UE Context Release Request is sending for specified UE");
+            sendResult(msg.address, "Requesting UE context release");
         }
         break;
     }
