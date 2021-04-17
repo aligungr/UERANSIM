@@ -34,6 +34,7 @@ class UeRlsTask : public NtsTask
     std::vector<InetAddress> m_cellSearchSpace;
     std::unordered_map<GlobalNci, UeCellMeasurement> m_pendingMeasurements;
     std::unordered_map<GlobalNci, UeCellMeasurement> m_activeMeasurements;
+    bool m_pendingPlmnResponse;
 
     uint64_t m_sti;
     std::optional<UeCellInfo> m_servingCell;

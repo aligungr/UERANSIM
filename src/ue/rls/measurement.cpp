@@ -44,6 +44,20 @@ void UeRlsTask::onMeasurement()
         rls::RlsCellInfoRequest req{m_sti};
         sendRlsMessage(ip, req);
     }
+
+    // Send PLMN search response to the RRC if it is requested
+    if (m_pendingPlmnResponse)
+    {
+        m_pendingPlmnResponse = false;
+
+        std::vector<UeCellMeasurement> measurements{};
+        for (auto &m : m_activeMeasurements)
+            measurements.push_back(m.second);
+
+        auto *w = new NwUeRlsToRrc(NwUeRlsToRrc::PLMN_SEARCH_RESPONSE);
+        w->measurements = std::move(measurements);
+        m_base->rrcTask->push(w);
+    }
 }
 
 void UeRlsTask::receiveCellInfoResponse(const rls::RlsCellInfoResponse &msg)
@@ -77,13 +91,7 @@ void UeRlsTask::onCoverageChange(const std::vector<GlobalNci> &entered, const st
 
 void UeRlsTask::plmnSearchRequested()
 {
-    std::vector<UeCellMeasurement> measurements{};
-    for (auto &m : m_activeMeasurements)
-        measurements.push_back(m.second);
-
-    auto *w = new NwUeRlsToRrc(NwUeRlsToRrc::PLMN_SEARCH_RESPONSE);
-    w->measurements = std::move(measurements);
-    m_base->rrcTask->push(w);
+    m_pendingPlmnResponse = true;
 }
 
 void UeRlsTask::handleCellSelectionCommand(const GlobalNci &cellId, bool isSuitable)
