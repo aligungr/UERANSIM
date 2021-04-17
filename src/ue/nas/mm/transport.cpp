@@ -10,18 +10,32 @@
 #include <asn/rrc/ASN_RRC_EstablishmentCause.h>
 #include <nas/utils.hpp>
 #include <ue/nas/enc.hpp>
-#include <ue/rrc/task.hpp>
 #include <ue/nas/sm/sm.hpp>
+#include <ue/rrc/task.hpp>
 
 namespace nr::ue
 {
 
+static bool IsInitialNasMessage(const nas::PlainMmMessage &msg)
+{
+    return msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
+           msg.messageType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING ||
+           msg.messageType == nas::EMessageType::SERVICE_REQUEST;
+}
+
 void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
+    if (m_cmState == ECmState::CM_IDLE && !IsInitialNasMessage(msg))
+    {
+        m_logger->warn("NAS Transport aborted, Service Request is needed for uplink signalling");
+        if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
+            sendServiceRequest(EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING);
+        return;
+    }
+
     OctetString pdu{};
-    if (m_usim->m_currentNsCtx &&
-        (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
-         m_usim->m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
+    if (m_usim->m_currentNsCtx && (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
+                                   m_usim->m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
     {
         auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg);
         nas::EncodeNasMessage(*secured, pdu);
