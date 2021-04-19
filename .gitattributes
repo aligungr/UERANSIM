@@ -1,2 +1,1 @@
-src/asn/* linguist-vendored
-src/ext/* linguist-vendored
+*.c linguist-vendored
