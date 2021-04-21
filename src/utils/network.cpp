@@ -19,10 +19,13 @@
 
 static std::string OctetStringToIpString(const OctetString &address)
 {
-    if (address.length() != 4 && address.length() != 16)
+    if (address.length() != 4 && address.length() != 16 && address.length() != 20)
         throw std::runtime_error("Bad Inet address octet string length");
 
-    int domain = address.length() == 4 ? AF_INET : AF_INET6;
+    // (If the length is 20, the address contains IPv4v6 which is 4+16 length. In this case
+    //  we prefer IPv4, and take the first 4 octets.)
+    int domain = (address.length() == 4 || address.length() == 20) ? AF_INET : AF_INET6;
+
     unsigned char buf[sizeof(struct in6_addr)] = {0};
     char str[INET6_ADDRSTRLEN] = {0};
 
