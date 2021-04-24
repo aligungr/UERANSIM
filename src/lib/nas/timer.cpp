@@ -9,6 +9,7 @@
 #include "timer.hpp"
 
 #include <sstream>
+
 #include <utils/common.hpp>
 
 namespace nas

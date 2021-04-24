@@ -8,12 +8,13 @@
 
 #pragma once
 
+#include "enums.hpp"
+
 #include <optional>
 #include <utility>
+
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
-
-#include "enums.hpp"
 
 namespace nas
 {
