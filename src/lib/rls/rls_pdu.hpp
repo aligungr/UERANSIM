@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <memory>
+
 #include <utils/common_types.hpp>
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
