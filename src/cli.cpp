@@ -8,18 +8,19 @@
 
 #include <algorithm>
 #include <iostream>
-#include <lib/app/cli_base.hpp>
-#include <lib/app/proc_table.hpp>
 #include <set>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <vector>
+
+#include <lib/app/cli_base.hpp>
+#include <lib/app/proc_table.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 #include <utils/io.hpp>
 #include <utils/network.hpp>
 #include <utils/options.hpp>
-#include <vector>
 
 static struct Options
 {
