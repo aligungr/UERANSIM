@@ -8,6 +8,7 @@
 
 #include "octet_string.hpp"
 #include "common.hpp"
+
 #include <cstring>
 
 void OctetString::append(const OctetString &v)

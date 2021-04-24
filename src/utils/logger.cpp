@@ -8,10 +8,10 @@
 
 #include "logger.hpp"
 
+#include <vector>
+
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-
-#include <vector>
 
 Logger::Logger(const std::string &name, const std::vector<std::shared_ptr<spdlog::sinks::sink>> &sinks)
 {

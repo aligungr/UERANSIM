@@ -8,6 +8,7 @@
 
 #include "common.hpp"
 #include "constants.hpp"
+
 #include <algorithm>
 #include <atomic>
 #include <cctype>
@@ -17,6 +18,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <thread>
+
 #include <unistd.h>
 
 static_assert(sizeof(char) == sizeof(uint8_t));

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "octet.hpp"
+
 #include <cstddef>
 #include <cstdint>
 #include <memory>

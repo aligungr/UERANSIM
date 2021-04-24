@@ -9,8 +9,9 @@
 #include "network.hpp"
 #include "libc_error.hpp"
 
-#include <arpa/inet.h>
 #include <cstring>
+
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdexcept>
 #include <sys/socket.h>

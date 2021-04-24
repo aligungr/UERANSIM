@@ -8,6 +8,7 @@
 
 #include "octet.hpp"
 #include "common.hpp"
+
 #include <sstream>
 
 Json ToJson(const octet &v)

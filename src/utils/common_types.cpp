@@ -8,6 +8,7 @@
 
 #include "common_types.hpp"
 #include "common.hpp"
+
 #include <algorithm>
 #include <iomanip>
 #include <sstream>

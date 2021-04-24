@@ -10,6 +10,7 @@
 
 #include "json.hpp"
 #include "octet.hpp"
+
 #include <memory>
 #include <optional>
 #include <stdexcept>

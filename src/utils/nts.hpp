@@ -9,6 +9,7 @@
 #pragma once
 
 #include "scoped_thread.hpp"
+
 #include <atomic>
 #include <chrono>
 #include <condition_variable>

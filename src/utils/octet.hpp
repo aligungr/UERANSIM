@@ -9,6 +9,7 @@
 #pragma once
 
 #include "json.hpp"
+
 #include <bitset>
 #include <cassert>
 #include <cstdint>

@@ -7,6 +7,7 @@
 //
 
 #include "options.hpp"
+
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
@@ -14,6 +15,7 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+
 #include <wordexp.h>
 
 static constexpr const size_t MAX_WIDTH = 90;

@@ -13,13 +13,14 @@
 #include <ostream>
 #include <queue>
 #include <stack>
-#include <utils/constants.hpp>
-#include <utils/libc_error.hpp>
 
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include <utils/constants.hpp>
+#include <utils/libc_error.hpp>
 
 static void AppendEntries(const std::string &path, std::vector<std::string> &vec)
 {

@@ -8,6 +8,7 @@
 
 #include "nts.hpp"
 #include "common.hpp"
+
 #include <stdexcept>
 
 #define WAIT_TIME_IF_NO_TIMER 500
