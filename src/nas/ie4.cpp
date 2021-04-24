@@ -47,22 +47,22 @@ IEPduSessionReactivationResult IEPduSessionReactivationResult::Decode(const Octe
 
 void IEPduSessionReactivationResult::Encode(const IEPduSessionReactivationResult &ie, OctetString &stream)
 {
-    stream.appendOctet(bits::Ranged8({{1, 0},
-                                      {1, ie.psi[1]},
-                                      {1, ie.psi[2]},
-                                      {1, ie.psi[3]},
-                                      {1, ie.psi[4]},
-                                      {1, ie.psi[5]},
+    stream.appendOctet(bits::Ranged8({{1, ie.psi[7]},
                                       {1, ie.psi[6]},
-                                      {1, ie.psi[7]}}));
-    stream.appendOctet(bits::Ranged8({{1, ie.psi[8]},
-                                      {1, ie.psi[9]},
-                                      {1, ie.psi[10]},
-                                      {1, ie.psi[11]},
-                                      {1, ie.psi[12]},
-                                      {1, ie.psi[13]},
+                                      {1, ie.psi[5]},
+                                      {1, ie.psi[4]},
+                                      {1, ie.psi[3]},
+                                      {1, ie.psi[2]},
+                                      {1, ie.psi[1]},
+                                      {1, 0}}));
+    stream.appendOctet(bits::Ranged8({{1, ie.psi[15]},
                                       {1, ie.psi[14]},
-                                      {1, ie.psi[15]}}));
+                                      {1, ie.psi[13]},
+                                      {1, ie.psi[12]},
+                                      {1, ie.psi[11]},
+                                      {1, ie.psi[10]},
+                                      {1, ie.psi[9]},
+                                      {1, ie.psi[8]}}));
 }
 
 IEPduAddress::IEPduAddress(EPduSessionType sessionType, OctetString &&pduAddressInformation)
@@ -354,7 +354,8 @@ IES1ModeToN1ModeNasTransparentContainer::IES1ModeToN1ModeNasTransparentContainer
 {
 }
 
-IES1ModeToN1ModeNasTransparentContainer IES1ModeToN1ModeNasTransparentContainer::Decode(const OctetView &stream, int length)
+IES1ModeToN1ModeNasTransparentContainer IES1ModeToN1ModeNasTransparentContainer::Decode(const OctetView &stream,
+                                                                                        int length)
 {
     IES1ModeToN1ModeNasTransparentContainer res;
     res.mac = stream.read4();
@@ -590,22 +591,22 @@ IEUplinkDataStatus IEUplinkDataStatus::Decode(const OctetView &stream, int lengt
 
 void IEUplinkDataStatus::Encode(const IEUplinkDataStatus &ie, OctetString &stream)
 {
-    stream.appendOctet(bits::Ranged8({{1, 0},
-                                      {1, ie.psi[1]},
-                                      {1, ie.psi[2]},
-                                      {1, ie.psi[3]},
-                                      {1, ie.psi[4]},
-                                      {1, ie.psi[5]},
+    stream.appendOctet(bits::Ranged8({{1, ie.psi[7]},
                                       {1, ie.psi[6]},
-                                      {1, ie.psi[7]}}));
-    stream.appendOctet(bits::Ranged8({{1, ie.psi[8]},
-                                      {1, ie.psi[9]},
-                                      {1, ie.psi[10]},
-                                      {1, ie.psi[11]},
-                                      {1, ie.psi[12]},
-                                      {1, ie.psi[13]},
+                                      {1, ie.psi[5]},
+                                      {1, ie.psi[4]},
+                                      {1, ie.psi[3]},
+                                      {1, ie.psi[2]},
+                                      {1, ie.psi[1]},
+                                      {1, 0}}));
+    stream.appendOctet(bits::Ranged8({{1, ie.psi[15]},
                                       {1, ie.psi[14]},
-                                      {1, ie.psi[15]}}));
+                                      {1, ie.psi[13]},
+                                      {1, ie.psi[12]},
+                                      {1, ie.psi[11]},
+                                      {1, ie.psi[10]},
+                                      {1, ie.psi[9]},
+                                      {1, ie.psi[8]}}));
 }
 
 IEAdditionalInformation::IEAdditionalInformation(OctetString &&rawData) : rawData(std::move(rawData))
@@ -781,22 +782,22 @@ IEAllowedPduSessionStatus IEAllowedPduSessionStatus::Decode(const OctetView &str
 
 void IEAllowedPduSessionStatus::Encode(const IEAllowedPduSessionStatus &ie, OctetString &stream)
 {
-    stream.appendOctet(bits::Ranged8({{1, 0},
-                                      {1, ie.psi[1]},
-                                      {1, ie.psi[2]},
-                                      {1, ie.psi[3]},
-                                      {1, ie.psi[4]},
-                                      {1, ie.psi[5]},
+    stream.appendOctet(bits::Ranged8({{1, ie.psi[7]},
                                       {1, ie.psi[6]},
-                                      {1, ie.psi[7]}}));
-    stream.appendOctet(bits::Ranged8({{1, ie.psi[8]},
-                                      {1, ie.psi[9]},
-                                      {1, ie.psi[10]},
-                                      {1, ie.psi[11]},
-                                      {1, ie.psi[12]},
-                                      {1, ie.psi[13]},
+                                      {1, ie.psi[5]},
+                                      {1, ie.psi[4]},
+                                      {1, ie.psi[3]},
+                                      {1, ie.psi[2]},
+                                      {1, ie.psi[1]},
+                                      {1, 0}}));
+    stream.appendOctet(bits::Ranged8({{1, ie.psi[15]},
                                       {1, ie.psi[14]},
-                                      {1, ie.psi[15]}}));
+                                      {1, ie.psi[13]},
+                                      {1, ie.psi[12]},
+                                      {1, ie.psi[11]},
+                                      {1, ie.psi[10]},
+                                      {1, ie.psi[9]},
+                                      {1, ie.psi[8]}}));
 }
 
 IEPduSessionStatus::IEPduSessionStatus(std::bitset<16> psi) : psi(psi)
@@ -819,22 +820,22 @@ IEPduSessionStatus IEPduSessionStatus::Decode(const OctetView &stream, int lengt
 
 void IEPduSessionStatus::Encode(const IEPduSessionStatus &ie, OctetString &stream)
 {
-    stream.appendOctet(bits::Ranged8({{1, 0},
-                                      {1, ie.psi[1]},
-                                      {1, ie.psi[2]},
-                                      {1, ie.psi[3]},
-                                      {1, ie.psi[4]},
-                                      {1, ie.psi[5]},
-                                      {1, ie.psi[6]},
-                                      {1, ie.psi[7]}}));
-    stream.appendOctet(bits::Ranged8({{1, ie.psi[8]},
-                                      {1, ie.psi[9]},
-                                      {1, ie.psi[10]},
-                                      {1, ie.psi[11]},
-                                      {1, ie.psi[12]},
-                                      {1, ie.psi[13]},
-                                      {1, ie.psi[14]},
-                                      {1, ie.psi[15]}}));
+	stream.appendOctet(bits::Ranged8({{1, ie.psi[7]},
+									  {1, ie.psi[6]},
+									  {1, ie.psi[5]},
+									  {1, ie.psi[4]},
+									  {1, ie.psi[3]},
+									  {1, ie.psi[2]},
+									  {1, ie.psi[1]},
+									  {1, 0}}));
+	stream.appendOctet(bits::Ranged8({{1, ie.psi[15]},
+									  {1, ie.psi[14]},
+									  {1, ie.psi[13]},
+									  {1, ie.psi[12]},
+									  {1, ie.psi[11]},
+									  {1, ie.psi[10]},
+									  {1, ie.psi[9]},
+									  {1, ie.psi[8]}}));
 }
 
 IE5gsDrxParameters::IE5gsDrxParameters(EDrxValue value) : value(value)
