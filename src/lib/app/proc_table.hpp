@@ -10,8 +10,9 @@
 
 #include <string>
 #include <unordered_map>
-#include <utils/concurrent_map.hpp>
 #include <vector>
+
+#include <utils/concurrent_map.hpp>
 
 namespace app
 {

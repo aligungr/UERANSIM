@@ -7,6 +7,7 @@
 //
 
 #include "cli_base.hpp"
+
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
 

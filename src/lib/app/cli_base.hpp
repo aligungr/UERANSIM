@@ -8,13 +8,14 @@
 
 #pragma once
 
-#include <lib/udp/server.hpp>
 #include <string>
 #include <utility>
+#include <vector>
+
+#include <lib/udp/server.hpp>
 #include <utils/constants.hpp>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
-#include <vector>
 
 namespace app
 {

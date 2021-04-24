@@ -11,8 +11,9 @@
 #include <array>
 #include <memory>
 #include <string>
-#include <utils/common_types.hpp>
 #include <vector>
+
+#include <utils/common_types.hpp>
 
 namespace app
 {

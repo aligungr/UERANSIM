@@ -12,8 +12,6 @@
 #include <csignal>
 #include <cstdio>
 #include <exception>
-#include <iostream>
-#include <utils/constants.hpp>
 #include <vector>
 
 static std::atomic_int g_instanceCount{};
