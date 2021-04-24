@@ -9,11 +9,12 @@
 #pragma once
 
 #include "utils.hpp"
-#include <utils/linked_list.hpp>
 
 #include <cassert>
 #include <functional>
 #include <stdexcept>
+
+#include <utils/linked_list.hpp>
 
 namespace rlc::func
 {

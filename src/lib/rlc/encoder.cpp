@@ -7,6 +7,7 @@
 //
 
 #include "encoder.hpp"
+
 #include <utils/bit_buffer.hpp>
 #include <utils/bits.hpp>
 

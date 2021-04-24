@@ -10,7 +10,9 @@
 
 #include "rlc.hpp"
 #include "utils.hpp"
+
 #include <bitset>
+
 #include <utils/linked_list.hpp>
 
 namespace rlc
