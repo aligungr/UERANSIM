@@ -7,6 +7,7 @@
 //
 
 #include "eea2.hpp"
+
 #include <crypt-ext/aes.hpp>
 #include <utils/bit_buffer.hpp>
 #include <utils/octet_string.hpp>

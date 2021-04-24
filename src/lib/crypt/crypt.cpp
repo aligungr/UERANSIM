@@ -14,6 +14,7 @@
 #include "snow3g.hpp"
 #include "uea2.hpp"
 #include "zuc.hpp"
+
 #include <stdexcept>
 
 namespace crypto

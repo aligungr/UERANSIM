@@ -7,6 +7,7 @@
 //
 
 #include "milenage.hpp"
+
 #include <crypt-ext/milenage.hpp>
 #include <stdexcept>
 

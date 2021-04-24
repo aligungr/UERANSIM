@@ -7,6 +7,7 @@
 //
 
 #include "mac.hpp"
+
 #include <crypt-ext/cmac.hpp>
 #include <crypt-ext/hmac-sha256.h>
 

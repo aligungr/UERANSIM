@@ -7,8 +7,10 @@
 //
 
 #include "utils.hpp"
+
 #include <cstring>
 #include <stdexcept>
+
 #include <utils/octet_string.hpp>
 
 namespace asn

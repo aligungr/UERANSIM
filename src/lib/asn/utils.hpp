@@ -8,12 +8,6 @@
 
 #pragma once
 
-#include <BIT_STRING.h>
-#include <NativeEnumerated.h>
-#include <OCTET_STRING.h>
-#include <PrintableString.h>
-#include <asn_SEQUENCE_OF.h>
-#include <asn_application.h>
 #include <cstdlib>
 #include <cstring>
 #include <functional>
@@ -21,6 +15,14 @@
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+
+#include <BIT_STRING.h>
+#include <NativeEnumerated.h>
+#include <OCTET_STRING.h>
+#include <PrintableString.h>
+#include <asn_SEQUENCE_OF.h>
+#include <asn_application.h>
+
 #include <utils/bit_buffer.hpp>
 #include <utils/octet.hpp>
 #include <utils/octet_view.hpp>
