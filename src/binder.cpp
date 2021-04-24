@@ -6,11 +6,12 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include <arpa/inet.h>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
+#include <arpa/inet.h>
 #include <dlfcn.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
