@@ -9,13 +9,15 @@
 #include "internal.hpp"
 #include "types.hpp"
 
-#include <arpa/inet.h>
 #include <cstring>
+
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/sctp.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
 #include <utils/common.hpp>
 
 #define RECEIVE_BUFFER_SIZE 8192u
