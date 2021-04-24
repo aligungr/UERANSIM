@@ -11,9 +11,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <vector>
+
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
-#include <vector>
 
 namespace gtp
 {

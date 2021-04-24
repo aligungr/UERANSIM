@@ -10,6 +10,7 @@
 #include "utils.hpp"
 
 #include <algorithm>
+
 #include <gnb/app/task.hpp>
 #include <gnb/rrc/task.hpp>
 #include <gnb/sctp/task.hpp>

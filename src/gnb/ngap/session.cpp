@@ -10,6 +10,11 @@
 #include "task.hpp"
 #include "utils.hpp"
 
+#include <set>
+#include <stdexcept>
+
+#include <gnb/gtp/task.hpp>
+
 #include <asn/ngap/ASN_NGAP_AssociatedQosFlowItem.h>
 #include <asn/ngap/ASN_NGAP_AssociatedQosFlowList.h>
 #include <asn/ngap/ASN_NGAP_GTPTunnel.h>
@@ -31,9 +36,6 @@
 #include <asn/ngap/ASN_NGAP_QosFlowPerTNLInformationList.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestList.h>
-#include <gnb/gtp/task.hpp>
-#include <set>
-#include <stdexcept>
 
 namespace nr::gnb
 {

@@ -8,11 +8,12 @@
 
 #include "task.hpp"
 
-#include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <gnb/gtp/proto.hpp>
 #include <gnb/rls/task.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
+
+#include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 
 namespace nr::gnb
 {

@@ -9,14 +9,16 @@
 #pragma once
 
 #include "utils.hpp"
-#include <gnb/nts.hpp>
-#include <lib/udp/server_task.hpp>
+
 #include <memory>
 #include <thread>
 #include <unordered_map>
+#include <vector>
+
+#include <gnb/nts.hpp>
+#include <lib/udp/server_task.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
-#include <vector>
 
 namespace nr::gnb
 {

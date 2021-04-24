@@ -7,8 +7,10 @@
 //
 
 #include "task.hpp"
-#include <gnb/rrc/task.hpp>
+
 #include <set>
+
+#include <gnb/rrc/task.hpp>
 #include <utils/common.hpp>
 
 static const int64_t LAST_SEEN_THRESHOLD = 3000;

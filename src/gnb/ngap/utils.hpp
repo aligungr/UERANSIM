@@ -8,12 +8,11 @@
 
 #pragma once
 
+#include <gnb/types.hpp>
 #include <lib/asn/ngap.hpp>
 #include <lib/asn/utils.hpp>
 #include <utils/common.hpp>
 #include <utils/common_types.hpp>
-
-#include <gnb/types.hpp>
 
 #include <asn/ngap/ASN_NGAP_Cause.h>
 #include <asn/ngap/ASN_NGAP_GUAMI.h>

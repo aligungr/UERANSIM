@@ -6,10 +6,9 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include <gnb/types.hpp>
-#include <iomanip>
 #include <sstream>
-#include <utils/printer.hpp>
+
+#include <gnb/types.hpp>
 
 namespace nr::gnb
 {

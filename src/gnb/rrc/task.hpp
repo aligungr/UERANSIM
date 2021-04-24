@@ -8,13 +8,14 @@
 
 #pragma once
 
-#include <gnb/nts.hpp>
 #include <memory>
 #include <thread>
 #include <unordered_map>
+#include <vector>
+
+#include <gnb/nts.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
-#include <vector>
 
 extern "C"
 {

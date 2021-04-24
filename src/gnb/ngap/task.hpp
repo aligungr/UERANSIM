@@ -8,30 +8,33 @@
 
 #pragma once
 
-#include <lib/app/monitor.hpp>
 #include <optional>
 #include <unordered_map>
-#include <utils/logger.hpp>
-#include <utils/nts.hpp>
 
 #include <gnb/nts.hpp>
 #include <gnb/types.hpp>
+#include <lib/app/monitor.hpp>
+#include <utils/logger.hpp>
+#include <utils/nts.hpp>
 
-extern "C" struct ASN_NGAP_NGAP_PDU;
-extern "C" struct ASN_NGAP_NGSetupResponse;
-extern "C" struct ASN_NGAP_NGSetupFailure;
-extern "C" struct ASN_NGAP_ErrorIndication;
-extern "C" struct ASN_NGAP_DownlinkNASTransport;
-extern "C" struct ASN_NGAP_RerouteNASRequest;
-extern "C" struct ASN_NGAP_PDUSessionResourceSetupRequest;
-extern "C" struct ASN_NGAP_InitialContextSetupRequest;
-extern "C" struct ASN_NGAP_UEContextReleaseCommand;
-extern "C" struct ASN_NGAP_UEContextModificationRequest;
-extern "C" struct ASN_NGAP_AMFConfigurationUpdate;
-extern "C" struct ASN_NGAP_OverloadStart;
-extern "C" struct ASN_NGAP_OverloadStop;
-extern "C" struct ASN_NGAP_PDUSessionResourceReleaseCommand;
-extern "C" struct ASN_NGAP_Paging;
+extern "C"
+{
+    struct ASN_NGAP_NGAP_PDU;
+    struct ASN_NGAP_NGSetupResponse;
+    struct ASN_NGAP_NGSetupFailure;
+    struct ASN_NGAP_ErrorIndication;
+    struct ASN_NGAP_DownlinkNASTransport;
+    struct ASN_NGAP_RerouteNASRequest;
+    struct ASN_NGAP_PDUSessionResourceSetupRequest;
+    struct ASN_NGAP_InitialContextSetupRequest;
+    struct ASN_NGAP_UEContextReleaseCommand;
+    struct ASN_NGAP_UEContextModificationRequest;
+    struct ASN_NGAP_AMFConfigurationUpdate;
+    struct ASN_NGAP_OverloadStart;
+    struct ASN_NGAP_OverloadStop;
+    struct ASN_NGAP_PDUSessionResourceReleaseCommand;
+    struct ASN_NGAP_Paging;
+}
 
 namespace nr::gnb
 {

@@ -8,16 +8,16 @@
 
 #pragma once
 
-#include <lib/sctp/sctp.hpp>
 #include <memory>
 #include <thread>
 #include <unordered_map>
+#include <vector>
+
+#include <gnb/nts.hpp>
+#include <lib/sctp/sctp.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <utils/scoped_thread.hpp>
-#include <vector>
-
-#include "gnb/nts.hpp"
 
 namespace nr::gnb
 {

@@ -9,19 +9,24 @@
 #pragma once
 
 #include "types.hpp"
-#include <lib/asn/utils.hpp>
+
+#include <utility>
+
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
+#include <lib/asn/utils.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <lib/sctp/sctp.hpp>
-#include <utility>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
 #include <utils/unique_buffer.hpp>
 
-extern "C" struct ASN_NGAP_FiveG_S_TMSI;
-extern "C" struct ASN_NGAP_TAIListForPaging;
+extern "C"
+{
+    struct ASN_NGAP_FiveG_S_TMSI;
+    struct ASN_NGAP_TAIListForPaging;
+}
 
 namespace nr::gnb
 {

@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+
 #include <gnb/gtp/task.hpp>
 #include <gnb/nts.hpp>
 #include <gnb/rrc/task.hpp>

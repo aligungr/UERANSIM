@@ -8,10 +8,11 @@
 
 #pragma once
 
-#include <gnb/types.hpp>
 #include <memory>
 #include <unordered_map>
 #include <vector>
+
+#include <gnb/types.hpp>
 
 namespace nr::gnb
 {
@@ -53,7 +54,7 @@ class PduSessionTree
     uint64_t findByDownTeid(uint32_t teid);
     uint64_t findBySessionId(int ue, int psi);
     void remove(uint64_t session, uint32_t downTeid);
-    void enumerateByUe(int ue, std::vector<uint64_t>& output);
+    void enumerateByUe(int ue, std::vector<uint64_t> &output);
 };
 
 class TokenBucket

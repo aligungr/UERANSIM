@@ -7,9 +7,11 @@
 //
 
 #include "task.hpp"
+
+#include <sstream>
+
 #include <gnb/app/task.hpp>
 #include <gnb/sctp/task.hpp>
-#include <sstream>
 
 namespace nr::gnb
 {

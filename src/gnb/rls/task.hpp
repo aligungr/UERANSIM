@@ -8,16 +8,17 @@
 
 #pragma once
 
+#include <memory>
+#include <thread>
+#include <unordered_map>
+#include <vector>
+
 #include <gnb/nts.hpp>
 #include <gnb/types.hpp>
 #include <lib/rls/rls_pdu.hpp>
 #include <lib/udp/server_task.hpp>
-#include <memory>
-#include <thread>
-#include <unordered_map>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
-#include <vector>
 
 namespace nr::gnb
 {

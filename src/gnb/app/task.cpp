@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 #include "cmd_handler.hpp"
+
 #include <gnb/nts.hpp>
 
 namespace nr::gnb

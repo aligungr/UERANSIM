@@ -12,8 +12,6 @@
 
 #include <lib/app/cli_cmd.hpp>
 #include <lib/app/monitor.hpp>
-#include <memory>
-#include <string>
 #include <utils/logger.hpp>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>

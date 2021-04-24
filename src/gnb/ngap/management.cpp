@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+
 #include <utils/common.hpp>
 
 namespace nr::gnb
