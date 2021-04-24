@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <crypt/milenage.hpp>
-#include <nas/nas.hpp>
-#include <nas/timer.hpp>
+#include <lib/crypt/milenage.hpp>
+#include <lib/nas/nas.hpp>
+#include <lib/nas/timer.hpp>
 #include <ue/nas/usim.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>

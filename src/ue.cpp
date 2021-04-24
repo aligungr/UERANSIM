@@ -6,12 +6,12 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include <app/base_app.hpp>
-#include <app/cli_base.hpp>
-#include <app/cli_cmd.hpp>
-#include <app/proc_table.hpp>
-#include <app/ue_ctl.hpp>
 #include <iostream>
+#include <lib/app/base_app.hpp>
+#include <lib/app/cli_base.hpp>
+#include <lib/app/cli_cmd.hpp>
+#include <lib/app/proc_table.hpp>
+#include <lib/app/ue_ctl.hpp>
 #include <stdexcept>
 #include <ue/ue.hpp>
 #include <unistd.h>

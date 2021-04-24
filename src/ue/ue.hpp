@@ -9,7 +9,7 @@
 #pragma once
 
 #include "types.hpp"
-#include <app/cli_cmd.hpp>
+#include <lib/app/cli_cmd.hpp>
 #include <memory>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>

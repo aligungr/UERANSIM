@@ -11,7 +11,7 @@
 #include <asn/rrc/ASN_RRC_RRCSetupRequest.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
-#include <rrc/encode.hpp>
+#include <lib/rrc/encode.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>

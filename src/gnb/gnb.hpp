@@ -10,8 +10,8 @@
 
 #include "types.hpp"
 
-#include <app/cli_cmd.hpp>
-#include <app/monitor.hpp>
+#include <lib/app/cli_cmd.hpp>
+#include <lib/app/monitor.hpp>
 #include <memory>
 #include <string>
 #include <utils/logger.hpp>

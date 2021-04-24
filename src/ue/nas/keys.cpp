@@ -7,7 +7,7 @@
 //
 
 #include "keys.hpp"
-#include <crypt/crypt.hpp>
+#include <lib/crypt/crypt.hpp>
 #include <stdexcept>
 
 static const int N_NAS_enc_alg = 0x01;
@@ -20,7 +20,7 @@ static const int N_UP_int_alg = 0x06;
 namespace nr::ue::keys
 {
 
-void DeriveKeysSeafAmf(const UeConfig &ueConfig, const Plmn& currentPlmn, NasSecurityContext &nasSecurityContext)
+void DeriveKeysSeafAmf(const UeConfig &ueConfig, const Plmn &currentPlmn, NasSecurityContext &nasSecurityContext)
 {
     auto &keys = nasSecurityContext.keys;
     std::string snn = ConstructServingNetworkName(currentPlmn);

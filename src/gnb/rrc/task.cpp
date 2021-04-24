@@ -11,7 +11,7 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 #include <gnb/nts.hpp>
 #include <gnb/rls/task.hpp>
-#include <rrc/encode.hpp>
+#include <lib/rrc/encode.hpp>
 
 namespace nr::gnb
 {

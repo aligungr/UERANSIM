@@ -10,9 +10,9 @@
 
 #include "types.hpp"
 #include "ue.hpp"
-#include <app/cli_base.hpp>
-#include <nas/timer.hpp>
-#include <rrc/rrc.hpp>
+#include <lib/app/cli_base.hpp>
+#include <lib/nas/timer.hpp>
+#include <lib/rrc/rrc.hpp>
 #include <utility>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>

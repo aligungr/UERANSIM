@@ -9,7 +9,7 @@
 #include "mm.hpp"
 
 #include <algorithm>
-#include <nas/utils.hpp>
+#include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 #include <utils/common.hpp>
 

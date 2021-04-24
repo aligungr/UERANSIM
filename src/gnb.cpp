@@ -6,12 +6,12 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include <app/base_app.hpp>
-#include <app/cli_base.hpp>
-#include <app/cli_cmd.hpp>
-#include <app/proc_table.hpp>
 #include <gnb/gnb.hpp>
 #include <iostream>
+#include <lib/app/base_app.hpp>
+#include <lib/app/cli_base.hpp>
+#include <lib/app/cli_cmd.hpp>
+#include <lib/app/proc_table.hpp>
 #include <stdexcept>
 #include <unistd.h>
 #include <unordered_map>

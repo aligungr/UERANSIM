@@ -7,8 +7,8 @@
 //
 
 #include "task.hpp"
-#include <asn/utils/utils.hpp>
-#include <rrc/encode.hpp>
+#include <lib/asn/utils.hpp>
+#include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/common.hpp>

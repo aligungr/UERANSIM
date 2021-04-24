@@ -7,9 +7,9 @@
 //
 
 #include <algorithm>
-#include <app/cli_base.hpp>
-#include <app/proc_table.hpp>
 #include <iostream>
+#include <lib/app/cli_base.hpp>
+#include <lib/app/proc_table.hpp>
 #include <set>
 #include <stdexcept>
 #include <string>

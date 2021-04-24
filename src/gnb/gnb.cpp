@@ -9,12 +9,12 @@
 #include "gnb.hpp"
 #include "app/task.hpp"
 #include "gtp/task.hpp"
-#include "rls/task.hpp"
 #include "ngap/task.hpp"
+#include "rls/task.hpp"
 #include "rrc/task.hpp"
 #include "sctp/task.hpp"
 
-#include <app/cli_base.hpp>
+#include <lib/app/cli_base.hpp>
 
 namespace nr::gnb
 {

@@ -8,7 +8,7 @@
 
 #include "enc.hpp"
 
-#include <crypt/crypt.hpp>
+#include <lib/crypt/crypt.hpp>
 #include <stdexcept>
 
 namespace nr::ue::nas_enc

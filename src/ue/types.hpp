@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include <app/monitor.hpp>
-#include <app/ue_ctl.hpp>
 #include <array>
+#include <lib/app/monitor.hpp>
+#include <lib/app/ue_ctl.hpp>
+#include <lib/nas/nas.hpp>
+#include <lib/nas/timer.hpp>
 #include <memory>
-#include <nas/nas.hpp>
-#include <nas/timer.hpp>
 #include <utils/common_types.hpp>
 #include <utils/json.hpp>
 #include <utils/logger.hpp>

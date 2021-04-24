@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <app/monitor.hpp>
+#include <lib/app/monitor.hpp>
 #include <optional>
 #include <unordered_map>
 #include <utils/logger.hpp>

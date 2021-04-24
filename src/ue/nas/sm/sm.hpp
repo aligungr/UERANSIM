@@ -10,8 +10,8 @@
 
 #include <array>
 #include <bitset>
-#include <nas/nas.hpp>
-#include <nas/timer.hpp>
+#include <lib/nas/nas.hpp>
+#include <lib/nas/timer.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>

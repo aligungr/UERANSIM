@@ -8,7 +8,7 @@
 
 #include "task.hpp"
 
-#include <rrc/encode.hpp>
+#include <lib/rrc/encode.hpp>
 #include <ue/rls/task.hpp>
 
 #include <asn/rrc/ASN_RRC_RRCReject.h>

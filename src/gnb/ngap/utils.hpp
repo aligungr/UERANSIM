@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <asn/utils/ngap.hpp>
-#include <asn/utils/utils.hpp>
+#include <lib/asn/ngap.hpp>
+#include <lib/asn/utils.hpp>
 #include <utils/common.hpp>
 #include <utils/common_types.hpp>
 

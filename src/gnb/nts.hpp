@@ -9,11 +9,11 @@
 #pragma once
 
 #include "types.hpp"
-#include <app/cli_base.hpp>
-#include <app/cli_cmd.hpp>
-#include <asn/utils/utils.hpp>
-#include <rrc/rrc.hpp>
-#include <sctp/sctp.hpp>
+#include <lib/asn/utils.hpp>
+#include <lib/app/cli_base.hpp>
+#include <lib/app/cli_cmd.hpp>
+#include <lib/rrc/rrc.hpp>
+#include <lib/sctp/sctp.hpp>
 #include <utility>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>

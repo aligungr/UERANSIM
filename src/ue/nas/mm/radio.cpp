@@ -8,7 +8,7 @@
 
 #include "mm.hpp"
 #include <algorithm>
-#include <nas/utils.hpp>
+#include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/sm/sm.hpp>
 #include <ue/rrc/task.hpp>

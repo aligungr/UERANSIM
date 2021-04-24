@@ -10,9 +10,9 @@
 
 #include "utils.hpp"
 #include <gnb/nts.hpp>
+#include <lib/udp/server_task.hpp>
 #include <memory>
 #include <thread>
-#include <udp/server_task.hpp>
 #include <unordered_map>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>

@@ -8,8 +8,8 @@
 
 #include "sm.hpp"
 #include <algorithm>
-#include <nas/proto_conf.hpp>
-#include <nas/utils.hpp>
+#include <lib/nas/proto_conf.hpp>
+#include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/mm/mm.hpp>
 

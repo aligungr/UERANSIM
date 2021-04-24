@@ -8,7 +8,7 @@
 
 #include "task.hpp"
 #include "cmd_handler.hpp"
-#include <nas/utils.hpp>
+#include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>

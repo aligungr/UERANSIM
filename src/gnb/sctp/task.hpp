@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include <lib/sctp/sctp.hpp>
 #include <memory>
-#include <sctp/sctp.hpp>
 #include <thread>
 #include <unordered_map>
 #include <utils/logger.hpp>

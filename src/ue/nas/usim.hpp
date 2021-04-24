@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include <lib/nas/msg.hpp>
 #include <memory>
-#include <nas/msg.hpp>
 #include <optional>
 #include <ue/types.hpp>
 #include <utils/common_types.hpp>
