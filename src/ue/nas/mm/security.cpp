@@ -239,10 +239,21 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         }
     }
 
-    // TODO: Bu service request de olabilir en son hangisiyse, ayrıca son mesaj yerine son unciphered mesaj da olabilir
-    //  See 4.4.6
-    resp.nasMessageContainer = nas::IENasMessageContainer{};
-    nas::EncodeNasMessage(*m_lastRegistrationRequest, resp.nasMessageContainer->data);
+    // Handle NAS message container
+    if (msg.additional5gSecurityInformation.has_value() &&
+        msg.additional5gSecurityInformation->rinmr == nas::ERetransmissionOfInitialNasMessageRequest::REQUESTED)
+    {
+        resp.nasMessageContainer = nas::IENasMessageContainer{};
+        if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest)
+            nas::EncodeNasMessage(*m_lastRegistrationRequest, resp.nasMessageContainer->data);
+        else if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED && m_lastServiceRequest)
+            nas::EncodeNasMessage(*m_lastServiceRequest, resp.nasMessageContainer->data);
+    }
+    if (m_lastRegWithoutNsc && m_lastRegistrationRequest)
+    {
+        resp.nasMessageContainer = nas::IENasMessageContainer{};
+        nas::EncodeNasMessage(*m_lastServiceRequest, resp.nasMessageContainer->data);
+    }
 
     // Send response
     sendNasMessage(resp);
