@@ -55,7 +55,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     {
         if (!hasEmergency())
         {
-            m_logger->err("IA0 and EA0 cannot be accepted as the UE does not have an emergency");
+            m_logger->err("[IA0, EA0] cannot be accepted as the UE does not have an emergency");
             reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
             return;
         }
@@ -101,9 +101,16 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
             reject(nas::EMmCause::UE_SECURITY_CAP_MISMATCH);
             return;
         }
+
+        if (integrity == nas::ETypeOfIntegrityProtectionAlgorithm::IA0 && !hasEmergency())
+        {
+            m_logger->err("[IA0] cannot be accepted as the UE does not have an emergency");
+            reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
+            return;
+        }
     }
 
-    // ============================ Process the security context. ============================
+    // ============================ Process the security context ============================
 
     // Assign ABBA (if any)
     if (msg.abba.has_value())
@@ -125,11 +132,6 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     {
         nsCtx->uplinkCount.sqn = 0;
         nsCtx->uplinkCount.overflow = octet2{0};
-    }
-
-    if (msg.selectedNasSecurityAlgorithms.integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0)
-    {
-        // TODO
     }
 
     // Set the new NAS Security Context as current one. (If it is not already the current one)
