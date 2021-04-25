@@ -100,14 +100,6 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     auto &nsCtx = whichCtx == 0 ? m_usim->m_currentNsCtx : m_usim->m_nonCurrentNsCtx;
 
-    // ======================== Check the integrity with new security context ========================
-
-    {
-        // TODO:
-        octet4 mac = msg._macForNewSC;
-        (void)mac;
-    }
-
     // ======================== Check replayed UE security capabilities ========================
 
     if (!nas::utils::DeepEqualsIe(msg.replayedUeSecurityCapabilities, createSecurityCapabilityIe()))
@@ -137,6 +129,14 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
             reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
             return;
         }
+    }
+
+    // ======================== Check the integrity with new security context ========================
+
+    {
+        // TODO:
+        octet4 mac = msg._macForNewSC;
+        (void)mac;
     }
 
     // ============================ Process the security context ============================
