@@ -29,6 +29,27 @@ static int FindSecurityContext(int ksi, const std::unique_ptr<NasSecurityContext
     return -1;
 }
 
+static std::unique_ptr<NasSecurityContext> LocallyDeriveNsc()
+{
+    auto nsc = std::make_unique<NasSecurityContext>();
+    nsc->tsc = nas::ETypeOfSecurityContext::NATIVE_SECURITY_CONTEXT;
+    nsc->ngKsi = 0;
+    nsc->downlinkCount = {};
+    nsc->uplinkCount = {};
+    nsc->integrity = nas::ETypeOfIntegrityProtectionAlgorithm::IA0;
+    nsc->ciphering = nas::ETypeOfCipheringAlgorithm::EA0;
+    nsc->keys.abba = OctetString::FromSpare(2);
+    nsc->keys.rand = OctetString::FromSpare(16);
+    nsc->keys.res = OctetString::FromSpare(16);
+    nsc->keys.resStar = OctetString::FromSpare(16);
+    nsc->keys.kAusf = OctetString::FromSpare(32);
+    nsc->keys.kSeaf = OctetString::FromSpare(32);
+    nsc->keys.kAmf = OctetString::FromSpare(32);
+    nsc->keys.kNasInt = OctetString::FromSpare(16);
+    nsc->keys.kNasEnc = OctetString::FromSpare(16);
+    return nsc;
+}
+
 void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 {
     m_logger->debug("Security Mode Command received");
@@ -42,6 +63,8 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // ============================== Check the received ngKSI ==============================
 
+    bool locallyDerived = false;
+
     if (!IsValidKsi(msg.ngKsi))
     {
         m_logger->err("Invalid ngKSI received, tsc[%d], ksi[%d]", (int)msg.ngKsi.tsc, msg.ngKsi.ksi);
@@ -53,7 +76,13 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         msg.selectedNasSecurityAlgorithms.integrity == nas::ETypeOfIntegrityProtectionAlgorithm::IA0 &&
         msg.selectedNasSecurityAlgorithms.ciphering == nas::ETypeOfCipheringAlgorithm::EA0)
     {
-        if (!hasEmergency())
+        if (hasEmergency())
+        {
+            m_logger->debug("Locally deriving a current NAS security context");
+            m_usim->m_currentNsCtx = LocallyDeriveNsc();
+            locallyDerived = true;
+        }
+        else
         {
             m_logger->err("[IA0, EA0] cannot be accepted as the UE does not have an emergency");
             reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
@@ -102,7 +131,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
             return;
         }
 
-        if (integrity == nas::ETypeOfIntegrityProtectionAlgorithm::IA0 && !hasEmergency())
+        if (integrity == nas::ETypeOfIntegrityProtectionAlgorithm::IA0 && !(hasEmergency() || locallyDerived))
         {
             m_logger->err("[IA0] cannot be accepted as the UE does not have an emergency");
             reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
