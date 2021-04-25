@@ -118,6 +118,9 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
             return;
         }
 
+        ((nas::SecurityModeCommand &)(*smcMsg))._macForNewSC = securedMm.messageAuthenticationCode;
+        ((nas::SecurityModeCommand &)(*smcMsg))._originalPlainNasPdu = securedMm.plainNasMessage.copy();
+
         receiveMmMessage((const nas::PlainMmMessage &)(*smcMsg));
         return;
     }

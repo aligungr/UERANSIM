@@ -8,6 +8,7 @@
 
 #include "mm.hpp"
 #include <lib/nas/utils.hpp>
+#include <ue/nas/enc.hpp>
 #include <ue/nas/keys.hpp>
 
 namespace nr::ue
@@ -133,13 +134,53 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // ======================== Check the integrity with new security context ========================
 
+    bool clearNasCount = false;
+
+    if (msg.selectedNasSecurityAlgorithms.integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0)
     {
-        // TODO:
-        octet4 mac = msg._macForNewSC;
-        (void)mac;
+        NasSecurityContext tmpCtx = nsCtx->deepCopy();
+
+        tmpCtx.integrity = msg.selectedNasSecurityAlgorithms.integrity;
+        tmpCtx.ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
+        keys::DeriveNasKeys(tmpCtx);
+
+        uint32_t calculatedMac =
+            nr::ue::nas_enc::ComputeMac(tmpCtx.integrity, tmpCtx.downlinkCount, tmpCtx.is3gppAccess, false,
+                                        tmpCtx.keys.kNasInt, msg._originalPlainNasPdu);
+
+        // First check with the last estimated NAS COUNT
+        if (calculatedMac != static_cast<uint32_t>(msg._macForNewSC))
+        {
+            // Integrity check failed with the last NAS COUNT
+            // Now check with the NAS COUNT=0
+
+            tmpCtx.downlinkCount = {}; // assign NAS COUNT=0
+
+            calculatedMac = nr::ue::nas_enc::ComputeMac(tmpCtx.integrity, tmpCtx.downlinkCount, tmpCtx.is3gppAccess,
+                                                        false, tmpCtx.keys.kNasInt, msg._originalPlainNasPdu);
+
+            if (calculatedMac != static_cast<uint32_t>(msg._macForNewSC))
+            {
+                // If it still mismatched, reject the security mode command
+                m_logger->err("Security Mode Command integrity check failed");
+                reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
+                return;
+            }
+            else
+            {
+                // Otherwise since the integrity passed with NAS COUNT=0, we should clear the NAS COUNT
+                // as specified in 5.4.2.3
+                m_logger->debug("Setting downlink NAS COUNT to 0");
+                clearNasCount = true;
+            }
+        }
     }
 
     // ============================ Process the security context ============================
+
+    // Clear the NAS count if necessary
+    if (clearNasCount)
+        nsCtx->downlinkCount = {};
 
     // Assign ABBA (if any)
     if (msg.abba.has_value())
@@ -150,8 +191,6 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     nsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
     keys::DeriveNasKeys(*nsCtx);
 
-    // m_logger->debug("Derived NAS keys integrity[%s] ciphering[%s]", nsCtx->keys.kNasInt.toHexString().c_str(),
-    //                nsCtx->keys.kNasEnc.toHexString().c_str());
     m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)nsCtx->integrity, (int)nsCtx->ciphering);
 
     // The UE shall in addition reset the uplink NAS COUNT counter if a) the SECURITY MODE COMMAND message is received
