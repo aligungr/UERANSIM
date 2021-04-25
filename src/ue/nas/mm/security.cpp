@@ -135,6 +135,9 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     // ======================== Check the integrity with new security context ========================
 
     bool clearNasCount = false;
+    bool horizontalDeriveNeeded =
+        msg.additional5gSecurityInformation.has_value() &&
+        msg.additional5gSecurityInformation->hdp == nas::EHorizontalDerivationParameter::REQUIRED;
 
     if (msg.selectedNasSecurityAlgorithms.integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0)
     {
@@ -142,11 +145,16 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
         tmpCtx.integrity = msg.selectedNasSecurityAlgorithms.integrity;
         tmpCtx.ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
+
+        // Before deriving the keys for temporary NAS security context, concern the horizontal derivation case
+        //  Because 33.501/6.9.3 says integrity check should be performed with the new key
+        if (horizontalDeriveNeeded)
+            tmpCtx.keys.kAmf = keys::DeriveAmfPrimeInMobility(true, tmpCtx.uplinkCount, tmpCtx.keys.kAmf);
+
         keys::DeriveNasKeys(tmpCtx);
 
-        uint32_t calculatedMac =
-            nr::ue::nas_enc::ComputeMac(tmpCtx.integrity, tmpCtx.downlinkCount, tmpCtx.is3gppAccess, false,
-                                        tmpCtx.keys.kNasInt, msg._originalPlainNasPdu);
+        uint32_t calculatedMac = nas_enc::ComputeMac(tmpCtx.integrity, tmpCtx.downlinkCount, tmpCtx.is3gppAccess, false,
+                                                     tmpCtx.keys.kNasInt, msg._originalPlainNasPdu);
 
         // First check with the last estimated NAS COUNT
         if (calculatedMac != static_cast<uint32_t>(msg._macForNewSC))
@@ -156,8 +164,8 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
             tmpCtx.downlinkCount = {}; // assign NAS COUNT=0
 
-            calculatedMac = nr::ue::nas_enc::ComputeMac(tmpCtx.integrity, tmpCtx.downlinkCount, tmpCtx.is3gppAccess,
-                                                        false, tmpCtx.keys.kNasInt, msg._originalPlainNasPdu);
+            calculatedMac = nas_enc::ComputeMac(tmpCtx.integrity, tmpCtx.downlinkCount, tmpCtx.is3gppAccess, false,
+                                                tmpCtx.keys.kNasInt, msg._originalPlainNasPdu);
 
             if (calculatedMac != static_cast<uint32_t>(msg._macForNewSC))
             {
@@ -189,10 +197,12 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         nsCtx->keys.abba = msg.abba->rawData.copy();
 
     // Handle horizontal derivation
-    if (msg.additional5gSecurityInformation.has_value() &&
-        msg.additional5gSecurityInformation->hdp == nas::EHorizontalDerivationParameter::REQUIRED)
+    if (horizontalDeriveNeeded)
     {
-        // TODO
+        m_logger->debug("Performing kAMF' derivation from kAMF in mobility");
+        nsCtx->keys.kAmf = keys::DeriveAmfPrimeInMobility(true, nsCtx->uplinkCount, nsCtx->keys.kAmf);
+        nsCtx->uplinkCount = {};
+        nsCtx->downlinkCount = {};
     }
 
     // Assign selected algorithms to security context, and derive NAS keys
