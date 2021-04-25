@@ -178,6 +178,8 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // ============================ Process the security context ============================
 
+    m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)nsCtx->integrity, (int)nsCtx->ciphering);
+
     // Clear the NAS count if necessary
     if (clearNasCount)
         nsCtx->downlinkCount = {};
@@ -190,8 +192,6 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     nsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
     nsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
     keys::DeriveNasKeys(*nsCtx);
-
-    m_logger->debug("Selected integrity[%d] ciphering[%d]", (int)nsCtx->integrity, (int)nsCtx->ciphering);
 
     // The UE shall in addition reset the uplink NAS COUNT counter if a) the SECURITY MODE COMMAND message is received
     // in order to take a 5G NAS security context into use created after a successful execution of the 5G AKA based
