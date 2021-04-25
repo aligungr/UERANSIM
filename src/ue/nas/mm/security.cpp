@@ -53,7 +53,12 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         msg.selectedNasSecurityAlgorithms.integrity == nas::ETypeOfIntegrityProtectionAlgorithm::IA0 &&
         msg.selectedNasSecurityAlgorithms.ciphering == nas::ETypeOfCipheringAlgorithm::EA0)
     {
-        // TODO
+        if (!hasEmergency())
+        {
+            m_logger->err("IA0 and EA0 cannot be accepted as the UE does not have an emergency");
+            reject(nas::EMmCause::SEC_MODE_REJECTED_UNSPECIFIED);
+            return;
+        }
     }
 
     int whichCtx = FindSecurityContext(msg.ngKsi.ksi, m_usim->m_currentNsCtx, m_usim->m_nonCurrentNsCtx);
