@@ -188,6 +188,13 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     if (msg.abba.has_value())
         nsCtx->keys.abba = msg.abba->rawData.copy();
 
+    // Handle horizontal derivation
+    if (msg.additional5gSecurityInformation.has_value() &&
+        msg.additional5gSecurityInformation->hdp == nas::EHorizontalDerivationParameter::REQUIRED)
+    {
+        // TODO
+    }
+
     // Assign selected algorithms to security context, and derive NAS keys
     nsCtx->integrity = msg.selectedNasSecurityAlgorithms.integrity;
     nsCtx->ciphering = msg.selectedNasSecurityAlgorithms.ciphering;
