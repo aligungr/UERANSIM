@@ -81,7 +81,6 @@ std::pair<OctetString, OctetString> CalculateCkPrimeIkPrime(const OctetString &c
     s[1] = sqnXorAk.copy();
 
     auto res = crypto::CalculateKdfKey(key, 0x20, s, 2);
-    ;
 
     std::pair<OctetString, OctetString> ckIk;
     ckIk.first = res.subCopy(0, ck.length());
@@ -137,6 +136,15 @@ OctetString CalculateResStar(const OctetString &key, const std::string &snn, con
 
     // The (X)RES* is identified with the 128 least significant bits of the output of the KDF.
     return output.subCopy(output.length() - 16);
+}
+
+OctetString DeriveAmfPrimeInMobility(bool isUplink, const NasCount &count, const OctetString &kAmf)
+{
+    OctetString params[2];
+    params[0] = OctetString::FromOctet(isUplink ? 0x00 : 0x01);
+    params[1] = OctetString::FromOctet4(count.toOctet4());
+
+    return crypto::CalculateKdfKey(kAmf, 0x72, params, 2);
 }
 
 } // namespace nr::ue::keys
