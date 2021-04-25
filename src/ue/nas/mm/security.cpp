@@ -213,7 +213,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     // The UE shall in addition reset the uplink NAS COUNT counter if a) the SECURITY MODE COMMAND message is received
     // in order to take a 5G NAS security context into use created after a successful execution of the 5G AKA based
     // primary authentication and key agreement procedure or the EAP based ...
-    if (whichCtx == 1) // It is unclear how we can detect this, but checking if it is 'non-current' one.
+    if (whichCtx == 1) // NOTE: It is unclear how we can detect this, but checking if it is 'non-current' one.
     {
         nsCtx->uplinkCount.sqn = 0;
         nsCtx->uplinkCount.overflow = octet2{0};
