@@ -42,6 +42,8 @@ class NasMm
     std::unique_ptr<nas::ServiceRequest> m_lastServiceRequest{};
     // Most recent de-registration request
     std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    // Indicates that last registration request was sent without a NAS security context
+    bool m_lastRegWithoutNsc{};
     // Indicates the last de-registration cause
     EDeregCause m_lastDeregCause{};
     // Indicates the last service request cause

@@ -97,6 +97,7 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
     // Send the message
     sendNasMessage(*request);
     m_lastRegistrationRequest = std::move(request);
+    m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
     // Process timers
     m_timers->t3510.start();
@@ -187,6 +188,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     // Send the message
     sendNasMessage(*request);
     m_lastRegistrationRequest = std::move(request);
+    m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
     // Process timers
     m_timers->t3510.start();
