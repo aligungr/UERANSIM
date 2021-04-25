@@ -40,8 +40,6 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
 
 void NasSm::receiveSmMessage(const nas::SmMessage &msg)
 {
-    // TODO: trigger on receive
-
     switch (msg.messageType)
     {
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
