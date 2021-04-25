@@ -252,7 +252,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     if (m_lastRegWithoutNsc && m_lastRegistrationRequest)
     {
         resp.nasMessageContainer = nas::IENasMessageContainer{};
-        nas::EncodeNasMessage(*m_lastServiceRequest, resp.nasMessageContainer->data);
+        nas::EncodeNasMessage(*m_lastRegistrationRequest, resp.nasMessageContainer->data);
     }
 
     // Send response
