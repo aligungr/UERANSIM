@@ -169,8 +169,6 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
 
 void NasMm::receiveMmMessage(const nas::PlainMmMessage &msg)
 {
-    // TODO: trigger on receive
-
     switch (msg.messageType)
     {
     case nas::EMessageType::REGISTRATION_ACCEPT:
