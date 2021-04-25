@@ -38,10 +38,10 @@ class NasMm
 
     // Most recent registration request
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
-    // Most recent de-registration request
-    std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
     // Most recent service request
     std::unique_ptr<nas::ServiceRequest> m_lastServiceRequest{};
+    // Most recent de-registration request
+    std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
     // Indicates the last de-registration cause
     EDeregCause m_lastDeregCause{};
     // Indicates the last service request cause
