@@ -371,6 +371,11 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
 {
     m_logger->err("Authentication Reject received.");
 
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    m_usim->m_rand = {};
+    m_usim->m_resStar = {};
+    m_timers->t3516.stop();
+
     if (msg.eapMessage.has_value() && msg.eapMessage->eap->code != eap::ECode::FAILURE)
     {
         m_logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");

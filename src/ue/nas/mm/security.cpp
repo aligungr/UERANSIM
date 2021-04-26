@@ -59,6 +59,11 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         m_logger->err("Rejecting Security Mode Command with cause [%s]", nas::utils::EnumToString(cause));
     };
 
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    m_usim->m_rand = {};
+    m_usim->m_resStar = {};
+    m_timers->t3516.stop();
+
     // ============================== Check the received ngKSI ==============================
 
     bool locallyDerived = false;
