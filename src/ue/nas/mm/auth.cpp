@@ -290,7 +290,16 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    auto autnCheck = validateAutn(rand, autn);
+    EAutnValidationRes autnCheck = EAutnValidationRes::OK;
+
+    // If the received RAND is same with store stored RAND, bypass AUTN validation
+    // NOTE: Not completely sure if this is correct and the spec meant this. But in worst case, synchronisation failure
+    //  happens, and hopefully that can be restored with the normal resynchronization procedure.
+    if (m_usim->m_rand != rand)
+    {
+        autnCheck = validateAutn(rand, autn);
+        m_timers->t3516.start();
+    }
 
     if (autnCheck == EAutnValidationRes::OK)
     {
