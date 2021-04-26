@@ -242,7 +242,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 
         if (auts.has_value())
         {
-            resp.authenticationFailureParameter = {};
+            resp.authenticationFailureParameter = nas::IEAuthenticationFailureParameter{};
             resp.authenticationFailureParameter->rawData = std::move(*auts);
         }
 
@@ -444,7 +444,6 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     // Verify that the received sequence number SQN is in the correct range
     if (!checkSqn(receivedSQN))
     {
-        m_logger->debug("AUTN validation SQN not acceptable");
         return EAutnValidationRes::SYNCHRONISATION_FAILURE;
     }
 
