@@ -74,7 +74,6 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto &milenageAk = milenage.ak;
-    auto &milenageMac = milenage.mac_a;
 
     auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenageAk);
     auto ckPrimeIkPrime =
@@ -123,7 +122,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     }
 
     // Control received AUTN
-    auto autnCheck = validateAutn(milenageAk, milenageMac, receivedAutn);
+    auto autnCheck = validateAutn(receivedRand, receivedAutn);
     if (autnCheck != EAutnValidationRes::OK)
     {
         eap::EapAkaPrime *eapResponse = nullptr;
@@ -289,30 +288,26 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
-    auto &res = milenage.res;
-    auto &ck = milenage.ck;
-    auto &ik = milenage.ik;
-    auto ckIk = OctetString::Concat(ck, ik);
-    auto &milenageAk = milenage.ak;
-    auto &milenageMac = milenage.mac_a;
-    auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenageAk);
-    auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
-
-    auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
+    auto autnCheck = validateAutn(rand, autn);
 
     if (autnCheck == EAutnValidationRes::OK)
     {
+        // Calculate milenage
+        auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+        auto ckIk = OctetString::Concat(milenage.ck, milenage.ik);
+        auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenage.ak);
+        auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
+
         // Store the relevant parameters
         m_usim->m_rand = rand.copy();
-        m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, res);
-        m_usim->m_res = std::move(res);
+        m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, milenage.res);
+        m_usim->m_res = milenage.res.copy();
 
         // Create new partial native NAS security context and continue with key derivation
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
         keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
@@ -329,8 +324,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        auto milenageForSync = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, true);
-        auto auts = keys::CalculateAuts(m_usim->m_sqnMng->getSqn(), milenageForSync.ak_r, milenageForSync.mac_s);
+        auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, true);
+        auto auts = keys::CalculateAuts(m_usim->m_sqnMng->getSqn(), milenage.ak_r, milenage.mac_s);
         sendFailure(nas::EMmCause::SYNCH_FAILURE, std::move(auts));
     }
     else
@@ -418,30 +413,35 @@ void NasMm::receiveEapResponseMessage(const eap::Eap &eap)
     }
 }
 
-EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString &mac, const OctetString &autn)
+EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetString &autn)
 {
     // Decode AUTN
     OctetString receivedSQNxorAK = autn.subCopy(0, 6);
-    OctetString receivedSQN = OctetString::Xor(receivedSQNxorAK, ak);
     OctetString receivedAMF = autn.subCopy(6, 2);
     OctetString receivedMAC = autn.subCopy(8, 8);
 
-    // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
-    // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
+    // Check the separation bit
     if (receivedAMF.get(0).bit(7) != 1)
     {
         m_logger->err("AUTN validation SEP-BIT failure. expected: 1, received: 0");
         return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
     }
 
+    // Derive AK and MAC
+    auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+    OctetString receivedSQN = OctetString::Xor(receivedSQNxorAK, milenage.ak);
+
     // Verify that the received sequence number SQN is in the correct range
     if (!m_usim->m_sqnMng->checkSqn(receivedSQN))
         return EAutnValidationRes::SYNCHRONISATION_FAILURE;
 
+    // Re-execute the milenage calculation (if case of sqn is changed with the received value)
+    milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+
     // Check MAC
-    if (receivedMAC != mac)
+    if (receivedMAC != milenage.mac_a)
     {
-        m_logger->err("AUTN validation MAC mismatch. expected [%s] received [%s]", mac.toHexString().c_str(),
+        m_logger->err("AUTN validation MAC mismatch. expected [%s] received [%s]", milenage.mac_a.toHexString().c_str(),
                       receivedMAC.toHexString().c_str());
         return EAutnValidationRes::MAC_FAILURE;
     }
