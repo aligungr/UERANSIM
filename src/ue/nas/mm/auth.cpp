@@ -9,7 +9,6 @@
 #include "mm.hpp"
 #include <ue/nas/keys.hpp>
 
-static const bool IGNORE_CONTROLS_FAILURES = false;
 static const bool USE_SQN_HACK = true; // TODO
 
 namespace nr::ue
@@ -62,9 +61,6 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         // Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
     }
 
-    if (IGNORE_CONTROLS_FAILURES)
-        m_logger->warn("IGNORE_CONTROLS_FAILURES enabled");
-
     if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand).ak;
@@ -106,7 +102,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     // m_logger->debug("calculated kaut: %s", kaut.toHexString().c_str());
 
     // Control received KDF
-    if (!IGNORE_CONTROLS_FAILURES && receivedKdf != 1)
+    if (receivedKdf != 1)
     {
         ueRejectionTimers();
 
@@ -148,7 +144,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
             eapResponse->attributes.putClientErrorCode(0);
         }
 
-        if (!IGNORE_CONTROLS_FAILURES && eapResponse != nullptr)
+        if (eapResponse != nullptr)
         {
             ueRejectionTimers();
 
@@ -168,21 +164,18 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_logger->err("AT_MAC failure in EAP AKA'. expected: %s received: %s", expectedMac.toHexString().c_str(),
                       receivedMac.toHexString().c_str());
 
-        if (!IGNORE_CONTROLS_FAILURES)
-        {
-            ueRejectionTimers();
+        ueRejectionTimers();
 
-            auto eapResponse = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-                                                                  eap::ESubType::AKA_CLIENT_ERROR);
-            eapResponse->attributes.putClientErrorCode(0);
+        auto eapResponse = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
+            eap::ESubType::AKA_CLIENT_ERROR);
+        eapResponse->attributes.putClientErrorCode(0);
 
-            nas::AuthenticationReject response;
-            response.eapMessage = nas::IEEapMessage{};
-            response.eapMessage->eap = std::move(eapResponse);
+        nas::AuthenticationReject response;
+        response.eapMessage = nas::IEEapMessage{};
+        response.eapMessage->eap = std::move(eapResponse);
 
-            sendNasMessage(response);
-            return;
-        }
+        sendNasMessage(response);
+        return;
     }
 
     // Create new partial native NAS security context and continue key derivation
@@ -238,9 +231,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         // Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
     }
 
-    if (IGNORE_CONTROLS_FAILURES)
-        m_logger->warn("IGNORE_CONTROLS_FAILURES enabled");
-
     if (!msg.authParamRAND.has_value() || !msg.authParamAUTN.has_value())
     {
         sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
@@ -275,7 +265,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
 
-    if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes::OK)
+    if (autnCheck == EAutnValidationRes::OK)
     {
         // Create new partial native NAS security context and continue with key derivation
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
