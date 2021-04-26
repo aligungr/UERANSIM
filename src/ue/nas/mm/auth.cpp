@@ -65,11 +65,11 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
     if (USE_SQN_HACK)
     {
-        auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand).ak;
+        auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand, false).ak;
         m_usim->m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
     }
 
-    auto milenage = calculateMilenage(m_usim->m_sqn, receivedRand);
+    auto milenage = calculateMilenage(m_usim->m_sqn, receivedRand, false);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
@@ -293,18 +293,17 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 
     if (USE_SQN_HACK)
     {
-        auto ak = calculateMilenage(OctetString::FromSpare(6), rand).ak;
+        auto ak = calculateMilenage(OctetString::FromSpare(6), rand, false).ak;
         m_usim->m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
     }
 
-    auto milenage = calculateMilenage(m_usim->m_sqn, rand);
+    auto milenage = calculateMilenage(m_usim->m_sqn, rand, false);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto ckIk = OctetString::Concat(ck, ik);
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
-    auto &milenageMacS = milenage.mac_s;
     auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
     auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
 
@@ -338,7 +337,9 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        sendFailure(nas::EMmCause::SYNCH_FAILURE, keys::CalculateAuts(m_usim->m_sqn, milenageAk, milenageMacS));
+        auto milenageForSync = calculateMilenage(m_usim->m_sqn, rand, true);
+        auto auts = keys::CalculateAuts(m_usim->m_sqn, milenageForSync.ak_r, milenageForSync.mac_s);
+        sendFailure(nas::EMmCause::SYNCH_FAILURE, std::move(auts));
     }
     else
     {
@@ -466,12 +467,15 @@ bool NasMm::checkSqn(const OctetString &sqn)
     return true;
 }
 
-crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, const OctetString &rand)
+crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, const OctetString &rand, bool dummyAmf)
 {
+    OctetString amf = dummyAmf ? OctetString::FromSpare(2) : m_base->config->amf.copy();
+
     if (m_base->config->opType == OpType::OPC)
-        return crypto::milenage::Calculate(m_base->config->opC, m_base->config->key, rand, sqn, m_base->config->amf);
+        return crypto::milenage::Calculate(m_base->config->opC, m_base->config->key, rand, sqn, amf);
+
     OctetString opc = crypto::milenage::CalculateOpC(m_base->config->opC, m_base->config->key);
-    return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, m_base->config->amf);
+    return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, amf);
 }
 
 } // namespace nr::ue
