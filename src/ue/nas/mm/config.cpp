@@ -16,6 +16,18 @@ namespace nr::ue
 
 void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg)
 {
+    // Abnormal case: 5.4.4.5, c) Generic UE configuration update and de-registration procedure collision
+    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+    {
+        // "If the UE receives CONFIGURATION UPDATE COMMAND message after sending a DEREGISTRATION REQUEST message and
+        //  the access type included in the DEREGISTRATION REQUEST message is same as the access in which the
+        //  CONFIGURATION UPDATE COMMAND message is received, then the UE shall ignore the CONFIGURATION UPDATE COMMAND
+        //  message and proceed with the de-registration procedure. Otherwise, the UE shall proceed with both the
+        //  procedures."
+        m_logger->warn("Configuration Update Command ignored because of the De-registration procedure collusion");
+        return;
+    }
+
     // Indicates there exists at least one configuration to be updated
     bool hasNewConfig = false;
 
