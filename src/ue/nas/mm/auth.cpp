@@ -46,8 +46,6 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_timers->t3521.stop();
     };
 
-    m_timers->t3520.stop();
-
     // Read EAP-AKA' request
     auto &receivedEap = (const eap::EapAkaPrime &)*msg.eapMessage->eap;
     auto receivedRand = receivedEap.attributes.getRand();
@@ -281,6 +279,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
         (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
     {
+        m_timers->t3520.start();
+
         sendFailure(nas::EMmCause::NGKSI_ALREADY_IN_USE);
         return;
     }
@@ -323,33 +323,32 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
         // Send response
+        m_timers->t3520.stop();
+
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
         resp.authenticationResponseParameter->rawData = m_usim->m_resStar.copy();
-        sendNasMessage(resp);
 
-        // 5.4.1.3.7, Item c)
-        // NOTE: Spec says UE shall start any retransmission timers previously stopped due to MAC failure
-        (void)0;
+        sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
-        // 5.4.1.3.7, Item c)
-        // NOTE: Spec says UE shall stop any retransmission timers
-        (void)0;
-
         m_timers->t3520.start();
 
         sendFailure(nas::EMmCause::MAC_FAILURE);
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
+        m_timers->t3520.start();
+
         auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, true);
         auto auts = keys::CalculateAuts(m_usim->m_sqnMng->getSqn(), milenage.ak_r, milenage.mac_s);
         sendFailure(nas::EMmCause::SYNCH_FAILURE, std::move(auts));
     }
     else
     {
+        m_timers->t3520.start();
+
         // the other case, separation bit mismatched
         sendFailure(nas::EMmCause::NON_5G_AUTHENTICATION_UNACCEPTABLE);
     }
