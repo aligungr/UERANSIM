@@ -187,7 +187,6 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
     m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
     m_usim->m_rand = std::move(receivedRand);
-    m_usim->m_res = std::move(res);
     m_usim->m_resStar = {};
     m_usim->m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
     m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
@@ -201,7 +200,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     {
         auto *akaPrimeResponse =
             new eap::EapAkaPrime(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CHALLENGE);
-        akaPrimeResponse->attributes.putRes(m_usim->m_res);
+        akaPrimeResponse->attributes.putRes(res);
         akaPrimeResponse->attributes.putMac(OctetString::FromSpare(16)); // Dummy mac for now
         akaPrimeResponse->attributes.putKdf(1);
 
@@ -227,9 +226,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         else
             m_logger->debug("Sending Authentication Failure due to SQN out of range");
 
-        // Clear parameters stored in volatile memory of ME
+        // Clear RAND and RES* stored in volatile memory
         m_usim->m_rand = {};
-        m_usim->m_res = {};
         m_usim->m_resStar = {};
 
         // Stop T3516 if running
@@ -312,7 +310,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         // Store the relevant parameters
         m_usim->m_rand = rand.copy();
         m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, milenage.res);
-        m_usim->m_res = milenage.res.copy();
 
         // Create new partial native NAS security context and continue with key derivation
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();

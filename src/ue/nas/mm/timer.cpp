@@ -85,6 +85,11 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         }
         break;
     }
+    case 3516: {
+        m_usim->m_rand = {};
+        m_usim->m_resStar = {};
+        break;
+    }
     case 3517: {
         if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
         {
