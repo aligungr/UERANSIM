@@ -449,7 +449,7 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     // Check MAC
     if (receivedMAC != mac)
     {
-        m_logger->err("AUTN validation MAC mismatch. expected: %s received: %s", mac.toHexString().c_str(),
+        m_logger->err("AUTN validation MAC mismatch. expected [%s] received [%s]", mac.toHexString().c_str(),
                       receivedMAC.toHexString().c_str());
         return EAutnValidationRes::MAC_FAILURE;
     }
