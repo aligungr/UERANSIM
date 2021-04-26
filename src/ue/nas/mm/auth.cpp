@@ -328,12 +328,16 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         resp.authenticationResponseParameter->rawData = m_usim->m_resStar.copy();
         sendNasMessage(resp);
 
-        // 5.4.1.3.7, c)
-        restorePreviouslyStoppedAndSavedRetransmissionTimers();
+        // 5.4.1.3.7, Item c)
+        // NOTE: Spec says UE shall start any retransmission timers previously stopped due to MAC failure
+        (void)0;
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
-        stopAndSaveRetransmissionTimers();
+        // 5.4.1.3.7, Item c)
+        // NOTE: Spec says UE shall stop any retransmission timers
+        (void)0;
+
         m_timers->t3520.start();
 
         sendFailure(nas::EMmCause::MAC_FAILURE);

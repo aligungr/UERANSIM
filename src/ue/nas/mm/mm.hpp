@@ -167,8 +167,6 @@ class NasMm
 
   private: /* Timer */
     void onTimerExpire(nas::NasTimer &timer);
-    void stopAndSaveRetransmissionTimers();
-    void restorePreviouslyStoppedAndSavedRetransmissionTimers();
 
   public:
     /* Interface */
