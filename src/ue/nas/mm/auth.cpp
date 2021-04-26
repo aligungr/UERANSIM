@@ -281,7 +281,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
         (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
     {
-        if (networkFailingTheAuthCheck())
+        if (networkFailingTheAuthCheck(true))
             return;
 
         m_timers->t3520.start();
@@ -338,14 +338,14 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
-        if (networkFailingTheAuthCheck())
+        if (networkFailingTheAuthCheck(true))
             return;
         m_timers->t3520.start();
         sendFailure(nas::EMmCause::MAC_FAILURE);
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        if (networkFailingTheAuthCheck())
+        if (networkFailingTheAuthCheck(true))
             return;
 
         m_timers->t3520.start();
@@ -356,7 +356,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else // the other case, separation bit mismatched
     {
-        if (networkFailingTheAuthCheck())
+        if (networkFailingTheAuthCheck(true))
             return;
         m_timers->t3520.start();
         sendFailure(nas::EMmCause::NON_5G_AUTHENTICATION_UNACCEPTABLE);
@@ -493,10 +493,17 @@ crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, cons
     return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, amf);
 }
 
-bool NasMm::networkFailingTheAuthCheck()
+bool NasMm::networkFailingTheAuthCheck(bool hasChance)
 {
-    if (m_nwConsecutiveAuthFailure++ < 3)
+    if (hasChance && m_nwConsecutiveAuthFailure++ < 3)
         return false;
+
+    // NOTE: Normally if we should check if the UE has an emergency. If it has, it should consider as network passed the
+    //  auth check, instead of performing the actions in the following lines. But it's difficult to maintain and
+    //  implement this behaviour. Therefore we would expect other solutions for an emergency case. Such as
+    //  - Network initiates a Security Mode Command with IA0 and EA0
+    //  - UE performs emergency registration after releasing the connection
+    // END
 
     m_logger->err("Network failing the authentication check");
     localReleaseConnection();

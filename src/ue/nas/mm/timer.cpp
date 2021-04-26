@@ -114,6 +114,11 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         m_usim->m_storedSuci = {};
         break;
     }
+    case 3520: {
+        logExpired();
+        networkFailingTheAuthCheck(false);
+        break;
+    }
     case 3521: {
         if (timer.getExpiryCount() == 5)
         {
