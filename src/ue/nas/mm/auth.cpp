@@ -226,11 +226,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         sendNasMessage(resp);
     };
 
-    if (USE_SQN_HACK)
-    {
-        // Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
-    }
-
     if (!msg.authParamRAND.has_value() || !msg.authParamAUTN.has_value())
     {
         sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
