@@ -24,6 +24,8 @@ void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
         return;
     }
 
+    m_timers->t3520.start();
+
     if (msg.eapMessage.has_value())
         receiveAuthenticationRequestEap(msg);
     else
@@ -325,9 +327,15 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
         resp.authenticationResponseParameter->rawData = m_usim->m_resStar.copy();
         sendNasMessage(resp);
+
+        // 5.4.1.3.7, c)
+        restorePreviouslyStoppedAndSavedRetransmissionTimers();
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
+        stopAndSaveRetransmissionTimers();
+        m_timers->t3520.start();
+
         sendFailure(nas::EMmCause::MAC_FAILURE);
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
