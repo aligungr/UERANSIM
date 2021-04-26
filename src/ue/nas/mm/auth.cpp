@@ -223,7 +223,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
     auto sendFailure = [this](nas::EMmCause cause) {
-        m_logger->err("Rejecting Authentication Request with cause: %s", nas::utils::EnumToString(cause));
+        m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
         nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
         sendNasMessage(resp);
@@ -384,6 +384,13 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     OctetString receivedAMF = autn.subCopy(6, 2);
     OctetString receivedMAC = autn.subCopy(8, 8);
 
+    // Verify that the received sequence number SQN is in the correct range
+    if (!checkSqn(receivedSQN))
+    {
+        m_logger->debug("AUTN validation SQN not acceptable");
+        return EAutnValidationRes::SYNCHRONISATION_FAILURE;
+    }
+
     // Check MAC
     if (receivedMAC != mac)
     {
@@ -400,17 +407,10 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
         return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
     }
 
-    // Verify that the received sequence number SQN is in the correct range
-    if (!checkSqn(receivedSQN))
-    {
-        m_logger->err("AUTN validation SQN not acceptable");
-        return EAutnValidationRes::SYNCHRONISATION_FAILURE;
-    }
-
     return EAutnValidationRes::OK;
 }
 
-bool NasMm::checkSqn(const OctetString &)
+bool NasMm::checkSqn(const OctetString &sqn)
 {
     // TODO:
     //  Verify the freshness of sequence numbers to determine whether the specified sequence number is

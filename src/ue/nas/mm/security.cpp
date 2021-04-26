@@ -59,7 +59,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         nas::SecurityModeReject resp;
         resp.mmCause.value = cause;
         sendNasMessage(resp);
-        m_logger->err("Rejecting Security Mode Command with cause: %s", nas::utils::EnumToString(cause));
+        m_logger->err("Rejecting Security Mode Command with cause [%s]", nas::utils::EnumToString(cause));
     };
 
     // ============================== Check the received ngKSI ==============================
