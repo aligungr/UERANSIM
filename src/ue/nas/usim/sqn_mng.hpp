@@ -22,12 +22,11 @@ class SqnManager
   private:
     uint64_t m_indBitLen;
     uint64_t m_wrappingDelta;
-    uint64_t m_limit;
 
     std::vector<uint64_t> m_sqnArr;
 
   public:
-    SqnManager(uint64_t indBitLen, uint64_t wrappingDelta, uint64_t limit);
+    SqnManager(uint64_t indBitLen, uint64_t wrappingDelta);
 
   private:
     [[nodiscard]] uint64_t getSeqFromSqn(uint64_t sqn) const;

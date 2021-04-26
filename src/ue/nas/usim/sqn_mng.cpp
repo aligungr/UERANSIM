@@ -13,8 +13,8 @@
 namespace nr::ue
 {
 
-SqnManager::SqnManager(uint64_t indBitLen, uint64_t wrappingDelta, uint64_t limit)
-    : m_indBitLen{indBitLen}, m_wrappingDelta{wrappingDelta}, m_limit{limit}, m_sqnArr(1ull << m_indBitLen)
+SqnManager::SqnManager(uint64_t indBitLen, uint64_t wrappingDelta)
+    : m_indBitLen{indBitLen}, m_wrappingDelta{wrappingDelta}, m_sqnArr(1ull << m_indBitLen)
 {
     if (m_indBitLen < 2 || m_indBitLen > 16)
         throw std::runtime_error("bad indBitLen");
@@ -49,8 +49,6 @@ bool SqnManager::checkSqn(uint64_t sqn)
     uint64_t ind = getIndFromSqn(sqn);
 
     if (seq - getSeqMs() > m_wrappingDelta)
-        return false;
-    if (getSeqMs() - seq >= m_limit)
         return false;
     if (seq <= getSeqFromSqn(m_sqnArr[ind]))
         return false;
