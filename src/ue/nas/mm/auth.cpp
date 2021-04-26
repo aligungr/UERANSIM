@@ -222,17 +222,29 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
-    auto sendFailure = [this](nas::EMmCause cause) {
-        m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
+    auto sendFailure = [this](nas::EMmCause cause, std::optional<OctetString> &&auts = std::nullopt) {
+        if (cause == nas::EMmCause::SYNCH_FAILURE)
+            m_logger->debug("Sending Authentication Failure due to SQN out of range");
+        else
+            m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
 
+        // Clear parameters stored in volatile memory of ME
         m_usim->m_rand = {};
         m_usim->m_res = {};
         m_usim->m_resStar = {};
 
+        // Stop T3516 if running
         m_timers->t3516.stop();
 
+        // Send Authentication Failure
         nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
+
+        if (auts.has_value())
+        {
+            resp.authenticationFailureParameter = {};
+            resp.authenticationFailureParameter->rawData = std::move(*auts);
+        }
 
         sendNasMessage(resp);
     };
@@ -325,9 +337,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        // TODO
-        m_logger->err("SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
-        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        sendFailure(nas::EMmCause::SYNCH_FAILURE);
     }
     else
     {
