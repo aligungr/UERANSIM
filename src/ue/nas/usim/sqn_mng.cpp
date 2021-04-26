@@ -54,10 +54,7 @@ bool SqnManager::checkSqn(uint64_t sqn)
     uint64_t ind = getIndFromSqn(sqn);
 
     if (seq - getSeqMs() > m_wrappingDelta)
-    {
-        getSqnRef() -= m_wrappingDelta;
         return false;
-    }
     if (seq <= getSeqFromSqn(m_sqnArr[ind]))
         return false;
 
