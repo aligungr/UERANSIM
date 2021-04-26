@@ -7,6 +7,8 @@
 //
 
 #include "mm.hpp"
+
+#include <lib/nas/utils.hpp>
 #include <ue/nas/keys.hpp>
 
 static const bool USE_SQN_HACK = true; // TODO
@@ -166,8 +168,8 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
         ueRejectionTimers();
 
-        auto eapResponse = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-            eap::ESubType::AKA_CLIENT_ERROR);
+        auto eapResponse =
+            std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CLIENT_ERROR);
         eapResponse->attributes.putClientErrorCode(0);
 
         nas::AuthenticationReject response;
@@ -221,12 +223,19 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
     auto sendFailure = [this](nas::EMmCause cause) {
+        m_logger->err("Rejecting Authentication Request with cause: %s", nas::utils::EnumToString(cause));
         nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
         sendNasMessage(resp);
     };
 
     if (!msg.authParamRAND.has_value() || !msg.authParamAUTN.has_value())
+    {
+        sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+        return;
+    }
+
+    if (msg.authParamRAND->value.length() != 16 || msg.authParamAUTN->value.length() != 16)
     {
         sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
         return;
