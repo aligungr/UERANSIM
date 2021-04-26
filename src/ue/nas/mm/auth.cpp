@@ -253,11 +253,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
     auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
 
-    // m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
-    //                ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
-    //                milenageMac.toHexString().c_str());
-    // m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_usim->m_sqn.toHexString().c_str());
-
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
 
     if (autnCheck == EAutnValidationRes::OK)
@@ -273,11 +268,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
         keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
-
-        // m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
-        //                m_usim->m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
-        //                m_usim->m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
-        //                m_usim->m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
 
         // Send response
         nas::AuthenticationResponse resp;
