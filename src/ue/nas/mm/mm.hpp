@@ -11,7 +11,7 @@
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
 #include <lib/nas/timer.hpp>
-#include <ue/nas/usim.hpp>
+#include <ue/nas/usim/usim.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>

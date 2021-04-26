@@ -11,7 +11,7 @@
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/nas/usim.hpp>
+#include <ue/nas/usim/usim.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 

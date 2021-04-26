@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "usim.hpp"
+#include <ue/nas/usim/usim.hpp>
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
 #include <lib/nas/timer.hpp>
