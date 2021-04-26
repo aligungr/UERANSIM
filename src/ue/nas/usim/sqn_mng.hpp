@@ -32,11 +32,12 @@ class SqnManager
     [[nodiscard]] uint64_t getSeqFromSqn(uint64_t sqn) const;
     [[nodiscard]] uint64_t getIndFromSqn(uint64_t sqn) const;
     [[nodiscard]] uint64_t getSeqMs() const;
+    [[nodiscard]] uint64_t &getSqnRef();
+    [[nodiscard]] uint64_t getSqnValue() const;
+    bool checkSqn(uint64_t sqn);
 
   public:
-    [[nodiscard]] uint64_t getSqnUL() const;
     [[nodiscard]] OctetString getSqn() const;
-    bool checkSqn(uint64_t sqn);
     bool checkSqn(const OctetString &sqn);
 };
 

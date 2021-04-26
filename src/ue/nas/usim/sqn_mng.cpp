@@ -18,6 +18,8 @@ SqnManager::SqnManager(uint64_t indBitLen, uint64_t wrappingDelta)
 {
     if (m_indBitLen < 2 || m_indBitLen > 16)
         throw std::runtime_error("bad indBitLen");
+
+    m_sqnArr[0] = 0xFFFFFFFFFFFFULL;
 }
 
 uint64_t SqnManager::getSeqFromSqn(uint64_t sqn) const
@@ -35,10 +37,15 @@ uint64_t SqnManager::getIndFromSqn(uint64_t sqn) const
 
 uint64_t SqnManager::getSeqMs() const
 {
-    return getSeqFromSqn(getSqnUL());
+    return getSeqFromSqn(getSqnValue());
 }
 
-uint64_t SqnManager::getSqnUL() const
+uint64_t &SqnManager::getSqnRef()
+{
+    return *std::max_element(m_sqnArr.begin(), m_sqnArr.end());
+}
+
+uint64_t SqnManager::getSqnValue() const
 {
     return *std::max_element(m_sqnArr.begin(), m_sqnArr.end());
 }
@@ -49,7 +56,10 @@ bool SqnManager::checkSqn(uint64_t sqn)
     uint64_t ind = getIndFromSqn(sqn);
 
     if (seq - getSeqMs() > m_wrappingDelta)
+    {
+        getSqnRef() -= m_wrappingDelta;
         return false;
+    }
     if (seq <= getSeqFromSqn(m_sqnArr[ind]))
         return false;
 
@@ -67,7 +77,7 @@ bool SqnManager::checkSqn(const OctetString &sqn)
 
 OctetString SqnManager::getSqn() const
 {
-    return OctetString::FromOctet8(getSqnUL()).subCopy(2);
+    return OctetString::FromOctet8(getSqnValue()).subCopy(2);
 }
 
 } // namespace nr::ue
