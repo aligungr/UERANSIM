@@ -216,6 +216,8 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
         sendNasMessage(response);
     }
+
+    // TODO (dont forget: m_nwConsecutiveAuthFailure = 0;)
 }
 
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
@@ -279,8 +281,10 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
         (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
     {
-        m_timers->t3520.start();
+        if (networkFailingTheAuthCheck())
+            return;
 
+        m_timers->t3520.start();
         sendFailure(nas::EMmCause::NGKSI_ALREADY_IN_USE);
         return;
     }
@@ -323,6 +327,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
         // Send response
+        m_nwConsecutiveAuthFailure = 0;
         m_timers->t3520.stop();
 
         nas::AuthenticationResponse resp;
@@ -333,23 +338,27 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
+        if (networkFailingTheAuthCheck())
+            return;
         m_timers->t3520.start();
-
         sendFailure(nas::EMmCause::MAC_FAILURE);
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
+        if (networkFailingTheAuthCheck())
+            return;
+
         m_timers->t3520.start();
 
         auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, true);
         auto auts = keys::CalculateAuts(m_usim->m_sqnMng->getSqn(), milenage.ak_r, milenage.mac_s);
         sendFailure(nas::EMmCause::SYNCH_FAILURE, std::move(auts));
     }
-    else
+    else // the other case, separation bit mismatched
     {
+        if (networkFailingTheAuthCheck())
+            return;
         m_timers->t3520.start();
-
-        // the other case, separation bit mismatched
         sendFailure(nas::EMmCause::NON_5G_AUTHENTICATION_UNACCEPTABLE);
     }
 }
@@ -484,12 +493,15 @@ crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, cons
     return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, amf);
 }
 
-void NasMm::networkFailingTheAuth()
+bool NasMm::networkFailingTheAuthCheck()
 {
+    if (m_nwConsecutiveAuthFailure++ < 3)
+        return false;
+
     m_logger->err("Network failing the authentication check");
     localReleaseConnection();
-
     // TODO: treat the active cell as barred
+    return true;
 }
 
 } // namespace nr::ue

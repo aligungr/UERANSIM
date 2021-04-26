@@ -60,6 +60,8 @@ class NasMm
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
     // Last time Service Request needed indication for Data
     long m_lastTimeServiceReqNeededIndForData{};
+    // Number of times the network failing the authentication check
+    int m_nwConsecutiveAuthFailure{};
 
     friend class UeCmdHandler;
 
@@ -116,7 +118,7 @@ class NasMm
     void receiveEapResponseMessage(const eap::Eap &eap);
     EAutnValidationRes validateAutn(const OctetString &rand, const OctetString &autn);
     crypto::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand, bool dummyAmf);
-    void networkFailingTheAuth();
+    bool networkFailingTheAuthCheck();
 
   private: /* Security */
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);
