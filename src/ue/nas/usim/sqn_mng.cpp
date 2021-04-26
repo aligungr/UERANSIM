@@ -35,15 +35,10 @@ uint64_t SqnManager::getIndFromSqn(uint64_t sqn) const
 
 uint64_t SqnManager::getSeqMs() const
 {
-    return getSeqFromSqn(getSqnValue());
+    return getSeqFromSqn(getSqnMs());
 }
 
-uint64_t &SqnManager::getSqnRef()
-{
-    return *std::max_element(m_sqnArr.begin(), m_sqnArr.end());
-}
-
-uint64_t SqnManager::getSqnValue() const
+uint64_t SqnManager::getSqnMs() const
 {
     return *std::max_element(m_sqnArr.begin(), m_sqnArr.end());
 }
@@ -72,7 +67,7 @@ bool SqnManager::checkSqn(const OctetString &sqn)
 
 OctetString SqnManager::getSqn() const
 {
-    return OctetString::FromOctet8(getSqnValue()).subCopy(2);
+    return OctetString::FromOctet8(getSqnMs()).subCopy(2);
 }
 
 } // namespace nr::ue

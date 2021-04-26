@@ -32,8 +32,7 @@ class SqnManager
     [[nodiscard]] uint64_t getSeqFromSqn(uint64_t sqn) const;
     [[nodiscard]] uint64_t getIndFromSqn(uint64_t sqn) const;
     [[nodiscard]] uint64_t getSeqMs() const;
-    [[nodiscard]] uint64_t &getSqnRef();
-    [[nodiscard]] uint64_t getSqnValue() const;
+    [[nodiscard]] uint64_t getSqnMs() const;
     bool checkSqn(uint64_t sqn);
 
   public:
