@@ -71,4 +71,9 @@ OctetString CalculateKAusfForEapAkaPrime(const OctetString &mk);
 OctetString CalculateResStar(const OctetString &key, const std::string &snn, const OctetString &rand,
                              const OctetString &res);
 
+/*
+ * Calculates AUTS according to the given parameters
+ */
+OctetString CalculateAuts(const OctetString &sqn, const OctetString &ak, const OctetString &macS);
+
 } // namespace nr::ue::keys

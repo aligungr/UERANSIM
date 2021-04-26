@@ -304,6 +304,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto ckIk = OctetString::Concat(ck, ik);
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
+    auto &milenageMacS = milenage.mac_s;
     auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
     auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
 
@@ -337,7 +338,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        sendFailure(nas::EMmCause::SYNCH_FAILURE);
+        sendFailure(nas::EMmCause::SYNCH_FAILURE, keys::CalculateAuts(m_usim->m_sqn, milenageAk, milenageMacS));
     }
     else
     {

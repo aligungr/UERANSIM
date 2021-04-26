@@ -147,4 +147,11 @@ OctetString DeriveAmfPrimeInMobility(bool isUplink, const NasCount &count, const
     return crypto::CalculateKdfKey(kAmf, 0x72, params, 2);
 }
 
+OctetString CalculateAuts(const OctetString &sqn, const OctetString &ak, const OctetString &macS)
+{
+    OctetString auts = OctetString::Xor(sqn, ak);
+    auts.append(macS);
+    return auts;
+}
+
 } // namespace nr::ue::keys
