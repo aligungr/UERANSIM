@@ -18,8 +18,6 @@ SqnManager::SqnManager(uint64_t indBitLen, uint64_t wrappingDelta)
 {
     if (m_indBitLen < 2 || m_indBitLen > 16)
         throw std::runtime_error("bad indBitLen");
-
-    m_sqnArr[0] = 0xFFFFFFFFFFFFULL;
 }
 
 uint64_t SqnManager::getSeqFromSqn(uint64_t sqn) const
