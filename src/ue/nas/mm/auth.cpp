@@ -224,10 +224,20 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 {
     auto sendFailure = [this](nas::EMmCause cause) {
         m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
+
+        m_usim->m_rand = {};
+        m_usim->m_res = {};
+        m_usim->m_resStar = {};
+
+        m_timers->t3516.stop();
+
         nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
+
         sendNasMessage(resp);
     };
+
+    // ========================== Check the received parameters syntactically ==========================
 
     if (!msg.authParamRAND.has_value() || !msg.authParamAUTN.has_value())
     {
@@ -240,6 +250,31 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
         return;
     }
+
+    // =================================== Check the received ngKSI ===================================
+
+    if (msg.ngKSI.tsc == nas::ETypeOfSecurityContext::MAPPED_SECURITY_CONTEXT)
+    {
+        m_logger->err("Mapped security context not supported");
+        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        return;
+    }
+
+    if (msg.ngKSI.ksi == nas::IENasKeySetIdentifier::NOT_AVAILABLE_OR_RESERVED)
+    {
+        m_logger->err("Invalid ngKSI value received");
+        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        return;
+    }
+
+    if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
+        (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
+    {
+        sendFailure(nas::EMmCause::NGKSI_ALREADY_IN_USE);
+        return;
+    }
+
+    // ============================================ Others ============================================
 
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
@@ -264,13 +299,15 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
 
     if (autnCheck == EAutnValidationRes::OK)
     {
+        // Store the relevant parameters
+        m_usim->m_rand = rand.copy();
+        m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, res);
+        m_usim->m_res = std::move(res);
+
         // Create new partial native NAS security context and continue with key derivation
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_usim->m_rand = rand.copy();
-        m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, res);
-        m_usim->m_res = std::move(res);
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
@@ -294,7 +331,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else
     {
-        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        // the other case, separation bit mismatched
+        sendFailure(nas::EMmCause::NON_5G_AUTHENTICATION_UNACCEPTABLE);
     }
 }
 
@@ -384,6 +422,14 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     OctetString receivedAMF = autn.subCopy(6, 2);
     OctetString receivedMAC = autn.subCopy(8, 8);
 
+    // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
+    // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
+    if (receivedAMF.get(0).bit(7) != 1)
+    {
+        m_logger->err("AUTN validation SEP-BIT failure. expected: 1, received: 0");
+        return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
+    }
+
     // Verify that the received sequence number SQN is in the correct range
     if (!checkSqn(receivedSQN))
     {
@@ -397,14 +443,6 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
         m_logger->err("AUTN validation MAC mismatch. expected: %s received: %s", mac.toHexString().c_str(),
                       receivedMAC.toHexString().c_str());
         return EAutnValidationRes::MAC_FAILURE;
-    }
-
-    // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
-    // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
-    if (receivedAMF.get(0).bit(7) != 1)
-    {
-        m_logger->err("AUTN validation SEP-BIT failure. expected: 1, received: 0");
-        return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
     }
 
     return EAutnValidationRes::OK;
