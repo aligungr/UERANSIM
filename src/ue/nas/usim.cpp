@@ -33,4 +33,10 @@ void Usim::invalidate()
     m_isValid = false;
 }
 
+bool Usim::checkSqn(const OctetString &sqn)
+{
+    // TODO
+    return false;
+}
+
 } // namespace nr::ue

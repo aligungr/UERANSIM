@@ -289,12 +289,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    if (USE_SQN_HACK)
-    {
-        auto ak = calculateMilenage(OctetString::FromSpare(6), rand, false).ak;
-        m_usim->m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
-    }
-
     auto milenage = calculateMilenage(m_usim->m_sqn, rand, false);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
@@ -441,10 +435,8 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     }
 
     // Verify that the received sequence number SQN is in the correct range
-    if (!checkSqn(receivedSQN))
-    {
+    if (!m_usim->checkSqn(receivedSQN))
         return EAutnValidationRes::SYNCHRONISATION_FAILURE;
-    }
 
     // Check MAC
     if (receivedMAC != mac)
@@ -455,14 +447,6 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     }
 
     return EAutnValidationRes::OK;
-}
-
-bool NasMm::checkSqn(const OctetString &sqn)
-{
-    // TODO:
-    //  Verify the freshness of sequence numbers to determine whether the specified sequence number is
-    //  in the correct range and acceptable by the USIM. See 3GPP TS 33.102, Annex C.2.
-    return true;
 }
 
 crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, const OctetString &rand, bool dummyAmf)

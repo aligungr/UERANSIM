@@ -46,7 +46,6 @@ class Usim
     // Security related
     std::unique_ptr<NasSecurityContext> m_currentNsCtx{};
     std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};
-    OctetString m_sqn{};
     OctetString m_rand{};
     OctetString m_res{};
     OctetString m_resStar{};
@@ -68,10 +67,16 @@ class Usim
     // eCall related
     bool m_isECallOnly{};
 
+    // SQN management
+    OctetString m_sqn{};
+
   public:
     void initialize(bool hasSupi, const UeConfig::Initials &initials);
+
     bool isValid();
     void invalidate();
+
+    bool checkSqn(const OctetString &sqn);
 };
 
 } // namespace nr::ue
