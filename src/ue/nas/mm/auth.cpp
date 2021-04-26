@@ -235,8 +235,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    // m_logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
-
     if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), rand).ak;
