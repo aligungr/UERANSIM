@@ -484,4 +484,12 @@ crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, cons
     return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, amf);
 }
 
+void NasMm::networkFailingTheAuth()
+{
+    m_logger->err("Network failing the authentication check");
+    localReleaseConnection();
+
+    // TODO: treat the active cell as barred
+}
+
 } // namespace nr::ue
