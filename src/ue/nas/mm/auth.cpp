@@ -224,6 +224,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto sendFailure = [this](nas::EMmCause cause, std::optional<OctetString> &&auts = std::nullopt) {
         if (cause != nas::EMmCause::SYNCH_FAILURE)
             m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
+        else
+            m_logger->debug("Sending Authentication Failure deu to SQN out of range");
 
         // Clear parameters stored in volatile memory of ME
         m_usim->m_rand = {};
