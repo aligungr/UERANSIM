@@ -8,9 +8,12 @@
 
 #pragma once
 
-#include <lib/nas/msg.hpp>
+#include "sqn_mng.hpp"
+
 #include <memory>
 #include <optional>
+
+#include <lib/nas/msg.hpp>
 #include <ue/types.hpp>
 #include <utils/common_types.hpp>
 #include <utils/octet_string.hpp>
@@ -49,6 +52,7 @@ class Usim
     OctetString m_rand{};
     OctetString m_res{};
     OctetString m_resStar{};
+    std::unique_ptr<SqnManager> m_sqnMng{};
 
     // NSSAI related
     NetworkSlice m_defConfiguredNssai{};
@@ -67,16 +71,11 @@ class Usim
     // eCall related
     bool m_isECallOnly{};
 
-    // SQN management
-    OctetString m_sqn{};
-
   public:
     void initialize(bool hasSupi, const UeConfig::Initials &initials);
 
     bool isValid();
     void invalidate();
-
-    bool checkSqn(const OctetString &sqn);
 };
 
 } // namespace nr::ue

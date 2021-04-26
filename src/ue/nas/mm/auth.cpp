@@ -63,20 +63,20 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         // Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
     }
 
-    if (USE_SQN_HACK)
+    /*if (USE_SQN_HACK)
     {
         auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand, false).ak;
         m_usim->m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
-    }
+    }*/
 
-    auto milenage = calculateMilenage(m_usim->m_sqn, receivedRand, false);
+    auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), receivedRand, false);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
 
-    auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
+    auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenageAk);
     auto ckPrimeIkPrime =
         keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(*m_usim->m_currentPlmn), sqnXorAk);
     auto &ckPrime = ckPrimeIkPrime.first;
@@ -289,14 +289,14 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    auto milenage = calculateMilenage(m_usim->m_sqn, rand, false);
+    auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto ckIk = OctetString::Concat(ck, ik);
     auto &milenageAk = milenage.ak;
     auto &milenageMac = milenage.mac_a;
-    auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
+    auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenageAk);
     auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
 
     auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
@@ -329,8 +329,8 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        auto milenageForSync = calculateMilenage(m_usim->m_sqn, rand, true);
-        auto auts = keys::CalculateAuts(m_usim->m_sqn, milenageForSync.ak_r, milenageForSync.mac_s);
+        auto milenageForSync = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, true);
+        auto auts = keys::CalculateAuts(m_usim->m_sqnMng->getSqn(), milenageForSync.ak_r, milenageForSync.mac_s);
         sendFailure(nas::EMmCause::SYNCH_FAILURE, std::move(auts));
     }
     else
@@ -435,7 +435,7 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString 
     }
 
     // Verify that the received sequence number SQN is in the correct range
-    if (!m_usim->checkSqn(receivedSQN))
+    if (!m_usim->m_sqnMng->checkSqn(receivedSQN))
         return EAutnValidationRes::SYNCHRONISATION_FAILURE;
 
     // Check MAC

@@ -20,7 +20,7 @@ void ue::Usim::initialize(bool hasSupi, const UeConfig::Initials &initials)
     m_defConfiguredNssai = initials.defaultConfiguredNssai;
     m_configuredNssai = initials.configuredNssai;
 
-    m_sqn = OctetString::FromSpare(6);
+    m_sqnMng = std::make_unique<SqnManager>(5ull, 1ull << 28ull, ~0ull);
 }
 
 bool Usim::isValid()
@@ -31,12 +31,6 @@ bool Usim::isValid()
 void Usim::invalidate()
 {
     m_isValid = false;
-}
-
-bool Usim::checkSqn(const OctetString &sqn)
-{
-    // TODO
-    return false;
 }
 
 } // namespace nr::ue
