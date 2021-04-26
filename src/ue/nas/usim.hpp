@@ -47,6 +47,9 @@ class Usim
     std::unique_ptr<NasSecurityContext> m_currentNsCtx{};
     std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};
     OctetString m_sqn{};
+    OctetString m_rand{};
+    OctetString m_res{};
+    OctetString m_resStar{};
 
     // NSSAI related
     NetworkSlice m_defConfiguredNssai{};

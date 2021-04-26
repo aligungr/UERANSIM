@@ -303,10 +303,6 @@ struct UeKeys
 {
     OctetString abba{};
 
-    OctetString rand{};
-    OctetString res{};
-    OctetString resStar{}; // used in 5G-AKA
-
     OctetString kAusf{};
     OctetString kSeaf{};
     OctetString kAmf{};
@@ -316,9 +312,6 @@ struct UeKeys
     [[nodiscard]] UeKeys deepCopy() const
     {
         UeKeys keys;
-        keys.rand = rand.subCopy(0);
-        keys.res = res.subCopy(0);
-        keys.resStar = resStar.subCopy(0);
         keys.kAusf = kAusf.subCopy(0);
         keys.kSeaf = kSeaf.subCopy(0);
         keys.kAmf = kAmf.subCopy(0);

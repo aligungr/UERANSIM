@@ -40,9 +40,6 @@ static std::unique_ptr<NasSecurityContext> LocallyDeriveNsc()
     nsc->integrity = nas::ETypeOfIntegrityProtectionAlgorithm::IA0;
     nsc->ciphering = nas::ETypeOfCipheringAlgorithm::EA0;
     nsc->keys.abba = OctetString::FromSpare(2);
-    nsc->keys.rand = OctetString::FromSpare(16);
-    nsc->keys.res = OctetString::FromSpare(16);
-    nsc->keys.resStar = OctetString::FromSpare(16);
     nsc->keys.kAusf = OctetString::FromSpare(32);
     nsc->keys.kSeaf = OctetString::FromSpare(32);
     nsc->keys.kAmf = OctetString::FromSpare(32);

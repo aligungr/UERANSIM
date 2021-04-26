@@ -187,9 +187,9 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
     m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
     m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-    m_usim->m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
-    m_usim->m_nonCurrentNsCtx->keys.res = std::move(res);
-    m_usim->m_nonCurrentNsCtx->keys.resStar = {};
+    m_usim->m_rand = std::move(receivedRand);
+    m_usim->m_res = std::move(res);
+    m_usim->m_resStar = {};
     m_usim->m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
     m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
@@ -202,7 +202,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     {
         auto *akaPrimeResponse =
             new eap::EapAkaPrime(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CHALLENGE);
-        akaPrimeResponse->attributes.putRes(m_usim->m_nonCurrentNsCtx->keys.res);
+        akaPrimeResponse->attributes.putRes(m_usim->m_res);
         akaPrimeResponse->attributes.putMac(OctetString::FromSpare(16)); // Dummy mac for now
         akaPrimeResponse->attributes.putKdf(1);
 
@@ -268,9 +268,9 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_usim->m_nonCurrentNsCtx->keys.rand = rand.copy();
-        m_usim->m_nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
-        m_usim->m_nonCurrentNsCtx->keys.res = std::move(res);
+        m_usim->m_rand = rand.copy();
+        m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, res);
+        m_usim->m_res = std::move(res);
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
@@ -279,7 +279,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         // Send response
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
-        resp.authenticationResponseParameter->rawData = m_usim->m_nonCurrentNsCtx->keys.resStar.copy();
+        resp.authenticationResponseParameter->rawData = m_usim->m_resStar.copy();
         sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
