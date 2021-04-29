@@ -117,7 +117,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
             SingleSlice s{};
             s.sst = yaml::GetInt32(sNssai, "sst", 1, 0xFF);
             if (yaml::HasField(sNssai, "sd"))
-                s.sd = octet3{yaml::GetInt32(sNssai, "sd", 1, 0xFFFFFF)};
+                s.sd = octet3{yaml::GetInt32(sNssai, "sd", 0, 0xFFFFFF)};
             result->initials.defaultConfiguredNssai.slices.push_back(s);
         }
     }
@@ -129,7 +129,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
             SingleSlice s{};
             s.sst = yaml::GetInt32(sNssai, "sst", 1, 0xFF);
             if (yaml::HasField(sNssai, "sd"))
-                s.sd = octet3{yaml::GetInt32(sNssai, "sd", 1, 0xFFFFFF)};
+                s.sd = octet3{yaml::GetInt32(sNssai, "sd", 0, 0xFFFFFF)};
             result->initials.configuredNssai.slices.push_back(s);
         }
     }
@@ -182,7 +182,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
                 s.sNssai = SingleSlice{};
                 s.sNssai->sst = yaml::GetInt32(slice, "sst", 1, 0xFF);
                 if (yaml::HasField(slice, "sd"))
-                    s.sNssai->sd = octet3{yaml::GetInt32(slice, "sd", 1, 0xFFFFFF)};
+                    s.sNssai->sd = octet3{yaml::GetInt32(slice, "sd", 0, 0xFFFFFF)};
             }
 
             std::string type = yaml::GetString(sess, "type");
