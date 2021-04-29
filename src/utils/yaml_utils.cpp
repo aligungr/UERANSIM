@@ -120,7 +120,7 @@ int64_t GetInt64(const YAML::Node &node, const std::string &name, std::optional<
                  std::optional<int64_t> maxValue)
 {
     int64_t value = GetInt64(node, name);
-    if (minValue.has_value() && value <= minValue)
+    if (minValue.has_value() && value < minValue)
         FieldError(name, "is too small");
     if (maxValue.has_value() && value > maxValue)
         FieldError(name, "is too big");
