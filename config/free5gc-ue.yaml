@@ -39,7 +39,7 @@ configured-nssai:
 # Default Configured NSSAI for this UE
 default-nssai:
   - sst: 1
-    sd: 0
+    sd: 1
 
 # Supported encryption algorithms by this UE
 integrity:
