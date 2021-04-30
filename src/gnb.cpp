@@ -68,7 +68,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     for (auto &nssai : yaml::GetSequence(config, "slices"))
     {
         SingleSlice s{};
-        s.sst = yaml::GetInt32(nssai, "sst", 1, 0xFF);
+        s.sst = yaml::GetInt32(nssai, "sst", 0, 0xFF);
         if (yaml::HasField(nssai, "sd"))
             s.sd = octet3{yaml::GetInt32(nssai, "sd", 0, 0xFFFFFF)};
         result->nssai.slices.push_back(s);
