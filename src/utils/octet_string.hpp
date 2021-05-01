@@ -47,6 +47,7 @@ class OctetString
     void appendOctet3(int v);
     void appendOctet4(octet4 v);
     void appendOctet4(int v);
+    void appendOctet4(uint32_t v);
     void appendOctet8(octet8 v);
     void appendOctet8(int64_t v);
     void appendOctet8(uint64_t v);

@@ -57,10 +57,10 @@ void CliServer::sendMessage(const CliMessage &msg)
     stream.appendOctet(cons::Minor);
     stream.appendOctet(cons::Patch);
     stream.appendOctet(static_cast<int>(msg.type));
-    stream.appendOctet4(static_cast<size_t>(msg.nodeName.size()));
+    stream.appendOctet4(static_cast<int>(msg.nodeName.size()));
     for (char c : msg.nodeName)
         stream.appendOctet(static_cast<uint8_t>(c));
-    stream.appendOctet4(static_cast<size_t>(msg.value.size()));
+    stream.appendOctet4(static_cast<int>(msg.value.size()));
     for (char c : msg.value)
         stream.appendOctet(static_cast<uint8_t>(c));
 

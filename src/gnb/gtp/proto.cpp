@@ -243,7 +243,7 @@ GtpMessage *DecodeGtpMessage(const OctetView &stream)
 
 std::unique_ptr<PduSessionInformation> PduSessionInformation::Decode(const OctetView &stream)
 {
-    int startIndex = stream.currentIndex();
+    size_t startIndex = stream.currentIndex();
 
     uint8_t octet = stream.read();
 

@@ -139,10 +139,10 @@ void GtpTask::handleSessionRelease(int ueId, int psi)
 
     // Remove all session information from rate limiter
     m_rateLimiter->updateSessionUplinkLimit(sessionInd, 0);
-    m_rateLimiter->updateUeDownlinkLimit(sessionInd, 0);
+    m_rateLimiter->updateUeDownlinkLimit(ueId, 0);
 
     // And remove from PDU session table
-    int teid = m_pduSessions[sessionInd]->downTunnel.teid;
+    uint32_t teid = m_pduSessions[sessionInd]->downTunnel.teid;
     m_pduSessions.erase(sessionInd);
 
     // And remove from the tree
@@ -159,10 +159,10 @@ void GtpTask::handleUeContextDelete(int ueId)
     {
         // Remove all session information from rate limiter
         m_rateLimiter->updateSessionUplinkLimit(session, 0);
-        m_rateLimiter->updateUeDownlinkLimit(session, 0);
+        m_rateLimiter->updateUeDownlinkLimit(ueId, 0);
 
         // And remove from PDU session table
-        int teid = m_pduSessions[session]->downTunnel.teid;
+        uint32_t teid = m_pduSessions[session]->downTunnel.teid;
         m_pduSessions.erase(session);
 
         // And remove from the tree

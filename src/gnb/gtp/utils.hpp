@@ -22,14 +22,14 @@ inline uint64_t MakeSessionResInd(int ueId, int psi)
     return (static_cast<int64_t>(ueId) << 32LL) | static_cast<int64_t>(psi);
 }
 
-inline int GetUeId(int64_t sessionResInd)
+inline int GetUeId(uint64_t sessionResInd)
 {
-    return static_cast<int>((sessionResInd >> 32LL) & 0xFFFFFFFFLL);
+    return static_cast<int>((sessionResInd >> 32uLL) & 0xFFFFFFFFuLL);
 }
 
-inline int GetPsi(int64_t sessionResInd)
+inline int GetPsi(uint64_t sessionResInd)
 {
-    return static_cast<int>(sessionResInd & 0xFFFFFFFFLL);
+    return static_cast<int>(sessionResInd & 0xFFFFFFFFuLL);
 }
 
 class IRateLimiter

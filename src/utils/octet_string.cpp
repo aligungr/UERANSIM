@@ -95,6 +95,11 @@ void OctetString::appendOctet4(int v)
     appendOctet4(octet4{v});
 }
 
+void OctetString::appendOctet4(uint32_t v)
+{
+    appendOctet4(octet4{v});
+}
+
 int OctetString::length() const
 {
     return static_cast<int>(m_data.size());

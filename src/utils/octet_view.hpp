@@ -124,6 +124,8 @@ class OctetView
     }
 
     OctetString readOctetString(int length) const;
+    OctetString readOctetString(size_t length) const;
     OctetString readOctetString() const;
     std::string readUtf8String(int length) const;
+    std::string readUtf8String(size_t length) const;
 };
