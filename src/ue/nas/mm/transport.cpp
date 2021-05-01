@@ -198,9 +198,6 @@ void NasMm::receiveMmMessage(const nas::PlainMmMessage &msg)
     case nas::EMessageType::AUTHENTICATION_REQUEST:
         receiveAuthenticationRequest((const nas::AuthenticationRequest &)msg);
         break;
-    case nas::EMessageType::AUTHENTICATION_RESPONSE:
-        receiveAuthenticationResponse((const nas::AuthenticationResponse &)msg);
-        break;
     case nas::EMessageType::AUTHENTICATION_REJECT:
         receiveAuthenticationReject((const nas::AuthenticationReject &)msg);
         break;

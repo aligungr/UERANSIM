@@ -111,7 +111,6 @@ class NasMm
     void receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg);
     void receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg);
     void receiveAuthenticationResult(const nas::AuthenticationResult &msg);
-    void receiveAuthenticationResponse(const nas::AuthenticationResponse &msg);
     void receiveAuthenticationReject(const nas::AuthenticationReject &msg);
     void receiveEapSuccessMessage(const eap::Eap &eap);
     void receiveEapFailureMessage(const eap::Eap &eap);
