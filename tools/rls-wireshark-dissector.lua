@@ -1,7 +1,6 @@
 --[[
 -- Dissector for Radio Link Simulation Protocol
 -- (used by UERANSIM <https://github.com/aligungr/UERANSIM>).
--- When this dissector was written, UERANSIM was in version 3.1.7.
 --
 -- CC0-1.0 2021 - Louis Royer (<https://github.com/louisroyer/RLS-wireshark-dissector>)
 --]]
@@ -30,14 +29,14 @@ local sim_pos_y = ProtoField.uint32("rls.sim_pos_y", "RLS Position Y", base.DEC)
 local sim_pos_z = ProtoField.uint32("rls.sim_pos_z", "RLS Position Z", base.DEC)
 
 -- For cell Info Response
-local mcc = ProtoField.uint16("rls.mmc", "RLS MMC", base.DEC)
-local mnc = ProtoField.uint16("rls.mnc", "RLS MNC", base.DEC)
-local long_mnc = ProtoField.bool("rls.long_mnc", "RLS MNC is long", base.BOOL)
-local nci = ProtoField.uint64("rls.nci", "RLS New Radio Cell Identity", base.HEX)
-local tac = ProtoField.uint32("rls.tac", "RLS Tracking Area Code", base.DEC)
+local mcc = ProtoField.uint16("rls.mcc", "MCC", base.DEC)
+local mnc = ProtoField.uint16("rls.mnc", "MNC", base.DEC)
+local long_mnc = ProtoField.bool("rls.long_mnc", "MNC is 3-digit", base.BOOL)
+local nci = ProtoField.uint64("rls.nci", "NR Cell Identity", base.HEX)
+local tac = ProtoField.uint32("rls.tac", "Tracking Area Code", base.DEC)
 local dbm = ProtoField.int32("rls.dbm", "RLS Signal Strength (dBm)", base.DEC)
-local gnb_name = ProtoField.string("rls.gnb_name", "RLS gNb name")
-local link_ip = ProtoField.string("rls.link_ip", "RLS gNb Link IP")
+local gnb_name = ProtoField.string("rls.gnb_name", "gNB Name")
+local link_ip = ProtoField.string("rls.link_ip", "gNB Link IP")
 
 -- For PDU Delivery
 local pdu_type_name = {
@@ -49,14 +48,14 @@ local pdu_type_name = {
 local pdu_type = ProtoField.uint8("rls.pdu_type", "RLS PDU Type", base.DEC, pdu_type_name)
 
 local rrc_channel_name = {
-	[0] = "BCCH_BCH",
-	[1] = "BCCH_DL_SCH",
-	[2] = "DL_CCCH",
-	[3] = "DL_DCCH",
+	[0] = "BCCH-BCH",
+	[1] = "BCCH-DL-SCH",
+	[2] = "DL-CCCH",
+	[3] = "DL-DCCH",
 	[4] = "PCCH",
-	[5] = "UL_CCCH",
-	[6] = "UL_CCCH1",
-	[7] = "UL_DCCH",
+	[5] = "UL-CCCH",
+	[6] = "UL-CCCH1",
+	[7] = "UL-DCCH",
 }
 
 local rrc_channel_dissector = {
@@ -71,7 +70,7 @@ local rrc_channel_dissector = {
 }
 
 local rrc_channel = ProtoField.uint32("rls.rrc_channel", "RRC Channel", base.DEC, rrc_channel_name)
-local session_id = ProtoField.uint32("rls.session_id", "RLS Session ID", base.DEC)
+local session_id = ProtoField.uint32("rls.session_id", "PDU Session ID", base.DEC)
 
 --[[
 -- Dissector definition
@@ -109,7 +108,7 @@ function rls_protocol.dissector(buffer, pinfo, tree)
 		subtree:add(sim_pos_z, buffer(21,4))
 	elseif msg_type == 2 then -- Cell Info Response
 		subtree:add(mcc, buffer(13,2))
-		local mnc_tree = subtree:add(rls_protocol, buffer(15,3), "RLS MNC: "..tostring(buffer(15,2):uint()))
+		local mnc_tree = subtree:add(rls_protocol, buffer(15,3), "MNC: "..tostring(buffer(15,2):uint()))
 		mnc_tree:add(mnc, buffer(15,2))
 		mnc_tree:add(long_mnc, buffer(17,1))
 		subtree:add(nci, buffer(18,8))

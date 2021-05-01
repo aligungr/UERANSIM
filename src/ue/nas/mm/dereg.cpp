@@ -236,13 +236,13 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
         {
-            // todo: add to forbidden plmn
+            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
         }
 
         if (cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            // todo: add to forbidden tai
+            nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRoaming, *m_usim->m_currentTai);
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)

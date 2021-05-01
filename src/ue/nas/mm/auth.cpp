@@ -7,9 +7,10 @@
 //
 
 #include "mm.hpp"
+
+#include <lib/nas/utils.hpp>
 #include <ue/nas/keys.hpp>
 
-static const bool IGNORE_CONTROLS_FAILURES = false;
 static const bool USE_SQN_HACK = true; // TODO
 
 namespace nr::ue
@@ -22,6 +23,8 @@ void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
         m_logger->warn("Authentication request is ignored. USIM is invalid");
         return;
     }
+
+    m_timers->t3520.start();
 
     if (msg.eapMessage.has_value())
         receiveAuthenticationRequestEap(msg);
@@ -43,8 +46,6 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_timers->t3521.stop();
     };
 
-    m_timers->t3520.stop();
-
     // Read EAP-AKA' request
     auto &receivedEap = (const eap::EapAkaPrime &)*msg.eapMessage->eap;
     auto receivedRand = receivedEap.attributes.getRand();
@@ -62,23 +63,19 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         // Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
     }
 
-    if (IGNORE_CONTROLS_FAILURES)
-        m_logger->warn("IGNORE_CONTROLS_FAILURES enabled");
-
-    if (USE_SQN_HACK)
+    /*if (USE_SQN_HACK)
     {
-        auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand).ak;
+        auto ak = calculateMilenage(OctetString::FromSpare(6), receivedRand, false).ak;
         m_usim->m_sqn = OctetString::Xor(receivedAutn.subCopy(0, 6), ak);
-    }
+    }*/
 
-    auto milenage = calculateMilenage(m_usim->m_sqn, receivedRand);
+    auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), receivedRand, false);
     auto &res = milenage.res;
     auto &ck = milenage.ck;
     auto &ik = milenage.ik;
     auto &milenageAk = milenage.ak;
-    auto &milenageMac = milenage.mac_a;
 
-    auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
+    auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenageAk);
     auto ckPrimeIkPrime =
         keys::CalculateCkPrimeIkPrime(ck, ik, keys::ConstructServingNetworkName(*m_usim->m_currentPlmn), sqnXorAk);
     auto &ckPrime = ckPrimeIkPrime.first;
@@ -106,7 +103,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     // m_logger->debug("calculated kaut: %s", kaut.toHexString().c_str());
 
     // Control received KDF
-    if (!IGNORE_CONTROLS_FAILURES && receivedKdf != 1)
+    if (receivedKdf != 1)
     {
         ueRejectionTimers();
 
@@ -125,7 +122,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     }
 
     // Control received AUTN
-    auto autnCheck = validateAutn(milenageAk, milenageMac, receivedAutn);
+    auto autnCheck = validateAutn(receivedRand, receivedAutn);
     if (autnCheck != EAutnValidationRes::OK)
     {
         eap::EapAkaPrime *eapResponse = nullptr;
@@ -148,7 +145,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
             eapResponse->attributes.putClientErrorCode(0);
         }
 
-        if (!IGNORE_CONTROLS_FAILURES && eapResponse != nullptr)
+        if (eapResponse != nullptr)
         {
             ueRejectionTimers();
 
@@ -168,21 +165,18 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_logger->err("AT_MAC failure in EAP AKA'. expected: %s received: %s", expectedMac.toHexString().c_str(),
                       receivedMac.toHexString().c_str());
 
-        if (!IGNORE_CONTROLS_FAILURES)
-        {
-            ueRejectionTimers();
+        ueRejectionTimers();
 
-            auto eapResponse = std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id,
-                                                                  eap::ESubType::AKA_CLIENT_ERROR);
-            eapResponse->attributes.putClientErrorCode(0);
+        auto eapResponse =
+            std::make_unique<eap::EapAkaPrime>(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CLIENT_ERROR);
+        eapResponse->attributes.putClientErrorCode(0);
 
-            nas::AuthenticationReject response;
-            response.eapMessage = nas::IEEapMessage{};
-            response.eapMessage->eap = std::move(eapResponse);
+        nas::AuthenticationReject response;
+        response.eapMessage = nas::IEEapMessage{};
+        response.eapMessage->eap = std::move(eapResponse);
 
-            sendNasMessage(response);
-            return;
-        }
+        sendNasMessage(response);
+        return;
     }
 
     // Create new partial native NAS security context and continue key derivation
@@ -192,9 +186,8 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
     m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
     m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-    m_usim->m_nonCurrentNsCtx->keys.rand = std::move(receivedRand);
-    m_usim->m_nonCurrentNsCtx->keys.res = std::move(res);
-    m_usim->m_nonCurrentNsCtx->keys.resStar = {};
+    m_usim->m_rand = std::move(receivedRand);
+    m_usim->m_resStar = {};
     m_usim->m_nonCurrentNsCtx->keys.kAusf = std::move(kAusf);
     m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
@@ -207,7 +200,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
     {
         auto *akaPrimeResponse =
             new eap::EapAkaPrime(eap::ECode::RESPONSE, receivedEap.id, eap::ESubType::AKA_CHALLENGE);
-        akaPrimeResponse->attributes.putRes(m_usim->m_nonCurrentNsCtx->keys.res);
+        akaPrimeResponse->attributes.putRes(res);
         akaPrimeResponse->attributes.putMac(OctetString::FromSpare(16)); // Dummy mac for now
         akaPrimeResponse->attributes.putKdf(1);
 
@@ -223,23 +216,39 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
         sendNasMessage(response);
     }
+
+    // TODO (dont forget: m_nwConsecutiveAuthFailure = 0;)
 }
 
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
-    auto sendFailure = [this](nas::EMmCause cause) {
+    auto sendFailure = [this](nas::EMmCause cause, std::optional<OctetString> &&auts = std::nullopt) {
+        if (cause != nas::EMmCause::SYNCH_FAILURE)
+            m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
+        else
+            m_logger->debug("Sending Authentication Failure due to SQN out of range");
+
+        // Clear RAND and RES* stored in volatile memory
+        m_usim->m_rand = {};
+        m_usim->m_resStar = {};
+
+        // Stop T3516 if running
+        m_timers->t3516.stop();
+
+        // Send Authentication Failure
         nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
+
+        if (auts.has_value())
+        {
+            resp.authenticationFailureParameter = nas::IEAuthenticationFailureParameter{};
+            resp.authenticationFailureParameter->rawData = std::move(*auts);
+        }
+
         sendNasMessage(resp);
     };
 
-    if (USE_SQN_HACK)
-    {
-        // Log.warning(Tag.CONFIG, "USE_SQN_HACK: %s", USE_SQN_HACK);
-    }
-
-    if (IGNORE_CONTROLS_FAILURES)
-        m_logger->warn("IGNORE_CONTROLS_FAILURES enabled");
+    // ========================== Check the received parameters syntactically ==========================
 
     if (!msg.authParamRAND.has_value() || !msg.authParamAUTN.has_value())
     {
@@ -247,72 +256,110 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         return;
     }
 
+    if (msg.authParamRAND->value.length() != 16 || msg.authParamAUTN->value.length() != 16)
+    {
+        sendFailure(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+        return;
+    }
+
+    // =================================== Check the received ngKSI ===================================
+
+    if (msg.ngKSI.tsc == nas::ETypeOfSecurityContext::MAPPED_SECURITY_CONTEXT)
+    {
+        m_logger->err("Mapped security context not supported");
+        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        return;
+    }
+
+    if (msg.ngKSI.ksi == nas::IENasKeySetIdentifier::NOT_AVAILABLE_OR_RESERVED)
+    {
+        m_logger->err("Invalid ngKSI value received");
+        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        return;
+    }
+
+    if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
+        (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
+    {
+        if (networkFailingTheAuthCheck(true))
+            return;
+
+        m_timers->t3520.start();
+        sendFailure(nas::EMmCause::NGKSI_ALREADY_IN_USE);
+        return;
+    }
+
+    // ============================================ Others ============================================
+
     auto &rand = msg.authParamRAND->value;
     auto &autn = msg.authParamAUTN->value;
 
-    // m_logger->debug("Received rand[%s] autn[%s]", rand.toHexString().c_str(), autn.toHexString().c_str());
+    EAutnValidationRes autnCheck = EAutnValidationRes::OK;
 
-    if (USE_SQN_HACK)
+    // If the received RAND is same with store stored RAND, bypass AUTN validation
+    // NOTE: Not completely sure if this is correct and the spec meant this. But in worst case, synchronisation failure
+    //  happens, and hopefully that can be restored with the normal resynchronization procedure.
+    if (m_usim->m_rand != rand)
     {
-        auto ak = calculateMilenage(OctetString::FromSpare(6), rand).ak;
-        m_usim->m_sqn = OctetString::Xor(autn.subCopy(0, 6), ak);
+        autnCheck = validateAutn(rand, autn);
+        m_timers->t3516.start();
     }
 
-    auto milenage = calculateMilenage(m_usim->m_sqn, rand);
-    auto &res = milenage.res;
-    auto &ck = milenage.ck;
-    auto &ik = milenage.ik;
-    auto ckIk = OctetString::Concat(ck, ik);
-    auto &milenageAk = milenage.ak;
-    auto &milenageMac = milenage.mac_a;
-    auto sqnXorAk = OctetString::Xor(m_usim->m_sqn, milenageAk);
-    auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
-
-    // m_logger->debug("Calculated res[%s] ck[%s] ik[%s] ak[%s] mac_a[%s]", res.toHexString().c_str(),
-    //                ck.toHexString().c_str(), ik.toHexString().c_str(), milenageAk.toHexString().c_str(),
-    //                milenageMac.toHexString().c_str());
-    // m_logger->debug("Used snn[%s] sqn[%s]", snn.c_str(), m_usim->m_sqn.toHexString().c_str());
-
-    auto autnCheck = validateAutn(milenageAk, milenageMac, autn);
-
-    if (IGNORE_CONTROLS_FAILURES || autnCheck == EAutnValidationRes::OK)
+    if (autnCheck == EAutnValidationRes::OK)
     {
+        // Calculate milenage
+        auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+        auto ckIk = OctetString::Concat(milenage.ck, milenage.ik);
+        auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenage.ak);
+        auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
+
+        // Store the relevant parameters
+        m_usim->m_rand = rand.copy();
+        m_usim->m_resStar = keys::CalculateResStar(ckIk, snn, rand, milenage.res);
+
         // Create new partial native NAS security context and continue with key derivation
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_usim->m_nonCurrentNsCtx->keys.rand = rand.copy();
-        m_usim->m_nonCurrentNsCtx->keys.resStar = keys::CalculateResStar(ckIk, snn, rand, res);
-        m_usim->m_nonCurrentNsCtx->keys.res = std::move(res);
-        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(ck, ik, snn, sqnXorAk);
+        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
         keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
-        // m_logger->debug("Derived kSeaf[%s] kAusf[%s] kAmf[%s]",
-        //                m_usim->m_nonCurrentNsCtx->keys.kSeaf.toHexString().c_str(),
-        //                m_usim->m_nonCurrentNsCtx->keys.kAusf.toHexString().c_str(),
-        //                m_usim->m_nonCurrentNsCtx->keys.kAmf.toHexString().c_str());
-
         // Send response
+        m_nwConsecutiveAuthFailure = 0;
+        m_timers->t3520.stop();
+
         nas::AuthenticationResponse resp;
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
-        resp.authenticationResponseParameter->rawData = m_usim->m_nonCurrentNsCtx->keys.resStar.copy();
+        resp.authenticationResponseParameter->rawData = m_usim->m_resStar.copy();
+
         sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
+        if (networkFailingTheAuthCheck(true))
+            return;
+        m_timers->t3520.start();
         sendFailure(nas::EMmCause::MAC_FAILURE);
     }
     else if (autnCheck == EAutnValidationRes::SYNCHRONISATION_FAILURE)
     {
-        // TODO
-        m_logger->err("SYNCHRONISATION_FAILURE case not implemented yet in AUTN validation");
-        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        if (networkFailingTheAuthCheck(true))
+            return;
+
+        m_timers->t3520.start();
+
+        auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, true);
+        auto auts = keys::CalculateAuts(m_usim->m_sqnMng->getSqn(), milenage.ak_r, milenage.mac_s);
+        sendFailure(nas::EMmCause::SYNCH_FAILURE, std::move(auts));
     }
-    else
+    else // the other case, separation bit mismatched
     {
-        sendFailure(nas::EMmCause::UNSPECIFIED_PROTOCOL_ERROR);
+        if (networkFailingTheAuthCheck(true))
+            return;
+        m_timers->t3520.start();
+        sendFailure(nas::EMmCause::NON_5G_AUTHENTICATION_UNACCEPTABLE);
     }
 }
 
@@ -343,6 +390,11 @@ void NasMm::receiveAuthenticationResponse(const nas::AuthenticationResponse &msg
 void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
 {
     m_logger->err("Authentication Reject received.");
+
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    m_usim->m_rand = {};
+    m_usim->m_resStar = {};
+    m_timers->t3516.stop();
 
     if (msg.eapMessage.has_value() && msg.eapMessage->eap->code != eap::ECode::FAILURE)
     {
@@ -394,54 +446,69 @@ void NasMm::receiveEapResponseMessage(const eap::Eap &eap)
     }
 }
 
-EAutnValidationRes NasMm::validateAutn(const OctetString &ak, const OctetString &mac, const OctetString &autn)
+EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetString &autn)
 {
     // Decode AUTN
     OctetString receivedSQNxorAK = autn.subCopy(0, 6);
-    OctetString receivedSQN = OctetString::Xor(receivedSQNxorAK, ak);
     OctetString receivedAMF = autn.subCopy(6, 2);
     OctetString receivedMAC = autn.subCopy(8, 8);
 
-    // Check MAC
-    if (receivedMAC != mac)
-    {
-        m_logger->err("AUTN validation MAC mismatch. expected: %s received: %s", mac.toHexString().c_str(),
-                      receivedMAC.toHexString().c_str());
-        return EAutnValidationRes::MAC_FAILURE;
-    }
-
-    // TS 33.501: An ME accessing 5G shall check during authentication that the "separation bit" in the AMF field
-    // of AUTN is set to 1. The "separation bit" is bit 0 of the AMF field of AUTN.
+    // Check the separation bit
     if (receivedAMF.get(0).bit(7) != 1)
     {
         m_logger->err("AUTN validation SEP-BIT failure. expected: 1, received: 0");
         return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
     }
 
+    // Derive AK and MAC
+    auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+    OctetString receivedSQN = OctetString::Xor(receivedSQNxorAK, milenage.ak);
+
     // Verify that the received sequence number SQN is in the correct range
-    if (!checkSqn(receivedSQN))
-    {
-        m_logger->err("AUTN validation SQN not acceptable");
+    if (!m_usim->m_sqnMng->checkSqn(receivedSQN))
         return EAutnValidationRes::SYNCHRONISATION_FAILURE;
+
+    // Re-execute the milenage calculation (if case of sqn is changed with the received value)
+    milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+
+    // Check MAC
+    if (receivedMAC != milenage.mac_a)
+    {
+        m_logger->err("AUTN validation MAC mismatch. expected [%s] received [%s]", milenage.mac_a.toHexString().c_str(),
+                      receivedMAC.toHexString().c_str());
+        return EAutnValidationRes::MAC_FAILURE;
     }
 
     return EAutnValidationRes::OK;
 }
 
-bool NasMm::checkSqn(const OctetString &)
+crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, const OctetString &rand, bool dummyAmf)
 {
-    // TODO:
-    //  Verify the freshness of sequence numbers to determine whether the specified sequence number is
-    //  in the correct range and acceptable by the USIM. See 3GPP TS 33.102, Annex C.2.
-    return true;
+    OctetString amf = dummyAmf ? OctetString::FromSpare(2) : m_base->config->amf.copy();
+
+    if (m_base->config->opType == OpType::OPC)
+        return crypto::milenage::Calculate(m_base->config->opC, m_base->config->key, rand, sqn, amf);
+
+    OctetString opc = crypto::milenage::CalculateOpC(m_base->config->opC, m_base->config->key);
+    return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, amf);
 }
 
-crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, const OctetString &rand)
+bool NasMm::networkFailingTheAuthCheck(bool hasChance)
 {
-    if (m_base->config->opType == OpType::OPC)
-        return crypto::milenage::Calculate(m_base->config->opC, m_base->config->key, rand, sqn, m_base->config->amf);
-    OctetString opc = crypto::milenage::CalculateOpC(m_base->config->opC, m_base->config->key);
-    return crypto::milenage::Calculate(opc, m_base->config->key, rand, sqn, m_base->config->amf);
+    if (hasChance && m_nwConsecutiveAuthFailure++ < 3)
+        return false;
+
+    // NOTE: Normally if we should check if the UE has an emergency. If it has, it should consider as network passed the
+    //  auth check, instead of performing the actions in the following lines. But it's difficult to maintain and
+    //  implement this behaviour. Therefore we would expect other solutions for an emergency case. Such as
+    //  - Network initiates a Security Mode Command with IA0 and EA0
+    //  - UE performs emergency registration after releasing the connection
+    // END
+
+    m_logger->err("Network failing the authentication check");
+    localReleaseConnection();
+    // TODO: treat the active cell as barred
+    return true;
 }
 
 } // namespace nr::ue

@@ -556,6 +556,7 @@ struct SecurityModeCommand : PlainMmMessage
     std::optional<IES1UeNetworkCapability> replayedS1UeNetworkCapability{};
 
     octet4 _macForNewSC{};
+    OctetString _originalPlainNasPdu{};
 
     SecurityModeCommand();
     void onBuild(NasMessageBuilder &b);

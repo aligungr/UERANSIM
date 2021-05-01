@@ -11,7 +11,7 @@
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
 #include <lib/nas/timer.hpp>
-#include <ue/nas/usim.hpp>
+#include <ue/nas/usim/usim.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
@@ -38,10 +38,12 @@ class NasMm
 
     // Most recent registration request
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
-    // Most recent de-registration request
-    std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
     // Most recent service request
     std::unique_ptr<nas::ServiceRequest> m_lastServiceRequest{};
+    // Most recent de-registration request
+    std::unique_ptr<nas::DeRegistrationRequestUeOriginating> m_lastDeregistrationRequest{};
+    // Indicates that last registration request was sent without a NAS security context
+    bool m_lastRegWithoutNsc{};
     // Indicates the last de-registration cause
     EDeregCause m_lastDeregCause{};
     // Indicates the last service request cause
@@ -58,6 +60,8 @@ class NasMm
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
     // Last time Service Request needed indication for Data
     long m_lastTimeServiceReqNeededIndForData{};
+    // Number of times the network failing the authentication check
+    int m_nwConsecutiveAuthFailure{};
 
     friend class UeCmdHandler;
 
@@ -112,9 +116,9 @@ class NasMm
     void receiveEapSuccessMessage(const eap::Eap &eap);
     void receiveEapFailureMessage(const eap::Eap &eap);
     void receiveEapResponseMessage(const eap::Eap &eap);
-    EAutnValidationRes validateAutn(const OctetString &ak, const OctetString &mac, const OctetString &autn);
-    bool checkSqn(const OctetString &sqn);
-    crypto::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand);
+    EAutnValidationRes validateAutn(const OctetString &rand, const OctetString &autn);
+    crypto::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand, bool dummyAmf);
+    bool networkFailingTheAuthCheck(bool hasChance);
 
   private: /* Security */
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);

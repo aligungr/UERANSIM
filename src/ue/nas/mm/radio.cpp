@@ -18,11 +18,6 @@ namespace nr::ue
 
 void NasMm::handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measures)
 {
-    // TODO
-    // if (m_base->nodeListener)
-    //    m_base->nodeListener->onConnected(app::NodeType::UE, m_base->config->getNodeName(), app::NodeType::GNB,
-    //                                      gnbName);
-
     if (m_mmSubState != EMmSubState::MM_REGISTERED_PLMN_SEARCH &&
         m_mmSubState != EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE &&
         m_mmSubState != EMmSubState::MM_DEREGISTERED_PLMN_SEARCH &&

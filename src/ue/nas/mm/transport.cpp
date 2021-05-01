@@ -30,7 +30,7 @@ static bool IsAcceptedWithoutIntegrity(const nas::PlainMmMessage &msg)
     return msgType == nas::EMessageType::IDENTITY_REQUEST || msgType == nas::EMessageType::AUTHENTICATION_REQUEST ||
            msgType == nas::EMessageType::AUTHENTICATION_RESULT || msgType == nas::EMessageType::AUTHENTICATION_REJECT ||
            msgType == nas::EMessageType::REGISTRATION_REJECT ||
-           msgType == nas::EMessageType::DEREGISTRATION_ACCEPT_UE_TERMINATED ||
+           msgType == nas::EMessageType::DEREGISTRATION_ACCEPT_UE_ORIGINATING ||
            msgType == nas::EMessageType::SERVICE_REJECT;
 }
 
@@ -118,6 +118,9 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
             return;
         }
 
+        ((nas::SecurityModeCommand &)(*smcMsg))._macForNewSC = securedMm.messageAuthenticationCode;
+        ((nas::SecurityModeCommand &)(*smcMsg))._originalPlainNasPdu = securedMm.plainNasMessage.copy();
+
         receiveMmMessage((const nas::PlainMmMessage &)(*smcMsg));
         return;
     }
@@ -169,8 +172,6 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
 
 void NasMm::receiveMmMessage(const nas::PlainMmMessage &msg)
 {
-    // TODO: trigger on receive
-
     switch (msg.messageType)
     {
     case nas::EMessageType::REGISTRATION_ACCEPT:

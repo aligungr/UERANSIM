@@ -11,7 +11,7 @@
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/nas/usim.hpp>
+#include <ue/nas/usim/usim.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
@@ -232,6 +232,15 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
             m_usim->m_nonCurrentNsCtx = {};
         }
     }
+
+    // If the UE enters the 5GMM state 5GMM-DEREGISTERED or 5GMM-NULL,
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    if (newState == EMmState::MM_DEREGISTERED || newState == EMmState::MM_NULL)
+    {
+        m_usim->m_rand = {};
+        m_usim->m_resStar = {};
+        m_timers->t3516.stop();
+    }
 }
 
 void NasMm::onSwitchRmState(ERmState oldState, ERmState newState)
@@ -278,6 +287,12 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
                      nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                 switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
         }
+
+        // If the UE enters the 5GMM-IDLE, the RAND and RES* values stored
+        //  in the ME shall be deleted and timer T3516, if running, shall be stopped
+        m_usim->m_rand = {};
+        m_usim->m_resStar = {};
+        m_timers->t3516.stop();
     }
 }
 

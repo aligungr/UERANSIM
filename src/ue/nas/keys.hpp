@@ -29,6 +29,11 @@ void DeriveNasKeys(NasSecurityContext &securityContext);
 std::string ConstructServingNetworkName(const Plmn &plmn);
 
 /**
+ * Derives kAMF to kAMF' in mobility 33.501/A.13
+ */
+OctetString DeriveAmfPrimeInMobility(bool isUplink, const NasCount &count, const OctetString &kAmf);
+
+/**
  * Calculates K_AUSF for 5G-AKA according to given parameters as specified in 3GPP TS 33.501 Annex A.2
  */
 OctetString CalculateKAusfFor5gAka(const OctetString &ck, const OctetString &ik, const std::string &snn,
@@ -65,5 +70,10 @@ OctetString CalculateKAusfForEapAkaPrime(const OctetString &mk);
  */
 OctetString CalculateResStar(const OctetString &key, const std::string &snn, const OctetString &rand,
                              const OctetString &res);
+
+/*
+ * Calculates AUTS according to the given parameters
+ */
+OctetString CalculateAuts(const OctetString &sqn, const OctetString &ak, const OctetString &macS);
 
 } // namespace nr::ue::keys

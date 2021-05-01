@@ -7,6 +7,7 @@
 //
 
 #include "mm.hpp"
+
 #include <lib/nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
 
@@ -210,6 +211,11 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     // is integrity protected, the UE shall reset the service request attempt counter and stop timer T3517 if running."
     m_serCounter = 0;
     m_timers->t3517.stop();
+
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    m_usim->m_rand = {};
+    m_usim->m_resStar = {};
+    m_timers->t3516.stop();
 
     auto cause = msg.mmCause.value;
     m_logger->err("Service Reject received with cause [%s]", nas::utils::EnumToString(cause));

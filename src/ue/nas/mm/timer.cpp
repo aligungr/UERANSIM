@@ -85,6 +85,11 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         }
         break;
     }
+    case 3516: {
+        m_usim->m_rand = {};
+        m_usim->m_resStar = {};
+        break;
+    }
     case 3517: {
         if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
         {
@@ -107,6 +112,11 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
     }
     case 3519: {
         m_usim->m_storedSuci = {};
+        break;
+    }
+    case 3520: {
+        logExpired();
+        networkFailingTheAuthCheck(false);
         break;
     }
     case 3521: {

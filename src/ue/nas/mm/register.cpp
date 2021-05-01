@@ -97,6 +97,7 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
     // Send the message
     sendNasMessage(*request);
     m_lastRegistrationRequest = std::move(request);
+    m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
     // Process timers
     m_timers->t3510.start();
@@ -187,6 +188,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     // Send the message
     sendNasMessage(*request);
     m_lastRegistrationRequest = std::move(request);
+    m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
     // Process timers
     m_timers->t3510.start();
@@ -218,6 +220,11 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
         receiveInitialRegistrationAccept(msg);
     else
         receiveMobilityRegistrationAccept(msg);
+
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    m_usim->m_rand = {};
+    m_usim->m_resStar = {};
+    m_timers->t3516.stop();
 }
 
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
@@ -449,6 +456,11 @@ void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
         receiveInitialRegistrationReject(msg);
     else
         receiveMobilityRegistrationReject(msg);
+
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    m_usim->m_rand = {};
+    m_usim->m_resStar = {};
+    m_timers->t3516.stop();
 }
 
 void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)

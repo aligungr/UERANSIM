@@ -27,10 +27,10 @@ Milenage Calculate(const OctetString &opc, const OctetString &key, const OctetSt
     r.ak_r = OctetString::FromSpare(6);
 
     if (milenage_f1(opc.data(), key.data(), rand.data(), sqn.data(), amf.data(), r.mac_a.data(), r.mac_s.data()))
-        throw std::runtime_error("OPC calculation failed");
+        throw std::runtime_error("Milenage calculation failed");
     if (milenage_f2345(opc.data(), key.data(), rand.data(), r.res.data(), r.ck.data(), r.ik.data(), r.ak.data(),
                        r.ak_r.data()))
-        throw std::runtime_error("OPC calculation failed");
+        throw std::runtime_error("Milenage calculation failed");
 
     return r;
 }

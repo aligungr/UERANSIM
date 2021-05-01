@@ -9,12 +9,25 @@
 #include "mm.hpp"
 
 #include <lib/nas/utils.hpp>
+#include <ue/nas/sm/sm.hpp>
 
 namespace nr::ue
 {
 
 void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg)
 {
+    // Abnormal case: 5.4.4.5, c) Generic UE configuration update and de-registration procedure collision
+    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+    {
+        // "If the UE receives CONFIGURATION UPDATE COMMAND message after sending a DEREGISTRATION REQUEST message and
+        //  the access type included in the DEREGISTRATION REQUEST message is same as the access in which the
+        //  CONFIGURATION UPDATE COMMAND message is received, then the UE shall ignore the CONFIGURATION UPDATE COMMAND
+        //  message and proceed with the de-registration procedure. Otherwise, the UE shall proceed with both the
+        //  procedures."
+        m_logger->warn("Configuration Update Command ignored because of the De-registration procedure collusion");
+        return;
+    }
+
     // Indicates there exists at least one configuration to be updated
     bool hasNewConfig = false;
 
@@ -127,6 +140,14 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
         }
     }
 
+    // "If acknowledgement requested is indicated in the Configuration update indication IE in the CONFIGURATION UPDATE
+    //  COMMAND message, the UE shall send a CONFIGURATION UPDATE COMPLETE message."
+    if (msg.configurationUpdateIndication.has_value() &&
+        msg.configurationUpdateIndication->ack == nas::EAcknowledgement::REQUESTED)
+    {
+        sendNasMessage(nas::ConfigurationUpdateComplete{});
+    }
+
     // "If the CONFIGURATION UPDATE COMMAND message indicates "registration requested" in the Configuration update
     //  indication IE and:"
     if (msg.configurationUpdateIndication.has_value() &&
@@ -137,7 +158,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
         if (!hasNewConfig || (msg.allowedNssai.has_value() || msg.configuredNssai.has_value() ||
                               msg.networkSlicingIndication.has_value()))
         {
-            if (hasEmergency()) // "an emergency PDU session exists,"
+            if (m_sm->anyEmergencySession()) // "an emergency PDU session exists,"
             {
                 // "the UE shall, after the completion of the generic UE configuration
                 //  update procedure and after the emergency PDU session is released, release the existing N1 NAS
@@ -162,14 +183,6 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
             //  the network."
             // TODO
         }
-    }
-
-    // "If acknowledgement requested is indicated in the Configuration update indication IE in the CONFIGURATION UPDATE
-    //  COMMAND message, the UE shall send a CONFIGURATION UPDATE COMPLETE message."
-    if (msg.configurationUpdateIndication.has_value() &&
-        msg.configurationUpdateIndication->ack == nas::EAcknowledgement::REQUESTED)
-    {
-        sendNasMessage(nas::ConfigurationUpdateComplete{});
     }
 }
 
