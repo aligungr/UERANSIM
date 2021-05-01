@@ -142,12 +142,11 @@ class EapAttributes
     [[nodiscard]] OctetString getAutn() const;
     [[nodiscard]] int getClientErrorCode() const;
     [[nodiscard]] int getKdf() const;
-    [[nodiscard]] const OctetString &getAuts() const;
+    [[nodiscard]] OctetString getKdfInput() const;
 
   public:
     void putRes(const OctetString &value);
     void putMac(const OctetString &value);
-    void putAutn(const OctetString &value);
     void putKdf(int value);
     void putClientErrorCode(int code);
     void putAuts(OctetString &&auts);

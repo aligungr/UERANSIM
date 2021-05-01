@@ -13,32 +13,60 @@
 
 OctetString eap::EapAttributes::getRand() const
 {
-    return attributes[(int)EAttributeType::AT_RAND].value().subCopy(2);
+    auto &val = attributes[(int)EAttributeType::AT_RAND];
+    if (!val.has_value() || val->length() < 2)
+        return {};
+
+    int len = val->get2I(0);
+    if (len != val->length() - 2)
+        return {};
+
+    return val->subCopy(2);
 }
 
 OctetString eap::EapAttributes::getMac() const
 {
-    return attributes[(int)EAttributeType::AT_MAC].value().subCopy(2);
+    auto &val = attributes[(int)EAttributeType::AT_MAC];
+    if (!val.has_value() || val->length() < 2)
+        return {};
+
+    int len = val->get2I(0);
+    if (len != val->length() - 2)
+        return {};
+
+    return val->subCopy(2);
 }
 
 OctetString eap::EapAttributes::getAutn() const
 {
-    return attributes[(int)EAttributeType::AT_AUTN].value().subCopy(2);
+    auto &val = attributes[(int)EAttributeType::AT_AUTN];
+    if (!val.has_value() || val->length() < 2)
+        return {};
+
+    int len = val->get2I(0);
+    if (len != val->length() - 2)
+        return {};
+
+    return val->subCopy(2);
 }
 
 int eap::EapAttributes::getClientErrorCode() const
 {
-    return attributes[(int)EAttributeType::AT_CLIENT_ERROR_CODE].value().get2I(0);
+    auto &val = attributes[(int)EAttributeType::AT_CLIENT_ERROR_CODE];
+    if (!val.has_value() || val->length() != 2)
+        return 0;
+    return val->get2I(0);
 }
 
 int eap::EapAttributes::getKdf() const
 {
-    return attributes[(int)EAttributeType::AT_KDF].value().get2I(0);
-}
+    auto &val = attributes[(int)EAttributeType::AT_KDF];
 
-const OctetString &eap::EapAttributes::getAuts() const
-{
-    return attributes[(int)EAttributeType::AT_AUTS].value();
+    if (!val.has_value())
+        return 0;
+    if (val->length() != 2)
+        return 0;
+    return val->get2I(0);
 }
 
 void eap::EapAttributes::putRes(const OctetString &value)
@@ -49,11 +77,6 @@ void eap::EapAttributes::putRes(const OctetString &value)
 void eap::EapAttributes::putMac(const OctetString &value)
 {
     attributes[(int)EAttributeType::AT_MAC] = OctetString::Concat(OctetString::FromOctet2(0), value);
-}
-
-void eap::EapAttributes::putAutn(const OctetString &value)
-{
-    attributes[(int)EAttributeType::AT_AUTN] = OctetString::Concat(OctetString::FromOctet2(0), value);
 }
 
 void eap::EapAttributes::putKdf(int value)
@@ -81,6 +104,12 @@ void eap::EapAttributes::forEachEntry(const std::function<void(EAttributeType, c
 void eap::EapAttributes::putRawAttribute(eap::EAttributeType key, OctetString &&value)
 {
     attributes[(int)key] = std::move(value);
+}
+
+OctetString eap::EapAttributes::getKdfInput() const
+{
+    // TODO
+    return OctetString();
 }
 
 eap::Eap::Eap(eap::ECode code, octet id, eap::EEapType eapType) : code(code), id(id), eapType(eapType)
