@@ -32,17 +32,6 @@ inline int GetPsi(uint64_t sessionResInd)
     return static_cast<int>(sessionResInd & 0xFFFFFFFFuLL);
 }
 
-class IRateLimiter
-{
-  public:
-    virtual bool allowDownlinkPacket(uint64_t pduSession, int64_t packetSize) = 0;
-    virtual bool allowUplinkPacket(uint64_t pduSession, int64_t packetSize) = 0;
-    virtual void updateUeUplinkLimit(int ueId, int64_t limit) = 0;
-    virtual void updateUeDownlinkLimit(int ueId, int64_t limit) = 0;
-    virtual void updateSessionUplinkLimit(uint64_t pduSession, int64_t limit) = 0;
-    virtual void updateSessionDownlinkLimit(uint64_t pduSession, int64_t limit) = 0;
-};
-
 class PduSessionTree
 {
     std::unordered_map<uint32_t, uint64_t> mapByDownTeid;
@@ -61,18 +50,30 @@ class TokenBucket
 {
     static constexpr const int64_t REFILL_PERIOD = 1000L;
 
-    int64_t byteCapacity;
+    uint64_t byteCapacity;
     double refillTokensPerOneMillis;
     double availableTokens;
     int64_t lastRefillTimestamp;
 
   public:
     explicit TokenBucket(long byteCapacity);
-    bool tryConsume(int64_t numberTokens);
-    void updateCapacity(int64_t newByteCapacity);
+
+    bool tryConsume(uint64_t numberTokens);
+    void updateCapacity(uint64_t newByteCapacity);
 
   private:
     void refill();
+};
+
+class IRateLimiter
+{
+  public:
+    virtual bool allowDownlinkPacket(uint64_t pduSession, uint64_t packetSize) = 0;
+    virtual bool allowUplinkPacket(uint64_t pduSession, uint64_t packetSize) = 0;
+    virtual void updateUeUplinkLimit(int ueId, uint64_t limit) = 0;
+    virtual void updateUeDownlinkLimit(int ueId, uint64_t limit) = 0;
+    virtual void updateSessionUplinkLimit(uint64_t pduSession, uint64_t limit) = 0;
+    virtual void updateSessionDownlinkLimit(uint64_t pduSession, uint64_t limit) = 0;
 };
 
 class RateLimiter : public IRateLimiter
@@ -83,12 +84,12 @@ class RateLimiter : public IRateLimiter
     std::unordered_map<uint64_t, std::unique_ptr<TokenBucket>> uplinkBySession;
 
   public:
-    bool allowDownlinkPacket(uint64_t pduSession, int64_t packetSize) override;
-    bool allowUplinkPacket(uint64_t pduSession, int64_t packetSize) override;
-    void updateUeUplinkLimit(int ueId, int64_t limit) override;
-    void updateUeDownlinkLimit(int ueId, int64_t limit) override;
-    void updateSessionUplinkLimit(uint64_t pduSession, int64_t limit) override;
-    void updateSessionDownlinkLimit(uint64_t pduSession, int64_t limit) override;
+    bool allowDownlinkPacket(uint64_t pduSession, uint64_t packetSize) override;
+    bool allowUplinkPacket(uint64_t pduSession, uint64_t packetSize) override;
+    void updateUeUplinkLimit(int ueId, uint64_t limit) override;
+    void updateUeDownlinkLimit(int ueId, uint64_t limit) override;
+    void updateSessionUplinkLimit(uint64_t pduSession, uint64_t limit) override;
+    void updateSessionDownlinkLimit(uint64_t pduSession, uint64_t limit) override;
 };
 
 } // namespace nr::gnb
