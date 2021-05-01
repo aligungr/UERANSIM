@@ -78,16 +78,16 @@ TokenBucket::TokenBucket(long byteCapacity) : byteCapacity(byteCapacity)
     }
 }
 
-bool TokenBucket::tryConsume(uint64_t numberTokens)
+bool TokenBucket::tryConsume(uint64_t numberOfTokens)
 {
     if (byteCapacity > 0)
     {
         refill();
-        if (availableTokens < static_cast<double>(numberTokens))
+        if (availableTokens < static_cast<double>(numberOfTokens))
             return false;
         else
         {
-            availableTokens -= static_cast<double>(numberTokens);
+            availableTokens -= static_cast<double>(numberOfTokens);
             return true;
         }
     }

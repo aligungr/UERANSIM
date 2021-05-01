@@ -58,7 +58,7 @@ class TokenBucket
   public:
     explicit TokenBucket(long byteCapacity);
 
-    bool tryConsume(uint64_t numberTokens);
+    bool tryConsume(uint64_t numberOfTokens);
     void updateCapacity(uint64_t newByteCapacity);
 
   private:
