@@ -69,6 +69,19 @@ int eap::EapAttributes::getKdf() const
     return val->get2I(0);
 }
 
+OctetString eap::EapAttributes::getKdfInput() const
+{
+    auto &val = attributes[(int)EAttributeType::AT_KDF_INPUT];
+    if (!val.has_value() || val->length() < 2)
+        return {};
+
+    int len = val->get2I(0);
+    if (len + 2 > val->length())
+        return {};
+
+    return val->subCopy(2, len);
+}
+
 void eap::EapAttributes::putRes(const OctetString &value)
 {
     attributes[(int)EAttributeType::AT_RES] = OctetString::Concat(OctetString::FromOctet2(value.length()), value);
@@ -104,12 +117,6 @@ void eap::EapAttributes::forEachEntry(const std::function<void(EAttributeType, c
 void eap::EapAttributes::putRawAttribute(eap::EAttributeType key, OctetString &&value)
 {
     attributes[(int)key] = std::move(value);
-}
-
-OctetString eap::EapAttributes::getKdfInput() const
-{
-    // TODO
-    return OctetString();
 }
 
 eap::Eap::Eap(eap::ECode code, octet id, eap::EEapType eapType) : code(code), id(id), eapType(eapType)
