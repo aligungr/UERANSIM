@@ -18,6 +18,28 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
     m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
 
+    // "The procedure shall only be initiated by the UE when the following conditions are fulfilled ..."
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+    {
+        m_logger->warn("Service Request canceled, MM specific procedure is ongoing");
+        return;
+    }
+    if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        m_logger->debug("Service Request canceled, already in 5GMM-SERVICE-REQUEST-INITIATED");
+        return;
+    }
+    if (m_usim->m_uState != E5UState::U1_UPDATED)
+    {
+        m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
+        return;
+    }
+    if (!nas::utils::TaiListContains(m_usim->m_taiList, *m_usim->m_currentTai))
+    {
+        m_logger->err("Service Request canceled, current TAI is not in the TAI list");
+        return;
+    }
+
     // 5.6.1.7 Abnormal cases in the UE
     // a) Timer T3525
     if (m_timers->t3525.isRunning())
