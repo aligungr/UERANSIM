@@ -11,6 +11,8 @@
 implementation. It can be considered as a 5G mobile phone and a base station in basic terms. The project can be used for
 testing 5G Core Network and studying 5G System.
 
+UERANSIM introduces the world's first and only open source 5G-SA UE and RAN implementation.
+
 ## Current Status
 
 Our UE and gNodeB are functional and ready to use. You can connect them to your 5G core network right now and start
@@ -36,8 +38,7 @@ the [latest](https://github.com/aligungr/UERANSIM/releases) UERANSIM.
 
 ## Contributing
 
-Implementing UE and RAN is not an easy task and is very time-consuming. We are always open to public contributions and
-pull requests.
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are greatly appreciated.
 
 ## Supporting
 
