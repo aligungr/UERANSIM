@@ -42,8 +42,7 @@ Contributions are what make the open source community such an amazing place to b
 
 ## Supporting
 
-UERANSIM is the first and currently only open source project that implements 5G-SA UE and RAN. Commercial alternatives
-of this software cost hundreds of thousands of dollars. You can support this free and open source software by:
+You can support this free and open source software by:
 
 - Donating on [Open Collective](https://opencollective.com/UERANSIM)
 - Starring our GitHub repository,
