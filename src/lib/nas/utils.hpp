@@ -45,7 +45,7 @@ const char *EnumToString(EPduSessionType v);
 template <typename T>
 inline bool DeepEqualsIe(const T &a, const T &b)
 {
-    OctetString s1{}, s2{};
+    OctetString s1, s2;
     if constexpr (std::is_base_of<InformationElement1, T>::value)
     {
         EncodeIe1(0, a, s1);
@@ -62,7 +62,7 @@ inline bool DeepEqualsIe(const T &a, const T &b)
 template <typename T>
 inline bool DeepEqualsV(const T &a, const T &b)
 {
-    OctetString s1{}, s2{};
+    OctetString s1, s2;
     T::Encode(a, s1);
     T::Encode(b, s2);
     return s1 == s2;
@@ -87,8 +87,7 @@ inline T DeepCopyIe(const T &a)
     }
 }
 
-template <typename T>
-inline std::unique_ptr<NasMessage> DeepCopyMsg(const T &msg)
+inline std::unique_ptr<NasMessage> DeepCopyMsg(const NasMessage &msg)
 {
     OctetString stream;
 
