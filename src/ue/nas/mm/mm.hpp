@@ -114,7 +114,6 @@ class NasMm
     void receiveAuthenticationReject(const nas::AuthenticationReject &msg);
     void receiveEapSuccessMessage(const eap::Eap &eap);
     void receiveEapFailureMessage(const eap::Eap &eap);
-    void receiveEapResponseMessage(const eap::Eap &eap);
     EAutnValidationRes validateAutn(const OctetString &rand, const OctetString &autn);
     crypto::milenage::Milenage calculateMilenage(const OctetString &sqn, const OctetString &rand, bool dummyAmf);
     bool networkFailingTheAuthCheck(bool hasChance);
