@@ -77,6 +77,10 @@ static void EncodeNasMessageWithoutCleartext(const nas::PlainMmMessage &msg, Oct
 
         nas::EncodeNasMessage(*copy, stream);
     }
+    else
+    {
+        nas::EncodeNasMessage(msg, stream);
+    }
 }
 
 void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
