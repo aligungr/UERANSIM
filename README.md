@@ -11,7 +11,8 @@
 implementation. It can be considered as a 5G mobile phone and a base station in basic terms. The project can be used for
 testing 5G Core Network and studying 5G System.
 
-UERANSIM introduces the world's first and only open source 5G-SA UE and RAN implementation.
+UERANSIM introduces the world's first and only open source 5G-SA UE and gNodeB implementation.
+Some parts of this software are **patent pending**.
 
 ## Current Status
 
@@ -19,6 +20,7 @@ Our UE and gNodeB are functional and ready to use. You can connect them to your 
 using it.
 
 In terms of 3GPP coverage, fundamental control plane features are done. However, some of them are in progress.
+More details can be found at [Feature Set](https://github.com/aligungr/UERANSIM/wiki/Feature-Set).
 
 At the same time, 5G-NR radio interface is under development but not complete yet. Currently we utilize the radio
 interface over a simulated environment.
