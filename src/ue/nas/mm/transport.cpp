@@ -34,17 +34,40 @@ static bool IsAcceptedWithoutIntegrity(const nas::PlainMmMessage &msg)
            msgType == nas::EMessageType::SERVICE_REJECT;
 }
 
-static bool ShouldBypassCiphering(const nas::PlainMmMessage &msg)
-{
-    return IsInitialNasMessage(msg);
-}
-
-static void EncodeNasMessageWithoutCleartext(const nas::PlainMmMessage &msg, OctetString &stream)
+static bool HasNonCleartext(const nas::PlainMmMessage &msg)
 {
     if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST)
     {
-        auto copy = nas::utils::DeepCopyMsg(msg);
-        auto &regReq = (nas::RegistrationRequest &)(*copy);
+        auto &regReq = (nas::RegistrationRequest &)(msg);
+        return regReq.nasMessageContainer || regReq.nonCurrentNgKsi || regReq.micoIndication ||
+               regReq.networkSlicingIndication || regReq.mmCapability || regReq.requestedNSSAI ||
+               regReq.requestedDrxParameters || regReq.uesUsageSetting || regReq.updateType ||
+               regReq.uplinkDataStatus || regReq.allowedPduSessionStatus || regReq.lastVisitedRegisteredTai ||
+               regReq.s1UeNetworkCapability || regReq.pduSessionStatus || regReq.payloadContainer ||
+               regReq.ladnIndication;
+    }
+    else if (msg.messageType == nas::EMessageType::SERVICE_REQUEST)
+    {
+        auto &servReq = (nas::ServiceRequest &)(msg);
+        return servReq.nasMessageContainer || servReq.uplinkDataStatus || servReq.pduSessionStatus ||
+               servReq.allowedPduSessionStatus;
+    }
+    return false;
+}
+
+static void RemoveCleartextIEs(nas::PlainMmMessage &msg, OctetString &&nasMsgContainer)
+{
+    if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST)
+    {
+        auto &regReq = (nas::RegistrationRequest &)(msg);
+
+        if (nasMsgContainer.length() == 0)
+            regReq.nasMessageContainer = std::nullopt;
+        else
+        {
+            regReq.nasMessageContainer = nas::IENasMessageContainer{};
+            regReq.nasMessageContainer->data = std::move(nasMsgContainer);
+        }
 
         regReq.nonCurrentNgKsi = std::nullopt;
         regReq.micoIndication = std::nullopt;
@@ -55,31 +78,28 @@ static void EncodeNasMessageWithoutCleartext(const nas::PlainMmMessage &msg, Oct
         regReq.uesUsageSetting = std::nullopt;
         regReq.updateType = std::nullopt;
         regReq.uplinkDataStatus = std::nullopt;
-        regReq.nasMessageContainer = std::nullopt;
         regReq.allowedPduSessionStatus = std::nullopt;
         regReq.lastVisitedRegisteredTai = std::nullopt;
         regReq.s1UeNetworkCapability = std::nullopt;
         regReq.pduSessionStatus = std::nullopt;
         regReq.payloadContainer = std::nullopt;
         regReq.ladnIndication = std::nullopt;
-
-        nas::EncodeNasMessage(*copy, stream);
     }
     else if (msg.messageType == nas::EMessageType::SERVICE_REQUEST)
     {
-        auto copy = nas::utils::DeepCopyMsg(msg);
-        auto &servReq = (nas::ServiceRequest &)(*copy);
+        auto &servReq = (nas::ServiceRequest &)(msg);
+
+        if (nasMsgContainer.length() == 0)
+            servReq.nasMessageContainer = std::nullopt;
+        else
+        {
+            servReq.nasMessageContainer = nas::IENasMessageContainer{};
+            servReq.nasMessageContainer->data = std::move(nasMsgContainer);
+        }
 
         servReq.uplinkDataStatus = std::nullopt;
         servReq.pduSessionStatus = std::nullopt;
         servReq.allowedPduSessionStatus = std::nullopt;
-        servReq.nasMessageContainer = std::nullopt;
-
-        nas::EncodeNasMessage(*copy, stream);
-    }
-    else
-    {
-        nas::EncodeNasMessage(msg, stream);
     }
 }
 
@@ -93,19 +113,58 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         return;
     }
 
+    bool hasNsCtx =
+        m_usim->m_currentNsCtx && (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
+                                   m_usim->m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0);
+
     OctetString pdu;
-    if (m_usim->m_currentNsCtx && (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
-                                   m_usim->m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0))
+    if (hasNsCtx)
     {
-        auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, ShouldBypassCiphering(msg));
-        nas::EncodeNasMessage(*secured, pdu);
+        if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
+            msg.messageType == nas::EMessageType::SERVICE_REQUEST)
+        {
+            if (HasNonCleartext(msg))
+            {
+                auto originalSecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false);
+                OctetString originalPdu;
+                nas::EncodeNasMessage(*originalSecured, originalPdu);
+
+                auto copy = nas::utils::DeepCopyMsg(msg);
+                RemoveCleartextIEs((nas::PlainMmMessage &)*copy, std::move(originalPdu));
+
+                auto copySecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, true);
+                nas::EncodeNasMessage(*copySecured, pdu);
+            }
+            else
+            {
+                auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true);
+                nas::EncodeNasMessage(*secured, pdu);
+            }
+        }
+        else if (msg.messageType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING)
+        {
+            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true);
+            nas::EncodeNasMessage(*secured, pdu);
+        }
+        else
+        {
+            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false);
+            nas::EncodeNasMessage(*secured, pdu);
+        }
     }
     else
     {
         if (IsInitialNasMessage(msg))
-            EncodeNasMessageWithoutCleartext(msg, pdu);
+        {
+            auto copy = nas::utils::DeepCopyMsg(msg);
+            RemoveCleartextIEs((nas::PlainMmMessage &)*copy, {});
+
+            nas::EncodeNasMessage(*copy, pdu);
+        }
         else
+        {
             nas::EncodeNasMessage(msg, pdu);
+        }
     }
 
     if (m_cmState == ECmState::CM_IDLE)
