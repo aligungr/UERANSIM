@@ -87,4 +87,13 @@ inline T DeepCopyIe(const T &a)
     }
 }
 
+template <typename T>
+inline std::unique_ptr<NasMessage> DeepCopyMsg(const T &msg)
+{
+    OctetString stream;
+
+    EncodeNasMessage(msg, stream);
+    return DecodeNasMessage(OctetView{stream});
+}
+
 } // namespace nas::utils
