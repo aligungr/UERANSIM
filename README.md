@@ -40,7 +40,7 @@ the [latest](https://github.com/aligungr/UERANSIM/releases) UERANSIM.
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are greatly appreciated.
+Any contributions you make are greatly appreciated via [Pull Request](https://github.com/aligungr/UERANSIM/pulls).
 
 ## Supporting
 
