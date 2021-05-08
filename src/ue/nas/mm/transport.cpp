@@ -13,9 +13,6 @@
 #include <ue/nas/sm/sm.hpp>
 #include <ue/rrc/task.hpp>
 
-// See https://github.com/aligungr/UERANSIM/issues/316 for details about this behaviour.
-#define NAS_CONTAINER_NOT_CIPHERED 1
-
 namespace nr::ue
 {
 
@@ -129,13 +126,7 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
             if (HasNonCleartext(msg))
             {
                 OctetString originalPdu;
-
-#if NAS_CONTAINER_NOT_CIPHERED
                 nas::EncodeNasMessage(msg, originalPdu);
-#else
-                auto originalSecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false);
-                nas::EncodeNasMessage(*originalSecured, originalPdu);
-#endif
 
                 auto copy = nas::utils::DeepCopyMsg(msg);
                 RemoveCleartextIEs((nas::PlainMmMessage &)*copy, std::move(originalPdu));
