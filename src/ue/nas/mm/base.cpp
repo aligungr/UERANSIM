@@ -50,6 +50,12 @@ void NasMm::performMmCycle()
     if (m_mmState == EMmState::MM_NULL)
         return;
 
+    if (!m_usim->isValid())
+    {
+        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
+        return;
+    }
+
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
     {
         if (switchToECallInactivityIfNeeded())
