@@ -17,7 +17,7 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
 {
     auto &session = m_pduSessions[psi];
 
-    nas::UlNasTransport m{};
+    nas::UlNasTransport m;
     m.payloadContainerType.payloadContainerType = nas::EPayloadContainerType::N1_SM_INFORMATION;
     nas::EncodeNasMessage(msg, m.payloadContainer.data);
     m.pduSessionId = nas::IEPduSessionIdentity2{};
@@ -87,12 +87,12 @@ void NasSm::sendSmCause(const nas::ESmCause &cause, int pti, int psi)
 {
     m_logger->warn("Sending SM Cause[%s] for PSI[%d]", nas::utils::EnumToString(cause), psi);
 
-    nas::FiveGSmStatus smStatus{};
+    nas::FiveGSmStatus smStatus;
     smStatus.smCause.value = cause;
     smStatus.pti = pti;
     smStatus.pduSessionId = psi;
 
-    nas::UlNasTransport ulTransport{};
+    nas::UlNasTransport ulTransport;
     ulTransport.payloadContainerType.payloadContainerType = nas::EPayloadContainerType::N1_SM_INFORMATION;
     nas::EncodeNasMessage(smStatus, ulTransport.payloadContainer.data);
     ulTransport.pduSessionId = nas::IEPduSessionIdentity2{};
