@@ -45,6 +45,8 @@ class NasSm
 
     /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);
+    void receiveForwardingFailure(const nas::SmMessage &msg, nas::EMmCause cause,
+                                  const std::optional<nas::IEGprsTimer3> &backoffTimer);
 
     /* Resource */
     void localReleaseSession(int psi);
@@ -76,7 +78,6 @@ class NasSm
     void sendEstablishmentRequest(const SessionConfig &config);
     void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
-    void receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg);
 
     /* Session Release */
     void receiveReleaseReject(const nas::PduSessionReleaseReject &msg);

@@ -18,23 +18,93 @@
 namespace nr::ue
 {
 
+static bool IsUplinkSmMessage(nas::EMessageType type)
+{
+    switch (type)
+    {
+    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST:
+    case nas::EMessageType::PDU_SESSION_AUTHENTICATION_COMPLETE:
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_REQUEST:
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_COMPLETE:
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_COMMAND_REJECT:
+    case nas::EMessageType::PDU_SESSION_RELEASE_REQUEST:
+    case nas::EMessageType::PDU_SESSION_RELEASE_COMPLETE:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
 {
+    m_timers->t3346.stop();
+
     if (msg.payloadContainerType.payloadContainerType != nas::EPayloadContainerType::N1_SM_INFORMATION)
     {
-        m_logger->err("Unhandled DL NAS Transport type [%d]", (int)msg.payloadContainerType.payloadContainerType);
+        m_logger->err("Unhandled DL NAS Transport payload container type [%d]",
+                      (int)msg.payloadContainerType.payloadContainerType);
         return;
     }
 
     OctetView buff{msg.payloadContainer.data.data(), static_cast<size_t>(msg.payloadContainer.data.length())};
-    auto sm = nas::DecodeNasMessage(buff);
-    if (sm->epd != nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
+    auto nasMessage = nas::DecodeNasMessage(buff);
+
+    if (nasMessage->epd != nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
     {
-        m_logger->err("Bad payload container in DL NAS Transport");
+        m_logger->err("Bad payload container in DL NAS Transport, ignoring received message");
         return;
     }
 
-    m_sm->receiveSmMessage((const nas::SmMessage &)(*sm));
+    auto &smMessage = ((nas::SmMessage &)*nasMessage);
+
+    if (msg.pduSessionId && (int)msg.pduSessionId->value != smMessage.pduSessionId)
+    {
+        m_logger->err("PSI mismatch in DL NAS Transport, ignoring received message");
+        return;
+    }
+
+    if (msg.mmCause)
+    {
+        if (!IsUplinkSmMessage(smMessage.messageType))
+        {
+            m_logger->err("MM Cause with invalid SM message type in DL NAS Transport, ignoring received message");
+            return;
+        }
+
+        switch (msg.mmCause->value)
+        {
+        case nas::EMmCause::PAYLOAD_NOT_FORWARDED:
+        case nas::EMmCause::DNN_NOT_SUPPORTED_OR_NOT_SUBSCRIBED:
+        case nas::EMmCause::MAX_PDU_SESSIONS_REACHED: {
+            m_sm->receiveForwardingFailure(smMessage, msg.mmCause->value, std::nullopt);
+            break;
+        }
+        case nas::EMmCause::RESTRICTED_SERVICE_AREA: {
+            if (m_rmState == ERmState::RM_REGISTERED)
+            {
+                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+                sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
+            }
+            m_sm->receiveForwardingFailure(smMessage, msg.mmCause->value, std::nullopt);
+            break;
+        }
+        case nas::EMmCause::CONGESTION:
+        case nas::EMmCause::INSUFFICIENT_RESOURCES_FOR_SLICE_AND_DNN:
+        case nas::EMmCause::INSUFFICIENT_RESOURCES_FOR_SLICE: {
+            m_sm->receiveForwardingFailure(smMessage, msg.mmCause->value, msg.backOffTimerValue);
+            break;
+        }
+        default: {
+            m_logger->warn("Unhandled MM Cause [%d] in DL NAS Transport", static_cast<int>(msg.mmCause->value));
+            m_sm->receiveForwardingFailure(smMessage, msg.mmCause->value, std::nullopt);
+            break;
+        }
+        }
+    }
+    else
+    {
+        m_sm->receiveSmMessage(smMessage);
+    }
 }
 
 void NasMm::deliverUlTransport(const nas::UlNasTransport &msg)

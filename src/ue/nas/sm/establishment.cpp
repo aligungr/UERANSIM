@@ -171,16 +171,6 @@ void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept 
     m_logger->info("PDU Session establishment is successful PSI[%d]", pduSession->psi);
 }
 
-void NasSm::receiveEstablishmentRoutingFailure(const nas::PduSessionEstablishmentRequest &msg)
-{
-    m_logger->err("PDU Session Establishment Request received due to a routing failure");
-
-    if (!checkPtiAndPsi(msg))
-        return;
-
-    abortProcedureByPti(msg.pti);
-}
-
 void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
 {
     m_logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));

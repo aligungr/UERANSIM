@@ -48,9 +48,6 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
         receiveEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
         break;
-    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST:
-        receiveEstablishmentRoutingFailure((const nas::PduSessionEstablishmentRequest &)msg);
-        break;
     case nas::EMessageType::PDU_SESSION_RELEASE_REJECT:
         receiveReleaseReject((const nas::PduSessionReleaseReject &)msg);
         break;
@@ -99,6 +96,20 @@ void NasSm::sendSmCause(const nas::ESmCause &cause, int pti, int psi)
     ulTransport.pduSessionId->value = psi;
 
     m_mm->deliverUlTransport(ulTransport);
+}
+
+void NasSm::receiveForwardingFailure(const nas::SmMessage &msg, nas::EMmCause cause,
+                                     const std::optional<nas::IEGprsTimer3> &backoffTimer)
+{
+    // TODO: other actions such as congestion control etc
+
+    m_logger->err("SM forwarding failure for message type[%d] with cause[%s]", static_cast<int>(msg.messageType),
+                  nas::utils::EnumToString(cause));
+
+    if (!checkPtiAndPsi(msg))
+        return;
+
+    abortProcedureByPti(msg.pti);
 }
 
 } // namespace nr::ue
