@@ -83,13 +83,18 @@ class NasMm
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
 
-  private: /* Transport */
+  private: /* Messaging */
     void sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
-    void receiveDlNasTransport(const nas::DlNasTransport &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
     void sendMmStatus(nas::EMmCause cause);
+
+  private: /* Transport */
+    void receiveDlNasTransport(const nas::DlNasTransport &msg);
+
+  public: /* Transport */
+    void deliverUlTransport(const nas::UlNasTransport &msg);
 
   public: /* Registration */
     void sendMobilityRegistration(ERegUpdateCause updateCause);
@@ -171,12 +176,11 @@ class NasMm
 
   public:
     /* Interface */
-    void handleRrcEvent(const NwUeRrcToNas &msg);            // used by RRC
-    void handleNasEvent(const NwUeNasToNas &msg);            // used by NAS
-    void deliverUlTransport(const nas::UlNasTransport &msg); // used by SM
-    bool isRegistered();                                     // used by SM
-    bool isRegisteredForEmergency();                         // used by SM
-    void serviceNeededForUplinkData();                       // used by SM
+    void handleRrcEvent(const NwUeRrcToNas &msg); // used by RRC
+    void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
+    bool isRegistered();                          // used by SM
+    bool isRegisteredForEmergency();              // used by SM
+    void serviceNeededForUplinkData();            // used by SM
 };
 
 } // namespace nr::ue
