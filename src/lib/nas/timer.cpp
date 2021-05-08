@@ -102,10 +102,7 @@ bool NasTimer::performTick()
         long remainingSec = m_interval - deltaSec;
 
         if (currentMs - m_lastDebugPrintMs > 10LL * 1000LL)
-        {
             m_lastDebugPrintMs = currentMs;
-            // Log.debug(Tag.TIMER, "NAS Timer %s int:%ss rem:%ss", timerCode, interval, remainingSec);
-        }
 
         if (remainingSec <= 0LL)
         {
