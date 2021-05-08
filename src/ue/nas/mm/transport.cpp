@@ -39,6 +39,28 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
 
 void NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
 {
+    // 5.4.5.2.6 Abnormal cases in the UE
+    // "The UE shall not send the UL NAS TRANSPORT message when the UE is in non-allowed area or
+    // is not in allowed area and .."
+    if (isInNonAllowedArea() && !isHighPriority())
+    {
+        // "1) the Payload container type IE is set to "N1 SM information", the Request type IE is set to "initial
+        // request", "existing PDU session" or "modification request" and the UE is not configured for high priority
+        // access in selected PLMN;" or
+        // "2) the Payload container type IE is set to "SMS" and the UE is not configured for high priority access in
+        // selected PLMN."
+        if ((msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::N1_SM_INFORMATION &&
+             (msg.requestType && (msg.requestType->requestType == nas::ERequestType::INITIAL_REQUEST ||
+                                  msg.requestType->requestType == nas::ERequestType::EXISTING_PDU_SESSION ||
+                                  msg.requestType->requestType == nas::ERequestType::MODIFICATION_REQUEST))) ||
+            msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::SMS)
+        {
+            m_logger->err("Ul Nas Transport procedure canceled, UE is not in allowed area");
+            return;
+        }
+    }
+
+    // Send the UL NAS Transport Message
     sendNasMessage(msg);
 }
 
