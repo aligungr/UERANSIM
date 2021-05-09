@@ -67,7 +67,7 @@ class Usim
     std::optional<nas::IETimeZoneAndTime> m_universalTimeAndLocalTimeZone{};
     std::optional<nas::IEDaylightSavingTime> m_networkDaylightSavingTime{};
 
-    // eCall related
+    // Others
     bool m_isECallOnly{};
 
   public:

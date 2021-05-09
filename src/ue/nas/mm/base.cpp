@@ -50,12 +50,6 @@ void NasMm::performMmCycle()
     if (m_mmState == EMmState::MM_NULL)
         return;
 
-    if (!m_usim->isValid())
-    {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
-        return;
-    }
-
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
     {
         if (switchToECallInactivityIfNeeded())
@@ -63,25 +57,20 @@ void NasMm::performMmCycle()
 
         if (m_usim->isValid())
         {
-            if (m_cmState == ECmState::CM_IDLE)
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            if (m_usim->m_servingCell.has_value())
+            {
+                auto cellCategory = m_usim->m_servingCell->cellCategory;
+
+                if (cellCategory == ECellCategory::SUITABLE_CELL)
+                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+                else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
+                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+                else
+                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            }
             else
             {
-                if (m_usim->m_servingCell.has_value())
-                {
-                    auto cellCategory = m_usim->m_servingCell->cellCategory;
-
-                    if (cellCategory == ECellCategory::SUITABLE_CELL)
-                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-                    else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
-                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-                    else
-                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-                }
-                else
-                {
-                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-                }
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
             }
         }
         else
