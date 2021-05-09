@@ -81,9 +81,9 @@ bool NasMm::switchToECallInactivityIfNeeded()
 
     if (m_cmState != ECmState::CM_IDLE)
         return false;
-    if (!(!m_timers->t3444.isRunning() && m_timers->t3445.isRunning()) ||
-        (!m_timers->t3445.isRunning() && m_timers->t3444.isRunning()) ||
-        (!m_timers->t3444.isRunning() && !m_timers->t3445.isRunning()))
+    if (!((!m_timers->t3444.isRunning() && m_timers->t3445.isRunning()) ||
+          (!m_timers->t3445.isRunning() && m_timers->t3444.isRunning()) ||
+          (!m_timers->t3444.isRunning() && !m_timers->t3445.isRunning())))
         return false;
 
     // Perform item c) in 5.5.3
