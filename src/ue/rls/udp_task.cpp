@@ -89,7 +89,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         m_cells[msg->sti].address = addr;
         m_cells[msg->sti].lastSeen = utils::CurrentTimeMillis();
 
-        int newDbm = ((const rls::RlsHeartBeatAck &)msg).dbm;
+        int newDbm = ((const rls::RlsHeartBeatAck &)*msg).dbm;
         m_cells[msg->sti].dbm = newDbm;
 
         if (oldDbm != newDbm)
