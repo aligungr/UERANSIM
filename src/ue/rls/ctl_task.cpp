@@ -33,6 +33,22 @@ void RlsControlTask::onLoop()
 
     switch (msg->msgType)
     {
+    case NtsMessageType::UE_RLS_TO_RLS: {
+        auto *w = dynamic_cast<NwUeRlsToRls *>(msg);
+        switch (w->present)
+        {
+        case NwUeRlsToRls::SIGNAL_CHANGED:
+            // TODO
+            break;
+        case NwUeRlsToRls::RECEIVE_RLS_MESSAGE:
+            // TODO
+            break;
+        default:
+            m_logger->unhandledNts(msg);
+            break;
+        }
+        break;
+    }
     default:
         m_logger->unhandledNts(msg);
         break;
