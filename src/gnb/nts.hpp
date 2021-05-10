@@ -15,6 +15,7 @@
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
 #include <lib/asn/utils.hpp>
+#include <lib/rls/rls_pdu.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <lib/sctp/sctp.hpp>
 #include <utils/network.hpp>
@@ -82,6 +83,27 @@ struct NwGnbGtpToRls : NtsMessage
     OctetString pdu{};
 
     explicit NwGnbGtpToRls(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_RLS), present(present)
+    {
+    }
+};
+
+struct NwGnbRlsToRls : NtsMessage
+{
+    enum PR
+    {
+        SIGNAL_DETECTED,
+        SIGNAL_LOST,
+        RECEIVE_RLS_MESSAGE
+    } present;
+
+    // SIGNAL_DETECTED
+    // SIGNAL_LOST
+    int ueId{};
+
+    // RECEIVE_RLS_MESSAGE
+    std::unique_ptr<rls::RlsMessage> msg{};
+
+    explicit NwGnbRlsToRls(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RLS), present(present)
     {
     }
 };

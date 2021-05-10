@@ -42,7 +42,7 @@ namespace nr::gnb
 {
 
 RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, Vector3 phyLocation)
-    : m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{}, m_ueMap{}
+    : m_ctlTask{}, m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{}, m_ueMap{}, m_newIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger("rls");
 
@@ -109,13 +109,15 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         }
         else
         {
-            int ueId = static_cast<int>(m_stiToUe.size()) + 1;
+            int ueId = ++m_newIdCounter;
 
             m_stiToUe[msg->sti] = ueId;
             m_ueMap[ueId].address = addr;
             m_ueMap[ueId].lastSeen = utils::CurrentTimeMillis();
 
-            // TODO notify upper layer new UE
+            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_DETECTED);
+            w->ueId = ueId;
+            m_ctlTask->push(w);
         }
 
         rls::RlsHeartBeatAck ack{m_sti};
@@ -125,7 +127,16 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    // TODO notify upper layer new message
+    if (!m_stiToUe.count(msg->sti))
+    {
+        // if no HB received yet, and the message is not HB, then ignore the message
+        return;
+    }
+
+    auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RECEIVE_RLS_MESSAGE);
+    w->ueId = m_stiToUe[msg->sti];
+    w->msg = std::move(msg);
+    m_ctlTask->push(w);
 }
 
 void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
@@ -158,8 +169,26 @@ void RlsUdpTask::heartbeatCycle(int64_t time)
 
     for (int ueId : lostUeId)
     {
-        // TODO: notify upper layer
+        auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_LOST);
+        w->ueId = ueId;
+        m_ctlTask->push(w);
     }
+}
+
+void RlsUdpTask::initialize(NtsTask *ctlTask)
+{
+    m_ctlTask = ctlTask;
+}
+
+void RlsUdpTask::send(int ueId, const rls::RlsMessage &msg)
+{
+    if (!m_ueMap.count(ueId))
+    {
+        // ignore the message
+        return;
+    }
+
+    sendRlsPdu(m_ueMap[ueId].address, msg);
 }
 
 } // namespace nr::gnb
