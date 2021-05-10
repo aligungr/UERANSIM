@@ -21,7 +21,8 @@
 static constexpr const int BUFFER_SIZE = 16384;
 
 static constexpr const int LOOP_PERIOD = 1000;
-static constexpr const int HEARTBEAT_THRESHOLD = 2000;
+static constexpr const int RECEIVE_TIMEOUT = 200;
+static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
 
 static constexpr const int MIN_ALLOWED_DBM = -120;
 
@@ -73,7 +74,7 @@ void RlsUdpTask::onLoop()
     uint8_t buffer[BUFFER_SIZE];
     InetAddress peerAddress;
 
-    int size = m_server->Receive(buffer, BUFFER_SIZE, LOOP_PERIOD, peerAddress);
+    int size = m_server->Receive(buffer, BUFFER_SIZE, RECEIVE_TIMEOUT, peerAddress);
     if (size > 0)
     {
         auto rlsMsg = rls::DecodeRlsMessage(OctetView{buffer, static_cast<size_t>(size)});
