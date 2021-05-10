@@ -123,6 +123,20 @@ std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream)
         res->payload = stream.readOctetString(stream.read4I());
         return res;
     }
+    else if (msgType == EMessageType::HEARTBEAT)
+    {
+        auto res = std::make_unique<RlsHeartBeat>(sti);
+        res->simPos.x = stream.read4I();
+        res->simPos.y = stream.read4I();
+        res->simPos.z = stream.read4I();
+        return res;
+    }
+    else if (msgType == EMessageType::HEARTBEAT_ACK)
+    {
+        auto res = std::make_unique<RlsHeartBeatAck>(sti);
+        res->dbm = stream.read4I();
+        return res;
+    }
 
     return nullptr;
 }
