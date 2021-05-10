@@ -242,7 +242,7 @@ struct NwUeRlsToApp : NtsMessage
     }
 };
 
-struct NwRlsToRls : NtsMessage
+struct NwUeRlsToRls : NtsMessage
 {
     enum PR
     {
@@ -257,7 +257,7 @@ struct NwRlsToRls : NtsMessage
     // RECEIVE_RLS_MESSAGE
     std::unique_ptr<rls::RlsMessage> msg{};
 
-    explicit NwRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
+    explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
     }
 };
