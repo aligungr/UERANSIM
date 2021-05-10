@@ -44,7 +44,7 @@ namespace nr::gnb
 RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, Vector3 phyLocation)
     : m_ctlTask{}, m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{}, m_ueMap{}, m_newIdCounter{}
 {
-    m_logger = base->logBase->makeUniqueLogger("rls");
+    m_logger = base->logBase->makeUniqueLogger("rls-udp");
 
     try
     {
