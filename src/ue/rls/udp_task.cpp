@@ -103,14 +103,14 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    auto *w = new NwRlsToRls(NwRlsToRls::RECEIVE_RLS_MESSAGE);
+    auto *w = new NwUeRlsToRls(NwUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->msg = std::move(msg);
     m_ctlTask->push(w);
 }
 
 void RlsUdpTask::onSignalChangeOrLost(uint64_t sti)
 {
-    auto *w = new NwRlsToRls(NwRlsToRls::SIGNAL_CHANGED);
+    auto *w = new NwUeRlsToRls(NwUeRlsToRls::SIGNAL_CHANGED);
     w->sti = sti;
     w->dbm = m_cells.count(sti) ? m_cells[sti].dbm : INT32_MIN;
     m_ctlTask->push(w);
