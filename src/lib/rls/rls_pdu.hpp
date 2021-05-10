@@ -21,9 +21,14 @@ namespace rls
 enum class EMessageType : uint8_t
 {
     RESERVED = 0,
-    CELL_INFO_REQUEST,
-    CELL_INFO_RESPONSE,
-    PDU_DELIVERY
+
+    CELL_INFO_REQUEST = 1,
+    CELL_INFO_RESPONSE = 2,
+
+    PDU_DELIVERY = 3,
+
+    HEARTBEAT = 4,
+    HEARTBEAT_ACK = 5,
 };
 
 enum class EPduType : uint8_t
@@ -39,6 +44,24 @@ struct RlsMessage
     const uint64_t sti{};
 
     explicit RlsMessage(EMessageType msgType, uint64_t sti) : msgType(msgType), sti(sti)
+    {
+    }
+};
+
+struct RlsHeartBeat : RlsMessage
+{
+    Vector3 simPos;
+
+    explicit RlsHeartBeat(uint64_t sti) : RlsMessage(EMessageType::HEARTBEAT, sti)
+    {
+    }
+};
+
+struct RlsHeartBeatAck : RlsMessage
+{
+    int dbm{};
+
+    explicit RlsHeartBeatAck(uint64_t sti) : RlsMessage(EMessageType::HEARTBEAT_ACK, sti)
     {
     }
 };

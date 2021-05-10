@@ -10,10 +10,13 @@
 
 #include "types.hpp"
 #include "ue.hpp"
+
+#include <utility>
+
 #include <lib/app/cli_base.hpp>
 #include <lib/nas/timer.hpp>
+#include <lib/rls/rls_pdu.hpp>
 #include <lib/rrc/rrc.hpp>
-#include <utility>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -235,6 +238,26 @@ struct NwUeRlsToApp : NtsMessage
     OctetString pdu{};
 
     explicit NwUeRlsToApp(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_APP), present(present)
+    {
+    }
+};
+
+struct NwRlsToRls : NtsMessage
+{
+    enum PR
+    {
+        RECEIVE_RLS_MESSAGE,
+        SIGNAL_CHANGED,
+    } present;
+
+    // SIGNAL_CHANGED
+    uint64_t sti{};
+    int dbm{};
+
+    // RECEIVE_RLS_MESSAGE
+    std::unique_ptr<rls::RlsMessage> msg{};
+
+    explicit NwRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
     }
 };
