@@ -174,12 +174,12 @@ int Socket::receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddre
         sockaddr_storage peerAddr{};
         socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
 
-        rc = recvfrom(fd, buffer, bufferSize, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
-        if (rc == -1)
+        auto r = recvfrom(fd, buffer, bufferSize, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
+        if (r == -1)
             throw LibError("recvfrom recv failed: ", errno);
 
         outAddress = InetAddress{peerAddr, peerAddrLen};
-        return rc;
+        return static_cast<int>(r);
     }
 
     return 0;
