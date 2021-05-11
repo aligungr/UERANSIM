@@ -29,6 +29,9 @@ enum class EMessageType : uint8_t
 
     HEARTBEAT = 4,
     HEARTBEAT_ACK = 5,
+
+    PDU_TRANSMISSION = 6,
+    PDU_TRANSMISSION_ACK = 7,
 };
 
 enum class EPduType : uint8_t
@@ -95,6 +98,27 @@ struct RlsPduDelivery : RlsMessage
     OctetString payload{};
 
     explicit RlsPduDelivery(uint64_t sti) : RlsMessage(EMessageType::PDU_DELIVERY, sti)
+    {
+    }
+};
+
+struct RlsPduTransmission : RlsMessage
+{
+    EPduType pduType{};
+    OctetString pdu{};
+    uint32_t payload{};
+    uint32_t pduId{};
+
+    explicit RlsPduTransmission(uint64_t sti) : RlsMessage(EMessageType::PDU_TRANSMISSION, sti)
+    {
+    }
+};
+
+struct RlsPduTransmissionAck : RlsMessage
+{
+    std::vector<uint32_t> sequences;
+
+    explicit RlsPduTransmissionAck(uint64_t sti) : RlsMessage(EMessageType::PDU_TRANSMISSION_ACK, sti)
     {
     }
 };
