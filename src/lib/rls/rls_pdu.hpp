@@ -22,10 +22,10 @@ enum class EMessageType : uint8_t
 {
     RESERVED = 0,
 
-    CELL_INFO_REQUEST = 1,
-    CELL_INFO_RESPONSE = 2,
+    CELL_INFO_REQUEST = 1, // TODO: deprecate
+    CELL_INFO_RESPONSE = 2, // TODO: deprecate
 
-    PDU_DELIVERY = 3,
+    PDU_DELIVERY = 3, // TODO: deprecate
 
     HEARTBEAT = 4,
     HEARTBEAT_ACK = 5,
