@@ -36,7 +36,7 @@ class RlsControlTask : public NtsTask
     RlsUdpTask *m_udpTask;
     std::unordered_map<uint32_t, PduInfo> m_pduMap;
     uint64_t m_sti;
-    std::vector<uint32_t> m_pendingAck;
+    std::unordered_map<uint32_t, int> m_pendingAck;
 
   public:
     explicit RlsControlTask(TaskBase *base, uint64_t sti);
@@ -55,6 +55,8 @@ class RlsControlTask : public NtsTask
     void handleSignalChange(int cellId, int dbm);
     void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
     void handleUplinkDataDelivery(int cellId, int psi, OctetString &&data);
+    void onAckControlTimerExpired();
+    void onAckSendTimerExpired();
 };
 
 } // namespace nr::ue

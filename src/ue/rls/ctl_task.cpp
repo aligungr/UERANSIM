@@ -12,6 +12,12 @@
 
 static constexpr const size_t MAX_PDU_COUNT = 128;
 
+static constexpr const int TIMER_ID_ACK_CONTROL = 1;
+static constexpr const int TIMER_ID_ACK_SEND = 2;
+
+static constexpr const int TIMER_PERIOD_ACK_CONTROL = 3000;
+static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
+
 namespace nr::ue
 {
 
@@ -27,6 +33,8 @@ void RlsControlTask::initialize(RlsUdpTask *udpTask)
 
 void RlsControlTask::onStart()
 {
+    setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
+    setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
 }
 
 void RlsControlTask::onLoop()
@@ -59,6 +67,20 @@ void RlsControlTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::TIMER_EXPIRED: {
+        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        if (w->timerId == TIMER_ID_ACK_CONTROL)
+        {
+            setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
+            onAckControlTimerExpired();
+        }
+        else if (w->timerId == TIMER_ID_ACK_SEND)
+        {
+            setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
+            onAckSendTimerExpired();
+        }
+        break;
+    }
     default:
         m_logger->unhandledNts(msg);
         break;
@@ -83,7 +105,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
     {
         auto &m = (rls::RlsPduTransmission &)msg;
         if (m.pduId != 0)
-            m_pendingAck.push_back(m.pduId);
+            m_pendingAck[m.pduId] = cellId;
 
         if (m.pduType == rls::EPduType::DATA)
         {
@@ -160,6 +182,29 @@ void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &
     msg.pduId = 0;
 
     m_udpTask->send(cellId, msg);
+}
+
+void RlsControlTask::onAckControlTimerExpired()
+{
+    // TODO
+}
+
+void RlsControlTask::onAckSendTimerExpired()
+{
+    std::unordered_map<int, std::vector<uint32_t>> ackData;
+
+    for (auto &pendingAck : m_pendingAck)
+        ackData[pendingAck.second].push_back(pendingAck.first);
+
+    m_pendingAck.clear();
+
+    for (auto &item : ackData)
+    {
+        rls::RlsPduTransmissionAck msg{m_sti};
+        msg.pduIds = std::move(item.second);
+
+        m_udpTask->send(item.first, msg);
+    }
 }
 
 } // namespace nr::ue
