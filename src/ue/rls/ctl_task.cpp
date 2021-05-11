@@ -105,7 +105,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
     {
         auto &m = (rls::RlsPduTransmission &)msg;
         if (m.pduId != 0)
-            m_pendingAck[m.pduId] = cellId;
+            m_pendingAck[cellId].push_back(m.pduId);
 
         if (m.pduType == rls::EPduType::DATA)
         {
@@ -191,14 +191,10 @@ void RlsControlTask::onAckControlTimerExpired()
 
 void RlsControlTask::onAckSendTimerExpired()
 {
-    std::unordered_map<int, std::vector<uint32_t>> ackData;
-
-    for (auto &pendingAck : m_pendingAck)
-        ackData[pendingAck.second].push_back(pendingAck.first);
-
+    auto copy = m_pendingAck;
     m_pendingAck.clear();
 
-    for (auto &item : ackData)
+    for (auto &item : copy)
     {
         rls::RlsPduTransmissionAck msg{m_sti};
         msg.pduIds = std::move(item.second);
