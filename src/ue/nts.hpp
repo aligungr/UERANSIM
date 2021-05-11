@@ -248,14 +248,36 @@ struct NwUeRlsToRls : NtsMessage
     {
         RECEIVE_RLS_MESSAGE,
         SIGNAL_CHANGED,
+        UPLINK_DATA,
+        DOWNLINK_DATA,
+        UPLINK_RRC,
+        DOWNLINK_RRC,
     } present;
 
     // RECEIVE_RLS_MESSAGE
+    // UPLINK_RRC
+    // DOWNLINK_RRC
     int cellId{};
+
+    // RECEIVE_RLS_MESSAGE
     std::unique_ptr<rls::RlsMessage> msg{};
 
     // SIGNAL_CHANGED
     int dbm{};
+
+    // UPLINK_DATA
+    // DOWNLINK_DATA
+    int psi{};
+
+    // UPLINK_DATA
+    // DOWNLINK_DATA
+    // UPLINK_RRC
+    // DOWNLINK_RRC
+    OctetString data;
+
+    // UPLINK_RRC
+    // DOWNLINK_RRC
+    rrc::RrcChannel rrcChannel{};
 
     explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
