@@ -199,6 +199,9 @@ void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &
 
 void RlsControlTask::onAckControlTimerExpired()
 {
+    if (m_pduMap.empty())
+        return;
+
     int64_t current = utils::CurrentTimeMillis();
 
     std::vector<rls::PduInfo> transmissionFailures;
