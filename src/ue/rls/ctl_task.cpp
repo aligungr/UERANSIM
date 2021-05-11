@@ -114,29 +114,35 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
             //  (This is not a problem for RRC, but for DATA), normally we should avoid this, no need for now.
             (void)cellId;
 
-            int psi = static_cast<int>(m.payload);
-
+            auto *w = new NwUeRlsToRls(NwUeRlsToRls::DOWNLINK_DATA);
+            w->psi = static_cast<int>(m.payload);
+            w->data = std::move(m.pdu);
             // TODO: send to upper layer [PSI, DATA]
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            auto rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
-
+            auto *w = new NwUeRlsToRls(NwUeRlsToRls::DOWNLINK_RRC);
+            w->cellId = cellId;
+            w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
+            w->data = std::move(m.pdu);
             // TODO: send to upper layer [rrcChannel, DATA]
         }
         else
         {
-            // TODO: log
+            m_logger->err("Unhandled RLS PDU type");
         }
     }
     else
     {
-        // TODO: log
+        m_logger->err("Unhandled RLS message type");
     }
 }
 
 void RlsControlTask::handleSignalChange(int cellId, int dbm)
 {
+    auto *w = new NwUeRlsToRls(NwUeRlsToRls::SIGNAL_CHANGED);
+    w->cellId = cellId;
+    w->dbm = dbm;
     // TODO transparently send to the RRC
 }
 
@@ -146,6 +152,8 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
     {
         if (m_pduMap.count(pduId))
         {
+            auto *w = new NwUeRlsToRls(NwUeRlsToRls::RADIO_LINK_FAILURE);
+            w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
             // TODO: issue RLF
 
             m_pduMap.clear();
@@ -154,6 +162,8 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
 
         if (m_pduMap.size() > MAX_PDU_COUNT)
         {
+            auto *w = new NwUeRlsToRls(NwUeRlsToRls::RADIO_LINK_FAILURE);
+            w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
             // TODO: issue RLF
 
             m_pduMap.clear();
@@ -189,7 +199,7 @@ void RlsControlTask::onAckControlTimerExpired()
 {
     int64_t current = utils::CurrentTimeMillis();
 
-    std::vector<PduInfo> transmissionFailures;
+    std::vector<rls::PduInfo> transmissionFailures;
 
     for (auto &pdu : m_pduMap)
     {
@@ -200,7 +210,9 @@ void RlsControlTask::onAckControlTimerExpired()
 
     m_pduMap.clear();
 
-    // TODO: Notify transmisson failures
+    auto *w = new NwUeRlsToRls(NwUeRlsToRls::TRANSMISSION_FAILURE);
+    w->pduList = std::move(transmissionFailures);
+    // TODO: Notify transmission failures
 }
 
 void RlsControlTask::onAckSendTimerExpired()

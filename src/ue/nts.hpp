@@ -253,6 +253,7 @@ struct NwUeRlsToRls : NtsMessage
         DOWNLINK_DATA,
         DOWNLINK_RRC,
         RADIO_LINK_FAILURE,
+        TRANSMISSION_FAILURE,
     } present;
 
     // RECEIVE_RLS_MESSAGE
@@ -280,11 +281,14 @@ struct NwUeRlsToRls : NtsMessage
     // DOWNLINK_RRC
     rrc::RrcChannel rrcChannel{};
 
-    // DOWNLINK_RRC
+    // UPLINK_RRC
     uint32_t pduId{};
 
     // RADIO_LINK_FAILURE
     rls::ERlfCause rlfCause{};
+
+    // TRANSMISSION_FAILURE
+    std::vector<rls::PduInfo> pduList;
 
     explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {

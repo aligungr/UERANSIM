@@ -24,17 +24,9 @@ namespace nr::ue
 class RlsControlTask : public NtsTask
 {
   private:
-    struct PduInfo
-    {
-        OctetString pdu;
-        rrc::RrcChannel rrcChannel{};
-        int64_t sentTime{};
-    };
-
-  private:
     std::unique_ptr<Logger> m_logger;
     RlsUdpTask *m_udpTask;
-    std::unordered_map<uint32_t, PduInfo> m_pduMap;
+    std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     uint64_t m_sti;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
