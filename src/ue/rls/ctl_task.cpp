@@ -126,12 +126,16 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
         if (m_pduMap.count(pduId))
         {
             // TODO: issue RLF
+
+            m_pduMap.clear();
             return;
         }
 
         if (m_pduMap.size() > MAX_PDU_COUNT)
         {
             // TODO: issue RLF
+
+            m_pduMap.clear();
             return;
         }
 
