@@ -61,4 +61,12 @@ void RlsControlTask::onQuit()
 {
 }
 
+void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
+{
+}
+
+void RlsControlTask::handleSignalChange(int cellId, int dbm)
+{
+}
+
 } // namespace nr::ue
