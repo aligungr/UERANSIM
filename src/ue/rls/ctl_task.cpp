@@ -10,12 +10,13 @@
 
 #include <utils/common.hpp>
 
-static constexpr const size_t MAX_PDU_COUNT = 128;
+static constexpr const size_t MAX_PDU_COUNT = 256;
+static constexpr const int MAX_PDU_TTL = 3000;
 
 static constexpr const int TIMER_ID_ACK_CONTROL = 1;
 static constexpr const int TIMER_ID_ACK_SEND = 2;
 
-static constexpr const int TIMER_PERIOD_ACK_CONTROL = 3000;
+static constexpr const int TIMER_PERIOD_ACK_CONTROL = 1500;
 static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
 
 namespace nr::ue
@@ -186,7 +187,20 @@ void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &
 
 void RlsControlTask::onAckControlTimerExpired()
 {
-    // TODO
+    int64_t current = utils::CurrentTimeMillis();
+
+    std::vector<PduInfo> transmissionFailures;
+
+    for (auto &pdu : m_pduMap)
+    {
+        auto delta = current - pdu.second.sentTime;
+        if (delta > MAX_PDU_TTL)
+            transmissionFailures.push_back(std::move(pdu.second));
+    }
+
+    m_pduMap.clear();
+
+    // TODO: Notify transmisson failures
 }
 
 void RlsControlTask::onAckSendTimerExpired()
