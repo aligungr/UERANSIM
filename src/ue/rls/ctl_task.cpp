@@ -8,10 +8,14 @@
 
 #include "ctl_task.hpp"
 
+#include <utils/common.hpp>
+
+static constexpr const size_t MAX_PDU_COUNT = 128;
+
 namespace nr::ue
 {
 
-RlsControlTask::RlsControlTask(TaskBase *base) : m_udpTask{}
+RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti) : m_udpTask{}, m_pduMap{}, m_sti{sti}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -69,10 +73,91 @@ void RlsControlTask::onQuit()
 
 void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
 {
+    if (msg.msgType == rls::EMessageType::PDU_TRANSMISSION_ACK)
+    {
+        auto &m = (rls::RlsPduTransmissionAck &)msg;
+        for (auto pduId : m.pduIds)
+            m_pduMap.erase(pduId);
+    }
+    else if (msg.msgType == rls::EMessageType::PDU_TRANSMISSION)
+    {
+        auto &m = (rls::RlsPduTransmission &)msg;
+        if (m.pduId != 0)
+        {
+            // TODO: Send ACK
+        }
+
+        if (m.pduType == rls::EPduType::DATA)
+        {
+            // NOTE: Data packet may be received from a cell other than serving cell
+            //  (This is not a problem for RRC, but for DATA), normally we should avoid this, no need for now.
+            (void)cellId;
+
+            int psi = static_cast<int>(m.payload);
+
+            // TODO: send to upper layer [PSI, DATA]
+        }
+        else if (m.pduType == rls::EPduType::RRC)
+        {
+            auto rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
+
+            // TODO: send to upper layer [rrcChannel, DATA]
+        }
+        else
+        {
+            // TODO: log
+        }
+    }
+    else
+    {
+        // TODO: log
+    }
 }
 
 void RlsControlTask::handleSignalChange(int cellId, int dbm)
 {
+    // TODO transparently send to the RRC
+}
+
+void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data)
+{
+    if (pduId != 0)
+    {
+        if (m_pduMap.count(pduId))
+        {
+            // TODO: issue RLF
+            return;
+        }
+
+        if (m_pduMap.size() > MAX_PDU_COUNT)
+        {
+            // TODO: issue RLF
+            return;
+        }
+
+        m_pduMap[pduId].pdu = data.copy();
+        m_pduMap[pduId].rrcChannel = channel;
+        m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
+    }
+
+    rls::RlsPduTransmission msg{m_sti};
+    msg.pduType = rls::EPduType::RRC;
+    msg.pdu = std::move(data);
+    msg.payload = static_cast<uint32_t>(channel);
+    msg.pduId = pduId;
+
+    m_udpTask->send(cellId, msg);
+}
+
+void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &&data)
+{
+    rls::RlsPduTransmission msg{m_sti};
+    msg.pduType = rls::EPduType::DATA;
+    msg.pdu = std::move(data);
+    msg.payload = static_cast<uint32_t>(psi);
+    msg.pduId = 0;
+
+    m_udpTask->send(cellId, msg);
 }
 
 } // namespace nr::ue
