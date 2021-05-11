@@ -15,7 +15,7 @@ static constexpr const size_t MAX_PDU_COUNT = 128;
 namespace nr::ue
 {
 
-RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti) : m_udpTask{}, m_pduMap{}, m_sti{sti}
+RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti) : m_udpTask{}, m_pduMap{}, m_sti{sti}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -83,9 +83,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
     {
         auto &m = (rls::RlsPduTransmission &)msg;
         if (m.pduId != 0)
-        {
-            // TODO: Send ACK
-        }
+            m_pendingAck.push_back(m.pduId);
 
         if (m.pduType == rls::EPduType::DATA)
         {

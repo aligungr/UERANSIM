@@ -10,6 +10,9 @@
 
 #include "udp_task.hpp"
 
+#include <unordered_map>
+#include <vector>
+
 #include <lib/rrc/rrc.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
@@ -33,6 +36,7 @@ class RlsControlTask : public NtsTask
     RlsUdpTask *m_udpTask;
     std::unordered_map<uint32_t, PduInfo> m_pduMap;
     uint64_t m_sti;
+    std::vector<uint32_t> m_pendingAck;
 
   public:
     explicit RlsControlTask(TaskBase *base, uint64_t sti);
