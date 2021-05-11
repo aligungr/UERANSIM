@@ -25,6 +25,7 @@ class RlsControlTask : public NtsTask
 {
   private:
     std::unique_ptr<Logger> m_logger;
+    NtsTask *m_mainTask;
     RlsUdpTask *m_udpTask;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     uint64_t m_sti;
@@ -40,7 +41,7 @@ class RlsControlTask : public NtsTask
     void onQuit() override;
 
   public:
-    void initialize(RlsUdpTask *udpTask);
+    void initialize(NtsTask *mainTask, RlsUdpTask *udpTask);
 
   private:
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);

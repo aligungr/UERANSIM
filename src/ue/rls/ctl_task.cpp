@@ -22,13 +22,15 @@ static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
 namespace nr::ue
 {
 
-RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti) : m_udpTask{}, m_pduMap{}, m_sti{sti}, m_pendingAck{}
+RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti)
+    : m_mainTask{}, m_udpTask{}, m_pduMap{}, m_sti{sti}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
 
-void RlsControlTask::initialize(RlsUdpTask *udpTask)
+void RlsControlTask::initialize(NtsTask *mainTask, RlsUdpTask *udpTask)
 {
+    m_mainTask = mainTask;
     m_udpTask = udpTask;
 }
 
@@ -117,7 +119,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
             auto *w = new NwUeRlsToRls(NwUeRlsToRls::DOWNLINK_DATA);
             w->psi = static_cast<int>(m.payload);
             w->data = std::move(m.pdu);
-            // TODO: send to upper layer [PSI, DATA]
+            m_mainTask->push(w);
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
@@ -125,7 +127,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
             w->cellId = cellId;
             w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
             w->data = std::move(m.pdu);
-            // TODO: send to upper layer [rrcChannel, DATA]
+            m_mainTask->push(w);
         }
         else
         {
@@ -143,7 +145,7 @@ void RlsControlTask::handleSignalChange(int cellId, int dbm)
     auto *w = new NwUeRlsToRls(NwUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;
-    // TODO transparently send to the RRC
+    m_mainTask->push(w);
 }
 
 void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data)
@@ -152,21 +154,21 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
     {
         if (m_pduMap.count(pduId))
         {
+            m_pduMap.clear();
+
             auto *w = new NwUeRlsToRls(NwUeRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
-            // TODO: issue RLF
-
-            m_pduMap.clear();
+            m_mainTask->push(w);
             return;
         }
 
         if (m_pduMap.size() > MAX_PDU_COUNT)
         {
+            m_pduMap.clear();
+
             auto *w = new NwUeRlsToRls(NwUeRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
-            // TODO: issue RLF
-
-            m_pduMap.clear();
+            m_mainTask->push(w);
             return;
         }
 
@@ -212,7 +214,7 @@ void RlsControlTask::onAckControlTimerExpired()
 
     auto *w = new NwUeRlsToRls(NwUeRlsToRls::TRANSMISSION_FAILURE);
     w->pduList = std::move(transmissionFailures);
-    // TODO: Notify transmission failures
+    m_mainTask->push(w);
 }
 
 void RlsControlTask::onAckSendTimerExpired()
