@@ -279,6 +279,9 @@ struct NwUeRlsToRls : NtsMessage
     // DOWNLINK_RRC
     rrc::RrcChannel rrcChannel{};
 
+    // DOWNLINK_RRC
+    uint32_t pduId{};
+
     explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
     }
