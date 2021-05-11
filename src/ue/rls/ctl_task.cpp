@@ -199,9 +199,6 @@ void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &
 
 void RlsControlTask::onAckControlTimerExpired()
 {
-    if (m_pduMap.empty())
-        return;
-
     int64_t current = utils::CurrentTimeMillis();
 
     std::vector<rls::PduInfo> transmissionFailures;
@@ -215,9 +212,12 @@ void RlsControlTask::onAckControlTimerExpired()
 
     m_pduMap.clear();
 
-    auto *w = new NwUeRlsToRls(NwUeRlsToRls::TRANSMISSION_FAILURE);
-    w->pduList = std::move(transmissionFailures);
-    m_mainTask->push(w);
+    if (!transmissionFailures.empty())
+    {
+        auto *w = new NwUeRlsToRls(NwUeRlsToRls::TRANSMISSION_FAILURE);
+        w->pduList = std::move(transmissionFailures);
+        m_mainTask->push(w);
+    }
 }
 
 void RlsControlTask::onAckSendTimerExpired()
