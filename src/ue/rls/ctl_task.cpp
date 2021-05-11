@@ -43,6 +43,12 @@ void RlsControlTask::onLoop()
         case NwUeRlsToRls::RECEIVE_RLS_MESSAGE:
             handleRlsMessage(w->cellId, *w->msg);
             break;
+        case NwUeRlsToRls::UPLINK_DATA:
+            handleUplinkDataDelivery(w->cellId, w->psi, std::move(w->data));
+            break;
+        case NwUeRlsToRls::UPLINK_RRC:
+            handleUplinkRrcDelivery(w->cellId, w->pduId, w->rrcChannel, std::move(w->data));
+            break;
         default:
             m_logger->unhandledNts(msg);
             break;

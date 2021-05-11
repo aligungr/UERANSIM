@@ -39,8 +39,8 @@ class RlsControlTask : public NtsTask
   private: /* Service Access Point */
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);
     void handleSignalChange(int cellId, int dbm);
-    void handleRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
-    void handleDataDelivery(int cellId, int psi, OctetString &&data);
+    void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
+    void handleUplinkDataDelivery(int cellId, int psi, OctetString &&data);
 };
 
 } // namespace nr::ue
