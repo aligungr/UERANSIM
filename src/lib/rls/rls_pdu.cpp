@@ -94,9 +94,10 @@ void EncodeRlsMessage(const RlsMessage &msg, OctetString &stream)
     else if (msg.msgType == EMessageType::PDU_TRANSMISSION)
     {
         auto &m = (const RlsPduTransmission &)msg;
-        stream.appendOctet(static_cast<int8_t>(m.pduType));
+        stream.appendOctet(static_cast<uint8_t>(m.pduType));
         stream.appendOctet4(m.pduId);
         stream.appendOctet4(m.payload);
+        stream.appendOctet4(m.pdu.length());
         stream.append(m.pdu);
     }
     else if (msg.msgType == EMessageType::PDU_TRANSMISSION_ACK)
@@ -162,6 +163,24 @@ std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream)
     {
         auto res = std::make_unique<RlsHeartBeatAck>(sti);
         res->dbm = stream.read4I();
+        return res;
+    }
+    else if (msgType == EMessageType::PDU_TRANSMISSION)
+    {
+        auto res = std::make_unique<RlsPduTransmission>(sti);
+        res->pduType = static_cast<EPduType>((uint8_t)stream.read());
+        res->pduId = stream.read4UI();
+        res->payload = stream.read4UI();
+        res->pdu = stream.readOctetString(stream.read4I());
+        return res;
+    }
+    else if (msgType == EMessageType::PDU_TRANSMISSION_ACK)
+    {
+        auto res = std::make_unique<RlsPduTransmissionAck>(sti);
+        auto count = stream.read4UI();
+        res->pduIds.reserve(count);
+        for (uint32_t i = 0; i < count; i++)
+            res->pduIds.push_back(stream.read4UI());
         return res;
     }
 
