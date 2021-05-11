@@ -10,7 +10,7 @@
 
 #include <utils/common.hpp>
 
-static constexpr const size_t MAX_PDU_COUNT = 256;
+static constexpr const size_t MAX_PDU_COUNT = 128;
 static constexpr const int MAX_PDU_TTL = 3000;
 
 static constexpr const int TIMER_ID_ACK_CONTROL = 1;
