@@ -260,6 +260,7 @@ struct NwUeRlsToRls : NtsMessage
     // UPLINK_RRC
     // DOWNLINK_RRC
     // SIGNAL_CHANGED
+    // UPLINK_DATA
     int cellId{};
 
     // RECEIVE_RLS_MESSAGE
