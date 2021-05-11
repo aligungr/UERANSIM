@@ -219,7 +219,7 @@ struct NwUeAppToRls : NtsMessage
 
     // DATA_PDU_DELIVERY
     int psi{};
-    OctetString pdu{};
+    OctetString pdu;
 
     explicit NwUeAppToRls(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_RLS), present(present)
     {
