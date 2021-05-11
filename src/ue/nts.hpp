@@ -15,7 +15,7 @@
 
 #include <lib/app/cli_base.hpp>
 #include <lib/nas/timer.hpp>
-#include <lib/rls/rls_pdu.hpp>
+#include <lib/rls/rls_base.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
@@ -249,9 +249,10 @@ struct NwUeRlsToRls : NtsMessage
         RECEIVE_RLS_MESSAGE,
         SIGNAL_CHANGED,
         UPLINK_DATA,
-        DOWNLINK_DATA,
         UPLINK_RRC,
+        DOWNLINK_DATA,
         DOWNLINK_RRC,
+        RADIO_LINK_FAILURE,
     } present;
 
     // RECEIVE_RLS_MESSAGE
@@ -281,6 +282,9 @@ struct NwUeRlsToRls : NtsMessage
 
     // DOWNLINK_RRC
     uint32_t pduId{};
+
+    // RADIO_LINK_FAILURE
+    rls::ERlfCause rlfCause{};
 
     explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
