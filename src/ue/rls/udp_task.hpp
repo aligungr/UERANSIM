@@ -28,6 +28,7 @@ class RlsUdpTask : public NtsTask
         InetAddress address;
         int64_t lastSeen{};
         int dbm{};
+        int cellId{};
     };
 
   private:
@@ -37,8 +38,10 @@ class RlsUdpTask : public NtsTask
     uint64_t m_sti;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
+    std::unordered_map<int, uint64_t> m_cellIdToSti;
     int64_t m_lastLoop;
     Vector3 m_simPos;
+    int m_cellIdCounter;
 
   public:
     explicit RlsUdpTask(TaskBase *base, uint64_t sti, const std::vector<std::string> &searchSpace);
@@ -52,12 +55,12 @@ class RlsUdpTask : public NtsTask
   private:
     void sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg);
     void receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg);
-    void onSignalChangeOrLost(uint64_t sti);
+    void onSignalChangeOrLost(int cellId);
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
     void initialize(NtsTask *ctlTask);
-    void send(uint64_t sti, const rls::RlsMessage &msg);
+    void send(int cellId, const rls::RlsMessage &msg);
 };
 
 } // namespace nr::ue

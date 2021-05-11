@@ -250,12 +250,12 @@ struct NwUeRlsToRls : NtsMessage
         SIGNAL_CHANGED,
     } present;
 
-    // SIGNAL_CHANGED
-    uint64_t sti{};
-    int dbm{};
-
     // RECEIVE_RLS_MESSAGE
+    int cellId{};
     std::unique_ptr<rls::RlsMessage> msg{};
+
+    // SIGNAL_CHANGED
+    int dbm{};
 
     explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {

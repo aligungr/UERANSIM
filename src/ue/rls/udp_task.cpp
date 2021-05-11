@@ -25,7 +25,7 @@ namespace nr::ue
 {
 
 RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, const std::vector<std::string> &searchSpace)
-    : m_ctlTask{}, m_sti{sti}, m_searchSpace{}, m_cells{}, m_lastLoop{}
+    : m_ctlTask{}, m_sti{sti}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
@@ -77,16 +77,25 @@ void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
     m_server->Send(addr, stream.data(), static_cast<size_t>(stream.length()));
 }
 
-void RlsUdpTask::send(uint64_t sti, const rls::RlsMessage &msg)
+void RlsUdpTask::send(int cellId, const rls::RlsMessage &msg)
 {
-    if (m_cells.count(sti))
+    if (m_cellIdToSti.count(cellId))
+    {
+        auto sti = m_cellIdToSti[cellId];
         sendRlsPdu(m_cells[sti].address, msg);
+    }
 }
 
 void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg)
 {
     if (msg->msgType == rls::EMessageType::HEARTBEAT_ACK)
     {
+        if (!m_cells.count(msg->sti))
+        {
+            m_cells[msg->sti].cellId = ++m_cellIdCounter;
+            m_cellIdToSti[m_cells[msg->sti].cellId] = msg->sti;
+        }
+
         int oldDbm = INT32_MIN;
         if (m_cells.count(msg->sti))
             oldDbm = m_cells[msg->sti].dbm;
@@ -98,7 +107,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         m_cells[msg->sti].dbm = newDbm;
 
         if (oldDbm != newDbm)
-            onSignalChangeOrLost(msg->sti);
+            onSignalChangeOrLost(m_cells[msg->sti].cellId);
         return;
     }
 
@@ -109,34 +118,45 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
     }
 
     auto *w = new NwUeRlsToRls(NwUeRlsToRls::RECEIVE_RLS_MESSAGE);
+    w->cellId = m_cells[msg->sti].cellId;
     w->msg = std::move(msg);
     m_ctlTask->push(w);
 }
 
-void RlsUdpTask::onSignalChangeOrLost(uint64_t sti)
+void RlsUdpTask::onSignalChangeOrLost(int cellId)
 {
+    int dbm = INT32_MIN;
+    if (m_cellIdToSti.count(cellId))
+    {
+        auto sti = m_cellIdToSti[cellId];
+        dbm = m_cells[sti].dbm;
+    }
+
     auto *w = new NwUeRlsToRls(NwUeRlsToRls::SIGNAL_CHANGED);
-    w->sti = sti;
-    w->dbm = m_cells.count(sti) ? m_cells[sti].dbm : INT32_MIN;
+    w->cellId = cellId;
+    w->dbm = dbm;
     m_ctlTask->push(w);
 }
 
 void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
 {
-    std::set<uint64_t> stiToRemove;
+    std::set<std::pair<uint64_t, int>> toRemove;
 
     for (auto &cell : m_cells)
     {
         auto delta = time - cell.second.lastSeen;
         if (delta > HEARTBEAT_THRESHOLD)
-            stiToRemove.insert(cell.first);
+            toRemove.insert({cell.first, cell.second.cellId});
     }
 
-    for (auto sti : stiToRemove)
-        m_cells.erase(sti);
+    for (auto cell : toRemove)
+    {
+        m_cells.erase(cell.first);
+        m_cellIdToSti.erase(cell.second);
+    }
 
-    for (auto sti : stiToRemove)
-        onSignalChangeOrLost(sti);
+    for (auto cell : toRemove)
+        onSignalChangeOrLost(cell.second);
 
     for (auto &addr : m_searchSpace)
     {
