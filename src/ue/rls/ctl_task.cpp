@@ -38,10 +38,10 @@ void RlsControlTask::onLoop()
         switch (w->present)
         {
         case NwUeRlsToRls::SIGNAL_CHANGED:
-            // TODO
+            handleSignalChange(w->cellId, w->dbm);
             break;
         case NwUeRlsToRls::RECEIVE_RLS_MESSAGE:
-            // TODO
+            handleRlsMessage(w->cellId, *w->msg);
             break;
         default:
             m_logger->unhandledNts(msg);

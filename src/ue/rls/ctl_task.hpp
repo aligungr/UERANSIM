@@ -34,6 +34,10 @@ class RlsControlTask : public NtsTask
 
   public:
     void initialize(RlsUdpTask *udpTask);
+
+  private: /* NTS related handlers */
+    void handleRlsMessage(int cellId, rls::RlsMessage &msg);
+    void handleSignalChange(int cellId, int dbm);
 };
 
 } // namespace nr::ue
