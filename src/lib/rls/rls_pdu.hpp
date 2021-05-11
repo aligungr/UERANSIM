@@ -105,9 +105,9 @@ struct RlsPduDelivery : RlsMessage
 struct RlsPduTransmission : RlsMessage
 {
     EPduType pduType{};
-    OctetString pdu{};
-    uint32_t payload{};
     uint32_t pduId{};
+    uint32_t payload{};
+    OctetString pdu{};
 
     explicit RlsPduTransmission(uint64_t sti) : RlsMessage(EMessageType::PDU_TRANSMISSION, sti)
     {
@@ -116,7 +116,7 @@ struct RlsPduTransmission : RlsMessage
 
 struct RlsPduTransmissionAck : RlsMessage
 {
-    std::vector<uint32_t> sequences;
+    std::vector<uint32_t> pduIds;
 
     explicit RlsPduTransmissionAck(uint64_t sti) : RlsMessage(EMessageType::PDU_TRANSMISSION_ACK, sti)
     {
