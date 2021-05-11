@@ -46,7 +46,7 @@ class RlsControlTask : public NtsTask
   public:
     void initialize(RlsUdpTask *udpTask);
 
-  private: /* Service Access Point */
+  private:
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);
     void handleSignalChange(int cellId, int dbm);
     void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
