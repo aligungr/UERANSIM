@@ -25,12 +25,12 @@ class RlsControlTask : public NtsTask
 {
   private:
     std::unique_ptr<Logger> m_logger;
+    uint64_t m_sti;
+    int m_servingCell;
     NtsTask *m_mainTask;
     RlsUdpTask *m_udpTask;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
-    uint64_t m_sti;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
-    int m_servingCell;
 
   public:
     explicit RlsControlTask(TaskBase *base, uint64_t sti);

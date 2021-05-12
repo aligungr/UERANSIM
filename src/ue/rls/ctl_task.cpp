@@ -23,7 +23,7 @@ namespace nr::ue
 {
 
 RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti)
-    : m_mainTask{}, m_udpTask{}, m_pduMap{}, m_sti{sti}, m_pendingAck{}, m_servingCell{}
+    : m_sti{sti}, m_servingCell{}, m_mainTask{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
