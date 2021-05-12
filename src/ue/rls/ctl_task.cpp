@@ -240,6 +240,9 @@ void RlsControlTask::onAckSendTimerExpired()
 
     for (auto &item : copy)
     {
+        if (!item.second.empty())
+            continue;
+
         rls::RlsPduTransmissionAck msg{m_sti};
         msg.pduIds = std::move(item.second);
 
