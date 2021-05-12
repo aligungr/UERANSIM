@@ -22,13 +22,15 @@ static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
 namespace nr::gnb
 {
 
-RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti) : m_sti{sti}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
+RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti)
+    : m_sti{sti}, m_mainTask{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger("rls-ctl");
 }
 
-void RlsControlTask::initialize(RlsUdpTask *udpTask)
+void RlsControlTask::initialize(NtsTask *mainTask, RlsUdpTask *udpTask)
 {
+    m_mainTask = mainTask;
     m_udpTask = udpTask;
 }
 
@@ -101,14 +103,14 @@ void RlsControlTask::handleSignalDetected(int ueId)
 {
     auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_DETECTED);
     w->ueId = ueId;
-    // TODO: push msg
+    m_mainTask->push(w);
 }
 
 void RlsControlTask::handleSignalLost(int ueId)
 {
     auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_LOST);
     w->ueId = ueId;
-    // TODO: push msg
+    m_mainTask->push(w);
 }
 
 void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
@@ -131,7 +133,7 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
             w->ueId = ueId;
             w->psi = static_cast<int>(m.payload);
             w->data = std::move(m.pdu);
-            // TODO push msg
+            m_mainTask->push(w);
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
@@ -139,7 +141,7 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
             w->ueId = ueId;
             w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
             w->data = std::move(m.pdu);
-            // TODO push msg
+            m_mainTask->push(w);
         }
         else
         {
@@ -162,7 +164,7 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
 
             auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
-            // TODO: push msg
+            m_mainTask->push(w);
             return;
         }
 
@@ -172,7 +174,7 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
 
             auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
-            // TODO: Send RLF
+            m_mainTask->push(w);
             return;
         }
 
@@ -221,7 +223,7 @@ void RlsControlTask::onAckControlTimerExpired()
     {
         auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::TRANSMISSION_FAILURE);
         w->pduList = std::move(transmissionFailures);
-        // TODO: push msg
+        m_mainTask->push(w);
     }
 }
 
