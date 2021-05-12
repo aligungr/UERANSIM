@@ -185,4 +185,39 @@ void RlsControlTask::handleDownlinkDataDelivery(int ueId, int psi, OctetString &
     m_udpTask->send(ueId, msg);
 }
 
+void RlsControlTask::onAckControlTimerExpired()
+{
+    int64_t current = utils::CurrentTimeMillis();
+
+    std::vector<rls::PduInfo> transmissionFailures;
+
+    for (auto &pdu : m_pduMap)
+    {
+        auto delta = current - pdu.second.sentTime;
+        if (delta > MAX_PDU_TTL)
+            transmissionFailures.push_back(std::move(pdu.second));
+    }
+
+    m_pduMap.clear();
+
+    if (!transmissionFailures.empty())
+    {
+        // TODO: send to upper layer
+    }
+}
+
+void RlsControlTask::onAckSendTimerExpired()
+{
+    auto copy = m_pendingAck;
+    m_pendingAck.clear();
+
+    for (auto &item : copy)
+    {
+        rls::RlsPduTransmissionAck msg{m_sti};
+        msg.pduIds = std::move(item.second);
+
+        m_udpTask->send(item.first, msg);
+    }
+}
+
 } // namespace nr::gnb
