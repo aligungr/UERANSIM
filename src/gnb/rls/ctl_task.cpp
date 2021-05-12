@@ -13,6 +13,12 @@
 static constexpr const size_t MAX_PDU_COUNT = 4096;
 static constexpr const int MAX_PDU_TTL = 3000;
 
+static constexpr const int TIMER_ID_ACK_CONTROL = 1;
+static constexpr const int TIMER_ID_ACK_SEND = 2;
+
+static constexpr const int TIMER_PERIOD_ACK_CONTROL = 1500;
+static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
+
 namespace nr::gnb
 {
 
@@ -28,6 +34,8 @@ void RlsControlTask::initialize(RlsUdpTask *udpTask)
 
 void RlsControlTask::onStart()
 {
+    setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
+    setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
 }
 
 void RlsControlTask::onLoop()
@@ -60,6 +68,20 @@ void RlsControlTask::onLoop()
         default:
             m_logger->unhandledNts(msg);
             break;
+        }
+        break;
+    }
+    case NtsMessageType::TIMER_EXPIRED: {
+        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        if (w->timerId == TIMER_ID_ACK_CONTROL)
+        {
+            setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
+            onAckControlTimerExpired();
+        }
+        else if (w->timerId == TIMER_ID_ACK_SEND)
+        {
+            setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
+            onAckSendTimerExpired();
         }
         break;
     }
