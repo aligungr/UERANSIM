@@ -21,10 +21,13 @@ class RlsControlTask : public NtsTask
 {
   private:
     std::unique_ptr<Logger> m_logger;
+    uint64_t m_sti;
     RlsUdpTask *m_udpTask;
+    std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
+    std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
   public:
-    explicit RlsControlTask(TaskBase *base);
+    explicit RlsControlTask(TaskBase *base, uint64_t sti);
     ~RlsControlTask() override = default;
 
   protected:
