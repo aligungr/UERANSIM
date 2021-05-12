@@ -18,6 +18,7 @@ struct PduInfo
     OctetString pdu;
     rrc::RrcChannel rrcChannel{};
     int64_t sentTime{};
+    int endPointId{};
 };
 
 enum class ERlfCause

@@ -178,6 +178,7 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
             return;
         }
 
+        m_pduMap[pduId].endPointId = cellId;
         m_pduMap[pduId].pdu = data.copy();
         m_pduMap[pduId].rrcChannel = channel;
         m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
