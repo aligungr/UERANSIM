@@ -93,15 +93,30 @@ struct NwGnbRlsToRls : NtsMessage
     {
         SIGNAL_DETECTED,
         SIGNAL_LOST,
-        RECEIVE_RLS_MESSAGE
+        RECEIVE_RLS_MESSAGE,
+        DOWNLINK_RRC,
+        DOWNLINK_DATA
     } present;
 
     // SIGNAL_DETECTED
     // SIGNAL_LOST
+    // DOWNLINK_RRC
+    // DOWNLINK_DATA
     int ueId{};
 
     // RECEIVE_RLS_MESSAGE
     std::unique_ptr<rls::RlsMessage> msg{};
+
+    // DOWNLINK_DATA
+    int psi{};
+
+    // DOWNLINK_DATA
+    // DOWNLINK_RRC
+    OctetString data;
+
+    // DOWNLINK_RRC
+    uint32_t pduId{};
+    rrc::RrcChannel rrcChannel{};
 
     explicit NwGnbRlsToRls(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RLS), present(present)
     {

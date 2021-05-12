@@ -46,6 +46,12 @@ void RlsControlTask::onLoop()
         case NwGnbRlsToRls::RECEIVE_RLS_MESSAGE:
             // TODO
             break;
+        case NwGnbRlsToRls::DOWNLINK_DATA:
+            // TODO
+            break;
+        case NwGnbRlsToRls::DOWNLINK_RRC:
+            // TODO
+            break;
         default:
             m_logger->unhandledNts(msg);
             break;
