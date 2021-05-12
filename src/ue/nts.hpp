@@ -254,13 +254,14 @@ struct NwUeRlsToRls : NtsMessage
         DOWNLINK_RRC,
         RADIO_LINK_FAILURE,
         TRANSMISSION_FAILURE,
+        ASSIGN_SERVING_CELL,
     } present;
 
     // RECEIVE_RLS_MESSAGE
     // UPLINK_RRC
     // DOWNLINK_RRC
     // SIGNAL_CHANGED
-    // UPLINK_DATA
+    // ASSIGN_SERVING_CELL
     int cellId{};
 
     // RECEIVE_RLS_MESSAGE

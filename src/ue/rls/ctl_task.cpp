@@ -23,7 +23,7 @@ namespace nr::ue
 {
 
 RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti)
-    : m_mainTask{}, m_udpTask{}, m_pduMap{}, m_sti{sti}, m_pendingAck{}
+    : m_mainTask{}, m_udpTask{}, m_pduMap{}, m_sti{sti}, m_pendingAck{}, m_servingCell{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -59,10 +59,13 @@ void RlsControlTask::onLoop()
             handleRlsMessage(w->cellId, *w->msg);
             break;
         case NwUeRlsToRls::UPLINK_DATA:
-            handleUplinkDataDelivery(w->cellId, w->psi, std::move(w->data));
+            handleUplinkDataDelivery(w->psi, std::move(w->data));
             break;
         case NwUeRlsToRls::UPLINK_RRC:
             handleUplinkRrcDelivery(w->cellId, w->pduId, w->rrcChannel, std::move(w->data));
+            break;
+        case NwUeRlsToRls::ASSIGN_SERVING_CELL:
+            m_servingCell = w->cellId;
             break;
         default:
             m_logger->unhandledNts(msg);
@@ -112,9 +115,12 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
 
         if (m.pduType == rls::EPduType::DATA)
         {
-            // NOTE: Data packet may be received from a cell other than serving cell
-            //  (This is not a problem for RRC, but for DATA), normally we should avoid this, no need for now.
-            (void)cellId;
+            if (cellId != m_servingCell)
+            {
+                // NOTE: Data packet may be received from a cell other than serving cell
+                //  Ignore the packet if this is the case. Other cell can only send RRC, but not DATA
+                return;
+            }
 
             auto *w = new NwUeRlsToRls(NwUeRlsToRls::DOWNLINK_DATA);
             w->psi = static_cast<int>(m.payload);
@@ -186,7 +192,7 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
     m_udpTask->send(cellId, msg);
 }
 
-void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &&data)
+void RlsControlTask::handleUplinkDataDelivery(int psi, OctetString &&data)
 {
     rls::RlsPduTransmission msg{m_sti};
     msg.pduType = rls::EPduType::DATA;
@@ -194,7 +200,7 @@ void RlsControlTask::handleUplinkDataDelivery(int cellId, int psi, OctetString &
     msg.payload = static_cast<uint32_t>(psi);
     msg.pduId = 0;
 
-    m_udpTask->send(cellId, msg);
+    m_udpTask->send(m_servingCell, msg);
 }
 
 void RlsControlTask::onAckControlTimerExpired()
