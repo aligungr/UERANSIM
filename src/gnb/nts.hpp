@@ -95,28 +95,46 @@ struct NwGnbRlsToRls : NtsMessage
         SIGNAL_LOST,
         RECEIVE_RLS_MESSAGE,
         DOWNLINK_RRC,
-        DOWNLINK_DATA
+        DOWNLINK_DATA,
+        UPLINK_RRC,
+        UPLINK_DATA,
+        RADIO_LINK_FAILURE,
+        TRANSMISSION_FAILURE,
     } present;
 
     // SIGNAL_DETECTED
     // SIGNAL_LOST
     // DOWNLINK_RRC
     // DOWNLINK_DATA
+    // UPLINK_DATA
+    // UPLINK_RRC
     int ueId{};
 
     // RECEIVE_RLS_MESSAGE
     std::unique_ptr<rls::RlsMessage> msg{};
 
     // DOWNLINK_DATA
+    // UPLINK_DATA
     int psi{};
 
     // DOWNLINK_DATA
     // DOWNLINK_RRC
+    // UPLINK_DATA
+    // UPLINK_RRC
     OctetString data;
 
     // DOWNLINK_RRC
     uint32_t pduId{};
+
+    // DOWNLINK_RRC
+    // UPLINK_RRC
     rrc::RrcChannel rrcChannel{};
+
+    // RADIO_LINK_FAILURE
+    rls::ERlfCause rlfCause{};
+
+    // TRANSMISSION_FAILURE
+    std::vector<rls::PduInfo> pduList;
 
     explicit NwGnbRlsToRls(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RLS), present(present)
     {

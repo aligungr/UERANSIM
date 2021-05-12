@@ -99,12 +99,16 @@ void RlsControlTask::onQuit()
 
 void RlsControlTask::handleSignalDetected(int ueId)
 {
-    // TODO: tranparently notify upper layer
+    auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_DETECTED);
+    w->ueId = ueId;
+    // TODO: push msg
 }
 
 void RlsControlTask::handleSignalLost(int ueId)
 {
-    // TODO: tranparently notify upper layer
+    auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_LOST);
+    w->ueId = ueId;
+    // TODO: push msg
 }
 
 void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
@@ -123,11 +127,19 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
 
         if (m.pduType == rls::EPduType::DATA)
         {
-            // TODO: send to the upper layer
+            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::UPLINK_DATA);
+            w->ueId = ueId;
+            w->psi = static_cast<int>(m.payload);
+            w->data = std::move(m.pdu);
+            // TODO push msg
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            // TODO: send to the upper layer
+            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::UPLINK_RRC);
+            w->ueId = ueId;
+            w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
+            w->data = std::move(m.pdu);
+            // TODO push msg
         }
         else
         {
@@ -148,7 +160,9 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            // TODO: Send RLF
+            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RADIO_LINK_FAILURE);
+            w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
+            // TODO: push msg
             return;
         }
 
@@ -156,6 +170,8 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
+            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RADIO_LINK_FAILURE);
+            w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
             // TODO: Send RLF
             return;
         }
@@ -202,7 +218,9 @@ void RlsControlTask::onAckControlTimerExpired()
 
     if (!transmissionFailures.empty())
     {
-        // TODO: send to upper layer
+        auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::TRANSMISSION_FAILURE);
+        w->pduList = std::move(transmissionFailures);
+        // TODO: push msg
     }
 }
 
