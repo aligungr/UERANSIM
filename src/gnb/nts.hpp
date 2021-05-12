@@ -15,7 +15,7 @@
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
 #include <lib/asn/utils.hpp>
-#include <lib/rls/rls_pdu.hpp>
+#include <lib/rls/rls_base.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <lib/sctp/sctp.hpp>
 #include <utils/network.hpp>
