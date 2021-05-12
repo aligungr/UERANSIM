@@ -208,16 +208,21 @@ void RlsControlTask::onAckControlTimerExpired()
 {
     int64_t current = utils::CurrentTimeMillis();
 
+    std::vector<uint32_t> transmissionFailureIds;
     std::vector<rls::PduInfo> transmissionFailures;
 
     for (auto &pdu : m_pduMap)
     {
         auto delta = current - pdu.second.sentTime;
         if (delta > MAX_PDU_TTL)
+        {
+            transmissionFailureIds.push_back(pdu.first);
             transmissionFailures.push_back(std::move(pdu.second));
+        }
     }
 
-    m_pduMap.clear();
+    for (auto id : transmissionFailureIds)
+        m_pduMap.erase(id);
 
     if (!transmissionFailures.empty())
     {
