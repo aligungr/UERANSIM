@@ -38,19 +38,19 @@ void RlsControlTask::onLoop()
         switch (w->present)
         {
         case NwGnbRlsToRls::SIGNAL_DETECTED:
-            // TODO
+            handleSignalDetected(w->ueId);
             break;
         case NwGnbRlsToRls::SIGNAL_LOST:
-            // TODO
+            handleSignalLost(w->ueId);
             break;
         case NwGnbRlsToRls::RECEIVE_RLS_MESSAGE:
-            // TODO
+            handleRlsMessage(w->ueId, *w->msg);
             break;
         case NwGnbRlsToRls::DOWNLINK_DATA:
-            // TODO
+            handleDownlinkDataDelivery(w->ueId, w->psi, std::move(w->data));
             break;
         case NwGnbRlsToRls::DOWNLINK_RRC:
-            // TODO
+            handleDownlinkRrcDelivery(w->ueId, w->pduId, w->rrcChannel, std::move(w->data));
             break;
         default:
             m_logger->unhandledNts(msg);
