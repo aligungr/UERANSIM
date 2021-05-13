@@ -6,7 +6,6 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-
 #include "task.hpp"
 
 #include <gnb/ngap/task.hpp>
