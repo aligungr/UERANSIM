@@ -15,7 +15,6 @@
 #include <utils/common.hpp>
 
 #include <asn/rrc/ASN_RRC_MIB.h>
-#include <asn/rrc/ASN_RRC_PLMN-Identity.h>
 #include <asn/rrc/ASN_RRC_PLMN-IdentityInfo.h>
 #include <asn/rrc/ASN_RRC_PLMN-IdentityInfoList.h>
 #include <asn/rrc/ASN_RRC_SIB1.h>
