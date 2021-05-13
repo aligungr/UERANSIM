@@ -15,6 +15,9 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 
+static constexpr const int TIMER_ID_SI_BROADCAST = 1;
+static constexpr const int TIMER_PERIOD_SI_BROADCAST = 5000;
+
 namespace nr::gnb
 {
 
@@ -25,6 +28,7 @@ GnbRrcTask::GnbRrcTask(TaskBase *base) : m_base{base}, m_ueCtx{}, m_tidCounter{}
 
 void GnbRrcTask::onStart()
 {
+    setTimer(TIMER_ID_SI_BROADCAST, TIMER_PERIOD_SI_BROADCAST);
 }
 
 void GnbRrcTask::onQuit()
@@ -74,6 +78,15 @@ void GnbRrcTask::onLoop()
         case NwGnbNgapToRrc::PAGING:
             handlePaging(w->uePagingTmsi, w->taiListForPaging);
             break;
+        }
+        break;
+    }
+    case NtsMessageType::TIMER_EXPIRED: {
+        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        if (w->timerId == TIMER_ID_SI_BROADCAST)
+        {
+            setTimer(TIMER_ID_SI_BROADCAST, TIMER_PERIOD_SI_BROADCAST);
+            onBroadcastTimerExpired();
         }
         break;
     }

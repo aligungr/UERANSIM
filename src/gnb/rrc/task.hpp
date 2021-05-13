@@ -90,6 +90,10 @@ class GnbRrcTask : public NtsTask
     void receiveRrcMessage(int ueId, ASN_RRC_UL_CCCH_Message *msg);
     void receiveRrcMessage(int ueId, ASN_RRC_UL_CCCH1_Message *msg);
     void receiveRrcMessage(int ueId, ASN_RRC_UL_DCCH_Message *msg);
+
+    /* System Information Broadcast related */
+    void onBroadcastTimerExpired();
+    void triggerSysInfoBroadcast();
 };
 
 } // namespace nr::gnb
