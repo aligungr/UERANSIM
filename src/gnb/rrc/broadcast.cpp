@@ -9,10 +9,19 @@
 #include "task.hpp"
 
 #include <gnb/ngap/task.hpp>
+#include <lib/asn/rrc.hpp>
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
+#include <utils/common.hpp>
 
 #include <asn/rrc/ASN_RRC_MIB.h>
+#include <asn/rrc/ASN_RRC_PLMN-Identity.h>
+#include <asn/rrc/ASN_RRC_PLMN-IdentityInfo.h>
+#include <asn/rrc/ASN_RRC_PLMN-IdentityInfoList.h>
+#include <asn/rrc/ASN_RRC_SIB1.h>
+#include <asn/rrc/ASN_RRC_UAC-BarringInfoSet.h>
+#include <asn/rrc/ASN_RRC_UAC-BarringInfoSetIndex.h>
+#include <asn/rrc/ASN_RRC_UAC-BarringInfoSetList.h>
 
 namespace nr::gnb
 {
@@ -38,6 +47,40 @@ static ASN_RRC_BCCH_BCH_Message *ConstructMibMessage(bool barred, bool intraFreq
     return pdu;
 }
 
+static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int tac, int64_t nci, const Plmn &plmn)
+{
+    auto *pdu = asn::New<ASN_RRC_BCCH_DL_SCH_Message>();
+    pdu->message.present = ASN_RRC_BCCH_DL_SCH_MessageType_PR_c1;
+    pdu->message.choice.c1 = asn::NewFor(pdu->message.choice.c1);
+    pdu->message.choice.c1->present = ASN_RRC_BCCH_DL_SCH_MessageType__c1_PR_systemInformationBlockType1;
+    pdu->message.choice.c1->choice.systemInformationBlockType1 = asn::New<ASN_RRC_SIB1>();
+
+    auto &sib1 = *pdu->message.choice.c1->choice.systemInformationBlockType1;
+
+    if (cellReserved)
+    {
+        sib1.cellAccessRelatedInfo.cellReservedForOtherUse =
+            asn::NewFor(sib1.cellAccessRelatedInfo.cellReservedForOtherUse);
+        *sib1.cellAccessRelatedInfo.cellReservedForOtherUse =
+            ASN_RRC_CellAccessRelatedInfo__cellReservedForOtherUse_true;
+    }
+
+    auto *plmnId = asn::rrc::NewPlmnId(plmn);
+
+    auto *plmnInfo = asn::New<ASN_RRC_PLMN_IdentityInfo>();
+    plmnInfo->cellReservedForOperatorUse = cellReserved
+                                               ? ASN_RRC_PLMN_IdentityInfo__cellReservedForOperatorUse_reserved
+                                               : ASN_RRC_PLMN_IdentityInfo__cellReservedForOperatorUse_notReserved;
+    plmnInfo->trackingAreaCode = asn::NewFor(plmnInfo->trackingAreaCode);
+    asn::SetBitStringInt<24>(tac, *plmnInfo->trackingAreaCode);
+    asn::SetBitStringLong<36>(nci, plmnInfo->cellIdentity);
+    asn::SequenceAdd(plmnInfo->plmn_IdentityList, plmnId);
+
+    asn::SequenceAdd(sib1.cellAccessRelatedInfo.plmn_IdentityList, plmnInfo);
+
+    return pdu;
+}
+
 void GnbRrcTask::onBroadcastTimerExpired()
 {
     triggerSysInfoBroadcast();
@@ -45,11 +88,14 @@ void GnbRrcTask::onBroadcastTimerExpired()
 
 void GnbRrcTask::triggerSysInfoBroadcast()
 {
-    ASN_RRC_BCCH_BCH_Message *msg = ConstructMibMessage(m_isBarred, m_intraFreqReselectAllowed);
+    auto *mib = ConstructMibMessage(m_isBarred, m_intraFreqReselectAllowed);
+    auto *sib1 = ConstructSib1Message(m_cellReserved, m_config->tac, m_config->nci, m_config->plmn);
 
-    sendRrcMessage(msg);
+    sendRrcMessage(mib);
+    sendRrcMessage(sib1);
 
-    asn::Free(asn_DEF_ASN_RRC_BCCH_BCH_Message, msg);
+    asn::Free(asn_DEF_ASN_RRC_BCCH_BCH_Message, mib);
+    asn::Free(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, sib1);
 }
 
 } // namespace nr::gnb

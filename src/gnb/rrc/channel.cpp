@@ -81,7 +81,7 @@ void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
     m_base->rlsTask->push(w);
 }
 
-void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, msg);
     if (pdu.length() == 0)
@@ -91,7 +91,7 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg)
     }
 
     auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
-    w->ueId = ueId;
+    w->ueId = 0;
     w->channel = rrc::RrcChannel::BCCH_DL_SCH;
     w->pdu = std::move(pdu);
     m_base->rlsTask->push(w);

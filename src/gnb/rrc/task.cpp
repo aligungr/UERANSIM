@@ -24,6 +24,7 @@ namespace nr::gnb
 GnbRrcTask::GnbRrcTask(TaskBase *base) : m_base{base}, m_ueCtx{}, m_tidCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger("rrc");
+    m_config = m_base->config;
 }
 
 void GnbRrcTask::onStart()

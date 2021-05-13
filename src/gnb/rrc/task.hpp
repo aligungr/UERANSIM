@@ -42,12 +42,14 @@ class GnbRrcTask : public NtsTask
 {
   private:
     TaskBase *m_base;
+    GnbConfig *m_config;
     std::unique_ptr<Logger> m_logger;
     std::unordered_map<int, RrcUeContext *> m_ueCtx;
     int m_tidCounter;
 
     bool m_isBarred = true;
     bool m_intraFreqReselectAllowed = true;
+    bool m_cellReserved = false;
 
     friend class GnbCmdHandler;
 
@@ -83,7 +85,7 @@ class GnbRrcTask : public NtsTask
 
     /* RRC channel send message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
-    void sendRrcMessage(int ueId, ASN_RRC_BCCH_DL_SCH_Message *msg);
+    void sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg);
     void sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg);
     void sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_PCCH_Message *msg);
