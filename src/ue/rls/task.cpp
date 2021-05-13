@@ -7,45 +7,30 @@
 //
 
 #include "task.hpp"
-#include <ue/nts.hpp>
+
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
-
-static constexpr const int TIMER_ID_MEASUREMENT = 1;
-static constexpr const int TIMER_PERIOD_MEASUREMENT_MIN = 1;
-static constexpr const int TIMER_PERIOD_MEASUREMENT_MAX = 2000;
-
-static constexpr const int TIMER_ID_RAPID_LAUNCH = 2;
-static constexpr const int TIMER_PERIOD_RAPID_LAUNCH = 750;
 
 namespace nr::ue
 {
 
-UeRlsTask::UeRlsTask(TaskBase *base)
-    : m_base{base}, m_udpTask{}, m_cellSearchSpace{}, m_pendingMeasurements{}, m_activeMeasurements{},
-      m_pendingPlmnResponse{}, m_measurementPeriod{TIMER_PERIOD_MEASUREMENT_MIN}, m_servingCell{}
+UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "rls");
 
-    for (auto &addr : m_base->config->gnbSearchList)
-        m_cellSearchSpace.emplace_back(addr, cons::PortalPort);
-
     m_sti = utils::Random64();
+
+    m_udpTask = new RlsUdpTask(base, m_sti, base->config->gnbSearchList);
+    m_ctlTask = new RlsControlTask(base, m_sti);
+
+    m_udpTask->initialize(m_ctlTask);
+    m_ctlTask->initialize(this, m_udpTask);
 }
 
 void UeRlsTask::onStart()
 {
-    m_udpTask = new udp::UdpServerTask(this);
-
-    std::vector<InetAddress> gnbSearchList{};
-    for (auto &ip : m_base->config->gnbSearchList)
-        gnbSearchList.emplace_back(ip, cons::PortalPort);
-
     m_udpTask->start();
-
-    setTimer(TIMER_ID_MEASUREMENT, m_measurementPeriod);
-    setTimer(TIMER_ID_RAPID_LAUNCH, TIMER_PERIOD_RAPID_LAUNCH);
-    onMeasurement();
+    m_ctlTask->start();
 }
 
 void UeRlsTask::onLoop()
@@ -56,59 +41,35 @@ void UeRlsTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RRC_TO_RLS: {
-        auto *w = dynamic_cast<NwUeRrcToRls *>(msg);
+    case NtsMessageType::UE_RLS_TO_RLS: {
+        auto *w = dynamic_cast<NwUeRlsToRls *>(msg);
         switch (w->present)
         {
-        case NwUeRrcToRls::PLMN_SEARCH_REQUEST:
-            plmnSearchRequested();
-            break;
-        case NwUeRrcToRls::CELL_SELECTION_COMMAND:
-            handleCellSelectionCommand(w->cellId, w->isSuitableCell);
-            break;
-        case NwUeRrcToRls::RRC_PDU_DELIVERY:
-            deliverUplinkPdu(rls::EPduType::RRC, std::move(w->pdu),
-                             OctetString::FromOctet4(static_cast<int>(w->channel)));
-            break;
-        case NwUeRrcToRls::RESET_STI:
-            m_sti = utils::Random64();
+        case NwUeRlsToRls::SIGNAL_CHANGED: {
+            m_logger->debug("signal changed cellId[%d] dbm[%d]", w->cellId, w->dbm);
             break;
         }
-        break;
-    }
-    case NtsMessageType::UE_APP_TO_RLS: {
-        auto *w = dynamic_cast<NwUeAppToRls *>(msg);
-        switch (w->present)
-        {
-        case NwUeAppToRls::DATA_PDU_DELIVERY: {
-            deliverUplinkPdu(rls::EPduType::DATA, std::move(w->pdu), OctetString::FromOctet4(static_cast<int>(w->psi)));
+        case NwUeRlsToRls::DOWNLINK_DATA: {
+            m_logger->debug("downlink data psi[%d]", w->psi);
+            break;
+        }
+        case NwUeRlsToRls::DOWNLINK_RRC: {
+            m_logger->debug("downlink rrc cellId[%d]", w->cellId);
+            break;
+        }
+        case NwUeRlsToRls::RADIO_LINK_FAILURE: {
+            m_logger->debug("radio link failure [%d]", (int)w->rlfCause);
+            break;
+        }
+        case NwUeRlsToRls::TRANSMISSION_FAILURE: {
+            m_logger->debug("transmission failure [%d]", w->pduList.size());
+            break;
+        }
+        default: {
+            m_logger->unhandledNts(msg);
             break;
         }
         }
-        break;
-    }
-    case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
-        if (w->timerId == TIMER_ID_MEASUREMENT)
-        {
-            setTimer(TIMER_ID_MEASUREMENT, m_measurementPeriod);
-            onMeasurement();
-        }
-        else if (w->timerId == TIMER_ID_RAPID_LAUNCH)
-        {
-            slowDownMeasurements();
-        }
-        break;
-    }
-    case NtsMessageType::UDP_SERVER_RECEIVE: {
-        auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto rlsMsg = rls::DecodeRlsMessage(OctetView{w->packet});
-        if (rlsMsg == nullptr)
-        {
-            m_logger->err("Unable to decode RLS message");
-            break;
-        }
-        receiveRlsMessage(w->fromAddress, *rlsMsg);
         break;
     }
     default:
@@ -122,12 +83,9 @@ void UeRlsTask::onLoop()
 void UeRlsTask::onQuit()
 {
     m_udpTask->quit();
+    m_ctlTask->quit();
     delete m_udpTask;
-}
-
-void UeRlsTask::slowDownMeasurements()
-{
-    m_measurementPeriod = TIMER_PERIOD_MEASUREMENT_MAX;
+    delete m_ctlTask;
 }
 
 } // namespace nr::ue

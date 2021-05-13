@@ -8,41 +8,27 @@
 
 #include "task.hpp"
 
-#include <gnb/gtp/task.hpp>
-#include <gnb/nts.hpp>
-#include <gnb/rrc/task.hpp>
 #include <utils/common.hpp>
-#include <utils/constants.hpp>
-#include <utils/libc_error.hpp>
-
-static const int TIMER_ID_LOST_CONTROL = 1;
-static const int TIMER_PERIOD_LOST_CONTROL = 2000;
 
 namespace nr::gnb
 {
 
-GnbRlsTask::GnbRlsTask(TaskBase *base)
-    : m_base{base}, m_udpTask{}, m_powerOn{}, m_ueCtx{}, m_stiToUeId{}, m_ueIdCounter{}
+GnbRlsTask::GnbRlsTask(TaskBase *base) : m_base{base}
 {
     m_logger = m_base->logBase->makeUniqueLogger("rls");
     m_sti = utils::Random64();
+
+    m_udpTask = new RlsUdpTask(base, m_sti, base->config->phyLocation);
+    m_ctlTask = new RlsControlTask(base, m_sti);
+
+    m_udpTask->initialize(m_ctlTask);
+    m_ctlTask->initialize(this, m_udpTask);
 }
 
 void GnbRlsTask::onStart()
 {
-    try
-    {
-        m_udpTask = new udp::UdpServerTask(m_base->config->portalIp, cons::PortalPort, this);
-        m_udpTask->start();
-    }
-    catch (const LibError &e)
-    {
-        m_logger->err("RLS failure [%s]", e.what());
-        quit();
-        return;
-    }
-
-    setTimer(TIMER_ID_LOST_CONTROL, TIMER_PERIOD_LOST_CONTROL);
+    m_udpTask->start();
+    m_ctlTask->start();
 }
 
 void GnbRlsTask::onLoop()
@@ -53,51 +39,38 @@ void GnbRlsTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::GNB_RRC_TO_RLS: {
-        auto *w = dynamic_cast<NwGnbRrcToRls *>(msg);
+    case NtsMessageType::GNB_RLS_TO_RLS: {
+        auto *w = dynamic_cast<NwGnbRlsToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbRrcToRls::RRC_PDU_DELIVERY: {
-            handleDownlinkDelivery(w->ueId, rls::EPduType::RRC, std::move(w->pdu),
-                                   OctetString::FromOctet4(static_cast<int>(w->channel)));
+        case NwGnbRlsToRls::SIGNAL_DETECTED: {
+            m_logger->debug("new UE[%d] detected", w->ueId);
             break;
         }
-        case NwGnbRrcToRls::RADIO_POWER_ON: {
-            m_powerOn = true;
+        case NwGnbRlsToRls::SIGNAL_LOST: {
+            m_logger->debug("UE[%d] signal lost", w->ueId);
             break;
         }
-        }
-        break;
-    }
-    case NtsMessageType::GNB_GTP_TO_RLS: {
-        auto *w = dynamic_cast<NwGnbGtpToRls *>(msg);
-        switch (w->present)
-        {
-        case NwGnbGtpToRls::DATA_PDU_DELIVERY: {
-            handleDownlinkDelivery(w->ueId, rls::EPduType::DATA, std::move(w->pdu),
-                                   OctetString::FromOctet4(static_cast<int>(w->psi)));
+        case NwGnbRlsToRls::UPLINK_DATA: {
+            m_logger->debug("UPLINK_DATA ue[%d] psi[%d]", w->ueId, w->psi);
             break;
         }
-        }
-        break;
-    }
-    case NtsMessageType::UDP_SERVER_RECEIVE: {
-        auto *w = dynamic_cast<udp::NwUdpServerReceive *>(msg);
-        auto rlsMsg = rls::DecodeRlsMessage(OctetView{w->packet});
-        if (rlsMsg == nullptr)
-        {
-            m_logger->err("Unable to decode RLS message");
+        case NwGnbRlsToRls::UPLINK_RRC: {
+            m_logger->debug("UPLINK_RRC ue[%d]", w->ueId);
             break;
         }
-        receiveRlsMessage(w->fromAddress, *rlsMsg);
-        break;
-    }
-    case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
-        if (w->timerId == TIMER_ID_LOST_CONTROL)
-        {
-            setTimer(TIMER_ID_LOST_CONTROL, TIMER_PERIOD_LOST_CONTROL);
-            onPeriodicLostControl();
+        case NwGnbRlsToRls::RADIO_LINK_FAILURE: {
+            m_logger->debug("radio link failure [%d]", (int)w->rlfCause);
+            break;
+        }
+        case NwGnbRlsToRls::TRANSMISSION_FAILURE: {
+            m_logger->debug("transmission failure [%s]", "");
+            break;
+        }
+        default: {
+            m_logger->unhandledNts(msg);
+            break;
+        }
         }
         break;
     }
@@ -111,9 +84,10 @@ void GnbRlsTask::onLoop()
 
 void GnbRlsTask::onQuit()
 {
-    if (m_udpTask != nullptr)
-        m_udpTask->quit();
+    m_udpTask->quit();
+    m_ctlTask->quit();
     delete m_udpTask;
+    delete m_ctlTask;
 }
 
 } // namespace nr::gnb

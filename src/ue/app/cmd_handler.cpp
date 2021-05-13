@@ -114,8 +114,6 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
             {"5u-state", ToJson(m_base->nasTask->mm->m_usim->m_uState)},
-            {"camped-cell",
-             ::ToJson(m_base->rlsTask->m_servingCell.has_value() ? m_base->rlsTask->m_servingCell->gnbName : "")},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_usim->m_storedSuci)},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_usim->m_storedGuti)},
@@ -161,30 +159,6 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         config.sNssai = msg.cmd->sNssai;
         m_base->nasTask->sm->sendEstablishmentRequest(config);
         sendResult(msg.address, "PDU session establishment procedure triggered");
-        break;
-    }
-    case app::UeCliCommand::COVERAGE: {
-        auto &map = m_base->rlsTask->m_activeMeasurements;
-        if (map.empty())
-        {
-            sendResult(msg.address, "No cell exists in the range");
-            break;
-        }
-
-        std::vector<Json> cellInfo{};
-        for (auto &entry : map)
-        {
-            auto &measurement = entry.second;
-            cellInfo.push_back(Json::Obj({
-                {"gnb", measurement.gnbName},
-                {"plmn", ToJson(measurement.cellId.plmn)},
-                {"nci", measurement.cellId.nci},
-                {"tac", measurement.tac},
-                {"signal", std::to_string(measurement.dbm) + "dBm [" + SignalDescription(measurement.dbm) + "]"},
-            }));
-        }
-
-        sendResult(msg.address, Json::Arr(cellInfo).dumpYaml());
         break;
     }
     }

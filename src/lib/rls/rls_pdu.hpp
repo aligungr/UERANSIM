@@ -22,14 +22,12 @@ enum class EMessageType : uint8_t
 {
     RESERVED = 0,
 
-    CELL_INFO_REQUEST = 1, // TODO: deprecate
-    CELL_INFO_RESPONSE = 2, // TODO: deprecate
-
-    PDU_DELIVERY = 3, // TODO: deprecate
+    DEPRECATED1 = 1,
+    DEPRECATED2 = 2,
+    DEPRECATED3 = 3,
 
     HEARTBEAT = 4,
     HEARTBEAT_ACK = 5,
-
     PDU_TRANSMISSION = 6,
     PDU_TRANSMISSION_ACK = 7,
 };
@@ -65,39 +63,6 @@ struct RlsHeartBeatAck : RlsMessage
     int dbm{};
 
     explicit RlsHeartBeatAck(uint64_t sti) : RlsMessage(EMessageType::HEARTBEAT_ACK, sti)
-    {
-    }
-};
-
-struct RlsCellInfoRequest : RlsMessage
-{
-    Vector3 simPos{};
-
-    explicit RlsCellInfoRequest(uint64_t sti) : RlsMessage(EMessageType::CELL_INFO_REQUEST, sti)
-    {
-    }
-};
-
-struct RlsCellInfoResponse : RlsMessage
-{
-    GlobalNci cellId{};
-    int tac{};
-    int dbm{};
-    std::string gnbName{};
-    std::string linkIp{};
-
-    explicit RlsCellInfoResponse(uint64_t sti) : RlsMessage(EMessageType::CELL_INFO_RESPONSE, sti)
-    {
-    }
-};
-
-struct RlsPduDelivery : RlsMessage
-{
-    EPduType pduType{};
-    OctetString pdu{};
-    OctetString payload{};
-
-    explicit RlsPduDelivery(uint64_t sti) : RlsMessage(EMessageType::PDU_DELIVERY, sti)
     {
     }
 };
