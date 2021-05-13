@@ -8,6 +8,7 @@
 
 #include "ctl_task.hpp"
 
+#include <stdexcept>
 #include <utils/common.hpp>
 
 static constexpr const size_t MAX_PDU_COUNT = 4096;
@@ -156,6 +157,12 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
 
 void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data)
 {
+    if (ueId == 0 && pduId != 0)
+    {
+        // PDU ID must be not set in case of broadcast
+        throw std::runtime_error("");
+    }
+
     if (pduId != 0)
     {
         if (m_pduMap.count(pduId))

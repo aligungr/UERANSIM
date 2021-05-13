@@ -46,8 +46,8 @@ class GnbRrcTask : public NtsTask
     std::unordered_map<int, RrcUeContext *> m_ueCtx;
     int m_tidCounter;
 
-    bool m_isBarred = false;
-    bool m_intraFreqReselectAllowed = false;
+    bool m_isBarred = true;
+    bool m_intraFreqReselectAllowed = true;
 
     friend class GnbCmdHandler;
 

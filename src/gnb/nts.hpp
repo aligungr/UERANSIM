@@ -145,7 +145,6 @@ struct NwGnbRrcToRls : NtsMessage
 {
     enum PR
     {
-        RADIO_POWER_ON,
         RRC_PDU_DELIVERY,
     } present;
 

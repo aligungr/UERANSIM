@@ -182,6 +182,13 @@ void RlsUdpTask::initialize(NtsTask *ctlTask)
 
 void RlsUdpTask::send(int ueId, const rls::RlsMessage &msg)
 {
+    if (ueId == 0)
+    {
+        for (auto &ue : m_ueMap)
+            send(ue.first, msg);
+        return;
+    }
+
     if (!m_ueMap.count(ueId))
     {
         // ignore the message

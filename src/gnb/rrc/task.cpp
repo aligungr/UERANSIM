@@ -16,7 +16,7 @@
 #include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 
 static constexpr const int TIMER_ID_SI_BROADCAST = 1;
-static constexpr const int TIMER_PERIOD_SI_BROADCAST = 5000;
+static constexpr const int TIMER_PERIOD_SI_BROADCAST = 10'000;
 
 namespace nr::gnb
 {
@@ -64,7 +64,8 @@ void GnbRrcTask::onLoop()
         switch (w->present)
         {
         case NwGnbNgapToRrc::RADIO_POWER_ON: {
-            m_base->rlsTask->push(new NwGnbRrcToRls(NwGnbRrcToRls::RADIO_POWER_ON));
+            m_isBarred = false;
+            triggerSysInfoBroadcast();
             break;
         }
         case NwGnbNgapToRrc::NAS_DELIVERY: {
