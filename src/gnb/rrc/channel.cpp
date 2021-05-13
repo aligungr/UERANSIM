@@ -65,7 +65,7 @@ void GnbRrcTask::handleUplinkRrc(int ueId, rrc::RrcChannel channel, const OctetS
     }
 }
 
-void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_BCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_BCH_Message, msg);
     if (pdu.length() == 0)
@@ -75,7 +75,7 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_BCCH_BCH_Message *msg)
     }
 
     auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
-    w->ueId = ueId;
+    w->ueId = 0;
     w->channel = rrc::RrcChannel::BCCH_BCH;
     w->pdu = std::move(pdu);
     m_base->rlsTask->push(w);
