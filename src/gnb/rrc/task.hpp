@@ -44,6 +44,7 @@ class GnbRrcTask : public NtsTask
     TaskBase *m_base;
     GnbConfig *m_config;
     std::unique_ptr<Logger> m_logger;
+
     std::unordered_map<int, RrcUeContext *> m_ueCtx;
     int m_tidCounter;
 
