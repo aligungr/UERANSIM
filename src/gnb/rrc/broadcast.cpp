@@ -65,8 +65,6 @@ static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int 
             ASN_RRC_CellAccessRelatedInfo__cellReservedForOtherUse_true;
     }
 
-    auto *plmnId = asn::rrc::NewPlmnId(plmn);
-
     auto *plmnInfo = asn::New<ASN_RRC_PLMN_IdentityInfo>();
     plmnInfo->cellReservedForOperatorUse = cellReserved
                                                ? ASN_RRC_PLMN_IdentityInfo__cellReservedForOperatorUse_reserved
@@ -74,8 +72,7 @@ static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int 
     plmnInfo->trackingAreaCode = asn::NewFor(plmnInfo->trackingAreaCode);
     asn::SetBitStringInt<24>(tac, *plmnInfo->trackingAreaCode);
     asn::SetBitStringLong<36>(nci, plmnInfo->cellIdentity);
-    asn::SequenceAdd(plmnInfo->plmn_IdentityList, plmnId);
-
+    asn::SequenceAdd(plmnInfo->plmn_IdentityList, asn::rrc::NewPlmnId(plmn));
     asn::SequenceAdd(sib1.cellAccessRelatedInfo.plmn_IdentityList, plmnInfo);
 
     return pdu;
