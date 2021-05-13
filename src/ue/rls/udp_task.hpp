@@ -33,8 +33,8 @@ class RlsUdpTask : public NtsTask
 
   private:
     std::unique_ptr<Logger> m_logger;
-    NtsTask *m_ctlTask;
     udp::UdpServer *m_server;
+    NtsTask *m_ctlTask;
     uint64_t m_sti;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;

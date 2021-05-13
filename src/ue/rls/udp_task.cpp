@@ -25,7 +25,7 @@ namespace nr::ue
 {
 
 RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, const std::vector<std::string> &searchSpace)
-    : m_ctlTask{}, m_sti{sti}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
+    : m_server{}, m_ctlTask{}, m_sti{sti}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
