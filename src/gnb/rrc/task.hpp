@@ -49,9 +49,9 @@ class GnbRrcTask : public NtsTask
     int m_tidCounter;
 
     bool m_isBarred = true;
-    bool m_intraFreqReselectAllowed = true;
     bool m_cellReserved = false;
     UacAiBarringSet m_aiBarringSet = {};
+    bool m_intraFreqReselectAllowed = true;
 
     friend class GnbCmdHandler;
 
