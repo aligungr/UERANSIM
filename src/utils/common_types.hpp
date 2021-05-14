@@ -153,22 +153,22 @@ enum class ECellCategory
 
 struct UeCellMeasurement
 {
-	uint64_t sti{};
-    GlobalNci cellId{};
+    uint64_t sti{};
+    GlobalNci cellId;
     int tac{};
     int dbm{};
-    std::string gnbName{};
-    std::string linkIp{};
+    std::string gnbName;
+    std::string linkIp;
 };
 
 struct UeCellInfo
 {
     uint64_t sti{};
-    GlobalNci cellId{};
+    GlobalNci cellId;
     int tac{};
     ECellCategory cellCategory{};
-    std::string gnbName{};
-    std::string linkIp{};
+    std::string gnbName;
+    std::string linkIp;
 };
 
 struct Vector3
@@ -182,6 +182,17 @@ struct Vector3
     Vector3(int x, int y, int z) : x(x), y(y), z(z)
     {
     }
+};
+
+struct UacAiBarringSet
+{
+    bool ai1 = false;
+    bool ai2 = false;
+    bool ai11 = false;
+    bool ai12 = false;
+    bool ai13 = false;
+    bool ai14 = false;
+    bool ai15 = false;
 };
 
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);

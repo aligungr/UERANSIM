@@ -20,7 +20,8 @@
 #include <asn/rrc/ASN_RRC_SIB1.h>
 #include <asn/rrc/ASN_RRC_UAC-BarringInfoSet.h>
 #include <asn/rrc/ASN_RRC_UAC-BarringInfoSetIndex.h>
-#include <asn/rrc/ASN_RRC_UAC-BarringInfoSetList.h>
+#include <asn/rrc/ASN_RRC_UAC-BarringPerCat.h>
+#include <asn/rrc/ASN_RRC_UAC-BarringPerCatList.h>
 
 namespace nr::gnb
 {
@@ -46,7 +47,8 @@ static ASN_RRC_BCCH_BCH_Message *ConstructMibMessage(bool barred, bool intraFreq
     return pdu;
 }
 
-static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int tac, int64_t nci, const Plmn &plmn)
+static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int tac, int64_t nci, const Plmn &plmn,
+                                                         const UacAiBarringSet &aiBarringSet)
 {
     auto *pdu = asn::New<ASN_RRC_BCCH_DL_SCH_Message>();
     pdu->message.present = ASN_RRC_BCCH_DL_SCH_MessageType_PR_c1;
@@ -74,6 +76,30 @@ static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int 
     asn::SequenceAdd(plmnInfo->plmn_IdentityList, asn::rrc::NewPlmnId(plmn));
     asn::SequenceAdd(sib1.cellAccessRelatedInfo.plmn_IdentityList, plmnInfo);
 
+    asn::MakeNew(sib1.uac_BarringInfo);
+
+    auto *info = asn::New<ASN_RRC_UAC_BarringInfoSet>();
+    info->uac_BarringFactor = ASN_RRC_UAC_BarringInfoSet__uac_BarringFactor_p50;
+    info->uac_BarringTime = ASN_RRC_UAC_BarringInfoSet__uac_BarringTime_s4;
+
+    asn::SetBitStringInt<7>(bits::Consequential8(false, aiBarringSet.ai1, aiBarringSet.ai2, aiBarringSet.ai11,
+                                                 aiBarringSet.ai12, aiBarringSet.ai13, aiBarringSet.ai14,
+                                                 aiBarringSet.ai15),
+                            info->uac_BarringForAccessIdentity);
+
+    asn::SequenceAdd(sib1.uac_BarringInfo->uac_BarringInfoSetList, info);
+
+    asn::MakeNew(sib1.uac_BarringInfo->uac_BarringForCommon);
+
+    for (size_t i = 0; i < 63; i++)
+    {
+        auto *item = asn::New<ASN_RRC_UAC_BarringPerCat>();
+        item->accessCategory = static_cast<long>(i + 1);
+        item->uac_barringInfoSetIndex = 1;
+
+        asn::SequenceAdd(*sib1.uac_BarringInfo->uac_BarringForCommon, item);
+    }
+
     return pdu;
 }
 
@@ -85,7 +111,7 @@ void GnbRrcTask::onBroadcastTimerExpired()
 void GnbRrcTask::triggerSysInfoBroadcast()
 {
     auto *mib = ConstructMibMessage(m_isBarred, m_intraFreqReselectAllowed);
-    auto *sib1 = ConstructSib1Message(m_cellReserved, m_config->tac, m_config->nci, m_config->plmn);
+    auto *sib1 = ConstructSib1Message(m_cellReserved, m_config->tac, m_config->nci, m_config->plmn, m_aiBarringSet);
 
     sendRrcMessage(mib);
     sendRrcMessage(sib1);

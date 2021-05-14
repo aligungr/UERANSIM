@@ -51,6 +51,7 @@ class GnbRrcTask : public NtsTask
     bool m_isBarred = true;
     bool m_intraFreqReselectAllowed = true;
     bool m_cellReserved = false;
+    UacAiBarringSet m_aiBarringSet = {};
 
     friend class GnbCmdHandler;
 
