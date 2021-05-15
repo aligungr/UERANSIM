@@ -60,8 +60,7 @@ static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int 
 
     if (cellReserved)
     {
-        sib1.cellAccessRelatedInfo.cellReservedForOtherUse =
-            asn::NewFor(sib1.cellAccessRelatedInfo.cellReservedForOtherUse);
+        asn::MakeNew(sib1.cellAccessRelatedInfo.cellReservedForOtherUse);
         *sib1.cellAccessRelatedInfo.cellReservedForOtherUse =
             ASN_RRC_CellAccessRelatedInfo__cellReservedForOtherUse_true;
     }
