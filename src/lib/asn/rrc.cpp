@@ -8,9 +8,13 @@
 
 #include "rrc.hpp"
 
+#include <stdexcept>
+
 #include <lib/asn/utils.hpp>
 
+#include <asn/rrc/ASN_RRC_MCC-MNC-Digit.h>
 #include <asn/rrc/ASN_RRC_MCC.h>
+#include <asn/rrc/ASN_RRC_MNC.h>
 
 namespace asn::rrc
 {
@@ -46,6 +50,28 @@ ASN_RRC_MCC_MNC_Digit_t *NewMccMncDigit(int digit)
     auto *value = asn::New<ASN_RRC_MCC_MNC_Digit_t>();
     *value = digit;
     return value;
+}
+
+Plmn GetPlmnId(const ASN_RRC_PLMN_Identity &value)
+{
+    if (value.mcc == nullptr)
+        throw std::runtime_error("");
+
+    Plmn plmn;
+
+    asn::ForeachItem(*value.mcc, [&plmn](auto &i) {
+        plmn.mcc *= 10;
+        plmn.mcc += static_cast<int>(i);
+    });
+
+    asn::ForeachItem(value.mnc, [&plmn](auto &i) {
+        plmn.mnc *= 10;
+        plmn.mnc += static_cast<int>(i);
+    });
+
+    plmn.isLongMnc = value.mnc.list.count == 3;
+
+    return plmn;
 }
 
 } // namespace asn::rrc

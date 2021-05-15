@@ -32,9 +32,23 @@ class UserEquipment;
 struct UeCellDesc
 {
     int dbm{};
-    bool isBarredByMib = true;
-    bool isIntraFreqReselectAllowed = true;
-    bool isReserved = false;
+
+    struct
+    {
+        bool hasMib = false;
+        bool isBarred = true;
+        bool isIntraFreqReselectAllowed = true;
+    } mib{};
+
+    struct
+    {
+        bool hasSib1 = false;
+        bool isReserved = false;
+        int64_t nci = 0;
+        int tac = 0;
+        Plmn plmn;
+        UacAiBarringSet aiBarringSet;
+    } sib1{};
 };
 
 struct SupportedAlgs

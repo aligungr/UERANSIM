@@ -69,7 +69,7 @@ static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int 
     plmnInfo->cellReservedForOperatorUse = cellReserved
                                                ? ASN_RRC_PLMN_IdentityInfo__cellReservedForOperatorUse_reserved
                                                : ASN_RRC_PLMN_IdentityInfo__cellReservedForOperatorUse_notReserved;
-    plmnInfo->trackingAreaCode = asn::NewFor(plmnInfo->trackingAreaCode);
+    asn::MakeNew(plmnInfo->trackingAreaCode);
     asn::SetBitStringInt<24>(tac, *plmnInfo->trackingAreaCode);
     asn::SetBitStringLong<36>(nci, plmnInfo->cellIdentity);
     asn::SequenceAdd(plmnInfo->plmn_IdentityList, asn::rrc::NewPlmnId(plmn));
