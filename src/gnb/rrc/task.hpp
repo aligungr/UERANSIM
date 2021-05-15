@@ -101,6 +101,9 @@ class GnbRrcTask : public NtsTask
     /* System Information Broadcast related */
     void onBroadcastTimerExpired();
     void triggerSysInfoBroadcast();
+
+    /* RLS Service Access Point */
+    void handleRlsSapMessage(NwGnbRlsToRrc &msg);
 };
 
 } // namespace nr::gnb

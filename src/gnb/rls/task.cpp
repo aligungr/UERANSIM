@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 
+#include <gnb/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::gnb
@@ -44,7 +45,9 @@ void GnbRlsTask::onLoop()
         switch (w->present)
         {
         case NwGnbRlsToRls::SIGNAL_DETECTED: {
-            m_logger->debug("new UE[%d] detected", w->ueId);
+            auto *m = new NwGnbRlsToRrc(NwGnbRlsToRrc::SIGNAL_DETECTED);
+            m->ueId = w->ueId;
+            m_base->rrcTask->push(m);
             break;
         }
         case NwGnbRlsToRls::SIGNAL_LOST: {

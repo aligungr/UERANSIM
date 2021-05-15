@@ -36,17 +36,11 @@ struct NwGnbRlsToRrc : NtsMessage
 {
     enum PR
     {
-        RRC_PDU_DELIVERY,
-        SIGNAL_LOST
+        SIGNAL_DETECTED,
     } present;
 
-    // RRC_PDU_DELIVERY
-    // SIGNAL_LOST
+    // SIGNAL_DETECTED
     int ueId{};
-
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu{};
 
     explicit NwGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
     {
