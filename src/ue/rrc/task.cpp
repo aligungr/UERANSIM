@@ -77,30 +77,7 @@ void UeRrcTask::onLoop()
         break;
     }
     case NtsMessageType::UE_RLS_TO_RRC: {
-        auto *w = dynamic_cast<NwUeRlsToRrc *>(msg);
-        switch (w->present)
-        {
-        case NwUeRlsToRrc::PLMN_SEARCH_RESPONSE: {
-            auto *wr = new NwUeRrcToNas(NwUeRrcToNas::PLMN_SEARCH_RESPONSE);
-            wr->measurements = std::move(w->measurements);
-            m_base->nasTask->push(wr);
-            break;
-        }
-        case NwUeRlsToRrc::SERVING_CELL_CHANGE: {
-            auto *wr = new NwUeRrcToNas(NwUeRrcToNas::SERVING_CELL_CHANGE);
-            wr->servingCell = w->servingCell;
-            m_base->nasTask->push(wr);
-            break;
-        }
-        case NwUeRlsToRrc::RRC_PDU_DELIVERY: {
-            handleDownlinkRrc(w->channel, w->pdu);
-            break;
-        }
-        case NwUeRlsToRrc::RADIO_LINK_FAILURE: {
-            handleRadioLinkFailure();
-            break;
-        }
-        }
+        handleRlsSapMessage(*dynamic_cast<NwUeRlsToRrc *>(msg));
         break;
     }
     default:

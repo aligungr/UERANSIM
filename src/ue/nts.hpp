@@ -144,21 +144,13 @@ struct NwUeRlsToRrc : NtsMessage
 {
     enum PR
     {
-        PLMN_SEARCH_RESPONSE,
-        SERVING_CELL_CHANGE,
-        RRC_PDU_DELIVERY,
-        RADIO_LINK_FAILURE
+        DOWNLINK_RRC_DELIVERY
     } present;
 
-    // PLMN_SEARCH_RESPONSE
-    std::vector<UeCellMeasurement> measurements{};
-
-    // SERVING_CELL_CHANGE
-    UeCellInfo servingCell{};
-
-    // RRC_PDU_DELIVERY
+    // DOWNLINK_RRC_DELIVERY
+    int cellId{};
     rrc::RrcChannel channel{};
-    OctetString pdu{};
+    OctetString pdu;
 
     explicit NwUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
     {

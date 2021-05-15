@@ -66,7 +66,7 @@ class UeRrcTask : public NtsTask
 
   private:
     /* Handlers */
-    void handleDownlinkRrc(rrc::RrcChannel channel, const OctetString &pdu);
+    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
     void deliverInitialNas(OctetString &&nasPdu, long establishmentCause);
     void deliverUplinkNas(OctetString &&nasPdu);
 
@@ -78,18 +78,19 @@ class UeRrcTask : public NtsTask
 
     void handleRadioLinkFailure();
 
-    /* RRC channel send message */
+    /* RRC send and receive message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
+    void receiveRrcMessage(int, ASN_RRC_BCCH_BCH_Message *msg);
+    void receiveRrcMessage(int, ASN_RRC_BCCH_DL_SCH_Message *msg);
+    void receiveRrcMessage(int, ASN_RRC_DL_CCCH_Message *msg);
+    void receiveRrcMessage(int, ASN_RRC_DL_DCCH_Message *msg);
+    void receiveRrcMessage(int, ASN_RRC_PCCH_Message *msg);
 
-    /* RRC channel receive message */
-    void receiveRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_DL_CCCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
-    void receiveRrcMessage(ASN_RRC_PCCH_Message *msg);
+    /* RLS Service Access Point */
+    void handleRlsSapMessage(NwUeRlsToRrc &msg);
 };
 
 } // namespace nr::ue

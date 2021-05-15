@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 
+#include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -54,7 +55,11 @@ void UeRlsTask::onLoop()
             break;
         }
         case NwUeRlsToRls::DOWNLINK_RRC: {
-            m_logger->debug("downlink rrc cellId[%d]", w->cellId);
+            auto *m = new NwUeRlsToRrc(NwUeRlsToRrc::DOWNLINK_RRC_DELIVERY);
+            m->cellId = w->cellId;
+            m->channel = w->rrcChannel;
+            m->pdu = std::move(w->data);
+            m_base->rrcTask->push(m);
             break;
         }
         case NwUeRlsToRls::RADIO_LINK_FAILURE: {
