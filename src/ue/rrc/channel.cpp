@@ -146,7 +146,18 @@ void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)
 
 void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg)
 {
-    // TODO
+    if (msg->message.present != ASN_RRC_BCCH_DL_SCH_MessageType_PR_c1)
+        return;
+
+    auto &c1 = msg->message.choice.c1;
+    switch (c1->present)
+    {
+    case ASN_RRC_BCCH_DL_SCH_MessageType__c1_PR_systemInformationBlockType1:
+        receiveSib1(cellId, *c1->choice.systemInformationBlockType1);
+        break;
+    default:
+        break;
+    }
 }
 
 void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)

@@ -39,6 +39,7 @@ extern "C"
     struct ASN_RRC_RRCRelease;
     struct ASN_RRC_Paging;
     struct ASN_RRC_MIB;
+    struct ASN_RRC_SIB1;
 }
 
 namespace nr::ue
@@ -105,6 +106,7 @@ class UeRrcTask : public NtsTask
 
     /* System Information */
     void receiveMib(int cellId, const ASN_RRC_MIB &msg);
+    void receiveSib1(int cellId, const ASN_RRC_SIB1 &msg);
 };
 
 } // namespace nr::ue

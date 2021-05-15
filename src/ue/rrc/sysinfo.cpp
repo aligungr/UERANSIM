@@ -27,4 +27,9 @@ void UeRrcTask::receiveMib(int cellId, const ASN_RRC_MIB &msg)
     desc.isIntraFreqReselectAllowed = msg.intraFreqReselection == ASN_RRC_MIB__intraFreqReselection_allowed;
 }
 
+void UeRrcTask::receiveSib1(int cellId, const ASN_RRC_SIB1 &msg)
+{
+    // TODO
+}
+
 } // namespace nr::ue
