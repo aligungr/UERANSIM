@@ -82,7 +82,7 @@ class UeRrcTask : public NtsTask
 
     void handleRadioLinkFailure();
 
-    /* RRC send and receive message */
+    /* RRC Message Transmission and Receive */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
