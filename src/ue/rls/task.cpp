@@ -47,7 +47,10 @@ void UeRlsTask::onLoop()
         switch (w->present)
         {
         case NwUeRlsToRls::SIGNAL_CHANGED: {
-            m_logger->debug("signal changed cellId[%d] dbm[%d]", w->cellId, w->dbm);
+            auto *m = new NwUeRlsToRrc(NwUeRlsToRrc::SIGNAL_CHANGED);
+            m->cellId = w->cellId;
+            m->dbm = w->dbm;
+            m_base->rrcTask->push(m);
             break;
         }
         case NwUeRlsToRls::DOWNLINK_DATA: {

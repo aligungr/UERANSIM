@@ -144,13 +144,20 @@ struct NwUeRlsToRrc : NtsMessage
 {
     enum PR
     {
-        DOWNLINK_RRC_DELIVERY
+        DOWNLINK_RRC_DELIVERY,
+        SIGNAL_CHANGED
     } present;
 
     // DOWNLINK_RRC_DELIVERY
+    // SIGNAL_CHANGED
     int cellId{};
+
+    // DOWNLINK_RRC_DELIVERY
     rrc::RrcChannel channel{};
     OctetString pdu;
+
+    // SIGNAL_CHANGED
+    int dbm{};
 
     explicit NwUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
     {

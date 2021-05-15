@@ -7,7 +7,6 @@
 //
 
 #include "task.hpp"
-#include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
@@ -20,6 +19,10 @@ void UeRrcTask::handleRlsSapMessage(NwUeRlsToRrc &msg)
 {
     switch (msg.present)
     {
+    case NwUeRlsToRrc::SIGNAL_CHANGED: {
+        // TODO
+        break;
+    }
     case NwUeRlsToRrc::DOWNLINK_RRC_DELIVERY: {
         handleDownlinkRrc(msg.cellId, msg.channel, msg.pdu);
         break;
