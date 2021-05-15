@@ -20,7 +20,7 @@ void UeRrcTask::handleRlsSapMessage(NwUeRlsToRrc &msg)
     switch (msg.present)
     {
     case NwUeRlsToRrc::SIGNAL_CHANGED: {
-        // TODO
+        handleCellSignalChange(msg.cellId, msg.dbm);
         break;
     }
     case NwUeRlsToRrc::DOWNLINK_RRC_DELIVERY: {

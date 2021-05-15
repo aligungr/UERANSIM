@@ -91,6 +91,9 @@ class UeRrcTask : public NtsTask
 
     /* RLS Service Access Point */
     void handleRlsSapMessage(NwUeRlsToRrc &msg);
+
+    /* Cell Management */
+    void handleCellSignalChange(int cellId, int dbm);
 };
 
 } // namespace nr::ue
