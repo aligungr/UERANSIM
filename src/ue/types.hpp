@@ -32,6 +32,8 @@ class UserEquipment;
 struct UeCellDesc
 {
     int dbm{};
+    bool isBarred = true;
+    bool isIntraFreqReselectAllowed = true;
 };
 
 struct SupportedAlgs

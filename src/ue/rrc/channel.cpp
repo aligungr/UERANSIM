@@ -138,18 +138,18 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
     m_base->rlsTask->push(nw);
 }
 
-void UeRrcTask::receiveRrcMessage(int, ASN_RRC_BCCH_BCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)
 {
     if (msg->message.present == ASN_RRC_BCCH_BCH_MessageType_PR_mib)
-        receiveMib(*msg->message.choice.mib);
+        receiveMib(cellId, *msg->message.choice.mib);
 }
 
-void UeRrcTask::receiveRrcMessage(int, ASN_RRC_BCCH_DL_SCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg)
 {
     // TODO
 }
 
-void UeRrcTask::receiveRrcMessage(int, ASN_RRC_DL_CCCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_DL_CCCH_MessageType_PR_c1)
         return;
@@ -168,7 +168,7 @@ void UeRrcTask::receiveRrcMessage(int, ASN_RRC_DL_CCCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(int, ASN_RRC_DL_DCCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_DCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_DL_DCCH_MessageType_PR_c1)
         return;
@@ -187,7 +187,7 @@ void UeRrcTask::receiveRrcMessage(int, ASN_RRC_DL_DCCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(int, ASN_RRC_PCCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_PCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_PCCH_MessageType_PR_c1)
         return;

@@ -104,7 +104,7 @@ class UeRrcTask : public NtsTask
     bool hasSignalToCell(int cellId);
 
     /* System Information */
-    void receiveMib(const ASN_RRC_MIB &msg);
+    void receiveMib(int cellId, const ASN_RRC_MIB &msg);
 };
 
 } // namespace nr::ue

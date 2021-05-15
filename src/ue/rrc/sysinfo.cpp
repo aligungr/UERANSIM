@@ -14,12 +14,17 @@
 #include <ue/nts.hpp>
 #include <utils/common.hpp>
 
+#include <asn/rrc/ASN_RRC_MIB.h>
+
 namespace nr::ue
 {
 
-void UeRrcTask::receiveMib(const ASN_RRC_MIB &msg)
+void UeRrcTask::receiveMib(int cellId, const ASN_RRC_MIB &msg)
 {
-    // TODO
+    auto &desc = m_cellDesc[cellId];
+
+    desc.isBarred = msg.cellBarred == ASN_RRC_MIB__cellBarred_barred;
+    desc.isIntraFreqReselectAllowed = msg.intraFreqReselection == ASN_RRC_MIB__intraFreqReselection_allowed;
 }
 
 } // namespace nr::ue
