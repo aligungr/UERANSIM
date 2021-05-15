@@ -140,7 +140,8 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
 
 void UeRrcTask::receiveRrcMessage(int, ASN_RRC_BCCH_BCH_Message *msg)
 {
-    // TODO
+    if (msg->message.present == ASN_RRC_BCCH_BCH_MessageType_PR_mib)
+        receiveMib(*msg->message.choice.mib);
 }
 
 void UeRrcTask::receiveRrcMessage(int, ASN_RRC_BCCH_DL_SCH_Message *msg)

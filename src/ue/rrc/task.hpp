@@ -38,6 +38,7 @@ extern "C"
     struct ASN_RRC_RRCReject;
     struct ASN_RRC_RRCRelease;
     struct ASN_RRC_Paging;
+    struct ASN_RRC_MIB;
 }
 
 namespace nr::ue
@@ -101,6 +102,9 @@ class UeRrcTask : public NtsTask
     void notifyCellDetected(int cellId, int dbm);
     void notifyCellLost(int cellId);
     bool hasSignalToCell(int cellId);
+
+    /* System Information */
+    void receiveMib(const ASN_RRC_MIB &msg);
 };
 
 } // namespace nr::ue
