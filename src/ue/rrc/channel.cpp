@@ -78,21 +78,6 @@ void UeRrcTask::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oct
     }
 }
 
-void UeRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
-{
-    OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_BCH_Message, msg);
-    if (pdu.length() == 0)
-    {
-        m_logger->err("RRC BCCH-BCH encoding failed.");
-        return;
-    }
-
-    auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
-    nw->channel = rrc::RrcChannel::BCCH_BCH;
-    nw->pdu = std::move(pdu);
-    m_base->rlsTask->push(nw);
-}
-
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_UL_CCCH_Message, msg);
