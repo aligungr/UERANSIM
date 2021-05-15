@@ -9,14 +9,53 @@
 #include "task.hpp"
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/nts.hpp>
 
 namespace nr::ue
 {
 
 void UeRrcTask::handleCellSignalChange(int cellId, int dbm)
 {
-    // TODO
+    bool considerLost = dbm < -120;
+
+    if (!m_cellDesc.count(cellId))
+    {
+        if (!considerLost)
+            notifyCellDetected(cellId, dbm);
+    }
+    else
+    {
+        if (considerLost)
+            notifyCellLost(cellId);
+        else
+            m_cellDesc[cellId].dbm = dbm;
+    }
+}
+
+void UeRrcTask::notifyCellDetected(int cellId, int dbm)
+{
+    m_cellDesc[cellId] = {};
+    m_cellDesc[cellId].dbm = dbm;
+
+    m_logger->debug("New signal detected for cell[%d], total [%d] cells in coverage", cellId,
+                    static_cast<int>(m_cellDesc.size()));
+}
+
+void UeRrcTask::notifyCellLost(int cellId)
+{
+    if (!m_cellDesc.count(cellId))
+        return;
+
+    m_cellDesc.erase(cellId);
+
+    m_logger->debug("Signal lost for cell[%d], total [%d] cells in coverage", cellId,
+                    static_cast<int>(m_cellDesc.size()));
+
+    // TODO: handle other operations
+}
+
+bool UeRrcTask::hasSignalToCell(int cellId)
+{
+    return m_cellDesc.count(cellId);
 }
 
 } // namespace nr::ue

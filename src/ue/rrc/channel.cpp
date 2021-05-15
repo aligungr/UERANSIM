@@ -21,6 +21,9 @@ namespace nr::ue
 
 void UeRrcTask::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &rrcPdu)
 {
+    if (!hasSignalToCell(cellId))
+        return;
+
     switch (channel)
     {
     case rrc::RrcChannel::BCCH_BCH: {

@@ -10,7 +10,6 @@
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
-#include <utils/common.hpp>
 
 namespace nr::ue
 {

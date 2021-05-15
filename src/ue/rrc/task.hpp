@@ -8,15 +8,17 @@
 
 #pragma once
 
-#include <asn/rrc/ASN_RRC_InitialUE-Identity.h>
 #include <memory>
 #include <thread>
+#include <unordered_map>
+#include <vector>
+
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
-#include <unordered_map>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
-#include <vector>
+
+#include <asn/rrc/ASN_RRC_InitialUE-Identity.h>
 
 extern "C"
 {
@@ -52,6 +54,8 @@ class UeRrcTask : public NtsTask
 
     ASN_RRC_InitialUE_Identity_t m_initialId{};
     OctetString m_initialNasPdu{};
+
+    std::unordered_map<int, UeCellDesc> m_cellDesc{};
 
     friend class UeCmdHandler;
 
@@ -94,6 +98,9 @@ class UeRrcTask : public NtsTask
 
     /* Cell Management */
     void handleCellSignalChange(int cellId, int dbm);
+    void notifyCellDetected(int cellId, int dbm);
+    void notifyCellLost(int cellId);
+    bool hasSignalToCell(int cellId);
 };
 
 } // namespace nr::ue

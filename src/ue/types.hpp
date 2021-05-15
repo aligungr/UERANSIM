@@ -29,6 +29,11 @@ class UeRrcTask;
 class UeRlsTask;
 class UserEquipment;
 
+struct UeCellDesc
+{
+    int dbm{};
+};
+
 struct SupportedAlgs
 {
     bool nia1 = true;
