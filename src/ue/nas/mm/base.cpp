@@ -50,48 +50,73 @@ void NasMm::performMmCycle()
     if (m_mmState == EMmState::MM_NULL)
         return;
 
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
+    if (m_mmState == EMmState::MM_DEREGISTERED)
     {
         if (switchToECallInactivityIfNeeded())
             return;
 
-        if (m_usim->isValid())
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
         {
-            if (m_usim->m_servingCell.has_value())
+            if (m_usim->isValid())
             {
-                auto cellCategory = m_usim->m_servingCell->cellCategory;
+                if (m_usim->m_servingCell.has_value())
+                {
+                    auto cellCategory = m_usim->m_servingCell->cellCategory;
 
-                if (cellCategory == ECellCategory::SUITABLE_CELL)
-                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-                else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
-                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+                    if (cellCategory == ECellCategory::SUITABLE_CELL)
+                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+                    else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
+                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+                    else
+                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+                }
                 else
+                {
                     switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+                }
             }
             else
             {
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
             }
+            return;
         }
-        else
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
+            if (!m_timers->t3346.isRunning())
+                sendInitialRegistration(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+            return;
         }
-    }
-
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
-        m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE ||
-        m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
-        m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
-    {
-        // TODO
-        return;
-    }
-
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
-    {
-        if (!m_timers->t3346.isRunning())
-            sendInitialRegistration(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
+        {
+            performPlmnSelection();
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
+        {
+            performPlmnSelection();
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED)
+        {
+            return;
+        }
         return;
     }
 
@@ -99,25 +124,73 @@ void NasMm::performMmCycle()
     {
         if (startECallInactivityIfNeeded())
             return;
+
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_NA)
+        {
+            if (m_usim->m_servingCell.has_value())
+            {
+                auto cellCategory = m_usim->m_servingCell->cellCategory;
+
+                if (cellCategory == ECellCategory::SUITABLE_CELL)
+                    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+                else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
+                    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+                else
+                    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+            }
+            else
+            {
+                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+            }
+
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_LIMITED_SERVICE)
+        {
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
+        {
+            performPlmnSelection();
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
+        {
+            performPlmnSelection();
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_UPDATE_NEEDED)
+        {
+            return;
+        }
+        return;
     }
 
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_NA)
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
     {
-        if (m_usim->m_servingCell.has_value())
-        {
-            auto cellCategory = m_usim->m_servingCell->cellCategory;
+        return;
+    }
 
-            if (cellCategory == ECellCategory::SUITABLE_CELL)
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-            else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
-            else
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-        }
-        else
-        {
-            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-        }
+    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+    {
+        return;
+    }
+
+    if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        return;
     }
 }
 

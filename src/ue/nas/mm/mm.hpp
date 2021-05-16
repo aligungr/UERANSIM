@@ -151,6 +151,7 @@ class NasMm
     void handleNetworkSlicingSubscriptionChange();
 
   private: /* Radio */
+    void performPlmnSelection();
     void localReleaseConnection();
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();

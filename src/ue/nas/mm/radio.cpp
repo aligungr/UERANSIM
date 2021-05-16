@@ -16,6 +16,11 @@
 namespace nr::ue
 {
 
+void NasMm::performPlmnSelection()
+{
+    // TODO
+}
+
 void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
 {
     if (m_cmState == ECmState::CM_CONNECTED)
