@@ -73,7 +73,7 @@ Json ToJson(const EMmSubState &state)
     switch (state)
     {
     case EMmSubState::MM_NULL_NA:
-        return "MM-NULL-NA";
+        return "MM-NULL";
     case EMmSubState::MM_DEREGISTERED_NA:
         return "MM-DEREGISTERED/NA";
     case EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE:
@@ -93,7 +93,7 @@ Json ToJson(const EMmSubState &state)
     case EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED:
         return "MM-DEREGISTERED/INITIAL-REGISTRATION-NEEDED";
     case EMmSubState::MM_REGISTERED_INITIATED_NA:
-        return "MM-REGISTER-INITIATED/NA";
+        return "MM-REGISTER-INITIATED";
     case EMmSubState::MM_REGISTERED_NA:
         return "MM-REGISTERED/NA";
     case EMmSubState::MM_REGISTERED_NORMAL_SERVICE:
@@ -111,9 +111,9 @@ Json ToJson(const EMmSubState &state)
     case EMmSubState::MM_REGISTERED_UPDATE_NEEDED:
         return "MM-REGISTERED/UPDATE-NEEDED";
     case EMmSubState::MM_DEREGISTERED_INITIATED_NA:
-        return "MM-DEREGISTER-INITIATED/NA";
+        return "MM-DEREGISTER-INITIATED";
     case EMmSubState::MM_SERVICE_REQUEST_INITIATED_NA:
-        return "MM-SERVICE-REQUEST-INITIATED/NA";
+        return "MM-SERVICE-REQUEST-INITIATED";
     default:
         return "?";
     }
