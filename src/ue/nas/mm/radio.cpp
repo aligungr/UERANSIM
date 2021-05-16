@@ -95,6 +95,36 @@ void NasMm::performPlmnSelection()
     }
 
     m_base->shCtx.selectedPlmn.set(selected);
+
+    // Check if the RRC selected some cell
+    bool cellSelected{};
+    ECellCategory cellCategory{};
+
+    m_base->shCtx.currentCell.access([&cellSelected, &cellCategory](auto &value) {
+        if (value.cellId != 0)
+        {
+            cellSelected = true;
+            cellCategory = value.category;
+        }
+    });
+
+    if (cellSelected)
+    {
+        if (cellCategory == ECellCategory::SUITABLE_CELL)
+        {
+            if (m_mmState == EMmState::MM_REGISTERED)
+                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+            else
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+        }
+        else
+        {
+            if (m_mmState == EMmState::MM_REGISTERED)
+                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+            else
+                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+        }
+    }
 }
 
 void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
