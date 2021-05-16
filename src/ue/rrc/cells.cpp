@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 
@@ -64,7 +65,12 @@ bool UeRrcTask::hasSignalToCell(int cellId)
 
 void UeRrcTask::updateAvailablePlmns()
 {
-    // TODO
+    m_base->shCtx.availablePlmns.mutate([this](std::unordered_set<Plmn> &value) {
+        value.clear();
+        for (auto &cellDesc : m_cellDesc)
+            if (cellDesc.second.sib1.hasSib1)
+                value.insert(cellDesc.second.sib1.plmn);
+    });
 }
 
 } // namespace nr::ue

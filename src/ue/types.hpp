@@ -11,6 +11,7 @@
 #include <array>
 #include <atomic>
 #include <memory>
+#include <unordered_set>
 
 #include <lib/app/monitor.hpp>
 #include <lib/app/ue_ctl.hpp>
@@ -18,6 +19,7 @@
 #include <lib/nas/timer.hpp>
 #include <utils/common_types.hpp>
 #include <utils/json.hpp>
+#include <utils/locked.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -138,7 +140,7 @@ struct UeConfig
 
 struct UeSharedContext
 {
-    std::array<std::atomic<Plmn>, 16> availablePlmns{};
+    Locked<std::unordered_set<Plmn>> availablePlmns{};
 };
 
 struct TaskBase
