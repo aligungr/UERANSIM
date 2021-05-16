@@ -49,7 +49,7 @@ class Locked
     inline T get()
     {
         T copy{};
-        access([&copy](auto &value) { copy = value; });
+        access([&copy](const auto &value) { copy = value; });
         return copy;
     }
 
@@ -57,7 +57,7 @@ class Locked
     inline U get(Func &&fun)
     {
         U copy{};
-        access([&copy, &fun](auto &value) { copy = fun(value); });
+        access([&copy, &fun](const auto &value) { copy = fun(value); });
         return copy;
     }
 

@@ -104,8 +104,8 @@ class UeRrcTask : public NtsTask
 
     /* Idle Mode Operations */
     void performCellSelection();
-    bool lookForSuitableCell();
-    bool lookForAcceptableCell();
+    bool lookForSuitableCell(CurrentCellInfo &cellInfo);
+    bool lookForAcceptableCell(CurrentCellInfo &cellInfo);
 
     /* Cell Management */
     void handleCellSignalChange(int cellId, int dbm);

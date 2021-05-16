@@ -64,7 +64,7 @@ void RlsControlTask::onLoop()
         case NwUeRlsToRls::UPLINK_RRC:
             handleUplinkRrcDelivery(w->cellId, w->pduId, w->rrcChannel, std::move(w->data));
             break;
-        case NwUeRlsToRls::ASSIGN_SERVING_CELL:
+        case NwUeRlsToRls::ASSIGN_CURRENT_CELL:
             m_servingCell = w->cellId;
             break;
         default:

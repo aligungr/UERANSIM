@@ -12,6 +12,7 @@
 
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
+#include <ue/rls/task.hpp>
 
 namespace nr::ue
 {
@@ -21,17 +22,39 @@ void UeRrcTask::performCellSelection()
     if (m_state == ERrcState::RRC_CONNECTED)
         return;
 
-    if (!lookForSuitableCell())
-        lookForAcceptableCell();
+    int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
+
+    CurrentCellInfo cellInfo;
+
+    if (!lookForSuitableCell(cellInfo))
+    {
+        lookForAcceptableCell(cellInfo);
+    }
+
+    int selectedCell = cellInfo.cellId;
+
+    m_base->shCtx.currentCell.set(cellInfo);
+
+    if (selectedCell != 0 && selectedCell != lastCell)
+    {
+        m_logger->info("Selected cell id[%d] category[%s]", selectedCell, ToJson(cellInfo.category).str().c_str());
+    }
+
+    if (selectedCell != lastCell)
+    {
+        auto *w = new NwUeRrcToRls(NwUeRrcToRls::ASSIGN_CURRENT_CELL);
+        w->cellId = selectedCell;
+        m_base->rlsTask->push(w);
+
+        m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::NAS_NOTIFY));
+    }
 }
 
-bool UeRrcTask::lookForSuitableCell()
+bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo)
 {
     Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
     if (!selectedPlmn.hasValue())
         return false;
-
-    int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
 
     int outOfPlmnCells = 0;
     int sib1MissingCells = 0;
@@ -72,7 +95,7 @@ bool UeRrcTask::lookForSuitableCell()
         }
 
         // TODO: Check TAI if forbidden by service area or forbidden list
-        // TODO: Do we need to check by access identity
+        // TODO: Do we need to check by access identity?
 
         // It seems suitable
         candidates.push_back(item.first);
@@ -96,24 +119,16 @@ bool UeRrcTask::lookForSuitableCell()
     auto &selectedId = candidates[0];
     auto &selectedCell = m_cellDesc[selectedId];
 
-    CurrentCellInfo cellInfo;
+    cellInfo = {};
     cellInfo.cellId = selectedId;
     cellInfo.plmn = selectedCell.sib1.plmn;
     cellInfo.tac = selectedCell.sib1.tac;
     cellInfo.category = ECellCategory::SUITABLE_CELL;
 
-    m_base->shCtx.currentCell.set(cellInfo);
-
-    if (lastCell != selectedId)
-    {
-        m_logger->info("Selected cell id[%d] category[SUITABLE]", selectedId);
-        // TODO: Notify RLS
-        m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::NAS_NOTIFY));
-    }
     return true;
 }
 
-bool UeRrcTask::lookForAcceptableCell()
+bool UeRrcTask::lookForAcceptableCell(CurrentCellInfo &cellInfo)
 {
     // TODO
     return false;

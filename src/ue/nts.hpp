@@ -113,9 +113,12 @@ struct NwUeRrcToRls : NtsMessage
 {
     enum PR
     {
+        ASSIGN_CURRENT_CELL,
         RRC_PDU_DELIVERY,
-        RESET_STI,
     } present;
+
+    // ASSIGN_CURRENT_CELL
+    int cellId{};
 
     // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
@@ -251,14 +254,14 @@ struct NwUeRlsToRls : NtsMessage
         DOWNLINK_RRC,
         RADIO_LINK_FAILURE,
         TRANSMISSION_FAILURE,
-        ASSIGN_SERVING_CELL,
+        ASSIGN_CURRENT_CELL,
     } present;
 
     // RECEIVE_RLS_MESSAGE
     // UPLINK_RRC
     // DOWNLINK_RRC
     // SIGNAL_CHANGED
-    // ASSIGN_SERVING_CELL
+    // ASSIGN_CURRENT_CELL
     int cellId{};
 
     // RECEIVE_RLS_MESSAGE

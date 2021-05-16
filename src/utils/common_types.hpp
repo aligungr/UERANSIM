@@ -207,6 +207,7 @@ Json ToJson(const SingleSlice &v);
 Json ToJson(const NetworkSlice &v);
 Json ToJson(const PlmnSupport &v);
 Json ToJson(const EDeregCause &v);
+Json ToJson(const ECellCategory &v);
 
 namespace std
 {

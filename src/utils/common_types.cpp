@@ -76,6 +76,23 @@ Json ToJson(const EDeregCause &v)
     }
 }
 
+Json ToJson(const ECellCategory &v)
+{
+    switch (v)
+    {
+    case ECellCategory::BARRED_CELL:
+        return "BARRED";
+    case ECellCategory::RESERVED_CELL:
+        return "RESERVED";
+    case ECellCategory::ACCEPTABLE_CELL:
+        return "ACCEPTABLE";
+    case ECellCategory::SUITABLE_CELL:
+        return "SUITABLE";
+    default:
+        return "?";
+    }
+}
+
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
 {
     if ((int)lhs.sst != (int)rhs.sst)

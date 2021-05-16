@@ -80,6 +80,23 @@ void UeRlsTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::UE_RRC_TO_RLS: {
+        auto *w = dynamic_cast<NwUeRrcToRls *>(msg);
+        switch (w->present)
+        {
+        case NwUeRrcToRls::ASSIGN_CURRENT_CELL: {
+            auto *m = new NwUeRlsToRls(NwUeRlsToRls::ASSIGN_CURRENT_CELL);
+            m->cellId = w->cellId;
+            m_ctlTask->push(m);
+            break;
+        }
+        case NwUeRrcToRls::RRC_PDU_DELIVERY: {
+            break;
+        }
+        }
+
+        break;
+    }
     default:
         m_logger->unhandledNts(msg);
         break;
