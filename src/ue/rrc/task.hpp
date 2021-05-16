@@ -97,6 +97,9 @@ class UeRrcTask : public NtsTask
     /* RLS Service Access Point */
     void handleRlsSapMessage(NwUeRlsToRrc &msg);
 
+    /* State Management */
+    void performCycle();
+
     /* Cell Management */
     void handleCellSignalChange(int cellId, int dbm);
     void notifyCellDetected(int cellId, int dbm);

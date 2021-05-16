@@ -17,6 +17,9 @@
 #include <ue/rls/task.hpp>
 #include <utils/common.hpp>
 
+static constexpr const int TIMER_ID_MACHINE_CYCLE = 1;
+static constexpr const int TIMER_PERIOD_MACHINE_CYCLE = 2500;
+
 namespace nr::ue
 {
 
@@ -29,6 +32,7 @@ UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}
 
 void UeRrcTask::onStart()
 {
+    setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);
 }
 
 void UeRrcTask::onQuit()
@@ -67,6 +71,15 @@ void UeRrcTask::onLoop()
     }
     case NtsMessageType::UE_RLS_TO_RRC: {
         handleRlsSapMessage(*dynamic_cast<NwUeRlsToRrc *>(msg));
+        break;
+    }
+    case NtsMessageType::TIMER_EXPIRED: {
+        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        if (w->timerId == TIMER_ID_MACHINE_CYCLE)
+        {
+            setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);
+            performCycle();
+        }
         break;
     }
     default:
