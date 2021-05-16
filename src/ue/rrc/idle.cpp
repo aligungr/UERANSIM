@@ -29,18 +29,33 @@ void UeRrcTask::performCellSelection()
 
     if (!lookForSuitableCell(cellInfo, report))
     {
-        m_logger->warn(
-            "Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, [%d] barred",
-            static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells, report.reservedCells,
-            report.barredCells);
+        if (!m_cellDesc.empty())
+        {
+            m_logger->warn("Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
+                           "[%d] barred",
+                           static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
+                           report.reservedCells, report.barredCells);
+        }
+        else
+        {
+            m_logger->warn("Suitable cell selection failed, no cell is in coverage");
+        }
 
         report = {};
 
         if (!lookForAcceptableCell(cellInfo, report))
         {
-            m_logger->warn("Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] barred",
-                           static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
-                           report.barredCells);
+            if (!m_cellDesc.empty())
+            {
+                m_logger->warn("Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] barred",
+                               static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
+                               report.barredCells);
+            }
+            else
+            {
+                m_logger->warn("Acceptable cell selection failed, no cell is in coverage");
+            }
+
             m_logger->err("Cell selection failure, no suitable or acceptable cell found");
         }
     }
