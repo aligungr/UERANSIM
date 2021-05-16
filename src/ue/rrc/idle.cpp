@@ -25,20 +25,31 @@ void UeRrcTask::performCellSelection()
     int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
 
     CurrentCellInfo cellInfo;
+    CellSelectionReport report;
 
-    if (!lookForSuitableCell(cellInfo))
+    if (!lookForSuitableCell(cellInfo, report))
     {
-        lookForAcceptableCell(cellInfo);
+        m_logger->warn(
+            "Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, [%d] barred",
+            static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells, report.reservedCells,
+            report.barredCells);
+
+        report = {};
+
+        if (!lookForAcceptableCell(cellInfo, report))
+        {
+            m_logger->warn("Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] barred",
+                           static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
+                           report.barredCells);
+            m_logger->err("Cell selection failure, no suitable or acceptable cell found");
+        }
     }
 
     int selectedCell = cellInfo.cellId;
-
     m_base->shCtx.currentCell.set(cellInfo);
 
     if (selectedCell != 0 && selectedCell != lastCell)
-    {
         m_logger->info("Selected cell id[%d] category[%s]", selectedCell, ToJson(cellInfo.category).str().c_str());
-    }
 
     if (selectedCell != lastCell)
     {
@@ -50,16 +61,11 @@ void UeRrcTask::performCellSelection()
     }
 }
 
-bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo)
+bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo, CellSelectionReport &report)
 {
     Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
     if (!selectedPlmn.hasValue())
         return false;
-
-    int outOfPlmnCells = 0;
-    int sib1MissingCells = 0;
-    int barredCells = 0;
-    int reservedCells = 0;
 
     std::vector<int> candidates;
 
@@ -69,13 +75,13 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo)
 
         if (!cell.sib1.hasSib1)
         {
-            sib1MissingCells++;
+            report.sib1MissingCells++;
             continue;
         }
 
         if (cell.sib1.plmn != selectedPlmn)
         {
-            outOfPlmnCells++;
+            report.outOfPlmnCells++;
             continue;
         }
 
@@ -83,14 +89,14 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo)
         {
             if (cell.mib.isBarred)
             {
-                barredCells++;
+                report.barredCells++;
                 continue;
             }
         }
 
         if (cell.sib1.isReserved)
         {
-            reservedCells++;
+            report.reservedCells++;
             continue;
         }
 
@@ -102,12 +108,7 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo)
     }
 
     if (candidates.empty())
-    {
-        m_logger->err("Cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, [%d] barred",
-                      static_cast<int>(m_cellDesc.size()), outOfPlmnCells, sib1MissingCells, reservedCells,
-                      barredCells);
         return false;
-    }
 
     // Order candidates by signal strength
     std::sort(candidates.begin(), candidates.end(), [this](int a, int b) {
@@ -128,10 +129,78 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo)
     return true;
 }
 
-bool UeRrcTask::lookForAcceptableCell(CurrentCellInfo &cellInfo)
+bool UeRrcTask::lookForAcceptableCell(CurrentCellInfo &cellInfo, CellSelectionReport &report)
 {
-    // TODO
-    return false;
+    std::vector<int> candidates;
+
+    for (auto &item : m_cellDesc)
+    {
+        auto &cell = item.second;
+
+        if (!cell.sib1.hasSib1)
+        {
+            report.sib1MissingCells++;
+            continue;
+        }
+
+        if (cell.mib.hasMib)
+        {
+            if (cell.mib.isBarred)
+            {
+                report.barredCells++;
+                continue;
+            }
+        }
+
+        if (cell.sib1.isReserved)
+        {
+            report.reservedCells++;
+            continue;
+        }
+
+        // TODO: Check TAI if forbidden by service area or forbidden list
+        // TODO: Do we need to check by access identity?
+
+        // It seems acceptable
+        candidates.push_back(item.first);
+    }
+
+    if (candidates.empty())
+        return false;
+
+    // Order candidates by signal strength first
+    std::sort(candidates.begin(), candidates.end(), [this](int a, int b) {
+        auto &cellA = m_cellDesc[a];
+        auto &cellB = m_cellDesc[b];
+        return cellB.dbm < cellA.dbm;
+    });
+
+    // Then order candidates by PLMN priority if we have a selected PLMN
+    Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
+    if (selectedPlmn.hasValue())
+    {
+        // Using stable-sort here
+        std::stable_sort(candidates.begin(), candidates.end(), [this, &selectedPlmn](int a, int b) {
+            auto &cellA = m_cellDesc[a];
+            auto &cellB = m_cellDesc[b];
+
+            bool matchesA = cellA.sib1.hasSib1 && cellA.sib1.plmn == selectedPlmn;
+            bool matchesB = cellB.sib1.hasSib1 && cellB.sib1.plmn == selectedPlmn;
+
+            return matchesB < matchesA;
+        });
+    }
+
+    auto &selectedId = candidates[0];
+    auto &selectedCell = m_cellDesc[selectedId];
+
+    cellInfo = {};
+    cellInfo.cellId = selectedId;
+    cellInfo.plmn = selectedCell.sib1.plmn;
+    cellInfo.tac = selectedCell.sib1.tac;
+    cellInfo.category = ECellCategory::ACCEPTABLE_CELL;
+
+    return true;
 }
 
 } // namespace nr::ue

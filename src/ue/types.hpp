@@ -138,6 +138,14 @@ struct UeConfig
     }
 };
 
+struct CellSelectionReport
+{
+    int outOfPlmnCells{};
+    int sib1MissingCells{};
+    int reservedCells{};
+    int barredCells{};
+};
+
 struct CurrentCellInfo
 {
     int cellId{};
