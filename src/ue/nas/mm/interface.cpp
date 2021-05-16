@@ -46,6 +46,10 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
         handlePaging(msg.pagingTmsi);
         break;
     }
+    case NwUeRrcToNas::NAS_NOTIFY: {
+        triggerMmCycle();
+        break;
+    }
     }
 }
 

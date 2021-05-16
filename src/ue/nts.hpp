@@ -70,6 +70,7 @@ struct NwUeRrcToNas : NtsMessage
         RADIO_LINK_FAILURE,
         SERVING_CELL_CHANGE,
         PAGING,
+        NAS_NOTIFY,
     } present;
 
     // NAS_DELIVERY

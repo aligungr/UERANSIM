@@ -71,6 +71,8 @@ void UeRrcTask::updateAvailablePlmns()
             if (cellDesc.second.sib1.hasSib1)
                 value.insert(cellDesc.second.sib1.plmn);
     });
+
+    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::NAS_NOTIFY));
 }
 
 } // namespace nr::ue
