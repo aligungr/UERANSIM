@@ -57,28 +57,7 @@ void NasMm::performMmCycle()
 
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
         {
-            if (m_usim->isValid())
-            {
-                if (m_usim->m_servingCell.has_value())
-                {
-                    auto cellCategory = m_usim->m_servingCell->cellCategory;
-
-                    if (cellCategory == ECellCategory::SUITABLE_CELL)
-                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-                    else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
-                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-                    else
-                        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-                }
-                else
-                {
-                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-                }
-            }
-            else
-            {
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_SUPI);
-            }
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
             return;
         }
         else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
@@ -127,22 +106,7 @@ void NasMm::performMmCycle()
 
         if (m_mmSubState == EMmSubState::MM_REGISTERED_NA)
         {
-            if (m_usim->m_servingCell.has_value())
-            {
-                auto cellCategory = m_usim->m_servingCell->cellCategory;
-
-                if (cellCategory == ECellCategory::SUITABLE_CELL)
-                    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-                else if (cellCategory == ECellCategory::ACCEPTABLE_CELL)
-                    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
-                else
-                    switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-            }
-            else
-            {
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-            }
-
+            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
             return;
         }
         else if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
