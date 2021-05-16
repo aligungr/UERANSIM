@@ -138,10 +138,21 @@ struct UeConfig
     }
 };
 
+struct CurrentCellInfo
+{
+    int cellId{};
+    ECellCategory category{};
+    Plmn plmn{};
+    int tac{};
+
+    [[nodiscard]] bool hasValue() const;
+};
+
 struct UeSharedContext
 {
     Locked<std::unordered_set<Plmn>> availablePlmns;
     Locked<Plmn> selectedPlmn;
+    Locked<CurrentCellInfo> currentCell;
 };
 
 struct TaskBase

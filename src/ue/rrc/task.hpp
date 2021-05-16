@@ -100,6 +100,11 @@ class UeRrcTask : public NtsTask
     /* State Management */
     void performCycle();
 
+    /* Idle Mode Operations */
+    void performCellSelection();
+    bool lookForSuitableCell();
+    bool lookForAcceptableCell();
+
     /* Cell Management */
     void handleCellSignalChange(int cellId, int dbm);
     void notifyCellDetected(int cellId, int dbm);

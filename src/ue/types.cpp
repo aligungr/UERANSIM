@@ -274,4 +274,9 @@ Json ToJson(const EServiceReqCause &v)
     }
 }
 
+bool CurrentCellInfo::hasValue() const
+{
+    return cellId != 0;
+}
+
 } // namespace nr::ue

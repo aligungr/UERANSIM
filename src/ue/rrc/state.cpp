@@ -18,8 +18,17 @@ namespace nr::ue
 
 void UeRrcTask::performCycle()
 {
-    // TODO
+    if (m_state == ERrcState::RRC_CONNECTED)
+    {
+    }
+    else if (m_state == ERrcState::RRC_IDLE)
+    {
+        performCellSelection();
+    }
+    else if (m_state == ERrcState::RRC_INACTIVE)
+    {
+        performCellSelection();
+    }
 }
-
 
 } // namespace nr::ue

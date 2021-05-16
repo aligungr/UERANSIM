@@ -146,11 +146,10 @@ struct GlobalNci
 
 enum class ECellCategory
 {
-    UNDEFINED,
-    ACCEPTABLE_CELL,
-    SUITABLE_CELL,
     BARRED_CELL,
     RESERVED_CELL,
+    ACCEPTABLE_CELL,
+    SUITABLE_CELL,
 };
 
 struct UeCellMeasurement
