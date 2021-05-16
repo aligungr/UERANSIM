@@ -9,11 +9,13 @@
 #pragma once
 
 #include <array>
+#include <atomic>
+#include <memory>
+
 #include <lib/app/monitor.hpp>
 #include <lib/app/ue_ctl.hpp>
 #include <lib/nas/nas.hpp>
 #include <lib/nas/timer.hpp>
-#include <memory>
 #include <utils/common_types.hpp>
 #include <utils/json.hpp>
 #include <utils/logger.hpp>
@@ -134,6 +136,11 @@ struct UeConfig
     }
 };
 
+struct UeSharedContext
+{
+    std::array<std::atomic<Plmn>, 16> availablePlmns{};
+};
+
 struct TaskBase
 {
     UserEquipment *ue{};
@@ -142,6 +149,8 @@ struct TaskBase
     app::IUeController *ueController{};
     app::INodeListener *nodeListener{};
     NtsTask *cliCallbackTask{};
+
+    UeSharedContext shCtx{};
 
     UeAppTask *appTask{};
     NasTask *nasTask{};

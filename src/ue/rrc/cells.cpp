@@ -38,6 +38,8 @@ void UeRrcTask::notifyCellDetected(int cellId, int dbm)
 
     m_logger->debug("New signal detected for cell[%d], total [%d] cells in coverage", cellId,
                     static_cast<int>(m_cellDesc.size()));
+
+    updateAvailablePlmns();
 }
 
 void UeRrcTask::notifyCellLost(int cellId)
@@ -50,12 +52,19 @@ void UeRrcTask::notifyCellLost(int cellId)
     m_logger->debug("Signal lost for cell[%d], total [%d] cells in coverage", cellId,
                     static_cast<int>(m_cellDesc.size()));
 
+    updateAvailablePlmns();
+
     // TODO: handle other operations
 }
 
 bool UeRrcTask::hasSignalToCell(int cellId)
 {
     return m_cellDesc.count(cellId);
+}
+
+void UeRrcTask::updateAvailablePlmns()
+{
+    // TODO
 }
 
 } // namespace nr::ue

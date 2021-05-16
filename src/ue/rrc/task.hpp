@@ -102,6 +102,7 @@ class UeRrcTask : public NtsTask
     void notifyCellDetected(int cellId, int dbm);
     void notifyCellLost(int cellId);
     bool hasSignalToCell(int cellId);
+    void updateAvailablePlmns();
 
     /* System Information */
     void receiveMib(int cellId, const ASN_RRC_MIB &msg);
