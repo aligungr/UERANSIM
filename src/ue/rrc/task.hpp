@@ -90,9 +90,9 @@ class UeRrcTask : public NtsTask
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
     void receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg);
     void receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg);
-    void receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg);
-    void receiveRrcMessage(int cellId, ASN_RRC_DL_DCCH_Message *msg);
-    void receiveRrcMessage(int cellId, ASN_RRC_PCCH_Message *msg);
+    void receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg); // TODO
+    void receiveRrcMessage(int cellId, ASN_RRC_DL_DCCH_Message *msg); //  ..
+    void receiveRrcMessage(int cellId, ASN_RRC_PCCH_Message *msg);    //  Broadcast vs için camped olmayanları ignore
 
     /* Service Access Point */
     void handleRlsSapMessage(NwUeRlsToRrc &msg);

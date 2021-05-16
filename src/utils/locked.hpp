@@ -36,12 +36,16 @@ class Locked
     inline void access(Func &&fun)
     {
         // Şimdilik access ve mutate aynı, optimizasyon adına read-write lock kullanılabilir
-        mutate(fun);
+
+        std::lock_guard lk(m_mutex);
+        fun((const T &)m_value);
     }
 
     template <typename Func>
     inline void mutate(Func &&fun)
     {
+        // Şimdilik access ve mutate aynı, optimizasyon adına read-write lock kullanılabilir
+
         std::lock_guard lk(m_mutex);
         fun(m_value);
     }
