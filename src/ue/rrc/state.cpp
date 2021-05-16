@@ -16,6 +16,11 @@
 namespace nr::ue
 {
 
+void UeRrcTask::triggerCycle()
+{
+    push(new NwUeRrcToRrc(NwUeRrcToRrc::TRIGGER_CYCLE));
+}
+
 void UeRrcTask::performCycle()
 {
     if (m_state == ERrcState::RRC_CONNECTED)

@@ -10,8 +10,6 @@
 
 #include <algorithm>
 
-#include <lib/asn/rrc.hpp>
-#include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 

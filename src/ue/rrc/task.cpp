@@ -32,6 +32,8 @@ UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}
 
 void UeRrcTask::onStart()
 {
+    triggerCycle();
+
     setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);
 }
 
@@ -49,28 +51,21 @@ void UeRrcTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_NAS_TO_RRC: {
-        auto *w = dynamic_cast<NwUeNasToRrc *>(msg);
-        switch (w->present)
-        {
-        case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
-            deliverInitialNas(std::move(w->nasPdu), w->rrcEstablishmentCause);
-            break;
-        }
-        case NwUeNasToRrc::UPLINK_NAS_DELIVERY: {
-            deliverUplinkNas(std::move(w->nasPdu));
-            break;
-        }
-        case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
-            m_state = ERrcState::RRC_IDLE;
-            m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
-            m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::RESET_STI));
-            break;
-        }
-        }
+        handleNasSapMessage(*dynamic_cast<NwUeNasToRrc *>(msg));
         break;
     }
     case NtsMessageType::UE_RLS_TO_RRC: {
         handleRlsSapMessage(*dynamic_cast<NwUeRlsToRrc *>(msg));
+        break;
+    }
+    case NtsMessageType::UE_RRC_TO_RRC: {
+        auto *w = dynamic_cast<NwUeRrcToRrc *>(msg);
+        switch (w->present)
+        {
+        case NwUeRrcToRrc::TRIGGER_CYCLE:
+            performCycle();
+            break;
+        }
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {

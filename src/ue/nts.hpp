@@ -94,6 +94,7 @@ struct NwUeNasToRrc : NtsMessage
         LOCAL_RELEASE_CONNECTION,
         INITIAL_NAS_DELIVERY,
         UPLINK_NAS_DELIVERY,
+        RRC_NOTIFY,
     } present;
 
     // INITIAL_NAS_DELIVERY
@@ -121,6 +122,18 @@ struct NwUeRrcToRls : NtsMessage
     OctetString pdu{};
 
     explicit NwUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
+    {
+    }
+};
+
+struct NwUeRrcToRrc : NtsMessage
+{
+    enum PR
+    {
+        TRIGGER_CYCLE,
+    } present;
+
+    explicit NwUeRrcToRrc(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RRC), present(present)
     {
     }
 };

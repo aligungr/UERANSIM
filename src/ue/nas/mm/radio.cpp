@@ -89,7 +89,10 @@ void NasMm::performPlmnSelection()
         }
     }
     else if (lastSelectedPlmn != selected)
+    {
         m_logger->info("Selected PLMN[%s]", ToJson(selected).str().c_str());
+        m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::RRC_NOTIFY));
+    }
 
     m_base->shCtx.selectedPlmn.set(selected);
 }
