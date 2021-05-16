@@ -96,6 +96,11 @@ bool operator==(const Plmn &lhs, const Plmn &rhs)
     return lhs.isLongMnc == rhs.isLongMnc;
 }
 
+bool operator!=(const Plmn &lhs, const Plmn &rhs)
+{
+    return !(lhs == rhs);
+}
+
 bool operator==(const GlobalNci &lhs, const GlobalNci &rhs)
 {
     return lhs.plmn == rhs.plmn && lhs.nci == rhs.nci;
@@ -122,4 +127,9 @@ std::size_t std::hash<GlobalNci>::operator()(const GlobalNci &v) const noexcept
     utils::HashCombine(h, v.plmn);
     utils::HashCombine(h, v.nci);
     return h;
+}
+
+bool Plmn::hasValue() const
+{
+    return this->mcc != 0;
 }

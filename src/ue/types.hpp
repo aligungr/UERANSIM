@@ -140,7 +140,8 @@ struct UeConfig
 
 struct UeSharedContext
 {
-    Locked<std::unordered_set<Plmn>> availablePlmns{};
+    Locked<std::unordered_set<Plmn>> availablePlmns;
+    Locked<Plmn> selectedPlmn;
 };
 
 struct TaskBase

@@ -30,6 +30,8 @@ struct Plmn
     int mcc{};
     int mnc{};
     bool isLongMnc{};
+
+    [[nodiscard]] bool hasValue() const;
 };
 
 struct SingleSlice
@@ -197,6 +199,7 @@ struct UacAiBarringSet
 
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
 bool operator==(const Plmn &lhs, const Plmn &rhs);
+bool operator!=(const Plmn &lhs, const Plmn &rhs);
 bool operator==(const GlobalNci &lhs, const GlobalNci &rhs);
 
 Json ToJson(const Supi &v);

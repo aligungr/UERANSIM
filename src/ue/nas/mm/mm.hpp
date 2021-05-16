@@ -57,9 +57,11 @@ class NasMm
     // Network feature support information
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
     // Last time Service Request needed indication for Data
-    long m_lastTimeServiceReqNeededIndForData{};
+    int64_t m_lastTimeServiceReqNeededIndForData{};
     // Number of times the network failing the authentication check
     int m_nwConsecutiveAuthFailure{};
+    // Last time PLMN search failure logged
+    int64_t m_lastTimePlmnSearchFailureLogged{};
 
     friend class UeCmdHandler;
 

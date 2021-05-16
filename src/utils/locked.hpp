@@ -24,6 +24,8 @@ class Locked
     {
     }
 
+    static_assert(!std::is_reference<T>::value);
+
     Locked(const T &) = delete;
     Locked(T &&) = delete;
 
@@ -42,5 +44,17 @@ class Locked
     {
         std::lock_guard lk(m_mutex);
         fun(m_value);
+    }
+
+    inline T get()
+    {
+        T copy{};
+        access([&copy](auto &value) { copy = value; });
+        return copy;
+    }
+
+    inline void set(const T &value)
+    {
+        mutate([&value](auto &v) { v = value; });
     }
 };

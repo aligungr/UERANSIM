@@ -7,18 +7,75 @@
 //
 
 #include "mm.hpp"
+
 #include <algorithm>
+
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/sm/sm.hpp>
 #include <ue/rrc/task.hpp>
+#include <utils/common.hpp>
 
 namespace nr::ue
 {
 
 void NasMm::performPlmnSelection()
 {
-    // TODO
+    int64_t currentTime = utils::CurrentTimeMillis();
+
+    bool logFailures = currentTime - m_lastTimePlmnSearchFailureLogged >= 10'000;
+
+    Plmn lastSelectedPlmn = m_base->shCtx.selectedPlmn.get();
+
+    std::unordered_set<Plmn> plmns = m_base->shCtx.availablePlmns.get();
+
+    if (!m_usim->isValid() || plmns.empty())
+    {
+        if (logFailures)
+        {
+            if (!m_usim->isValid())
+                m_logger->warn("No PLMN can be selected, USIM is invalid");
+            else
+                m_logger->err("PLMN selection failure, no cells in coverage");
+            m_lastTimePlmnSearchFailureLogged = currentTime;
+        }
+
+        m_base->shCtx.selectedPlmn.set({});
+        return;
+    }
+
+    std::vector<Plmn> candidates;
+
+    for (auto &plmn : plmns)
+        if (plmn == m_base->config->hplmn)
+            candidates.push_back(plmn);
+
+    for (auto &plmn : plmns)
+    {
+        if (plmn == m_base->config->hplmn)
+            continue;
+        if (nas::utils::PlmnListContains(m_usim->m_forbiddenPlmnList, plmn))
+            continue;
+        if (nas::utils::ServiceAreaListForbidsPlmn(m_usim->m_serviceAreaList, nas::utils::PlmnFrom(plmn)))
+            continue;
+        if (nas::utils::PlmnListContains(m_usim->m_equivalentPlmnList, plmn))
+            candidates.push_back(plmn);
+    }
+
+    Plmn selected = candidates.empty() ? Plmn{} : candidates[0];
+
+    if (!selected.hasValue())
+    {
+        if (logFailures)
+        {
+            m_logger->err("No PLMN could be selected among [%d] PLMNs", static_cast<int>(plmns.size()));
+            m_lastTimePlmnSearchFailureLogged = currentTime;
+        }
+    }
+    else if (lastSelectedPlmn != selected)
+        m_logger->info("Selected PLMN[%s]", ToJson(selected).str().c_str());
+
+    m_base->shCtx.selectedPlmn.set(selected);
 }
 
 void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
