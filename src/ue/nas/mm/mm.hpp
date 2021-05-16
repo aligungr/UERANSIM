@@ -48,8 +48,6 @@ class NasMm
     EDeregCause m_lastDeregCause{};
     // Indicates the last service request cause
     EServiceReqCause m_lastServiceReqCause{};
-    // Last time PLMN search is triggered
-    long m_lastPlmnSearchTrigger{};
     // Registration attempt counter
     int m_regCounter{};
     // Service request attempt counter
@@ -154,7 +152,6 @@ class NasMm
 
   private: /* Radio */
     void localReleaseConnection();
-    void handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measures);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handleServingCellChange(const UeCellInfo &servingCell);

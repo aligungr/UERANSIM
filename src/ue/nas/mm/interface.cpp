@@ -23,10 +23,6 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
         handleRrcConnectionSetup();
         break;
     }
-    case NwUeRrcToNas::PLMN_SEARCH_RESPONSE: {
-        handlePlmnSearchResponse(msg.measurements);
-        break;
-    }
     case NwUeRrcToNas::NAS_DELIVERY: {
         OctetView buffer{msg.nasPdu};
         auto nasMessage = nas::DecodeNasMessage(buffer);

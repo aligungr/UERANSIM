@@ -48,10 +48,6 @@ void UeRrcTask::onLoop()
         auto *w = dynamic_cast<NwUeNasToRrc *>(msg);
         switch (w->present)
         {
-        case NwUeNasToRrc::PLMN_SEARCH_REQUEST: {
-            m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::PLMN_SEARCH_REQUEST));
-            break;
-        }
         case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
             deliverInitialNas(std::move(w->nasPdu), w->rrcEstablishmentCause);
             break;
@@ -64,13 +60,6 @@ void UeRrcTask::onLoop()
             m_state = ERrcState::RRC_IDLE;
             m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
             m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::RESET_STI));
-            break;
-        }
-        case NwUeNasToRrc::CELL_SELECTION_COMMAND: {
-            auto *wr = new NwUeRrcToRls(NwUeRrcToRls::CELL_SELECTION_COMMAND);
-            wr->cellId = w->cellId;
-            wr->isSuitableCell = w->isSuitableCell;
-            m_base->rlsTask->push(wr);
             break;
         }
         }

@@ -65,7 +65,6 @@ struct NwUeRrcToNas : NtsMessage
     enum PR
     {
         NAS_DELIVERY,
-        PLMN_SEARCH_RESPONSE,
         RRC_CONNECTION_SETUP,
         RRC_CONNECTION_RELEASE,
         RADIO_LINK_FAILURE,
@@ -75,9 +74,6 @@ struct NwUeRrcToNas : NtsMessage
 
     // NAS_DELIVERY
     OctetString nasPdu{};
-
-    // PLMN_SEARCH_RESPONSE
-    std::vector<UeCellMeasurement> measurements{};
 
     // SERVING_CELL_CHANGE
     UeCellInfo servingCell{};
@@ -94,11 +90,9 @@ struct NwUeNasToRrc : NtsMessage
 {
     enum PR
     {
-        PLMN_SEARCH_REQUEST,
         LOCAL_RELEASE_CONNECTION,
         INITIAL_NAS_DELIVERY,
         UPLINK_NAS_DELIVERY,
-        CELL_SELECTION_COMMAND,
     } present;
 
     // INITIAL_NAS_DELIVERY
@@ -107,10 +101,6 @@ struct NwUeNasToRrc : NtsMessage
 
     // INITIAL_NAS_DELIVERY
     long rrcEstablishmentCause{};
-
-    // CELL_SELECTION_COMMAND
-    GlobalNci cellId{};
-    bool isSuitableCell{}; // otherwise 'acceptable'
 
     explicit NwUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {
@@ -121,15 +111,9 @@ struct NwUeRrcToRls : NtsMessage
 {
     enum PR
     {
-        PLMN_SEARCH_REQUEST,
-        CELL_SELECTION_COMMAND,
         RRC_PDU_DELIVERY,
         RESET_STI,
     } present;
-
-    // CELL_SELECTION_COMMAND
-    GlobalNci cellId{};
-    bool isSuitableCell{}; // otherwise 'acceptable'
 
     // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
