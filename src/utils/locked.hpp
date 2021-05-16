@@ -33,14 +33,14 @@ class Locked
     Locked &operator=(Locked &&) = delete;
 
     template <typename Func>
-    inline void access(Func fun)
+    inline void access(Func&& fun)
     {
         // Şimdilik access ve mutate aynı, optimizasyon adına read-write lock kullanılabilir
         mutate(fun);
     }
 
     template <typename Func>
-    inline void mutate(Func fun)
+    inline void mutate(Func&& fun)
     {
         std::lock_guard lk(m_mutex);
         fun(m_value);
