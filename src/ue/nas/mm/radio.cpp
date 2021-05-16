@@ -23,7 +23,20 @@ void NasMm::performPlmnSelection()
 {
     int64_t currentTime = utils::CurrentTimeMillis();
 
-    bool logFailures = currentTime - m_lastTimePlmnSearchFailureLogged >= 10'000;
+    // If the state is PLMN_SEARCH instead of NO_CELL_AVAILABLE, then we log the errors more intensely.
+    int64_t loggingThreshold = m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
+                                       m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH
+                                   ? 1'000LL
+                                   : 10'000LL;
+
+    bool logFailures = currentTime - m_lastTimePlmnSearchFailureLogged >= loggingThreshold;
+
+    // If the device just switched on, then no error logging for PLMN selection failures
+    if (m_lastTimePlmnSearchFailureLogged == 0)
+    {
+        m_lastTimePlmnSearchFailureLogged = currentTime;
+        logFailures = false;
+    }
 
     Plmn lastSelectedPlmn = m_base->shCtx.selectedPlmn.get();
 
@@ -44,16 +57,19 @@ void NasMm::performPlmnSelection()
         return;
     }
 
+    // Determine candidate PLMNs from the list. Candidates are in priority order
     std::vector<Plmn> candidates;
 
+    // Highest priority is for HPLMN, so just look for HPLMN first.
     for (auto &plmn : plmns)
         if (plmn == m_base->config->hplmn)
             candidates.push_back(plmn);
 
+    // Then again look for the all PLMNS
     for (auto &plmn : plmns)
     {
         if (plmn == m_base->config->hplmn)
-            continue;
+            continue; // If it's the HPLMN, it's already added above
         if (nas::utils::PlmnListContains(m_usim->m_forbiddenPlmnList, plmn))
             continue;
         if (nas::utils::ServiceAreaListForbidsPlmn(m_usim->m_serviceAreaList, nas::utils::PlmnFrom(plmn)))
