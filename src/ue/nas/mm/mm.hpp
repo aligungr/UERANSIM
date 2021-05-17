@@ -64,6 +64,8 @@ class NasMm
     int m_nwConsecutiveAuthFailure{};
     // Last time PLMN search failure logged
     int64_t m_lastTimePlmnSearchFailureLogged{};
+    // Last time MM state changed
+    int64_t m_lastTimeMmStateChange{};
 
     friend class UeCmdHandler;
 

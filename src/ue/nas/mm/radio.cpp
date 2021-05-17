@@ -23,10 +23,25 @@ void NasMm::performPlmnSelection()
 {
     int64_t currentTime = utils::CurrentTimeMillis();
 
+    // After some timeout in PLMN_SEARCH states, NO_CELL_AVAILABLE state is selected
+    if (currentTime - m_lastTimeMmStateChange >= 5'000LL)
+    {
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
+        {
+            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE);
+            return;
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
+        {
+            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE);
+            return;
+        }
+    }
+
     // If the state is PLMN_SEARCH instead of NO_CELL_AVAILABLE, then we log the errors more intensely.
     int64_t loggingThreshold = m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
                                        m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH
-                                   ? 1'000LL
+                                   ? 2'000LL
                                    : 10'000LL;
 
     bool logFailures = currentTime - m_lastTimePlmnSearchFailureLogged >= loggingThreshold;

@@ -183,6 +183,8 @@ void NasMm::switchMmState(EMmState state, EMmSubState subState)
     m_mmState = state;
     m_mmSubState = subState;
 
+    m_lastTimeMmStateChange = utils::CurrentTimeMillis();
+
     onSwitchMmState(oldState, m_mmState, oldSubState, m_mmSubState);
 
     if (m_base->nodeListener)
