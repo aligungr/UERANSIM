@@ -53,9 +53,9 @@ void UeRrcTask::notifyCellLost(int cellId)
     m_logger->debug("Signal lost for cell[%d], total [%d] cells in coverage", cellId,
                     static_cast<int>(m_cellDesc.size()));
 
-    updateAvailablePlmns();
-
     // TODO: handle other operations
+
+    updateAvailablePlmns();
 }
 
 bool UeRrcTask::hasSignalToCell(int cellId)
