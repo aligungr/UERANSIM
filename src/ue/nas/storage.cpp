@@ -15,10 +15,11 @@ namespace nr::ue
 {
 
 MmStorage::MmStorage()
-    : m_forbiddenTaiListRoaming{FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD}, m_forbiddenTaiListRps{
-                                                                                          FORBIDDEN_TAI_LIST_SIZE,
-                                                                                          FORBIDDEN_TAI_CLEAR_PERIOD}
 {
+    m_forbiddenTaiListRoaming =
+        std::make_unique<nas::NasListT1<Tai>>(FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD, std::nullopt);
+    m_forbiddenTaiListRps =
+        std::make_unique<nas::NasListT1<Tai>>(FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD, std::nullopt);
 }
 
 } // namespace nr::ue

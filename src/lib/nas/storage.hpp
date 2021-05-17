@@ -7,6 +7,8 @@
 //
 
 #include <array>
+#include <functional>
+#include <optional>
 #include <vector>
 
 #include <utils/common.hpp>
@@ -23,16 +25,20 @@ namespace nas
 template <typename T>
 class NasListT1
 {
+  public:
+    using backup_functor_type = std::function<void(const std::vector<T> &buffer, size_t size)>;
+
   private:
     const size_t m_sizeLimit;
     const int64_t m_autoClearingPeriod;
+    const std::optional<backup_functor_type> m_backupFunctor;
 
     std::vector<T> m_data;
     size_t m_size;
     int64_t m_lastAutoCleared;
 
   public:
-    NasListT1(size_t sizeLimit, int64_t autoClearingPeriod)
+    NasListT1(size_t sizeLimit, int64_t autoClearingPeriod, std::optional<backup_functor_type> backupFunctor)
         : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod}, m_data{sizeLimit}, m_size{},
           m_lastAutoCleared{::utils::CurrentTimeMillis()}
     {
@@ -158,6 +164,8 @@ class NasListT1
 
     void touch()
     {
+        if (m_backupFunctor)
+            (*m_backupFunctor)(m_data, m_size);
     }
 };
 

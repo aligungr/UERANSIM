@@ -15,8 +15,8 @@ namespace nr::ue
 class MmStorage
 {
   public:
-    nas::NasListT1<Tai> m_forbiddenTaiListRoaming;
-    nas::NasListT1<Tai> m_forbiddenTaiListRps;
+    std::unique_ptr<nas::NasListT1<Tai>> m_forbiddenTaiListRoaming;
+    std::unique_ptr<nas::NasListT1<Tai>> m_forbiddenTaiListRps;
 
   public:
     MmStorage();

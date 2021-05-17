@@ -569,7 +569,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
             tai.tac = (int)m_usim->m_currentTai->tac;
 
-            m_storage.m_forbiddenTaiListRoaming.add(tai);
+            m_storage.m_forbiddenTaiListRoaming->add(tai);
         }
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
@@ -733,7 +733,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
         tai.tac = (int)m_usim->m_currentTai->tac;
 
-        m_storage.m_forbiddenTaiListRoaming.add(tai);
+        m_storage.m_forbiddenTaiListRoaming->add(tai);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
