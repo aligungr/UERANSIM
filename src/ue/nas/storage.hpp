@@ -8,18 +8,22 @@
 
 #include <lib/nas/msg.hpp>
 #include <lib/nas/storage.hpp>
+#include <ue/types.hpp>
 
 namespace nr::ue
 {
 
 class MmStorage
 {
+  private:
+    TaskBase *m_base;
+
   public:
     std::unique_ptr<nas::NasListT1<Tai>> m_forbiddenTaiListRoaming;
     std::unique_ptr<nas::NasListT1<Tai>> m_forbiddenTaiListRps;
 
   public:
-    MmStorage();
+    explicit MmStorage(TaskBase *base);
 };
 
 } // namespace nr::ue

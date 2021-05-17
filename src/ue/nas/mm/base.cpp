@@ -26,6 +26,8 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_cmState = ECmState::CM_IDLE;
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
+
+    m_storage = new MmStorage(m_base);
 }
 
 void NasMm::onStart(NasSm *sm, Usim *usim)

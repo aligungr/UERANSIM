@@ -316,7 +316,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
         tai.tac = (int)m_usim->m_currentTai->tac;
 
-        m_storage.m_forbiddenTaiListRps->add(tai);
+        m_storage->m_forbiddenTaiListRps->add(tai);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
@@ -327,7 +327,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
         tai.tac = (int)m_usim->m_currentTai->tac;
 
-        m_storage.m_forbiddenTaiListRoaming->add(tai);
+        m_storage->m_forbiddenTaiListRoaming->add(tai);
 
         nas::utils::RemoveFromTaiList(m_usim->m_taiList, *m_usim->m_currentTai);
     }

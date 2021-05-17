@@ -31,7 +31,7 @@ class NasMm
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
     Usim *m_usim;
-    MmStorage m_storage;
+    MmStorage* m_storage;
 
     ERmState m_rmState;
     ECmState m_cmState;

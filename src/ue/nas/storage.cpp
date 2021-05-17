@@ -14,7 +14,7 @@ static constexpr const int64_t FORBIDDEN_TAI_CLEAR_PERIOD = 1000ll * 60ll * 60ll
 namespace nr::ue
 {
 
-MmStorage::MmStorage()
+MmStorage::MmStorage(TaskBase *base) : m_base{base}
 {
     m_forbiddenTaiListRoaming =
         std::make_unique<nas::NasListT1<Tai>>(FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD, std::nullopt);

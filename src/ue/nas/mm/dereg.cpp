@@ -253,7 +253,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
             tai.tac = (int)m_usim->m_currentTai->tac;
 
-            m_storage.m_forbiddenTaiListRoaming->add(tai);
+            m_storage->m_forbiddenTaiListRoaming->add(tai);
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
