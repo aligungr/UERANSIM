@@ -65,9 +65,13 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
 
     // TODO: Bu ikisinin burada olması gerektiğinden emin değilim
     if (deregCause == EDeregCause::SWITCH_OFF)
+    {
+        onSwitchOff();
         m_base->appTask->push(new NwUeNasToApp(NwUeNasToApp::PERFORM_SWITCH_OFF));
+    }
     else if (deregCause == EDeregCause::USIM_REMOVAL)
     {
+        onSimRemoval();
         m_logger->info("SIM card has been invalidated");
         m_usim->invalidate();
     }
