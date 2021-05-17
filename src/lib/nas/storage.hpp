@@ -39,10 +39,13 @@ class NasList
 
   public:
     NasList(size_t sizeLimit, int64_t autoClearingPeriod, std::optional<backup_functor_type> backupFunctor)
-        : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod}, m_data{sizeLimit}, m_size{},
-          m_lastAutoCleared{::utils::CurrentTimeMillis()}
+        : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod},
+          m_backupFunctor{backupFunctor}, m_data{sizeLimit}, m_size{}, m_lastAutoCleared{::utils::CurrentTimeMillis()}
     {
     }
+
+    NasList(const NasList &) = delete;
+    NasList(NasList &&) = delete;
 
   public:
     void add(const T &item)
