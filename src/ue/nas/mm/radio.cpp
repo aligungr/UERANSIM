@@ -42,7 +42,7 @@ void NasMm::performPlmnSelection()
     int64_t loggingThreshold = m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
                                        m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH
                                    ? 2'000LL
-                                   : 10'000LL;
+                                   : 15'000LL;
 
     bool logFailures = currentTime - m_lastTimePlmnSearchFailureLogged >= loggingThreshold;
 
