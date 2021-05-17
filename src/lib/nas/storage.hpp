@@ -9,12 +9,15 @@
 #include <array>
 #include <functional>
 #include <optional>
+#include <type_traits>
 #include <vector>
 
 #include <utils/common.hpp>
 
 namespace nas
 {
+
+// TODO: Periodun sonuna geldiğinde erişilmezse, (autoClearIfNecessary çağrılmazsa) delete yapılmaz backup çalışmaz
 
 /*
  * - Items are unique, if already exists, deletes the previous one
@@ -142,6 +145,9 @@ class NasList
   private:
     void autoClearIfNecessary()
     {
+        if (m_autoClearingPeriod <= 0)
+            return;
+
         int64_t currentTime = ::utils::CurrentTimeMillis();
         if (currentTime - m_lastAutoCleared >= m_autoClearingPeriod)
         {
@@ -158,17 +164,100 @@ class NasList
 
     void removeAt(size_t index)
     {
-        touch();
-
         for (size_t i = index; i < m_size; ++i)
             m_data[i] = i + 1 < m_sizeLimit ? m_data[i + 1] : T{};
         m_size--;
+
+        touch();
     }
 
     void touch()
     {
         if (m_backupFunctor)
             (*m_backupFunctor)(m_data, m_size);
+    }
+};
+
+template <typename T>
+class NasSlot
+{
+  public:
+    using backup_functor_type = std::function<void(const T &value)>;
+
+  private:
+    const int64_t m_autoClearingPeriod;
+    const std::optional<backup_functor_type> m_backupFunctor;
+
+    T m_value;
+    int64_t m_lastAutoCleared;
+
+    static_assert(!std::is_reference<T>::value);
+
+  public:
+    NasSlot(int64_t autoClearingPeriod, std::optional<backup_functor_type> backupFunctor)
+        : m_autoClearingPeriod{autoClearingPeriod}, m_backupFunctor{backupFunctor}, m_value{},
+          m_lastAutoCleared{::utils::CurrentTimeMillis()}
+    {
+    }
+
+    T get()
+    {
+        autoClearIfNecessary();
+
+        return m_value;
+    }
+
+    void set(const T &value)
+    {
+        autoClearIfNecessary();
+
+        m_value = value;
+        touch();
+    }
+
+    void set(T &&value)
+    {
+        autoClearIfNecessary();
+
+        m_value = std::move(value);
+        touch();
+    }
+
+    template <typename Functor>
+    void access(Functor fun)
+    {
+        autoClearIfNecessary();
+
+        fun((const T &)m_value);
+    }
+
+    template <typename Functor>
+    void mutate(Functor fun)
+    {
+        autoClearIfNecessary();
+
+        fun((T &)m_value);
+        touch();
+    }
+
+  private:
+    void autoClearIfNecessary()
+    {
+        if (m_autoClearingPeriod <= 0)
+            return;
+
+        int64_t currentTime = ::utils::CurrentTimeMillis();
+        if (currentTime - m_lastAutoCleared >= m_autoClearingPeriod)
+        {
+            m_lastAutoCleared = currentTime;
+            m_value = {};
+        }
+    }
+
+    void touch()
+    {
+        if (m_backupFunctor)
+            (*m_backupFunctor)(m_value);
     }
 };
 
