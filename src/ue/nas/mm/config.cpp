@@ -59,7 +59,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.serviceAreaList.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_serviceAreaList = *msg.serviceAreaList;
+        m_storage->m_serviceAreaList->set(*msg.serviceAreaList);
     }
 
     // "If the UE receives new NITZ information in the CONFIGURATION UPDATE COMMAND message, the UE considers the new

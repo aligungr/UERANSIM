@@ -232,7 +232,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // Store the TAI list as a registration area
     m_usim->m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
     // Store the service area list
-    m_usim->m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
+    m_storage->m_serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
 
     // Store the E-PLMN list and ..
     m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
@@ -355,7 +355,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
 
     // Store the service area list
-    m_usim->m_serviceAreaList = msg.serviceAreaList.value_or(nas::IEServiceAreaList{});
+    m_storage->m_serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
 
     // "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter and service
     // request attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."

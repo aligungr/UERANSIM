@@ -200,7 +200,7 @@ class NasSlot
     {
     }
 
-    T get()
+    const T &get()
     {
         autoClearIfNecessary();
 

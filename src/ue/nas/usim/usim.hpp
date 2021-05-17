@@ -42,7 +42,6 @@ class Usim
     nas::IE5gsTrackingAreaIdentityList m_taiList{};
     nas::IEPlmnList m_equivalentPlmnList{};
     nas::IEPlmnList m_forbiddenPlmnList{};
-    nas::IEServiceAreaList m_serviceAreaList{};
 
     // Security related
     std::unique_ptr<NasSecurityContext> m_currentNsCtx{};

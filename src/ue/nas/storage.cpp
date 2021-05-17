@@ -34,6 +34,8 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
         FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD, [this](const std::vector<Tai> &buffer, size_t count) {
             BackupTaiListInSharedCtx(buffer, count, m_base->shCtx.forbiddenTaiRps);
         });
+
+    m_serviceAreaList = std::make_unique<nas::NasSlot<nas::IEServiceAreaList>>(0, std::nullopt);
 }
 
 } // namespace nr::ue

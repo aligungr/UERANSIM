@@ -52,13 +52,13 @@ bool NasMm::isInNonAllowedArea()
 
     auto &plmn = *m_usim->m_currentPlmn;
 
-    if (nas::utils::ServiceAreaListForbidsPlmn(m_usim->m_serviceAreaList, nas::utils::PlmnFrom(plmn)))
+    if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->m_serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
         return true;
 
     if (m_usim->m_servingCell.has_value())
     {
         if (nas::utils::ServiceAreaListForbidsTai(
-                m_usim->m_serviceAreaList,
+                m_storage->m_serviceAreaList->get(),
                 nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(plmn), octet3{m_usim->m_servingCell->tac}}))
             return true;
     }
