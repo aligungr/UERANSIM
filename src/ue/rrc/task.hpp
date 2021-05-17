@@ -59,6 +59,7 @@ class UeRrcTask : public NtsTask
     ASN_RRC_InitialUE_Identity_t m_initialId{};
     OctetString m_initialNasPdu{};
 
+    int64_t m_lastTimePlmnSearchFailureLogged{};
 
     friend class UeCmdHandler;
 

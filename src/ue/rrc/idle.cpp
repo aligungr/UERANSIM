@@ -22,10 +22,14 @@ void UeRrcTask::performCellSelection()
     if (m_state == ERrcState::RRC_CONNECTED)
         return;
 
-    if (utils::CurrentTimeMillis() - m_startedTime <= 1000LL && m_cellDesc.empty())
+    int64_t currentTime = utils::CurrentTimeMillis();
+
+    if (currentTime - m_startedTime <= 1000LL && m_cellDesc.empty())
         return;
 
     int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
+
+    bool shouldLogErrors = lastCell != 0 || (currentTime - m_lastTimePlmnSearchFailureLogged >= 30'000LL);
 
     CurrentCellInfo cellInfo;
     CellSelectionReport report;
@@ -36,17 +40,22 @@ void UeRrcTask::performCellSelection()
         cellFound = lookForSuitableCell(cellInfo, report);
         if (!cellFound)
         {
-            if (!m_cellDesc.empty())
+            if (shouldLogErrors)
             {
-                m_logger->warn(
-                    "Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
-                    "[%d] barred, ftai [%d]",
-                    static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
-                    report.reservedCells, report.barredCells, report.forbiddenTaiCells);
-            }
-            else
-            {
-                m_logger->warn("Suitable cell selection failed, no cell is in coverage");
+                if (!m_cellDesc.empty())
+                {
+                    m_logger->warn(
+                        "Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
+                        "[%d] barred, ftai [%d]",
+                        static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
+                        report.reservedCells, report.barredCells, report.forbiddenTaiCells);
+                }
+                else
+                {
+                    m_logger->warn("Suitable cell selection failed, no cell is in coverage");
+                }
+
+                m_lastTimePlmnSearchFailureLogged = currentTime;
             }
         }
     }
@@ -59,19 +68,24 @@ void UeRrcTask::performCellSelection()
 
         if (!cellFound)
         {
-            if (!m_cellDesc.empty())
+            if (shouldLogErrors)
             {
-                m_logger->warn(
-                    "Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] barred, ftai [%d]",
-                    static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
-                    report.barredCells, report.forbiddenTaiCells);
-            }
-            else
-            {
-                m_logger->warn("Acceptable cell selection failed, no cell is in coverage");
-            }
+                if (!m_cellDesc.empty())
+                {
+                    m_logger->warn("Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] "
+                                   "barred, ftai [%d]",
+                                   static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
+                                   report.barredCells, report.forbiddenTaiCells);
+                }
+                else
+                {
+                    m_logger->warn("Acceptable cell selection failed, no cell is in coverage");
+                }
 
-            m_logger->err("Cell selection failure, no suitable or acceptable cell found");
+                m_logger->err("Cell selection failure, no suitable or acceptable cell found");
+
+                m_lastTimePlmnSearchFailureLogged = currentTime;
+            }
         }
     }
 
