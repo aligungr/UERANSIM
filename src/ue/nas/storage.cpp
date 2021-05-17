@@ -25,12 +25,12 @@ namespace nr::ue
 
 MmStorage::MmStorage(TaskBase *base) : m_base{base}
 {
-    m_forbiddenTaiListRoaming = std::make_unique<nas::NasListT1<Tai>>(
+    m_forbiddenTaiListRoaming = std::make_unique<nas::NasList<Tai>>(
         FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD, [this](const std::vector<Tai> &buffer, size_t count) {
             BackupTaiListInSharedCtx(buffer, count, m_base->shCtx.forbiddenTaiRoaming);
         });
 
-    m_forbiddenTaiListRps = std::make_unique<nas::NasListT1<Tai>>(
+    m_forbiddenTaiListRps = std::make_unique<nas::NasList<Tai>>(
         FORBIDDEN_TAI_LIST_SIZE, FORBIDDEN_TAI_CLEAR_PERIOD, [this](const std::vector<Tai> &buffer, size_t count) {
             BackupTaiListInSharedCtx(buffer, count, m_base->shCtx.forbiddenTaiRps);
         });

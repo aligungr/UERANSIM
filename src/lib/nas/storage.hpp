@@ -23,7 +23,7 @@ namespace nas
  * - The list is NOT thread safe
  */
 template <typename T>
-class NasListT1
+class NasList
 {
   public:
     using backup_functor_type = std::function<void(const std::vector<T> &buffer, size_t count)>;
@@ -38,7 +38,7 @@ class NasListT1
     int64_t m_lastAutoCleared;
 
   public:
-    NasListT1(size_t sizeLimit, int64_t autoClearingPeriod, std::optional<backup_functor_type> backupFunctor)
+    NasList(size_t sizeLimit, int64_t autoClearingPeriod, std::optional<backup_functor_type> backupFunctor)
         : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod}, m_data{sizeLimit}, m_size{},
           m_lastAutoCleared{::utils::CurrentTimeMillis()}
     {

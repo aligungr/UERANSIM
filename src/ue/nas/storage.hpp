@@ -19,8 +19,8 @@ class MmStorage
     TaskBase *m_base;
 
   public:
-    std::unique_ptr<nas::NasListT1<Tai>> m_forbiddenTaiListRoaming;
-    std::unique_ptr<nas::NasListT1<Tai>> m_forbiddenTaiListRps;
+    std::unique_ptr<nas::NasList<Tai>> m_forbiddenTaiListRoaming;
+    std::unique_ptr<nas::NasList<Tai>> m_forbiddenTaiListRps;
 
   public:
     explicit MmStorage(TaskBase *base);
