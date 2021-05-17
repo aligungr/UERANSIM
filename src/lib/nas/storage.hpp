@@ -26,7 +26,7 @@ template <typename T>
 class NasListT1
 {
   public:
-    using backup_functor_type = std::function<void(const std::vector<T> &buffer, size_t size)>;
+    using backup_functor_type = std::function<void(const std::vector<T> &buffer, size_t count)>;
 
   private:
     const size_t m_sizeLimit;
