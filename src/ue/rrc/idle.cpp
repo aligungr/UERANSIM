@@ -134,9 +134,6 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo, CellSelectionRepo
             continue;
         }
 
-        // TODO: Check TAI if forbidden by service area
-        // TODO: Do we need to check by access identity?
-
         // It seems suitable
         candidates.push_back(item.first);
     }
@@ -209,9 +206,6 @@ bool UeRrcTask::lookForAcceptableCell(CurrentCellInfo &cellInfo, CellSelectionRe
             report.forbiddenTaiCells++;
             continue;
         }
-
-        // TODO: Check TAI if forbidden by service area
-        // TODO: Do we need to check by access identity?
 
         // It seems acceptable
         candidates.push_back(item.first);
