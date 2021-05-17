@@ -322,4 +322,12 @@ void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 {
 }
 
+void NasMm::onSimRemoval()
+{
+}
+
+void NasMm::onSwitchOff()
+{
+}
+
 } // namespace nr::ue
