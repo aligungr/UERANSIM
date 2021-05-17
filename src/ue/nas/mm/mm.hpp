@@ -11,6 +11,7 @@
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
 #include <lib/nas/timer.hpp>
+#include <ue/nas/storage.hpp>
 #include <ue/nas/usim/usim.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
@@ -29,7 +30,8 @@ class NasMm
     UeTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
-    Usim *m_usim{};
+    Usim *m_usim;
+    MmStorage m_storage;
 
     ERmState m_rmState;
     ECmState m_cmState;

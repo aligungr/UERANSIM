@@ -33,7 +33,7 @@ class NasListT1
   public:
     NasListT1(size_t sizeLimit, int64_t autoClearingPeriod)
         : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod}, m_data{sizeLimit}, m_size{},
-          m_lastAutoCleared{utils::CurrentTimeMillis()}
+          m_lastAutoCleared{::utils::CurrentTimeMillis()}
     {
     }
 
@@ -113,7 +113,7 @@ class NasListT1
   private:
     void autoClearIfNecessary()
     {
-        int64_t currentTime = utils::CurrentTimeMillis();
+        int64_t currentTime = ::utils::CurrentTimeMillis();
         if (currentTime - m_lastAutoCleared >= m_autoClearingPeriod)
         {
             m_lastAutoCleared = currentTime;
