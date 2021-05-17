@@ -43,39 +43,30 @@ class NasListT1
   public:
     void add(const T &item)
     {
-        touch();
         autoClearIfNecessary();
         remove(item);
         makeSlotForNewItem();
 
         m_data[m_size] = item;
         m_size++;
+
+        touch();
     }
 
     void add(T &&item)
     {
-        touch();
         autoClearIfNecessary();
         remove(item);
         makeSlotForNewItem();
 
         m_data[m_size] = std::move(item);
         m_size++;
-    }
 
-    bool contains(const T &item)
-    {
-        autoClearIfNecessary();
-
-        for (size_t i = 0; i < m_size; i++)
-            if (m_data[i] == item)
-                return true;
-        return false;
+        touch();
     }
 
     void remove(const T &item)
     {
-        touch();
         autoClearIfNecessary();
 
         size_t index = ~0u;
@@ -92,6 +83,16 @@ class NasListT1
             removeAt(index);
     }
 
+    bool contains(const T &item)
+    {
+        autoClearIfNecessary();
+
+        for (size_t i = 0; i < m_size; i++)
+            if (m_data[i] == item)
+                return true;
+        return false;
+    }
+
     template <typename Functor>
     void forEach(Functor &&fun)
     {
@@ -104,24 +105,24 @@ class NasListT1
     template <typename Functor>
     void mutateForEach(Functor &&fun)
     {
-        touch();
-
         autoClearIfNecessary();
 
         for (size_t i = 0; i < m_size; i++)
             fun(m_data[i]);
+
+        touch();
     }
 
     void clear()
     {
-        touch();
-
         int64_t currentTime = ::utils::CurrentTimeMillis();
         if (currentTime - m_lastAutoCleared >= m_autoClearingPeriod)
             m_lastAutoCleared = currentTime;
 
         m_data.clear();
         m_size = 0;
+
+        touch();
     }
 
     [[nodiscard]] size_t size() const
