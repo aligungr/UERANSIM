@@ -170,3 +170,15 @@ bool Plmn::hasValue() const
 {
     return this->mcc != 0;
 }
+
+Tai::Tai() : plmn{}, tac{}
+{
+}
+
+Tai::Tai(const Plmn &plmn, int tac) : plmn{plmn}, tac{tac}
+{
+}
+
+Tai::Tai(int mcc, int mnc, bool longMnc, int tac) : plmn{mcc, mnc, longMnc}, tac{tac}
+{
+}

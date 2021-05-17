@@ -37,7 +37,11 @@ struct Plmn
 struct Tai
 {
     Plmn plmn;
-    int tac{};
+    int tac;
+
+    Tai();
+    Tai(const Plmn& plmn, int tac);
+    Tai(int mcc, int mnc, bool longMnc, int tac);
 };
 
 struct SingleSlice

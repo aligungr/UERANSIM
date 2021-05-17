@@ -12,6 +12,7 @@
 #include <atomic>
 #include <memory>
 #include <unordered_set>
+#include <set>
 
 #include <lib/app/monitor.hpp>
 #include <lib/app/ue_ctl.hpp>
@@ -161,6 +162,8 @@ struct UeSharedContext
     Locked<std::unordered_set<Plmn>> availablePlmns;
     Locked<Plmn> selectedPlmn;
     Locked<CurrentCellInfo> currentCell;
+    Locked<std::vector<Tai>> forbiddenTaiRoaming;
+    Locked<std::vector<Tai>> forbiddenTaiRps;
 };
 
 struct TaskBase
