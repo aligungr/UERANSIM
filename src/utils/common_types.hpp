@@ -34,6 +34,12 @@ struct Plmn
     [[nodiscard]] bool hasValue() const;
 };
 
+struct Tai
+{
+    Plmn plmn;
+    int tac{};
+};
+
 struct SingleSlice
 {
     octet sst{};
@@ -196,10 +202,17 @@ struct UacAiBarringSet
     bool ai15 = false;
 };
 
-bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
 bool operator==(const Plmn &lhs, const Plmn &rhs);
 bool operator!=(const Plmn &lhs, const Plmn &rhs);
+
+bool operator==(const Tai &lhs, const Tai &rhs);
+bool operator!=(const Tai &lhs, const Tai &rhs);
+
+bool operator==(const SingleSlice &lhs, const SingleSlice &rhs);
+bool operator!=(const SingleSlice &lhs, const SingleSlice &rhs);
+
 bool operator==(const GlobalNci &lhs, const GlobalNci &rhs);
+bool operator!=(const GlobalNci &lhs, const GlobalNci &rhs);
 
 Json ToJson(const Supi &v);
 Json ToJson(const Plmn &v);

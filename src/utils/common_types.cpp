@@ -104,6 +104,11 @@ bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
     return ((int)*lhs.sd) == ((int)*rhs.sd);
 }
 
+bool operator!=(const SingleSlice &lhs, const SingleSlice &rhs)
+{
+    return !(lhs == rhs);
+}
+
 bool operator==(const Plmn &lhs, const Plmn &rhs)
 {
     if (lhs.mcc != rhs.mcc)
@@ -121,6 +126,21 @@ bool operator!=(const Plmn &lhs, const Plmn &rhs)
 bool operator==(const GlobalNci &lhs, const GlobalNci &rhs)
 {
     return lhs.plmn == rhs.plmn && lhs.nci == rhs.nci;
+}
+
+bool operator!=(const GlobalNci &lhs, const GlobalNci &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator==(const Tai &lhs, const Tai &rhs)
+{
+    return lhs.plmn == rhs.plmn && lhs.tac == rhs.tac;
+}
+
+bool operator!=(const Tai &lhs, const Tai &rhs)
+{
+    return !(lhs == rhs);
 }
 
 void NetworkSlice::addIfNotExists(const SingleSlice &slice)
