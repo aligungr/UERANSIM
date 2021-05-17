@@ -18,6 +18,7 @@ namespace nas
  * - Items are unique, if already exists, deletes the previous one
  * - List have fixed size, if capacity is full, oldest item is deleted
  * - Automatically cleared after specified period
+ * - The list is NOT thread safe
  */
 template <typename T>
 class NasListT1
