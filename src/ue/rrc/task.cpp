@@ -27,6 +27,8 @@ UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
 
+    m_startedTime = utils::CurrentTimeMillis();
+
     m_state = ERrcState::RRC_IDLE;
 }
 

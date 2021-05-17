@@ -22,28 +22,42 @@ void UeRrcTask::performCellSelection()
     if (m_state == ERrcState::RRC_CONNECTED)
         return;
 
+    if (utils::CurrentTimeMillis() - m_startedTime <= 1000LL && m_cellDesc.empty())
+        return;
+
     int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
 
     CurrentCellInfo cellInfo;
     CellSelectionReport report;
 
-    if (!lookForSuitableCell(cellInfo, report))
+    bool cellFound = false;
+    if (m_base->shCtx.selectedPlmn.get().hasValue())
     {
-        if (!m_cellDesc.empty())
+        cellFound = lookForSuitableCell(cellInfo, report);
+        if (!cellFound)
         {
-            m_logger->warn("Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
-                           "[%d] barred, ftai [%d]",
-                           static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
-                           report.reservedCells, report.barredCells, report.forbiddenTaiCells);
+            if (!m_cellDesc.empty())
+            {
+                m_logger->warn(
+                    "Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
+                    "[%d] barred, ftai [%d]",
+                    static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
+                    report.reservedCells, report.barredCells, report.forbiddenTaiCells);
+            }
+            else
+            {
+                m_logger->warn("Suitable cell selection failed, no cell is in coverage");
+            }
         }
-        else
-        {
-            m_logger->warn("Suitable cell selection failed, no cell is in coverage");
-        }
+    }
 
+    if (!cellFound)
+    {
         report = {};
 
-        if (!lookForAcceptableCell(cellInfo, report))
+        cellFound = lookForAcceptableCell(cellInfo, report);
+
+        if (!cellFound)
         {
             if (!m_cellDesc.empty())
             {
