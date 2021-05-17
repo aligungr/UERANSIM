@@ -145,6 +145,7 @@ struct CellSelectionReport
     int sib1MissingCells{};
     int reservedCells{};
     int barredCells{};
+    int forbiddenTaiCells{};
 };
 
 struct CurrentCellInfo

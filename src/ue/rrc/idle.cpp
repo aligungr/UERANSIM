@@ -32,9 +32,9 @@ void UeRrcTask::performCellSelection()
         if (!m_cellDesc.empty())
         {
             m_logger->warn("Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
-                           "[%d] barred",
+                           "[%d] barred, ftai [%d]",
                            static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
-                           report.reservedCells, report.barredCells);
+                           report.reservedCells, report.barredCells, report.forbiddenTaiCells);
         }
         else
         {
@@ -47,9 +47,10 @@ void UeRrcTask::performCellSelection()
         {
             if (!m_cellDesc.empty())
             {
-                m_logger->warn("Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] barred",
-                               static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
-                               report.barredCells);
+                m_logger->warn(
+                    "Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] barred, ftai [%d]",
+                    static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
+                    report.barredCells, report.forbiddenTaiCells);
             }
             else
             {
@@ -115,7 +116,25 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo, CellSelectionRepo
             continue;
         }
 
-        // TODO: Check TAI if forbidden by service area or forbidden list
+        Tai tai{cell.sib1.plmn, cell.sib1.tac};
+
+        if (m_base->shCtx.forbiddenTaiRoaming.get<bool>([&tai](auto &item) {
+                return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
+            }))
+        {
+            report.forbiddenTaiCells++;
+            continue;
+        }
+
+        if (m_base->shCtx.forbiddenTaiRps.get<bool>([&tai](auto &item) {
+                return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
+            }))
+        {
+            report.forbiddenTaiCells++;
+            continue;
+        }
+
+        // TODO: Check TAI if forbidden by service area
         // TODO: Do we need to check by access identity?
 
         // It seems suitable
@@ -173,7 +192,25 @@ bool UeRrcTask::lookForAcceptableCell(CurrentCellInfo &cellInfo, CellSelectionRe
             continue;
         }
 
-        // TODO: Check TAI if forbidden by service area or forbidden list
+        Tai tai{cell.sib1.plmn, cell.sib1.tac};
+
+        if (m_base->shCtx.forbiddenTaiRoaming.get<bool>([&tai](auto &item) {
+                return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
+            }))
+        {
+            report.forbiddenTaiCells++;
+            continue;
+        }
+
+        if (m_base->shCtx.forbiddenTaiRps.get<bool>([&tai](auto &item) {
+                return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
+            }))
+        {
+            report.forbiddenTaiCells++;
+            continue;
+        }
+
+        // TODO: Check TAI if forbidden by service area
         // TODO: Do we need to check by access identity?
 
         // It seems acceptable
