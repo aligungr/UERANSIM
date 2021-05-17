@@ -18,7 +18,6 @@ namespace nas
  * - Items are unique, if already exists, deletes the previous one
  * - List have fixed size, if capacity is full, oldest item is deleted
  * - Automatically cleared after specified period
- * - Can be asked if it has a changes after the last one
  */
 template <typename T>
 class NasListT1
@@ -30,13 +29,11 @@ class NasListT1
     std::vector<T> m_data;
     size_t m_size;
     int64_t m_lastAutoCleared;
-    int64_t m_lastChange;
-    int64_t m_lastChangeQueried;
 
   public:
     NasListT1(size_t sizeLimit, int64_t autoClearingPeriod)
         : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod}, m_data{sizeLimit}, m_size{},
-          m_lastAutoCleared{::utils::CurrentTimeMillis()}, m_lastChange{}, m_lastChangeQueried{}
+          m_lastAutoCleared{::utils::CurrentTimeMillis()}
     {
     }
 
@@ -132,16 +129,6 @@ class NasListT1
         return m_data.size();
     }
 
-    bool hasChange()
-    {
-        if (m_lastChangeQueried == 0 || m_lastChangeQueried != m_lastChange)
-        {
-            m_lastChangeQueried = m_lastChange;
-            return true;
-        }
-        return false;
-    }
-
   private:
     void autoClearIfNecessary()
     {
@@ -170,7 +157,6 @@ class NasListT1
 
     void touch()
     {
-        m_lastChange = utils::CurrentTimeMillis();
     }
 };
 
