@@ -75,7 +75,6 @@ class UeRrcTask : public NtsTask
   private:
     /* Handlers */
     void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
-    void deliverInitialNas(OctetString &&nasPdu, long establishmentCause);
     void deliverUplinkNas(OctetString &&nasPdu);
 
     void receiveRrcSetup(const ASN_RRC_RRCSetup &msg);
@@ -123,6 +122,9 @@ class UeRrcTask : public NtsTask
 
     /* NAS Transport */
     void deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu);
+
+    /* Connection Control */
+    void startConnectionSetup(OctetString &&nasPdu);
 };
 
 } // namespace nr::ue

@@ -7,6 +7,7 @@
 //
 
 #include "task.hpp"
+
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
@@ -32,7 +33,7 @@ void UeRrcTask::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
     }
     else if (m_state == ERrcState::RRC_IDLE)
     {
-        // TODO
+        startConnectionSetup(std::move(nasPdu));
     }
 }
 

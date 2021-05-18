@@ -118,6 +118,7 @@ struct NwUeRrcToRls : NtsMessage
 
     // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
+    uint32_t pduId{};
     OctetString pdu{};
 
     explicit NwUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)

@@ -91,6 +91,12 @@ void UeRlsTask::onLoop()
             break;
         }
         case NwUeRrcToRls::RRC_PDU_DELIVERY: {
+            auto *m = new NwUeRlsToRls(NwUeRlsToRls::UPLINK_RRC);
+            m->cellId = w->cellId;
+            m->rrcChannel = w->channel;
+            m->pduId = w->pduId;
+            m->data = std::move(w->pdu);
+            m_ctlTask->push(m);
             break;
         }
         }

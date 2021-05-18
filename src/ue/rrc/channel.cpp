@@ -94,6 +94,7 @@ void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
     }
 
     auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
+    nw->cellId = cellId;
     nw->channel = rrc::RrcChannel::UL_CCCH;
     nw->pdu = std::move(pdu);
     m_base->rlsTask->push(nw);
@@ -109,6 +110,7 @@ void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
     }
 
     auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
+    nw->cellId = cellId;
     nw->channel = rrc::RrcChannel::UL_CCCH1;
     nw->pdu = std::move(pdu);
     m_base->rlsTask->push(nw);
