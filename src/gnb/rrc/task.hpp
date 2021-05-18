@@ -66,9 +66,6 @@ class GnbRrcTask : public NtsTask
 
   private:
     /* Management */
-    RrcUeContext *tryFindUe(int id);
-    RrcUeContext *findUe(int id);
-    RrcUeContext *createUe(int id);
     RrcUeContext *tryFindByInitialRandomId(int64_t id);
     int getNextTid();
 
@@ -82,8 +79,6 @@ class GnbRrcTask : public NtsTask
                       const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList);
 
     void receiveUplinkInformationTransfer(int ueId, const ASN_RRC_ULInformationTransfer &msg);
-    void receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest &msg);
-    void receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplete &msg);
 
     /* RRC channel send message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);
@@ -104,6 +99,15 @@ class GnbRrcTask : public NtsTask
 
     /* Service Access Point */
     void handleRlsSapMessage(NwGnbRlsToRrc &msg);
+
+    /* UE Management */
+    RrcUeContext *createUe(int id);
+    RrcUeContext *tryFindUe(int id);
+    RrcUeContext *findUe(int id);
+
+    /* Connection Control */
+    void receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest &msg);
+    void receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplete &msg);
 };
 
 } // namespace nr::gnb

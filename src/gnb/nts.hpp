@@ -37,10 +37,16 @@ struct NwGnbRlsToRrc : NtsMessage
     enum PR
     {
         SIGNAL_DETECTED,
+        UPLINK_RRC,
     } present;
 
     // SIGNAL_DETECTED
+    // UPLINK_RRC
     int ueId{};
+
+    // UPLINK_RRC
+    OctetString data;
+    rrc::RrcChannel rrcChannel{};
 
     explicit NwGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
     {

@@ -19,8 +19,12 @@ void GnbRrcTask::handleRlsSapMessage(NwGnbRlsToRrc &msg)
     switch (msg.present)
     {
     case NwGnbRlsToRrc::SIGNAL_DETECTED: {
-        m_logger->info("UE[%d] new signal detected", msg.ueId);
+        m_logger->debug("UE[%d] new signal detected", msg.ueId);
         triggerSysInfoBroadcast();
+        break;
+    }
+    case NwGnbRlsToRrc::UPLINK_RRC: {
+        handleUplinkRrc(msg.ueId, msg.rrcChannel, msg.data);
         break;
     }
     }

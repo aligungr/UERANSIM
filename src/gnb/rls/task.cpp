@@ -59,7 +59,11 @@ void GnbRlsTask::onLoop()
             break;
         }
         case NwGnbRlsToRls::UPLINK_RRC: {
-            m_logger->debug("UPLINK_RRC ue[%d]", w->ueId);
+            auto *m = new NwGnbRlsToRrc(NwGnbRlsToRrc::UPLINK_RRC);
+            m->ueId = w->ueId;
+            m->rrcChannel = w->rrcChannel;
+            m->data = std::move(w->data);
+            m_base->rrcTask->push(m);
             break;
         }
         case NwGnbRlsToRls::RADIO_LINK_FAILURE: {
