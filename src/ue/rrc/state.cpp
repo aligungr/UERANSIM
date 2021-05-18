@@ -42,12 +42,18 @@ void UeRrcTask::switchState(ERrcState state)
     m_state = state;
 
     m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
+
+    if (m_base->nodeListener)
+    {
+        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RRC,
+                                       ToJson(oldState).str(), ToJson(state).str());
+    }
+
     onSwitchState(oldState, state);
 }
 
 void UeRrcTask::onSwitchState(ERrcState oldState, ERrcState newState)
 {
-
 }
 
 } // namespace nr::ue
