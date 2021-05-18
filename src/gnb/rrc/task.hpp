@@ -102,7 +102,7 @@ class GnbRrcTask : public NtsTask
     void onBroadcastTimerExpired();
     void triggerSysInfoBroadcast();
 
-    /* RLS Service Access Point */
+    /* Service Access Point */
     void handleRlsSapMessage(NwGnbRlsToRrc &msg);
 };
 
