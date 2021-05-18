@@ -24,15 +24,15 @@ void UeRrcTask::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
 
     if (m_state == ERrcState::RRC_CONNECTED)
     {
-
+        // TODO
     }
     else if (m_state == ERrcState::RRC_INACTIVE)
     {
-
+        // TODO
     }
     else if (m_state == ERrcState::RRC_IDLE)
     {
-
+        // TODO
     }
 }
 
