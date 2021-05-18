@@ -63,6 +63,11 @@ bool UeRrcTask::hasSignalToCell(int cellId)
     return m_cellDesc.count(cellId);
 }
 
+bool UeRrcTask::isActiveCell(int cellId)
+{
+    return m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }) == cellId;
+}
+
 void UeRrcTask::updateAvailablePlmns()
 {
     m_base->shCtx.availablePlmns.mutate([this](std::unordered_set<Plmn> &value) {

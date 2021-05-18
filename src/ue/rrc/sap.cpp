@@ -33,14 +33,8 @@ void UeRrcTask::handleNasSapMessage(NwUeNasToRrc &msg)
 {
     switch (msg.present)
     {
-    case NwUeNasToRrc::INITIAL_NAS_DELIVERY: {
-        // TODO
-        // deliverInitialNas(std::move(msg.nasPdu), msg.rrcEstablishmentCause);
-        break;
-    }
     case NwUeNasToRrc::UPLINK_NAS_DELIVERY: {
-        // TODO
-        // deliverUplinkNas(std::move(msg.nasPdu));
+        deliverUplinkNas(msg.pduId, std::move(msg.nasPdu));
         break;
     }
     case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION: {

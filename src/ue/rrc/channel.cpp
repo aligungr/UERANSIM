@@ -54,21 +54,27 @@ void UeRrcTask::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oct
         break;
     }
     case rrc::RrcChannel::DL_DCCH: {
-        auto *pdu = rrc::encode::Decode<ASN_RRC_DL_DCCH_Message>(asn_DEF_ASN_RRC_DL_DCCH_Message, rrcPdu);
-        if (pdu == nullptr)
-            m_logger->err("RRC DL-DCCH PDU decoding failed.");
-        else
-            receiveRrcMessage(cellId, pdu);
-        asn::Free(asn_DEF_ASN_RRC_DL_DCCH_Message, pdu);
+        if (isActiveCell(cellId))
+        {
+            auto *pdu = rrc::encode::Decode<ASN_RRC_DL_DCCH_Message>(asn_DEF_ASN_RRC_DL_DCCH_Message, rrcPdu);
+            if (pdu == nullptr)
+                m_logger->err("RRC DL-DCCH PDU decoding failed.");
+            else
+                receiveRrcMessage(pdu);
+            asn::Free(asn_DEF_ASN_RRC_DL_DCCH_Message, pdu);
+        }
         break;
     };
     case rrc::RrcChannel::PCCH: {
-        auto *pdu = rrc::encode::Decode<ASN_RRC_PCCH_Message>(asn_DEF_ASN_RRC_PCCH_Message, rrcPdu);
-        if (pdu == nullptr)
-            m_logger->err("RRC PCCH PDU decoding failed.");
-        else
-            receiveRrcMessage(cellId, pdu);
-        asn::Free(asn_DEF_ASN_RRC_PCCH_Message, pdu);
+        if (isActiveCell(cellId))
+        {
+            auto *pdu = rrc::encode::Decode<ASN_RRC_PCCH_Message>(asn_DEF_ASN_RRC_PCCH_Message, rrcPdu);
+            if (pdu == nullptr)
+                m_logger->err("RRC PCCH PDU decoding failed.");
+            else
+                receiveRrcMessage(pdu);
+            asn::Free(asn_DEF_ASN_RRC_PCCH_Message, pdu);
+        }
         break;
     }
     case rrc::RrcChannel::UL_CCCH:
@@ -78,7 +84,7 @@ void UeRrcTask::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oct
     }
 }
 
-void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
+void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_UL_CCCH_Message, msg);
     if (pdu.length() == 0)
@@ -93,7 +99,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg)
     m_base->rlsTask->push(nw);
 }
 
-void UeRrcTask::sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg)
+void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_UL_CCCH1_Message, msg);
     if (pdu.length() == 0)
@@ -164,7 +170,7 @@ void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_DCCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_DL_DCCH_MessageType_PR_c1)
         return;
@@ -183,7 +189,7 @@ void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_DCCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_PCCH_Message *msg)
+void UeRrcTask::receiveRrcMessage(ASN_RRC_PCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_PCCH_MessageType_PR_c1)
         return;

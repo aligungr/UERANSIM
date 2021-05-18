@@ -34,7 +34,7 @@ namespace nr::ue
 
 void UeRrcTask::deliverInitialNas(OctetString &&nasPdu, long establishmentCause)
 {
-    if (m_state != ERrcState::RRC_IDLE)
+    /*if (m_state != ERrcState::RRC_IDLE)
     {
         m_logger->warn("Initial NAS delivery while not in RRC_IDLE, treating as uplink delivery");
         deliverUplinkNas(std::move(nasPdu));
@@ -60,7 +60,7 @@ void UeRrcTask::deliverInitialNas(OctetString &&nasPdu, long establishmentCause)
 
     m_initialNasPdu = std::move(nasPdu);
     m_lastSetupReq = ERrcLastSetupRequest::SETUP_REQUEST;
-    sendRrcMessage(pdu);
+    sendRrcMessage(pdu);*/
 }
 
 void UeRrcTask::deliverUplinkNas(OctetString &&nasPdu)

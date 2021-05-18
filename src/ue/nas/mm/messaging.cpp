@@ -13,8 +13,6 @@
 #include <ue/nas/sm/sm.hpp>
 #include <ue/rrc/task.hpp>
 
-#include <asn/rrc/ASN_RRC_EstablishmentCause.h>
-
 namespace nr::ue
 {
 
@@ -168,19 +166,10 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    if (m_cmState == ECmState::CM_IDLE)
-    {
-        auto *nw = new NwUeNasToRrc(NwUeNasToRrc::INITIAL_NAS_DELIVERY);
-        nw->nasPdu = std::move(pdu);
-        nw->rrcEstablishmentCause = ASN_RRC_EstablishmentCause_mo_Data;
-        m_base->rrcTask->push(nw);
-    }
-    else
-    {
-        auto *nw = new NwUeNasToRrc(NwUeNasToRrc::UPLINK_NAS_DELIVERY);
-        nw->nasPdu = std::move(pdu);
-        m_base->rrcTask->push(nw);
-    }
+    auto *nw = new NwUeNasToRrc(NwUeNasToRrc::UPLINK_NAS_DELIVERY);
+    nw->pduId = 0;
+    nw->nasPdu = std::move(pdu);
+    m_base->rrcTask->push(nw);
 }
 
 void NasMm::receiveNasMessage(const nas::NasMessage &msg)

@@ -92,17 +92,13 @@ struct NwUeNasToRrc : NtsMessage
     enum PR
     {
         LOCAL_RELEASE_CONNECTION,
-        INITIAL_NAS_DELIVERY,
         UPLINK_NAS_DELIVERY,
         RRC_NOTIFY,
     } present;
 
-    // INITIAL_NAS_DELIVERY
     // UPLINK_NAS_DELIVERY
-    OctetString nasPdu{};
-
-    // INITIAL_NAS_DELIVERY
-    long rrcEstablishmentCause{};
+    uint32_t pduId{};
+    OctetString nasPdu;
 
     explicit NwUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {

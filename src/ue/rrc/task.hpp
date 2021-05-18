@@ -87,14 +87,14 @@ class UeRrcTask : public NtsTask
     void handleRadioLinkFailure();
 
     /* RRC Message Transmission and Receive */
-    void sendRrcMessage(ASN_RRC_UL_CCCH_Message *msg);
-    void sendRrcMessage(ASN_RRC_UL_CCCH1_Message *msg);
+    void sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg);
+    void sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
     void receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg);
     void receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg);
-    void receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg); // TODO
-    void receiveRrcMessage(int cellId, ASN_RRC_DL_DCCH_Message *msg); //  ..
-    void receiveRrcMessage(int cellId, ASN_RRC_PCCH_Message *msg);    //  Broadcast vs için camped olmayanları ignore
+    void receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg);
+    void receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
+    void receiveRrcMessage(ASN_RRC_PCCH_Message *msg);
 
     /* Service Access Point */
     void handleRlsSapMessage(NwUeRlsToRrc &msg);
@@ -114,11 +114,15 @@ class UeRrcTask : public NtsTask
     void notifyCellDetected(int cellId, int dbm);
     void notifyCellLost(int cellId);
     bool hasSignalToCell(int cellId);
+    bool isActiveCell(int cellId);
     void updateAvailablePlmns();
 
     /* System Information */
     void receiveMib(int cellId, const ASN_RRC_MIB &msg);
     void receiveSib1(int cellId, const ASN_RRC_SIB1 &msg);
+
+    /* NAS Transport */
+    void deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu);
 };
 
 } // namespace nr::ue
