@@ -51,41 +51,6 @@ void UeRrcTask::deliverUplinkNas(OctetString &&nasPdu)
     sendRrcMessage(pdu);
 }
 
-void UeRrcTask::receiveRrcSetup(const ASN_RRC_RRCSetup &msg)
-{
-    if (m_lastSetupReq != ERrcLastSetupRequest::SETUP_REQUEST)
-    {
-        // TODO
-        return;
-    }
-
-    m_state = ERrcState::RRC_CONNECTED;
-
-    auto *pdu = asn::New<ASN_RRC_UL_DCCH_Message>();
-    pdu->message.present = ASN_RRC_UL_DCCH_MessageType_PR_c1;
-    pdu->message.choice.c1 = asn::NewFor(pdu->message.choice.c1);
-    pdu->message.choice.c1->present = ASN_RRC_UL_DCCH_MessageType__c1_PR_rrcSetupComplete;
-    auto &setupComplete = pdu->message.choice.c1->choice.rrcSetupComplete = asn::New<ASN_RRC_RRCSetupComplete>();
-    setupComplete->rrc_TransactionIdentifier = msg.rrc_TransactionIdentifier;
-    setupComplete->criticalExtensions.present = ASN_RRC_RRCSetupComplete__criticalExtensions_PR_rrcSetupComplete;
-    auto &ies = setupComplete->criticalExtensions.choice.rrcSetupComplete = asn::New<ASN_RRC_RRCSetupComplete_IEs>();
-    ies->selectedPLMN_Identity = 1;
-    asn::SetOctetString(ies->dedicatedNAS_Message, m_initialNasPdu);
-    m_initialNasPdu = {};
-
-    m_logger->info("RRC connection established");
-
-    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_SETUP));
-
-    sendRrcMessage(pdu);
-}
-
-void UeRrcTask::receiveRrcReject(const ASN_RRC_RRCReject &msg)
-{
-    // TODO
-    m_logger->err("RRC Reject received");
-}
-
 void UeRrcTask::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg)
 {
     OctetString nasPdu =

@@ -76,13 +76,9 @@ class UeRrcTask : public NtsTask
     /* Handlers */
     void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
     void deliverUplinkNas(OctetString &&nasPdu);
-
-    void receiveRrcSetup(const ASN_RRC_RRCSetup &msg);
-    void receiveRrcReject(const ASN_RRC_RRCReject &msg);
     void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
     void receivePaging(const ASN_RRC_Paging &msg);
-
     void handleRadioLinkFailure();
 
     /* RRC Message Transmission and Receive */
@@ -102,6 +98,8 @@ class UeRrcTask : public NtsTask
     /* State Management */
     void triggerCycle();
     void performCycle();
+    void switchState(ERrcState state);
+    void onSwitchState(ERrcState oldState, ERrcState newState);
 
     /* Idle Mode Operations */
     void performCellSelection();
@@ -125,6 +123,8 @@ class UeRrcTask : public NtsTask
 
     /* Connection Control */
     void startConnectionSetup(OctetString &&nasPdu);
+    void receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg);
+    void receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg);
 };
 
 } // namespace nr::ue

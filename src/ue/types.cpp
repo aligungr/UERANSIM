@@ -68,6 +68,21 @@ Json ToJson(const EMmState &state)
     }
 }
 
+Json ToJson(const ERrcState &state)
+{
+    switch (state)
+    {
+    case ERrcState::RRC_IDLE:
+        return "RRC-IDLE";
+    case ERrcState::RRC_CONNECTED:
+        return "RRC-CONNECTED";
+    case ERrcState::RRC_INACTIVE:
+        return "RRC-INACTIVE";
+    default:
+        return "?";
+    }
+}
+
 Json ToJson(const EMmSubState &state)
 {
     switch (state)

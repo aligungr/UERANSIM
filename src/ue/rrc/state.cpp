@@ -36,4 +36,18 @@ void UeRrcTask::performCycle()
     }
 }
 
+void UeRrcTask::switchState(ERrcState state)
+{
+    ERrcState oldState = m_state;
+    m_state = state;
+
+    m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
+    onSwitchState(oldState, state);
+}
+
+void UeRrcTask::onSwitchState(ERrcState oldState, ERrcState newState)
+{
+
+}
+
 } // namespace nr::ue

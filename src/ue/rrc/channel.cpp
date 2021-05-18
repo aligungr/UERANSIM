@@ -162,10 +162,10 @@ void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)
     switch (c1->present)
     {
     case ASN_RRC_DL_CCCH_MessageType__c1_PR_rrcReject:
-        receiveRrcReject(*c1->choice.rrcReject);
+        receiveRrcReject(cellId, *c1->choice.rrcReject);
         break;
     case ASN_RRC_DL_CCCH_MessageType__c1_PR_rrcSetup:
-        receiveRrcSetup(*c1->choice.rrcSetup);
+        receiveRrcSetup(cellId, *c1->choice.rrcSetup);
         break;
     default:
         break;

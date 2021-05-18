@@ -547,5 +547,6 @@ Json ToJson(const ERegUpdateCause &v);
 Json ToJson(const EPsState &v);
 Json ToJson(const UePduSessionInfo &v);
 Json ToJson(const EServiceReqCause &v);
+Json ToJson(const ERrcState &v);
 
 } // namespace nr::ue
