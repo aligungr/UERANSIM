@@ -126,6 +126,7 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
     }
 
     auto *nw = new NwUeRrcToRls(NwUeRrcToRls::RRC_PDU_DELIVERY);
+    nw->cellId = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
     nw->channel = rrc::RrcChannel::UL_DCCH;
     nw->pdu = std::move(pdu);
     m_base->rlsTask->push(nw);

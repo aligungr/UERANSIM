@@ -16,6 +16,8 @@ namespace nr::ue
 
 void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 {
+    m_logger->debug("Authentication Request received.");
+
     if (!m_usim->isValid())
     {
         m_logger->warn("Authentication request is ignored. USIM is invalid");
