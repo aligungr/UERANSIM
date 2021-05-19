@@ -75,7 +75,6 @@ class UeRrcTask : public NtsTask
   private:
     /* Handlers */
     void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
-    void deliverUplinkNas(OctetString &&nasPdu);
     void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
     void receivePaging(const ASN_RRC_Paging &msg);

@@ -123,7 +123,7 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
             msg.messageType == nas::EMessageType::SERVICE_REQUEST)
         {
-            if (HasNonCleartext(msg))
+            if (HasNonCleartext(msg) && m_cmState == ECmState::CM_IDLE)
             {
                 OctetString originalPdu;
                 nas::EncodeNasMessage(msg, originalPdu);
