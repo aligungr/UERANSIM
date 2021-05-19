@@ -47,10 +47,11 @@ bool NasMm::isInNonAllowedArea()
 {
     if (!m_usim->isValid())
         return false;
-    if (!m_usim->m_currentPlmn.has_value())
-        return false;
 
-    auto &plmn = *m_usim->m_currentPlmn;
+    auto plmn = m_base->shCtx.getCurrentPlmn();
+
+    if (!plmn.hasValue())
+        return false;
 
     if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->m_serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
         return true;

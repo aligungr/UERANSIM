@@ -16,7 +16,7 @@ namespace nr::ue
 
 void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 {
-    m_logger->debug("Authentication Request received.");
+    m_logger->debug("Authentication Request received");
 
     if (!m_usim->isValid())
     {
@@ -111,7 +111,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         return;
     }
 
-    auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
+    auto snn = keys::ConstructServingNetworkName(m_base->shCtx.getCurrentPlmn());
 
     if (receivedEap.attributes.getKdfInput() != OctetString::FromAscii(snn))
     {
@@ -196,7 +196,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, m_base->shCtx.getCurrentPlmn(), *m_usim->m_nonCurrentNsCtx);
 
         // Send response
         m_nwConsecutiveAuthFailure = 0;
@@ -346,7 +346,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
         auto ckIk = OctetString::Concat(milenage.ck, milenage.ik);
         auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenage.ak);
-        auto snn = keys::ConstructServingNetworkName(*m_usim->m_currentPlmn);
+        auto snn = keys::ConstructServingNetworkName(m_base->shCtx.getCurrentPlmn());
 
         // Store the relevant parameters
         m_usim->m_rand = rand.copy();
@@ -359,7 +359,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, *m_usim->m_currentPlmn, *m_usim->m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, m_base->shCtx.getCurrentPlmn(), *m_usim->m_nonCurrentNsCtx);
 
         // Send response
         m_nwConsecutiveAuthFailure = 0;
@@ -413,7 +413,7 @@ void NasMm::receiveAuthenticationResult(const nas::AuthenticationResult &msg)
 
 void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
 {
-    m_logger->err("Authentication Reject received.");
+    m_logger->err("Authentication Reject received");
 
     // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
     m_usim->m_rand = {};
@@ -524,10 +524,10 @@ bool NasMm::networkFailingTheAuthCheck(bool hasChance)
     m_logger->err("Network failing the authentication check");
 
     if (m_cmState == ECmState::CM_CONNECTED)
-	{
-		localReleaseConnection();
-		// TODO: treat the active cell as barred
-	}
+    {
+        localReleaseConnection();
+        // TODO: treat the active cell as barred
+    }
 
     m_timers->t3520.stop();
     return true;

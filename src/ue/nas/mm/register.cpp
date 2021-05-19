@@ -246,7 +246,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
         });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
+    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
 
     // Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state
     // 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
@@ -352,7 +352,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
         });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
+    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
 
     // Store the service area list
     m_storage->m_serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
@@ -574,7 +574,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
+            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
         }
 
         if (cause == nas::EMmCause::CONGESTION)
@@ -738,7 +738,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
+        nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
     }
 
     if (cause == nas::EMmCause::CONGESTION)

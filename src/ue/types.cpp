@@ -294,4 +294,9 @@ bool CurrentCellInfo::hasValue() const
     return cellId != 0;
 }
 
+Plmn UeSharedContext::getCurrentPlmn()
+{
+    return currentCell.get<Plmn>([](auto &value) { return value.plmn; });
+}
+
 } // namespace nr::ue

@@ -241,7 +241,8 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
         {
-            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
+            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList,
+                                      nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
         }
 
         if (cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||

@@ -11,8 +11,8 @@
 #include <array>
 #include <atomic>
 #include <memory>
-#include <unordered_set>
 #include <set>
+#include <unordered_set>
 
 #include <lib/app/monitor.hpp>
 #include <lib/app/ue_ctl.hpp>
@@ -165,6 +165,8 @@ struct UeSharedContext
     Locked<CurrentCellInfo> currentCell;
     Locked<std::vector<Tai>> forbiddenTaiRoaming;
     Locked<std::vector<Tai>> forbiddenTaiRps;
+
+    Plmn getCurrentPlmn();
 };
 
 struct TaskBase

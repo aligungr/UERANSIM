@@ -175,7 +175,6 @@ void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
     resetRegAttemptCounter();
 
     m_usim->m_servingCell = servingCell;
-    m_usim->m_currentPlmn = servingCell.cellId.plmn;
     m_usim->m_currentTai =
         nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(servingCell.cellId.plmn), octet3{servingCell.tac}};
 }
@@ -198,7 +197,6 @@ void NasMm::handleRadioLinkFailure()
     }
 
     m_usim->m_servingCell = std::nullopt;
-    m_usim->m_currentPlmn = std::nullopt;
     m_usim->m_currentTai = std::nullopt;
 
     handleRrcConnectionRelease();
