@@ -22,7 +22,7 @@ void UeRrcTask::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
 {
     if (!m_base->shCtx.currentCell.get<bool>([](auto &value) { return value.hasValue(); }))
     {
-        m_logger->err("Uplink NAS delivery failed. No cell is active");
+        m_logger->err("Uplink NAS delivery failed. No active cell");
         return;
     }
 
