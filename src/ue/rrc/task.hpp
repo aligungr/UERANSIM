@@ -74,13 +74,11 @@ class UeRrcTask : public NtsTask
 
   private:
     /* Handlers */
-    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
-    void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
-    void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
     void receivePaging(const ASN_RRC_Paging &msg);
     void handleRadioLinkFailure();
 
     /* RRC Message Transmission and Receive */
+    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
     void sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg);
     void sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
@@ -113,17 +111,20 @@ class UeRrcTask : public NtsTask
     bool isActiveCell(int cellId);
     void updateAvailablePlmns();
 
-    /* System Information */
+    /* System Information and Broadcast */
     void receiveMib(int cellId, const ASN_RRC_MIB &msg);
     void receiveSib1(int cellId, const ASN_RRC_SIB1 &msg);
 
     /* NAS Transport */
     void deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu);
+    void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
 
     /* Connection Control */
     void startConnectionSetup(OctetString &&nasPdu);
     void receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg);
     void receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg);
+    void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
+
 };
 
 } // namespace nr::ue

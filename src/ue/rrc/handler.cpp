@@ -32,23 +32,6 @@
 namespace nr::ue
 {
 
-void UeRrcTask::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg)
-{
-    OctetString nasPdu =
-        asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);
-
-    auto *nw = new NwUeRrcToNas(NwUeRrcToNas::NAS_DELIVERY);
-    nw->nasPdu = std::move(nasPdu);
-    m_base->nasTask->push(nw);
-}
-
-void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
-{
-    m_logger->debug("RRC Release received");
-    m_state = ERrcState::RRC_IDLE;
-    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
-}
-
 void UeRrcTask::receivePaging(const ASN_RRC_Paging &msg)
 {
     std::vector<GutiMobileIdentity> tmsiIds{};

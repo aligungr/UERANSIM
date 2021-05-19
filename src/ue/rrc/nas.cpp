@@ -12,6 +12,8 @@
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
 
+#include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
+#include <asn/rrc/ASN_RRC_DLInformationTransfer.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer-IEs.h>
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
 
@@ -55,6 +57,16 @@ void UeRrcTask::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
     asn::SetOctetString(*c1.choice.ulInformationTransfer->dedicatedNAS_Message, nasPdu);
 
     sendRrcMessage(pdu);
+}
+
+void UeRrcTask::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg)
+{
+    OctetString nasPdu =
+        asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);
+
+    auto *nw = new NwUeRrcToNas(NwUeRrcToNas::NAS_DELIVERY);
+    nw->nasPdu = std::move(nasPdu);
+    m_base->nasTask->push(nw);
 }
 
 } // namespace nr::ue
