@@ -574,7 +574,8 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
+            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList,
+                                      nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
         }
 
         if (cause == nas::EMmCause::CONGESTION)
@@ -838,9 +839,8 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
     // "If the registration attempt counter is less than 5:"
     if (m_regCounter < 5)
     {
-        bool includedInTaiList = nas::utils::TaiListContains(
-            m_usim->m_taiList, nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(m_usim->m_servingCell->cellId.plmn),
-                                                          octet3{m_usim->m_servingCell->tac}});
+        auto tai = m_base->shCtx.getCurrentTai();
+        bool includedInTaiList = nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{tai});
 
         // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
         // to 5U1 UPDATED"

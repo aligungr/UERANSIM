@@ -15,6 +15,7 @@
 
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
+#include <utils/common_types.hpp>
 
 namespace nas
 {
@@ -73,6 +74,7 @@ struct VTrackingAreaIdentity
     octet3 tac;
 
     VTrackingAreaIdentity(const VPlmn &plmn, const octet3 &tac);
+    explicit VTrackingAreaIdentity(const Tai &tai);
 
     static void Encode(const VTrackingAreaIdentity &value, OctetString &stream);
     static VTrackingAreaIdentity Decode(const OctetView &stream);

@@ -167,6 +167,7 @@ struct UeSharedContext
     Locked<std::vector<Tai>> forbiddenTaiRps;
 
     Plmn getCurrentPlmn();
+    Tai getCurrentTai();
 };
 
 struct TaskBase

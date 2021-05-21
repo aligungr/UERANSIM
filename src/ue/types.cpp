@@ -299,4 +299,14 @@ Plmn UeSharedContext::getCurrentPlmn()
     return currentCell.get<Plmn>([](auto &value) { return value.plmn; });
 }
 
+Tai UeSharedContext::getCurrentTai()
+{
+    Tai tai;
+    currentCell.access([&tai](auto &value) {
+        tai.plmn = value.plmn;
+        tai.tac = value.tac;
+    });
+    return tai;
+}
+
 } // namespace nr::ue
