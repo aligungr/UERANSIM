@@ -202,7 +202,7 @@ void NasMm::handleActiveCellChange(const Tai &lastTai)
     {
         // This should never happen
         m_logger->err("Active cell change in [CM-IDLE] state while MM specific procedure is ongoing");
-        localReleaseConnection();
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
     }
 }
 
