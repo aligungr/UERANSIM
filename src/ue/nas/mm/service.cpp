@@ -373,12 +373,6 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
         switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
-
-        setN1Capability(false);
-    }
-
-    if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-    {
         setN1Capability(false);
     }
 
