@@ -89,7 +89,7 @@ bool NasMm::switchToECallInactivityIfNeeded()
     // Perform item c) in 5.5.3
     m_usim->m_storedGuti = {};
     m_usim->m_taiList = {};
-    m_usim->m_lastVisitedRegisteredTai = {};
+    m_storage->lastVisitedRegisteredTai->clear();
     m_usim->m_equivalentPlmnList = {};
     m_usim->m_currentNsCtx = {};
     m_usim->m_nonCurrentNsCtx = {};

@@ -197,7 +197,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         // TS 23.122 [5]; otherwise the UE shall enter the state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
         m_usim->m_storedGuti = {};
         m_usim->m_taiList = {};
-        m_usim->m_lastVisitedRegisteredTai = {};
+        m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_equivalentPlmnList = {};
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
@@ -219,7 +219,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         {
             switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
             m_usim->m_storedGuti = {};
-            m_usim->m_lastVisitedRegisteredTai = {};
+            m_storage->lastVisitedRegisteredTai->clear();
             m_usim->m_taiList = {};
             m_usim->m_currentNsCtx = {};
             m_usim->m_nonCurrentNsCtx = {};
@@ -250,7 +250,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         {
             Tai tai = m_base->shCtx.getCurrentTai();
             if (tai.hasValue())
-                m_storage->m_forbiddenTaiListRoaming->add(tai);
+                m_storage->forbiddenTaiListRoaming->add(tai);
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)

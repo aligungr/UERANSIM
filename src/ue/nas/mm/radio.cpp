@@ -87,7 +87,7 @@ void NasMm::performPlmnSelection()
             continue; // If it's the HPLMN, it's already added above
         if (nas::utils::PlmnListContains(m_usim->m_forbiddenPlmnList, plmn))
             continue;
-        if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->m_serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
+        if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
             continue;
         if (nas::utils::PlmnListContains(m_usim->m_equivalentPlmnList, plmn))
             candidates.push_back(plmn);
@@ -175,6 +175,8 @@ void NasMm::handleActiveCellChange(const Tai &lastTai)
 
             if (!nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
                 sendMobilityRegistration(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
+            else
+                m_storage->lastVisitedRegisteredTai->set(currentTai);
         }
     }
     else if (m_mmState == EMmState::MM_DEREGISTERED)
@@ -195,6 +197,9 @@ void NasMm::handleActiveCellChange(const Tai &lastTai)
                 switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
             else
                 switchMmState(EMmSubState::MM_DEREGISTERED_PS);
+
+            if (nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+                m_storage->lastVisitedRegisteredTai->set(currentTai);
         }
     }
     else if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||

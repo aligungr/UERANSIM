@@ -35,7 +35,6 @@ class Usim
     nas::IE5gsMobileIdentity m_storedGuti{};
 
     // Plmn related
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
     nas::IE5gsTrackingAreaIdentityList m_taiList{};
     nas::IEPlmnList m_equivalentPlmnList{};
     nas::IEPlmnList m_forbiddenPlmnList{};

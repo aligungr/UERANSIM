@@ -433,7 +433,7 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI. The USIM shall be considered invalid
     // until switching off the UE or the UICC containing the USIM is removed
     m_usim->m_storedGuti = {};
-    m_usim->m_lastVisitedRegisteredTai = {};
+    m_storage->lastVisitedRegisteredTai->clear();
     m_usim->m_taiList = {};
     m_usim->m_currentNsCtx = {};
     m_usim->m_nonCurrentNsCtx = {};

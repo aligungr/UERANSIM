@@ -287,7 +287,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
         m_usim->m_storedGuti = {};
-        m_usim->m_lastVisitedRegisteredTai = {};
+        m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_taiList = {};
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
@@ -312,7 +312,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     {
         Tai tai = m_base->shCtx.getCurrentTai();
         if (tai.hasValue())
-            m_storage->m_forbiddenTaiListRps->add(tai);
+            m_storage->forbiddenTaiListRps->add(tai);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
@@ -320,7 +320,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         Tai tai = m_base->shCtx.getCurrentTai();
         if (tai.hasValue())
         {
-            m_storage->m_forbiddenTaiListRoaming->add(tai);
+            m_storage->forbiddenTaiListRoaming->add(tai);
             nas::utils::RemoveFromTaiList(m_usim->m_taiList, nas::VTrackingAreaIdentity{tai});
         }
     }

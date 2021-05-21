@@ -207,6 +207,11 @@ class NasSlot
         return m_value;
     }
 
+    void clear()
+    {
+        set(T{});
+    }
+
     void set(const T &value)
     {
         autoClearIfNecessary();

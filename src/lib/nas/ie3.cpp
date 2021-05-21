@@ -32,6 +32,11 @@ IE5gsTrackingAreaIdentity::IE5gsTrackingAreaIdentity(int mcc, int mnc, bool isLo
 {
 }
 
+IE5gsTrackingAreaIdentity::IE5gsTrackingAreaIdentity(const Tai &tai)
+    : mcc(tai.plmn.mcc), mnc(tai.plmn.mnc), isLongMnc(tai.plmn.isLongMnc), trackingAreaCode(tai.tac)
+{
+}
+
 IE5gsTrackingAreaIdentity IE5gsTrackingAreaIdentity::Decode(const OctetView &stream)
 {
     auto plmn = VPlmn::Decode(stream);

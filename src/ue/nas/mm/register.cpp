@@ -80,7 +80,9 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
 
     // Assign other fields
     request->mobileIdentity = getOrGeneratePreferredId();
-    request->lastVisitedRegisteredTai = m_usim->m_lastVisitedRegisteredTai;
+    if (m_storage->lastVisitedRegisteredTai->get().hasValue())
+        request->lastVisitedRegisteredTai =
+            nas::IE5gsTrackingAreaIdentity{m_storage->lastVisitedRegisteredTai->get()};
     if (!requestedNssai.slices.empty())
         request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
@@ -173,7 +175,9 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     }
 
     // Assign other fields
-    request->lastVisitedRegisteredTai = m_usim->m_lastVisitedRegisteredTai;
+    if (m_storage->lastVisitedRegisteredTai->get().hasValue())
+        request->lastVisitedRegisteredTai =
+            nas::IE5gsTrackingAreaIdentity{m_storage->lastVisitedRegisteredTai->get()};
     request->mobileIdentity = getOrGeneratePreferredId();
     if (!requestedNssai.slices.empty())
         request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
@@ -232,7 +236,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // Store the TAI list as a registration area
     m_usim->m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
     // Store the service area list
-    m_storage->m_serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
+    m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
 
     // Store the E-PLMN list and ..
     m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
@@ -355,7 +359,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
 
     // Store the service area list
-    m_storage->m_serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
+    m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
 
     // "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter and service
     // request attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."
@@ -513,7 +517,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
             m_usim->m_storedGuti = {};
-            m_usim->m_lastVisitedRegisteredTai = {};
+            m_storage->lastVisitedRegisteredTai->clear();
             m_usim->m_taiList = {};
             m_usim->m_currentNsCtx = {};
             m_usim->m_nonCurrentNsCtx = {};
@@ -565,7 +569,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
         {
             Tai tai = m_base->shCtx.getCurrentTai();
             if (tai.hasValue())
-                m_storage->m_forbiddenTaiListRoaming->add(tai);
+                m_storage->forbiddenTaiListRoaming->add(tai);
         }
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
@@ -662,7 +666,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
         m_usim->m_storedGuti = {};
-        m_usim->m_lastVisitedRegisteredTai = {};
+        m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_taiList = {};
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
@@ -726,7 +730,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     {
         Tai tai = m_base->shCtx.getCurrentTai();
         if (tai.hasValue())
-            m_storage->m_forbiddenTaiListRoaming->add(tai);
+            m_storage->forbiddenTaiListRoaming->add(tai);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
@@ -803,7 +807,7 @@ void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
         // The UE shall delete 5G-GUTI, TAI list, last visited TAI, list of equivalent PLMNs and ngKSI, ..
         m_usim->m_storedGuti = {};
         m_usim->m_taiList = {};
-        m_usim->m_lastVisitedRegisteredTai = {};
+        m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_equivalentPlmnList = {};
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};

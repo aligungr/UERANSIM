@@ -52,12 +52,12 @@ bool NasMm::isInNonAllowedArea()
     if (!plmn.hasValue())
         return false;
 
-    if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->m_serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
+    if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
         return true;
 
     int tac = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.tac; });
 
-    if (nas::utils::ServiceAreaListForbidsTai(m_storage->m_serviceAreaList->get(),
+    if (nas::utils::ServiceAreaListForbidsTai(m_storage->serviceAreaList->get(),
                                               nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(plmn), octet3{tac}}))
         return true;
 
