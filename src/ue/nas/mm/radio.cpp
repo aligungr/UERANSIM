@@ -142,7 +142,7 @@ void NasMm::performPlmnSelection()
     }
 }
 
-void NasMm::handleActiveCellChange(const Tai &lastTai)
+void NasMm::handleActiveCellChange()
 {
     if (m_cmState == ECmState::CM_CONNECTED)
     {
