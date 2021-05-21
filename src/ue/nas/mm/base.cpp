@@ -267,6 +267,15 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
         m_usim->m_resStar = {};
         m_timers->t3516.stop();
     }
+
+    // If NAS layer starts PLMN SEARCH in CM-CONNECTED, we switch to CM-IDLE. Because PLMN search is an idle
+    // operation and RRC expects it in RRC-IDLE state. (This may happen in for example initial registration reject with
+    // switch to PLMN search state)
+    if (m_cmState == ECmState::CM_CONNECTED && (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
+                                                m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH))
+    {
+        localReleaseConnection();
+    }
 }
 
 void NasMm::onSwitchRmState(ERmState oldState, ERmState newState)
