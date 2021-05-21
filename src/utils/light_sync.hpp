@@ -15,28 +15,40 @@
 template <typename TInput, typename TOutput>
 class LightSync
 {
-    const int64_t m_validUntil;
+  private:
+    const int64_t m_validUntilForProducer;
+    const int64_t m_validUntilForConsumer;
     const std::unique_ptr<TInput> m_input;
     std::atomic_bool m_processed;
     std::shared_ptr<TOutput> m_output;
 
   public:
-    LightSync(int validForMs, std::unique_ptr<TInput> &&input)
-        : m_validUntil{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs)}, m_input{std::move(input)},
-          m_processed{}, m_output{}
+    LightSync(int validForMs, int estimatedProcessMs, std::unique_ptr<TInput> &&input)
+        : m_validUntilForProducer{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs)},
+          m_validUntilForConsumer{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs + estimatedProcessMs)},
+          m_input{std::move(input)}, m_processed{}, m_output{}
     {
         if (validForMs >= 2500)
             throw std::runtime_error("LightSync timeout is too large");
+        if (estimatedProcessMs >= 50)
+            throw std::runtime_error("LightSync estimated process time is too large");
     }
 
-    const TInput &getInput()
+  private:
+    bool isExpiredForConsumer()
+    {
+        return utils::CurrentTimeMillis() > m_validUntilForConsumer;
+    }
+
+  public:
+    const TInput &input()
     {
         return *m_input;
     }
 
-    bool isValid()
+    bool isExpiredForProducer()
     {
-        return utils::CurrentTimeMillis() <= m_validUntil;
+        return utils::CurrentTimeMillis() > m_validUntilForProducer;
     }
 
     // Only producer can call at most once
@@ -53,11 +65,17 @@ class LightSync
     {
         while (true)
         {
-            if (!isValid())
+            if (isExpiredForConsumer())
                 return nullptr;
 
             if (m_processed)
                 return m_output;
         }
+    }
+
+    static std::shared_ptr<LightSync<TInput, TOutput>> MakeShared(int validForMs, int estimatedProcessMs,
+                                                                  std::unique_ptr<TInput> &&input)
+    {
+        return std::make_shared<LightSync<TInput, TOutput>>(validForMs, estimatedProcessMs, std::move(input));
     }
 };

@@ -81,8 +81,7 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
     // Assign other fields
     request->mobileIdentity = getOrGeneratePreferredId();
     if (m_storage->lastVisitedRegisteredTai->get().hasValue())
-        request->lastVisitedRegisteredTai =
-            nas::IE5gsTrackingAreaIdentity{m_storage->lastVisitedRegisteredTai->get()};
+        request->lastVisitedRegisteredTai = nas::IE5gsTrackingAreaIdentity{m_storage->lastVisitedRegisteredTai->get()};
     if (!requestedNssai.slices.empty())
         request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
     request->ueSecurityCapability = createSecurityCapabilityIe();
@@ -176,8 +175,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
 
     // Assign other fields
     if (m_storage->lastVisitedRegisteredTai->get().hasValue())
-        request->lastVisitedRegisteredTai =
-            nas::IE5gsTrackingAreaIdentity{m_storage->lastVisitedRegisteredTai->get()};
+        request->lastVisitedRegisteredTai = nas::IE5gsTrackingAreaIdentity{m_storage->lastVisitedRegisteredTai->get()};
     request->mobileIdentity = getOrGeneratePreferredId();
     if (!requestedNssai.slices.empty())
         request->requestedNSSAI = nas::utils::NssaiFrom(requestedNssai);
@@ -236,8 +234,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // Store the TAI list as a registration area
     m_usim->m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
     Tai currentTai = m_base->shCtx.getCurrentTai();
-    if (currentTai.hasValue() &&
-        nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+    if (currentTai.hasValue() && nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
         m_storage->lastVisitedRegisteredTai->set(currentTai);
 
     // Store the service area list
