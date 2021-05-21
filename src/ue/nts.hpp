@@ -70,13 +70,17 @@ struct NwUeRrcToNas : NtsMessage
         RADIO_LINK_FAILURE,
         PAGING,
         NAS_NOTIFY,
+        ACTIVE_CELL_CHANGED
     } present;
 
     // NAS_DELIVERY
-    OctetString nasPdu{};
+    OctetString nasPdu;
 
     // PAGING
-    std::vector<GutiMobileIdentity> pagingTmsi{};
+    std::vector<GutiMobileIdentity> pagingTmsi;
+
+    // ACTIVE_CELL_CHANGED
+    Tai lastTai;
 
     explicit NwUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {

@@ -28,6 +28,7 @@ void UeRrcTask::performCellSelection()
         return;
 
     int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
+    Tai lastTai = m_base->shCtx.getCurrentTai();
 
     bool shouldLogErrors = lastCell != 0 || (currentTime - m_lastTimePlmnSearchFailureLogged >= 30'000LL);
 
@@ -97,11 +98,13 @@ void UeRrcTask::performCellSelection()
 
     if (selectedCell != lastCell)
     {
-        auto *w = new NwUeRrcToRls(NwUeRrcToRls::ASSIGN_CURRENT_CELL);
-        w->cellId = selectedCell;
-        m_base->rlsTask->push(w);
+        auto *w1 = new NwUeRrcToRls(NwUeRrcToRls::ASSIGN_CURRENT_CELL);
+        w1->cellId = selectedCell;
+        m_base->rlsTask->push(w1);
 
-        m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::NAS_NOTIFY));
+        auto w2 = new NwUeRrcToNas(NwUeRrcToNas::ACTIVE_CELL_CHANGED);
+        w2->lastTai = lastTai;
+        m_base->nasTask->push(w2);
     }
 }
 

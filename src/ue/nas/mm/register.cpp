@@ -563,13 +563,9 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            Tai tai;
-            tai.plmn.mcc = m_usim->m_currentTai->plmn.mcc;
-            tai.plmn.mnc = m_usim->m_currentTai->plmn.mnc;
-            tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
-            tai.tac = (int)m_usim->m_currentTai->tac;
-
-            m_storage->m_forbiddenTaiListRoaming->add(tai);
+            Tai tai = m_base->shCtx.getCurrentTai();
+            if (tai.hasValue())
+                m_storage->m_forbiddenTaiListRoaming->add(tai);
         }
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
@@ -728,13 +724,9 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        Tai tai;
-        tai.plmn.mcc = m_usim->m_currentTai->plmn.mcc;
-        tai.plmn.mnc = m_usim->m_currentTai->plmn.mnc;
-        tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
-        tai.tac = (int)m_usim->m_currentTai->tac;
-
-        m_storage->m_forbiddenTaiListRoaming->add(tai);
+        Tai tai = m_base->shCtx.getCurrentTai();
+        if (tai.hasValue())
+            m_storage->m_forbiddenTaiListRoaming->add(tai);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)

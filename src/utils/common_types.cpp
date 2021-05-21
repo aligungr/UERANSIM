@@ -182,3 +182,8 @@ Tai::Tai(const Plmn &plmn, int tac) : plmn{plmn}, tac{tac}
 Tai::Tai(int mcc, int mnc, bool longMnc, int tac) : plmn{mcc, mnc, longMnc}, tac{tac}
 {
 }
+
+bool Tai::hasValue() const
+{
+    return plmn.hasValue();
+}

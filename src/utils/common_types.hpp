@@ -42,6 +42,8 @@ struct Tai
     Tai();
     Tai(const Plmn& plmn, int tac);
     Tai(int mcc, int mnc, bool longMnc, int tac);
+
+    [[nodiscard]] bool hasValue() const;
 };
 
 struct SingleSlice

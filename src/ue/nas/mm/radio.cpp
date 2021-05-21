@@ -142,6 +142,19 @@ void NasMm::performPlmnSelection()
     }
 }
 
+void NasMm::handleActiveCellChange(const Tai &lastTai)
+{
+    if (m_cmState == ECmState::CM_CONNECTED)
+    {
+        // TODO
+        m_logger->err("Serving cell change in CM-CONNECTED");
+        return;
+    }
+
+    Tai currentTai = m_base->shCtx.getCurrentTai();
+
+}
+
 /*void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
 {
     if (m_cmState == ECmState::CM_CONNECTED)
@@ -195,8 +208,6 @@ void NasMm::handleRadioLinkFailure()
     {
         m_logger->err("Radio link failure detected");
     }
-
-    m_usim->m_currentTai = std::nullopt;
 
     handleRrcConnectionRelease();
 

@@ -31,7 +31,7 @@ class NasMm
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
     Usim *m_usim;
-    MmStorage* m_storage;
+    MmStorage *m_storage;
 
     ERmState m_rmState;
     ECmState m_cmState;
@@ -161,6 +161,7 @@ class NasMm
   private: /* Radio */
     void performPlmnSelection();
     void localReleaseConnection();
+    void handleActiveCellChange(const Tai &lastTai);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handleRadioLinkFailure();

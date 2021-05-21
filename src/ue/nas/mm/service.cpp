@@ -34,7 +34,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
         return;
     }
-    if (!nas::utils::TaiListContains(m_usim->m_taiList, *m_usim->m_currentTai))
+    if (!nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{m_base->shCtx.getCurrentTai()}))
     {
         m_logger->err("Service Request canceled, current TAI is not in the TAI list");
         return;
@@ -310,26 +310,19 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
-        Tai tai;
-        tai.plmn.mcc = m_usim->m_currentTai->plmn.mcc;
-        tai.plmn.mnc = m_usim->m_currentTai->plmn.mnc;
-        tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
-        tai.tac = (int)m_usim->m_currentTai->tac;
-
-        m_storage->m_forbiddenTaiListRps->add(tai);
+        Tai tai = m_base->shCtx.getCurrentTai();
+        if (tai.hasValue())
+            m_storage->m_forbiddenTaiListRps->add(tai);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        Tai tai;
-        tai.plmn.mcc = m_usim->m_currentTai->plmn.mcc;
-        tai.plmn.mnc = m_usim->m_currentTai->plmn.mnc;
-        tai.plmn.isLongMnc = m_usim->m_currentTai->plmn.isLongMnc;
-        tai.tac = (int)m_usim->m_currentTai->tac;
-
-        m_storage->m_forbiddenTaiListRoaming->add(tai);
-
-        nas::utils::RemoveFromTaiList(m_usim->m_taiList, *m_usim->m_currentTai);
+        Tai tai = m_base->shCtx.getCurrentTai();
+        if (tai.hasValue())
+        {
+            m_storage->m_forbiddenTaiListRoaming->add(tai);
+            nas::utils::RemoveFromTaiList(m_usim->m_taiList, nas::VTrackingAreaIdentity{tai});
+        }
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
