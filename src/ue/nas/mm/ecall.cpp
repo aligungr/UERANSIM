@@ -95,7 +95,7 @@ bool NasMm::switchToECallInactivityIfNeeded()
     m_usim->m_nonCurrentNsCtx = {};
 
     // Perform item d) in 5.5.3
-    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE);
+    switchMmState(EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE);
     return true;
 }
 

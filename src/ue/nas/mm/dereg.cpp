@@ -79,10 +79,10 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
     m_sm->localReleaseAllSessions();
 
     if (m_lastDeregistrationRequest->deRegistrationType.switchOff == nas::ESwitchOff::NORMAL_DE_REGISTRATION)
-        switchMmState(EMmState::MM_DEREGISTERED_INITIATED, EMmSubState::MM_DEREGISTERED_INITIATED_NA);
+        switchMmState(EMmSubState::MM_DEREGISTERED_INITIATED_PS);
     else
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
     }
 }
 
@@ -90,7 +90,7 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
 {
     m_logger->debug("De-registration accept received");
 
-    if (m_mmSubState != EMmSubState::MM_DEREGISTERED_INITIATED_NA)
+    if (m_mmState != EMmState::MM_DEREGISTERED_INITIATED)
     {
         m_logger->warn("De-registration accept message ignored. UE is not in MM_DEREGISTERED_INITIATED");
         sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
@@ -105,9 +105,9 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     m_sm->localReleaseAllSessions();
 
     if (m_lastDeregCause == EDeregCause::DISABLE_5G)
-        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+        switchMmState(EMmSubState::MM_NULL_PS);
     else
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 
     m_logger->info("De-registration is successful");
 }
@@ -203,7 +203,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         m_usim->m_nonCurrentNsCtx = {};
         switchUState(E5UState::U2_NOT_UPDATED);
         m_timers->t3502.start();
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
     };
 
     // "If the de-registration type indicates "re-registration not required", the UE shall take the actions depending on
@@ -258,19 +258,19 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+            switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
 
         if (cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+            switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
 
         if (cause == nas::EMmCause::CONGESTION)
         {
             m_timers->t3346.stop();
             switchUState(E5UState::U2_NOT_UPDATED);
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
+            switchMmState(EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
 
             if (msg.t3346Value.has_value() && nas::utils::HasValue(*msg.t3346Value))
                 m_timers->t3346.start(*msg.t3346Value);
@@ -278,7 +278,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
         if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
-            switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+            switchMmState(EMmSubState::MM_NULL_PS);
             setN1Capability(false);
         }
 

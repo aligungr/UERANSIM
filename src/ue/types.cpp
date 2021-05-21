@@ -87,10 +87,10 @@ Json ToJson(const EMmSubState &state)
 {
     switch (state)
     {
-    case EMmSubState::MM_NULL_NA:
+    case EMmSubState::MM_NULL_PS:
         return "MM-NULL";
-    case EMmSubState::MM_DEREGISTERED_NA:
-        return "MM-DEREGISTERED/NA";
+    case EMmSubState::MM_DEREGISTERED_PS:
+        return "MM-DEREGISTERED/PS";
     case EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE:
         return "MM-DEREGISTERED/NORMAL-SERVICE";
     case EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE:
@@ -107,10 +107,10 @@ Json ToJson(const EMmSubState &state)
         return "MM-DEREGISTERED/ECALL-INACTIVE";
     case EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED:
         return "MM-DEREGISTERED/INITIAL-REGISTRATION-NEEDED";
-    case EMmSubState::MM_REGISTERED_INITIATED_NA:
+    case EMmSubState::MM_REGISTERED_INITIATED_PS:
         return "MM-REGISTER-INITIATED";
-    case EMmSubState::MM_REGISTERED_NA:
-        return "MM-REGISTERED/NA";
+    case EMmSubState::MM_REGISTERED_PS:
+        return "MM-REGISTERED/PS";
     case EMmSubState::MM_REGISTERED_NORMAL_SERVICE:
         return "MM-REGISTERED/NORMAL-SERVICE";
     case EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE:
@@ -125,9 +125,9 @@ Json ToJson(const EMmSubState &state)
         return "MM-REGISTERED/NO-CELL-AVAILABLE";
     case EMmSubState::MM_REGISTERED_UPDATE_NEEDED:
         return "MM-REGISTERED/UPDATE-NEEDED";
-    case EMmSubState::MM_DEREGISTERED_INITIATED_NA:
+    case EMmSubState::MM_DEREGISTERED_INITIATED_PS:
         return "MM-DEREGISTER-INITIATED";
-    case EMmSubState::MM_SERVICE_REQUEST_INITIATED_NA:
+    case EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS:
         return "MM-SERVICE-REQUEST-INITIATED";
     default:
         return "?";

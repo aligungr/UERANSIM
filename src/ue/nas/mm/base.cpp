@@ -18,6 +18,42 @@
 namespace nr::ue
 {
 
+static EMmState GetMmStateFromSubState(EMmSubState subState)
+{
+    switch (subState)
+    {
+    case EMmSubState::MM_NULL_PS:
+        return EMmState::MM_NULL;
+    case EMmSubState::MM_DEREGISTERED_PS:
+    case EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE:
+    case EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE:
+    case EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION:
+    case EMmSubState::MM_DEREGISTERED_PLMN_SEARCH:
+    case EMmSubState::MM_DEREGISTERED_NO_SUPI:
+    case EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE:
+    case EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE:
+    case EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED:
+        return EMmState::MM_DEREGISTERED;
+    case EMmSubState::MM_REGISTERED_INITIATED_PS:
+        return EMmState::MM_REGISTERED_INITIATED;
+    case EMmSubState::MM_REGISTERED_PS:
+    case EMmSubState::MM_REGISTERED_NORMAL_SERVICE:
+    case EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE:
+    case EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE:
+    case EMmSubState::MM_REGISTERED_LIMITED_SERVICE:
+    case EMmSubState::MM_REGISTERED_PLMN_SEARCH:
+    case EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE:
+    case EMmSubState::MM_REGISTERED_UPDATE_NEEDED:
+        return EMmState::MM_REGISTERED;
+    case EMmSubState::MM_DEREGISTERED_INITIATED_PS:
+        return EMmState::MM_DEREGISTERED_INITIATED;
+    case EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS:
+        return EMmState::MM_SERVICE_REQUEST_INITIATED;
+    }
+
+    std::terminate();
+}
+
 NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers}, m_sm{}, m_usim{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
@@ -25,7 +61,7 @@ NasMm::NasMm(TaskBase *base, UeTimers *timers) : m_base{base}, m_timers{timers},
     m_rmState = ERmState::RM_DEREGISTERED;
     m_cmState = ECmState::CM_IDLE;
     m_mmState = EMmState::MM_DEREGISTERED;
-    m_mmSubState = EMmSubState::MM_DEREGISTERED_NA;
+    m_mmSubState = EMmSubState::MM_DEREGISTERED_PS;
 
     m_storage = new MmStorage(m_base);
 }
@@ -57,9 +93,9 @@ void NasMm::performMmCycle()
         if (switchToECallInactivityIfNeeded())
             return;
 
-        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NA)
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PS)
         {
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
             return;
         }
         else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
@@ -106,9 +142,9 @@ void NasMm::performMmCycle()
         if (startECallInactivityIfNeeded())
             return;
 
-        if (m_mmSubState == EMmSubState::MM_REGISTERED_NA)
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_PS)
         {
-            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+            switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
             return;
         }
         else if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
@@ -160,8 +196,10 @@ void NasMm::performMmCycle()
     }
 }
 
-void NasMm::switchMmState(EMmState state, EMmSubState subState)
+void NasMm::switchMmState(EMmSubState subState)
 {
+    EMmState state = GetMmStateFromSubState(subState);
+
     ERmState oldRmState = m_rmState;
     if (state == EMmState::MM_DEREGISTERED || state == EMmState::MM_REGISTERED_INITIATED)
         m_rmState = ERmState::RM_DEREGISTERED;
@@ -298,7 +336,7 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
             if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
                 regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
             {
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+                switchMmState(EMmSubState::MM_DEREGISTERED_PS);
                 switchUState(E5UState::U2_NOT_UPDATED);
 
                 handleAbnormalInitialRegFailure(regType);
@@ -315,12 +353,12 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
             // if the de-registration procedure was performed due to disabling of 5GS services, the UE shall enter the
             // 5GMM-NULL state;
             if (m_lastDeregCause == EDeregCause::DISABLE_5G)
-                switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+                switchMmState(EMmSubState::MM_NULL_PS);
             // if the de-registration type "normal de-registration" was requested for reasons other than disabling of
             // 5GS services, the UE shall enter the 5GMM-DEREGISTERED state.
             else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                      nas::ESwitchOff::NORMAL_DE_REGISTRATION)
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+                switchMmState(EMmSubState::MM_DEREGISTERED_PS);
         }
 
         // If the UE enters the 5GMM-IDLE, the RAND and RES* values stored

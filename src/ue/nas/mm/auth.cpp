@@ -446,7 +446,7 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     m_timers->t3519.stop();
     m_timers->t3521.stop();
     // .. and enter state 5GMM-DEREGISTERED.
-    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+    switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 }
 
 void NasMm::receiveEapSuccessMessage(const eap::Eap &eap)

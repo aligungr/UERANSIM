@@ -28,12 +28,12 @@ void NasMm::performPlmnSelection()
     {
         if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
         {
-            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE);
+            switchMmState(EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE);
             return;
         }
         else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
         {
-            switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE);
+            switchMmState(EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE);
             return;
         }
     }
@@ -128,16 +128,16 @@ void NasMm::performPlmnSelection()
         if (cellCategory == ECellCategory::SUITABLE_CELL)
         {
             if (m_mmState == EMmState::MM_REGISTERED)
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+                switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
             else
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+                switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
         }
         else
         {
             if (m_mmState == EMmState::MM_REGISTERED)
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+                switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
             else
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+                switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
         }
     }
 }
@@ -201,9 +201,9 @@ void NasMm::handleRadioLinkFailure()
     handleRrcConnectionRelease();
 
     if (m_mmState == EMmState::MM_REGISTERED)
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+        switchMmState(EMmSubState::MM_REGISTERED_PS);
     else if (m_mmState == EMmState::MM_DEREGISTERED)
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 }
 
 void NasMm::localReleaseConnection()

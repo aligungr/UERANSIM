@@ -159,7 +159,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     m_lastServiceRequest = std::move(request);
     m_lastServiceReqCause = reqCause;
     m_timers->t3517.start();
-    switchMmState(EMmState::MM_SERVICE_REQUEST_INITIATED, EMmSubState::MM_SERVICE_REQUEST_INITIATED_NA);
+    switchMmState(EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS);
 }
 
 void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
@@ -176,7 +176,7 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
         m_logger->info("Service Accept received");
         m_serCounter = 0;
         m_timers->t3517.stop();
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+        switchMmState(EMmSubState::MM_REGISTERED_PS);
     }
     else
     {
@@ -245,7 +245,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     auto handleAbnormalCase = [this]() {
         m_logger->debug("Handling Service Reject abnormal case");
 
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+        switchMmState(EMmSubState::MM_REGISTERED_PS);
         m_timers->t3517.stop();
     };
 
@@ -342,37 +342,37 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
         cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+        switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
     }
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+        switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
     {
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
     }
 
     if (cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+        switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
     }
 
     if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
-        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+        switchMmState(EMmSubState::MM_NULL_PS);
         setN1Capability(false);
     }
 
@@ -394,7 +394,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         {
             if (!hasEmergency())
             {
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+                switchMmState(EMmSubState::MM_REGISTERED_PS);
 
                 m_timers->t3517.stop();
             }
@@ -414,7 +414,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::RESTRICTED_SERVICE_AREA)
     {
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+        switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
 
         if (m_lastServiceRequest->serviceType.serviceType != nas::EServiceType::ELEVATED_SIGNALLING)
             sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);

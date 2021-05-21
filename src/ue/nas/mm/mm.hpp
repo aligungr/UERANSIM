@@ -79,7 +79,7 @@ class NasMm
   private: /* Base */
     void triggerMmCycle();
     void performMmCycle();
-    void switchMmState(EMmState state, EMmSubState subState);
+    void switchMmState(EMmSubState subState);
     void switchCmState(ECmState state);
     void switchUState(E5UState state);
     void onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate);
