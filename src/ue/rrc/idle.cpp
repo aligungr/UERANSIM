@@ -94,7 +94,8 @@ void UeRrcTask::performCellSelection()
     m_base->shCtx.currentCell.set(cellInfo);
 
     if (selectedCell != 0 && selectedCell != lastCell)
-        m_logger->info("Selected cell id[%d] category[%s]", selectedCell, ToJson(cellInfo.category).str().c_str());
+        m_logger->info("Selected cell plmn[%s] tac[%d] category[%s]", ToJson(cellInfo.plmn).str().c_str(), cellInfo.tac,
+                       ToJson(cellInfo.category).str().c_str());
 
     if (selectedCell != lastCell)
     {

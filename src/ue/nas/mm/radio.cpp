@@ -105,7 +105,7 @@ void NasMm::performPlmnSelection()
     }
     else if (lastSelectedPlmn != selected)
     {
-        m_logger->info("Selected PLMN[%s]", ToJson(selected).str().c_str());
+        m_logger->info("Selected plmn[%s]", ToJson(selected).str().c_str());
         m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::RRC_NOTIFY));
     }
 
@@ -151,46 +151,60 @@ void NasMm::handleActiveCellChange(const Tai &lastTai)
         return;
     }
 
-    Tai currentTai = m_base->shCtx.getCurrentTai();
+    auto currentCell = m_base->shCtx.currentCell.get();
+    Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
-}
-
-/*void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
-{
-    if (m_cmState == ECmState::CM_CONNECTED)
+    if (m_mmState == EMmState::MM_REGISTERED)
     {
-        m_logger->err("Serving cell change in CM-CONNECTED");
-        return;
-    }
-
-    if (servingCell.cellCategory != ECellCategory::ACCEPTABLE_CELL &&
-        servingCell.cellCategory != ECellCategory::SUITABLE_CELL)
-    {
-        m_logger->err("Serving cell change with unhandled cell category");
-        return;
-    }
-
-    m_logger->info("Serving cell determined [%s]", servingCell.gnbName.c_str());
-
-    if (m_mmState == EMmState::MM_REGISTERED || m_mmState == EMmState::MM_DEREGISTERED)
-    {
-        bool isSuitable = servingCell.cellCategory == ECellCategory::SUITABLE_CELL;
-
-        if (m_mmState == EMmState::MM_REGISTERED)
-            switchMmState(EMmState::MM_REGISTERED, isSuitable ? EMmSubState::MM_REGISTERED_NORMAL_SERVICE
-                                                              : EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+        if (currentCell.cellId == 0)
+        {
+            if (m_mmSubState != EMmSubState::MM_REGISTERED_PLMN_SEARCH &&
+                m_mmSubState != EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
+            {
+                switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+            }
+        }
         else
-            switchMmState(EMmState::MM_DEREGISTERED, isSuitable ? EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE
-                                                                : EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+        {
+            if (currentCell.category == ECellCategory::SUITABLE_CELL)
+                switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+            else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
+                switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+            else
+                switchMmState(EMmSubState::MM_REGISTERED_PS);
+
+            if (!nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+                sendMobilityRegistration(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
+        }
     }
-    // todo: else, other states abnormal case
-
-    resetRegAttemptCounter();
-
-    m_usim->m_servingCell = servingCell;
-    m_usim->m_currentTai =
-        nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(servingCell.cellId.plmn), octet3{servingCell.tac}};
-}*/
+    else if (m_mmState == EMmState::MM_DEREGISTERED)
+    {
+        if (currentCell.cellId == 0)
+        {
+            if (m_mmSubState != EMmSubState::MM_DEREGISTERED_PLMN_SEARCH &&
+                m_mmSubState != EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
+            {
+                switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            }
+        }
+        else
+        {
+            if (currentCell.category == ECellCategory::SUITABLE_CELL)
+                switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+            else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
+                switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+            else
+                switchMmState(EMmSubState::MM_DEREGISTERED_PS);
+        }
+    }
+    else if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||
+             m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+    {
+        // This should never happen
+        m_logger->err("Active cell change in [CM-IDLE] state while MM specific procedure is ongoing");
+        localReleaseConnection();
+    }
+}
 
 void NasMm::handleRrcConnectionSetup()
 {
@@ -219,6 +233,9 @@ void NasMm::handleRadioLinkFailure()
 
 void NasMm::localReleaseConnection()
 {
+    if (m_cmState == ECmState::CM_IDLE)
+        return;
+
     m_logger->info("Performing local release of NAS connection");
 
     m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::LOCAL_RELEASE_CONNECTION));

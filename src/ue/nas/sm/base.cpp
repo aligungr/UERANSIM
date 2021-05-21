@@ -37,7 +37,7 @@ void NasSm::establishInitialSessions()
         return;
     }
 
-    m_logger->info("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
+    m_logger->debug("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
 
     for (auto &sess : m_base->config->initSessions)
         sendEstablishmentRequest(sess);
