@@ -15,7 +15,6 @@
 template <typename TInput, typename TOutput>
 class LightSync
 {
-    const int m_validForMs;
     const int64_t m_validUntil;
     const std::unique_ptr<TInput> m_input;
     std::atomic_bool m_processed;
@@ -23,10 +22,10 @@ class LightSync
 
   public:
     LightSync(int validForMs, std::unique_ptr<TInput> &&input)
-        : m_validForMs{validForMs}, m_validUntil{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs)},
-          m_input{std::move(input)}, m_processed{}, m_output{}
+        : m_validUntil{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs)}, m_input{std::move(input)},
+          m_processed{}, m_output{}
     {
-        if (validForMs >= 2000)
+        if (validForMs >= 2500)
             throw std::runtime_error("LightSync timeout is too large");
     }
 
