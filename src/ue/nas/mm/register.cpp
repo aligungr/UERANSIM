@@ -235,6 +235,11 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 {
     // Store the TAI list as a registration area
     m_usim->m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
+    Tai currentTai = m_base->shCtx.getCurrentTai();
+    if (currentTai.hasValue() &&
+        nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+        m_storage->lastVisitedRegisteredTai->set(currentTai);
+
     // Store the service area list
     m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
 
@@ -342,7 +347,14 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     // "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI
     // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
     if (msg.taiList.has_value())
+    {
         m_usim->m_taiList = *msg.taiList;
+
+        Tai currentTai = m_base->shCtx.getCurrentTai();
+        if (currentTai.hasValue() &&
+            nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+            m_storage->lastVisitedRegisteredTai->set(currentTai);
+    }
 
     // Store the E-PLMN list and ..
     m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});

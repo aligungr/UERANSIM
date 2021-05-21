@@ -50,6 +50,11 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     {
         hasNewConfig = true;
         m_usim->m_taiList = *msg.taiList;
+
+        Tai currentTai = m_base->shCtx.getCurrentTai();
+        if (currentTai.hasValue() &&
+            nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+            m_storage->lastVisitedRegisteredTai->set(currentTai);
     }
 
     // "If the UE receives a new service area list in the CONFIGURATION UPDATE COMMAND message, the UE shall consider
