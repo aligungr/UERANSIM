@@ -142,7 +142,7 @@ void NasMm::performPlmnSelection()
     }
 }
 
-void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
+/*void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
 {
     if (m_cmState == ECmState::CM_CONNECTED)
     {
@@ -177,7 +177,7 @@ void NasMm::handleServingCellChange(const UeCellInfo &servingCell)
     m_usim->m_servingCell = servingCell;
     m_usim->m_currentTai =
         nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(servingCell.cellId.plmn), octet3{servingCell.tac}};
-}
+}*/
 
 void NasMm::handleRrcConnectionSetup()
 {
@@ -196,7 +196,6 @@ void NasMm::handleRadioLinkFailure()
         m_logger->err("Radio link failure detected");
     }
 
-    m_usim->m_servingCell = std::nullopt;
     m_usim->m_currentTai = std::nullopt;
 
     handleRrcConnectionRelease();

@@ -162,26 +162,6 @@ enum class ECellCategory
     SUITABLE_CELL,
 };
 
-struct UeCellMeasurement
-{
-    uint64_t sti{};
-    GlobalNci cellId;
-    int tac{};
-    int dbm{};
-    std::string gnbName;
-    std::string linkIp;
-};
-
-struct UeCellInfo
-{
-    uint64_t sti{};
-    GlobalNci cellId;
-    int tac{};
-    ECellCategory cellCategory{};
-    std::string gnbName;
-    std::string linkIp;
-};
-
 struct Vector3
 {
     int x{};

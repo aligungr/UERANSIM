@@ -163,7 +163,6 @@ class NasMm
     void localReleaseConnection();
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
-    void handleServingCellChange(const UeCellInfo &servingCell);
     void handleRadioLinkFailure();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
 
