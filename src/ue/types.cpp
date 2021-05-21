@@ -289,7 +289,7 @@ Json ToJson(const EServiceReqCause &v)
     }
 }
 
-bool CurrentCellInfo::hasValue() const
+bool ActiveCellInfo::hasValue() const
 {
     return cellId != 0;
 }

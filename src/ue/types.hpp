@@ -148,7 +148,7 @@ struct CellSelectionReport
     int forbiddenTaiCells{};
 };
 
-struct CurrentCellInfo
+struct ActiveCellInfo
 {
     int cellId{};
     ECellCategory category{};
@@ -162,7 +162,7 @@ struct UeSharedContext
 {
     Locked<std::unordered_set<Plmn>> availablePlmns;
     Locked<Plmn> selectedPlmn;
-    Locked<CurrentCellInfo> currentCell;
+    Locked<ActiveCellInfo> currentCell;
     Locked<std::vector<Tai>> forbiddenTaiRoaming;
     Locked<std::vector<Tai>> forbiddenTaiRps;
 

@@ -31,7 +31,7 @@ void UeRrcTask::performCellSelection()
 
     bool shouldLogErrors = lastCell != 0 || (currentTime - m_lastTimePlmnSearchFailureLogged >= 30'000LL);
 
-    CurrentCellInfo cellInfo;
+    ActiveCellInfo cellInfo;
     CellSelectionReport report;
 
     bool cellFound = false;
@@ -107,7 +107,7 @@ void UeRrcTask::performCellSelection()
     }
 }
 
-bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo, CellSelectionReport &report)
+bool UeRrcTask::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
 {
     Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
     if (!selectedPlmn.hasValue())
@@ -190,7 +190,7 @@ bool UeRrcTask::lookForSuitableCell(CurrentCellInfo &cellInfo, CellSelectionRepo
     return true;
 }
 
-bool UeRrcTask::lookForAcceptableCell(CurrentCellInfo &cellInfo, CellSelectionReport &report)
+bool UeRrcTask::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
 {
     std::vector<int> candidates;
 
