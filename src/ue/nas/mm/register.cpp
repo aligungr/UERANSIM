@@ -232,6 +232,12 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 {
     // Store the TAI list as a registration area
+    if (msg.taiList.has_value() && nas::utils::TaiListSize(*msg.taiList) == 0)
+    {
+        m_logger->err("Invalid TAI list size");
+        sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+        return;
+    }
     m_storage->taiList->set(msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{}));
     Tai currentTai = m_base->shCtx.getCurrentTai();
     if (currentTai.hasValue() &&
@@ -347,6 +353,13 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
     if (msg.taiList.has_value())
     {
+        if (nas::utils::TaiListSize(*msg.taiList) == 0)
+        {
+            m_logger->err("Invalid TAI list size");
+            sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+            return;
+        }
+
         m_storage->taiList->set(*msg.taiList);
 
         Tai currentTai = m_base->shCtx.getCurrentTai();
@@ -441,7 +454,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     if (msg.networkFeatureSupport.has_value())
         m_nwFeatureSupport = *msg.networkFeatureSupport;
 
-    // The service request attempt counter shall be reset when  registration procedure for mobility and periodic
+    // The service request attempt counter shall be reset when registration procedure for mobility and periodic
     // registration update is successfully completed
     m_serCounter = 0;
 

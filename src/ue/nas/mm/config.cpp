@@ -48,13 +48,22 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     //  list as valid and the old TAI list as invalid; otherwise, the UE shall consider the old TAI list as valid."
     if (msg.taiList.has_value())
     {
-        hasNewConfig = true;
+        if (nas::utils::TaiListSize(*msg.taiList) == 0)
+        {
+            m_logger->err("Invalid TAI list size");
+            sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+        }
+        else
+        {
+            hasNewConfig = true;
 
-        m_storage->taiList->set(*msg.taiList);
+            m_storage->taiList->set(*msg.taiList);
 
-        Tai currentTai = m_base->shCtx.getCurrentTai();
-        if (currentTai.hasValue() && nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
-            m_storage->lastVisitedRegisteredTai->set(currentTai);
+            Tai currentTai = m_base->shCtx.getCurrentTai();
+            if (currentTai.hasValue() &&
+                nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
+                m_storage->lastVisitedRegisteredTai->set(currentTai);
+        }
     }
 
     // "If the UE receives a new service area list in the CONFIGURATION UPDATE COMMAND message, the UE shall consider

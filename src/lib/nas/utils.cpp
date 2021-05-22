@@ -434,4 +434,24 @@ void RemoveFromTaiList(IE5gsTrackingAreaIdentityList &list, const VTrackingAreaI
         list.list.end());
 }
 
+int TaiListSize(const IE5gsTrackingAreaIdentityList &list)
+{
+    int size = 0;
+    for (auto &item : list.list)
+        size += TaiListSize(item);
+    return size;
+}
+
+int TaiListSize(const VPartialTrackingAreaIdentityList &list)
+{
+    size_t size = 0;
+    if (list.list00.has_value())
+        size += list.list00->tacs.size();
+    if (list.list01.has_value())
+        size++;
+    if (list.list10.has_value())
+        size += list.list10->tais.size();
+    return static_cast<int>(size);
+}
+
 } // namespace nas::utils
