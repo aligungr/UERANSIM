@@ -45,9 +45,6 @@ void NasMm::setN1Capability(bool enabled)
 
 bool NasMm::isInNonAllowedArea()
 {
-    if (!m_usim->isValid())
-        return false;
-
     auto currentCell = m_base->shCtx.currentCell.get();
     if (!currentCell.hasValue())
         return false;

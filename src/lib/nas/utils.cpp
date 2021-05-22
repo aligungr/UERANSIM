@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include <utils/common.hpp>
+
 namespace nas::utils
 {
 
@@ -508,6 +510,44 @@ Plmn PlmnFrom(const VPlmn &plmn)
     res.mnc = plmn.mnc;
     res.isLongMnc = plmn.isLongMnc;
     return res;
+}
+
+void RemoveFromServiceAreaList(IEServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    std::vector<int> deletedSubLists;
+    int index = 0;
+
+    for (auto &sublist : list.list)
+    {
+        if (sublist.present == 0)
+        {
+            if (nas::utils::DeepEqualsV(sublist.list00->plmn, tai.plmn))
+                ::utils::EraseWhere(sublist.list00->tacs, [&tai](auto &i) { return (int)i == (int)tai.tac; });
+            if (sublist.list00->tacs.empty())
+                deletedSubLists.push_back(index);
+        }
+        else if (sublist.present == 1)
+        {
+            if (nas::utils::DeepEqualsV(sublist.list01->plmn, tai.plmn) && (int)tai.tac == (int)sublist.list01->tac)
+                deletedSubLists.push_back(index);
+        }
+        else if (sublist.present == 2)
+        {
+            ::utils::EraseWhere(sublist.list10->tais, [&tai](auto &i) { return nas::utils::DeepEqualsV(i, tai); });
+            if (sublist.list10->tais.empty())
+                deletedSubLists.push_back(index);
+        }
+        index++;
+    }
+
+    int deletedSoFar = 0;
+
+    for (int i : deletedSubLists)
+    {
+        int indexToDelete = i - deletedSoFar;
+        list.list.erase(list.list.begin() + indexToDelete);
+        deletedSoFar++;
+    }
 }
 
 } // namespace nas::utils

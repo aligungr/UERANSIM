@@ -94,4 +94,9 @@ void NasMm::serviceNeededForUplinkData()
     }
 }
 
+bool NasMm::isStateNonAllowedService()
+{
+    return m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE;
+}
+
 } // namespace nr::ue

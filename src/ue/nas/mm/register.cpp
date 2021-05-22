@@ -615,7 +615,12 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
         {
             Tai tai = m_base->shCtx.getCurrentTai();
             if (tai.hasValue())
+            {
                 m_storage->forbiddenTaiListRoaming->add(tai);
+                m_storage->serviceAreaList->mutate([&tai](auto &value) {
+                  nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
+                });
+            }
         }
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
@@ -777,7 +782,12 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     {
         Tai tai = m_base->shCtx.getCurrentTai();
         if (tai.hasValue())
+        {
             m_storage->forbiddenTaiListRoaming->add(tai);
+            m_storage->serviceAreaList->mutate([&tai](auto &value) {
+              nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
+            });
+        }
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)

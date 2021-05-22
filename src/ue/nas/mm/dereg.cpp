@@ -250,14 +250,24 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         {
             Tai tai = m_base->shCtx.getCurrentTai();
             if (tai.hasValue())
+            {
                 m_storage->forbiddenTaiListRps->add(tai);
+                m_storage->serviceAreaList->mutate([&tai](auto &value) {
+                  nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
+                });
+            }
         }
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
             Tai tai = m_base->shCtx.getCurrentTai();
             if (tai.hasValue())
+            {
                 m_storage->forbiddenTaiListRoaming->add(tai);
+                m_storage->serviceAreaList->mutate([&tai](auto &value) {
+                    nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
+                });
+            }
         }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)

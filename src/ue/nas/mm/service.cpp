@@ -331,7 +331,11 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     {
         Tai tai = m_base->shCtx.getCurrentTai();
         if (tai.hasValue())
+        {
             m_storage->forbiddenTaiListRps->add(tai);
+            m_storage->serviceAreaList->mutate(
+                [&tai](auto &value) { nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai}); });
+        }
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
