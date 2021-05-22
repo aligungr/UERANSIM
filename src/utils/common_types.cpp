@@ -166,6 +166,14 @@ std::size_t std::hash<GlobalNci>::operator()(const GlobalNci &v) const noexcept
     return h;
 }
 
+std::size_t std::hash<Tai>::operator()(const Tai &v) const noexcept
+{
+    std::size_t h = 0;
+    utils::HashCombine(h, v.plmn);
+    utils::HashCombine(h, v.tac);
+    return h;
+}
+
 bool Plmn::hasValue() const
 {
     return this->mcc != 0;

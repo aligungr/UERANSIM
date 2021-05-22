@@ -37,6 +37,10 @@ bool ServiceAreaListForbidsPlmn(const nas::IEServiceAreaList &list, const VPlmn 
 bool ServiceAreaListForbidsTai(const nas::IEServiceAreaList &list, const VTrackingAreaIdentity &tai);
 bool ServiceAreaListForbidsPlmn(const nas::VPartialServiceAreaList &list, const VPlmn &plmn);
 bool ServiceAreaListForbidsTai(const nas::VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai);
+bool ServiceAreaListAllowsPlmn(const nas::IEServiceAreaList &list, const VPlmn &plmn);
+bool ServiceAreaListAllowsTai(const nas::IEServiceAreaList &list, const VTrackingAreaIdentity &tai);
+bool ServiceAreaListAllowsPlmn(const nas::VPartialServiceAreaList &list, const VPlmn &plmn);
+bool ServiceAreaListAllowsTai(const nas::VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai);
 
 const char *EnumToString(ERegistrationType v);
 const char *EnumToString(EMmCause v);

@@ -247,6 +247,8 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // Store the service area list
     m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
 
+    updateForbiddenTaiListsForAllowedIndications();
+
     // Store the E-PLMN list and ..
     m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
     // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
@@ -383,6 +385,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
 
     // Store the service area list
     m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
+    updateForbiddenTaiListsForAllowedIndications();
 
     // "Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter and service
     // request attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED."

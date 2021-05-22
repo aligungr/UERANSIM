@@ -454,4 +454,51 @@ int TaiListSize(const VPartialTrackingAreaIdentityList &list)
     return static_cast<int>(size);
 }
 
+bool ServiceAreaListAllowsPlmn(const IEServiceAreaList &list, const VPlmn &plmn)
+{
+    return std::any_of(list.list.begin(), list.list.end(),
+                       [&plmn](auto &item) { return ServiceAreaListAllowsPlmn(item, plmn); });
+}
+
+bool ServiceAreaListAllowsTai(const IEServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    return std::any_of(list.list.begin(), list.list.end(),
+                       [&tai](auto &item) { return ServiceAreaListAllowsTai(item, tai); });
+}
+
+bool ServiceAreaListAllowsPlmn(const VPartialServiceAreaList &list, const VPlmn &plmn)
+{
+    if (list.present == 3)
+    {
+        if (list.list11->allowedType == EAllowedType::IN_THE_ALLOWED_AREA && DeepEqualsV(list.list11->plmn, plmn))
+            return true;
+    }
+    return false;
+}
+
+bool ServiceAreaListAllowsTai(const VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    if (list.present == 0)
+    {
+        if (list.list00->allowedType == EAllowedType::IN_THE_ALLOWED_AREA && DeepEqualsV(list.list00->plmn, tai.plmn) &&
+            std::any_of(list.list00->tacs.begin(), list.list00->tacs.end(),
+                        [&tai](auto &i) { return (int)i == (int)tai.tac; }))
+            return true;
+    }
+    else if (list.present == 1)
+    {
+        if (list.list01->allowedType == EAllowedType::IN_THE_ALLOWED_AREA && DeepEqualsV(list.list01->plmn, tai.plmn) &&
+            (int)list.list01->tac == (int)tai.tac)
+            return true;
+    }
+    else if (list.present == 2)
+    {
+        if (list.list10->allowedType == EAllowedType::IN_THE_ALLOWED_AREA &&
+            std::any_of(list.list10->tais.begin(), list.list10->tais.end(),
+                        [tai](auto &i) { return DeepEqualsV(i, tai); }))
+            return true;
+    }
+    return false;
+}
+
 } // namespace nas::utils

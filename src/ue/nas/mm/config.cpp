@@ -8,6 +8,8 @@
 
 #include "mm.hpp"
 
+#include <unordered_set>
+
 #include <lib/nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
 
@@ -16,6 +18,8 @@ namespace nr::ue
 
 void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg)
 {
+    m_logger->debug("Configuration Update Command received");
+
     // Abnormal case: 5.4.4.5, c) Generic UE configuration update and de-registration procedure collision
     if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
     {
@@ -58,6 +62,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
             hasNewConfig = true;
 
             m_storage->taiList->set(*msg.taiList);
+            updateForbiddenTaiListsForAllowedIndications();
 
             Tai currentTai = m_base->shCtx.getCurrentTai();
             if (currentTai.hasValue() &&
@@ -73,6 +78,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     {
         hasNewConfig = true;
         m_storage->serviceAreaList->set(*msg.serviceAreaList);
+        updateForbiddenTaiListsForAllowedIndications();
     }
 
     // "If the UE receives new NITZ information in the CONFIGURATION UPDATE COMMAND message, the UE considers the new
@@ -196,6 +202,38 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
             //  the network."
             // TODO
         }
+    }
+}
+
+void NasMm::updateForbiddenTaiListsForAllowedIndications()
+{
+    // "A tracking area shall be removed from the list of "5GS forbidden tracking areas for roaming", as well as the
+    // list of "5GS forbidden tracking areas for regional provision of service", if the UE receives the tracking area in
+    // the TAI list or the Service area list of "allowed tracking areas" in REGISTRATION ACCEPT message or a
+    // CONFIGURATION UPDATE COMMAND message. The UE shall not remove the tracking area from "5GS forbidden tracking
+    // areas for roaming" or "5GS forbidden tracking areas for regional provision of service" if the UE is registered
+    // for emergency services"
+
+    std::unordered_set<Tai> taiSet;
+
+    m_storage->forbiddenTaiListRoaming->forEach([&taiSet, this](auto &value) {
+        if (nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{value}))
+            taiSet.insert(value);
+        if (nas::utils::ServiceAreaListAllowsTai(m_storage->serviceAreaList->get(), nas::VTrackingAreaIdentity{value}))
+            taiSet.insert(value);
+    });
+
+    m_storage->forbiddenTaiListRps->forEach([&taiSet, this](auto &value) {
+        if (nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{value}))
+            taiSet.insert(value);
+        if (nas::utils::ServiceAreaListAllowsTai(m_storage->serviceAreaList->get(), nas::VTrackingAreaIdentity{value}))
+            taiSet.insert(value);
+    });
+
+    for (auto &tai : taiSet)
+    {
+        m_storage->forbiddenTaiListRoaming->remove(tai);
+        m_storage->forbiddenTaiListRps->remove(tai);
     }
 }
 

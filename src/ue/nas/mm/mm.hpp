@@ -142,6 +142,7 @@ class NasMm
 
   private: /* Configuration */
     void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
+    void updateForbiddenTaiListsForAllowedIndications();
 
   private: /* Identity */
     void receiveIdentityRequest(const nas::IdentityRequest &msg);

@@ -218,6 +218,12 @@ struct hash<Plmn>
 };
 
 template <>
+struct hash<Tai>
+{
+    std::size_t operator()(const Tai &v) const noexcept;
+};
+
+template <>
 struct hash<GlobalNci>
 {
     std::size_t operator()(const GlobalNci &v) const noexcept;
