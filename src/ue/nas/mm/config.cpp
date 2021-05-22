@@ -49,11 +49,11 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.taiList.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_taiList = *msg.taiList;
+
+        m_storage->taiList->set(*msg.taiList);
 
         Tai currentTai = m_base->shCtx.getCurrentTai();
-        if (currentTai.hasValue() &&
-            nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+        if (currentTai.hasValue() && nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
             m_storage->lastVisitedRegisteredTai->set(currentTai);
     }
 

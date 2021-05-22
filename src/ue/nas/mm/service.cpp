@@ -34,7 +34,8 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
         return;
     }
-    if (!nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{m_base->shCtx.getCurrentTai()}))
+    if (!nas::utils::TaiListContains(m_storage->taiList->get(),
+                                     nas::VTrackingAreaIdentity{m_base->shCtx.getCurrentTai()}))
     {
         m_logger->err("Service Request canceled, current TAI is not in the TAI list");
         return;
@@ -288,7 +289,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     {
         m_storage->storedGuti->clear();
         m_storage->lastVisitedRegisteredTai->clear();
-        m_usim->m_taiList = {};
+        m_storage->taiList->clear();
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
     }
@@ -321,7 +322,8 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         if (tai.hasValue())
         {
             m_storage->forbiddenTaiListRoaming->add(tai);
-            nas::utils::RemoveFromTaiList(m_usim->m_taiList, nas::VTrackingAreaIdentity{tai});
+            m_storage->taiList->mutate(
+                [&tai](auto &value) { nas::utils::RemoveFromTaiList(value, nas::VTrackingAreaIdentity{tai}); });
         }
     }
 

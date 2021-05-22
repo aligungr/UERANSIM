@@ -22,6 +22,7 @@ class MmStorage
     std::unique_ptr<nas::NasSlot<nas::IE5gsMobileIdentity>> storedSuci;
     std::unique_ptr<nas::NasSlot<nas::IE5gsMobileIdentity>> storedGuti;
 
+    std::unique_ptr<nas::NasSlot<nas::IE5gsTrackingAreaIdentityList>> taiList;
     std::unique_ptr<nas::NasSlot<Tai>> lastVisitedRegisteredTai;
     std::unique_ptr<nas::NasList<Tai>> forbiddenTaiListRoaming;
     std::unique_ptr<nas::NasList<Tai>> forbiddenTaiListRps;

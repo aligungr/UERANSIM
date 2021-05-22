@@ -232,9 +232,10 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 {
     // Store the TAI list as a registration area
-    m_usim->m_taiList = msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{});
+    m_storage->taiList->set(msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{}));
     Tai currentTai = m_base->shCtx.getCurrentTai();
-    if (currentTai.hasValue() && nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+    if (currentTai.hasValue() &&
+        nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
         m_storage->lastVisitedRegisteredTai->set(currentTai);
 
     // Store the service area list
@@ -346,11 +347,10 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
     if (msg.taiList.has_value())
     {
-        m_usim->m_taiList = *msg.taiList;
+        m_storage->taiList->set(*msg.taiList);
 
         Tai currentTai = m_base->shCtx.getCurrentTai();
-        if (currentTai.hasValue() &&
-            nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+        if (currentTai.hasValue() && nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
             m_storage->lastVisitedRegisteredTai->set(currentTai);
     }
 
@@ -529,7 +529,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
         {
             m_storage->storedGuti->clear();
             m_storage->lastVisitedRegisteredTai->clear();
-            m_usim->m_taiList = {};
+            m_storage->taiList->clear();
             m_usim->m_currentNsCtx = {};
             m_usim->m_nonCurrentNsCtx = {};
         }
@@ -678,7 +678,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     {
         m_storage->storedGuti->clear();
         m_storage->lastVisitedRegisteredTai->clear();
-        m_usim->m_taiList = {};
+        m_storage->taiList->clear();
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
     }
@@ -817,7 +817,7 @@ void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
     {
         // The UE shall delete 5G-GUTI, TAI list, last visited TAI, list of equivalent PLMNs and ngKSI, ..
         m_storage->storedGuti->clear();
-        m_usim->m_taiList = {};
+        m_storage->taiList->clear();
         m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_equivalentPlmnList = {};
         m_usim->m_currentNsCtx = {};
@@ -847,7 +847,8 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
     if (m_regCounter < 5)
     {
         auto tai = m_base->shCtx.getCurrentTai();
-        bool includedInTaiList = nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{tai});
+        bool includedInTaiList =
+            nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai});
 
         // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
         // to 5U1 UPDATED"

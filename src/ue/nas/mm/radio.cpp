@@ -173,7 +173,7 @@ void NasMm::handleActiveCellChange()
             else
                 switchMmState(EMmSubState::MM_REGISTERED_PS);
 
-            if (!nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+            if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
                 sendMobilityRegistration(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
             else
                 m_storage->lastVisitedRegisteredTai->set(currentTai);
@@ -198,7 +198,7 @@ void NasMm::handleActiveCellChange()
             else
                 switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 
-            if (nas::utils::TaiListContains(m_usim->m_taiList, nas::VTrackingAreaIdentity{currentTai}))
+            if (nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
                 m_storage->lastVisitedRegisteredTai->set(currentTai);
         }
     }

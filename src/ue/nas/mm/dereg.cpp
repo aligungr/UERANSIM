@@ -196,7 +196,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         // enter the state 5GMM-DEREGISTERED.PLMN-SEARCH in order to perform a PLMN selection according to 3GPP
         // TS 23.122 [5]; otherwise the UE shall enter the state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
         m_storage->storedGuti->clear();
-        m_usim->m_taiList = {};
+        m_storage->taiList->clear();
         m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_equivalentPlmnList = {};
         m_usim->m_currentNsCtx = {};
@@ -220,7 +220,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
             m_storage->storedGuti->clear();
             m_storage->lastVisitedRegisteredTai->clear();
-            m_usim->m_taiList = {};
+            m_storage->taiList->clear();
             m_usim->m_currentNsCtx = {};
             m_usim->m_nonCurrentNsCtx = {};
         }

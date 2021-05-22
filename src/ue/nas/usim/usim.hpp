@@ -31,7 +31,6 @@ class Usim
     E5UState m_uState{};
 
     // Plmn related
-    nas::IE5gsTrackingAreaIdentityList m_taiList{};
     nas::IEPlmnList m_equivalentPlmnList{};
     nas::IEPlmnList m_forbiddenPlmnList{};
 

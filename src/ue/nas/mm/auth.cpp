@@ -434,7 +434,7 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     // until switching off the UE or the UICC containing the USIM is removed
     m_storage->storedGuti->clear();
     m_storage->lastVisitedRegisteredTai->clear();
-    m_usim->m_taiList = {};
+    m_storage->taiList->clear();
     m_usim->m_currentNsCtx = {};
     m_usim->m_nonCurrentNsCtx = {};
     m_usim->invalidate();
