@@ -52,7 +52,7 @@ class Usim
     std::optional<nas::IEDaylightSavingTime> m_networkDaylightSavingTime{};
 
     // Others
-    bool m_isECallOnly{};
+    bool m_isECallOnly{}; // todo: configurable
 
   public:
     void initialize(bool hasSupi, const UeConfig::Initials &initials);
