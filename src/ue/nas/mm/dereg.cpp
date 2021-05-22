@@ -245,8 +245,14 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
                                       nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
         }
 
-        if (cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
-            cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
+        if (cause == nas::EMmCause::TA_NOT_ALLOWED)
+        {
+            Tai tai = m_base->shCtx.getCurrentTai();
+            if (tai.hasValue())
+                m_storage->forbiddenTaiListRps->add(tai);
+        }
+
+        if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
             Tai tai = m_base->shCtx.getCurrentTai();
             if (tai.hasValue())
