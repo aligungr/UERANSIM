@@ -73,6 +73,9 @@ bool NasMm::startECallInactivityIfNeeded()
 
 bool NasMm::switchToECallInactivityIfNeeded()
 {
+    if (!m_usim->isValid())
+        return false;
+
     if (!m_usim->m_isECallOnly)
         return false;
 
