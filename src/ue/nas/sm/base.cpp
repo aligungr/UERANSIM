@@ -11,7 +11,7 @@
 namespace nr::ue
 {
 
-NasSm::NasSm(TaskBase *base, UeTimers *timers) : m_base(base), m_timers(timers), m_mm(nullptr)
+NasSm::NasSm(TaskBase *base, NasTimers *timers) : m_base(base), m_timers(timers), m_mm(nullptr)
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 

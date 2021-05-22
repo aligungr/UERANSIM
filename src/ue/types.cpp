@@ -12,7 +12,7 @@
 namespace nr::ue
 {
 
-UeTimers::UeTimers()
+NasTimers::NasTimers()
     : t3346(3346, true, INT32_MAX), t3396(3396, false, INT32_MAX), t3444(3444, true, 12 * 60 * 60),
       t3445(3445, true, 12 * 60 * 60), t3502(3502, true, 12 * 60), t3510(3510, true, 15), t3511(3511, true, 10),
       t3512(3512, true, 54 * 60), t3516(3516, true, 30), t3517(3517, true, 15), t3519(3519, true, 60),
@@ -144,7 +144,7 @@ Json ToJson(const UeConfig &v)
     });
 }
 
-Json ToJson(const UeTimers &v)
+Json ToJson(const NasTimers &v)
 {
     return Json::Obj({
         {"T3346", ToJson(v.t3346)},

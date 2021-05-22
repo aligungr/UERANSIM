@@ -27,7 +27,7 @@ class NasMm
 {
   private:
     TaskBase *m_base;
-    UeTimers *m_timers;
+    NasTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
     Usim *m_usim;
@@ -70,7 +70,7 @@ class NasMm
     friend class UeCmdHandler;
 
   public:
-    NasMm(TaskBase *base, UeTimers *timers);
+    NasMm(TaskBase *base, NasTimers *timers);
 
   public: /* Base */
     void onStart(NasSm *sm, Usim *usim);

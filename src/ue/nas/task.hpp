@@ -27,7 +27,7 @@ class NasTask : public NtsTask
     TaskBase *base;
     std::unique_ptr<Logger> logger;
 
-    UeTimers timers;
+    NasTimers timers;
     NasMm *mm;
     NasSm *sm;
     Usim *usim;

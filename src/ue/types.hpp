@@ -187,7 +187,7 @@ struct TaskBase
     UeRlsTask *rlsTask{};
 };
 
-struct UeTimers
+struct NasTimers
 {
     nas::NasTimer t3346; /* MM - ... */
     nas::NasTimer t3396; /* SM - ... */
@@ -210,7 +210,7 @@ struct UeTimers
     nas::NasTimer t3584; /* SM - ... */
     nas::NasTimer t3585; /* SM - ... */
 
-    UeTimers();
+    NasTimers();
 };
 
 enum class ERmState
@@ -545,7 +545,7 @@ Json ToJson(const EMmState &state);
 Json ToJson(const EMmSubState &state);
 Json ToJson(const E5UState &state);
 Json ToJson(const UeConfig &v);
-Json ToJson(const UeTimers &v);
+Json ToJson(const NasTimers &v);
 Json ToJson(const ERegUpdateCause &v);
 Json ToJson(const EPsState &v);
 Json ToJson(const UePduSessionInfo &v);
