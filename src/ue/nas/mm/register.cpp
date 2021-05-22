@@ -110,7 +110,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
 {
     if (m_rmState == ERmState::RM_DEREGISTERED)
     {
-        m_logger->warn("Registration updating could not be triggered. UE is in RM-DEREGISTERED state.");
+        m_logger->warn("Mobility updating could not be triggered. UE is in RM-DEREGISTERED state.");
         return;
     }
 
@@ -122,7 +122,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
                        isHighPriority() || hasEmergency() || updateCause == ERegUpdateCause::CONFIGURATION_UPDATE;
         if (!allowed)
         {
-            m_logger->debug("Registration updating canceled, T3346 is running");
+            m_logger->debug("Mobility updating updating canceled, T3346 is running");
             return;
         }
     }
