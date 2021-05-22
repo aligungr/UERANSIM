@@ -96,8 +96,8 @@ void UeRrcTask::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
     if (!isActiveCell(cellId))
         return;
 
-    // TODO
     m_logger->err("RRC Reject received");
+    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
 }
 
 void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)

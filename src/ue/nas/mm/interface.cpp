@@ -50,6 +50,10 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
         handleActiveCellChange();
         break;
     }
+    case NwUeRrcToNas::RRC_ESTABLISHMENT_FAILURE: {
+        handleRrcEstablishmentFailure();
+        break;
+    }
     }
 }
 

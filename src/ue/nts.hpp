@@ -64,12 +64,13 @@ struct NwUeRrcToNas : NtsMessage
 {
     enum PR
     {
+        NAS_NOTIFY,
         NAS_DELIVERY,
         RRC_CONNECTION_SETUP,
         RRC_CONNECTION_RELEASE,
+        RRC_ESTABLISHMENT_FAILURE,
         RADIO_LINK_FAILURE,
         PAGING,
-        NAS_NOTIFY,
         ACTIVE_CELL_CHANGED
     } present;
 

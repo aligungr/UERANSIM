@@ -221,6 +221,11 @@ void NasMm::handleRrcConnectionRelease()
     switchCmState(ECmState::CM_IDLE);
 }
 
+void NasMm::handleRrcEstablishmentFailure()
+{
+
+}
+
 void NasMm::handleRadioLinkFailure()
 {
     if (m_cmState == ECmState::CM_CONNECTED)

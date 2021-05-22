@@ -164,6 +164,7 @@ class NasMm
     void handleActiveCellChange();
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
+    void handleRrcEstablishmentFailure();
     void handleRadioLinkFailure();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
 
