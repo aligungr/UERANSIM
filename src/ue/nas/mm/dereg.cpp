@@ -312,4 +312,21 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
     }
 }
 
+void NasMm::performLocalDeregistration()
+{
+    if (m_mmState == EMmState::MM_DEREGISTERED)
+        return;
+
+    m_logger->debug("Performing local de-registration");
+
+    m_timers->t3521.stop();
+    m_timers->t3519.stop();
+
+    m_storage->storedSuci->clear();
+
+    m_sm->localReleaseAllSessions();
+
+    switchMmState(EMmSubState::MM_DEREGISTERED_PS);
+}
+
 } // namespace nr::ue
