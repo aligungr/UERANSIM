@@ -48,19 +48,20 @@ bool NasMm::isInNonAllowedArea()
     if (!m_usim->isValid())
         return false;
 
-    auto plmn = m_base->shCtx.getCurrentPlmn();
-    if (!plmn.hasValue())
+    auto currentCell = m_base->shCtx.currentCell.get();
+    if (!currentCell.hasValue())
         return false;
 
+    auto plmn = currentCell.plmn;
     if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
         return true;
 
-    int tac = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.tac; });
-
+    int tac = currentCell.tac;
     if (nas::utils::ServiceAreaListForbidsTai(m_storage->serviceAreaList->get(),
                                               nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(plmn), octet3{tac}}))
+    {
         return true;
-
+    }
     return false;
 }
 

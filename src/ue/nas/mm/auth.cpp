@@ -34,6 +34,10 @@ void NasMm::receiveAuthenticationRequest(const nas::AuthenticationRequest &msg)
 
 void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &msg)
 {
+    Plmn currentPlmn = m_base->shCtx.getCurrentPlmn();
+    if (!currentPlmn.hasValue())
+        return;
+
     auto sendEapFailure = [this](std::unique_ptr<eap::Eap> &&eap) {
         // Clear RAND and RES* stored in volatile memory
         m_usim->m_rand = {};
@@ -111,7 +115,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         return;
     }
 
-    auto snn = keys::ConstructServingNetworkName(m_base->shCtx.getCurrentPlmn());
+    auto snn = keys::ConstructServingNetworkName(currentPlmn);
 
     if (receivedEap.attributes.getKdfInput() != OctetString::FromAscii(snn))
     {
@@ -196,7 +200,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, m_base->shCtx.getCurrentPlmn(), *m_usim->m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, currentPlmn, *m_usim->m_nonCurrentNsCtx);
 
         // Send response
         m_nwConsecutiveAuthFailure = 0;
@@ -257,6 +261,10 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
 void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &msg)
 {
+    Plmn currentPLmn = m_base->shCtx.getCurrentPlmn();
+    if (!currentPLmn.hasValue())
+        return;
+
     auto sendFailure = [this](nas::EMmCause cause, std::optional<OctetString> &&auts = std::nullopt) {
         if (cause != nas::EMmCause::SYNCH_FAILURE)
             m_logger->err("Sending Authentication Failure with cause [%s]", nas::utils::EnumToString(cause));
@@ -346,7 +354,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
         auto ckIk = OctetString::Concat(milenage.ck, milenage.ik);
         auto sqnXorAk = OctetString::Xor(m_usim->m_sqnMng->getSqn(), milenage.ak);
-        auto snn = keys::ConstructServingNetworkName(m_base->shCtx.getCurrentPlmn());
+        auto snn = keys::ConstructServingNetworkName(currentPLmn);
 
         // Store the relevant parameters
         m_usim->m_rand = rand.copy();
@@ -359,7 +367,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
-        keys::DeriveKeysSeafAmf(*m_base->config, m_base->shCtx.getCurrentPlmn(), *m_usim->m_nonCurrentNsCtx);
+        keys::DeriveKeysSeafAmf(*m_base->config, currentPLmn, *m_usim->m_nonCurrentNsCtx);
 
         // Send response
         m_nwConsecutiveAuthFailure = 0;

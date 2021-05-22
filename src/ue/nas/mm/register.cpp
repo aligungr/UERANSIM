@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
-#include <utils/common.hpp>
 
 namespace nr::ue
 {
@@ -231,6 +230,12 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 {
+    Tai currentTai = m_base->shCtx.getCurrentTai();
+    Plmn currentPlmn = currentTai.plmn;
+
+    if (!currentTai.hasValue())
+        return;
+
     // Store the TAI list as a registration area
     if (msg.taiList.has_value() && nas::utils::TaiListSize(*msg.taiList) == 0)
     {
@@ -239,7 +244,6 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
         return;
     }
     m_storage->taiList->set(msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{}));
-    Tai currentTai = m_base->shCtx.getCurrentTai();
     if (currentTai.hasValue() &&
         nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
         m_storage->lastVisitedRegisteredTai->set(currentTai);
@@ -262,7 +266,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
             [this](auto &forbiddenPlmn) { m_storage->equivalentPlmnList->remove(forbiddenPlmn); });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    m_storage->equivalentPlmnList->add(m_base->shCtx.getCurrentPlmn());
+    m_storage->equivalentPlmnList->add(currentPlmn);
 
     // Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state
     // 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
@@ -352,6 +356,12 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 
 void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg)
 {
+    Tai currentTai = m_base->shCtx.getCurrentTai();
+    Plmn currentPlmn = currentTai.plmn;
+
+    if (!currentTai.hasValue())
+        return;
+
     // "The UE, upon receiving a REGISTRATION ACCEPT message, shall delete its old TAI list and store the received TAI
     // list. If there is no TAI list received, the UE shall consider the old TAI list as valid."
     if (msg.taiList.has_value())
@@ -364,9 +374,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
         }
 
         m_storage->taiList->set(*msg.taiList);
-
-        Tai currentTai = m_base->shCtx.getCurrentTai();
-        if (currentTai.hasValue() && nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
+        if (nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
             m_storage->lastVisitedRegisteredTai->set(currentTai);
     }
 
@@ -383,7 +391,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
             [this](auto &forbiddenPlmn) { m_storage->equivalentPlmnList->remove(forbiddenPlmn); });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    m_storage->equivalentPlmnList->add(m_base->shCtx.getCurrentPlmn());
+    m_storage->equivalentPlmnList->add(currentPlmn);
 
     // Store the service area list
     m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
@@ -603,7 +611,9 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
+            Plmn plmn = m_base->shCtx.getCurrentPlmn();
+            if (plmn.hasValue())
+                m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
         }
 
         if (cause == nas::EMmCause::CONGESTION)
@@ -763,7 +773,9 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
+        Plmn plmn = m_base->shCtx.getCurrentPlmn();
+        if (plmn.hasValue())
+            m_storage->forbiddenPlmnList->add(plmn);
     }
 
     if (cause == nas::EMmCause::CONGESTION)
@@ -865,7 +877,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
     {
         auto tai = m_base->shCtx.getCurrentTai();
         bool includedInTaiList =
-            nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai});
+            tai.hasValue() && nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai});
 
         // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
         // to 5U1 UPDATED"

@@ -34,8 +34,13 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
         return;
     }
-    if (!nas::utils::TaiListContains(m_storage->taiList->get(),
-                                     nas::VTrackingAreaIdentity{m_base->shCtx.getCurrentTai()}))
+    Tai currentTai = m_base->shCtx.getCurrentTai();
+    if (!currentTai.hasValue())
+    {
+        m_logger->err("Service Request canceled, no active cell exists");
+        return;
+    }
+    if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
     {
         m_logger->err("Service Request canceled, current TAI is not in the TAI list");
         return;
@@ -306,7 +311,9 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
+        Plmn plmn = m_base->shCtx.getCurrentPlmn();
+        if (plmn.hasValue())
+            m_storage->forbiddenPlmnList->add(plmn);
     }
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
