@@ -58,9 +58,8 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     }
 
     // "If the UE receives a new service area list in the CONFIGURATION UPDATE COMMAND message, the UE shall consider
-    // the
-    //  new service area list as valid and the old service area list as invalid; otherwise, the UE shall consider the
-    //  old service area list, if any, as valid."
+    //  the new service area list as valid and the old service area list as invalid; otherwise, the UE shall consider
+    //  the old service area list, if any, as valid."
     if (msg.serviceAreaList.has_value())
     {
         hasNewConfig = true;
