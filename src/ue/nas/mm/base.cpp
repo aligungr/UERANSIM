@@ -428,10 +428,14 @@ void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 
 void NasMm::onSimRemoval()
 {
+    m_storage->forbiddenTaiListRoaming->clear();
+    m_storage->forbiddenTaiListRps->clear();
 }
 
 void NasMm::onSwitchOff()
 {
+    m_storage->forbiddenTaiListRoaming->clear();
+    m_storage->forbiddenTaiListRps->clear();
 }
 
 } // namespace nr::ue

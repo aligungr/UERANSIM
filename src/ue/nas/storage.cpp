@@ -29,8 +29,6 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
 
     storedGuti = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
 
-    taiList = std::make_unique<nas::NasSlot<nas::IE5gsTrackingAreaIdentityList>>(0, std::nullopt);
-
     lastVisitedRegisteredTai = std::make_unique<nas::NasSlot<Tai>>(0, std::nullopt);
 
     forbiddenTaiListRoaming = std::make_unique<nas::NasList<Tai>>(
@@ -44,6 +42,8 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
         });
 
     serviceAreaList = std::make_unique<nas::NasSlot<nas::IEServiceAreaList>>(0, std::nullopt);
+
+    taiList = std::make_unique<nas::NasSlot<nas::IE5gsTrackingAreaIdentityList>>(0, std::nullopt);
 }
 
 } // namespace nr::ue
