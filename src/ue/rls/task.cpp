@@ -66,7 +66,9 @@ void UeRlsTask::onLoop()
             break;
         }
         case NwUeRlsToRls::RADIO_LINK_FAILURE: {
-            m_logger->debug("radio link failure [%d]", (int)w->rlfCause);
+            auto *m = new NwUeRlsToRrc(NwUeRlsToRrc::RADIO_LINK_FAILURE);
+            m->rlfCause = w->rlfCause;
+            m_base->rrcTask->push(m);
             break;
         }
         case NwUeRlsToRls::TRANSMISSION_FAILURE: {

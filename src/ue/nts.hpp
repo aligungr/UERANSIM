@@ -141,7 +141,8 @@ struct NwUeRlsToRrc : NtsMessage
     enum PR
     {
         DOWNLINK_RRC_DELIVERY,
-        SIGNAL_CHANGED
+        SIGNAL_CHANGED,
+        RADIO_LINK_FAILURE
     } present;
 
     // DOWNLINK_RRC_DELIVERY
@@ -154,6 +155,9 @@ struct NwUeRlsToRrc : NtsMessage
 
     // SIGNAL_CHANGED
     int dbm{};
+
+    // RADIO_LINK_FAILURE
+    rls::ERlfCause rlfCause{};
 
     explicit NwUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
     {

@@ -75,7 +75,6 @@ class UeRrcTask : public NtsTask
   private:
     /* Handlers */
     void receivePaging(const ASN_RRC_Paging &msg);
-    void handleRadioLinkFailure();
 
     /* RRC Message Transmission and Receive */
     void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
@@ -124,6 +123,7 @@ class UeRrcTask : public NtsTask
     void receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg);
     void receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg);
     void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
+    void handleRadioLinkFailure(rls::ERlfCause cause);
 
 };
 

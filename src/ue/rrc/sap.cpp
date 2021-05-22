@@ -27,6 +27,10 @@ void UeRrcTask::handleRlsSapMessage(NwUeRlsToRrc &msg)
         handleDownlinkRrc(msg.cellId, msg.channel, msg.pdu);
         break;
     }
+    case NwUeRlsToRrc::RADIO_LINK_FAILURE: {
+        handleRadioLinkFailure(msg.rlfCause);
+        break;
+    }
     }
 }
 
