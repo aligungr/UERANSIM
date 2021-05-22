@@ -274,6 +274,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
         {
+            m_storage->storedSuci->clear();
             m_storage->storedGuti->set(*msg.mobileIdentity);
             m_timers->t3519.stop();
             sendComplete = true;
@@ -392,6 +393,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
         {
+            m_storage->storedSuci->clear();
             m_storage->storedGuti->set(*msg.mobileIdentity);
             m_timers->t3519.stop();
             sendComplete = true;
