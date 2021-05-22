@@ -107,10 +107,4 @@ void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
     m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
 }
 
-void UeRrcTask::handleRadioLinkFailure(rls::ERlfCause cause)
-{
-    m_state = ERrcState::RRC_IDLE;
-    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RADIO_LINK_FAILURE));
-}
-
 } // namespace nr::ue
