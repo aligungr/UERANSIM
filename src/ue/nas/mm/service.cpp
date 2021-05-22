@@ -301,7 +301,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
     {
-        m_usim->m_equivalentPlmnList = {};
+        m_storage->equivalentPlmnList->clear();
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)

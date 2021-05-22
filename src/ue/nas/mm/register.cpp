@@ -250,18 +250,19 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     updateForbiddenTaiListsForAllowedIndications();
 
     // Store the E-PLMN list and ..
-    m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
+    m_storage->equivalentPlmnList->clear();
+    if (msg.equivalentPLMNs.has_value())
+        for (auto &item : msg.equivalentPLMNs->plmns)
+            m_storage->equivalentPlmnList->add(nas::utils::PlmnFrom(item));
     // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
     // PLMN code that is already in the list of "forbidden PLMNs". ..
     if (!hasEmergency())
     {
-        utils::EraseWhere(m_usim->m_equivalentPlmnList.plmns, [this](auto &plmn) {
-            return std::any_of(m_usim->m_forbiddenPlmnList.plmns.begin(), m_usim->m_forbiddenPlmnList.plmns.end(),
-                               [&plmn](auto &forbidden) { return nas::utils::DeepEqualsV(plmn, forbidden); });
-        });
+        for (auto &forbiddenPlmn : m_usim->m_forbiddenPlmnList.plmns)
+            m_storage->equivalentPlmnList->remove(nas::utils::PlmnFrom(forbiddenPlmn));
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
+    m_storage->equivalentPlmnList->add(m_base->shCtx.getCurrentPlmn());
 
     // Upon receipt of the REGISTRATION ACCEPT message, the UE shall reset the registration attempt counter, enter state
     // 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
@@ -370,18 +371,19 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     }
 
     // Store the E-PLMN list and ..
-    m_usim->m_equivalentPlmnList = msg.equivalentPLMNs.value_or(nas::IEPlmnList{});
+    m_storage->equivalentPlmnList->clear();
+    if (msg.equivalentPLMNs.has_value())
+        for (auto &item : msg.equivalentPLMNs->plmns)
+            m_storage->equivalentPlmnList->add(nas::utils::PlmnFrom(item));
     // .. if the initial registration procedure is not for emergency services, the UE shall remove from the list any
     // PLMN code that is already in the list of "forbidden PLMNs". ..
     if (!hasEmergency())
     {
-        utils::EraseWhere(m_usim->m_equivalentPlmnList.plmns, [this](auto &plmn) {
-            return std::any_of(m_usim->m_forbiddenPlmnList.plmns.begin(), m_usim->m_forbiddenPlmnList.plmns.end(),
-                               [&plmn](auto &forbidden) { return nas::utils::DeepEqualsV(plmn, forbidden); });
-        });
+        for (auto &forbiddenPlmn : m_usim->m_forbiddenPlmnList.plmns)
+            m_storage->equivalentPlmnList->remove(nas::utils::PlmnFrom(forbiddenPlmn));
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
-    nas::utils::AddToPlmnList(m_usim->m_equivalentPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
+    m_storage->equivalentPlmnList->add(m_base->shCtx.getCurrentPlmn());
 
     // Store the service area list
     m_storage->serviceAreaList->set(msg.serviceAreaList.value_or(nas::IEServiceAreaList{}));
@@ -589,7 +591,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
         {
-            m_usim->m_equivalentPlmnList = {};
+            m_storage->equivalentPlmnList->clear();
         }
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
@@ -750,7 +752,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
     {
-        m_usim->m_equivalentPlmnList = {};
+        m_storage->equivalentPlmnList->clear();
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
@@ -835,7 +837,7 @@ void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
         m_storage->storedGuti->clear();
         m_storage->taiList->clear();
         m_storage->lastVisitedRegisteredTai->clear();
-        m_usim->m_equivalentPlmnList = {};
+        m_storage->equivalentPlmnList->clear();
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
 
@@ -897,7 +899,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
 
         // "The UE shall delete the list of equivalent PLMNs and shall change to state
         // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE UPDATE"
-        m_usim->m_equivalentPlmnList = {};
+        m_storage->equivalentPlmnList->clear();
         switchMmState(EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
     }
 }

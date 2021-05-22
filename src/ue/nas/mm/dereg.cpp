@@ -198,7 +198,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         m_storage->storedGuti->clear();
         m_storage->taiList->clear();
         m_storage->lastVisitedRegisteredTai->clear();
-        m_usim->m_equivalentPlmnList = {};
+        m_storage->equivalentPlmnList->clear();
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
         switchUState(E5UState::U2_NOT_UPDATED);
@@ -232,7 +232,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
             cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
-            m_usim->m_equivalentPlmnList = {};
+            m_storage->equivalentPlmnList->clear();
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
             cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA ||

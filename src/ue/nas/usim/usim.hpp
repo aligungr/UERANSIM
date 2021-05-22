@@ -31,7 +31,6 @@ class Usim
     E5UState m_uState{};
 
     // Plmn related
-    nas::IEPlmnList m_equivalentPlmnList{};
     nas::IEPlmnList m_forbiddenPlmnList{};
 
     // Security related

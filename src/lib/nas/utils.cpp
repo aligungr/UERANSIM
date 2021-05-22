@@ -501,4 +501,13 @@ bool ServiceAreaListAllowsTai(const VPartialServiceAreaList &list, const VTracki
     return false;
 }
 
+Plmn PlmnFrom(const VPlmn &plmn)
+{
+    Plmn res;
+    res.mcc = plmn.mcc;
+    res.mnc = plmn.mnc;
+    res.isLongMnc = plmn.isLongMnc;
+    return res;
+}
+
 } // namespace nas::utils

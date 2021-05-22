@@ -17,6 +17,7 @@ IESNssai SNssaiFrom(const SingleSlice &v);
 IENssai NssaiFrom(const NetworkSlice &v);
 IEDnn DnnFromApn(const std::string &apn);
 VPlmn PlmnFrom(const Plmn &plmn);
+Plmn PlmnFrom(const VPlmn &plmn);
 
 NetworkSlice NssaiTo(const IENssai &v);
 SingleSlice SNssaiTo(const IESNssai &v);

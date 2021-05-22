@@ -93,7 +93,7 @@ bool NasMm::switchToECallInactivityIfNeeded()
     m_storage->storedGuti->clear();
     m_storage->taiList->clear();
     m_storage->lastVisitedRegisteredTai->clear();
-    m_usim->m_equivalentPlmnList = {};
+    m_storage->equivalentPlmnList->clear();
     m_usim->m_currentNsCtx = {};
     m_usim->m_nonCurrentNsCtx = {};
 
