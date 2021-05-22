@@ -38,8 +38,23 @@ static ASN_RRC_UL_CCCH_Message *ConstructSetupRequest(ASN_RRC_InitialUE_Identity
     return pdu;
 }
 
-void UeRrcTask::startConnectionSetup(OctetString &&nasPdu)
+void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
 {
+    if (m_state != ERrcState::RRC_IDLE)
+    {
+        m_logger->err("RRC establishment could not start, UE not in RRC-IDLE state");
+        handleEstablishmentFailure();
+        return;
+    }
+
+    int activeCell = m_base->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
+    if (activeCell == 0)
+    {
+        m_logger->err("RRC establishment could not start, no active cell");
+        handleEstablishmentFailure();
+        return;
+    }
+
     // TODO: if it's already in progress
 
     if (m_initialId.present == ASN_RRC_InitialUE_Identity_PR_NOTHING)
@@ -49,8 +64,6 @@ void UeRrcTask::startConnectionSetup(OctetString &&nasPdu)
     }
 
     m_initialNasPdu = std::move(nasPdu);
-
-    int activeCell = m_base->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
 
     m_logger->debug("Sending RRC Setup Request");
 
@@ -97,7 +110,8 @@ void UeRrcTask::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
         return;
 
     m_logger->err("RRC Reject received");
-    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
+
+    handleEstablishmentFailure();
 }
 
 void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
@@ -105,6 +119,11 @@ void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
     m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
+}
+
+void UeRrcTask::handleEstablishmentFailure()
+{
+    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
 }
 
 } // namespace nr::ue

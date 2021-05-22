@@ -119,7 +119,8 @@ class UeRrcTask : public NtsTask
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
 
     /* Connection Control */
-    void startConnectionSetup(OctetString &&nasPdu);
+    void startConnectionEstablishment(OctetString &&nasPdu);
+    void handleEstablishmentFailure();
     void receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg);
     void receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg);
     void receiveRrcRelease(const ASN_RRC_RRCRelease &msg);
