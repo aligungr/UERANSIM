@@ -142,7 +142,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     }
 
     // Assign TMSI (TMSI is a part of GUTI)
-    request->tmsi = m_usim->m_storedGuti;
+    request->tmsi = m_storage->storedGuti->get();
     if (request->tmsi.type != nas::EIdentityType::NO_IDENTITY)
     {
         request->tmsi.type = nas::EIdentityType::TMSI;
@@ -286,7 +286,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
         cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
-        m_usim->m_storedGuti = {};
+        m_storage->storedGuti->clear();
         m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_taiList = {};
         m_usim->m_currentNsCtx = {};

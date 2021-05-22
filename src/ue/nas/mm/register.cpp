@@ -274,7 +274,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
         {
-            m_usim->m_storedGuti = *msg.mobileIdentity;
+            m_storage->storedGuti->set(*msg.mobileIdentity);
             m_timers->t3519.stop();
             sendComplete = true;
         }
@@ -392,7 +392,7 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     {
         if (msg.mobileIdentity->type == nas::EIdentityType::GUTI)
         {
-            m_usim->m_storedGuti = *msg.mobileIdentity;
+            m_storage->storedGuti->set(*msg.mobileIdentity);
             m_timers->t3519.stop();
             sendComplete = true;
         }
@@ -525,7 +525,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
-            m_usim->m_storedGuti = {};
+            m_storage->storedGuti->clear();
             m_storage->lastVisitedRegisteredTai->clear();
             m_usim->m_taiList = {};
             m_usim->m_currentNsCtx = {};
@@ -674,7 +674,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED ||
         cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
-        m_usim->m_storedGuti = {};
+        m_storage->storedGuti->clear();
         m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_taiList = {};
         m_usim->m_currentNsCtx = {};
@@ -814,7 +814,7 @@ void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
     else
     {
         // The UE shall delete 5G-GUTI, TAI list, last visited TAI, list of equivalent PLMNs and ngKSI, ..
-        m_usim->m_storedGuti = {};
+        m_storage->storedGuti->clear();
         m_usim->m_taiList = {};
         m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_equivalentPlmnList = {};
@@ -889,7 +889,7 @@ void NasMm::resetRegAttemptCounter()
     // the UE shall stop timer T3519 if running, and delete any stored SUCI"
     m_regCounter = 0;
     m_timers->t3519.stop();
-    m_usim->m_storedSuci = {};
+    m_storage->storedSuci->clear();
 
     // TODO: Registration attempt counter shall be reset for these cases as well (not implemented yet)
     // - the UE is powered on;

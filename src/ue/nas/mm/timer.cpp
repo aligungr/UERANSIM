@@ -111,7 +111,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         break;
     }
     case 3519: {
-        m_usim->m_storedSuci = {};
+        m_storage->storedSuci->clear();
         break;
     }
     case 3520: {

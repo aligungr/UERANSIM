@@ -30,10 +30,6 @@ class Usim
     // State related
     E5UState m_uState{};
 
-    // Identity related
-    nas::IE5gsMobileIdentity m_storedSuci{};
-    nas::IE5gsMobileIdentity m_storedGuti{};
-
     // Plmn related
     nas::IE5gsTrackingAreaIdentityList m_taiList{};
     nas::IEPlmnList m_equivalentPlmnList{};

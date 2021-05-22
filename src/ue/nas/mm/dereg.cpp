@@ -100,7 +100,7 @@ void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOrigina
     m_timers->t3521.stop();
     m_timers->t3519.stop();
 
-    m_usim->m_storedSuci = {};
+    m_storage->storedSuci->clear();
 
     m_sm->localReleaseAllSessions();
 
@@ -195,7 +195,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
         // set the 5GS update status to 5U2 NOT UPDATED and shall start timer T3502. A UE not supporting S1 mode may
         // enter the state 5GMM-DEREGISTERED.PLMN-SEARCH in order to perform a PLMN selection according to 3GPP
         // TS 23.122 [5]; otherwise the UE shall enter the state 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION."
-        m_usim->m_storedGuti = {};
+        m_storage->storedGuti->clear();
         m_usim->m_taiList = {};
         m_storage->lastVisitedRegisteredTai->clear();
         m_usim->m_equivalentPlmnList = {};
@@ -218,7 +218,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
         {
             switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-            m_usim->m_storedGuti = {};
+            m_storage->storedGuti->clear();
             m_storage->lastVisitedRegisteredTai->clear();
             m_usim->m_taiList = {};
             m_usim->m_currentNsCtx = {};

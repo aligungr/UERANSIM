@@ -223,7 +223,6 @@ void NasMm::handleRrcConnectionRelease()
 
 void NasMm::handleRrcEstablishmentFailure()
 {
-
 }
 
 void NasMm::handleRadioLinkFailure()
@@ -253,14 +252,15 @@ void NasMm::localReleaseConnection()
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
 {
-    if (m_usim->m_storedGuti.type == nas::EIdentityType::NO_IDENTITY)
+    auto guti = m_storage->storedGuti->get();
+
+    if (guti.type == nas::EIdentityType::NO_IDENTITY)
         return;
     bool tmsiMatches = false;
     for (auto &tmsi : tmsiIds)
     {
-        if (tmsi.amfSetId == m_usim->m_storedGuti.gutiOrTmsi.amfSetId &&
-            tmsi.amfPointer == m_usim->m_storedGuti.gutiOrTmsi.amfPointer &&
-            tmsi.tmsi == m_usim->m_storedGuti.gutiOrTmsi.tmsi)
+        if (tmsi.amfSetId == guti.gutiOrTmsi.amfSetId && tmsi.amfPointer == guti.gutiOrTmsi.amfPointer &&
+            tmsi.tmsi == guti.gutiOrTmsi.tmsi)
         {
             tmsiMatches = true;
             break;

@@ -39,8 +39,8 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.guti.has_value() && msg.guti->type == nas::EIdentityType::GUTI)
     {
         hasNewConfig = true;
-        m_usim->m_storedSuci = {};
-        m_usim->m_storedGuti = *msg.guti;
+        m_storage->storedSuci->clear();
+        m_storage->storedGuti->set(*msg.guti);
         m_timers->t3519.stop();
     }
 

@@ -19,10 +19,14 @@ class MmStorage
     TaskBase *m_base;
 
   public:
+    std::unique_ptr<nas::NasSlot<nas::IE5gsMobileIdentity>> storedSuci;
+    std::unique_ptr<nas::NasSlot<nas::IE5gsMobileIdentity>> storedGuti;
+
+    std::unique_ptr<nas::NasSlot<Tai>> lastVisitedRegisteredTai;
     std::unique_ptr<nas::NasList<Tai>> forbiddenTaiListRoaming;
     std::unique_ptr<nas::NasList<Tai>> forbiddenTaiListRps;
+
     std::unique_ptr<nas::NasSlot<nas::IEServiceAreaList>> serviceAreaList;
-    std::unique_ptr<nas::NasSlot<Tai>> lastVisitedRegisteredTai;
 
   public:
     explicit MmStorage(TaskBase *base);

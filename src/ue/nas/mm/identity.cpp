@@ -33,12 +33,12 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
     }
     else if (msg.identityType.value == nas::EIdentityType::GUTI)
     {
-        resp.mobileIdentity = m_usim->m_storedGuti;
+        resp.mobileIdentity = m_storage->storedGuti->get();
     }
     else if (msg.identityType.value == nas::EIdentityType::TMSI)
     {
         // TMSI is already a part of GUTI
-        resp.mobileIdentity = m_usim->m_storedGuti;
+        resp.mobileIdentity = m_storage->storedGuti->get();
         if (resp.mobileIdentity.type != nas::EIdentityType::NO_IDENTITY)
         {
             resp.mobileIdentity.type = nas::EIdentityType::TMSI;
@@ -57,15 +57,16 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
 
 nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
 {
-    if (m_timers->t3519.isRunning() && m_usim->m_storedSuci.type != nas::EIdentityType::NO_IDENTITY)
-        return m_usim->m_storedSuci;
+    if (m_timers->t3519.isRunning() && m_storage->storedSuci->get().type != nas::EIdentityType::NO_IDENTITY)
+        return m_storage->storedSuci->get();
 
-    m_usim->m_storedSuci = generateSuci();
+    m_storage->storedSuci->set(generateSuci());
+
     m_timers->t3519.start();
 
-    if (m_usim->m_storedSuci.type == nas::EIdentityType::NO_IDENTITY)
+    if (m_storage->storedSuci->get().type == nas::EIdentityType::NO_IDENTITY)
         return {};
-    return m_usim->m_storedSuci;
+    return m_storage->storedSuci->get();
 }
 
 nas::IE5gsMobileIdentity NasMm::generateSuci()
@@ -99,8 +100,8 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
 
 nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()
 {
-    if (m_usim->m_storedGuti.type != nas::EIdentityType::NO_IDENTITY)
-        return m_usim->m_storedGuti;
+    if (m_storage->storedGuti->get().type != nas::EIdentityType::NO_IDENTITY)
+        return m_storage->storedGuti->get();
 
     auto suci = getOrGenerateSuci();
     if (suci.type != nas::EIdentityType::NO_IDENTITY)
