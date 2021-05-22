@@ -117,7 +117,6 @@ void NasMm::performMmCycle()
                 }
             }
             return;
-            return;
         }
         else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
