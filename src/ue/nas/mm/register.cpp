@@ -258,8 +258,8 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     // PLMN code that is already in the list of "forbidden PLMNs". ..
     if (!hasEmergency())
     {
-        for (auto &forbiddenPlmn : m_usim->m_forbiddenPlmnList.plmns)
-            m_storage->equivalentPlmnList->remove(nas::utils::PlmnFrom(forbiddenPlmn));
+        m_storage->forbiddenPlmnList->forEach(
+            [this](auto &forbiddenPlmn) { m_storage->equivalentPlmnList->remove(forbiddenPlmn); });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
     m_storage->equivalentPlmnList->add(m_base->shCtx.getCurrentPlmn());
@@ -379,8 +379,8 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     // PLMN code that is already in the list of "forbidden PLMNs". ..
     if (!hasEmergency())
     {
-        for (auto &forbiddenPlmn : m_usim->m_forbiddenPlmnList.plmns)
-            m_storage->equivalentPlmnList->remove(nas::utils::PlmnFrom(forbiddenPlmn));
+        m_storage->forbiddenPlmnList->forEach(
+            [this](auto &forbiddenPlmn) { m_storage->equivalentPlmnList->remove(forbiddenPlmn); });
     }
     // .. in addition, the UE shall add to the stored list the PLMN code of the registered PLMN that sent the list
     m_storage->equivalentPlmnList->add(m_base->shCtx.getCurrentPlmn());
@@ -603,8 +603,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList,
-                                      nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
+            m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
         }
 
         if (cause == nas::EMmCause::CONGESTION)
@@ -764,7 +763,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(m_base->shCtx.getCurrentPlmn()));
+        m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
     }
 
     if (cause == nas::EMmCause::CONGESTION)

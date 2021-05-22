@@ -43,6 +43,8 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
     taiList = std::make_unique<nas::NasSlot<nas::IE5gsTrackingAreaIdentityList>>(0, std::nullopt);
 
     equivalentPlmnList = std::make_unique<nas::NasList<Plmn>>(16, 0, std::nullopt);
+
+    forbiddenPlmnList = std::make_unique<nas::NasList<Plmn>>(16, 0, std::nullopt);
 }
 
 } // namespace nr::ue

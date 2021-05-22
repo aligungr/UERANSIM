@@ -30,9 +30,6 @@ class Usim
     // State related
     E5UState m_uState{};
 
-    // Plmn related
-    nas::IEPlmnList m_forbiddenPlmnList{};
-
     // Security related
     std::unique_ptr<NasSecurityContext> m_currentNsCtx{};
     std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};

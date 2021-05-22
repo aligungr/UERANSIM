@@ -85,7 +85,7 @@ void NasMm::performPlmnSelection()
     {
         if (plmn == m_base->config->hplmn)
             continue; // If it's the HPLMN, it's already added above
-        if (nas::utils::PlmnListContains(m_usim->m_forbiddenPlmnList, plmn))
+        if (m_storage->forbiddenPlmnList->contains(plmn))
             continue;
         if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
             continue;
