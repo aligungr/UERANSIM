@@ -169,9 +169,11 @@ class NasMm
     void handleRadioLinkFailure();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
 
-  private: /* Access Control */
+  public: /* Access Control */
     bool isHighPriority();
     bool hasEmergency();
+
+  private: /* Access Control */
     void setN1Capability(bool enabled);
     bool isInNonAllowedArea();
 
@@ -189,6 +191,7 @@ class NasMm
     bool isRegistered();                          // used by SM
     bool isRegisteredForEmergency();              // used by SM
     void serviceNeededForUplinkData();            // used by SM
+    bool isStateNonAllowedService();              // used by SM
 };
 
 } // namespace nr::ue

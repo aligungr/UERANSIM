@@ -437,12 +437,16 @@ void NasMm::onSimRemoval()
 {
     m_storage->equivalentPlmnList->clear();
 
+    m_storage->serviceAreaList->clear();
+
     m_storage->forbiddenTaiListRoaming->clear();
     m_storage->forbiddenTaiListRps->clear();
 }
 
 void NasMm::onSwitchOff()
 {
+    m_storage->serviceAreaList->clear();
+
     m_storage->forbiddenTaiListRoaming->clear();
     m_storage->forbiddenTaiListRps->clear();
 }

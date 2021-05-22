@@ -47,6 +47,12 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
         return;
     }
 
+    if (m_mm->isStateNonAllowedService() && !m_mm->hasEmergency() && !m_mm->isHighPriority())
+    {
+        m_logger->err("PDU session establishment could not be triggered, non allowed service condition");
+        return;
+    }
+
     /* Control the received config */
     if (config.type != nas::EPduSessionType::IPV4)
     {

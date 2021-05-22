@@ -18,6 +18,13 @@ namespace nr::ue
 
 void NasSm::sendReleaseRequest(int psi)
 {
+    /* Control the protocol state */
+    if (m_mm->isStateNonAllowedService() && !m_mm->hasEmergency() && !m_mm->isHighPriority())
+    {
+        m_logger->err("PDU session release could not start, non allowed service condition");
+        return;
+    }
+
     /* Control the PDU session state */
     auto &ps = m_pduSessions[psi];
     if (ps->psState != EPsState::ACTIVE)
