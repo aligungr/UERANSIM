@@ -360,6 +360,13 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
 
 void NasMm::onSwitchRmState(ERmState oldState, ERmState newState)
 {
+    if (oldState == ERmState::RM_REGISTERED && newState == ERmState::RM_REGISTERED)
+    {
+        // "The UE shall delete (List of equivalent PLMNs) ...  when the UE registered for emergency services
+        // enters the state 5GMM-DEREGISTERED"
+        if (m_registeredForEmergency)
+            m_storage->equivalentPlmnList->clear();
+    }
 }
 
 void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
@@ -428,6 +435,8 @@ void NasMm::onSwitchUState(E5UState oldState, E5UState newState)
 
 void NasMm::onSimRemoval()
 {
+    m_storage->equivalentPlmnList->clear();
+
     m_storage->forbiddenTaiListRoaming->clear();
     m_storage->forbiddenTaiListRps->clear();
 }

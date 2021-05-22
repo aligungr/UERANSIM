@@ -53,7 +53,7 @@ class NasMm
     int m_regCounter{};
     // Service request attempt counter
     int m_serCounter{};
-    // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state)
+    // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state, or implies the last one)
     bool m_registeredForEmergency{};
     // Network feature support information
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
