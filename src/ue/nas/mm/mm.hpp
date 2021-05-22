@@ -138,6 +138,7 @@ class NasMm
   private: /* De-registration */
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
+    void performLocalDeregistration();
 
   private: /* Configuration */
     void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);

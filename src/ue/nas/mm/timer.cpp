@@ -78,10 +78,22 @@ void NasMm::onTimerExpire(UeTimer &timer)
         break;
     }
     case 3512: {
-        if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
+        if (m_mmState == EMmState::MM_REGISTERED)
         {
             logExpired();
-            sendMobilityRegistration(ERegUpdateCause::T3512_EXPIRY);
+
+            if (m_registeredForEmergency)
+                performLocalDeregistration();
+            else
+            {
+                if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
+                    sendMobilityRegistration(ERegUpdateCause::T3512_EXPIRY);
+                else
+                {
+                    // TODO: "the periodic registration update procedure is delayed until the UE returns to
+                    //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
+                }
+            }
         }
         break;
     }

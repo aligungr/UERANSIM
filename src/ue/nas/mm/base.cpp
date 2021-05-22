@@ -321,9 +321,9 @@ void NasMm::switchUState(E5UState state)
 
 void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate)
 {
-    // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
+    // "The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure as described in subclause 5.5.1.2 or when the UE leaves state
-    // 5GMM-DEREGISTERED for any other state except 5GMM-NULL.
+    // 5GMM-DEREGISTERED for any other state except 5GMM-NULL."
     if (oldState == EMmState::MM_DEREGISTERED && newState != EMmState::MM_DEREGISTERED && newState != EMmState::MM_NULL)
     {
         if (m_usim->m_currentNsCtx || m_usim->m_nonCurrentNsCtx)
@@ -335,8 +335,8 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
         }
     }
 
-    // If the UE enters the 5GMM state 5GMM-DEREGISTERED or 5GMM-NULL,
-    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped
+    // "If the UE enters the 5GMM state 5GMM-DEREGISTERED or 5GMM-NULL,
+    // The RAND and RES* values stored in the ME shall be deleted and timer T3516, if running, shall be stopped"
     if (newState == EMmState::MM_DEREGISTERED || newState == EMmState::MM_NULL)
     {
         m_usim->m_rand = {};
@@ -352,6 +352,10 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
     {
         localReleaseConnection();
     }
+
+    // "Timer T3512 is stopped when the UE enters ... the 5GMM-DEREGISTERED state over 3GPP access"
+    if (newState == EMmState::MM_DEREGISTERED)
+        m_timers->t3512.stop();
 }
 
 void NasMm::onSwitchRmState(ERmState oldState, ERmState newState)
@@ -387,23 +391,34 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
         // 5.5.2.2.6 Abnormal cases in the UE (in de-registration)
         else if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         {
-            // The de-registration procedure shall be aborted and the UE proceeds as follows:
+            // "The de-registration procedure shall be aborted and the UE proceeds as follows:
             // if the de-registration procedure was performed due to disabling of 5GS services, the UE shall enter the
-            // 5GMM-NULL state;
+            // 5GMM-NULL state;"
             if (m_lastDeregCause == EDeregCause::DISABLE_5G)
                 switchMmState(EMmSubState::MM_NULL_PS);
-            // if the de-registration type "normal de-registration" was requested for reasons other than disabling of
-            // 5GS services, the UE shall enter the 5GMM-DEREGISTERED state.
+            // "if the de-registration type "normal de-registration" was requested for reasons other than disabling of
+            // 5GS services, the UE shall enter the 5GMM-DEREGISTERED state."
             else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                      nas::ESwitchOff::NORMAL_DE_REGISTRATION)
                 switchMmState(EMmSubState::MM_DEREGISTERED_PS);
         }
 
-        // If the UE enters the 5GMM-IDLE, the RAND and RES* values stored
-        //  in the ME shall be deleted and timer T3516, if running, shall be stopped
+        // "If the UE enters the 5GMM-IDLE, the RAND and RES* values stored in the ME shall be deleted and timer T3516,
+        // if running, shall be stopped"
         m_usim->m_rand = {};
         m_usim->m_resStar = {};
         m_timers->t3516.stop();
+
+        // "Timer T3512 is reset and started with its initial value, when the UE changes from 5GMM-CONNECTED over 3GPP
+        // access to 5GMM-IDLE mode over 3GPP access"
+        m_timers->t3512.start();
+    }
+
+    if (oldState == ECmState::CM_IDLE && newState == ECmState::CM_CONNECTED)
+    {
+        // "Timer T3512 is stopped when the UE enters 5GMM-CONNECTED mode over 3GPP access or the 5GMM-DEREGISTERED
+        // state over 3GPP access"
+        m_timers->t3512.stop();
     }
 }
 
