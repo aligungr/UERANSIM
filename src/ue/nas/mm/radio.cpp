@@ -154,6 +154,9 @@ void NasMm::handleActiveCellChange()
     auto currentCell = m_base->shCtx.currentCell.get();
     Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
+    if (currentCell.hasValue() && !m_storage->equivalentPlmnList->contains(currentCell.plmn))
+        m_timers->t3346.stop();
+
     if (m_mmState == EMmState::MM_REGISTERED)
     {
         if (currentCell.cellId == 0)
