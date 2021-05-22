@@ -25,7 +25,8 @@ struct PduInfo
 enum class ERlfCause
 {
     PDU_ID_EXISTS,
-    PDU_ID_FULL
+    PDU_ID_FULL,
+    SIGNAL_LOST_TO_CONNECTED_CELL
 };
 
 } // namespace rls

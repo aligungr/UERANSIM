@@ -48,12 +48,22 @@ void UeRrcTask::notifyCellLost(int cellId)
     if (!m_cellDesc.count(cellId))
         return;
 
+    bool isActiveCell = false;
+    m_base->shCtx.currentCell.mutate([&isActiveCell, cellId](auto &value) {
+        if (value.cellId == cellId)
+        {
+            value = {};
+            isActiveCell = true;
+        }
+    });
+
     m_cellDesc.erase(cellId);
 
     m_logger->debug("Signal lost for cell[%d], total [%d] cells in coverage", cellId,
                     static_cast<int>(m_cellDesc.size()));
 
-    // TODO: handle other operations
+    if (isActiveCell && m_state != ERrcState::RRC_IDLE)
+        declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
 
     updateAvailablePlmns();
 }
