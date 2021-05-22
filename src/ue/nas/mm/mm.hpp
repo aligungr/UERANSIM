@@ -10,7 +10,6 @@
 
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
-#include <lib/nas/timer.hpp>
 #include <ue/nas/storage.hpp>
 #include <ue/nas/usim/usim.hpp>
 #include <ue/nts.hpp>
@@ -179,7 +178,7 @@ class NasMm
     bool switchToECallInactivityIfNeeded();
 
   private: /* Timer */
-    void onTimerExpire(nas::NasTimer &timer);
+    void onTimerExpire(UeTimer &timer);
 
   public:
     /* Interface */

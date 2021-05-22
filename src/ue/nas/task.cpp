@@ -122,7 +122,7 @@ void NasTask::onLoop()
 
 void NasTask::performTick()
 {
-    auto sendExpireMsg = [this](nas::NasTimer *timer) {
+    auto sendExpireMsg = [this](UeTimer *timer) {
         auto *nw = new NwUeNasToNas(NwUeNasToNas::NAS_TIMER_EXPIRE);
         nw->timer = timer;
         push(nw);

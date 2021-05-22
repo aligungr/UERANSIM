@@ -11,7 +11,6 @@
 #include <array>
 #include <bitset>
 #include <lib/nas/nas.hpp>
-#include <lib/nas/timer.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
@@ -84,8 +83,8 @@ class NasSm
     void receiveReleaseCommand(const nas::PduSessionReleaseCommand &msg);
 
     /* Timer */
-    std::unique_ptr<nas::NasTimer> newTransactionTimer(int code);
-    void onTimerExpire(nas::NasTimer &timer);
+    std::unique_ptr<UeTimer> newTransactionTimer(int code);
+    void onTimerExpire(UeTimer &timer);
     void onTransactionTimerExpire(int pti);
 
     /* Procedure */

@@ -14,7 +14,6 @@
 #include <utility>
 
 #include <lib/app/cli_base.hpp>
-#include <lib/nas/timer.hpp>
 #include <lib/rls/rls_base.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <utils/network.hpp>
@@ -174,7 +173,7 @@ struct NwUeNasToNas : NtsMessage
     } present;
 
     // NAS_TIMER_EXPIRE
-    nas::NasTimer *timer{};
+    UeTimer *timer{};
 
     explicit NwUeNasToNas(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_NAS), present(present)
     {

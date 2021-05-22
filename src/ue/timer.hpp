@@ -8,14 +8,10 @@
 
 #pragma once
 
-#include "ie4.hpp"
-
+#include <lib/nas/ie4.hpp>
 #include <utils/json.hpp>
 
-namespace nas
-{
-
-class NasTimer
+class UeTimer
 {
   private:
     const int m_code;
@@ -29,12 +25,12 @@ class NasTimer
     long m_lastDebugPrintMs;
 
   public:
-    NasTimer(int timerCode, bool isMmTimer, int defaultInterval);
+    UeTimer(int timerCode, bool isMmTimer, int defaultInterval);
 
   public:
     void start(bool clearExpiryCount = true);
-    void start(const IEGprsTimer2 &v, bool clearExpiryCount = true);
-    void start(const IEGprsTimer3 &v, bool clearExpiryCount = true);
+    void start(const nas::IEGprsTimer2 &v, bool clearExpiryCount = true);
+    void start(const nas::IEGprsTimer3 &v, bool clearExpiryCount = true);
     void stop(bool clearExpiryCount = true);
     void resetExpiryCount();
     bool performTick();
@@ -46,6 +42,4 @@ class NasTimer
     [[nodiscard]] int getExpiryCount() const;
 };
 
-Json ToJson(const NasTimer &v);
-
-} // namespace nas
+Json ToJson(const UeTimer &v);

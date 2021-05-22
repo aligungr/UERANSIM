@@ -16,20 +16,20 @@
 namespace nr::ue
 {
 
-std::unique_ptr<nas::NasTimer> NasSm::newTransactionTimer(int code)
+std::unique_ptr<UeTimer> NasSm::newTransactionTimer(int code)
 {
-    std::unique_ptr<nas::NasTimer> timer;
+    std::unique_ptr<UeTimer> timer;
 
     switch (code)
     {
     case 3580:
-        timer = std::make_unique<nas::NasTimer>(3580, false, 16);
+        timer = std::make_unique<UeTimer>(3580, false, 16);
         break;
     case 3581:
-        timer = std::make_unique<nas::NasTimer>(3581, false, 16);
+        timer = std::make_unique<UeTimer>(3581, false, 16);
         break;
     case 3582:
-        timer = std::make_unique<nas::NasTimer>(3582, false, 16);
+        timer = std::make_unique<UeTimer>(3582, false, 16);
         break;
     default:
         m_logger->err("Bad SM transaction timer code");
@@ -40,7 +40,7 @@ std::unique_ptr<nas::NasTimer> NasSm::newTransactionTimer(int code)
     return timer;
 }
 
-void NasSm::onTimerExpire(nas::NasTimer &timer)
+void NasSm::onTimerExpire(UeTimer &timer)
 {
 }
 

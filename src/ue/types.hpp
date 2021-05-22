@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "timer.hpp"
+
 #include <array>
 #include <atomic>
 #include <memory>
@@ -17,7 +19,6 @@
 #include <lib/app/monitor.hpp>
 #include <lib/app/ue_ctl.hpp>
 #include <lib/nas/nas.hpp>
-#include <lib/nas/timer.hpp>
 #include <utils/common_types.hpp>
 #include <utils/json.hpp>
 #include <utils/locked.hpp>
@@ -189,26 +190,26 @@ struct TaskBase
 
 struct NasTimers
 {
-    nas::NasTimer t3346; /* MM - ... */
-    nas::NasTimer t3396; /* SM - ... */
+    UeTimer t3346; /* MM - ... */
+    UeTimer t3396; /* SM - ... */
 
-    nas::NasTimer t3444; /* MM - ... */
-    nas::NasTimer t3445; /* MM - ... */
+    UeTimer t3444; /* MM - ... */
+    UeTimer t3445; /* MM - ... */
 
-    nas::NasTimer t3502; /* MM - Initiation of the registration procedure, if still required */
-    nas::NasTimer t3510; /* MM - Registration Request transmission timer */
-    nas::NasTimer t3511; /* MM - Retransmission of the REGISTRATION REQUEST, if still required */
-    nas::NasTimer t3512; /* MM - Periodic registration update timer */
-    nas::NasTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
-    nas::NasTimer t3517; /* MM - Service Request transmission timer */
-    nas::NasTimer t3519; /* MM - Transmission with fresh SUCI timer */
-    nas::NasTimer t3520; /* MM - ... */
-    nas::NasTimer t3521; /* MM - De-registration transmission timer for not switch off */
-    nas::NasTimer t3525; /* MM - ... */
-    nas::NasTimer t3540; /* MM - ... */
+    UeTimer t3502; /* MM - Initiation of the registration procedure, if still required */
+    UeTimer t3510; /* MM - Registration Request transmission timer */
+    UeTimer t3511; /* MM - Retransmission of the REGISTRATION REQUEST, if still required */
+    UeTimer t3512; /* MM - Periodic registration update timer */
+    UeTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
+    UeTimer t3517; /* MM - Service Request transmission timer */
+    UeTimer t3519; /* MM - Transmission with fresh SUCI timer */
+    UeTimer t3520; /* MM - ... */
+    UeTimer t3521; /* MM - De-registration transmission timer for not switch off */
+    UeTimer t3525; /* MM - ... */
+    UeTimer t3540; /* MM - ... */
 
-    nas::NasTimer t3584; /* SM - ... */
-    nas::NasTimer t3585; /* SM - ... */
+    UeTimer t3584; /* SM - ... */
+    UeTimer t3585; /* SM - ... */
 
     NasTimers();
 };
@@ -333,7 +334,7 @@ struct ProcedureTransaction
     static constexpr const int MAX_ID = 254;
 
     EPtState state{};
-    std::unique_ptr<nas::NasTimer> timer{};
+    std::unique_ptr<UeTimer> timer{};
     std::unique_ptr<nas::SmMessage> message{};
     int psi{};
 };
