@@ -46,14 +46,25 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
         return;
     }
 
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
+    {
+        if (reqCause != EServiceReqCause::IDLE_PAGING &&
+            reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP && !isHighPriority() && !hasEmergency())
+        {
+            m_logger->debug("Service Request canceled, registered in non allowed service");
+            return;
+        }
+    }
+
     // 5.6.1.7 Abnormal cases in the UE
     // a) Timer T3525
     if (m_timers->t3525.isRunning())
     {
         if (reqCause != EServiceReqCause::IDLE_PAGING &&
             reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
-            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP && !isHighPriority() && !hasEmergency() &&
-            reqCause != EServiceReqCause::EMERGENCY_FALLBACK)
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::EMERGENCY_FALLBACK && !isHighPriority() && !hasEmergency())
         {
             m_logger->debug("Service Request canceled, T3346 is running");
             return;

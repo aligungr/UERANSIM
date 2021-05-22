@@ -113,6 +113,15 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
         return;
     }
 
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
+    {
+        if (!isHighPriority() && !hasEmergency())
+        {
+            m_logger->debug("Mobility updating canceled, registered in non allowed service");
+            return;
+        }
+    }
+
     // 5.5.1.3.7 Abnormal cases in the UE
     // a) Timer T3346 is running.
     if (m_timers->t3346.isRunning())
@@ -121,7 +130,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
                        isHighPriority() || hasEmergency() || updateCause == ERegUpdateCause::CONFIGURATION_UPDATE;
         if (!allowed)
         {
-            m_logger->debug("Mobility updating updating canceled, T3346 is running");
+            m_logger->debug("Mobility updating canceled, T3346 is running");
             return;
         }
     }
