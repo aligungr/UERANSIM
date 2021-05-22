@@ -55,8 +55,6 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
         return;
     }
 
-    // TODO: if it's already in progress
-
     if (m_initialId.present == ASN_RRC_InitialUE_Identity_PR_NOTHING)
     {
         m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;

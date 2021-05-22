@@ -23,7 +23,7 @@ static constexpr const int TIMER_PERIOD_MACHINE_CYCLE = 2500;
 namespace nr::ue
 {
 
-UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}
+UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}, m_timers{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
 

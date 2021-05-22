@@ -50,16 +50,21 @@ class UeRrcTask : public NtsTask
   private:
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
+
     int64_t m_startedTime;
     ERrcState m_state;
-    std::unordered_map<int, UeCellDesc> m_cellDesc{};
+    RrcTimers m_timers;
 
+    /* Cell and PLMN related */
+    std::unordered_map<int, UeCellDesc> m_cellDesc{};
+    int64_t m_lastTimePlmnSearchFailureLogged{};
+
+    /* Procedure related */
     ERrcLastSetupRequest m_lastSetupReq{};
 
+    /* Establishment procedure related */
     ASN_RRC_InitialUE_Identity_t m_initialId{};
     OctetString m_initialNasPdu{};
-
-    int64_t m_lastTimePlmnSearchFailureLogged{};
 
     friend class UeCmdHandler;
 

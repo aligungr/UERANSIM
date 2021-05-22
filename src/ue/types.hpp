@@ -188,6 +188,13 @@ struct TaskBase
     UeRlsTask *rlsTask{};
 };
 
+struct RrcTimers
+{
+    UeTimer t300;
+
+    RrcTimers();
+};
+
 struct NasTimers
 {
     UeTimer t3346; /* MM - ... */

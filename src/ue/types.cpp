@@ -309,4 +309,8 @@ Tai UeSharedContext::getCurrentTai()
     return tai;
 }
 
+RrcTimers::RrcTimers() : t300(300, false, 1)
+{
+}
+
 } // namespace nr::ue
