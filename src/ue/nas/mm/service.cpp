@@ -182,6 +182,8 @@ EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
     m_timers->t3517.start();
 
     switchMmState(EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS);
+
+    return EProcRc::OK;
 }
 
 void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
