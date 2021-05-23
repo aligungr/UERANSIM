@@ -33,7 +33,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         else if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
         {
             logExpired();
-            sendMobilityRegistration(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
         }
         break;
     }
@@ -45,7 +45,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
             resetRegAttemptCounter();
 
             if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
-                sendMobilityRegistration(ERegUpdateCause::UNSPECIFIED);
+                mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
         }
         break;
     }
@@ -85,7 +85,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
         {
             logExpired();
-            sendMobilityRegistration(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
         }
         break;
     }
@@ -97,15 +97,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
             if (m_registeredForEmergency)
                 performLocalDeregistration();
             else
-            {
-                if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
-                    sendMobilityRegistration(ERegUpdateCause::T3512_EXPIRY);
-                else
-                {
-                    // TODO: "the periodic registration update procedure is delayed until the UE returns to
-                    //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
-                }
-            }
+                mobilityUpdatingRequired(ERegUpdateCause::T3512_EXPIRY);
         }
         break;
     }
