@@ -296,14 +296,4 @@ void NasMm::updateProvidedGuti(bool provide)
     }
 }
 
-bool NasMm::missingSessionBearer()
-{
-    // This control is only valid in CM-CONNECTED
-    if (m_cmState == ECmState::CM_IDLE)
-        return false;
-
-    // TODO
-    return false;
-}
-
 } // namespace nr::ue
