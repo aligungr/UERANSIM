@@ -102,7 +102,11 @@ void NasMm::deregistrationRequired(EDeregCause cause)
 
 void NasMm::invokeProcedures()
 {
-    if (m_procCtl.deregistration)
+    auto activeCell = m_base->shCtx.currentCell.get();
+
+    bool hasActiveCell = activeCell.hasValue();
+
+    if (hasActiveCell && m_procCtl.deregistration)
     {
         EProcRc rc = sendDeregistration(*m_procCtl.deregistration);
         if (rc == EProcRc::OK)
@@ -119,7 +123,7 @@ void NasMm::invokeProcedures()
         return;
     }
 
-    if (m_procCtl.initialRegistration)
+    if (hasActiveCell && m_procCtl.initialRegistration)
     {
         EProcRc rc = sendInitialRegistration(*m_procCtl.initialRegistration);
         if (rc == EProcRc::OK)
@@ -127,17 +131,41 @@ void NasMm::invokeProcedures()
             m_procCtl.initialRegistration = std::nullopt;
             m_procCtl.mobilityRegistration = std::nullopt;
             m_procCtl.serviceRequest = std::nullopt;
+            return;
         }
         else if (rc == EProcRc::CANCEL)
         {
             m_procCtl.initialRegistration = std::nullopt;
+            return;
+        }
+    }
+
+    if (hasActiveCell && m_procCtl.mobilityRegistration)
+    {
+        EProcRc rc = sendMobilityRegistration(*m_procCtl.mobilityRegistration);
+        if (rc == EProcRc::OK)
+        {
+            m_procCtl.mobilityRegistration = std::nullopt;
+            m_procCtl.serviceRequest = std::nullopt;
+            return;
+        }
+        else if (rc == EProcRc::CANCEL)
+        {
+            m_procCtl.mobilityRegistration = std::nullopt;
+            return;
         }
         return;
     }
 
-    // note1:
-    // TODO: "the periodic registration update procedure is delayed until the UE returns to
-    //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
+    if (hasActiveCell && m_procCtl.serviceRequest)
+    {
+        EProcRc rc = sendServiceRequest(*m_procCtl.serviceRequest);
+        if (rc == EProcRc::OK || rc == EProcRc::CANCEL)
+        {
+            m_procCtl.serviceRequest = std::nullopt;
+            return;
+        }
+    }
 }
 
 } // namespace nr::ue

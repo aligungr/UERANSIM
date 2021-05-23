@@ -115,21 +115,21 @@ EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
     return EProcRc::OK;
 }
 
-void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
+EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
 {
     if (m_rmState == ERmState::RM_DEREGISTERED)
     {
         m_logger->warn("Mobility updating could not be triggered. UE is in RM-DEREGISTERED state.");
-        return;
+        return EProcRc::CANCEL;
     }
 
-    if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
+    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+        return EProcRc::STAY;
+
+    if (updateCause == ERegUpdateCause::T3512_EXPIRY && m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
     {
         if (!isHighPriority() && !hasEmergency())
-        {
-            m_logger->debug("Mobility updating canceled, registered in non allowed service");
-            return;
-        }
+            return EProcRc::STAY;
     }
 
     // 5.5.1.3.7 Abnormal cases in the UE
@@ -141,7 +141,7 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
         if (!allowed)
         {
             m_logger->debug("Mobility updating canceled, T3346 is running");
-            return;
+            return EProcRc::STAY;
         }
     }
 
@@ -162,9 +162,6 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     // UPDATE COMMAND message that indicates "registration requested" including: ... the UE NAS shall not provide the
     // lower layers with the 5G-S-TMSI or the registered GUAMI; "
     updateProvidedGuti(updateCause != ERegUpdateCause::CONFIGURATION_UPDATE);
-
-    // Switch state
-    switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);
 
     // Prepare FOR pending field
     nas::EFollowOnRequest followOn = nas::EFollowOnRequest::FOR_PENDING;
@@ -211,14 +208,21 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     //                   : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
 
     // Send the message
-    sendNasMessage(*request);
+    auto rc = sendNasMessage(*request);
+    if (rc != EProcRc::OK)
+        return rc;
     m_lastRegistrationRequest = std::move(request);
     m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
+
+    // Switch state
+    switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);
 
     // Process timers
     m_timers->t3510.start();
     m_timers->t3502.stop();
     m_timers->t3511.stop();
+
+    return EProcRc::OK;
 }
 
 void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)

@@ -104,8 +104,8 @@ class NasMm
     void deliverUlTransport(const nas::UlNasTransport &msg);
 
   private: /* Registration */
-    void sendMobilityRegistration(ERegUpdateCause updateCause);
     EProcRc sendInitialRegistration(EInitialRegCause regCause);
+    EProcRc sendMobilityRegistration(ERegUpdateCause updateCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg);
@@ -149,7 +149,7 @@ class NasMm
     nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
   private: /* Service */
-    void sendServiceRequest(EServiceReqCause reqCause);
+    EProcRc sendServiceRequest(EServiceReqCause reqCause);
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
 

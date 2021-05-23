@@ -14,36 +14,34 @@
 namespace nr::ue
 {
 
-void NasMm::sendServiceRequest(EServiceReqCause reqCause)
+EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
-    m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
-
     // "The procedure shall only be initiated by the UE when the following conditions are fulfilled ..."
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
     {
         m_logger->warn("Service Request canceled, MM specific procedure is ongoing");
-        return;
+        return EProcRc::STAY;
     }
     if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
     {
         m_logger->debug("Service Request canceled, already in 5GMM-SERVICE-REQUEST-INITIATED");
-        return;
+        return EProcRc::CANCEL;
     }
     if (m_storage->uState->get() != E5UState::U1_UPDATED)
     {
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
-        return;
+        return EProcRc::STAY;
     }
     Tai currentTai = m_base->shCtx.getCurrentTai();
     if (!currentTai.hasValue())
     {
         m_logger->err("Service Request canceled, no active cell exists");
-        return;
+        return EProcRc::STAY;
     }
     if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
     {
         m_logger->err("Service Request canceled, current TAI is not in the TAI list");
-        return;
+        return EProcRc::CANCEL;
     }
 
     if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
@@ -53,7 +51,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
             reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP && !isHighPriority() && !hasEmergency())
         {
             m_logger->debug("Service Request canceled, registered in non allowed service");
-            return;
+            return EProcRc::CANCEL;
         }
     }
 
@@ -67,7 +65,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
             reqCause != EServiceReqCause::EMERGENCY_FALLBACK && !isHighPriority() && !hasEmergency())
         {
             m_logger->debug("Service Request canceled, T3346 is running");
-            return;
+            return EProcRc::STAY;
         }
     }
     // c) Timer T3346 is running.
@@ -79,9 +77,11 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
             reqCause != EServiceReqCause::EMERGENCY_FALLBACK)
         {
             m_logger->debug("Service Request canceled, T3346 is running");
-            return;
+            return EProcRc::STAY;
         }
     }
+
+    m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
 
     updateProvidedGuti();
 
@@ -174,10 +174,13 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     request->pduSessionStatus->psi = m_sm->getPduSessionStatus();
 
     // Send the message and process the timers
-    sendNasMessage(*request);
+    auto rc = sendNasMessage(*request);
+    if (rc != EProcRc::OK)
+        return rc;
     m_lastServiceRequest = std::move(request);
     m_lastServiceReqCause = reqCause;
     m_timers->t3517.start();
+
     switchMmState(EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS);
 }
 

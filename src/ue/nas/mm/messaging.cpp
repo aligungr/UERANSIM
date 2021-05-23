@@ -105,6 +105,12 @@ static void RemoveCleartextIEs(nas::PlainMmMessage &msg, OctetString &&nasMsgCon
 
 EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
+    if (!m_base->shCtx.hasActiveCell())
+    {
+        m_logger->debug("NAS Transport aborted, no active cell");
+        return EProcRc::STAY;
+    }
+
     if (m_cmState == ECmState::CM_IDLE && !IsInitialNasMessage(msg))
     {
         m_logger->warn("NAS Transport aborted, Service Request is needed for uplink signalling");
