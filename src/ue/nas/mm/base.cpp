@@ -170,8 +170,7 @@ void NasMm::performMmCycle()
         initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
     else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && hasEmergency())
         initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
-
-    if (hasEmergency())
+    else if (hasEmergency())
     {
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE ||
             m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
