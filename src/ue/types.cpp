@@ -309,6 +309,11 @@ Tai UeSharedContext::getCurrentTai()
     return tai;
 }
 
+bool UeSharedContext::hasActiveCell()
+{
+    return getCurrentTai().hasValue();
+}
+
 RrcTimers::RrcTimers() : t300(300, false, 1)
 {
 }
