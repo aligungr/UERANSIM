@@ -87,6 +87,9 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
 
 void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
 {
+    if (m_mm->m_cmState == ECmState::CM_IDLE)
+        return;
+
     auto state = m_mm->m_mmSubState;
     if (state != EMmSubState::MM_REGISTERED_INITIATED_PS && state != EMmSubState::MM_REGISTERED_NORMAL_SERVICE &&
         state != EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE &&
