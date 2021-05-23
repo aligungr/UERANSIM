@@ -147,10 +147,6 @@ void NasMm::performMmCycle()
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
         initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
 
-    /* Check for uplink data pending */
-    if (m_sm->anyUplinkDataPending() || missingSessionBearer())
-        serviceRequestRequiredForData();
-
     /* Process TAI changes if any */
     if (currentTai.hasValue() &&
         !nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))

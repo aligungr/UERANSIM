@@ -64,6 +64,9 @@ void NasSm::handleUplinkStatusChange(int psi, bool isPending)
     m_logger->debug("Uplink data status changed PSI[%d] pending[%s]", psi, isPending ? "true" : "false");
     m_pduSessions[psi]->uplinkPending = isPending;
 
+    if (isPending)
+        m_mm->serviceRequestRequiredForData();
+
     m_mm->triggerMmCycle();
 }
 
