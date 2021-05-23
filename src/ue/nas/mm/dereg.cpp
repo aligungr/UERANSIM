@@ -40,6 +40,8 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
 
     if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         return EProcRc::CANCEL;
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_UPDATE_NEEDED)
+        return EProcRc::STAY;
 
     // 5.2.3.2.3 "shall not initiate de-registration procedure unless timer T3346 is running and the current TAI is part
     // of the TAI list."

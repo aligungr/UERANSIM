@@ -55,6 +55,16 @@ EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
         }
     }
 
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_UPDATE_NEEDED)
+    {
+        if (reqCause != EServiceReqCause::IDLE_PAGING &&
+            reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP)
+        {
+            return EProcRc::STAY;
+        }
+    }
+
     // 5.6.1.7 Abnormal cases in the UE
     // a) Timer T3525
     if (m_timers->t3525.isRunning())

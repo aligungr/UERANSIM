@@ -27,6 +27,8 @@ EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
         return EProcRc::CANCEL;
     if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         return EProcRc::STAY;
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_UPDATE_NEEDED)
+        return EProcRc::STAY;
 
     bool isEmergencyReg = regCause == EInitialRegCause::EMERGENCY_SERVICES;
 
