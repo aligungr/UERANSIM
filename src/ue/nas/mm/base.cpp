@@ -173,6 +173,9 @@ void NasMm::performMmCycle()
     /* Automatic initial registration */
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
         initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+
+    /* Try to start procedures */
+    invokeProcedures();
 }
 
 void NasMm::switchMmState(EMmSubState subState)
