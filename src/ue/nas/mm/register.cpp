@@ -23,6 +23,8 @@ EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
         return EProcRc::CANCEL;
     }
 
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+        return EProcRc::CANCEL;
     if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         return EProcRc::STAY;
 
@@ -123,6 +125,8 @@ EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
         return EProcRc::CANCEL;
     }
 
+    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+        return EProcRc::CANCEL;
     if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         return EProcRc::STAY;
 
