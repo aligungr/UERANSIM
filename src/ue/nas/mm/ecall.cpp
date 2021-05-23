@@ -79,9 +79,6 @@ bool NasMm::switchToECallInactivityIfNeeded()
     if (!m_usim->m_isECallOnly)
         return false;
 
-    if (m_mmState != EMmState::MM_DEREGISTERED)
-        return false;
-
     if (m_cmState != ECmState::CM_IDLE)
         return false;
     if (!((!m_timers->t3444.isRunning() && m_timers->t3445.isRunning()) ||
