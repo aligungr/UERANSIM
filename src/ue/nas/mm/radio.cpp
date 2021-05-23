@@ -148,7 +148,7 @@ void NasMm::performPlmnSelection()
     }
 }
 
-void NasMm::handleActiveCellChange()
+void NasMm::handleActiveCellChange(const Tai &prevTai)
 {
     if (m_cmState == ECmState::CM_CONNECTED)
     {
@@ -162,6 +162,15 @@ void NasMm::handleActiveCellChange()
 
     if (currentCell.hasValue() && !m_storage->equivalentPlmnList->contains(currentCell.plmn))
         m_timers->t3346.stop();
+
+    if (currentCell.hasValue() && prevTai != currentTai)
+    {
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
+            m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+        {
+            resetRegAttemptCounter();
+        }
+    }
 
     if (m_mmState == EMmState::MM_REGISTERED)
     {

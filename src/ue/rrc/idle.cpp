@@ -27,9 +27,9 @@ void UeRrcTask::performCellSelection()
     if (currentTime - m_startedTime <= 1000LL && m_cellDesc.empty())
         return;
 
-    int lastCell = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
+    auto lastCell = m_base->shCtx.currentCell.get();
 
-    bool shouldLogErrors = lastCell != 0 || (currentTime - m_lastTimePlmnSearchFailureLogged >= 30'000LL);
+    bool shouldLogErrors = lastCell.cellId != 0 || (currentTime - m_lastTimePlmnSearchFailureLogged >= 30'000LL);
 
     ActiveCellInfo cellInfo;
     CellSelectionReport report;
@@ -92,17 +92,18 @@ void UeRrcTask::performCellSelection()
     int selectedCell = cellInfo.cellId;
     m_base->shCtx.currentCell.set(cellInfo);
 
-    if (selectedCell != 0 && selectedCell != lastCell)
+    if (selectedCell != 0 && selectedCell != lastCell.cellId)
         m_logger->info("Selected cell plmn[%s] tac[%d] category[%s]", ToJson(cellInfo.plmn).str().c_str(), cellInfo.tac,
                        ToJson(cellInfo.category).str().c_str());
 
-    if (selectedCell != lastCell)
+    if (selectedCell != lastCell.cellId)
     {
         auto *w1 = new NwUeRrcToRls(NwUeRrcToRls::ASSIGN_CURRENT_CELL);
         w1->cellId = selectedCell;
         m_base->rlsTask->push(w1);
 
         auto w2 = new NwUeRrcToNas(NwUeRrcToNas::ACTIVE_CELL_CHANGED);
+        w2->previousTai = Tai{lastCell.plmn, lastCell.tac};
         m_base->nasTask->push(w2);
     }
 }

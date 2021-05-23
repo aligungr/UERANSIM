@@ -79,6 +79,9 @@ struct NwUeRrcToNas : NtsMessage
     // PAGING
     std::vector<GutiMobileIdentity> pagingTmsi;
 
+    // ACTIVE_CELL_CHANGED
+    Tai previousTai;
+
     explicit NwUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {
     }

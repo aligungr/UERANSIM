@@ -45,7 +45,7 @@ void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
         break;
     }
     case NwUeRrcToNas::ACTIVE_CELL_CHANGED: {
-        handleActiveCellChange();
+        handleActiveCellChange(msg.previousTai);
         break;
     }
     case NwUeRrcToNas::RRC_ESTABLISHMENT_FAILURE: {
