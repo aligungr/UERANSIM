@@ -83,6 +83,8 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
         }
     }
 
+    updateProvidedGuti();
+
     auto request = std::make_unique<nas::ServiceRequest>();
 
     if (reqCause == EServiceReqCause::IDLE_PAGING)

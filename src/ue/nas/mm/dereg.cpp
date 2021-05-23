@@ -36,6 +36,8 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
 
     m_logger->debug("Starting de-registration procedure due to [%s]", ToJson(deregCause).str().c_str());
 
+    updateProvidedGuti();
+
     auto request = std::make_unique<nas::DeRegistrationRequestUeOriginating>();
     request->deRegistrationType = MakeDeRegistrationType(deregCause);
 
@@ -253,7 +255,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
             {
                 m_storage->forbiddenTaiListRps->add(tai);
                 m_storage->serviceAreaList->mutate([&tai](auto &value) {
-                  nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
+                    nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
                 });
             }
         }

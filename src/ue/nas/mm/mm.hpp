@@ -168,6 +168,7 @@ class NasMm
     void handleRrcEstablishmentFailure();
     void handleRadioLinkFailure();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
+    void updateProvidedGuti(bool provide = true);
 
   public: /* Access Control */
     bool isHighPriority();

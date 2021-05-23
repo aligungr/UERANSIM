@@ -294,4 +294,31 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
         sendServiceRequest(EServiceReqCause::IDLE_PAGING);
 }
 
+void NasMm::updateProvidedGuti(bool provide)
+{
+    if (m_cmState != ECmState::CM_IDLE)
+        return;
+
+    auto &guti = m_storage->storedGuti->get();
+    if (!provide || guti.type == nas::EIdentityType::NO_IDENTITY)
+    {
+        m_base->shCtx.providedGuti.set({});
+        m_base->shCtx.providedTmsi.set({});
+    }
+    else
+    {
+        auto tai = m_base->shCtx.getCurrentTai();
+        if (tai.hasValue() && nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai}))
+        {
+            m_base->shCtx.providedGuti.set({});
+            m_base->shCtx.providedTmsi.set(guti.gutiOrTmsi);
+        }
+        else
+        {
+            m_base->shCtx.providedGuti.set(guti.gutiOrTmsi);
+            m_base->shCtx.providedTmsi.set({});
+        }
+    }
+}
+
 } // namespace nr::ue

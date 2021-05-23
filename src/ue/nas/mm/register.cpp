@@ -45,6 +45,8 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
                     nas::utils::EnumToString(isEmergencyReg ? nas::ERegistrationType::EMERGENCY_REGISTRATION
                                                             : nas::ERegistrationType::INITIAL_REGISTRATION));
 
+    updateProvidedGuti();
+
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
     m_usim->m_currentNsCtx = {};
@@ -147,6 +149,11 @@ void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
                                                  ? nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING
                                                  : nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING),
                     ToJson(updateCause).str().c_str());
+
+    // "if the registration procedure for mobility and periodic update was triggered due to the last CONFIGURATION
+    // UPDATE COMMAND message that indicates "registration requested" including: ... the UE NAS shall not provide the
+    // lower layers with the 5G-S-TMSI or the registered GUAMI; "
+    updateProvidedGuti(updateCause != ERegUpdateCause::CONFIGURATION_UPDATE);
 
     // Switch state
     switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);

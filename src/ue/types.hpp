@@ -166,6 +166,8 @@ struct UeSharedContext
     Locked<ActiveCellInfo> currentCell;
     Locked<std::vector<Tai>> forbiddenTaiRoaming;
     Locked<std::vector<Tai>> forbiddenTaiRps;
+    Locked<GutiMobileIdentity> providedGuti;
+    Locked<GutiMobileIdentity> providedTmsi;
 
     Plmn getCurrentPlmn();
     Tai getCurrentTai();
