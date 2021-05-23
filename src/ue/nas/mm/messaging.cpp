@@ -109,7 +109,7 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
     {
         m_logger->warn("NAS Transport aborted, Service Request is needed for uplink signalling");
         if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
-            sendServiceRequest(EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING);
+            serviceRequestRequiredForSignalling();
         return;
     }
 

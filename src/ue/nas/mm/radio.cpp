@@ -321,7 +321,7 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
     if (m_cmState == ECmState::CM_CONNECTED)
         mobilityUpdatingRequired(ERegUpdateCause::PAGING_OR_NOTIFICATION);
     else
-        sendServiceRequest(EServiceReqCause::IDLE_PAGING);
+        serviceRequestRequired(EServiceReqCause::IDLE_PAGING);
 }
 
 void NasMm::updateProvidedGuti(bool provide)

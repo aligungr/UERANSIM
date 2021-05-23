@@ -152,7 +152,6 @@ class NasMm
     void sendServiceRequest(EServiceReqCause reqCause);
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
-    void serviceNeededForUplinkData();
 
   private: /* Network Slicing */
     NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
@@ -186,6 +185,9 @@ class NasMm
   private: /* Procedure Control */
     void initialRegistrationRequired(EInitialRegCause cause);
     void mobilityUpdatingRequired(ERegUpdateCause cause);
+    void serviceRequestRequiredForData();
+    void serviceRequestRequiredForSignalling();
+    void serviceRequestRequired(EServiceReqCause cause);
 
   private: /* Service Access Point */
     void handleRrcEvent(const NmUeRrcToNas &msg);

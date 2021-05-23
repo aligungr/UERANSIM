@@ -36,4 +36,31 @@ void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
     triggerMmCycle();
 }
 
+void NasMm::serviceRequestRequiredForSignalling()
+{
+}
+
+void NasMm::serviceRequestRequiredForData()
+{
+    static constexpr const int64_t SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD = 1000;
+
+    auto currentTime = utils::CurrentTimeMillis();
+    if (currentTime - m_lastTimeServiceReqNeededIndForData > SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD)
+    {
+        serviceRequestRequired(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
+                                                                   : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
+
+        m_lastTimeServiceReqNeededIndForData = currentTime;
+
+        triggerMmCycle();
+    }
+}
+
+void NasMm::serviceRequestRequired(EServiceReqCause cause)
+{
+    // TODO
+
+    triggerMmCycle();
+}
+
 } // namespace nr::ue

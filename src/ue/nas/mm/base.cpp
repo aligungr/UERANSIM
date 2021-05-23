@@ -145,7 +145,7 @@ void NasMm::performMmCycle()
 
     /* Check for uplink data pending */
     if (m_sm->anyUplinkDataPending() && missingSessionBearer())
-        serviceNeededForUplinkData();
+        serviceRequestRequiredForData();
 
     /* Process TAI changes if any */
     if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
