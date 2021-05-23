@@ -321,4 +321,13 @@ void NasMm::updateProvidedGuti(bool provide)
     }
 }
 
+bool NasMm::missingSessionBearer()
+{
+    if (m_cmState == ECmState::CM_IDLE)
+        return true;
+
+    // TODO
+    return false;
+}
+
 } // namespace nr::ue

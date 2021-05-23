@@ -88,6 +88,9 @@ void NasMm::performMmCycle()
     if (m_mmState == EMmState::MM_NULL)
         return;
 
+    if (m_sm->anyUplinkDataPending() && missingSessionBearer())
+        serviceNeededForUplinkData();
+
     if (m_mmState == EMmState::MM_DEREGISTERED)
     {
         if (switchToECallInactivityIfNeeded())
