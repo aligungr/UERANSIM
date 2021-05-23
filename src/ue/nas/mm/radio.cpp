@@ -129,6 +129,7 @@ void NasMm::performPlmnSelection()
     {
         if (isInNonAllowedArea())
         {
+            // TODO: check this later
             switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
         }
         else if (cellCategory == ECellCategory::SUITABLE_CELL)
