@@ -86,43 +86,83 @@ void NasMm::triggerMmCycle()
 
 void NasMm::performMmCycle()
 {
+    /* Do nothing in case of MM-NULL */
     if (m_mmState == EMmState::MM_NULL)
         return;
 
+    auto currentCell = m_base->shCtx.currentCell.get();
+    Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
+
+    /* Perform substate selection in case of primary substate */
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PS)
+    {
+        if (m_cmState == ECmState::CM_IDLE)
+            switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        else
+        {
+            if (currentCell.hasValue())
+            {
+                if (!m_usim->isValid())
+                    switchMmState(EMmSubState::MM_DEREGISTERED_NO_SUPI);
+                else if (currentCell.category == ECellCategory::SUITABLE_CELL)
+                    switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+                else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
+                    switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+                else
+                    switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            }
+            else
+            {
+                switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+            }
+        }
+        return;
+    }
+
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_PS)
+    {
+        if (m_cmState == ECmState::CM_IDLE)
+            switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        else
+        {
+            auto cell = m_base->shCtx.currentCell.get();
+            if (cell.hasValue())
+            {
+                if (cell.category == ECellCategory::SUITABLE_CELL)
+                    switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+                else if (cell.category == ECellCategory::ACCEPTABLE_CELL)
+                    switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+                else
+                    switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+            }
+            else
+            {
+                switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+            }
+        }
+        return;
+    }
+
+    /* Check for uplink data pending */
     if (m_sm->anyUplinkDataPending() && missingSessionBearer())
         serviceNeededForUplinkData();
 
+    /* Process TAI changes if any */
+    if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
+    {
+        if (m_rmState == ERmState::RM_REGISTERED)
+            sendMobilityRegistration(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
+    }
+    else
+        m_storage->lastVisitedRegisteredTai->set(currentTai);
+
+    /* Other operations */
     if (m_mmState == EMmState::MM_DEREGISTERED)
     {
         if (switchToECallInactivityIfNeeded())
             return;
 
-        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PS)
-        {
-            if (m_cmState == ECmState::CM_IDLE)
-                switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-            else
-            {
-                auto cell = m_base->shCtx.currentCell.get();
-                if (cell.hasValue())
-                {
-                    if (!m_usim->isValid())
-                        switchMmState(EMmSubState::MM_DEREGISTERED_NO_SUPI);
-                    else if (cell.category == ECellCategory::SUITABLE_CELL)
-                        switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-                    else if (cell.category == ECellCategory::ACCEPTABLE_CELL)
-                        switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-                    else
-                        switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-                }
-                else
-                {
-                    switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-                }
-            }
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
             if (!m_timers->t3346.isRunning())
                 sendInitialRegistration(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
@@ -166,30 +206,7 @@ void NasMm::performMmCycle()
         if (startECallInactivityIfNeeded())
             return;
 
-        if (m_mmSubState == EMmSubState::MM_REGISTERED_PS)
-        {
-            if (m_cmState == ECmState::CM_IDLE)
-                switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-            else
-            {
-                auto cell = m_base->shCtx.currentCell.get();
-                if (cell.hasValue())
-                {
-                    if (cell.category == ECellCategory::SUITABLE_CELL)
-                        switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-                    else if (cell.category == ECellCategory::ACCEPTABLE_CELL)
-                        switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
-                    else
-                        switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-                }
-                else
-                {
-                    switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-                }
-            }
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
         {
             return;
         }
