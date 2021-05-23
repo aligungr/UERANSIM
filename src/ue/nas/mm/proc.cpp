@@ -166,6 +166,12 @@ void NasMm::invokeProcedures()
             return;
         }
     }
+
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE ||
+        m_mmSubState == EMmSubState::MM_REGISTERED_LIMITED_SERVICE)
+    {
+        m_sm->establishRequiredSessions();
+    }
 }
 
 } // namespace nr::ue

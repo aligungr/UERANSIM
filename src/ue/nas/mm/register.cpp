@@ -377,12 +377,6 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
         m_registeredForEmergency = true;
 
     m_logger->info("%s is successful", nas::utils::EnumToString(regType));
-
-    if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
-        regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
-    {
-        m_sm->establishRequiredSessions();
-    }
 }
 
 void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg)
