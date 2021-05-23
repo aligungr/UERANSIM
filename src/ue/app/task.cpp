@@ -51,24 +51,6 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RLS_TO_APP: {
-        auto *w = dynamic_cast<NmUeRlsToApp *>(msg);
-        switch (w->present)
-        {
-        case NmUeRlsToApp::DATA_PDU_DELIVERY: {
-            auto *tunTask = m_tunTasks[w->psi];
-            if (tunTask)
-            {
-                auto *m = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
-                m->psi = w->psi;
-                m->data = std::move(w->pdu);
-                tunTask->push(m);
-            }
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_TUN_TO_APP: {
         auto *w = dynamic_cast<NmUeTunToApp *>(msg);
         switch (w->present)
@@ -93,6 +75,17 @@ void UeAppTask::onLoop()
         {
         case NmUeNasToApp::PERFORM_SWITCH_OFF: {
             setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
+            break;
+        }
+        case NmUeNasToApp::DOWNLINK_DATA_DELIVERY: {
+            auto *tunTask = m_tunTasks[w->psi];
+            if (tunTask)
+            {
+                auto *m = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
+                m->psi = w->psi;
+                m->data = std::move(w->data);
+                tunTask->push(m);
+            }
             break;
         }
         }

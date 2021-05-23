@@ -93,6 +93,7 @@ class NasSm
     void handleNasEvent(const NmUeNasToNas &msg);
     void onTimerTick();
     void handleUplinkDataRequest(int psi, OctetString &&data);
+    void handleDownlinkDataRequest(int psi, OctetString &&data);
 };
 
 } // namespace nr::ue

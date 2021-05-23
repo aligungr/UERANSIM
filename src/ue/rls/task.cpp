@@ -9,6 +9,7 @@
 #include "task.hpp"
 
 #include <ue/app/task.hpp>
+#include <ue/nas/task.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -55,10 +56,10 @@ void UeRlsTask::onLoop()
             break;
         }
         case NmUeRlsToRls::DOWNLINK_DATA: {
-            auto *m = new NmUeRlsToApp(NmUeRlsToApp::DATA_PDU_DELIVERY);
+            auto *m = new NmUeRlsToNas(NmUeRlsToNas::DATA_PDU_DELIVERY);
             m->psi = w->psi;
             m->pdu = std::move(w->data);
-            m_base->appTask->push(m);
+            m_base->nasTask->push(m);
             break;
         }
         case NmUeRlsToRls::DOWNLINK_RRC: {

@@ -49,7 +49,11 @@ void NasSm::onTimerTick()
 
 void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
 {
-    if (m_mm->m_mmState == EMmState::MM_NULL)
+    auto state = m_mm->m_mmSubState;
+    if (state != EMmSubState::MM_REGISTERED_INITIATED_PS && state != EMmSubState::MM_REGISTERED_NORMAL_SERVICE &&
+        state != EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE &&
+        state != EMmSubState::MM_REGISTERED_LIMITED_SERVICE && state != EMmSubState::MM_DEREGISTERED_INITIATED_PS &&
+        state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
         return;
 
     if (m_pduSessions[psi]->psState != EPsState::ACTIVE)
@@ -79,6 +83,22 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
             handleUplinkStatusChange(psi, true);
         }
     }
+}
+
+void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
+{
+    auto state = m_mm->m_mmSubState;
+    if (state != EMmSubState::MM_REGISTERED_INITIATED_PS && state != EMmSubState::MM_REGISTERED_NORMAL_SERVICE &&
+        state != EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE &&
+        state != EMmSubState::MM_REGISTERED_LIMITED_SERVICE && state != EMmSubState::MM_DEREGISTERED_INITIATED_PS &&
+        state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
+        return;
+
+    auto *w = new NmUeNasToApp(NmUeNasToApp::DOWNLINK_DATA_DELIVERY);
+    w->psi = psi;
+    w->data = std::move(data);
+
+    m_base->appTask->push(w);
 }
 
 } // namespace nr::ue

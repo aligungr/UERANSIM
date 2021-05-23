@@ -93,6 +93,18 @@ void NasTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::UE_RLS_TO_NAS: {
+        auto *w = dynamic_cast<NmUeRlsToNas *>(msg);
+        switch (w->present)
+        {
+        case NmUeRlsToNas::DATA_PDU_DELIVERY: {
+            sm->handleDownlinkDataRequest(w->psi, std::move(w->pdu));
+            break;
+        }
+        }
+
+        break;
+    }
     case NtsMessageType::TIMER_EXPIRED: {
         auto *w = dynamic_cast<NmTimerExpired *>(msg);
         int timerId = w->timerId;
