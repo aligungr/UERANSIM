@@ -201,43 +201,11 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
 
     if (m_mmState == EMmState::MM_REGISTERED)
     {
-        if (currentCell.cellId == 0)
-        {
-            if (m_mmSubState != EMmSubState::MM_REGISTERED_PLMN_SEARCH &&
-                m_mmSubState != EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
-            {
-                switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-            }
-        }
-        else
-        {
-            if (currentCell.category == ECellCategory::SUITABLE_CELL)
-                switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-            else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
-                switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
-            else
-                switchMmState(EMmSubState::MM_REGISTERED_PS);
-        }
+        switchMmState(EMmSubState::MM_REGISTERED_PS);
     }
     else if (m_mmState == EMmState::MM_DEREGISTERED)
     {
-        if (currentCell.cellId == 0)
-        {
-            if (m_mmSubState != EMmSubState::MM_DEREGISTERED_PLMN_SEARCH &&
-                m_mmSubState != EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
-            {
-                switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-            }
-        }
-        else
-        {
-            if (currentCell.category == ECellCategory::SUITABLE_CELL)
-                switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-            else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
-                switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-            else
-                switchMmState(EMmSubState::MM_DEREGISTERED_PS);
-        }
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
     }
     else if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||
              m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)

@@ -96,49 +96,39 @@ void NasMm::performMmCycle()
     /* Perform substate selection in case of primary substate */
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PS)
     {
-        if (m_cmState == ECmState::CM_IDLE)
-            switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        if (currentCell.hasValue())
+        {
+            if (!m_usim->isValid())
+                switchMmState(EMmSubState::MM_DEREGISTERED_NO_SUPI);
+            else if (currentCell.category == ECellCategory::SUITABLE_CELL)
+                switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+            else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
+                switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+            else
+                switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        }
         else
         {
-            if (currentCell.hasValue())
-            {
-                if (!m_usim->isValid())
-                    switchMmState(EMmSubState::MM_DEREGISTERED_NO_SUPI);
-                else if (currentCell.category == ECellCategory::SUITABLE_CELL)
-                    switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
-                else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
-                    switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
-                else
-                    switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-            }
-            else
-            {
-                switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
-            }
+            switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
         }
         return;
     }
 
     if (m_mmSubState == EMmSubState::MM_REGISTERED_PS)
     {
-        if (m_cmState == ECmState::CM_IDLE)
-            switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        auto cell = m_base->shCtx.currentCell.get();
+        if (cell.hasValue())
+        {
+            if (cell.category == ECellCategory::SUITABLE_CELL)
+                switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
+            else if (cell.category == ECellCategory::ACCEPTABLE_CELL)
+                switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+            else
+                switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        }
         else
         {
-            auto cell = m_base->shCtx.currentCell.get();
-            if (cell.hasValue())
-            {
-                if (cell.category == ECellCategory::SUITABLE_CELL)
-                    switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
-                else if (cell.category == ECellCategory::ACCEPTABLE_CELL)
-                    switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
-                else
-                    switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-            }
-            else
-            {
-                switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
-            }
+            switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
         }
         return;
     }
