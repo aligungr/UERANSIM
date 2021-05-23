@@ -57,25 +57,6 @@ Json ToJson(const PlmnSupport &v)
     return Json::Obj({{"plmn", ToJson(v.plmn)}, {"nssai", ToJson(v.sliceSupportList)}});
 }
 
-Json ToJson(const EDeregCause &v)
-{
-    switch (v)
-    {
-    case EDeregCause::UNSPECIFIED:
-        return "NORMAL";
-    case EDeregCause::SWITCH_OFF:
-        return "SWITCH-OFF";
-    case EDeregCause::USIM_REMOVAL:
-        return "USIM-REMOVAL";
-    case EDeregCause::DISABLE_5G:
-        return "DISABLE-5G";
-    case EDeregCause::ECALL_INACTIVITY:
-        return "ECALL-INACTIVITY";
-    default:
-        return "?";
-    }
-}
-
 Json ToJson(const ECellCategory &v)
 {
     switch (v)
@@ -88,27 +69,6 @@ Json ToJson(const ECellCategory &v)
         return "ACCEPTABLE";
     case ECellCategory::SUITABLE_CELL:
         return "SUITABLE";
-    default:
-        return "?";
-    }
-}
-
-Json ToJson(const EInitialRegCause &v)
-{
-    switch (v)
-    {
-    case EInitialRegCause::UNSPECIFIED:
-        return "UNSPECIFIED";
-    case EInitialRegCause::EMERGENCY_SERVICES:
-        return "EMERGENCY_SERVICES";
-    case EInitialRegCause::MM_DEREG_NORMAL_SERVICE:
-        return "MM_DEREG_NORMAL_SERVICE";
-    case EInitialRegCause::T3346_EXPIRY:
-        return "T3346_EXPIRY";
-    case EInitialRegCause::DUE_TO_DEREGISTRATION:
-        return "DUE_TO_DEREGISTRATION";
-    case EInitialRegCause::DUE_TO_SERVICE_REJECT:
-        return "DUE_TO_SERVICE_REJECT";
     default:
         return "?";
     }

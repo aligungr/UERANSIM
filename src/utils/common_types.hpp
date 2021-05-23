@@ -127,7 +127,6 @@ struct Supi
 
 enum class EDeregCause
 {
-    UNSPECIFIED,
     SWITCH_OFF,
     USIM_REMOVAL,
     DISABLE_5G,
@@ -136,7 +135,6 @@ enum class EDeregCause
 
 enum class EInitialRegCause
 {
-    UNSPECIFIED,
     EMERGENCY_SERVICES,
     MM_DEREG_NORMAL_SERVICE,
     T3346_EXPIRY,

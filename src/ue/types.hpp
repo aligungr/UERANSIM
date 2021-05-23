@@ -465,8 +465,6 @@ struct UePduSessionInfo
 
 enum class ERegUpdateCause
 {
-    // unspecified cause
-    UNSPECIFIED,
     // when the UE detects entering a tracking area that is not in the list of tracking areas that the UE previously
     // registered in the AMF
     ENTER_UNLISTED_TRACKING_AREA,
@@ -515,13 +513,17 @@ enum class ERegUpdateCause
     // belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN;
     ENTER_EQUIVALENT_PLMN_CELL,
     // when the UE receives a SERVICE REJECT message with the 5GMM cause value set to #28 "Restricted service area".
-    RESTRICTED_SERVICE_AREA
+    RESTRICTED_SERVICE_AREA,
+    // ------ following are not specified by 24.501 ------
+    TAI_CHANGE_IN_ATT_UPD,
+    PLMN_CHANGE_IN_ATT_UPD,
+    T3346_EXPIRY_IN_ATT_UPD,
+    T3502_EXPIRY_IN_ATT_UPD,
+    T3511_EXPIRY_IN_ATT_UPD,
 };
 
 enum class EServiceReqCause
 {
-    // unspecified cause
-    UNSPECIFIED,
     // a) the UE, in 5GMM-IDLE mode over 3GPP access, receives a paging request from the network
     IDLE_PAGING,
     // b) the UE, in 5GMM-CONNECTED mode over 3GPP access, receives a notification from the network with access type

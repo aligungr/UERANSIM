@@ -33,7 +33,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         else if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
         {
             logExpired();
-            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::T3346_EXPIRY_IN_ATT_UPD);
         }
         break;
     }
@@ -45,7 +45,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
             resetRegAttemptCounter();
 
             if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
-                mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
+                mobilityUpdatingRequired(ERegUpdateCause::T3502_EXPIRY_IN_ATT_UPD);
         }
         break;
     }
@@ -85,7 +85,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
         {
             logExpired();
-            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::T3511_EXPIRY_IN_ATT_UPD);
         }
         break;
     }

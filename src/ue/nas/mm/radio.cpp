@@ -144,9 +144,10 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
         // of the serving cell has changed, if timer T3346 is not running, the PLMN identity of the new cell is not in
         // one of the forbidden PLMN lists and the tracking area is not in one of the lists of 5GS forbidden tracking
         // area"
-        if (!m_timers->t3346.isRunning() && currentCell.category == ECellCategory::SUITABLE_CELL)
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE && !m_timers->t3346.isRunning() &&
+            currentCell.category == ECellCategory::SUITABLE_CELL)
         {
-            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::TAI_CHANGE_IN_ATT_UPD);
         }
     }
 
@@ -160,7 +161,7 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
             !m_storage->equivalentPlmnList->contains(currentTai.plmn) &&
             currentCell.category == ECellCategory::SUITABLE_CELL)
         {
-            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::PLMN_CHANGE_IN_ATT_UPD);
         }
     }
 

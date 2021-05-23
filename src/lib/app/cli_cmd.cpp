@@ -235,7 +235,6 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
     else if (subCmd == "deregister")
     {
         auto cmd = std::make_unique<UeCliCommand>(UeCliCommand::DE_REGISTER);
-        cmd->deregCause = EDeregCause::UNSPECIFIED;
         if (options.positionalCount() == 0)
             CMD_ERR("De-registration type is expected")
         if (options.positionalCount() > 1)
