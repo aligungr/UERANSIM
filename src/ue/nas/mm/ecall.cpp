@@ -27,6 +27,10 @@ bool NasMm::startECallInactivityIfNeeded()
     if (!m_usim->m_isECallOnly)
         return false;
 
+    // "5.2.2.3.7 The UE camps on a suitable cell or an acceptable cell in a PLMN selected as specified in 3GPP ..."
+    if (!m_base->shCtx.hasActiveCell())
+        return false;
+
     // The procedure shall be started when
     // a) the UE is in any 5GMM-REGISTERED substate except substates 5GMM-REGISTERED.PLMN-SEARCH or
     // 5GMM-REGISTERED.NO-CELL-AVAILABLE;"

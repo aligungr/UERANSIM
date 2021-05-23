@@ -275,6 +275,12 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
     if (!tmsiMatches)
         return;
 
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE)
+    {
+        m_logger->debug("Ignoring received Paging due to eCall inactive");
+        return;
+    }
+
     m_timers->t3346.stop();
 
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED ||

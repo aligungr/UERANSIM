@@ -470,6 +470,8 @@ void NasMm::onSimRemoval()
 
     m_storage->forbiddenTaiListRoaming->clear();
     m_storage->forbiddenTaiListRps->clear();
+
+    switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 }
 
 } // namespace nr::ue

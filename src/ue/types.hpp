@@ -171,6 +171,7 @@ struct UeSharedContext
 
     Plmn getCurrentPlmn();
     Tai getCurrentTai();
+    bool hasActiveCell();
 };
 
 struct TaskBase
