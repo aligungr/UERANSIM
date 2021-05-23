@@ -184,6 +184,7 @@ class NasMm
     void onTimerExpire(UeTimer &timer);
 
   private: /* Procedure Control */
+    void initialRegistrationRequired(EInitialRegCause cause);
     void mobilityUpdatingRequired(ERegUpdateCause cause);
 
   private: /* Service Access Point */

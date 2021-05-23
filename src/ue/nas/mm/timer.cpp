@@ -28,7 +28,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
             logExpired();
-            sendInitialRegistration(EInitialRegCause::T3346_EXPIRY);
+            initialRegistrationRequired(EInitialRegCause::T3346_EXPIRY);
         }
         else if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
         {

@@ -398,13 +398,13 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
         if (m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
-            sendInitialRegistration(EInitialRegCause::DUE_TO_SERVICE_REJECT);
+            initialRegistrationRequired(EInitialRegCause::DUE_TO_SERVICE_REJECT);
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
         if (!hasEmergency())
-            sendInitialRegistration(EInitialRegCause::DUE_TO_SERVICE_REJECT);
+            initialRegistrationRequired(EInitialRegCause::DUE_TO_SERVICE_REJECT);
     }
 
     if (cause == nas::EMmCause::CONGESTION)
@@ -436,7 +436,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
 
         if (m_lastServiceRequest->serviceType.serviceType != nas::EServiceType::ELEVATED_SIGNALLING)
-            sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
+            mobilityUpdatingRequired(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
     }
 
     if (hasEmergency())
@@ -461,15 +461,17 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
 void NasMm::serviceNeededForUplinkData()
 {
-	static constexpr const int64_t SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD = 1000;
+    static constexpr const int64_t SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD = 1000;
 
-	auto currentTime = utils::CurrentTimeMillis();
+    auto currentTime = utils::CurrentTimeMillis();
     if (currentTime - m_lastTimeServiceReqNeededIndForData > SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD)
     {
         sendServiceRequest(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
                                                                : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
 
         m_lastTimeServiceReqNeededIndForData = currentTime;
+
+        triggerMmCycle();
     }
 }
 

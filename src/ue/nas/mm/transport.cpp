@@ -83,7 +83,7 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
             if (m_rmState == ERmState::RM_REGISTERED)
             {
                 switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
-                sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
+                mobilityUpdatingRequired(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
             }
             m_sm->receiveForwardingFailure(smMessage, msg.mmCause->value, std::nullopt);
             break;

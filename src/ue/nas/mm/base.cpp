@@ -151,7 +151,7 @@ void NasMm::performMmCycle()
     if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
     {
         if (m_rmState == ERmState::RM_REGISTERED)
-            sendMobilityRegistration(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
+            mobilityUpdatingRequired(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
     }
     else
         m_storage->lastVisitedRegisteredTai->set(currentTai);
@@ -165,7 +165,7 @@ void NasMm::performMmCycle()
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
             if (!m_timers->t3346.isRunning())
-                sendInitialRegistration(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+                initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
             return;
         }
         else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE)

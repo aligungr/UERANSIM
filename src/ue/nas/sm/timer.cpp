@@ -79,7 +79,7 @@ void NasSm::onTransactionTimerExpire(int pti)
         {
             m_logger->err("PDU Session Release procedure failure, no response from the network after 5 attempts");
             abortProcedureByPti(pti);
-            m_mm->sendMobilityRegistration(ERegUpdateCause::PS_STATUS_INFORM);
+            m_mm->mobilityUpdatingRequired(ERegUpdateCause::PS_STATUS_INFORM);
         }
         break;
     }

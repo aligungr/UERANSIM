@@ -319,7 +319,7 @@ void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
     m_logger->debug("Responding to received Paging");
 
     if (m_cmState == ECmState::CM_CONNECTED)
-        sendMobilityRegistration(ERegUpdateCause::PAGING_OR_NOTIFICATION);
+        mobilityUpdatingRequired(ERegUpdateCause::PAGING_OR_NOTIFICATION);
     else
         sendServiceRequest(EServiceReqCause::IDLE_PAGING);
 }
