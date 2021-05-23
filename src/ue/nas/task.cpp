@@ -57,25 +57,25 @@ void NasTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RRC_TO_NAS: {
-        mm->handleRrcEvent(*dynamic_cast<NwUeRrcToNas *>(msg));
+        mm->handleRrcEvent(*dynamic_cast<NmUeRrcToNas *>(msg));
         break;
     }
     case NtsMessageType::UE_NAS_TO_NAS: {
-        auto *w = dynamic_cast<NwUeNasToNas *>(msg);
+        auto *w = dynamic_cast<NmUeNasToNas *>(msg);
         switch (w->present)
         {
-        case NwUeNasToNas::PERFORM_MM_CYCLE: {
+        case NmUeNasToNas::PERFORM_MM_CYCLE: {
             mm->handleNasEvent(*w);
             break;
         }
-        case NwUeNasToNas::NAS_TIMER_EXPIRE: {
+        case NmUeNasToNas::NAS_TIMER_EXPIRE: {
             if (w->timer->isMmTimer())
                 mm->handleNasEvent(*w);
             else
                 sm->handleNasEvent(*w);
             break;
         }
-        case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS: {
+        case NmUeNasToNas::ESTABLISH_INITIAL_SESSIONS: {
             sm->establishInitialSessions();
             break;
         }
@@ -85,10 +85,10 @@ void NasTask::onLoop()
         break;
     }
     case NtsMessageType::UE_APP_TO_NAS: {
-        auto *w = dynamic_cast<NwUeAppToNas *>(msg);
+        auto *w = dynamic_cast<NmUeAppToNas *>(msg);
         switch (w->present)
         {
-        case NwUeAppToNas::UPLINK_DATA_DELIVERY: {
+        case NmUeAppToNas::UPLINK_DATA_DELIVERY: {
             sm->handleUplinkDataRequest(w->psi, std::move(w->data));
             break;
         }
@@ -108,7 +108,7 @@ void NasTask::onLoop()
         if (timerId == NTS_TIMER_ID_MM_CYCLE)
         {
             setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
-            mm->handleNasEvent(NwUeNasToNas{NwUeNasToNas::PERFORM_MM_CYCLE});
+            mm->handleNasEvent(NmUeNasToNas{NmUeNasToNas::PERFORM_MM_CYCLE});
         }
         break;
     }
@@ -123,7 +123,7 @@ void NasTask::onLoop()
 void NasTask::performTick()
 {
     auto sendExpireMsg = [this](UeTimer *timer) {
-        auto *nw = new NwUeNasToNas(NwUeNasToNas::NAS_TIMER_EXPIRE);
+        auto *nw = new NmUeNasToNas(NmUeNasToNas::NAS_TIMER_EXPIRE);
         nw->timer = timer;
         push(nw);
     };

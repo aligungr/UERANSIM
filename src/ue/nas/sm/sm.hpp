@@ -89,7 +89,7 @@ class NasSm
     void abortProcedureByPtiOrPsi(int pti, int psi);
 
   private: /* Service Access Point */
-    void handleNasEvent(const NwUeNasToNas &msg);
+    void handleNasEvent(const NmUeNasToNas &msg);
     void onTimerTick();
     void handleUplinkDataRequest(int psi, OctetString &&data);
 };

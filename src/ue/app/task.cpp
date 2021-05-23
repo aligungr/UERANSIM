@@ -52,14 +52,14 @@ void UeAppTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RLS_TO_APP: {
-        auto *w = dynamic_cast<NwUeRlsToApp *>(msg);
+        auto *w = dynamic_cast<NmUeRlsToApp *>(msg);
         switch (w->present)
         {
-        case NwUeRlsToApp::DATA_PDU_DELIVERY: {
+        case NmUeRlsToApp::DATA_PDU_DELIVERY: {
             auto *tunTask = m_tunTasks[w->psi];
             if (tunTask)
             {
-                auto *nw = new NwAppToTun(NwAppToTun::DATA_PDU_DELIVERY);
+                auto *nw = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
                 nw->psi = w->psi;
                 nw->data = std::move(w->pdu);
                 tunTask->push(nw);
@@ -70,17 +70,17 @@ void UeAppTask::onLoop()
         break;
     }
     case NtsMessageType::UE_TUN_TO_APP: {
-        auto *w = dynamic_cast<NwUeTunToApp *>(msg);
+        auto *w = dynamic_cast<NmUeTunToApp *>(msg);
         switch (w->present)
         {
-        case NwUeTunToApp::DATA_PDU_DELIVERY: {
-            auto *m = new NwUeAppToNas(NwUeAppToNas::UPLINK_DATA_DELIVERY);
+        case NmUeTunToApp::DATA_PDU_DELIVERY: {
+            auto *m = new NmUeAppToNas(NmUeAppToNas::UPLINK_DATA_DELIVERY);
             m->psi = w->psi;
             m->data = std::move(w->data);
             m_base->nasTask->push(m);
             break;
         }
-        case NwUeTunToApp::TUN_ERROR: {
+        case NmUeTunToApp::TUN_ERROR: {
             m_logger->err("TUN failure [%s]", w->error.c_str());
             break;
         }
@@ -88,10 +88,10 @@ void UeAppTask::onLoop()
         break;
     }
     case NtsMessageType::UE_NAS_TO_APP: {
-        auto *w = dynamic_cast<NwUeNasToApp *>(msg);
+        auto *w = dynamic_cast<NmUeNasToApp *>(msg);
         switch (w->present)
         {
-        case NwUeNasToApp::PERFORM_SWITCH_OFF: {
+        case NmUeNasToApp::PERFORM_SWITCH_OFF: {
             setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
             break;
         }
@@ -99,11 +99,11 @@ void UeAppTask::onLoop()
         break;
     }
     case NtsMessageType::UE_STATUS_UPDATE: {
-        receiveStatusUpdate(*dynamic_cast<NwUeStatusUpdate *>(msg));
+        receiveStatusUpdate(*dynamic_cast<NmUeStatusUpdate *>(msg));
         break;
     }
     case NtsMessageType::UE_CLI_COMMAND: {
-        auto *w = dynamic_cast<NwUeCliCommand *>(msg);
+        auto *w = dynamic_cast<NmUeCliCommand *>(msg);
         UeCmdHandler handler{m_base};
         handler.handleCmd(*w);
         break;
@@ -124,16 +124,16 @@ void UeAppTask::onLoop()
     delete msg;
 }
 
-void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
+void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
 {
-    if (msg.what == NwUeStatusUpdate::SESSION_ESTABLISHMENT)
+    if (msg.what == NmUeStatusUpdate::SESSION_ESTABLISHMENT)
     {
         auto *session = msg.pduSession;
         setupTunInterface(session);
         return;
     }
 
-    if (msg.what == NwUeStatusUpdate::SESSION_RELEASE)
+    if (msg.what == NmUeStatusUpdate::SESSION_RELEASE)
     {
         if (m_tunTasks[msg.psi] != nullptr)
         {
@@ -145,7 +145,7 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
         return;
     }
 
-    if (msg.what == NwUeStatusUpdate::CM_STATE)
+    if (msg.what == NmUeStatusUpdate::CM_STATE)
     {
         m_cmState = msg.cmState;
         return;

@@ -87,7 +87,7 @@ void UeRrcTask::updateAvailablePlmns()
                 value.insert(cellDesc.second.sib1.plmn);
     });
 
-    m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::NAS_NOTIFY));
+    m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::NAS_NOTIFY));
 }
 
 } // namespace nr::ue

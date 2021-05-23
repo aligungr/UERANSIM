@@ -13,56 +13,56 @@
 namespace nr::ue
 {
 
-void NasMm::handleRrcEvent(const NwUeRrcToNas &msg)
+void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
 {
     switch (msg.present)
     {
-    case NwUeRrcToNas::RRC_CONNECTION_SETUP: {
+    case NmUeRrcToNas::RRC_CONNECTION_SETUP: {
         handleRrcConnectionSetup();
         break;
     }
-    case NwUeRrcToNas::NAS_DELIVERY: {
+    case NmUeRrcToNas::NAS_DELIVERY: {
         OctetView buffer{msg.nasPdu};
         auto nasMessage = nas::DecodeNasMessage(buffer);
         if (nasMessage != nullptr)
             receiveNasMessage(*nasMessage);
         break;
     }
-    case NwUeRrcToNas::RRC_CONNECTION_RELEASE: {
+    case NmUeRrcToNas::RRC_CONNECTION_RELEASE: {
         handleRrcConnectionRelease();
         break;
     }
-    case NwUeRrcToNas::RADIO_LINK_FAILURE: {
+    case NmUeRrcToNas::RADIO_LINK_FAILURE: {
         handleRadioLinkFailure();
         break;
     }
-    case NwUeRrcToNas::PAGING: {
+    case NmUeRrcToNas::PAGING: {
         handlePaging(msg.pagingTmsi);
         break;
     }
-    case NwUeRrcToNas::NAS_NOTIFY: {
+    case NmUeRrcToNas::NAS_NOTIFY: {
         triggerMmCycle();
         break;
     }
-    case NwUeRrcToNas::ACTIVE_CELL_CHANGED: {
+    case NmUeRrcToNas::ACTIVE_CELL_CHANGED: {
         handleActiveCellChange(msg.previousTai);
         break;
     }
-    case NwUeRrcToNas::RRC_ESTABLISHMENT_FAILURE: {
+    case NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE: {
         handleRrcEstablishmentFailure();
         break;
     }
     }
 }
 
-void NasMm::handleNasEvent(const NwUeNasToNas &msg)
+void NasMm::handleNasEvent(const NmUeNasToNas &msg)
 {
     switch (msg.present)
     {
-    case NwUeNasToNas::PERFORM_MM_CYCLE:
+    case NmUeNasToNas::PERFORM_MM_CYCLE:
         performMmCycle();
         break;
-    case NwUeNasToNas::NAS_TIMER_EXPIRE:
+    case NmUeNasToNas::NAS_TIMER_EXPIRE:
         onTimerExpire(*msg.timer);
         break;
     default:

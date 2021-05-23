@@ -184,8 +184,8 @@ class NasMm
     void onTimerExpire(UeTimer &timer);
 
   private: /* Service Access Point */
-    void handleRrcEvent(const NwUeRrcToNas &msg);
-    void handleNasEvent(const NwUeNasToNas &msg);
+    void handleRrcEvent(const NmUeRrcToNas &msg);
+    void handleNasEvent(const NmUeNasToNas &msg);
 };
 
 } // namespace nr::ue

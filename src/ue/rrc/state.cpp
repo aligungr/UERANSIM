@@ -18,7 +18,7 @@ namespace nr::ue
 
 void UeRrcTask::triggerCycle()
 {
-    push(new NwUeRrcToRrc(NwUeRrcToRrc::TRIGGER_CYCLE));
+    push(new NmUeRrcToRrc(NmUeRrcToRrc::TRIGGER_CYCLE));
 }
 
 void UeRrcTask::performCycle()

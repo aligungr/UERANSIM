@@ -19,11 +19,11 @@
 namespace nr::ue
 {
 
-void NasSm::handleNasEvent(const NwUeNasToNas &msg)
+void NasSm::handleNasEvent(const NmUeNasToNas &msg)
 {
     switch (msg.present)
     {
-    case NwUeNasToNas::NAS_TIMER_EXPIRE:
+    case NmUeNasToNas::NAS_TIMER_EXPIRE:
         onTimerExpire(*msg.timer);
         break;
     default:
@@ -58,7 +58,7 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
             handleUplinkStatusChange(psi, false);
         }
 
-        auto *nw = new NwUeNasToRls(NwUeNasToRls::DATA_PDU_DELIVERY);
+        auto *nw = new NmUeNasToRls(NmUeNasToRls::DATA_PDU_DELIVERY);
         nw->psi = psi;
         nw->pdu = std::move(data);
         m_base->rlsTask->push(nw);

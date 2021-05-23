@@ -170,7 +170,7 @@ void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept 
     else
         pduSession->pduAddress = {};
 
-    auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::SESSION_ESTABLISHMENT);
+    auto *statusUpdate = new NmUeStatusUpdate(NmUeStatusUpdate::SESSION_ESTABLISHMENT);
     statusUpdate->pduSession = pduSession;
     m_base->appTask->push(statusUpdate);
 

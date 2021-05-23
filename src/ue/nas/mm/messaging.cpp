@@ -166,7 +166,7 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    auto *nw = new NwUeNasToRrc(NwUeNasToRrc::UPLINK_NAS_DELIVERY);
+    auto *nw = new NmUeNasToRrc(NmUeNasToRrc::UPLINK_NAS_DELIVERY);
     nw->pduId = 0;
     nw->nasPdu = std::move(pdu);
     m_base->rrcTask->push(nw);

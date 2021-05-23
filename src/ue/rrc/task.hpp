@@ -93,8 +93,8 @@ class UeRrcTask : public NtsTask
     void receiveRrcMessage(ASN_RRC_PCCH_Message *msg);
 
     /* Service Access Point */
-    void handleRlsSapMessage(NwUeRlsToRrc &msg);
-    void handleNasSapMessage(NwUeNasToRrc &msg);
+    void handleRlsSapMessage(NmUeRlsToRrc &msg);
+    void handleNasSapMessage(NmUeNasToRrc &msg);
 
     /* State Management */
     void triggerCycle();

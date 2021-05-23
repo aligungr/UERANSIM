@@ -49,22 +49,22 @@ void RlsControlTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RLS_TO_RLS: {
-        auto *w = dynamic_cast<NwUeRlsToRls *>(msg);
+        auto *w = dynamic_cast<NmUeRlsToRls *>(msg);
         switch (w->present)
         {
-        case NwUeRlsToRls::SIGNAL_CHANGED:
+        case NmUeRlsToRls::SIGNAL_CHANGED:
             handleSignalChange(w->cellId, w->dbm);
             break;
-        case NwUeRlsToRls::RECEIVE_RLS_MESSAGE:
+        case NmUeRlsToRls::RECEIVE_RLS_MESSAGE:
             handleRlsMessage(w->cellId, *w->msg);
             break;
-        case NwUeRlsToRls::UPLINK_DATA:
+        case NmUeRlsToRls::UPLINK_DATA:
             handleUplinkDataDelivery(w->psi, std::move(w->data));
             break;
-        case NwUeRlsToRls::UPLINK_RRC:
+        case NmUeRlsToRls::UPLINK_RRC:
             handleUplinkRrcDelivery(w->cellId, w->pduId, w->rrcChannel, std::move(w->data));
             break;
-        case NwUeRlsToRls::ASSIGN_CURRENT_CELL:
+        case NmUeRlsToRls::ASSIGN_CURRENT_CELL:
             m_servingCell = w->cellId;
             break;
         default:
@@ -122,14 +122,14 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
                 return;
             }
 
-            auto *w = new NwUeRlsToRls(NwUeRlsToRls::DOWNLINK_DATA);
+            auto *w = new NmUeRlsToRls(NmUeRlsToRls::DOWNLINK_DATA);
             w->psi = static_cast<int>(m.payload);
             w->data = std::move(m.pdu);
             m_mainTask->push(w);
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            auto *w = new NwUeRlsToRls(NwUeRlsToRls::DOWNLINK_RRC);
+            auto *w = new NmUeRlsToRls(NmUeRlsToRls::DOWNLINK_RRC);
             w->cellId = cellId;
             w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
             w->data = std::move(m.pdu);
@@ -148,7 +148,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
 
 void RlsControlTask::handleSignalChange(int cellId, int dbm)
 {
-    auto *w = new NwUeRlsToRls(NwUeRlsToRls::SIGNAL_CHANGED);
+    auto *w = new NmUeRlsToRls(NmUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;
     m_mainTask->push(w);
@@ -162,7 +162,7 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            auto *w = new NwUeRlsToRls(NwUeRlsToRls::RADIO_LINK_FAILURE);
+            auto *w = new NmUeRlsToRls(NmUeRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
             m_mainTask->push(w);
             return;
@@ -172,7 +172,7 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            auto *w = new NwUeRlsToRls(NwUeRlsToRls::RADIO_LINK_FAILURE);
+            auto *w = new NmUeRlsToRls(NmUeRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
             m_mainTask->push(w);
             return;
@@ -227,7 +227,7 @@ void RlsControlTask::onAckControlTimerExpired()
 
     if (!transmissionFailures.empty())
     {
-        auto *w = new NwUeRlsToRls(NwUeRlsToRls::TRANSMISSION_FAILURE);
+        auto *w = new NmUeRlsToRls(NmUeRlsToRls::TRANSMISSION_FAILURE);
         w->pduList = std::move(transmissionFailures);
         m_mainTask->push(w);
     }

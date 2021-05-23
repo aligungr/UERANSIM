@@ -53,18 +53,18 @@ void UeRrcTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_NAS_TO_RRC: {
-        handleNasSapMessage(*dynamic_cast<NwUeNasToRrc *>(msg));
+        handleNasSapMessage(*dynamic_cast<NmUeNasToRrc *>(msg));
         break;
     }
     case NtsMessageType::UE_RLS_TO_RRC: {
-        handleRlsSapMessage(*dynamic_cast<NwUeRlsToRrc *>(msg));
+        handleRlsSapMessage(*dynamic_cast<NmUeRlsToRrc *>(msg));
         break;
     }
     case NtsMessageType::UE_RRC_TO_RRC: {
-        auto *w = dynamic_cast<NwUeRrcToRrc *>(msg);
+        auto *w = dynamic_cast<NmUeRrcToRrc *>(msg);
         switch (w->present)
         {
-        case NwUeRrcToRrc::TRIGGER_CYCLE:
+        case NmUeRrcToRrc::TRIGGER_CYCLE:
             performCycle();
             break;
         }

@@ -98,11 +98,11 @@ void UeRrcTask::performCellSelection()
 
     if (selectedCell != lastCell.cellId)
     {
-        auto *w1 = new NwUeRrcToRls(NwUeRrcToRls::ASSIGN_CURRENT_CELL);
+        auto *w1 = new NmUeRrcToRls(NmUeRrcToRls::ASSIGN_CURRENT_CELL);
         w1->cellId = selectedCell;
         m_base->rlsTask->push(w1);
 
-        auto w2 = new NwUeRrcToNas(NwUeRrcToNas::ACTIVE_CELL_CHANGED);
+        auto w2 = new NmUeRrcToNas(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
         w2->previousTai = Tai{lastCell.plmn, lastCell.tac};
         m_base->nasTask->push(w2);
     }

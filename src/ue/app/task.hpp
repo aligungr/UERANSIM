@@ -42,7 +42,7 @@ class UeAppTask : public NtsTask
     void onQuit() override;
 
   private:
-    void receiveStatusUpdate(NwUeStatusUpdate &msg);
+    void receiveStatusUpdate(NmUeStatusUpdate &msg);
     void setupTunInterface(const PduSession *pduSession);
 };
 

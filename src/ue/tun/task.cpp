@@ -35,9 +35,9 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-static nr::ue::NwUeTunToApp *NwError(std::string &&error)
+static nr::ue::NmUeTunToApp *NmError(std::string &&error)
 {
-    auto *nw = new nr::ue::NwUeTunToApp(nr::ue::NwUeTunToApp::TUN_ERROR);
+    auto *nw = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::TUN_ERROR);
     nw->error = std::move(error);
     return nw;
 }
@@ -57,13 +57,13 @@ static void ReceiverThread(ReceiverArgs *args)
         int n = ::read(fd, buffer, RECEIVER_BUFFER_SIZE);
         if (n < 0)
         {
-            targetTask->push(NwError(GetErrorMessage("TUN device could not read")));
+            targetTask->push(NmError(GetErrorMessage("TUN device could not read")));
             return; // Abort receiver thread
         }
 
         if (n > 0)
         {
-            auto *nw = new nr::ue::NwUeTunToApp(nr::ue::NwUeTunToApp::DATA_PDU_DELIVERY);
+            auto *nw = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
             nw->psi = psi;
             nw->data = OctetString::FromArray(buffer, static_cast<size_t>(n));
             targetTask->push(nw);
@@ -103,12 +103,12 @@ void TunTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_APP_TO_TUN: {
-        auto *w = dynamic_cast<NwAppToTun *>(msg);
+        auto *w = dynamic_cast<NmAppToTun *>(msg);
         int res = ::write(m_fd, w->data.data(), w->data.length());
         if (res < 0)
-            push(NwError(GetErrorMessage("TUN device could not write")));
+            push(NmError(GetErrorMessage("TUN device could not write")));
         else if (res != w->data.length())
-            push(NwError(GetErrorMessage("TUN device partially written")));
+            push(NmError(GetErrorMessage("TUN device partially written")));
         delete w;
         break;
     }

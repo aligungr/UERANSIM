@@ -69,7 +69,7 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
     if (deregCause == EDeregCause::SWITCH_OFF)
     {
         onSwitchOff();
-        m_base->appTask->push(new NwUeNasToApp(NwUeNasToApp::PERFORM_SWITCH_OFF));
+        m_base->appTask->push(new NmUeNasToApp(NmUeNasToApp::PERFORM_SWITCH_OFF));
     }
     else if (deregCause == EDeregCause::USIM_REMOVAL)
     {

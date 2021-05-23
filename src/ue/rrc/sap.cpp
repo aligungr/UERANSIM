@@ -15,41 +15,41 @@
 namespace nr::ue
 {
 
-void UeRrcTask::handleRlsSapMessage(NwUeRlsToRrc &msg)
+void UeRrcTask::handleRlsSapMessage(NmUeRlsToRrc &msg)
 {
     switch (msg.present)
     {
-    case NwUeRlsToRrc::SIGNAL_CHANGED: {
+    case NmUeRlsToRrc::SIGNAL_CHANGED: {
         handleCellSignalChange(msg.cellId, msg.dbm);
         break;
     }
-    case NwUeRlsToRrc::DOWNLINK_RRC_DELIVERY: {
+    case NmUeRlsToRrc::DOWNLINK_RRC_DELIVERY: {
         handleDownlinkRrc(msg.cellId, msg.channel, msg.pdu);
         break;
     }
-    case NwUeRlsToRrc::RADIO_LINK_FAILURE: {
+    case NmUeRlsToRrc::RADIO_LINK_FAILURE: {
         handleRadioLinkFailure(msg.rlfCause);
         break;
     }
     }
 }
 
-void UeRrcTask::handleNasSapMessage(NwUeNasToRrc &msg)
+void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
 {
     switch (msg.present)
     {
-    case NwUeNasToRrc::UPLINK_NAS_DELIVERY: {
+    case NmUeNasToRrc::UPLINK_NAS_DELIVERY: {
         deliverUplinkNas(msg.pduId, std::move(msg.nasPdu));
         break;
     }
-    case NwUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
+    case NmUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
         // TODO
         // m_state = ERrcState::RRC_IDLE;
         // m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
         // m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::RESET_STI));
         break;
     }
-    case NwUeNasToRrc::RRC_NOTIFY: {
+    case NmUeNasToRrc::RRC_NOTIFY: {
         triggerCycle();
         break;
     }

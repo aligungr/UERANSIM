@@ -39,7 +39,7 @@ void NasSm::localReleaseSession(int psi)
 
     if (isEstablished)
     {
-        auto *statusUpdate = new NwUeStatusUpdate(NwUeStatusUpdate::SESSION_RELEASE);
+        auto *statusUpdate = new NmUeStatusUpdate(NmUeStatusUpdate::SESSION_RELEASE);
         statusUpdate->psi = psi;
         m_base->appTask->push(statusUpdate);
     }

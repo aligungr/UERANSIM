@@ -117,7 +117,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    auto *w = new NwUeRlsToRls(NwUeRlsToRls::RECEIVE_RLS_MESSAGE);
+    auto *w = new NmUeRlsToRls(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->cellId = m_cells[msg->sti].cellId;
     w->msg = std::move(msg);
     m_ctlTask->push(w);
@@ -132,7 +132,7 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
         dbm = m_cells[sti].dbm;
     }
 
-    auto *w = new NwUeRlsToRls(NwUeRlsToRls::SIGNAL_CHANGED);
+    auto *w = new NmUeRlsToRls(NmUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;
     m_ctlTask->push(w);

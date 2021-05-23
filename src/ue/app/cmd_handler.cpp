@@ -69,7 +69,7 @@ bool UeCmdHandler::isAllPaused()
     return true;
 }
 
-void UeCmdHandler::handleCmd(NwUeCliCommand &msg)
+void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
 {
     pauseTasks();
 
@@ -100,7 +100,7 @@ void UeCmdHandler::handleCmd(NwUeCliCommand &msg)
     unpauseTasks();
 }
 
-void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
+void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
 {
     switch (msg.cmd->present)
     {

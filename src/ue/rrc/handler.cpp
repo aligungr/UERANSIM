@@ -51,7 +51,7 @@ void UeRrcTask::receivePaging(const ASN_RRC_Paging &msg)
         }
     });
 
-    auto *w = new NwUeRrcToNas(NwUeRrcToNas::PAGING);
+    auto *w = new NmUeRrcToNas(NmUeRrcToNas::PAGING);
     w->pagingTmsi = std::move(tmsiIds);
     m_base->nasTask->push(w);
 }
