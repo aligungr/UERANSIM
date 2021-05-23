@@ -21,53 +21,39 @@ namespace nr::ue
 
 void NasMm::initialRegistrationRequired(EInitialRegCause cause)
 {
-    // TODO
-
+    m_procCtl.initialRegistration = cause;
     triggerMmCycle();
 }
 
 void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 {
-    // TODO
+    m_procCtl.mobilityRegistration = cause;
+    triggerMmCycle();
 
     // TODO: "the periodic registration update procedure is delayed until the UE returns to
     //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
-
-    triggerMmCycle();
 }
 
 void NasMm::serviceRequestRequiredForSignalling()
 {
-    // TODO
+    serviceRequestRequired(EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING);
 }
 
 void NasMm::serviceRequestRequiredForData()
 {
-    static constexpr const int64_t SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD = 1000;
-
-    auto currentTime = utils::CurrentTimeMillis();
-    if (currentTime - m_lastTimeServiceReqNeededIndForData > SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD)
-    {
-        serviceRequestRequired(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
-                                                                   : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
-
-        m_lastTimeServiceReqNeededIndForData = currentTime;
-
-        triggerMmCycle();
-    }
+    serviceRequestRequired(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
+                                                               : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
 }
 
 void NasMm::serviceRequestRequired(EServiceReqCause cause)
 {
-    // TODO
-
+    m_procCtl.serviceRequest = cause;
     triggerMmCycle();
 }
 
 void NasMm::deregistrationRequired(EDeregCause cause)
 {
-    // TODO
-
+    m_procCtl.deregistration = cause;
     triggerMmCycle();
 }
 

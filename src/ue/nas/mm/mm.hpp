@@ -37,6 +37,8 @@ class NasMm
     EMmState m_mmState;
     EMmSubState m_mmSubState;
 
+    // Procedure management
+    ProcControl m_procCtl;
     // Most recent registration request
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
     // Most recent service request
@@ -57,8 +59,6 @@ class NasMm
     bool m_registeredForEmergency{};
     // Network feature support information
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
-    // Last time Service Request needed indication for Data
-    int64_t m_lastTimeServiceReqNeededIndForData{};
     // Number of times the network failing the authentication check
     int m_nwConsecutiveAuthFailure{};
     // Last time PLMN search failure logged

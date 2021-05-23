@@ -550,6 +550,14 @@ enum class EServiceReqCause
     FALLBACK_INDICATION
 };
 
+struct ProcControl
+{
+    std::optional<EInitialRegCause> initialRegistration{};
+    std::optional<ERegUpdateCause> mobilityRegistration{};
+    std::optional<EServiceReqCause> serviceRequest{};
+    std::optional<EDeregCause> deregistration{};
+};
+
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
