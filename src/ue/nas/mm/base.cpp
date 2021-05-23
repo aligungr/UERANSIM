@@ -168,12 +168,18 @@ void NasMm::performMmCycle()
     /* Initial registration controls */
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
         initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE && hasEmergency())
+    else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && hasEmergency())
         initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION && hasEmergency())
-        initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI && hasEmergency())
-        initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
+
+    if (hasEmergency())
+    {
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE ||
+            m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
+            m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI ||
+            m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE ||
+            m_mmSubState == EMmSubState::MM_REGISTERED_LIMITED_SERVICE)
+            initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
+    }
 
     /* Process TAI changes if any */
     if (currentTai.hasValue() &&
