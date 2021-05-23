@@ -35,6 +35,11 @@ void NasMm::onTimerExpire(UeTimer &timer)
             logExpired();
             mobilityUpdatingRequired(ERegUpdateCause::T3346_EXPIRY_IN_ATT_UPD);
         }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+        {
+            logExpired();
+            initialRegistrationRequired(EInitialRegCause::T3346_EXPIRY_IN_ATT_REG);
+        }
         break;
     }
     case 3502: {
@@ -44,6 +49,8 @@ void NasMm::onTimerExpire(UeTimer &timer)
             logExpired();
             resetRegAttemptCounter();
 
+            if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+                initialRegistrationRequired(EInitialRegCause::T3502_EXPIRY_IN_ATT_REG);
             if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
                 mobilityUpdatingRequired(ERegUpdateCause::T3502_EXPIRY_IN_ATT_UPD);
         }
@@ -86,6 +93,11 @@ void NasMm::onTimerExpire(UeTimer &timer)
         {
             logExpired();
             mobilityUpdatingRequired(ERegUpdateCause::T3511_EXPIRY_IN_ATT_UPD);
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+        {
+            logExpired();
+            initialRegistrationRequired(EInitialRegCause::T3511_EXPIRY_IN_ATT_REG);
         }
         break;
     }

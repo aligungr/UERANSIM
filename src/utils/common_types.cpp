@@ -155,6 +155,16 @@ Json ToJson(const EInitialRegCause &v)
         return "DUE-TO-DEREGISTRATION";
     case EInitialRegCause::DUE_TO_SERVICE_REJECT:
         return "DUE-TO-SERVICE_REJECT";
+    case EInitialRegCause::TAI_CHANGE_IN_ATT_REG:
+        return "TAI-CHANGE-IN-ATT-REG";
+    case EInitialRegCause::PLMN_CHANGE_IN_ATT_REG:
+        return "PLMN-CHANGE-IN-ATT-REG";
+    case EInitialRegCause::T3346_EXPIRY_IN_ATT_REG:
+        return "T3346-EXPIRY-IN-ATT-REG";
+    case EInitialRegCause::T3502_EXPIRY_IN_ATT_REG:
+        return "T3502-EXPIRY-IN-ATT-REG";
+    case EInitialRegCause::T3511_EXPIRY_IN_ATT_REG:
+        return "T3511-EXPIRY-IN-ATT-REG";
     default:
         return "?";
     }

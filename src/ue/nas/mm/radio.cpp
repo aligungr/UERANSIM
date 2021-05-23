@@ -149,6 +149,15 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
         {
             mobilityUpdatingRequired(ERegUpdateCause::TAI_CHANGE_IN_ATT_UPD);
         }
+
+        // "shall initiate an initial registration procedure when the tracking area of the serving cell has changed, if
+        // timer T3346 is not running, the PLMN identity of the new cell is not in one of the forbidden PLMN lists and
+        // the tracking area of the new cell is not in one of the lists of 5GS forbidden tracking areas"
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION && !m_timers->t3346.isRunning() &&
+            currentCell.category == ECellCategory::SUITABLE_CELL)
+        {
+            initialRegistrationRequired(EInitialRegCause::TAI_CHANGE_IN_ATT_REG);
+        }
     }
 
     if (currentCell.hasValue() && prevTai.plmn != currentTai.plmn)
@@ -162,6 +171,17 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
             currentCell.category == ECellCategory::SUITABLE_CELL)
         {
             mobilityUpdatingRequired(ERegUpdateCause::PLMN_CHANGE_IN_ATT_UPD);
+        }
+
+        // "shall initiate an initial registration procedure when entering a new PLMN, if timer T3346 is running and the
+        // new PLMN is not equivalent to the PLMN where the UE started timer T3346, the PLMN identity of the new cell is
+        // not in the forbidden PLMN lists and the tracking area is not in one of the lists of 5GS forbidden tracking
+        // areas"
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION && m_timers->t3346.isRunning() &&
+            !m_storage->equivalentPlmnList->contains(currentTai.plmn) &&
+            currentCell.category == ECellCategory::SUITABLE_CELL)
+        {
+            initialRegistrationRequired(EInitialRegCause::PLMN_CHANGE_IN_ATT_REG);
         }
     }
 

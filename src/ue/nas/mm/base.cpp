@@ -165,9 +165,13 @@ void NasMm::performMmCycle()
     /* Try to start procedures */
     invokeProcedures();
 
-    /* Automatic initial registration */
+    /* Initial registration controls */
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
         initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE && hasEmergency())
+        initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION && hasEmergency())
+        initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
 
     /* Process TAI changes if any */
     if (currentTai.hasValue() &&
