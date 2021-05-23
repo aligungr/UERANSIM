@@ -63,4 +63,11 @@ void NasMm::serviceRequestRequired(EServiceReqCause cause)
     triggerMmCycle();
 }
 
+void NasMm::deregistrationRequired(EDeregCause cause)
+{
+    // TODO
+
+    triggerMmCycle();
+}
+
 } // namespace nr::ue

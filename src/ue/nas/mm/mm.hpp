@@ -188,6 +188,7 @@ class NasMm
     void serviceRequestRequiredForData();
     void serviceRequestRequiredForSignalling();
     void serviceRequestRequired(EServiceReqCause cause);
+    void deregistrationRequired(EDeregCause cause);
 
   private: /* Service Access Point */
     void handleRrcEvent(const NmUeRrcToNas &msg);

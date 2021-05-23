@@ -134,7 +134,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::DE_REGISTER: {
-        m_base->nasTask->mm->sendDeregistration(msg.cmd->deregCause);
+        m_base->nasTask->mm->deregistrationRequired(msg.cmd->deregCause);
 
         if (msg.cmd->deregCause != EDeregCause::SWITCH_OFF)
             sendResult(msg.address, "De-registration procedure triggered");

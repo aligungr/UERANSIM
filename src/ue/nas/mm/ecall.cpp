@@ -67,7 +67,7 @@ bool NasMm::startECallInactivityIfNeeded()
     // And perform de-registration.
     // NOTE: The items c) and d) is performed after de-registration by the other function, therefore we are just
     // performing de-registration for now.
-    sendDeregistration(EDeregCause::ECALL_INACTIVITY);
+    deregistrationRequired(EDeregCause::ECALL_INACTIVITY);
     return true;
 }
 
