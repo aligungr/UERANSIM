@@ -157,10 +157,6 @@ void NasMm::performMmCycle()
     else
         m_storage->lastVisitedRegisteredTai->set(currentTai);
 
-    /* eCall inactivity related */
-    if (switchToECallInactivityIfNeeded())
-        return;
-
     /* PLMN selection related */
     if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
         m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE ||
@@ -168,6 +164,16 @@ void NasMm::performMmCycle()
         m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
     {
         performPlmnSelection();
+    }
+
+    /* eCall inactivity related */
+    if (m_mmSubState != EMmSubState::MM_REGISTERED_PLMN_SEARCH &&
+        m_mmSubState != EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE &&
+        m_mmSubState != EMmSubState::MM_DEREGISTERED_PLMN_SEARCH &&
+        m_mmSubState != EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
+    {
+        if (switchToECallInactivityIfNeeded())
+            return;
     }
 
     /* Try to start procedures */
