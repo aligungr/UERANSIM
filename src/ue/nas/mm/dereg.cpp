@@ -28,6 +28,10 @@ static nas::IEDeRegistrationType MakeDeRegistrationType(EDeregCause deregCause)
 
 EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
 {
+    auto currentTai = m_base->shCtx.getCurrentTai();
+    if (!currentTai.hasValue())
+        return EProcRc::STAY;
+
     if (m_rmState != ERmState::RM_REGISTERED)
     {
         m_logger->warn("De-registration could not be triggered. UE is already de-registered");
@@ -36,6 +40,17 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
 
     if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
         return EProcRc::CANCEL;
+
+    // 5.2.3.2.3 "shall not initiate de-registration procedure unless timer T3346 is running and the current TAI is part
+    // of the TAI list."
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+    {
+        if (!m_timers->t3346.isRunning() ||
+            !nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
+        {
+            return EProcRc::STAY;
+        }
+    }
 
     m_logger->debug("Starting de-registration procedure due to [%s]", ToJson(deregCause).str().c_str());
 
@@ -330,9 +345,6 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
 void NasMm::performLocalDeregistration()
 {
-    if (m_mmState == EMmState::MM_DEREGISTERED)
-        return;
-
     m_logger->debug("Performing local de-registration");
 
     m_timers->t3521.stop();

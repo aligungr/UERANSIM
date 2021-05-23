@@ -165,7 +165,7 @@ void NasMm::performMmCycle()
     /* Try to start procedures */
     invokeProcedures();
 
-    /* Initial registration controls */
+    /* Registration related */
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
         initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
     else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && hasEmergency())
@@ -178,6 +178,16 @@ void NasMm::performMmCycle()
             m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE ||
             m_mmSubState == EMmSubState::MM_REGISTERED_LIMITED_SERVICE)
             initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
+    }
+
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE && hasEmergency())
+    {
+        // 5.2.3.2.3; f)
+        // "may perform de-registration locally and initiate a registration procedure for initial registration for
+        // emergency services even if timer T3346 is running"
+
+        // UE will try to send initial emergency registration after local de-registration
+        performLocalDeregistration();
     }
 
     /* Process TAI changes if any */
