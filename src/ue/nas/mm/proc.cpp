@@ -103,7 +103,6 @@ void NasMm::deregistrationRequired(EDeregCause cause)
 void NasMm::invokeProcedures()
 {
     auto activeCell = m_base->shCtx.currentCell.get();
-
     bool hasActiveCell = activeCell.hasValue();
 
     if (hasActiveCell && m_procCtl.deregistration)
