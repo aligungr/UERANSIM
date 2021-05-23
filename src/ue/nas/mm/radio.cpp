@@ -164,6 +164,28 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
     if (currentCell.hasValue() && !m_storage->equivalentPlmnList->contains(currentCell.plmn))
         m_timers->t3346.stop();
 
+    if (currentCell.hasValue() && prevTai != currentTai)
+    {
+        // "Additionally, the registration attempt counter shall be reset when the UE is in substate
+        // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE, and a new
+        // tracking area is entered"
+        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
+            m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+        {
+            resetRegAttemptCounter();
+        }
+    }
+
+    if (currentCell.hasValue() && prevTai.plmn != currentTai.plmn)
+    {
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE && m_timers->t3346.isRunning() &&
+            !m_storage->equivalentPlmnList->contains(currentTai.plmn) &&
+            currentCell.category == ECellCategory::SUITABLE_CELL)
+        {
+            sendMobilityRegistration(ERegUpdateCause::UNSPECIFIED);
+        }
+    }
+
     if (m_mmState == EMmState::MM_REGISTERED)
     {
         if (currentCell.cellId == 0)
@@ -210,18 +232,6 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
         // This should never happen
         m_logger->err("Active cell change in [CM-IDLE] state while MM specific procedure is ongoing");
         switchMmState(EMmSubState::MM_DEREGISTERED_PS);
-    }
-
-    if (currentCell.hasValue() && prevTai != currentTai)
-    {
-        // "Additionally, the registration attempt counter shall be reset when the UE is in substate
-        // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE, and a new
-        // tracking area is entered"
-        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
-            m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
-        {
-            resetRegAttemptCounter();
-        }
     }
 }
 
