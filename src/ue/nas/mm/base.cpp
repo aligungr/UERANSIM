@@ -172,6 +172,8 @@ void NasMm::performMmCycle()
         initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
     if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION && hasEmergency())
         initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI && hasEmergency())
+        initialRegistrationRequired(EInitialRegCause::EMERGENCY_SERVICES);
 
     /* Process TAI changes if any */
     if (currentTai.hasValue() &&
