@@ -23,7 +23,7 @@
 namespace nr::ue
 {
 
-struct NwAppToTun : NtsMessage
+struct NmAppToTun : NtsMessage
 {
     enum PR
     {
@@ -34,12 +34,12 @@ struct NwAppToTun : NtsMessage
     int psi{};
     OctetString data{};
 
-    explicit NwAppToTun(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_TUN), present(present)
+    explicit NmAppToTun(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_TUN), present(present)
     {
     }
 };
 
-struct NwUeTunToApp : NtsMessage
+struct NmUeTunToApp : NtsMessage
 {
     enum PR
     {
@@ -54,12 +54,12 @@ struct NwUeTunToApp : NtsMessage
     // TUN_ERROR
     std::string error{};
 
-    explicit NwUeTunToApp(PR present) : NtsMessage(NtsMessageType::UE_TUN_TO_APP), present(present)
+    explicit NmUeTunToApp(PR present) : NtsMessage(NtsMessageType::UE_TUN_TO_APP), present(present)
     {
     }
 };
 
-struct NwUeRrcToNas : NtsMessage
+struct NmUeRrcToNas : NtsMessage
 {
     enum PR
     {
@@ -82,12 +82,12 @@ struct NwUeRrcToNas : NtsMessage
     // ACTIVE_CELL_CHANGED
     Tai previousTai;
 
-    explicit NwUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
+    explicit NmUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeNasToRrc : NtsMessage
+struct NmUeNasToRrc : NtsMessage
 {
     enum PR
     {
@@ -100,12 +100,12 @@ struct NwUeNasToRrc : NtsMessage
     uint32_t pduId{};
     OctetString nasPdu;
 
-    explicit NwUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
+    explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {
     }
 };
 
-struct NwUeRrcToRls : NtsMessage
+struct NmUeRrcToRls : NtsMessage
 {
     enum PR
     {
@@ -121,24 +121,24 @@ struct NwUeRrcToRls : NtsMessage
     uint32_t pduId{};
     OctetString pdu{};
 
-    explicit NwUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
+    explicit NmUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeRrcToRrc : NtsMessage
+struct NmUeRrcToRrc : NtsMessage
 {
     enum PR
     {
         TRIGGER_CYCLE,
     } present;
 
-    explicit NwUeRrcToRrc(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RRC), present(present)
+    explicit NmUeRrcToRrc(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RRC), present(present)
     {
     }
 };
 
-struct NwUeRlsToRrc : NtsMessage
+struct NmUeRlsToRrc : NtsMessage
 {
     enum PR
     {
@@ -161,12 +161,12 @@ struct NwUeRlsToRrc : NtsMessage
     // RADIO_LINK_FAILURE
     rls::ERlfCause rlfCause{};
 
-    explicit NwUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
+    explicit NmUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
     {
     }
 };
 
-struct NwUeNasToNas : NtsMessage
+struct NmUeNasToNas : NtsMessage
 {
     enum PR
     {
@@ -178,24 +178,24 @@ struct NwUeNasToNas : NtsMessage
     // NAS_TIMER_EXPIRE
     UeTimer *timer{};
 
-    explicit NwUeNasToNas(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_NAS), present(present)
+    explicit NmUeNasToNas(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeNasToApp : NtsMessage
+struct NmUeNasToApp : NtsMessage
 {
     enum PR
     {
         PERFORM_SWITCH_OFF,
     } present;
 
-    explicit NwUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
+    explicit NmUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
     {
     }
 };
 
-struct NwUeAppToNas : NtsMessage
+struct NmUeAppToNas : NtsMessage
 {
     enum PR
     {
@@ -206,12 +206,12 @@ struct NwUeAppToNas : NtsMessage
     int psi{};
     OctetString data;
 
-    explicit NwUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
+    explicit NmUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeNasToRls : NtsMessage
+struct NmUeNasToRls : NtsMessage
 {
     enum PR
     {
@@ -222,12 +222,12 @@ struct NwUeNasToRls : NtsMessage
     int psi{};
     OctetString pdu;
 
-    explicit NwUeNasToRls(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RLS), present(present)
+    explicit NmUeNasToRls(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeRlsToApp : NtsMessage
+struct NmUeRlsToApp : NtsMessage
 {
     enum PR
     {
@@ -238,12 +238,12 @@ struct NwUeRlsToApp : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwUeRlsToApp(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_APP), present(present)
+    explicit NmUeRlsToApp(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_APP), present(present)
     {
     }
 };
 
-struct NwUeRlsToRls : NtsMessage
+struct NmUeRlsToRls : NtsMessage
 {
     enum PR
     {
@@ -294,12 +294,12 @@ struct NwUeRlsToRls : NtsMessage
     // TRANSMISSION_FAILURE
     std::vector<rls::PduInfo> pduList;
 
-    explicit NwUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
+    explicit NmUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeStatusUpdate : NtsMessage
+struct NmUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;
     static constexpr const int SESSION_RELEASE = 2;
@@ -316,17 +316,17 @@ struct NwUeStatusUpdate : NtsMessage
     // CM_STATE
     ECmState cmState{};
 
-    explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
+    explicit NmUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {
     }
 };
 
-struct NwUeCliCommand : NtsMessage
+struct NmUeCliCommand : NtsMessage
 {
     std::unique_ptr<app::UeCliCommand> cmd;
     InetAddress address;
 
-    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
+    NmUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
         : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
     }
