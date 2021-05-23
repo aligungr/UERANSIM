@@ -59,10 +59,10 @@ void UeAppTask::onLoop()
             auto *tunTask = m_tunTasks[w->psi];
             if (tunTask)
             {
-                auto *nw = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
-                nw->psi = w->psi;
-                nw->data = std::move(w->pdu);
-                tunTask->push(nw);
+                auto *m = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
+                m->psi = w->psi;
+                m->data = std::move(w->pdu);
+                tunTask->push(m);
             }
             break;
         }

@@ -93,11 +93,11 @@ void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NmUeRrcToRls(NmUeRrcToRls::RRC_PDU_DELIVERY);
-    nw->cellId = cellId;
-    nw->channel = rrc::RrcChannel::UL_CCCH;
-    nw->pdu = std::move(pdu);
-    m_base->rlsTask->push(nw);
+    auto *m = new NmUeRrcToRls(NmUeRrcToRls::RRC_PDU_DELIVERY);
+    m->cellId = cellId;
+    m->channel = rrc::RrcChannel::UL_CCCH;
+    m->pdu = std::move(pdu);
+    m_base->rlsTask->push(m);
 }
 
 void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
@@ -109,11 +109,11 @@ void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
         return;
     }
 
-    auto *nw = new NmUeRrcToRls(NmUeRrcToRls::RRC_PDU_DELIVERY);
-    nw->cellId = cellId;
-    nw->channel = rrc::RrcChannel::UL_CCCH1;
-    nw->pdu = std::move(pdu);
-    m_base->rlsTask->push(nw);
+    auto *m = new NmUeRrcToRls(NmUeRrcToRls::RRC_PDU_DELIVERY);
+    m->cellId = cellId;
+    m->channel = rrc::RrcChannel::UL_CCCH1;
+    m->pdu = std::move(pdu);
+    m_base->rlsTask->push(m);
 }
 
 void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
@@ -125,11 +125,11 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
         return;
     }
 
-    auto *nw = new NmUeRrcToRls(NmUeRrcToRls::RRC_PDU_DELIVERY);
-    nw->cellId = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
-    nw->channel = rrc::RrcChannel::UL_DCCH;
-    nw->pdu = std::move(pdu);
-    m_base->rlsTask->push(nw);
+    auto *m = new NmUeRrcToRls(NmUeRrcToRls::RRC_PDU_DELIVERY);
+    m->cellId = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
+    m->channel = rrc::RrcChannel::UL_DCCH;
+    m->pdu = std::move(pdu);
+    m_base->rlsTask->push(m);
 }
 
 void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)

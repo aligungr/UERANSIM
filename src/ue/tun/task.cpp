@@ -37,9 +37,9 @@ static std::string GetErrorMessage(const std::string &cause)
 
 static nr::ue::NmUeTunToApp *NmError(std::string &&error)
 {
-    auto *nw = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::TUN_ERROR);
-    nw->error = std::move(error);
-    return nw;
+    auto *m = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::TUN_ERROR);
+    m->error = std::move(error);
+    return m;
 }
 
 static void ReceiverThread(ReceiverArgs *args)
@@ -54,7 +54,7 @@ static void ReceiverThread(ReceiverArgs *args)
 
     while (true)
     {
-        int n = ::read(fd, buffer, RECEIVER_BUFFER_SIZE);
+        ssize_t n = ::read(fd, buffer, RECEIVER_BUFFER_SIZE);
         if (n < 0)
         {
             targetTask->push(NmError(GetErrorMessage("TUN device could not read")));
@@ -63,10 +63,10 @@ static void ReceiverThread(ReceiverArgs *args)
 
         if (n > 0)
         {
-            auto *nw = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
-            nw->psi = psi;
-            nw->data = OctetString::FromArray(buffer, static_cast<size_t>(n));
-            targetTask->push(nw);
+            auto *m = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
+            m->psi = psi;
+            m->data = OctetString::FromArray(buffer, static_cast<size_t>(n));
+            targetTask->push(m);
         }
     }
 }
@@ -104,7 +104,7 @@ void TunTask::onLoop()
     {
     case NtsMessageType::UE_APP_TO_TUN: {
         auto *w = dynamic_cast<NmAppToTun *>(msg);
-        int res = ::write(m_fd, w->data.data(), w->data.length());
+        ssize_t res = ::write(m_fd, w->data.data(), w->data.length());
         if (res < 0)
             push(NmError(GetErrorMessage("TUN device could not write")));
         else if (res != w->data.length())

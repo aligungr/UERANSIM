@@ -166,10 +166,10 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    auto *nw = new NmUeNasToRrc(NmUeNasToRrc::UPLINK_NAS_DELIVERY);
-    nw->pduId = 0;
-    nw->nasPdu = std::move(pdu);
-    m_base->rrcTask->push(nw);
+    auto *m = new NmUeNasToRrc(NmUeNasToRrc::UPLINK_NAS_DELIVERY);
+    m->pduId = 0;
+    m->nasPdu = std::move(pdu);
+    m_base->rrcTask->push(m);
 }
 
 void NasMm::receiveNasMessage(const nas::NasMessage &msg)

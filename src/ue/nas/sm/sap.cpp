@@ -58,10 +58,10 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
             handleUplinkStatusChange(psi, false);
         }
 
-        auto *nw = new NmUeNasToRls(NmUeNasToRls::DATA_PDU_DELIVERY);
-        nw->psi = psi;
-        nw->pdu = std::move(data);
-        m_base->rlsTask->push(nw);
+        auto *m = new NmUeNasToRls(NmUeNasToRls::DATA_PDU_DELIVERY);
+        m->psi = psi;
+        m->pdu = std::move(data);
+        m_base->rlsTask->push(m);
     }
     else
     {

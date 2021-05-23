@@ -64,9 +64,9 @@ void UeRrcTask::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTr
     OctetString nasPdu =
         asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);
 
-    auto *nw = new NmUeRrcToNas(NmUeRrcToNas::NAS_DELIVERY);
-    nw->nasPdu = std::move(nasPdu);
-    m_base->nasTask->push(nw);
+    auto *m = new NmUeRrcToNas(NmUeRrcToNas::NAS_DELIVERY);
+    m->nasPdu = std::move(nasPdu);
+    m_base->nasTask->push(m);
 }
 
 } // namespace nr::ue
