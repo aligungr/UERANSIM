@@ -143,6 +143,10 @@ void NasMm::performMmCycle()
         return;
     }
 
+    /* Automatic initial registration */
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
+        initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+
     /* Check for uplink data pending */
     if (m_sm->anyUplinkDataPending() || missingSessionBearer())
         serviceRequestRequiredForData();
@@ -169,10 +173,6 @@ void NasMm::performMmCycle()
         performPlmnSelection();
         return;
     }
-
-    /* Automatic initial registration */
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
-        initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
 
     /* Try to start procedures */
     invokeProcedures();
