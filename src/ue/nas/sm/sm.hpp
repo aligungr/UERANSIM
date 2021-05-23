@@ -51,7 +51,7 @@ class NasSm
     bool anyEmergencyUplinkDataPending();
     std::bitset<16> getUplinkDataStatus();
     std::bitset<16> getPduSessionStatus();
-    void establishInitialSessions();
+    void establishRequiredSessions();
 
   private: /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);

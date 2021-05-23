@@ -106,7 +106,7 @@ std::bitset<16> NasSm::getPduSessionStatus()
     return res;
 }
 
-void NasSm::establishInitialSessions()
+void NasSm::establishRequiredSessions()
 {
     if (m_base->config->initSessions.empty())
     {
@@ -114,7 +114,7 @@ void NasSm::establishInitialSessions()
         return;
     }
 
-    m_logger->debug("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
+    //m_logger->debug("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
 
     for (auto &sess : m_base->config->initSessions)
         sendEstablishmentRequest(sess);
