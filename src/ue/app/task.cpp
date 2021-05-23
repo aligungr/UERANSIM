@@ -74,7 +74,10 @@ void UeAppTask::onLoop()
         switch (w->present)
         {
         case NwUeTunToApp::DATA_PDU_DELIVERY: {
-            handleUplinkDataRequest(w->psi, std::move(w->data));
+            auto *m = new NwUeAppToNas(NwUeAppToNas::UPLINK_DATA_DELIVERY);
+            m->psi = w->psi;
+            m->data = std::move(w->data);
+            m_base->nasTask->push(m);
             break;
         }
         case NwUeTunToApp::TUN_ERROR: {
@@ -222,42 +225,6 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
                    allocatedName.c_str(), ipAddress.c_str());
-}
-
-void UeAppTask::handleUplinkDataRequest(int psi, OctetString &&data)
-{
-    if (!m_pduSessions[psi].has_value())
-        return;
-
-    if (m_cmState == ECmState::CM_CONNECTED)
-    {
-        if (m_pduSessions[psi]->uplinkPending)
-        {
-            m_pduSessions[psi]->uplinkPending = false;
-
-            auto *w = new NwUeAppToNas(NwUeAppToNas::UPLINK_STATUS_CHANGE);
-            w->psi = psi;
-            w->isPending = false;
-            m_base->nasTask->push(w);
-        }
-
-        auto *nw = new NwUeAppToRls(NwUeAppToRls::DATA_PDU_DELIVERY);
-        nw->psi = psi;
-        nw->pdu = std::move(data);
-        m_base->rlsTask->push(nw);
-    }
-    else
-    {
-        if (!m_pduSessions[psi]->uplinkPending)
-        {
-            m_pduSessions[psi]->uplinkPending = true;
-
-            auto *w = new NwUeAppToNas(NwUeAppToNas::UPLINK_STATUS_CHANGE);
-            w->psi = psi;
-            w->isPending = true;
-            m_base->nasTask->push(w);
-        }
-    }
 }
 
 } // namespace nr::ue

@@ -91,6 +91,7 @@ class NasSm
   private: /* Service Access Point */
     void handleNasEvent(const NwUeNasToNas &msg);
     void onTimerTick();
+    void handleUplinkDataRequest(int psi, OctetString &&data);
 };
 
 } // namespace nr::ue

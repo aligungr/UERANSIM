@@ -196,19 +196,19 @@ struct NwUeAppToNas : NtsMessage
 {
     enum PR
     {
-        UPLINK_STATUS_CHANGE,
+        UPLINK_DATA_DELIVERY,
     } present;
 
-    // UPLINK_STATUS_CHANGE
+    // UPLINK_DATA_DELIVERY
     int psi{};
-    bool isPending{};
+    OctetString data;
 
     explicit NwUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeAppToRls : NtsMessage
+struct NwUeNasToRls : NtsMessage
 {
     enum PR
     {
@@ -219,7 +219,7 @@ struct NwUeAppToRls : NtsMessage
     int psi{};
     OctetString pdu;
 
-    explicit NwUeAppToRls(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_RLS), present(present)
+    explicit NwUeNasToRls(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RLS), present(present)
     {
     }
 };

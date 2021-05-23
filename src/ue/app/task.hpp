@@ -45,7 +45,6 @@ class UeAppTask : public NtsTask
   private:
     void receiveStatusUpdate(NwUeStatusUpdate &msg);
     void setupTunInterface(const PduSession *pduSession);
-    void handleUplinkDataRequest(int psi, OctetString &&data);
 };
 
 } // namespace nr::ue

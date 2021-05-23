@@ -7,11 +7,14 @@
 //
 
 #include "sm.hpp"
+
 #include <algorithm>
+
 #include <lib/nas/proto_conf.hpp>
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
 #include <ue/nas/mm/mm.hpp>
+#include <ue/rls/task.hpp>
 
 namespace nr::ue
 {
@@ -36,6 +39,37 @@ void NasSm::onTimerTick()
         if (pt.timer && pt.timer->performTick())
             onTransactionTimerExpire(pti);
         pti++;
+    }
+}
+
+void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
+{
+    if (m_pduSessions[psi]->psState != EPsState::ACTIVE)
+        return;
+
+    if (m_mm->m_cmState == ECmState::CM_CONNECTED)
+    {
+        // TODO: We should also check if radio resources are established by RRC.
+        //  Checking CM state is not sufficient
+
+        if (m_pduSessions[psi]->uplinkPending)
+        {
+            m_pduSessions[psi]->uplinkPending = false;
+            handleUplinkStatusChange(psi, false);
+        }
+
+        auto *nw = new NwUeNasToRls(NwUeNasToRls::DATA_PDU_DELIVERY);
+        nw->psi = psi;
+        nw->pdu = std::move(data);
+        m_base->rlsTask->push(nw);
+    }
+    else
+    {
+        if (!m_pduSessions[psi]->uplinkPending)
+        {
+            m_pduSessions[psi]->uplinkPending = true;
+            handleUplinkStatusChange(psi, true);
+        }
     }
 }
 

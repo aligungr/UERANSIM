@@ -88,8 +88,8 @@ void NasTask::onLoop()
         auto *w = dynamic_cast<NwUeAppToNas *>(msg);
         switch (w->present)
         {
-        case NwUeAppToNas::UPLINK_STATUS_CHANGE: {
-            sm->handleUplinkStatusChange(w->psi, w->isPending);
+        case NwUeAppToNas::UPLINK_DATA_DELIVERY: {
+            sm->handleUplinkDataRequest(w->psi, std::move(w->data));
             break;
         }
         default:
