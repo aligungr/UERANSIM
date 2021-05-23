@@ -49,9 +49,11 @@ void UeRrcTask::notifyCellLost(int cellId)
         return;
 
     bool isActiveCell = false;
-    m_base->shCtx.currentCell.mutate([&isActiveCell, cellId](auto &value) {
+    ActiveCellInfo lastActiveCell;
+    m_base->shCtx.currentCell.mutate([&isActiveCell, &lastActiveCell, cellId](auto &value) {
         if (value.cellId == cellId)
         {
+            lastActiveCell = value;
             value = {};
             isActiveCell = true;
         }
@@ -62,8 +64,17 @@ void UeRrcTask::notifyCellLost(int cellId)
     m_logger->debug("Signal lost for cell[%d], total [%d] cells in coverage", cellId,
                     static_cast<int>(m_cellDesc.size()));
 
-    if (isActiveCell && m_state != ERrcState::RRC_IDLE)
-        declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
+    if (isActiveCell)
+    {
+        if (m_state != ERrcState::RRC_IDLE)
+            declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
+        else
+        {
+            auto w2 = new NmUeRrcToNas(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
+            w2->previousTai = Tai{lastActiveCell.plmn, lastActiveCell.tac};
+            m_base->nasTask->push(w2);
+        }
+    }
 
     updateAvailablePlmns();
 }

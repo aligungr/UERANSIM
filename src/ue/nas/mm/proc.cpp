@@ -19,9 +19,21 @@
 namespace nr::ue
 {
 
+void NasMm::initialRegistrationRequired(EInitialRegCause cause)
+{
+    // TODO
+
+    triggerMmCycle();
+}
+
 void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 {
     // TODO
+
+    // TODO: "the periodic registration update procedure is delayed until the UE returns to
+    //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
+
+    triggerMmCycle();
 }
 
 } // namespace nr::ue
