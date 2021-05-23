@@ -374,7 +374,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
         regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
     {
-        m_base->nasTask->push(new NmUeNasToNas(NmUeNasToNas::ESTABLISH_INITIAL_SESSIONS));
+        m_sm->establishInitialSessions();
     }
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)

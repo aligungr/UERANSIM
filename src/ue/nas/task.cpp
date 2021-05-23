@@ -75,10 +75,6 @@ void NasTask::onLoop()
                 sm->handleNasEvent(*w);
             break;
         }
-        case NmUeNasToNas::ESTABLISH_INITIAL_SESSIONS: {
-            sm->establishInitialSessions();
-            break;
-        }
         default:
             break;
         }

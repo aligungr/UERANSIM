@@ -29,18 +29,4 @@ void NasSm::onQuit()
     // TODO
 }
 
-void NasSm::establishInitialSessions()
-{
-    if (m_base->config->initSessions.empty())
-    {
-        m_logger->warn("No initial PDU sessions are configured");
-        return;
-    }
-
-    m_logger->debug("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
-
-    for (auto &sess : m_base->config->initSessions)
-        sendEstablishmentRequest(sess);
-}
-
 } // namespace nr::ue

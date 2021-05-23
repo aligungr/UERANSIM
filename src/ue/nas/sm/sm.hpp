@@ -51,6 +51,7 @@ class NasSm
     bool anyEmergencyUplinkDataPending();
     std::bitset<16> getUplinkDataStatus();
     std::bitset<16> getPduSessionStatus();
+    void establishInitialSessions();
 
   private: /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);
@@ -67,7 +68,6 @@ class NasSm
     void freePduSessionId(int psi);
 
   private: /* Session Establishment */
-    void establishInitialSessions();
     void sendEstablishmentRequest(const SessionConfig &config);
     void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);

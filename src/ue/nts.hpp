@@ -172,7 +172,6 @@ struct NmUeNasToNas : NtsMessage
     {
         PERFORM_MM_CYCLE,
         NAS_TIMER_EXPIRE,
-        ESTABLISH_INITIAL_SESSIONS
     } present;
 
     // NAS_TIMER_EXPIRE
