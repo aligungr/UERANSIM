@@ -248,13 +248,14 @@ void NasMm::localReleaseConnection()
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
 {
-    if (m_rmState != ERmState::RM_REGISTERED)
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE)
         return;
 
     auto guti = m_storage->storedGuti->get();
 
     if (guti.type == nas::EIdentityType::NO_IDENTITY)
         return;
+
     bool tmsiMatches = false;
     for (auto &tmsi : tmsiIds)
     {

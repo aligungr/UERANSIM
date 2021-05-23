@@ -408,6 +408,8 @@ void NasMm::onSwitchOn()
 void NasMm::onSimInsertion()
 {
     resetRegAttemptCounter();
+
+    switchMmState(EMmSubState::MM_DEREGISTERED_PS);
 }
 
 void NasMm::onSwitchOff()
