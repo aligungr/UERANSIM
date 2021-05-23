@@ -52,6 +52,7 @@ class NasSm
     std::bitset<16> getUplinkDataStatus();
     std::bitset<16> getPduSessionStatus();
     void establishRequiredSessions();
+    bool anySessionMatches(const SessionConfig &config);
 
   private: /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);

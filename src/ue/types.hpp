@@ -100,7 +100,7 @@ struct UeConfig
     std::optional<std::string> imeiSv{};
     SupportedAlgs supportedAlgs{};
     std::vector<std::string> gnbSearchList{};
-    std::vector<SessionConfig> initSessions{};
+    std::vector<SessionConfig> defaultSessions{};
     IntegrityMaxDataRateConfig integrityMaxRate{};
 
     /* Read from config file as well, but should be stored in non-volatile

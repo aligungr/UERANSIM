@@ -108,16 +108,49 @@ std::bitset<16> NasSm::getPduSessionStatus()
 
 void NasSm::establishRequiredSessions()
 {
-    if (m_base->config->initSessions.empty())
+    if (m_mm->hasEmergency())
     {
-        m_logger->warn("No initial PDU sessions are configured");
+        if (!anyEmergencySession())
+        {
+            SessionConfig config;
+            config.type = nas::EPduSessionType::IPV4;
+            config.apn = std::nullopt;
+            config.sNssai = std::nullopt;
+            config.isEmergency = true;
+            sendEstablishmentRequest(config);
+        }
+
         return;
     }
 
-    //m_logger->debug("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
+    for (auto &config : m_base->config->defaultSessions)
+    {
+        if (!anySessionMatches(config))
+            sendEstablishmentRequest(config);
+    }
+}
 
-    for (auto &sess : m_base->config->initSessions)
-        sendEstablishmentRequest(sess);
+bool NasSm::anySessionMatches(const SessionConfig &config)
+{
+    // ACTIVE_PENDING etc. are also included
+    return std::any_of(m_pduSessions.begin(), m_pduSessions.end(), [&config](auto &ps) {
+        if (ps->psState == EPsState::INACTIVE)
+            return false;
+
+        if (config.isEmergency)
+            return ps->isEmergency;
+
+        if (config.isEmergency != ps->isEmergency)
+            return false;
+        if (config.type != ps->sessionType)
+            return false;
+        if (config.apn != ps->apn)
+            return false;
+        if (config.sNssai != ps->sNssai)
+            return false;
+
+        return true;
+    });
 }
 
 } // namespace nr::ue

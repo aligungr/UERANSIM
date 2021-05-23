@@ -201,7 +201,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
 
             s.isEmergency = yaml::GetBool(sess, "emergency");
 
-            result->initSessions.push_back(s);
+            result->defaultSessions.push_back(s);
         }
     }
 
@@ -317,7 +317,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->initials = g_refConfig->initials;
     c->supportedAlgs = g_refConfig->supportedAlgs;
     c->gnbSearchList = g_refConfig->gnbSearchList;
-    c->initSessions = g_refConfig->initSessions;
+    c->defaultSessions = g_refConfig->defaultSessions;
     c->configureRouting = g_refConfig->configureRouting;
     c->prefixLogger = g_refConfig->prefixLogger;
     c->integrityMaxRate = g_refConfig->integrityMaxRate;
