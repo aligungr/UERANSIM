@@ -100,6 +100,11 @@ void NasMm::performMmCycle()
         {
             if (!m_usim->isValid())
                 switchMmState(EMmSubState::MM_DEREGISTERED_NO_SUPI);
+            else if (isInNonAllowedArea())
+            {
+                // TODO: check this later
+                switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+            }
             else if (currentCell.category == ECellCategory::SUITABLE_CELL)
                 switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
             else if (currentCell.category == ECellCategory::ACCEPTABLE_CELL)
@@ -119,7 +124,12 @@ void NasMm::performMmCycle()
         auto cell = m_base->shCtx.currentCell.get();
         if (cell.hasValue())
         {
-            if (cell.category == ECellCategory::SUITABLE_CELL)
+            if (isInNonAllowedArea())
+            {
+                // TODO: check this later
+                switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+            }
+            else if (cell.category == ECellCategory::SUITABLE_CELL)
                 switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);
             else if (cell.category == ECellCategory::ACCEPTABLE_CELL)
                 switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
@@ -146,102 +156,25 @@ void NasMm::performMmCycle()
     else
         m_storage->lastVisitedRegisteredTai->set(currentTai);
 
+    /* PLMN selection related */
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
+        m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE ||
+        m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
+        m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
+    {
+        performPlmnSelection();
+        return;
+    }
+
+    /* eCall inactivity related */
+    if (switchToECallInactivityIfNeeded())
+        return;
+
     /* Other operations */
-    if (m_mmState == EMmState::MM_DEREGISTERED)
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
     {
-        if (switchToECallInactivityIfNeeded())
-            return;
-
-        if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
-        {
-            if (!m_timers->t3346.isRunning())
-                initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH)
-        {
-            performPlmnSelection();
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_SUPI)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
-        {
-            performPlmnSelection();
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED)
-        {
-            return;
-        }
-        return;
-    }
-
-    if (m_mmState == EMmState::MM_REGISTERED)
-    {
-        if (startECallInactivityIfNeeded())
-            return;
-
-        if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_LIMITED_SERVICE)
-        {
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH)
-        {
-            performPlmnSelection();
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE)
-        {
-            performPlmnSelection();
-            return;
-        }
-        else if (m_mmSubState == EMmSubState::MM_REGISTERED_UPDATE_NEEDED)
-        {
-            return;
-        }
-        return;
-    }
-
-    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
-    {
-        return;
-    }
-
-    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
-    {
-        return;
-    }
-
-    if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
-    {
-        return;
+        if (!m_timers->t3346.isRunning())
+            initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
     }
 }
 
