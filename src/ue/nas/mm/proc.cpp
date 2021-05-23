@@ -104,11 +104,13 @@ void NasMm::invokeProcedures()
 {
     if (m_procCtl.deregistration)
     {
-        sendDeregistration(*m_procCtl.deregistration);
+        EProcRc rc = sendDeregistration(*m_procCtl.deregistration);
+        if (rc != EProcRc::STAY)
+            m_procCtl.deregistration = std::nullopt;
+
         m_procCtl.initialRegistration = std::nullopt;
         m_procCtl.mobilityRegistration = std::nullopt;
         m_procCtl.serviceRequest = std::nullopt;
-        m_procCtl.deregistration = std::nullopt;
         return;
     }
 

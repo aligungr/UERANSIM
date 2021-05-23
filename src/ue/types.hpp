@@ -555,8 +555,8 @@ enum class EServiceReqCause
 enum class EProcRc
 {
     OK,
-    INVALID,
-    FAIL,
+    CANCEL,
+    STAY,
 };
 
 struct ProcControl

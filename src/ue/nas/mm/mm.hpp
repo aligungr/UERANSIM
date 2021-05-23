@@ -93,7 +93,7 @@ class NasMm
     void onSimRemoval();
 
   private: /* Messaging */
-    void sendNasMessage(const nas::PlainMmMessage &msg);
+    EProcRc sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
@@ -133,7 +133,7 @@ class NasMm
     nas::IEUeSecurityCapability createSecurityCapabilityIe();
 
   private: /* De-registration */
-    void sendDeregistration(EDeregCause deregCause);
+    EProcRc sendDeregistration(EDeregCause deregCause);
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
     void performLocalDeregistration();

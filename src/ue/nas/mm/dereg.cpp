@@ -26,12 +26,12 @@ static nas::IEDeRegistrationType MakeDeRegistrationType(EDeregCause deregCause)
     return res;
 }
 
-void NasMm::sendDeregistration(EDeregCause deregCause)
+EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
 {
     if (m_rmState != ERmState::RM_REGISTERED)
     {
         m_logger->warn("De-registration could not be triggered. UE is already de-registered");
-        return;
+        return EProcRc::CANCEL;
     }
 
     m_logger->debug("Starting de-registration procedure due to [%s]", ToJson(deregCause).str().c_str());
@@ -54,7 +54,10 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
 
     request->mobileIdentity = getOrGeneratePreferredId();
 
-    sendNasMessage(*request);
+    auto rc = sendNasMessage(*request);
+    if (rc != EProcRc::OK)
+        return EProcRc::STAY;
+
     m_lastDeregistrationRequest = std::move(request);
     m_lastDeregCause = deregCause;
     m_timers->t3521.resetExpiryCount();
@@ -64,6 +67,10 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
         if (m_mmState == EMmState::MM_REGISTERED || m_mmState == EMmState::MM_REGISTERED_INITIATED)
             m_timers->t3521.start();
     }
+
+    m_sm->localReleaseAllSessions();
+
+    switchMmState(EMmSubState::MM_DEREGISTERED_INITIATED_PS);
 
     // TODO: Bu ikisinin burada olması gerektiğinden emin değilim
     if (deregCause == EDeregCause::SWITCH_OFF)
@@ -78,9 +85,7 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
         m_usim->invalidate();
     }
 
-    m_sm->localReleaseAllSessions();
-
-    switchMmState(EMmSubState::MM_DEREGISTERED_INITIATED_PS);
+    return EProcRc::OK;
 }
 
 void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg)

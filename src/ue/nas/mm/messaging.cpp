@@ -103,14 +103,14 @@ static void RemoveCleartextIEs(nas::PlainMmMessage &msg, OctetString &&nasMsgCon
     }
 }
 
-void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
+EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
     if (m_cmState == ECmState::CM_IDLE && !IsInitialNasMessage(msg))
     {
         m_logger->warn("NAS Transport aborted, Service Request is needed for uplink signalling");
         if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
             serviceRequestRequiredForSignalling();
-        return;
+        return EProcRc::STAY;
     }
 
     bool hasNsCtx =
@@ -170,6 +170,8 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
     m->pduId = 0;
     m->nasPdu = std::move(pdu);
     m_base->rrcTask->push(m);
+
+    return EProcRc::OK;
 }
 
 void NasMm::receiveNasMessage(const nas::NasMessage &msg)
