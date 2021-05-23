@@ -143,20 +143,6 @@ void NasMm::performMmCycle()
         return;
     }
 
-    /* Automatic initial registration */
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
-        initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
-
-    /* Process TAI changes if any */
-    if (currentTai.hasValue() &&
-        !nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
-    {
-        if (m_rmState == ERmState::RM_REGISTERED)
-            mobilityUpdatingRequired(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
-    }
-    else
-        m_storage->lastVisitedRegisteredTai->set(currentTai);
-
     /* PLMN selection related */
     if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
         m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE ||
@@ -178,6 +164,20 @@ void NasMm::performMmCycle()
 
     /* Try to start procedures */
     invokeProcedures();
+
+    /* Automatic initial registration */
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
+        initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
+
+    /* Process TAI changes if any */
+    if (currentTai.hasValue() &&
+        !nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
+    {
+        if (m_rmState == ERmState::RM_REGISTERED)
+            mobilityUpdatingRequired(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
+    }
+    else
+        m_storage->lastVisitedRegisteredTai->set(currentTai);
 }
 
 void NasMm::switchMmState(EMmSubState subState)
