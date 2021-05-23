@@ -80,12 +80,7 @@ void NasMm::sendDeregistration(EDeregCause deregCause)
 
     m_sm->localReleaseAllSessions();
 
-    if (m_lastDeregistrationRequest->deRegistrationType.switchOff == nas::ESwitchOff::NORMAL_DE_REGISTRATION)
-        switchMmState(EMmSubState::MM_DEREGISTERED_INITIATED_PS);
-    else
-    {
-        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
-    }
+    switchMmState(EMmSubState::MM_DEREGISTERED_INITIATED_PS);
 }
 
 void NasMm::receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg)
