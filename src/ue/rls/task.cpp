@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 
+#include <ue/app/task.hpp>
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -54,7 +55,10 @@ void UeRlsTask::onLoop()
             break;
         }
         case NwUeRlsToRls::DOWNLINK_DATA: {
-            m_logger->debug("downlink data psi[%d]", w->psi);
+            auto *m = new NwUeRlsToApp(NwUeRlsToApp::DATA_PDU_DELIVERY);
+            m->psi = w->psi;
+            m->pdu = std::move(w->data);
+            m_base->appTask->push(m);
             break;
         }
         case NwUeRlsToRls::DOWNLINK_RRC: {
