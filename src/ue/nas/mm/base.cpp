@@ -156,6 +156,10 @@ void NasMm::performMmCycle()
     else
         m_storage->lastVisitedRegisteredTai->set(currentTai);
 
+    /* eCall inactivity related */
+    if (switchToECallInactivityIfNeeded())
+        return;
+
     /* PLMN selection related */
     if (m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH ||
         m_mmSubState == EMmSubState::MM_REGISTERED_NO_CELL_AVAILABLE ||
@@ -166,16 +170,9 @@ void NasMm::performMmCycle()
         return;
     }
 
-    /* eCall inactivity related */
-    if (switchToECallInactivityIfNeeded())
-        return;
-
-    /* Other operations */
-    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
-    {
-        if (!m_timers->t3346.isRunning())
-            initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
-    }
+    /* Automatic initial registration */
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE && !m_timers->t3346.isRunning())
+        initialRegistrationRequired(EInitialRegCause::MM_DEREG_NORMAL_SERVICE);
 }
 
 void NasMm::switchMmState(EMmSubState subState)
