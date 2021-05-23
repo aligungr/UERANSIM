@@ -102,6 +102,21 @@ void GnbRlsTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::GNB_GTP_TO_RLS: {
+        auto *w = dynamic_cast<NwGnbGtpToRls *>(msg);
+        switch (w->present)
+        {
+        case NwGnbGtpToRls::DATA_PDU_DELIVERY: {
+            auto *m = new NwGnbRlsToRls(NwGnbRlsToRls::DOWNLINK_DATA);
+            m->ueId = w->ueId;
+            m->psi = w->psi;
+            m->data = std::move(w->pdu);
+            m_ctlTask->push(m);
+            break;
+        }
+        }
+        break;
+    }
     default:
         m_logger->unhandledNts(msg);
         break;
