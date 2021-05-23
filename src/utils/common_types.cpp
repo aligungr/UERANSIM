@@ -93,6 +93,27 @@ Json ToJson(const ECellCategory &v)
     }
 }
 
+Json ToJson(const EInitialRegCause &v)
+{
+    switch (v)
+    {
+    case EInitialRegCause::UNSPECIFIED:
+        return "UNSPECIFIED";
+    case EInitialRegCause::EMERGENCY_SERVICES:
+        return "EMERGENCY_SERVICES";
+    case EInitialRegCause::MM_DEREG_NORMAL_SERVICE:
+        return "MM_DEREG_NORMAL_SERVICE";
+    case EInitialRegCause::T3346_EXPIRY:
+        return "T3346_EXPIRY";
+    case EInitialRegCause::DUE_TO_DEREGISTRATION:
+        return "DUE_TO_DEREGISTRATION";
+    case EInitialRegCause::DUE_TO_SERVICE_REJECT:
+        return "DUE_TO_SERVICE_REJECT";
+    default:
+        return "?";
+    }
+}
+
 bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
 {
     if ((int)lhs.sst != (int)rhs.sst)

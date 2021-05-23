@@ -21,12 +21,22 @@ namespace nr::ue
 
 void NasMm::initialRegistrationRequired(EInitialRegCause cause)
 {
+    if (m_procCtl.initialRegistration == cause)
+        return;
+
+    m_logger->debug("Initial registration required due to [%s]", ToJson(cause).str().c_str());
+
     m_procCtl.initialRegistration = cause;
     triggerMmCycle();
 }
 
 void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 {
+    if (m_procCtl.mobilityRegistration == cause)
+        return;
+
+    m_logger->debug("Mobility registration updating required due to [%s]", ToJson(cause).str().c_str());
+
     m_procCtl.mobilityRegistration = cause;
     triggerMmCycle();
 
@@ -47,12 +57,22 @@ void NasMm::serviceRequestRequiredForData()
 
 void NasMm::serviceRequestRequired(EServiceReqCause cause)
 {
+    if (m_procCtl.serviceRequest == cause)
+        return;
+
+    m_logger->debug("Service request required due to [%s]", ToJson(cause).str().c_str());
+
     m_procCtl.serviceRequest = cause;
     triggerMmCycle();
 }
 
 void NasMm::deregistrationRequired(EDeregCause cause)
 {
+    if (m_procCtl.deregistration == cause)
+        return;
+
+    m_logger->debug("De-registration required due to [%s]", ToJson(cause).str().c_str());
+
     m_procCtl.deregistration = cause;
     triggerMmCycle();
 }
