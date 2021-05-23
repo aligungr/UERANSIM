@@ -71,4 +71,9 @@ void NasMm::deregistrationRequired(EDeregCause cause)
     triggerMmCycle();
 }
 
+void NasMm::invokeProcedures()
+{
+    // TODO
+}
+
 } // namespace nr::ue
