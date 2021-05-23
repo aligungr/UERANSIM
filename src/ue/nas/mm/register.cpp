@@ -364,7 +364,10 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     m_nwFeatureSupport = msg.networkFeatureSupport.value_or(nas::IE5gsNetworkFeatureSupport{});
 
     if (sendComplete)
+    {
+        m_logger->debug("Sending Registration Complete");
         sendNasMessage(nas::RegistrationComplete{});
+    }
 
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
