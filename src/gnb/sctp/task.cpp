@@ -55,7 +55,7 @@ class SctpHandler : public sctp::ISctpHandler
   private:
     void onAssociationSetup(int associationId, int inStreams, int outStreams) override
     {
-        auto *w = new NwGnbSctp(NwGnbSctp::ASSOCIATION_SETUP);
+        auto *w = new NmGnbSctp(NmGnbSctp::ASSOCIATION_SETUP);
         w->clientId = clientId;
         w->associationId = associationId;
         w->inStreams = inStreams;
@@ -65,7 +65,7 @@ class SctpHandler : public sctp::ISctpHandler
 
     void onAssociationShutdown() override
     {
-        auto *w = new NwGnbSctp(NwGnbSctp::ASSOCIATION_SHUTDOWN);
+        auto *w = new NmGnbSctp(NmGnbSctp::ASSOCIATION_SHUTDOWN);
         w->clientId = clientId;
         sctpTask->push(w);
     }
@@ -75,7 +75,7 @@ class SctpHandler : public sctp::ISctpHandler
         auto *data = new uint8_t[length];
         std::memcpy(data, buffer, length);
 
-        auto *w = new NwGnbSctp(NwGnbSctp::RECEIVE_MESSAGE);
+        auto *w = new NmGnbSctp(NmGnbSctp::RECEIVE_MESSAGE);
         w->clientId = clientId;
         w->buffer = UniqueBuffer{data, length};
         w->stream = stream;
@@ -84,7 +84,7 @@ class SctpHandler : public sctp::ISctpHandler
 
     void onUnhandledNotification() override
     {
-        auto *w = new NwGnbSctp(NwGnbSctp::UNHANDLED_NOTIFICATION);
+        auto *w = new NmGnbSctp(NmGnbSctp::UNHANDLED_NOTIFICATION);
         w->clientId = clientId;
         sctpTask->push(w);
     }
@@ -119,35 +119,35 @@ void SctpTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_SCTP: {
-        auto *w = dynamic_cast<NwGnbSctp *>(msg);
+        auto *w = dynamic_cast<NmGnbSctp *>(msg);
         switch (w->present)
         {
-        case NwGnbSctp::CONNECTION_REQUEST: {
+        case NmGnbSctp::CONNECTION_REQUEST: {
             receiveSctpConnectionSetupRequest(w->clientId, w->localAddress, w->localPort, w->remoteAddress,
                                               w->remotePort, w->ppid, w->associatedTask);
             break;
         }
-        case NwGnbSctp::CONNECTION_CLOSE: {
+        case NmGnbSctp::CONNECTION_CLOSE: {
             receiveConnectionClose(w->clientId);
             break;
         }
-        case NwGnbSctp::ASSOCIATION_SETUP: {
+        case NmGnbSctp::ASSOCIATION_SETUP: {
             receiveAssociationSetup(w->clientId, w->associationId, w->inStreams, w->outStreams);
             break;
         }
-        case NwGnbSctp::ASSOCIATION_SHUTDOWN: {
+        case NmGnbSctp::ASSOCIATION_SHUTDOWN: {
             receiveAssociationShutdown(w->clientId);
             break;
         }
-        case NwGnbSctp::RECEIVE_MESSAGE: {
+        case NmGnbSctp::RECEIVE_MESSAGE: {
             receiveClientReceive(w->clientId, w->stream, std::move(w->buffer));
             break;
         }
-        case NwGnbSctp::SEND_MESSAGE: {
+        case NmGnbSctp::SEND_MESSAGE: {
             receiveSendMessage(w->clientId, w->stream, std::move(w->buffer));
             break;
         }
-        case NwGnbSctp::UNHANDLED_NOTIFICATION: {
+        case NmGnbSctp::UNHANDLED_NOTIFICATION: {
             receiveUnhandledNotification(w->clientId);
             break;
         }
@@ -242,7 +242,7 @@ void SctpTask::receiveAssociationSetup(int clientId, int associationId, int inSt
     }
 
     // Notify the relevant task
-    auto *msg = new NwGnbSctp(NwGnbSctp::ASSOCIATION_SETUP);
+    auto *msg = new NmGnbSctp(NmGnbSctp::ASSOCIATION_SETUP);
     msg->clientId = clientId;
     msg->associationId = associationId;
     msg->inStreams = inStreams;
@@ -262,7 +262,7 @@ void SctpTask::receiveAssociationShutdown(int clientId)
     }
 
     // Notify the relevant task
-    auto *msg = new NwGnbSctp(NwGnbSctp::ASSOCIATION_SHUTDOWN);
+    auto *msg = new NmGnbSctp(NmGnbSctp::ASSOCIATION_SHUTDOWN);
     msg->clientId = clientId;
     entry->associatedTask->push(msg);
 }
@@ -277,7 +277,7 @@ void SctpTask::receiveClientReceive(int clientId, uint16_t stream, UniqueBuffer 
     }
 
     // Notify the relevant task
-    auto *msg = new NwGnbSctp(NwGnbSctp::RECEIVE_MESSAGE);
+    auto *msg = new NmGnbSctp(NmGnbSctp::RECEIVE_MESSAGE);
     msg->clientId = clientId;
     msg->stream = stream;
     msg->buffer = std::move(buffer);

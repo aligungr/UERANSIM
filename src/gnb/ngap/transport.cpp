@@ -109,7 +109,7 @@ void NgapTask::sendNgapNonUe(int associatedAmf, ASN_NGAP_NGAP_PDU *pdu)
         m_logger->err("NGAP APER encoding failed");
     else
     {
-        auto *msg = new NwGnbSctp(NwGnbSctp::SEND_MESSAGE);
+        auto *msg = new NmGnbSctp(NmGnbSctp::SEND_MESSAGE);
         msg->clientId = amf->ctxId;
         msg->stream = 0;
         msg->buffer = UniqueBuffer{buffer, static_cast<size_t>(encoded)};
@@ -200,7 +200,7 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
         m_logger->err("NGAP APER encoding failed");
     else
     {
-        auto *msg = new NwGnbSctp(NwGnbSctp::SEND_MESSAGE);
+        auto *msg = new NmGnbSctp(NmGnbSctp::SEND_MESSAGE);
         msg->clientId = amf->ctxId;
         msg->stream = ue->uplinkStream;
         msg->buffer = UniqueBuffer{buffer, static_cast<size_t>(encoded)};

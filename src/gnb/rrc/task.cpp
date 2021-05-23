@@ -46,27 +46,27 @@ void GnbRrcTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RLS_TO_RRC: {
-        handleRlsSapMessage(*dynamic_cast<NwGnbRlsToRrc *>(msg));
+        handleRlsSapMessage(*dynamic_cast<NmGnbRlsToRrc *>(msg));
         break;
     }
     case NtsMessageType::GNB_NGAP_TO_RRC: {
-        auto *w = dynamic_cast<NwGnbNgapToRrc *>(msg);
+        auto *w = dynamic_cast<NmGnbNgapToRrc *>(msg);
         switch (w->present)
         {
-        case NwGnbNgapToRrc::RADIO_POWER_ON: {
+        case NmGnbNgapToRrc::RADIO_POWER_ON: {
             m_isBarred = false;
             triggerSysInfoBroadcast();
             break;
         }
-        case NwGnbNgapToRrc::NAS_DELIVERY: {
+        case NmGnbNgapToRrc::NAS_DELIVERY: {
             handleDownlinkNasDelivery(w->ueId, w->pdu);
             break;
         }
-        case NwGnbNgapToRrc::AN_RELEASE: {
+        case NmGnbNgapToRrc::AN_RELEASE: {
             releaseConnection(w->ueId);
             break;
         }
-        case NwGnbNgapToRrc::PAGING:
+        case NmGnbNgapToRrc::PAGING:
             handlePaging(w->uePagingTmsi, w->taiListForPaging);
             break;
         }

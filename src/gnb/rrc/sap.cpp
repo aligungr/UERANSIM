@@ -14,16 +14,16 @@
 namespace nr::gnb
 {
 
-void GnbRrcTask::handleRlsSapMessage(NwGnbRlsToRrc &msg)
+void GnbRrcTask::handleRlsSapMessage(NmGnbRlsToRrc &msg)
 {
     switch (msg.present)
     {
-    case NwGnbRlsToRrc::SIGNAL_DETECTED: {
+    case NmGnbRlsToRrc::SIGNAL_DETECTED: {
         m_logger->debug("UE[%d] new signal detected", msg.ueId);
         triggerSysInfoBroadcast();
         break;
     }
-    case NwGnbRlsToRrc::UPLINK_RRC: {
+    case NmGnbRlsToRrc::UPLINK_RRC: {
         handleUplinkRrc(msg.ueId, msg.rrcChannel, msg.data);
         break;
     }

@@ -32,7 +32,7 @@ extern "C"
 namespace nr::gnb
 {
 
-struct NwGnbRlsToRrc : NtsMessage
+struct NmGnbRlsToRrc : NtsMessage
 {
     enum PR
     {
@@ -48,12 +48,12 @@ struct NwGnbRlsToRrc : NtsMessage
     OctetString data;
     rrc::RrcChannel rrcChannel{};
 
-    explicit NwGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
+    explicit NmGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
     {
     }
 };
 
-struct NwGnbRlsToGtp : NtsMessage
+struct NmGnbRlsToGtp : NtsMessage
 {
     enum PR
     {
@@ -65,12 +65,12 @@ struct NwGnbRlsToGtp : NtsMessage
     int psi{};
     OctetString pdu;
 
-    explicit NwGnbRlsToGtp(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_GTP), present(present)
+    explicit NmGnbRlsToGtp(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_GTP), present(present)
     {
     }
 };
 
-struct NwGnbGtpToRls : NtsMessage
+struct NmGnbGtpToRls : NtsMessage
 {
     enum PR
     {
@@ -82,12 +82,12 @@ struct NwGnbGtpToRls : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwGnbGtpToRls(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_RLS), present(present)
+    explicit NmGnbGtpToRls(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_RLS), present(present)
     {
     }
 };
 
-struct NwGnbRlsToRls : NtsMessage
+struct NmGnbRlsToRls : NtsMessage
 {
     enum PR
     {
@@ -136,12 +136,12 @@ struct NwGnbRlsToRls : NtsMessage
     // TRANSMISSION_FAILURE
     std::vector<rls::PduInfo> pduList;
 
-    explicit NwGnbRlsToRls(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RLS), present(present)
+    explicit NmGnbRlsToRls(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RLS), present(present)
     {
     }
 };
 
-struct NwGnbRrcToRls : NtsMessage
+struct NmGnbRrcToRls : NtsMessage
 {
     enum PR
     {
@@ -153,12 +153,12 @@ struct NwGnbRrcToRls : NtsMessage
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
-    explicit NwGnbRrcToRls(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_RLS), present(present)
+    explicit NmGnbRrcToRls(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_RLS), present(present)
     {
     }
 };
 
-struct NwGnbNgapToRrc : NtsMessage
+struct NmGnbNgapToRrc : NtsMessage
 {
     enum PR
     {
@@ -179,12 +179,12 @@ struct NwGnbNgapToRrc : NtsMessage
     asn::Unique<ASN_NGAP_FiveG_S_TMSI> uePagingTmsi{};
     asn::Unique<ASN_NGAP_TAIListForPaging> taiListForPaging{};
 
-    explicit NwGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
+    explicit NmGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
     {
     }
 };
 
-struct NwGnbRrcToNgap : NtsMessage
+struct NmGnbRrcToNgap : NtsMessage
 {
     enum PR
     {
@@ -205,12 +205,12 @@ struct NwGnbRrcToNgap : NtsMessage
     // INITIAL_NAS_DELIVERY
     long rrcEstablishmentCause{};
 
-    explicit NwGnbRrcToNgap(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_NGAP), present(present)
+    explicit NmGnbRrcToNgap(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_NGAP), present(present)
     {
     }
 };
 
-struct NwGnbNgapToGtp : NtsMessage
+struct NmGnbNgapToGtp : NtsMessage
 {
     enum PR
     {
@@ -233,12 +233,12 @@ struct NwGnbNgapToGtp : NtsMessage
     // SESSION_RELEASE
     int psi{};
 
-    explicit NwGnbNgapToGtp(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_GTP), present(present)
+    explicit NmGnbNgapToGtp(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_GTP), present(present)
     {
     }
 };
 
-struct NwGnbSctp : NtsMessage
+struct NmGnbSctp : NtsMessage
 {
     enum PR
     {
@@ -278,12 +278,12 @@ struct NwGnbSctp : NtsMessage
     UniqueBuffer buffer{};
     uint16_t stream{};
 
-    explicit NwGnbSctp(PR present) : NtsMessage(NtsMessageType::GNB_SCTP), present(present)
+    explicit NmGnbSctp(PR present) : NtsMessage(NtsMessageType::GNB_SCTP), present(present)
     {
     }
 };
 
-struct NwGnbStatusUpdate : NtsMessage
+struct NmGnbStatusUpdate : NtsMessage
 {
     static constexpr const int NGAP_IS_UP = 1;
 
@@ -292,17 +292,17 @@ struct NwGnbStatusUpdate : NtsMessage
     // NGAP_IS_UP
     bool isNgapUp{};
 
-    explicit NwGnbStatusUpdate(const int what) : NtsMessage(NtsMessageType::GNB_STATUS_UPDATE), what(what)
+    explicit NmGnbStatusUpdate(const int what) : NtsMessage(NtsMessageType::GNB_STATUS_UPDATE), what(what)
     {
     }
 };
 
-struct NwGnbCliCommand : NtsMessage
+struct NmGnbCliCommand : NtsMessage
 {
     std::unique_ptr<app::GnbCliCommand> cmd;
     InetAddress address;
 
-    NwGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address)
+    NmGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address)
         : NtsMessage(NtsMessageType::GNB_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
     }

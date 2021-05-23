@@ -98,7 +98,7 @@ class GnbRrcTask : public NtsTask
     void triggerSysInfoBroadcast();
 
     /* Service Access Point */
-    void handleRlsSapMessage(NwGnbRlsToRrc &msg);
+    void handleRlsSapMessage(NmGnbRlsToRrc &msg);
 
     /* UE Management */
     RrcUeContext *createUe(int id);

@@ -50,22 +50,22 @@ void RlsControlTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RLS_TO_RLS: {
-        auto *w = dynamic_cast<NwGnbRlsToRls *>(msg);
+        auto *w = dynamic_cast<NmGnbRlsToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbRlsToRls::SIGNAL_DETECTED:
+        case NmGnbRlsToRls::SIGNAL_DETECTED:
             handleSignalDetected(w->ueId);
             break;
-        case NwGnbRlsToRls::SIGNAL_LOST:
+        case NmGnbRlsToRls::SIGNAL_LOST:
             handleSignalLost(w->ueId);
             break;
-        case NwGnbRlsToRls::RECEIVE_RLS_MESSAGE:
+        case NmGnbRlsToRls::RECEIVE_RLS_MESSAGE:
             handleRlsMessage(w->ueId, *w->msg);
             break;
-        case NwGnbRlsToRls::DOWNLINK_DATA:
+        case NmGnbRlsToRls::DOWNLINK_DATA:
             handleDownlinkDataDelivery(w->ueId, w->psi, std::move(w->data));
             break;
-        case NwGnbRlsToRls::DOWNLINK_RRC:
+        case NmGnbRlsToRls::DOWNLINK_RRC:
             handleDownlinkRrcDelivery(w->ueId, w->pduId, w->rrcChannel, std::move(w->data));
             break;
         default:
@@ -102,14 +102,14 @@ void RlsControlTask::onQuit()
 
 void RlsControlTask::handleSignalDetected(int ueId)
 {
-    auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_DETECTED);
+    auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::SIGNAL_DETECTED);
     w->ueId = ueId;
     m_mainTask->push(w);
 }
 
 void RlsControlTask::handleSignalLost(int ueId)
 {
-    auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::SIGNAL_LOST);
+    auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::SIGNAL_LOST);
     w->ueId = ueId;
     m_mainTask->push(w);
 }
@@ -130,7 +130,7 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
 
         if (m.pduType == rls::EPduType::DATA)
         {
-            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::UPLINK_DATA);
+            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::UPLINK_DATA);
             w->ueId = ueId;
             w->psi = static_cast<int>(m.payload);
             w->data = std::move(m.pdu);
@@ -138,7 +138,7 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::UPLINK_RRC);
+            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::UPLINK_RRC);
             w->ueId = ueId;
             w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
             w->data = std::move(m.pdu);
@@ -169,7 +169,7 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RADIO_LINK_FAILURE);
+            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
             m_mainTask->push(w);
             return;
@@ -179,7 +179,7 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::RADIO_LINK_FAILURE);
+            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
             m_mainTask->push(w);
             return;
@@ -234,7 +234,7 @@ void RlsControlTask::onAckControlTimerExpired()
 
     if (!transmissionFailures.empty())
     {
-        auto *w = new NwGnbRlsToRls(NwGnbRlsToRls::TRANSMISSION_FAILURE);
+        auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::TRANSMISSION_FAILURE);
         w->pduList = std::move(transmissionFailures);
         m_mainTask->push(w);
     }

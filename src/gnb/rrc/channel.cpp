@@ -74,7 +74,7 @@ void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
+    auto *w = new NmGnbRrcToRls(NmGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = 0;
     w->channel = rrc::RrcChannel::BCCH_BCH;
     w->pdu = std::move(pdu);
@@ -90,7 +90,7 @@ void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
+    auto *w = new NmGnbRrcToRls(NmGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = 0;
     w->channel = rrc::RrcChannel::BCCH_DL_SCH;
     w->pdu = std::move(pdu);
@@ -106,7 +106,7 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
+    auto *w = new NmGnbRrcToRls(NmGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::DL_CCCH;
     w->pdu = std::move(pdu);
@@ -122,7 +122,7 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
+    auto *w = new NmGnbRrcToRls(NmGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = ueId;
     w->channel = rrc::RrcChannel::DL_DCCH;
     w->pdu = std::move(pdu);
@@ -138,7 +138,7 @@ void GnbRrcTask::sendRrcMessage(ASN_RRC_PCCH_Message *msg)
         return;
     }
 
-    auto *w = new NwGnbRrcToRls(NwGnbRrcToRls::RRC_PDU_DELIVERY);
+    auto *w = new NmGnbRrcToRls(NmGnbRrcToRls::RRC_PDU_DELIVERY);
     w->ueId = 0;
     w->channel = rrc::RrcChannel::PCCH;
     w->pdu = std::move(pdu);

@@ -59,7 +59,7 @@ void GnbRrcTask::handleDownlinkNasDelivery(int ueId, const OctetString &nasPdu)
 
 void GnbRrcTask::deliverUplinkNas(int ueId, OctetString &&nasPdu)
 {
-    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::UPLINK_NAS_DELIVERY);
+    auto *w = new NmGnbRrcToNgap(NmGnbRrcToNgap::UPLINK_NAS_DELIVERY);
     w->ueId = ueId;
     w->pdu = std::move(nasPdu);
     m_base->ngapTask->push(w);
@@ -95,7 +95,7 @@ void GnbRrcTask::releaseConnection(int ueId)
 void GnbRrcTask::handleRadioLinkFailure(int ueId)
 {
     // Notify NGAP task
-    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::RADIO_LINK_FAILURE);
+    auto *w = new NmGnbRrcToNgap(NmGnbRrcToNgap::RADIO_LINK_FAILURE);
     w->ueId = ueId;
     m_base->ngapTask->push(w);
 

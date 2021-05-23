@@ -100,7 +100,7 @@ void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplet
 
     auto setupComplete = msg.criticalExtensions.choice.rrcSetupComplete;
 
-    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::INITIAL_NAS_DELIVERY);
+    auto *w = new NmGnbRrcToNgap(NmGnbRrcToNgap::INITIAL_NAS_DELIVERY);
     w->ueId = ueId;
     w->pdu = asn::GetOctetString(setupComplete->dedicatedNAS_Message);
     w->rrcEstablishmentCause = ue->establishmentCause;

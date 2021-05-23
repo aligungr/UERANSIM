@@ -30,7 +30,7 @@ void NgapTask::onStart()
 
     for (auto &amfCtx : m_amfCtx)
     {
-        auto *msg = new NwGnbSctp(NwGnbSctp::CONNECTION_REQUEST);
+        auto *msg = new NmGnbSctp(NmGnbSctp::CONNECTION_REQUEST);
         msg->clientId = amfCtx.second->ctxId;
         msg->localAddress = m_base->config->ngapIp;
         msg->localPort = 0;
@@ -51,18 +51,18 @@ void NgapTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RRC_TO_NGAP: {
-        auto *w = dynamic_cast<NwGnbRrcToNgap *>(msg);
+        auto *w = dynamic_cast<NmGnbRrcToNgap *>(msg);
         switch (w->present)
         {
-        case NwGnbRrcToNgap::INITIAL_NAS_DELIVERY: {
+        case NmGnbRrcToNgap::INITIAL_NAS_DELIVERY: {
             handleInitialNasTransport(w->ueId, w->pdu, w->rrcEstablishmentCause);
             break;
         }
-        case NwGnbRrcToNgap::UPLINK_NAS_DELIVERY: {
+        case NmGnbRrcToNgap::UPLINK_NAS_DELIVERY: {
             handleUplinkNasTransport(w->ueId, w->pdu);
             break;
         }
-        case NwGnbRrcToNgap::RADIO_LINK_FAILURE: {
+        case NmGnbRrcToNgap::RADIO_LINK_FAILURE: {
             handleRadioLinkFailure(w->ueId);
             break;
         }
@@ -70,16 +70,16 @@ void NgapTask::onLoop()
         break;
     }
     case NtsMessageType::GNB_SCTP: {
-        auto *w = dynamic_cast<NwGnbSctp *>(msg);
+        auto *w = dynamic_cast<NmGnbSctp *>(msg);
         switch (w->present)
         {
-        case NwGnbSctp::ASSOCIATION_SETUP:
+        case NmGnbSctp::ASSOCIATION_SETUP:
             handleAssociationSetup(w->clientId, w->associationId, w->inStreams, w->outStreams);
             break;
-        case NwGnbSctp::RECEIVE_MESSAGE:
+        case NmGnbSctp::RECEIVE_MESSAGE:
             handleSctpMessage(w->clientId, w->stream, w->buffer);
             break;
-        case NwGnbSctp::ASSOCIATION_SHUTDOWN:
+        case NmGnbSctp::ASSOCIATION_SHUTDOWN:
             handleAssociationShutdown(w->clientId);
             break;
         default:

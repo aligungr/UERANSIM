@@ -42,40 +42,40 @@ void GnbRlsTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RLS_TO_RLS: {
-        auto *w = dynamic_cast<NwGnbRlsToRls *>(msg);
+        auto *w = dynamic_cast<NmGnbRlsToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbRlsToRls::SIGNAL_DETECTED: {
-            auto *m = new NwGnbRlsToRrc(NwGnbRlsToRrc::SIGNAL_DETECTED);
+        case NmGnbRlsToRls::SIGNAL_DETECTED: {
+            auto *m = new NmGnbRlsToRrc(NmGnbRlsToRrc::SIGNAL_DETECTED);
             m->ueId = w->ueId;
             m_base->rrcTask->push(m);
             break;
         }
-        case NwGnbRlsToRls::SIGNAL_LOST: {
+        case NmGnbRlsToRls::SIGNAL_LOST: {
             m_logger->debug("UE[%d] signal lost", w->ueId);
             break;
         }
-        case NwGnbRlsToRls::UPLINK_DATA: {
-            auto *m = new NwGnbRlsToGtp(NwGnbRlsToGtp::DATA_PDU_DELIVERY);
+        case NmGnbRlsToRls::UPLINK_DATA: {
+            auto *m = new NmGnbRlsToGtp(NmGnbRlsToGtp::DATA_PDU_DELIVERY);
             m->ueId = w->ueId;
             m->psi = w->psi;
             m->pdu = std::move(w->data);
             m_base->gtpTask->push(m);
             break;
         }
-        case NwGnbRlsToRls::UPLINK_RRC: {
-            auto *m = new NwGnbRlsToRrc(NwGnbRlsToRrc::UPLINK_RRC);
+        case NmGnbRlsToRls::UPLINK_RRC: {
+            auto *m = new NmGnbRlsToRrc(NmGnbRlsToRrc::UPLINK_RRC);
             m->ueId = w->ueId;
             m->rrcChannel = w->rrcChannel;
             m->data = std::move(w->data);
             m_base->rrcTask->push(m);
             break;
         }
-        case NwGnbRlsToRls::RADIO_LINK_FAILURE: {
+        case NmGnbRlsToRls::RADIO_LINK_FAILURE: {
             m_logger->debug("radio link failure [%d]", (int)w->rlfCause);
             break;
         }
-        case NwGnbRlsToRls::TRANSMISSION_FAILURE: {
+        case NmGnbRlsToRls::TRANSMISSION_FAILURE: {
             m_logger->debug("transmission failure [%s]", "");
             break;
         }
@@ -87,11 +87,11 @@ void GnbRlsTask::onLoop()
         break;
     }
     case NtsMessageType::GNB_RRC_TO_RLS: {
-        auto *w = dynamic_cast<NwGnbRrcToRls *>(msg);
+        auto *w = dynamic_cast<NmGnbRrcToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbRrcToRls::RRC_PDU_DELIVERY: {
-            auto *m = new NwGnbRlsToRls(NwGnbRlsToRls::DOWNLINK_RRC);
+        case NmGnbRrcToRls::RRC_PDU_DELIVERY: {
+            auto *m = new NmGnbRlsToRls(NmGnbRlsToRls::DOWNLINK_RRC);
             m->ueId = w->ueId;
             m->rrcChannel = w->channel;
             m->pduId = 0;
@@ -103,11 +103,11 @@ void GnbRlsTask::onLoop()
         break;
     }
     case NtsMessageType::GNB_GTP_TO_RLS: {
-        auto *w = dynamic_cast<NwGnbGtpToRls *>(msg);
+        auto *w = dynamic_cast<NmGnbGtpToRls *>(msg);
         switch (w->present)
         {
-        case NwGnbGtpToRls::DATA_PDU_DELIVERY: {
-            auto *m = new NwGnbRlsToRls(NwGnbRlsToRls::DOWNLINK_DATA);
+        case NmGnbGtpToRls::DATA_PDU_DELIVERY: {
+            auto *m = new NmGnbRlsToRls(NmGnbRlsToRls::DOWNLINK_DATA);
             m->ueId = w->ueId;
             m->psi = w->psi;
             m->data = std::move(w->pdu);
