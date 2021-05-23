@@ -134,7 +134,7 @@ void NasMm::performMmCycle()
     }
 
     /* Check for uplink data pending */
-    if (m_sm->anyUplinkDataPending() && missingSessionBearer())
+    if (m_sm->anyUplinkDataPending() || missingSessionBearer())
         serviceRequestRequiredForData();
 
     /* Process TAI changes if any */
