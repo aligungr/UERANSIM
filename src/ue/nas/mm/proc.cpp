@@ -77,6 +77,10 @@ void NasMm::deregistrationRequired(EDeregCause cause)
 void NasMm::invokeProcedures()
 {
     // TODO
+    if (m_procCtl.deregistration)
+    {
+
+    }
 
     // note1:
     // TODO: "the periodic registration update procedure is delayed until the UE returns to

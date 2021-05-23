@@ -186,12 +186,6 @@ struct UacAiBarringSet
     bool ai15 = false;
 };
 
-enum class Rc
-{
-    OK,
-    FAIL
-};
-
 bool operator==(const Plmn &lhs, const Plmn &rhs);
 bool operator!=(const Plmn &lhs, const Plmn &rhs);
 

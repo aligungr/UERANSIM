@@ -552,6 +552,13 @@ enum class EServiceReqCause
     FALLBACK_INDICATION
 };
 
+enum class EProcRc
+{
+    OK,
+    INVALID,
+    FAIL,
+};
+
 struct ProcControl
 {
     std::optional<EInitialRegCause> initialRegistration{};
