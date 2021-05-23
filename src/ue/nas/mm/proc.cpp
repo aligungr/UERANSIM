@@ -38,6 +38,7 @@ void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 
 void NasMm::serviceRequestRequiredForSignalling()
 {
+    // TODO
 }
 
 void NasMm::serviceRequestRequiredForData()
