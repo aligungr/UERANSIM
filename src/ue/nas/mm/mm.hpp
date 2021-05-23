@@ -87,8 +87,10 @@ class NasMm
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
-    void onSimRemoval();
+    void onSwitchOn();
+    void onSimInsertion();
     void onSwitchOff();
+    void onSimRemoval();
 
   private: /* Messaging */
     void sendNasMessage(const nas::PlainMmMessage &msg);

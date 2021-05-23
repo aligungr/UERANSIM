@@ -107,6 +107,8 @@ void NasMm::performPlmnSelection()
     {
         m_logger->info("Selected plmn[%s]", ToJson(selected).str().c_str());
         m_base->rrcTask->push(new NwUeNasToRrc(NwUeNasToRrc::RRC_NOTIFY));
+
+        resetRegAttemptCounter();
     }
 
     m_base->shCtx.selectedPlmn.set(selected);
