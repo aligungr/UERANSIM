@@ -174,10 +174,23 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
         {
             resetRegAttemptCounter();
         }
+
+        // "Shall initiate a registration procedure for mobility and periodic registration update when the tracking area
+        // of the serving cell has changed, if timer T3346 is not running, the PLMN identity of the new cell is not in
+        // one of the forbidden PLMN lists and the tracking area is not in one of the lists of 5GS forbidden tracking
+        // area"
+        if (!m_timers->t3346.isRunning() && currentCell.category == ECellCategory::SUITABLE_CELL)
+        {
+            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
+        }
     }
 
     if (currentCell.hasValue() && prevTai.plmn != currentTai.plmn)
     {
+        // "Shall initiate a registration procedure for mobility and periodic registration update when entering a new
+        // PLMN, if timer T3346 is running and the new PLMN is not equivalent to the PLMN where the UE started timer
+        // T3346, the PLMN identity of the new cell is not in the forbidden PLMN lists, and the tracking area is not in
+        // one of the lists of 5GS forbidden tracking areas"
         if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE && m_timers->t3346.isRunning() &&
             !m_storage->equivalentPlmnList->contains(currentTai.plmn) &&
             currentCell.category == ECellCategory::SUITABLE_CELL)
