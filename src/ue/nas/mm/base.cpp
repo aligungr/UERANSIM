@@ -306,15 +306,15 @@ void NasMm::switchCmState(ECmState state)
 
 void NasMm::switchUState(E5UState state)
 {
-    E5UState oldState = m_usim->m_uState;
-    m_usim->m_uState = state;
+    E5UState oldState = m_storage->uState->get();
+    m_storage->uState->set(state);
 
-    onSwitchUState(oldState, m_usim->m_uState);
+    onSwitchUState(oldState, state);
 
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::U5,
-                                       ToJson(oldState).str(), ToJson(m_usim->m_uState).str());
+                                       ToJson(oldState).str(), ToJson(state).str());
     }
 
     if (state != oldState)

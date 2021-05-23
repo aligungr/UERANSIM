@@ -907,7 +907,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
 
         // "If the TAI of the current serving cell is not included in the TAI list or the 5GS update status is different
         // to 5U1 UPDATED"
-        if (!includedInTaiList || m_usim->m_uState != E5UState::U1_UPDATED)
+        if (!includedInTaiList || m_storage->uState->get() != E5UState::U1_UPDATED)
         {
             // "The UE shall start timer T3511, shall set the 5GS update status to 5U2 NOT UPDATED and change to state
             // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE. When timer T3511 expires and the registration update
@@ -920,7 +920,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
         // "If the TAI of the current serving cell is included in the TAI list, the 5GS update status is equal to 5U1
         // UPDATED, and the UE is not performing the registration procedure after an inter-system change from S1 mode to
         // N1 mode"
-        if (includedInTaiList && m_usim->m_uState == E5UState::U1_UPDATED)
+        if (includedInTaiList && m_storage->uState->get() == E5UState::U1_UPDATED)
         {
             // "The UE shall keep the 5GS update status to 5U1 UPDATED and enter state 5GMM-REGISTERED.NORMAL-SERVICE."
             switchMmState(EMmSubState::MM_REGISTERED_NORMAL_SERVICE);

@@ -27,9 +27,6 @@ class Usim
     bool m_isValid{};
 
   public:
-    // State related
-    E5UState m_uState{};
-
     // Security related
     std::unique_ptr<NasSecurityContext> m_currentNsCtx{};
     std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};

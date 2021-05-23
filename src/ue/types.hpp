@@ -237,7 +237,7 @@ enum class ECmState
 
 enum class E5UState
 {
-    U1_UPDATED,
+    U1_UPDATED = 0,
     U2_NOT_UPDATED,
     U3_ROAMING_NOT_ALLOWED
 };

@@ -22,7 +22,9 @@ namespace nr::ue
 
 MmStorage::MmStorage(TaskBase *base) : m_base{base}
 {
-    storedSuci = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
+	uState = std::make_unique<nas::NasSlot<E5UState>>(0, std::nullopt);
+
+	storedSuci = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
 
     storedGuti = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
 

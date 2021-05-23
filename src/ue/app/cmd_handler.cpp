@@ -10,8 +10,8 @@
 
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/rrc/task.hpp>
 #include <ue/rls/task.hpp>
+#include <ue/rrc/task.hpp>
 #include <ue/tun/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
@@ -106,8 +106,8 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     {
     case app::UeCliCommand::STATUS: {
         // TODO
-        //std::vector<Json> pduSessions{};
-        //for (auto &pduSession : m_base->appTask->m_pduSessions)
+        // std::vector<Json> pduSessions{};
+        // for (auto &pduSession : m_base->appTask->m_pduSessions)
         //    if (pduSession.has_value())
         //        pduSessions.push_back(ToJson(*pduSession));
 
@@ -115,12 +115,12 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
-            {"5u-state", ToJson(m_base->nasTask->mm->m_usim->m_uState)},
+            {"5u-state", ToJson(m_base->nasTask->mm->m_storage->uState->get())},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
             {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
-            //TODO {"pdu-sessions", Json::Arr(std::move(pduSessions))},
+            // TODO {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         sendResult(msg.address, json.dumpYaml());
         break;

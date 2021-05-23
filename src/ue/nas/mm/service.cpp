@@ -29,7 +29,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
         m_logger->debug("Service Request canceled, already in 5GMM-SERVICE-REQUEST-INITIATED");
         return;
     }
-    if (m_usim->m_uState != E5UState::U1_UPDATED)
+    if (m_storage->uState->get() != E5UState::U1_UPDATED)
     {
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
         return;
