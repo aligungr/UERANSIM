@@ -150,7 +150,7 @@ void NasSm::receiveReleaseCommand(const nas::PduSessionReleaseCommand &msg)
     }
 
     /* Construct Release Complete message */
-    nas::PduSessionReleaseComplete resp{};
+    nas::PduSessionReleaseComplete resp;
     resp.pduSessionId = psi;
     resp.pti = pti;
 

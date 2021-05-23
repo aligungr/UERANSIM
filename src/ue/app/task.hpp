@@ -27,7 +27,6 @@ class UeAppTask : public NtsTask
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
 
-    std::array<std::optional<UePduSessionInfo>, 16> m_pduSessions{};
     std::array<TunTask *, 16> m_tunTasks{};
     ECmState m_cmState{};
 

@@ -19,6 +19,7 @@
 #define PAUSE_CONFIRM_TIMEOUT 3000
 #define PAUSE_POLLING 10
 
+// todo add coverage again to cli
 static std::string SignalDescription(int dbm)
 {
     if (dbm > -90)
@@ -104,10 +105,11 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
-        std::vector<Json> pduSessions{};
-        for (auto &pduSession : m_base->appTask->m_pduSessions)
-            if (pduSession.has_value())
-                pduSessions.push_back(ToJson(*pduSession));
+        // TODO
+        //std::vector<Json> pduSessions{};
+        //for (auto &pduSession : m_base->appTask->m_pduSessions)
+        //    if (pduSession.has_value())
+        //        pduSessions.push_back(ToJson(*pduSession));
 
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
@@ -118,7 +120,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
             {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
-            {"pdu-sessions", Json::Arr(std::move(pduSessions))},
+            //TODO {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         sendResult(msg.address, json.dumpYaml());
         break;

@@ -129,17 +129,6 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
     if (msg.what == NwUeStatusUpdate::SESSION_ESTABLISHMENT)
     {
         auto *session = msg.pduSession;
-
-        UePduSessionInfo sessionInfo{};
-        sessionInfo.psi = session->psi;
-        sessionInfo.type = nas::utils::EnumToString(session->sessionType);
-        if (session->pduAddress.has_value())
-            sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
-        sessionInfo.isEmergency = session->isEmergency;
-        sessionInfo.uplinkPending = false;
-
-        m_pduSessions[session->psi] = std::move(sessionInfo);
-
         setupTunInterface(session);
         return;
     }
@@ -153,11 +142,6 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
             m_tunTasks[msg.psi] = nullptr;
         }
 
-        if (m_pduSessions[msg.psi].has_value())
-        {
-            m_logger->info("PDU session[%d] released", msg.psi);
-            m_pduSessions[msg.psi] = {};
-        }
         return;
     }
 
