@@ -47,6 +47,9 @@ static void AssignCause(std::optional<EDeregCause> &oldCause, EDeregCause newCau
 
 void NasMm::initialRegistrationRequired(EInitialRegCause cause)
 {
+    if (m_mmState == EMmState::MM_NULL)
+        return;
+
     if (m_procCtl.initialRegistration == cause)
         return;
 
@@ -58,12 +61,43 @@ void NasMm::initialRegistrationRequired(EInitialRegCause cause)
 
 void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 {
+    if (m_mmState == EMmState::MM_NULL)
+        return;
+
     if (m_procCtl.mobilityRegistration == cause)
         return;
 
     m_logger->debug("Mobility registration updating required due to [%s]", ToJson(cause).str().c_str());
 
     AssignCause(m_procCtl.mobilityRegistration, cause);
+    triggerMmCycle();
+}
+
+void NasMm::serviceRequestRequired(EServiceReqCause cause)
+{
+    if (m_mmState == EMmState::MM_NULL)
+        return;
+
+    if (m_procCtl.serviceRequest == cause)
+        return;
+
+    m_logger->debug("Service request required due to [%s]", ToJson(cause).str().c_str());
+
+    AssignCause(m_procCtl.serviceRequest, cause);
+    triggerMmCycle();
+}
+
+void NasMm::deregistrationRequired(EDeregCause cause)
+{
+    if (m_mmState == EMmState::MM_NULL)
+        return;
+
+    if (m_procCtl.deregistration == cause)
+        return;
+
+    m_logger->debug("De-registration required due to [%s]", ToJson(cause).str().c_str());
+
+    AssignCause(m_procCtl.deregistration, cause);
     triggerMmCycle();
 }
 
@@ -76,28 +110,6 @@ void NasMm::serviceRequestRequiredForData()
 {
     serviceRequestRequired(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
                                                                : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
-}
-
-void NasMm::serviceRequestRequired(EServiceReqCause cause)
-{
-    if (m_procCtl.serviceRequest == cause)
-        return;
-
-    m_logger->debug("Service request required due to [%s]", ToJson(cause).str().c_str());
-
-    AssignCause(m_procCtl.serviceRequest, cause);
-    triggerMmCycle();
-}
-
-void NasMm::deregistrationRequired(EDeregCause cause)
-{
-    if (m_procCtl.deregistration == cause)
-        return;
-
-    m_logger->debug("De-registration required due to [%s]", ToJson(cause).str().c_str());
-
-    AssignCause(m_procCtl.deregistration, cause);
-    triggerMmCycle();
 }
 
 void NasMm::invokeProcedures()

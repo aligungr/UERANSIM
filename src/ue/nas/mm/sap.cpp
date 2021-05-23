@@ -15,6 +15,9 @@ namespace nr::ue
 
 void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
 {
+    if (m_mmState == EMmState::MM_NULL)
+        return;
+
     switch (msg.present)
     {
     case NmUeRrcToNas::RRC_CONNECTION_SETUP: {
@@ -57,6 +60,9 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
 
 void NasMm::handleNasEvent(const NmUeNasToNas &msg)
 {
+    if (m_mmState == EMmState::MM_NULL)
+        return;
+
     switch (msg.present)
     {
     case NmUeNasToNas::PERFORM_MM_CYCLE:
