@@ -39,9 +39,6 @@ void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 
     m_procCtl.mobilityRegistration = cause;
     triggerMmCycle();
-
-    // TODO: "the periodic registration update procedure is delayed until the UE returns to
-    //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
 }
 
 void NasMm::serviceRequestRequiredForSignalling()
@@ -80,6 +77,10 @@ void NasMm::deregistrationRequired(EDeregCause cause)
 void NasMm::invokeProcedures()
 {
     // TODO
+
+    // note1:
+    // TODO: "the periodic registration update procedure is delayed until the UE returns to
+    //  5GMM-REGISTERED.NORMAL-SERVICE over 3GPP access." See 5.3.7
 }
 
 } // namespace nr::ue
