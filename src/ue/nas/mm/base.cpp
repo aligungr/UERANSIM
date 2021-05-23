@@ -190,6 +190,14 @@ void NasMm::performMmCycle()
         performLocalDeregistration();
     }
 
+    if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE && hasEmergency())
+    {
+        // "If the UE receives a request from upper layers to establish an eCall over IMS, the UE enters state
+        // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION. The UE then uses the relevant 5GMM and 5GSM procedures to
+        // establish the eCall over IMS at the earliest opportunity"
+        switchMmState(EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
+    }
+
     /* Process TAI changes if any */
     if (currentTai.hasValue() &&
         !nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
