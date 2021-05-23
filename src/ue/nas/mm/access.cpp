@@ -24,6 +24,12 @@ bool NasMm::hasEmergency()
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest &&
         m_lastRegistrationRequest->registrationType.registrationType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
         return true;
+    if (m_procCtl.initialRegistration && m_procCtl.initialRegistration == EInitialRegCause::EMERGENCY_SERVICES)
+        return true;
+    if (m_procCtl.mobilityRegistration && m_procCtl.mobilityRegistration == ERegUpdateCause::EMERGENCY_CASE)
+        return true;
+    if (m_procCtl.serviceRequest && m_procCtl.serviceRequest == EServiceReqCause::EMERGENCY_FALLBACK)
+        return true;
 
     // TODO: Other case which is an emergency PDU session need to be established (and wanted to be
     //  established soon)

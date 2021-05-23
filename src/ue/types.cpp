@@ -134,6 +134,90 @@ Json ToJson(const EMmSubState &state)
     }
 }
 
+Json ToJson(const EServiceReqCause &v)
+{
+    switch (v)
+    {
+    case EServiceReqCause::IDLE_PAGING:
+        return "IDLE-PAGING";
+    case EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP:
+        return "CONNECTED-3GPP-NOTIFICATION-N3GPP";
+    case EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING:
+        return "IDLE-UPLINK-SIGNAL-PENDING";
+    case EServiceReqCause::IDLE_UPLINK_DATA_PENDING:
+        return "IDLE-UPLINK-DATA-PENDING";
+    case EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING:
+        return "CONNECTED-UPLINK-DATA-PENDING";
+    case EServiceReqCause::NON_3GPP_AS_ESTABLISHED:
+        return "NON-3GPP-AS-ESTABLISHED";
+    case EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP:
+        return "IDLE-3GPP-NOTIFICATION-N3GPP";
+    case EServiceReqCause::EMERGENCY_FALLBACK:
+        return "EMERGENCY-FALLBACK";
+    case EServiceReqCause::FALLBACK_INDICATION:
+        return "FALLBACK-INDICATION";
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const ERegUpdateCause &v)
+{
+    switch (v)
+    {
+    case ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA:
+        return "ENTER-UNLISTED-TRACKING-AREA";
+    case ERegUpdateCause::T3512_EXPIRY:
+        return "T3512-EXPIRY";
+    case ERegUpdateCause::CONFIGURATION_UPDATE:
+        return "CONFIGURATION-UPDATE";
+    case ERegUpdateCause::PAGING_OR_NOTIFICATION:
+        return "PAGING-OR-NOTIFICATION";
+    case ERegUpdateCause::INTER_SYSTEM_CHANGE_S1_TO_N1:
+        return "INTER-SYSTEM-CHANGE-S1-TO-N1";
+    case ERegUpdateCause::CONNECTION_RECOVERY:
+        return "CONNECTION-RECOVERY";
+    case ERegUpdateCause::FALLBACK_INDICATION:
+        return "FALLBACK-INDICATION";
+    case ERegUpdateCause::MM_OR_S1_CAPABILITY_CHANGE:
+        return "MM-OR-S1-CAPABILITY-CHANGE";
+    case ERegUpdateCause::USAGE_SETTING_CHANGE:
+        return "USAGE-SETTING_CHANGE";
+    case ERegUpdateCause::SLICE_CHANGE:
+        return "SLICE-CHANGE";
+    case ERegUpdateCause::DRX_CHANGE:
+        return "DRX-CHANGE";
+    case ERegUpdateCause::EMERGENCY_CASE:
+        return "EMERGENCY-CASE";
+    case ERegUpdateCause::SMS_OVER_NAS_CHANGE:
+        return "SMS-OVER-NAS-CHANGE";
+    case ERegUpdateCause::PS_STATUS_INFORM:
+        return "PS-STATUS-INFORM";
+    case ERegUpdateCause::RADIO_CAP_CHANGE:
+        return "RADIO-CAP-CHANGE";
+    case ERegUpdateCause::NEW_LADN_NEEDED:
+        return "NEW-LADN-NEEDED";
+    case ERegUpdateCause::MICO_MODE_CHANGE:
+        return "MICO-MODE-CHANGE";
+    case ERegUpdateCause::ENTER_EQUIVALENT_PLMN_CELL:
+        return "ENTER-EQUIVALENT-PLMN-CELL";
+    case ERegUpdateCause::RESTRICTED_SERVICE_AREA:
+        return "RESTRICTED-SERVICE-AREA";
+    case ERegUpdateCause::TAI_CHANGE_IN_ATT_UPD:
+        return "TAI-CHANGE-IN-ATT-UPD";
+    case ERegUpdateCause::PLMN_CHANGE_IN_ATT_UPD:
+        return "PLMN-CHANGE-IN-ATT-UPD";
+    case ERegUpdateCause::T3346_EXPIRY_IN_ATT_UPD:
+        return "T3346-EXPIRY-IN-ATT-UPD";
+    case ERegUpdateCause::T3502_EXPIRY_IN_ATT_UPD:
+        return "T3502-EXPIRY-IN-ATT-UPD";
+    case ERegUpdateCause::T3511_EXPIRY_IN_ATT_UPD:
+        return "T3511-EXPIRY-IN-ATT-UPD";
+    default:
+        return "?";
+    }
+}
+
 Json ToJson(const UeConfig &v)
 {
     return Json::Obj({

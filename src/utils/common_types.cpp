@@ -124,6 +124,42 @@ bool operator!=(const Tai &lhs, const Tai &rhs)
     return !(lhs == rhs);
 }
 
+Json ToJson(const EDeregCause &v)
+{
+    switch (v)
+    {
+    case EDeregCause::SWITCH_OFF:
+        return "SWITCH-OFF";
+    case EDeregCause::USIM_REMOVAL:
+        return "USIM-REMOVAL";
+    case EDeregCause::DISABLE_5G:
+        return "DISABLE-5G";
+    case EDeregCause::ECALL_INACTIVITY:
+        return "ECALL-INACTIVITY";
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const EInitialRegCause &v)
+{
+    switch (v)
+    {
+    case EInitialRegCause::EMERGENCY_SERVICES:
+        return "EMERGENCY-SERVICES";
+    case EInitialRegCause::MM_DEREG_NORMAL_SERVICE:
+        return "MM-DEREG-NORMAL-SERVICE";
+    case EInitialRegCause::T3346_EXPIRY:
+        return "T3346-EXPIRY";
+    case EInitialRegCause::DUE_TO_DEREGISTRATION:
+        return "DUE-TO-DEREGISTRATION";
+    case EInitialRegCause::DUE_TO_SERVICE_REJECT:
+        return "DUE-TO-SERVICE_REJECT";
+    default:
+        return "?";
+    }
+}
+
 void NetworkSlice::addIfNotExists(const SingleSlice &slice)
 {
     if (!std::any_of(slices.begin(), slices.end(), [&slice](auto &s) { return s == slice; }))
