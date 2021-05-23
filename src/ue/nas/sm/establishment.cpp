@@ -41,13 +41,13 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     m_logger->debug("Sending PDU Session Establishment Request");
 
     /* Control the protocol state */
-    if (!m_mm->isRegistered())
+    if (m_mm->m_rmState != ERmState::RM_REGISTERED)
     {
         m_logger->err("PDU session establishment could not be triggered, UE is not registered");
         return;
     }
 
-    if (m_mm->isStateNonAllowedService() && !m_mm->hasEmergency() && !m_mm->isHighPriority())
+    if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() && !m_mm->isHighPriority())
     {
         m_logger->err("PDU session establishment could not be triggered, non allowed service condition");
         return;
@@ -59,7 +59,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
         m_logger->err("PDU session type [%s] is not supported", nas::utils::EnumToString(config.type));
         return;
     }
-    if (m_mm->isRegisteredForEmergency() && !config.isEmergency)
+    if (m_mm->m_rmState == ERmState::RM_REGISTERED && m_mm->m_registeredForEmergency && !config.isEmergency)
     {
         m_logger->err("Non-emergency PDU session cannot be requested, UE is registered for emergency only");
         return;

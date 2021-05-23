@@ -32,22 +32,17 @@ class NasSm
     std::array<ProcedureTransaction, 255> m_procedureTransactions{};
 
     friend class UeCmdHandler;
+    friend class NasMm;
+    friend class NasTask;
 
   public:
     NasSm(TaskBase *base, NasTimers *timers);
 
-  public:
-    /* Base */
+  public: /* Base */
     void onStart(NasMm *mm);
     void onQuit();
-    void establishInitialSessions();
 
-    /* Transport */
-    void receiveSmMessage(const nas::SmMessage &msg);
-    void receiveForwardingFailure(const nas::SmMessage &msg, nas::EMmCause cause,
-                                  const std::optional<nas::IEGprsTimer3> &backoffTimer);
-
-    /* Resource */
+  private: /* Resource */
     void localReleaseSession(int psi);
     void localReleaseAllSessions();
     bool anyEmergencySession();
@@ -57,45 +52,45 @@ class NasSm
     std::bitset<16> getUplinkDataStatus();
     std::bitset<16> getPduSessionStatus();
 
-    /* Session Release */
-    void sendReleaseRequest(int psi);
-    void sendReleaseRequestForAll();
-
-  private:
-    /* Transport */
+  private: /* Transport */
+    void receiveSmMessage(const nas::SmMessage &msg);
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
     void sendSmCause(const nas::ESmCause &cause, int pti, int psi);
+    void receiveForwardingFailure(const nas::SmMessage &msg, nas::EMmCause cause,
+                                  const std::optional<nas::IEGprsTimer3> &backoffTimer);
 
-    /* Allocation */
+  private: /* Allocation */
     int allocatePduSessionId(const SessionConfig &config);
     int allocateProcedureTransactionId();
     void freeProcedureTransactionId(int pti);
     void freePduSessionId(int psi);
 
-    /* Session Establishment */
+  private: /* Session Establishment */
+    void establishInitialSessions();
     void sendEstablishmentRequest(const SessionConfig &config);
     void receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg);
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
 
-    /* Session Release */
+  private: /* Session Release */
+    void sendReleaseRequest(int psi);
+    void sendReleaseRequestForAll();
     void receiveReleaseReject(const nas::PduSessionReleaseReject &msg);
     void receiveReleaseCommand(const nas::PduSessionReleaseCommand &msg);
 
-    /* Timer */
+  private: /* Timer */
     std::unique_ptr<UeTimer> newTransactionTimer(int code);
     void onTimerExpire(UeTimer &timer);
     void onTransactionTimerExpire(int pti);
 
-    /* Procedure */
+  private: /* Procedure */
     bool checkPtiAndPsi(const nas::SmMessage &msg);
     void abortProcedureByPti(int pti);
     void abortProcedureByPtiOrPsi(int pti, int psi);
 
-  public:
-    /* Interface */
-    void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
-    void onTimerTick();                           // used by NAS
+  private: /* Service Access Point */
+    void handleNasEvent(const NwUeNasToNas &msg);
+    void onTimerTick();
 };
 
 } // namespace nr::ue

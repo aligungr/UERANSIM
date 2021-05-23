@@ -67,6 +67,8 @@ class NasMm
     int64_t m_lastTimeMmStateChange{};
 
     friend class UeCmdHandler;
+    friend class NasSm;
+    friend class NasTask;
 
   public:
     NasMm(TaskBase *base, NasTimers *timers);
@@ -97,14 +99,10 @@ class NasMm
 
   private: /* Transport */
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
-
-  public: /* Transport */
     void deliverUlTransport(const nas::UlNasTransport &msg);
 
-  public: /* Registration */
-    void sendMobilityRegistration(ERegUpdateCause updateCause);
-
   private: /* Registration */
+    void sendMobilityRegistration(ERegUpdateCause updateCause);
     void sendInitialRegistration(EInitialRegCause regCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
@@ -132,10 +130,8 @@ class NasMm
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);
     nas::IEUeSecurityCapability createSecurityCapabilityIe();
 
-  public: /* De-registration */
-    void sendDeregistration(EDeregCause deregCause);
-
   private: /* De-registration */
+    void sendDeregistration(EDeregCause deregCause);
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
     void performLocalDeregistration();
@@ -154,6 +150,7 @@ class NasMm
     void sendServiceRequest(EServiceReqCause reqCause);
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
+    void serviceNeededForUplinkData();
 
   private: /* Network Slicing */
     NetworkSlice makeRequestedNssai(bool &isDefaultNssai) const;
@@ -170,11 +167,9 @@ class NasMm
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
     void updateProvidedGuti(bool provide = true);
 
-  public: /* Access Control */
+  private: /* Access Control */
     bool isHighPriority();
     bool hasEmergency();
-
-  private: /* Access Control */
     void setN1Capability(bool enabled);
     bool isInNonAllowedArea();
 
@@ -185,14 +180,9 @@ class NasMm
   private: /* Timer */
     void onTimerExpire(UeTimer &timer);
 
-  public:
-    /* Interface */
-    void handleRrcEvent(const NwUeRrcToNas &msg); // used by RRC
-    void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
-    bool isRegistered();                          // used by SM
-    bool isRegisteredForEmergency();              // used by SM
-    void serviceNeededForUplinkData();            // used by SM
-    bool isStateNonAllowedService();              // used by SM
+  private: /* Service Access Point */
+    void handleRrcEvent(const NwUeRrcToNas &msg);
+    void handleNasEvent(const NwUeNasToNas &msg);
 };
 
 } // namespace nr::ue

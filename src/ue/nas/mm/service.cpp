@@ -459,4 +459,18 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     }
 }
 
+void NasMm::serviceNeededForUplinkData()
+{
+	static constexpr const int64_t SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD = 1000;
+
+	auto currentTime = utils::CurrentTimeMillis();
+    if (currentTime - m_lastTimeServiceReqNeededIndForData > SERVICE_REQUEST_NEEDED_FOR_DATA_THRESHOLD)
+    {
+        sendServiceRequest(m_cmState == ECmState::CM_CONNECTED ? EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING
+                                                               : EServiceReqCause::IDLE_UPLINK_DATA_PENDING);
+
+        m_lastTimeServiceReqNeededIndForData = currentTime;
+    }
+}
+
 } // namespace nr::ue
