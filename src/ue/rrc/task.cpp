@@ -71,7 +71,7 @@ void UeRrcTask::onLoop()
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        auto *w = dynamic_cast<NmTimerExpired *>(msg);
         if (w->timerId == TIMER_ID_MACHINE_CYCLE)
         {
             setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);

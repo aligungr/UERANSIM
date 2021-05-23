@@ -109,7 +109,7 @@ void UeAppTask::onLoop()
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        auto *w = dynamic_cast<NmTimerExpired *>(msg);
         if (w->timerId == SWITCH_OFF_TIMER_ID)
         {
             m_logger->info("UE device is switching off");

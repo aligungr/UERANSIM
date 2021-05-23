@@ -72,11 +72,11 @@ struct NtsMessage
     virtual ~NtsMessage() = default;
 };
 
-struct NwTimerExpired : NtsMessage
+struct NmTimerExpired : NtsMessage
 {
     int timerId;
 
-    explicit NwTimerExpired(int timerId) : NtsMessage(NtsMessageType::TIMER_EXPIRED), timerId(timerId)
+    explicit NmTimerExpired(int timerId) : NtsMessage(NtsMessageType::TIMER_EXPIRED), timerId(timerId)
     {
     }
 };

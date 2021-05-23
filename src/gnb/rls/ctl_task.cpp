@@ -75,7 +75,7 @@ void RlsControlTask::onLoop()
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        auto *w = dynamic_cast<NmTimerExpired *>(msg);
         if (w->timerId == TIMER_ID_ACK_CONTROL)
         {
             setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);

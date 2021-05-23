@@ -16,7 +16,7 @@
 
 static NtsMessage *TimerExpiredMessage(TimerInfo *timerInfo)
 {
-    return timerInfo ? new NwTimerExpired(timerInfo->timerId) : nullptr;
+    return timerInfo ? new NmTimerExpired(timerInfo->timerId) : nullptr;
 }
 
 void TimerBase::setTimerAbsolute(int timerId, int64_t timeMs)

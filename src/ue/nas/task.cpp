@@ -98,7 +98,7 @@ void NasTask::onLoop()
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        auto *w = dynamic_cast<NmTimerExpired *>(msg);
         int timerId = w->timerId;
         if (timerId == NTS_TIMER_ID_NAS_TIMER_CYCLE)
         {
