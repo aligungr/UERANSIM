@@ -165,6 +165,9 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
 
     if (currentCell.hasValue() && prevTai != currentTai)
     {
+        // "Additionally, the registration attempt counter shall be reset when the UE is in substate
+        // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE, and a new
+        // tracking area is entered"
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION ||
             m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
         {
