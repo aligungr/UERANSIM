@@ -184,20 +184,25 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
 
 void NasMm::handleRrcConnectionSetup()
 {
+    // TODO
     switchCmState(ECmState::CM_CONNECTED);
 }
 
 void NasMm::handleRrcConnectionRelease()
 {
+    // TODO
     switchCmState(ECmState::CM_IDLE);
 }
 
 void NasMm::handleRrcEstablishmentFailure()
 {
+    // TODO
 }
 
 void NasMm::handleRadioLinkFailure()
 {
+    // TODO
+
     if (m_cmState == ECmState::CM_CONNECTED)
     {
         m_logger->err("Radio link failure detected");
