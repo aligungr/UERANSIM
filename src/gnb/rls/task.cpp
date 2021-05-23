@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 
+#include <gnb/gtp/task.hpp>
 #include <gnb/rrc/task.hpp>
 #include <utils/common.hpp>
 
@@ -55,7 +56,11 @@ void GnbRlsTask::onLoop()
             break;
         }
         case NwGnbRlsToRls::UPLINK_DATA: {
-            m_logger->debug("UPLINK_DATA ue[%d] psi[%d]", w->ueId, w->psi);
+            auto *m = new NwGnbRlsToGtp(NwGnbRlsToGtp::DATA_PDU_DELIVERY);
+            m->ueId = w->ueId;
+            m->psi = w->psi;
+            m->pdu = std::move(w->data);
+            m_base->gtpTask->push(m);
             break;
         }
         case NwGnbRlsToRls::UPLINK_RRC: {

@@ -63,7 +63,7 @@ struct NwGnbRlsToGtp : NtsMessage
     // DATA_PDU_DELIVERY
     int ueId{};
     int psi{};
-    OctetString pdu{};
+    OctetString pdu;
 
     explicit NwGnbRlsToGtp(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_GTP), present(present)
     {

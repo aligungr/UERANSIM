@@ -102,7 +102,20 @@ void UeRlsTask::onLoop()
             break;
         }
         }
-
+        break;
+    }
+    case NtsMessageType::UE_NAS_TO_RLS: {
+        auto *w = dynamic_cast<NwUeNasToRls *>(msg);
+        switch (w->present)
+        {
+        case NwUeNasToRls::DATA_PDU_DELIVERY: {
+            auto *m = new NwUeRlsToRls(NwUeRlsToRls::UPLINK_DATA);
+            m->psi = w->psi;
+            m->data = std::move(w->pdu);
+            m_ctlTask->push(m);
+            break;
+        }
+        }
         break;
     }
     default:
