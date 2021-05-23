@@ -161,7 +161,7 @@ class NasMm
   private: /* Radio */
     void performPlmnSelection();
     void localReleaseConnection();
-    void handleActiveCellChange(const Tai& prevTai);
+    void handleActiveCellChange(const Tai &prevTai);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handleRrcEstablishmentFailure();
@@ -182,6 +182,9 @@ class NasMm
 
   private: /* Timer */
     void onTimerExpire(UeTimer &timer);
+
+  private: /* Procedure Control */
+    void mobilityUpdatingRequired(ERegUpdateCause cause);
 
   private: /* Service Access Point */
     void handleRrcEvent(const NmUeRrcToNas &msg);

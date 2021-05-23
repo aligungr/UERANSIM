@@ -182,7 +182,7 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
             !m_storage->equivalentPlmnList->contains(currentTai.plmn) &&
             currentCell.category == ECellCategory::SUITABLE_CELL)
         {
-            sendMobilityRegistration(ERegUpdateCause::UNSPECIFIED);
+            mobilityUpdatingRequired(ERegUpdateCause::UNSPECIFIED);
         }
     }
 
