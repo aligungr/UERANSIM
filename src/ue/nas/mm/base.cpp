@@ -171,7 +171,6 @@ void NasMm::performMmCycle()
         m_mmSubState == EMmSubState::MM_DEREGISTERED_NO_CELL_AVAILABLE)
     {
         performPlmnSelection();
-        return;
     }
 
     /* Try to start procedures */

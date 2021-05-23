@@ -19,6 +19,32 @@
 namespace nr::ue
 {
 
+static void AssignCause(std::optional<EInitialRegCause> &oldCause, EInitialRegCause newCause)
+{
+    oldCause = newCause;
+}
+
+static void AssignCause(std::optional<ERegUpdateCause> &oldCause, ERegUpdateCause newCause)
+{
+    oldCause = newCause;
+}
+
+static void AssignCause(std::optional<EServiceReqCause> &oldCause, EServiceReqCause newCause)
+{
+    oldCause = newCause;
+}
+
+static void AssignCause(std::optional<EDeregCause> &oldCause, EDeregCause newCause)
+{
+    if ((oldCause == EDeregCause::SWITCH_OFF || oldCause == EDeregCause::USIM_REMOVAL) &&
+        (newCause == EDeregCause::SWITCH_OFF || newCause == EDeregCause::USIM_REMOVAL))
+        return;
+    if (oldCause == EDeregCause::DISABLE_5G && newCause == EDeregCause::ECALL_INACTIVITY)
+        return;
+
+    oldCause = newCause;
+}
+
 void NasMm::initialRegistrationRequired(EInitialRegCause cause)
 {
     if (m_procCtl.initialRegistration == cause)
@@ -26,7 +52,7 @@ void NasMm::initialRegistrationRequired(EInitialRegCause cause)
 
     m_logger->debug("Initial registration required due to [%s]", ToJson(cause).str().c_str());
 
-    m_procCtl.initialRegistration = cause;
+    AssignCause(m_procCtl.initialRegistration, cause);
     triggerMmCycle();
 }
 
@@ -37,7 +63,7 @@ void NasMm::mobilityUpdatingRequired(ERegUpdateCause cause)
 
     m_logger->debug("Mobility registration updating required due to [%s]", ToJson(cause).str().c_str());
 
-    m_procCtl.mobilityRegistration = cause;
+    AssignCause(m_procCtl.mobilityRegistration, cause);
     triggerMmCycle();
 }
 
@@ -59,7 +85,7 @@ void NasMm::serviceRequestRequired(EServiceReqCause cause)
 
     m_logger->debug("Service request required due to [%s]", ToJson(cause).str().c_str());
 
-    m_procCtl.serviceRequest = cause;
+    AssignCause(m_procCtl.serviceRequest, cause);
     triggerMmCycle();
 }
 
@@ -70,16 +96,20 @@ void NasMm::deregistrationRequired(EDeregCause cause)
 
     m_logger->debug("De-registration required due to [%s]", ToJson(cause).str().c_str());
 
-    m_procCtl.deregistration = cause;
+    AssignCause(m_procCtl.deregistration, cause);
     triggerMmCycle();
 }
 
 void NasMm::invokeProcedures()
 {
-    // TODO
     if (m_procCtl.deregistration)
     {
-
+        sendDeregistration(*m_procCtl.deregistration);
+        m_procCtl.initialRegistration = std::nullopt;
+        m_procCtl.mobilityRegistration = std::nullopt;
+        m_procCtl.serviceRequest = std::nullopt;
+        m_procCtl.deregistration = std::nullopt;
+        return;
     }
 
     // note1:
