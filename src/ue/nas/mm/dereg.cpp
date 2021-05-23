@@ -34,6 +34,9 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
         return EProcRc::CANCEL;
     }
 
+    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+        return EProcRc::CANCEL;
+
     m_logger->debug("Starting de-registration procedure due to [%s]", ToJson(deregCause).str().c_str());
 
     updateProvidedGuti();
@@ -56,7 +59,7 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
 
     auto rc = sendNasMessage(*request);
     if (rc != EProcRc::OK)
-        return EProcRc::STAY;
+        return rc;
 
     m_lastDeregistrationRequest = std::move(request);
     m_lastDeregCause = deregCause;

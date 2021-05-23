@@ -15,13 +15,16 @@
 namespace nr::ue
 {
 
-void NasMm::sendInitialRegistration(EInitialRegCause regCause)
+EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
 {
     if (m_rmState != ERmState::RM_DEREGISTERED)
     {
         m_logger->warn("Registration could not be triggered. UE is not in RM-DEREGISTERED state.");
-        return;
+        return EProcRc::CANCEL;
     }
+
+    if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+        return EProcRc::STAY;
 
     bool isEmergencyReg = regCause == EInitialRegCause::EMERGENCY_SERVICES;
 
@@ -37,7 +40,7 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
         if (!highPriority && regCause != EInitialRegCause::DUE_TO_DEREGISTRATION)
         {
             m_logger->debug("Initial registration canceled, T3346 is running");
-            return;
+            return EProcRc::STAY;
         }
     }
 
@@ -50,9 +53,6 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
     // The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure
     m_usim->m_currentNsCtx = {};
-
-    // Switch MM state
-    switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);
 
     // Prepare requested NSSAI
     bool isDefaultNssai{};
@@ -97,7 +97,13 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
     }
 
     // Send the message
-    sendNasMessage(*request);
+    auto rc = sendNasMessage(*request);
+    if (rc != EProcRc::OK)
+        return rc;
+
+    // Switch MM state
+    switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);
+
     m_lastRegistrationRequest = std::move(request);
     m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
@@ -105,6 +111,8 @@ void NasMm::sendInitialRegistration(EInitialRegCause regCause)
     m_timers->t3510.start();
     m_timers->t3502.stop();
     m_timers->t3511.stop();
+
+    return EProcRc::OK;
 }
 
 void NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
@@ -625,7 +633,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             {
                 m_storage->forbiddenTaiListRoaming->add(tai);
                 m_storage->serviceAreaList->mutate([&tai](auto &value) {
-                  nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
+                    nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
                 });
             }
         }
@@ -791,9 +799,8 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         if (tai.hasValue())
         {
             m_storage->forbiddenTaiListRoaming->add(tai);
-            m_storage->serviceAreaList->mutate([&tai](auto &value) {
-              nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai});
-            });
+            m_storage->serviceAreaList->mutate(
+                [&tai](auto &value) { nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai}); });
         }
     }
 

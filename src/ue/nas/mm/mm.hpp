@@ -105,7 +105,7 @@ class NasMm
 
   private: /* Registration */
     void sendMobilityRegistration(ERegUpdateCause updateCause);
-    void sendInitialRegistration(EInitialRegCause regCause);
+    EProcRc sendInitialRegistration(EInitialRegCause regCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg);
