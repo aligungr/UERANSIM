@@ -40,7 +40,7 @@ struct Tai
     int tac;
 
     Tai();
-    Tai(const Plmn& plmn, int tac);
+    Tai(const Plmn &plmn, int tac);
     Tai(int mcc, int mnc, bool longMnc, int tac);
 
     [[nodiscard]] bool hasValue() const;
@@ -186,6 +186,12 @@ struct UacAiBarringSet
     bool ai13 = false;
     bool ai14 = false;
     bool ai15 = false;
+};
+
+enum class Rc
+{
+    OK,
+    FAIL
 };
 
 bool operator==(const Plmn &lhs, const Plmn &rhs);
