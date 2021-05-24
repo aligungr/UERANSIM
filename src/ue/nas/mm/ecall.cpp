@@ -61,13 +61,6 @@ bool NasMm::startECallInactivityIfNeeded()
     m_timers->t3511.stop();
     m_timers->t3512.stop();
 
-    // Spec says if the UE is currently registered to the network for 5GS services, but it also says procedure shall
-    // be started if ... and 5GMM-REGISTERED ....
-    if (m_rmState != ERmState::RM_REGISTERED)
-    {
-        // Therefore just assert that the UE is registered
-        throw std::runtime_error("UE MM eCall - MM and RM state inconsistent");
-    }
     // And perform de-registration.
     // NOTE: The items c) and d) is performed after de-registration by the other function, therefore we are just
     // performing de-registration for now.
