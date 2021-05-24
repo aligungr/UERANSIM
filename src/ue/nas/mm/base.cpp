@@ -161,6 +161,11 @@ void NasMm::performMmCycle()
         if (switchToECallInactivityIfNeeded())
             return;
     }
+    if (m_mmState == EMmState::MM_REGISTERED)
+    {
+        if (startECallInactivityIfNeeded())
+            return;
+    }
 
     /* Try to start procedures */
     invokeProcedures();
