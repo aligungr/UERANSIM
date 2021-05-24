@@ -185,4 +185,20 @@ void NasMm::invokeProcedures()
     }
 }
 
+bool NasMm::hasPendingProcedure()
+{
+    if (m_procCtl.initialRegistration)
+        return true;
+    if (m_procCtl.mobilityRegistration)
+        return true;
+    if (m_procCtl.serviceRequest)
+        return true;
+    if (m_procCtl.deregistration)
+        return true;
+
+    // TODO: Check for SM sublayer, (and other stacks in the future such as SMS) because they are transported over MM.
+    // NOTE: Other MM common procedures are ignored. (Except UL/DL NAS Transport)
+    return false;
+}
+
 } // namespace nr::ue
