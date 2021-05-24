@@ -320,4 +320,11 @@ void NasMm::updateProvidedGuti(bool provide)
     }
 }
 
+void NasMm::handleRrcFallbackIndication()
+{
+    // TODO: RRC does not send this indication yet
+
+
+}
+
 } // namespace nr::ue

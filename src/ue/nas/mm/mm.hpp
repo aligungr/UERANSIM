@@ -165,6 +165,7 @@ class NasMm
     void handleRrcConnectionRelease();
     void handleRrcEstablishmentFailure();
     void handleRadioLinkFailure();
+    void handleRrcFallbackIndication();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
     void updateProvidedGuti(bool provide = true);
 

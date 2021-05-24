@@ -55,6 +55,10 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
         handleRrcEstablishmentFailure();
         break;
     }
+    case NmUeRrcToNas::RRC_FALLBACK_INDICATION: {
+        handleRrcFallbackIndication();
+        break;
+    }
     }
 }
 

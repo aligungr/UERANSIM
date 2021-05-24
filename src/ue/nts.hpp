@@ -70,7 +70,8 @@ struct NmUeRrcToNas : NtsMessage
         RRC_ESTABLISHMENT_FAILURE,
         RADIO_LINK_FAILURE,
         PAGING,
-        ACTIVE_CELL_CHANGED
+        ACTIVE_CELL_CHANGED,
+        RRC_FALLBACK_INDICATION,
     } present;
 
     // NAS_DELIVERY
