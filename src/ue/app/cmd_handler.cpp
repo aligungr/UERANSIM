@@ -110,6 +110,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         // for (auto &pduSession : m_base->appTask->m_pduSessions)
         //    if (pduSession.has_value())
         //        pduSessions.push_back(ToJson(*pduSession));
+        // TODO: include SST, SD, DNN as well..
 
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
