@@ -324,7 +324,33 @@ void NasMm::handleRrcFallbackIndication()
 {
     // TODO: RRC does not send this indication yet
 
+    if (m_cmState == ECmState::CM_IDLE)
+    {
+        m_logger->err("RRC fallback indication in CM-IDLE");
+        return;
+    }
 
+    bool pendingProc = hasPendingProcedure();
+    bool pendingData = m_sm->anyUplinkDataPending(); // TODO: look for only resources are already established (5.3.1.2)
+
+    switchCmState(ECmState::CM_IDLE);
+
+    if (!pendingProc)
+    {
+        if (pendingData)
+            serviceRequestRequired(EServiceReqCause::FALLBACK_INDICATION);
+        else
+            mobilityUpdatingRequired(ERegUpdateCause::FALLBACK_INDICATION);
+    }
+    else
+    {
+        if (m_procCtl.initialRegistration || m_procCtl.deregistration)
+            (void)0;
+        else if (m_procCtl.mobilityRegistration)
+            mobilityUpdatingRequired(ERegUpdateCause::FALLBACK_INDICATION);
+        else
+            serviceRequestRequired(EServiceReqCause::FALLBACK_INDICATION);
+    }
 }
 
 } // namespace nr::ue

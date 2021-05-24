@@ -190,6 +190,7 @@ class NasMm
     void serviceRequestRequired(EServiceReqCause cause);
     void deregistrationRequired(EDeregCause cause);
     void invokeProcedures();
+    bool hasPendingProcedure();
 
   private: /* Service Access Point */
     void handleRrcEvent(const NmUeRrcToNas &msg);
