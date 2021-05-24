@@ -72,6 +72,8 @@ void NasSm::handleUplinkStatusChange(int psi, bool isPending)
 
 bool NasSm::anyUplinkDataPending()
 {
+    // TODO: look for only resources are already established etc
+
     auto status = getUplinkDataStatus();
     for (int i = 1; i < 16; i++)
         if (status[i])

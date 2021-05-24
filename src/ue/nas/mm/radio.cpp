@@ -331,7 +331,7 @@ void NasMm::handleRrcFallbackIndication()
     }
 
     bool pendingProc = hasPendingProcedure();
-    bool pendingData = m_sm->anyUplinkDataPending(); // TODO: look for only resources are already established (5.3.1.2)
+    bool pendingData = m_sm->anyUplinkDataPending();
 
     switchCmState(ECmState::CM_IDLE);
 
