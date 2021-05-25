@@ -129,6 +129,11 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
 
         UePduSessionInfo sessionInfo{};
         sessionInfo.psi = session->psi;
+
+        if (session->apn.has_value())
+            sessionInfo.apn = session->apn.value();
+        if(session->sNssai.has_value())
+            sessionInfo.sNssai = session->sNssai.value();
         sessionInfo.type = nas::utils::EnumToString(session->sessionType);
         if (session->pduAddress.has_value())
             sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
