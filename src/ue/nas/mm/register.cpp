@@ -190,19 +190,7 @@ EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
                                         ? nas::ENgRanRadioCapabilityUpdate::NEEDED
                                         : nas::ENgRanRadioCapabilityUpdate::NOT_NEEDED;
 
-    // Assign uplink data status
-    if (updateCause == ERegUpdateCause::FALLBACK_INDICATION || updateCause == ERegUpdateCause::CONNECTION_RECOVERY)
-    {
-        request->uplinkDataStatus = nas::IEUplinkDataStatus{};
-        request->uplinkDataStatus->psi = m_sm->getUplinkDataStatus();
-    }
 
-    // Assign PDU session status
-    if (m_cmState == ECmState::CM_IDLE)
-    {
-        request->pduSessionStatus = nas::IEPduSessionStatus{};
-        request->pduSessionStatus->psi = m_sm->getPduSessionStatus();
-    }
 
     // MM capability should be included if it is not a periodic registration
     if (updateCause != ERegUpdateCause::T3512_EXPIRY)
