@@ -15,7 +15,7 @@
 #include <utils/scoped_thread.hpp>
 
 // TODO: May be reduced to MTU 1500
-#define RECEIVER_BUFFER_SIZE 16000
+#define RECEIVER_BUFFER_SIZE 8000
 
 struct ReceiverArgs
 {
