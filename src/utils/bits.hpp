@@ -179,13 +179,13 @@ inline void Bmp4Dec1111(int v, T1 v1, T2 v2, T3 v3, T4 v4)
     (void)v3;
     (void)v4;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<3, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<2, 2>(v));
-    if constexpr (!std::is_same<T3, nullptr_t>::value)
+    if constexpr (!std::is_same<T3, std::nullptr_t>::value)
         *v3 = static_cast<typename std::remove_pointer<T3>::type>(BitRange8<1, 1>(v));
-    if constexpr (!std::is_same<T4, nullptr_t>::value)
+    if constexpr (!std::is_same<T4, std::nullptr_t>::value)
         *v4 = static_cast<typename std::remove_pointer<T4>::type>(BitRange8<0, 0>(v));
 }
 
@@ -196,11 +196,11 @@ inline void Bmp4Dec112(int v, T1 v1, T2 v2, T3 v3)
     (void)v2;
     (void)v3;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<3, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<2, 2>(v));
-    if constexpr (!std::is_same<T3, nullptr_t>::value)
+    if constexpr (!std::is_same<T3, std::nullptr_t>::value)
         *v3 = static_cast<typename std::remove_pointer<T3>::type>(BitRange8<0, 1>(v));
 }
 
@@ -211,11 +211,11 @@ inline void Bmp4Dec121(int v, T1 v1, T2 v2, T3 v3)
     (void)v2;
     (void)v3;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<3, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<1, 2>(v));
-    if constexpr (!std::is_same<T3, nullptr_t>::value)
+    if constexpr (!std::is_same<T3, std::nullptr_t>::value)
         *v3 = static_cast<typename std::remove_pointer<T3>::type>(BitRange8<0, 0>(v));
 }
 
@@ -226,11 +226,11 @@ inline void Bmp4Dec211(int v, T1 v1, T2 v2, T3 v3)
     (void)v2;
     (void)v3;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<2, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<1, 1>(v));
-    if constexpr (!std::is_same<T3, nullptr_t>::value)
+    if constexpr (!std::is_same<T3, std::nullptr_t>::value)
         *v3 = static_cast<typename std::remove_pointer<T3>::type>(BitRange8<0, 0>(v));
 }
 
@@ -240,9 +240,9 @@ inline void Bmp4Dec13(int v, T1 v1, T2 v2)
     (void)v1;
     (void)v2;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<3, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<0, 2>(v));
 }
 
@@ -252,9 +252,9 @@ inline void Bmp4Dec22(int v, T1 v1, T2 v2)
     (void)v1;
     (void)v2;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<2, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<0, 1>(v));
 }
 
@@ -264,9 +264,9 @@ inline void Bmp4Dec31(int v, T1 v1, T2 v2)
     (void)v1;
     (void)v2;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<1, 3>(v));
-    if constexpr (!std::is_same<T2, nullptr_t>::value)
+    if constexpr (!std::is_same<T2, std::nullptr_t>::value)
         *v2 = static_cast<typename std::remove_pointer<T2>::type>(BitRange8<0, 0>(v));
 }
 
@@ -275,7 +275,7 @@ inline void Bmp4Dec4(int v, T1 v1)
 {
     (void)v1;
 
-    if constexpr (!std::is_same<T1, nullptr_t>::value)
+    if constexpr (!std::is_same<T1, std::nullptr_t>::value)
         *v1 = static_cast<typename std::remove_pointer<T1>::type>(BitRange8<0, 3>(v));
 }
 
