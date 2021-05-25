@@ -29,7 +29,6 @@ sessions:
     slice:
       sst: 1
       sd: 1
-    emergency: false
 
 # Configured NSSAI for this UE by HPLMN
 configured-nssai:

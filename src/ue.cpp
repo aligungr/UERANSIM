@@ -199,7 +199,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
             else
                 throw std::runtime_error("Invalid PDU session type: " + type);
 
-            s.isEmergency = yaml::GetBool(sess, "emergency");
+            s.isEmergency = false;
 
             result->defaultSessions.push_back(s);
         }
