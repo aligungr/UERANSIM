@@ -18,11 +18,6 @@ imei: '356938035643803'
 # IMEISV number of the device. It is used if no SUPI and IMEI is provided
 imeiSv: '4370816125816151'
 
-# Other USIM (Universal Subscriber Identity Module) Parameters
-highPriority: false
-eCallOnly: false
-emergencyIndication: false
-
 # List of gNB IP addresses for Radio Link Simulation
 gnbSearchList:
   - 127.0.0.1
