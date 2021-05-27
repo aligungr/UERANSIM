@@ -35,7 +35,8 @@ class Usim
     std::unique_ptr<SqnManager> m_sqnMng{};
 
     // Others
-    bool m_isECallOnly{}; // todo: configurable
+    bool m_isECallOnly = false;   // todo: configurable
+    bool m_emgIndication = false; // todo: configurable
 
   public:
     void initialize(bool hasSupi, const UeConfig::Initials &initials);
