@@ -74,7 +74,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
                 if (m_lastRegistrationRequest->registrationType.registrationType !=
                     nas::ERegistrationType::EMERGENCY_REGISTRATION)
                 {
-                    localReleaseConnection();
+                    localReleaseConnection(false);
                 }
 
                 handleAbnormalInitialRegFailure(regType);
@@ -82,7 +82,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
             else if (regType == nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING ||
                      regType == nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
             {
-                localReleaseConnection();
+                localReleaseConnection(false);
                 handleAbnormalMobilityRegFailure(regType);
             }
         }

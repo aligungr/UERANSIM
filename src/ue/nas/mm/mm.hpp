@@ -159,7 +159,7 @@ class NasMm
 
   private: /* Radio */
     void performPlmnSelection();
-    void localReleaseConnection();
+    void localReleaseConnection(bool treatBarred);
     void handleActiveCellChange(const Tai &prevTai);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();

@@ -101,6 +101,9 @@ struct NmUeNasToRrc : NtsMessage
     uint32_t pduId{};
     OctetString nasPdu;
 
+    // LOCAL_RELEASE_CONNECTION
+    bool treatBarred{};
+
     explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {
     }
@@ -191,9 +194,9 @@ struct NmUeNasToApp : NtsMessage
         DOWNLINK_DATA_DELIVERY
     } present;
 
-	// DOWNLINK_DATA_DELIVERY
-	int psi{};
-	OctetString data;
+    // DOWNLINK_DATA_DELIVERY
+    int psi{};
+    OctetString data;
 
     explicit NmUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
     {

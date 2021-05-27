@@ -330,7 +330,7 @@ void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState ol
     if (m_cmState == ECmState::CM_CONNECTED && (m_mmSubState == EMmSubState::MM_DEREGISTERED_PLMN_SEARCH ||
                                                 m_mmSubState == EMmSubState::MM_REGISTERED_PLMN_SEARCH))
     {
-        localReleaseConnection();
+        localReleaseConnection(false);
     }
 
     // "Timer T3512 is stopped when the UE enters ... the 5GMM-DEREGISTERED state over 3GPP access"

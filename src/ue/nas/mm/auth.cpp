@@ -532,10 +532,7 @@ bool NasMm::networkFailingTheAuthCheck(bool hasChance)
     m_logger->err("Network failing the authentication check");
 
     if (m_cmState == ECmState::CM_CONNECTED)
-    {
-        localReleaseConnection();
-        // TODO: treat the active cell as barred
-    }
+        localReleaseConnection(true);
 
     m_timers->t3520.stop();
     return true;
