@@ -159,7 +159,14 @@ EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
             request->serviceType.serviceType = nas::EServiceType::HIGH_PRIORITY_ACCESS;
         else
         {
-            // TODO: fallback indication not supported yet
+            // From 5.6.1.2:
+            //  "a) if the pending message is an UL NAS TRANSPORT message with the Request type IE set to "initial
+            //  emergency request" or "existing emergency PDU session", the UE shall set the Service type IE in the
+            //  SERVICE REQUEST message to "emergency services"; or
+            //  b) otherwise, the UE shall set the Service type IE in the SERVICE REQUEST message to "signalling"."
+            // Just check if the UE has an emergency
+            request->serviceType.serviceType =
+                hasEmergency() ? nas::EServiceType::EMERGENCY_SERVICES : nas::EServiceType::SIGNALLING;
         }
     }
 
