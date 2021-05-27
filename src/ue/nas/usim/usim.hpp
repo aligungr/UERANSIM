@@ -34,13 +34,6 @@ class Usim
     OctetString m_resStar{};
     std::unique_ptr<SqnManager> m_sqnMng{};
 
-    // NSSAI related
-    NetworkSlice m_defConfiguredNssai{};
-    NetworkSlice m_configuredNssai{};
-    NetworkSlice m_allowedNssai{};
-    NetworkSlice m_rejectedNssaiInPlmn{};
-    NetworkSlice m_rejectedNssaiInTa{};
-
     // NITZ related
     std::optional<nas::IENetworkName> m_networkFullName{};
     std::optional<nas::IENetworkName> m_networkShortName{};

@@ -15,9 +15,6 @@ void ue::Usim::initialize(bool hasSupi, const UeConfig::Initials &initials)
 {
     m_isValid = hasSupi;
 
-    m_defConfiguredNssai = initials.defaultConfiguredNssai;
-    m_configuredNssai = initials.configuredNssai;
-
     m_sqnMng = std::make_unique<SqnManager>(5ull, 1ull << 28ull);
 }
 

@@ -208,8 +208,8 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
     // "Upon sending a DEREGISTRATION ACCEPT message, the UE shall delete the rejected NSSAI as specified in
     // subclause 4.6.2.2."
-    m_usim->m_rejectedNssaiInTa = {};
-    m_usim->m_rejectedNssaiInPlmn = {};
+    m_storage->rejectedNssaiInTa->clear();
+    m_storage->rejectedNssaiInPlmn->clear();
 
     // Handle 5.5.2.3.4 Abnormal cases in the UE, item b)
     auto handleAbnormal = [this]() {

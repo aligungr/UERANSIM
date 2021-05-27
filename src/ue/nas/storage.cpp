@@ -22,9 +22,9 @@ namespace nr::ue
 
 MmStorage::MmStorage(TaskBase *base) : m_base{base}
 {
-	uState = std::make_unique<nas::NasSlot<E5UState>>(0, std::nullopt);
+    uState = std::make_unique<nas::NasSlot<E5UState>>(0, std::nullopt);
 
-	storedSuci = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
+    storedSuci = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
 
     storedGuti = std::make_unique<nas::NasSlot<nas::IE5gsMobileIdentity>>(0, std::nullopt);
 
@@ -47,6 +47,21 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
     equivalentPlmnList = std::make_unique<nas::NasList<Plmn>>(16, 0, std::nullopt);
 
     forbiddenPlmnList = std::make_unique<nas::NasList<Plmn>>(16, 0, std::nullopt);
+
+    defConfiguredNssai = std::make_unique<nas::NasSlot<NetworkSlice>>(0, std::nullopt);
+
+    configuredNssai = std::make_unique<nas::NasSlot<NetworkSlice>>(0, std::nullopt);
+
+    allowedNssai = std::make_unique<nas::NasSlot<NetworkSlice>>(0, std::nullopt);
+
+    rejectedNssaiInPlmn = std::make_unique<nas::NasSlot<NetworkSlice>>(0, std::nullopt);
+
+    rejectedNssaiInTa = std::make_unique<nas::NasSlot<NetworkSlice>>(0, std::nullopt);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    defConfiguredNssai->set(m_base->config->initials.defaultConfiguredNssai);
+    configuredNssai->set(m_base->config->initials.configuredNssai);
 }
 
 } // namespace nr::ue

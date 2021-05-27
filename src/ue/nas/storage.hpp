@@ -34,6 +34,12 @@ class MmStorage
 
     std::unique_ptr<nas::NasSlot<nas::IEServiceAreaList>> serviceAreaList;
 
+    std::unique_ptr<nas::NasSlot<NetworkSlice>> defConfiguredNssai;
+    std::unique_ptr<nas::NasSlot<NetworkSlice>> configuredNssai;
+    std::unique_ptr<nas::NasSlot<NetworkSlice>> allowedNssai;
+    std::unique_ptr<nas::NasSlot<NetworkSlice>> rejectedNssaiInPlmn;
+    std::unique_ptr<nas::NasSlot<NetworkSlice>> rejectedNssaiInTa;
+
   public:
     explicit MmStorage(TaskBase *base);
 };

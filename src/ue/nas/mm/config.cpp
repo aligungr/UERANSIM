@@ -118,7 +118,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.allowedNssai.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_allowedNssai = nas::utils::NssaiTo(*msg.allowedNssai);
+        m_storage->allowedNssai->set(nas::utils::NssaiTo(*msg.allowedNssai));
     }
 
     // "If the UE receives a new configured NSSAI in the CONFIGURATION UPDATE COMMAND message, the UE shall consider the
@@ -128,7 +128,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.configuredNssai.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_configuredNssai = nas::utils::NssaiTo(*msg.configuredNssai);
+        m_storage->configuredNssai->set(nas::utils::NssaiTo(*msg.configuredNssai));
     }
 
     // "If the UE receives the Network slicing indication IE in the CONFIGURATION UPDATE COMMAND message with the
@@ -149,13 +149,13 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
         hasNewConfig = true;
         for (auto &rejectedSlice : msg.rejectedNssai->list)
         {
-            SingleSlice slice{};
+            SingleSlice slice;
             slice.sst = rejectedSlice.sst;
             slice.sd = rejectedSlice.sd;
 
-            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_usim->m_rejectedNssaiInPlmn
-                                                                                      : m_usim->m_rejectedNssaiInTa;
-            list.addIfNotExists(slice);
+            auto &nssai = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage->rejectedNssaiInPlmn
+                                                                                       : m_storage->rejectedNssaiInTa;
+            nssai->mutate([slice](auto &value) { value.addIfNotExists(slice); });
         }
     }
 

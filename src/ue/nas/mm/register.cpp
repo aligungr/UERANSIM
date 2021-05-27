@@ -352,13 +352,13 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     {
         for (auto &rejectedSlice : msg.rejectedNSSAI->list)
         {
-            SingleSlice slice{};
+            SingleSlice slice;
             slice.sst = rejectedSlice.sst;
             slice.sd = rejectedSlice.sd;
 
-            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_usim->m_rejectedNssaiInPlmn
-                                                                                      : m_usim->m_rejectedNssaiInTa;
-            list.addIfNotExists(slice);
+            auto &nssai = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage->rejectedNssaiInPlmn
+                                                                                       : m_storage->rejectedNssaiInTa;
+            nssai->mutate([slice](auto &value) { value.addIfNotExists(slice); });
         }
     }
 
@@ -371,12 +371,12 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     }
 
     // Store the allowed NSSAI
-    m_usim->m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
+    m_storage->allowedNssai->set(nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{})));
 
     // Process configured NSSAI IE
     if (msg.configuredNSSAI.has_value())
     {
-        m_usim->m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
+        m_storage->configuredNssai->set(nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{})));
         sendComplete = true;
     }
 
@@ -484,9 +484,9 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
             slice.sst = rejectedSlice.sst;
             slice.sd = rejectedSlice.sd;
 
-            auto &list = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_usim->m_rejectedNssaiInPlmn
-                                                                                      : m_usim->m_rejectedNssaiInTa;
-            list.addIfNotExists(slice);
+            auto &nssai = rejectedSlice.cause == nas::ERejectedSNssaiCause::NA_IN_PLMN ? m_storage->rejectedNssaiInPlmn
+                                                                                       : m_storage->rejectedNssaiInTa;
+            nssai->mutate([slice](auto &value) { value.addIfNotExists(slice); });
         }
     }
 
@@ -499,12 +499,12 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     }
 
     // Store the allowed NSSAI
-    m_usim->m_allowedNssai = nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{}));
+    m_storage->allowedNssai->set(nas::utils::NssaiTo(msg.allowedNSSAI.value_or(nas::IENssai{})));
 
     // Process configured NSSAI IE
     if (msg.configuredNSSAI.has_value())
     {
-        m_usim->m_configuredNssai = nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{}));
+        m_storage->configuredNssai->set(nas::utils::NssaiTo(msg.configuredNSSAI.value_or(nas::IENssai{})));
         sendComplete = true;
     }
 
