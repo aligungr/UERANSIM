@@ -11,6 +11,7 @@
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
+#include <ue/rls/task.hpp>
 
 namespace nr::ue
 {
@@ -43,10 +44,9 @@ void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
         break;
     }
     case NmUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
-        // TODO
-        // m_state = ERrcState::RRC_IDLE;
-        // m_base->nasTask->push(new NwUeRrcToNas(NwUeRrcToNas::RRC_CONNECTION_RELEASE));
-        // m_base->rlsTask->push(new NwUeRrcToRls(NwUeRrcToRls::RESET_STI));
+        switchState(ERrcState::RRC_IDLE);
+        m_base->rlsTask->push(new NmUeRrcToRls(NmUeRrcToRls::RESET_STI));
+        m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
         break;
     }
     case NmUeNasToRrc::RRC_NOTIFY: {

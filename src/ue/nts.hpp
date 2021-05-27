@@ -115,6 +115,7 @@ struct NmUeRrcToRls : NtsMessage
     {
         ASSIGN_CURRENT_CELL,
         RRC_PDU_DELIVERY,
+        RESET_STI,
     } present;
 
     // ASSIGN_CURRENT_CELL

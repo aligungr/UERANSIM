@@ -106,6 +106,9 @@ void UeRlsTask::onLoop()
             m_ctlTask->push(m);
             break;
         }
+        case NmUeRrcToRls::RESET_STI: {
+            break;
+        }
         }
         break;
     }
