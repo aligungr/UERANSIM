@@ -36,7 +36,7 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
 
     if (skipFirst)
     {
-        for (int i = bcd.length(); i >= 1; i--)
+        for (size_t i = bcd.length(); i >= 1; i--)
             halfOctets[i] = halfOctets[i - 1];
         halfOctets[0] = skippedHalfOctet & 0xF;
     }
