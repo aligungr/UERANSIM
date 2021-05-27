@@ -40,6 +40,12 @@ class MmStorage
     std::unique_ptr<nas::NasSlot<NetworkSlice>> rejectedNssaiInPlmn;
     std::unique_ptr<nas::NasSlot<NetworkSlice>> rejectedNssaiInTa;
 
+    std::unique_ptr<nas::NasSlot<std::optional<nas::IENetworkName>>> networkFullName;
+    std::unique_ptr<nas::NasSlot<std::optional<nas::IENetworkName>>> networkShortName;
+    std::unique_ptr<nas::NasSlot<std::optional<nas::IETimeZone>>> localTimeZone;
+    std::unique_ptr<nas::NasSlot<std::optional<nas::IETimeZoneAndTime>>> universalTimeAndLocalTimeZone;
+    std::unique_ptr<nas::NasSlot<std::optional<nas::IEDaylightSavingTime>>> networkDaylightSavingTime;
+
   public:
     explicit MmStorage(TaskBase *base);
 };

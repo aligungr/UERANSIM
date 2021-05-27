@@ -58,6 +58,18 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
 
     rejectedNssaiInTa = std::make_unique<nas::NasSlot<NetworkSlice>>(0, std::nullopt);
 
+    networkFullName = std::make_unique<nas::NasSlot<std::optional<nas::IENetworkName>>>(0, std::nullopt);
+
+    networkShortName = std::make_unique<nas::NasSlot<std::optional<nas::IENetworkName>>>(0, std::nullopt);
+
+    localTimeZone = std::make_unique<nas::NasSlot<std::optional<nas::IETimeZone>>>(0, std::nullopt);
+
+    universalTimeAndLocalTimeZone =
+        std::make_unique<nas::NasSlot<std::optional<nas::IETimeZoneAndTime>>>(0, std::nullopt);
+
+    networkDaylightSavingTime =
+        std::make_unique<nas::NasSlot<std::optional<nas::IEDaylightSavingTime>>>(0, std::nullopt);
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     defConfiguredNssai->set(m_base->config->initials.defaultConfiguredNssai);

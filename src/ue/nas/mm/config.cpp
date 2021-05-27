@@ -87,27 +87,27 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.networkFullName.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_networkFullName = nas::utils::DeepCopyIe(*msg.networkFullName);
+        m_storage->networkFullName->set(nas::utils::DeepCopyIe(*msg.networkFullName));
     }
     if (msg.networkShortName.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_networkShortName = nas::utils::DeepCopyIe(*msg.networkShortName);
+        m_storage->networkShortName->set(nas::utils::DeepCopyIe(*msg.networkShortName));
     }
     if (msg.localTimeZone.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_localTimeZone = *msg.localTimeZone;
+        m_storage->localTimeZone->set(*msg.localTimeZone);
     }
     if (msg.universalTimeAndLocalTimeZone.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_universalTimeAndLocalTimeZone = *msg.universalTimeAndLocalTimeZone;
+        m_storage->universalTimeAndLocalTimeZone->set(*msg.universalTimeAndLocalTimeZone);
     }
     if (msg.networkDaylightSavingTime.has_value())
     {
         hasNewConfig = true;
-        m_usim->m_networkDaylightSavingTime = *msg.networkDaylightSavingTime;
+        m_storage->networkDaylightSavingTime->set(*msg.networkDaylightSavingTime);
     }
 
     // "If the UE receives a new allowed NSSAI for the associated access type in the CONFIGURATION UPDATE COMMAND

@@ -34,13 +34,6 @@ class Usim
     OctetString m_resStar{};
     std::unique_ptr<SqnManager> m_sqnMng{};
 
-    // NITZ related
-    std::optional<nas::IENetworkName> m_networkFullName{};
-    std::optional<nas::IENetworkName> m_networkShortName{};
-    std::optional<nas::IETimeZone> m_localTimeZone{};
-    std::optional<nas::IETimeZoneAndTime> m_universalTimeAndLocalTimeZone{};
-    std::optional<nas::IEDaylightSavingTime> m_networkDaylightSavingTime{};
-
     // Others
     bool m_isECallOnly{}; // todo: configurable
 
