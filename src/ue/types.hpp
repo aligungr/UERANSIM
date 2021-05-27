@@ -168,6 +168,11 @@ struct UeSharedContext
     bool hasActiveCell();
 };
 
+struct RlsSharedContext
+{
+    std::atomic<uint64_t> sti{};
+};
+
 struct TaskBase
 {
     UserEquipment *ue{};

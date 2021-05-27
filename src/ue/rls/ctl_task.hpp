@@ -25,7 +25,7 @@ class RlsControlTask : public NtsTask
 {
   private:
     std::unique_ptr<Logger> m_logger;
-    uint64_t m_sti;
+    RlsSharedContext *m_shCtx;
     int m_servingCell;
     NtsTask *m_mainTask;
     RlsUdpTask *m_udpTask;
@@ -33,7 +33,7 @@ class RlsControlTask : public NtsTask
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
   public:
-    explicit RlsControlTask(TaskBase *base, uint64_t sti);
+    explicit RlsControlTask(TaskBase *base, RlsSharedContext *shCtx);
     ~RlsControlTask() override = default;
 
   protected:

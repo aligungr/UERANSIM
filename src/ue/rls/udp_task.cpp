@@ -24,8 +24,9 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, const std::vector<std::string> &searchSpace)
-    : m_server{}, m_ctlTask{}, m_sti{sti}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
+RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vector<std::string> &searchSpace)
+    : m_server{}, m_ctlTask{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
+      m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
@@ -160,7 +161,7 @@ void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
 
     for (auto &addr : m_searchSpace)
     {
-        rls::RlsHeartBeat msg{m_sti};
+        rls::RlsHeartBeat msg{m_shCtx->sti};
         msg.simPos = simPos;
         sendRlsPdu(addr, msg);
     }

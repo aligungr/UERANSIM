@@ -21,10 +21,11 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "rls");
 
-    m_sti = utils::Random64();
+    m_shCtx = new RlsSharedContext();
+    m_shCtx->sti = utils::Random64();
 
-    m_udpTask = new RlsUdpTask(base, m_sti, base->config->gnbSearchList);
-    m_ctlTask = new RlsControlTask(base, m_sti);
+    m_udpTask = new RlsUdpTask(base, m_shCtx, base->config->gnbSearchList);
+    m_ctlTask = new RlsControlTask(base, m_shCtx);
 
     m_udpTask->initialize(m_ctlTask);
     m_ctlTask->initialize(this, m_udpTask);
@@ -107,6 +108,7 @@ void UeRlsTask::onLoop()
             break;
         }
         case NmUeRrcToRls::RESET_STI: {
+            m_shCtx->sti = utils::Random64();
             break;
         }
         }
@@ -138,8 +140,11 @@ void UeRlsTask::onQuit()
 {
     m_udpTask->quit();
     m_ctlTask->quit();
+
     delete m_udpTask;
     delete m_ctlTask;
+
+    delete m_shCtx;
 }
 
 } // namespace nr::ue

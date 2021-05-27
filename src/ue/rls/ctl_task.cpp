@@ -22,8 +22,8 @@ static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
 namespace nr::ue
 {
 
-RlsControlTask::RlsControlTask(TaskBase *base, uint64_t sti)
-    : m_sti{sti}, m_servingCell{}, m_mainTask{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
+RlsControlTask::RlsControlTask(TaskBase *base, RlsSharedContext *shCtx)
+    : m_shCtx{shCtx}, m_servingCell{}, m_mainTask{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -185,7 +185,7 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
         m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
     }
 
-    rls::RlsPduTransmission msg{m_sti};
+    rls::RlsPduTransmission msg{m_shCtx->sti};
     msg.pduType = rls::EPduType::RRC;
     msg.pdu = std::move(data);
     msg.payload = static_cast<uint32_t>(channel);
@@ -196,7 +196,7 @@ void RlsControlTask::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::Rr
 
 void RlsControlTask::handleUplinkDataDelivery(int psi, OctetString &&data)
 {
-    rls::RlsPduTransmission msg{m_sti};
+    rls::RlsPduTransmission msg{m_shCtx->sti};
     msg.pduType = rls::EPduType::DATA;
     msg.pdu = std::move(data);
     msg.payload = static_cast<uint32_t>(psi);
@@ -243,7 +243,7 @@ void RlsControlTask::onAckSendTimerExpired()
         if (!item.second.empty())
             continue;
 
-        rls::RlsPduTransmissionAck msg{m_sti};
+        rls::RlsPduTransmissionAck msg{m_shCtx->sti};
         msg.pduIds = std::move(item.second);
 
         m_udpTask->send(item.first, msg);
