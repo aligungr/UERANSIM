@@ -118,7 +118,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
             s.sst = yaml::GetInt32(sNssai, "sst", 0, 0xFF);
             if (yaml::HasField(sNssai, "sd"))
                 s.sd = octet3{yaml::GetInt32(sNssai, "sd", 0, 0xFFFFFF)};
-            result->initials.defaultConfiguredNssai.slices.push_back(s);
+            result->defaultConfiguredNssai.slices.push_back(s);
         }
     }
 
@@ -130,7 +130,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
             s.sst = yaml::GetInt32(sNssai, "sst", 0, 0xFF);
             if (yaml::HasField(sNssai, "sd"))
                 s.sd = octet3{yaml::GetInt32(sNssai, "sd", 0, 0xFFFFFF)};
-            result->initials.configuredNssai.slices.push_back(s);
+            result->configuredNssai.slices.push_back(s);
         }
     }
 
@@ -314,7 +314,8 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->imeiSv = g_refConfig->imeiSv;
     c->supi = g_refConfig->supi;
     c->hplmn = g_refConfig->hplmn;
-    c->initials = g_refConfig->initials;
+    c->configuredNssai = g_refConfig->configuredNssai;
+    c->defaultConfiguredNssai = g_refConfig->defaultConfiguredNssai;
     c->supportedAlgs = g_refConfig->supportedAlgs;
     c->gnbSearchList = g_refConfig->gnbSearchList;
     c->defaultSessions = g_refConfig->defaultSessions;

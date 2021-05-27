@@ -102,14 +102,8 @@ struct UeConfig
     std::vector<std::string> gnbSearchList{};
     std::vector<SessionConfig> defaultSessions{};
     IntegrityMaxDataRateConfig integrityMaxRate{};
-
-    /* Read from config file as well, but should be stored in non-volatile
-     * mobile storage and subject to change in runtime */
-    struct Initials
-    {
-        NetworkSlice defaultConfiguredNssai{};
-        NetworkSlice configuredNssai{};
-    } initials{};
+    NetworkSlice defaultConfiguredNssai{};
+    NetworkSlice configuredNssai{};
 
     /* Assigned by program */
     bool configureRouting{};

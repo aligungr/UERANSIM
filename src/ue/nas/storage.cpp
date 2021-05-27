@@ -72,8 +72,8 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    defConfiguredNssai->set(m_base->config->initials.defaultConfiguredNssai);
-    configuredNssai->set(m_base->config->initials.configuredNssai);
+    defConfiguredNssai->set(m_base->config->defaultConfiguredNssai);
+    configuredNssai->set(m_base->config->configuredNssai);
 }
 
 } // namespace nr::ue
