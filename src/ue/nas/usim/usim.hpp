@@ -39,7 +39,7 @@ class Usim
     bool m_emgIndication = false; // todo: configurable
 
   public:
-    void initialize(bool hasSupi, const UeConfig::Initials &initials);
+    void initialize(bool hasSupi);
 
     bool isValid();
     void invalidate();

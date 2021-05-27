@@ -11,7 +11,7 @@
 namespace nr::ue
 {
 
-void ue::Usim::initialize(bool hasSupi, const UeConfig::Initials &initials)
+void ue::Usim::initialize(bool hasSupi)
 {
     m_isValid = hasSupi;
 

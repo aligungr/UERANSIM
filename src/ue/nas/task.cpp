@@ -28,7 +28,7 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 
 void NasTask::onStart()
 {
-    usim->initialize(base->config->supi.has_value(), base->config->initials);
+    usim->initialize(base->config->supi.has_value());
 
     sm->onStart(mm);
     mm->onStart(sm, usim);
