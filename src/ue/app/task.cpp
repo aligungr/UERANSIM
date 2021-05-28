@@ -122,6 +122,20 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
     if (msg.what == NmUeStatusUpdate::SESSION_ESTABLISHMENT)
     {
         auto *session = msg.pduSession;
+
+        UePduSessionInfo sessionInfo{};
+        sessionInfo.psi = session->psi;
+
+        sessionInfo.apn = session->apn;
+        sessionInfo.sNssai = session->sNssai;
+        sessionInfo.type = nas::utils::EnumToString(session->sessionType);
+        if (session->pduAddress.has_value())
+            sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
+        sessionInfo.isEmergency = session->isEmergency;
+        sessionInfo.uplinkPending = false;
+
+        m_pduSessions[session->psi] = std::move(sessionInfo);
+
         setupTunInterface(session);
         return;
     }
