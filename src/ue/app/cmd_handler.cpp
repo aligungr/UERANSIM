@@ -127,7 +127,6 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"current-cell", ::ToJson(currentCellId)},
             {"current-plmn", ::ToJson(currentPlmn)},
             {"current-tac", ::ToJson(currentTac)},
-            {"tai-list", ""},
             {"last-tai", ToJson(m_base->nasTask->mm->m_storage->lastVisitedRegisteredTai)},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
