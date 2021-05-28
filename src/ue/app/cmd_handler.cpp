@@ -174,7 +174,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
                 {"data-pending", pduSession->uplinkPending},
             });
 
-            json.put(std::to_string(pduSession->psi), obj);
+            json.put("PDU Session" + std::to_string(pduSession->psi), obj);
         }
         sendResult(msg.address, json.dumpYaml());
         break;
