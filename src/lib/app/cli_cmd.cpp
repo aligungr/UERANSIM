@@ -158,13 +158,15 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"info", {"Show some information about the UE", "", DefaultDesc, false}},
     {"status", {"Show some status information about the UE", "", DefaultDesc, false}},
     {"timers", {"Dump current status of the timers in the UE", "", DefaultDesc, false}},
+    {"rls-state", {"Show status information about RLS", "", DefaultDesc, false}},
+    {"coverage", {"Dump available cells and PLMNs in the coverage", "", DefaultDesc, false}},
     {"ps-establish",
      {"Trigger a PDU session establishment procedure", "<session-type> [options]", DescForPsEstablish, true}},
+    {"ps-list", {"List all PDU sessions", "", DefaultDesc, false}},
     {"ps-release", {"Trigger a PDU session release procedure", "<pdu-session-id>...", DefaultDesc, true}},
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
     {"deregister",
      {"Perform a de-registration by the UE", "<normal|disable-5g|switch-off|remove-sim>", DefaultDesc, true}},
-    {"coverage", {"Show gNodeB cell coverage information", "", DefaultDesc, false}},
 };
 
 static std::unique_ptr<GnbCliCommand> GnbCliParseImpl(const std::string &subCmd, const opt::OptionsResult &options,
@@ -236,19 +238,20 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
     else if (subCmd == "deregister")
     {
         auto cmd = std::make_unique<UeCliCommand>(UeCliCommand::DE_REGISTER);
-        cmd->deregCause = EDeregCause::UNSPECIFIED;
         if (options.positionalCount() == 0)
             CMD_ERR("De-registration type is expected")
         if (options.positionalCount() > 1)
             CMD_ERR("Only one de-registration type is expected")
         auto type = options.getPositional(0);
-        if (type == "switch-off")
+        if (type == "normal")
+            cmd->deregCause = EDeregCause::NORMAL;
+        else if (type == "switch-off")
             cmd->deregCause = EDeregCause::SWITCH_OFF;
         else if (type == "disable-5g")
             cmd->deregCause = EDeregCause::DISABLE_5G;
         else if (type == "remove-sim")
             cmd->deregCause = EDeregCause::USIM_REMOVAL;
-        else if (type != "normal")
+        else
             CMD_ERR("Invalid de-registration type, possible values are: \"normal\", \"disable-5g\", \"switch-off\", "
                     "\"remove-sim\"")
         return cmd;
@@ -315,6 +318,14 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
             }
         }
         return cmd;
+    }
+    else if (subCmd == "ps-list")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::PS_LIST);
+    }
+    else if (subCmd == "rls-state")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::RLS_STATE);
     }
     else if (subCmd == "coverage")
     {

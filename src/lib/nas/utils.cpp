@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include <utils/common.hpp>
+
 namespace nas::utils
 {
 
@@ -432,6 +434,120 @@ void RemoveFromTaiList(IE5gsTrackingAreaIdentityList &list, const VTrackingAreaI
         std::remove_if(list.list.begin(), list.list.end(),
                        [](auto &itemList) { return itemList.present == 2 && itemList.list10->tais.empty(); }),
         list.list.end());
+}
+
+int TaiListSize(const IE5gsTrackingAreaIdentityList &list)
+{
+    int size = 0;
+    for (auto &item : list.list)
+        size += TaiListSize(item);
+    return size;
+}
+
+int TaiListSize(const VPartialTrackingAreaIdentityList &list)
+{
+    size_t size = 0;
+    if (list.list00.has_value())
+        size += list.list00->tacs.size();
+    if (list.list01.has_value())
+        size++;
+    if (list.list10.has_value())
+        size += list.list10->tais.size();
+    return static_cast<int>(size);
+}
+
+bool ServiceAreaListAllowsPlmn(const IEServiceAreaList &list, const VPlmn &plmn)
+{
+    return std::any_of(list.list.begin(), list.list.end(),
+                       [&plmn](auto &item) { return ServiceAreaListAllowsPlmn(item, plmn); });
+}
+
+bool ServiceAreaListAllowsTai(const IEServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    return std::any_of(list.list.begin(), list.list.end(),
+                       [&tai](auto &item) { return ServiceAreaListAllowsTai(item, tai); });
+}
+
+bool ServiceAreaListAllowsPlmn(const VPartialServiceAreaList &list, const VPlmn &plmn)
+{
+    if (list.present == 3)
+    {
+        if (list.list11->allowedType == EAllowedType::IN_THE_ALLOWED_AREA && DeepEqualsV(list.list11->plmn, plmn))
+            return true;
+    }
+    return false;
+}
+
+bool ServiceAreaListAllowsTai(const VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    if (list.present == 0)
+    {
+        if (list.list00->allowedType == EAllowedType::IN_THE_ALLOWED_AREA && DeepEqualsV(list.list00->plmn, tai.plmn) &&
+            std::any_of(list.list00->tacs.begin(), list.list00->tacs.end(),
+                        [&tai](auto &i) { return (int)i == (int)tai.tac; }))
+            return true;
+    }
+    else if (list.present == 1)
+    {
+        if (list.list01->allowedType == EAllowedType::IN_THE_ALLOWED_AREA && DeepEqualsV(list.list01->plmn, tai.plmn) &&
+            (int)list.list01->tac == (int)tai.tac)
+            return true;
+    }
+    else if (list.present == 2)
+    {
+        if (list.list10->allowedType == EAllowedType::IN_THE_ALLOWED_AREA &&
+            std::any_of(list.list10->tais.begin(), list.list10->tais.end(),
+                        [tai](auto &i) { return DeepEqualsV(i, tai); }))
+            return true;
+    }
+    return false;
+}
+
+Plmn PlmnFrom(const VPlmn &plmn)
+{
+    Plmn res;
+    res.mcc = plmn.mcc;
+    res.mnc = plmn.mnc;
+    res.isLongMnc = plmn.isLongMnc;
+    return res;
+}
+
+void RemoveFromServiceAreaList(IEServiceAreaList &list, const VTrackingAreaIdentity &tai)
+{
+    std::vector<int> deletedSubLists;
+    int index = 0;
+
+    for (auto &sublist : list.list)
+    {
+        if (sublist.present == 0)
+        {
+            if (nas::utils::DeepEqualsV(sublist.list00->plmn, tai.plmn))
+                ::utils::EraseWhere(sublist.list00->tacs, [&tai](auto &i) { return (int)i == (int)tai.tac; });
+            if (sublist.list00->tacs.empty())
+                deletedSubLists.push_back(index);
+        }
+        else if (sublist.present == 1)
+        {
+            if (nas::utils::DeepEqualsV(sublist.list01->plmn, tai.plmn) && (int)tai.tac == (int)sublist.list01->tac)
+                deletedSubLists.push_back(index);
+        }
+        else if (sublist.present == 2)
+        {
+            ::utils::EraseWhere(sublist.list10->tais, [&tai](auto &i) { return nas::utils::DeepEqualsV(i, tai); });
+            if (sublist.list10->tais.empty())
+                deletedSubLists.push_back(index);
+        }
+        index++;
+    }
+
+    int deletedSoFar = 0;
+
+    for (int i : deletedSubLists)
+    {
+        int indexToDelete = i - deletedSoFar;
+        list.list.erase(list.list.begin() + indexToDelete);
+        deletedSoFar++;
+    }
 }
 
 } // namespace nas::utils

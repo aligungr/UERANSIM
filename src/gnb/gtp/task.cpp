@@ -55,22 +55,22 @@ void GtpTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_NGAP_TO_GTP: {
-        auto *w = dynamic_cast<NwGnbNgapToGtp *>(msg);
+        auto *w = dynamic_cast<NmGnbNgapToGtp *>(msg);
         switch (w->present)
         {
-        case NwGnbNgapToGtp::UE_CONTEXT_UPDATE: {
+        case NmGnbNgapToGtp::UE_CONTEXT_UPDATE: {
             handleUeContextUpdate(*w->update);
             break;
         }
-        case NwGnbNgapToGtp::UE_CONTEXT_RELEASE: {
+        case NmGnbNgapToGtp::UE_CONTEXT_RELEASE: {
             handleUeContextDelete(w->ueId);
             break;
         }
-        case NwGnbNgapToGtp::SESSION_CREATE: {
+        case NmGnbNgapToGtp::SESSION_CREATE: {
             handleSessionCreate(w->resource);
             break;
         }
-        case NwGnbNgapToGtp::SESSION_RELEASE: {
+        case NmGnbNgapToGtp::SESSION_RELEASE: {
             handleSessionRelease(w->ueId, w->psi);
             break;
         }
@@ -78,10 +78,10 @@ void GtpTask::onLoop()
         break;
     }
     case NtsMessageType::GNB_RLS_TO_GTP: {
-        auto *w = dynamic_cast<NwGnbRlsToGtp *>(msg);
+        auto *w = dynamic_cast<NmGnbRlsToGtp *>(msg);
         switch (w->present)
         {
-        case NwGnbRlsToGtp::DATA_PDU_DELIVERY: {
+        case NmGnbRlsToGtp::DATA_PDU_DELIVERY: {
             handleUplinkData(w->ueId, w->psi, std::move(w->pdu));
             break;
         }
@@ -240,7 +240,7 @@ void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
 
     if (m_rateLimiter->allowDownlinkPacket(sessionInd, gtp->payload.length()))
     {
-        auto *w = new NwGnbGtpToRls(NwGnbGtpToRls::DATA_PDU_DELIVERY);
+        auto *w = new NmGnbGtpToRls(NmGnbGtpToRls::DATA_PDU_DELIVERY);
         w->ueId = GetUeId(sessionInd);
         w->psi = GetPsi(sessionInd);
         w->pdu = std::move(gtp->payload);

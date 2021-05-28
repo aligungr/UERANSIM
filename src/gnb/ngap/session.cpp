@@ -236,7 +236,7 @@ std::optional<NgapCause> NgapTask::setupPduSessionResource(PduSessionResource *r
     resource->downTunnel.address = utils::IpToOctetString(m_base->config->gtpIp);
     resource->downTunnel.teid = ++m_downlinkTeidCounter;
 
-    auto *w = new NwGnbNgapToGtp(NwGnbNgapToGtp::SESSION_CREATE);
+    auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::SESSION_CREATE);
     w->resource = resource;
     m_base->gtpTask->push(w);
 
@@ -277,7 +277,7 @@ void NgapTask::receiveSessionResourceReleaseCommand(int amfId, ASN_NGAP_PDUSessi
     // Perform release
     for (auto &psi : psIds)
     {
-        auto *w = new NwGnbNgapToGtp(NwGnbNgapToGtp::SESSION_RELEASE);
+        auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::SESSION_RELEASE);
         w->ueId = ue->ctxId;
         w->psi = psi;
         m_base->gtpTask->push(w);

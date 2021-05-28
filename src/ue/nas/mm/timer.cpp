@@ -16,7 +16,7 @@
 namespace nr::ue
 {
 
-void NasMm::onTimerExpire(nas::NasTimer &timer)
+void NasMm::onTimerExpire(UeTimer &timer)
 {
     auto logExpired = [this, &timer]() {
         m_logger->debug("NAS timer[%d] expired [%d]", timer.getCode(), timer.getExpiryCount());
@@ -28,7 +28,17 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         if (m_mmSubState == EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE)
         {
             logExpired();
-            sendInitialRegistration(EInitialRegCause::T3346_EXPIRY);
+            initialRegistrationRequired(EInitialRegCause::T3346_EXPIRY);
+        }
+        else if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+        {
+            logExpired();
+            mobilityUpdatingRequired(ERegUpdateCause::T3346_EXPIRY_IN_ATT_UPD);
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+        {
+            logExpired();
+            initialRegistrationRequired(EInitialRegCause::T3346_EXPIRY_IN_ATT_REG);
         }
         break;
     }
@@ -38,6 +48,11 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         {
             logExpired();
             resetRegAttemptCounter();
+
+            if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+                initialRegistrationRequired(EInitialRegCause::T3502_EXPIRY_IN_ATT_REG);
+            if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+                mobilityUpdatingRequired(ERegUpdateCause::T3502_EXPIRY_IN_ATT_UPD);
         }
         break;
     }
@@ -53,13 +68,13 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
                 // The UE shall abort the registration procedure for initial registration and the NAS signalling
                 // connection, if any, shall be released locally if the initial registration request is not for
                 // emergency services..
-                switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+                switchMmState(EMmSubState::MM_DEREGISTERED_PS);
                 switchUState(E5UState::U2_NOT_UPDATED);
 
                 if (m_lastRegistrationRequest->registrationType.registrationType !=
                     nas::ERegistrationType::EMERGENCY_REGISTRATION)
                 {
-                    localReleaseConnection();
+                    localReleaseConnection(false);
                 }
 
                 handleAbnormalInitialRegFailure(regType);
@@ -67,21 +82,34 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
             else if (regType == nas::ERegistrationType::MOBILITY_REGISTRATION_UPDATING ||
                      regType == nas::ERegistrationType::PERIODIC_REGISTRATION_UPDATING)
             {
-                localReleaseConnection();
+                localReleaseConnection(false);
                 handleAbnormalMobilityRegFailure(regType);
             }
         }
         break;
     }
     case 3511: {
-        // TODO
+        if (m_mmSubState == EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE)
+        {
+            logExpired();
+            mobilityUpdatingRequired(ERegUpdateCause::T3511_EXPIRY_IN_ATT_UPD);
+        }
+        else if (m_mmSubState == EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION)
+        {
+            logExpired();
+            initialRegistrationRequired(EInitialRegCause::T3511_EXPIRY_IN_ATT_REG);
+        }
         break;
     }
     case 3512: {
-        if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_CONNECTED)
+        if (m_mmState == EMmState::MM_REGISTERED)
         {
             logExpired();
-            sendMobilityRegistration(ERegUpdateCause::T3512_EXPIRY);
+
+            if (m_registeredForEmergency)
+                performLocalDeregistration();
+            else
+                mobilityUpdatingRequired(ERegUpdateCause::T3512_EXPIRY);
         }
         break;
     }
@@ -95,7 +123,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         {
             logExpired();
 
-            switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+            switchMmState(EMmSubState::MM_REGISTERED_PS);
 
             if (m_cmState == ECmState::CM_IDLE && m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
             {
@@ -111,7 +139,7 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
         break;
     }
     case 3519: {
-        m_usim->m_storedSuci = {};
+        m_storage->storedSuci->clear();
         break;
     }
     case 3520: {
@@ -129,10 +157,10 @@ void NasMm::onTimerExpire(nas::NasTimer &timer)
                 m_logger->debug("De-registration aborted");
 
                 if (m_lastDeregCause == EDeregCause::DISABLE_5G)
-                    switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
+                    switchMmState(EMmSubState::MM_NULL_PS);
                 else if (m_lastDeregistrationRequest->deRegistrationType.switchOff ==
                          nas::ESwitchOff::NORMAL_DE_REGISTRATION)
-                    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+                    switchMmState(EMmSubState::MM_DEREGISTERED_PS);
             }
         }
         else

@@ -27,25 +27,6 @@ class Usim
     bool m_isValid{};
 
   public:
-    // State related
-    E5UState m_uState{};
-
-    // Identity related
-    nas::IE5gsMobileIdentity m_storedSuci{};
-    nas::IE5gsMobileIdentity m_storedGuti{};
-
-    // Plmn related
-    std::optional<UeCellInfo> m_servingCell{};
-    std::optional<Plmn> m_currentPlmn{};
-    std::optional<nas::VTrackingAreaIdentity> m_currentTai{};
-    std::optional<nas::IE5gsTrackingAreaIdentity> m_lastVisitedRegisteredTai{};
-    nas::IE5gsTrackingAreaIdentityList m_taiList{};
-    nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiListRoaming{}; // 5GS forbidden TAs for roaming
-    nas::IE5gsTrackingAreaIdentityList m_forbiddenTaiListRps{}; // 5GS forbidden TAs for regional provision of service
-    nas::IEPlmnList m_equivalentPlmnList{};
-    nas::IEPlmnList m_forbiddenPlmnList{};
-    nas::IEServiceAreaList m_serviceAreaList{};
-
     // Security related
     std::unique_ptr<NasSecurityContext> m_currentNsCtx{};
     std::unique_ptr<NasSecurityContext> m_nonCurrentNsCtx{};
@@ -53,25 +34,12 @@ class Usim
     OctetString m_resStar{};
     std::unique_ptr<SqnManager> m_sqnMng{};
 
-    // NSSAI related
-    NetworkSlice m_defConfiguredNssai{};
-    NetworkSlice m_configuredNssai{};
-    NetworkSlice m_allowedNssai{};
-    NetworkSlice m_rejectedNssaiInPlmn{};
-    NetworkSlice m_rejectedNssaiInTa{};
-
-    // NITZ related
-    std::optional<nas::IENetworkName> m_networkFullName{};
-    std::optional<nas::IENetworkName> m_networkShortName{};
-    std::optional<nas::IETimeZone> m_localTimeZone{};
-    std::optional<nas::IETimeZoneAndTime> m_universalTimeAndLocalTimeZone{};
-    std::optional<nas::IEDaylightSavingTime> m_networkDaylightSavingTime{};
-
     // Others
-    bool m_isECallOnly{};
+    bool m_isECallOnly = false;   // todo: configurable
+    bool m_emgIndication = false; // todo: configurable
 
   public:
-    void initialize(bool hasSupi, const UeConfig::Initials &initials);
+    void initialize(bool hasSupi);
 
     bool isValid();
     void invalidate();

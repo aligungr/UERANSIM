@@ -27,6 +27,10 @@ bool NasMm::startECallInactivityIfNeeded()
     if (!m_usim->m_isECallOnly)
         return false;
 
+    // "5.2.2.3.7 The UE camps on a suitable cell or an acceptable cell in a PLMN selected as specified in 3GPP ..."
+    if (!m_base->shCtx.hasActiveCell())
+        return false;
+
     // The procedure shall be started when
     // a) the UE is in any 5GMM-REGISTERED substate except substates 5GMM-REGISTERED.PLMN-SEARCH or
     // 5GMM-REGISTERED.NO-CELL-AVAILABLE;"
@@ -57,26 +61,22 @@ bool NasMm::startECallInactivityIfNeeded()
     m_timers->t3511.stop();
     m_timers->t3512.stop();
 
-    // Spec says if the UE is currently registered to the network for 5GS services, but it also says procedure shall
-    // be started if ... and 5GMM-REGISTERED ....
-    if (m_rmState != ERmState::RM_REGISTERED)
-    {
-        // Therefore just assert that the UE is registered
-        throw std::runtime_error("UE MM eCall - MM and RM state inconsistent");
-    }
     // And perform de-registration.
     // NOTE: The items c) and d) is performed after de-registration by the other function, therefore we are just
     // performing de-registration for now.
-    sendDeregistration(EDeregCause::ECALL_INACTIVITY);
+    deregistrationRequired(EDeregCause::ECALL_INACTIVITY);
     return true;
 }
 
 bool NasMm::switchToECallInactivityIfNeeded()
 {
+    if (!m_usim->isValid())
+        return false;
+
     if (!m_usim->m_isECallOnly)
         return false;
 
-    if (m_mmState != EMmState::MM_DEREGISTERED)
+    if (m_mmState != EMmState::MM_DEREGISTERED && m_mmState != EMmState::MM_REGISTERED)
         return false;
 
     if (m_cmState != ECmState::CM_IDLE)
@@ -87,15 +87,15 @@ bool NasMm::switchToECallInactivityIfNeeded()
         return false;
 
     // Perform item c) in 5.5.3
-    m_usim->m_storedGuti = {};
-    m_usim->m_taiList = {};
-    m_usim->m_lastVisitedRegisteredTai = {};
-    m_usim->m_equivalentPlmnList = {};
+    m_storage->storedGuti->clear();
+    m_storage->taiList->clear();
+    m_storage->lastVisitedRegisteredTai->clear();
+    m_storage->equivalentPlmnList->clear();
     m_usim->m_currentNsCtx = {};
     m_usim->m_nonCurrentNsCtx = {};
 
     // Perform item d) in 5.5.3
-    switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE);
+    switchMmState(EMmSubState::MM_DEREGISTERED_ECALL_INACTIVE);
     return true;
 }
 

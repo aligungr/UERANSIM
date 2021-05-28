@@ -82,8 +82,8 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
         case nas::EMmCause::RESTRICTED_SERVICE_AREA: {
             if (m_rmState == ERmState::RM_REGISTERED)
             {
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
-                sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
+                switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+                mobilityUpdatingRequired(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
             }
             m_sm->receiveForwardingFailure(smMessage, msg.mmCause->value, std::nullopt);
             break;
@@ -107,7 +107,7 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
     }
 }
 
-void NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
+EProcRc NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
 {
     // 5.4.5.2.6 Abnormal cases in the UE
     // "The UE shall not send the UL NAS TRANSPORT message when the UE is in non-allowed area or
@@ -126,12 +126,16 @@ void NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
             msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::SMS)
         {
             m_logger->err("Ul Nas Transport procedure canceled, UE is not in allowed area");
-            return;
+            return EProcRc::STAY;
         }
     }
 
     // Send the UL NAS Transport Message
-    sendNasMessage(msg);
+    auto rc = sendNasMessage(msg);
+    if (rc != EProcRc::OK)
+        return rc;
+
+    return EProcRc::OK;
 }
 
 } // namespace nr::ue

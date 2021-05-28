@@ -12,31 +12,28 @@
 
 #include <utils/common.hpp>
 
-namespace nas
-{
-
-NasTimer::NasTimer(int timerCode, bool isMmTimer, int defaultInterval)
+UeTimer::UeTimer(int timerCode, bool isMmTimer, int defaultInterval)
     : m_code(timerCode), m_isMm(isMmTimer), m_interval(defaultInterval), m_startMillis(0), m_isRunning(false),
       m_expiryCount(0), m_lastDebugPrintMs(0)
 {
 }
 
-bool NasTimer::isRunning() const
+bool UeTimer::isRunning() const
 {
     return m_isRunning;
 }
 
-int NasTimer::getCode() const
+int UeTimer::getCode() const
 {
     return m_code;
 }
 
-bool NasTimer::isMmTimer() const
+bool UeTimer::isMmTimer() const
 {
     return m_isMm;
 }
 
-void NasTimer::start(bool clearExpiryCount)
+void UeTimer::start(bool clearExpiryCount)
 {
     if (clearExpiryCount)
         resetExpiryCount();
@@ -44,7 +41,7 @@ void NasTimer::start(bool clearExpiryCount)
     m_isRunning = true;
 }
 
-void NasTimer::start(const nas::IEGprsTimer2 &v, bool clearExpiryCount)
+void UeTimer::start(const nas::IEGprsTimer2 &v, bool clearExpiryCount)
 {
     if (clearExpiryCount)
         resetExpiryCount();
@@ -53,7 +50,7 @@ void NasTimer::start(const nas::IEGprsTimer2 &v, bool clearExpiryCount)
     m_isRunning = true;
 }
 
-void NasTimer::start(const nas::IEGprsTimer3 &v, bool clearExpiryCount)
+void UeTimer::start(const nas::IEGprsTimer3 &v, bool clearExpiryCount)
 {
     if (clearExpiryCount)
         resetExpiryCount();
@@ -81,7 +78,7 @@ void NasTimer::start(const nas::IEGprsTimer3 &v, bool clearExpiryCount)
     m_isRunning = true;
 }
 
-void NasTimer::stop(bool clearExpiryCount)
+void UeTimer::stop(bool clearExpiryCount)
 {
     if (clearExpiryCount)
         resetExpiryCount();
@@ -93,7 +90,7 @@ void NasTimer::stop(bool clearExpiryCount)
     }
 }
 
-bool NasTimer::performTick()
+bool UeTimer::performTick()
 {
     if (m_isRunning)
     {
@@ -114,12 +111,12 @@ bool NasTimer::performTick()
     return false;
 }
 
-int NasTimer::getInterval() const
+int UeTimer::getInterval() const
 {
     return m_interval;
 }
 
-int NasTimer::getRemaining() const
+int UeTimer::getRemaining() const
 {
     if (!m_isRunning)
         return 0;
@@ -128,17 +125,17 @@ int NasTimer::getRemaining() const
     return std::max(m_interval - elapsed, 0);
 }
 
-void NasTimer::resetExpiryCount()
+void UeTimer::resetExpiryCount()
 {
     m_expiryCount = 0;
 }
 
-int NasTimer::getExpiryCount() const
+int UeTimer::getExpiryCount() const
 {
     return m_expiryCount;
 }
 
-Json ToJson(const NasTimer &v)
+Json ToJson(const UeTimer &v)
 {
     std::stringstream ss{};
     if (v.isRunning())
@@ -148,5 +145,3 @@ Json ToJson(const NasTimer &v)
 
     return ss.str();
 }
-
-} // namespace nas

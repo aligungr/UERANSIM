@@ -34,6 +34,7 @@ struct IE5gsTrackingAreaIdentity : InformationElement3
 
     IE5gsTrackingAreaIdentity() = default;
     IE5gsTrackingAreaIdentity(int mcc, int mnc, bool isLongMnc, const octet3 &trackingAreaCode);
+    explicit IE5gsTrackingAreaIdentity(const Tai &tai);
 
     static IE5gsTrackingAreaIdentity Decode(const OctetView &stream);
     static void Encode(const IE5gsTrackingAreaIdentity &ie, OctetString &stream);

@@ -11,31 +11,6 @@
 namespace nr::gnb
 {
 
-RrcUeContext *GnbRrcTask::tryFindUe(int id)
-{
-    if (m_ueCtx.count(id))
-        return m_ueCtx[id];
-    return nullptr;
-}
-
-RrcUeContext *GnbRrcTask::findUe(int id)
-{
-    auto *ue = tryFindUe(id);
-    if (ue == nullptr)
-    {
-        m_logger->err("UE context with ID[%d] not found", id);
-        return ue;
-    }
-    return ue;
-}
-
-RrcUeContext *GnbRrcTask::createUe(int id)
-{
-    auto *ctx = new RrcUeContext(id);
-    m_ueCtx[id] = ctx;
-    return ctx;
-}
-
 RrcUeContext *GnbRrcTask::tryFindByInitialRandomId(int64_t id)
 {
     if (id == -1)

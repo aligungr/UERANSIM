@@ -1,0 +1,81 @@
+//
+// This file is a part of UERANSIM open source project.
+// Copyright (c) 2021 ALİ GÜNGÖR.
+//
+// The software and all associated files are licensed under GPL-3.0
+// and subject to the terms and conditions defined in LICENSE file.
+//
+
+#include "common.hpp"
+
+#include <atomic>
+#include <memory>
+#include <stdexcept>
+
+template <typename TInput, typename TOutput>
+class LightSync
+{
+  private:
+    const int64_t m_validUntilForProducer;
+    const int64_t m_validUntilForConsumer;
+    const std::unique_ptr<TInput> m_input;
+    std::atomic_bool m_processed;
+    std::shared_ptr<TOutput> m_output;
+
+  public:
+    LightSync(int validForMs, int estimatedProcessMs, std::unique_ptr<TInput> &&input)
+        : m_validUntilForProducer{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs)},
+          m_validUntilForConsumer{utils::CurrentTimeMillis() + static_cast<int64_t>(validForMs + estimatedProcessMs)},
+          m_input{std::move(input)}, m_processed{}, m_output{}
+    {
+        if (validForMs >= 2500)
+            throw std::runtime_error("LightSync timeout is too large");
+        if (estimatedProcessMs >= 50)
+            throw std::runtime_error("LightSync estimated process time is too large");
+    }
+
+  private:
+    bool isExpiredForConsumer()
+    {
+        return utils::CurrentTimeMillis() > m_validUntilForConsumer;
+    }
+
+  public:
+    const TInput &input()
+    {
+        return *m_input;
+    }
+
+    bool isExpiredForProducer()
+    {
+        return utils::CurrentTimeMillis() > m_validUntilForProducer;
+    }
+
+    // Only producer can call at most once
+    void notifyProcessed(std::unique_ptr<TOutput> &&output)
+    {
+        if (m_processed)
+            throw std::runtime_error("LightSync processed more than once");
+        m_output = std::move(output);
+        m_processed = true;
+    }
+
+    // Only consumer can call at most once
+    std::shared_ptr<TOutput> waitForProcess()
+    {
+        while (true)
+        {
+            if (isExpiredForConsumer())
+                return nullptr;
+
+            if (m_processed)
+                return m_output;
+        }
+    }
+
+    static std::shared_ptr<LightSync<TInput, TOutput>> MakeShared(int validForMs, int estimatedProcessMs,
+                                                                  std::unique_ptr<TInput> &&input)
+    {
+        return std::make_shared<LightSync<TInput, TOutput>>(validForMs, estimatedProcessMs, std::move(input));
+    }
+};

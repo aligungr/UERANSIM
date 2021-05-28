@@ -17,6 +17,7 @@ IESNssai SNssaiFrom(const SingleSlice &v);
 IENssai NssaiFrom(const NetworkSlice &v);
 IEDnn DnnFromApn(const std::string &apn);
 VPlmn PlmnFrom(const Plmn &plmn);
+Plmn PlmnFrom(const VPlmn &plmn);
 
 NetworkSlice NssaiTo(const IENssai &v);
 SingleSlice SNssaiTo(const IESNssai &v);
@@ -31,10 +32,17 @@ bool PlmnListContains(const IEPlmnList &list, VPlmn item);
 bool PlmnListContains(const IEPlmnList &list, Plmn item);
 bool TaiListContains(const nas::IE5gsTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai);
 bool TaiListContains(const nas::VPartialTrackingAreaIdentityList &list, const VTrackingAreaIdentity &tai);
+int TaiListSize(const nas::VPartialTrackingAreaIdentityList &list);
+int TaiListSize(const nas::IE5gsTrackingAreaIdentityList &list);
 bool ServiceAreaListForbidsPlmn(const nas::IEServiceAreaList &list, const VPlmn &plmn);
 bool ServiceAreaListForbidsTai(const nas::IEServiceAreaList &list, const VTrackingAreaIdentity &tai);
 bool ServiceAreaListForbidsPlmn(const nas::VPartialServiceAreaList &list, const VPlmn &plmn);
 bool ServiceAreaListForbidsTai(const nas::VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai);
+bool ServiceAreaListAllowsPlmn(const nas::IEServiceAreaList &list, const VPlmn &plmn);
+bool ServiceAreaListAllowsTai(const nas::IEServiceAreaList &list, const VTrackingAreaIdentity &tai);
+bool ServiceAreaListAllowsPlmn(const nas::VPartialServiceAreaList &list, const VPlmn &plmn);
+bool ServiceAreaListAllowsTai(const nas::VPartialServiceAreaList &list, const VTrackingAreaIdentity &tai);
+void RemoveFromServiceAreaList(nas::IEServiceAreaList &list, const VTrackingAreaIdentity &tai);
 
 const char *EnumToString(ERegistrationType v);
 const char *EnumToString(EMmCause v);

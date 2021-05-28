@@ -59,7 +59,7 @@ void GnbRrcTask::handleDownlinkNasDelivery(int ueId, const OctetString &nasPdu)
 
 void GnbRrcTask::deliverUplinkNas(int ueId, OctetString &&nasPdu)
 {
-    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::UPLINK_NAS_DELIVERY);
+    auto *w = new NmGnbRrcToNgap(NmGnbRrcToNgap::UPLINK_NAS_DELIVERY);
     w->ueId = ueId;
     w->pdu = std::move(nasPdu);
     m_base->ngapTask->push(w);
@@ -70,76 +70,6 @@ void GnbRrcTask::receiveUplinkInformationTransfer(int ueId, const ASN_RRC_ULInfo
     if (msg.criticalExtensions.present == ASN_RRC_ULInformationTransfer__criticalExtensions_PR_ulInformationTransfer)
         deliverUplinkNas(
             ueId, asn::GetOctetString(*msg.criticalExtensions.choice.ulInformationTransfer->dedicatedNAS_Message));
-}
-
-void GnbRrcTask::receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest &msg)
-{
-    auto *ue = tryFindUe(ueId);
-    if (ue)
-    {
-        m_logger->warn("Discarding RRC Setup Request, UE context already exists");
-        return;
-    }
-
-    if (msg.rrcSetupRequest.ue_Identity.present == ASN_RRC_InitialUE_Identity_PR_ng_5G_S_TMSI_Part1)
-    {
-        m_logger->err("RRC Setup Request with TMSI not implemented yet");
-        return;
-    }
-
-    if (msg.rrcSetupRequest.ue_Identity.present != ASN_RRC_InitialUE_Identity_PR_randomValue)
-    {
-        m_logger->err("Bad message");
-        return;
-    }
-
-    int64_t initialRandomId = asn::GetBitStringLong<39>(msg.rrcSetupRequest.ue_Identity.choice.randomValue);
-    if (tryFindByInitialRandomId(initialRandomId) != nullptr)
-    {
-        m_logger->err("Initial random ID conflict [%ld], discarding RRC Setup Request", initialRandomId);
-        return;
-    }
-
-    ue = createUe(ueId);
-    ue->initialRandomId = initialRandomId;
-    ue->establishmentCause = msg.rrcSetupRequest.establishmentCause;
-
-    // Prepare RRC Setup
-    auto *pdu = asn::New<ASN_RRC_DL_CCCH_Message>();
-    pdu->message.present = ASN_RRC_DL_CCCH_MessageType_PR_c1;
-    pdu->message.choice.c1 = asn::NewFor(pdu->message.choice.c1);
-    pdu->message.choice.c1->present = ASN_RRC_DL_CCCH_MessageType__c1_PR_rrcSetup;
-    auto &rrcSetup = pdu->message.choice.c1->choice.rrcSetup = asn::New<ASN_RRC_RRCSetup>();
-    rrcSetup->rrc_TransactionIdentifier = getNextTid();
-    rrcSetup->criticalExtensions.present = ASN_RRC_RRCSetup__criticalExtensions_PR_rrcSetup;
-    auto &rrcSetupIEs = rrcSetup->criticalExtensions.choice.rrcSetup = asn::New<ASN_RRC_RRCSetup_IEs>();
-
-    ASN_RRC_CellGroupConfig masterCellGroup{};
-    masterCellGroup.cellGroupId = 0;
-
-    asn::SetOctetString(rrcSetupIEs->masterCellGroup,
-                        rrc::encode::EncodeS(asn_DEF_ASN_RRC_CellGroupConfig, &masterCellGroup));
-
-    m_logger->info("RRC Setup for UE[%d]", ueId);
-    sendRrcMessage(ueId, pdu);
-}
-
-void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplete &msg)
-{
-    if (msg.criticalExtensions.present != ASN_RRC_RRCSetupComplete__criticalExtensions_PR_rrcSetupComplete)
-        return;
-
-    auto *ue = findUe(ueId);
-    if (!ue)
-        return;
-
-    auto setupComplete = msg.criticalExtensions.choice.rrcSetupComplete;
-
-    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::INITIAL_NAS_DELIVERY);
-    w->ueId = ueId;
-    w->pdu = asn::GetOctetString(setupComplete->dedicatedNAS_Message);
-    w->rrcEstablishmentCause = ue->establishmentCause;
-    m_base->ngapTask->push(w);
 }
 
 void GnbRrcTask::releaseConnection(int ueId)
@@ -165,7 +95,7 @@ void GnbRrcTask::releaseConnection(int ueId)
 void GnbRrcTask::handleRadioLinkFailure(int ueId)
 {
     // Notify NGAP task
-    auto *w = new NwGnbRrcToNgap(NwGnbRrcToNgap::RADIO_LINK_FAILURE);
+    auto *w = new NmGnbRrcToNgap(NmGnbRrcToNgap::RADIO_LINK_FAILURE);
     w->ueId = ueId;
     m_base->ngapTask->push(w);
 

@@ -44,6 +44,12 @@ inline T *NewFor(T *p)
 }
 
 template <typename T>
+inline void MakeNew(T *&p)
+{
+    p = NewFor(p);
+}
+
+template <typename T>
 inline void Free(asn_TYPE_descriptor_t &desc, T *ptr)
 {
     ASN_STRUCT_FREE(desc, ptr);

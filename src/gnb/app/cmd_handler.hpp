@@ -24,7 +24,7 @@ class GnbCmdHandler
     {
     }
 
-    void handleCmd(NwGnbCliCommand &msg);
+    void handleCmd(NmGnbCliCommand &msg);
 
   private:
     void pauseTasks();
@@ -32,7 +32,7 @@ class GnbCmdHandler
     bool isAllPaused();
 
   private:
-    void handleCmdImpl(NwGnbCliCommand &msg);
+    void handleCmdImpl(NmGnbCliCommand &msg);
 
   private:
     void sendResult(const InetAddress &address, const std::string &output);

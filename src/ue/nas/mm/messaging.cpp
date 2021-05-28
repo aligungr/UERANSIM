@@ -13,8 +13,6 @@
 #include <ue/nas/sm/sm.hpp>
 #include <ue/rrc/task.hpp>
 
-#include <asn/rrc/ASN_RRC_EstablishmentCause.h>
-
 namespace nr::ue
 {
 
@@ -105,14 +103,20 @@ static void RemoveCleartextIEs(nas::PlainMmMessage &msg, OctetString &&nasMsgCon
     }
 }
 
-void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
+EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
+    if (!m_base->shCtx.hasActiveCell())
+    {
+        m_logger->debug("NAS Transport aborted, no active cell");
+        return EProcRc::STAY;
+    }
+
     if (m_cmState == ECmState::CM_IDLE && !IsInitialNasMessage(msg))
     {
         m_logger->warn("NAS Transport aborted, Service Request is needed for uplink signalling");
         if (m_mmState != EMmState::MM_SERVICE_REQUEST_INITIATED)
-            sendServiceRequest(EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING);
-        return;
+            serviceRequestRequiredForSignalling();
+        return EProcRc::STAY;
     }
 
     bool hasNsCtx =
@@ -125,7 +129,7 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
             msg.messageType == nas::EMessageType::SERVICE_REQUEST)
         {
-            if (HasNonCleartext(msg))
+            if (HasNonCleartext(msg) && m_cmState == ECmState::CM_IDLE)
             {
                 OctetString originalPdu;
                 nas::EncodeNasMessage(msg, originalPdu);
@@ -168,19 +172,12 @@ void NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    if (m_cmState == ECmState::CM_IDLE)
-    {
-        auto *nw = new NwUeNasToRrc(NwUeNasToRrc::INITIAL_NAS_DELIVERY);
-        nw->nasPdu = std::move(pdu);
-        nw->rrcEstablishmentCause = ASN_RRC_EstablishmentCause_mo_Data;
-        m_base->rrcTask->push(nw);
-    }
-    else
-    {
-        auto *nw = new NwUeNasToRrc(NwUeNasToRrc::UPLINK_NAS_DELIVERY);
-        nw->nasPdu = std::move(pdu);
-        m_base->rrcTask->push(nw);
-    }
+    auto *m = new NmUeNasToRrc(NmUeNasToRrc::UPLINK_NAS_DELIVERY);
+    m->pduId = 0;
+    m->nasPdu = std::move(pdu);
+    m_base->rrcTask->push(m);
+
+    return EProcRc::OK;
 }
 
 void NasMm::receiveNasMessage(const nas::NasMessage &msg)

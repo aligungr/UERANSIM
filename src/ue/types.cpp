@@ -12,7 +12,7 @@
 namespace nr::ue
 {
 
-UeTimers::UeTimers()
+NasTimers::NasTimers()
     : t3346(3346, true, INT32_MAX), t3396(3396, false, INT32_MAX), t3444(3444, true, 12 * 60 * 60),
       t3445(3445, true, 12 * 60 * 60), t3502(3502, true, 12 * 60), t3510(3510, true, 15), t3511(3511, true, 10),
       t3512(3512, true, 54 * 60), t3516(3516, true, 30), t3517(3517, true, 15), t3519(3519, true, 60),
@@ -68,14 +68,29 @@ Json ToJson(const EMmState &state)
     }
 }
 
+Json ToJson(const ERrcState &state)
+{
+    switch (state)
+    {
+    case ERrcState::RRC_IDLE:
+        return "RRC-IDLE";
+    case ERrcState::RRC_CONNECTED:
+        return "RRC-CONNECTED";
+    case ERrcState::RRC_INACTIVE:
+        return "RRC-INACTIVE";
+    default:
+        return "?";
+    }
+}
+
 Json ToJson(const EMmSubState &state)
 {
     switch (state)
     {
-    case EMmSubState::MM_NULL_NA:
-        return "MM-NULL-NA";
-    case EMmSubState::MM_DEREGISTERED_NA:
-        return "MM-DEREGISTERED/NA";
+    case EMmSubState::MM_NULL_PS:
+        return "MM-NULL";
+    case EMmSubState::MM_DEREGISTERED_PS:
+        return "MM-DEREGISTERED/PS";
     case EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE:
         return "MM-DEREGISTERED/NORMAL-SERVICE";
     case EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE:
@@ -92,10 +107,10 @@ Json ToJson(const EMmSubState &state)
         return "MM-DEREGISTERED/ECALL-INACTIVE";
     case EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED:
         return "MM-DEREGISTERED/INITIAL-REGISTRATION-NEEDED";
-    case EMmSubState::MM_REGISTERED_INITIATED_NA:
-        return "MM-REGISTER-INITIATED/NA";
-    case EMmSubState::MM_REGISTERED_NA:
-        return "MM-REGISTERED/NA";
+    case EMmSubState::MM_REGISTERED_INITIATED_PS:
+        return "MM-REGISTER-INITIATED";
+    case EMmSubState::MM_REGISTERED_PS:
+        return "MM-REGISTERED/PS";
     case EMmSubState::MM_REGISTERED_NORMAL_SERVICE:
         return "MM-REGISTERED/NORMAL-SERVICE";
     case EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE:
@@ -110,26 +125,100 @@ Json ToJson(const EMmSubState &state)
         return "MM-REGISTERED/NO-CELL-AVAILABLE";
     case EMmSubState::MM_REGISTERED_UPDATE_NEEDED:
         return "MM-REGISTERED/UPDATE-NEEDED";
-    case EMmSubState::MM_DEREGISTERED_INITIATED_NA:
-        return "MM-DEREGISTER-INITIATED/NA";
-    case EMmSubState::MM_SERVICE_REQUEST_INITIATED_NA:
-        return "MM-SERVICE-REQUEST-INITIATED/NA";
+    case EMmSubState::MM_DEREGISTERED_INITIATED_PS:
+        return "MM-DEREGISTER-INITIATED";
+    case EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS:
+        return "MM-SERVICE-REQUEST-INITIATED";
     default:
         return "?";
     }
 }
 
-Json ToJson(const UeConfig &v)
+Json ToJson(const EServiceReqCause &v)
 {
-    return Json::Obj({
-        {"supi", ToJson(v.supi)},
-        {"hplmn", ToJson(v.hplmn)},
-        {"imei", ::ToJson(v.imei)},
-        {"imeiSv", ::ToJson(v.imeiSv)},
-    });
+    switch (v)
+    {
+    case EServiceReqCause::IDLE_PAGING:
+        return "IDLE-PAGING";
+    case EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP:
+        return "CONNECTED-3GPP-NOTIFICATION-N3GPP";
+    case EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING:
+        return "IDLE-UPLINK-SIGNAL-PENDING";
+    case EServiceReqCause::IDLE_UPLINK_DATA_PENDING:
+        return "IDLE-UPLINK-DATA-PENDING";
+    case EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING:
+        return "CONNECTED-UPLINK-DATA-PENDING";
+    case EServiceReqCause::NON_3GPP_AS_ESTABLISHED:
+        return "NON-3GPP-AS-ESTABLISHED";
+    case EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP:
+        return "IDLE-3GPP-NOTIFICATION-N3GPP";
+    case EServiceReqCause::EMERGENCY_FALLBACK:
+        return "EMERGENCY-FALLBACK";
+    case EServiceReqCause::FALLBACK_INDICATION:
+        return "FALLBACK-INDICATION";
+    default:
+        return "?";
+    }
 }
 
-Json ToJson(const UeTimers &v)
+Json ToJson(const ERegUpdateCause &v)
+{
+    switch (v)
+    {
+    case ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA:
+        return "ENTER-UNLISTED-TRACKING-AREA";
+    case ERegUpdateCause::T3512_EXPIRY:
+        return "T3512-EXPIRY";
+    case ERegUpdateCause::CONFIGURATION_UPDATE:
+        return "CONFIGURATION-UPDATE";
+    case ERegUpdateCause::PAGING_OR_NOTIFICATION:
+        return "PAGING-OR-NOTIFICATION";
+    case ERegUpdateCause::INTER_SYSTEM_CHANGE_S1_TO_N1:
+        return "INTER-SYSTEM-CHANGE-S1-TO-N1";
+    case ERegUpdateCause::CONNECTION_RECOVERY:
+        return "CONNECTION-RECOVERY";
+    case ERegUpdateCause::FALLBACK_INDICATION:
+        return "FALLBACK-INDICATION";
+    case ERegUpdateCause::MM_OR_S1_CAPABILITY_CHANGE:
+        return "MM-OR-S1-CAPABILITY-CHANGE";
+    case ERegUpdateCause::USAGE_SETTING_CHANGE:
+        return "USAGE-SETTING_CHANGE";
+    case ERegUpdateCause::SLICE_CHANGE:
+        return "SLICE-CHANGE";
+    case ERegUpdateCause::DRX_CHANGE:
+        return "DRX-CHANGE";
+    case ERegUpdateCause::EMERGENCY_CASE:
+        return "EMERGENCY-CASE";
+    case ERegUpdateCause::SMS_OVER_NAS_CHANGE:
+        return "SMS-OVER-NAS-CHANGE";
+    case ERegUpdateCause::PS_STATUS_INFORM:
+        return "PS-STATUS-INFORM";
+    case ERegUpdateCause::RADIO_CAP_CHANGE:
+        return "RADIO-CAP-CHANGE";
+    case ERegUpdateCause::NEW_LADN_NEEDED:
+        return "NEW-LADN-NEEDED";
+    case ERegUpdateCause::MICO_MODE_CHANGE:
+        return "MICO-MODE-CHANGE";
+    case ERegUpdateCause::ENTER_EQUIVALENT_PLMN_CELL:
+        return "ENTER-EQUIVALENT-PLMN-CELL";
+    case ERegUpdateCause::RESTRICTED_SERVICE_AREA:
+        return "RESTRICTED-SERVICE-AREA";
+    case ERegUpdateCause::TAI_CHANGE_IN_ATT_UPD:
+        return "TAI-CHANGE-IN-ATT-UPD";
+    case ERegUpdateCause::PLMN_CHANGE_IN_ATT_UPD:
+        return "PLMN-CHANGE-IN-ATT-UPD";
+    case ERegUpdateCause::T3346_EXPIRY_IN_ATT_UPD:
+        return "T3346-EXPIRY-IN-ATT-UPD";
+    case ERegUpdateCause::T3502_EXPIRY_IN_ATT_UPD:
+        return "T3502-EXPIRY-IN-ATT-UPD";
+    case ERegUpdateCause::T3511_EXPIRY_IN_ATT_UPD:
+        return "T3511-EXPIRY-IN-ATT-UPD";
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const NasTimers &v)
 {
     return Json::Obj({
         {"T3346", ToJson(v.t3346)},
@@ -167,55 +256,6 @@ Json ToJson(const E5UState &state)
     }
 }
 
-Json ToJson(const ERegUpdateCause &v)
-{
-    switch (v)
-    {
-    case ERegUpdateCause::UNSPECIFIED:
-        return "UNSPECIFIED";
-    case ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA:
-        return "ENTER_UNLISTED_TRACKING_AREA";
-    case ERegUpdateCause::T3512_EXPIRY:
-        return "T3512_EXPIRY";
-    case ERegUpdateCause::CONFIGURATION_UPDATE:
-        return "CONFIGURATION_UPDATE";
-    case ERegUpdateCause::PAGING_OR_NOTIFICATION:
-        return "PAGING_OR_NOTIFICATION";
-    case ERegUpdateCause::INTER_SYSTEM_CHANGE_S1_TO_N1:
-        return "INTER_SYSTEM_CHANGE_S1_TO_N1";
-    case ERegUpdateCause::CONNECTION_RECOVERY:
-        return "CONNECTION_RECOVERY";
-    case ERegUpdateCause::FALLBACK_INDICATION:
-        return "FALLBACK_INDICATION";
-    case ERegUpdateCause::MM_OR_S1_CAPABILITY_CHANGE:
-        return "MM_OR_S1_CAPABILITY_CHANGE";
-    case ERegUpdateCause::USAGE_SETTING_CHANGE:
-        return "USAGE_SETTING_CHANGE";
-    case ERegUpdateCause::SLICE_CHANGE:
-        return "SLICE_CHANGE";
-    case ERegUpdateCause::DRX_CHANGE:
-        return "DRX_CHANGE";
-    case ERegUpdateCause::EMERGENCY_CASE:
-        return "EMERGENCY_CASE";
-    case ERegUpdateCause::SMS_OVER_NAS_CHANGE:
-        return "SMS_OVER_NAS_CHANGE";
-    case ERegUpdateCause::PS_STATUS_INFORM:
-        return "PS_STATUS_INFORM";
-    case ERegUpdateCause::RADIO_CAP_CHANGE:
-        return "RADIO_CAP_CHANGE";
-    case ERegUpdateCause::NEW_LADN_NEEDED:
-        return "NEW_LADN_NEEDED";
-    case ERegUpdateCause::MICO_MODE_CHANGE:
-        return "MICO_MODE_CHANGE";
-    case ERegUpdateCause::ENTER_EQUIVALENT_PLMN_CELL:
-        return "ENTER_EQUIVALENT_PLMN_CELL";
-    case ERegUpdateCause::RESTRICTED_SERVICE_AREA:
-        return "RESTRICTED_SERVICE_AREA";
-    default:
-        return "?";
-    }
-}
-
 Json ToJson(const EPsState &state)
 {
     switch (state)
@@ -235,43 +275,33 @@ Json ToJson(const EPsState &state)
     }
 }
 
-Json ToJson(const UePduSessionInfo &v)
+bool ActiveCellInfo::hasValue() const
 {
-    return Json::Obj({{"id", v.psi},
-                      {"type", v.type},
-                      {"address", v.address},
-                      {"emergency", v.isEmergency},
-                      {"apn", ::ToJson(v.apn)},
-                      {"s-nssai", ToJson(v.sNssai)}});
+    return cellId != 0;
 }
 
-Json ToJson(const EServiceReqCause &v)
+Plmn UeSharedContext::getCurrentPlmn()
 {
-    switch (v)
-    {
-    case EServiceReqCause::UNSPECIFIED:
-        return "UNSPECIFIED";
-    case EServiceReqCause::IDLE_PAGING:
-        return "IDLE_PAGING";
-    case EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP:
-        return "CONNECTED_3GPP_NOTIFICATION_N3GPP";
-    case EServiceReqCause::IDLE_UPLINK_SIGNAL_PENDING:
-        return "IDLE_UPLINK_SIGNAL_PENDING";
-    case EServiceReqCause::IDLE_UPLINK_DATA_PENDING:
-        return "IDLE_UPLINK_DATA_PENDING";
-    case EServiceReqCause::CONNECTED_UPLINK_DATA_PENDING:
-        return "CONNECTED_UPLINK_DATA_PENDING";
-    case EServiceReqCause::NON_3GPP_AS_ESTABLISHED:
-        return "NON_3GPP_AS_ESTABLISHED";
-    case EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP:
-        return "IDLE_3GPP_NOTIFICATION_N3GPP";
-    case EServiceReqCause::EMERGENCY_FALLBACK:
-        return "EMERGENCY_FALLBACK";
-    case EServiceReqCause::FALLBACK_INDICATION:
-        return "FALLBACK_INDICATION";
-    default:
-        return "?";
-    }
+    return currentCell.get<Plmn>([](auto &value) { return value.plmn; });
+}
+
+Tai UeSharedContext::getCurrentTai()
+{
+    Tai tai;
+    currentCell.access([&tai](auto &value) {
+        tai.plmn = value.plmn;
+        tai.tac = value.tac;
+    });
+    return tai;
+}
+
+bool UeSharedContext::hasActiveCell()
+{
+    return getCurrentTai().hasValue();
+}
+
+RrcTimers::RrcTimers() : t300(300, false, 1)
+{
 }
 
 } // namespace nr::ue

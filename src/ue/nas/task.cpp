@@ -28,7 +28,7 @@ NasTask::NasTask(TaskBase *base) : base{base}, timers{}
 
 void NasTask::onStart()
 {
-    usim->initialize(base->config->supi.has_value(), base->config->initials);
+    usim->initialize(base->config->supi.has_value());
 
     sm->onStart(mm);
     mm->onStart(sm, usim);
@@ -57,26 +57,22 @@ void NasTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RRC_TO_NAS: {
-        mm->handleRrcEvent(*dynamic_cast<NwUeRrcToNas *>(msg));
+        mm->handleRrcEvent(*dynamic_cast<NmUeRrcToNas *>(msg));
         break;
     }
     case NtsMessageType::UE_NAS_TO_NAS: {
-        auto *w = dynamic_cast<NwUeNasToNas *>(msg);
+        auto *w = dynamic_cast<NmUeNasToNas *>(msg);
         switch (w->present)
         {
-        case NwUeNasToNas::PERFORM_MM_CYCLE: {
+        case NmUeNasToNas::PERFORM_MM_CYCLE: {
             mm->handleNasEvent(*w);
             break;
         }
-        case NwUeNasToNas::NAS_TIMER_EXPIRE: {
+        case NmUeNasToNas::NAS_TIMER_EXPIRE: {
             if (w->timer->isMmTimer())
                 mm->handleNasEvent(*w);
             else
                 sm->handleNasEvent(*w);
-            break;
-        }
-        case NwUeNasToNas::ESTABLISH_INITIAL_SESSIONS: {
-            sm->establishInitialSessions();
             break;
         }
         default:
@@ -85,11 +81,11 @@ void NasTask::onLoop()
         break;
     }
     case NtsMessageType::UE_APP_TO_NAS: {
-        auto *w = dynamic_cast<NwUeAppToNas *>(msg);
+        auto *w = dynamic_cast<NmUeAppToNas *>(msg);
         switch (w->present)
         {
-        case NwUeAppToNas::UPLINK_STATUS_CHANGE: {
-            sm->handleUplinkStatusChange(w->psi, w->isPending);
+        case NmUeAppToNas::UPLINK_DATA_DELIVERY: {
+            sm->handleUplinkDataRequest(w->psi, std::move(w->data));
             break;
         }
         default:
@@ -97,8 +93,20 @@ void NasTask::onLoop()
         }
         break;
     }
+    case NtsMessageType::UE_RLS_TO_NAS: {
+        auto *w = dynamic_cast<NmUeRlsToNas *>(msg);
+        switch (w->present)
+        {
+        case NmUeRlsToNas::DATA_PDU_DELIVERY: {
+            sm->handleDownlinkDataRequest(w->psi, std::move(w->pdu));
+            break;
+        }
+        }
+
+        break;
+    }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        auto *w = dynamic_cast<NmTimerExpired *>(msg);
         int timerId = w->timerId;
         if (timerId == NTS_TIMER_ID_NAS_TIMER_CYCLE)
         {
@@ -108,7 +116,7 @@ void NasTask::onLoop()
         if (timerId == NTS_TIMER_ID_MM_CYCLE)
         {
             setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
-            mm->handleNasEvent(NwUeNasToNas{NwUeNasToNas::PERFORM_MM_CYCLE});
+            mm->handleNasEvent(NmUeNasToNas{NmUeNasToNas::PERFORM_MM_CYCLE});
         }
         break;
     }
@@ -122,10 +130,10 @@ void NasTask::onLoop()
 
 void NasTask::performTick()
 {
-    auto sendExpireMsg = [this](nas::NasTimer *timer) {
-        auto *nw = new NwUeNasToNas(NwUeNasToNas::NAS_TIMER_EXPIRE);
-        nw->timer = timer;
-        push(nw);
+    auto sendExpireMsg = [this](UeTimer *timer) {
+        auto *m = new NmUeNasToNas(NmUeNasToNas::NAS_TIMER_EXPIRE);
+        m->timer = timer;
+        push(m);
     };
 
     if (timers.t3346.performTick())

@@ -15,6 +15,7 @@
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
 #include <lib/asn/utils.hpp>
+#include <lib/rls/rls_base.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <lib/sctp/sctp.hpp>
 #include <utils/network.hpp>
@@ -31,66 +32,119 @@ extern "C"
 namespace nr::gnb
 {
 
-struct NwGnbRlsToRrc : NtsMessage
+struct NmGnbRlsToRrc : NtsMessage
 {
     enum PR
     {
-        RRC_PDU_DELIVERY,
-        SIGNAL_LOST
+        SIGNAL_DETECTED,
+        UPLINK_RRC,
     } present;
 
-    // RRC_PDU_DELIVERY
+    // SIGNAL_DETECTED
+    // UPLINK_RRC
+    int ueId{};
+
+    // UPLINK_RRC
+    OctetString data;
+    rrc::RrcChannel rrcChannel{};
+
+    explicit NmGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
+    {
+    }
+};
+
+struct NmGnbRlsToGtp : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY,
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int ueId{};
+    int psi{};
+    OctetString pdu;
+
+    explicit NmGnbRlsToGtp(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_GTP), present(present)
+    {
+    }
+};
+
+struct NmGnbGtpToRls : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY,
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int ueId{};
+    int psi{};
+    OctetString pdu{};
+
+    explicit NmGnbGtpToRls(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_RLS), present(present)
+    {
+    }
+};
+
+struct NmGnbRlsToRls : NtsMessage
+{
+    enum PR
+    {
+        SIGNAL_DETECTED,
+        SIGNAL_LOST,
+        RECEIVE_RLS_MESSAGE,
+        DOWNLINK_RRC,
+        DOWNLINK_DATA,
+        UPLINK_RRC,
+        UPLINK_DATA,
+        RADIO_LINK_FAILURE,
+        TRANSMISSION_FAILURE,
+    } present;
+
+    // SIGNAL_DETECTED
     // SIGNAL_LOST
+    // DOWNLINK_RRC
+    // DOWNLINK_DATA
+    // UPLINK_DATA
+    // UPLINK_RRC
     int ueId{};
 
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu{};
+    // RECEIVE_RLS_MESSAGE
+    std::unique_ptr<rls::RlsMessage> msg{};
 
-    explicit NwGnbRlsToRrc(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RRC), present(present)
-    {
-    }
-};
-
-struct NwGnbRlsToGtp : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY,
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int ueId{};
+    // DOWNLINK_DATA
+    // UPLINK_DATA
     int psi{};
-    OctetString pdu{};
 
-    explicit NwGnbRlsToGtp(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_GTP), present(present)
+    // DOWNLINK_DATA
+    // DOWNLINK_RRC
+    // UPLINK_DATA
+    // UPLINK_RRC
+    OctetString data;
+
+    // DOWNLINK_RRC
+    uint32_t pduId{};
+
+    // DOWNLINK_RRC
+    // UPLINK_RRC
+    rrc::RrcChannel rrcChannel{};
+
+    // RADIO_LINK_FAILURE
+    rls::ERlfCause rlfCause{};
+
+    // TRANSMISSION_FAILURE
+    std::vector<rls::PduInfo> pduList;
+
+    explicit NmGnbRlsToRls(PR present) : NtsMessage(NtsMessageType::GNB_RLS_TO_RLS), present(present)
     {
     }
 };
 
-struct NwGnbGtpToRls : NtsMessage
+struct NmGnbRrcToRls : NtsMessage
 {
     enum PR
     {
-        DATA_PDU_DELIVERY,
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int ueId{};
-    int psi{};
-    OctetString pdu{};
-
-    explicit NwGnbGtpToRls(PR present) : NtsMessage(NtsMessageType::GNB_GTP_TO_RLS), present(present)
-    {
-    }
-};
-
-struct NwGnbRrcToRls : NtsMessage
-{
-    enum PR
-    {
-        RADIO_POWER_ON,
         RRC_PDU_DELIVERY,
     } present;
 
@@ -99,12 +153,12 @@ struct NwGnbRrcToRls : NtsMessage
     rrc::RrcChannel channel{};
     OctetString pdu{};
 
-    explicit NwGnbRrcToRls(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_RLS), present(present)
+    explicit NmGnbRrcToRls(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_RLS), present(present)
     {
     }
 };
 
-struct NwGnbNgapToRrc : NtsMessage
+struct NmGnbNgapToRrc : NtsMessage
 {
     enum PR
     {
@@ -125,12 +179,12 @@ struct NwGnbNgapToRrc : NtsMessage
     asn::Unique<ASN_NGAP_FiveG_S_TMSI> uePagingTmsi{};
     asn::Unique<ASN_NGAP_TAIListForPaging> taiListForPaging{};
 
-    explicit NwGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
+    explicit NmGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
     {
     }
 };
 
-struct NwGnbRrcToNgap : NtsMessage
+struct NmGnbRrcToNgap : NtsMessage
 {
     enum PR
     {
@@ -151,12 +205,12 @@ struct NwGnbRrcToNgap : NtsMessage
     // INITIAL_NAS_DELIVERY
     long rrcEstablishmentCause{};
 
-    explicit NwGnbRrcToNgap(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_NGAP), present(present)
+    explicit NmGnbRrcToNgap(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_NGAP), present(present)
     {
     }
 };
 
-struct NwGnbNgapToGtp : NtsMessage
+struct NmGnbNgapToGtp : NtsMessage
 {
     enum PR
     {
@@ -179,12 +233,12 @@ struct NwGnbNgapToGtp : NtsMessage
     // SESSION_RELEASE
     int psi{};
 
-    explicit NwGnbNgapToGtp(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_GTP), present(present)
+    explicit NmGnbNgapToGtp(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_GTP), present(present)
     {
     }
 };
 
-struct NwGnbSctp : NtsMessage
+struct NmGnbSctp : NtsMessage
 {
     enum PR
     {
@@ -224,12 +278,12 @@ struct NwGnbSctp : NtsMessage
     UniqueBuffer buffer{};
     uint16_t stream{};
 
-    explicit NwGnbSctp(PR present) : NtsMessage(NtsMessageType::GNB_SCTP), present(present)
+    explicit NmGnbSctp(PR present) : NtsMessage(NtsMessageType::GNB_SCTP), present(present)
     {
     }
 };
 
-struct NwGnbStatusUpdate : NtsMessage
+struct NmGnbStatusUpdate : NtsMessage
 {
     static constexpr const int NGAP_IS_UP = 1;
 
@@ -238,17 +292,17 @@ struct NwGnbStatusUpdate : NtsMessage
     // NGAP_IS_UP
     bool isNgapUp{};
 
-    explicit NwGnbStatusUpdate(const int what) : NtsMessage(NtsMessageType::GNB_STATUS_UPDATE), what(what)
+    explicit NmGnbStatusUpdate(const int what) : NtsMessage(NtsMessageType::GNB_STATUS_UPDATE), what(what)
     {
     }
 };
 
-struct NwGnbCliCommand : NtsMessage
+struct NmGnbCliCommand : NtsMessage
 {
     std::unique_ptr<app::GnbCliCommand> cmd;
     InetAddress address;
 
-    NwGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address)
+    NmGnbCliCommand(std::unique_ptr<app::GnbCliCommand> cmd, InetAddress address)
         : NtsMessage(NtsMessageType::GNB_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
     }

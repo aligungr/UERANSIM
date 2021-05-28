@@ -47,7 +47,7 @@ class Json
 
   public:
     Json();
-    /* no-explicit */ Json(nullptr_t v);
+    /* no-explicit */ Json(std::nullptr_t v);
     /* no-explicit */ Json(std::string str);
     /* no-explicit */ Json(bool v);
     /* no-explicit */ Json(uint8_t v);
@@ -105,7 +105,7 @@ class Json
     [[nodiscard]] std::string dumpYaml() const;
 };
 
-Json ToJson(nullptr_t);
+Json ToJson(std::nullptr_t);
 Json ToJson(bool v);
 Json ToJson(const std::string &v);
 Json ToJson(uint8_t v);

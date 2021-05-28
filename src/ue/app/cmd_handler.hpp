@@ -24,7 +24,7 @@ class UeCmdHandler
     {
     }
 
-    void handleCmd(NwUeCliCommand &msg);
+    void handleCmd(NmUeCliCommand &msg);
 
   private:
     void pauseTasks();
@@ -32,7 +32,7 @@ class UeCmdHandler
     bool isAllPaused();
 
   private:
-    void handleCmdImpl(NwUeCliCommand &msg);
+    void handleCmdImpl(NmUeCliCommand &msg);
 
   private:
     void sendResult(const InetAddress &address, const std::string &output);

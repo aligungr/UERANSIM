@@ -39,22 +39,25 @@ enum class NtsMessageType
     GNB_RLS_TO_GTP,
     GNB_GTP_TO_RLS,
     GNB_RRC_TO_RLS,
+    GNB_RLS_TO_RLS,
     GNB_NGAP_TO_RRC,
     GNB_RRC_TO_NGAP,
     GNB_NGAP_TO_GTP,
     GNB_SCTP,
 
-    UE_APP_TO_RLS,
     UE_APP_TO_TUN,
     UE_APP_TO_NAS,
     UE_TUN_TO_APP,
     UE_RRC_TO_NAS,
     UE_NAS_TO_RRC,
-    UE_RRC_TO_RLS,
+	UE_RRC_TO_RLS,
+	UE_RRC_TO_RRC,
     UE_NAS_TO_NAS,
     UE_RLS_TO_RRC,
-    UE_RLS_TO_APP,
-    UE_NAS_TO_APP,
+    UE_RLS_TO_NAS,
+    UE_RLS_TO_RLS,
+	UE_NAS_TO_APP,
+	UE_NAS_TO_RLS,
 };
 
 struct NtsMessage
@@ -68,11 +71,11 @@ struct NtsMessage
     virtual ~NtsMessage() = default;
 };
 
-struct NwTimerExpired : NtsMessage
+struct NmTimerExpired : NtsMessage
 {
     int timerId;
 
-    explicit NwTimerExpired(int timerId) : NtsMessage(NtsMessageType::TIMER_EXPIRED), timerId(timerId)
+    explicit NmTimerExpired(int timerId) : NtsMessage(NtsMessageType::TIMER_EXPIRED), timerId(timerId)
     {
     }
 };

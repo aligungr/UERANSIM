@@ -18,17 +18,28 @@ bool NasMm::hasEmergency()
 {
     // Indicates emergency services are required (even if registered for normal initial registration)
     // This happens if it 'has' or 'need' some emergency PDU Session, as well.
-
     if (m_rmState == ERmState::RM_REGISTERED && m_registeredForEmergency)
         return true;
+
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED && m_lastRegistrationRequest &&
         m_lastRegistrationRequest->registrationType.registrationType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
         return true;
 
-    // TODO: Other case which is an emergency PDU session need to be established (and wanted to be
-    //  established soon)
+    if (m_procCtl.initialRegistration && m_procCtl.initialRegistration == EInitialRegCause::EMERGENCY_SERVICES)
+        return true;
+
+    if (m_procCtl.mobilityRegistration && m_procCtl.mobilityRegistration == ERegUpdateCause::EMERGENCY_CASE)
+        return true;
+
+    if (m_procCtl.serviceRequest && m_procCtl.serviceRequest == EServiceReqCause::EMERGENCY_FALLBACK)
+        return true;
+
     if (m_sm->anyEmergencySession())
         return true;
+
+    if (m_usim->m_emgIndication)
+        return true;
+
     return false;
 }
 
@@ -45,24 +56,20 @@ void NasMm::setN1Capability(bool enabled)
 
 bool NasMm::isInNonAllowedArea()
 {
-    if (!m_usim->isValid())
-        return false;
-    if (!m_usim->m_currentPlmn.has_value())
+    auto currentCell = m_base->shCtx.currentCell.get();
+    if (!currentCell.hasValue())
         return false;
 
-    auto &plmn = *m_usim->m_currentPlmn;
-
-    if (nas::utils::ServiceAreaListForbidsPlmn(m_usim->m_serviceAreaList, nas::utils::PlmnFrom(plmn)))
+    auto plmn = currentCell.plmn;
+    if (nas::utils::ServiceAreaListForbidsPlmn(m_storage->serviceAreaList->get(), nas::utils::PlmnFrom(plmn)))
         return true;
 
-    if (m_usim->m_servingCell.has_value())
+    int tac = currentCell.tac;
+    if (nas::utils::ServiceAreaListForbidsTai(m_storage->serviceAreaList->get(),
+                                              nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(plmn), octet3{tac}}))
     {
-        if (nas::utils::ServiceAreaListForbidsTai(
-                m_usim->m_serviceAreaList,
-                nas::VTrackingAreaIdentity{nas::utils::PlmnFrom(plmn), octet3{m_usim->m_servingCell->tac}}))
-            return true;
+        return true;
     }
-
     return false;
 }
 

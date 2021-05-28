@@ -99,7 +99,7 @@ void NgapTask::handleAssociationShutdown(int amfId)
 
     amf->state = EAmfState::NOT_CONNECTED;
 
-    auto *w = new NwGnbSctp(NwGnbSctp::CONNECTION_CLOSE);
+    auto *w = new NmGnbSctp(NmGnbSctp::CONNECTION_CLOSE);
     w->clientId = amfId;
     m_base->sctpTask->push(w);
 
@@ -192,11 +192,11 @@ void NgapTask::receiveNgSetupResponse(int amfId, ASN_NGAP_NGSetupResponse *msg)
     {
         m_isInitialized = true;
 
-        auto *update = new NwGnbStatusUpdate(NwGnbStatusUpdate::NGAP_IS_UP);
+        auto *update = new NmGnbStatusUpdate(NmGnbStatusUpdate::NGAP_IS_UP);
         update->isNgapUp = true;
         m_base->appTask->push(update);
 
-        m_base->rrcTask->push(new NwGnbNgapToRrc(NwGnbNgapToRrc::RADIO_POWER_ON));
+        m_base->rrcTask->push(new NmGnbNgapToRrc(NmGnbNgapToRrc::RADIO_POWER_ON));
     }
 }
 

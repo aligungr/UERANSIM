@@ -32,17 +32,17 @@ void GnbAppTask::onLoop()
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_STATUS_UPDATE: {
-        auto *w = dynamic_cast<NwGnbStatusUpdate *>(msg);
+        auto *w = dynamic_cast<NmGnbStatusUpdate *>(msg);
         switch (w->what)
         {
-        case NwGnbStatusUpdate::NGAP_IS_UP:
+        case NmGnbStatusUpdate::NGAP_IS_UP:
             m_statusInfo.isNgapUp = w->isNgapUp;
             break;
         }
         break;
     }
     case NtsMessageType::GNB_CLI_COMMAND: {
-        auto *w = dynamic_cast<NwGnbCliCommand *>(msg);
+        auto *w = dynamic_cast<NmGnbCliCommand *>(msg);
         GnbCmdHandler handler{m_base};
         handler.handleCmd(*w);
         break;

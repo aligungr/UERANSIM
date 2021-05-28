@@ -36,6 +36,7 @@ enum class StateType
     RM,
     CM,
     U5,
+    RRC
 };
 
 class INodeListener

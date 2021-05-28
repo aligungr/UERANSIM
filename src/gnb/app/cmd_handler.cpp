@@ -66,7 +66,7 @@ bool GnbCmdHandler::isAllPaused()
     return true;
 }
 
-void GnbCmdHandler::handleCmd(NwGnbCliCommand &msg)
+void GnbCmdHandler::handleCmd(NmGnbCliCommand &msg)
 {
     pauseTasks();
 
@@ -97,7 +97,7 @@ void GnbCmdHandler::handleCmd(NwGnbCliCommand &msg)
     unpauseTasks();
 }
 
-void GnbCmdHandler::handleCmdImpl(NwGnbCliCommand &msg)
+void GnbCmdHandler::handleCmdImpl(NmGnbCliCommand &msg)
 {
     switch (msg.cmd->present)
     {

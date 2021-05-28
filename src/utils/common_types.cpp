@@ -36,6 +36,9 @@ Json ToJson(const Supi &v)
 
 Json ToJson(const Plmn &v)
 {
+    if (!v.hasValue())
+        return nullptr;
+
     std::stringstream ss{};
     ss << std::setfill('0') << std::setw(3) << v.mcc << "/";
     ss << std::setfill('0') << std::setw(v.isLongMnc ? 3 : 2) << v.mnc;
@@ -57,20 +60,18 @@ Json ToJson(const PlmnSupport &v)
     return Json::Obj({{"plmn", ToJson(v.plmn)}, {"nssai", ToJson(v.sliceSupportList)}});
 }
 
-Json ToJson(const EDeregCause &v)
+Json ToJson(const ECellCategory &v)
 {
     switch (v)
     {
-    case EDeregCause::UNSPECIFIED:
-        return "NORMAL";
-    case EDeregCause::SWITCH_OFF:
-        return "SWITCH-OFF";
-    case EDeregCause::USIM_REMOVAL:
-        return "USIM-REMOVAL";
-    case EDeregCause::DISABLE_5G:
-        return "DISABLE-5G";
-    case EDeregCause::ECALL_INACTIVITY:
-        return "ECALL-INACTIVITY";
+    case ECellCategory::BARRED_CELL:
+        return "BARRED";
+    case ECellCategory::RESERVED_CELL:
+        return "RESERVED";
+    case ECellCategory::ACCEPTABLE_CELL:
+        return "ACCEPTABLE";
+    case ECellCategory::SUITABLE_CELL:
+        return "SUITABLE";
     default:
         return "?";
     }
@@ -87,6 +88,11 @@ bool operator==(const SingleSlice &lhs, const SingleSlice &rhs)
     return ((int)*lhs.sd) == ((int)*rhs.sd);
 }
 
+bool operator!=(const SingleSlice &lhs, const SingleSlice &rhs)
+{
+    return !(lhs == rhs);
+}
+
 bool operator==(const Plmn &lhs, const Plmn &rhs)
 {
     if (lhs.mcc != rhs.mcc)
@@ -96,9 +102,84 @@ bool operator==(const Plmn &lhs, const Plmn &rhs)
     return lhs.isLongMnc == rhs.isLongMnc;
 }
 
+bool operator!=(const Plmn &lhs, const Plmn &rhs)
+{
+    return !(lhs == rhs);
+}
+
 bool operator==(const GlobalNci &lhs, const GlobalNci &rhs)
 {
     return lhs.plmn == rhs.plmn && lhs.nci == rhs.nci;
+}
+
+bool operator!=(const GlobalNci &lhs, const GlobalNci &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator==(const Tai &lhs, const Tai &rhs)
+{
+    return lhs.plmn == rhs.plmn && lhs.tac == rhs.tac;
+}
+
+bool operator!=(const Tai &lhs, const Tai &rhs)
+{
+    return !(lhs == rhs);
+}
+
+Json ToJson(const EDeregCause &v)
+{
+    switch (v)
+    {
+    case EDeregCause::NORMAL:
+        return "NORMAL";
+    case EDeregCause::SWITCH_OFF:
+        return "SWITCH-OFF";
+    case EDeregCause::USIM_REMOVAL:
+        return "USIM-REMOVAL";
+    case EDeregCause::DISABLE_5G:
+        return "DISABLE-5G";
+    case EDeregCause::ECALL_INACTIVITY:
+        return "ECALL-INACTIVITY";
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const EInitialRegCause &v)
+{
+    switch (v)
+    {
+    case EInitialRegCause::EMERGENCY_SERVICES:
+        return "EMERGENCY-SERVICES";
+    case EInitialRegCause::MM_DEREG_NORMAL_SERVICE:
+        return "MM-DEREG-NORMAL-SERVICE";
+    case EInitialRegCause::T3346_EXPIRY:
+        return "T3346-EXPIRY";
+    case EInitialRegCause::DUE_TO_DEREGISTRATION:
+        return "DUE-TO-DEREGISTRATION";
+    case EInitialRegCause::DUE_TO_SERVICE_REJECT:
+        return "DUE-TO-SERVICE_REJECT";
+    case EInitialRegCause::TAI_CHANGE_IN_ATT_REG:
+        return "TAI-CHANGE-IN-ATT-REG";
+    case EInitialRegCause::PLMN_CHANGE_IN_ATT_REG:
+        return "PLMN-CHANGE-IN-ATT-REG";
+    case EInitialRegCause::T3346_EXPIRY_IN_ATT_REG:
+        return "T3346-EXPIRY-IN-ATT-REG";
+    case EInitialRegCause::T3502_EXPIRY_IN_ATT_REG:
+        return "T3502-EXPIRY-IN-ATT-REG";
+    case EInitialRegCause::T3511_EXPIRY_IN_ATT_REG:
+        return "T3511-EXPIRY-IN-ATT-REG";
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const Tai &v)
+{
+    if (!v.hasValue())
+        return nullptr;
+    return "PLMN[" + ToJson(v.plmn).str() + "] TAC[" + std::to_string(v.tac) + "]";
 }
 
 void NetworkSlice::addIfNotExists(const SingleSlice &slice)
@@ -122,4 +203,34 @@ std::size_t std::hash<GlobalNci>::operator()(const GlobalNci &v) const noexcept
     utils::HashCombine(h, v.plmn);
     utils::HashCombine(h, v.nci);
     return h;
+}
+
+std::size_t std::hash<Tai>::operator()(const Tai &v) const noexcept
+{
+    std::size_t h = 0;
+    utils::HashCombine(h, v.plmn);
+    utils::HashCombine(h, v.tac);
+    return h;
+}
+
+bool Plmn::hasValue() const
+{
+    return this->mcc != 0;
+}
+
+Tai::Tai() : plmn{}, tac{}
+{
+}
+
+Tai::Tai(const Plmn &plmn, int tac) : plmn{plmn}, tac{tac}
+{
+}
+
+Tai::Tai(int mcc, int mnc, bool longMnc, int tac) : plmn{mcc, mnc, longMnc}, tac{tac}
+{
+}
+
+bool Tai::hasValue() const
+{
+    return plmn.hasValue();
 }

@@ -51,33 +51,18 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RLS_TO_APP: {
-        auto *w = dynamic_cast<NwUeRlsToApp *>(msg);
-        switch (w->present)
-        {
-        case NwUeRlsToApp::DATA_PDU_DELIVERY: {
-            auto *tunTask = m_tunTasks[w->psi];
-            if (tunTask)
-            {
-                auto *nw = new NwAppToTun(NwAppToTun::DATA_PDU_DELIVERY);
-                nw->psi = w->psi;
-                nw->data = std::move(w->pdu);
-                tunTask->push(nw);
-            }
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_TUN_TO_APP: {
-        auto *w = dynamic_cast<NwUeTunToApp *>(msg);
+        auto *w = dynamic_cast<NmUeTunToApp *>(msg);
         switch (w->present)
         {
-        case NwUeTunToApp::DATA_PDU_DELIVERY: {
-            handleUplinkDataRequest(w->psi, std::move(w->data));
+        case NmUeTunToApp::DATA_PDU_DELIVERY: {
+            auto *m = new NmUeAppToNas(NmUeAppToNas::UPLINK_DATA_DELIVERY);
+            m->psi = w->psi;
+            m->data = std::move(w->data);
+            m_base->nasTask->push(m);
             break;
         }
-        case NwUeTunToApp::TUN_ERROR: {
+        case NmUeTunToApp::TUN_ERROR: {
             m_logger->err("TUN failure [%s]", w->error.c_str());
             break;
         }
@@ -85,28 +70,39 @@ void UeAppTask::onLoop()
         break;
     }
     case NtsMessageType::UE_NAS_TO_APP: {
-        auto *w = dynamic_cast<NwUeNasToApp *>(msg);
+        auto *w = dynamic_cast<NmUeNasToApp *>(msg);
         switch (w->present)
         {
-        case NwUeNasToApp::PERFORM_SWITCH_OFF: {
+        case NmUeNasToApp::PERFORM_SWITCH_OFF: {
             setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
+            break;
+        }
+        case NmUeNasToApp::DOWNLINK_DATA_DELIVERY: {
+            auto *tunTask = m_tunTasks[w->psi];
+            if (tunTask)
+            {
+                auto *m = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
+                m->psi = w->psi;
+                m->data = std::move(w->data);
+                tunTask->push(m);
+            }
             break;
         }
         }
         break;
     }
     case NtsMessageType::UE_STATUS_UPDATE: {
-        receiveStatusUpdate(*dynamic_cast<NwUeStatusUpdate *>(msg));
+        receiveStatusUpdate(*dynamic_cast<NmUeStatusUpdate *>(msg));
         break;
     }
     case NtsMessageType::UE_CLI_COMMAND: {
-        auto *w = dynamic_cast<NwUeCliCommand *>(msg);
+        auto *w = dynamic_cast<NmUeCliCommand *>(msg);
         UeCmdHandler handler{m_base};
         handler.handleCmd(*w);
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NwTimerExpired *>(msg);
+        auto *w = dynamic_cast<NmTimerExpired *>(msg);
         if (w->timerId == SWITCH_OFF_TIMER_ID)
         {
             m_logger->info("UE device is switching off");
@@ -121,30 +117,17 @@ void UeAppTask::onLoop()
     delete msg;
 }
 
-void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
+void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
 {
-    if (msg.what == NwUeStatusUpdate::SESSION_ESTABLISHMENT)
+    if (msg.what == NmUeStatusUpdate::SESSION_ESTABLISHMENT)
     {
         auto *session = msg.pduSession;
-
-        UePduSessionInfo sessionInfo{};
-        sessionInfo.psi = session->psi;
-
-        sessionInfo.apn = session->apn;
-        sessionInfo.sNssai = session->sNssai;
-        sessionInfo.type = nas::utils::EnumToString(session->sessionType);
-        if (session->pduAddress.has_value())
-            sessionInfo.address = utils::OctetStringToIp(session->pduAddress->pduAddressInformation);
-        sessionInfo.isEmergency = session->isEmergency;
-        sessionInfo.uplinkPending = false;
-
-        m_pduSessions[session->psi] = std::move(sessionInfo);
 
         setupTunInterface(session);
         return;
     }
 
-    if (msg.what == NwUeStatusUpdate::SESSION_RELEASE)
+    if (msg.what == NmUeStatusUpdate::SESSION_RELEASE)
     {
         if (m_tunTasks[msg.psi] != nullptr)
         {
@@ -153,15 +136,10 @@ void UeAppTask::receiveStatusUpdate(NwUeStatusUpdate &msg)
             m_tunTasks[msg.psi] = nullptr;
         }
 
-        if (m_pduSessions[msg.psi].has_value())
-        {
-            m_logger->info("PDU session[%d] released", msg.psi);
-            m_pduSessions[msg.psi] = {};
-        }
         return;
     }
 
-    if (msg.what == NwUeStatusUpdate::CM_STATE)
+    if (msg.what == NmUeStatusUpdate::CM_STATE)
     {
         m_cmState = msg.cmState;
         return;
@@ -225,42 +203,6 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
                    allocatedName.c_str(), ipAddress.c_str());
-}
-
-void UeAppTask::handleUplinkDataRequest(int psi, OctetString &&data)
-{
-    if (!m_pduSessions[psi].has_value())
-        return;
-
-    if (m_cmState == ECmState::CM_CONNECTED)
-    {
-        if (m_pduSessions[psi]->uplinkPending)
-        {
-            m_pduSessions[psi]->uplinkPending = false;
-
-            auto *w = new NwUeAppToNas(NwUeAppToNas::UPLINK_STATUS_CHANGE);
-            w->psi = psi;
-            w->isPending = false;
-            m_base->nasTask->push(w);
-        }
-
-        auto *nw = new NwUeAppToRls(NwUeAppToRls::DATA_PDU_DELIVERY);
-        nw->psi = psi;
-        nw->pdu = std::move(data);
-        m_base->rlsTask->push(nw);
-    }
-    else
-    {
-        if (!m_pduSessions[psi]->uplinkPending)
-        {
-            m_pduSessions[psi]->uplinkPending = true;
-
-            auto *w = new NwUeAppToNas(NwUeAppToNas::UPLINK_STATUS_CHANGE);
-            w->psi = psi;
-            w->isPending = true;
-            m_base->nasTask->push(w);
-        }
-    }
 }
 
 } // namespace nr::ue

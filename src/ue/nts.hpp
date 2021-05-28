@@ -10,10 +10,12 @@
 
 #include "types.hpp"
 #include "ue.hpp"
-#include <lib/app/cli_base.hpp>
-#include <lib/nas/timer.hpp>
-#include <lib/rrc/rrc.hpp>
+
 #include <utility>
+
+#include <lib/app/cli_base.hpp>
+#include <lib/rls/rls_base.hpp>
+#include <lib/rrc/rrc.hpp>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -21,7 +23,7 @@
 namespace nr::ue
 {
 
-struct NwAppToTun : NtsMessage
+struct NmAppToTun : NtsMessage
 {
     enum PR
     {
@@ -32,12 +34,12 @@ struct NwAppToTun : NtsMessage
     int psi{};
     OctetString data{};
 
-    explicit NwAppToTun(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_TUN), present(present)
+    explicit NmAppToTun(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_TUN), present(present)
     {
     }
 };
 
-struct NwUeTunToApp : NtsMessage
+struct NmUeTunToApp : NtsMessage
 {
     enum PR
     {
@@ -52,162 +54,189 @@ struct NwUeTunToApp : NtsMessage
     // TUN_ERROR
     std::string error{};
 
-    explicit NwUeTunToApp(PR present) : NtsMessage(NtsMessageType::UE_TUN_TO_APP), present(present)
+    explicit NmUeTunToApp(PR present) : NtsMessage(NtsMessageType::UE_TUN_TO_APP), present(present)
     {
     }
 };
 
-struct NwUeRrcToNas : NtsMessage
+struct NmUeRrcToNas : NtsMessage
 {
     enum PR
     {
+        NAS_NOTIFY,
         NAS_DELIVERY,
-        PLMN_SEARCH_RESPONSE,
         RRC_CONNECTION_SETUP,
         RRC_CONNECTION_RELEASE,
+        RRC_ESTABLISHMENT_FAILURE,
         RADIO_LINK_FAILURE,
-        SERVING_CELL_CHANGE,
         PAGING,
+        ACTIVE_CELL_CHANGED,
+        RRC_FALLBACK_INDICATION,
     } present;
 
     // NAS_DELIVERY
-    OctetString nasPdu{};
-
-    // PLMN_SEARCH_RESPONSE
-    std::vector<UeCellMeasurement> measurements{};
-
-    // SERVING_CELL_CHANGE
-    UeCellInfo servingCell{};
+    OctetString nasPdu;
 
     // PAGING
-    std::vector<GutiMobileIdentity> pagingTmsi{};
+    std::vector<GutiMobileIdentity> pagingTmsi;
 
-    explicit NwUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
+    // ACTIVE_CELL_CHANGED
+    Tai previousTai;
+
+    explicit NmUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeNasToRrc : NtsMessage
+struct NmUeNasToRrc : NtsMessage
 {
     enum PR
     {
-        PLMN_SEARCH_REQUEST,
         LOCAL_RELEASE_CONNECTION,
-        INITIAL_NAS_DELIVERY,
         UPLINK_NAS_DELIVERY,
-        CELL_SELECTION_COMMAND,
+        RRC_NOTIFY,
     } present;
 
-    // INITIAL_NAS_DELIVERY
     // UPLINK_NAS_DELIVERY
-    OctetString nasPdu{};
+    uint32_t pduId{};
+    OctetString nasPdu;
 
-    // INITIAL_NAS_DELIVERY
-    long rrcEstablishmentCause{};
+    // LOCAL_RELEASE_CONNECTION
+    bool treatBarred{};
 
-    // CELL_SELECTION_COMMAND
-    GlobalNci cellId{};
-    bool isSuitableCell{}; // otherwise 'acceptable'
-
-    explicit NwUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
+    explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {
     }
 };
 
-struct NwUeRrcToRls : NtsMessage
+struct NmUeRrcToRls : NtsMessage
 {
     enum PR
     {
-        PLMN_SEARCH_REQUEST,
-        CELL_SELECTION_COMMAND,
+        ASSIGN_CURRENT_CELL,
         RRC_PDU_DELIVERY,
         RESET_STI,
     } present;
 
-    // CELL_SELECTION_COMMAND
-    GlobalNci cellId{};
-    bool isSuitableCell{}; // otherwise 'acceptable'
+    // ASSIGN_CURRENT_CELL
+    int cellId{};
 
     // RRC_PDU_DELIVERY
     rrc::RrcChannel channel{};
+    uint32_t pduId{};
     OctetString pdu{};
 
-    explicit NwUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
+    explicit NmUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeRlsToRrc : NtsMessage
+struct NmUeRrcToRrc : NtsMessage
 {
     enum PR
     {
-        PLMN_SEARCH_RESPONSE,
-        SERVING_CELL_CHANGE,
-        RRC_PDU_DELIVERY,
-        RADIO_LINK_FAILURE
+        TRIGGER_CYCLE,
     } present;
 
-    // PLMN_SEARCH_RESPONSE
-    std::vector<UeCellMeasurement> measurements{};
-
-    // SERVING_CELL_CHANGE
-    UeCellInfo servingCell{};
-
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu{};
-
-    explicit NwUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
+    explicit NmUeRrcToRrc(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RRC), present(present)
     {
     }
 };
 
-struct NwUeNasToNas : NtsMessage
+struct NmUeRlsToRrc : NtsMessage
+{
+    enum PR
+    {
+        DOWNLINK_RRC_DELIVERY,
+        SIGNAL_CHANGED,
+        RADIO_LINK_FAILURE
+    } present;
+
+    // DOWNLINK_RRC_DELIVERY
+    // SIGNAL_CHANGED
+    int cellId{};
+
+    // DOWNLINK_RRC_DELIVERY
+    rrc::RrcChannel channel{};
+    OctetString pdu;
+
+    // SIGNAL_CHANGED
+    int dbm{};
+
+    // RADIO_LINK_FAILURE
+    rls::ERlfCause rlfCause{};
+
+    explicit NmUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
+    {
+    }
+};
+
+struct NmUeNasToNas : NtsMessage
 {
     enum PR
     {
         PERFORM_MM_CYCLE,
         NAS_TIMER_EXPIRE,
-        ESTABLISH_INITIAL_SESSIONS
     } present;
 
     // NAS_TIMER_EXPIRE
-    nas::NasTimer *timer{};
+    UeTimer *timer{};
 
-    explicit NwUeNasToNas(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_NAS), present(present)
+    explicit NmUeNasToNas(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeNasToApp : NtsMessage
+struct NmUeNasToApp : NtsMessage
 {
     enum PR
     {
         PERFORM_SWITCH_OFF,
+        DOWNLINK_DATA_DELIVERY
     } present;
 
-    explicit NwUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
+    // DOWNLINK_DATA_DELIVERY
+    int psi{};
+    OctetString data;
+
+    explicit NmUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
     {
     }
 };
 
-struct NwUeAppToNas : NtsMessage
+struct NmUeAppToNas : NtsMessage
 {
     enum PR
     {
-        UPLINK_STATUS_CHANGE,
+        UPLINK_DATA_DELIVERY,
     } present;
 
-    // UPLINK_STATUS_CHANGE
+    // UPLINK_DATA_DELIVERY
     int psi{};
-    bool isPending{};
+    OctetString data;
 
-    explicit NwUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
+    explicit NmUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeAppToRls : NtsMessage
+struct NmUeNasToRls : NtsMessage
+{
+    enum PR
+    {
+        DATA_PDU_DELIVERY
+    } present;
+
+    // DATA_PDU_DELIVERY
+    int psi{};
+    OctetString pdu;
+
+    explicit NmUeNasToRls(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RLS), present(present)
+    {
+    }
+};
+
+struct NmUeRlsToNas : NtsMessage
 {
     enum PR
     {
@@ -218,28 +247,68 @@ struct NwUeAppToRls : NtsMessage
     int psi{};
     OctetString pdu{};
 
-    explicit NwUeAppToRls(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_RLS), present(present)
+    explicit NmUeRlsToNas(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_NAS), present(present)
     {
     }
 };
 
-struct NwUeRlsToApp : NtsMessage
+struct NmUeRlsToRls : NtsMessage
 {
     enum PR
     {
-        DATA_PDU_DELIVERY
+        RECEIVE_RLS_MESSAGE,
+        SIGNAL_CHANGED,
+        UPLINK_DATA,
+        UPLINK_RRC,
+        DOWNLINK_DATA,
+        DOWNLINK_RRC,
+        RADIO_LINK_FAILURE,
+        TRANSMISSION_FAILURE,
+        ASSIGN_CURRENT_CELL,
     } present;
 
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString pdu{};
+    // RECEIVE_RLS_MESSAGE
+    // UPLINK_RRC
+    // DOWNLINK_RRC
+    // SIGNAL_CHANGED
+    // ASSIGN_CURRENT_CELL
+    int cellId{};
 
-    explicit NwUeRlsToApp(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_APP), present(present)
+    // RECEIVE_RLS_MESSAGE
+    std::unique_ptr<rls::RlsMessage> msg{};
+
+    // SIGNAL_CHANGED
+    int dbm{};
+
+    // UPLINK_DATA
+    // DOWNLINK_DATA
+    int psi{};
+
+    // UPLINK_DATA
+    // DOWNLINK_DATA
+    // UPLINK_RRC
+    // DOWNLINK_RRC
+    OctetString data;
+
+    // UPLINK_RRC
+    // DOWNLINK_RRC
+    rrc::RrcChannel rrcChannel{};
+
+    // UPLINK_RRC
+    uint32_t pduId{};
+
+    // RADIO_LINK_FAILURE
+    rls::ERlfCause rlfCause{};
+
+    // TRANSMISSION_FAILURE
+    std::vector<rls::PduInfo> pduList;
+
+    explicit NmUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
     {
     }
 };
 
-struct NwUeStatusUpdate : NtsMessage
+struct NmUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;
     static constexpr const int SESSION_RELEASE = 2;
@@ -256,17 +325,17 @@ struct NwUeStatusUpdate : NtsMessage
     // CM_STATE
     ECmState cmState{};
 
-    explicit NwUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
+    explicit NmUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
     {
     }
 };
 
-struct NwUeCliCommand : NtsMessage
+struct NmUeCliCommand : NtsMessage
 {
     std::unique_ptr<app::UeCliCommand> cmd;
     InetAddress address;
 
-    NwUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
+    NmUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
         : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address)
     {
     }

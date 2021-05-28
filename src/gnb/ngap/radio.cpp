@@ -22,7 +22,7 @@ namespace nr::gnb
 void NgapTask::handleRadioLinkFailure(int ueId)
 {
     // Notify GTP task
-    auto *w2 = new NwGnbNgapToGtp(NwGnbNgapToGtp::UE_CONTEXT_RELEASE);
+    auto *w2 = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_RELEASE);
     w2->ueId = ueId;
     m_base->gtpTask->push(w2);
 
@@ -48,7 +48,7 @@ void NgapTask::receivePaging(int amfId, ASN_NGAP_Paging *msg)
         return;
     }
 
-    auto *w = new NwGnbNgapToRrc(NwGnbNgapToRrc::PAGING);
+    auto *w = new NmGnbNgapToRrc(NmGnbNgapToRrc::PAGING);
     w->uePagingTmsi =
         asn::UniqueCopy(*ieUePagingIdentity->UEPagingIdentity.choice.fiveG_S_TMSI, asn_DEF_ASN_NGAP_FiveG_S_TMSI);
     w->taiListForPaging = asn::UniqueCopy(ieTaiListForPaging->TAIListForPaging, asn_DEF_ASN_NGAP_TAIListForPaging);

@@ -11,7 +11,6 @@
 #include <ue/nas/usim/usim.hpp>
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
-#include <lib/nas/timer.hpp>
 #include <ue/nas/mm/mm.hpp>
 #include <ue/nas/sm/sm.hpp>
 #include <ue/nts.hpp>
@@ -27,7 +26,7 @@ class NasTask : public NtsTask
     TaskBase *base;
     std::unique_ptr<Logger> logger;
 
-    UeTimers timers;
+    NasTimers timers;
     NasMm *mm;
     NasSm *sm;
     Usim *usim;

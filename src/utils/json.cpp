@@ -161,7 +161,7 @@ Json::Json() : m_type{Type::NULL_TYPE}
 {
 }
 
-Json::Json(nullptr_t) : m_type{Type::NULL_TYPE}
+Json::Json(std::nullptr_t) : m_type{Type::NULL_TYPE}
 {
 }
 
@@ -362,7 +362,7 @@ void Json::put(std::string key, Json value)
     m_children.emplace_back(std::move(key), std::move(value));
 }
 
-Json ToJson(nullptr_t)
+Json ToJson(std::nullptr_t)
 {
     return nullptr;
 }

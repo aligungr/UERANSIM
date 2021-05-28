@@ -53,7 +53,7 @@ void NgapTask::receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetu
     if (ie)
         deliverDownlinkNas(ue->ctxId, asn::GetOctetString(ie->NAS_PDU));
 
-    auto *w = new NwGnbNgapToGtp(NwGnbNgapToGtp::UE_CONTEXT_UPDATE);
+    auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_UPDATE);
     w->update = std::make_unique<GtpUeContextUpdate>(true, ue->ctxId, ue->ueAmbr);
     m_base->gtpTask->push(w);
 }
@@ -67,12 +67,12 @@ void NgapTask::receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand
         return;
 
     // Notify RRC task
-    auto *w1 = new NwGnbNgapToRrc(NwGnbNgapToRrc::AN_RELEASE);
+    auto *w1 = new NmGnbNgapToRrc(NmGnbNgapToRrc::AN_RELEASE);
     w1->ueId = ue->ctxId;
     m_base->rrcTask->push(w1);
 
     // Notify GTP task
-    auto *w2 = new NwGnbNgapToGtp(NwGnbNgapToGtp::UE_CONTEXT_RELEASE);
+    auto *w2 = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_RELEASE);
     w2->ueId = ue->ctxId;
     m_base->gtpTask->push(w2);
 
@@ -108,7 +108,7 @@ void NgapTask::receiveContextModification(int amfId, ASN_NGAP_UEContextModificat
     auto *response = asn::ngap::NewMessagePdu<ASN_NGAP_UEContextModificationResponse>({});
     sendNgapUeAssociated(ue->ctxId, response);
 
-    auto *w = new NwGnbNgapToGtp(NwGnbNgapToGtp::UE_CONTEXT_UPDATE);
+    auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_UPDATE);
     w->update = std::make_unique<GtpUeContextUpdate>(false, ue->ctxId, ue->ueAmbr);
     m_base->gtpTask->push(w);
 }

@@ -14,30 +14,55 @@
 namespace nr::ue
 {
 
-void NasMm::sendServiceRequest(EServiceReqCause reqCause)
+EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
-    m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
-
     // "The procedure shall only be initiated by the UE when the following conditions are fulfilled ..."
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
     {
         m_logger->warn("Service Request canceled, MM specific procedure is ongoing");
-        return;
+        return EProcRc::STAY;
     }
     if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
     {
         m_logger->debug("Service Request canceled, already in 5GMM-SERVICE-REQUEST-INITIATED");
-        return;
+        return EProcRc::CANCEL;
     }
-    if (m_usim->m_uState != E5UState::U1_UPDATED)
+    if (m_storage->uState->get() != E5UState::U1_UPDATED)
     {
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
-        return;
+        return EProcRc::STAY;
     }
-    if (!nas::utils::TaiListContains(m_usim->m_taiList, *m_usim->m_currentTai))
+    Tai currentTai = m_base->shCtx.getCurrentTai();
+    if (!currentTai.hasValue())
+    {
+        m_logger->err("Service Request canceled, no active cell exists");
+        return EProcRc::STAY;
+    }
+    if (!nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
     {
         m_logger->err("Service Request canceled, current TAI is not in the TAI list");
-        return;
+        return EProcRc::CANCEL;
+    }
+
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE)
+    {
+        if (reqCause != EServiceReqCause::IDLE_PAGING &&
+            reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP && !isHighPriority() && !hasEmergency())
+        {
+            m_logger->debug("Service Request canceled, registered in non allowed service");
+            return EProcRc::CANCEL;
+        }
+    }
+
+    if (m_mmSubState == EMmSubState::MM_REGISTERED_UPDATE_NEEDED)
+    {
+        if (reqCause != EServiceReqCause::IDLE_PAGING &&
+            reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP)
+        {
+            return EProcRc::STAY;
+        }
     }
 
     // 5.6.1.7 Abnormal cases in the UE
@@ -46,11 +71,11 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     {
         if (reqCause != EServiceReqCause::IDLE_PAGING &&
             reqCause != EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP &&
-            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP && !isHighPriority() && !hasEmergency() &&
-            reqCause != EServiceReqCause::EMERGENCY_FALLBACK)
+            reqCause != EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP &&
+            reqCause != EServiceReqCause::EMERGENCY_FALLBACK && !isHighPriority() && !hasEmergency())
         {
             m_logger->debug("Service Request canceled, T3346 is running");
-            return;
+            return EProcRc::STAY;
         }
     }
     // c) Timer T3346 is running.
@@ -62,9 +87,13 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
             reqCause != EServiceReqCause::EMERGENCY_FALLBACK)
         {
             m_logger->debug("Service Request canceled, T3346 is running");
-            return;
+            return EProcRc::STAY;
         }
     }
+
+    m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
+
+    updateProvidedGuti();
 
     auto request = std::make_unique<nas::ServiceRequest>();
 
@@ -130,7 +159,14 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
             request->serviceType.serviceType = nas::EServiceType::HIGH_PRIORITY_ACCESS;
         else
         {
-            // TODO: fallback indication not supported yet
+            // From 5.6.1.2:
+            //  "a) if the pending message is an UL NAS TRANSPORT message with the Request type IE set to "initial
+            //  emergency request" or "existing emergency PDU session", the UE shall set the Service type IE in the
+            //  SERVICE REQUEST message to "emergency services"; or
+            //  b) otherwise, the UE shall set the Service type IE in the SERVICE REQUEST message to "signalling"."
+            // Just check if the UE has an emergency
+            request->serviceType.serviceType =
+                hasEmergency() ? nas::EServiceType::EMERGENCY_SERVICES : nas::EServiceType::SIGNALLING;
         }
     }
 
@@ -142,7 +178,7 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     }
 
     // Assign TMSI (TMSI is a part of GUTI)
-    request->tmsi = m_usim->m_storedGuti;
+    request->tmsi = m_storage->storedGuti->get();
     if (request->tmsi.type != nas::EIdentityType::NO_IDENTITY)
     {
         request->tmsi.type = nas::EIdentityType::TMSI;
@@ -155,11 +191,16 @@ void NasMm::sendServiceRequest(EServiceReqCause reqCause)
     request->pduSessionStatus->psi = m_sm->getPduSessionStatus();
 
     // Send the message and process the timers
-    sendNasMessage(*request);
+    auto rc = sendNasMessage(*request);
+    if (rc != EProcRc::OK)
+        return rc;
     m_lastServiceRequest = std::move(request);
     m_lastServiceReqCause = reqCause;
     m_timers->t3517.start();
-    switchMmState(EMmState::MM_SERVICE_REQUEST_INITIATED, EMmSubState::MM_SERVICE_REQUEST_INITIATED_NA);
+
+    switchMmState(EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS);
+
+    return EProcRc::OK;
 }
 
 void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
@@ -176,7 +217,7 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
         m_logger->info("Service Accept received");
         m_serCounter = 0;
         m_timers->t3517.stop();
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+        switchMmState(EMmSubState::MM_REGISTERED_PS);
     }
     else
     {
@@ -245,7 +286,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     auto handleAbnormalCase = [this]() {
         m_logger->debug("Handling Service Reject abnormal case");
 
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+        switchMmState(EMmSubState::MM_REGISTERED_PS);
         m_timers->t3517.stop();
     };
 
@@ -286,9 +327,9 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::TA_NOT_ALLOWED ||
         cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
-        m_usim->m_storedGuti = {};
-        m_usim->m_lastVisitedRegisteredTai = {};
-        m_usim->m_taiList = {};
+        m_storage->storedGuti->clear();
+        m_storage->lastVisitedRegisteredTai->clear();
+        m_storage->taiList->clear();
         m_usim->m_currentNsCtx = {};
         m_usim->m_nonCurrentNsCtx = {};
     }
@@ -300,23 +341,36 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
     {
-        m_usim->m_equivalentPlmnList = {};
+        m_storage->equivalentPlmnList->clear();
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        nas::utils::AddToPlmnList(m_usim->m_forbiddenPlmnList, nas::utils::PlmnFrom(*m_usim->m_currentPlmn));
+        Plmn plmn = m_base->shCtx.getCurrentPlmn();
+        if (plmn.hasValue())
+            m_storage->forbiddenPlmnList->add(plmn);
     }
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
-        nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRps, *m_usim->m_currentTai);
+        Tai tai = m_base->shCtx.getCurrentTai();
+        if (tai.hasValue())
+        {
+            m_storage->forbiddenTaiListRps->add(tai);
+            m_storage->serviceAreaList->mutate(
+                [&tai](auto &value) { nas::utils::RemoveFromServiceAreaList(value, nas::VTrackingAreaIdentity{tai}); });
+        }
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        nas::utils::AddToTaiList(m_usim->m_forbiddenTaiListRoaming, *m_usim->m_currentTai);
-        nas::utils::RemoveFromTaiList(m_usim->m_taiList, *m_usim->m_currentTai);
+        Tai tai = m_base->shCtx.getCurrentTai();
+        if (tai.hasValue())
+        {
+            m_storage->forbiddenTaiListRoaming->add(tai);
+            m_storage->taiList->mutate(
+                [&tai](auto &value) { nas::utils::RemoveFromTaiList(value, nas::VTrackingAreaIdentity{tai}); });
+        }
     }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
@@ -329,56 +383,50 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
         cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NA);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PS);
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
+        switchMmState(EMmSubState::MM_DEREGISTERED_NORMAL_SERVICE);
     }
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
+        switchMmState(EMmSubState::MM_DEREGISTERED_PLMN_SEARCH);
     }
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
-        switchMmState(EMmState::MM_DEREGISTERED, EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
+        switchMmState(EMmSubState::MM_DEREGISTERED_LIMITED_SERVICE);
     }
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA)
     {
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_PLMN_SEARCH);
+        switchMmState(EMmSubState::MM_REGISTERED_PLMN_SEARCH);
     }
 
     if (cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
+        switchMmState(EMmSubState::MM_REGISTERED_LIMITED_SERVICE);
     }
 
     if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
     {
-        switchMmState(EMmState::MM_NULL, EMmSubState::MM_NULL_NA);
-
-        setN1Capability(false);
-    }
-
-    if (cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-    {
+        switchMmState(EMmSubState::MM_NULL_PS);
         setN1Capability(false);
     }
 
     if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
     {
         if (m_lastServiceReqCause != EServiceReqCause::EMERGENCY_FALLBACK)
-            sendInitialRegistration(EInitialRegCause::DUE_TO_SERVICE_REJECT);
+            initialRegistrationRequired(EInitialRegCause::DUE_TO_SERVICE_REJECT);
     }
 
     if (cause == nas::EMmCause::IMPLICITY_DEREGISTERED)
     {
         if (!hasEmergency())
-            sendInitialRegistration(EInitialRegCause::DUE_TO_SERVICE_REJECT);
+            initialRegistrationRequired(EInitialRegCause::DUE_TO_SERVICE_REJECT);
     }
 
     if (cause == nas::EMmCause::CONGESTION)
@@ -387,7 +435,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         {
             if (!hasEmergency())
             {
-                switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NA);
+                switchMmState(EMmSubState::MM_REGISTERED_PS);
 
                 m_timers->t3517.stop();
             }
@@ -407,10 +455,10 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::RESTRICTED_SERVICE_AREA)
     {
-        switchMmState(EMmState::MM_REGISTERED, EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
+        switchMmState(EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE);
 
         if (m_lastServiceRequest->serviceType.serviceType != nas::EServiceType::ELEVATED_SIGNALLING)
-            sendMobilityRegistration(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
+            mobilityUpdatingRequired(ERegUpdateCause::RESTRICTED_SERVICE_AREA);
     }
 
     if (hasEmergency())

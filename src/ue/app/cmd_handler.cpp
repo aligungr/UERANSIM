@@ -10,8 +10,8 @@
 
 #include <ue/app/task.hpp>
 #include <ue/nas/task.hpp>
-#include <ue/rrc/task.hpp>
 #include <ue/rls/task.hpp>
+#include <ue/rrc/task.hpp>
 #include <ue/tun/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>
@@ -19,6 +19,7 @@
 #define PAUSE_CONFIRM_TIMEOUT 3000
 #define PAUSE_POLLING 10
 
+// todo add coverage again to cli
 static std::string SignalDescription(int dbm)
 {
     if (dbm > -90)
@@ -68,7 +69,7 @@ bool UeCmdHandler::isAllPaused()
     return true;
 }
 
-void UeCmdHandler::handleCmd(NwUeCliCommand &msg)
+void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
 {
     pauseTasks();
 
@@ -99,34 +100,51 @@ void UeCmdHandler::handleCmd(NwUeCliCommand &msg)
     unpauseTasks();
 }
 
-void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
+void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
 {
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
-        std::vector<Json> pduSessions{};
-        for (auto &pduSession : m_base->appTask->m_pduSessions)
-            if (pduSession.has_value())
-                pduSessions.push_back(ToJson(*pduSession));
+        std::optional<int> currentCellId = std::nullopt;
+        std::optional<Plmn> currentPlmn = std::nullopt;
+        std::optional<int> currentTac = std::nullopt;
+
+        auto currentCell = m_base->shCtx.currentCell.get();
+        if (currentCell.hasValue())
+        {
+            currentCellId = currentCell.cellId;
+            currentPlmn = currentCell.plmn;
+            currentTac = currentCell.tac;
+        }
 
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
-            {"5u-state", ToJson(m_base->nasTask->mm->m_usim->m_uState)},
-            {"camped-cell",
-             ::ToJson(m_base->rlsTask->m_servingCell.has_value() ? m_base->rlsTask->m_servingCell->gnbName : "")},
+            {"5u-state", ToJson(m_base->nasTask->mm->m_storage->uState->get())},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
-            {"stored-suci", ToJson(m_base->nasTask->mm->m_usim->m_storedSuci)},
-            {"stored-guti", ToJson(m_base->nasTask->mm->m_usim->m_storedGuti)},
+            {"selected-plmn", ::ToJson(m_base->shCtx.selectedPlmn.get())},
+            {"current-cell", ::ToJson(currentCellId)},
+            {"current-plmn", ::ToJson(currentPlmn)},
+            {"current-tac", ::ToJson(currentTac)},
+            {"last-tai", ToJson(m_base->nasTask->mm->m_storage->lastVisitedRegisteredTai)},
+            {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
+            {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
             {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
-            {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::INFO: {
-        sendResult(msg.address, ToJson(*m_base->config).dumpYaml());
+        auto json = Json::Obj({
+            {"supi", ToJson(m_base->config->supi)},
+            {"hplmn", ToJson(m_base->config->hplmn)},
+            {"imei", ::ToJson(m_base->config->imei)},
+            {"imeisv", ::ToJson(m_base->config->imeiSv)},
+            {"ecall-only", ::ToJson(m_base->nasTask->usim->m_isECallOnly)},
+        });
+
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::TIMERS: {
@@ -134,7 +152,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::DE_REGISTER: {
-        m_base->nasTask->mm->sendDeregistration(msg.cmd->deregCause);
+        m_base->nasTask->mm->deregistrationRequired(msg.cmd->deregCause);
 
         if (msg.cmd->deregCause != EDeregCause::SWITCH_OFF)
             sendResult(msg.address, "De-registration procedure triggered");
@@ -154,7 +172,7 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::PS_ESTABLISH: {
-        SessionConfig config{};
+        SessionConfig config;
         config.type = nas::EPduSessionType::IPV4;
         config.isEmergency = msg.cmd->isEmergency;
         config.apn = msg.cmd->apn;
@@ -163,28 +181,77 @@ void UeCmdHandler::handleCmdImpl(NwUeCliCommand &msg)
         sendResult(msg.address, "PDU session establishment procedure triggered");
         break;
     }
+    case app::UeCliCommand::PS_LIST: {
+        Json json = Json::Obj({});
+        for (auto *pduSession : m_base->nasTask->sm->m_pduSessions)
+        {
+            if (pduSession->psi == 0 || pduSession->psState == EPsState::INACTIVE)
+                continue;
+
+            auto obj = Json::Obj({
+                {"state", ToJson(pduSession->psState)},
+                {"session-type", ToJson(pduSession->sessionType)},
+                {"apn", ::ToJson(pduSession->apn)},
+                {"s-nssai", ToJson(pduSession->sNssai)},
+                {"emergency", pduSession->isEmergency},
+                {"address", ::ToJson(pduSession->pduAddress)},
+                {"ambr", ::ToJson(pduSession->sessionAmbr)},
+                {"data-pending", pduSession->uplinkPending},
+            });
+
+            json.put("PDU Session" + std::to_string(pduSession->psi), obj);
+        }
+        sendResult(msg.address, json.dumpYaml());
+        break;
+    }
+    case app::UeCliCommand::RLS_STATE: {
+        Json json = Json::Obj({
+            {"sti", OctetString::FromOctet8(m_base->rlsTask->m_shCtx->sti).toHexString()},
+            {"gnb-search-space", ::ToJson(m_base->config->gnbSearchList)},
+        });
+        sendResult(msg.address, json.dumpYaml());
+        break;
+    }
     case app::UeCliCommand::COVERAGE: {
-        auto &map = m_base->rlsTask->m_activeMeasurements;
-        if (map.empty())
+        Json json = Json::Obj({});
+
+        const auto &cells = m_base->rrcTask->m_cellDesc;
+        for (auto &item : cells)
         {
-            sendResult(msg.address, "No cell exists in the range");
-            break;
+            auto &cell = item.second;
+
+            auto mib = Json{};
+            auto sib1 = Json{};
+
+            if (cell.mib.hasMib)
+            {
+                mib = Json::Obj({
+                    {"barred", cell.mib.isBarred},
+                    {"intra-freq-reselection",
+                     std::string{cell.mib.isIntraFreqReselectAllowed ? "allowed" : "not-allowed"}},
+                });
+            }
+            if (cell.sib1.hasSib1)
+            {
+                sib1 = Json::Obj({
+                    {"nr-cell-id", utils::IntToHex(cell.sib1.nci)},
+                    {"plmn", ToJson(cell.sib1.plmn)},
+                    {"tac", cell.sib1.tac},
+                    {"operator-reserved", cell.sib1.isReserved},
+                });
+            }
+
+            auto obj = Json::Obj({{"signal", std::to_string(cell.dbm) + " dBm (" + SignalDescription(cell.dbm) + ")"},
+                                  {"mib", mib},
+                                  {"sib1", sib1}});
+
+            json.put("[" + std::to_string(item.first) + "]", obj);
         }
 
-        std::vector<Json> cellInfo{};
-        for (auto &entry : map)
-        {
-            auto &measurement = entry.second;
-            cellInfo.push_back(Json::Obj({
-                {"gnb", measurement.gnbName},
-                {"plmn", ToJson(measurement.cellId.plmn)},
-                {"nci", measurement.cellId.nci},
-                {"tac", measurement.tac},
-                {"signal", std::to_string(measurement.dbm) + "dBm [" + SignalDescription(measurement.dbm) + "]"},
-            }));
-        }
+        if (cells.empty())
+            json = "No cell available";
 
-        sendResult(msg.address, Json::Arr(cellInfo).dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     }

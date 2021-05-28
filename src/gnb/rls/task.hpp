@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include "ctl_task.hpp"
+#include "udp_task.hpp"
+
 #include <memory>
 #include <thread>
 #include <unordered_map>
@@ -28,13 +31,11 @@ class GnbRlsTask : public NtsTask
   private:
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
-    udp::UdpServerTask *m_udpTask;
 
-    bool m_powerOn;
+    RlsUdpTask *m_udpTask;
+    RlsControlTask *m_ctlTask;
+
     uint64_t m_sti;
-    std::unordered_map<int, std::unique_ptr<RlsUeContext>> m_ueCtx;
-    std::unordered_map<uint64_t, int> m_stiToUeId;
-    int m_ueIdCounter;
 
     friend class GnbCmdHandler;
 
@@ -46,19 +47,6 @@ class GnbRlsTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
-
-  private: /* Transport */
-    void receiveRlsMessage(const InetAddress &addr, rls::RlsMessage &msg);
-    void sendRlsMessage(int ueId, const rls::RlsMessage &msg);
-
-  private: /* Handler */
-    void handleCellInfoRequest(int ueId, const rls::RlsCellInfoRequest &msg);
-    void handleUplinkPduDelivery(int ueId, rls::RlsPduDelivery &msg);
-    void handleDownlinkDelivery(int ueId, rls::EPduType pduType, OctetString &&pdu, OctetString &&payload);
-
-  private: /* UE Management */
-    int updateUeInfo(const InetAddress &addr, uint64_t sti);
-    void onPeriodicLostControl();
 };
 
 } // namespace nr::gnb

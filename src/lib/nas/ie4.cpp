@@ -8,6 +8,8 @@
 
 #include "ie4.hpp"
 
+#include <utils/common.hpp>
+
 namespace nas
 {
 
@@ -1073,6 +1075,45 @@ void IE5gsTrackingAreaIdentityList::Encode(const IE5gsTrackingAreaIdentityList &
 {
     for (auto &x : ie.list)
         VPartialTrackingAreaIdentityList::Encode(x, stream);
+}
+
+Json ToJson(const IEPduAddress &v)
+{
+    switch (v.sessionType)
+    {
+    case EPduSessionType::IPV4:
+    case EPduSessionType::IPV6:
+    case EPduSessionType::IPV4V6:
+        return utils::OctetStringToIp(v.pduAddressInformation);
+    case EPduSessionType::UNSTRUCTURED:
+    case EPduSessionType::ETHERNET:
+        return v.pduAddressInformation.toHexString();
+    default:
+        return "?";
+    }
+}
+
+Json ToJson(const IESessionAmbr &v)
+{
+    int downlinkValue = static_cast<int>(v.sessionAmbrForDownlink);
+    int uplinkValue = static_cast<int>(v.sessionAmbrForUplink);
+
+    int downlinkUnit = static_cast<int>(v.unitForSessionAmbrForDownlink);
+    int uplinkUnit = static_cast<int>(v.unitForSessionAmbrForUplink);
+
+    int downlinkFactor = 1 << (2 * ((downlinkUnit - 1) % 5));
+    int uplinkFactor = 1 << (2 * ((uplinkUnit - 1) % 5));
+
+    int downlinkMagnitude = (downlinkUnit - 1) / 5;
+    int uplinkMagnitude = (uplinkUnit - 1) / 5;
+
+    int downlink = downlinkValue * downlinkFactor;
+    int uplink = uplinkValue * uplinkFactor;
+
+    static const std::string units[5] = {"Kb/s", "Mb/s", "Gb/s", "Tb/s", "Pb/s"};
+
+    return "up[" + std::to_string(uplink) + units[uplinkMagnitude] + "] down[" + std::to_string(downlink) +
+           units[downlinkMagnitude] + "]";
 }
 
 } // namespace nas

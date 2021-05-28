@@ -10,7 +10,7 @@
 
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
-#include <lib/nas/timer.hpp>
+#include <ue/nas/storage.hpp>
 #include <ue/nas/usim/usim.hpp>
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
@@ -26,16 +26,19 @@ class NasMm
 {
   private:
     TaskBase *m_base;
-    UeTimers *m_timers;
+    NasTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
-    Usim *m_usim{};
+    Usim *m_usim;
+    MmStorage *m_storage;
 
     ERmState m_rmState;
     ECmState m_cmState;
     EMmState m_mmState;
     EMmSubState m_mmSubState;
 
+    // Procedure management
+    ProcControl m_procCtl;
     // Most recent registration request
     std::unique_ptr<nas::RegistrationRequest> m_lastRegistrationRequest{};
     // Most recent service request
@@ -48,25 +51,27 @@ class NasMm
     EDeregCause m_lastDeregCause{};
     // Indicates the last service request cause
     EServiceReqCause m_lastServiceReqCause{};
-    // Last time PLMN search is triggered
-    long m_lastPlmnSearchTrigger{};
     // Registration attempt counter
     int m_regCounter{};
     // Service request attempt counter
     int m_serCounter{};
-    // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state)
+    // Indicates registered for emergency services (Only meaningful in RM-REGISTERED state, or implies the last one)
     bool m_registeredForEmergency{};
     // Network feature support information
     nas::IE5gsNetworkFeatureSupport m_nwFeatureSupport{};
-    // Last time Service Request needed indication for Data
-    long m_lastTimeServiceReqNeededIndForData{};
     // Number of times the network failing the authentication check
     int m_nwConsecutiveAuthFailure{};
+    // Last time PLMN search failure logged
+    int64_t m_lastTimePlmnSearchFailureLogged{};
+    // Last time MM state changed
+    int64_t m_lastTimeMmStateChange{};
 
     friend class UeCmdHandler;
+    friend class NasSm;
+    friend class NasTask;
 
   public:
-    NasMm(TaskBase *base, UeTimers *timers);
+    NasMm(TaskBase *base, NasTimers *timers);
 
   public: /* Base */
     void onStart(NasSm *sm, Usim *usim);
@@ -75,16 +80,20 @@ class NasMm
   private: /* Base */
     void triggerMmCycle();
     void performMmCycle();
-    void switchMmState(EMmState state, EMmSubState subState);
+    void switchMmState(EMmSubState subState);
     void switchCmState(ECmState state);
     void switchUState(E5UState state);
     void onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate);
     void onSwitchRmState(ERmState oldState, ERmState newState);
     void onSwitchCmState(ECmState oldState, ECmState newState);
     void onSwitchUState(E5UState oldState, E5UState newState);
+    void onSwitchOn();
+    void onSimInsertion();
+    void onSwitchOff();
+    void onSimRemoval();
 
   private: /* Messaging */
-    void sendNasMessage(const nas::PlainMmMessage &msg);
+    EProcRc sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
@@ -92,15 +101,11 @@ class NasMm
 
   private: /* Transport */
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
-
-  public: /* Transport */
-    void deliverUlTransport(const nas::UlNasTransport &msg);
-
-  public: /* Registration */
-    void sendMobilityRegistration(ERegUpdateCause updateCause);
+    EProcRc deliverUlTransport(const nas::UlNasTransport &msg);
 
   private: /* Registration */
-    void sendInitialRegistration(EInitialRegCause regCause);
+    EProcRc sendInitialRegistration(EInitialRegCause regCause);
+    EProcRc sendMobilityRegistration(ERegUpdateCause updateCause);
     void receiveRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg);
     void receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg);
@@ -127,15 +132,15 @@ class NasMm
     void receiveSecurityModeCommand(const nas::SecurityModeCommand &msg);
     nas::IEUeSecurityCapability createSecurityCapabilityIe();
 
-  public: /* De-registration */
-    void sendDeregistration(EDeregCause deregCause);
-
   private: /* De-registration */
+    EProcRc sendDeregistration(EDeregCause deregCause);
     void receiveDeregistrationAccept(const nas::DeRegistrationAcceptUeOriginating &msg);
     void receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTerminated &msg);
+    void performLocalDeregistration();
 
   private: /* Configuration */
     void receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &msg);
+    void updateForbiddenTaiListsForAllowedIndications();
 
   private: /* Identity */
     void receiveIdentityRequest(const nas::IdentityRequest &msg);
@@ -144,7 +149,7 @@ class NasMm
     nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
   private: /* Service */
-    void sendServiceRequest(EServiceReqCause reqCause);
+    EProcRc sendServiceRequest(EServiceReqCause reqCause);
     void receiveServiceAccept(const nas::ServiceAccept &msg);
     void receiveServiceReject(const nas::ServiceReject &msg);
 
@@ -153,13 +158,16 @@ class NasMm
     void handleNetworkSlicingSubscriptionChange();
 
   private: /* Radio */
-    void localReleaseConnection();
-    void handlePlmnSearchResponse(const std::vector<UeCellMeasurement> &measures);
+    void performPlmnSelection();
+    void localReleaseConnection(bool treatBarred);
+    void handleActiveCellChange(const Tai &prevTai);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
-    void handleServingCellChange(const UeCellInfo &servingCell);
+    void handleRrcEstablishmentFailure();
     void handleRadioLinkFailure();
+    void handleRrcFallbackIndication();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
+    void updateProvidedGuti(bool provide = true);
 
   private: /* Access Control */
     bool isHighPriority();
@@ -172,15 +180,21 @@ class NasMm
     bool switchToECallInactivityIfNeeded();
 
   private: /* Timer */
-    void onTimerExpire(nas::NasTimer &timer);
+    void onTimerExpire(UeTimer &timer);
 
-  public:
-    /* Interface */
-    void handleRrcEvent(const NwUeRrcToNas &msg); // used by RRC
-    void handleNasEvent(const NwUeNasToNas &msg); // used by NAS
-    bool isRegistered();                          // used by SM
-    bool isRegisteredForEmergency();              // used by SM
-    void serviceNeededForUplinkData();            // used by SM
+  private: /* Procedure Control */
+    void initialRegistrationRequired(EInitialRegCause cause);
+    void mobilityUpdatingRequired(ERegUpdateCause cause);
+    void serviceRequestRequiredForData();
+    void serviceRequestRequiredForSignalling();
+    void serviceRequestRequired(EServiceReqCause cause);
+    void deregistrationRequired(EDeregCause cause);
+    void invokeProcedures();
+    bool hasPendingProcedure();
+
+  private: /* Service Access Point */
+    void handleRrcEvent(const NmUeRrcToNas &msg);
+    void handleNasEvent(const NmUeNasToNas &msg);
 };
 
 } // namespace nr::ue

@@ -8,14 +8,20 @@
 
 #pragma once
 
+#include "timer.hpp"
+
 #include <array>
+#include <atomic>
+#include <memory>
+#include <set>
+#include <unordered_set>
+
 #include <lib/app/monitor.hpp>
 #include <lib/app/ue_ctl.hpp>
 #include <lib/nas/nas.hpp>
-#include <lib/nas/timer.hpp>
-#include <memory>
 #include <utils/common_types.hpp>
 #include <utils/json.hpp>
+#include <utils/locked.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -28,6 +34,28 @@ class NasTask;
 class UeRrcTask;
 class UeRlsTask;
 class UserEquipment;
+
+struct UeCellDesc
+{
+    int dbm{};
+
+    struct
+    {
+        bool hasMib = false;
+        bool isBarred = true;
+        bool isIntraFreqReselectAllowed = true;
+    } mib{};
+
+    struct
+    {
+        bool hasSib1 = false;
+        bool isReserved = false;
+        int64_t nci = 0;
+        int tac = 0;
+        Plmn plmn;
+        UacAiBarringSet aiBarringSet;
+    } sib1{};
+};
 
 struct SupportedAlgs
 {
@@ -72,16 +100,10 @@ struct UeConfig
     std::optional<std::string> imeiSv{};
     SupportedAlgs supportedAlgs{};
     std::vector<std::string> gnbSearchList{};
-    std::vector<SessionConfig> initSessions{};
+    std::vector<SessionConfig> defaultSessions{};
     IntegrityMaxDataRateConfig integrityMaxRate{};
-
-    /* Read from config file as well, but should be stored in non-volatile
-     * mobile storage and subject to change in runtime */
-    struct Initials
-    {
-        NetworkSlice defaultConfiguredNssai{};
-        NetworkSlice configuredNssai{};
-    } initials{};
+    NetworkSlice defaultConfiguredNssai{};
+    NetworkSlice configuredNssai{};
 
     /* Assigned by program */
     bool configureRouting{};
@@ -112,6 +134,45 @@ struct UeConfig
     }
 };
 
+struct CellSelectionReport
+{
+    int outOfPlmnCells{};
+    int sib1MissingCells{};
+    int reservedCells{};
+    int barredCells{};
+    int forbiddenTaiCells{};
+};
+
+struct ActiveCellInfo
+{
+    int cellId{};
+    ECellCategory category{};
+    Plmn plmn{};
+    int tac{};
+
+    [[nodiscard]] bool hasValue() const;
+};
+
+struct UeSharedContext
+{
+    Locked<std::unordered_set<Plmn>> availablePlmns;
+    Locked<Plmn> selectedPlmn;
+    Locked<ActiveCellInfo> currentCell;
+    Locked<std::vector<Tai>> forbiddenTaiRoaming;
+    Locked<std::vector<Tai>> forbiddenTaiRps;
+    Locked<GutiMobileIdentity> providedGuti;
+    Locked<GutiMobileIdentity> providedTmsi;
+
+    Plmn getCurrentPlmn();
+    Tai getCurrentTai();
+    bool hasActiveCell();
+};
+
+struct RlsSharedContext
+{
+    std::atomic<uint64_t> sti{};
+};
+
 struct TaskBase
 {
     UserEquipment *ue{};
@@ -121,36 +182,45 @@ struct TaskBase
     app::INodeListener *nodeListener{};
     NtsTask *cliCallbackTask{};
 
+    UeSharedContext shCtx{};
+
     UeAppTask *appTask{};
     NasTask *nasTask{};
     UeRrcTask *rrcTask{};
     UeRlsTask *rlsTask{};
 };
 
-struct UeTimers
+struct RrcTimers
 {
-    nas::NasTimer t3346; /* MM - ... */
-    nas::NasTimer t3396; /* SM - ... */
+    UeTimer t300;
 
-    nas::NasTimer t3444; /* MM - ... */
-    nas::NasTimer t3445; /* MM - ... */
+    RrcTimers();
+};
 
-    nas::NasTimer t3502; /* MM - Initiation of the registration procedure, if still required */
-    nas::NasTimer t3510; /* MM - Registration Request transmission timer */
-    nas::NasTimer t3511; /* MM - Retransmission of the REGISTRATION REQUEST, if still required */
-    nas::NasTimer t3512; /* MM - Periodic registration update timer */
-    nas::NasTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
-    nas::NasTimer t3517; /* MM - Service Request transmission timer */
-    nas::NasTimer t3519; /* MM - Transmission with fresh SUCI timer */
-    nas::NasTimer t3520; /* MM - ... */
-    nas::NasTimer t3521; /* MM - De-registration transmission timer for not switch off */
-    nas::NasTimer t3525; /* MM - ... */
-    nas::NasTimer t3540; /* MM - ... */
+struct NasTimers
+{
+    UeTimer t3346; /* MM - ... */
+    UeTimer t3396; /* SM - ... */
 
-    nas::NasTimer t3584; /* SM - ... */
-    nas::NasTimer t3585; /* SM - ... */
+    UeTimer t3444; /* MM - ... */
+    UeTimer t3445; /* MM - ... */
 
-    UeTimers();
+    UeTimer t3502; /* MM - Initiation of the registration procedure, if still required */
+    UeTimer t3510; /* MM - Registration Request transmission timer */
+    UeTimer t3511; /* MM - Retransmission of the REGISTRATION REQUEST, if still required */
+    UeTimer t3512; /* MM - Periodic registration update timer */
+    UeTimer t3516; /* MM - 5G AKA - RAND and RES* storing timer */
+    UeTimer t3517; /* MM - Service Request transmission timer */
+    UeTimer t3519; /* MM - Transmission with fresh SUCI timer */
+    UeTimer t3520; /* MM - ... */
+    UeTimer t3521; /* MM - De-registration transmission timer for not switch off */
+    UeTimer t3525; /* MM - ... */
+    UeTimer t3540; /* MM - ... */
+
+    UeTimer t3584; /* SM - ... */
+    UeTimer t3585; /* SM - ... */
+
+    NasTimers();
 };
 
 enum class ERmState
@@ -167,7 +237,7 @@ enum class ECmState
 
 enum class E5UState
 {
-    U1_UPDATED,
+    U1_UPDATED = 0,
     U2_NOT_UPDATED,
     U3_ROAMING_NOT_ALLOWED
 };
@@ -199,9 +269,9 @@ enum class EMmState
 
 enum class EMmSubState
 {
-    MM_NULL_NA,
+    MM_NULL_PS,
 
-    MM_DEREGISTERED_NA,
+    MM_DEREGISTERED_PS,
     MM_DEREGISTERED_NORMAL_SERVICE,
     MM_DEREGISTERED_LIMITED_SERVICE,
     MM_DEREGISTERED_ATTEMPTING_REGISTRATION,
@@ -211,9 +281,9 @@ enum class EMmSubState
     MM_DEREGISTERED_ECALL_INACTIVE,
     MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED,
 
-    MM_REGISTERED_INITIATED_NA,
+    MM_REGISTERED_INITIATED_PS,
 
-    MM_REGISTERED_NA,
+    MM_REGISTERED_PS,
     MM_REGISTERED_NORMAL_SERVICE,
     MM_REGISTERED_NON_ALLOWED_SERVICE,
     MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE,
@@ -222,9 +292,9 @@ enum class EMmSubState
     MM_REGISTERED_NO_CELL_AVAILABLE,
     MM_REGISTERED_UPDATE_NEEDED,
 
-    MM_DEREGISTERED_INITIATED_NA,
+    MM_DEREGISTERED_INITIATED_PS,
 
-    MM_SERVICE_REQUEST_INITIATED_NA
+    MM_SERVICE_REQUEST_INITIATED_PS
 };
 
 enum class EPsState
@@ -273,7 +343,7 @@ struct ProcedureTransaction
     static constexpr const int MAX_ID = 254;
 
     EPtState state{};
-    std::unique_ptr<nas::NasTimer> timer{};
+    std::unique_ptr<UeTimer> timer{};
     std::unique_ptr<nas::SmMessage> message{};
     int psi{};
 };
@@ -383,21 +453,8 @@ enum class EAutnValidationRes
     SYNCHRONISATION_FAILURE,
 };
 
-struct UePduSessionInfo
-{
-    int psi{};
-    std::string type{};
-    std::string address{};
-    bool isEmergency{};
-    bool uplinkPending{};
-    std::optional<std::string> apn{};
-    std::optional<SingleSlice> sNssai{};
-};
-
 enum class ERegUpdateCause
 {
-    // unspecified cause
-    UNSPECIFIED,
     // when the UE detects entering a tracking area that is not in the list of tracking areas that the UE previously
     // registered in the AMF
     ENTER_UNLISTED_TRACKING_AREA,
@@ -446,13 +503,17 @@ enum class ERegUpdateCause
     // belonging to an equivalent PLMN of the registered PLMN and not belonging to the registered PLMN;
     ENTER_EQUIVALENT_PLMN_CELL,
     // when the UE receives a SERVICE REJECT message with the 5GMM cause value set to #28 "Restricted service area".
-    RESTRICTED_SERVICE_AREA
+    RESTRICTED_SERVICE_AREA,
+    // ------ following are not specified by 24.501 ------
+    TAI_CHANGE_IN_ATT_UPD,
+    PLMN_CHANGE_IN_ATT_UPD,
+    T3346_EXPIRY_IN_ATT_UPD,
+    T3502_EXPIRY_IN_ATT_UPD,
+    T3511_EXPIRY_IN_ATT_UPD,
 };
 
 enum class EServiceReqCause
 {
-    // unspecified cause
-    UNSPECIFIED,
     // a) the UE, in 5GMM-IDLE mode over 3GPP access, receives a paging request from the network
     IDLE_PAGING,
     // b) the UE, in 5GMM-CONNECTED mode over 3GPP access, receives a notification from the network with access type
@@ -481,16 +542,30 @@ enum class EServiceReqCause
     FALLBACK_INDICATION
 };
 
+enum class EProcRc
+{
+    OK,
+    CANCEL,
+    STAY,
+};
+
+struct ProcControl
+{
+    std::optional<EInitialRegCause> initialRegistration{};
+    std::optional<ERegUpdateCause> mobilityRegistration{};
+    std::optional<EServiceReqCause> serviceRequest{};
+    std::optional<EDeregCause> deregistration{};
+};
+
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);
 Json ToJson(const EMmSubState &state);
 Json ToJson(const E5UState &state);
-Json ToJson(const UeConfig &v);
-Json ToJson(const UeTimers &v);
+Json ToJson(const NasTimers &v);
 Json ToJson(const ERegUpdateCause &v);
 Json ToJson(const EPsState &v);
-Json ToJson(const UePduSessionInfo &v);
 Json ToJson(const EServiceReqCause &v);
+Json ToJson(const ERrcState &v);
 
 } // namespace nr::ue

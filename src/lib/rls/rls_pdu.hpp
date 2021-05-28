@@ -21,9 +21,15 @@ namespace rls
 enum class EMessageType : uint8_t
 {
     RESERVED = 0,
-    CELL_INFO_REQUEST,
-    CELL_INFO_RESPONSE,
-    PDU_DELIVERY
+
+    DEPRECATED1 = 1,
+    DEPRECATED2 = 2,
+    DEPRECATED3 = 3,
+
+    HEARTBEAT = 4,
+    HEARTBEAT_ACK = 5,
+    PDU_TRANSMISSION = 6,
+    PDU_TRANSMISSION_ACK = 7,
 };
 
 enum class EPduType : uint8_t
@@ -43,35 +49,41 @@ struct RlsMessage
     }
 };
 
-struct RlsCellInfoRequest : RlsMessage
+struct RlsHeartBeat : RlsMessage
 {
-    Vector3 simPos{};
+    Vector3 simPos;
 
-    explicit RlsCellInfoRequest(uint64_t sti) : RlsMessage(EMessageType::CELL_INFO_REQUEST, sti)
+    explicit RlsHeartBeat(uint64_t sti) : RlsMessage(EMessageType::HEARTBEAT, sti)
     {
     }
 };
 
-struct RlsCellInfoResponse : RlsMessage
+struct RlsHeartBeatAck : RlsMessage
 {
-    GlobalNci cellId{};
-    int tac{};
     int dbm{};
-    std::string gnbName{};
-    std::string linkIp{};
 
-    explicit RlsCellInfoResponse(uint64_t sti) : RlsMessage(EMessageType::CELL_INFO_RESPONSE, sti)
+    explicit RlsHeartBeatAck(uint64_t sti) : RlsMessage(EMessageType::HEARTBEAT_ACK, sti)
     {
     }
 };
 
-struct RlsPduDelivery : RlsMessage
+struct RlsPduTransmission : RlsMessage
 {
     EPduType pduType{};
+    uint32_t pduId{};
+    uint32_t payload{};
     OctetString pdu{};
-    OctetString payload{};
 
-    explicit RlsPduDelivery(uint64_t sti) : RlsMessage(EMessageType::PDU_DELIVERY, sti)
+    explicit RlsPduTransmission(uint64_t sti) : RlsMessage(EMessageType::PDU_TRANSMISSION, sti)
+    {
+    }
+};
+
+struct RlsPduTransmissionAck : RlsMessage
+{
+    std::vector<uint32_t> pduIds;
+
+    explicit RlsPduTransmissionAck(uint64_t sti) : RlsMessage(EMessageType::PDU_TRANSMISSION_ACK, sti)
     {
     }
 };

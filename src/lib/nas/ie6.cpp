@@ -448,7 +448,7 @@ Json ToJson(const IE5gsMobileIdentity &v)
     switch (v.type)
     {
     case EIdentityType::NO_IDENTITY:
-        return "no-identitiy";
+        return "no-identity";
     case EIdentityType::SUCI: {
         switch (v.supiFormat)
         {

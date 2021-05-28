@@ -11,7 +11,7 @@
 namespace nr::ue
 {
 
-NasSm::NasSm(TaskBase *base, UeTimers *timers) : m_base(base), m_timers(timers), m_mm(nullptr)
+NasSm::NasSm(TaskBase *base, NasTimers *timers) : m_base(base), m_timers(timers), m_mm(nullptr)
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 
@@ -27,20 +27,6 @@ void NasSm::onStart(NasMm *mm)
 void NasSm::onQuit()
 {
     // TODO
-}
-
-void NasSm::establishInitialSessions()
-{
-    if (m_base->config->initSessions.empty())
-    {
-        m_logger->warn("No initial PDU sessions are configured");
-        return;
-    }
-
-    m_logger->info("Initial PDU sessions are establishing [%d#]", m_base->config->initSessions.size());
-
-    for (auto &sess : m_base->config->initSessions)
-        sendEstablishmentRequest(sess);
 }
 
 } // namespace nr::ue

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <utils/json.hpp>
+
 namespace nas
 {
 
@@ -749,5 +751,7 @@ enum class EQoSOperationCode
     DELETE_EXISTING = 0b010,
     MODIFY_EXISTING = 0b011,
 };
+
+Json ToJson(const EPduSessionType &v);
 
 } // namespace nas

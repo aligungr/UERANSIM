@@ -149,6 +149,11 @@ VTrackingAreaIdentity::VTrackingAreaIdentity(const VPlmn &plmn, const octet3 &ta
 {
 }
 
+VTrackingAreaIdentity::VTrackingAreaIdentity(const Tai &tai)
+    : plmn(tai.plmn.mcc, tai.plmn.mnc, tai.plmn.isLongMnc), tac(tai.tac)
+{
+}
+
 void VTime::Encode(const VTime &value, OctetString &stream)
 {
     stream.appendOctet(value.year);
