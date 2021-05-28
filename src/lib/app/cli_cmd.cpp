@@ -158,6 +158,8 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"info", {"Show some information about the UE", "", DefaultDesc, false}},
     {"status", {"Show some status information about the UE", "", DefaultDesc, false}},
     {"timers", {"Dump current status of the timers in the UE", "", DefaultDesc, false}},
+    {"rls-state", {"Show status information about RLS", "", DefaultDesc, false}},
+    {"coverage", {"Dump available cells and PLMNs in the coverage", "", DefaultDesc, false}},
     {"ps-establish",
      {"Trigger a PDU session establishment procedure", "<session-type> [options]", DescForPsEstablish, true}},
     {"ps-list", {"List all PDU sessions", "", DefaultDesc, false}},
@@ -320,6 +322,14 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
     else if (subCmd == "ps-list")
     {
         return std::make_unique<UeCliCommand>(UeCliCommand::PS_LIST);
+    }
+    else if (subCmd == "rls-info")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::RLS_INFO);
+    }
+    else if (subCmd == "coverage")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::COVERAGE);
     }
 
     return nullptr;
