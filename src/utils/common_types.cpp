@@ -36,6 +36,9 @@ Json ToJson(const Supi &v)
 
 Json ToJson(const Plmn &v)
 {
+    if (!v.hasValue())
+        return nullptr;
+
     std::stringstream ss{};
     ss << std::setfill('0') << std::setw(3) << v.mcc << "/";
     ss << std::setfill('0') << std::setw(v.isLongMnc ? 3 : 2) << v.mnc;

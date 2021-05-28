@@ -105,6 +105,18 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
+        std::optional<int> currentCellId = std::nullopt;
+        std::optional<Plmn> currentPlmn = std::nullopt;
+        std::optional<int> currentTac = std::nullopt;
+
+        auto currentCell = m_base->shCtx.currentCell.get();
+        if (currentCell.hasValue())
+        {
+            currentCellId = currentCell.cellId;
+            currentPlmn = currentCell.plmn;
+            currentTac = currentCell.tac;
+        }
+
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
@@ -112,9 +124,9 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"5u-state", ToJson(m_base->nasTask->mm->m_storage->uState->get())},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
             {"selected-plmn", ::ToJson(m_base->shCtx.selectedPlmn.get())},
-            {"current-cell", ::ToJson(m_base->shCtx.currentCell.get().cellId)},
-            {"current-plmn", ::ToJson(m_base->shCtx.getCurrentPlmn())},
-            {"current-tac", ::ToJson(m_base->shCtx.currentCell.get().tac)},
+            {"current-cell", ::ToJson(currentCellId)},
+            {"current-plmn", ::ToJson(currentPlmn)},
+            {"current-tac", ::ToJson(currentTac)},
             {"tai-list", ""},
             {"last-tai", ""},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
