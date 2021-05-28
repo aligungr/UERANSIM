@@ -13,6 +13,7 @@
 #include <vector>
 
 #include <utils/common.hpp>
+#include <utils/json.hpp>
 
 namespace nas
 {
@@ -207,6 +208,11 @@ class NasSlot
         return m_value;
     }
 
+    const T &getPure() const
+    {
+        return m_value;
+    }
+
     void clear()
     {
         set(T{});
@@ -267,3 +273,9 @@ class NasSlot
 };
 
 } // namespace nas
+
+template <typename T>
+inline Json ToJson(const nas::NasSlot<T> &v)
+{
+    return ToJson(v.getPure());
+}

@@ -206,6 +206,7 @@ bool operator!=(const GlobalNci &lhs, const GlobalNci &rhs);
 
 Json ToJson(const Supi &v);
 Json ToJson(const Plmn &v);
+Json ToJson(const Tai &v);
 Json ToJson(const SingleSlice &v);
 Json ToJson(const NetworkSlice &v);
 Json ToJson(const PlmnSupport &v);

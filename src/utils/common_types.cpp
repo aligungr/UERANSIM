@@ -175,6 +175,13 @@ Json ToJson(const EInitialRegCause &v)
     }
 }
 
+Json ToJson(const Tai &v)
+{
+    if (!v.hasValue())
+        return nullptr;
+    return "PLMN[" + ToJson(v.plmn).str() + "] TAC[" + std::to_string(v.tac) + "]";
+}
+
 void NetworkSlice::addIfNotExists(const SingleSlice &slice)
 {
     if (!std::any_of(slices.begin(), slices.end(), [&slice](auto &s) { return s == slice; }))
