@@ -157,14 +157,13 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::PS_LIST: {
-        std::vector<Json> arr{};
+        Json json = Json::Obj({});
         for (auto *pduSession : m_base->nasTask->sm->m_pduSessions)
         {
-            if (pduSession->psi == 0)
+            if (pduSession->psi == 0 || pduSession->psState == EPsState::INACTIVE)
                 continue;
 
-            arr.push_back(Json::Obj({
-                {"ID", pduSession->psi},
+            auto obj = Json::Obj({
                 {"state", ToJson(pduSession->psState)},
                 {"session-type", ToJson(pduSession->sessionType)},
                 {"apn", ::ToJson(pduSession->apn)},
@@ -173,9 +172,11 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
                 {"address", ::ToJson(pduSession->pduAddress)},
                 {"ambr", ::ToJson(pduSession->sessionAmbr)},
                 {"data-pending", pduSession->uplinkPending},
-            }));
+            });
+
+            json.put(std::to_string(pduSession->psi), obj);
         }
-        sendResult(msg.address, Json::Arr(arr).dumpYaml());
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     }
