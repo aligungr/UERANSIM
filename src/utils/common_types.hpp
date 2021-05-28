@@ -127,6 +127,7 @@ struct Supi
 
 enum class EDeregCause
 {
+    NORMAL,
     SWITCH_OFF,
     USIM_REMOVAL,
     DISABLE_5G,

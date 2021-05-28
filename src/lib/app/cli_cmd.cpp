@@ -240,13 +240,15 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
         if (options.positionalCount() > 1)
             CMD_ERR("Only one de-registration type is expected")
         auto type = options.getPositional(0);
-        if (type == "switch-off")
+        if (type == "normal")
+            cmd->deregCause = EDeregCause::NORMAL;
+        else if (type == "switch-off")
             cmd->deregCause = EDeregCause::SWITCH_OFF;
         else if (type == "disable-5g")
             cmd->deregCause = EDeregCause::DISABLE_5G;
         else if (type == "remove-sim")
             cmd->deregCause = EDeregCause::USIM_REMOVAL;
-        else if (type != "normal")
+        else
             CMD_ERR("Invalid de-registration type, possible values are: \"normal\", \"disable-5g\", \"switch-off\", "
                     "\"remove-sim\"")
         return cmd;

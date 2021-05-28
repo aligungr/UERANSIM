@@ -128,6 +128,8 @@ Json ToJson(const EDeregCause &v)
 {
     switch (v)
     {
+    case EDeregCause::NORMAL:
+        return "NORMAL";
     case EDeregCause::SWITCH_OFF:
         return "SWITCH-OFF";
     case EDeregCause::USIM_REMOVAL:
