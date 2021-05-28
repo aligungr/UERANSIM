@@ -242,6 +242,8 @@ Json ToJson(const UePduSessionInfo &v)
         {"type", v.type},
         {"address", v.address},
         {"emergency", v.isEmergency},
+        {"apn", v.apn},
+        {"sNssai", ToJson(v.sNssai)}
     });
 }
 
