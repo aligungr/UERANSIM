@@ -123,8 +123,8 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"supi", ToJson(m_base->config->supi)},
             {"hplmn", ToJson(m_base->config->hplmn)},
             {"imei", ::ToJson(m_base->config->imei)},
-            {"imeiSv", ::ToJson(m_base->config->imeiSv)},
-            {"eCallOnly", ::ToJson(m_base->nasTask->usim->m_isECallOnly)},
+            {"imeisv", ::ToJson(m_base->config->imeiSv)},
+            {"ecall-only", ::ToJson(m_base->nasTask->usim->m_isECallOnly)},
         });
 
         sendResult(msg.address, json.dumpYaml());
