@@ -134,7 +134,7 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
         sessionInfo.isEmergency = session->isEmergency;
         sessionInfo.uplinkPending = false;
 
-        m_pduSessions[session->psi] = std::move(sessionInfo);
+        //m_pduSessions[session->psi] = std::move(sessionInfo);
 
         setupTunInterface(session);
         return;
