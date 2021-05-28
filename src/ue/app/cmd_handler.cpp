@@ -160,6 +160,9 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         std::vector<Json> arr{};
         for (auto *pduSession : m_base->nasTask->sm->m_pduSessions)
         {
+            if (pduSession->psi == 0)
+                continue;
+
             arr.push_back(Json::Obj({
                 {"ID", pduSession->psi},
                 {"state", ToJson(pduSession->psState)},
@@ -168,7 +171,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
                 {"s-nssai", ToJson(pduSession->sNssai)},
                 {"emergency", pduSession->isEmergency},
                 {"address", ::ToJson(pduSession->pduAddress)},
-                {"ambr", ""},    // TODO
+                {"ambr", ::ToJson(pduSession->sessionAmbr)},
                 {"data-pending", pduSession->uplinkPending},
             }));
         }

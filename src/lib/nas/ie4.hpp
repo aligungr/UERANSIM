@@ -573,5 +573,6 @@ struct IE5gsTrackingAreaIdentityList : InformationElement4
 };
 
 Json ToJson(const IEPduAddress &v);
+Json ToJson(const IESessionAmbr &v);
 
 } // namespace nas
