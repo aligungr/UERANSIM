@@ -43,6 +43,8 @@ class RlsUdpTask : public NtsTask
     Vector3 m_simPos;
     int m_cellIdCounter;
 
+    friend class UeCmdHandler;
+
   public:
     explicit RlsUdpTask(TaskBase *base, RlsSharedContext* shCtx, const std::vector<std::string> &searchSpace);
     ~RlsUdpTask() override = default;

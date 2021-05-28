@@ -181,12 +181,52 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     }
     case app::UeCliCommand::RLS_STATE: {
         Json json = Json::Obj({
-            {"STI", OctetString::FromOctet8(m_base->rlsTask->m_shCtx->sti).toHexString()},
+            {"sti", OctetString::FromOctet8(m_base->rlsTask->m_shCtx->sti).toHexString()},
+            {"gnb-search-space", ::ToJson(m_base->config->gnbSearchList)},
         });
         sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::COVERAGE: {
+        Json json = Json::Obj({});
+
+        const auto &cells = m_base->rrcTask->m_cellDesc;
+        for (auto &item : cells)
+        {
+            auto &cell = item.second;
+
+            auto mib = Json{};
+            auto sib1 = Json{};
+
+            if (cell.mib.hasMib)
+            {
+                mib = Json::Obj({
+                    {"barred", cell.mib.isBarred},
+                    {"intra-freq-reselection",
+                     std::string{cell.mib.isIntraFreqReselectAllowed ? "allowed" : "not-allowed"}},
+                });
+            }
+            if (cell.sib1.hasSib1)
+            {
+                sib1 = Json::Obj({
+                    {"nr-cell-id", utils::IntToHex(cell.sib1.nci)},
+                    {"plmn", ToJson(cell.sib1.plmn)},
+                    {"tac", cell.sib1.tac},
+                    {"operator-reserved", cell.sib1.isReserved},
+                });
+            }
+
+            auto obj = Json::Obj({{"signal", std::to_string(cell.dbm) + " dBm (" + SignalDescription(cell.dbm) + ")"},
+                                  {"mib", mib},
+                                  {"sib1", sib1}});
+
+            json.put("[" + std::to_string(item.first) + "]", obj);
+        }
+
+        if (cells.empty())
+            json = "No cell available";
+
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     }
