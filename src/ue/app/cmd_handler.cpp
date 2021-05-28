@@ -119,7 +119,15 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         break;
     }
     case app::UeCliCommand::INFO: {
-        sendResult(msg.address, ToJson(*m_base->config).dumpYaml());
+        auto json = Json::Obj({
+            {"supi", ToJson(m_base->config->supi)},
+            {"hplmn", ToJson(m_base->config->hplmn)},
+            {"imei", ::ToJson(m_base->config->imei)},
+            {"imeiSv", ::ToJson(m_base->config->imeiSv)},
+            {"eCallOnly", ::ToJson(m_base->nasTask->usim->m_isECallOnly)},
+        });
+
+        sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::TIMERS: {

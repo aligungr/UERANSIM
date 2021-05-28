@@ -218,16 +218,6 @@ Json ToJson(const ERegUpdateCause &v)
     }
 }
 
-Json ToJson(const UeConfig &v)
-{
-    return Json::Obj({
-        {"supi", ToJson(v.supi)},
-        {"hplmn", ToJson(v.hplmn)},
-        {"imei", ::ToJson(v.imei)},
-        {"imeiSv", ::ToJson(v.imeiSv)},
-    });
-}
-
 Json ToJson(const NasTimers &v)
 {
     return Json::Obj({
