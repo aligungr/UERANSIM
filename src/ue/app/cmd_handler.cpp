@@ -105,13 +105,6 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
-        // TODO
-        // std::vector<Json> pduSessions{};
-        // for (auto &pduSession : m_base->appTask->m_pduSessions)
-        //    if (pduSession.has_value())
-        //        pduSessions.push_back(ToJson(*pduSession));
-        // TODO: include SST, SD, DNN as well..
-
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
@@ -121,7 +114,6 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
             {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
-            // TODO {"pdu-sessions", Json::Arr(std::move(pduSessions))},
         });
         sendResult(msg.address, json.dumpYaml());
         break;
@@ -162,6 +154,25 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         config.sNssai = msg.cmd->sNssai;
         m_base->nasTask->sm->sendEstablishmentRequest(config);
         sendResult(msg.address, "PDU session establishment procedure triggered");
+        break;
+    }
+    case app::UeCliCommand::PS_LIST: {
+        std::vector<Json> arr{};
+        for (auto *pduSession : m_base->nasTask->sm->m_pduSessions)
+        {
+            arr.push_back(Json::Obj({
+                {"ID", pduSession->psi},
+                {"state", ToJson(pduSession->psState)},
+                {"session-type", ToJson(pduSession->sessionType)},
+                {"apn", ::ToJson(pduSession->apn)},
+                {"s-nssai", ToJson(pduSession->sNssai)},
+                {"emergency", pduSession->isEmergency},
+                {"address", ::ToJson(pduSession->pduAddress)},
+                {"ambr", ""},    // TODO
+                {"data-pending", pduSession->uplinkPending},
+            }));
+        }
+        sendResult(msg.address, Json::Arr(arr).dumpYaml());
         break;
     }
     }

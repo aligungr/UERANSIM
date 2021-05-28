@@ -8,6 +8,8 @@
 
 #include "ie4.hpp"
 
+#include <utils/common.hpp>
+
 namespace nas
 {
 
@@ -1073,6 +1075,22 @@ void IE5gsTrackingAreaIdentityList::Encode(const IE5gsTrackingAreaIdentityList &
 {
     for (auto &x : ie.list)
         VPartialTrackingAreaIdentityList::Encode(x, stream);
+}
+
+Json ToJson(const IEPduAddress &v)
+{
+    switch (v.sessionType)
+    {
+    case EPduSessionType::IPV4:
+    case EPduSessionType::IPV6:
+    case EPduSessionType::IPV4V6:
+        return utils::OctetStringToIp(v.pduAddressInformation);
+    case EPduSessionType::UNSTRUCTURED:
+    case EPduSessionType::ETHERNET:
+        return v.pduAddressInformation.toHexString();
+    default:
+        return "?";
+    }
 }
 
 } // namespace nas

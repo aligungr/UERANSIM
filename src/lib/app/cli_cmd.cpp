@@ -160,6 +160,7 @@ static OrderedMap<std::string, CmdEntry> g_ueCmdEntries = {
     {"timers", {"Dump current status of the timers in the UE", "", DefaultDesc, false}},
     {"ps-establish",
      {"Trigger a PDU session establishment procedure", "<session-type> [options]", DescForPsEstablish, true}},
+    {"ps-list", {"List all PDU sessions", "", DefaultDesc, false}},
     {"ps-release", {"Trigger a PDU session release procedure", "<pdu-session-id>...", DefaultDesc, true}},
     {"ps-release-all", {"Trigger PDU session release procedures for all active sessions", "", DefaultDesc, false}},
     {"deregister",
@@ -315,6 +316,10 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
             }
         }
         return cmd;
+    }
+    else if (subCmd == "ps-list")
+    {
+        return std::make_unique<UeCliCommand>(UeCliCommand::PS_LIST);
     }
 
     return nullptr;

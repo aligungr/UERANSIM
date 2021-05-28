@@ -52,6 +52,7 @@ struct UeCliCommand
         PS_ESTABLISH,
         PS_RELEASE,
         PS_RELEASE_ALL,
+        PS_LIST,
         DE_REGISTER,
     } present;
 

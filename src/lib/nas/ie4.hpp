@@ -14,6 +14,8 @@
 #include <optional>
 #include <utility>
 
+#include <utils/json.hpp>
+
 namespace nas
 {
 
@@ -569,5 +571,7 @@ struct IE5gsTrackingAreaIdentityList : InformationElement4
     static IE5gsTrackingAreaIdentityList Decode(const OctetView &stream, int length);
     static void Encode(const IE5gsTrackingAreaIdentityList &ie, OctetString &stream);
 };
+
+Json ToJson(const IEPduAddress &v);
 
 } // namespace nas
