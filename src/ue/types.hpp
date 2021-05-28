@@ -390,8 +390,8 @@ struct UePduSessionInfo
     std::string address{};
     bool isEmergency{};
     bool uplinkPending{};
-    std::string apn{};
-    SingleSlice sNssai{};
+    std::optional<std::string> apn{};
+    std::optional<SingleSlice> sNssai{};
 };
 
 enum class ERegUpdateCause
