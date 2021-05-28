@@ -179,6 +179,16 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         sendResult(msg.address, json.dumpYaml());
         break;
     }
+    case app::UeCliCommand::RLS_STATE: {
+        Json json = Json::Obj({
+            {"STI", OctetString::FromOctet8(m_base->rlsTask->m_shCtx->sti).toHexString()},
+        });
+        sendResult(msg.address, json.dumpYaml());
+        break;
+    }
+    case app::UeCliCommand::COVERAGE: {
+        break;
+    }
     }
 }
 

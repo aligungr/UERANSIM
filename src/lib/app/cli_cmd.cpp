@@ -323,9 +323,9 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
     {
         return std::make_unique<UeCliCommand>(UeCliCommand::PS_LIST);
     }
-    else if (subCmd == "rls-info")
+    else if (subCmd == "rls-state")
     {
-        return std::make_unique<UeCliCommand>(UeCliCommand::RLS_INFO);
+        return std::make_unique<UeCliCommand>(UeCliCommand::RLS_STATE);
     }
     else if (subCmd == "coverage")
     {

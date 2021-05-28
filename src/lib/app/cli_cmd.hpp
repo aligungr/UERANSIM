@@ -54,7 +54,7 @@ struct UeCliCommand
         PS_RELEASE_ALL,
         PS_LIST,
         DE_REGISTER,
-        RLS_INFO,
+        RLS_STATE,
         COVERAGE,
     } present;
 
