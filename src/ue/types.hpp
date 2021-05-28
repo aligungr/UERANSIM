@@ -453,17 +453,6 @@ enum class EAutnValidationRes
     SYNCHRONISATION_FAILURE,
 };
 
-struct UePduSessionInfo
-{
-    int psi{};
-    std::string type{};
-    std::string address{};
-    bool isEmergency{};
-    bool uplinkPending{};
-    std::optional<std::string> apn{};
-    std::optional<SingleSlice> sNssai{};
-};
-
 enum class ERegUpdateCause
 {
     // when the UE detects entering a tracking area that is not in the list of tracking areas that the UE previously
@@ -577,7 +566,6 @@ Json ToJson(const UeConfig &v);
 Json ToJson(const NasTimers &v);
 Json ToJson(const ERegUpdateCause &v);
 Json ToJson(const EPsState &v);
-Json ToJson(const UePduSessionInfo &v);
 Json ToJson(const EServiceReqCause &v);
 Json ToJson(const ERrcState &v);
 

@@ -285,16 +285,6 @@ Json ToJson(const EPsState &state)
     }
 }
 
-Json ToJson(const UePduSessionInfo &v)
-{
-    return Json::Obj({{"id", v.psi},
-                      {"type", v.type},
-                      {"address", v.address},
-                      {"emergency", v.isEmergency},
-                      {"apn", ::ToJson(v.apn)},
-                      {"s-nssai", ToJson(v.sNssai)}});
-}
-
 bool ActiveCellInfo::hasValue() const
 {
     return cellId != 0;
