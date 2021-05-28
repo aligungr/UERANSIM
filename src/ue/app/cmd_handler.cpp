@@ -105,12 +105,28 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     switch (msg.cmd->present)
     {
     case app::UeCliCommand::STATUS: {
+        std::optional<int> currentCellId = std::nullopt;
+        std::optional<Plmn> currentPlmn = std::nullopt;
+        std::optional<int> currentTac = std::nullopt;
+
+        auto currentCell = m_base->shCtx.currentCell.get();
+        if (currentCell.hasValue())
+        {
+            currentCellId = currentCell.cellId;
+            currentPlmn = currentCell.plmn;
+            currentTac = currentCell.tac;
+        }
+
         Json json = Json::Obj({
             {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
             {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
             {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
             {"5u-state", ToJson(m_base->nasTask->mm->m_storage->uState->get())},
             {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
+            {"selected-plmn", ::ToJson(m_base->shCtx.selectedPlmn.get())},
+            {"current-cell", ::ToJson(currentCellId)},
+            {"current-plmn", ::ToJson(currentPlmn)},
+            {"current-tac", ::ToJson(currentTac)},
             {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
             {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
             {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
