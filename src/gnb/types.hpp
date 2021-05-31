@@ -307,6 +307,7 @@ struct GnbConfig
     std::string portalIp{};
     std::string ngapIp{};
     std::string gtpIp{};
+    std::optional<std::string> gtpAdvertiseIp{};
     bool ignoreStreamIds{};
 
     /* Assigned by program */

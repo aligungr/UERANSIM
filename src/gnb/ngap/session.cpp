@@ -233,7 +233,9 @@ std::optional<NgapCause> NgapTask::setupPduSessionResource(PduSessionResource *r
         return NgapCause::Protocol_semantic_error;
     }
 
-    resource->downTunnel.address = utils::IpToOctetString(m_base->config->gtpIp);
+    std::string gtpIp = m_base->config->gtpAdvertiseIp.value_or(m_base->config->gtpIp);
+
+    resource->downTunnel.address = utils::IpToOctetString(gtpIp);
     resource->downTunnel.teid = ++m_downlinkTeidCounter;
 
     auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::SESSION_CREATE);

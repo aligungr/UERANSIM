@@ -52,6 +52,9 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     result->ngapIp = yaml::GetIp4(config, "ngapIp");
     result->gtpIp = yaml::GetIp4(config, "gtpIp");
 
+    if (yaml::HasField(config, "gtpAdvertiseIp"))
+        result->gtpAdvertiseIp = yaml::GetIp4(config, "gtpAdvertiseIp");
+
     result->ignoreStreamIds = yaml::GetBool(config, "ignoreStreamIds");
     result->pagingDrx = EPagingDrx::V128;
     result->name = "UERANSIM-gnb-" + std::to_string(result->plmn.mcc) + "-" + std::to_string(result->plmn.mnc) + "-" +
