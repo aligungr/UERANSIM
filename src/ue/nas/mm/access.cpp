@@ -155,16 +155,21 @@ EUacResult NasMm::performUac()
         if (currentPlmn.hasValue() &&
             (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn)))
         {
-            ais[11] = true;
-            ais[15] = true;
+            if (m_base->config->uacAcc.cls11)
+                ais[11] = true;
+            if (m_base->config->uacAcc.cls15)
+                ais[15] = true;
         }
 
         if (currentPlmn.hasValue() &&
             (currentPlmn == m_base->config->hplmn || currentPlmn.mcc == m_base->config->hplmn.mcc))
         {
-            ais[12] = true;
-            ais[13] = true;
-            ais[14] = true;
+            if (m_base->config->uacAcc.cls12)
+                ais[12] = true;
+            if (m_base->config->uacAcc.cls13)
+                ais[13] = true;
+            if (m_base->config->uacAcc.cls14)
+                ais[14] = true;
         }
 
         if (ais.none())
