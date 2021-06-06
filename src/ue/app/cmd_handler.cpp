@@ -142,6 +142,19 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"imei", ::ToJson(m_base->config->imei)},
             {"imeisv", ::ToJson(m_base->config->imeiSv)},
             {"ecall-only", ::ToJson(m_base->nasTask->usim->m_isECallOnly)},
+            {"uac-aic", Json::Obj({
+                            {"mps", m_base->config->uacAic.mps},
+                            {"mcs", m_base->config->uacAic.mcs},
+                        })},
+            {"uac-acc", Json::Obj({
+                            {"normal-class", m_base->config->uacAcc.normalCls},
+                            {"class-11", m_base->config->uacAcc.cls11},
+                            {"class-12", m_base->config->uacAcc.cls12},
+                            {"class-13", m_base->config->uacAcc.cls13},
+                            {"class-14", m_base->config->uacAcc.cls14},
+                            {"class-15", m_base->config->uacAcc.cls15},
+                        })},
+            {"is-high-priority", m_base->nasTask->mm->isHighPriority()},
         });
 
         sendResult(msg.address, json.dumpYaml());
