@@ -251,13 +251,13 @@ EUacResult NasMm::performUac()
         if (accessCategory == 1)
         {
             // TODO: RRC establishment cause not applicable
-            return ASN_RRC_EstablishmentCause_mo_Signalling;
+            return ASN_RRC_EstablishmentCause_mt_Access;
         }
 
         if (accessCategory >= 0 && accessCategory <= 7)
             return categoryMapping[accessCategory];
 
-        return ASN_RRC_EstablishmentCause_mo_Signalling;
+        return ASN_RRC_EstablishmentCause_mt_Access;
     }();
 
     auto uacInput = std::make_unique<UacInput>();
