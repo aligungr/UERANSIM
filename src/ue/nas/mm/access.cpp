@@ -11,6 +11,8 @@
 #include <lib/nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
 
+#include <asn/rrc/ASN_RRC_EstablishmentCause.h>
+
 namespace nr::ue
 {
 
@@ -175,6 +177,34 @@ void NasMm::performUac()
             return 7;
 
         return 0;
+    }();
+
+    auto establishmentCause = [&accessIdentities, accessCategory]() {
+        if (accessIdentities[1])
+            return ASN_RRC_EstablishmentCause_mps_PriorityAccess;
+        if (accessIdentities[2])
+            return ASN_RRC_EstablishmentCause_mcs_PriorityAccess;
+        if (accessIdentities[11] || accessIdentities[15])
+            return ASN_RRC_EstablishmentCause_highPriorityAccess;
+        if (accessIdentities[12] || accessIdentities[13] || accessIdentities[14])
+            return ASN_RRC_EstablishmentCause_highPriorityAccess;
+
+        ASN_RRC_EstablishmentCause categoryMapping[] = {
+            ASN_RRC_EstablishmentCause_mt_Access,    ASN_RRC_EstablishmentCause_mo_Signalling,
+            ASN_RRC_EstablishmentCause_emergency,    ASN_RRC_EstablishmentCause_mo_Signalling,
+            ASN_RRC_EstablishmentCause_mo_VoiceCall, ASN_RRC_EstablishmentCause_mo_VideoCall,
+            ASN_RRC_EstablishmentCause_mo_SMS,       ASN_RRC_EstablishmentCause_mo_Data};
+
+        if (accessCategory == 1)
+        {
+            // TODO: RRC establishment cause not applicable
+            return ASN_RRC_EstablishmentCause_mo_Signalling;
+        }
+
+        if (accessCategory >= 0 && accessCategory <= 7)
+            return categoryMapping[accessCategory];
+
+        return ASN_RRC_EstablishmentCause_mo_Signalling;
     }();
 }
 
