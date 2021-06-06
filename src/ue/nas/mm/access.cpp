@@ -206,7 +206,7 @@ void NasMm::performUac()
             return categoryMapping[accessCategory];
 
         return ASN_RRC_EstablishmentCause_mo_Signalling;
-    };
+    }();
 
     auto uacInput = std::make_unique<UacInput>();
     uacInput->identities = accessIdentities;
