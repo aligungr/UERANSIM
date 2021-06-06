@@ -174,8 +174,7 @@ class NasMm
     bool hasEmergency();
     void setN1Capability(bool enabled);
     bool isInNonAllowedArea();
-    std::bitset<16> determineAccessIdentities();
-    int determineAccessCategory();
+    void performUac();
 
   private: /* eCall */
     bool startECallInactivityIfNeeded();

@@ -73,112 +73,109 @@ bool NasMm::isInNonAllowedArea()
     return false;
 }
 
-std::bitset<16> NasMm::determineAccessIdentities()
+void NasMm::performUac()
 {
-    std::bitset<16> ais;
+    auto accessIdentities = [this]() {
+        std::bitset<16> ais;
 
-    auto currentPlmn = m_base->shCtx.getCurrentPlmn();
+        auto currentPlmn = m_base->shCtx.getCurrentPlmn();
 
-    if (m_base->config->uacAic.mps && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
-    {
-        if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
-            currentPlmn.mcc == m_base->config->hplmn.mcc)
+        if (m_base->config->uacAic.mps && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
         {
-            ais[1] = true;
+            if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
+                currentPlmn.mcc == m_base->config->hplmn.mcc)
+                ais[1] = true;
         }
-    }
 
-    if (m_base->config->uacAic.mcs && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
-    {
-        if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
-            currentPlmn.mcc == m_base->config->hplmn.mcc)
+        if (m_base->config->uacAic.mcs && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
         {
-            ais[2] = true;
+            if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
+                currentPlmn.mcc == m_base->config->hplmn.mcc)
+                ais[2] = true;
         }
-    }
 
-    if (m_nwFeatureSupport)
-    {
-        if (m_nwFeatureSupport->mpsi == nas::EMpsIndicator::SUPPORTED)
-            ais[1] = true;
-        if (m_nwFeatureSupport->mcsi && m_nwFeatureSupport->mcsi == nas::EMcsIndicator::VALID)
-            ais[2] = true;
-    }
-
-    if (currentPlmn.hasValue() &&
-        (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn)))
-    {
-        ais[11] = true;
-        ais[15] = true;
-    }
-
-    if (currentPlmn.hasValue() &&
-        (currentPlmn == m_base->config->hplmn || currentPlmn.mcc == m_base->config->hplmn.mcc))
-    {
-        ais[12] = true;
-        ais[13] = true;
-        ais[14] = true;
-    }
-
-    if (ais.none())
-        ais[0] = true;
-
-    return ais;
-}
-
-int NasMm::determineAccessCategory()
-{
-    /* Check for Rule #1 */
-    if (m_procCtl.mobilityRegistration)
-    {
-        if (m_procCtl.mobilityRegistration == ERegUpdateCause::PAGING_OR_NOTIFICATION)
+        if (m_nwFeatureSupport)
         {
-            return 0;
+            if (m_nwFeatureSupport->mpsi == nas::EMpsIndicator::SUPPORTED)
+                ais[1] = true;
+            if (m_nwFeatureSupport->mcsi && m_nwFeatureSupport->mcsi == nas::EMcsIndicator::VALID)
+                ais[2] = true;
         }
-    }
 
-    if (m_procCtl.serviceRequest)
-    {
-        if (m_procCtl.serviceRequest == EServiceReqCause::IDLE_PAGING ||
-            m_procCtl.serviceRequest == EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP ||
-            m_procCtl.serviceRequest == EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP)
+        if (currentPlmn.hasValue() &&
+            (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn)))
         {
-            return 0;
+            ais[11] = true;
+            ais[15] = true;
         }
-    }
 
-    /* Check for Rule #2 */
-    if (hasEmergency())
-        return 2;
+        if (currentPlmn.hasValue() &&
+            (currentPlmn == m_base->config->hplmn || currentPlmn.mcc == m_base->config->hplmn.mcc))
+        {
+            ais[12] = true;
+            ais[13] = true;
+            ais[14] = true;
+        }
 
-    /* Check for Rule #3 */
-    // TODO: Operator defined access category not supported
+        if (ais.none())
+            ais[0] = true;
 
-    /* Check for Rule #4 */
-    // TODO: Access attempt for delay tolerant service
+        return ais;
+    }();
 
-    /* Check for Rule #5 */
-    // TODO: MO MMTel voice call
+    auto accessCategory = [this]() {
+        /* Check for Rule #1 */
+        if (m_procCtl.mobilityRegistration)
+        {
+            if (m_procCtl.mobilityRegistration == ERegUpdateCause::PAGING_OR_NOTIFICATION)
+            {
+                return 0;
+            }
+        }
 
-    /* Check for Rule #6 */
-    // TODO: MO MMTel video call
+        if (m_procCtl.serviceRequest)
+        {
+            if (m_procCtl.serviceRequest == EServiceReqCause::IDLE_PAGING ||
+                m_procCtl.serviceRequest == EServiceReqCause::CONNECTED_3GPP_NOTIFICATION_N3GPP ||
+                m_procCtl.serviceRequest == EServiceReqCause::IDLE_3GPP_NOTIFICATION_N3GPP)
+            {
+                return 0;
+            }
+        }
 
-    /* Check for Rule #7 */
-    // TODO: MO SMS over NAS or MO SMSoIP
+        /* Check for Rule #2 */
+        if (hasEmergency())
+            return 2;
 
-    /* Check for Rule #8 */
-    if (hasPendingProcedure() && !m_sm->anyUplinkDataPending())
-        return 3;
+        /* Check for Rule #3 */
+        // TODO: Operator defined access category not supported
 
-    /* Check for Rule #9 */
-    if (hasPendingProcedure() && m_sm->anyUplinkDataPending())
-        return 7;
+        /* Check for Rule #4 */
+        // TODO: Access attempt for delay tolerant service
 
-    /* Check for Rule #10 */
-    if (m_sm->anyUplinkDataPending())
-        return 7;
+        /* Check for Rule #5 */
+        // TODO: MO MMTel voice call
 
-    return 0;
+        /* Check for Rule #6 */
+        // TODO: MO MMTel video call
+
+        /* Check for Rule #7 */
+        // TODO: MO SMS over NAS or MO SMSoIP
+
+        /* Check for Rule #8 */
+        if (hasPendingProcedure() && !m_sm->anyUplinkDataPending())
+            return 3;
+
+        /* Check for Rule #9 */
+        if (hasPendingProcedure() && m_sm->anyUplinkDataPending())
+            return 7;
+
+        /* Check for Rule #10 */
+        if (m_sm->anyUplinkDataPending())
+            return 7;
+
+        return 0;
+    }();
 }
 
 } // namespace nr::ue
