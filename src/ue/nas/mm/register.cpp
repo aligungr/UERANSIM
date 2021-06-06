@@ -381,7 +381,27 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
     }
 
     // Store the network feature support
-    m_nwFeatureSupport = msg.networkFeatureSupport.value_or(nas::IE5gsNetworkFeatureSupport{});
+    if (msg.networkFeatureSupport)
+    {
+        if (m_nwFeatureSupport)
+        {
+            m_nwFeatureSupport->imsVoPs3gpp = msg.networkFeatureSupport->imsVoPs3gpp;
+            m_nwFeatureSupport->imsVoPsN3gpp = msg.networkFeatureSupport->imsVoPsN3gpp;
+            m_nwFeatureSupport->emc = msg.networkFeatureSupport->emc;
+            m_nwFeatureSupport->emf = msg.networkFeatureSupport->emf;
+            m_nwFeatureSupport->iwkN26 = msg.networkFeatureSupport->iwkN26;
+            m_nwFeatureSupport->mpsi = msg.networkFeatureSupport->mpsi;
+
+            if (msg.networkFeatureSupport->emcn3)
+                m_nwFeatureSupport->emcn3 = msg.networkFeatureSupport->emcn3;
+            if (msg.networkFeatureSupport->mcsi)
+                m_nwFeatureSupport->mcsi = msg.networkFeatureSupport->mcsi;
+        }
+        else
+        {
+            m_nwFeatureSupport = msg.networkFeatureSupport;
+        }
+    }
 
     if (sendComplete)
     {
@@ -509,8 +529,27 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     }
 
     // Store the network feature support
-    if (msg.networkFeatureSupport.has_value())
-        m_nwFeatureSupport = *msg.networkFeatureSupport;
+    if (msg.networkFeatureSupport)
+    {
+        if (m_nwFeatureSupport)
+        {
+            m_nwFeatureSupport->imsVoPs3gpp = msg.networkFeatureSupport->imsVoPs3gpp;
+            m_nwFeatureSupport->imsVoPsN3gpp = msg.networkFeatureSupport->imsVoPsN3gpp;
+            m_nwFeatureSupport->emc = msg.networkFeatureSupport->emc;
+            m_nwFeatureSupport->emf = msg.networkFeatureSupport->emf;
+            m_nwFeatureSupport->iwkN26 = msg.networkFeatureSupport->iwkN26;
+            m_nwFeatureSupport->mpsi = msg.networkFeatureSupport->mpsi;
+
+            if (msg.networkFeatureSupport->emcn3)
+                m_nwFeatureSupport->emcn3 = msg.networkFeatureSupport->emcn3;
+            if (msg.networkFeatureSupport->mcsi)
+                m_nwFeatureSupport->mcsi = msg.networkFeatureSupport->mcsi;
+        }
+        else
+        {
+            m_nwFeatureSupport = msg.networkFeatureSupport;
+        }
+    }
 
     // The service request attempt counter shall be reset when registration procedure for mobility and periodic
     // registration update is successfully completed

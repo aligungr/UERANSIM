@@ -73,4 +73,57 @@ bool NasMm::isInNonAllowedArea()
     return false;
 }
 
+std::bitset<16> NasMm::determineAccessIdentities()
+{
+    std::bitset<16> ais;
+
+    auto currentPlmn = m_base->shCtx.getCurrentPlmn();
+
+    if (m_base->config->uacAic.mps && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
+    {
+        if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
+            currentPlmn.mcc == m_base->config->hplmn.mcc)
+        {
+            ais[1] = true;
+        }
+    }
+
+    if (m_base->config->uacAic.mcs && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
+    {
+        if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
+            currentPlmn.mcc == m_base->config->hplmn.mcc)
+        {
+            ais[2] = true;
+        }
+    }
+
+    if (m_nwFeatureSupport)
+    {
+        if (m_nwFeatureSupport->mpsi == nas::EMpsIndicator::SUPPORTED)
+            ais[1] = true;
+        if (m_nwFeatureSupport->mcsi && m_nwFeatureSupport->mcsi == nas::EMcsIndicator::VALID)
+            ais[2] = true;
+    }
+
+    if (currentPlmn.hasValue() &&
+        (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn)))
+    {
+        ais[11] = true;
+        ais[15] = true;
+    }
+
+    if (currentPlmn.hasValue() &&
+        (currentPlmn == m_base->config->hplmn || currentPlmn.mcc == m_base->config->hplmn.mcc))
+    {
+        ais[12] = true;
+        ais[13] = true;
+        ais[14] = true;
+    }
+
+    if (ais.none())
+        ais[0] = true;
+
+    return ais;
+}
+
 } // namespace nr::ue
