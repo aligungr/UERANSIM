@@ -175,6 +175,7 @@ class NasMm
     void setN1Capability(bool enabled);
     bool isInNonAllowedArea();
     std::bitset<16> determineAccessIdentities();
+    int determineAccessCategory();
 
   private: /* eCall */
     bool startECallInactivityIfNeeded();
