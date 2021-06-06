@@ -45,8 +45,8 @@ bool NasMm::hasEmergency()
 
 bool NasMm::isHighPriority()
 {
-    // TODO
-    return false;
+    auto &acc = m_base->config->uacAcc;
+    return acc.cls11 || acc.cls12 || acc.cls13 || acc.cls14 || acc.cls15;
 }
 
 void NasMm::setN1Capability(bool enabled)
