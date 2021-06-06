@@ -44,6 +44,9 @@ void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
         break;
     }
     case NmUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
+        // TODO: handle treat barred
+        (void)msg.treatBarred;
+
         switchState(ERrcState::RRC_IDLE);
         m_base->rlsTask->push(new NmUeRrcToRls(NmUeRrcToRls::RESET_STI));
         m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::RRC_CONNECTION_RELEASE));

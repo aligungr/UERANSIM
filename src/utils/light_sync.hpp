@@ -20,7 +20,7 @@ class LightSync
     const int64_t m_validUntilForConsumer;
     const std::unique_ptr<TInput> m_input;
     std::atomic_bool m_processed;
-    std::shared_ptr<TOutput> m_output;
+    std::unique_ptr<TOutput> m_output;
 
   public:
     LightSync(int validForMs, int estimatedProcessMs, std::unique_ptr<TInput> &&input)
@@ -61,7 +61,7 @@ class LightSync
     }
 
     // Only consumer can call at most once
-    std::shared_ptr<TOutput> waitForProcess()
+    std::unique_ptr<TOutput> waitForProcess()
     {
         while (true)
         {
@@ -69,7 +69,11 @@ class LightSync
                 return nullptr;
 
             if (m_processed)
-                return m_output;
+            {
+                std::unique_ptr<TOutput> output = std::move(m_output);
+                m_output = nullptr;
+                return output;
+            }
         }
     }
 

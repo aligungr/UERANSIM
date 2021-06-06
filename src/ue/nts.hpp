@@ -16,6 +16,7 @@
 #include <lib/app/cli_base.hpp>
 #include <lib/rls/rls_base.hpp>
 #include <lib/rrc/rrc.hpp>
+#include <utils/light_sync.hpp>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -95,6 +96,7 @@ struct NmUeNasToRrc : NtsMessage
         LOCAL_RELEASE_CONNECTION,
         UPLINK_NAS_DELIVERY,
         RRC_NOTIFY,
+        PERFORM_UAC,
     } present;
 
     // UPLINK_NAS_DELIVERY
@@ -103,6 +105,9 @@ struct NmUeNasToRrc : NtsMessage
 
     // LOCAL_RELEASE_CONNECTION
     bool treatBarred{};
+
+    // PERFORM_UAC
+    std::shared_ptr<LightSync<UacInput, UacOutput>> uacCtl{};
 
     explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {

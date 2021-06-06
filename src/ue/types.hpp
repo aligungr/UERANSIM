@@ -573,6 +573,18 @@ struct ProcControl
     std::optional<EDeregCause> deregistration{};
 };
 
+struct UacInput
+{
+    std::bitset<16> identities;
+    int category{};
+    int establishmentCause{};
+};
+
+struct UacOutput
+{
+
+};
+
 Json ToJson(const ECmState &state);
 Json ToJson(const ERmState &state);
 Json ToJson(const EMmState &state);

@@ -10,6 +10,7 @@
 
 #include <lib/nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
+#include <ue/rrc/task.hpp>
 
 #include <asn/rrc/ASN_RRC_EstablishmentCause.h>
 
@@ -205,7 +206,22 @@ void NasMm::performUac()
             return categoryMapping[accessCategory];
 
         return ASN_RRC_EstablishmentCause_mo_Signalling;
-    }();
+    };
+
+    auto uacInput = std::make_unique<UacInput>();
+    uacInput->identities = accessIdentities;
+    uacInput->category = accessCategory;
+    uacInput->establishmentCause = static_cast<int>(establishmentCause);
+
+    auto uacCtl = LightSync<UacInput, UacOutput>::MakeShared(100, 0, std::move(uacInput));
+
+    auto *w = new NmUeNasToRrc(NmUeNasToRrc::PERFORM_UAC);
+    w->uacCtl = uacCtl;
+    m_base->rrcTask->push(w);
+
+    auto uacOutput = uacCtl->waitForProcess();
+
+    // TODO: use uacOutput
 }
 
 } // namespace nr::ue
