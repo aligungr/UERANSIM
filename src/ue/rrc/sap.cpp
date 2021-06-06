@@ -57,7 +57,8 @@ void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
         break;
     }
     case NmUeNasToRrc::PERFORM_UAC: {
-        performUac(msg.uacCtl);
+        if (!msg.uacCtl->isExpiredForProducer())
+            performUac(msg.uacCtl);
         break;
     }
     }

@@ -16,7 +16,12 @@ namespace nr::ue
 
 void UeRrcTask::performUac(std::shared_ptr<LightSync<UacInput, UacOutput>> &uacCtl)
 {
-    // TODO
+    auto &input = uacCtl->input();
+
+    auto output = std::make_unique<UacOutput>();
+    output->allowed = true; // TODO
+
+    uacCtl->notifyProcessed(std::move(output));
 }
 
 } // namespace nr::ue

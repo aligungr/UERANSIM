@@ -582,7 +582,7 @@ struct UacInput
 
 struct UacOutput
 {
-
+    bool allowed{};
 };
 
 Json ToJson(const ECmState &state);
