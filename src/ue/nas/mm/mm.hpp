@@ -174,7 +174,7 @@ class NasMm
     bool hasEmergency();
     void setN1Capability(bool enabled);
     bool isInNonAllowedArea();
-    void performUac();
+    EUacResult performUac();
 
   private: /* eCall */
     bool startECallInactivityIfNeeded();

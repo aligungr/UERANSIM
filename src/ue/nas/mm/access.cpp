@@ -8,6 +8,8 @@
 
 #include "mm.hpp"
 
+#include <sstream>
+
 #include <lib/nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
 #include <ue/rrc/task.hpp>
@@ -16,6 +18,51 @@
 
 namespace nr::ue
 {
+
+static std::string AccessIdentitiesToString(const std::bitset<16> &ais)
+{
+    bool first = true;
+    std::stringstream ss;
+    for (size_t i = 0; i < ais.size(); i++)
+    {
+        if (ais[i])
+        {
+            if (!first)
+                ss << ", ";
+            ss << i;
+            first = false;
+        }
+    }
+    return ss.str();
+}
+
+static std::string AccessCategoryToString(int n)
+{
+    if (n >= 32 && n <= 63)
+        return "operator defined[" + std::to_string(n) + "]";
+
+    switch (n)
+    {
+    case 0:
+        return "MT_acc";
+    case 1:
+        return "delay tolerant";
+    case 2:
+        return "emergency";
+    case 3:
+        return "MO_sig";
+    case 4:
+        return "MO MMTel voice";
+    case 5:
+        return "MO MMTel video";
+    case 6:
+        return "MO SMS and SMSoIP";
+    case 7:
+        return "MO_data";
+    default:
+        return "?";
+    }
+}
 
 bool NasMm::hasEmergency()
 {
@@ -76,7 +123,7 @@ bool NasMm::isInNonAllowedArea()
     return false;
 }
 
-void NasMm::performUac()
+EUacResult NasMm::performUac()
 {
     auto accessIdentities = [this]() {
         std::bitset<16> ais;
@@ -221,7 +268,37 @@ void NasMm::performUac()
 
     auto uacOutput = uacCtl->waitForProcess();
 
-    // TODO: use uacOutput
+    if (uacOutput == nullptr)
+    {
+        m_logger->err("No response from RRC from UAC checks, considering access attempt is barred");
+        return EUacResult::BARRED;
+    }
+
+    auto res = uacOutput->res;
+
+    switch (res)
+    {
+    case EUacResult::ALLOWED:
+        m_logger->debug("UAC access attempt is allowed for identity[%s], category[%s]",
+                        AccessIdentitiesToString(accessIdentities).c_str(),
+                        AccessCategoryToString(accessCategory).c_str());
+        return EUacResult::ALLOWED;
+    case EUacResult::BARRED:
+        m_logger->err("UAC access attempt is barred for identity[%s], category[%s]",
+                      AccessIdentitiesToString(accessIdentities).c_str(),
+                      AccessCategoryToString(accessCategory).c_str());
+        return EUacResult::BARRED;
+    case EUacResult::BARRING_APPLICABLE_EXCEPT_0_2:
+        if (accessCategory != 0 && accessCategory != 2)
+        {
+            m_logger->err("UAC access barred is applicable except category [0] and [2]");
+            return EUacResult::BARRING_APPLICABLE_EXCEPT_0_2;
+        }
+        return EUacResult::ALLOWED;
+    default:
+        // Should never reach here
+        return EUacResult::BARRED;
+    }
 }
 
 } // namespace nr::ue

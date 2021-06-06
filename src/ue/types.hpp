@@ -584,8 +584,7 @@ enum class EUacResult
 {
     ALLOWED,
     BARRED,
-    BARRING_APPLICABLE_EXCEPT_0,
-    BARRING_APPLICABLE_EXCEPT_0_2
+    BARRING_APPLICABLE_EXCEPT_0_2,
 };
 
 struct UacOutput
