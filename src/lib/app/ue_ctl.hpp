@@ -10,7 +10,9 @@
 
 namespace nr::ue
 {
+
 class UserEquipment;
+
 }
 
 namespace app

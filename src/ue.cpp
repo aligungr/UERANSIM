@@ -217,6 +217,22 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->integrityMaxRate.downlinkFull = downlink == "full";
     }
 
+    yaml::AssertHasField(config, "uacAic");
+    {
+        result->uacAic.mps = yaml::GetBool(config["uacAic"], "mps");
+        result->uacAic.mcs = yaml::GetBool(config["uacAic"], "mcs");
+    }
+
+    yaml::AssertHasField(config, "uacAcc");
+    {
+        result->uacAcc.normalCls = yaml::GetInt32(config["uacAcc"], "normalClass", 0, 9);
+        result->uacAcc.cls11 = yaml::GetBool(config["uacAcc"], "class11");
+        result->uacAcc.cls12 = yaml::GetBool(config["uacAcc"], "class12");
+        result->uacAcc.cls13 = yaml::GetBool(config["uacAcc"], "class13");
+        result->uacAcc.cls14 = yaml::GetBool(config["uacAcc"], "class14");
+        result->uacAcc.cls15 = yaml::GetBool(config["uacAcc"], "class15");
+    }
+
     return result;
 }
 
@@ -274,22 +290,22 @@ static std::string LargeSum(std::string a, std::string b)
         std::swap(a, b);
 
     std::string str;
-    int n1 = a.length(), n2 = b.length();
+    size_t n1 = a.length(), n2 = b.length();
 
     reverse(a.begin(), a.end());
     reverse(b.begin(), b.end());
 
     int carry = 0;
-    for (int i = 0; i < n1; i++)
+    for (size_t i = 0; i < n1; i++)
     {
         int sum = ((a[i] - '0') + (b[i] - '0') + carry);
-        str.push_back(sum % 10 + '0');
+        str.push_back(static_cast<char>((sum % 10) + '0'));
         carry = sum / 10;
     }
-    for (int i = n1; i < n2; i++)
+    for (size_t i = n1; i < n2; i++)
     {
         int sum = ((b[i] - '0') + carry);
-        str.push_back(sum % 10 + '0');
+        str.push_back(static_cast<char>((sum % 10) + '0'));
         carry = sum / 10;
     }
     if (carry)
@@ -322,6 +338,8 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->configureRouting = g_refConfig->configureRouting;
     c->prefixLogger = g_refConfig->prefixLogger;
     c->integrityMaxRate = g_refConfig->integrityMaxRate;
+    c->uacAic = g_refConfig->uacAic;
+    c->uacAcc = g_refConfig->uacAcc;
 
     if (c->supi.has_value())
         IncrementNumber(c->supi->value, ueIndex);

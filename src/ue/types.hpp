@@ -105,6 +105,22 @@ struct UeConfig
     NetworkSlice defaultConfiguredNssai{};
     NetworkSlice configuredNssai{};
 
+    struct
+    {
+        bool mps{};
+        bool mcs{};
+    } uacAic;
+
+    struct
+    {
+        int normalCls{}; // [0..9]
+        bool cls11{};
+        bool cls12{};
+        bool cls13{};
+        bool cls14{};
+        bool cls15{};
+    } uacAcc;
+
     /* Assigned by program */
     bool configureRouting{};
     bool prefixLogger{};
