@@ -133,6 +133,9 @@ class UeRrcTask : public NtsTask
     /* Failures */
     void declareRadioLinkFailure(rls::ERlfCause cause);
     void handleRadioLinkFailure(rls::ERlfCause cause);
+
+    /* Access Control */
+    void performUac(std::shared_ptr<LightSync<UacInput, UacOutput>>& uacCtl);
 };
 
 } // namespace nr::ue

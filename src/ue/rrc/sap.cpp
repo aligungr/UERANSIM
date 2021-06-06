@@ -56,6 +56,10 @@ void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
         triggerCycle();
         break;
     }
+    case NmUeNasToRrc::PERFORM_UAC: {
+        performUac(msg.uacCtl);
+        break;
+    }
     }
 }
 
