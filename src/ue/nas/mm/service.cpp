@@ -91,6 +91,12 @@ EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
         }
     }
 
+    // Perform Unified Access Control
+    if (performUac() != EUacResult::ALLOWED)
+    {
+        return EProcRc::STAY;
+    }
+
     m_logger->debug("Sending Service Request due to [%s]", ToJson(reqCause).str().c_str());
 
     updateProvidedGuti();

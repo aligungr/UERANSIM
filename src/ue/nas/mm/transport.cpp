@@ -107,7 +107,7 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
     }
 }
 
-EProcRc NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
+EProcRc NasMm::deliverUlTransport(const nas::UlNasTransport &msg, ENasTransportHint hint)
 {
     // 5.4.5.2.6 Abnormal cases in the UE
     // "The UE shall not send the UL NAS TRANSPORT message when the UE is in non-allowed area or
@@ -126,6 +126,15 @@ EProcRc NasMm::deliverUlTransport(const nas::UlNasTransport &msg)
             msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::SMS)
         {
             m_logger->err("Ul Nas Transport procedure canceled, UE is not in allowed area");
+            return EProcRc::STAY;
+        }
+    }
+
+    // Perform UAC for PDU session establishment and modification
+    if (hint == ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REQUEST || hint == ENasTransportHint::PDU_SESSION_MODIFICATION_REQUEST)
+    {
+        if (performUac() != EUacResult::ALLOWED)
+        {
             return EProcRc::STAY;
         }
     }

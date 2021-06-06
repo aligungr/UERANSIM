@@ -101,7 +101,7 @@ class NasMm
 
   private: /* Transport */
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
-    EProcRc deliverUlTransport(const nas::UlNasTransport &msg);
+    EProcRc deliverUlTransport(const nas::UlNasTransport &msg, ENasTransportHint hint);
 
   private: /* Registration */
     EProcRc sendInitialRegistration(EInitialRegCause regCause);

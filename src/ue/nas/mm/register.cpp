@@ -48,6 +48,12 @@ EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
         }
     }
 
+    // Perform Unified Access Control
+    if (m_cmState == ECmState::CM_IDLE && performUac() != EUacResult::ALLOWED)
+    {
+        return EProcRc::STAY;
+    }
+
     m_logger->debug("Sending %s",
                     nas::utils::EnumToString(isEmergencyReg ? nas::ERegistrationType::EMERGENCY_REGISTRATION
                                                             : nas::ERegistrationType::INITIAL_REGISTRATION));
@@ -156,6 +162,12 @@ EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
     {
         m_timers->t3517.stop();
+    }
+
+    // Perform Unified Access Control
+    if (m_cmState == ECmState::CM_IDLE && performUac() != EUacResult::ALLOWED)
+    {
+        return EProcRc::STAY;
     }
 
     m_logger->debug("Sending %s with update cause [%s]",

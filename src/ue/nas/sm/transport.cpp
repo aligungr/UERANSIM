@@ -7,11 +7,55 @@
 //
 
 #include "sm.hpp"
+
+#include <stdexcept>
+
 #include <lib/nas/utils.hpp>
 #include <ue/nas/mm/mm.hpp>
 
 namespace nr::ue
 {
+
+static ENasTransportHint MapMsgTypeToHint(nas::EMessageType msgType)
+{
+    switch (msgType)
+    {
+    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST:
+        return ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REQUEST;
+    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
+        return ENasTransportHint::PDU_SESSION_ESTABLISHMENT_ACCEPT;
+    case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
+        return ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REJECT;
+    case nas::EMessageType::PDU_SESSION_AUTHENTICATION_COMMAND:
+        return ENasTransportHint::PDU_SESSION_AUTHENTICATION_COMMAND;
+    case nas::EMessageType::PDU_SESSION_AUTHENTICATION_COMPLETE:
+        return ENasTransportHint::PDU_SESSION_AUTHENTICATION_COMPLETE;
+    case nas::EMessageType::PDU_SESSION_AUTHENTICATION_RESULT:
+        return ENasTransportHint::PDU_SESSION_AUTHENTICATION_RESULT;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_REQUEST:
+        return ENasTransportHint::PDU_SESSION_MODIFICATION_REQUEST;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_REJECT:
+        return ENasTransportHint::PDU_SESSION_MODIFICATION_REJECT;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_COMMAND:
+        return ENasTransportHint::PDU_SESSION_MODIFICATION_COMMAND;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_COMPLETE:
+        return ENasTransportHint::PDU_SESSION_MODIFICATION_COMPLETE;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_COMMAND_REJECT:
+        return ENasTransportHint::PDU_SESSION_MODIFICATION_COMMAND_REJECT;
+    case nas::EMessageType::PDU_SESSION_RELEASE_REQUEST:
+        return ENasTransportHint::PDU_SESSION_RELEASE_REQUEST;
+    case nas::EMessageType::PDU_SESSION_RELEASE_REJECT:
+        return ENasTransportHint::PDU_SESSION_RELEASE_REJECT;
+    case nas::EMessageType::PDU_SESSION_RELEASE_COMMAND:
+        return ENasTransportHint::PDU_SESSION_RELEASE_COMMAND;
+    case nas::EMessageType::PDU_SESSION_RELEASE_COMPLETE:
+        return ENasTransportHint::PDU_SESSION_RELEASE_COMPLETE;
+    case nas::EMessageType::FIVEG_SM_STATUS:
+        return ENasTransportHint::FIVEG_SM_STATUS;
+    default:
+        throw std::runtime_error("failure in MapMsgTypeToHint");
+    }
+}
 
 void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
 {
@@ -35,7 +79,7 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
             m.dnn = nas::utils::DnnFromApn(*session->apn);
     }
 
-    m_mm->deliverUlTransport(m);
+    m_mm->deliverUlTransport(m, MapMsgTypeToHint(msg.messageType));
 }
 
 void NasSm::receiveSmMessage(const nas::SmMessage &msg)
@@ -95,7 +139,7 @@ void NasSm::sendSmCause(const nas::ESmCause &cause, int pti, int psi)
     ulTransport.pduSessionId = nas::IEPduSessionIdentity2{};
     ulTransport.pduSessionId->value = psi;
 
-    m_mm->deliverUlTransport(ulTransport);
+    m_mm->deliverUlTransport(ulTransport, ENasTransportHint::FIVEG_SM_STATUS);
 }
 
 void NasSm::receiveForwardingFailure(const nas::SmMessage &msg, nas::EMmCause cause,
