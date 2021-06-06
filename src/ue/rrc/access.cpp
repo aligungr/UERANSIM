@@ -19,7 +19,7 @@ void UeRrcTask::performUac(std::shared_ptr<LightSync<UacInput, UacOutput>> &uacC
     auto &input = uacCtl->input();
 
     auto output = std::make_unique<UacOutput>();
-    output->allowed = true; // TODO
+    output->res = EUacResult::ALLOWED; // TODO
 
     uacCtl->notifyProcessed(std::move(output));
 }

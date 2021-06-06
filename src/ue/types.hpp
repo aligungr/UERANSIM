@@ -580,9 +580,17 @@ struct UacInput
     int establishmentCause{};
 };
 
+enum class EUacResult
+{
+    ALLOWED,
+    BARRED,
+    BARRING_APPLICABLE_EXCEPT_0,
+    BARRING_APPLICABLE_EXCEPT_0_2
+};
+
 struct UacOutput
 {
-    bool allowed{};
+    EUacResult res{};
 };
 
 Json ToJson(const ECmState &state);
