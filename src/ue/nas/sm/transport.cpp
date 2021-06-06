@@ -29,7 +29,7 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
     if (!session->isEmergency)
     {
         if (session->sNssai.has_value())
-            m.sNssa = nas::utils::SNssaiFrom(*session->sNssai);
+            m.sNssai = nas::utils::SNssaiFrom(*session->sNssai);
 
         if (session->apn.has_value())
             m.dnn = nas::utils::DnnFromApn(*session->apn);

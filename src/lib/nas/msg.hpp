@@ -622,7 +622,7 @@ struct UlNasTransport : PlainMmMessage
     std::optional<IEPduSessionIdentity2> pduSessionId{};
     std::optional<IEPduSessionIdentity2> oldPduSessionId{};
     std::optional<IERequestType> requestType{};
-    std::optional<IESNssai> sNssa{};
+    std::optional<IESNssai> sNssai{};
     std::optional<IEDnn> dnn{};
     std::optional<IEAdditionalInformation> additionalInformation{};
 

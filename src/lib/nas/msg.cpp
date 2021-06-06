@@ -672,7 +672,7 @@ void UlNasTransport::onBuild(NasMessageBuilder &b)
     b.optionalIE(0x12, &pduSessionId);
     b.optionalIE(0x59, &oldPduSessionId);
     b.optionalIE1(0x8, &requestType);
-    b.optionalIE(0x22, &sNssa);
+    b.optionalIE(0x22, &sNssai);
     b.optionalIE(0x25, &dnn);
     b.optionalIE(0x24, &additionalInformation);
 }
