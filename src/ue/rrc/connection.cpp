@@ -65,7 +65,8 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
 
     m_logger->debug("Sending RRC Setup Request");
 
-    auto *rrcSetupRequest = ConstructSetupRequest(m_initialId, ASN_RRC_EstablishmentCause_mo_Data);
+    auto *rrcSetupRequest =
+        ConstructSetupRequest(m_initialId, static_cast<ASN_RRC_EstablishmentCause_t>(m_establishmentCause));
     sendRrcMessage(activeCell, rrcSetupRequest);
     asn::Free(asn_DEF_ASN_RRC_UL_CCCH_Message, rrcSetupRequest);
 }

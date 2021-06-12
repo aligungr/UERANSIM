@@ -28,8 +28,8 @@ UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}, m_timers{}
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
 
     m_startedTime = utils::CurrentTimeMillis();
-
     m_state = ERrcState::RRC_IDLE;
+    m_establishmentCause = ASN_RRC_EstablishmentCause_mt_Access;
 }
 
 void UeRrcTask::onStart()
