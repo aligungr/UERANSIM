@@ -63,6 +63,7 @@ class UeRrcTask : public NtsTask
     ERrcLastSetupRequest m_lastSetupReq{};
 
     /* Establishment procedure related */
+    int m_establishmentCause{};
     ASN_RRC_InitialUE_Identity_t m_initialId{};
     OctetString m_initialNasPdu{};
 
@@ -135,7 +136,7 @@ class UeRrcTask : public NtsTask
     void handleRadioLinkFailure(rls::ERlfCause cause);
 
     /* Access Control */
-    void performUac(std::shared_ptr<LightSync<UacInput, UacOutput>>& uacCtl);
+    void performUac(std::shared_ptr<LightSync<UacInput, UacOutput>> &uacCtl);
 };
 
 } // namespace nr::ue
