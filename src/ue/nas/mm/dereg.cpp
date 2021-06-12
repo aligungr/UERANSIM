@@ -54,6 +54,14 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
         }
     }
 
+    // Perform Unified Access Control
+    if (m_cmState == ECmState::CM_IDLE && performUac() != EUacResult::ALLOWED)
+    {
+        m_logger->warn("Performing local de-registration due to UAC");
+        performLocalDeregistration();
+        return EProcRc::CANCEL;
+    }
+
     m_logger->debug("Starting de-registration procedure due to [%s]", ToJson(deregCause).str().c_str());
 
     updateProvidedGuti();
