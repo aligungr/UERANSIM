@@ -296,7 +296,7 @@ EUacResult NasMm::performUac()
     case EUacResult::BARRING_APPLICABLE_EXCEPT_0_2:
         if (accessCategory != 0 && accessCategory != 2)
         {
-            m_logger->err("UAC access barred is applicable except category [0] and [2]");
+            m_logger->err("UAC access barring is applicable except category [0] and [2]");
             return EUacResult::BARRING_APPLICABLE_EXCEPT_0_2;
         }
         return EUacResult::ALLOWED;
