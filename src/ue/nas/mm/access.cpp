@@ -229,7 +229,7 @@ EUacResult NasMm::performUac()
         if (m_sm->anyUplinkDataPending())
             return 7;
 
-        return 0;
+        return 3;
     }();
 
     auto establishmentCause = [&accessIdentities, accessCategory]() {
