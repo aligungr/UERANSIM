@@ -58,4 +58,4 @@ All source code and related files including documentation and wiki pages are lic
 under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html),
 see [LICENSE](https://github.com/aligungr/UERANSIM/blob/master/LICENSE).
 
-If you want to use UERANSIM for **commercial** purposes, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to obtain a commercial license.
+**Commercial Usage**: If you want to use UERANSIM for commercial purposes, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to obtain a commercial license.
