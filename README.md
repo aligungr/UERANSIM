@@ -46,7 +46,7 @@ Any contributions you make are greatly appreciated via [Pull Request](https://gi
 
 You can support UERANSIM by:
 
-- Starring our GitHub repository,
+- Starring the GitHub repository,
 - Donating on [Open Collective](https://opencollective.com/UERANSIM)
 - Creating pull requests, submitting bugs, suggesting new features or documentation updates.
 
