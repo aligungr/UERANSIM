@@ -153,7 +153,7 @@ struct UeConfig
 struct CellSelectionReport
 {
     int outOfPlmnCells{};
-    int sib1MissingCells{};
+    int siMissingCells{};
     int reservedCells{};
     int barredCells{};
     int forbiddenTaiCells{};

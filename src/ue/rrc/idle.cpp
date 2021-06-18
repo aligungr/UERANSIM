@@ -26,6 +26,8 @@ void UeRrcTask::performCellSelection()
 
     if (currentTime - m_startedTime <= 1000LL && m_cellDesc.empty())
         return;
+    if (currentTime - m_startedTime <= 4000LL && !m_base->shCtx.selectedPlmn.get().hasValue())
+        return;
 
     auto lastCell = m_base->shCtx.currentCell.get();
 
@@ -47,7 +49,7 @@ void UeRrcTask::performCellSelection()
                     m_logger->warn(
                         "Suitable cell selection failed in [%d] cells. [%d] out of PLMN, [%d] no SI, [%d] reserved, "
                         "[%d] barred, ftai [%d]",
-                        static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.sib1MissingCells,
+                        static_cast<int>(m_cellDesc.size()), report.outOfPlmnCells, report.siMissingCells,
                         report.reservedCells, report.barredCells, report.forbiddenTaiCells);
                 }
                 else
@@ -74,7 +76,7 @@ void UeRrcTask::performCellSelection()
                 {
                     m_logger->warn("Acceptable cell selection failed in [%d] cells. [%d] no SI, [%d] reserved, [%d] "
                                    "barred, ftai [%d]",
-                                   static_cast<int>(m_cellDesc.size()), report.sib1MissingCells, report.reservedCells,
+                                   static_cast<int>(m_cellDesc.size()), report.siMissingCells, report.reservedCells,
                                    report.barredCells, report.forbiddenTaiCells);
                 }
                 else
@@ -122,7 +124,13 @@ bool UeRrcTask::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionRepor
 
         if (!cell.sib1.hasSib1)
         {
-            report.sib1MissingCells++;
+            report.siMissingCells++;
+            continue;
+        }
+
+        if (!cell.mib.hasMib)
+        {
+            report.siMissingCells++;
             continue;
         }
 
@@ -132,13 +140,10 @@ bool UeRrcTask::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionRepor
             continue;
         }
 
-        if (cell.mib.hasMib)
+        if (cell.mib.isBarred)
         {
-            if (cell.mib.isBarred)
-            {
-                report.barredCells++;
-                continue;
-            }
+            report.barredCells++;
+            continue;
         }
 
         if (cell.sib1.isReserved)
@@ -201,17 +206,20 @@ bool UeRrcTask::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionRep
 
         if (!cell.sib1.hasSib1)
         {
-            report.sib1MissingCells++;
+            report.siMissingCells++;
             continue;
         }
 
-        if (cell.mib.hasMib)
+        if (!cell.mib.hasMib)
         {
-            if (cell.mib.isBarred)
-            {
-                report.barredCells++;
-                continue;
-            }
+            report.siMissingCells++;
+            continue;
+        }
+
+        if (cell.mib.isBarred)
+        {
+            report.barredCells++;
+            continue;
         }
 
         if (cell.sib1.isReserved)
