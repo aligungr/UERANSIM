@@ -17,8 +17,6 @@
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
 
-#include <queue>
-
 namespace nr::ue
 {
 

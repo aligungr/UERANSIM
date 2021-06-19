@@ -12,7 +12,9 @@
 
 #include <array>
 #include <atomic>
+#include <deque>
 #include <memory>
+#include <queue>
 #include <set>
 #include <unordered_set>
 
