@@ -216,21 +216,38 @@ void NasMm::handleRrcConnectionRelease()
 
 void NasMm::handleRrcEstablishmentFailure()
 {
-    // TODO
-
     m_logger->err("RRC Establishment failure");
 
-    if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+    /* Handle NAS count */
     {
-        switchMmState(m_rmState == ERmState::RM_REGISTERED ? EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE
-                                                           : EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED);
+        // "After each new or retransmitted outbound SECURITY PROTECTED 5GS NAS MESSAGE message, the sender shall
+        // increase the NAS COUNT number by one, except for the initial NAS messages if the lower layers indicated the
+        // failure to establish the RRC connection"
+        bool hasNsCtx = m_usim->m_currentNsCtx &&
+                        (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0 ||
+                         m_usim->m_currentNsCtx->ciphering != nas::ETypeOfCipheringAlgorithm::EA0);
+        if (hasNsCtx && m_usim->m_currentNsCtx->uplinkCount.sqn != 0 &&
+            m_usim->m_currentNsCtx->uplinkCount.overflow.operator int() != 0)
+        {
+            m_usim->m_currentNsCtx->rollbackCountOnEncrypt();
+        }
     }
-    else if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+
+    /* Handle MM state changes */
     {
-        switchMmState(EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
-    }
-    else if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
-    {
+        if (m_mmState == EMmState::MM_REGISTERED_INITIATED)
+        {
+            switchMmState(m_rmState == ERmState::RM_REGISTERED
+                              ? EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE
+                              : EMmSubState::MM_DEREGISTERED_INITIAL_REGISTRATION_NEEDED);
+        }
+        else if (m_mmState == EMmState::MM_SERVICE_REQUEST_INITIATED)
+        {
+            switchMmState(EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
+        }
+        else if (m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
+        {
+        }
     }
 }
 

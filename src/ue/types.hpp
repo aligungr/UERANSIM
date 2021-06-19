@@ -446,6 +446,23 @@ struct NasSecurityContext
             uplinkCount.overflow = octet2(((int)uplinkCount.overflow + 1) & 0xFFFF);
     }
 
+    void rollbackCountOnEncrypt()
+    {
+        if (uplinkCount.sqn == 0)
+        {
+            uplinkCount.sqn = 0xFF;
+
+            if ((int)uplinkCount.overflow == 0)
+                uplinkCount.overflow = octet2{0xFFFF};
+            else
+                uplinkCount.overflow = octet2{(int)uplinkCount.overflow - 1};
+        }
+        else
+        {
+            uplinkCount.sqn = static_cast<uint8_t>(((int)uplinkCount.sqn - 1) & 0xFF);
+        }
+    }
+
     [[nodiscard]] NasSecurityContext deepCopy() const
     {
         NasSecurityContext ctx;
