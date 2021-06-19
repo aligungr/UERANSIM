@@ -126,6 +126,16 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
     OctetString pdu;
     if (hasNsCtx)
     {
+        if (m_usim->m_currentNsCtx->uplinkCount.sqn == 0xFF &&
+            static_cast<int>(m_usim->m_currentNsCtx->uplinkCount.overflow) == 0xFFFF)
+        {
+            m_logger->warn("Uplink NAS Count about to wrap around, performing local release of NAS connection and "
+                           "deleting current NSC");
+            m_usim->m_currentNsCtx = nullptr;
+            localReleaseConnection(false);
+            return EProcRc::STAY;
+        }
+
         if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
             msg.messageType == nas::EMessageType::SERVICE_REQUEST)
         {
