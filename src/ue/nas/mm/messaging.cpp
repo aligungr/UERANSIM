@@ -243,6 +243,15 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
         return;
     }
 
+    if (m_usim->m_currentNsCtx->integrity != nas::ETypeOfIntegrityProtectionAlgorithm::IA0)
+    {
+        if (!checkForReplay(securedMm))
+        {
+            m_logger->warn("Replayed NAS message detected, discarding the message");
+            return;
+        }
+    }
+
     auto decrypted = nas_enc::Decrypt(*m_usim->m_currentNsCtx, securedMm);
     if (decrypted == nullptr)
     {
@@ -338,6 +347,21 @@ void NasMm::sendMmStatus(nas::EMmCause cause)
 void NasMm::receiveMmStatus(const nas::FiveGMmStatus &msg)
 {
     m_logger->err("MM status received with cause [%s]", nas::utils::EnumToString(msg.mmCause.value));
+}
+
+bool NasMm::checkForReplay(const nas::SecuredMmMessage &msg)
+{
+    int n = static_cast<int>(msg.sequenceNumber);
+
+    for (int seq : m_lastNasSequenceNums)
+        if (seq == n)
+            return false;
+
+    m_lastNasSequenceNums.push_back(n);
+    while (m_lastNasSequenceNums.size() > 16)
+        m_lastNasSequenceNums.pop_front();
+
+    return true;
 }
 
 } // namespace nr::ue

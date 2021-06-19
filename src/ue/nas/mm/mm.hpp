@@ -17,6 +17,8 @@
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
 
+#include <queue>
+
 namespace nr::ue
 {
 
@@ -65,6 +67,8 @@ class NasMm
     int64_t m_lastTimePlmnSearchFailureLogged{};
     // Last time MM state changed
     int64_t m_lastTimeMmStateChange{};
+    // Received NAS sequence numbers for replay protection
+    std::deque<int> m_lastNasSequenceNums{};
 
     friend class UeCmdHandler;
     friend class NasSm;
@@ -98,6 +102,7 @@ class NasMm
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
     void sendMmStatus(nas::EMmCause cause);
+    bool checkForReplay(const nas::SecuredMmMessage &msg);
 
   private: /* Transport */
     void receiveDlNasTransport(const nas::DlNasTransport &msg);
