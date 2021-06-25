@@ -22,6 +22,7 @@
 #include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
+#include <string>
 
 static app::CliServer *g_cliServer = nullptr;
 static nr::gnb::GnbConfig *g_refConfig = nullptr;
@@ -41,8 +42,10 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
 
     result->plmn.mcc = yaml::GetInt32(config, "mcc", 1, 999);
     yaml::GetString(config, "mcc", 3, 3);
-    result->plmn.mnc = yaml::GetInt32(config, "mnc", 0, 999);
     result->plmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
+    auto mncValue = config["mnc"].Scalar();
+    config["mnc"] = mncValue.erase(0, std::min(mncValue.find_first_not_of('0'), mncValue.size()-1));
+    result->plmn.mnc = yaml::GetInt32(config, "mnc", 0, 999);
 
     result->nci = yaml::GetInt64(config, "nci", 0, 0xFFFFFFFFFll);
     result->gnbIdLength = yaml::GetInt32(config, "idLength", 22, 32);
