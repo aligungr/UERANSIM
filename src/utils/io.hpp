@@ -40,4 +40,6 @@ std::string GetStem(const std::string &path);
 
 void AppendPath(std::string &source, const std::string &target);
 
+std::string GetIp4OfInterface(const std::string &ifName);
+
 } // namespace io

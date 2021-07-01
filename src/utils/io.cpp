@@ -14,7 +14,12 @@
 #include <queue>
 #include <stack>
 
+#include <arpa/inet.h>
 #include <dirent.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -181,6 +186,36 @@ void AppendPath(std::string &source, const std::string &target)
     if (source[source.size() - 1] != cons::DIR_SEPARATOR)
         source += std::string(1, cons::DIR_SEPARATOR);
     source += target;
+}
+
+std::string GetIp4OfInterface(const std::string &ifName)
+{
+    std::string res;
+
+    struct ifreq ifr = {};
+
+    int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd <= 0)
+        return "";
+
+    ifr.ifr_addr.sa_family = AF_INET;
+    strncpy(ifr.ifr_name, ifName.c_str(), IFNAMSIZ - 1);
+
+    if (ioctl(fd, SIOCGIFADDR, &ifr))
+    {
+        close(fd);
+        return "";
+    }
+
+    close(fd);
+
+    auto address = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
+
+    char str[INET_ADDRSTRLEN] = {0};
+    if (inet_ntop(AF_INET, &address, str, INET_ADDRSTRLEN) == nullptr)
+        return "";
+
+    return std::string{str};
 }
 
 } // namespace io
