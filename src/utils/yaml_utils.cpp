@@ -40,8 +40,12 @@ void AssertHasFields(const YAML::Node &node, const std::vector<std::string> &fie
 
 int GetInt32(const YAML::Node &node, const std::string &name)
 {
-    AssertHasInt32(node, name);
-    return node[name].as<int>();
+    auto nodeValue = node[name].Scalar();
+    nodeValue.erase(0, std::min(nodeValue.find_first_not_of('0'), nodeValue.size()-1));
+    YAML::Node modifiedNode;
+    modifiedNode[name] = nodeValue;
+    AssertHasInt32(modifiedNode, name);
+    return modifiedNode[name].as<int>();
 }
 
 int GetInt32(const YAML::Node &node, const std::string &name, std::optional<int> minValue, std::optional<int> maxValue)
