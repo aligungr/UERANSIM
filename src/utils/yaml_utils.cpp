@@ -9,12 +9,26 @@
 #include "yaml_utils.hpp"
 #include "common.hpp"
 
+#include <cctype>
 #include <stdexcept>
 
 #include <yaml-cpp/yaml.h>
 
 namespace yaml
 {
+
+static YAML::Node OctalFix(const YAML::Node &node)
+{
+    auto s = node.as<std::string>();
+
+    if (!std::all_of(s.begin(), s.end(), ::isdigit))
+        return node;
+    if (!s.empty() && s[0] != '0')
+        return node;
+
+    s.erase(0, std::min(s.find_first_not_of('0'), s.size() - 1));
+    return YAML::Node{s};
+}
 
 [[noreturn]] void FieldError(const std::string &name, const std::string &error)
 {
@@ -40,12 +54,8 @@ void AssertHasFields(const YAML::Node &node, const std::vector<std::string> &fie
 
 int GetInt32(const YAML::Node &node, const std::string &name)
 {
-    auto nodeValue = node[name].Scalar();
-    nodeValue.erase(0, std::min(nodeValue.find_first_not_of('0'), nodeValue.size()-1));
-    YAML::Node modifiedNode;
-    modifiedNode[name] = nodeValue;
-    AssertHasInt32(modifiedNode, name);
-    return modifiedNode[name].as<int>();
+    AssertHasInt32(node, name);
+    return OctalFix(node[name]).as<int>();
 }
 
 int GetInt32(const YAML::Node &node, const std::string &name, std::optional<int> minValue, std::optional<int> maxValue)
@@ -63,7 +73,7 @@ void AssertHasInt32(const YAML::Node &node, const std::string &name)
     AssertHasField(node, name);
     try
     {
-        node[name].as<int>();
+        OctalFix(node[name]).as<int>();
     }
     catch (const std::runtime_error &e)
     {
@@ -106,7 +116,7 @@ void AssertHasInt64(const YAML::Node &node, const std::string &name)
     AssertHasField(node, name);
     try
     {
-        node[name].as<int64_t>();
+        OctalFix(node[name]).as<int64_t>();
     }
     catch (const std::runtime_error &e)
     {
@@ -117,7 +127,7 @@ void AssertHasInt64(const YAML::Node &node, const std::string &name)
 int64_t GetInt64(const YAML::Node &node, const std::string &name)
 {
     AssertHasInt64(node, name);
-    return node[name].as<int64_t>();
+    return OctalFix(node[name]).as<int64_t>();
 }
 
 int64_t GetInt64(const YAML::Node &node, const std::string &name, std::optional<int64_t> minValue,
