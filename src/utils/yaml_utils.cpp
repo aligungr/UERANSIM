@@ -155,11 +155,7 @@ std::string GetIp4(const YAML::Node &node, const std::string &name)
     auto ipFromIf = io::GetIp4OfInterface(s);
     if (ipFromIf.empty())
         FieldError(name, "must be a valid IPv4 address or a valid network interface with a IPv4 address");
-
-    auto n = io::GetHostByName(name);
-    if (utils::GetIpVersion(n) == 4)
-        return n;
-    return "";
+    return ipFromIf;
 }
 
 void AssertHasBool(const YAML::Node &node, const std::string &name)
