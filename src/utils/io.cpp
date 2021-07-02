@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <netdb.h>
 
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
@@ -216,6 +217,40 @@ std::string GetIp4OfInterface(const std::string &ifName)
         return "";
 
     return std::string{str};
+}
+
+std::string GetHostByName(const std::string &name)
+{
+    struct addrinfo hints = {};
+
+    hints.ai_family = PF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags |= AI_CANONNAME;
+
+    auto* res = gethostbyname(name.c_str());
+    if (res == nullptr)
+        return "";
+    if (res->h_addr_list == nullptr)
+        return "";
+
+    if (res->h_addrtype == AF_INET)
+    {
+        char str[INET_ADDRSTRLEN] = {0};
+        if (inet_ntop(AF_INET, res->h_addr_list[0], str, INET_ADDRSTRLEN) == nullptr)
+            return "";
+        return std::string{str};
+    }
+    else if (res->h_addrtype == AF_INET)
+    {
+        char str[INET6_ADDRSTRLEN] = {0};
+        if (inet_ntop(AF_INET6, res->h_addr_list[0], str, INET6_ADDRSTRLEN) == nullptr)
+            return "";
+        return std::string{str};
+    }
+    else
+    {
+        return "";
+    }
 }
 
 } // namespace io
