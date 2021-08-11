@@ -8,6 +8,7 @@
 
 #include "yaml_utils.hpp"
 #include "common.hpp"
+#include "io.hpp"
 
 #include <cctype>
 #include <stdexcept>
@@ -143,11 +144,18 @@ int64_t GetInt64(const YAML::Node &node, const std::string &name, std::optional<
 
 std::string GetIp4(const YAML::Node &node, const std::string &name)
 {
-    std::string ip = GetString(node, name);
-    int version = utils::GetIpVersion(ip);
-    if (version != 4)
-        FieldError(name, "must be a valid IPv4 address");
-    return ip;
+    std::string s = GetString(node, name);
+
+    int version = utils::GetIpVersion(s);
+    if (version == 6)
+        FieldError(name, "must be a valid IPv4 address or a valid network interface with a IPv4 address");
+    if (version == 4)
+        return s;
+
+    auto ipFromIf = io::GetIp4OfInterface(s);
+    if (ipFromIf.empty())
+        FieldError(name, "must be a valid IPv4 address or a valid network interface with a IPv4 address");
+    return ipFromIf;
 }
 
 void AssertHasBool(const YAML::Node &node, const std::string &name)
