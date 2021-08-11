@@ -19,7 +19,7 @@ Supi Supi::Parse(const std::string &supi)
     if (supi[0] == 'i' && supi[1] == 'm' && supi[2] == 's' && supi[3] == 'i' && supi[4] == '-')
     {
         std::string val = supi.substr(5);
-        if (val.size() != 15 && val.size() != 16)
+        if (val.size() != 15)
             throw std::runtime_error("invalid IMSI value");
         for (char c : val)
             if (c < '0' || c > '9')
