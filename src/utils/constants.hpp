@@ -15,10 +15,10 @@ struct cons
     // Version information
     static constexpr const uint8_t Major = 3;
     static constexpr const uint8_t Minor = 2;
-    static constexpr const uint8_t Patch = 2;
+    static constexpr const uint8_t Patch = 3;
     static constexpr const char *Project = "UERANSIM";
-    static constexpr const char *Tag = "v3.2.2";
-    static constexpr const char *Name = "UERANSIM v3.2.2";
+    static constexpr const char *Tag = "v3.2.3";
+    static constexpr const char *Name = "UERANSIM v3.2.3";
     static constexpr const char *Owner = "ALİ GÜNGÖR";
 
     // Some port values
