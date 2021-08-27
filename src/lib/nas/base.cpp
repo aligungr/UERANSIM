@@ -61,7 +61,12 @@ std::string nas::DecodeBcdString(const OctetView &stream, int length, bool skipF
 
     constexpr char digits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '?', '?', '?', '?', '?', '?'};
     int offset = 0, i = 0;
-    std::string str(length * 2, '0');
+
+    size_t stringLength = length * 2;
+    if ((stream.peek(length - 1) >> 4) == 0xF)
+        stringLength--;
+
+    std::string str(stringLength, '0');
 
     while (offset < length)
     {
