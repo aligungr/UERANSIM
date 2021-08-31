@@ -278,6 +278,12 @@ static void ReadOptions(int argc, char **argv)
     if (opt.hasFlag(itemImsi))
     {
         g_options.imsi = opt.getOption(itemImsi);
+        if (g_options.imsi.length() > 5 && g_options.imsi[0] == 'i' && g_options.imsi[1] == 'm' &&
+            g_options.imsi[2] == 's' && g_options.imsi[3] == 'i' && g_options.imsi[4] == '-')
+        {
+            g_options.imsi = g_options.imsi.substr(5);
+        }
+
         Supi::Parse("imsi-" + g_options.imsi); // validate the string by parsing
     }
 
