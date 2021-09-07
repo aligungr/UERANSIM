@@ -54,13 +54,13 @@ default-nssai:
   - sst: 1
     sd: 1
 
-# Supported encryption algorithms by this UE
+# Supported integrity algorithms by this UE
 integrity:
   IA1: true
   IA2: true
   IA3: true
 
-# Supported integrity algorithms by this UE
+# Supported encryption algorithms by this UE
 ciphering:
   EA1: true
   EA2: true
