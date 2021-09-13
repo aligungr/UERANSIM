@@ -108,7 +108,7 @@ class NgapTask : public NtsTask
     /* PDU session management */
     void receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSessionResourceSetupRequest *msg);
     void receiveSessionResourceReleaseCommand(int amfId, ASN_NGAP_PDUSessionResourceReleaseCommand *msg);
-    std::optional<NgapCause> setupPduSessionResource(PduSessionResource *resource);
+    std::optional<NgapCause> setupPduSessionResource(NgapUeContext* ue, PduSessionResource *resource);
 
     /* UE context management */
     void receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetupRequest *msg);

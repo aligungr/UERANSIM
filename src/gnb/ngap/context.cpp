@@ -16,6 +16,7 @@
 #include <asn/ngap/ASN_NGAP_InitialContextSetupRequest.h>
 #include <asn/ngap/ASN_NGAP_InitialContextSetupResponse.h>
 #include <asn/ngap/ASN_NGAP_NGAP-PDU.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceItemCxtRelReq.h>
 #include <asn/ngap/ASN_NGAP_ProtocolIE-Field.h>
 #include <asn/ngap/ASN_NGAP_SuccessfulOutcome.h>
 #include <asn/ngap/ASN_NGAP_UE-NGAP-ID-pair.h>
@@ -117,13 +118,37 @@ void NgapTask::sendContextRelease(int ueId, NgapCause cause)
 {
     m_logger->debug("Sending UE Context release request (NG-RAN node initiated)");
 
+    auto *ue = findUeContext(ueId);
+    if (ue == nullptr)
+        return;
+
+    std::vector<ASN_NGAP_UEContextReleaseRequest_IEs *> ies;
+
+    if (!ue->pduSessions.empty())
+    {
+        auto *ieSessionList = asn::New<ASN_NGAP_UEContextReleaseRequest_IEs>();
+        ieSessionList->id = ASN_NGAP_ProtocolIE_ID_id_PDUSessionResourceListCxtRelReq;
+        ieSessionList->criticality = ASN_NGAP_Criticality_reject;
+        ieSessionList->value.present = ASN_NGAP_UEContextReleaseRequest_IEs__value_PR_PDUSessionResourceListCxtRelReq;
+
+        for (int psi : ue->pduSessions)
+        {
+            auto *sessionItem = asn::New<ASN_NGAP_PDUSessionResourceItemCxtRelReq>();
+            sessionItem->pDUSessionID = static_cast<ASN_NGAP_PDUSessionID_t>(psi);
+            asn::SequenceAdd(ieSessionList->value.choice.PDUSessionResourceListCxtRelReq, sessionItem);
+        }
+
+        ies.push_back(ieSessionList);
+    }
+
     auto *ieCause = asn::New<ASN_NGAP_UEContextReleaseRequest_IEs>();
     ieCause->id = ASN_NGAP_ProtocolIE_ID_id_Cause;
     ieCause->criticality = ASN_NGAP_Criticality_ignore;
     ieCause->value.present = ASN_NGAP_UEContextReleaseRequest_IEs__value_PR_Cause;
     ngap_utils::ToCauseAsn_Ref(cause, ieCause->value.choice.Cause);
+    ies.push_back(ieCause);
 
-    auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_UEContextReleaseRequest>({ieCause});
+    auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_UEContextReleaseRequest>(ies);
     sendNgapUeAssociated(ueId, pdu);
 }
 

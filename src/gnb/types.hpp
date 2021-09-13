@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <set>
+
 #include <lib/app/monitor.hpp>
 #include <lib/asn/utils.hpp>
 #include <utils/common_types.hpp>
@@ -132,6 +134,7 @@ struct NgapUeContext
     int uplinkStream{};
     int downlinkStream{};
     AggregateMaximumBitRate ueAmbr{};
+    std::set<int> pduSessions{};
 
     explicit NgapUeContext(int ctxId) : ctxId(ctxId)
     {
