@@ -207,7 +207,7 @@ void NasMm::performMmCycle()
     if (currentTai.hasValue() &&
         !nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
     {
-        if (m_rmState == ERmState::RM_REGISTERED)
+        if (!m_storage->taiList->get().list.empty() && m_rmState == ERmState::RM_REGISTERED)
             mobilityUpdatingRequired(ERegUpdateCause::ENTER_UNLISTED_TRACKING_AREA);
     }
     else
