@@ -297,15 +297,19 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
         return;
 
     // Store the TAI list as a registration area
-    if (msg.taiList.has_value() && nas::utils::TaiListSize(*msg.taiList) == 0)
+    if (msg.taiList.has_value())
     {
-        m_logger->err("Invalid TAI list size");
-        sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
-        return;
+        if (nas::utils::TaiListSize(*msg.taiList) == 0)
+        {
+            m_logger->err("Invalid TAI list size");
+            sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+            return;
+        }
+
+        m_storage->taiList->set(*msg.taiList);
     }
-    m_storage->taiList->set(msg.taiList.value_or(nas::IE5gsTrackingAreaIdentityList{}));
-    if (currentTai.hasValue() &&
-        nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
+
+    if (nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
         m_storage->lastVisitedRegisteredTai->set(currentTai);
 
     // Store the service area list
@@ -451,9 +455,10 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
         }
 
         m_storage->taiList->set(*msg.taiList);
-        if (nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
-            m_storage->lastVisitedRegisteredTai->set(currentTai);
     }
+
+    if (nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{currentTai}))
+        m_storage->lastVisitedRegisteredTai->set(currentTai);
 
     // Store the E-PLMN list and ..
     m_storage->equivalentPlmnList->clear();
