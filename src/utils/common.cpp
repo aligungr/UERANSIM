@@ -262,27 +262,6 @@ int utils::ParseInt(const char *str)
     return n;
 }
 
-uint64_t utils::Random64()
-{
-    static bool initiated = false;
-    static std::random_device randomDevice{};
-    static std::mt19937_64 randomEngine(randomDevice());
-
-    if (!initiated)
-    {
-        randomEngine.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-        initiated = true;
-    }
-
-    while (true)
-    {
-        std::uniform_int_distribution<uint64_t> distribution;
-        uint64_t r = distribution(randomEngine);
-        if (r != 0)
-            return r;
-    }
-}
-
 void utils::Sleep(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));

@@ -20,9 +20,24 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 #include <utils/io.hpp>
+#include <utils/random.hpp>
 
 namespace app
 {
+
+static std::string RandomFileName(const std::vector<std::string> &nodes, int cmdPort)
+{
+    std::string s;
+    for (auto &node : nodes)
+    {
+        s += node;
+        s += "|";
+    }
+    s += std::to_string(cmdPort);
+
+    Random rnd = Random::Mixed(s);
+    return utils::IntToHex(rnd.nextL()) + utils::IntToHex(rnd.nextL());
+}
 
 void CreateProcTable(const std::vector<std::string> &nodes, int cmdPort)
 {
@@ -33,7 +48,7 @@ void CreateProcTable(const std::vector<std::string> &nodes, int cmdPort)
         std::string filePath;
         while (true)
         {
-            std::string fileName = utils::IntToHex(utils::Random64()) + utils::IntToHex(utils::Random64());
+            std::string fileName = RandomFileName(nodes, cmdPort);
             filePath = cons::PROC_TABLE_DIR + fileName;
 
             if (!io::Exists(filePath))

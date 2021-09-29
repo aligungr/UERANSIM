@@ -34,7 +34,6 @@ int ParseInt(const std::string &str);
 int ParseInt(const char *str);
 bool TryParseInt(const std::string &str, int &output);
 bool TryParseInt(const char *str, int &output);
-uint64_t Random64();
 void Sleep(int ms);
 bool IsRoot();
 bool IsNumeric(const std::string &str);

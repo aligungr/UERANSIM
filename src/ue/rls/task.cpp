@@ -13,6 +13,7 @@
 #include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
+#include <utils/random.hpp>
 
 namespace nr::ue
 {
@@ -22,7 +23,7 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "rls");
 
     m_shCtx = new RlsSharedContext();
-    m_shCtx->sti = utils::Random64();
+    m_shCtx->sti = Random::Mixed(base->config->getNodeName()).nextL();
 
     m_udpTask = new RlsUdpTask(base, m_shCtx, base->config->gnbSearchList);
     m_ctlTask = new RlsControlTask(base, m_shCtx);
@@ -108,7 +109,7 @@ void UeRlsTask::onLoop()
             break;
         }
         case NmUeRrcToRls::RESET_STI: {
-            m_shCtx->sti = utils::Random64();
+            m_shCtx->sti = Random::Mixed(m_base->config->getNodeName()).nextL();
             break;
         }
         }

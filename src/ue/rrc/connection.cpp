@@ -11,6 +11,7 @@
 #include <lib/rrc/encode.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/nts.hpp>
+#include <utils/random.hpp>
 
 #include <asn/rrc/ASN_RRC_RRCSetup-IEs.h>
 #include <asn/rrc/ASN_RRC_RRCSetup.h>
@@ -58,7 +59,7 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
     if (m_initialId.present == ASN_RRC_InitialUE_Identity_PR_NOTHING)
     {
         m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;
-        asn::SetBitStringLong<39>(static_cast<int64_t>(utils::Random64()), m_initialId.choice.randomValue);
+        asn::SetBitStringLong<39>(Random::Mixed(m_base->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
     }
 
     m_initialNasPdu = std::move(nasPdu);
