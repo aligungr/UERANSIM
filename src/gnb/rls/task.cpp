@@ -11,6 +11,7 @@
 #include <gnb/gtp/task.hpp>
 #include <gnb/rrc/task.hpp>
 #include <utils/common.hpp>
+#include <utils/random.hpp>
 
 namespace nr::gnb
 {
@@ -18,7 +19,7 @@ namespace nr::gnb
 GnbRlsTask::GnbRlsTask(TaskBase *base) : m_base{base}
 {
     m_logger = m_base->logBase->makeUniqueLogger("rls");
-    m_sti = utils::Random64();
+    m_sti = Random::Mixed(base->config->name).nextUL();
 
     m_udpTask = new RlsUdpTask(base, m_sti, base->config->phyLocation);
     m_ctlTask = new RlsControlTask(base, m_sti);

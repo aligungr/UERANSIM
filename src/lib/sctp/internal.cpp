@@ -173,7 +173,15 @@ void ReceiveMessage(int sd, uint32_t ppid, ISctpHandler *handler)
     int r = sctp_recvmsg(sd, (void *)buffer, RECEIVE_BUFFER_SIZE, (sockaddr *)&addr, &fromLen, &info, &flags);
 
     if (r < 0)
+    {
+        if (errno == ECONNRESET)
+        {
+            if (handler)
+                handler->onConnectionReset();
+            return;
+        }
         ThrowError("SCTP receive message failure: ", errno);
+    }
 
     if (r == 0)
         return; // no data

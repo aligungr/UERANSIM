@@ -88,6 +88,13 @@ class SctpHandler : public sctp::ISctpHandler
         w->clientId = clientId;
         sctpTask->push(w);
     }
+
+    void onConnectionReset() override
+    {
+        auto *w = new NmGnbSctp(NmGnbSctp::UNHANDLED_NOTIFICATION);
+        w->clientId = clientId;
+        sctpTask->push(w);
+    }
 };
 
 [[noreturn]] static void ReceiverThread(std::pair<sctp::SctpClient *, sctp::ISctpHandler *> *args)
