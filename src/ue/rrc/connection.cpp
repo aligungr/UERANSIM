@@ -56,11 +56,8 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
         return;
     }
 
-    if (m_initialId.present == ASN_RRC_InitialUE_Identity_PR_NOTHING)
-    {
-        m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;
-        asn::SetBitStringLong<39>(Random::Mixed(m_base->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
-    }
+    m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;
+    asn::SetBitStringLong<39>(Random::Mixed(m_base->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
 
     m_initialNasPdu = std::move(nasPdu);
 
