@@ -102,7 +102,7 @@ void NasMm::onTimerExpire(UeTimer &timer)
         break;
     }
     case 3512: {
-        if (m_mmState == EMmState::MM_REGISTERED)
+        if (m_mmState == EMmState::MM_REGISTERED && m_cmState == ECmState::CM_IDLE)
         {
             logExpired();
 
