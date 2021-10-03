@@ -632,6 +632,7 @@ enum class ERequestType
     INITIAL_EMERGENCY_REQUEST = 0b011,
     EXISTING_EMERGENCY_PDU_SESSION = 0b100,
     MODIFICATION_REQUEST = 0b101,
+    RESERVED=0b111,
 };
 
 enum class EAllowedType

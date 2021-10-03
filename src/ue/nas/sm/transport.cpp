@@ -69,6 +69,10 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
     m.requestType = nas::IERequestType{};
     m.requestType->requestType =
         session->isEmergency ? nas::ERequestType::INITIAL_EMERGENCY_REQUEST : nas::ERequestType::INITIAL_REQUEST;
+    if (msg.messageType == nas::EMessageType::PDU_SESSION_RELEASE_REQUEST || msg.messageType == nas::EMessageType::PDU_SESSION_RELEASE_COMPLETE) {
+       m.requestType->requestType = nas::ERequestType::RESERVED;
+
+    }
 
     if (!session->isEmergency)
     {
