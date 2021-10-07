@@ -104,6 +104,8 @@ void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplet
     w->ueId = ueId;
     w->pdu = asn::GetOctetString(setupComplete->dedicatedNAS_Message);
     w->rrcEstablishmentCause = ue->establishmentCause;
+    w->sTmsi = std::nullopt; // TODO
+
     m_base->ngapTask->push(w);
 }
 
