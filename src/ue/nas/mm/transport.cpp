@@ -46,6 +46,13 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
         return;
     }
 
+    if (msg.payloadContainer.data.length() == 0)
+    {
+        m_logger->err("Empty payload container received with type[%d]",
+                      (int)msg.payloadContainerType.payloadContainerType);
+        return;
+    }
+
     OctetView buff{msg.payloadContainer.data.data(), static_cast<size_t>(msg.payloadContainer.data.length())};
     auto nasMessage = nas::DecodeNasMessage(buff);
 
@@ -131,7 +138,8 @@ EProcRc NasMm::deliverUlTransport(const nas::UlNasTransport &msg, ENasTransportH
     }
 
     // Perform UAC for PDU session establishment and modification
-    if (hint == ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REQUEST || hint == ENasTransportHint::PDU_SESSION_MODIFICATION_REQUEST)
+    if (hint == ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REQUEST ||
+        hint == ENasTransportHint::PDU_SESSION_MODIFICATION_REQUEST)
     {
         if (performUac() != EUacResult::ALLOWED)
         {
