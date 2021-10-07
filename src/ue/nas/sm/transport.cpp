@@ -73,15 +73,15 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
         m.requestType = nas::IERequestType{};
         m.requestType->requestType =
             session->isEmergency ? nas::ERequestType::INITIAL_EMERGENCY_REQUEST : nas::ERequestType::INITIAL_REQUEST;
-    }
 
-    if (!session->isEmergency)
-    {
-        if (session->sNssai.has_value())
-            m.sNssai = nas::utils::SNssaiFrom(*session->sNssai);
+        if (!session->isEmergency)
+        {
+            if (session->sNssai.has_value())
+                m.sNssai = nas::utils::SNssaiFrom(*session->sNssai);
 
-        if (session->apn.has_value())
-            m.dnn = nas::utils::DnnFromApn(*session->apn);
+            if (session->apn.has_value())
+                m.dnn = nas::utils::DnnFromApn(*session->apn);
+        }
     }
 
     m_mm->deliverUlTransport(m, MapMsgTypeToHint(msg.messageType));
