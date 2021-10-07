@@ -90,6 +90,8 @@ struct GutiMobileIdentity
         : plmn(plmn), amfRegionId(amfRegionId), amfSetId(amfSetId), amfPointer(amfPointer), tmsi(tmsi)
     {
     }
+
+    static GutiMobileIdentity FromSTmsi(int64_t sTmsi);
 };
 
 struct ImsiMobileIdentity

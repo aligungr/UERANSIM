@@ -11,17 +11,6 @@
 namespace nr::gnb
 {
 
-RrcUeContext *GnbRrcTask::tryFindByInitialRandomId(int64_t id)
-{
-    if (id == -1)
-        return nullptr;
-    // TODO: Optimize
-    for (auto &item : m_ueCtx)
-        if (item.second->initialRandomId == id)
-            return item.second;
-    return nullptr;
-}
-
 int GnbRrcTask::getNextTid()
 {
     m_tidCounter++;
