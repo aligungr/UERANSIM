@@ -91,6 +91,8 @@ struct GutiMobileIdentity
     {
     }
 
+    [[nodiscard]] int64_t toTmsiValue() const;
+
     static GutiMobileIdentity FromSTmsi(int64_t sTmsi);
 };
 

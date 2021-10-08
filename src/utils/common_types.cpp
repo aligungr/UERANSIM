@@ -29,6 +29,12 @@ Supi Supi::Parse(const std::string &supi)
     throw std::runtime_error("invalid SUPI value");
 }
 
+int64_t GutiMobileIdentity::toTmsiValue() const
+{
+    return (static_cast<int64_t>(this->tmsi)) | (static_cast<int64_t>(this->amfPointer) << 38LL) |
+           (static_cast<int64_t>(this->amfSetId) << 48LL);
+}
+
 GutiMobileIdentity GutiMobileIdentity::FromSTmsi(int64_t sTmsi)
 {
     GutiMobileIdentity res;
