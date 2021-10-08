@@ -177,6 +177,16 @@ struct octet4
         return value;
     }
 
+    inline explicit constexpr operator int64_t() const
+    {
+        return static_cast<int64_t>(value);
+    }
+
+    inline explicit constexpr operator uint64_t() const
+    {
+        return static_cast<int64_t>(value);
+    }
+
     inline bool operator==(const octet4 &other) const
     {
         return value == other.value;

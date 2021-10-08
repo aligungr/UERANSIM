@@ -49,28 +49,26 @@ void GnbRrcTask::receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest 
         return;
     }
 
-    if (msg.rrcSetupRequest.ue_Identity.present == ASN_RRC_InitialUE_Identity_PR_ng_5G_S_TMSI_Part1)
-    {
-        m_logger->err("RRC Setup Request with TMSI not implemented yet");
-        return;
-    }
-
-    if (msg.rrcSetupRequest.ue_Identity.present != ASN_RRC_InitialUE_Identity_PR_randomValue)
+    if (msg.rrcSetupRequest.ue_Identity.present == ASN_RRC_InitialUE_Identity_PR_NOTHING)
     {
         m_logger->err("Bad constructed RRC message ignored");
         return;
     }
 
-    int64_t initialRandomId = asn::GetBitStringLong<39>(msg.rrcSetupRequest.ue_Identity.choice.randomValue);
-    if (tryFindByInitialRandomId(initialRandomId) != nullptr)
+    ue = createUe(ueId);
+
+    if (msg.rrcSetupRequest.ue_Identity.present == ASN_RRC_InitialUE_Identity_PR_ng_5G_S_TMSI_Part1)
     {
-        m_logger->err("Initial random ID conflict [%ld], discarding RRC Setup Request", initialRandomId);
-        return;
+        ue->initialId = asn::GetBitStringLong<39>(msg.rrcSetupRequest.ue_Identity.choice.ng_5G_S_TMSI_Part1);
+        ue->isInitialIdSTmsi = true;
+    }
+    else
+    {
+        ue->initialId = asn::GetBitStringLong<39>(msg.rrcSetupRequest.ue_Identity.choice.randomValue);
+        ue->isInitialIdSTmsi = false;
     }
 
-    ue = createUe(ueId);
-    ue->initialRandomId = initialRandomId;
-    ue->establishmentCause = msg.rrcSetupRequest.establishmentCause;
+    ue->establishmentCause = static_cast<long>(msg.rrcSetupRequest.establishmentCause);
 
     // Prepare RRC Setup
     auto *pdu = asn::New<ASN_RRC_DL_CCCH_Message>();
@@ -100,10 +98,35 @@ void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplet
 
     auto setupComplete = msg.criticalExtensions.choice.rrcSetupComplete;
 
+    if (msg.criticalExtensions.choice.rrcSetupComplete)
+    {
+        // Handle received 5G S-TMSI if any
+        if (msg.criticalExtensions.choice.rrcSetupComplete->ng_5G_S_TMSI_Value)
+        {
+            ue->sTmsi = std::nullopt;
+
+            auto &sTmsiValue = msg.criticalExtensions.choice.rrcSetupComplete->ng_5G_S_TMSI_Value;
+            if (sTmsiValue->present == ASN_RRC_RRCSetupComplete_IEs__ng_5G_S_TMSI_Value_PR_ng_5G_S_TMSI)
+            {
+                ue->sTmsi = GutiMobileIdentity::FromSTmsi(asn::GetBitStringLong<48>(sTmsiValue->choice.ng_5G_S_TMSI));
+            }
+            else if (sTmsiValue->present == ASN_RRC_RRCSetupComplete_IEs__ng_5G_S_TMSI_Value_PR_ng_5G_S_TMSI_Part2)
+            {
+                if (ue->isInitialIdSTmsi)
+                {
+                    int64_t part2 = asn::GetBitStringLong<9>(sTmsiValue->choice.ng_5G_S_TMSI_Part2);
+                    ue->sTmsi = GutiMobileIdentity::FromSTmsi((part2 << 39) | (ue->initialId));
+                }
+            }
+        }
+    }
+
     auto *w = new NmGnbRrcToNgap(NmGnbRrcToNgap::INITIAL_NAS_DELIVERY);
     w->ueId = ueId;
     w->pdu = asn::GetOctetString(setupComplete->dedicatedNAS_Message);
     w->rrcEstablishmentCause = ue->establishmentCause;
+    w->sTmsi = ue->sTmsi;
+
     m_base->ngapTask->push(w);
 }
 

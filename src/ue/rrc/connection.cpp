@@ -41,6 +41,7 @@ static ASN_RRC_UL_CCCH_Message *ConstructSetupRequest(ASN_RRC_InitialUE_Identity
 
 void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
 {
+    /* Check the protocol state */
     if (m_state != ERrcState::RRC_IDLE)
     {
         m_logger->err("RRC establishment could not start, UE not in RRC-IDLE state");
@@ -48,6 +49,7 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
         return;
     }
 
+    /* Check the current cell */
     int activeCell = m_base->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
     if (activeCell == 0)
     {
@@ -56,11 +58,28 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
         return;
     }
 
-    m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;
-    asn::SetBitStringLong<39>(Random::Mixed(m_base->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
+    /* Handle Initial UE Identity (S-TMSI or 39-bit random value) */
+    std::optional<GutiMobileIdentity> gutiOrTmsi = m_base->shCtx.providedGuti.get();
+    if (!gutiOrTmsi)
+        gutiOrTmsi = m_base->shCtx.providedTmsi.get();
 
+    if (gutiOrTmsi)
+    {
+        m_initialId.present = ASN_RRC_InitialUE_Identity_PR_ng_5G_S_TMSI_Part1;
+        asn::SetBitStringLong<39>(static_cast<int64_t>(gutiOrTmsi->tmsi) |
+                                      (static_cast<int64_t>((gutiOrTmsi->amfPointer & 0b1111111)) << 39ull),
+                                  m_initialId.choice.ng_5G_S_TMSI_Part1);
+    }
+    else
+    {
+        m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;
+        asn::SetBitStringLong<39>(Random::Mixed(m_base->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
+    }
+
+    /* Set the Initial NAS PDU */
     m_initialNasPdu = std::move(nasPdu);
 
+    /* Send the message */
     m_logger->debug("Sending RRC Setup Request");
 
     auto *rrcSetupRequest =
@@ -92,6 +111,18 @@ void UeRrcTask::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
     auto &ies = setupComplete->criticalExtensions.choice.rrcSetupComplete = asn::New<ASN_RRC_RRCSetupComplete_IEs>();
     ies->selectedPLMN_Identity = 1;
     asn::SetOctetString(ies->dedicatedNAS_Message, m_initialNasPdu);
+
+    /* Send S-TMSI if available */
+    std::optional<GutiMobileIdentity> gutiOrTmsi = m_base->shCtx.providedGuti.get();
+    if (!gutiOrTmsi)
+        gutiOrTmsi = m_base->shCtx.providedTmsi.get();
+    if (gutiOrTmsi)
+    {
+        auto &sTmsi = setupComplete->criticalExtensions.choice.rrcSetupComplete->ng_5G_S_TMSI_Value =
+            asn::New<ASN_RRC_RRCSetupComplete_IEs::ASN_RRC_RRCSetupComplete_IEs__ng_5G_S_TMSI_Value>();
+        sTmsi->present = ASN_RRC_RRCSetupComplete_IEs__ng_5G_S_TMSI_Value_PR_ng_5G_S_TMSI;
+        asn::SetBitStringLong<48>(gutiOrTmsi->toTmsiValue(), sTmsi->choice.ng_5G_S_TMSI);
+    }
 
     m_initialNasPdu = {};
     sendRrcMessage(pdu);
