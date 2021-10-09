@@ -143,7 +143,7 @@ void GtpTask::handleSessionRelease(int ueId, int psi)
     m_rateLimiter->updateUeDownlinkLimit(ueId, 0);
 
     
-    if (!m_pduSessions[sessionInd]->downTunnel) {
+    if (m_pduSessions[sessionInd] == nullptr ) {
          m_logger->err("PDU session resource could not be released, PSI downlink tunnel [%d] not found", psi);
         return;
     }
