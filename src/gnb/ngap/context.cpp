@@ -64,6 +64,10 @@ void NgapTask::receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetu
     if (ue == nullptr)
         return;
 
+    auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_UPDATE);
+    w->update = std::make_unique<GtpUeContextUpdate>(true, ue->ctxId, ue->ueAmbr);
+    m_base->gtpTask->push(w);
+
     auto *reqIe = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_UEAggregateMaximumBitRate);
     if (reqIe)
     {
@@ -222,10 +226,6 @@ void NgapTask::receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetu
 
     auto *response = asn::ngap::NewMessagePdu<ASN_NGAP_InitialContextSetupResponse>(responseIes);
     sendNgapUeAssociated(ue->ctxId, response);
-
-    auto *w = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_UPDATE);
-    w->update = std::make_unique<GtpUeContextUpdate>(true, ue->ctxId, ue->ueAmbr);
-    m_base->gtpTask->push(w);
 }
 
 void NgapTask::receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand *msg)
