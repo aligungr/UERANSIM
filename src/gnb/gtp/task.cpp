@@ -135,25 +135,21 @@ void GtpTask::handleSessionRelease(int ueId, int psi)
         return;
     }
 
-
     uint64_t sessionInd = MakeSessionResInd(ueId, psi);
 
     // Remove all session information from rate limiter
     m_rateLimiter->updateSessionUplinkLimit(sessionInd, 0);
     m_rateLimiter->updateUeDownlinkLimit(ueId, 0);
 
-    
-    if (m_pduSessions[sessionInd] == nullptr ) {
-         m_logger->err("PDU session resource could not be released, PSI downlink tunnel [%d] not found", psi);
-        return;
-    }
-    
     // And remove from PDU session table
-    uint32_t teid = m_pduSessions[sessionInd]->downTunnel.teid;
-    m_pduSessions.erase(sessionInd);
+    if (m_pduSessions.count(sessionInd))
+    {
+        uint32_t teid = m_pduSessions[sessionInd]->downTunnel.teid;
+        m_pduSessions.erase(sessionInd);
 
-    // And remove from the tree
-    m_sessionTree.remove(sessionInd, teid);
+        // And remove from the tree
+        m_sessionTree.remove(sessionInd, teid);
+    }
 }
 
 void GtpTask::handleUeContextDelete(int ueId)
