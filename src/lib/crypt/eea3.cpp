@@ -66,7 +66,7 @@ uint32_t EIA3(const uint8_t *pKey, uint32_t count, uint32_t direction, uint32_t 
 
     std::vector<uint32_t> data_htobe32(length / 32 + 1);
     for (uint32_t j = 0; j < (length + 31) / 32; j++)
-        data_htobe32[j] = htobe32(*(pData + j));
+        data_htobe32[j] = htobe32(pData[j]);
 
     T = 0;
     for (i = 0; i < length; i++)
@@ -112,7 +112,7 @@ void EEA3(const uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t directi
 
     ZUC(pKey, iv, z, L);
     for (i = 0; i < L; i++)
-        pData[i] = be32toh(htobe32(*(pData + i)) ^ z[i]);
+        pData[i] = be32toh(htobe32(pData[i]) ^ z[i]);
     delete[] z;
 }
 
