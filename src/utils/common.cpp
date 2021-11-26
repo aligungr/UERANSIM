@@ -30,7 +30,7 @@ static_assert(sizeof(long long) == sizeof(uint64_t));
 
 static std::atomic<int> g_idCounter = 1;
 
-static bool IPv6FromString(const char *szAddress, uint8_t *address)
+static bool IPv6FromString(const char *szAddress, std::vector<uint8_t>& address)
 {
     auto asciiToHex = [](char c) {
         c |= 0x20;
@@ -46,7 +46,9 @@ static bool IPv6FromString(const char *szAddress, uint8_t *address)
     uint8_t colons = 0;
     uint8_t pos = 0;
 
-    memset(address, 0, 16);
+    address.clear();
+    std::vector<uint8_t> emptyAddress{16};
+    address.insert(address.begin(), emptyAddress.begin(), emptyAddress.end());
 
     for (uint8_t i = 1; i <= 39; i++)
     {
@@ -60,12 +62,12 @@ static bool IPv6FromString(const char *szAddress, uint8_t *address)
         else if (szAddress[i] == '\0')
             break;
     }
-    for (uint8_t i = 0; i <= 39 && pos < 16; i++)
+    for (uint8_t i = 0; i <= 39 && pos < address.size(); i++)
     {
         if (szAddress[i] == ':' || szAddress[i] == '\0')
         {
-            address[pos] = acc >> 8;
-            address[pos + 1] = acc;
+            address.at(pos) = acc >> 8;
+            address.at(pos + 1) = acc;
             acc = 0;
 
             if (colons && i && szAddress[i - 1] == ':')
@@ -197,7 +199,7 @@ OctetString utils::IpToOctetString(const std::string &address)
     else if (ipVersion == 6)
     {
         std::vector<uint8_t> data{16};
-        if (!IPv6FromString(address.c_str(), data.data()))
+        if (!IPv6FromString(address.c_str(), data))
             return {};
         return OctetString(std::move(data));
     }
