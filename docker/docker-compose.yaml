@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+    ueransim:
+        container_name: ueransim
+        image: ueransim:latest
+        privileged: true
+        environment:
+            # GNB Congig Parameters
+            - MCC=208
+            - MNC=95
+            - NCI=0x000000010
+            - TAC=0xa000
+            - LINK_IP=192.168.70.141
+            - NGAP_IP=192.168.70.141
+            - GTP_IP=192.168.72.141
+            - NGAP_PEER_IP=192.168.70.132
+            - SST=222
+            - SD=123
+            - IGNORE_STREAM_IDS=true
+            # UE Config Parameters
+            - NUMBER_OF_UE=1
+            - IMSI=208950000000031
+            - KEY=0C0A34601D4F07677303652C0462535B
+            - OP=63bfa50ee6523365ff14c1f45f88737d
+            - OP_TYPE=OPC
+            - AMF_VALUE=8000
+            - IMEI=356938035643803
+            - IMEI_SV=0035609204079514
+            - GNB_IP_ADDRESS=192.168.70.141
+            - PDU_TYPE=IPv4
+            - APN=default
+            - SST_C=1
+            - SD_C=1
+            - SST_D=1
+            - SD_D=1
+        networks:
+            public_net_cp:
+                ipv4_address: 192.168.70.141
+            public_net_access:
+                ipv4_address: 192.168.72.141
+        healthcheck:
+            test: /bin/bash -c "ifconfig uesimtun0"
+            interval: 10s
+            timeout: 5s
+            retries: 5
+networks:
+    public_net_cp:
+        name: public-cp
+        ipam:
+            config:
+                - subnet: 192.168.70.0/24
+    public_net_access:
+        name: public-access
+        ipam:
+            config:
+                - subnet: 192.168.72.0/24
+

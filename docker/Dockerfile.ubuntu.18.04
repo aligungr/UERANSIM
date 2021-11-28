@@ -1,0 +1,36 @@
+#---------------------------------------------------------------------
+# BUILDER IMAGE
+#---------------------------------------------------------------------
+FROM ubuntu:bionic as ueransim-builder
+
+RUN apt-get update -y && apt-get upgrade -y &&\
+    apt install -y make gcc g++ libsctp-dev lksctp-tools\
+    iproute2 wget software-properties-common
+
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null\
+    | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null\
+    && apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'\
+    && apt update && apt install -y cmake
+    
+RUN cmake --version
+
+COPY . /UERANSIM
+
+RUN make -C UERANSIM
+
+#---------------------------------------------------------------------
+# TARGET IMAGE
+#---------------------------------------------------------------------
+FROM ubuntu:bionic as ueransim
+
+RUN apt update && apt install -y iproute2 iputils-ping net-tools\
+    iperf3 libsctp-dev lksctp-tools
+
+WORKDIR /ueransim/etc
+COPY --from=ueransim-builder /UERANSIM/docker/custom*.yaml  /ueransim/etc/
+
+WORKDIR /ueransim/bin
+COPY --from=ueransim-builder /UERANSIM/build/*  /ueransim/bin/
+COPY --from=ueransim-builder /UERANSIM/docker/entrypoint.sh . 
+
+ENTRYPOINT ["/ueransim/bin/entrypoint.sh"]

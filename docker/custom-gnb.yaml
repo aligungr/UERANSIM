@@ -1,0 +1,23 @@
+mcc: '@MCC@'          # Mobile Country Code value
+mnc: '@MNC@'           # Mobile Network Code value (2 or 3 digits)
+
+nci: '@NCI@'  # NR Cell Identity (36-bit)
+idLength: 32        # NR gNB ID length in bits [22...32]
+tac: @TAC@              # Tracking Area Code
+
+linkIp: @LINK_IP@   # gNB's local IP address for Radio Link Simulation (Usually same with local IP)
+ngapIp: @NGAP_IP@   # gNB's local IP address for N2 Interface (Usually same with local IP)
+gtpIp:  @GTP_IP@    # gNB's local IP address for N3 Interface (Usually same with local IP)
+
+# List of AMF address information
+amfConfigs:
+  - address: @NGAP_PEER_IP@
+    port: 38412
+
+# List of supported S-NSSAIs by this gNB
+slices:
+  - sst: @SST@
+    sd:  @SD@
+
+# Indicates whether or not SCTP stream number errors should be ignored.
+ignoreStreamIds: @IGNORE_STREAM_IDS@
