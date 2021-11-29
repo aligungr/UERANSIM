@@ -63,7 +63,13 @@ void BindSocket(int sd, const std::string &address, uint16_t port)
             ThrowError("Bad IPv4 address.");
     }
     else if (ipVersion == 6)
-        ThrowError("IPv6 for SCTP is not supported yet.");
+    {
+        auto addr6 = (sockaddr_in6 *)addr;
+        addr6->sin6_family = AF_INET6;
+        addr6->sin6_port = htons(port);
+        if (inet_pton(AF_INET6, address.c_str(), &(addr6->sin6_addr)) != 1)
+            ThrowError("Bad IPv6 address.");
+    }
     else
         ThrowError("Bad IPv4 or IPv6 address.");
 
