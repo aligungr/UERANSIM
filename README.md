@@ -22,11 +22,11 @@ using it.
 In terms of 3GPP coverage, fundamental control plane features are done. However, some of them are in progress.
 More details can be found at [Feature Set](https://github.com/aligungr/UERANSIM/wiki/Feature-Set).
 
-At the same time, 5G-NR radio interface is under development but not complete yet. Currently we utilize the radio
+Meanwhile, 5G-NR radio interface is partially implemented but not completed yet. Currently, we utilize the radio
 interface over a simulated environment.
 
 <p align="center">
-<img src="https://img.shields.io/badge/Radio%20Interface-in%20progress-orange" alt="OS Linux"/>
+<img src="https://img.shields.io/badge/Radio%20Interface-simulated-orange" alt="OS Linux"/>
 <img src="https://img.shields.io/badge/Control%20Plane-functional-green" alt="OS Linux"/>  
 <img src="https://img.shields.io/badge/User%20Plane-functional-green" alt="OS Linux"/>
 </p>
