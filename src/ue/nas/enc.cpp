@@ -15,25 +15,25 @@ namespace nr::ue::nas_enc
 {
 
 static nas::ESecurityHeaderType MakeSecurityHeaderType(const NasSecurityContext &ctx, nas::EMessageType msgType,
-                                                       bool bypassCiphering)
+                                                       bool noCipheredHeader)
 {
-    auto &encKey = ctx.keys.kNasEnc;
-    auto &intKey = ctx.keys.kNasInt;
-
-    bool ciphered = !bypassCiphering && encKey.length() > 0;
-    bool integrityProtected = intKey.length() > 0;
-
-    if (!ciphered && !integrityProtected)
-        return nas::ESecurityHeaderType::NOT_PROTECTED;
-
     if (msgType == nas::EMessageType::SECURITY_MODE_COMPLETE)
         return nas::ESecurityHeaderType::INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECURITY_CONTEXT;
 
     if (msgType == nas::EMessageType::SECURITY_MODE_COMMAND)
         return nas::ESecurityHeaderType::INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT;
 
-    return ciphered ? nas::ESecurityHeaderType::INTEGRITY_PROTECTED_AND_CIPHERED
-                    : nas::ESecurityHeaderType::INTEGRITY_PROTECTED;
+    auto &intKey = ctx.keys.kNasInt;
+    auto &encKey = ctx.keys.kNasEnc;
+
+    bool integrityProtected = intKey.length() > 0;
+    bool ciphered = encKey.length() > 0;
+
+    if (!integrityProtected)
+        return nas::ESecurityHeaderType::NOT_PROTECTED;
+    if (!ciphered || noCipheredHeader)
+        return nas::ESecurityHeaderType::INTEGRITY_PROTECTED;
+    return nas::ESecurityHeaderType::INTEGRITY_PROTECTED_AND_CIPHERED;
 }
 
 static OctetString EncryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCount &count, bool is3gppAccess,
@@ -65,7 +65,8 @@ static OctetString EncryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCoun
 }
 
 static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, OctetString &&plainNasMessage,
-                                                      nas::EMessageType msgType, bool bypassCiphering)
+                                                      nas::EMessageType msgType, bool bypassCiphering,
+                                                      bool noCipheredHeader)
 {
     auto count = ctx.uplinkCount;
     auto is3gppAccess = ctx.is3gppAccess;
@@ -80,7 +81,7 @@ static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, O
 
     auto secured = std::make_unique<nas::SecuredMmMessage>();
     secured->epd = nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES;
-    secured->sht = MakeSecurityHeaderType(ctx, msgType, bypassCiphering);
+    secured->sht = MakeSecurityHeaderType(ctx, msgType, noCipheredHeader);
     secured->messageAuthenticationCode = octet4{mac};
     secured->sequenceNumber = count.sqn;
     secured->plainNasMessage = std::move(encryptedData);
@@ -123,14 +124,14 @@ static OctetString DecryptData(nas::ETypeOfCipheringAlgorithm alg, const NasCoun
 }
 
 std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, const nas::PlainMmMessage &msg,
-                                               bool bypassCiphering)
+                                               bool bypassCiphering, bool noCipheredHeader)
 {
     nas::EMessageType msgType = msg.messageType;
 
     OctetString stream;
     nas::EncodeNasMessage(msg, stream);
 
-    return Encrypt(ctx, std::move(stream), msgType, bypassCiphering);
+    return Encrypt(ctx, std::move(stream), msgType, bypassCiphering, noCipheredHeader);
 }
 
 std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::SecuredMmMessage &msg)

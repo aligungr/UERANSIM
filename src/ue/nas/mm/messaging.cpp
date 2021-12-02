@@ -147,23 +147,23 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
                 auto copy = nas::utils::DeepCopyMsg(msg);
                 RemoveCleartextIEs((nas::PlainMmMessage &)*copy, std::move(originalPdu));
 
-                auto copySecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, true);
+                auto copySecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, true, true);
                 nas::EncodeNasMessage(*copySecured, pdu);
             }
             else
             {
-                auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true);
+                auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true, false);
                 nas::EncodeNasMessage(*secured, pdu);
             }
         }
         else if (msg.messageType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING)
         {
-            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true);
+            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true, false);
             nas::EncodeNasMessage(*secured, pdu);
         }
         else
         {
-            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false);
+            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
             nas::EncodeNasMessage(*secured, pdu);
         }
     }
