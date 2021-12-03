@@ -128,24 +128,24 @@ OctetString GetOctetString(const BIT_STRING_t &source)
 
 uint64_t GetUnsigned64(const INTEGER_t &source)
 {
-    uint64_t res = 0;
+    unsigned long res = 0;
     if (asn_INTEGER2ulong(&source, &res) != 0)
     {
         // ignore the error
         res = 0;
     }
-    return res;
+    return static_cast<uint64_t>(res);
 }
 
 int64_t GetSigned64(const INTEGER_t &source)
 {
-    int64_t res = 0;
+    long res = 0;
     if (asn_INTEGER2long(&source, &res) != 0)
     {
         // ignore the error
         res = 0;
     }
-    return res;
+    return static_cast<int64_t>(res);
 }
 
 void SetUnsigned64(uint64_t value, INTEGER_t &target)
