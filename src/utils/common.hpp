@@ -40,6 +40,7 @@ bool IsNumeric(const std::string &str);
 void AssertNodeName(const std::string &str);
 void Trim(std::string &str);
 void Trim(std::stringstream &str);
+bool IsLittleEndian();
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <thread>
 
+#include <arpa/inet.h>
 #include <unistd.h>
 
 static_assert(sizeof(char) == sizeof(uint8_t));
@@ -323,4 +324,9 @@ void utils::Trim(std::stringstream &s)
     str = s.str();
     Trim(str);
     s.str(str);
+}
+
+bool utils::IsLittleEndian()
+{
+    return htonl(1453) != 1453;
 }
