@@ -28,10 +28,10 @@ void sha256_init(sha256_t *p)
 #define s1(x) (ROTR32(x, 17) ^ ROTR32(x, 19) ^ (x >> 10))
 
 #define blk0(i) (W[i] = data[i])
-#define blk2(i) (W[i & 15] += s1(W[(i - 2) & 15]) + W[(i - 7) & 15] + s0(W[(i - 15) & 15]))
+#define blk2(i) (W[(i)&15] += s1(W[((i)-2) & 15]) + W[((i)-7) & 15] + s0(W[((i)-15) & 15]))
 
-#define Ch(x, y, z) (z ^ (x & (y ^ z)))
-#define Maj(x, y, z) ((x & y) | (z & (x | y)))
+#define Ch(x, y, z) ((z) ^ ((x) & ((y) ^ (z))))
+#define Maj(x, y, z) (((x) & (y)) | ((z) & ((x) | (y))))
 
 #define a(i) T[(0 - (i)) & 7]
 #define b(i) T[(1 - (i)) & 7]
@@ -45,19 +45,19 @@ void sha256_init(sha256_t *p)
 #ifdef _SHA256_UNROLL2
 
 #define R(a, b, c, d, e, f, g, h, i)                                                                                   \
-    h += S1(e) + Ch(e, f, g) + K[i + j] + (j ? blk2(i) : blk0(i));                                                     \
-    d += h;                                                                                                            \
-    h += S0(a) + Maj(a, b, c)
+    h += S1(e) + Ch(e, f, g) + K[(i) + j] + (j ? blk2(i) : blk0(i));                                                   \
+    (d) += (h);                                                                                                        \
+    (h) += S0(a) + Maj(a, b, c)
 
 #define RX_8(i)                                                                                                        \
     R(a, b, c, d, e, f, g, h, i);                                                                                      \
-    R(h, a, b, c, d, e, f, g, (i + 1));                                                                                \
-    R(g, h, a, b, c, d, e, f, (i + 2));                                                                                \
-    R(f, g, h, a, b, c, d, e, (i + 3));                                                                                \
-    R(e, f, g, h, a, b, c, d, (i + 4));                                                                                \
-    R(d, e, f, g, h, a, b, c, (i + 5));                                                                                \
-    R(c, d, e, f, g, h, a, b, (i + 6));                                                                                \
-    R(b, c, d, e, f, g, h, a, (i + 7))
+    R(h, a, b, c, d, e, f, g, ((i) + 1));                                                                              \
+    R(g, h, a, b, c, d, e, f, ((i) + 2));                                                                              \
+    R(f, g, h, a, b, c, d, e, ((i) + 3));                                                                              \
+    R(e, f, g, h, a, b, c, d, ((i) + 4));                                                                              \
+    R(d, e, f, g, h, a, b, c, ((i) + 5));                                                                              \
+    R(c, d, e, f, g, h, a, b, ((i) + 6));                                                                              \
+    R(b, c, d, e, f, g, h, a, ((i) + 7))
 
 #else
 

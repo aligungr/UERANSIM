@@ -375,7 +375,7 @@ bool NgapTask::handleSctpStreamId(int amfId, int stream, const ASN_NGAP_NGAP_PDU
                 return false;
             }
 
-            long id = static_cast<long>(*reinterpret_cast<ASN_NGAP_RAN_UE_NGAP_ID_t *>(ptr));
+            auto id = static_cast<int64_t>(*reinterpret_cast<ASN_NGAP_RAN_UE_NGAP_ID_t *>(ptr));
             auto *ue = findUeByRanId(id);
             if (ue == nullptr)
                 return false;

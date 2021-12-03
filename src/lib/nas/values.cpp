@@ -285,6 +285,7 @@ VPartialServiceAreaList00 VPartialServiceAreaList00::Decode(const OctetView &str
 
     auto plmn = VPlmn::Decode(stream);
     std::vector<octet3> tacs;
+    tacs.reserve(count);
     for (int i = 0; i < count; i++)
         tacs.push_back(stream.read3());
     return VPartialServiceAreaList00{allowed, plmn, std::move(tacs)};
@@ -330,6 +331,7 @@ VPartialServiceAreaList10 VPartialServiceAreaList10::Decode(const OctetView &str
     int count = bits::BitRange8<0, 4>(octet) + 1;
 
     std::vector<VTrackingAreaIdentity> list;
+    list.reserve(count);
     for (int i = 0; i < count; i++)
         list.push_back(VTrackingAreaIdentity::Decode(stream));
     return VPartialServiceAreaList10{allowed, std::move(list)};
@@ -374,6 +376,7 @@ VPartialTrackingAreaIdentityList00 VPartialTrackingAreaIdentityList00::Decode(co
 
     auto plmn = VPlmn::Decode(stream);
     std::vector<octet3> tacs;
+    tacs.reserve(count);
     for (int i = 0; i < count; i++)
         tacs.push_back(stream.read3());
     return VPartialTrackingAreaIdentityList00{plmn, std::move(tacs)};
@@ -415,6 +418,7 @@ VPartialTrackingAreaIdentityList10 VPartialTrackingAreaIdentityList10::Decode(co
     int count = bits::BitRange8<0, 4>(octet) + 1;
 
     std::vector<VTrackingAreaIdentity> tacs;
+    tacs.reserve(count);
     for (int i = 0; i < count; i++)
         tacs.push_back(VTrackingAreaIdentity::Decode(stream));
     return VPartialTrackingAreaIdentityList10{std::move(tacs)};

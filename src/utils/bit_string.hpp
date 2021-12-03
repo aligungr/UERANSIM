@@ -27,7 +27,7 @@ class BitString
     void write(bool bit)
     {
         BitBuffer buffer{m_data.data()};
-        buffer.seek(m_bitIndex);
+        buffer.seek(static_cast<int>(m_bitIndex));
         buffer.write(bit);
         m_bitIndex = buffer.currentIndex();
     }
@@ -35,17 +35,17 @@ class BitString
     void writeBits(int value, int len)
     {
         BitBuffer buffer{m_data.data()};
-        buffer.seek(m_bitIndex);
+        buffer.seek(static_cast<int>(m_bitIndex));
         buffer.writeBits(value, len);
         m_bitIndex = buffer.currentIndex();
     }
 
-    int bitLength() const
+    [[nodiscard]] inline int bitLength() const
     {
-        return m_bitIndex;
+        return static_cast<int>(m_bitIndex);
     }
 
-    int octetLength() const
+    [[nodiscard]] inline int octetLength() const
     {
         return bits::NearDiv(bitLength(), 8) / 8;
     }

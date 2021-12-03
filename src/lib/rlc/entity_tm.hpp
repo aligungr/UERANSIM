@@ -26,7 +26,7 @@ class TmEntity : public IRlcEntity
     LinkedList<RlcSduSegment> txBuffer;
 
     // Timers
-    long tCurrent; // Not a timer, but holds the current time in ms.
+    int64_t tCurrent; // Not a timer, but holds the current time in ms.
 
   public:
     TmEntity(IRlcConsumer *pConsumer, int txMaxSize);

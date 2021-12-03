@@ -93,7 +93,7 @@ static ASN_RRC_BCCH_DL_SCH_Message *ConstructSib1Message(bool cellReserved, int 
     for (size_t i = 0; i < 63; i++)
     {
         auto *item = asn::New<ASN_RRC_UAC_BarringPerCat>();
-        item->accessCategory = static_cast<long>(i + 1);
+        item->accessCategory = static_cast<decltype(item->accessCategory)>(i + 1);
         item->uac_barringInfoSetIndex = 1;
 
         asn::SequenceAdd(*sib1.uac_BarringInfo->uac_BarringForCommon, item);

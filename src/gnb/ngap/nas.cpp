@@ -24,7 +24,7 @@
 namespace nr::gnb
 {
 
-void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu, long rrcEstablishmentCause,
+void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu, int64_t rrcEstablishmentCause,
                                          const std::optional<GutiMobileIdentity> &sTmsi)
 {
     m_logger->debug("Initial NAS message received from UE[%d]", ueId);

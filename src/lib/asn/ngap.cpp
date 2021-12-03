@@ -857,7 +857,10 @@ static bool GetProtocolIeInfo(const ASN_NGAP_NGAP_PDU &pdu, const asn_TYPE_descr
     // This function assumes all ASN structs are "C++ standard layout".
     // Therefore no problem is expected since the structs are already standard layout.
 
-    // TODO: assert for Little Endian (this asssumption is used for presentEnumSize and related)
+    // Assert that the machine is Little Endian. (This assumption is used for presentEnumSize and related)
+#if 'ABCD' != 0x41424344
+#error "Big Endian architecture is not supported"
+#endif
 
     asn_TYPE_descriptor_t *desc;
     void *ptr;

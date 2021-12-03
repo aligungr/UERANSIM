@@ -131,7 +131,7 @@ static void AppendYaml(const Json &json, std::stringstream &stream, int indentat
             else
             {
                 stream << "\n";
-                initialPos = stream.tellp();
+                initialPos = static_cast<int>(stream.tellp());
                 AppendYaml(item.second, stream, indentation + 1, true);
             }
             if (index != json.itemCount() - 1 && initialPos != stream.tellp())

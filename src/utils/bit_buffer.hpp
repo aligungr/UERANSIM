@@ -105,15 +105,15 @@ class BitBuffer
             write((value >> (len - 1LL - i)) & 1LL);
     }
 
-    /**
+    /*
      * Returns total number of octets written. (Read and write are considered as same op.)
-     * */
-    inline size_t writtenOctets() const
+     */
+    [[nodiscard]] inline size_t writtenOctets() const
     {
         return (m_index + (8u - (m_index % 8u)) % 8) / 8u;
     }
 
-    inline size_t currentIndex() const
+    [[nodiscard]] inline size_t currentIndex() const
     {
         return m_index;
     }

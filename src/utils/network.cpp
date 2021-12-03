@@ -30,7 +30,7 @@ static std::string OctetStringToIpString(const OctetString &address)
     unsigned char buf[sizeof(struct in6_addr)] = {0};
     char str[INET6_ADDRSTRLEN] = {0};
 
-    if (domain == 4)
+    if (domain == AF_INET)
     {
         auto *p = reinterpret_cast<in_addr *>(buf);
         p->s_addr = (in_addr_t)octet4{address.data()[0], address.data()[1], address.data()[2], address.data()[3]};
@@ -118,22 +118,22 @@ Socket::Socket(int domain, int type, int protocol)
 
 Socket Socket::CreateUdp4()
 {
-    return Socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    return {AF_INET, SOCK_DGRAM, IPPROTO_UDP};
 }
 
 Socket Socket::CreateUdp6()
 {
-    return Socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+    return {AF_INET6, SOCK_DGRAM, IPPROTO_UDP};
 }
 
 Socket Socket::CreateTcp4()
 {
-    return Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    return {AF_INET, SOCK_STREAM, IPPROTO_TCP};
 }
 
 Socket Socket::CreateTcp6()
 {
-    return Socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+    return {AF_INET6, SOCK_STREAM, IPPROTO_TCP};
 }
 
 Socket::Socket() : fd(-1)
@@ -295,5 +295,5 @@ InetAddress Socket::getAddress() const
     if (getsockname(fd, reinterpret_cast<struct sockaddr *>(&storage), &len) != 0)
         throw LibError("getsockname failed: ", errno);
 
-    return InetAddress(storage, len);
+    return {storage, len};
 }

@@ -56,7 +56,7 @@ class TokenBucket
     int64_t lastRefillTimestamp;
 
   public:
-    explicit TokenBucket(long byteCapacity);
+    explicit TokenBucket(int64_t byteCapacity);
 
     bool tryConsume(uint64_t numberOfTokens);
     void updateCapacity(uint64_t newByteCapacity);

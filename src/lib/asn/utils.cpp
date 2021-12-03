@@ -18,7 +18,7 @@ namespace asn
 
 void SetPrintableString(PrintableString_t &target, const std::string &value)
 {
-    if (OCTET_STRING_fromBuf(&target, value.c_str(), value.length()) != 0)
+    if (OCTET_STRING_fromBuf(&target, value.c_str(), static_cast<int>(value.length())) != 0)
         throw std::runtime_error("OCTET_STRING_fromBuf failed");
 }
 

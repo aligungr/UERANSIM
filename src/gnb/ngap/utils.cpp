@@ -100,34 +100,34 @@ std::string CauseToString(const ASN_NGAP_Cause_t &cause)
 {
     std::string result;
 
-    long enumValue;
+    int64_t enumValue;
     asn_TYPE_descriptor_t *typeDescriptor;
 
     switch (cause.present)
     {
     case ASN_NGAP_Cause_PR_radioNetwork:
         result = "radio-network";
-        enumValue = cause.choice.radioNetwork;
+        enumValue = static_cast<int64_t>(cause.choice.radioNetwork);
         typeDescriptor = &asn_DEF_ASN_NGAP_CauseRadioNetwork;
         break;
     case ASN_NGAP_Cause_PR_transport:
         result = "transport";
-        enumValue = cause.choice.transport;
+        enumValue = static_cast<int64_t>(cause.choice.transport);
         typeDescriptor = &asn_DEF_ASN_NGAP_CauseTransport;
         break;
     case ASN_NGAP_Cause_PR_nas:
         result = "nas";
-        enumValue = cause.choice.nas;
+        enumValue = static_cast<int64_t>(cause.choice.nas);
         typeDescriptor = &asn_DEF_ASN_NGAP_CauseNas;
         break;
     case ASN_NGAP_Cause_PR_protocol:
         result = "protocol";
-        enumValue = cause.choice.protocol;
+        enumValue = static_cast<int64_t>(cause.choice.protocol);
         typeDescriptor = &asn_DEF_ASN_NGAP_CauseProtocol;
         break;
     case ASN_NGAP_Cause_PR_misc:
         result = "misc";
-        enumValue = cause.choice.misc;
+        enumValue = static_cast<int64_t>(cause.choice.misc);
         typeDescriptor = &asn_DEF_ASN_NGAP_CauseMisc;
         break;
     default:
@@ -141,7 +141,7 @@ std::string CauseToString(const ASN_NGAP_Cause_t &cause)
         {
             for (int i = 0; i < specs->map_count; i++)
             {
-                if (specs->value2enum[i].nat_value == enumValue)
+                if (static_cast<int64_t>(specs->value2enum[i].nat_value) == enumValue)
                 {
                     result += "/" + std::string(specs->value2enum[i].enum_name);
                     break;

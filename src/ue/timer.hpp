@@ -18,11 +18,11 @@ class UeTimer
     const bool m_isMm;
 
     int m_interval;
-    long m_startMillis;
+    int64_t m_startMillis;
     bool m_isRunning;
     int m_expiryCount;
 
-    long m_lastDebugPrintMs;
+    int64_t m_lastDebugPrintMs;
 
   public:
     UeTimer(int timerCode, bool isMmTimer, int defaultInterval);

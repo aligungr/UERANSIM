@@ -203,7 +203,7 @@ struct NmGnbRrcToNgap : NtsMessage
     OctetString pdu{};
 
     // INITIAL_NAS_DELIVERY
-    long rrcEstablishmentCause{};
+    int64_t rrcEstablishmentCause{};
     std::optional<GutiMobileIdentity> sTmsi{};
 
     explicit NmGnbRrcToNgap(PR present) : NtsMessage(NtsMessageType::GNB_RRC_TO_NGAP), present(present)

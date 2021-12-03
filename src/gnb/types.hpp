@@ -99,7 +99,7 @@ struct NgapAmfContext
     std::string address{};
     uint16_t port{};
     std::string amfName{};
-    long relativeCapacity{};
+    int64_t relativeCapacity{};
     EAmfState state{};
     OverloadInfo overloadInfo{};
     std::vector<ServedGuami *> servedGuamiList{};
@@ -147,7 +147,7 @@ struct RrcUeContext
 
     int64_t initialId = -1; // 39-bit value, or -1
     bool isInitialIdSTmsi{}; // TMSI-part-1 or a random value
-    long establishmentCause{};
+    int64_t establishmentCause{};
     std::optional<GutiMobileIdentity> sTmsi{};
 
     explicit RrcUeContext(const int ueId) : ueId(ueId)

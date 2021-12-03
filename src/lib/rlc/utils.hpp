@@ -161,16 +161,16 @@ struct RlcSduSegment
 
 class RlcTimer
 {
-    const long period;
-    long startedAt; // 0 means not started
+    const int64_t period;
+    int64_t startedAt; // 0 means not started
 
   public:
-    explicit RlcTimer(long period) : period{period}, startedAt(0)
+    explicit RlcTimer(int64_t period) : period{period}, startedAt(0)
     {
     }
 
     // Returns true iff the timer was running and just expired and has been reset.
-    bool cycle(long currentTime)
+    bool cycle(int64_t currentTime)
     {
         // If timer is running and expired
         if (startedAt != 0 && currentTime > startedAt + period)
@@ -183,7 +183,7 @@ class RlcTimer
         return false;
     }
 
-    inline void start(long currentTime)
+    inline void start(int64_t currentTime)
     {
         startedAt = currentTime;
     }
@@ -193,12 +193,12 @@ class RlcTimer
         startedAt = 0;
     }
 
-    inline bool isRunning() const
+    [[nodiscard]] inline bool isRunning() const
     {
         return startedAt != 0;
     }
 
-    inline bool stoppedOrExpired(long currentTime) const
+    [[nodiscard]] inline bool stoppedOrExpired(int64_t currentTime) const
     {
         return !isRunning() || currentTime - startedAt > period;
     }
@@ -207,7 +207,7 @@ class RlcTimer
 template <typename T>
 struct IComparator
 {
-    virtual int compare(const T &a, const T &b) const = 0;
+    [[nodiscard]] virtual int compare(const T &a, const T &b) const = 0;
 };
 
 template <typename T, typename U>
@@ -234,7 +234,7 @@ struct ISnCompare : IComparator<int>
     {
     }
 
-    inline int compare(const int &a, const int &b) const override
+    [[nodiscard]] inline int compare(const int &a, const int &b) const override
     {
         return comp(a, b);
     }

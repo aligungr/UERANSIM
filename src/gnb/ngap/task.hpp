@@ -52,7 +52,7 @@ class NgapTask : public NtsTask
 
     std::unordered_map<int, NgapAmfContext *> m_amfCtx;
     std::unordered_map<int, NgapUeContext *> m_ueCtx;
-    long m_ueNgapIdCounter;
+    int64_t m_ueNgapIdCounter;
     uint32_t m_downlinkTeidCounter;
     bool m_isInitialized;
 
@@ -73,8 +73,8 @@ class NgapTask : public NtsTask
     NgapAmfContext *findAmfContext(int ctxId);
     void createUeContext(int ueId);
     NgapUeContext *findUeContext(int ctxId);
-    NgapUeContext *findUeByRanId(long ranUeNgapId);
-    NgapUeContext *findUeByAmfId(long amfUeNgapId);
+    NgapUeContext *findUeByRanId(int64_t ranUeNgapId);
+    NgapUeContext *findUeByAmfId(int64_t amfUeNgapId);
     NgapUeContext *findUeByNgapIdPair(int amfCtxId, const NgapIdPair &idPair);
     void deleteUeContext(int ueId);
     void deleteAmfContext(int amfId);
@@ -98,7 +98,7 @@ class NgapTask : public NtsTask
     bool handleSctpStreamId(int amfId, int stream, const ASN_NGAP_NGAP_PDU &pdu);
 
     /* NAS transport */
-    void handleInitialNasTransport(int ueId, const OctetString &nasPdu, long rrcEstablishmentCause,
+    void handleInitialNasTransport(int ueId, const OctetString &nasPdu, int64_t rrcEstablishmentCause,
                                    const std::optional<GutiMobileIdentity> &sTmsi);
     void handleUplinkNasTransport(int ueId, const OctetString &nasPdu);
     void receiveDownlinkNasTransport(int amfId, ASN_NGAP_DownlinkNASTransport *msg);

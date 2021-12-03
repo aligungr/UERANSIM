@@ -59,7 +59,7 @@ NgapUeContext *NgapTask::findUeContext(int ctxId)
     return ctx;
 }
 
-NgapUeContext *NgapTask::findUeByRanId(long ranUeNgapId)
+NgapUeContext *NgapTask::findUeByRanId(int64_t ranUeNgapId)
 {
     if (ranUeNgapId <= 0)
         return nullptr;
@@ -70,7 +70,7 @@ NgapUeContext *NgapTask::findUeByRanId(long ranUeNgapId)
     return nullptr;
 }
 
-NgapUeContext *NgapTask::findUeByAmfId(long amfUeNgapId)
+NgapUeContext *NgapTask::findUeByAmfId(int64_t amfUeNgapId)
 {
     if (amfUeNgapId <= 0)
         return nullptr;

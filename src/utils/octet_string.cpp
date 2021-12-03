@@ -199,9 +199,9 @@ uint32_t OctetString::get4UI(int index) const
     return static_cast<uint32_t>(get4(index));
 }
 
-long OctetString::get8L(int index) const
+int64_t OctetString::get8L(int index) const
 {
-    return static_cast<long>(get8(index));
+    return static_cast<int64_t>(get8(index));
 }
 
 uint64_t OctetString::get8UL(int index) const
@@ -281,7 +281,7 @@ OctetString OctetString::FromOctet8(octet8 value)
     return OctetString{std::move(v)};
 }
 
-OctetString OctetString::FromOctet8(long value)
+OctetString OctetString::FromOctet8(int64_t value)
 {
     return FromOctet8(octet8{value});
 }

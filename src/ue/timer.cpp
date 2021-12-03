@@ -94,9 +94,9 @@ bool UeTimer::performTick()
 {
     if (m_isRunning)
     {
-        long currentMs = utils::CurrentTimeMillis();
-        long deltaSec = (currentMs - m_startMillis) / 1000LL;
-        long remainingSec = m_interval - deltaSec;
+        int64_t currentMs = utils::CurrentTimeMillis();
+        int64_t deltaSec = (currentMs - m_startMillis) / 1000LL;
+        int64_t remainingSec = m_interval - deltaSec;
 
         if (currentMs - m_lastDebugPrintMs > 10LL * 1000LL)
             m_lastDebugPrintMs = currentMs;

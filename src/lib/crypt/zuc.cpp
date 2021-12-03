@@ -56,7 +56,7 @@ static uint32_t AddM(uint32_t a, uint32_t b)
     return (c & 0x7FFFFFFF) + (c >> 31);
 }
 
-#define MulByPow2(x, k) ((((x) << k) | ((x) >> (31 - k))) & 0x7FFFFFFF)
+#define MulByPow2(x, k) ((((x) << (k)) | ((x) >> (31 - (k)))) & 0x7FFFFFFF)
 
 static void LFSRWithInitializationMode(uint32_t u)
 {
@@ -118,7 +118,7 @@ static void BitReorganization()
     BRC_X[3] = ((LFSR_S[2] & 0xFFFF) << 16) | (LFSR_S[0] >> 15);
 }
 
-#define ROT(a, k) (((a) << k) | ((a) >> (32 - k)))
+#define ROT(a, k) (((a) << (k)) | ((a) >> (32 - (k))))
 
 static uint32_t L1(uint32_t X)
 {

@@ -68,7 +68,7 @@ void PduSessionTree::enumerateByUe(int ue, std::vector<uint64_t> &output)
         output.push_back(item.second);
 }
 
-TokenBucket::TokenBucket(long byteCapacity) : byteCapacity(byteCapacity)
+TokenBucket::TokenBucket(int64_t byteCapacity) : byteCapacity(byteCapacity)
 {
     if (byteCapacity > 0)
     {

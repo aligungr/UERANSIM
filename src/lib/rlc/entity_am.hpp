@@ -63,7 +63,7 @@ class AmEntity : public IRlcEntity
     bool forcePoll;
 
     // Timers
-    long tCurrent;
+    int64_t tCurrent;
     RlcTimer pollRetransmitTimer;
     RlcTimer reassemblyTimer;
     RlcTimer statusProhibitTimer;

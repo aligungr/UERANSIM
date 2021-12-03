@@ -68,7 +68,7 @@ void GnbRrcTask::receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest 
         ue->isInitialIdSTmsi = false;
     }
 
-    ue->establishmentCause = static_cast<long>(msg.rrcSetupRequest.establishmentCause);
+    ue->establishmentCause = static_cast<int64_t>(msg.rrcSetupRequest.establishmentCause);
 
     // Prepare RRC Setup
     auto *pdu = asn::New<ASN_RRC_DL_CCCH_Message>();

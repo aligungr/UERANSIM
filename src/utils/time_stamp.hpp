@@ -18,27 +18,27 @@ struct TimeStamp
     {
     }
 
-    inline int64_t ntpValue() const
+    [[nodiscard]] inline int64_t ntpValue() const
     {
         return ntpTime;
     }
 
-    inline int64_t seconds64() const
+    [[nodiscard]] inline int64_t seconds64() const
     {
         return (ntpTime >> 32) & 0xffffffffLL;
     }
 
-    inline int64_t fraction64() const
+    [[nodiscard]] inline int64_t fraction64() const
     {
         return ntpTime & 0xffffffffLL;
     }
 
-    inline int seconds32() const
+    [[nodiscard]] inline int seconds32() const
     {
         return static_cast<int>((ntpTime >> 32) & 0xffffffffLL);
     }
 
-    inline int fraction32() const
+    [[nodiscard]] inline int fraction32() const
     {
         return static_cast<int>(ntpTime & 0xffffffffLL);
     }
