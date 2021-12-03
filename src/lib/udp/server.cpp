@@ -27,8 +27,7 @@ UdpServer::UdpServer(const std::string &address, uint16_t port): sockets{}
 
 int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress)
 {
-    // Use the first socket ready for receiving data
-    // Warning: this may lead to starvation since there is no round robin implemented yet in `Socket::Select`
+    // Choose at random a ready socket for receiving data
     std::vector<Socket> ws;
     return Socket::Select(sockets, ws, timeoutMs).receive(buffer, bufferSize, 0, outPeerAddress);
 }

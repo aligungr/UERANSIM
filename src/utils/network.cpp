@@ -13,6 +13,7 @@
 
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <random>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -273,10 +274,20 @@ Socket Socket::Select(const std::vector<Socket> &readSockets, const std::vector<
     std::vector<Socket> rs, ws;
     Select(readSockets, writeSockets, rs, ws, timeout);
 
+    // Return a socket choosen at random from selection
+    // to avoid starvation
+    std::default_random_engine generator;
+
     if (!rs.empty())
-        return rs[0];
+    {
+        std::uniform_int_distribution<int> drs(0, rs.size()-1);
+        return rs[drs(generator)];
+    }
     if (!ws.empty())
-        return rs[0];
+    {
+        std::uniform_int_distribution<int> dws(0, ws.size()-1);
+        return rs[dws(generator)];
+    }
     return {};
 }
 
