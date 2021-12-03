@@ -88,7 +88,7 @@ inline void SetBitStringInt(int value, BIT_STRING_t &target)
 
     if (target.buf != nullptr)
         free(target.buf);
-    target.size = bits::NearDiv(BitCount, 8) / 8;
+    target.size = bits::NearDiv(static_cast<int>(BitCount), 8) / 8;
     target.buf = static_cast<uint8_t *>(calloc(1, target.size));
     target.bits_unused = (8 - (static_cast<int>(BitCount) % 8)) % 8;
     BitBuffer{target.buf}.writeBits(value, BitCount);
@@ -101,7 +101,7 @@ inline void SetBitStringLong(int64_t value, BIT_STRING_t &target)
 
     if (target.buf != nullptr)
         free(target.buf);
-    target.size = bits::NearDiv(BitCount, 8) / 8;
+    target.size = bits::NearDiv(static_cast<int>(BitCount), 8) / 8;
     target.buf = static_cast<uint8_t *>(calloc(1, target.size));
     target.bits_unused = (8 - (static_cast<int>(BitCount) % 8)) % 8;
     BitBuffer{target.buf}.writeBits(value, BitCount);

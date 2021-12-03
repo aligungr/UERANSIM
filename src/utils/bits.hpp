@@ -112,11 +112,6 @@ inline uint8_t Consequential8(bool b7, bool b6, bool b5, bool b4, bool b3, bool 
     return Ranged8({{1, b7}, {1, b6}, {1, b5}, {1, b4}, {1, b3}, {1, b2}, {1, b1}, {1, b0}});
 }
 
-inline unsigned NearDiv(unsigned val, unsigned div)
-{
-    return (div) * ((val + (div - 1u)) / (div));
-}
-
 inline int NearDiv(int val, int div)
 {
     return (div) * ((val + (div - 1)) / (div));
