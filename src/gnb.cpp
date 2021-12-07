@@ -50,10 +50,10 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
 
     result->linkIp = yaml::GetIp(config, "linkIp");
     result->ngapIp = yaml::GetIp(config, "ngapIp");
-    result->gtpIp = yaml::GetIp4(config, "gtpIp");
+    result->gtpIp = yaml::GetIp(config, "gtpIp");
 
     if (yaml::HasField(config, "gtpAdvertiseIp"))
-        result->gtpAdvertiseIp = yaml::GetIp4(config, "gtpAdvertiseIp");
+        result->gtpAdvertiseIp = yaml::GetIp(config, "gtpAdvertiseIp");
 
     result->ignoreStreamIds = yaml::GetBool(config, "ignoreStreamIds");
     result->pagingDrx = EPagingDrx::V128;
