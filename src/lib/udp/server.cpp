@@ -34,7 +34,7 @@ void UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t b
 {
     int version = address.getIpVersion();
     if (version != 4 && version != 6)
-        throw std::runtime_error{"UdpServer::Send failure: Invalid IP version on"};
+        throw std::runtime_error{"UdpServer::Send failure: Invalid IP version"};
 
     for (const Socket &s : sockets)
     {
