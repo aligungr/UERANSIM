@@ -27,7 +27,7 @@ class UdpServer
     ~UdpServer();
 
     int Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress);
-    int Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const;
+    void Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const;
 };
 
 } // namespace udp

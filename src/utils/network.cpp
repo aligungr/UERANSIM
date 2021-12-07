@@ -122,10 +122,10 @@ uint16_t InetAddress::getPort() const
 Socket::Socket(int domain, int type, int protocol)
 {
     int sd = socket(domain, type, protocol);
-    socketDomain = domain;
     if (sd < 0)
         throw LibError("Socket could not be created:", errno);
     this->fd = sd;
+    this->domain = domain;
 }
 
 Socket Socket::CreateUdp4()
@@ -148,7 +148,7 @@ Socket Socket::CreateTcp6()
     return {AF_INET6, SOCK_STREAM, IPPROTO_TCP};
 }
 
-Socket::Socket() : fd(-1)
+Socket::Socket() : fd(-1), domain(0)
 {
 }
 
@@ -197,7 +197,7 @@ int Socket::receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddre
     return 0;
 }
 
-int Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size) const
+void Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size) const
 {
     ssize_t rc = sendto(fd, buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
     if (rc == -1)
@@ -206,7 +206,6 @@ int Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size)
         if (err != EAGAIN)
             throw LibError("sendto failed: ", errno);
     }
-    return rc;
 }
 
 bool Socket::hasFd() const
@@ -280,12 +279,12 @@ Socket Socket::Select(const std::vector<Socket> &readSockets, const std::vector<
 
     if (!rs.empty())
     {
-        std::uniform_int_distribution<int> drs(0, rs.size()-1);
+        std::uniform_int_distribution<int> drs(0, rs.size() - 1);
         return rs[drs(generator)];
     }
     if (!ws.empty())
     {
-        std::uniform_int_distribution<int> dws(0, ws.size()-1);
+        std::uniform_int_distribution<int> dws(0, ws.size() - 1);
         return rs[dws(generator)];
     }
     return {};
@@ -323,10 +322,9 @@ InetAddress Socket::getAddress() const
 
 int Socket::getIpVersion() const
 {
-    if (socketDomain == AF_INET6)
+    if (domain == AF_INET6)
         return 6;
-    else if (socketDomain == AF_INET)
+    if (domain == AF_INET)
         return 4;
-    else
-        return 0;
+    return 0;
 }

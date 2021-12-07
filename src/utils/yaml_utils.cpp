@@ -158,7 +158,6 @@ std::string GetIp4(const YAML::Node &node, const std::string &name)
     return ipFromIf;
 }
 
-
 std::string GetIp(const YAML::Node &node, const std::string & name)
 {
     std::string s = GetString(node, name);
@@ -173,7 +172,6 @@ std::string GetIp(const YAML::Node &node, const std::string & name)
     if (!ip6FromIf.empty())
         return ip6FromIf;
     FieldError(name, "must be a valid IP address or a valid network interface with an IP address");
-
 }
 
 void AssertHasBool(const YAML::Node &node, const std::string &name)

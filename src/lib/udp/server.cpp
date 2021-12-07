@@ -14,13 +14,13 @@
 namespace udp
 {
 
-UdpServer::UdpServer(): sockets{}
+UdpServer::UdpServer() : sockets{}
 {
     sockets.push_back(Socket::CreateUdp6());
     sockets.push_back(Socket::CreateUdp4());
 }
 
-UdpServer::UdpServer(const std::string &address, uint16_t port): sockets{}
+UdpServer::UdpServer(const std::string &address, uint16_t port) : sockets{}
 {
     sockets.push_back(Socket::CreateAndBindUdp({address, port}));
 }
@@ -32,25 +32,27 @@ int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAd
     return Socket::Select(sockets, ws, timeoutMs).receive(buffer, bufferSize, 0, outPeerAddress);
 }
 
-int UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const
+void UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const
 {
     int version = address.getIpVersion();
-    // invalid family
-    if (!version)
-        return -1;
-    // send on first socket matching ip version
-    for(const Socket &s : sockets)
+    if (version != 4 && version != 6)
+        throw std::runtime_error{"UdpServer::Send failure: Invalid IP version on"};
+
+    for (const Socket &s : sockets)
     {
         if (s.getIpVersion() == version)
-            return s.send(address, buffer, bufferSize);
+        {
+            s.send(address, buffer, bufferSize);
+            return;
+        }
     }
-    // no socket found
-    return -1;
+
+    throw std::runtime_error{"UdpServer::Send failure: No socket found"};
 }
 
 UdpServer::~UdpServer()
 {
-    for (Socket &s : sockets)
+    for (auto &s : sockets)
         s.close();
 }
 
