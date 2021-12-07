@@ -38,6 +38,7 @@ struct InetAddress
         return len;
     }
 
+    [[nodiscard]] int getIpVersion() const;
     [[nodiscard]] uint16_t getPort() const;
 };
 
@@ -45,6 +46,7 @@ class Socket
 {
   private:
     int fd;
+    int socketDomain;
 
   public:
     Socket();
@@ -53,10 +55,11 @@ class Socket
   public:
     void bind(const InetAddress &address) const;
     int receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outAddress) const;
-    void send(const InetAddress &address, const uint8_t *buffer, size_t size) const;
+    int send(const InetAddress &address, const uint8_t *buffer, size_t size) const;
     void close();
     [[nodiscard]] bool hasFd() const;
     [[nodiscard]] InetAddress getAddress() const;
+    [[nodiscard]] int getIpVersion() const;
 
     /* Socket options */
     void setReuseAddress() const;

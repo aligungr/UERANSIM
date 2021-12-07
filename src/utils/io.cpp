@@ -219,6 +219,36 @@ std::string GetIp4OfInterface(const std::string &ifName)
     return std::string{str};
 }
 
+std::string GetIp6OfInterface(const std::string &ifName)
+{
+    std::string res;
+
+    struct ifreq ifr = {};
+
+    int fd = socket(AF_INET6, SOCK_DGRAM, 0);
+    if (fd <= 0)
+        return "";
+
+    ifr.ifr_addr.sa_family = AF_INET6;
+    strncpy(ifr.ifr_name, ifName.c_str(), IFNAMSIZ - 1);
+
+    if (ioctl(fd, SIOCGIFADDR, &ifr))
+    {
+        close(fd);
+        return "";
+    }
+
+    close(fd);
+
+    auto address = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
+
+    char str[INET6_ADDRSTRLEN] = {0};
+    if (inet_ntop(AF_INET6, &address, str, INET6_ADDRSTRLEN) == nullptr)
+        return "";
+
+    return std::string{str};
+}
+
 std::string GetHostByName(const std::string &name)
 {
     struct addrinfo hints = {};

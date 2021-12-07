@@ -13,6 +13,7 @@
 
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <random>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -78,7 +79,7 @@ InetAddress::InetAddress(const std::string &address, uint16_t port) : storage{},
     if (s != 0)
         throw LibError("Bad Inet address: " + address, errno);
 
-    if (result->ai_family != AF_INET && result->ai_family == AF_INET6)
+    if (result->ai_family != AF_INET && result->ai_family != AF_INET6)
     {
         freeaddrinfo(result);
         throw std::runtime_error("Bad Inet address: " + address);
@@ -87,6 +88,16 @@ InetAddress::InetAddress(const std::string &address, uint16_t port) : storage{},
     this->len = result->ai_addrlen;
     std::memcpy(&this->storage, result->ai_addr, this->len);
     freeaddrinfo(result);
+}
+
+int InetAddress::getIpVersion() const
+{
+    if (storage.ss_family == AF_INET)
+        return 4;
+    else if (storage.ss_family == AF_INET6)
+        return 6;
+    else
+        return 0;
 }
 
 InetAddress::InetAddress(const OctetString &address, uint16_t port) : InetAddress(OctetStringToIpString(address), port)
@@ -111,6 +122,7 @@ uint16_t InetAddress::getPort() const
 Socket::Socket(int domain, int type, int protocol)
 {
     int sd = socket(domain, type, protocol);
+    socketDomain = domain;
     if (sd < 0)
         throw LibError("Socket could not be created:", errno);
     this->fd = sd;
@@ -185,7 +197,7 @@ int Socket::receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddre
     return 0;
 }
 
-void Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size) const
+int Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size) const
 {
     ssize_t rc = sendto(fd, buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
     if (rc == -1)
@@ -194,6 +206,7 @@ void Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size
         if (err != EAGAIN)
             throw LibError("sendto failed: ", errno);
     }
+    return rc;
 }
 
 bool Socket::hasFd() const
@@ -261,10 +274,20 @@ Socket Socket::Select(const std::vector<Socket> &readSockets, const std::vector<
     std::vector<Socket> rs, ws;
     Select(readSockets, writeSockets, rs, ws, timeout);
 
+    // Return a socket choosen at random from selection
+    // to avoid starvation
+    std::default_random_engine generator;
+
     if (!rs.empty())
-        return rs[0];
+    {
+        std::uniform_int_distribution<int> drs(0, rs.size()-1);
+        return rs[drs(generator)];
+    }
     if (!ws.empty())
-        return rs[0];
+    {
+        std::uniform_int_distribution<int> dws(0, ws.size()-1);
+        return rs[dws(generator)];
+    }
     return {};
 }
 
@@ -296,4 +319,14 @@ InetAddress Socket::getAddress() const
         throw LibError("getsockname failed: ", errno);
 
     return {storage, len};
+}
+
+int Socket::getIpVersion() const
+{
+    if (socketDomain == AF_INET6)
+        return 6;
+    else if (socketDomain == AF_INET)
+        return 4;
+    else
+        return 0;
 }

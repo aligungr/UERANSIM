@@ -9,31 +9,49 @@
 #include "server.hpp"
 
 #include <cstring>
+#include <utils/common.hpp>
 
 namespace udp
 {
 
-UdpServer::UdpServer() : socket{Socket::CreateUdp4()}
+UdpServer::UdpServer(): sockets{}
 {
+    sockets.push_back(Socket::CreateUdp6());
+    sockets.push_back(Socket::CreateUdp4());
 }
 
-UdpServer::UdpServer(const std::string &address, uint16_t port) : socket{Socket::CreateAndBindUdp({address, port})}
+UdpServer::UdpServer(const std::string &address, uint16_t port): sockets{}
 {
+    sockets.push_back(Socket::CreateAndBindUdp({address, port}));
 }
 
-int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const
+int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress)
 {
-    return socket.receive(buffer, bufferSize, timeoutMs, outPeerAddress);
+    // Choose at random a ready socket for receiving data
+    std::vector<Socket> ws;
+    return Socket::Select(sockets, ws, timeoutMs).receive(buffer, bufferSize, 0, outPeerAddress);
 }
 
-void UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const
+int UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const
 {
-    socket.send(address, buffer, bufferSize);
+    int version = address.getIpVersion();
+    // invalid family
+    if (!version)
+        return -1;
+    // send on first socket matching ip version
+    for(const Socket &s : sockets)
+    {
+        if (s.getIpVersion() == version)
+            return s.send(address, buffer, bufferSize);
+    }
+    // no socket found
+    return -1;
 }
 
 UdpServer::~UdpServer()
 {
-    socket.close();
+    for (Socket &s : sockets)
+        s.close();
 }
 
 } // namespace udp
