@@ -38,6 +38,7 @@ struct InetAddress
         return len;
     }
 
+    [[nodiscard]] int getIpVersion() const;
     [[nodiscard]] uint16_t getPort() const;
 };
 
@@ -45,6 +46,7 @@ class Socket
 {
   private:
     int fd;
+    int domain;
 
   public:
     Socket();
@@ -57,6 +59,7 @@ class Socket
     void close();
     [[nodiscard]] bool hasFd() const;
     [[nodiscard]] InetAddress getAddress() const;
+    [[nodiscard]] int getIpVersion() const;
 
     /* Socket options */
     void setReuseAddress() const;
@@ -66,8 +69,6 @@ class Socket
     static Socket CreateAndBindTcp(const InetAddress &address);
     static Socket CreateUdp4();
     static Socket CreateUdp6();
-    static Socket CreateTcp4();
-    static Socket CreateTcp6();
 
     static bool Select(const std::vector<Socket> &inReadSockets, const std::vector<Socket> &inWriteSockets,
                        std::vector<Socket> &outReadSockets, std::vector<Socket> &outWriteSockets, int timeout = 0);

@@ -42,6 +42,8 @@ std::string GetString(const YAML::Node &node, const std::string &name, std::opti
                       std::optional<int> maxLength);
 
 std::string GetIp4(const YAML::Node &node, const std::string &name);
+std::string GetIp6(const YAML::Node &node, const std::string &name);
+std::string GetIp(const YAML::Node &node, const std::string &name);
 
 bool GetBool(const YAML::Node &node, const std::string &name);
 

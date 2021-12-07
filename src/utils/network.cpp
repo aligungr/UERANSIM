@@ -13,6 +13,7 @@
 
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <random>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -31,15 +32,9 @@ static std::string OctetStringToIpString(const OctetString &address)
     char str[INET6_ADDRSTRLEN] = {0};
 
     if (domain == AF_INET)
-    {
-        auto *p = reinterpret_cast<in_addr *>(buf);
-        p->s_addr = (in_addr_t)octet4{address.data()[0], address.data()[1], address.data()[2], address.data()[3]};
-    }
+        std::memcpy(buf, address.data(), 4);
     else
-    {
-        auto *p = reinterpret_cast<in6_addr *>(buf);
-        std::memcpy(p, address.data(), 16);
-    }
+        std::memcpy(buf, address.data(), 16);
 
     if (inet_ntop(domain, buf, str, INET6_ADDRSTRLEN) == nullptr)
         throw LibError("Bad Inet address, inet_ntop failure:", errno);
@@ -78,7 +73,7 @@ InetAddress::InetAddress(const std::string &address, uint16_t port) : storage{},
     if (s != 0)
         throw LibError("Bad Inet address: " + address, errno);
 
-    if (result->ai_family != AF_INET && result->ai_family == AF_INET6)
+    if (result->ai_family != AF_INET && result->ai_family != AF_INET6)
     {
         freeaddrinfo(result);
         throw std::runtime_error("Bad Inet address: " + address);
@@ -87,6 +82,15 @@ InetAddress::InetAddress(const std::string &address, uint16_t port) : storage{},
     this->len = result->ai_addrlen;
     std::memcpy(&this->storage, result->ai_addr, this->len);
     freeaddrinfo(result);
+}
+
+int InetAddress::getIpVersion() const
+{
+    if (storage.ss_family == AF_INET)
+        return 4;
+    if (storage.ss_family == AF_INET6)
+        return 6;
+    return 0;
 }
 
 InetAddress::InetAddress(const OctetString &address, uint16_t port) : InetAddress(OctetStringToIpString(address), port)
@@ -114,6 +118,7 @@ Socket::Socket(int domain, int type, int protocol)
     if (sd < 0)
         throw LibError("Socket could not be created:", errno);
     this->fd = sd;
+    this->domain = domain;
 }
 
 Socket Socket::CreateUdp4()
@@ -126,17 +131,7 @@ Socket Socket::CreateUdp6()
     return {AF_INET6, SOCK_DGRAM, IPPROTO_UDP};
 }
 
-Socket Socket::CreateTcp4()
-{
-    return {AF_INET, SOCK_STREAM, IPPROTO_TCP};
-}
-
-Socket Socket::CreateTcp6()
-{
-    return {AF_INET6, SOCK_STREAM, IPPROTO_TCP};
-}
-
-Socket::Socket() : fd(-1)
+Socket::Socket() : fd(-1), domain(0)
 {
 }
 
@@ -261,10 +256,12 @@ Socket Socket::Select(const std::vector<Socket> &readSockets, const std::vector<
     std::vector<Socket> rs, ws;
     Select(readSockets, writeSockets, rs, ws, timeout);
 
+    // Return a socket chosen at random from selection to avoid starvation
+    auto r = static_cast<size_t>(rand());
     if (!rs.empty())
-        return rs[0];
+        return rs[r % rs.size()];
     if (!ws.empty())
-        return rs[0];
+        return ws[r % ws.size()];
     return {};
 }
 
@@ -296,4 +293,13 @@ InetAddress Socket::getAddress() const
         throw LibError("getsockname failed: ", errno);
 
     return {storage, len};
+}
+
+int Socket::getIpVersion() const
+{
+    if (domain == AF_INET6)
+        return 6;
+    if (domain == AF_INET)
+        return 4;
+    return 0;
 }

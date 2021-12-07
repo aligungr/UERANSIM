@@ -11,6 +11,8 @@
 #include <atomic>
 #include <csignal>
 #include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <exception>
 #include <vector>
 
@@ -36,6 +38,8 @@ void Initialize()
 {
     if (g_instanceCount++ != 0)
         std::terminate();
+
+    srand(time(nullptr));
 
     std::signal(SIGTERM, BaseSignalHandler);
     std::signal(SIGINT, BaseSignalHandler);
