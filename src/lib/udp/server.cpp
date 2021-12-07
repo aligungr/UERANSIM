@@ -41,14 +41,14 @@ void UdpServer::Send(const InetAddress &address, const uint8_t *buffer, size_t b
 
     for (const Socket &s : sockets)
     {
-        if (s.getIpVersion() == version)
+        if (s.hasFd() && s.getIpVersion() == version)
         {
             s.send(address, buffer, bufferSize);
             return;
         }
     }
 
-    throw std::runtime_error{"UdpServer::Send failure: No socket found"};
+    throw std::runtime_error{"UdpServer::Send failure: No IP socket found"};
 }
 
 UdpServer::~UdpServer()
