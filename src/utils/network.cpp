@@ -32,15 +32,9 @@ static std::string OctetStringToIpString(const OctetString &address)
     char str[INET6_ADDRSTRLEN] = {0};
 
     if (domain == AF_INET)
-    {
-        auto *p = reinterpret_cast<in_addr *>(buf);
-        p->s_addr = (in_addr_t)octet4{address.data()[0], address.data()[1], address.data()[2], address.data()[3]};
-    }
+        std::memcpy(buf, address.data(), 4);
     else
-    {
-        auto *p = reinterpret_cast<in6_addr *>(buf);
-        std::memcpy(p, address.data(), 16);
-    }
+        std::memcpy(buf, address.data(), 16);
 
     if (inet_ntop(domain, buf, str, INET6_ADDRSTRLEN) == nullptr)
         throw LibError("Bad Inet address, inet_ntop failure:", errno);
