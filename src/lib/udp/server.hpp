@@ -26,7 +26,7 @@ class UdpServer
     UdpServer(const std::string &address, uint16_t port);
     ~UdpServer();
 
-    int Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress);
+    int Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const;
     void Send(const InetAddress &address, const uint8_t *buffer, size_t bufferSize) const;
 };
 

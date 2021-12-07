@@ -25,7 +25,7 @@ UdpServer::UdpServer(const std::string &address, uint16_t port) : sockets{}
     sockets.push_back(Socket::CreateAndBindUdp({address, port}));
 }
 
-int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress)
+int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const
 {
     // Choose at random a ready socket for receiving data
     std::vector<Socket> ws;
