@@ -33,7 +33,7 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vecto
     m_server = new udp::UdpServer();
 
     for (auto &ip : searchSpace)
-        m_searchSpace.emplace_back(ip, cons::PortalPort);
+        m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
     m_simPos = Vector3{};
 }

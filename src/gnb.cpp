@@ -48,7 +48,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     result->gnbIdLength = yaml::GetInt32(config, "idLength", 22, 32);
     result->tac = yaml::GetInt32(config, "tac", 0, 0xFFFFFF);
 
-    result->portalIp = yaml::GetIp(config, "linkIp");
+    result->linkIp = yaml::GetIp(config, "linkIp");
     result->ngapIp = yaml::GetIp(config, "ngapIp");
     result->gtpIp = yaml::GetIp4(config, "gtpIp");
 

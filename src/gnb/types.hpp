@@ -309,7 +309,7 @@ struct GnbConfig
     int tac{};
     NetworkSlice nssai{};
     std::vector<GnbAmfConfig> amfConfigs{};
-    std::string portalIp{};
+    std::string linkIp{};
     std::string ngapIp{};
     std::string gtpIp{};
     std::optional<std::string> gtpAdvertiseIp{};
