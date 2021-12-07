@@ -158,6 +158,22 @@ std::string GetIp4(const YAML::Node &node, const std::string &name)
     return ipFromIf;
 }
 
+std::string GetIp6(const YAML::Node &node, const std::string &name)
+{
+    std::string s = GetString(node, name);
+
+    int version = utils::GetIpVersion(s);
+    if (version == 4)
+        FieldError(name, "must be a valid IPv6 address or a valid network interface with a IPv6 address");
+    if (version == 6)
+        return s;
+
+    auto ipFromIf = io::GetIp6OfInterface(s);
+    if (ipFromIf.empty())
+        FieldError(name, "must be a valid IPv6 address or a valid network interface with a IPv6 address");
+    return ipFromIf;
+}
+
 std::string GetIp(const YAML::Node &node, const std::string & name)
 {
     std::string s = GetString(node, name);
