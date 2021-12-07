@@ -273,20 +273,12 @@ Socket Socket::Select(const std::vector<Socket> &readSockets, const std::vector<
     std::vector<Socket> rs, ws;
     Select(readSockets, writeSockets, rs, ws, timeout);
 
-    // Return a socket choosen at random from selection
-    // to avoid starvation
-    std::default_random_engine generator;
-
+    // Return a socket chosen at random from selection to avoid starvation
+    auto r = static_cast<size_t>(rand());
     if (!rs.empty())
-    {
-        std::uniform_int_distribution<int> drs(0, rs.size() - 1);
-        return rs[drs(generator)];
-    }
+        return rs[r % rs.size()];
     if (!ws.empty())
-    {
-        std::uniform_int_distribution<int> dws(0, ws.size() - 1);
-        return rs[dws(generator)];
-    }
+        return ws[r % ws.size()];
     return {};
 }
 
