@@ -88,10 +88,9 @@ int InetAddress::getIpVersion() const
 {
     if (storage.ss_family == AF_INET)
         return 4;
-    else if (storage.ss_family == AF_INET6)
+    if (storage.ss_family == AF_INET6)
         return 6;
-    else
-        return 0;
+    return 0;
 }
 
 InetAddress::InetAddress(const OctetString &address, uint16_t port) : InetAddress(OctetStringToIpString(address), port)
