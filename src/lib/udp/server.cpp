@@ -14,10 +14,8 @@
 namespace udp
 {
 
-UdpServer::UdpServer() : sockets{}
+UdpServer::UdpServer() : sockets{Socket::CreateUdp4(), Socket::CreateUdp6()}
 {
-    sockets.push_back(Socket::CreateUdp6());
-    sockets.push_back(Socket::CreateUdp4());
 }
 
 UdpServer::UdpServer(const std::string &address, uint16_t port) : sockets{}
