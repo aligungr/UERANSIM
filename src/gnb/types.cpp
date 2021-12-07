@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include <gnb/types.hpp>
+#include <utils/common.hpp>
 
 namespace nr::gnb
 {
@@ -38,7 +39,7 @@ Json ToJson(const NgapAmfContext &v)
     return Json::Obj({
         {"id", v.ctxId},
         {"name", v.amfName},
-        {"address", v.address + ":" + std::to_string(v.port)},
+        {"address", ((utils::GetIpVersion(v.address) == 6) ? "[" + v.address + "]" : v.address) + ":" + std::to_string(v.port)},
         {"state", ToJson(v.state).str()},
         {"capacity", v.relativeCapacity},
         {"association", ToJson(v.association)},

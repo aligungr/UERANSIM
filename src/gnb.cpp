@@ -49,7 +49,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     result->tac = yaml::GetInt32(config, "tac", 0, 0xFFFFFF);
 
     result->portalIp = yaml::GetIp(config, "linkIp");
-    result->ngapIp = yaml::GetIp4(config, "ngapIp");
+    result->ngapIp = yaml::GetIp(config, "ngapIp");
     result->gtpIp = yaml::GetIp4(config, "gtpIp");
 
     if (yaml::HasField(config, "gtpAdvertiseIp"))
@@ -63,7 +63,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     for (auto &amfConfig : yaml::GetSequence(config, "amfConfigs"))
     {
         nr::gnb::GnbAmfConfig c{};
-        c.address = yaml::GetIp4(amfConfig, "address");
+        c.address = yaml::GetIp(amfConfig, "address");
         c.port = static_cast<uint16_t>(yaml::GetInt32(amfConfig, "port", 1024, 65535));
         result->amfConfigs.push_back(c);
     }
