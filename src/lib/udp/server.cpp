@@ -18,9 +18,8 @@ UdpServer::UdpServer() : sockets{Socket::CreateUdp4(), Socket::CreateUdp6()}
 {
 }
 
-UdpServer::UdpServer(const std::string &address, uint16_t port) : sockets{}
+UdpServer::UdpServer(const std::string &address, uint16_t port) : sockets{Socket::CreateAndBindUdp({address, port})}
 {
-    sockets.push_back(Socket::CreateAndBindUdp({address, port}));
 }
 
 int UdpServer::Receive(uint8_t *buffer, size_t bufferSize, int timeoutMs, InetAddress &outPeerAddress) const
