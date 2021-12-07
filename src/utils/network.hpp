@@ -69,8 +69,6 @@ class Socket
     static Socket CreateAndBindTcp(const InetAddress &address);
     static Socket CreateUdp4();
     static Socket CreateUdp6();
-    static Socket CreateTcp4();
-    static Socket CreateTcp6();
 
     static bool Select(const std::vector<Socket> &inReadSockets, const std::vector<Socket> &inWriteSockets,
                        std::vector<Socket> &outReadSockets, std::vector<Socket> &outWriteSockets, int timeout = 0);

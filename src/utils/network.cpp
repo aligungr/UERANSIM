@@ -138,16 +138,6 @@ Socket Socket::CreateUdp6()
     return {AF_INET6, SOCK_DGRAM, IPPROTO_UDP};
 }
 
-Socket Socket::CreateTcp4()
-{
-    return {AF_INET, SOCK_STREAM, IPPROTO_TCP};
-}
-
-Socket Socket::CreateTcp6()
-{
-    return {AF_INET6, SOCK_STREAM, IPPROTO_TCP};
-}
-
 Socket::Socket() : fd(-1), domain(0)
 {
 }
