@@ -251,12 +251,6 @@ std::string GetIp6OfInterface(const std::string &ifName)
 
 std::string GetHostByName(const std::string &name)
 {
-    struct addrinfo hints = {};
-
-    hints.ai_family = PF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags |= AI_CANONNAME;
-
     auto* res = gethostbyname(name.c_str());
     if (res == nullptr)
         return "";
@@ -270,7 +264,7 @@ std::string GetHostByName(const std::string &name)
             return "";
         return std::string{str};
     }
-    else if (res->h_addrtype == AF_INET)
+    else if (res->h_addrtype == AF_INET6)
     {
         char str[INET6_ADDRSTRLEN] = {0};
         if (inet_ntop(AF_INET6, res->h_addr_list[0], str, INET6_ADDRSTRLEN) == nullptr)
