@@ -146,15 +146,17 @@ std::string GetIp4(const YAML::Node &node, const std::string &name)
 {
     std::string s = GetString(node, name);
 
+    s = io::GetHostByName(s);
+
     int version = utils::GetIpVersion(s);
     if (version == 6)
-        FieldError(name, "must be a valid IPv4 address or a valid network interface with a IPv4 address");
+        FieldError(name, "must be a valid IPv4 address, FQDN or a valid network interface with a IPv4 address");
     if (version == 4)
         return s;
 
     auto ipFromIf = io::GetIp4OfInterface(s);
     if (ipFromIf.empty())
-        FieldError(name, "must be a valid IPv4 address or a valid network interface with a IPv4 address");
+        FieldError(name, "must be a valid IPv4 address, FQDN or a valid network interface with a IPv4 address");
     return ipFromIf;
 }
 
@@ -162,21 +164,25 @@ std::string GetIp6(const YAML::Node &node, const std::string &name)
 {
     std::string s = GetString(node, name);
 
+    s = io::GetHostByName(s);
+
     int version = utils::GetIpVersion(s);
     if (version == 4)
-        FieldError(name, "must be a valid IPv6 address or a valid network interface with a IPv6 address");
+        FieldError(name, "must be a valid IPv6 address, FQDN or a valid network interface with a IPv6 address");
     if (version == 6)
         return s;
 
     auto ipFromIf = io::GetIp6OfInterface(s);
     if (ipFromIf.empty())
-        FieldError(name, "must be a valid IPv6 address or a valid network interface with a IPv6 address");
+        FieldError(name, "must be a valid IPv6 address, FQDN or a valid network interface with a IPv6 address");
     return ipFromIf;
 }
 
 std::string GetIp(const YAML::Node &node, const std::string & name)
 {
     std::string s = GetString(node, name);
+
+    s = io::GetHostByName(s);
 
     int version = utils::GetIpVersion(s);
     if (version == 6 || version == 4)
@@ -187,7 +193,7 @@ std::string GetIp(const YAML::Node &node, const std::string & name)
     auto ip6FromIf = io::GetIp6OfInterface(s);
     if (!ip6FromIf.empty())
         return ip6FromIf;
-    FieldError(name, "must be a valid IP address or a valid network interface with an IP address");
+    FieldError(name, "must be a valid IP address, FQDN or a valid network interface with an IP address");
 }
 
 void AssertHasBool(const YAML::Node &node, const std::string &name)

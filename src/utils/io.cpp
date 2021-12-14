@@ -252,33 +252,38 @@ std::string GetIp6OfInterface(const std::string &ifName)
 std::string GetHostByName(const std::string &name)
 {
     struct addrinfo hints = {};
+    struct addrinfo *res;
 
-    hints.ai_family = PF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags |= AI_CANONNAME;
+    hints.ai_family = AF_UNSPEC;
 
-    auto* res = gethostbyname(name.c_str());
-    if (res == nullptr)
-        return "";
-    if (res->h_addr_list == nullptr)
+    if (getaddrinfo(name.c_str(), NULL, &hints, &res))
         return "";
 
-    if (res->h_addrtype == AF_INET)
+    if (res->ai_family == AF_INET)
     {
         char str[INET_ADDRSTRLEN] = {0};
-        if (inet_ntop(AF_INET, res->h_addr_list[0], str, INET_ADDRSTRLEN) == nullptr)
+        if (inet_ntop(AF_INET, &((struct sockaddr_in*)res->ai_addr)->sin_addr, str, INET_ADDRSTRLEN) == nullptr)
+        {
+            freeaddrinfo(res);
             return "";
+        }
+        freeaddrinfo(res);
         return std::string{str};
     }
-    else if (res->h_addrtype == AF_INET)
+    else if (res->ai_family == AF_INET6)
     {
         char str[INET6_ADDRSTRLEN] = {0};
-        if (inet_ntop(AF_INET6, res->h_addr_list[0], str, INET6_ADDRSTRLEN) == nullptr)
+        if (inet_ntop(AF_INET6, &((struct sockaddr_in6*)res->ai_addr)->sin6_addr, str, INET6_ADDRSTRLEN) == nullptr)
+        {
+            freeaddrinfo(res);
             return "";
+        }
+        freeaddrinfo(res);
         return std::string{str};
     }
     else
     {
+        freeaddrinfo(res);
         return "";
     }
 }
