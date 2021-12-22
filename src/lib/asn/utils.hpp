@@ -78,7 +78,7 @@ void SetOctetString(OCTET_STRING_t &target, const OctetString &value);
 OctetString GetOctetString(const OCTET_STRING_t &source);
 OctetString GetOctetString(const BIT_STRING_t &source);
 
-void SetBitString(BIT_STRING_t &target, octet4 value);
+void SetBitString(BIT_STRING_t &target, octet4 value, size_t bitCount = 32);
 void SetBitString(BIT_STRING_t &target, const OctetString &value);
 
 template <size_t BitCount>

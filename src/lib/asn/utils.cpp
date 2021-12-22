@@ -60,7 +60,7 @@ void SetOctetString(OCTET_STRING_t &target, const OctetString &value)
         throw std::runtime_error("OCTET_STRING_fromBuf failed");
 }
 
-void SetBitString(BIT_STRING_t &target, octet4 value)
+void SetBitString(BIT_STRING_t &target, octet4 value, size_t bitCount)
 {
     if (target.buf)
         free(target.buf);
@@ -70,8 +70,8 @@ void SetBitString(BIT_STRING_t &target, octet4 value)
     target.buf[1] = value[1];
     target.buf[2] = value[2];
     target.buf[3] = value[3];
-    target.size = 4;
-    target.bits_unused = 0;
+    target.size = static_cast<size_t>(bits::NearDiv(static_cast<int>(bitCount), 8) / 8);
+    target.bits_unused = static_cast<int>(target.size * 8 - bitCount);
 }
 
 void SetBitString(BIT_STRING_t &target, const OctetString &value)
