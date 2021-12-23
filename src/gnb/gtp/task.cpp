@@ -48,55 +48,53 @@ void GtpTask::onQuit()
 
 void GtpTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_NGAP_TO_GTP: {
-        auto *w = dynamic_cast<NmGnbNgapToGtp *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbNgapToGtp &>(*msg);
+        switch (w.present)
         {
         case NmGnbNgapToGtp::UE_CONTEXT_UPDATE: {
-            handleUeContextUpdate(*w->update);
+            handleUeContextUpdate(*w.update);
             break;
         }
         case NmGnbNgapToGtp::UE_CONTEXT_RELEASE: {
-            handleUeContextDelete(w->ueId);
+            handleUeContextDelete(w.ueId);
             break;
         }
         case NmGnbNgapToGtp::SESSION_CREATE: {
-            handleSessionCreate(w->resource);
+            handleSessionCreate(w.resource);
             break;
         }
         case NmGnbNgapToGtp::SESSION_RELEASE: {
-            handleSessionRelease(w->ueId, w->psi);
+            handleSessionRelease(w.ueId, w.psi);
             break;
         }
         }
         break;
     }
     case NtsMessageType::GNB_RLS_TO_GTP: {
-        auto *w = dynamic_cast<NmGnbRlsToGtp *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbRlsToGtp &>(*msg);
+        switch (w.present)
         {
         case NmGnbRlsToGtp::DATA_PDU_DELIVERY: {
-            handleUplinkData(w->ueId, w->psi, std::move(w->pdu));
+            handleUplinkData(w.ueId, w.psi, std::move(w.pdu));
             break;
         }
         }
         break;
     }
     case NtsMessageType::UDP_SERVER_RECEIVE:
-        handleUdpReceive(*dynamic_cast<udp::NwUdpServerReceive *>(msg));
+        handleUdpReceive(dynamic_cast<udp::NwUdpServerReceive &>(*msg));
         break;
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 void GtpTask::handleUeContextUpdate(const GtpUeContextUpdate &msg)
@@ -243,11 +241,11 @@ void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
 
     if (m_rateLimiter->allowDownlinkPacket(sessionInd, gtp->payload.length()))
     {
-        auto *w = new NmGnbGtpToRls(NmGnbGtpToRls::DATA_PDU_DELIVERY);
+        auto w = std::make_unique<NmGnbGtpToRls>(NmGnbGtpToRls::DATA_PDU_DELIVERY);
         w->ueId = GetUeId(sessionInd);
         w->psi = GetPsi(sessionInd);
         w->pdu = std::move(gtp->payload);
-        m_base->rlsTask->push(w);
+        m_base->rlsTask->push(std::move(w));
     }
 
     delete gtp;

@@ -70,9 +70,9 @@ void UeRrcTask::notifyCellLost(int cellId)
             declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
         else
         {
-            auto w2 = new NmUeRrcToNas(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
-            w2->previousTai = Tai{lastActiveCell.plmn, lastActiveCell.tac};
-            m_base->nasTask->push(w2);
+            auto w = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
+            w->previousTai = Tai{lastActiveCell.plmn, lastActiveCell.tac};
+            m_base->nasTask->push(std::move(w));
         }
     }
 
@@ -98,7 +98,7 @@ void UeRrcTask::updateAvailablePlmns()
                 value.insert(cellDesc.second.sib1.plmn);
     });
 
-    m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::NAS_NOTIFY));
+    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::NAS_NOTIFY));
 }
 
 } // namespace nr::ue

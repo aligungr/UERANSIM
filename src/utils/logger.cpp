@@ -55,9 +55,9 @@ void Logger::flush()
     logger->flush();
 }
 
-void Logger::unhandledNts(NtsMessage* msg)
+void Logger::unhandledNts(const NtsMessage& msg)
 {
-    err("Unhandled NTS message received with type %d", (int)msg->msgType);
+    err("Unhandled NTS message received with type %d", (int)msg.msgType);
 }
 
 LogBase::LogBase(const std::string &filename)

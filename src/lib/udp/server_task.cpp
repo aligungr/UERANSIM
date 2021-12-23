@@ -41,7 +41,7 @@ void udp::UdpServerTask::onLoop()
     {
         std::vector<uint8_t> v(size);
         std::memcpy(v.data(), buffer, size);
-        targetTask->push(new NwUdpServerReceive(OctetString{std::move(v)}, peerAddress));
+        targetTask->push(std::make_unique<NwUdpServerReceive>(OctetString{std::move(v)}, peerAddress));
     }
 }
 

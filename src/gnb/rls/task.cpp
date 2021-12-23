@@ -36,44 +36,44 @@ void GnbRlsTask::onStart()
 
 void GnbRlsTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RLS_TO_RLS: {
-        auto *w = dynamic_cast<NmGnbRlsToRls *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbRlsToRls &>(*msg);
+        switch (w.present)
         {
         case NmGnbRlsToRls::SIGNAL_DETECTED: {
-            auto *m = new NmGnbRlsToRrc(NmGnbRlsToRrc::SIGNAL_DETECTED);
-            m->ueId = w->ueId;
-            m_base->rrcTask->push(m);
+            auto m = std::make_unique<NmGnbRlsToRrc>(NmGnbRlsToRrc::SIGNAL_DETECTED);
+            m->ueId = w.ueId;
+            m_base->rrcTask->push(std::move(m));
             break;
         }
         case NmGnbRlsToRls::SIGNAL_LOST: {
-            m_logger->debug("UE[%d] signal lost", w->ueId);
+            m_logger->debug("UE[%d] signal lost", w.ueId);
             break;
         }
         case NmGnbRlsToRls::UPLINK_DATA: {
-            auto *m = new NmGnbRlsToGtp(NmGnbRlsToGtp::DATA_PDU_DELIVERY);
-            m->ueId = w->ueId;
-            m->psi = w->psi;
-            m->pdu = std::move(w->data);
-            m_base->gtpTask->push(m);
+            auto m = std::make_unique<NmGnbRlsToGtp>(NmGnbRlsToGtp::DATA_PDU_DELIVERY);
+            m->ueId = w.ueId;
+            m->psi = w.psi;
+            m->pdu = std::move(w.data);
+            m_base->gtpTask->push(std::move(m));
             break;
         }
         case NmGnbRlsToRls::UPLINK_RRC: {
-            auto *m = new NmGnbRlsToRrc(NmGnbRlsToRrc::UPLINK_RRC);
-            m->ueId = w->ueId;
-            m->rrcChannel = w->rrcChannel;
-            m->data = std::move(w->data);
-            m_base->rrcTask->push(m);
+            auto m = std::make_unique<NmGnbRlsToRrc>(NmGnbRlsToRrc::UPLINK_RRC);
+            m->ueId = w.ueId;
+            m->rrcChannel = w.rrcChannel;
+            m->data = std::move(w.data);
+            m_base->rrcTask->push(std::move(m));
             break;
         }
         case NmGnbRlsToRls::RADIO_LINK_FAILURE: {
-            m_logger->debug("radio link failure [%d]", (int)w->rlfCause);
+            m_logger->debug("radio link failure [%d]", (int)w.rlfCause);
             break;
         }
         case NmGnbRlsToRls::TRANSMISSION_FAILURE: {
@@ -81,49 +81,47 @@ void GnbRlsTask::onLoop()
             break;
         }
         default: {
-            m_logger->unhandledNts(msg);
+            m_logger->unhandledNts(*msg);
             break;
         }
         }
         break;
     }
     case NtsMessageType::GNB_RRC_TO_RLS: {
-        auto *w = dynamic_cast<NmGnbRrcToRls *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbRrcToRls &>(*msg);
+        switch (w.present)
         {
         case NmGnbRrcToRls::RRC_PDU_DELIVERY: {
-            auto *m = new NmGnbRlsToRls(NmGnbRlsToRls::DOWNLINK_RRC);
-            m->ueId = w->ueId;
-            m->rrcChannel = w->channel;
+            auto m = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::DOWNLINK_RRC);
+            m->ueId = w.ueId;
+            m->rrcChannel = w.channel;
             m->pduId = 0;
-            m->data = std::move(w->pdu);
-            m_ctlTask->push(m);
+            m->data = std::move(w.pdu);
+            m_ctlTask->push(std::move(m));
             break;
         }
         }
         break;
     }
     case NtsMessageType::GNB_GTP_TO_RLS: {
-        auto *w = dynamic_cast<NmGnbGtpToRls *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbGtpToRls &>(*msg);
+        switch (w.present)
         {
         case NmGnbGtpToRls::DATA_PDU_DELIVERY: {
-            auto *m = new NmGnbRlsToRls(NmGnbRlsToRls::DOWNLINK_DATA);
-            m->ueId = w->ueId;
-            m->psi = w->psi;
-            m->data = std::move(w->pdu);
-            m_ctlTask->push(m);
+            auto m = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::DOWNLINK_DATA);
+            m->ueId = w.ueId;
+            m->psi = w.psi;
+            m->data = std::move(w.pdu);
+            m_ctlTask->push(std::move(m));
             break;
         }
         }
         break;
     }
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 void GnbRlsTask::onQuit()

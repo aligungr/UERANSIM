@@ -51,9 +51,9 @@ void UeRrcTask::receivePaging(const ASN_RRC_Paging &msg)
         }
     });
 
-    auto *w = new NmUeRrcToNas(NmUeRrcToNas::PAGING);
+    auto w = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::PAGING);
     w->pagingTmsi = std::move(tmsiIds);
-    m_base->nasTask->push(w);
+    m_base->nasTask->push(std::move(w));
 }
 
 } // namespace nr::ue

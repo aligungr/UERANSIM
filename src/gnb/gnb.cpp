@@ -70,7 +70,7 @@ void GNodeB::start()
 
 void GNodeB::pushCommand(std::unique_ptr<app::GnbCliCommand> cmd, const InetAddress &address)
 {
-    taskBase->appTask->push(new NmGnbCliCommand(std::move(cmd), address));
+    taskBase->appTask->push(std::make_unique<NmGnbCliCommand>(std::move(cmd), address));
 }
 
 } // namespace nr::gnb

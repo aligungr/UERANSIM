@@ -97,10 +97,10 @@ void NgapTask::handleInitialNasTransport(int ueId, const OctetString &nasPdu, in
 
 void NgapTask::deliverDownlinkNas(int ueId, OctetString &&nasPdu)
 {
-    auto *w = new NmGnbNgapToRrc(NmGnbNgapToRrc::NAS_DELIVERY);
+    auto w = std::make_unique<NmGnbNgapToRrc>(NmGnbNgapToRrc::NAS_DELIVERY);
     w->ueId = ueId;
     w->pdu = std::move(nasPdu);
-    m_base->rrcTask->push(w);
+    m_base->rrcTask->push(std::move(w));
 }
 
 void NgapTask::handleUplinkNasTransport(int ueId, const OctetString &nasPdu)

@@ -45,46 +45,46 @@ void UeAppTask::onQuit()
 
 void UeAppTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::UE_TUN_TO_APP: {
-        auto *w = dynamic_cast<NmUeTunToApp *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
+        switch (w.present)
         {
         case NmUeTunToApp::DATA_PDU_DELIVERY: {
-            auto *m = new NmUeAppToNas(NmUeAppToNas::UPLINK_DATA_DELIVERY);
-            m->psi = w->psi;
-            m->data = std::move(w->data);
-            m_base->nasTask->push(m);
+            auto m = std::make_unique<NmUeAppToNas>(NmUeAppToNas::UPLINK_DATA_DELIVERY);
+            m->psi = w.psi;
+            m->data = std::move(w.data);
+            m_base->nasTask->push(std::move(m));
             break;
         }
         case NmUeTunToApp::TUN_ERROR: {
-            m_logger->err("TUN failure [%s]", w->error.c_str());
+            m_logger->err("TUN failure [%s]", w.error.c_str());
             break;
         }
         }
         break;
     }
     case NtsMessageType::UE_NAS_TO_APP: {
-        auto *w = dynamic_cast<NmUeNasToApp *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmUeNasToApp &>(*msg);
+        switch (w.present)
         {
         case NmUeNasToApp::PERFORM_SWITCH_OFF: {
             setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
             break;
         }
         case NmUeNasToApp::DOWNLINK_DATA_DELIVERY: {
-            auto *tunTask = m_tunTasks[w->psi];
+            auto *tunTask = m_tunTasks[w.psi];
             if (tunTask)
             {
-                auto *m = new NmAppToTun(NmAppToTun::DATA_PDU_DELIVERY);
-                m->psi = w->psi;
-                m->data = std::move(w->data);
-                tunTask->push(m);
+                auto m = std::make_unique<NmAppToTun>(NmAppToTun::DATA_PDU_DELIVERY);
+                m->psi = w.psi;
+                m->data = std::move(w.data);
+                tunTask->push(std::move(m));
             }
             break;
         }
@@ -92,18 +92,18 @@ void UeAppTask::onLoop()
         break;
     }
     case NtsMessageType::UE_STATUS_UPDATE: {
-        receiveStatusUpdate(*dynamic_cast<NmUeStatusUpdate *>(msg));
+        receiveStatusUpdate(dynamic_cast<NmUeStatusUpdate &>(*msg));
         break;
     }
     case NtsMessageType::UE_CLI_COMMAND: {
-        auto *w = dynamic_cast<NmUeCliCommand *>(msg);
+        auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
         UeCmdHandler handler{m_base};
-        handler.handleCmd(*w);
+        handler.handleCmd(w);
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NmTimerExpired *>(msg);
-        if (w->timerId == SWITCH_OFF_TIMER_ID)
+        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
+        if (w.timerId == SWITCH_OFF_TIMER_ID)
         {
             m_logger->info("UE device is switching off");
             m_base->ueController->performSwitchOff(m_base->ue);
@@ -111,10 +111,9 @@ void UeAppTask::onLoop()
         break;
     }
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-    delete msg;
 }
 
 void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)

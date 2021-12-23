@@ -14,6 +14,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <deque>
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -50,14 +51,14 @@ enum class NtsMessageType
     UE_TUN_TO_APP,
     UE_RRC_TO_NAS,
     UE_NAS_TO_RRC,
-	UE_RRC_TO_RLS,
-	UE_RRC_TO_RRC,
+    UE_RRC_TO_RLS,
+    UE_RRC_TO_RRC,
     UE_NAS_TO_NAS,
     UE_RLS_TO_RRC,
     UE_RLS_TO_NAS,
     UE_RLS_TO_RLS,
-	UE_NAS_TO_APP,
-	UE_NAS_TO_RLS,
+    UE_NAS_TO_APP,
+    UE_NAS_TO_RLS,
 };
 
 struct NtsMessage
@@ -114,7 +115,7 @@ class TimerBase
 class NtsTask
 {
   private:
-    std::deque<NtsMessage *> msgQueue{};
+    std::deque<std::unique_ptr<NtsMessage>> msgQueue{};
     TimerBase timerBase{};
     std::mutex mutex{};
     std::condition_variable cv{};
@@ -128,25 +129,15 @@ class NtsTask
 
     virtual ~NtsTask() = default;
 
-    // NtsTask takes the ownership of NtsMessage* after somebody pushes the message.
-    bool push(NtsMessage *msg);
-
-    // NtsTask takes the ownership of NtsMessage* after somebody pushes the message.
-    bool pushFront(NtsMessage *msg);
-
+    bool push(std::unique_ptr<NtsMessage> &&msg);
+    bool pushFront(std::unique_ptr<NtsMessage> &&msg);
     bool setTimer(int timerId, int64_t delayMs);
-
     bool setTimerAbsolute(int timerId, int64_t timeMs);
 
   protected:
-    // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
-    NtsMessage *poll();
-
-    // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
-    NtsMessage *poll(int64_t timeout);
-
-    // NtsTask gives the ownership of NtsMessage* to the taker (actually almost always it's its itself)
-    NtsMessage *take();
+    std::unique_ptr<NtsMessage> poll();
+    std::unique_ptr<NtsMessage> poll(int64_t timeout);
+    std::unique_ptr<NtsMessage> take();
 
   protected:
     // Called exactly once after start() called and before onLoop() callbacks.

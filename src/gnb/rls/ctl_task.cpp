@@ -43,45 +43,45 @@ void RlsControlTask::onStart()
 
 void RlsControlTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RLS_TO_RLS: {
-        auto *w = dynamic_cast<NmGnbRlsToRls *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbRlsToRls &>(*msg);
+        switch (w.present)
         {
         case NmGnbRlsToRls::SIGNAL_DETECTED:
-            handleSignalDetected(w->ueId);
+            handleSignalDetected(w.ueId);
             break;
         case NmGnbRlsToRls::SIGNAL_LOST:
-            handleSignalLost(w->ueId);
+            handleSignalLost(w.ueId);
             break;
         case NmGnbRlsToRls::RECEIVE_RLS_MESSAGE:
-            handleRlsMessage(w->ueId, *w->msg);
+            handleRlsMessage(w.ueId, *w.msg);
             break;
         case NmGnbRlsToRls::DOWNLINK_DATA:
-            handleDownlinkDataDelivery(w->ueId, w->psi, std::move(w->data));
+            handleDownlinkDataDelivery(w.ueId, w.psi, std::move(w.data));
             break;
         case NmGnbRlsToRls::DOWNLINK_RRC:
-            handleDownlinkRrcDelivery(w->ueId, w->pduId, w->rrcChannel, std::move(w->data));
+            handleDownlinkRrcDelivery(w.ueId, w.pduId, w.rrcChannel, std::move(w.data));
             break;
         default:
-            m_logger->unhandledNts(msg);
+            m_logger->unhandledNts(*msg);
             break;
         }
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NmTimerExpired *>(msg);
-        if (w->timerId == TIMER_ID_ACK_CONTROL)
+        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
+        if (w.timerId == TIMER_ID_ACK_CONTROL)
         {
             setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
             onAckControlTimerExpired();
         }
-        else if (w->timerId == TIMER_ID_ACK_SEND)
+        else if (w.timerId == TIMER_ID_ACK_SEND)
         {
             setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
             onAckSendTimerExpired();
@@ -89,11 +89,9 @@ void RlsControlTask::onLoop()
         break;
     }
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 void RlsControlTask::onQuit()
@@ -102,16 +100,16 @@ void RlsControlTask::onQuit()
 
 void RlsControlTask::handleSignalDetected(int ueId)
 {
-    auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::SIGNAL_DETECTED);
+    auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::SIGNAL_DETECTED);
     w->ueId = ueId;
-    m_mainTask->push(w);
+    m_mainTask->push(std::move(w));
 }
 
 void RlsControlTask::handleSignalLost(int ueId)
 {
-    auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::SIGNAL_LOST);
+    auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::SIGNAL_LOST);
     w->ueId = ueId;
-    m_mainTask->push(w);
+    m_mainTask->push(std::move(w));
 }
 
 void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
@@ -130,19 +128,19 @@ void RlsControlTask::handleRlsMessage(int ueId, rls::RlsMessage &msg)
 
         if (m.pduType == rls::EPduType::DATA)
         {
-            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::UPLINK_DATA);
+            auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::UPLINK_DATA);
             w->ueId = ueId;
             w->psi = static_cast<int>(m.payload);
             w->data = std::move(m.pdu);
-            m_mainTask->push(w);
+            m_mainTask->push(std::move(w));
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::UPLINK_RRC);
+            auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::UPLINK_RRC);
             w->ueId = ueId;
             w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
             w->data = std::move(m.pdu);
-            m_mainTask->push(w);
+            m_mainTask->push(std::move(w));
         }
         else
         {
@@ -169,9 +167,9 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::RADIO_LINK_FAILURE);
+            auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
-            m_mainTask->push(w);
+            m_mainTask->push(std::move(w));
             return;
         }
 
@@ -179,9 +177,9 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
         {
             m_pduMap.clear();
 
-            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::RADIO_LINK_FAILURE);
+            auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
-            m_mainTask->push(w);
+            m_mainTask->push(std::move(w));
             return;
         }
 
@@ -234,9 +232,9 @@ void RlsControlTask::onAckControlTimerExpired()
 
     if (!transmissionFailures.empty())
     {
-        auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::TRANSMISSION_FAILURE);
+        auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::TRANSMISSION_FAILURE);
         w->pduList = std::move(transmissionFailures);
-        m_mainTask->push(w);
+        m_mainTask->push(std::move(w));
     }
 }
 

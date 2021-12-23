@@ -39,9 +39,9 @@ void NasSm::localReleaseSession(int psi)
 
     if (isEstablished)
     {
-        auto *statusUpdate = new NmUeStatusUpdate(NmUeStatusUpdate::SESSION_RELEASE);
+        auto statusUpdate = std::make_unique<NmUeStatusUpdate>(NmUeStatusUpdate::SESSION_RELEASE);
         statusUpdate->psi = psi;
-        m_base->appTask->push(statusUpdate);
+        m_base->appTask->push(std::move(statusUpdate));
     }
 }
 

@@ -129,7 +129,7 @@ void UeRrcTask::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);
-    m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::RRC_CONNECTION_SETUP));
+    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_SETUP));
 }
 
 void UeRrcTask::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
@@ -146,12 +146,12 @@ void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
 {
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
-    m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
+    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
 }
 
 void UeRrcTask::handleEstablishmentFailure()
 {
-    m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
+    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
 }
 
 } // namespace nr::ue

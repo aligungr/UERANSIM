@@ -39,19 +39,19 @@ void GnbRrcTask::onQuit()
 
 void GnbRrcTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RLS_TO_RRC: {
-        handleRlsSapMessage(*dynamic_cast<NmGnbRlsToRrc *>(msg));
+        handleRlsSapMessage(dynamic_cast<NmGnbRlsToRrc &>(*msg));
         break;
     }
     case NtsMessageType::GNB_NGAP_TO_RRC: {
-        auto *w = dynamic_cast<NmGnbNgapToRrc *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbNgapToRrc &>(*msg);
+        switch (w.present)
         {
         case NmGnbNgapToRrc::RADIO_POWER_ON: {
             m_isBarred = false;
@@ -59,22 +59,22 @@ void GnbRrcTask::onLoop()
             break;
         }
         case NmGnbNgapToRrc::NAS_DELIVERY: {
-            handleDownlinkNasDelivery(w->ueId, w->pdu);
+            handleDownlinkNasDelivery(w.ueId, w.pdu);
             break;
         }
         case NmGnbNgapToRrc::AN_RELEASE: {
-            releaseConnection(w->ueId);
+            releaseConnection(w.ueId);
             break;
         }
         case NmGnbNgapToRrc::PAGING:
-            handlePaging(w->uePagingTmsi, w->taiListForPaging);
+            handlePaging(w.uePagingTmsi, w.taiListForPaging);
             break;
         }
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NmTimerExpired *>(msg);
-        if (w->timerId == TIMER_ID_SI_BROADCAST)
+        auto w = dynamic_cast<NmTimerExpired &>(*msg);
+        if (w.timerId == TIMER_ID_SI_BROADCAST)
         {
             setTimer(TIMER_ID_SI_BROADCAST, TIMER_PERIOD_SI_BROADCAST);
             onBroadcastTimerExpired();
@@ -82,11 +82,9 @@ void GnbRrcTask::onLoop()
         break;
     }
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 } // namespace nr::gnb

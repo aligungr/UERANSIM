@@ -106,7 +106,7 @@ void NasMm::performPlmnSelection()
     else if (lastSelectedPlmn != selected)
     {
         m_logger->info("Selected plmn[%s]", ToJson(selected).str().c_str());
-        m_base->rrcTask->push(new NmUeNasToRrc(NmUeNasToRrc::RRC_NOTIFY));
+        m_base->rrcTask->push(std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::RRC_NOTIFY));
 
         resetRegAttemptCounter();
     }
@@ -273,9 +273,9 @@ void NasMm::localReleaseConnection(bool treatBarred)
     if (m_cmState != ECmState::CM_IDLE)
         m_logger->info("Performing local release of NAS connection");
 
-    auto *w = new NmUeNasToRrc(NmUeNasToRrc::LOCAL_RELEASE_CONNECTION);
+    auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::LOCAL_RELEASE_CONNECTION);
     w->treatBarred = treatBarred;
-    m_base->rrcTask->push(w);
+    m_base->rrcTask->push(std::move(w));
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)

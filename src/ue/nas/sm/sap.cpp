@@ -70,10 +70,10 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
             handleUplinkStatusChange(psi, false);
         }
 
-        auto *m = new NmUeNasToRls(NmUeNasToRls::DATA_PDU_DELIVERY);
+        auto m = std::make_unique<NmUeNasToRls>(NmUeNasToRls::DATA_PDU_DELIVERY);
         m->psi = psi;
         m->pdu = std::move(data);
-        m_base->rlsTask->push(m);
+        m_base->rlsTask->push(std::move(m));
     }
     else
     {
@@ -97,11 +97,11 @@ void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
         state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
         return;
 
-    auto *w = new NmUeNasToApp(NmUeNasToApp::DOWNLINK_DATA_DELIVERY);
+    auto w = std::make_unique<NmUeNasToApp>(NmUeNasToApp::DOWNLINK_DATA_DELIVERY);
     w->psi = psi;
     w->data = std::move(data);
 
-    m_base->appTask->push(w);
+    m_base->appTask->push(std::move(w));
 }
 
 } // namespace nr::ue

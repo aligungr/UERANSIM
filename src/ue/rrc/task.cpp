@@ -46,23 +46,23 @@ void UeRrcTask::onQuit()
 
 void UeRrcTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::UE_NAS_TO_RRC: {
-        handleNasSapMessage(*dynamic_cast<NmUeNasToRrc *>(msg));
+        handleNasSapMessage(dynamic_cast<NmUeNasToRrc &>(*msg));
         break;
     }
     case NtsMessageType::UE_RLS_TO_RRC: {
-        handleRlsSapMessage(*dynamic_cast<NmUeRlsToRrc *>(msg));
+        handleRlsSapMessage(dynamic_cast<NmUeRlsToRrc &>(*msg));
         break;
     }
     case NtsMessageType::UE_RRC_TO_RRC: {
-        auto *w = dynamic_cast<NmUeRrcToRrc *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmUeRrcToRrc &>(*msg);
+        switch (w.present)
         {
         case NmUeRrcToRrc::TRIGGER_CYCLE:
             performCycle();
@@ -71,8 +71,8 @@ void UeRrcTask::onLoop()
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NmTimerExpired *>(msg);
-        if (w->timerId == TIMER_ID_MACHINE_CYCLE)
+        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
+        if (w.timerId == TIMER_ID_MACHINE_CYCLE)
         {
             setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);
             performCycle();
@@ -80,11 +80,9 @@ void UeRrcTask::onLoop()
         break;
     }
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 } // namespace nr::ue

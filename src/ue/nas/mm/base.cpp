@@ -81,7 +81,7 @@ void NasMm::onQuit()
 
 void NasMm::triggerMmCycle()
 {
-    m_base->nasTask->push(new NmUeNasToNas(NmUeNasToNas::PERFORM_MM_CYCLE));
+    m_base->nasTask->push(std::make_unique<NmUeNasToNas>(NmUeNasToNas::PERFORM_MM_CYCLE));
 }
 
 void NasMm::performMmCycle()
@@ -267,9 +267,9 @@ void NasMm::switchCmState(ECmState state)
 
     onSwitchCmState(oldState, m_cmState);
 
-    auto *statusUpdate = new NmUeStatusUpdate(NmUeStatusUpdate::CM_STATE);
+    auto statusUpdate = std::make_unique<NmUeStatusUpdate>(NmUeStatusUpdate::CM_STATE);
     statusUpdate->cmState = m_cmState;
-    m_base->appTask->push(statusUpdate);
+    m_base->appTask->push(std::move(statusUpdate));
 
     if (m_base->nodeListener)
     {

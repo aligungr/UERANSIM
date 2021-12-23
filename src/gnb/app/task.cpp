@@ -25,34 +25,32 @@ void GnbAppTask::onStart()
 
 void GnbAppTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_STATUS_UPDATE: {
-        auto *w = dynamic_cast<NmGnbStatusUpdate *>(msg);
-        switch (w->what)
+        auto& w = dynamic_cast<NmGnbStatusUpdate &>(*msg);
+        switch (w.what)
         {
         case NmGnbStatusUpdate::NGAP_IS_UP:
-            m_statusInfo.isNgapUp = w->isNgapUp;
+            m_statusInfo.isNgapUp = w.isNgapUp;
             break;
         }
         break;
     }
     case NtsMessageType::GNB_CLI_COMMAND: {
-        auto *w = dynamic_cast<NmGnbCliCommand *>(msg);
+        auto& w = dynamic_cast<NmGnbCliCommand &>(*msg);
         GnbCmdHandler handler{m_base};
-        handler.handleCmd(*w);
+        handler.handleCmd(w);
         break;
     }
     default:
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 void GnbAppTask::onQuit()

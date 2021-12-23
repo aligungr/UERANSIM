@@ -118,10 +118,10 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    auto *w = new NmUeRlsToRls(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
+    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->cellId = m_cells[msg->sti].cellId;
     w->msg = std::move(msg);
-    m_ctlTask->push(w);
+    m_ctlTask->push(std::move(w));
 }
 
 void RlsUdpTask::onSignalChangeOrLost(int cellId)
@@ -133,10 +133,10 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
         dbm = m_cells[sti].dbm;
     }
 
-    auto *w = new NmUeRlsToRls(NmUeRlsToRls::SIGNAL_CHANGED);
+    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;
-    m_ctlTask->push(w);
+    m_ctlTask->push(std::move(w));
 }
 
 void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)

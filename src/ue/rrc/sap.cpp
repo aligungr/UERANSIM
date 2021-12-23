@@ -48,8 +48,8 @@ void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
         (void)msg.treatBarred;
 
         switchState(ERrcState::RRC_IDLE);
-        m_base->rlsTask->push(new NmUeRrcToRls(NmUeRrcToRls::RESET_STI));
-        m_base->nasTask->push(new NmUeRrcToNas(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
+        m_base->rlsTask->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
+        m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
         break;
     }
     case NmUeNasToRrc::RRC_NOTIFY: {

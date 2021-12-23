@@ -267,9 +267,9 @@ EUacResult NasMm::performUac()
 
     auto uacCtl = LightSync<UacInput, UacOutput>::MakeShared(100, 0, std::move(uacInput));
 
-    auto *w = new NmUeNasToRrc(NmUeNasToRrc::PERFORM_UAC);
+    auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::PERFORM_UAC);
     w->uacCtl = uacCtl;
-    m_base->rrcTask->push(w);
+    m_base->rrcTask->push(std::move(w));
 
     auto uacOutput = uacCtl->waitForProcess();
 

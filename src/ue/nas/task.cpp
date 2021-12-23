@@ -50,29 +50,29 @@ void NasTask::onQuit()
 
 void NasTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RRC_TO_NAS: {
-        mm->handleRrcEvent(*dynamic_cast<NmUeRrcToNas *>(msg));
+        mm->handleRrcEvent(dynamic_cast<NmUeRrcToNas &>(*msg));
         break;
     }
     case NtsMessageType::UE_NAS_TO_NAS: {
-        auto *w = dynamic_cast<NmUeNasToNas *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmUeNasToNas &>(*msg);
+        switch (w.present)
         {
         case NmUeNasToNas::PERFORM_MM_CYCLE: {
-            mm->handleNasEvent(*w);
+            mm->handleNasEvent(w);
             break;
         }
         case NmUeNasToNas::NAS_TIMER_EXPIRE: {
-            if (w->timer->isMmTimer())
-                mm->handleNasEvent(*w);
+            if (w.timer->isMmTimer())
+                mm->handleNasEvent(w);
             else
-                sm->handleNasEvent(*w);
+                sm->handleNasEvent(w);
             break;
         }
         default:
@@ -81,11 +81,11 @@ void NasTask::onLoop()
         break;
     }
     case NtsMessageType::UE_APP_TO_NAS: {
-        auto *w = dynamic_cast<NmUeAppToNas *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmUeAppToNas &>(*msg);
+        switch (w.present)
         {
         case NmUeAppToNas::UPLINK_DATA_DELIVERY: {
-            sm->handleUplinkDataRequest(w->psi, std::move(w->data));
+            sm->handleUplinkDataRequest(w.psi, std::move(w.data));
             break;
         }
         default:
@@ -94,11 +94,11 @@ void NasTask::onLoop()
         break;
     }
     case NtsMessageType::UE_RLS_TO_NAS: {
-        auto *w = dynamic_cast<NmUeRlsToNas *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmUeRlsToNas &>(*msg);
+        switch (w.present)
         {
         case NmUeRlsToNas::DATA_PDU_DELIVERY: {
-            sm->handleDownlinkDataRequest(w->psi, std::move(w->pdu));
+            sm->handleDownlinkDataRequest(w.psi, std::move(w.pdu));
             break;
         }
         }
@@ -106,8 +106,8 @@ void NasTask::onLoop()
         break;
     }
     case NtsMessageType::TIMER_EXPIRED: {
-        auto *w = dynamic_cast<NmTimerExpired *>(msg);
-        int timerId = w->timerId;
+        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
+        int timerId = w.timerId;
         if (timerId == NTS_TIMER_ID_NAS_TIMER_CYCLE)
         {
             setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
@@ -121,19 +121,17 @@ void NasTask::onLoop()
         break;
     }
     default:
-        logger->unhandledNts(msg);
+        logger->unhandledNts(*msg);
         break;
     }
-
-    delete msg;
 }
 
 void NasTask::performTick()
 {
     auto sendExpireMsg = [this](UeTimer *timer) {
-        auto *m = new NmUeNasToNas(NmUeNasToNas::NAS_TIMER_EXPIRE);
+        auto m = std::make_unique<NmUeNasToNas>(NmUeNasToNas::NAS_TIMER_EXPIRE);
         m->timer = timer;
-        push(m);
+        push(std::move(m));
     };
 
     if (timers.t3346.performTick())

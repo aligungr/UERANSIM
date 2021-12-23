@@ -123,19 +123,20 @@ class CliResponseTask : public NtsTask
     void onStart() override
     {
     }
+
     void onLoop() override
     {
-        auto *msg = take();
+        auto msg = take();
         if (msg == nullptr)
             return;
         if (msg->msgType == NtsMessageType::CLI_SEND_RESPONSE)
         {
-            auto *w = dynamic_cast<NwCliSendResponse *>(msg);
-            cliServer->sendMessage(w->isError ? CliMessage::Error(w->address, w->output)
-                                              : CliMessage::Result(w->address, w->output));
+            auto& w = dynamic_cast<NwCliSendResponse &>(*msg);
+            cliServer->sendMessage(w.isError ? CliMessage::Error(w.address, w.output)
+                                             : CliMessage::Result(w.address, w.output));
         }
-        delete msg;
     }
+
     void onQuit() override
     {
     }

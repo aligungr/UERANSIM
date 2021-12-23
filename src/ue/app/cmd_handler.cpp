@@ -36,12 +36,12 @@ namespace nr::ue
 
 void UeCmdHandler::sendResult(const InetAddress &address, const std::string &output)
 {
-    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, false));
+    m_base->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, false));
 }
 
 void UeCmdHandler::sendError(const InetAddress &address, const std::string &output)
 {
-    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, true));
+    m_base->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, true));
 }
 
 void UeCmdHandler::pauseTasks()

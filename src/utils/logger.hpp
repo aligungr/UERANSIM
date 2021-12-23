@@ -105,7 +105,7 @@ class Logger
     void flush();
 
     /* Specific logs */
-    void unhandledNts(NtsMessage *msg);
+    void unhandledNts(const NtsMessage& msg);
 };
 
 class LogBase

@@ -30,7 +30,7 @@ void NgapTask::onStart()
 
     for (auto &amfCtx : m_amfCtx)
     {
-        auto *msg = new NmGnbSctp(NmGnbSctp::CONNECTION_REQUEST);
+        auto msg = std::make_unique<NmGnbSctp>(NmGnbSctp::CONNECTION_REQUEST);
         msg->clientId = amfCtx.second->ctxId;
         msg->localAddress = m_base->config->ngapIp;
         msg->localPort = 0;
@@ -38,63 +38,61 @@ void NgapTask::onStart()
         msg->remotePort = amfCtx.second->port;
         msg->ppid = sctp::PayloadProtocolId::NGAP;
         msg->associatedTask = this;
-        m_base->sctpTask->push(msg);
+        m_base->sctpTask->push(std::move(msg));
     }
 }
 
 void NgapTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RRC_TO_NGAP: {
-        auto *w = dynamic_cast<NmGnbRrcToNgap *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbRrcToNgap &>(*msg);
+        switch (w.present)
         {
         case NmGnbRrcToNgap::INITIAL_NAS_DELIVERY: {
-            handleInitialNasTransport(w->ueId, w->pdu, w->rrcEstablishmentCause, w->sTmsi);
+            handleInitialNasTransport(w.ueId, w.pdu, w.rrcEstablishmentCause, w.sTmsi);
             break;
         }
         case NmGnbRrcToNgap::UPLINK_NAS_DELIVERY: {
-            handleUplinkNasTransport(w->ueId, w->pdu);
+            handleUplinkNasTransport(w.ueId, w.pdu);
             break;
         }
         case NmGnbRrcToNgap::RADIO_LINK_FAILURE: {
-            handleRadioLinkFailure(w->ueId);
+            handleRadioLinkFailure(w.ueId);
             break;
         }
         }
         break;
     }
     case NtsMessageType::GNB_SCTP: {
-        auto *w = dynamic_cast<NmGnbSctp *>(msg);
-        switch (w->present)
+        auto &w = dynamic_cast<NmGnbSctp &>(*msg);
+        switch (w.present)
         {
         case NmGnbSctp::ASSOCIATION_SETUP:
-            handleAssociationSetup(w->clientId, w->associationId, w->inStreams, w->outStreams);
+            handleAssociationSetup(w.clientId, w.associationId, w.inStreams, w.outStreams);
             break;
         case NmGnbSctp::RECEIVE_MESSAGE:
-            handleSctpMessage(w->clientId, w->stream, w->buffer);
+            handleSctpMessage(w.clientId, w.stream, w.buffer);
             break;
         case NmGnbSctp::ASSOCIATION_SHUTDOWN:
-            handleAssociationShutdown(w->clientId);
+            handleAssociationShutdown(w.clientId);
             break;
         default:
-            m_logger->unhandledNts(msg);
+            m_logger->unhandledNts(*msg);
             break;
         }
         break;
     }
     default: {
-        m_logger->unhandledNts(msg);
+        m_logger->unhandledNts(*msg);
         break;
     }
     }
-
-    delete msg;
 }
 
 void NgapTask::onQuit()

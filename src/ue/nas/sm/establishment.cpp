@@ -170,9 +170,9 @@ void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept 
     else
         pduSession->pduAddress = {};
 
-    auto *statusUpdate = new NmUeStatusUpdate(NmUeStatusUpdate::SESSION_ESTABLISHMENT);
+    auto statusUpdate = std::make_unique<NmUeStatusUpdate>(NmUeStatusUpdate::SESSION_ESTABLISHMENT);
     statusUpdate->pduSession = pduSession;
-    m_base->appTask->push(statusUpdate);
+    m_base->appTask->push(std::move(statusUpdate));
 
     m_logger->info("PDU Session establishment is successful PSI[%d]", pduSession->psi);
 }

@@ -115,9 +115,9 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
             m_ueMap[ueId].address = addr;
             m_ueMap[ueId].lastSeen = utils::CurrentTimeMillis();
 
-            auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::SIGNAL_DETECTED);
+            auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::SIGNAL_DETECTED);
             w->ueId = ueId;
-            m_ctlTask->push(w);
+            m_ctlTask->push(std::move(w));
         }
 
         rls::RlsHeartBeatAck ack{m_sti};
@@ -133,10 +133,10 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::RECEIVE_RLS_MESSAGE);
+    auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::RECEIVE_RLS_MESSAGE);
     w->ueId = m_stiToUe[msg->sti];
     w->msg = std::move(msg);
-    m_ctlTask->push(w);
+    m_ctlTask->push(std::move(w));
 }
 
 void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
@@ -169,9 +169,9 @@ void RlsUdpTask::heartbeatCycle(int64_t time)
 
     for (int ueId : lostUeId)
     {
-        auto *w = new NmGnbRlsToRls(NmGnbRlsToRls::SIGNAL_LOST);
+        auto w = std::make_unique<NmGnbRlsToRls>(NmGnbRlsToRls::SIGNAL_LOST);
         w->ueId = ueId;
-        m_ctlTask->push(w);
+        m_ctlTask->push(std::move(w));
     }
 }
 

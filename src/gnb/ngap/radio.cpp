@@ -22,9 +22,9 @@ namespace nr::gnb
 void NgapTask::handleRadioLinkFailure(int ueId)
 {
     // Notify GTP task
-    auto *w2 = new NmGnbNgapToGtp(NmGnbNgapToGtp::UE_CONTEXT_RELEASE);
-    w2->ueId = ueId;
-    m_base->gtpTask->push(w2);
+    auto w = std::make_unique<NmGnbNgapToGtp>(NmGnbNgapToGtp::UE_CONTEXT_RELEASE);
+    w->ueId = ueId;
+    m_base->gtpTask->push(std::move(w));
 
     // Notify AMF
     sendContextRelease(ueId, NgapCause::RadioNetwork_radio_connection_with_ue_lost);
@@ -48,12 +48,12 @@ void NgapTask::receivePaging(int amfId, ASN_NGAP_Paging *msg)
         return;
     }
 
-    auto *w = new NmGnbNgapToRrc(NmGnbNgapToRrc::PAGING);
+    auto w = std::make_unique<NmGnbNgapToRrc>(NmGnbNgapToRrc::PAGING);
     w->uePagingTmsi =
         asn::UniqueCopy(*ieUePagingIdentity->UEPagingIdentity.choice.fiveG_S_TMSI, asn_DEF_ASN_NGAP_FiveG_S_TMSI);
     w->taiListForPaging = asn::UniqueCopy(ieTaiListForPaging->TAIListForPaging, asn_DEF_ASN_NGAP_TAIListForPaging);
 
-    m_base->rrcTask->push(w);
+    m_base->rrcTask->push(std::move(w));
 }
 
 } // namespace nr::gnb

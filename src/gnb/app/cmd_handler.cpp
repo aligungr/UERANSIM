@@ -25,12 +25,12 @@ namespace nr::gnb
 
 void GnbCmdHandler::sendResult(const InetAddress &address, const std::string &output)
 {
-    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, false));
+    m_base->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, false));
 }
 
 void GnbCmdHandler::sendError(const InetAddress &address, const std::string &output)
 {
-    m_base->cliCallbackTask->push(new app::NwCliSendResponse(address, output, true));
+    m_base->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, true));
 }
 
 void GnbCmdHandler::pauseTasks()

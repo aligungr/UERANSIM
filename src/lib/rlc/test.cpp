@@ -92,14 +92,13 @@ struct RlcTask : NtsTask, IRlcConsumer
 
     void onLoop() override
     {
-        NtsMessage *msg = poll();
+        auto msg = poll();
         if (msg)
         {
             if (msg->msgType == NtsMessageType::RESERVED_END)
             {
-                auto w = ((NwRadioUplink *)msg);
-                m_pEntity->receivePdu(w->data, w->size);
-                delete w;
+                auto w = ((NwRadioUplink &)*msg);
+                m_pEntity->receivePdu(w.data, w.size);
             }
         }
 
@@ -111,10 +110,10 @@ struct RlcTask : NtsTask, IRlcConsumer
         auto written = m_pEntity->createPdu(buffer, opSize);
         if (written)
         {
-            auto uplink = new NwRadioUplink();
+            auto uplink = std::make_unique<NwRadioUplink>();
             uplink->size = written;
             uplink->data = buffer;
-            pair->push(uplink);
+            pair->push(std::move(uplink));
         }
 
         if (continueTesting)

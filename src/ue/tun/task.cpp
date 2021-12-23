@@ -35,9 +35,9 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-static nr::ue::NmUeTunToApp *NmError(std::string &&error)
+static std::unique_ptr<nr::ue::NmUeTunToApp> NmError(std::string &&error)
 {
-    auto *m = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::TUN_ERROR);
+    auto m = std::make_unique<nr::ue::NmUeTunToApp>(nr::ue::NmUeTunToApp::TUN_ERROR);
     m->error = std::move(error);
     return m;
 }
@@ -63,10 +63,10 @@ static void ReceiverThread(ReceiverArgs *args)
 
         if (n > 0)
         {
-            auto *m = new nr::ue::NmUeTunToApp(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
+            auto m = std::make_unique<nr::ue::NmUeTunToApp>(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
             m->psi = psi;
             m->data = OctetString::FromArray(buffer, static_cast<size_t>(n));
-            targetTask->push(m);
+            targetTask->push(std::move(m));
         }
     }
 }
@@ -96,28 +96,26 @@ void TunTask::onQuit()
 
 void TunTask::onLoop()
 {
-    NtsMessage *msg = take();
+    auto msg = take();
     if (!msg)
         return;
 
     switch (msg->msgType)
     {
     case NtsMessageType::UE_APP_TO_TUN: {
-        auto *w = dynamic_cast<NmAppToTun *>(msg);
-        ssize_t res = ::write(m_fd, w->data.data(), w->data.length());
+        auto &w = dynamic_cast<NmAppToTun &>(*msg);
+        ssize_t res = ::write(m_fd, w.data.data(), w.data.length());
         if (res < 0)
             push(NmError(GetErrorMessage("TUN device could not write")));
-        else if (res != w->data.length())
+        else if (res != w.data.length())
             push(NmError(GetErrorMessage("TUN device partially written")));
-        delete w;
         break;
     }
     case NtsMessageType::UE_TUN_TO_APP: {
-        m_base->appTask->push(msg);
+        m_base->appTask->push(std::move(msg));
         break;
     }
     default:
-        delete msg;
         break;
     }
 }
