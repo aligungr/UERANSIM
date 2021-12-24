@@ -45,15 +45,11 @@ struct NmUeTunToApp : NtsMessage
     enum PR
     {
         DATA_PDU_DELIVERY,
-        TUN_ERROR
     } present;
 
     // DATA_PDU_DELIVERY
     int psi{};
     OctetString data{};
-
-    // TUN_ERROR
-    std::string error{};
 
     explicit NmUeTunToApp(PR present) : NtsMessage(NtsMessageType::UE_TUN_TO_APP), present(present)
     {

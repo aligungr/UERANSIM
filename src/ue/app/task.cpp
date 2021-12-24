@@ -62,10 +62,6 @@ void UeAppTask::onLoop()
             m_base->nasTask->push(std::move(m));
             break;
         }
-        case NmUeTunToApp::TUN_ERROR: {
-            m_logger->err("TUN failure [%s]", w.error.c_str());
-            break;
-        }
         }
         break;
     }

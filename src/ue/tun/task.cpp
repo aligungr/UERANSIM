@@ -7,10 +7,12 @@
 //
 
 #include "task.hpp"
+
 #include <cstring>
+#include <unistd.h>
+
 #include <ue/app/task.hpp>
 #include <ue/nts.hpp>
-#include <unistd.h>
 #include <utils/libc_error.hpp>
 #include <utils/scoped_thread.hpp>
 
@@ -35,13 +37,6 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-static std::unique_ptr<nr::ue::NmUeTunToApp> NmError(std::string &&error)
-{
-    auto m = std::make_unique<nr::ue::NmUeTunToApp>(nr::ue::NmUeTunToApp::TUN_ERROR);
-    m->error = std::move(error);
-    return m;
-}
-
 static void ReceiverThread(ReceiverArgs *args)
 {
     int fd = args->fd;
@@ -56,10 +51,7 @@ static void ReceiverThread(ReceiverArgs *args)
     {
         ssize_t n = ::read(fd, buffer, RECEIVER_BUFFER_SIZE);
         if (n < 0)
-        {
-            targetTask->push(NmError(GetErrorMessage("TUN device could not read")));
-            return; // Abort receiver thread
-        }
+            throw std::runtime_error(GetErrorMessage("TUN device could not read"));
 
         if (n > 0)
         {
@@ -106,9 +98,9 @@ void TunTask::onLoop()
         auto &w = dynamic_cast<NmAppToTun &>(*msg);
         ssize_t res = ::write(m_fd, w.data.data(), w.data.length());
         if (res < 0)
-            push(NmError(GetErrorMessage("TUN device could not write")));
-        else if (res != w.data.length())
-            push(NmError(GetErrorMessage("TUN device partially written")));
+            throw std::runtime_error(GetErrorMessage("TUN device could not write"));
+        if (res != w.data.length())
+            throw std::runtime_error(GetErrorMessage("TUN device partially written"));
         break;
     }
     default:
