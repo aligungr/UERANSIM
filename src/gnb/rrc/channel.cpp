@@ -65,7 +65,7 @@ void GnbRrcTask::handleUplinkRrc(int ueId, rrc::RrcChannel channel, const OctetS
     }
 }
 
-void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(const ASN_RRC_BCCH_BCH_Message &msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_BCH_Message, msg);
     if (pdu.length() == 0)
@@ -81,7 +81,7 @@ void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg)
     m_base->rlsTask->push(std::move(w));
 }
 
-void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(const ASN_RRC_BCCH_DL_SCH_Message &msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, msg);
     if (pdu.length() == 0)
@@ -97,7 +97,7 @@ void GnbRrcTask::sendRrcMessage(ASN_RRC_BCCH_DL_SCH_Message *msg)
     m_base->rlsTask->push(std::move(w));
 }
 
-void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(int ueId, const ASN_RRC_DL_CCCH_Message &msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_DL_CCCH_Message, msg);
     if (pdu.length() == 0)
@@ -113,7 +113,7 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_CCCH_Message *msg)
     m_base->rlsTask->push(std::move(w));
 }
 
-void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(int ueId, const ASN_RRC_DL_DCCH_Message &msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_DL_DCCH_Message, msg);
     if (pdu.length() == 0)
@@ -129,7 +129,7 @@ void GnbRrcTask::sendRrcMessage(int ueId, ASN_RRC_DL_DCCH_Message *msg)
     m_base->rlsTask->push(std::move(w));
 }
 
-void GnbRrcTask::sendRrcMessage(ASN_RRC_PCCH_Message *msg)
+void GnbRrcTask::sendRrcMessage(const ASN_RRC_PCCH_Message &msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_PCCH_Message, msg);
     if (pdu.length() == 0)

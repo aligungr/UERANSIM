@@ -87,7 +87,9 @@ void GnbRrcTask::receiveRrcSetupRequest(int ueId, const ASN_RRC_RRCSetupRequest 
                         rrc::encode::EncodeS(asn_DEF_ASN_RRC_CellGroupConfig, &masterCellGroup));
 
     m_logger->info("RRC Setup for UE[%d]", ueId);
-    sendRrcMessage(ueId, pdu);
+
+    sendRrcMessage(ueId, *pdu);
+    asn::Free(asn_DEF_ASN_RRC_DL_CCCH_Message, pdu);
 }
 
 void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplete &msg)

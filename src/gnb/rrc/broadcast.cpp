@@ -112,8 +112,8 @@ void GnbRrcTask::triggerSysInfoBroadcast()
     auto *mib = ConstructMibMessage(m_isBarred, m_intraFreqReselectAllowed);
     auto *sib1 = ConstructSib1Message(m_cellReserved, m_config->tac, m_config->nci, m_config->plmn, m_aiBarringSet);
 
-    sendRrcMessage(mib);
-    sendRrcMessage(sib1);
+    sendRrcMessage(*mib);
+    sendRrcMessage(*sib1);
 
     asn::Free(asn_DEF_ASN_RRC_BCCH_BCH_Message, mib);
     asn::Free(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, sib1);
