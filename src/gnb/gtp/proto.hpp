@@ -39,12 +39,12 @@ struct PduSessionInformation
 
 struct DlPduSessionInformation : PduSessionInformation
 {
-    bool qmp{};                        // (Mandatory) QoS Monitoring Packet, See 5.5.3.8
-    int qfi{};                         // (Mandatory) 6-bit, QOS Flow Identifier, See 5.5.3.3
-    bool rqi{};                        // (Mandatory) Reflective QOS Indicator, See 5.5.3.4
-    std::optional<int> ppi{};          // (Optional, may be null) Paging Policy Indicator, See 5.5.3.7
+    bool qmp{};                           // (Mandatory) QoS Monitoring Packet, See 5.5.3.8
+    int qfi{};                            // (Mandatory) 6-bit, QOS Flow Identifier, See 5.5.3.3
+    bool rqi{};                           // (Mandatory) Reflective QOS Indicator, See 5.5.3.4
+    std::optional<int> ppi{};             // (Optional, may be null) Paging Policy Indicator, See 5.5.3.7
     std::optional<int64_t> dlSendingTs{}; // (Optional, may be null) DL Sending Time Stamp, See 5.5.3.9
-    std::optional<int> dlQfiSeq{};     // (Optional, may be null) 3-octet, DL QFI Sequence Number, See 5.5.3.18
+    std::optional<int> dlQfiSeq{};        // (Optional, may be null) 3-octet, DL QFI Sequence Number, See 5.5.3.18
 
     DlPduSessionInformation() : PduSessionInformation(PDU_TYPE_DL)
     {
@@ -55,14 +55,15 @@ struct DlPduSessionInformation : PduSessionInformation
 
 struct UlPduSessionInformation : PduSessionInformation
 {
-    bool qmp{};                                // (Mandatory) QoS Monitoring Packet, See 5.5.3.8
-    int qfi{};                                 // (Mandatory) 6-bit, QOS Flow Identifier, See 5.5.3.3
-    std::optional<int64_t> dlSendingTsRepeated{}; // (Optional, may be null) DL Sending Time Stamp Repeated, See 5.5.3.10
-    std::optional<int64_t> dlReceivedTs{};        // (Optional, may be null) DL Received Time Stamp, See 5.5.3.11
-    std::optional<int64_t> ulSendingTs{};         // (Optional, may be null) UL Sending Time Stamp, See 5.5.3.12
-    std::optional<uint32_t> dlDelayResult{};   // (Optional, may be null) DL Delay Result, See 5.5.3.14
-    std::optional<uint32_t> ulDelayResult{};   // (Optional, may be null) UL Delay Result, See 5.5.3.16
-    std::optional<int> ulQfiSeq{};             // (Optional, may be null) 3-octet, UL QFI Sequence Number, See 5.5.3.19
+    bool qmp{}; // (Mandatory) QoS Monitoring Packet, See 5.5.3.8
+    int qfi{};  // (Mandatory) 6-bit, QOS Flow Identifier, See 5.5.3.3
+    std::optional<int64_t>
+        dlSendingTsRepeated{};               // (Optional, may be null) DL Sending Time Stamp Repeated, See 5.5.3.10
+    std::optional<int64_t> dlReceivedTs{};   // (Optional, may be null) DL Received Time Stamp, See 5.5.3.11
+    std::optional<int64_t> ulSendingTs{};    // (Optional, may be null) UL Sending Time Stamp, See 5.5.3.12
+    std::optional<uint32_t> dlDelayResult{}; // (Optional, may be null) DL Delay Result, See 5.5.3.14
+    std::optional<uint32_t> ulDelayResult{}; // (Optional, may be null) UL Delay Result, See 5.5.3.16
+    std::optional<int> ulQfiSeq{};           // (Optional, may be null) 3-octet, UL QFI Sequence Number, See 5.5.3.19
 
     UlPduSessionInformation() : PduSessionInformation(PDU_TYPE_UL)
     {
@@ -151,6 +152,6 @@ struct GtpMessage
 };
 
 bool EncodeGtpMessage(const GtpMessage &msg, OctetString &stream);
-GtpMessage *DecodeGtpMessage(const OctetView &stream);
+std::unique_ptr<GtpMessage> DecodeGtpMessage(const OctetView &stream);
 
 } // namespace gtp

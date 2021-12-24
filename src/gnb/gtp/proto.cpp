@@ -153,9 +153,9 @@ static PdcpPduNumberExtHeader *DecodePdcpPduNumberExtHeader(int len, const Octet
     return res;
 }
 
-GtpMessage *DecodeGtpMessage(const OctetView &stream)
+std::unique_ptr<GtpMessage> DecodeGtpMessage(const OctetView &stream)
 {
-    auto *res = new GtpMessage();
+    auto res = std::make_unique<GtpMessage>();
 
     size_t fistIndex = stream.currentIndex();
 

@@ -222,20 +222,18 @@ void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)
 void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
 {
     OctetView buffer{msg.packet};
-    auto *gtp = gtp::DecodeGtpMessage(buffer);
+    auto gtp = gtp::DecodeGtpMessage(buffer);
 
     auto sessionInd = m_sessionTree.findByDownTeid(gtp->teid);
     if (sessionInd == 0)
     {
         m_logger->err("TEID %d not found on GTP-U Downlink", gtp->teid);
-        delete gtp;
         return;
     }
 
     if (gtp->msgType != gtp::GtpMessage::MT_G_PDU)
     {
         m_logger->err("Unhandled GTP-U message type: %d", gtp->msgType);
-        delete gtp;
         return;
     }
 
@@ -247,8 +245,6 @@ void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
         w->pdu = std::move(gtp->payload);
         m_base->rlsTask->push(std::move(w));
     }
-
-    delete gtp;
 }
 
 void GtpTask::updateAmbrForUe(int ueId)
