@@ -98,17 +98,17 @@ bool EncodeGtpMessage(const GtpMessage &gtp, OctetString &stream)
     return true; // success
 }
 
-static UdpPortExtHeader *DecodeUdpPortExtHeader(int len, const OctetView &stream)
+static std::unique_ptr<UdpPortExtHeader> DecodeUdpPortExtHeader(int len, const OctetView &stream)
 {
     if (len != 1)
         return nullptr; // length must be 1 for UdpPortExtHeader
 
-    auto *res = new UdpPortExtHeader();
+    auto res = std::make_unique<UdpPortExtHeader>();
     res->port = stream.read2US();
     return res;
 }
 
-static LongPdcpPduNumberExtHeader *DecodeLongPdcpPduNumberExtHeader(int len, const OctetView &stream)
+static std::unique_ptr<LongPdcpPduNumberExtHeader> DecodeLongPdcpPduNumberExtHeader(int len, const OctetView &stream)
 {
     if (len != 2)
         return nullptr; // length must be 2 for LongPdcpPduNumberExtHeader
@@ -119,12 +119,12 @@ static LongPdcpPduNumberExtHeader *DecodeLongPdcpPduNumberExtHeader(int len, con
     num <<= 8;
     num |= stream.readI();
 
-    auto *res = new LongPdcpPduNumberExtHeader();
+    auto res = std::make_unique<LongPdcpPduNumberExtHeader>();
     res->pdcpPduNumber = num;
     return res;
 }
 
-static NrRanContainerExtHeader *DecodeNrRanContainerExtHeader(int len, const OctetView &stream)
+static std::unique_ptr<NrRanContainerExtHeader> DecodeNrRanContainerExtHeader(int len, const OctetView &stream)
 {
     // obtain actual length in octets. (but not used)
     len = 4 * len - 2;
@@ -133,22 +133,23 @@ static NrRanContainerExtHeader *DecodeNrRanContainerExtHeader(int len, const Oct
     return nullptr;
 }
 
-static PduSessionContainerExtHeader *DecodePduSessionContainerExtHeader(int len, const OctetView &stream)
+static std::unique_ptr<PduSessionContainerExtHeader> DecodePduSessionContainerExtHeader(int len,
+                                                                                        const OctetView &stream)
 {
     // obtain actual length in octets. (but not used)
     len = 4 * len - 2;
 
-    auto *res = new PduSessionContainerExtHeader();
+    auto res = std::make_unique<PduSessionContainerExtHeader>();
     res->pduSessionInformation = PduSessionInformation::Decode(stream);
     return res;
 }
 
-static PdcpPduNumberExtHeader *DecodePdcpPduNumberExtHeader(int len, const OctetView &stream)
+static std::unique_ptr<PdcpPduNumberExtHeader> DecodePdcpPduNumberExtHeader(int len, const OctetView &stream)
 {
     if (len != 1)
         return nullptr; // length must be 1 for PdcpPduNumberExtHeader
 
-    auto *res = new PdcpPduNumberExtHeader();
+    auto res = std::make_unique<PdcpPduNumberExtHeader>();
     res->pdcpPduNumber = stream.read2US();
     return res;
 }
@@ -199,7 +200,7 @@ std::unique_ptr<GtpMessage> DecodeGtpMessage(const OctetView &stream)
             {
                 int len = stream.readI(); // NOTE: len is actually 4 times length
 
-                GtpExtHeader *header = nullptr;
+                std::unique_ptr<GtpExtHeader> header = nullptr;
 
                 switch (nextExtHeaderType)
                 {
@@ -227,7 +228,7 @@ std::unique_ptr<GtpMessage> DecodeGtpMessage(const OctetView &stream)
                 }
 
                 if (header != nullptr)
-                    res->extHeaders.push_back(std::unique_ptr<GtpExtHeader>(header));
+                    res->extHeaders.push_back(std::move(header));
 
                 nextExtHeaderType = stream.readI();
             }
