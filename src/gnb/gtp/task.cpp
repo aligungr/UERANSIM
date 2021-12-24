@@ -207,9 +207,9 @@ void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)
         // TODO: currently using first QSI
         ul->qfi = static_cast<int>(pduSession->qosFlows->list.array[0]->qosFlowIdentifier);
 
-        auto cont = new gtp::PduSessionContainerExtHeader();
+        auto cont = std::make_unique<gtp::PduSessionContainerExtHeader>();
         cont->pduSessionInformation = std::move(ul);
-        gtp.extHeaders.push_back(std::unique_ptr<gtp::GtpExtHeader>(cont));
+        gtp.extHeaders.push_back(std::move(cont));
 
         OctetString gtpPdu;
         if (!gtp::EncodeGtpMessage(gtp, gtpPdu))
