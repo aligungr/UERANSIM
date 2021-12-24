@@ -24,9 +24,9 @@ namespace rrc::encode
 {
 
 template <typename T>
-inline bool Encode(const asn_TYPE_descriptor_t &desc, const T &pdu, ssize_t &encoded, uint8_t *&buffer)
+inline bool Encode(const asn_TYPE_descriptor_t &desc, T *pdu, ssize_t &encoded, uint8_t *&buffer)
 {
-    auto res = asn_encode_to_new_buffer(nullptr, ATS_UNALIGNED_CANONICAL_PER, &desc, &pdu);
+    auto res = asn_encode_to_new_buffer(nullptr, ATS_UNALIGNED_CANONICAL_PER, &desc, pdu);
 
     if (res.buffer == nullptr || res.result.encoded < 0)
         return false;
@@ -38,7 +38,7 @@ inline bool Encode(const asn_TYPE_descriptor_t &desc, const T &pdu, ssize_t &enc
 }
 
 template <typename T>
-inline OctetString EncodeS(const asn_TYPE_descriptor_t &desc, const T &pdu)
+inline OctetString EncodeS(const asn_TYPE_descriptor_t &desc, T *pdu)
 {
     uint8_t *buffer;
     ssize_t encoded;

@@ -54,7 +54,7 @@ void GnbRrcTask::handleDownlinkNasDelivery(int ueId, const OctetString &nasPdu)
     c1.choice.dlInformationTransfer->dedicatedNAS_Message = asn::New<ASN_RRC_DedicatedNAS_Message_t>();
     asn::SetOctetString(*c1.choice.dlInformationTransfer->dedicatedNAS_Message, nasPdu);
 
-    sendRrcMessage(ueId, *pdu);
+    sendRrcMessage(ueId, pdu);
     asn::Free(asn_DEF_ASN_RRC_DL_DCCH_Message, pdu);
 }
 
@@ -87,7 +87,7 @@ void GnbRrcTask::releaseConnection(int ueId)
     rrcRelease->criticalExtensions.present = ASN_RRC_RRCRelease__criticalExtensions_PR_rrcRelease;
     rrcRelease->criticalExtensions.choice.rrcRelease = asn::New<ASN_RRC_RRCRelease_IEs>();
 
-    sendRrcMessage(ueId, *pdu);
+    sendRrcMessage(ueId, pdu);
     asn::Free(asn_DEF_ASN_RRC_DL_DCCH_Message, pdu);
 
     // Delete UE RRC context
@@ -130,7 +130,7 @@ void GnbRrcTask::handlePaging(const asn::Unique<ASN_NGAP_FiveG_S_TMSI> &tmsi,
     paging->pagingRecordList = asn::NewFor(paging->pagingRecordList);
     asn::SequenceAdd(*paging->pagingRecordList, record);
 
-    sendRrcMessage(*pdu);
+    sendRrcMessage(pdu);
     asn::Free(asn_DEF_ASN_RRC_PCCH_Message, pdu);
 }
 
