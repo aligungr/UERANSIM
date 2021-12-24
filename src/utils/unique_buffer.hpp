@@ -21,6 +21,10 @@ class UniqueBuffer
     {
     }
 
+    explicit inline UniqueBuffer(size_t length) noexcept : m_data(new uint8_t[length]), m_size(0)
+    {
+    }
+
     inline UniqueBuffer(uint8_t *data, size_t length) noexcept : m_data(data), m_size(length)
     {
     }
@@ -58,7 +62,7 @@ class UniqueBuffer
         return m_data;
     }
 
-    [[nodiscard]] inline const uint8_t *data()
+    [[nodiscard]] inline uint8_t *data()
     {
         return m_data;
     }
