@@ -16,6 +16,7 @@ namespace nas
 
 struct InformationElement
 {
+    virtual ~InformationElement() = default;
 };
 
 struct InformationElement1 : InformationElement

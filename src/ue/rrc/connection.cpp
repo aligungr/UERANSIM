@@ -126,6 +126,7 @@ void UeRrcTask::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_initialNasPdu = {};
     sendRrcMessage(pdu);
+    asn::Free(asn_DEF_ASN_RRC_UL_DCCH_Message, pdu);
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);

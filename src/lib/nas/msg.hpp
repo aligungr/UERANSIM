@@ -83,6 +83,9 @@ struct NasMessage
 
   protected:
     NasMessage() = default;
+
+  public:
+    virtual ~NasMessage() = default;
 };
 
 struct SmMessage : NasMessage
