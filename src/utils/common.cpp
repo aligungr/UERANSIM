@@ -148,11 +148,20 @@ int utils::NextId()
 
 int64_t utils::CurrentTimeMillis()
 {
-    auto time = std::chrono::system_clock::now();
-    auto sinceEpoch = time.time_since_epoch();
-    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(sinceEpoch);
-    int64_t now = millis.count();
-    return now;
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+}
+
+int64_t utils::CurrentTimeMicros()
+{
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+}
+
+int64_t utils::CurrentTimeNanos()
+{
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
 }
 
 TimeStamp utils::CurrentTimeStamp()

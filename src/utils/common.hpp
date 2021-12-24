@@ -28,6 +28,8 @@ int GetIpVersion(const std::string &address);
 OctetString IpToOctetString(const std::string &address);
 std::string OctetStringToIp(const OctetString &address);
 int64_t CurrentTimeMillis();
+int64_t CurrentTimeMicros();
+int64_t CurrentTimeNanos();
 TimeStamp CurrentTimeStamp();
 int NextId();
 int ParseInt(const std::string &str);
