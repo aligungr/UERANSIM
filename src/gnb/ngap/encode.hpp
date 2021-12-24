@@ -53,7 +53,7 @@ inline OctetString EncodeS(const asn_TYPE_descriptor_t &desc, T *pdu)
     {
         std::vector<uint8_t> v(encoded);
         memcpy(v.data(), buffer, encoded);
-        free(buffer);
+        delete[] buffer;
         return OctetString{std::move(v)};
     }
     return OctetString{};
