@@ -82,7 +82,7 @@ void TunTask::onStart()
 {
     auto *receiverArgs = new ReceiverArgs();
     receiverArgs->fd = m_fd;
-    receiverArgs->targetTask = this;
+    receiverArgs->targetTask = m_base->appTask;
     receiverArgs->psi = m_psi;
     m_receiver =
         new ScopedThread([](void *args) { ReceiverThread(reinterpret_cast<ReceiverArgs *>(args)); }, receiverArgs);
@@ -109,10 +109,6 @@ void TunTask::onLoop()
             push(NmError(GetErrorMessage("TUN device could not write")));
         else if (res != w.data.length())
             push(NmError(GetErrorMessage("TUN device partially written")));
-        break;
-    }
-    case NtsMessageType::UE_TUN_TO_APP: {
-        m_base->appTask->push(std::move(msg));
         break;
     }
     default:
