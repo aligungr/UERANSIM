@@ -88,6 +88,8 @@ struct GtpExtHeader
     explicit GtpExtHeader(ExtHeaderType type) : type(type)
     {
     }
+
+    virtual ~GtpExtHeader() = default;
 };
 
 struct LongPdcpPduNumberExtHeader : GtpExtHeader
