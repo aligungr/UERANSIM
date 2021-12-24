@@ -205,22 +205,6 @@ struct NmUeNasToApp : NtsMessage
     }
 };
 
-struct NmUeAppToNas : NtsMessage
-{
-    enum PR
-    {
-        UPLINK_DATA_DELIVERY,
-    } present;
-
-    // UPLINK_DATA_DELIVERY
-    int psi{};
-    OctetString data;
-
-    explicit NmUeAppToNas(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_NAS), present(present)
-    {
-    }
-};
-
 struct NmUeNasToRls : NtsMessage
 {
     enum PR

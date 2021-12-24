@@ -51,20 +51,6 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_TUN_TO_APP: {
-        auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
-        switch (w.present)
-        {
-        case NmUeTunToApp::DATA_PDU_DELIVERY: {
-            auto m = std::make_unique<NmUeAppToNas>(NmUeAppToNas::UPLINK_DATA_DELIVERY);
-            m->psi = w.psi;
-            m->data = std::move(w.data);
-            m_base->nasTask->push(std::move(m));
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_NAS_TO_APP: {
         auto &w = dynamic_cast<NmUeNasToApp &>(*msg);
         switch (w.present)

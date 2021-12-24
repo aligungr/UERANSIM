@@ -80,11 +80,11 @@ void NasTask::onLoop()
         }
         break;
     }
-    case NtsMessageType::UE_APP_TO_NAS: {
-        auto &w = dynamic_cast<NmUeAppToNas &>(*msg);
+    case NtsMessageType::UE_TUN_TO_APP: {
+        auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
         switch (w.present)
         {
-        case NmUeAppToNas::UPLINK_DATA_DELIVERY: {
+        case NmUeTunToApp::DATA_PDU_DELIVERY: {
             sm->handleUplinkDataRequest(w.psi, std::move(w.data));
             break;
         }
