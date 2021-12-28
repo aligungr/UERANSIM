@@ -70,7 +70,7 @@ void NasLayer::handleSapMessage(std::unique_ptr<NtsMessage> msg)
     }
 }
 
-void NasLayer::performTick()
+void NasLayer::performCycle()
 {
     UeTimer *const arr[] = {
         &m_timers.t3346, &m_timers.t3396, &m_timers.t3444, &m_timers.t3445, &m_timers.t3502, &m_timers.t3510,
@@ -90,10 +90,7 @@ void NasLayer::performTick()
     }
 
     m_sm->onTimerTick();
-}
 
-void NasLayer::performCycle()
-{
     m_mm->performMmCycle();
 }
 

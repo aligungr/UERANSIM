@@ -32,8 +32,6 @@ class NasLayer
     void onQuit();
 
     void performCycle();
-    void performTick();
-
     void handleSapMessage(std::unique_ptr<NtsMessage> msg);
 };
 

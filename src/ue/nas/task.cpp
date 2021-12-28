@@ -52,7 +52,7 @@ void NasTask::onLoop()
         if (timerId == NTS_TIMER_ID_NAS_TIMER_CYCLE)
         {
             setTimer(NTS_TIMER_ID_NAS_TIMER_CYCLE, NTS_TIMER_INTERVAL_NAS_TIMER_CYCLE);
-            layer->performTick();
+            layer->performCycle();
         }
         if (timerId == NTS_TIMER_ID_MM_CYCLE)
         {
