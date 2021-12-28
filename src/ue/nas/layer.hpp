@@ -14,13 +14,13 @@ namespace nr::ue
 
 class NasLayer
 {
-    TaskBase *base;
-    std::unique_ptr<Logger> logger;
+    TaskBase *m_base;
+    std::unique_ptr<Logger> m_logger;
 
-    NasTimers timers;
-    NasMm *mm;
-    NasSm *sm;
-    Usim *usim;
+    NasTimers m_timers;
+    NasMm *m_mm;
+    NasSm *m_sm;
+    Usim *m_usim;
 
     friend class UeCmdHandler;
 
@@ -28,16 +28,13 @@ class NasLayer
     explicit NasLayer(TaskBase *base);
     ~NasLayer() = default;
 
-  public:
     void onStart();
     void onQuit();
 
-  public:
-    void handleSapMessage(std::unique_ptr<NtsMessage> msg);
-
-  public:
     void performCycle();
     void performTick();
+
+    void handleSapMessage(std::unique_ptr<NtsMessage> msg);
 };
 
 } // namespace nr::ue

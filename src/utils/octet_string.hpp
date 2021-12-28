@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include <array>
 
 class OctetString
 {
