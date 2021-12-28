@@ -81,7 +81,7 @@ void NasMm::onQuit()
 
 void NasMm::triggerMmCycle()
 {
-    m_base->nasTask->push(std::make_unique<NmUeNasToNas>(NmUeNasToNas::PERFORM_MM_CYCLE));
+    m_base->nasTask->push(std::make_unique<NmCycleRequired>());
 }
 
 void NasMm::performMmCycle()

@@ -62,22 +62,4 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
     }
 }
 
-void NasMm::handleNasEvent(const NmUeNasToNas &msg)
-{
-    if (m_mmState == EMmState::MM_NULL)
-        return;
-
-    switch (msg.present)
-    {
-    case NmUeNasToNas::PERFORM_MM_CYCLE:
-        performMmCycle();
-        break;
-    case NmUeNasToNas::NAS_TIMER_EXPIRE:
-        onTimerExpire(*msg.timer);
-        break;
-    default:
-        break;
-    }
-}
-
 } // namespace nr::ue

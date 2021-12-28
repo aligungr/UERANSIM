@@ -18,21 +18,6 @@
 namespace nr::ue
 {
 
-void NasSm::handleNasEvent(const NmUeNasToNas &msg)
-{
-    if (m_mm->m_mmState == EMmState::MM_NULL)
-        return;
-
-    switch (msg.present)
-    {
-    case NmUeNasToNas::NAS_TIMER_EXPIRE:
-        onTimerExpire(*msg.timer);
-        break;
-    default:
-        break;
-    }
-}
-
 void NasSm::onTimerTick()
 {
     if (m_mm->m_mmState == EMmState::MM_NULL)

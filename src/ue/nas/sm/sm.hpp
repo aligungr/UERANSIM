@@ -33,7 +33,7 @@ class NasSm
 
     friend class UeCmdHandler;
     friend class NasMm;
-    friend class NasTask;
+    friend class NasLayer;
 
   public:
     NasSm(TaskBase *base, NasTimers *timers);
@@ -90,7 +90,6 @@ class NasSm
     void abortProcedureByPtiOrPsi(int pti, int psi);
 
   private: /* Service Access Point */
-    void handleNasEvent(const NmUeNasToNas &msg);
     void onTimerTick();
     void handleUplinkDataRequest(int psi, OctetString &&data);
     void handleDownlinkDataRequest(int psi, OctetString &&data);

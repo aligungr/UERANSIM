@@ -68,7 +68,7 @@ class NasMm
 
     friend class UeCmdHandler;
     friend class NasSm;
-    friend class NasTask;
+    friend class NasLayer;
 
   public:
     NasMm(TaskBase *base, NasTimers *timers);
@@ -196,7 +196,6 @@ class NasMm
 
   private: /* Service Access Point */
     void handleRrcEvent(const NmUeRrcToNas &msg);
-    void handleNasEvent(const NmUeNasToNas &msg);
 };
 
 } // namespace nr::ue

@@ -172,22 +172,6 @@ struct NmUeRlsToRrc : NtsMessage
     }
 };
 
-struct NmUeNasToNas : NtsMessage
-{
-    enum PR
-    {
-        PERFORM_MM_CYCLE,
-        NAS_TIMER_EXPIRE,
-    } present;
-
-    // NAS_TIMER_EXPIRE
-    UeTimer *timer{};
-
-    explicit NmUeNasToNas(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_NAS), present(present)
-    {
-    }
-};
-
 struct NmUeNasToApp : NtsMessage
 {
     enum PR
@@ -322,6 +306,13 @@ struct NmUeCliCommand : NtsMessage
 
     NmUeCliCommand(std::unique_ptr<app::UeCliCommand> cmd, InetAddress address)
         : NtsMessage(NtsMessageType::UE_CLI_COMMAND), cmd(std::move(cmd)), address(address)
+    {
+    }
+};
+
+struct NmCycleRequired : NtsMessage
+{
+    NmCycleRequired() : NtsMessage(NtsMessageType::UE_CYCLE_REQUIRED)
     {
     }
 };

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "layer.hpp"
+
 #include <ue/nas/usim/usim.hpp>
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
@@ -23,14 +25,7 @@ namespace nr::ue
 class NasTask : public NtsTask
 {
   private:
-    TaskBase *base;
-    std::unique_ptr<Logger> logger;
-
-    NasTimers timers;
-    NasMm *mm;
-    NasSm *sm;
-    Usim *usim;
-
+    std::unique_ptr<NasLayer> layer;
     friend class UeCmdHandler;
 
   public:
@@ -41,9 +36,6 @@ class NasTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
-
-  private:
-    void performTick();
 };
 
 } // namespace nr::ue

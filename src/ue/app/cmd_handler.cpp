@@ -118,19 +118,19 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         }
 
         Json json = Json::Obj({
-            {"cm-state", ToJson(m_base->nasTask->mm->m_cmState)},
-            {"rm-state", ToJson(m_base->nasTask->mm->m_rmState)},
-            {"mm-state", ToJson(m_base->nasTask->mm->m_mmSubState)},
-            {"5u-state", ToJson(m_base->nasTask->mm->m_storage->uState->get())},
-            {"sim-inserted", m_base->nasTask->mm->m_usim->isValid()},
+            {"cm-state", ToJson(m_base->nasTask->layer->mm->m_cmState)},
+            {"rm-state", ToJson(m_base->nasTask->layer->mm->m_rmState)},
+            {"mm-state", ToJson(m_base->nasTask->layer->mm->m_mmSubState)},
+            {"5u-state", ToJson(m_base->nasTask->layer->mm->m_storage->uState->get())},
+            {"sim-inserted", m_base->nasTask->layer->mm->m_usim->isValid()},
             {"selected-plmn", ::ToJson(m_base->shCtx.selectedPlmn.get())},
             {"current-cell", ::ToJson(currentCellId)},
             {"current-plmn", ::ToJson(currentPlmn)},
             {"current-tac", ::ToJson(currentTac)},
-            {"last-tai", ToJson(m_base->nasTask->mm->m_storage->lastVisitedRegisteredTai)},
-            {"stored-suci", ToJson(m_base->nasTask->mm->m_storage->storedSuci->get())},
-            {"stored-guti", ToJson(m_base->nasTask->mm->m_storage->storedGuti->get())},
-            {"has-emergency", ::ToJson(m_base->nasTask->mm->hasEmergency())},
+            {"last-tai", ToJson(m_base->nasTask->layer->mm->m_storage->lastVisitedRegisteredTai)},
+            {"stored-suci", ToJson(m_base->nasTask->layer->mm->m_storage->storedSuci->get())},
+            {"stored-guti", ToJson(m_base->nasTask->layer->mm->m_storage->storedGuti->get())},
+            {"has-emergency", ::ToJson(m_base->nasTask->layer->mm->hasEmergency())},
         });
         sendResult(msg.address, json.dumpYaml());
         break;
@@ -141,7 +141,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
             {"hplmn", ToJson(m_base->config->hplmn)},
             {"imei", ::ToJson(m_base->config->imei)},
             {"imeisv", ::ToJson(m_base->config->imeiSv)},
-            {"ecall-only", ::ToJson(m_base->nasTask->usim->m_isECallOnly)},
+            {"ecall-only", ::ToJson(m_base->nasTask->layer->usim->m_isECallOnly)},
             {"uac-aic", Json::Obj({
                             {"mps", m_base->config->uacAic.mps},
                             {"mcs", m_base->config->uacAic.mcs},
@@ -154,18 +154,18 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
                             {"class-14", m_base->config->uacAcc.cls14},
                             {"class-15", m_base->config->uacAcc.cls15},
                         })},
-            {"is-high-priority", m_base->nasTask->mm->isHighPriority()},
+            {"is-high-priority", m_base->nasTask->layer->mm->isHighPriority()},
         });
 
         sendResult(msg.address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::TIMERS: {
-        sendResult(msg.address, ToJson(m_base->nasTask->timers).dumpYaml());
+        sendResult(msg.address, ToJson(m_base->nasTask->layer->timers).dumpYaml());
         break;
     }
     case app::UeCliCommand::DE_REGISTER: {
-        m_base->nasTask->mm->deregistrationRequired(msg.cmd->deregCause);
+        m_base->nasTask->layer->mm->deregistrationRequired(msg.cmd->deregCause);
 
         if (msg.cmd->deregCause != EDeregCause::SWITCH_OFF)
             sendResult(msg.address, "De-registration procedure triggered");
@@ -175,12 +175,12 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     }
     case app::UeCliCommand::PS_RELEASE: {
         for (int i = 0; i < msg.cmd->psCount; i++)
-            m_base->nasTask->sm->sendReleaseRequest(static_cast<int>(msg.cmd->psIds[i]) % 16);
+            m_base->nasTask->layer->sm->sendReleaseRequest(static_cast<int>(msg.cmd->psIds[i]) % 16);
         sendResult(msg.address, "PDU session release procedure(s) triggered");
         break;
     }
     case app::UeCliCommand::PS_RELEASE_ALL: {
-        m_base->nasTask->sm->sendReleaseRequestForAll();
+        m_base->nasTask->layer->sm->sendReleaseRequestForAll();
         sendResult(msg.address, "PDU session release procedure(s) triggered");
         break;
     }
@@ -190,13 +190,13 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
         config.isEmergency = msg.cmd->isEmergency;
         config.apn = msg.cmd->apn;
         config.sNssai = msg.cmd->sNssai;
-        m_base->nasTask->sm->sendEstablishmentRequest(config);
+        m_base->nasTask->layer->sm->sendEstablishmentRequest(config);
         sendResult(msg.address, "PDU session establishment procedure triggered");
         break;
     }
     case app::UeCliCommand::PS_LIST: {
         Json json = Json::Obj({});
-        for (auto *pduSession : m_base->nasTask->sm->m_pduSessions)
+        for (auto *pduSession : m_base->nasTask->layer->sm->m_pduSessions)
         {
             if (pduSession->psi == 0 || pduSession->psState == EPsState::INACTIVE)
                 continue;
