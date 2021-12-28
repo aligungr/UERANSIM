@@ -73,7 +73,7 @@ class NasMm
   public:
     NasMm(TaskBase *base, NasTimers *timers);
 
-  public: /* Base */
+  private: /* Base */
     void onStart(NasSm *sm, Usim *usim);
     void onQuit();
 
