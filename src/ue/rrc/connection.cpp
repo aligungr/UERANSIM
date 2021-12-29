@@ -154,7 +154,7 @@ void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
 
 void UeRrcLayer::handleEstablishmentFailure()
 {
-    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
+    m_base->l3Task->nas().handleRrcEstablishmentFailure();
 }
 
 void UeRrcLayer::performLocalRelease(bool treatBarred)

@@ -70,9 +70,7 @@ void UeRrcLayer::notifyCellLost(int cellId)
             declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
         else
         {
-            auto w = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
-            w->previousTai = Tai{lastActiveCell.plmn, lastActiveCell.tac};
-            m_base->l3Task->push(std::move(w));
+            m_base->l3Task->nas().handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
         }
     }
 

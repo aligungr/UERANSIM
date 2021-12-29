@@ -104,9 +104,7 @@ void UeRrcLayer::performCellSelection()
         w1->cellId = selectedCell;
         m_base->rlsTask->push(std::move(w1));
 
-        auto w2 = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
-        w2->previousTai = Tai{lastCell.plmn, lastCell.tac};
-        m_base->l3Task->push(std::move(w2));
+        m_base->l3Task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
     }
 }
 

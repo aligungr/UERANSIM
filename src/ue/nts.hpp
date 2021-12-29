@@ -61,15 +61,10 @@ struct NmUeRrcToNas : NtsMessage
     enum PR
     {
         NAS_DELIVERY,
-        RRC_ESTABLISHMENT_FAILURE,
-        ACTIVE_CELL_CHANGED,
     } present;
 
     // NAS_DELIVERY
     OctetString nasPdu;
-
-    // ACTIVE_CELL_CHANGED
-    Tai previousTai;
 
     explicit NmUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
     {

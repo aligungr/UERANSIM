@@ -119,4 +119,14 @@ void NasLayer::handleRadioLinkFailure()
     m_mm->handleRadioLinkFailure();
 }
 
+void NasLayer::handleRrcEstablishmentFailure()
+{
+    m_mm->handleRrcEstablishmentFailure();
+}
+
+void NasLayer::handleActiveCellChange(const Tai &prevTai)
+{
+    m_mm->handleActiveCellChange(prevTai);
+}
+
 } // namespace nr::ue

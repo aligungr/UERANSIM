@@ -40,6 +40,8 @@ class NasLayer
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
     void handleRrcFallbackIndication();
     void handleRadioLinkFailure();
+    void handleRrcEstablishmentFailure();
+    void handleActiveCellChange(const Tai &prevTai);
 };
 
 } // namespace nr::ue
