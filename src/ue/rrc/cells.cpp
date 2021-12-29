@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 
 namespace nr::ue
 {
@@ -72,7 +72,7 @@ void UeRrcLayer::notifyCellLost(int cellId)
         {
             auto w = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
             w->previousTai = Tai{lastActiveCell.plmn, lastActiveCell.tac};
-            m_base->nasTask->push(std::move(w));
+            m_base->l3Task->push(std::move(w));
         }
     }
 
@@ -98,7 +98,7 @@ void UeRrcLayer::updateAvailablePlmns()
                 value.insert(cellDesc.second.sib1.plmn);
     });
 
-    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::NAS_NOTIFY));
+    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::NAS_NOTIFY));
 }
 
 } // namespace nr::ue

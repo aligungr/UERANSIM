@@ -8,12 +8,8 @@
 
 #include "mm.hpp"
 
-#include <stdexcept>
-
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
-#include <ue/nas/task.hpp>
-#include <ue/rrc/task.hpp>
 
 namespace nr::ue
 {

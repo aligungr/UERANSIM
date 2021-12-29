@@ -11,7 +11,7 @@
 #include <cstring>
 #include <unistd.h>
 
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/libc_error.hpp>
 #include <utils/scoped_thread.hpp>
@@ -74,7 +74,7 @@ void TunTask::onStart()
 {
     auto *receiverArgs = new ReceiverArgs();
     receiverArgs->fd = m_fd;
-    receiverArgs->targetTask = m_base->nasTask;
+    receiverArgs->targetTask = m_base->l3Task;
     receiverArgs->psi = m_psi;
     m_receiver =
         new ScopedThread([](void *args) { ReceiverThread(reinterpret_cast<ReceiverArgs *>(args)); }, receiverArgs);

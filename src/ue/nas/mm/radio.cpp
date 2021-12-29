@@ -12,8 +12,8 @@
 
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nas/sm/sm.hpp>
-#include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -106,7 +106,7 @@ void NasMm::performPlmnSelection()
     else if (lastSelectedPlmn != selected)
     {
         m_logger->info("Selected plmn[%s]", ToJson(selected).str().c_str());
-        m_base->rrcTask->push(std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::RRC_NOTIFY));
+        m_base->l3Task->push(std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::RRC_NOTIFY));
 
         resetRegAttemptCounter();
     }
@@ -275,7 +275,7 @@ void NasMm::localReleaseConnection(bool treatBarred)
 
     auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::LOCAL_RELEASE_CONNECTION);
     w->treatBarred = treatBarred;
-    m_base->rrcTask->push(std::move(w));
+    m_base->l3Task->push(std::move(w));
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)

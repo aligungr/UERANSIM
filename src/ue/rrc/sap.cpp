@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 #include <ue/rls/task.hpp>
 
@@ -49,16 +49,11 @@ void UeRrcLayer::handleNasSapMessage(NmUeNasToRrc &msg)
 
         switchState(ERrcState::RRC_IDLE);
         m_base->rlsTask->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
-        m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
+        m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
         break;
     }
     case NmUeNasToRrc::RRC_NOTIFY: {
         triggerCycle();
-        break;
-    }
-    case NmUeNasToRrc::PERFORM_UAC: {
-        if (!msg.uacCtl->isExpiredForProducer())
-            performUac(msg.uacCtl);
         break;
     }
     }

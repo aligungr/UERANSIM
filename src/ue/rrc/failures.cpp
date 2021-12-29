@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 
 namespace nr::ue
@@ -23,7 +23,7 @@ void UeRrcLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 void UeRrcLayer::handleRadioLinkFailure(rls::ERlfCause cause)
 {
     m_state = ERrcState::RRC_IDLE;
-    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RADIO_LINK_FAILURE));
+    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RADIO_LINK_FAILURE));
 }
 
 } // namespace nr::ue

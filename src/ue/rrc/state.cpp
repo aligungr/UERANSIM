@@ -6,19 +6,19 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <lib/asn/rrc.hpp>
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 
 namespace nr::ue
 {
 
 void UeRrcLayer::triggerCycle()
 {
-    m_base->rrcTask->push(std::make_unique<NmCycleRequired>());
+    m_base->l3Task->push(std::make_unique<NmCycleRequired>());
 }
 
 void UeRrcLayer::performCycle()

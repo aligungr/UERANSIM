@@ -10,9 +10,8 @@
 
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nas/usim/usim.hpp>
-#include <ue/rrc/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
@@ -81,7 +80,7 @@ void NasMm::onQuit()
 
 void NasMm::triggerMmCycle()
 {
-    m_base->nasTask->push(std::make_unique<NmCycleRequired>());
+    m_base->l3Task->push(std::make_unique<NmCycleRequired>());
 }
 
 void NasMm::performMmCycle()

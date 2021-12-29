@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
@@ -67,7 +67,7 @@ void UeRrcLayer::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationT
 
     auto m = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::NAS_DELIVERY);
     m->nasPdu = std::move(nasPdu);
-    m_base->nasTask->push(std::move(m));
+    m_base->l3Task->push(std::move(m));
 }
 
 } // namespace nr::ue

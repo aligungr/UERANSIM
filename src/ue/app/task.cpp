@@ -9,7 +9,6 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <lib/nas/utils.hpp>
-#include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>
 #include <utils/common.hpp>

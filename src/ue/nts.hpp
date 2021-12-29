@@ -92,7 +92,6 @@ struct NmUeNasToRrc : NtsMessage
         LOCAL_RELEASE_CONNECTION,
         UPLINK_NAS_DELIVERY,
         RRC_NOTIFY,
-        PERFORM_UAC,
     } present;
 
     // UPLINK_NAS_DELIVERY
@@ -101,9 +100,6 @@ struct NmUeNasToRrc : NtsMessage
 
     // LOCAL_RELEASE_CONNECTION
     bool treatBarred{};
-
-    // PERFORM_UAC
-    std::shared_ptr<LightSync<UacInput, UacOutput>> uacCtl{};
 
     explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {

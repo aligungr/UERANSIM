@@ -6,10 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/random.hpp>
 
@@ -130,7 +130,7 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);
-    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_SETUP));
+    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_SETUP));
 }
 
 void UeRrcLayer::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
@@ -147,12 +147,12 @@ void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
 {
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
-    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
+    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
 }
 
 void UeRrcLayer::handleEstablishmentFailure()
 {
-    m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
+    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
 }
 
 } // namespace nr::ue

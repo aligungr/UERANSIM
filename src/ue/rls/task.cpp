@@ -9,8 +9,7 @@
 #include "task.hpp"
 
 #include <ue/app/task.hpp>
-#include <ue/nas/task.hpp>
-#include <ue/rrc/task.hpp>
+#include <ue/l3/task.hpp>
 #include <utils/common.hpp>
 #include <utils/random.hpp>
 
@@ -53,14 +52,14 @@ void UeRlsTask::onLoop()
             auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::SIGNAL_CHANGED);
             m->cellId = w.cellId;
             m->dbm = w.dbm;
-            m_base->rrcTask->push(std::move(m));
+            m_base->l3Task->push(std::move(m));
             break;
         }
         case NmUeRlsToRls::DOWNLINK_DATA: {
             auto m = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
             m->psi = w.psi;
             m->pdu = std::move(w.data);
-            m_base->nasTask->push(std::move(m));
+            m_base->l3Task->push(std::move(m));
             break;
         }
         case NmUeRlsToRls::DOWNLINK_RRC: {
@@ -68,13 +67,13 @@ void UeRlsTask::onLoop()
             m->cellId = w.cellId;
             m->channel = w.rrcChannel;
             m->pdu = std::move(w.data);
-            m_base->rrcTask->push(std::move(m));
+            m_base->l3Task->push(std::move(m));
             break;
         }
         case NmUeRlsToRls::RADIO_LINK_FAILURE: {
             auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::RADIO_LINK_FAILURE);
             m->rlfCause = w.rlfCause;
-            m_base->rrcTask->push(std::move(m));
+            m_base->l3Task->push(std::move(m));
             break;
         }
         case NmUeRlsToRls::TRANSMISSION_FAILURE: {

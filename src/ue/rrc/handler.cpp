@@ -6,10 +6,11 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
+
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/common.hpp>
 
@@ -53,7 +54,7 @@ void UeRrcLayer::receivePaging(const ASN_RRC_Paging &msg)
 
     auto w = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::PAGING);
     w->pagingTmsi = std::move(tmsiIds);
-    m_base->nasTask->push(std::move(w));
+    m_base->l3Task->push(std::move(w));
 }
 
 } // namespace nr::ue

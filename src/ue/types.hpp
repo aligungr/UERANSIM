@@ -32,8 +32,7 @@ namespace nr::ue
 {
 
 class UeAppTask;
-class NasTask;
-class UeRrcTask;
+class UeL3Task;
 class UeRlsTask;
 class UserEquipment;
 
@@ -203,8 +202,7 @@ struct TaskBase
     UeSharedContext shCtx{};
 
     UeAppTask *appTask{};
-    NasTask *nasTask{};
-    UeRrcTask *rrcTask{};
+    UeL3Task *l3Task{};
     UeRlsTask *rlsTask{};
 };
 
@@ -595,23 +593,11 @@ struct ProcControl
     std::optional<EDeregCause> deregistration{};
 };
 
-struct UacInput
-{
-    std::bitset<16> identities;
-    int category{};
-    int establishmentCause{};
-};
-
 enum class EUacResult
 {
     ALLOWED,
     BARRED,
     BARRING_APPLICABLE_EXCEPT_0_2,
-};
-
-struct UacOutput
-{
-    EUacResult res{};
 };
 
 enum class ENasTransportHint

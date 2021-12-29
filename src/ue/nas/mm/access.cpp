@@ -11,8 +11,8 @@
 #include <sstream>
 
 #include <lib/nas/utils.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/nas/sm/sm.hpp>
-#include <ue/rrc/task.hpp>
 
 #include <asn/rrc/ASN_RRC_EstablishmentCause.h>
 
@@ -260,26 +260,7 @@ EUacResult NasMm::performUac()
         return ASN_RRC_EstablishmentCause_mt_Access;
     }();
 
-    auto uacInput = std::make_unique<UacInput>();
-    uacInput->identities = accessIdentities;
-    uacInput->category = accessCategory;
-    uacInput->establishmentCause = static_cast<int>(establishmentCause);
-
-    auto uacCtl = LightSync<UacInput, UacOutput>::MakeShared(100, 0, std::move(uacInput));
-
-    auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::PERFORM_UAC);
-    w->uacCtl = uacCtl;
-    m_base->rrcTask->push(std::move(w));
-
-    auto uacOutput = uacCtl->waitForProcess();
-
-    if (uacOutput == nullptr)
-    {
-        m_logger->err("No response from RRC from UAC checks, considering access attempt is barred");
-        return EUacResult::BARRED;
-    }
-
-    auto res = uacOutput->res;
+    auto res = m_base->l3Task->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
 
     switch (res)
     {

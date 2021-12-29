@@ -7,7 +7,6 @@
 
 #include <lib/rrc/encode.hpp>
 #include <ue/app/task.hpp>
-#include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <utils/common.hpp>
 

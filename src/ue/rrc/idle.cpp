@@ -6,12 +6,12 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "task.hpp"
+#include "layer.hpp"
 
 #include <algorithm>
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nas/task.hpp>
+#include <ue/l3/task.hpp>
 #include <ue/rls/task.hpp>
 
 namespace nr::ue
@@ -106,7 +106,7 @@ void UeRrcLayer::performCellSelection()
 
         auto w2 = std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::ACTIVE_CELL_CHANGED);
         w2->previousTai = Tai{lastCell.plmn, lastCell.tac};
-        m_base->nasTask->push(std::move(w2));
+        m_base->l3Task->push(std::move(w2));
     }
 }
 

@@ -31,7 +31,6 @@ extern "C"
     struct ASN_RRC_SIB1;
 }
 
-
 namespace nr::ue
 {
 
@@ -58,7 +57,7 @@ class UeRrcLayer
     OctetString m_initialNasPdu{};
 
     friend class UeCmdHandler;
-    friend class UeRrcTask;
+    friend class UeL3Task;
 
   public:
     explicit UeRrcLayer(TaskBase *base);
@@ -125,8 +124,9 @@ class UeRrcLayer
     void declareRadioLinkFailure(rls::ERlfCause cause);
     void handleRadioLinkFailure(rls::ERlfCause cause);
 
+  public:
     /* Access Control */
-    void performUac(std::shared_ptr<LightSync<UacInput, UacOutput>> &uacCtl);
+    EUacResult performUac(std::bitset<16> identities, int category, int establishmentCause);
 };
 
-}
+} // namespace nr::ue
