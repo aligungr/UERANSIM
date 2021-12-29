@@ -60,7 +60,6 @@ struct NmUeRrcToNas : NtsMessage
 {
     enum PR
     {
-        NAS_NOTIFY,
         NAS_DELIVERY,
         RRC_CONNECTION_SETUP,
         RRC_ESTABLISHMENT_FAILURE,

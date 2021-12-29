@@ -39,10 +39,6 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
         handlePaging(msg.pagingTmsi);
         break;
     }
-    case NmUeRrcToNas::NAS_NOTIFY: {
-        triggerMmCycle();
-        break;
-    }
     case NmUeRrcToNas::ACTIVE_CELL_CHANGED: {
         handleActiveCellChange(msg.previousTai);
         break;

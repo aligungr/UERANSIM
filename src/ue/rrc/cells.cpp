@@ -98,7 +98,7 @@ void UeRrcLayer::updateAvailablePlmns()
                 value.insert(cellDesc.second.sib1.plmn);
     });
 
-    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::NAS_NOTIFY));
+    triggerCycle();
 }
 
 } // namespace nr::ue
