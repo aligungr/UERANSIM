@@ -131,7 +131,7 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);
-    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_SETUP));
+    m_base->l3Task->nas().handleRrcConnectionSetup();
 }
 
 void UeRrcLayer::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)

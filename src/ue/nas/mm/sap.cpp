@@ -20,10 +20,6 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
 
     switch (msg.present)
     {
-    case NmUeRrcToNas::RRC_CONNECTION_SETUP: {
-        handleRrcConnectionSetup();
-        break;
-    }
     case NmUeRrcToNas::NAS_DELIVERY: {
         OctetView buffer{msg.nasPdu};
         auto nasMessage = nas::DecodeNasMessage(buffer);

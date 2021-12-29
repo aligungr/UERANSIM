@@ -94,6 +94,11 @@ void NasLayer::performCycle()
     m_mm->performMmCycle();
 }
 
+void NasLayer::handleRrcConnectionSetup()
+{
+    m_mm->handleRrcConnectionSetup();
+}
+
 void NasLayer::handleRrcConnectionRelease()
 {
     m_mm->handleRrcConnectionRelease();

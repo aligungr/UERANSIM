@@ -35,6 +35,7 @@ class NasLayer
   public:
     void performCycle();
     void handleSapMessage(std::unique_ptr<NtsMessage> msg);
+    void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
     void handleRrcFallbackIndication();
