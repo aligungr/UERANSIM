@@ -35,10 +35,6 @@ void NasLayer::handleSapMessage(std::unique_ptr<NtsMessage> msg)
 {
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RRC_TO_NAS: {
-        m_mm->handleRrcEvent(dynamic_cast<NmUeRrcToNas &>(*msg));
-        break;
-    }
     case NtsMessageType::UE_TUN_TO_APP: {
         auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
         switch (w.present)
@@ -127,6 +123,14 @@ void NasLayer::handleRrcEstablishmentFailure()
 void NasLayer::handleActiveCellChange(const Tai &prevTai)
 {
     m_mm->handleActiveCellChange(prevTai);
+}
+
+void NasLayer::handleNasDelivery(const OctetString &data)
+{
+    OctetView buffer{data};
+    auto nasMessage = nas::DecodeNasMessage(buffer);
+    if (nasMessage != nullptr)
+        m_mm->receiveNasMessage(*nasMessage);
 }
 
 } // namespace nr::ue

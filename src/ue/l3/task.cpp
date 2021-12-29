@@ -67,10 +67,6 @@ void UeL3Task::onLoop()
     {
         m_rrc->handleRlsSapMessage(dynamic_cast<NmUeRlsToRrc &>(*msg));
     }
-    else if (msg->msgType == NtsMessageType::UE_RRC_TO_NAS)
-    {
-        m_nas->handleSapMessage(std::move(msg));
-    }
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP || msg->msgType == NtsMessageType::UE_RLS_TO_NAS)
     {
         m_nas->handleSapMessage(std::move(msg));

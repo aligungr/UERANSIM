@@ -193,9 +193,6 @@ class NasMm
     void deregistrationRequired(EDeregCause cause);
     void invokeProcedures();
     bool hasPendingProcedure();
-
-  private: /* Service Access Point */
-    void handleRrcEvent(const NmUeRrcToNas &msg);
 };
 
 } // namespace nr::ue

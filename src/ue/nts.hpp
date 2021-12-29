@@ -56,21 +56,6 @@ struct NmUeTunToApp : NtsMessage
     }
 };
 
-struct NmUeRrcToNas : NtsMessage
-{
-    enum PR
-    {
-        NAS_DELIVERY,
-    } present;
-
-    // NAS_DELIVERY
-    OctetString nasPdu;
-
-    explicit NmUeRrcToNas(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_NAS), present(present)
-    {
-    }
-};
-
 struct NmUeRrcToRls : NtsMessage
 {
     enum PR

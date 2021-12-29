@@ -42,6 +42,7 @@ class NasLayer
     void handleRadioLinkFailure();
     void handleRrcEstablishmentFailure();
     void handleActiveCellChange(const Tai &prevTai);
+    void handleNasDelivery(const OctetString& data);
 };
 
 } // namespace nr::ue
