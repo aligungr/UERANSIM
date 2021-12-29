@@ -31,10 +31,6 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
             receiveNasMessage(*nasMessage);
         break;
     }
-    case NmUeRrcToNas::RRC_CONNECTION_RELEASE: {
-        handleRrcConnectionRelease();
-        break;
-    }
     case NmUeRrcToNas::RADIO_LINK_FAILURE: {
         handleRadioLinkFailure();
         break;

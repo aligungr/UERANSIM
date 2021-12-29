@@ -36,6 +36,9 @@ class NasLayer
   private:
     void performCycle();
     void handleSapMessage(std::unique_ptr<NtsMessage> msg);
+
+  public:
+    void handleRrcConnectionRelease();
 };
 
 } // namespace nr::ue

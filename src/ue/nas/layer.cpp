@@ -94,4 +94,9 @@ void NasLayer::performCycle()
     m_mm->performMmCycle();
 }
 
+void NasLayer::handleRrcConnectionRelease()
+{
+    m_mm->handleRrcConnectionRelease();
+}
+
 } // namespace nr::ue

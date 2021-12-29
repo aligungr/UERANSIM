@@ -11,6 +11,7 @@
 #include <lib/rrc/encode.hpp>
 #include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
+#include <ue/rls/task.hpp>
 #include <utils/random.hpp>
 
 #include <asn/rrc/ASN_RRC_RRCSetup-IEs.h>
@@ -147,12 +148,23 @@ void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
 {
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
-    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
+
+    m_base->l3Task->nas().handleRrcConnectionRelease();
 }
 
 void UeRrcLayer::handleEstablishmentFailure()
 {
     m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
+}
+
+void UeRrcLayer::performLocalRelease(bool treatBarred)
+{
+    // TODO: handle treat barred
+    (void)treatBarred;
+
+    switchState(ERrcState::RRC_IDLE);
+    m_base->rlsTask->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
+    m_base->l3Task->nas().handleRrcConnectionRelease();
 }
 
 } // namespace nr::ue

@@ -272,9 +272,7 @@ void NasMm::localReleaseConnection(bool treatBarred)
     if (m_cmState != ECmState::CM_IDLE)
         m_logger->info("Performing local release of NAS connection");
 
-    auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::LOCAL_RELEASE_CONNECTION);
-    w->treatBarred = treatBarred;
-    m_base->l3Task->push(std::move(w));
+    m_base->l3Task->rrc().performLocalRelease(treatBarred);
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)

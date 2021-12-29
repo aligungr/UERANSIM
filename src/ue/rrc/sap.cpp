@@ -43,15 +43,6 @@ void UeRrcLayer::handleNasSapMessage(NmUeNasToRrc &msg)
         deliverUplinkNas(msg.pduId, std::move(msg.nasPdu));
         break;
     }
-    case NmUeNasToRrc::LOCAL_RELEASE_CONNECTION: {
-        // TODO: handle treat barred
-        (void)msg.treatBarred;
-
-        switchState(ERrcState::RRC_IDLE);
-        m_base->rlsTask->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
-        m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
-        break;
-    }
     }
 }
 

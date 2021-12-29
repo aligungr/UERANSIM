@@ -63,7 +63,6 @@ struct NmUeRrcToNas : NtsMessage
         NAS_NOTIFY,
         NAS_DELIVERY,
         RRC_CONNECTION_SETUP,
-        RRC_CONNECTION_RELEASE,
         RRC_ESTABLISHMENT_FAILURE,
         RADIO_LINK_FAILURE,
         PAGING,
@@ -89,16 +88,12 @@ struct NmUeNasToRrc : NtsMessage
 {
     enum PR
     {
-        LOCAL_RELEASE_CONNECTION,
         UPLINK_NAS_DELIVERY,
     } present;
 
     // UPLINK_NAS_DELIVERY
     uint32_t pduId{};
     OctetString nasPdu;
-
-    // LOCAL_RELEASE_CONNECTION
-    bool treatBarred{};
 
     explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
     {

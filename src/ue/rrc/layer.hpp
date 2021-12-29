@@ -127,6 +127,9 @@ class UeRrcLayer
   public:
     /* Access Control */
     EUacResult performUac(std::bitset<16> identities, int category, int establishmentCause);
+
+    /* Connection Control */
+    void performLocalRelease(bool treatBarred);
 };
 
 } // namespace nr::ue
