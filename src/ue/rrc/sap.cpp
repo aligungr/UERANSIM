@@ -16,7 +16,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::handleRlsSapMessage(NmUeRlsToRrc &msg)
+void UeRrcLayer::handleRlsSapMessage(NmUeRlsToRrc &msg)
 {
     switch (msg.present)
     {
@@ -35,7 +35,7 @@ void UeRrcTask::handleRlsSapMessage(NmUeRlsToRrc &msg)
     }
 }
 
-void UeRrcTask::handleNasSapMessage(NmUeNasToRrc &msg)
+void UeRrcLayer::handleNasSapMessage(NmUeNasToRrc &msg)
 {
     switch (msg.present)
     {

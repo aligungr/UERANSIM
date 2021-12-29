@@ -39,7 +39,7 @@ static ASN_RRC_UL_CCCH_Message *ConstructSetupRequest(ASN_RRC_InitialUE_Identity
     return pdu;
 }
 
-void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
+void UeRrcLayer::startConnectionEstablishment(OctetString &&nasPdu)
 {
     /* Check the protocol state */
     if (m_state != ERrcState::RRC_IDLE)
@@ -88,7 +88,7 @@ void UeRrcTask::startConnectionEstablishment(OctetString &&nasPdu)
     asn::Free(asn_DEF_ASN_RRC_UL_CCCH_Message, rrcSetupRequest);
 }
 
-void UeRrcTask::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
+void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 {
     if (!isActiveCell(cellId))
         return;
@@ -133,7 +133,7 @@ void UeRrcTask::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
     m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_SETUP));
 }
 
-void UeRrcTask::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
+void UeRrcLayer::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
 {
     if (!isActiveCell(cellId))
         return;
@@ -143,14 +143,14 @@ void UeRrcTask::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
     handleEstablishmentFailure();
 }
 
-void UeRrcTask::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
+void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
 {
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
     m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
 }
 
-void UeRrcTask::handleEstablishmentFailure()
+void UeRrcLayer::handleEstablishmentFailure()
 {
     m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE));
 }

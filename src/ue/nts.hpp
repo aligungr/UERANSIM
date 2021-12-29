@@ -132,18 +132,6 @@ struct NmUeRrcToRls : NtsMessage
     }
 };
 
-struct NmUeRrcToRrc : NtsMessage
-{
-    enum PR
-    {
-        TRIGGER_CYCLE,
-    } present;
-
-    explicit NmUeRrcToRrc(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RRC), present(present)
-    {
-    }
-};
-
 struct NmUeRlsToRrc : NtsMessage
 {
     enum PR

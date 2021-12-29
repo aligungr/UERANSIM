@@ -15,12 +15,12 @@
 namespace nr::ue
 {
 
-void UeRrcTask::declareRadioLinkFailure(rls::ERlfCause cause)
+void UeRrcLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 {
     handleRadioLinkFailure(cause);
 }
 
-void UeRrcTask::handleRadioLinkFailure(rls::ERlfCause cause)
+void UeRrcLayer::handleRadioLinkFailure(rls::ERlfCause cause)
 {
     m_state = ERrcState::RRC_IDLE;
     m_base->nasTask->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RADIO_LINK_FAILURE));

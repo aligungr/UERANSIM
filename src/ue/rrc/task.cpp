@@ -23,25 +23,21 @@ static constexpr const int TIMER_PERIOD_MACHINE_CYCLE = 2500;
 namespace nr::ue
 {
 
-UeRrcTask::UeRrcTask(TaskBase *base) : m_base{base}, m_timers{}
+UeRrcTask::UeRrcTask(TaskBase *base)
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
-
-    m_startedTime = utils::CurrentTimeMillis();
-    m_state = ERrcState::RRC_IDLE;
-    m_establishmentCause = ASN_RRC_EstablishmentCause_mt_Access;
+    layer = std::make_unique<UeRrcLayer>(base);
 }
 
 void UeRrcTask::onStart()
 {
-    triggerCycle();
+    layer->onStart();
 
     setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);
 }
 
 void UeRrcTask::onQuit()
 {
-    // TODO
+    layer->onQuit();
 }
 
 void UeRrcTask::onLoop()
@@ -50,38 +46,26 @@ void UeRrcTask::onLoop()
     if (!msg)
         return;
 
-    switch (msg->msgType)
+    if (msg->msgType == NtsMessageType::UE_CYCLE_REQUIRED)
     {
-    case NtsMessageType::UE_NAS_TO_RRC: {
-        handleNasSapMessage(dynamic_cast<NmUeNasToRrc &>(*msg));
-        break;
+        layer->performCycle();
     }
-    case NtsMessageType::UE_RLS_TO_RRC: {
-        handleRlsSapMessage(dynamic_cast<NmUeRlsToRrc &>(*msg));
-        break;
-    }
-    case NtsMessageType::UE_RRC_TO_RRC: {
-        auto &w = dynamic_cast<NmUeRrcToRrc &>(*msg);
-        switch (w.present)
-        {
-        case NmUeRrcToRrc::TRIGGER_CYCLE:
-            performCycle();
-            break;
-        }
-        break;
-    }
-    case NtsMessageType::TIMER_EXPIRED: {
+    else if (msg->msgType == NtsMessageType::TIMER_EXPIRED)
+    {
         auto &w = dynamic_cast<NmTimerExpired &>(*msg);
         if (w.timerId == TIMER_ID_MACHINE_CYCLE)
         {
             setTimer(TIMER_ID_MACHINE_CYCLE, TIMER_PERIOD_MACHINE_CYCLE);
-            performCycle();
+            layer->performCycle();
         }
-        break;
     }
-    default:
-        m_logger->unhandledNts(*msg);
-        break;
+    else if (msg->msgType == NtsMessageType::UE_NAS_TO_RRC)
+    {
+        layer->handleNasSapMessage(dynamic_cast<NmUeNasToRrc &>(*msg));
+    }
+    else if (msg->msgType == NtsMessageType::UE_RLS_TO_RRC)
+    {
+        layer->handleRlsSapMessage(dynamic_cast<NmUeRlsToRrc &>(*msg));
     }
 }
 

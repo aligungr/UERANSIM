@@ -20,7 +20,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
+void UeRrcLayer::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
 {
     if (!m_base->shCtx.currentCell.get<bool>([](auto &value) { return value.hasValue(); }))
     {
@@ -60,7 +60,7 @@ void UeRrcTask::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
     asn::Free(asn_DEF_ASN_RRC_UL_DCCH_Message, pdu);
 }
 
-void UeRrcTask::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg)
+void UeRrcLayer::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg)
 {
     OctetString nasPdu =
         asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);

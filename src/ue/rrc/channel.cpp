@@ -19,7 +19,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &rrcPdu)
+void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &rrcPdu)
 {
     if (!hasSignalToCell(cellId))
         return;
@@ -84,7 +84,7 @@ void UeRrcTask::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oct
     }
 }
 
-void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
+void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_UL_CCCH_Message, msg);
     if (pdu.length() == 0)
@@ -100,7 +100,7 @@ void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
     m_base->rlsTask->push(std::move(m));
 }
 
-void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
+void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_UL_CCCH1_Message, msg);
     if (pdu.length() == 0)
@@ -116,7 +116,7 @@ void UeRrcTask::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
     m_base->rlsTask->push(std::move(m));
 }
 
-void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
+void UeRrcLayer::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
 {
     OctetString pdu = rrc::encode::EncodeS(asn_DEF_ASN_RRC_UL_DCCH_Message, msg);
     if (pdu.length() == 0)
@@ -132,13 +132,13 @@ void UeRrcTask::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
     m_base->rlsTask->push(std::move(m));
 }
 
-void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)
+void UeRrcLayer::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)
 {
     if (msg->message.present == ASN_RRC_BCCH_BCH_MessageType_PR_mib)
         receiveMib(cellId, *msg->message.choice.mib);
 }
 
-void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg)
+void UeRrcLayer::receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_BCCH_DL_SCH_MessageType_PR_c1)
         return;
@@ -154,7 +154,7 @@ void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_BCCH_DL_SCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)
+void UeRrcLayer::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_DL_CCCH_MessageType_PR_c1)
         return;
@@ -173,7 +173,7 @@ void UeRrcTask::receiveRrcMessage(int cellId, ASN_RRC_DL_CCCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
+void UeRrcLayer::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_DL_DCCH_MessageType_PR_c1)
         return;
@@ -192,7 +192,7 @@ void UeRrcTask::receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg)
     }
 }
 
-void UeRrcTask::receiveRrcMessage(ASN_RRC_PCCH_Message *msg)
+void UeRrcLayer::receiveRrcMessage(ASN_RRC_PCCH_Message *msg)
 {
     if (msg->message.present != ASN_RRC_PCCH_MessageType_PR_c1)
         return;

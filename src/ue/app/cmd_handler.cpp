@@ -228,7 +228,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     case app::UeCliCommand::COVERAGE: {
         Json json = Json::Obj({});
 
-        const auto &cells = m_base->rrcTask->m_cellDesc;
+        const auto &cells = m_base->rrcTask->layer->m_cellDesc;
         for (auto &item : cells)
         {
             auto &cell = item.second;

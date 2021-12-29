@@ -16,12 +16,12 @@
 namespace nr::ue
 {
 
-void UeRrcTask::triggerCycle()
+void UeRrcLayer::triggerCycle()
 {
-    push(std::make_unique<NmUeRrcToRrc>(NmUeRrcToRrc::TRIGGER_CYCLE));
+    m_base->rrcTask->push(std::make_unique<NmCycleRequired>());
 }
 
-void UeRrcTask::performCycle()
+void UeRrcLayer::performCycle()
 {
     if (m_state == ERrcState::RRC_CONNECTED)
     {
@@ -36,7 +36,7 @@ void UeRrcTask::performCycle()
     }
 }
 
-void UeRrcTask::switchState(ERrcState state)
+void UeRrcLayer::switchState(ERrcState state)
 {
     ERrcState oldState = m_state;
     m_state = state;
@@ -52,7 +52,7 @@ void UeRrcTask::switchState(ERrcState state)
     onSwitchState(oldState, state);
 }
 
-void UeRrcTask::onSwitchState(ERrcState oldState, ERrcState newState)
+void UeRrcLayer::onSwitchState(ERrcState oldState, ERrcState newState)
 {
 }
 

@@ -17,7 +17,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::performCellSelection()
+void UeRrcLayer::performCellSelection()
 {
     if (m_state == ERrcState::RRC_CONNECTED)
         return;
@@ -110,7 +110,7 @@ void UeRrcTask::performCellSelection()
     }
 }
 
-bool UeRrcTask::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
+bool UeRrcLayer::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
 {
     Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
     if (!selectedPlmn.hasValue())
@@ -196,7 +196,7 @@ bool UeRrcTask::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionRepor
     return true;
 }
 
-bool UeRrcTask::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
+bool UeRrcLayer::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
 {
     std::vector<int> candidates;
 

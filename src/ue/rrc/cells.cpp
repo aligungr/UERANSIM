@@ -14,7 +14,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::handleCellSignalChange(int cellId, int dbm)
+void UeRrcLayer::handleCellSignalChange(int cellId, int dbm)
 {
     bool considerLost = dbm < -120;
 
@@ -32,7 +32,7 @@ void UeRrcTask::handleCellSignalChange(int cellId, int dbm)
     }
 }
 
-void UeRrcTask::notifyCellDetected(int cellId, int dbm)
+void UeRrcLayer::notifyCellDetected(int cellId, int dbm)
 {
     m_cellDesc[cellId] = {};
     m_cellDesc[cellId].dbm = dbm;
@@ -43,7 +43,7 @@ void UeRrcTask::notifyCellDetected(int cellId, int dbm)
     updateAvailablePlmns();
 }
 
-void UeRrcTask::notifyCellLost(int cellId)
+void UeRrcLayer::notifyCellLost(int cellId)
 {
     if (!m_cellDesc.count(cellId))
         return;
@@ -79,17 +79,17 @@ void UeRrcTask::notifyCellLost(int cellId)
     updateAvailablePlmns();
 }
 
-bool UeRrcTask::hasSignalToCell(int cellId)
+bool UeRrcLayer::hasSignalToCell(int cellId)
 {
     return m_cellDesc.count(cellId);
 }
 
-bool UeRrcTask::isActiveCell(int cellId)
+bool UeRrcLayer::isActiveCell(int cellId)
 {
     return m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }) == cellId;
 }
 
-void UeRrcTask::updateAvailablePlmns()
+void UeRrcLayer::updateAvailablePlmns()
 {
     m_base->shCtx.availablePlmns.mutate([this](std::unordered_set<Plmn> &value) {
         value.clear();

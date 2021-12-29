@@ -16,7 +16,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::performUac(std::shared_ptr<LightSync<UacInput, UacOutput>> &uacCtl)
+void UeRrcLayer::performUac(std::shared_ptr<LightSync<UacInput, UacOutput>> &uacCtl)
 {
     auto &input = uacCtl->input();
 

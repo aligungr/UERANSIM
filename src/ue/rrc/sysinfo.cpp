@@ -22,7 +22,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::receiveMib(int cellId, const ASN_RRC_MIB &msg)
+void UeRrcLayer::receiveMib(int cellId, const ASN_RRC_MIB &msg)
 {
     auto &desc = m_cellDesc[cellId];
 
@@ -34,7 +34,7 @@ void UeRrcTask::receiveMib(int cellId, const ASN_RRC_MIB &msg)
     updateAvailablePlmns();
 }
 
-void UeRrcTask::receiveSib1(int cellId, const ASN_RRC_SIB1 &msg)
+void UeRrcLayer::receiveSib1(int cellId, const ASN_RRC_SIB1 &msg)
 {
     auto &desc = m_cellDesc[cellId];
 

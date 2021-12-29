@@ -32,7 +32,7 @@
 namespace nr::ue
 {
 
-void UeRrcTask::receivePaging(const ASN_RRC_Paging &msg)
+void UeRrcLayer::receivePaging(const ASN_RRC_Paging &msg)
 {
     std::vector<GutiMobileIdentity> tmsiIds{};
 
