@@ -161,13 +161,10 @@ struct NmUeRlsToRls : NtsMessage
     {
         RECEIVE_RLS_MESSAGE,
         SIGNAL_CHANGED,
-        UPLINK_DATA,
-        UPLINK_RRC,
         DOWNLINK_DATA,
         DOWNLINK_RRC,
         RADIO_LINK_FAILURE,
         TRANSMISSION_FAILURE,
-        ASSIGN_CURRENT_CELL,
     } present;
 
     // RECEIVE_RLS_MESSAGE

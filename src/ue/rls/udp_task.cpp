@@ -25,7 +25,7 @@ namespace nr::ue
 {
 
 RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vector<std::string> &searchSpace)
-    : m_server{}, m_ctlTask{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
+    : m_server{}, m_mainTask{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
       m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
@@ -121,7 +121,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->cellId = m_cells[msg->sti].cellId;
     w->msg = std::move(msg);
-    m_ctlTask->push(std::move(w));
+    m_mainTask->push(std::move(w));
 }
 
 void RlsUdpTask::onSignalChangeOrLost(int cellId)
@@ -136,7 +136,7 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;
-    m_ctlTask->push(std::move(w));
+    m_mainTask->push(std::move(w));
 }
 
 void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
@@ -167,9 +167,9 @@ void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
     }
 }
 
-void RlsUdpTask::initialize(NtsTask *ctlTask)
+void RlsUdpTask::initialize(NtsTask *mainTask)
 {
-    m_ctlTask = ctlTask;
+    m_mainTask = mainTask;
 }
 
 } // namespace nr::ue

@@ -34,7 +34,7 @@ class RlsUdpTask : public NtsTask
   private:
     std::unique_ptr<Logger> m_logger;
     udp::UdpServer *m_server;
-    NtsTask *m_ctlTask;
+    NtsTask *m_mainTask;
     RlsSharedContext* m_shCtx;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
@@ -61,7 +61,7 @@ class RlsUdpTask : public NtsTask
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
-    void initialize(NtsTask *ctlTask);
+    void initialize(NtsTask *mainTask);
     void send(int cellId, const rls::RlsMessage &msg);
 };
 

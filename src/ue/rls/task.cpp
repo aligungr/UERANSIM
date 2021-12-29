@@ -13,6 +13,11 @@
 #include <utils/common.hpp>
 #include <utils/random.hpp>
 
+static constexpr const int TIMER_ID_ACK_CONTROL = 1;
+static constexpr const int TIMER_ID_ACK_SEND = 2;
+static constexpr const int TIMER_PERIOD_ACK_CONTROL = 1500;
+static constexpr const int TIMER_PERIOD_ACK_SEND = 2250;
+
 namespace nr::ue
 {
 
@@ -24,16 +29,18 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
     m_shCtx->sti = Random::Mixed(base->config->getNodeName()).nextL();
 
     m_udpTask = new RlsUdpTask(base, m_shCtx, base->config->gnbSearchList);
-    m_ctlTask = new RlsControlTask(base, m_shCtx);
+    m_ctlLayer = std::make_unique<RlsCtlLayer>(base, m_shCtx);
 
-    m_udpTask->initialize(m_ctlTask);
-    m_ctlTask->initialize(this, m_udpTask);
+    m_udpTask->initialize(this);
 }
 
 void UeRlsTask::onStart()
 {
     m_udpTask->start();
-    m_ctlTask->start();
+    m_ctlLayer->onStart(this, m_udpTask);
+
+    setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
+    setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
 }
 
 void UeRlsTask::onLoop()
@@ -42,12 +49,32 @@ void UeRlsTask::onLoop()
     if (!msg)
         return;
 
+    if (msg->msgType == NtsMessageType::TIMER_EXPIRED)
+    {
+        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
+        if (w.timerId == TIMER_ID_ACK_CONTROL)
+        {
+            setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
+            m_ctlLayer->onAckControlTimerExpired();
+        }
+        else if (w.timerId == TIMER_ID_ACK_SEND)
+        {
+            setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
+            m_ctlLayer->onAckSendTimerExpired();
+        }
+        return;
+    }
+
     switch (msg->msgType)
     {
     case NtsMessageType::UE_RLS_TO_RLS: {
         auto &w = dynamic_cast<NmUeRlsToRls &>(*msg);
         switch (w.present)
         {
+        case NmUeRlsToRls::RECEIVE_RLS_MESSAGE: {
+            m_ctlLayer->handleRlsMessage(w.cellId, *w.msg);
+            break;
+        }
         case NmUeRlsToRls::SIGNAL_CHANGED: {
             auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::SIGNAL_CHANGED);
             m->cellId = w.cellId;
@@ -92,18 +119,11 @@ void UeRlsTask::onLoop()
         switch (w.present)
         {
         case NmUeRrcToRls::ASSIGN_CURRENT_CELL: {
-            auto m = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::ASSIGN_CURRENT_CELL);
-            m->cellId = w.cellId;
-            m_ctlTask->push(std::move(m));
+            m_ctlLayer->assignCurrentCell(w.cellId);
             break;
         }
         case NmUeRrcToRls::RRC_PDU_DELIVERY: {
-            auto m = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::UPLINK_RRC);
-            m->cellId = w.cellId;
-            m->rrcChannel = w.channel;
-            m->pduId = w.pduId;
-            m->data = std::move(w.pdu);
-            m_ctlTask->push(std::move(m));
+            m_ctlLayer->handleUplinkRrcDelivery(w.cellId, w.pduId, w.channel, std::move(w.pdu));
             break;
         }
         case NmUeRrcToRls::RESET_STI: {
@@ -118,10 +138,7 @@ void UeRlsTask::onLoop()
         switch (w.present)
         {
         case NmUeNasToRls::DATA_PDU_DELIVERY: {
-            auto m = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::UPLINK_DATA);
-            m->psi = w.psi;
-            m->data = std::move(w.pdu);
-            m_ctlTask->push(std::move(m));
+            m_ctlLayer->handleUplinkDataDelivery(w.psi, std::move(w.pdu));
             break;
         }
         }
@@ -136,11 +153,9 @@ void UeRlsTask::onLoop()
 void UeRlsTask::onQuit()
 {
     m_udpTask->quit();
-    m_ctlTask->quit();
+    m_ctlLayer->onQuit();
 
     delete m_udpTask;
-    delete m_ctlTask;
-
     delete m_shCtx;
 }
 

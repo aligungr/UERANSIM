@@ -31,17 +31,12 @@ class RlsCtlLayer
   public:
     void onStart(NtsTask* mainTask, RlsUdpTask* udpTask);
     void onQuit();
-
-  private:
-    void handleRlsMessage(int cellId, rls::RlsMessage &msg);
-    void handleSignalChange(int cellId, int dbm);
-    void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
-    void handleUplinkDataDelivery(int psi, OctetString &&data);
-
-  public:
     void onAckControlTimerExpired();
     void onAckSendTimerExpired();
-    void handleSapMessage(NmUeRlsToRls& msg);
+    void handleUplinkDataDelivery(int psi, OctetString &&data);
+    void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
+    void assignCurrentCell(int cellId);
+    void handleRlsMessage(int cellId, rls::RlsMessage &msg);
 };
 
 }

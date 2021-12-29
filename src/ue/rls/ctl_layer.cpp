@@ -69,14 +69,6 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
     }
 }
 
-void RlsCtlLayer::handleSignalChange(int cellId, int dbm)
-{
-    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::SIGNAL_CHANGED);
-    w->cellId = cellId;
-    w->dbm = dbm;
-    m_mainTask->push(std::move(w));
-}
-
 void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data)
 {
     if (pduId != 0)
@@ -173,29 +165,9 @@ void RlsCtlLayer::onAckSendTimerExpired()
     }
 }
 
-void RlsCtlLayer::handleSapMessage(NmUeRlsToRls &msg)
+void RlsCtlLayer::assignCurrentCell(int cellId)
 {
-    switch (msg.present)
-    {
-    case NmUeRlsToRls::SIGNAL_CHANGED:
-        handleSignalChange(msg.cellId, msg.dbm);
-        break;
-    case NmUeRlsToRls::RECEIVE_RLS_MESSAGE:
-        handleRlsMessage(msg.cellId, *msg.msg);
-        break;
-    case NmUeRlsToRls::UPLINK_DATA:
-        handleUplinkDataDelivery(msg.psi, std::move(msg.data));
-        break;
-    case NmUeRlsToRls::UPLINK_RRC:
-        handleUplinkRrcDelivery(msg.cellId, msg.pduId, msg.rrcChannel, std::move(msg.data));
-        break;
-    case NmUeRlsToRls::ASSIGN_CURRENT_CELL:
-        m_servingCell = msg.cellId;
-        break;
-    default:
-        m_logger->unhandledNts(msg);
-        break;
-    }
+    m_servingCell = cellId;
 }
 
 } // namespace nr::ue

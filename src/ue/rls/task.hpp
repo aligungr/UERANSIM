@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "ctl_task.hpp"
+#include "ctl_layer.hpp"
 #include "udp_task.hpp"
 
 #include <memory>
@@ -36,7 +36,8 @@ class UeRlsTask : public NtsTask
 
     RlsSharedContext* m_shCtx;
     RlsUdpTask *m_udpTask;
-    RlsControlTask *m_ctlTask;
+
+    std::unique_ptr<RlsCtlLayer> m_ctlLayer;
 
     friend class UeCmdHandler;
 
