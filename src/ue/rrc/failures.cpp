@@ -23,7 +23,7 @@ void UeRrcLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 void UeRrcLayer::handleRadioLinkFailure(rls::ERlfCause cause)
 {
     m_state = ERrcState::RRC_IDLE;
-    m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RADIO_LINK_FAILURE));
+    m_base->l3Task->nas().handleRadioLinkFailure();
 }
 
 } // namespace nr::ue

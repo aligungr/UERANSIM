@@ -62,7 +62,6 @@ struct NmUeRrcToNas : NtsMessage
     {
         NAS_DELIVERY,
         RRC_ESTABLISHMENT_FAILURE,
-        RADIO_LINK_FAILURE,
         ACTIVE_CELL_CHANGED,
     } present;
 

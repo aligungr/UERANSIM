@@ -114,4 +114,9 @@ void NasLayer::handleRrcFallbackIndication()
     m_mm->handleRrcFallbackIndication();
 }
 
+void NasLayer::handleRadioLinkFailure()
+{
+    m_mm->handleRadioLinkFailure();
+}
+
 } // namespace nr::ue

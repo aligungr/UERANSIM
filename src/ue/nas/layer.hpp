@@ -39,6 +39,7 @@ class NasLayer
     void handleRrcConnectionRelease();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
     void handleRrcFallbackIndication();
+    void handleRadioLinkFailure();
 };
 
 } // namespace nr::ue
