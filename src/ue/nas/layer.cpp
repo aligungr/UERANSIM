@@ -99,4 +99,14 @@ void NasLayer::handleRrcConnectionRelease()
     m_mm->handleRrcConnectionRelease();
 }
 
+void NasLayer::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
+{
+    m_mm->handlePaging(tmsiIds);
+}
+
+void NasLayer::handleRrcFallbackIndication()
+{
+    m_mm->handleRrcFallbackIndication();
+}
+
 } // namespace nr::ue

@@ -64,16 +64,11 @@ struct NmUeRrcToNas : NtsMessage
         RRC_CONNECTION_SETUP,
         RRC_ESTABLISHMENT_FAILURE,
         RADIO_LINK_FAILURE,
-        PAGING,
         ACTIVE_CELL_CHANGED,
-        RRC_FALLBACK_INDICATION,
     } present;
 
     // NAS_DELIVERY
     OctetString nasPdu;
-
-    // PAGING
-    std::vector<GutiMobileIdentity> pagingTmsi;
 
     // ACTIVE_CELL_CHANGED
     Tai previousTai;

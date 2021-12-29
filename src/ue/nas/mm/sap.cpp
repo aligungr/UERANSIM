@@ -35,20 +35,12 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
         handleRadioLinkFailure();
         break;
     }
-    case NmUeRrcToNas::PAGING: {
-        handlePaging(msg.pagingTmsi);
-        break;
-    }
     case NmUeRrcToNas::ACTIVE_CELL_CHANGED: {
         handleActiveCellChange(msg.previousTai);
         break;
     }
     case NmUeRrcToNas::RRC_ESTABLISHMENT_FAILURE: {
         handleRrcEstablishmentFailure();
-        break;
-    }
-    case NmUeRrcToNas::RRC_FALLBACK_INDICATION: {
-        handleRrcFallbackIndication();
         break;
     }
     }
