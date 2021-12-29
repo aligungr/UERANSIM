@@ -84,22 +84,6 @@ struct NmUeRrcToNas : NtsMessage
     }
 };
 
-struct NmUeNasToRrc : NtsMessage
-{
-    enum PR
-    {
-        UPLINK_NAS_DELIVERY,
-    } present;
-
-    // UPLINK_NAS_DELIVERY
-    uint32_t pduId{};
-    OctetString nasPdu;
-
-    explicit NmUeNasToRrc(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RRC), present(present)
-    {
-    }
-};
-
 struct NmUeRrcToRls : NtsMessage
 {
     enum PR

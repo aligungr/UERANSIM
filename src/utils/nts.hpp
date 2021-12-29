@@ -49,7 +49,6 @@ enum class NtsMessageType
     UE_APP_TO_TUN,
     UE_TUN_TO_APP,
     UE_RRC_TO_NAS,
-    UE_NAS_TO_RRC,
     UE_RRC_TO_RLS,
     UE_RLS_TO_RRC,
     UE_RLS_TO_NAS,

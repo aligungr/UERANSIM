@@ -23,7 +23,6 @@ class NasLayer
     Usim *m_usim;
 
     friend class UeCmdHandler;
-    friend class UeL3Task;
 
   public:
     explicit NasLayer(TaskBase *base);
@@ -33,11 +32,9 @@ class NasLayer
     void onStart();
     void onQuit();
 
-  private:
+  public:
     void performCycle();
     void handleSapMessage(std::unique_ptr<NtsMessage> msg);
-
-  public:
     void handleRrcConnectionRelease();
 };
 

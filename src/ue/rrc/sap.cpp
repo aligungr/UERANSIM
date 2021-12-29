@@ -35,15 +35,4 @@ void UeRrcLayer::handleRlsSapMessage(NmUeRlsToRrc &msg)
     }
 }
 
-void UeRrcLayer::handleNasSapMessage(NmUeNasToRrc &msg)
-{
-    switch (msg.present)
-    {
-    case NmUeNasToRrc::UPLINK_NAS_DELIVERY: {
-        deliverUplinkNas(msg.pduId, std::move(msg.nasPdu));
-        break;
-    }
-    }
-}
-
 } // namespace nr::ue

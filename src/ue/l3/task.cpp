@@ -63,10 +63,6 @@ void UeL3Task::onLoop()
             m_nas->performCycle();
         }
     }
-    else if (msg->msgType == NtsMessageType::UE_NAS_TO_RRC)
-    {
-        m_rrc->handleNasSapMessage(dynamic_cast<NmUeNasToRrc &>(*msg));
-    }
     else if (msg->msgType == NtsMessageType::UE_RLS_TO_RRC)
     {
         m_rrc->handleRlsSapMessage(dynamic_cast<NmUeRlsToRrc &>(*msg));

@@ -57,7 +57,6 @@ class UeRrcLayer
     OctetString m_initialNasPdu{};
 
     friend class UeCmdHandler;
-    friend class UeL3Task;
 
   public:
     explicit UeRrcLayer(TaskBase *base);
@@ -82,13 +81,8 @@ class UeRrcLayer
     void receiveRrcMessage(ASN_RRC_DL_DCCH_Message *msg);
     void receiveRrcMessage(ASN_RRC_PCCH_Message *msg);
 
-    /* Service Access Point */
-    void handleRlsSapMessage(NmUeRlsToRrc &msg);
-    void handleNasSapMessage(NmUeNasToRrc &msg);
-
     /* State Management */
     void triggerCycle();
-    void performCycle();
     void switchState(ERrcState state);
     void onSwitchState(ERrcState oldState, ERrcState newState);
 
@@ -110,7 +104,6 @@ class UeRrcLayer
     void receiveSib1(int cellId, const ASN_RRC_SIB1 &msg);
 
     /* NAS Transport */
-    void deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu);
     void receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationTransfer &msg);
 
     /* Connection Control */
@@ -130,6 +123,15 @@ class UeRrcLayer
 
     /* Connection Control */
     void performLocalRelease(bool treatBarred);
+
+    /* NAS Transport */
+    void deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu);
+
+    /* Service Access Point */
+    void handleRlsSapMessage(NmUeRlsToRrc &msg);
+
+    /* State Management */
+    void performCycle();
 };
 
 } // namespace nr::ue
