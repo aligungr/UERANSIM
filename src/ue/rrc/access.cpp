@@ -27,7 +27,6 @@ EUacResult UeRrcLayer::performUac(std::bitset<16> identities, int category, int 
             return EUacResult::BARRED;
         else
         {
-
             size_t barredCount = 0;
 
             if (desc.sib1.aiBarringSet.ai1 && identities[1])
