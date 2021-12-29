@@ -52,10 +52,6 @@ void UeRrcLayer::handleNasSapMessage(NmUeNasToRrc &msg)
         m_base->l3Task->push(std::make_unique<NmUeRrcToNas>(NmUeRrcToNas::RRC_CONNECTION_RELEASE));
         break;
     }
-    case NmUeNasToRrc::RRC_NOTIFY: {
-        triggerCycle();
-        break;
-    }
     }
 }
 

@@ -91,7 +91,6 @@ struct NmUeNasToRrc : NtsMessage
     {
         LOCAL_RELEASE_CONNECTION,
         UPLINK_NAS_DELIVERY,
-        RRC_NOTIFY,
     } present;
 
     // UPLINK_NAS_DELIVERY

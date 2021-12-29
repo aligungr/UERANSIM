@@ -106,8 +106,7 @@ void NasMm::performPlmnSelection()
     else if (lastSelectedPlmn != selected)
     {
         m_logger->info("Selected plmn[%s]", ToJson(selected).str().c_str());
-        m_base->l3Task->push(std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::RRC_NOTIFY));
-
+        triggerMmCycle();
         resetRegAttemptCounter();
     }
 
