@@ -52,5 +52,10 @@ void udp::UdpServerTask::onQuit()
 
 void udp::UdpServerTask::send(const InetAddress &to, const OctetString &packet)
 {
-    server->Send(to, packet.data(), static_cast<size_t>(packet.length()));
+    send(to, packet.data(), packet.length());
+}
+
+void udp::UdpServerTask::send(const InetAddress &to, const uint8_t *buffer, size_t bufferSize)
+{
+    server->Send(to, buffer, bufferSize);
 }

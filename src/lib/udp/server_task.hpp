@@ -44,6 +44,7 @@ class UdpServerTask : public NtsTask
 
   public:
     void send(const InetAddress &to, const OctetString &packet);
+    void send(const InetAddress &to, const uint8_t *buffer, size_t bufferSize);
 };
 
 } // namespace udp
