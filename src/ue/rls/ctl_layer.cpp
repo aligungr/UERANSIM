@@ -10,14 +10,13 @@ namespace nr::ue
 {
 
 RlsCtlLayer::RlsCtlLayer(TaskBase *base, RlsSharedContext *shCtx)
-    : m_base{base}, m_shCtx{shCtx}, m_servingCell{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
+    : m_base{base}, m_shCtx{shCtx}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
 
-void RlsCtlLayer::onStart(RlsUdpTask* udpTask)
+void RlsCtlLayer::onStart()
 {
-    m_udpTask = udpTask;
 }
 
 void RlsCtlLayer::onQuit()
@@ -102,7 +101,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
     msg.payload = static_cast<uint32_t>(channel);
     msg.pduId = pduId;
 
-    m_udpTask->send(cellId, msg);
+    m_base->rlsTask->udp().send(cellId, msg);
 }
 
 void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
@@ -113,7 +112,7 @@ void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
     msg.payload = static_cast<uint32_t>(psi);
     msg.pduId = 0;
 
-    m_udpTask->send(m_servingCell, msg);
+    m_base->rlsTask->udp().send(m_servingCell, msg);
 }
 
 void RlsCtlLayer::onAckControlTimerExpired()
@@ -153,7 +152,7 @@ void RlsCtlLayer::onAckSendTimerExpired()
         rls::RlsPduTransmissionAck msg{m_shCtx->sti};
         msg.pduIds = std::move(item.second);
 
-        m_udpTask->send(item.first, msg);
+        m_base->rlsTask->udp().send(item.first, msg);
     }
 }
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "udp_task.hpp"
-
 #include <unordered_map>
 #include <vector>
 
@@ -20,7 +18,6 @@ class RlsCtlLayer
     std::unique_ptr<Logger> m_logger;
     RlsSharedContext *m_shCtx;
     int m_servingCell;
-    RlsUdpTask *m_udpTask;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
@@ -28,16 +25,19 @@ class RlsCtlLayer
     explicit RlsCtlLayer(TaskBase *base, RlsSharedContext *shCtx);
     ~RlsCtlLayer() = default;
 
+  private:
+    void declareRadioLinkFailure(rls::ERlfCause cause);
+
   public:
-    void onStart(RlsUdpTask *udpTask);
+    void onStart();
     void onQuit();
     void onAckControlTimerExpired();
     void onAckSendTimerExpired();
-    void handleUplinkDataDelivery(int psi, OctetString &&data);
-    void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
-    void assignCurrentCell(int cellId);
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);
-    void declareRadioLinkFailure(rls::ERlfCause cause);
+    void assignCurrentCell(int cellId);
+    void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
+    void handleUplinkDataDelivery(int psi, OctetString &&data);
+
 };
 
 } // namespace nr::ue

@@ -1,11 +1,3 @@
-//
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
-//
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
-//
-
 #pragma once
 
 #include <cstdint>
@@ -21,7 +13,7 @@
 namespace nr::ue
 {
 
-class RlsUdpTask : public NtsTask
+class RlsUdpLayer
 {
   private:
     struct CellInfo
@@ -47,13 +39,8 @@ class RlsUdpTask : public NtsTask
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx);
-    ~RlsUdpTask() override = default;
-
-  protected:
-    void onStart() override;
-    void onLoop() override;
-    void onQuit() override;
+    explicit RlsUdpLayer(TaskBase *base, RlsSharedContext *shCtx);
+    ~RlsUdpLayer() = default;
 
   private:
     void sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg);
@@ -61,6 +48,9 @@ class RlsUdpTask : public NtsTask
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
+    void onStart();
+    void onQuit();
+    void checkHeartbeat();
     void send(int cellId, const rls::RlsMessage &msg);
     void receiveRlsPdu(const InetAddress &address, std::unique_ptr<rls::RlsMessage> &&msg);
 };

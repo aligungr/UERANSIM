@@ -28,14 +28,14 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
     m_shCtx = new RlsSharedContext();
     m_shCtx->sti = Random::Mixed(base->config->getNodeName()).nextL();
 
-    m_udpTask = new RlsUdpTask(base, m_shCtx);
+    m_udpLayer = std::make_unique<RlsUdpLayer>(base, m_shCtx);
     m_ctlLayer = std::make_unique<RlsCtlLayer>(base, m_shCtx);
 }
 
 void UeRlsTask::onStart()
 {
-    m_udpTask->start();
-    m_ctlLayer->onStart(m_udpTask);
+    m_udpLayer->onStart();
+    m_ctlLayer->onStart();
 
     setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
     setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
@@ -43,6 +43,8 @@ void UeRlsTask::onStart()
 
 void UeRlsTask::onLoop()
 {
+    m_udpLayer->checkHeartbeat();
+
     auto msg = take();
     if (!msg)
         return;
@@ -101,7 +103,7 @@ void UeRlsTask::onLoop()
         if (rlsMsg == nullptr)
             m_logger->err("Unable to decode RLS message");
         else
-            m_udpTask->receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
+            m_udpLayer->receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
         break;
     }
     default:
@@ -112,16 +114,20 @@ void UeRlsTask::onLoop()
 
 void UeRlsTask::onQuit()
 {
-    m_udpTask->quit();
+    m_udpLayer->onQuit();
     m_ctlLayer->onQuit();
 
-    delete m_udpTask;
     delete m_shCtx;
 }
 
 RlsCtlLayer &UeRlsTask::ctl()
 {
     return *m_ctlLayer;
+}
+
+RlsUdpLayer &UeRlsTask::udp()
+{
+    return *m_udpLayer;
 }
 
 } // namespace nr::ue

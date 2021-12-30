@@ -9,7 +9,7 @@
 #pragma once
 
 #include "ctl_layer.hpp"
-#include "udp_task.hpp"
+#include "udp_layer.hpp"
 
 #include <memory>
 #include <optional>
@@ -35,8 +35,8 @@ class UeRlsTask : public NtsTask
     std::unique_ptr<Logger> m_logger;
 
     RlsSharedContext* m_shCtx;
-    RlsUdpTask *m_udpTask;
 
+    std::unique_ptr<RlsUdpLayer> m_udpLayer;
     std::unique_ptr<RlsCtlLayer> m_ctlLayer;
 
     friend class UeCmdHandler;
@@ -52,6 +52,7 @@ class UeRlsTask : public NtsTask
 
   public:
     RlsCtlLayer& ctl();
+    RlsUdpLayer& udp();
 };
 
 } // namespace nr::ue

@@ -1,19 +1,11 @@
-//
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
-//
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
-//
-
-#include "udp_task.hpp"
+#include "udp_layer.hpp"
 
 #include <cstdint>
 #include <set>
 
+#include <ue/l3/task.hpp>
 #include <ue/nts.hpp>
 #include <ue/rls/task.hpp>
-#include <ue/l3/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -23,7 +15,7 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx)
+RlsUdpLayer::RlsUdpLayer(TaskBase *base, RlsSharedContext *shCtx)
     : m_base{base}, m_server{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
       m_cellIdCounter{}
 {
@@ -35,13 +27,13 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx)
     m_simPos = Vector3{};
 }
 
-void RlsUdpTask::onStart()
+void RlsUdpLayer::onStart()
 {
     m_server = std::make_unique<udp::UdpServerTask>(m_base->rlsTask);
     m_server->start();
 }
 
-void RlsUdpTask::onLoop()
+void RlsUdpLayer::checkHeartbeat()
 {
     auto current = utils::CurrentTimeMillis();
     if (current - m_lastLoop > LOOP_PERIOD)
@@ -51,12 +43,12 @@ void RlsUdpTask::onLoop()
     }
 }
 
-void RlsUdpTask::onQuit()
+void RlsUdpLayer::onQuit()
 {
     m_server->quit();
 }
 
-void RlsUdpTask::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)
+void RlsUdpLayer::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)
 {
     OctetString stream;
     rls::EncodeRlsMessage(msg, stream);
@@ -64,7 +56,7 @@ void RlsUdpTask::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &m
     m_server->send(address, stream);
 }
 
-void RlsUdpTask::send(int cellId, const rls::RlsMessage &msg)
+void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
 {
     if (m_cellIdToSti.count(cellId))
     {
@@ -73,7 +65,7 @@ void RlsUdpTask::send(int cellId, const rls::RlsMessage &msg)
     }
 }
 
-void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg)
+void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg)
 {
     if (msg->msgType == rls::EMessageType::HEARTBEAT_ACK)
     {
@@ -107,7 +99,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
     m_base->rlsTask->ctl().handleRlsMessage(m_cells[msg->sti].cellId, *msg);
 }
 
-void RlsUdpTask::onSignalChangeOrLost(int cellId)
+void RlsUdpLayer::onSignalChangeOrLost(int cellId)
 {
     int dbm = INT32_MIN;
     if (m_cellIdToSti.count(cellId))
@@ -122,7 +114,7 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
     m_base->l3Task->push(std::move(m));
 }
 
-void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
+void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)
 {
     std::set<std::pair<uint64_t, int>> toRemove;
 
