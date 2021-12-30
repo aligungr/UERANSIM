@@ -29,8 +29,6 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx)
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
-    m_server = std::make_unique<udp::UdpServerTask>(this);
-
     for (auto &ip : base->config->gnbSearchList)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
@@ -39,6 +37,7 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx)
 
 void RlsUdpTask::onStart()
 {
+    m_server = std::make_unique<udp::UdpServerTask>(m_base->rlsTask);
     m_server->start();
 }
 
@@ -49,21 +48,6 @@ void RlsUdpTask::onLoop()
     {
         m_lastLoop = current;
         heartbeatCycle(current, m_simPos);
-    }
-
-    auto msg = take();
-
-    if (msg)
-    {
-        if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
-        {
-            auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
-            auto rlsMsg = rls::DecodeRlsMessage(OctetView{w.packet});
-            if (rlsMsg == nullptr)
-                m_logger->err("Unable to decode RLS message");
-            else
-                receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
-        }
     }
 }
 

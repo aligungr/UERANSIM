@@ -57,12 +57,12 @@ class RlsUdpTask : public NtsTask
 
   private:
     void sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg);
-    void receiveRlsPdu(const InetAddress &address, std::unique_ptr<rls::RlsMessage> &&msg);
     void onSignalChangeOrLost(int cellId);
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
     void send(int cellId, const rls::RlsMessage &msg);
+    void receiveRlsPdu(const InetAddress &address, std::unique_ptr<rls::RlsMessage> &&msg);
 };
 
 } // namespace nr::ue
