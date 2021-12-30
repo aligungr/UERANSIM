@@ -9,10 +9,10 @@
 #include "udp_task.hpp"
 
 #include <cstdint>
-#include <cstring>
 #include <set>
 
 #include <ue/nts.hpp>
+#include <ue/rls/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -22,15 +22,15 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vector<std::string> &searchSpace)
-    : m_server{}, m_mainTask{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
+RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx)
+    : m_base{base}, m_server{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
       m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
     m_server = new udp::UdpServerTask(this);
 
-    for (auto &ip : searchSpace)
+    for (auto &ip : base->config->gnbSearchList)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
     m_simPos = Vector3{};
@@ -56,7 +56,7 @@ void RlsUdpTask::onLoop()
     {
         if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
         {
-            auto& w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
+            auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
             auto rlsMsg = rls::DecodeRlsMessage(OctetView{w.packet});
             if (rlsMsg == nullptr)
                 m_logger->err("Unable to decode RLS message");
@@ -123,7 +123,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->cellId = m_cells[msg->sti].cellId;
     w->msg = std::move(msg);
-    m_mainTask->push(std::move(w));
+    m_base->rlsTask->push(std::move(w));
 }
 
 void RlsUdpTask::onSignalChangeOrLost(int cellId)
@@ -138,7 +138,7 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;
-    m_mainTask->push(std::move(w));
+    m_base->rlsTask->push(std::move(w));
 }
 
 void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
@@ -167,11 +167,6 @@ void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
         msg.simPos = simPos;
         sendRlsPdu(addr, msg);
     }
-}
-
-void RlsUdpTask::initialize(NtsTask *mainTask)
-{
-    m_mainTask = mainTask;
 }
 
 } // namespace nr::ue

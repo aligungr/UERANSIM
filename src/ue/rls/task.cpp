@@ -28,10 +28,8 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
     m_shCtx = new RlsSharedContext();
     m_shCtx->sti = Random::Mixed(base->config->getNodeName()).nextL();
 
-    m_udpTask = new RlsUdpTask(base, m_shCtx, base->config->gnbSearchList);
+    m_udpTask = new RlsUdpTask(base, m_shCtx);
     m_ctlLayer = std::make_unique<RlsCtlLayer>(base, m_shCtx);
-
-    m_udpTask->initialize(this);
 }
 
 void UeRlsTask::onStart()

@@ -33,9 +33,9 @@ class RlsUdpTask : public NtsTask
     };
 
   private:
+    TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
     udp::UdpServerTask *m_server;
-    NtsTask *m_mainTask;
     RlsSharedContext *m_shCtx;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
@@ -47,7 +47,7 @@ class RlsUdpTask : public NtsTask
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vector<std::string> &searchSpace);
+    explicit RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx);
     ~RlsUdpTask() override = default;
 
   protected:
@@ -62,7 +62,6 @@ class RlsUdpTask : public NtsTask
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
-    void initialize(NtsTask *mainTask);
     void send(int cellId, const rls::RlsMessage &msg);
 };
 
