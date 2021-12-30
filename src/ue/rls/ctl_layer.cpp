@@ -78,20 +78,14 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
         if (m_pduMap.count(pduId))
         {
             m_pduMap.clear();
-
-            auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RADIO_LINK_FAILURE);
-            w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
-            m_base->rlsTask->push(std::move(w));
+            declareRadioLinkFailure(rls::ERlfCause::PDU_ID_EXISTS);
             return;
         }
 
         if (m_pduMap.size() > MAX_PDU_COUNT)
         {
             m_pduMap.clear();
-
-            auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RADIO_LINK_FAILURE);
-            w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
-            m_base->rlsTask->push(std::move(w));
+            declareRadioLinkFailure(rls::ERlfCause::PDU_ID_FULL);
             return;
         }
 
@@ -170,6 +164,13 @@ void RlsCtlLayer::onAckSendTimerExpired()
 void RlsCtlLayer::assignCurrentCell(int cellId)
 {
     m_servingCell = cellId;
+}
+
+void RlsCtlLayer::declareRadioLinkFailure(rls::ERlfCause cause)
+{
+    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RADIO_LINK_FAILURE);
+    w->rlfCause = cause;
+    m_base->rlsTask->push(std::move(w));
 }
 
 } // namespace nr::ue

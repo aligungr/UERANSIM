@@ -37,6 +37,7 @@ class RlsCtlLayer
     void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
     void assignCurrentCell(int cellId);
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);
+    void declareRadioLinkFailure(rls::ERlfCause cause);
 };
 
 } // namespace nr::ue
