@@ -15,9 +15,8 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpLayer::RlsUdpLayer(TaskBase *base, RlsSharedContext *shCtx)
-    : m_base{base}, m_server{}, m_shCtx{shCtx}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
-      m_cellIdCounter{}
+RlsUdpLayer::RlsUdpLayer(TaskBase *base)
+    : m_base{base}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
@@ -136,7 +135,7 @@ void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)
 
     for (auto &address : m_searchSpace)
     {
-        rls::RlsHeartBeat msg{m_shCtx->sti};
+        rls::RlsHeartBeat msg{m_base->shCtx.sti};
         msg.simPos = simPos;
         sendRlsPdu(address, msg);
     }

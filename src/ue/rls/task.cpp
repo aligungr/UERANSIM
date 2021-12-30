@@ -25,11 +25,10 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
 {
     m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "rls");
 
-    m_shCtx = new RlsSharedContext();
-    m_shCtx->sti = Random::Mixed(base->config->getNodeName()).nextL();
+    base->shCtx.sti = Random::Mixed(base->config->getNodeName()).nextL();
 
-    m_udpLayer = std::make_unique<RlsUdpLayer>(base, m_shCtx);
-    m_ctlLayer = std::make_unique<RlsCtlLayer>(base, m_shCtx);
+    m_udpLayer = std::make_unique<RlsUdpLayer>(base);
+    m_ctlLayer = std::make_unique<RlsCtlLayer>(base);
 }
 
 void UeRlsTask::onStart()
@@ -80,7 +79,7 @@ void UeRlsTask::onLoop()
             break;
         }
         case NmUeRrcToRls::RESET_STI: {
-            m_shCtx->sti = Random::Mixed(m_base->config->getNodeName()).nextL();
+            m_base->shCtx.sti = Random::Mixed(m_base->config->getNodeName()).nextL();
             break;
         }
         }
@@ -116,8 +115,6 @@ void UeRlsTask::onQuit()
 {
     m_udpLayer->onQuit();
     m_ctlLayer->onQuit();
-
-    delete m_shCtx;
 }
 
 RlsCtlLayer &UeRlsTask::ctl()

@@ -9,8 +9,8 @@ static constexpr const int MAX_PDU_TTL = 3000;
 namespace nr::ue
 {
 
-RlsCtlLayer::RlsCtlLayer(TaskBase *base, RlsSharedContext *shCtx)
-    : m_base{base}, m_shCtx{shCtx}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
+RlsCtlLayer::RlsCtlLayer(TaskBase *base)
+    : m_base{base}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -95,7 +95,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
         m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
     }
 
-    rls::RlsPduTransmission msg{m_shCtx->sti};
+    rls::RlsPduTransmission msg{m_base->shCtx.sti};
     msg.pduType = rls::EPduType::RRC;
     msg.pdu = std::move(data);
     msg.payload = static_cast<uint32_t>(channel);
@@ -106,7 +106,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
 
 void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
 {
-    rls::RlsPduTransmission msg{m_shCtx->sti};
+    rls::RlsPduTransmission msg{m_base->shCtx.sti};
     msg.pduType = rls::EPduType::DATA;
     msg.pdu = std::move(data);
     msg.payload = static_cast<uint32_t>(psi);
@@ -149,7 +149,7 @@ void RlsCtlLayer::onAckSendTimerExpired()
         if (!item.second.empty())
             continue;
 
-        rls::RlsPduTransmissionAck msg{m_shCtx->sti};
+        rls::RlsPduTransmissionAck msg{m_base->shCtx.sti};
         msg.pduIds = std::move(item.second);
 
         m_base->rlsTask->udp().send(item.first, msg);

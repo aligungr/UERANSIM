@@ -214,7 +214,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     }
     case app::UeCliCommand::RLS_STATE: {
         Json json = Json::Obj({
-            {"sti", OctetString::FromOctet8(m_base->rlsTask->m_shCtx->sti).toHexString()},
+            {"sti", OctetString::FromOctet8(m_base->shCtx.sti).toHexString()},
             {"gnb-search-space", ::ToJson(m_base->config->gnbSearchList)},
         });
         sendResult(msg.address, json.dumpYaml());

@@ -16,13 +16,12 @@ class RlsCtlLayer
   private:
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
-    RlsSharedContext *m_shCtx;
     int m_servingCell;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
   public:
-    explicit RlsCtlLayer(TaskBase *base, RlsSharedContext *shCtx);
+    explicit RlsCtlLayer(TaskBase *base);
     ~RlsCtlLayer() = default;
 
   private:

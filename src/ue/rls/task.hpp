@@ -34,8 +34,6 @@ class UeRlsTask : public NtsTask
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
 
-    RlsSharedContext* m_shCtx;
-
     std::unique_ptr<RlsUdpLayer> m_udpLayer;
     std::unique_ptr<RlsCtlLayer> m_ctlLayer;
 

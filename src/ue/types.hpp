@@ -180,14 +180,11 @@ struct UeSharedContext
     Locked<std::optional<GutiMobileIdentity>> providedGuti;
     Locked<std::optional<GutiMobileIdentity>> providedTmsi;
 
+    std::atomic<uint64_t> sti{};
+
     Plmn getCurrentPlmn();
     Tai getCurrentTai();
     bool hasActiveCell();
-};
-
-struct RlsSharedContext
-{
-    std::atomic<uint64_t> sti{};
 };
 
 struct TaskBase

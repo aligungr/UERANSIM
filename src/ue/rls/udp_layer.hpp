@@ -28,7 +28,6 @@ class RlsUdpLayer
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
     std::unique_ptr<udp::UdpServerTask> m_server;
-    RlsSharedContext *m_shCtx;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
     std::unordered_map<int, uint64_t> m_cellIdToSti;
@@ -39,7 +38,7 @@ class RlsUdpLayer
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpLayer(TaskBase *base, RlsSharedContext *shCtx);
+    explicit RlsUdpLayer(TaskBase *base);
     ~RlsUdpLayer() = default;
 
   private:
