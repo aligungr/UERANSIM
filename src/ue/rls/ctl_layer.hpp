@@ -16,10 +16,10 @@ namespace nr::ue
 class RlsCtlLayer
 {
   private:
+    TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
     RlsSharedContext *m_shCtx;
     int m_servingCell;
-    NtsTask *m_mainTask;
     RlsUdpTask *m_udpTask;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
@@ -29,7 +29,7 @@ class RlsCtlLayer
     ~RlsCtlLayer() = default;
 
   public:
-    void onStart(NtsTask* mainTask, RlsUdpTask* udpTask);
+    void onStart(RlsUdpTask *udpTask);
     void onQuit();
     void onAckControlTimerExpired();
     void onAckSendTimerExpired();
@@ -39,4 +39,4 @@ class RlsCtlLayer
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);
 };
 
-}
+} // namespace nr::ue

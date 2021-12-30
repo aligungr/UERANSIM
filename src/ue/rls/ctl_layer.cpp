@@ -1,5 +1,8 @@
 #include "ctl_layer.hpp"
 
+#include <ue/l3/task.hpp>
+#include <ue/rls/task.hpp>
+
 static constexpr const size_t MAX_PDU_COUNT = 128;
 static constexpr const int MAX_PDU_TTL = 3000;
 
@@ -7,14 +10,13 @@ namespace nr::ue
 {
 
 RlsCtlLayer::RlsCtlLayer(TaskBase *base, RlsSharedContext *shCtx)
-    : m_shCtx{shCtx}, m_servingCell{}, m_mainTask{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
+    : m_base{base}, m_shCtx{shCtx}, m_servingCell{}, m_udpTask{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
 
-void RlsCtlLayer::onStart(NtsTask* mainTask, RlsUdpTask* udpTask)
+void RlsCtlLayer::onStart(RlsUdpTask* udpTask)
 {
-    m_mainTask = mainTask;
     m_udpTask = udpTask;
 }
 
@@ -45,18 +47,18 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
                 return;
             }
 
-            auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::DOWNLINK_DATA);
+            auto w = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
             w->psi = static_cast<int>(m.payload);
-            w->data = std::move(m.pdu);
-            m_mainTask->push(std::move(w));
+            w->pdu = std::move(m.pdu);
+            m_base->l3Task->push(std::move(w));
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::DOWNLINK_RRC);
+            auto w = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::DOWNLINK_RRC_DELIVERY);
             w->cellId = cellId;
-            w->rrcChannel = static_cast<rrc::RrcChannel>(m.payload);
-            w->data = std::move(m.pdu);
-            m_mainTask->push(std::move(w));
+            w->channel = static_cast<rrc::RrcChannel>(m.payload);
+            w->pdu = std::move(m.pdu);
+            m_base->l3Task->push(std::move(w));
         }
         else
         {
@@ -79,7 +81,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
 
             auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_EXISTS;
-            m_mainTask->push(std::move(w));
+            m_base->rlsTask->push(std::move(w));
             return;
         }
 
@@ -89,7 +91,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
 
             auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RADIO_LINK_FAILURE);
             w->rlfCause = rls::ERlfCause::PDU_ID_FULL;
-            m_mainTask->push(std::move(w));
+            m_base->rlsTask->push(std::move(w));
             return;
         }
 
@@ -144,7 +146,7 @@ void RlsCtlLayer::onAckControlTimerExpired()
     {
         auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::TRANSMISSION_FAILURE);
         w->pduList = std::move(transmissionFailures);
-        m_mainTask->push(std::move(w));
+        m_base->rlsTask->push(std::move(w));
     }
 }
 

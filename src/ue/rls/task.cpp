@@ -35,7 +35,7 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
 void UeRlsTask::onStart()
 {
     m_udpTask->start();
-    m_ctlLayer->onStart(this, m_udpTask);
+    m_ctlLayer->onStart(m_udpTask);
 
     setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
     setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
@@ -71,21 +71,6 @@ void UeRlsTask::onLoop()
         {
         case NmUeRlsToRls::RECEIVE_RLS_MESSAGE: {
             m_ctlLayer->handleRlsMessage(w.cellId, *w.msg);
-            break;
-        }
-        case NmUeRlsToRls::DOWNLINK_DATA: {
-            auto m = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
-            m->psi = w.psi;
-            m->pdu = std::move(w.data);
-            m_base->l3Task->push(std::move(m));
-            break;
-        }
-        case NmUeRlsToRls::DOWNLINK_RRC: {
-            auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::DOWNLINK_RRC_DELIVERY);
-            m->cellId = w.cellId;
-            m->channel = w.rrcChannel;
-            m->pdu = std::move(w.data);
-            m_base->l3Task->push(std::move(m));
             break;
         }
         case NmUeRlsToRls::RADIO_LINK_FAILURE: {
