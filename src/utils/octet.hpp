@@ -94,6 +94,12 @@ struct octet2
     {
         return value;
     }
+
+    static inline void SetTo(const octet2 &v, uint8_t *buffer)
+    {
+        buffer[0] = v[0];
+        buffer[1] = v[1];
+    }
 };
 
 struct octet3
@@ -134,6 +140,13 @@ struct octet3
     inline explicit constexpr operator uint32_t() const
     {
         return value;
+    }
+
+    static inline void SetTo(const octet3 &v, uint8_t *buffer)
+    {
+        buffer[0] = v[0];
+        buffer[1] = v[1];
+        buffer[2] = v[2];
     }
 };
 
@@ -191,6 +204,14 @@ struct octet4
     {
         return value == other.value;
     }
+
+    static inline void SetTo(const octet4 &v, uint8_t *buffer)
+    {
+        buffer[0] = v[0];
+        buffer[1] = v[1];
+        buffer[2] = v[2];
+        buffer[3] = v[3];
+    }
 };
 
 struct octet8
@@ -212,7 +233,7 @@ struct octet8
     }
 
     inline octet8(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t octet5,
-           uint8_t octet6, uint8_t octet7) noexcept
+                  uint8_t octet6, uint8_t octet7) noexcept
         : value{(static_cast<uint64_t>(octet0) << 56U) | (static_cast<uint64_t>(octet1) << 48U) |
                 ((static_cast<uint64_t>(octet2) << 40U)) | (static_cast<uint64_t>(octet3) << 32U) |
                 (static_cast<uint64_t>(octet4) << 24U) | (static_cast<uint64_t>(octet5) << 16U) |
@@ -234,6 +255,18 @@ struct octet8
     inline explicit constexpr operator uint64_t() const
     {
         return value;
+    }
+
+    static inline void SetTo(const octet8 &v, uint8_t *buffer)
+    {
+        buffer[0] = v[0];
+        buffer[1] = v[1];
+        buffer[2] = v[2];
+        buffer[3] = v[3];
+        buffer[4] = v[4];
+        buffer[5] = v[5];
+        buffer[6] = v[6];
+        buffer[7] = v[7];
     }
 };
 
