@@ -56,8 +56,8 @@ class RlsUdpTask : public NtsTask
     void onQuit() override;
 
   private:
-    void sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg);
-    void receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg);
+    void sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg);
+    void receiveRlsPdu(const InetAddress &address, std::unique_ptr<rls::RlsMessage> &&msg);
     void onSignalChangeOrLost(int cellId);
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 

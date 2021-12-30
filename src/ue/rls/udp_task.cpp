@@ -72,12 +72,12 @@ void RlsUdpTask::onQuit()
     m_server->quit();
 }
 
-void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
+void RlsUdpTask::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)
 {
     OctetString stream;
     rls::EncodeRlsMessage(msg, stream);
 
-    m_server->send(addr, stream);
+    m_server->send(address, stream);
 }
 
 void RlsUdpTask::send(int cellId, const rls::RlsMessage &msg)
