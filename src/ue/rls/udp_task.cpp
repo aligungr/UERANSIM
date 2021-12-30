@@ -28,7 +28,7 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx)
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
-    m_server = new udp::UdpServerTask(this);
+    m_server = std::make_unique<udp::UdpServerTask>(this);
 
     for (auto &ip : base->config->gnbSearchList)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
@@ -69,7 +69,6 @@ void RlsUdpTask::onLoop()
 void RlsUdpTask::onQuit()
 {
     m_server->quit();
-    delete m_server;
 }
 
 void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
