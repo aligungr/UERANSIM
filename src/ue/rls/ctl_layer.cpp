@@ -137,11 +137,7 @@ void RlsCtlLayer::onAckControlTimerExpired()
         m_pduMap.erase(id);
 
     if (!transmissionFailures.empty())
-    {
-        auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::TRANSMISSION_FAILURE);
-        w->pduList = std::move(transmissionFailures);
-        m_base->rlsTask->push(std::move(w));
-    }
+        m_logger->err("transmission failure [%d]", transmissionFailures.size());
 }
 
 void RlsCtlLayer::onAckSendTimerExpired()
@@ -168,9 +164,9 @@ void RlsCtlLayer::assignCurrentCell(int cellId)
 
 void RlsCtlLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 {
-    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RADIO_LINK_FAILURE);
-    w->rlfCause = cause;
-    m_base->rlsTask->push(std::move(w));
+    auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::RADIO_LINK_FAILURE);
+    m->rlfCause = cause;
+    m_base->l3Task->push(std::move(m));
 }
 
 } // namespace nr::ue

@@ -65,27 +65,6 @@ void UeRlsTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_RLS_TO_RLS: {
-        auto &w = dynamic_cast<NmUeRlsToRls &>(*msg);
-        switch (w.present)
-        {
-        case NmUeRlsToRls::RADIO_LINK_FAILURE: {
-            auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::RADIO_LINK_FAILURE);
-            m->rlfCause = w.rlfCause;
-            m_base->l3Task->push(std::move(m));
-            break;
-        }
-        case NmUeRlsToRls::TRANSMISSION_FAILURE: {
-            m_logger->debug("transmission failure [%d]", w.pduList.size());
-            break;
-        }
-        default: {
-            m_logger->unhandledNts(*msg);
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_RRC_TO_RLS: {
         auto &w = dynamic_cast<NmUeRrcToRls &>(*msg);
         switch (w.present)

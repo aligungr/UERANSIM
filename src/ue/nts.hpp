@@ -155,55 +155,6 @@ struct NmUeRlsToNas : NtsMessage
     }
 };
 
-struct NmUeRlsToRls : NtsMessage
-{
-    enum PR
-    {
-        RADIO_LINK_FAILURE,
-        TRANSMISSION_FAILURE,
-    } present;
-
-    // RECEIVE_RLS_MESSAGE
-    // UPLINK_RRC
-    // DOWNLINK_RRC
-    // SIGNAL_CHANGED
-    // ASSIGN_CURRENT_CELL
-    int cellId{};
-
-    // RECEIVE_RLS_MESSAGE
-    std::unique_ptr<rls::RlsMessage> msg{};
-
-    // SIGNAL_CHANGED
-    int dbm{};
-
-    // UPLINK_DATA
-    // DOWNLINK_DATA
-    int psi{};
-
-    // UPLINK_DATA
-    // DOWNLINK_DATA
-    // UPLINK_RRC
-    // DOWNLINK_RRC
-    OctetString data;
-
-    // UPLINK_RRC
-    // DOWNLINK_RRC
-    rrc::RrcChannel rrcChannel{};
-
-    // UPLINK_RRC
-    uint32_t pduId{};
-
-    // RADIO_LINK_FAILURE
-    rls::ERlfCause rlfCause{};
-
-    // TRANSMISSION_FAILURE
-    std::vector<rls::PduInfo> pduList;
-
-    explicit NmUeRlsToRls(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RLS), present(present)
-    {
-    }
-};
-
 struct NmUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;
