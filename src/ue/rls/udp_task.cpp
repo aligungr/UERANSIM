@@ -158,11 +158,11 @@ void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
     for (auto cell : toRemove)
         onSignalChangeOrLost(cell.second);
 
-    for (auto &addr : m_searchSpace)
+    for (auto &address : m_searchSpace)
     {
         rls::RlsHeartBeat msg{m_shCtx->sti};
         msg.simPos = simPos;
-        sendRlsPdu(addr, msg);
+        sendRlsPdu(address, msg);
     }
 }
 
