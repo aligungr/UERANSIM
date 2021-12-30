@@ -21,24 +21,24 @@ struct octet
     uint8_t value;
 
   public:
-    octet() noexcept : value(0)
+    inline octet() noexcept : value(0)
     {
     }
 
-    /* no explicit */ octet(int32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
+    /* no explicit */ inline octet(int32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
     {
     }
 
-    /* no explicit */ octet(uint32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
+    /* no explicit */ inline octet(uint32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
     {
     }
 
-    /* no explicit */ constexpr operator uint8_t() const
+    /* no explicit */ inline constexpr operator uint8_t() const
     {
         return value;
     }
 
-    explicit constexpr operator int32_t() const
+    inline explicit constexpr operator int32_t() const
     {
         return static_cast<int32_t>(value);
     }
@@ -57,19 +57,19 @@ struct octet2
     uint16_t value;
 
   public:
-    octet2() noexcept : value(0)
+    inline octet2() noexcept : value(0)
     {
     }
 
-    explicit octet2(int32_t value) noexcept : value(static_cast<uint16_t>(value & 0xFFFF))
+    inline explicit octet2(int32_t value) noexcept : value(static_cast<uint16_t>(value & 0xFFFF))
     {
     }
 
-    explicit octet2(uint32_t value) noexcept : value(static_cast<uint16_t>(value & 0xFFFF))
+    inline explicit octet2(uint32_t value) noexcept : value(static_cast<uint16_t>(value & 0xFFFF))
     {
     }
 
-    octet2(uint8_t octet0, uint8_t octet1) noexcept
+    inline octet2(uint8_t octet0, uint8_t octet1) noexcept
         : value{static_cast<uint16_t>((static_cast<uint32_t>(octet0) << 8U) | (static_cast<uint32_t>(octet1)))}
     {
     }
@@ -80,17 +80,17 @@ struct octet2
         return (value >> (8 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator uint32_t() const
+    inline explicit constexpr operator uint32_t() const
     {
         return static_cast<uint32_t>(value);
     }
 
-    explicit constexpr operator int32_t() const
+    inline explicit constexpr operator int32_t() const
     {
         return static_cast<int32_t>(value);
     }
 
-    explicit constexpr operator uint16_t() const
+    inline explicit constexpr operator uint16_t() const
     {
         return value;
     }
@@ -102,19 +102,19 @@ struct octet3
     uint32_t value;
 
   public:
-    octet3() noexcept : value(0)
+    inline octet3() noexcept : value(0)
     {
     }
 
-    explicit octet3(int32_t value) noexcept : value(static_cast<uint32_t>(value & 0xFFFFFF))
+    inline explicit octet3(int32_t value) noexcept : value(static_cast<uint32_t>(value & 0xFFFFFF))
     {
     }
 
-    explicit octet3(uint32_t value) noexcept : value(value & 0xFFFFFF)
+    inline explicit octet3(uint32_t value) noexcept : value(value & 0xFFFFFF)
     {
     }
 
-    octet3(uint8_t octet0, uint8_t octet1, uint8_t octet2) noexcept
+    inline octet3(uint8_t octet0, uint8_t octet1, uint8_t octet2) noexcept
         : value{(static_cast<uint32_t>(octet0) << 16U) | (static_cast<uint32_t>(octet1) << 8U) |
                 (static_cast<uint32_t>(octet2))}
     {
@@ -126,12 +126,12 @@ struct octet3
         return (value >> (16 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator int32_t() const
+    inline explicit constexpr operator int32_t() const
     {
         return static_cast<int32_t>(value);
     }
 
-    explicit constexpr operator uint32_t() const
+    inline explicit constexpr operator uint32_t() const
     {
         return value;
     }
@@ -143,19 +143,19 @@ struct octet4
     uint32_t value;
 
   public:
-    octet4() noexcept : value(0)
+    inline octet4() noexcept : value(0)
     {
     }
 
-    explicit octet4(int32_t value) noexcept : value(static_cast<uint32_t>(value))
+    inline explicit octet4(int32_t value) noexcept : value(static_cast<uint32_t>(value))
     {
     }
 
-    explicit octet4(uint32_t value) noexcept : value(value)
+    inline explicit octet4(uint32_t value) noexcept : value(value)
     {
     }
 
-    octet4(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3) noexcept
+    inline octet4(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3) noexcept
         : value{(static_cast<uint32_t>(octet0) << 24U) | (static_cast<uint32_t>(octet1) << 16U) |
                 ((static_cast<uint32_t>(octet2) << 8U)) | (static_cast<uint32_t>(octet3))}
     {
@@ -199,19 +199,19 @@ struct octet8
     uint64_t value;
 
   public:
-    octet8() noexcept : value(0)
+    inline octet8() noexcept : value(0)
     {
     }
 
-    explicit octet8(int64_t value) noexcept : value(static_cast<uint64_t>(value))
+    inline explicit octet8(int64_t value) noexcept : value(static_cast<uint64_t>(value))
     {
     }
 
-    explicit octet8(uint64_t value) noexcept : value(value)
+    inline explicit octet8(uint64_t value) noexcept : value(value)
     {
     }
 
-    octet8(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t octet5,
+    inline octet8(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4, uint8_t octet5,
            uint8_t octet6, uint8_t octet7) noexcept
         : value{(static_cast<uint64_t>(octet0) << 56U) | (static_cast<uint64_t>(octet1) << 48U) |
                 ((static_cast<uint64_t>(octet2) << 40U)) | (static_cast<uint64_t>(octet3) << 32U) |
@@ -226,12 +226,12 @@ struct octet8
         return (value >> (56 - index * 8)) & 0xFF;
     }
 
-    explicit constexpr operator int64_t() const
+    inline explicit constexpr operator int64_t() const
     {
         return static_cast<int64_t>(value);
     }
 
-    explicit constexpr operator uint64_t() const
+    inline explicit constexpr operator uint64_t() const
     {
         return value;
     }
