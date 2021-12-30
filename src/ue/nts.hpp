@@ -160,7 +160,6 @@ struct NmUeRlsToRls : NtsMessage
     enum PR
     {
         RECEIVE_RLS_MESSAGE,
-        SIGNAL_CHANGED,
         DOWNLINK_DATA,
         DOWNLINK_RRC,
         RADIO_LINK_FAILURE,

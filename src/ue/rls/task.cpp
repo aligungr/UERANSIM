@@ -73,13 +73,6 @@ void UeRlsTask::onLoop()
             m_ctlLayer->handleRlsMessage(w.cellId, *w.msg);
             break;
         }
-        case NmUeRlsToRls::SIGNAL_CHANGED: {
-            auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::SIGNAL_CHANGED);
-            m->cellId = w.cellId;
-            m->dbm = w.dbm;
-            m_base->l3Task->push(std::move(m));
-            break;
-        }
         case NmUeRlsToRls::DOWNLINK_DATA: {
             auto m = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
             m->psi = w.psi;

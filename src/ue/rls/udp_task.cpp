@@ -13,6 +13,7 @@
 
 #include <ue/nts.hpp>
 #include <ue/rls/task.hpp>
+#include <ue/l3/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -134,10 +135,10 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
         dbm = m_cells[sti].dbm;
     }
 
-    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::SIGNAL_CHANGED);
-    w->cellId = cellId;
-    w->dbm = dbm;
-    m_base->rlsTask->push(std::move(w));
+    auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::SIGNAL_CHANGED);
+    m->cellId = cellId;
+    m->dbm = dbm;
+    m_base->l3Task->push(std::move(m));
 }
 
 void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
