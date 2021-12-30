@@ -16,9 +16,7 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
-static constexpr const int BUFFER_SIZE = 16384;
 static constexpr const int LOOP_PERIOD = 1000;
-static constexpr const int RECEIVE_TIMEOUT = 200;
 static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
 
 namespace nr::ue
@@ -30,7 +28,7 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vecto
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
-    m_server = new udp::UdpServer();
+    m_server = new udp::UdpServerTask(this);
 
     for (auto &ip : searchSpace)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
@@ -40,6 +38,7 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vecto
 
 void RlsUdpTask::onStart()
 {
+    m_server->start();
 }
 
 void RlsUdpTask::onLoop()
@@ -51,22 +50,25 @@ void RlsUdpTask::onLoop()
         heartbeatCycle(current, m_simPos);
     }
 
-    uint8_t buffer[BUFFER_SIZE];
-    InetAddress peerAddress;
+    auto msg = take();
 
-    int size = m_server->Receive(buffer, BUFFER_SIZE, RECEIVE_TIMEOUT, peerAddress);
-    if (size > 0)
+    if (msg)
     {
-        auto rlsMsg = rls::DecodeRlsMessage(OctetView{buffer, static_cast<size_t>(size)});
-        if (rlsMsg == nullptr)
-            m_logger->err("Unable to decode RLS message");
-        else
-            receiveRlsPdu(peerAddress, std::move(rlsMsg));
+        if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
+        {
+            auto& w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
+            auto rlsMsg = rls::DecodeRlsMessage(OctetView{w.packet});
+            if (rlsMsg == nullptr)
+                m_logger->err("Unable to decode RLS message");
+            else
+                receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
+        }
     }
 }
 
 void RlsUdpTask::onQuit()
 {
+    m_server->quit();
     delete m_server;
 }
 
@@ -75,7 +77,7 @@ void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
     OctetString stream;
     rls::EncodeRlsMessage(msg, stream);
 
-    m_server->Send(addr, stream.data(), static_cast<size_t>(stream.length()));
+    m_server->send(addr, stream);
 }
 
 void RlsUdpTask::send(int cellId, const rls::RlsMessage &msg)

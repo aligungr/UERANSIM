@@ -14,6 +14,7 @@
 
 #include <lib/rls/rls_pdu.hpp>
 #include <lib/udp/server.hpp>
+#include <lib/udp/server_task.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
 
@@ -33,9 +34,9 @@ class RlsUdpTask : public NtsTask
 
   private:
     std::unique_ptr<Logger> m_logger;
-    udp::UdpServer *m_server;
+    udp::UdpServerTask *m_server;
     NtsTask *m_mainTask;
-    RlsSharedContext* m_shCtx;
+    RlsSharedContext *m_shCtx;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
     std::unordered_map<int, uint64_t> m_cellIdToSti;
@@ -46,7 +47,7 @@ class RlsUdpTask : public NtsTask
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpTask(TaskBase *base, RlsSharedContext* shCtx, const std::vector<std::string> &searchSpace);
+    explicit RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vector<std::string> &searchSpace);
     ~RlsUdpTask() override = default;
 
   protected:
