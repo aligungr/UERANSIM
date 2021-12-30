@@ -49,6 +49,9 @@ class UeRlsTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
+
+  public:
+    RlsCtlLayer& ctl();
 };
 
 } // namespace nr::ue

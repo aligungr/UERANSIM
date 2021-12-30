@@ -159,7 +159,6 @@ struct NmUeRlsToRls : NtsMessage
 {
     enum PR
     {
-        RECEIVE_RLS_MESSAGE,
         RADIO_LINK_FAILURE,
         TRANSMISSION_FAILURE,
     } present;

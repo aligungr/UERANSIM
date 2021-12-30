@@ -120,10 +120,7 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
-    w->cellId = m_cells[msg->sti].cellId;
-    w->msg = std::move(msg);
-    m_base->rlsTask->push(std::move(w));
+    m_base->rlsTask->ctl().handleRlsMessage(m_cells[msg->sti].cellId, *msg);
 }
 
 void RlsUdpTask::onSignalChangeOrLost(int cellId)

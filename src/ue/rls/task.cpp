@@ -69,10 +69,6 @@ void UeRlsTask::onLoop()
         auto &w = dynamic_cast<NmUeRlsToRls &>(*msg);
         switch (w.present)
         {
-        case NmUeRlsToRls::RECEIVE_RLS_MESSAGE: {
-            m_ctlLayer->handleRlsMessage(w.cellId, *w.msg);
-            break;
-        }
         case NmUeRlsToRls::RADIO_LINK_FAILURE: {
             auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::RADIO_LINK_FAILURE);
             m->rlfCause = w.rlfCause;
@@ -133,6 +129,11 @@ void UeRlsTask::onQuit()
 
     delete m_udpTask;
     delete m_shCtx;
+}
+
+RlsCtlLayer &UeRlsTask::ctl()
+{
+    return *m_ctlLayer;
 }
 
 } // namespace nr::ue
