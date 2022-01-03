@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "octet_string.hpp"
+
 #include <cstdint>
 #include <memory>
 
@@ -71,4 +73,6 @@ class UniqueBuffer
     {
         return m_size;
     }
+
+    static UniqueBuffer FromOctetString(const OctetString &s);
 };

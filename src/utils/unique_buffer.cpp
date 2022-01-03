@@ -7,3 +7,10 @@
 //
 
 #include "unique_buffer.hpp"
+
+UniqueBuffer UniqueBuffer::FromOctetString(const OctetString &s)
+{
+    auto buffer = new uint8_t[s.length()];
+    std::memcpy(buffer, s.data(), static_cast<size_t>(s.length()));
+    return UniqueBuffer{buffer, static_cast<size_t>(s.length())};
+}
