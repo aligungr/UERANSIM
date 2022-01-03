@@ -115,23 +115,23 @@ void RlsUdpLayer::onSignalChangeOrLost(int cellId)
 
 void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)
 {
-    std::set<std::pair<uint64_t, int>> toRemove;
+    std::vector<int> toRemove;
 
     for (auto &cell : m_cells)
     {
         auto delta = time - cell.second.lastSeen;
         if (delta > HEARTBEAT_THRESHOLD)
-            toRemove.insert({cell.first, cell.second.cellId});
+            toRemove.push_back(cell.second.cellId);
     }
 
     for (auto cell : toRemove)
     {
-        m_cells.erase(cell.first);
-        m_cellIdToSti.erase(cell.second);
+        m_cells.erase(m_cellIdToSti[cell]);
+        m_cellIdToSti.erase(cell);
     }
 
     for (auto cell : toRemove)
-        onSignalChangeOrLost(cell.second);
+        onSignalChangeOrLost(cell);
 
     for (auto &address : m_searchSpace)
     {
