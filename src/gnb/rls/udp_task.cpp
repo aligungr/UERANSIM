@@ -42,7 +42,8 @@ namespace nr::gnb
 {
 
 RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, Vector3 phyLocation)
-    : m_server{}, m_ctlTask{}, m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{}, m_ueMap{}, m_newIdCounter{}
+    : m_server{}, m_ctlTask{}, m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{}, m_ueMap{},
+      m_newIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger("rls-udp");
 
@@ -141,10 +142,10 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
 
 void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
 {
-    OctetString stream;
-    rls::EncodeRlsMessage(msg, stream);
-
-    m_server->Send(addr, stream.data(), static_cast<size_t>(stream.length()));
+    auto buffer = new uint8_t[16384]; // TODO: optimize, and make member
+    int n = rls::EncodeRlsMessage(msg, buffer);
+    m_server->Send(addr, buffer, static_cast<size_t>(n));
+    delete[] buffer;
 }
 
 void RlsUdpTask::heartbeatCycle(int64_t time)
