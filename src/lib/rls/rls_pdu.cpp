@@ -13,43 +13,54 @@
 namespace rls
 {
 
-void EncodeRlsMessage(const RlsMessage &msg, OctetString &stream)
+int EncodeRlsMessage(const RlsMessage &msg, uint8_t *buffer)
 {
-    stream.appendOctet(0x03); // (Just for old RLS compatibility)
+    buffer[0] = 0x03; // (Just for old RLS compatibility)
 
-    stream.appendOctet(cons::Major);
-    stream.appendOctet(cons::Minor);
-    stream.appendOctet(cons::Patch);
-    stream.appendOctet(static_cast<uint8_t>(msg.msgType));
-    stream.appendOctet8(msg.sti);
+    buffer[1] = cons::Major;
+    buffer[2] = cons::Minor;
+    buffer[3] = cons::Patch;
+    buffer[4] = static_cast<uint8_t>(msg.msgType);
+
+    octet8::SetTo(octet8{msg.sti}, buffer + 5);
+
     if (msg.msgType == EMessageType::HEARTBEAT)
     {
         auto &m = (const RlsHeartBeat &)msg;
-        stream.appendOctet4(m.simPos.x);
-        stream.appendOctet4(m.simPos.y);
-        stream.appendOctet4(m.simPos.z);
+        octet4::SetTo(octet4{m.simPos.x}, buffer + 13);
+        octet4::SetTo(octet4{m.simPos.y}, buffer + 17);
+        octet4::SetTo(octet4{m.simPos.z}, buffer + 21);
+        return 25;
     }
     else if (msg.msgType == EMessageType::HEARTBEAT_ACK)
     {
         auto &m = (const RlsHeartBeatAck &)msg;
-        stream.appendOctet4(m.dbm);
+        octet4::SetTo(octet4{m.dbm}, buffer + 13);
+        return 17;
     }
     else if (msg.msgType == EMessageType::PDU_TRANSMISSION)
     {
         auto &m = (const RlsPduTransmission &)msg;
-        stream.appendOctet(static_cast<uint8_t>(m.pduType));
-        stream.appendOctet4(m.pduId);
-        stream.appendOctet4(m.payload);
-        stream.appendOctet4(m.pdu.length());
-        stream.append(m.pdu);
+        buffer[13] = static_cast<uint8_t>(m.pduType);
+        octet4::SetTo(octet4{m.pduId}, buffer + 14);
+        octet4::SetTo(octet4{m.payload}, buffer + 18);
+        octet4::SetTo(octet4{m.pdu.length()}, buffer + 22);
+        std::memcpy(buffer + 26, m.pdu.data(), static_cast<size_t>(m.pdu.length()));
+        return 26 + m.pdu.length();
     }
     else if (msg.msgType == EMessageType::PDU_TRANSMISSION_ACK)
     {
         auto &m = (const RlsPduTransmissionAck &)msg;
-        stream.appendOctet4(static_cast<uint32_t>(m.pduIds.size()));
+        octet4::SetTo(octet4{m.pduIds.size()}, buffer + 13);
+        buffer += 17;
         for (auto pduId : m.pduIds)
-            stream.appendOctet4(pduId);
+        {
+            octet4::SetTo(octet4{pduId}, buffer);
+            buffer += 4;
+        }
+        return 17 + static_cast<int>(m.pduIds.size()) * 4;
     }
+    return 0;
 }
 
 std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream)

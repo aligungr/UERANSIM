@@ -9,6 +9,7 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
+static constexpr const int SEND_BUFFER = 16384;
 static constexpr const int LOOP_PERIOD = 1000;
 static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
 
@@ -16,7 +17,8 @@ namespace nr::ue
 {
 
 RlsUdpLayer::RlsUdpLayer(TaskBase *base)
-    : m_base{base}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
+    : m_base{base}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{},
+      m_lastLoop{}, m_cellIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
@@ -49,10 +51,8 @@ void RlsUdpLayer::onQuit()
 
 void RlsUdpLayer::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)
 {
-    OctetString stream;
-    rls::EncodeRlsMessage(msg, stream);
-
-    m_server->send(address, stream);
+    int n = rls::EncodeRlsMessage(msg, m_sendBuffer.get());
+    m_server->send(address, m_sendBuffer.get(), static_cast<size_t>(n));
 }
 
 void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)

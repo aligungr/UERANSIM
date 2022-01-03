@@ -168,6 +168,10 @@ struct octet4
     {
     }
 
+    inline explicit octet4(size_t value) noexcept : value(static_cast<uint32_t>(value))
+    {
+    }
+
     inline octet4(uint8_t octet0, uint8_t octet1, uint8_t octet2, uint8_t octet3) noexcept
         : value{(static_cast<uint32_t>(octet0) << 24U) | (static_cast<uint32_t>(octet1) << 16U) |
                 ((static_cast<uint32_t>(octet2) << 8U)) | (static_cast<uint32_t>(octet3))}

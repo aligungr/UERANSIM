@@ -35,6 +35,7 @@ class RlsUdpLayer
   private:
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
+    std::unique_ptr<uint8_t[]> m_sendBuffer;
     std::unique_ptr<udp::UdpServerTask> m_server;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;

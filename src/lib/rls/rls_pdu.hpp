@@ -88,7 +88,7 @@ struct RlsPduTransmissionAck : RlsMessage
     }
 };
 
-void EncodeRlsMessage(const RlsMessage &msg, OctetString &stream);
+int EncodeRlsMessage(const RlsMessage &msg, uint8_t *buffer);
 std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream);
 
 } // namespace rls
