@@ -97,6 +97,9 @@ bool NtsTask::setTimer(int timerId, int64_t delayMs)
 
 bool NtsTask::setTimerAbsolute(int timerId, int64_t timeMs)
 {
+    if (timerId < 0)
+        return false;
+
     if (isQuiting)
         return false;
 
