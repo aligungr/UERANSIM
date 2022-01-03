@@ -10,6 +10,7 @@
 
 #include "bits.hpp"
 #include "octet.hpp"
+#include "unique_buffer.hpp"
 
 #include <cstdint>
 #include <cstdlib>
@@ -128,4 +129,6 @@ class OctetView
     OctetString readOctetString() const;
     std::string readUtf8String(int length) const;
     std::string readUtf8String(size_t length) const;
+    UniqueBuffer readUniqueBuffer(int length) const;
+    UniqueBuffer readUniqueBuffer(size_t length) const;
 };

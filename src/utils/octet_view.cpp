@@ -48,3 +48,15 @@ std::string OctetView::readUtf8String(size_t length) const
 {
     return readUtf8String(static_cast<int>(length));
 }
+
+UniqueBuffer OctetView::readUniqueBuffer(int length) const
+{
+    return readUniqueBuffer(static_cast<size_t>(length));
+}
+
+UniqueBuffer OctetView::readUniqueBuffer(size_t length) const
+{
+    UniqueBuffer b{length};
+    std::memcpy(b.data(), data + index, length);
+    return b;
+}
