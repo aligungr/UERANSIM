@@ -14,18 +14,17 @@
 #define WAIT_TIME_IF_NO_TIMER 500
 #define PAUSE_POLLING_PERIOD 20
 
-static std::unique_ptr<NtsMessage> TimerExpiredMessage(TimerInfo *timerInfo)
+static inline std::unique_ptr<NtsMessage> TimerExpiredMessage(int timerId)
 {
-    return timerInfo ? std::make_unique<NmTimerExpired>(timerInfo->timerId) : nullptr;
+    return std::make_unique<NmTimerExpired>(timerId);
 }
 
 void TimerBase::setTimerAbsolute(int timerId, int64_t timeMs)
 {
-    auto *timerInfo = new TimerInfo();
-    timerInfo->start = utils::CurrentTimeMillis();
-    timerInfo->end = timeMs;
-    timerInfo->timerId = timerId;
-
+    TimerInfo timerInfo;
+    timerInfo.start = utils::CurrentTimeMillis();
+    timerInfo.end = timeMs;
+    timerInfo.timerId = timerId;
     timerQueue.push(timerInfo);
 }
 
@@ -34,32 +33,24 @@ int64_t TimerBase::getNextWaitTime()
     if (timerQueue.empty())
         return WAIT_TIME_IF_NO_TIMER;
 
-    auto delta = timerQueue.top()->end - utils::CurrentTimeMillis();
+    auto delta = timerQueue.top().end - utils::CurrentTimeMillis();
     return delta < 0 ? 0 : delta;
 }
 
-TimerInfo *TimerBase::getAndRemoveExpiredTimer()
+int TimerBase::getAndRemoveExpiredTimer()
 {
     if (timerQueue.empty())
-        return nullptr;
+        return -1;
 
-    TimerInfo *timer = timerQueue.top();
-    if (timer->end < utils::CurrentTimeMillis())
+    const TimerInfo &timer = timerQueue.top();
+    if (timer.end < utils::CurrentTimeMillis())
     {
+        int id = timer.timerId;
         timerQueue.pop();
-        return timer;
+        return id;
     }
 
-    return nullptr;
-}
-
-TimerBase::~TimerBase()
-{
-    while (!timerQueue.empty())
-    {
-        delete timerQueue.top();
-        timerQueue.pop();
-    }
+    return -1;
 }
 
 bool NtsTask::push(std::unique_ptr<NtsMessage> &&msg)
@@ -126,19 +117,15 @@ std::unique_ptr<NtsMessage> NtsTask::poll()
 
     if (isQuiting)
         return nullptr;
-    TimerInfo *expiredTimer;
 
+    int expiredTimer;
     {
         std::unique_lock<std::mutex> lock(mutex);
         expiredTimer = timerBase.getAndRemoveExpiredTimer();
     }
 
-    if (expiredTimer != nullptr)
-    {
-        auto msg = TimerExpiredMessage(expiredTimer);
-        delete expiredTimer;
-        return msg;
-    }
+    if (expiredTimer >= 0)
+        return TimerExpiredMessage(expiredTimer);
     return nullptr;
 }
 
@@ -173,18 +160,14 @@ std::unique_ptr<NtsMessage> NtsTask::poll(int64_t timeout)
         }
     }
 
-    TimerInfo *expiredTimer;
+    int expiredTimer;
     {
         std::unique_lock<std::mutex> lock(mutex);
         expiredTimer = timerBase.getAndRemoveExpiredTimer();
     }
 
-    if (expiredTimer != nullptr)
-    {
-        auto msg = TimerExpiredMessage(expiredTimer);
-        delete expiredTimer;
-        return msg;
-    }
+    if (expiredTimer >= 0)
+        return TimerExpiredMessage(expiredTimer);
     return nullptr;
 }
 

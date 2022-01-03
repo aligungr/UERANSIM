@@ -88,20 +88,20 @@ class TimerBase
 {
     struct TimerInfoComparator
     {
-        bool operator()(TimerInfo *a, TimerInfo *b)
+        bool operator()(const TimerInfo &a, const TimerInfo &b)
         {
-            return a->end >= b->end;
+            return a.end >= b.end;
         }
     };
 
-    std::priority_queue<TimerInfo *, std::vector<TimerInfo *>, TimerInfoComparator> timerQueue{};
+    std::priority_queue<TimerInfo, std::vector<TimerInfo>, TimerInfoComparator> timerQueue{};
 
   public:
-    ~TimerBase();
+    ~TimerBase() = default;
 
     void setTimerAbsolute(int timerId, int64_t timeMs);
 
-    TimerInfo *getAndRemoveExpiredTimer();
+    int getAndRemoveExpiredTimer();
 
     int64_t getNextWaitTime();
 };
