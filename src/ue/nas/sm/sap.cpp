@@ -82,11 +82,7 @@ void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
         state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
         return;
 
-    auto w = std::make_unique<NmUeNasToApp>(NmUeNasToApp::DOWNLINK_DATA_DELIVERY);
-    w->psi = psi;
-    w->data = std::move(data);
-
-    m_base->appTask->push(std::move(w));
+    m_base->tunLayer->write(psi, data.data(), static_cast<size_t>(data.length()));
 }
 
 } // namespace nr::ue

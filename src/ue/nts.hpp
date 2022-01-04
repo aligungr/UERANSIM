@@ -95,12 +95,7 @@ struct NmUeNasToApp : NtsMessage
     enum PR
     {
         PERFORM_SWITCH_OFF,
-        DOWNLINK_DATA_DELIVERY
     } present;
-
-    // DOWNLINK_DATA_DELIVERY
-    int psi{};
-    OctetString data;
 
     explicit NmUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
     {
