@@ -137,16 +137,12 @@ struct NmUeRlsToNas : NtsMessage
 struct NmUeStatusUpdate : NtsMessage
 {
     static constexpr const int SESSION_ESTABLISHMENT = 1;
-    static constexpr const int SESSION_RELEASE = 2;
-    static constexpr const int CM_STATE = 3;
+    static constexpr const int CM_STATE = 2;
 
     const int what{};
 
     // SESSION_ESTABLISHMENT
     PduSession *pduSession{};
-
-    // SESSION_RELEASE
-    int psi{};
 
     // CM_STATE
     ECmState cmState{};

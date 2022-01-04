@@ -12,7 +12,6 @@
 #include <ue/rls/task.hpp>
 #include <ue/tun/config.hpp>
 #include <utils/common.hpp>
-#include <utils/constants.hpp>
 
 static constexpr const int SWITCH_OFF_TIMER_ID = 1;
 static constexpr const int SWITCH_OFF_DELAY = 500;
@@ -31,15 +30,6 @@ void UeAppTask::onStart()
 
 void UeAppTask::onQuit()
 {
-    for (auto &tunTask : m_tunTasks)
-    {
-        if (tunTask != nullptr)
-        {
-            tunTask->quit();
-            delete tunTask;
-            tunTask = nullptr;
-        }
-    }
 }
 
 void UeAppTask::onLoop()
@@ -56,17 +46,6 @@ void UeAppTask::onLoop()
         {
         case NmUeNasToApp::PERFORM_SWITCH_OFF: {
             setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
-            break;
-        }
-        case NmUeNasToApp::DOWNLINK_DATA_DELIVERY: {
-            auto *tunTask = m_tunTasks[w.psi];
-            if (tunTask)
-            {
-                auto m = std::make_unique<NmAppToTun>(NmAppToTun::DATA_PDU_DELIVERY);
-                m->psi = w.psi;
-                m->data = std::move(w.data);
-                tunTask->push(std::move(m));
-            }
             break;
         }
         }
@@ -107,18 +86,6 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
         return;
     }
 
-    if (msg.what == NmUeStatusUpdate::SESSION_RELEASE)
-    {
-        if (m_tunTasks[msg.psi] != nullptr)
-        {
-            m_tunTasks[msg.psi]->quit();
-            delete m_tunTasks[msg.psi];
-            m_tunTasks[msg.psi] = nullptr;
-        }
-
-        return;
-    }
-
     if (msg.what == NmUeStatusUpdate::CM_STATE)
     {
         m_cmState = msg.cmState;
@@ -128,12 +95,6 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
 
 void UeAppTask::setupTunInterface(const PduSession *pduSession)
 {
-    if (!utils::IsRoot())
-    {
-        m_logger->err("TUN interface could not be setup. Permission denied. Please run the UE with 'sudo'");
-        return;
-    }
-
     if (!pduSession->pduAddress.has_value())
     {
         m_logger->err("Connection could not setup. PDU address is missing.");
@@ -147,39 +108,12 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    int psi = pduSession->psi;
-    if (psi == 0 || psi > 15)
-    {
-        m_logger->err("Connection could not setup. Invalid PSI.");
-        return;
-    }
-
-    if (m_tunTasks[psi] != nullptr)
-    {
-        m_logger->err("Connection could not setup. TUN task for specified PSI is non-null.");
-        return;
-    }
-
-    std::string error{}, allocatedName{};
-    int fd = tun::TunAllocate(cons::TunNamePrefix, allocatedName, error);
-    if (fd == 0 || error.length() > 0)
-    {
-        m_logger->err("TUN allocation failure [%s]", error.c_str());
-        return;
-    }
+    std::string error;
 
     std::string ipAddress = utils::OctetStringToIp(pduSession->pduAddress->pduAddressInformation);
 
-    bool r = tun::TunConfigure(allocatedName, ipAddress, cons::TunMtu, m_base->config->configureRouting, error);
-    if (!r || error.length() > 0)
-    {
-        m_logger->err("TUN configuration failure [%s]", error.c_str());
-        return;
-    }
-
-    auto *task = new TunTask(m_base, psi, fd);
-    m_tunTasks[psi] = task;
-    task->start();
+    auto allocatedName =
+        m_base->tunLayer->allocate(pduSession->psi, ipAddress, m_base->config->configureRouting, error);
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
                    allocatedName.c_str(), ipAddress.c_str());

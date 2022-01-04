@@ -38,11 +38,7 @@ void NasSm::localReleaseSession(int psi)
     freePduSessionId(psi);
 
     if (isEstablished)
-    {
-        auto statusUpdate = std::make_unique<NmUeStatusUpdate>(NmUeStatusUpdate::SESSION_RELEASE);
-        statusUpdate->psi = psi;
-        m_base->appTask->push(std::move(statusUpdate));
-    }
+        m_base->tunLayer->release(psi);
 }
 
 void NasSm::localReleaseAllSessions()
