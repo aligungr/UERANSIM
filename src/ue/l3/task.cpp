@@ -11,13 +11,13 @@
 struct TimerId
 {
     static constexpr const int MACHINE_CYCLE = 1;
-    static constexpr const int TIMER = 2;
+    static constexpr const int L3_TIMER = 2;
 };
 
 struct TimerPeriod
 {
     static constexpr const int MACHINE_CYCLE = 2500;
-    static constexpr const int TIMER = 1000;
+    static constexpr const int L3_TIMER = 1000;
 };
 
 namespace nr::ue
@@ -35,7 +35,7 @@ void UeL3Task::onStart()
     m_nas->onStart();
 
     setTimer(TimerId::MACHINE_CYCLE, TimerPeriod::MACHINE_CYCLE);
-    setTimer(TimerId::TIMER, TimerPeriod::TIMER);
+    setTimer(TimerId::L3_TIMER, TimerPeriod::L3_TIMER);
 }
 
 void UeL3Task::onQuit()
@@ -64,9 +64,9 @@ void UeL3Task::onLoop()
             m_rrc->performCycle();
             m_nas->performCycle();
         }
-        else if (w.timerId == TimerId::TIMER)
+        else if (w.timerId == TimerId::L3_TIMER)
         {
-            setTimer(TimerId::TIMER, TimerPeriod::TIMER);
+            setTimer(TimerId::L3_TIMER, TimerPeriod::L3_TIMER);
             m_rrc->performCycle();
             m_nas->performCycle();
         }
