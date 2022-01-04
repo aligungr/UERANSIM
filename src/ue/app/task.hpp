@@ -26,7 +26,6 @@ class UeAppTask : public NtsTask
   private:
     TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
-    ECmState m_cmState{};
 
     friend class UeCmdHandler;
 

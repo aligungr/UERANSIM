@@ -85,12 +85,6 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
         setupTunInterface(session);
         return;
     }
-
-    if (msg.what == NmUeStatusUpdate::CM_STATE)
-    {
-        m_cmState = msg.cmState;
-        return;
-    }
 }
 
 void UeAppTask::setupTunInterface(const PduSession *pduSession)
