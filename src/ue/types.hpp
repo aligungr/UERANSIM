@@ -35,6 +35,7 @@ class UeAppTask;
 class UeL3Task;
 class UeRlsTask;
 class UserEquipment;
+class TunLayer;
 
 struct UeCellDesc
 {
@@ -201,6 +202,7 @@ struct TaskBase
     UeAppTask *appTask{};
     UeL3Task *l3Task{};
     UeRlsTask *rlsTask{};
+    TunLayer* tunLayer{};
 };
 
 struct RrcTimers

@@ -24,22 +24,6 @@
 namespace nr::ue
 {
 
-struct NmAppToTun : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString data{};
-
-    explicit NmAppToTun(PR present) : NtsMessage(NtsMessageType::UE_APP_TO_TUN), present(present)
-    {
-    }
-};
-
 struct NmUeTunToApp : NtsMessage
 {
     enum PR

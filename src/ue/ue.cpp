@@ -29,6 +29,7 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
     base->l3Task = new UeL3Task(base);
     base->appTask = new UeAppTask(base);
     base->rlsTask = new UeRlsTask(base);
+    base->tunLayer = new TunLayer(base);
 
     taskBase = base;
 }
