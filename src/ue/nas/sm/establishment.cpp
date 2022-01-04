@@ -47,7 +47,8 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
         return;
     }
 
-    if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() && !m_mm->isHighPriority())
+    if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() &&
+        !m_mm->isHighPriority())
     {
         m_logger->err("PDU session establishment could not be triggered, non allowed service condition");
         return;
@@ -170,11 +171,8 @@ void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept 
     else
         pduSession->pduAddress = {};
 
-    auto statusUpdate = std::make_unique<NmUeStatusUpdate>(NmUeStatusUpdate::SESSION_ESTABLISHMENT);
-    statusUpdate->pduSession = pduSession;
-    m_base->appTask->push(std::move(statusUpdate));
-
     m_logger->info("PDU Session establishment is successful PSI[%d]", pduSession->psi);
+    setupTunInterface(*pduSession);
 }
 
 void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)

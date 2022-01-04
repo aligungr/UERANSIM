@@ -93,6 +93,7 @@ class NasSm
     void onTimerTick();
     void handleUplinkDataRequest(int psi, OctetString &&data);
     void handleDownlinkDataRequest(int psi, OctetString &&data);
+    void setupTunInterface(const PduSession &pduSession);
 };
 
 } // namespace nr::ue

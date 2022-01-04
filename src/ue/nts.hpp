@@ -134,20 +134,6 @@ struct NmUeRlsToNas : NtsMessage
     }
 };
 
-struct NmUeStatusUpdate : NtsMessage
-{
-    static constexpr const int SESSION_ESTABLISHMENT = 1;
-
-    const int what{};
-
-    // SESSION_ESTABLISHMENT
-    PduSession *pduSession{};
-
-    explicit NmUeStatusUpdate(const int what) : NtsMessage(NtsMessageType::UE_STATUS_UPDATE), what(what)
-    {
-    }
-};
-
 struct NmUeCliCommand : NtsMessage
 {
     std::unique_ptr<app::UeCliCommand> cmd;

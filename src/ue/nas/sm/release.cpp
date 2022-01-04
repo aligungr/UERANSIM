@@ -19,7 +19,8 @@ namespace nr::ue
 void NasSm::sendReleaseRequest(int psi)
 {
     /* Control the protocol state */
-    if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() && !m_mm->isHighPriority())
+    if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() &&
+        !m_mm->isHighPriority())
     {
         m_logger->err("PDU session release could not start, non allowed service condition");
         return;
@@ -163,6 +164,31 @@ void NasSm::receiveReleaseCommand(const nas::PduSessionReleaseCommand &msg)
         m_logger->debug("Re-initiating a PDU session establishment procedure due to reactivation request");
         sendEstablishmentRequest(*reactivation);
     }
+}
+
+void NasSm::setupTunInterface(const PduSession &pduSession)
+{
+    if (!pduSession.pduAddress.has_value())
+    {
+        m_logger->err("Connection could not setup. PDU address is missing.");
+        return;
+    }
+
+    if (pduSession.pduAddress->sessionType != nas::EPduSessionType::IPV4 ||
+        pduSession.sessionType != nas::EPduSessionType::IPV4)
+    {
+        m_logger->err("Connection could not setup. PDU session type is not supported.");
+        return;
+    }
+
+    std::string error;
+
+    std::string ipAddress = utils::OctetStringToIp(pduSession.pduAddress->pduAddressInformation);
+
+    auto allocatedName = m_base->tunLayer->allocate(pduSession.psi, ipAddress, m_base->config->configureRouting, error);
+
+    m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession.psi,
+                   allocatedName.c_str(), ipAddress.c_str());
 }
 
 } // namespace nr::ue

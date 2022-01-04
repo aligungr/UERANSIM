@@ -37,10 +37,6 @@ class UeAppTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
-
-  private:
-    void receiveStatusUpdate(NmUeStatusUpdate &msg);
-    void setupTunInterface(const PduSession *pduSession);
 };
 
 } // namespace nr::ue
