@@ -10,7 +10,7 @@
 #include "cmd_handler.hpp"
 #include <lib/nas/utils.hpp>
 #include <ue/rls/task.hpp>
-#include <ue/tun/tun.hpp>
+#include <ue/tun/config.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 

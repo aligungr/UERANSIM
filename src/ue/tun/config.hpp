@@ -15,7 +15,7 @@
 namespace nr::ue::tun
 {
 
-int AllocateTun(const char *ifPrefix, char **allocatedName);
-void ConfigureTun(const char *tunName, const char *ipAddr, int mtu, bool configureRoute);
+int TunAllocate(const char *namePrefix, std::string &allocatedName, std::string &error);
+bool TunConfigure(const std::string &tunName, const std::string &ipAddress, int mtu, bool configureRouting, std::string &error);
 
 } // namespace nr::ue::tun
