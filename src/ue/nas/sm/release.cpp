@@ -185,7 +185,7 @@ void NasSm::setupTunInterface(const PduSession &pduSession)
 
     std::string ipAddress = utils::OctetStringToIp(pduSession.pduAddress->pduAddressInformation);
 
-    auto allocatedName = m_ue->tun().allocate(pduSession.psi, ipAddress, m_ue->config->configureRouting, error);
+    auto allocatedName = m_ue->tun->allocate(pduSession.psi, ipAddress, m_ue->config->configureRouting, error);
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession.psi,
                    allocatedName.c_str(), ipAddress.c_str());

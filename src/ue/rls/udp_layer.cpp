@@ -91,7 +91,7 @@ void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rl
         return;
     }
 
-    m_ue->rlsCtl().handleRlsMessage(m_cells[msg->sti].cellId, *msg);
+    m_ue->rlsCtl->handleRlsMessage(m_cells[msg->sti].cellId, *msg);
 }
 
 void RlsUdpLayer::onSignalChangeOrLost(int cellId)
@@ -103,7 +103,7 @@ void RlsUdpLayer::onSignalChangeOrLost(int cellId)
         dbm = m_cells[sti].dbm;
     }
 
-    m_ue->rrc().handleCellSignalChange(cellId, dbm);
+    m_ue->rrc->handleCellSignalChange(cellId, dbm);
 }
 
 void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)

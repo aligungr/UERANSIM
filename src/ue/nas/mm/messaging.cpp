@@ -182,7 +182,7 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    m_ue->rrc().deliverUplinkNas(0, std::move(pdu));
+    m_ue->rrc->deliverUplinkNas(0, std::move(pdu));
     return EProcRc::OK;
 }
 

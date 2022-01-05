@@ -93,7 +93,7 @@ void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
         return;
     }
 
-    m_ue->rlsCtl().handleUplinkRrcDelivery(cellId, 0, rrc::RrcChannel::UL_CCCH, std::move(pdu));
+    m_ue->rlsCtl->handleUplinkRrcDelivery(cellId, 0, rrc::RrcChannel::UL_CCCH, std::move(pdu));
 }
 
 void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
@@ -105,7 +105,7 @@ void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
         return;
     }
 
-    m_ue->rlsCtl().handleUplinkRrcDelivery(cellId, 0, rrc::RrcChannel::UL_CCCH1, std::move(pdu));
+    m_ue->rlsCtl->handleUplinkRrcDelivery(cellId, 0, rrc::RrcChannel::UL_CCCH1, std::move(pdu));
 }
 
 void UeRrcLayer::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
@@ -117,7 +117,7 @@ void UeRrcLayer::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
         return;
     }
 
-    m_ue->rlsCtl().handleUplinkRrcDelivery(
+    m_ue->rlsCtl->handleUplinkRrcDelivery(
         m_ue->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }), 0, rrc::RrcChannel::UL_DCCH,
         std::move(pdu));
 }

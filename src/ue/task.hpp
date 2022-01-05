@@ -42,22 +42,20 @@ class UeTask : public NtsTask
   private:
     std::unique_ptr<Logger> m_logger;
 
-  private:
-    std::unique_ptr<RlsUdpLayer> m_rlsUdp;
-    std::unique_ptr<RlsCtlLayer> m_rlsCtl;
-    std::unique_ptr<UeRrcLayer> m_rrc;
-    std::unique_ptr<NasLayer> m_nas;
-    std::unique_ptr<TunLayer> m_tun;
+  public:
+    std::unique_ptr<UeConfig> config;
+    std::unique_ptr<LogBase> logBase;
+    app::IUeController *ueController;
+    app::INodeListener *nodeListener;
+    NtsTask *cliCallbackTask;
+    UeSharedContext shCtx;
 
   public:
-    std::unique_ptr<UeConfig> config{};
-    std::unique_ptr<LogBase> logBase{};
-    app::IUeController *ueController{};
-    app::INodeListener *nodeListener{};
-    NtsTask *cliCallbackTask{};
-    UeSharedContext shCtx{};
-
-    friend class UeCmdHandler;
+    std::unique_ptr<RlsUdpLayer> rlsUdp;
+    std::unique_ptr<RlsCtlLayer> rlsCtl;
+    std::unique_ptr<UeRrcLayer> rrc;
+    std::unique_ptr<NasLayer> nas;
+    std::unique_ptr<TunLayer> tun;
 
   public:
     explicit UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
@@ -68,32 +66,6 @@ class UeTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
-
-  public:
-    inline RlsUdpLayer &rlsUdp()
-    {
-        return *m_rlsUdp;
-    }
-
-    inline RlsCtlLayer &rlsCtl()
-    {
-        return *m_rlsCtl;
-    }
-
-    inline UeRrcLayer &rrc()
-    {
-        return *m_rrc;
-    }
-
-    inline NasLayer &nas()
-    {
-        return *m_nas;
-    }
-
-    inline TunLayer &tun()
-    {
-        return *m_tun;
-    }
 };
 
 } // namespace nr::ue

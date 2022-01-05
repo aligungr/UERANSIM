@@ -271,7 +271,7 @@ void NasMm::localReleaseConnection(bool treatBarred)
     if (m_cmState != ECmState::CM_IDLE)
         m_logger->info("Performing local release of NAS connection");
 
-    m_ue->rrc().performLocalRelease(treatBarred);
+    m_ue->rrc->performLocalRelease(treatBarred);
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)

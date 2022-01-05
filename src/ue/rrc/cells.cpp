@@ -70,7 +70,7 @@ void UeRrcLayer::notifyCellLost(int cellId)
             declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
         else
         {
-            m_ue->nas().handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
+            m_ue->nas->handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
         }
     }
 

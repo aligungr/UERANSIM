@@ -260,7 +260,7 @@ EUacResult NasMm::performUac()
         return ASN_RRC_EstablishmentCause_mt_Access;
     }();
 
-    auto res = m_ue->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
+    auto res = m_ue->rrc->performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
 
     switch (res)
     {

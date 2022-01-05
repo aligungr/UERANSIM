@@ -130,7 +130,7 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);
-    m_ue->nas().handleRrcConnectionSetup();
+    m_ue->nas->handleRrcConnectionSetup();
 }
 
 void UeRrcLayer::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
@@ -148,12 +148,12 @@ void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
 
-    m_ue->nas().handleRrcConnectionRelease();
+    m_ue->nas->handleRrcConnectionRelease();
 }
 
 void UeRrcLayer::handleEstablishmentFailure()
 {
-    m_ue->nas().handleRrcEstablishmentFailure();
+    m_ue->nas->handleRrcEstablishmentFailure();
 }
 
 void UeRrcLayer::performLocalRelease(bool treatBarred)
@@ -164,7 +164,7 @@ void UeRrcLayer::performLocalRelease(bool treatBarred)
     switchState(ERrcState::RRC_IDLE);
 
     m_ue->shCtx.sti = Random::Mixed(m_ue->config->getNodeName()).nextL();
-    m_ue->nas().handleRrcConnectionRelease();
+    m_ue->nas->handleRrcConnectionRelease();
 }
 
 } // namespace nr::ue

@@ -44,19 +44,19 @@ ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueCon
     this->m_logger = logBase->makeUniqueLogger(this->config->getLoggerPrefix() + "main");
     this->shCtx.sti = Random::Mixed(this->config->getNodeName()).nextL();
 
-    this->m_rlsUdp = std::make_unique<RlsUdpLayer>(this);
-    this->m_rlsCtl = std::make_unique<RlsCtlLayer>(this);
-    this->m_rrc = std::make_unique<UeRrcLayer>(this);
-    this->m_nas = std::make_unique<NasLayer>(this);
-    this->m_tun = std::make_unique<TunLayer>(this);
+    this->rlsUdp = std::make_unique<RlsUdpLayer>(this);
+    this->rlsCtl = std::make_unique<RlsCtlLayer>(this);
+    this->rrc = std::make_unique<UeRrcLayer>(this);
+    this->nas = std::make_unique<NasLayer>(this);
+    this->tun = std::make_unique<TunLayer>(this);
 }
 
 UeTask::~UeTask() = default;
 
 void UeTask::onStart()
 {
-    m_rrc->onStart();
-    m_nas->onStart();
+    rrc->onStart();
+    nas->onStart();
 
     setTimer(TimerId::L3_MACHINE_CYCLE, TimerPeriod::L3_MACHINE_CYCLE);
     setTimer(TimerId::L3_TIMER, TimerPeriod::L3_TIMER);
@@ -66,7 +66,7 @@ void UeTask::onStart()
 
 void UeTask::onLoop()
 {
-    m_rlsUdp->checkHeartbeat();
+    rlsUdp->checkHeartbeat();
 
     auto msg = take();
     if (!msg)
@@ -74,8 +74,8 @@ void UeTask::onLoop()
 
     if (msg->msgType == NtsMessageType::UE_CYCLE_REQUIRED)
     {
-        m_rrc->performCycle();
-        m_nas->performCycle();
+        rrc->performCycle();
+        nas->performCycle();
     }
     else if (msg->msgType == NtsMessageType::TIMER_EXPIRED)
     {
@@ -83,24 +83,24 @@ void UeTask::onLoop()
         if (w.timerId == TimerId::L3_MACHINE_CYCLE)
         {
             setTimer(TimerId::L3_MACHINE_CYCLE, TimerPeriod::L3_MACHINE_CYCLE);
-            m_rrc->performCycle();
-            m_nas->performCycle();
+            rrc->performCycle();
+            nas->performCycle();
         }
         else if (w.timerId == TimerId::L3_TIMER)
         {
             setTimer(TimerId::L3_TIMER, TimerPeriod::L3_TIMER);
-            m_rrc->performCycle();
-            m_nas->performCycle();
+            rrc->performCycle();
+            nas->performCycle();
         }
         else if (w.timerId == TimerId::RLS_ACK_CONTROL)
         {
             setTimer(TimerId::RLS_ACK_CONTROL, TimerPeriod::RLS_ACK_CONTROL);
-            m_rlsCtl->onAckControlTimerExpired();
+            rlsCtl->onAckControlTimerExpired();
         }
         else if (w.timerId == TimerId::RLS_ACK_SEND)
         {
             setTimer(TimerId::RLS_ACK_SEND, TimerPeriod::RLS_ACK_SEND);
-            m_rlsCtl->onAckSendTimerExpired();
+            rlsCtl->onAckSendTimerExpired();
         }
         else if (w.timerId == TimerId::SWITCH_OFF)
         {
@@ -110,7 +110,7 @@ void UeTask::onLoop()
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
     {
         auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
-        m_nas->handleUplinkDataRequest(w.psi, std::move(w.data));
+        nas->handleUplinkDataRequest(w.psi, std::move(w.data));
     }
     else if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
     {
@@ -119,7 +119,7 @@ void UeTask::onLoop()
         if (rlsMsg == nullptr)
             m_logger->err("Unable to decode RLS message");
         else
-            m_rlsUdp->receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
+            rlsUdp->receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
     }
     else if (msg->msgType == NtsMessageType::UE_SWITCH_OFF)
     {
@@ -139,8 +139,8 @@ void UeTask::onLoop()
 
 void UeTask::onQuit()
 {
-    m_rrc->onQuit();
-    m_nas->onQuit();
+    rrc->onQuit();
+    nas->onQuit();
 }
 
 } // namespace nr::ue

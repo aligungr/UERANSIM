@@ -65,7 +65,7 @@ void UeRrcLayer::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationT
     OctetString nasPdu =
         asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);
 
-    m_ue->nas().handleNasDelivery(nasPdu);
+    m_ue->nas->handleNasDelivery(nasPdu);
 }
 
 } // namespace nr::ue
