@@ -47,9 +47,9 @@ enum class NtsMessageType
 
     UE_TUN_TO_APP,
     UE_RLS_TO_NAS,
-    UE_NAS_TO_APP,
 
-    UE_CYCLE_REQUIRED
+    UE_CYCLE_REQUIRED,
+    UE_SWITCH_OFF
 };
 
 struct NtsMessage

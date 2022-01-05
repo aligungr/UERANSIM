@@ -10,9 +10,6 @@
 #include "cmd_handler.hpp"
 #include <ue/tun/config.hpp>
 
-static constexpr const int SWITCH_OFF_TIMER_ID = 1;
-static constexpr const int SWITCH_OFF_DELAY = 500;
-
 namespace nr::ue
 {
 
@@ -37,30 +34,10 @@ void UeAppTask::onLoop()
 
     switch (msg->msgType)
     {
-    case NtsMessageType::UE_NAS_TO_APP: {
-        auto &w = dynamic_cast<NmUeNasToApp &>(*msg);
-        switch (w.present)
-        {
-        case NmUeNasToApp::PERFORM_SWITCH_OFF: {
-            setTimer(SWITCH_OFF_TIMER_ID, SWITCH_OFF_DELAY);
-            break;
-        }
-        }
-        break;
-    }
     case NtsMessageType::UE_CLI_COMMAND: {
         auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
         UeCmdHandler handler{m_base};
         handler.handleCmd(w);
-        break;
-    }
-    case NtsMessageType::TIMER_EXPIRED: {
-        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
-        if (w.timerId == SWITCH_OFF_TIMER_ID)
-        {
-            m_logger->info("UE device is switching off");
-            m_base->ueController->performSwitchOff(m_base->ue);
-        }
         break;
     }
     default:

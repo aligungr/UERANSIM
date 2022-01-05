@@ -40,18 +40,6 @@ struct NmUeTunToApp : NtsMessage
     }
 };
 
-struct NmUeNasToApp : NtsMessage
-{
-    enum PR
-    {
-        PERFORM_SWITCH_OFF,
-    } present;
-
-    explicit NmUeNasToApp(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_APP), present(present)
-    {
-    }
-};
-
 struct NmUeRlsToNas : NtsMessage
 {
     enum PR
@@ -82,6 +70,14 @@ struct NmUeCliCommand : NtsMessage
 struct NmCycleRequired : NtsMessage
 {
     NmCycleRequired() : NtsMessage(NtsMessageType::UE_CYCLE_REQUIRED)
+    {
+    }
+};
+
+
+struct NmSwitchOff : NtsMessage
+{
+    NmSwitchOff() : NtsMessage(NtsMessageType::UE_SWITCH_OFF)
     {
     }
 };

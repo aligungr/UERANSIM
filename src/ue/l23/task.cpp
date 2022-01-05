@@ -16,6 +16,7 @@ struct TimerId
     static constexpr const int L3_TIMER = 2;
     static constexpr const int RLS_ACK_CONTROL = 3;
     static constexpr const int RLS_ACK_SEND = 4;
+    static constexpr const int SWITCH_OFF = 5;
 };
 
 struct TimerPeriod
@@ -24,6 +25,7 @@ struct TimerPeriod
     static constexpr const int L3_TIMER = 1000;
     static constexpr const int RLS_ACK_CONTROL = 1500;
     static constexpr const int RLS_ACK_SEND = 2250;
+    static constexpr const int SWITCH_OFF = 500;
 };
 
 namespace nr::ue
@@ -92,6 +94,10 @@ void UeL23Task::onLoop()
             setTimer(TimerId::RLS_ACK_SEND, TimerPeriod::RLS_ACK_SEND);
             m_rlsCtl->onAckSendTimerExpired();
         }
+        else if (w.timerId == TimerId::SWITCH_OFF)
+        {
+            m_base->ueController->performSwitchOff(m_base->ue);
+        }
     }
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP || msg->msgType == NtsMessageType::UE_RLS_TO_NAS)
     {
@@ -105,6 +111,10 @@ void UeL23Task::onLoop()
             m_logger->err("Unable to decode RLS message");
         else
             m_rlsUdp->receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
+    }
+    else if (msg->msgType == NtsMessageType::UE_SWITCH_OFF)
+    {
+        setTimer(TimerId::SWITCH_OFF, TimerPeriod::SWITCH_OFF);
     }
     else
     {

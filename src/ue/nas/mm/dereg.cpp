@@ -9,7 +9,7 @@
 #include "mm.hpp"
 
 #include <lib/nas/utils.hpp>
-#include <ue/app/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nas/sm/sm.hpp>
 
 namespace nr::ue
@@ -104,7 +104,7 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
     if (deregCause == EDeregCause::SWITCH_OFF)
     {
         onSwitchOff();
-        m_base->appTask->push(std::make_unique<NmUeNasToApp>(NmUeNasToApp::PERFORM_SWITCH_OFF));
+        m_base->l23Task->push(std::make_unique<NmSwitchOff>());
     }
     else if (deregCause == EDeregCause::USIM_REMOVAL)
     {
