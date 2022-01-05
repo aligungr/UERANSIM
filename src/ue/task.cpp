@@ -11,15 +11,6 @@
 
 #include <utils/random.hpp>
 
-struct TimerId
-{
-    static constexpr const int L3_MACHINE_CYCLE = 1;
-    static constexpr const int L3_TIMER = 2;
-    static constexpr const int RLS_ACK_CONTROL = 3;
-    static constexpr const int RLS_ACK_SEND = 4;
-    static constexpr const int SWITCH_OFF = 5;
-};
-
 struct TimerPeriod
 {
     static constexpr const int L3_MACHINE_CYCLE = 2500;
@@ -49,6 +40,12 @@ ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueCon
     this->rrc = std::make_unique<UeRrcLayer>(this);
     this->nas = std::make_unique<NasLayer>(this);
     this->tun = std::make_unique<TunLayer>(this);
+
+    this->m_timerL3MachineCycle = -1;
+    this->m_timerL3Timer = -1;
+    this->m_timerRlsAckControl = -1;
+    this->m_timerRlsAckSend = -1;
+    this->m_timerSwitchOff = -1;
 }
 
 UeTask::~UeTask() = default;
@@ -59,15 +56,18 @@ void UeTask::onStart()
     rrc->onStart();
     nas->onStart();
 
-    setTimer(TimerId::L3_MACHINE_CYCLE, TimerPeriod::L3_MACHINE_CYCLE);
-    setTimer(TimerId::L3_TIMER, TimerPeriod::L3_TIMER);
-    setTimer(TimerId::RLS_ACK_CONTROL, TimerPeriod::RLS_ACK_CONTROL);
-    setTimer(TimerId::RLS_ACK_SEND, TimerPeriod::RLS_ACK_SEND);
+    auto current = utils::CurrentTimeMillis();
+    m_timerL3MachineCycle = current + TimerPeriod::L3_MACHINE_CYCLE;
+    m_timerL3Timer = current + TimerPeriod::L3_TIMER;
+    m_timerRlsAckControl = current + TimerPeriod::RLS_ACK_CONTROL;
+    m_timerRlsAckSend = current + TimerPeriod::RLS_ACK_SEND;
 }
 
 void UeTask::onLoop()
 {
     rlsUdp->checkHeartbeat();
+
+    checkTimers();
 
     auto msg = take();
     if (!msg)
@@ -77,36 +77,6 @@ void UeTask::onLoop()
     {
         rrc->performCycle();
         nas->performCycle();
-    }
-    else if (msg->msgType == NtsMessageType::TIMER_EXPIRED)
-    {
-        auto &w = dynamic_cast<NmTimerExpired &>(*msg);
-        if (w.timerId == TimerId::L3_MACHINE_CYCLE)
-        {
-            setTimer(TimerId::L3_MACHINE_CYCLE, TimerPeriod::L3_MACHINE_CYCLE);
-            rrc->performCycle();
-            nas->performCycle();
-        }
-        else if (w.timerId == TimerId::L3_TIMER)
-        {
-            setTimer(TimerId::L3_TIMER, TimerPeriod::L3_TIMER);
-            rrc->performCycle();
-            nas->performCycle();
-        }
-        else if (w.timerId == TimerId::RLS_ACK_CONTROL)
-        {
-            setTimer(TimerId::RLS_ACK_CONTROL, TimerPeriod::RLS_ACK_CONTROL);
-            rlsCtl->onAckControlTimerExpired();
-        }
-        else if (w.timerId == TimerId::RLS_ACK_SEND)
-        {
-            setTimer(TimerId::RLS_ACK_SEND, TimerPeriod::RLS_ACK_SEND);
-            rlsCtl->onAckSendTimerExpired();
-        }
-        else if (w.timerId == TimerId::SWITCH_OFF)
-        {
-            ueController->performSwitchOff(this);
-        }
     }
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
     {
@@ -120,7 +90,7 @@ void UeTask::onLoop()
     }
     else if (msg->msgType == NtsMessageType::UE_SWITCH_OFF)
     {
-        setTimer(TimerId::SWITCH_OFF, TimerPeriod::SWITCH_OFF);
+        m_timerSwitchOff = utils::CurrentTimeMillis() + TimerPeriod::SWITCH_OFF;
     }
     else if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
     {
@@ -139,6 +109,38 @@ void UeTask::onQuit()
     rlsUdp->onQuit();
     rrc->onQuit();
     nas->onQuit();
+}
+
+void UeTask::checkTimers()
+{
+    auto current = utils::CurrentTimeMillis();
+
+    if (m_timerL3MachineCycle != -1 && m_timerL3MachineCycle <= current)
+    {
+        m_timerL3MachineCycle = current + TimerPeriod::L3_MACHINE_CYCLE;
+        rrc->performCycle();
+        nas->performCycle();
+    }
+    else if (m_timerL3Timer != -1 && m_timerL3Timer <= current)
+    {
+        m_timerL3Timer = current + TimerPeriod::L3_TIMER;
+        rrc->performCycle();
+        nas->performCycle();
+    }
+    else if (m_timerRlsAckControl != -1 && m_timerRlsAckControl <= current)
+    {
+        m_timerRlsAckControl = current + TimerPeriod::RLS_ACK_CONTROL;
+        rlsCtl->onAckControlTimerExpired();
+    }
+    else if (m_timerRlsAckSend != -1 && m_timerRlsAckSend <= current)
+    {
+        m_timerRlsAckSend = current + TimerPeriod::RLS_ACK_SEND;
+        rlsCtl->onAckSendTimerExpired();
+    }
+    else if (m_timerSwitchOff != -1 && m_timerSwitchOff <= current)
+    {
+        ueController->performSwitchOff(this);
+    }
 }
 
 } // namespace nr::ue

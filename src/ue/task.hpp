@@ -42,6 +42,13 @@ class UeTask : public NtsTask
   private:
     std::unique_ptr<Logger> m_logger;
 
+  private:
+    int64_t m_timerL3MachineCycle;
+    int64_t m_timerL3Timer;
+    int64_t m_timerRlsAckControl;
+    int64_t m_timerRlsAckSend;
+    int64_t m_timerSwitchOff;
+
   public:
     std::unique_ptr<UeConfig> config;
     std::unique_ptr<LogBase> logBase;
@@ -66,6 +73,9 @@ class UeTask : public NtsTask
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
+
+  private:
+    void checkTimers();
 };
 
 } // namespace nr::ue
