@@ -65,8 +65,15 @@ void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
     }
 }
 
-void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg)
+void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, const OctetString& pdu)
 {
+    auto msg = rls::DecodeRlsMessage(OctetView{pdu});
+    if (msg == nullptr)
+    {
+        m_logger->err("Unable to decode RLS message");
+        return;
+    }
+
     if (msg->msgType == rls::EMessageType::HEARTBEAT_ACK)
     {
         if (!m_cells.count(msg->sti))

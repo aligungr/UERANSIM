@@ -60,7 +60,7 @@ class RlsUdpLayer
     void onQuit();
     void checkHeartbeat();
     void send(int cellId, const rls::RlsMessage &msg);
-    void receiveRlsPdu(const InetAddress &address, std::unique_ptr<rls::RlsMessage> &&msg);
+    void receiveRlsPdu(const InetAddress &address, const OctetString& pdu);
 };
 
 } // namespace nr::ue

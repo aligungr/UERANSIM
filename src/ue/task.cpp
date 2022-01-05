@@ -116,11 +116,7 @@ void UeTask::onLoop()
     else if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
     {
         auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
-        auto rlsMsg = rls::DecodeRlsMessage(OctetView{w.packet});
-        if (rlsMsg == nullptr)
-            m_logger->err("Unable to decode RLS message");
-        else
-            rlsUdp->receiveRlsPdu(w.fromAddress, std::move(rlsMsg));
+        rlsUdp->receiveRlsPdu(w.fromAddress, w.packet);
     }
     else if (msg->msgType == NtsMessageType::UE_SWITCH_OFF)
     {
