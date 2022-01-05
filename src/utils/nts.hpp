@@ -50,7 +50,6 @@ enum class NtsMessageType
     UE_RLS_TO_RRC,
     UE_RLS_TO_NAS,
     UE_NAS_TO_APP,
-    UE_NAS_TO_RLS,
 
     UE_CYCLE_REQUIRED
 };

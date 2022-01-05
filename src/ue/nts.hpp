@@ -102,22 +102,6 @@ struct NmUeNasToApp : NtsMessage
     }
 };
 
-struct NmUeNasToRls : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString pdu;
-
-    explicit NmUeNasToRls(PR present) : NtsMessage(NtsMessageType::UE_NAS_TO_RLS), present(present)
-    {
-    }
-};
-
 struct NmUeRlsToNas : NtsMessage
 {
     enum PR

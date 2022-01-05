@@ -119,17 +119,6 @@ void UeL23Task::onLoop()
         }
         }
     }
-    else if (msg->msgType == NtsMessageType::UE_NAS_TO_RLS)
-    {
-        auto &w = dynamic_cast<NmUeNasToRls &>(*msg);
-        switch (w.present)
-        {
-        case NmUeNasToRls::DATA_PDU_DELIVERY: {
-            m_rlsCtl->handleUplinkDataDelivery(w.psi, std::move(w.pdu));
-            break;
-        }
-        }
-    }
     else if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
     {
         auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
