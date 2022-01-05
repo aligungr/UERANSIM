@@ -40,55 +40,7 @@ void UeCmdHandler::sendError(const InetAddress &address, const std::string &outp
     m_ue->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, true));
 }
 
-void UeCmdHandler::pauseTasks()
-{
-    m_ue->requestPause();
-}
-
-void UeCmdHandler::unpauseTasks()
-{
-    m_ue->requestUnpause();
-}
-
-bool UeCmdHandler::isAllPaused()
-{
-    if (!m_ue->isPauseConfirmed())
-        return false;
-    return true;
-}
-
 void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
-{
-    pauseTasks();
-
-    uint64_t currentTime = utils::CurrentTimeMillis();
-    uint64_t endTime = currentTime + PAUSE_CONFIRM_TIMEOUT;
-
-    bool isPaused = false;
-    while (currentTime < endTime)
-    {
-        currentTime = utils::CurrentTimeMillis();
-        if (isAllPaused())
-        {
-            isPaused = true;
-            break;
-        }
-        utils::Sleep(PAUSE_POLLING);
-    }
-
-    if (!isPaused)
-    {
-        sendError(msg.address, "UE is unable process command due to pausing timeout");
-    }
-    else
-    {
-        handleCmdImpl(msg);
-    }
-
-    unpauseTasks();
-}
-
-void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
 {
     switch (msg.cmd->present)
     {
