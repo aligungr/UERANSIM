@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 
 #include <unistd.h>
@@ -325,9 +326,9 @@ static void IncrementNumber(std::string &s, int delta)
     s = LargeSum(s, std::to_string(delta));
 }
 
-static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
+static std::unique_ptr<nr::ue::UeConfig> GetConfigByUe(int ueIndex)
 {
-    auto *c = new nr::ue::UeConfig();
+    auto c = std::make_unique<nr::ue::UeConfig>();
     c->key = g_refConfig->key.copy();
     c->opC = g_refConfig->opC.copy();
     c->opType = g_refConfig->opType;
@@ -482,9 +483,10 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < g_options.count; i++)
     {
-        auto *config = GetConfigByUe(i);
-        auto *ue = new nr::ue::UserEquipment(config, &g_ueController, nullptr, g_cliRespTask);
-        g_ueMap.put(config->getNodeName(), ue);
+        auto config = GetConfigByUe(i);
+        auto nodeName = config->getNodeName();
+        auto *ue = new nr::ue::UserEquipment(std::move(config), &g_ueController, nullptr, g_cliRespTask);
+        g_ueMap.put(nodeName, ue);
     }
 
     if (!g_options.disableCmd)

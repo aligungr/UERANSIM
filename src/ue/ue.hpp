@@ -23,8 +23,8 @@ class UserEquipment
     TaskBase *taskBase;
 
   public:
-    UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener,
-                  NtsTask *cliCallbackTask);
+    UserEquipment(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
+                  app::INodeListener *nodeListener, NtsTask *cliCallbackTask);
     virtual ~UserEquipment();
 
   public:

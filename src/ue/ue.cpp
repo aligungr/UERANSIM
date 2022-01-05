@@ -12,13 +12,13 @@
 namespace nr::ue
 {
 
-UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController, app::INodeListener *nodeListener,
-                             NtsTask *cliCallbackTask)
+UserEquipment::UserEquipment(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
+                             app::INodeListener *nodeListener, NtsTask *cliCallbackTask)
 {
     auto *base = new TaskBase();
     base->ue = this;
-    base->config = config;
-    base->logBase = std::make_unique<LogBase>("logs/ue-" + config->getNodeName() + ".log");
+    base->config = std::move(config);
+    base->logBase = std::make_unique<LogBase>("logs/ue-" + base->config->getNodeName() + ".log");
     base->ueController = ueController;
     base->nodeListener = nodeListener;
     base->cliCallbackTask = cliCallbackTask;

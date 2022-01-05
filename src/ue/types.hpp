@@ -188,7 +188,7 @@ struct UeSharedContext
 struct TaskBase
 {
     UserEquipment *ue{};
-    UeConfig *config{};
+    std::unique_ptr<UeConfig> config{};
     std::unique_ptr<LogBase> logBase{};
     app::IUeController *ueController{};
     app::INodeListener *nodeListener{};
