@@ -79,7 +79,7 @@ void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
         state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
         return;
 
-    m_base->tunLayer->write(psi, data.data(), static_cast<size_t>(data.length()));
+    m_base->l23Task->tun().write(psi, data.data(), static_cast<size_t>(data.length()));
 }
 
 } // namespace nr::ue

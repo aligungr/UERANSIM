@@ -11,6 +11,7 @@
 #include <lib/nas/proto_conf.hpp>
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nas/mm/mm.hpp>
 
 namespace nr::ue
@@ -38,7 +39,7 @@ void NasSm::localReleaseSession(int psi)
     freePduSessionId(psi);
 
     if (isEstablished)
-        m_base->tunLayer->release(psi);
+        m_base->l23Task->tun().release(psi);
 }
 
 void NasSm::localReleaseAllSessions()

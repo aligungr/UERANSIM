@@ -33,9 +33,7 @@ namespace nr::ue
 
 class UeAppTask;
 class UeL23Task;
-class UeRlsTask;
 class UserEquipment;
-class TunLayer;
 
 struct UeCellDesc
 {
@@ -201,7 +199,6 @@ struct TaskBase
 
     UeAppTask *appTask{};
     UeL23Task *l23Task{};
-    TunLayer* tunLayer{};
 };
 
 struct RrcTimers

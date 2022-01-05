@@ -37,7 +37,7 @@ static void ReceiverThread(void *args)
     while (true)
     {
         int psi;
-        size_t s = base->tunLayer->read(buffer, RECEIVER_BUFFER_SIZE, psi);
+        size_t s = base->l23Task->tun().read(buffer, RECEIVER_BUFFER_SIZE, psi);
 
         if (s > 0)
         {

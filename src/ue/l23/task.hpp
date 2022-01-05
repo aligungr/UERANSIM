@@ -21,6 +21,7 @@
 #include <ue/rls/ctl_layer.hpp>
 #include <ue/rls/udp_layer.hpp>
 #include <ue/rrc/layer.hpp>
+#include <ue/tun/layer.hpp>
 #include <ue/types.hpp>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
@@ -38,6 +39,7 @@ class UeL23Task : public NtsTask
     std::unique_ptr<RlsCtlLayer> m_rlsCtl;
     std::unique_ptr<UeRrcLayer> m_rrc;
     std::unique_ptr<NasLayer> m_nas;
+    std::unique_ptr<TunLayer> m_tun;
 
     friend class UeCmdHandler;
 
@@ -69,6 +71,11 @@ class UeL23Task : public NtsTask
     inline NasLayer &nas()
     {
         return *m_nas;
+    }
+
+    inline TunLayer &tun()
+    {
+        return *m_tun;
     }
 };
 

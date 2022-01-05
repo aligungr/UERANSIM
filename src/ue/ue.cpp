@@ -27,7 +27,6 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
 
     base->l23Task = new UeL23Task(base);
     base->appTask = new UeAppTask(base);
-    base->tunLayer = new TunLayer(base);
 
     taskBase = base;
 }

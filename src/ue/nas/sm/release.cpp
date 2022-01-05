@@ -11,6 +11,7 @@
 #include <lib/nas/utils.hpp>
 #include <optional>
 #include <ue/app/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nas/mm/mm.hpp>
 
 namespace nr::ue
@@ -185,7 +186,8 @@ void NasSm::setupTunInterface(const PduSession &pduSession)
 
     std::string ipAddress = utils::OctetStringToIp(pduSession.pduAddress->pduAddressInformation);
 
-    auto allocatedName = m_base->tunLayer->allocate(pduSession.psi, ipAddress, m_base->config->configureRouting, error);
+    auto allocatedName =
+        m_base->l23Task->tun().allocate(pduSession.psi, ipAddress, m_base->config->configureRouting, error);
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession.psi,
                    allocatedName.c_str(), ipAddress.c_str());

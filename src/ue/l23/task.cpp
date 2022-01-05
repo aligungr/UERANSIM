@@ -38,6 +38,7 @@ ue::UeL23Task::UeL23Task(TaskBase *base) : m_base{base}
     m_rlsCtl = std::make_unique<RlsCtlLayer>(base);
     m_rrc = std::make_unique<UeRrcLayer>(base);
     m_nas = std::make_unique<NasLayer>(base);
+    m_tun = std::make_unique<TunLayer>(base);
 }
 
 UeL23Task::~UeL23Task() = default;
