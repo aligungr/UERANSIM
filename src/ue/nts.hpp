@@ -24,38 +24,6 @@
 namespace nr::ue
 {
 
-struct NmUeTunToApp : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY,
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString data{};
-
-    explicit NmUeTunToApp(PR present) : NtsMessage(NtsMessageType::UE_TUN_TO_APP), present(present)
-    {
-    }
-};
-
-struct NmUeRlsToNas : NtsMessage
-{
-    enum PR
-    {
-        DATA_PDU_DELIVERY
-    } present;
-
-    // DATA_PDU_DELIVERY
-    int psi{};
-    OctetString pdu{};
-
-    explicit NmUeRlsToNas(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_NAS), present(present)
-    {
-    }
-};
-
 struct NmUeCliCommand : NtsMessage
 {
     std::unique_ptr<app::UeCliCommand> cmd;
@@ -74,10 +42,19 @@ struct NmCycleRequired : NtsMessage
     }
 };
 
-
 struct NmSwitchOff : NtsMessage
 {
     NmSwitchOff() : NtsMessage(NtsMessageType::UE_SWITCH_OFF)
+    {
+    }
+};
+
+struct NmUeTunToApp : NtsMessage
+{
+    int psi{};
+    OctetString data{};
+
+    NmUeTunToApp() : NtsMessage(NtsMessageType::UE_TUN_TO_APP)
     {
     }
 };

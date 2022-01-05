@@ -100,9 +100,10 @@ void UeTask::onLoop()
             m_base->ueController->performSwitchOff(m_base->ue);
         }
     }
-    else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP || msg->msgType == NtsMessageType::UE_RLS_TO_NAS)
+    else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
     {
-        m_nas->handleSapMessage(std::move(msg));
+        auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
+        m_nas->handleUplinkDataRequest(w.psi, std::move(w.data));
     }
     else if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
     {

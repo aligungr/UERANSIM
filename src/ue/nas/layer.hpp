@@ -42,7 +42,6 @@ class NasLayer
 
   public:
     void performCycle();
-    void handleSapMessage(std::unique_ptr<NtsMessage> msg);
     void handleRrcConnectionSetup();
     void handleRrcConnectionRelease();
     void handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds);
@@ -51,6 +50,8 @@ class NasLayer
     void handleRrcEstablishmentFailure();
     void handleActiveCellChange(const Tai &prevTai);
     void handleNasDelivery(const OctetString& data);
+    void handleUplinkDataRequest(int psi, OctetString &&data);
+    void handleDownlinkDataRequest(int psi, OctetString &&data);
 };
 
 } // namespace nr::ue

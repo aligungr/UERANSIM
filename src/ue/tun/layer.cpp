@@ -41,7 +41,7 @@ static void ReceiverThread(void *args)
 
         if (s > 0)
         {
-            auto m = std::make_unique<nr::ue::NmUeTunToApp>(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
+            auto m = std::make_unique<nr::ue::NmUeTunToApp>();
             m->psi = psi;
             m->data = OctetString::FromArray(buffer, s);
             base->task->push(std::move(m));

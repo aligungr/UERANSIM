@@ -46,8 +46,6 @@ enum class NtsMessageType
     GNB_SCTP,
 
     UE_TUN_TO_APP,
-    UE_RLS_TO_NAS,
-
     UE_CYCLE_REQUIRED,
     UE_SWITCH_OFF
 };

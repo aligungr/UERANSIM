@@ -36,19 +36,12 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
                 return;
             }
 
-            auto w = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
-            w->psi = static_cast<int>(m.payload);
-            w->pdu = std::move(m.pdu);
-            m_base->task->push(std::move(w));
+            m_base->task->nas().handleDownlinkDataRequest(static_cast<int>(m.payload), std::move(m.pdu));
         }
         else if (m.pduType == rls::EPduType::RRC)
-        {
             m_base->task->rrc().handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
-        }
         else
-        {
             m_logger->err("Unhandled RLS PDU type");
-        }
     }
     else
     {

@@ -39,41 +39,6 @@ void NasLayer::onQuit()
     delete m_usim;
 }
 
-void NasLayer::handleSapMessage(std::unique_ptr<NtsMessage> msg)
-{
-    switch (msg->msgType)
-    {
-    case NtsMessageType::UE_TUN_TO_APP: {
-        auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
-        switch (w.present)
-        {
-        case NmUeTunToApp::DATA_PDU_DELIVERY: {
-            m_sm->handleUplinkDataRequest(w.psi, std::move(w.data));
-            break;
-        }
-        default:
-            break;
-        }
-        break;
-    }
-    case NtsMessageType::UE_RLS_TO_NAS: {
-        auto &w = dynamic_cast<NmUeRlsToNas &>(*msg);
-        switch (w.present)
-        {
-        case NmUeRlsToNas::DATA_PDU_DELIVERY: {
-            m_sm->handleDownlinkDataRequest(w.psi, std::move(w.pdu));
-            break;
-        }
-        }
-
-        break;
-    }
-    default:
-        m_logger->unhandledNts(*msg);
-        break;
-    }
-}
-
 void NasLayer::performCycle()
 {
     UeTimer *const arr[] = {
@@ -139,6 +104,16 @@ void NasLayer::handleNasDelivery(const OctetString &data)
     auto nasMessage = nas::DecodeNasMessage(buffer);
     if (nasMessage != nullptr)
         m_mm->receiveNasMessage(*nasMessage);
+}
+
+void NasLayer::handleUplinkDataRequest(int psi, OctetString &&data)
+{
+    m_sm->handleUplinkDataRequest(psi, std::move(data));
+}
+
+void NasLayer::handleDownlinkDataRequest(int psi, OctetString &&data)
+{
+    m_sm->handleDownlinkDataRequest(psi, std::move(data));
 }
 
 } // namespace nr::ue
