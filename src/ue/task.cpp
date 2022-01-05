@@ -88,10 +88,6 @@ void UeTask::onLoop()
         auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
         rlsUdp->receiveRlsPdu(w.fromAddress, w.packet);
     }
-    else if (msg->msgType == NtsMessageType::UE_SWITCH_OFF)
-    {
-        m_timerSwitchOff = utils::CurrentTimeMillis() + TimerPeriod::SWITCH_OFF;
-    }
     else if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
     {
         auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
@@ -141,6 +137,11 @@ void UeTask::checkTimers()
     {
         ueController->performSwitchOff(this);
     }
+}
+
+void UeTask::triggerSwitchOff()
+{
+    m_timerSwitchOff = utils::CurrentTimeMillis() + TimerPeriod::SWITCH_OFF;
 }
 
 } // namespace nr::ue

@@ -47,7 +47,6 @@ enum class NtsMessageType
 
     UE_TUN_TO_APP,
     UE_CYCLE_REQUIRED,
-    UE_SWITCH_OFF
 };
 
 struct NtsMessage

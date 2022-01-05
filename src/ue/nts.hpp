@@ -42,13 +42,6 @@ struct NmCycleRequired : NtsMessage
     }
 };
 
-struct NmSwitchOff : NtsMessage
-{
-    NmSwitchOff() : NtsMessage(NtsMessageType::UE_SWITCH_OFF)
-    {
-    }
-};
-
 struct NmUeTunToApp : NtsMessage
 {
     int psi{};

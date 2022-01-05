@@ -74,6 +74,10 @@ class UeTask : public NtsTask
     void onLoop() override;
     void onQuit() override;
 
+  public:
+    void triggerCycle();
+    void triggerSwitchOff();
+
   private:
     void checkTimers();
 };

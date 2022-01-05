@@ -104,7 +104,7 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
     if (deregCause == EDeregCause::SWITCH_OFF)
     {
         onSwitchOff();
-        m_ue->push(std::make_unique<NmSwitchOff>());
+        m_ue->triggerSwitchOff();
     }
     else if (deregCause == EDeregCause::USIM_REMOVAL)
     {
