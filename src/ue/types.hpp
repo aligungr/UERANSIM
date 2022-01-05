@@ -32,7 +32,6 @@ namespace nr::ue
 {
 
 class UeTask;
-class UserEquipment;
 
 struct UeCellDesc
 {

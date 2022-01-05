@@ -104,7 +104,7 @@ void UeTask::onLoop()
         }
         else if (w.timerId == TimerId::SWITCH_OFF)
         {
-            ueController->performSwitchOff(ue);
+            ueController->performSwitchOff(this);
         }
     }
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)

@@ -50,7 +50,6 @@ class UeTask : public NtsTask
     std::unique_ptr<TunLayer> m_tun;
 
   public:
-    UserEquipment *ue{};
     std::unique_ptr<UeConfig> config{};
     std::unique_ptr<LogBase> logBase{};
     app::IUeController *ueController{};

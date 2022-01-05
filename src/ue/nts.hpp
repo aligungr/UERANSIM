@@ -9,11 +9,11 @@
 #pragma once
 
 #include "types.hpp"
-#include "ue.hpp"
 
 #include <utility>
 
 #include <lib/app/cli_base.hpp>
+#include <lib/app/cli_cmd.hpp>
 #include <lib/rls/rls_base.hpp>
 #include <lib/rrc/rrc.hpp>
 #include <utils/light_sync.hpp>

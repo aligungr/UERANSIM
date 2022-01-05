@@ -17,7 +17,8 @@
 #include <lib/app/cli_cmd.hpp>
 #include <lib/app/proc_table.hpp>
 #include <lib/app/ue_ctl.hpp>
-#include <ue/ue.hpp>
+#include <ue/task.hpp>
+#include <ue/types.hpp>
 #include <utils/common.hpp>
 #include <utils/concurrent_map.hpp>
 #include <utils/constants.hpp>
@@ -27,7 +28,7 @@
 
 static app::CliServer *g_cliServer = nullptr;
 static nr::ue::UeConfig *g_refConfig = nullptr;
-static ConcurrentMap<std::string, nr::ue::UserEquipment *> g_ueMap{};
+static ConcurrentMap<std::string, nr::ue::UeTask *> g_ueMap{};
 static app::CliResponseTask *g_cliRespTask = nullptr;
 
 static struct Options
@@ -47,7 +48,7 @@ struct NwUeControllerCmd : NtsMessage
     } present;
 
     // PERFORM_SWITCH_OFF
-    nr::ue::UserEquipment *ue{};
+    nr::ue::UeTask *ue{};
 
     explicit NwUeControllerCmd(PR present) : NtsMessage(NtsMessageType::UE_CTL_COMMAND), present(present)
     {
@@ -406,7 +407,7 @@ static void ReceiveCommand(app::CliMessage &msg)
         return;
     }
 
-    ue->pushCommand(std::move(cmd), msg.clientAddr);
+    ue->push(std::make_unique<nr::ue::NmUeCliCommand>(std::move(cmd), msg.clientAddr));
 }
 
 static void Loop()
@@ -445,7 +446,7 @@ static void Loop()
 static class UeController : public app::IUeController
 {
   public:
-    void performSwitchOff(nr::ue::UserEquipment *ue) override
+    void performSwitchOff(nr::ue::UeTask *ue) override
     {
         auto w = std::make_unique<NwUeControllerCmd>(NwUeControllerCmd::PERFORM_SWITCH_OFF);
         w->ue = ue;
@@ -485,7 +486,7 @@ int main(int argc, char **argv)
     {
         auto config = GetConfigByUe(i);
         auto nodeName = config->getNodeName();
-        auto *ue = new nr::ue::UserEquipment(std::move(config), &g_ueController, nullptr, g_cliRespTask);
+        auto *ue = new nr::ue::UeTask(std::move(config), &g_ueController, nullptr, g_cliRespTask);
         g_ueMap.put(nodeName, ue);
     }
 

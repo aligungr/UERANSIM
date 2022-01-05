@@ -11,7 +11,7 @@
 namespace nr::ue
 {
 
-class UserEquipment;
+class UeTask;
 
 }
 
@@ -21,7 +21,7 @@ namespace app
 class IUeController
 {
   public:
-    virtual void performSwitchOff(nr::ue::UserEquipment *ue) = 0;
+    virtual void performSwitchOff(nr::ue::UeTask *ue) = 0;
 };
 
 } // namespace app
