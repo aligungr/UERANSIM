@@ -197,7 +197,6 @@ struct TaskBase
 
     UeSharedContext shCtx{};
 
-    UeAppTask *appTask{};
     UeL23Task *l23Task{};
 };
 

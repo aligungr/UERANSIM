@@ -6,9 +6,9 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
-#include "cmd_handler.hpp"
+#include "cmd.hpp"
 
-#include <ue/app/task.hpp>
+#include <ue/cmd.hpp>
 #include <ue/l23/task.hpp>
 #include <utils/common.hpp>
 #include <utils/printer.hpp>

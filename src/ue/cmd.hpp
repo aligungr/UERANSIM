@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include <ue/nts.hpp>
-#include <ue/types.hpp>
-#include "ue/l23/task.hpp"
+#include "nts.hpp"
+#include "types.hpp"
 
 namespace nr::ue
 {

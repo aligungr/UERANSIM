@@ -9,7 +9,6 @@
 #include "mm.hpp"
 
 #include <lib/nas/utils.hpp>
-#include <ue/app/task.hpp>
 #include <ue/l23/task.hpp>
 #include <ue/nas/usim/usim.hpp>
 #include <utils/common.hpp>

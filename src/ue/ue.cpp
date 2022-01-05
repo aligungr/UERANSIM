@@ -8,7 +8,6 @@
 
 #include "ue.hpp"
 
-#include "app/task.hpp"
 #include "l23/task.hpp"
 
 namespace nr::ue
@@ -26,7 +25,6 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
     base->cliCallbackTask = cliCallbackTask;
 
     base->l23Task = new UeL23Task(base);
-    base->appTask = new UeAppTask(base);
 
     taskBase = base;
 }
@@ -34,10 +32,8 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
 UserEquipment::~UserEquipment()
 {
     taskBase->l23Task->quit();
-    taskBase->appTask->quit();
 
     delete taskBase->l23Task;
-    delete taskBase->appTask;
 
     delete taskBase->logBase;
 
@@ -47,12 +43,11 @@ UserEquipment::~UserEquipment()
 void UserEquipment::start()
 {
     taskBase->l23Task->start();
-    taskBase->appTask->start();
 }
 
 void UserEquipment::pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address)
 {
-    taskBase->appTask->push(std::make_unique<NmUeCliCommand>(std::move(cmd), address));
+    taskBase->l23Task->push(std::make_unique<NmUeCliCommand>(std::move(cmd), address));
 }
 
 } // namespace nr::ue

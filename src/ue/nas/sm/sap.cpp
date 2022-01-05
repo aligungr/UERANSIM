@@ -11,7 +11,6 @@
 #include <algorithm>
 
 #include <lib/nas/proto_conf.hpp>
-#include <ue/app/task.hpp>
 #include <ue/l23/task.hpp>
 #include <ue/nas/mm/mm.hpp>
 

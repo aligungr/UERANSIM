@@ -7,9 +7,10 @@
 //
 
 #include "sm.hpp"
-#include <lib/nas/utils.hpp>
+
 #include <set>
-#include <ue/app/task.hpp>
+
+#include <lib/nas/utils.hpp>
 #include <ue/nas/mm/mm.hpp>
 
 namespace nr::ue

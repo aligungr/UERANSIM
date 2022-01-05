@@ -14,7 +14,6 @@
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
 
 #include <lib/rrc/encode.hpp>
-#include <ue/app/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue

@@ -9,6 +9,7 @@
 #include "task.hpp"
 
 #include <utils/random.hpp>
+#include <ue/cmd.hpp>
 
 struct TimerId
 {
@@ -115,6 +116,12 @@ void UeL23Task::onLoop()
     else if (msg->msgType == NtsMessageType::UE_SWITCH_OFF)
     {
         setTimer(TimerId::SWITCH_OFF, TimerPeriod::SWITCH_OFF);
+    }
+    else if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
+    {
+        auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
+        UeCmdHandler handler{m_base};
+        handler.handleCmd(w);
     }
     else
     {
