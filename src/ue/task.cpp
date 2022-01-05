@@ -55,6 +55,7 @@ UeTask::~UeTask() = default;
 
 void UeTask::onStart()
 {
+    rlsUdp->onStart();
     rrc->onStart();
     nas->onStart();
 
@@ -139,6 +140,7 @@ void UeTask::onLoop()
 
 void UeTask::onQuit()
 {
+    rlsUdp->onQuit();
     rrc->onQuit();
     nas->onQuit();
 }

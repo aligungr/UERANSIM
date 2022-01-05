@@ -25,15 +25,20 @@ RlsUdpLayer::RlsUdpLayer(UeTask *ue)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
     m_simPos = Vector3{};
+}
 
-    m_server = std::make_unique<udp::UdpServerTask>(ue);
+void RlsUdpLayer::onStart()
+{
+    m_server = std::make_unique<udp::UdpServerTask>(m_ue);
     m_server->start();
 }
 
-RlsUdpLayer::~RlsUdpLayer()
+void RlsUdpLayer::onQuit()
 {
     m_server->quit();
 }
+
+RlsUdpLayer::~RlsUdpLayer() = default;
 
 void RlsUdpLayer::checkHeartbeat()
 {
