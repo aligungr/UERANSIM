@@ -37,7 +37,7 @@ class NasSm
     friend class NasLayer;
 
   public:
-    NasSm(UeTask *base, NasTimers *timers);
+    NasSm(UeTask *ue, NasTimers *timers);
 
   private: /* Base */
     void onStart(NasMm *mm);

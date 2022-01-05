@@ -20,9 +20,9 @@
 namespace nr::ue
 {
 
-UeRrcLayer::UeRrcLayer(UeTask *base) : m_ue{base}, m_timers{}
+UeRrcLayer::UeRrcLayer(UeTask *ue) : m_ue{ue}, m_timers{}
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
+    m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rrc");
 
     m_startedTime = utils::CurrentTimeMillis();
     m_state = ERrcState::RRC_IDLE;

@@ -29,7 +29,7 @@ class RlsCtlLayer
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
   public:
-    explicit RlsCtlLayer(UeTask *base);
+    explicit RlsCtlLayer(UeTask *ue);
     ~RlsCtlLayer() = default;
 
   private:

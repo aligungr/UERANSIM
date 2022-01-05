@@ -67,7 +67,7 @@ class UeRrcLayer
     friend class UeCmdHandler;
 
   public:
-    explicit UeRrcLayer(UeTask *base);
+    explicit UeRrcLayer(UeTask *ue);
     ~UeRrcLayer() = default;
 
   public:

@@ -11,12 +11,12 @@
 namespace nr::ue
 {
 
-NasLayer::NasLayer(UeTask *base) : m_ue{base}, m_timers{}
+NasLayer::NasLayer(UeTask *ue) : m_ue{ue}, m_timers{}
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
+    m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "nas");
 
-    m_mm = new NasMm(base, &m_timers);
-    m_sm = new NasSm(base, &m_timers);
+    m_mm = new NasMm(ue, &m_timers);
+    m_sm = new NasSm(ue, &m_timers);
     m_usim = new Usim();
 }
 

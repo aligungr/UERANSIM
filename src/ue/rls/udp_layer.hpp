@@ -47,7 +47,7 @@ class RlsUdpLayer
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpLayer(UeTask *base);
+    explicit RlsUdpLayer(UeTask *ue);
     ~RlsUdpLayer();
 
   private:

@@ -49,7 +49,7 @@ class MmStorage
     std::unique_ptr<nas::NasSlot<std::optional<nas::IEDaylightSavingTime>>> networkDaylightSavingTime;
 
   public:
-    explicit MmStorage(UeTask *base);
+    explicit MmStorage(UeTask *ue);
 };
 
 } // namespace nr::ue

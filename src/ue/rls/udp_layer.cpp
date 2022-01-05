@@ -15,18 +15,18 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpLayer::RlsUdpLayer(UeTask *base)
-    : m_ue{base}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{},
+RlsUdpLayer::RlsUdpLayer(UeTask *ue)
+    : m_ue{ue}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{},
       m_lastLoop{}, m_cellIdCounter{}
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
+    m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rls-udp");
 
-    for (auto &ip : base->config->gnbSearchList)
+    for (auto &ip : ue->config->gnbSearchList)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
     m_simPos = Vector3{};
 
-    m_server = std::make_unique<udp::UdpServerTask>(base);
+    m_server = std::make_unique<udp::UdpServerTask>(ue);
     m_server->start();
 }
 

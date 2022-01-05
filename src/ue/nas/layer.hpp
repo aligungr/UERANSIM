@@ -33,7 +33,7 @@ class NasLayer
     friend class UeCmdHandler;
 
   public:
-    explicit NasLayer(UeTask *base);
+    explicit NasLayer(UeTask *ue);
     ~NasLayer() = default;
 
   public:

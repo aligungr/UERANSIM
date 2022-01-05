@@ -11,9 +11,9 @@
 namespace nr::ue
 {
 
-NasSm::NasSm(UeTask *base, NasTimers *timers) : m_ue(base), m_timers(timers), m_mm(nullptr)
+NasSm::NasSm(UeTask *ue, NasTimers *timers) : m_ue(ue), m_timers(timers), m_mm(nullptr)
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
+    m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "nas");
 
     for (int i = 0; i < 16; i++)
         m_pduSessions[i] = new PduSession(i);

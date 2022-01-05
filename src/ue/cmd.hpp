@@ -20,7 +20,7 @@ class UeCmdHandler
     UeTask *m_ue;
 
   public:
-    explicit UeCmdHandler(UeTask *base) : m_ue(base)
+    explicit UeCmdHandler(UeTask *ue) : m_ue(ue)
     {
     }
 

@@ -21,7 +21,7 @@ static void BackupTaiListInSharedCtx(const std::vector<Tai> &buffer, size_t coun
 namespace nr::ue
 {
 
-MmStorage::MmStorage(UeTask *base) : m_ue{base}
+MmStorage::MmStorage(UeTask *ue) : m_ue{ue}
 {
     uState = std::make_unique<nas::NasSlot<E5UState>>(0, std::nullopt);
 

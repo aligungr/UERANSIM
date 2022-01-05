@@ -8,9 +8,9 @@ static constexpr const int MAX_PDU_TTL = 3000;
 namespace nr::ue
 {
 
-RlsCtlLayer::RlsCtlLayer(UeTask *base) : m_ue{base}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
+RlsCtlLayer::RlsCtlLayer(UeTask *ue) : m_ue{ue}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
+    m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rls-ctl");
 }
 
 void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)

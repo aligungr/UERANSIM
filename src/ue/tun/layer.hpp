@@ -29,7 +29,7 @@ class TunLayer
     int m_dice;
 
   public:
-    explicit TunLayer(UeTask *base);
+    explicit TunLayer(UeTask *ue);
     ~TunLayer();
 
   public:
