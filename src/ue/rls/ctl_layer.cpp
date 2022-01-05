@@ -8,8 +8,7 @@ static constexpr const int MAX_PDU_TTL = 3000;
 namespace nr::ue
 {
 
-RlsCtlLayer::RlsCtlLayer(TaskBase *base)
-    : m_base{base}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
+RlsCtlLayer::RlsCtlLayer(TaskBase *base) : m_base{base}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -44,11 +43,7 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            auto w = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::DOWNLINK_RRC_DELIVERY);
-            w->cellId = cellId;
-            w->channel = static_cast<rrc::RrcChannel>(m.payload);
-            w->pdu = std::move(m.pdu);
-            m_base->l23Task->push(std::move(w));
+            m_base->l23Task->rrc().handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
         }
         else
         {
@@ -154,9 +149,7 @@ void RlsCtlLayer::assignCurrentCell(int cellId)
 
 void RlsCtlLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 {
-    auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::RADIO_LINK_FAILURE);
-    m->rlfCause = cause;
-    m_base->l23Task->push(std::move(m));
+    m_base->l23Task->rrc().handleRadioLinkFailure(cause);
 }
 
 } // namespace nr::ue

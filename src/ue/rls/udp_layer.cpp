@@ -103,10 +103,7 @@ void RlsUdpLayer::onSignalChangeOrLost(int cellId)
         dbm = m_cells[sti].dbm;
     }
 
-    auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::SIGNAL_CHANGED);
-    m->cellId = cellId;
-    m->dbm = dbm;
-    m_base->l23Task->push(std::move(m));
+    m_base->l23Task->rrc().handleCellSignalChange(cellId, dbm);
 }
 
 void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)

@@ -92,10 +92,6 @@ void UeL23Task::onLoop()
             m_rlsCtl->onAckSendTimerExpired();
         }
     }
-    else if (msg->msgType == NtsMessageType::UE_RLS_TO_RRC)
-    {
-        m_rrc->handleRlsSapMessage(dynamic_cast<NmUeRlsToRrc &>(*msg));
-    }
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP || msg->msgType == NtsMessageType::UE_RLS_TO_NAS)
     {
         m_nas->handleSapMessage(std::move(msg));

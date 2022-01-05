@@ -79,7 +79,6 @@ class UeRrcLayer
     void receivePaging(const ASN_RRC_Paging &msg);
 
     /* RRC Message Transmission and Receive */
-    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
     void sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg);
     void sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg);
     void sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg);
@@ -100,7 +99,6 @@ class UeRrcLayer
     bool lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report);
 
     /* Cell Management */
-    void handleCellSignalChange(int cellId, int dbm);
     void notifyCellDetected(int cellId, int dbm);
     void notifyCellLost(int cellId);
     bool hasSignalToCell(int cellId);
@@ -123,9 +121,14 @@ class UeRrcLayer
 
     /* Failures */
     void declareRadioLinkFailure(rls::ERlfCause cause);
-    void handleRadioLinkFailure(rls::ERlfCause cause);
 
   public:
+    /* RRC Message Transmission and Receive */
+    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
+
+    /* Cell Management */
+    void handleCellSignalChange(int cellId, int dbm);
+
     /* Access Control */
     EUacResult performUac(std::bitset<16> identities, int category, int establishmentCause);
 
@@ -135,11 +138,11 @@ class UeRrcLayer
     /* NAS Transport */
     void deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu);
 
-    /* Service Access Point */
-    void handleRlsSapMessage(NmUeRlsToRrc &msg);
-
     /* State Management */
     void performCycle();
+
+    /* Failures */
+    void handleRadioLinkFailure(rls::ERlfCause cause);
 };
 
 } // namespace nr::ue

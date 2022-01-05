@@ -62,34 +62,6 @@ struct NmUeRrcToRls : NtsMessage
     }
 };
 
-struct NmUeRlsToRrc : NtsMessage
-{
-    enum PR
-    {
-        DOWNLINK_RRC_DELIVERY,
-        SIGNAL_CHANGED,
-        RADIO_LINK_FAILURE
-    } present;
-
-    // DOWNLINK_RRC_DELIVERY
-    // SIGNAL_CHANGED
-    int cellId{};
-
-    // DOWNLINK_RRC_DELIVERY
-    rrc::RrcChannel channel{};
-    OctetString pdu;
-
-    // SIGNAL_CHANGED
-    int dbm{};
-
-    // RADIO_LINK_FAILURE
-    rls::ERlfCause rlfCause{};
-
-    explicit NmUeRlsToRrc(PR present) : NtsMessage(NtsMessageType::UE_RLS_TO_RRC), present(present)
-    {
-    }
-};
-
 struct NmUeNasToApp : NtsMessage
 {
     enum PR
