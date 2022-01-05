@@ -16,7 +16,7 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpLayer::RlsUdpLayer(TaskBase *base)
+RlsUdpLayer::RlsUdpLayer(TaskBase *base, NtsTask *rlsTask)
     : m_base{base}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{},
       m_lastLoop{}, m_cellIdCounter{}
 {
@@ -26,12 +26,14 @@ RlsUdpLayer::RlsUdpLayer(TaskBase *base)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
     m_simPos = Vector3{};
+
+    m_server = std::make_unique<udp::UdpServerTask>(rlsTask);
+    m_server->start();
 }
 
-void RlsUdpLayer::onStart()
+RlsUdpLayer::~RlsUdpLayer()
 {
-    m_server = std::make_unique<udp::UdpServerTask>(m_base->rlsTask);
-    m_server->start();
+    m_server->quit();
 }
 
 void RlsUdpLayer::checkHeartbeat()
@@ -42,11 +44,6 @@ void RlsUdpLayer::checkHeartbeat()
         m_lastLoop = current;
         heartbeatCycle(current, m_simPos);
     }
-}
-
-void RlsUdpLayer::onQuit()
-{
-    m_server->quit();
 }
 
 void RlsUdpLayer::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)

@@ -47,8 +47,8 @@ class RlsUdpLayer
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpLayer(TaskBase *base);
-    ~RlsUdpLayer() = default;
+    explicit RlsUdpLayer(TaskBase *base, NtsTask *rlsTask);
+    ~RlsUdpLayer();
 
   private:
     void sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg);
@@ -56,8 +56,6 @@ class RlsUdpLayer
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
-    void onStart();
-    void onQuit();
     void checkHeartbeat();
     void send(int cellId, const rls::RlsMessage &msg);
     void receiveRlsPdu(const InetAddress &address, std::unique_ptr<rls::RlsMessage> &&msg);

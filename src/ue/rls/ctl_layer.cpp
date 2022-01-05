@@ -15,14 +15,6 @@ RlsCtlLayer::RlsCtlLayer(TaskBase *base)
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
 
-void RlsCtlLayer::onStart()
-{
-}
-
-void RlsCtlLayer::onQuit()
-{
-}
-
 void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
 {
     if (msg.msgType == rls::EMessageType::PDU_TRANSMISSION_ACK)

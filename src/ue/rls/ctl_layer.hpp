@@ -36,8 +36,6 @@ class RlsCtlLayer
     void declareRadioLinkFailure(rls::ERlfCause cause);
 
   public:
-    void onStart();
-    void onQuit();
     void onAckControlTimerExpired();
     void onAckSendTimerExpired();
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);

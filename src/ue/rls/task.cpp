@@ -27,15 +27,12 @@ UeRlsTask::UeRlsTask(TaskBase *base) : m_base{base}
 
     base->shCtx.sti = Random::Mixed(base->config->getNodeName()).nextL();
 
-    m_udpLayer = std::make_unique<RlsUdpLayer>(base);
+    m_udpLayer = std::make_unique<RlsUdpLayer>(base, this);
     m_ctlLayer = std::make_unique<RlsCtlLayer>(base);
 }
 
 void UeRlsTask::onStart()
 {
-    m_udpLayer->onStart();
-    m_ctlLayer->onStart();
-
     setTimer(TIMER_ID_ACK_CONTROL, TIMER_PERIOD_ACK_CONTROL);
     setTimer(TIMER_ID_ACK_SEND, TIMER_PERIOD_ACK_SEND);
 }
@@ -113,8 +110,7 @@ void UeRlsTask::onLoop()
 
 void UeRlsTask::onQuit()
 {
-    m_udpLayer->onQuit();
-    m_ctlLayer->onQuit();
+
 }
 
 RlsCtlLayer &UeRlsTask::ctl()
