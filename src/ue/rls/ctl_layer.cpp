@@ -39,11 +39,11 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
             auto w = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
             w->psi = static_cast<int>(m.payload);
             w->pdu = std::move(m.pdu);
-            m_base->l23Task->push(std::move(w));
+            m_base->task->push(std::move(w));
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
-            m_base->l23Task->rrc().handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
+            m_base->task->rrc().handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
         }
         else
         {
@@ -87,7 +87,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
     msg.payload = static_cast<uint32_t>(channel);
     msg.pduId = pduId;
 
-    m_base->l23Task->rlsUdp().send(cellId, msg);
+    m_base->task->rlsUdp().send(cellId, msg);
 }
 
 void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
@@ -98,7 +98,7 @@ void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
     msg.payload = static_cast<uint32_t>(psi);
     msg.pduId = 0;
 
-    m_base->l23Task->rlsUdp().send(m_servingCell, msg);
+    m_base->task->rlsUdp().send(m_servingCell, msg);
 }
 
 void RlsCtlLayer::onAckControlTimerExpired()
@@ -138,7 +138,7 @@ void RlsCtlLayer::onAckSendTimerExpired()
         rls::RlsPduTransmissionAck msg{m_base->shCtx.sti};
         msg.pduIds = std::move(item.second);
 
-        m_base->l23Task->rlsUdp().send(item.first, msg);
+        m_base->task->rlsUdp().send(item.first, msg);
     }
 }
 
@@ -149,7 +149,7 @@ void RlsCtlLayer::assignCurrentCell(int cellId)
 
 void RlsCtlLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 {
-    m_base->l23Task->rrc().handleRadioLinkFailure(cause);
+    m_base->task->rrc().handleRadioLinkFailure(cause);
 }
 
 } // namespace nr::ue

@@ -31,8 +31,7 @@
 namespace nr::ue
 {
 
-class UeAppTask;
-class UeL23Task;
+class UeTask;
 class UserEquipment;
 
 struct UeCellDesc
@@ -190,14 +189,14 @@ struct TaskBase
 {
     UserEquipment *ue{};
     UeConfig *config{};
-    LogBase *logBase{};
+    std::unique_ptr<LogBase> logBase{};
     app::IUeController *ueController{};
     app::INodeListener *nodeListener{};
     NtsTask *cliCallbackTask{};
 
     UeSharedContext shCtx{};
 
-    UeL23Task *l23Task{};
+    UeTask *task{};
 };
 
 struct RrcTimers

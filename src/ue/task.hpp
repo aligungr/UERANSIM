@@ -31,7 +31,7 @@
 namespace nr::ue
 {
 
-class UeL23Task : public NtsTask
+class UeTask : public NtsTask
 {
   private:
     TaskBase *m_base;
@@ -45,8 +45,8 @@ class UeL23Task : public NtsTask
     friend class UeCmdHandler;
 
   public:
-    explicit UeL23Task(TaskBase *base);
-    ~UeL23Task() override;
+    explicit UeTask(TaskBase *base);
+    ~UeTask() override;
 
   protected:
     void onStart() override;

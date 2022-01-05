@@ -99,8 +99,8 @@ void UeRrcLayer::performCellSelection()
 
     if (selectedCell != lastCell.cellId)
     {
-        m_base->l23Task->rlsCtl().assignCurrentCell(selectedCell);
-        m_base->l23Task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
+        m_base->task->rlsCtl().assignCurrentCell(selectedCell);
+        m_base->task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
     }
 }
 

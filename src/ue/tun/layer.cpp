@@ -37,14 +37,14 @@ static void ReceiverThread(void *args)
     while (true)
     {
         int psi;
-        size_t s = base->l23Task->tun().read(buffer, RECEIVER_BUFFER_SIZE, psi);
+        size_t s = base->task->tun().read(buffer, RECEIVER_BUFFER_SIZE, psi);
 
         if (s > 0)
         {
             auto m = std::make_unique<nr::ue::NmUeTunToApp>(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
             m->psi = psi;
             m->data = OctetString::FromArray(buffer, s);
-            base->l23Task->push(std::move(m));
+            base->task->push(std::move(m));
         }
     }
 }

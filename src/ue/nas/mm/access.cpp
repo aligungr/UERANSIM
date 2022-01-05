@@ -261,7 +261,7 @@ EUacResult NasMm::performUac()
     }();
 
     auto res =
-        m_base->l23Task->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
+        m_base->task->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
 
     switch (res)
     {

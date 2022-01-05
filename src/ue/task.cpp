@@ -32,9 +32,9 @@ struct TimerPeriod
 namespace nr::ue
 {
 
-ue::UeL23Task::UeL23Task(TaskBase *base) : m_base{base}
+ue::UeTask::UeTask(TaskBase *base) : m_base{base}
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "l23");
+    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "main");
     base->shCtx.sti = Random::Mixed(base->config->getNodeName()).nextL();
 
     m_rlsUdp = std::make_unique<RlsUdpLayer>(base, this);
@@ -44,9 +44,9 @@ ue::UeL23Task::UeL23Task(TaskBase *base) : m_base{base}
     m_tun = std::make_unique<TunLayer>(base);
 }
 
-UeL23Task::~UeL23Task() = default;
+UeTask::~UeTask() = default;
 
-void UeL23Task::onStart()
+void UeTask::onStart()
 {
     m_rrc->onStart();
     m_nas->onStart();
@@ -57,7 +57,7 @@ void UeL23Task::onStart()
     setTimer(TimerId::RLS_ACK_SEND, TimerPeriod::RLS_ACK_SEND);
 }
 
-void UeL23Task::onLoop()
+void UeTask::onLoop()
 {
     m_rlsUdp->checkHeartbeat();
 
@@ -129,7 +129,7 @@ void UeL23Task::onLoop()
     }
 }
 
-void UeL23Task::onQuit()
+void UeTask::onQuit()
 {
     m_rrc->onQuit();
     m_nas->onQuit();

@@ -38,7 +38,7 @@ void NasSm::localReleaseSession(int psi)
     freePduSessionId(psi);
 
     if (isEstablished)
-        m_base->l23Task->tun().release(psi);
+        m_base->task->tun().release(psi);
 }
 
 void NasSm::localReleaseAllSessions()
