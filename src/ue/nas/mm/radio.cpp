@@ -52,9 +52,9 @@ void NasMm::performPlmnSelection()
         logFailures = false;
     }
 
-    Plmn lastSelectedPlmn = m_ue->shCtx.selectedPlmn.get();
+    Plmn lastSelectedPlmn = m_ue->shCtx.selectedPlmn;
 
-    std::unordered_set<Plmn> plmns = m_ue->shCtx.availablePlmns.get();
+    std::unordered_set<Plmn>& plmns = m_ue->shCtx.availablePlmns;
 
     if (!m_usim->isValid() || plmns.empty())
     {
@@ -67,7 +67,7 @@ void NasMm::performPlmnSelection()
             m_lastTimePlmnSearchFailureLogged = currentTime;
         }
 
-        m_ue->shCtx.selectedPlmn.set({});
+        m_ue->shCtx.selectedPlmn = {};
         return;
     }
 
@@ -109,7 +109,7 @@ void NasMm::performPlmnSelection()
         resetRegAttemptCounter();
     }
 
-    m_ue->shCtx.selectedPlmn.set(selected);
+    m_ue->shCtx.selectedPlmn = selected;
 }
 
 void NasMm::handleActiveCellChange(const Tai &prevTai)
@@ -121,7 +121,7 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
         return;
     }
 
-    auto currentCell = m_ue->shCtx.currentCell.get();
+    auto currentCell = m_ue->shCtx.currentCell;
     Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
     if (currentCell.hasValue() && !m_storage->equivalentPlmnList->contains(currentCell.plmn))
@@ -329,21 +329,21 @@ void NasMm::updateProvidedGuti(bool provide)
     auto &guti = m_storage->storedGuti->get();
     if (!provide || guti.type == nas::EIdentityType::NO_IDENTITY)
     {
-        m_ue->shCtx.providedGuti.set({});
-        m_ue->shCtx.providedTmsi.set({});
+        m_ue->shCtx.providedGuti = {};
+        m_ue->shCtx.providedTmsi= {};
     }
     else
     {
         auto tai = m_ue->shCtx.getCurrentTai();
         if (tai.hasValue() && nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai}))
         {
-            m_ue->shCtx.providedGuti.set({});
-            m_ue->shCtx.providedTmsi.set(guti.gutiOrTmsi);
+            m_ue->shCtx.providedGuti= {};
+            m_ue->shCtx.providedTmsi = guti.gutiOrTmsi;
         }
         else
         {
-            m_ue->shCtx.providedGuti.set(guti.gutiOrTmsi);
-            m_ue->shCtx.providedTmsi.set({});
+            m_ue->shCtx.providedGuti = guti.gutiOrTmsi;
+            m_ue->shCtx.providedTmsi= {};
         }
     }
 }

@@ -280,24 +280,22 @@ bool ActiveCellInfo::hasValue() const
     return cellId != 0;
 }
 
-Plmn UeSharedContext::getCurrentPlmn()
+Plmn UeSharedContext::getCurrentPlmn() const
 {
-    return currentCell.get<Plmn>([](auto &value) { return value.plmn; });
+    return currentCell.plmn;
 }
 
-Tai UeSharedContext::getCurrentTai()
+Tai UeSharedContext::getCurrentTai() const
 {
     Tai tai;
-    currentCell.access([&tai](auto &value) {
-        tai.plmn = value.plmn;
-        tai.tac = value.tac;
-    });
+    tai.plmn = currentCell.plmn;
+    tai.tac = currentCell.tac;
     return tai;
 }
 
-bool UeSharedContext::hasActiveCell()
+bool UeSharedContext::hasActiveCell() const
 {
-    return getCurrentTai().hasValue();
+    return currentCell.plmn.hasValue();
 }
 
 RrcTimers::RrcTimers() : t300(300, false, 1)

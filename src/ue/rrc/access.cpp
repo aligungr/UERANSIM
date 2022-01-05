@@ -19,7 +19,7 @@ EUacResult UeRrcLayer::performUac(std::bitset<16> identities, int category, int 
 {
     m_establishmentCause = establishmentCause;
 
-    int cellId = m_ue->shCtx.currentCell.get().cellId;
+    int cellId = m_ue->shCtx.currentCell.cellId;
     if (m_cellDesc.count(cellId))
     {
         auto &desc = m_cellDesc[cellId];

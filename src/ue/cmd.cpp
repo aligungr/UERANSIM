@@ -49,7 +49,7 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
         std::optional<Plmn> currentPlmn = std::nullopt;
         std::optional<int> currentTac = std::nullopt;
 
-        auto currentCell = m_ue->shCtx.currentCell.get();
+        auto& currentCell = m_ue->shCtx.currentCell;
         if (currentCell.hasValue())
         {
             currentCellId = currentCell.cellId;
@@ -63,7 +63,7 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
             {"mm-state", ToJson(m_ue->nas->m_mm->m_mmSubState)},
             {"5u-state", ToJson(m_ue->nas->m_mm->m_storage->uState->get())},
             {"sim-inserted", m_ue->nas->m_mm->m_usim->isValid()},
-            {"selected-plmn", ::ToJson(m_ue->shCtx.selectedPlmn.get())},
+            {"selected-plmn", ::ToJson(m_ue->shCtx.selectedPlmn)},
             {"current-cell", ::ToJson(currentCellId)},
             {"current-plmn", ::ToJson(currentPlmn)},
             {"current-tac", ::ToJson(currentTac)},

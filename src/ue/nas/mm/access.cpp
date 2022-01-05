@@ -106,7 +106,7 @@ void NasMm::setN1Capability(bool enabled)
 
 bool NasMm::isInNonAllowedArea()
 {
-    auto currentCell = m_ue->shCtx.currentCell.get();
+    auto& currentCell = m_ue->shCtx.currentCell;
     if (!currentCell.hasValue())
         return false;
 

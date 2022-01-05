@@ -50,14 +50,13 @@ void UeRrcLayer::notifyCellLost(int cellId)
 
     bool isActiveCell = false;
     ActiveCellInfo lastActiveCell;
-    m_ue->shCtx.currentCell.mutate([&isActiveCell, &lastActiveCell, cellId](auto &value) {
-        if (value.cellId == cellId)
-        {
-            lastActiveCell = value;
-            value = {};
-            isActiveCell = true;
-        }
-    });
+
+    if (m_ue->shCtx.currentCell.cellId == cellId)
+    {
+        lastActiveCell = m_ue->shCtx.currentCell;
+        m_ue->shCtx.currentCell = {};
+        isActiveCell = true;
+    }
 
     m_cellDesc.erase(cellId);
 
@@ -84,17 +83,15 @@ bool UeRrcLayer::hasSignalToCell(int cellId)
 
 bool UeRrcLayer::isActiveCell(int cellId)
 {
-    return m_ue->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }) == cellId;
+    return m_ue->shCtx.currentCell.cellId == cellId;
 }
 
 void UeRrcLayer::updateAvailablePlmns()
 {
-    m_ue->shCtx.availablePlmns.mutate([this](std::unordered_set<Plmn> &value) {
-        value.clear();
-        for (auto &cellDesc : m_cellDesc)
-            if (cellDesc.second.sib1.hasSib1)
-                value.insert(cellDesc.second.sib1.plmn);
-    });
+    m_ue->shCtx.availablePlmns.clear();
+    for (auto &cellDesc : m_cellDesc)
+        if (cellDesc.second.sib1.hasSib1)
+            m_ue->shCtx.availablePlmns.insert(cellDesc.second.sib1.plmn);
 
     triggerCycle();
 }

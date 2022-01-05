@@ -88,7 +88,7 @@ void NasMm::performMmCycle()
     if (m_mmState == EMmState::MM_NULL)
         return;
 
-    auto currentCell = m_ue->shCtx.currentCell.get();
+    auto currentCell = m_ue->shCtx.currentCell;
     Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
     /* Perform substate selection in case of primary substate */
@@ -119,7 +119,7 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_REGISTERED_PS)
     {
-        auto cell = m_ue->shCtx.currentCell.get();
+        auto cell = m_ue->shCtx.currentCell;
         if (cell.hasValue())
         {
             if (isInNonAllowedArea())

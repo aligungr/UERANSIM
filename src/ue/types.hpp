@@ -169,19 +169,19 @@ struct ActiveCellInfo
 
 struct UeSharedContext
 {
-    Locked<std::unordered_set<Plmn>> availablePlmns;
-    Locked<Plmn> selectedPlmn;
-    Locked<ActiveCellInfo> currentCell;
-    Locked<std::vector<Tai>> forbiddenTaiRoaming;
-    Locked<std::vector<Tai>> forbiddenTaiRps;
-    Locked<std::optional<GutiMobileIdentity>> providedGuti;
-    Locked<std::optional<GutiMobileIdentity>> providedTmsi;
+    std::unordered_set<Plmn> availablePlmns;
+    Plmn selectedPlmn;
+    ActiveCellInfo currentCell;
+    std::vector<Tai> forbiddenTaiRoaming;
+    std::vector<Tai> forbiddenTaiRps;
+    std::optional<GutiMobileIdentity> providedGuti;
+    std::optional<GutiMobileIdentity> providedTmsi;
 
-    std::atomic<uint64_t> sti{};
+    uint64_t sti{};
 
-    Plmn getCurrentPlmn();
-    Tai getCurrentTai();
-    bool hasActiveCell();
+    Plmn getCurrentPlmn() const;
+    Tai getCurrentTai() const;
+    bool hasActiveCell() const;
 };
 
 struct RrcTimers

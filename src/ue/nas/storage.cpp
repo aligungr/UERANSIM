@@ -9,13 +9,11 @@
 #include "storage.hpp"
 #include <ue/task.hpp>
 
-static void BackupTaiListInSharedCtx(const std::vector<Tai> &buffer, size_t count, Locked<std::vector<Tai>> &target)
+static void BackupTaiListInSharedCtx(const std::vector<Tai> &buffer, size_t count, std::vector<Tai> &target)
 {
-    target.mutate([count, &buffer](auto &value) {
-        value.clear();
-        for (size_t i = 0; i < count; i++)
-            value.push_back(buffer[i]);
-    });
+    target.clear();
+    for (size_t i = 0; i < count; i++)
+        target.push_back(buffer[i]);
 }
 
 namespace nr::ue

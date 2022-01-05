@@ -50,7 +50,7 @@ void UeRrcLayer::startConnectionEstablishment(OctetString &&nasPdu)
     }
 
     /* Check the current cell */
-    int activeCell = m_ue->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
+    int activeCell = m_ue->shCtx.currentCell.cellId;
     if (activeCell == 0)
     {
         m_logger->err("RRC establishment could not start, no active cell");
@@ -59,9 +59,9 @@ void UeRrcLayer::startConnectionEstablishment(OctetString &&nasPdu)
     }
 
     /* Handle Initial UE Identity (S-TMSI or 39-bit random value) */
-    std::optional<GutiMobileIdentity> gutiOrTmsi = m_ue->shCtx.providedGuti.get();
+    std::optional<GutiMobileIdentity> gutiOrTmsi = m_ue->shCtx.providedGuti;
     if (!gutiOrTmsi)
-        gutiOrTmsi = m_ue->shCtx.providedTmsi.get();
+        gutiOrTmsi = m_ue->shCtx.providedTmsi;
 
     if (gutiOrTmsi)
     {
@@ -113,9 +113,9 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
     asn::SetOctetString(ies->dedicatedNAS_Message, m_initialNasPdu);
 
     /* Send S-TMSI if available */
-    std::optional<GutiMobileIdentity> gutiOrTmsi = m_ue->shCtx.providedGuti.get();
+    std::optional<GutiMobileIdentity> gutiOrTmsi = m_ue->shCtx.providedGuti;
     if (!gutiOrTmsi)
-        gutiOrTmsi = m_ue->shCtx.providedTmsi.get();
+        gutiOrTmsi = m_ue->shCtx.providedTmsi;
     if (gutiOrTmsi)
     {
         auto &sTmsi = setupComplete->criticalExtensions.choice.rrcSetupComplete->ng_5G_S_TMSI_Value =

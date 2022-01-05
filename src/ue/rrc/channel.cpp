@@ -117,9 +117,7 @@ void UeRrcLayer::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
         return;
     }
 
-    m_ue->rlsCtl->handleUplinkRrcDelivery(
-        m_ue->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }), 0, rrc::RrcChannel::UL_DCCH,
-        std::move(pdu));
+    m_ue->rlsCtl->handleUplinkRrcDelivery(m_ue->shCtx.currentCell.cellId, 0, rrc::RrcChannel::UL_DCCH, std::move(pdu));
 }
 
 void UeRrcLayer::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)
