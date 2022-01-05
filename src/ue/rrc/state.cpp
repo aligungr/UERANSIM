@@ -17,7 +17,7 @@ namespace nr::ue
 
 void UeRrcLayer::triggerCycle()
 {
-    m_ue->push(std::make_unique<NmCycleRequired>());
+    m_ue->triggerCycle();
 }
 
 void UeRrcLayer::performCycle()

@@ -35,13 +35,6 @@ struct NmUeCliCommand : NtsMessage
     }
 };
 
-struct NmCycleRequired : NtsMessage
-{
-    NmCycleRequired() : NtsMessage(NtsMessageType::UE_CYCLE_REQUIRED)
-    {
-    }
-};
-
 struct NmUeTunToApp : NtsMessage
 {
     int psi{};

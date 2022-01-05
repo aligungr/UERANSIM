@@ -49,6 +49,9 @@ class UeTask : public NtsTask
     int64_t m_timerRlsAckSend;
     int64_t m_timerSwitchOff;
 
+  private:
+    bool m_immediateCycle;
+
   public:
     std::unique_ptr<UeConfig> config;
     std::unique_ptr<LogBase> logBase;

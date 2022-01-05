@@ -46,6 +46,8 @@ ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueCon
     this->m_timerRlsAckControl = -1;
     this->m_timerRlsAckSend = -1;
     this->m_timerSwitchOff = -1;
+
+    this->m_immediateCycle = true;
 }
 
 UeTask::~UeTask() = default;
@@ -69,16 +71,19 @@ void UeTask::onLoop()
 
     checkTimers();
 
+    if (m_immediateCycle)
+    {
+        m_immediateCycle = false;
+        rrc->performCycle();
+        nas->performCycle();
+        return;
+    }
+
     auto msg = take();
     if (!msg)
         return;
 
-    if (msg->msgType == NtsMessageType::UE_CYCLE_REQUIRED)
-    {
-        rrc->performCycle();
-        nas->performCycle();
-    }
-    else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
+    if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
     {
         auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
         nas->handleUplinkDataRequest(w.psi, std::move(w.data));
@@ -137,6 +142,11 @@ void UeTask::checkTimers()
     {
         ueController->performSwitchOff(this);
     }
+}
+
+void UeTask::triggerCycle()
+{
+    m_immediateCycle = true;
 }
 
 void UeTask::triggerSwitchOff()

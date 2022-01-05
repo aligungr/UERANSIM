@@ -46,7 +46,6 @@ enum class NtsMessageType
     GNB_SCTP,
 
     UE_TUN_TO_APP,
-    UE_CYCLE_REQUIRED,
 };
 
 struct NtsMessage

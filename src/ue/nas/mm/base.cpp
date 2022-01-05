@@ -79,7 +79,7 @@ void NasMm::onQuit()
 
 void NasMm::triggerMmCycle()
 {
-    m_ue->push(std::make_unique<NmCycleRequired>());
+    m_ue->triggerCycle();
 }
 
 void NasMm::performMmCycle()
